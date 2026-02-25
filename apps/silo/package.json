@@ -1,8 +1,8 @@
 {
   "name": "silo",
   "version": "2.3.0",
-  "description": "A simple, lightweight, and fast integrations engine.",
   "private": true,
+  "description": "A simple, lightweight, and fast integrations engine.",
   "author": "engineering@plane.so",
   "type": "module",
   "main": "./dist/start.mjs",
@@ -20,9 +20,9 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=2553",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt . --check",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=2553 --fix",
-    "fix:format": "prettier . --cache --write",
+    "fix:format": "oxfmt . --write",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject ./dist && sentry-cli sourcemaps upload --release=$SENTRY_RELEASE_VERSION ./dist"
   },
   "dependencies": {

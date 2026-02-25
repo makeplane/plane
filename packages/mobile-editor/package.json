@@ -9,9 +9,9 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "check:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=28",
     "check:types-mobile": "tsc --noEmit",
-    "check:format-mobile": "prettier . --cache --check",
+    "check:format-mobile": "oxfmt . --check",
     "fix:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=28",
-    "fix:format-mobile": "prettier . --cache --write"
+    "fix:format-mobile": "oxfmt . --write"
   },
   "dependencies": {
     "@plane/constants": "workspace:*",

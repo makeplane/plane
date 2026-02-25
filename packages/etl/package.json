@@ -1,13 +1,14 @@
 {
   "name": "@plane/etl",
   "version": "2.3.0",
-  "repository": "https://github.com/makeplane/plane-ee",
-  "author": "Plane Engineering",
-  "license": "AGPL",
   "private": true,
+  "license": "AGPL",
+  "author": "Plane Engineering",
+  "repository": "https://github.com/makeplane/plane-ee",
   "files": [
     "dist/**/*"
   ],
+  "type": "module",
   "exports": {
     "./asana": "./dist/asana/index.js",
     "./clickup": "./dist/clickup/index.js",
@@ -22,16 +23,15 @@
     "./slack": "./dist/slack/index.js",
     "./package.json": "./package.json"
   },
-  "type": "module",
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=614",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt . --check",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=614 --fix",
-    "fix:format": "prettier . --cache --write"
+    "fix:format": "oxfmt . --write"
   },
   "dependencies": {
     "@flatfile/api": "^1.12.0",
@@ -49,14 +49,14 @@
     "uuid": "catalog:",
     "zod": "^3.24.1"
   },
-  "peerDependencies": {
-    "@octokit/openapi-webhooks-types": ">=8"
-  },
   "devDependencies": {
     "@octokit/openapi-webhooks-types": "^8.3.0",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@types/papaparse": "catalog:",
     "tsdown": "catalog:"
+  },
+  "peerDependencies": {
+    "@octokit/openapi-webhooks-types": ">=8"
   }
 }

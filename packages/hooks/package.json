@@ -1,10 +1,11 @@
 {
   "name": "@plane/hooks",
   "version": "2.3.0",
-  "license": "AGPL-3.0",
-  "description": "React hooks that are shared across multiple apps internally",
   "private": true,
+  "description": "React hooks that are shared across multiple apps internally",
+  "license": "AGPL-3.0",
   "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"
@@ -14,9 +15,9 @@
     "dev": "tsdown --watch",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=60",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt . --check",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=60",
-    "fix:format": "prettier . --cache --write",
+    "fix:format": "oxfmt . --write",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
@@ -28,6 +29,5 @@
     "@types/react": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  },
-  "types": "./dist/index.d.ts"
+  }
 }

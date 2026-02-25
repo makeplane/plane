@@ -1,6 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
-  "globalDependencies": [".npmrc", ".prettierrc", "eslint.config.mjs"],
+  "globalDependencies": [".npmrc", ".oxfmtrc.json", "eslint.config.mjs"],
   "globalEnv": [
     "API_BASE_URL",
     "APP_BASE_URL",
@@ -82,7 +82,7 @@
     },
     "check:format": {
       "inputs": ["$TURBO_DEFAULT$"],
-      "outputs": ["node_modules/.cache/prettier/**"]
+      "outputs": []
     },
     "check:lint": {
       "dependsOn": ["^build"],

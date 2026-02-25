@@ -84,7 +84,7 @@ const data: any = response;
 
 Lint-staged runs automatically on commit via Husky:
 
-- Prettier formats your staged files
+- oxfmt formats your staged files
 - ESLint fixes what it can (with `--max-warnings=0`)
 
 If the commit fails due to lint errors, fix them before committing.

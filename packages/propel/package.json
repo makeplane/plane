@@ -4,19 +4,15 @@
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
-  "scripts": {
-    "dev": "tsdown --watch",
-    "build": "tsdown",
-    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1306",
-    "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
-    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1306",
-    "fix:format": "prettier . --cache --write",
-    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "pretest": "if [ \"$CI\" = \"true\" ]; then playwright install --with-deps chromium; else playwright install chromium; fi",
-    "test": "vitest run --project=storybook"
+  "types": "./dist/index.d.ts",
+  "imports": {
+    "#*": [
+      "./*",
+      "./*.ts",
+      "./*.tsx",
+      "./*.js",
+      "./*.jsx"
+    ]
   },
   "exports": {
     "./accordion": "./dist/accordion/index.js",
@@ -68,6 +64,20 @@
     "./styles/react-day-picker.css": "./dist/styles/react-day-picker.css",
     "./styles/react-day-picker": "./dist/styles/react-day-picker.css"
   },
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1306",
+    "check:types": "tsc --noEmit",
+    "check:format": "oxfmt . --check",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1306",
+    "fix:format": "oxfmt . --write",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "pretest": "if [ \"$CI\" = \"true\" ]; then playwright install --with-deps chromium; else playwright install chromium; fi",
+    "test": "vitest run --project=storybook"
+  },
   "dependencies": {
     "@base-ui/react": "1.2.0",
     "@monaco-editor/react": "^4.7.0",
@@ -109,15 +119,5 @@
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "^4.0.18"
-  },
-  "types": "./dist/index.d.ts",
-  "imports": {
-    "#*": [
-      "./*",
-      "./*.ts",
-      "./*.tsx",
-      "./*.js",
-      "./*.jsx"
-    ]
   }
 }

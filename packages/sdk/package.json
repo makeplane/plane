@@ -2,24 +2,24 @@
   "name": "@plane/sdk",
   "version": "2.3.0",
   "private": true,
+  "files": [
+    "dist/**"
+  ],
   "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist/**"
-  ],
   "scripts": {
     "dev": "tsdown --watch",
     "build": "tsdown",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=272",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt . --check",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=272 --fix",
-    "fix:format": "prettier . --cache --write"
+    "fix:format": "oxfmt . --write"
   },
   "dependencies": {
     "axios": "catalog:"

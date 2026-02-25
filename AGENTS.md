@@ -140,7 +140,7 @@ Every source file in this repository contains a copyright/license header. When r
 ## Code Style
 
 - **TypeScript**: Strict mode, use `workspace:*` for internal packages, `catalog:` for external deps
-- **Formatting**: Prettier with Tailwind plugin (runs on commit via Husky)
+- **Formatting**: oxfmt with built-in Tailwind class sorting (runs on commit via Husky)
 - **Linting**: ESLint 9 with typed linting from root config
 - **Naming**: camelCase for variables/functions, PascalCase for components/types
 - **State**: MobX stores in `@plane/shared-state`

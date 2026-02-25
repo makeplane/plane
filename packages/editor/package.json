@@ -1,9 +1,16 @@
 {
   "name": "@plane/editor",
   "version": "2.3.0",
-  "description": "Core Editor that powers Plane",
-  "license": "AGPL-3.0",
   "private": true,
+  "description": "Core Editor that powers Plane",
+  "keywords": [
+    "editor",
+    "markdown",
+    "nextjs",
+    "react",
+    "rich-text"
+  ],
+  "license": "AGPL-3.0",
   "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -18,15 +25,10 @@
     "dev": "tsdown --watch",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1435",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt . --check",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1435",
-    "fix:format": "prettier . --cache --write",
+    "fix:format": "oxfmt . --write",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
-  },
-  "peerDependencies": {
-    "nanoid": "3.3.8",
-    "react": "catalog:",
-    "react-dom": "catalog:"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.1",
@@ -100,11 +102,9 @@
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
-  "keywords": [
-    "editor",
-    "rich-text",
-    "markdown",
-    "nextjs",
-    "react"
-  ]
+  "peerDependencies": {
+    "nanoid": "3.3.8",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  }
 }

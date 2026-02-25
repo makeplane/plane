@@ -1,8 +1,11 @@
 {
   "name": "flux",
   "version": "2.3.0",
-  "license": "AGPL-3.0",
+  "private": true,
   "description": "WebSocket flux service for horizontal scaling with Redis pub/sub",
+  "license": "AGPL-3.0",
+  "author": "Plane Software Inc.",
+  "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "exports": {
@@ -10,8 +13,6 @@
     "./consumer": "./dist/consumer.mjs",
     "./package.json": "./package.json"
   },
-  "private": true,
-  "type": "module",
   "scripts": {
     "build": "tsc --noEmit && tsdown",
     "dev": "tsdown --watch --onSuccess \"node --env-file=.env .\"",
@@ -19,12 +20,11 @@
     "start": "node --env-file=.env .",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt . --check",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix",
-    "fix:format": "prettier . --cache --write",
+    "fix:format": "oxfmt . --write",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
-  "author": "Plane Software Inc.",
   "dependencies": {
     "@dotenvx/dotenvx": "catalog:",
     "@effect/opentelemetry": "0.61.0",

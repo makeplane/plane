@@ -12,9 +12,8 @@ import reactHooksPlugin from "eslint-plugin-react-hooks";
 import reactRefreshPlugin from "eslint-plugin-react-refresh";
 import turboPlugin from "eslint-plugin-turbo";
 import storybookPlugin from "eslint-plugin-storybook";
-
-import prettierConfig from "eslint-config-prettier/flat";
 import globals from "globals";
+import prettierConfig from "eslint-config-prettier/flat";
 
 export default defineConfig([
   globalIgnores([
@@ -165,7 +164,10 @@ export default defineConfig([
   },
   {
     files: ["**/*.{ts,tsx}"],
-    extends: [importPlugin.flatConfigs.recommended, importPlugin.flatConfigs.typescript],
+    extends: [
+      importPlugin.flatConfigs.recommended,
+      importPlugin.flatConfigs.typescript,
+    ],
     settings: {
       "import/ignore": ["next/link", "next/navigation"],
       "import/resolver": {
@@ -178,7 +180,10 @@ export default defineConfig([
     },
     rules: {
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
-      "import/no-unresolved": ["error", { ignore: ["next/link", "next/navigation"] }],
+      "import/no-unresolved": [
+        "error",
+        { ignore: ["next/link", "next/navigation"] },
+      ],
       "no-restricted-imports": [
         "error",
         {
@@ -186,11 +191,17 @@ export default defineConfig([
             {
               name: "@headlessui/react",
               importNames: ["Disclosure", "Switch", "Tabs"],
-              message: "Use @plane/propel components instead of @headlessui/react",
+              message:
+                "Use @plane/propel components instead of @headlessui/react",
             },
             {
               name: "@plane/ui",
-              importNames: ["Collapsible", "CollapsibleButton", "Switch", "Tabs"],
+              importNames: [
+                "Collapsible",
+                "CollapsibleButton",
+                "Switch",
+                "Tabs",
+              ],
               message: "Use @plane/propel components instead of @plane/ui",
             },
           ],
