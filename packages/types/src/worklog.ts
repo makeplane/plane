@@ -46,3 +46,50 @@ export interface IWorkLogSummary {
     total_minutes: number;
   }>;
 }
+
+export interface ITimesheetRow {
+  issue_id: string;
+  issue_name: string;
+  issue_identifier: string;
+  project_id: string;
+  days: Record<string, number>; // "YYYY-MM-DD" → minutes
+  total_minutes: number;
+}
+
+export interface ITimesheetGridResponse {
+  week_start: string;
+  week_end: string;
+  rows: ITimesheetRow[];
+  daily_totals: Record<string, number>;
+  grand_total_minutes: number;
+}
+
+export interface ITimesheetBulkEntry {
+  issue_id: string;
+  logged_at: string;
+  duration_minutes: number;
+}
+
+export interface ITimesheetBulkPayload {
+  entries: ITimesheetBulkEntry[];
+}
+
+export interface ICapacityMember {
+  member_id: string;
+  display_name: string;
+  avatar_url: string;
+  total_logged_minutes: number;
+  total_estimated_minutes: number;
+  issue_count: number;
+  status: "normal" | "overload" | "under";
+  days?: Record<string, number>;
+}
+
+export interface ICapacityReportResponse {
+  date_from: string;
+  date_to: string;
+  members: ICapacityMember[];
+  project_total_logged: number;
+  project_total_estimated: number;
+  project_daily_totals?: Record<string, { minutes: number; issue_count: number }>;
+}

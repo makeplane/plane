@@ -68,3 +68,19 @@ class IssueWorkLogSerializer(BaseSerializer):
                 "avatar_url": obj.logged_by.avatar or "",
             }
         return None
+
+
+class TimesheetBulkEntrySerializer(serializers.Serializer):
+    """Validates a single entry in a bulk timesheet update payload."""
+
+    issue_id = serializers.UUIDField()
+    logged_at = serializers.DateField()
+    duration_minutes = serializers.IntegerField(min_value=0, max_value=MAX_DURATION_MINUTES)
+
+    def validate_logged_at(self, value):
+        max_future = date.today() + timedelta(days=MAX_FUTURE_DAYS)
+        if value > max_future:
+            raise serializers.ValidationError(
+                f"Date cannot be more than {MAX_FUTURE_DAYS} days in the future."
+            )
+        return value

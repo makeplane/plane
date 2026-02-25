@@ -82,9 +82,29 @@ export interface IStaffStats {
   }>;
 }
 
+export interface IMyStaffProfile {
+  id: string;
+  staff_id: string;
+  position: string;
+  department: string | null;
+  department_detail: {
+    id: string;
+    name: string;
+    code: string;
+  } | null;
+}
+
 export class StaffService extends APIService {
   constructor() {
     super(API_BASE_URL);
+  }
+
+  async getMyStaffProfile(workspaceSlug: string): Promise<IMyStaffProfile> {
+    return this.get(`/api/workspaces/${workspaceSlug}/me/staff-profile/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   /**
@@ -95,7 +115,11 @@ export class StaffService extends APIService {
    */
   async getStaffList(workspaceSlug: string, params?: Record<string, any>): Promise<IStaff[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/staff/`, { params })
-      .then((response) => response?.data)
+      .then((response) => {
+        const data = response?.data as IStaff[] | { results: IStaff[] };
+        // Backend returns paginated response { results: [...], ... }
+        return Array.isArray(data) ? data : (data?.results ?? []);
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

@@ -223,11 +223,19 @@ export const coreRoutes: RouteConfigEntry[] = [
               "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/intake/page.tsx"
             ),
           ]),
-          // Time Tracking
+          // Time Tracking (tabbed layout)
           layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/time-tracking/layout.tsx", [
             route(
               ":workspaceSlug/projects/:projectId/time-tracking",
               "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/time-tracking/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/projects/:projectId/time-tracking/analytics",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/time-tracking/analytics/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/projects/:projectId/time-tracking/capacity",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/time-tracking/capacity/page.tsx"
             ),
           ]),
         ]),

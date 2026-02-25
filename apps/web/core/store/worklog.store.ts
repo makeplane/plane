@@ -5,13 +5,25 @@
  */
 
 import { action, makeObservable, observable, runInAction } from "mobx";
-import type { IWorkLog, IWorkLogCreate, IWorkLogUpdate, IWorkLogSummary } from "@plane/types";
+import type {
+  IWorkLog,
+  IWorkLogCreate,
+  IWorkLogUpdate,
+  IWorkLogSummary,
+  ITimesheetGridResponse,
+  ITimesheetBulkEntry,
+  ICapacityReportResponse,
+} from "@plane/types";
 import { WorklogService } from "@/services/worklog.service";
 
 export interface IWorklogStore {
   // observables
   worklogsByIssueId: Record<string, IWorkLog[]>;
   isLoading: boolean;
+  timesheetData: ITimesheetGridResponse | null;
+  isTimesheetLoading: boolean;
+  capacityData: ICapacityReportResponse | null;
+  isCapacityLoading: boolean;
   // helpers
   getWorklogsForIssue(issueId: string): IWorkLog[];
   getTotalMinutesForIssue(issueId: string): number;
@@ -31,11 +43,27 @@ export interface IWorklogStore {
     projectId: string,
     params?: Record<string, string>
   ): Promise<IWorkLogSummary>;
+  fetchTimesheetGrid(workspaceSlug: string, projectId: string, weekStart?: string): Promise<ITimesheetGridResponse>;
+  bulkUpdateTimesheet(
+    workspaceSlug: string,
+    projectId: string,
+    entries: ITimesheetBulkEntry[]
+  ): Promise<void>;
+  addEmptyTimesheetRow(issueId: string, issueName: string, issueIdentifier: string, projectId: string): void;
+  fetchCapacityReport(
+    workspaceSlug: string,
+    projectId: string,
+    params?: Record<string, string>
+  ): Promise<ICapacityReportResponse>;
 }
 
 export class WorklogStore implements IWorklogStore {
   worklogsByIssueId: Record<string, IWorkLog[]> = {};
   isLoading = false;
+  timesheetData: ITimesheetGridResponse | null = null;
+  isTimesheetLoading = false;
+  capacityData: ICapacityReportResponse | null = null;
+  isCapacityLoading = false;
 
   private worklogService: WorklogService;
   // Tracks in-flight delete requests to prevent duplicate calls
@@ -45,10 +73,18 @@ export class WorklogStore implements IWorklogStore {
     makeObservable(this, {
       worklogsByIssueId: observable,
       isLoading: observable,
+      timesheetData: observable,
+      isTimesheetLoading: observable,
+      capacityData: observable,
+      isCapacityLoading: observable,
       fetchWorklogs: action,
       createWorklog: action,
       updateWorklog: action,
       deleteWorklog: action,
+      fetchTimesheetGrid: action,
+      bulkUpdateTimesheet: action,
+      addEmptyTimesheetRow: action,
+      fetchCapacityReport: action,
     });
     this.worklogService = new WorklogService();
   }
@@ -141,4 +177,80 @@ export class WorklogStore implements IWorklogStore {
     projectId: string,
     params?: Record<string, string>
   ): Promise<IWorkLogSummary> => this.worklogService.getProjectSummary(workspaceSlug, projectId, params);
+
+  fetchTimesheetGrid = async (
+    workspaceSlug: string,
+    projectId: string,
+    weekStart?: string
+  ): Promise<ITimesheetGridResponse> => {
+    this.isTimesheetLoading = true;
+    try {
+      const params: Record<string, string> = {};
+      if (weekStart) params["week_start"] = weekStart;
+      const data = await this.worklogService.getTimesheetGrid(workspaceSlug, projectId, params);
+      runInAction(() => {
+        this.timesheetData = data;
+        this.isTimesheetLoading = false;
+      });
+      return data;
+    } catch (error) {
+      runInAction(() => {
+        this.isTimesheetLoading = false;
+      });
+      throw error;
+    }
+  };
+
+  bulkUpdateTimesheet = async (
+    workspaceSlug: string,
+    projectId: string,
+    entries: ITimesheetBulkEntry[]
+  ): Promise<void> => {
+    await this.worklogService.bulkUpdateTimesheet(workspaceSlug, projectId, { entries });
+    // Re-fetch grid to get updated data
+    const weekStart = this.timesheetData?.week_start;
+    await this.fetchTimesheetGrid(workspaceSlug, projectId, weekStart ?? undefined);
+  };
+
+  addEmptyTimesheetRow = (issueId: string, issueName: string, issueIdentifier: string, projectId: string): void => {
+    if (!this.timesheetData) return;
+    const exists = this.timesheetData.rows.find((r) => r.issue_id === issueId);
+    if (exists) return;
+
+    this.timesheetData = {
+      ...this.timesheetData,
+      rows: [
+        {
+          issue_id: issueId,
+          issue_name: issueName,
+          issue_identifier: issueIdentifier,
+          project_id: projectId,
+          days: {},
+          total_minutes: 0,
+        },
+        ...this.timesheetData.rows,
+      ],
+    };
+  };
+
+  fetchCapacityReport = async (
+    workspaceSlug: string,
+    projectId: string,
+    params?: Record<string, string>
+  ): Promise<ICapacityReportResponse> => {
+    this.isCapacityLoading = true;
+    try {
+      const data = await this.worklogService.getCapacityReport(workspaceSlug, projectId, params);
+      runInAction(() => {
+        this.capacityData = data;
+        this.isCapacityLoading = false;
+      });
+      return data;
+    } catch (error) {
+      runInAction(() => {
+        this.isCapacityLoading = false;
+      });
+      throw error;
+    }
+  };
 }
