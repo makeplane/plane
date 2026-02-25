@@ -141,6 +141,7 @@ export function convertHTMLToMarkdown(args: TArgs): string {
     })
     .use(remarkGfm)
     .use(remarkStringify, {
+      resourceLink: true, // Prevent autolinks (<url>); always emit [text](url) format
       handlers: {
         text: (node: { value: string }): string => node.value,
       },
