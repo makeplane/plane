@@ -136,6 +136,26 @@ services:
     volumes:
     - /opt/plane/data/postgres:/var/lib/postgresql/data
 
+  pi-db-init:
+    image: postgres:15.7-alpine
+    restart: "no"
+    env_file:
+    - /opt/plane/plane.env
+    command: >
+      /bin/sh -c '
+      echo "Waiting for plane-db to be ready..."
+      until pg_isready -h plane-db -U ${POSTGRES_USER}; do sleep 2; done;
+      export PGPASSWORD=${POSTGRES_PASSWORD};
+      createdb -h plane-db -U ${POSTGRES_USER} plane_pi --echo --if-exists=false || echo "Database plane_pi already exists or could not be created";
+      exit 0;
+      '
+    depends_on:
+    - plane-db
+    networks:
+    - systemd-plane-nw
+    volumes:
+    - /opt/plane/data/postgres:/var/lib/postgresql/data
+
   plane-redis:
     image: valkey/valkey:7.2.11-alpine
     restart: unless-stopped
@@ -202,6 +222,67 @@ services:
     restart: unless-stopped
     env_file:
     - /opt/plane/plane.env
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - plane-db
+    - plane-mq
+
+  pi-api:
+    image: artifacts.plane.so/makeplane/plane-pi-commercial:v1.14.0
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    environment:
+      DEPLOY_PLATFORM: docker_compose
+      PRIME_HOST: https://prime.plane.so
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - plane-db
+    - plane-mq
+    - monitor
+
+  pi-beat:
+    image: artifacts.plane.so/makeplane/plane-pi-commercial:v1.14.0
+    command: ./bin/entrypoint-celery-beat.sh
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    environment:
+      DEPLOY_PLATFORM: docker_compose
+      PRIME_HOST: https://prime.plane.so
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - plane-db
+    - plane-mq
+    - pi-api
+
+  pi-worker:
+    image: artifacts.plane.so/makeplane/plane-pi-commercial:v1.14.0
+    command: ./bin/entrypoint-celery-worker.sh
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    environment:
+      DEPLOY_PLATFORM: docker_compose
+      PRIME_HOST: https://prime.plane.so
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - plane-db
+    - plane-mq
+
+  pi-migrator:
+    image: artifacts.plane.so/makeplane/plane-pi-commercial:v1.14.0
+    command: ./bin/entrypoint-migrator.sh
+    restart: "no"
+    env_file:
+    - /opt/plane/plane.env
+    environment:
+      DEPLOY_PLATFORM: docker_compose
+      PRIME_HOST: https://prime.plane.so
     networks:
     - systemd-plane-nw
     depends_on:

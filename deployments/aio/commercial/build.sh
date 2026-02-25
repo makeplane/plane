@@ -122,6 +122,7 @@ build_dist_files(){
     string_replace $DIST_DIR/Caddyfile "web:3000" "localhost:3001"
     string_replace $DIST_DIR/Caddyfile "space:3000" "localhost:3002"
     string_replace $DIST_DIR/Caddyfile "admin:3000" "localhost:3003"
+    string_replace $DIST_DIR/Caddyfile "pi-api:8000" "localhost:3008"
     string_replace $DIST_DIR/Caddyfile "api:8000" "localhost:3004"
     string_replace $DIST_DIR/Caddyfile "live:3000" "localhost:3005"
     string_replace $DIST_DIR/Caddyfile "silo:3000" "localhost:3006"

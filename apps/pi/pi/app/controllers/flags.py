@@ -183,7 +183,6 @@ async def get_workspace_feature_availability(
     caps = await _compute_env_capabilities()
     env_ready = _env_readiness_from_caps(caps)
 
-    # No remote server configured: disable all remote-gated features for security.
     if not _flag_server_configured():
         log.warning("Feature flag server not configured. Disabling all remote-gated features.")
         # Return all flags as False since we can't verify authorization without remote server

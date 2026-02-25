@@ -423,17 +423,18 @@ jobs:
     name: Build-Push AIO Docker Image
     runs-on: ubuntu-22.04-4core
     needs: [
-        branch_build_setup,
-        branch_build_push_admin,
-        branch_build_push_web,
-        branch_build_push_space,
-        branch_build_push_live,
-        branch_build_push_api,
-        branch_build_push_proxy,
-        branch_build_push_monitor,
-        branch_build_push_email,
-        branch_build_push_silo
-      ]
+      branch_build_setup,
+      branch_build_push_admin,
+      branch_build_push_web,
+      branch_build_push_space,
+      branch_build_push_live,
+      branch_build_push_api,
+      branch_build_push_proxy,
+      branch_build_push_monitor,
+      branch_build_push_email,
+      branch_build_push_silo,
+      branch_build_push_plane_pi
+    ]
     steps:
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -753,7 +754,8 @@ jobs:
         branch_build_push_monitor,
         branch_build_push_email,
         branch_build_push_silo,
-        upload_artifacts_s3,
+        branch_build_push_plane_pi,
+        upload_artifacts_s3
       ]
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.SELF_HOST_BUCKET_ACCESS_KEY }}

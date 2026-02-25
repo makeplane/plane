@@ -27,6 +27,9 @@
     handle /silo/* {
         reverse_proxy silo:3000
     }
+	handle /pi/* {
+		reverse_proxy pi-api:8000
+	}
     handle_path /god-mode* {
         root * /app/admin
         try_files {path} {path}/ /index.html
