@@ -242,6 +242,90 @@ Before submitting your contribution, please ensure the following:
 
 Happy translating! 🌍✨
 
+## Troubleshooting development environment
+
+### Common issues and solutions
+
+#### Module resolution errors during `pnpm dev`
+
+**Symptom:**
+```
+[vite] Internal server error: Failed to resolve import "@plane/utils"
+or
+Cannot find module '@plane/hooks' or its corresponding type declarations
+```
+
+**Root Cause:**
+This happens when workspace package build artifacts are missing or corrupted, usually after:
+- Interrupting builds with `Ctrl+C`
+- Switching git branches without rebuilding
+- Package updates without reinstalling dependencies
+
+**Solutions:**
+
+1. **Automatic fix** (rebuilds packages during install):
+   ```bash
+   pnpm install
+   pnpm dev
+   ```
+   The `prepare` npm hook automatically builds all workspace packages after install.
+
+2. **Quick manual rebuild** (rebuilds only workspace packages):
+   ```bash
+   pnpm build:packages
+   pnpm dev
+   ```
+
+3. **Nuclear option** (cleans everything and rebuilds):
+   ```bash
+   pnpm dev:clean
+   ```
+
+#### Understanding workspace package builds
+
+Plane uses an **artifact-based** monorepo architecture. Most workspace packages (`@plane/utils`, `@plane/hooks`, `@plane/types`, etc.) must be built to `dist/` folders before apps can import them.
+
+**Key packages requiring builds:**
+- `@plane/constants` → `packages/constants/dist/`
+- `@plane/decorators` → `packages/decorators/dist/`
+- `@plane/editor` → `packages/editor/dist/`
+- `@plane/hooks` → `packages/hooks/dist/`
+- `@plane/i18n` → `packages/i18n/dist/`
+- `@plane/logger` → `packages/logger/dist/`
+- `@plane/propel` → `packages/propel/dist/`
+- `@plane/services` → `packages/services/dist/`
+- `@plane/types` → `packages/types/dist/`
+- `@plane/ui` → `packages/ui/dist/`
+- `@plane/utils` → `packages/utils/dist/`
+
+**Exception:** `@plane/shared-state` uses source resolution (no build required).
+
+#### How the automatic fix works
+
+The `prepare` npm lifecycle hook in the root [package.json](package.json) automatically builds all workspace packages after `pnpm install` completes. This ensures:
+- Fresh clones have packages built immediately
+- Interrupted builds are repaired on next install
+- Branch switches followed by install rebuild packages
+- No manual intervention required in most cases
+
+Additionally, Turbo's dependency graph (configured in [turbo.json](turbo.json)) ensures that when you run `pnpm dev`, it checks if upstream packages need building and builds them first if necessary.
+
+#### Commands for workspace management
+
+| Command | Purpose | Use When |
+|---------|---------|----------|
+| `pnpm build:packages` | Build only workspace packages (fast) | After git branch switch |
+| `pnpm clean:packages` | Remove package dist/ folders | Clearing corrupted builds |
+| `pnpm dev:clean` | Full cleanup + rebuild + dev | Nuclear reset option |
+
+#### Preventing future issues
+
+After running `pnpm install`, all workspace packages are automatically built via the `prepare` hook. If you still encounter issues:
+
+1. Ensure you've run `pnpm install` after interrupting dev with Ctrl+C
+2. If packages are corrupted mid-build, run `pnpm clean:packages && pnpm build:packages`
+3. For persistent issues, use the nuclear option: `pnpm dev:clean`
+
 ## Need help? Questions and suggestions
 
 Questions, suggestions, and thoughts are most welcome. We can also be reached in our [Discord Server](https://discord.com/invite/A92xrEGCge).
