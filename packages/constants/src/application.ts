@@ -358,6 +358,20 @@ export const RESOURCE_PERMISSIONS_GROUPS = [
     ],
   },
   {
+    group_key: "assets",
+    title: "Assets",
+    description: "Assets and all related entities",
+    scopes: [
+      {
+        key: "assets",
+        title: "Assets",
+        description: "Assets",
+        read_permission: "assets:read",
+        write_permission: "assets:write",
+      },
+    ],
+  },
+  {
     group_key: "agents",
     title: "Agents",
     description: "Agents and all related entities",

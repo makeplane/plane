@@ -2103,6 +2103,7 @@ Create a new project instead`,
           teamspaces: "Access to teamspaces, and all teamspace related entities",
           profile: "Access to user profile information",
           agents: "Access to agents, and all agent related entities",
+          assets: "Access to assets, and all asset related entities",
         },
       },
       "plane-intelligence": {

@@ -2115,6 +2115,7 @@ export default {
           teamspaces: "访问团队空间及所有团队空间相关实体",
           profile: "访问用户资料信息",
           agents: "访问代理以及所有代理相关实体",
+          assets: "访问资产以及所有资产相关实体",
         },
         internal: "内部",
       },

@@ -112,6 +112,10 @@ AGENT_RUNS_WRITE_SCOPE = "agent_runs:write"
 AGENT_RUN_ACTIVITIES_READ_SCOPE = "agent_runs.activities:read"
 AGENT_RUN_ACTIVITIES_WRITE_SCOPE = "agent_runs.activities:write"
 
+# ASSETS SCOPES
+ASSETS_READ_SCOPE = "assets:read"
+ASSETS_WRITE_SCOPE = "assets:write"
+
 # SCOPES DICT --- any scope added above should be added here
 ALL_OAUTH_SCOPES = {
     # Global scopes
@@ -206,4 +210,7 @@ ALL_OAUTH_SCOPES = {
     AGENT_RUNS_WRITE_SCOPE: "Write access to agent runs",
     AGENT_RUN_ACTIVITIES_READ_SCOPE: "Read access to agent run activities",
     AGENT_RUN_ACTIVITIES_WRITE_SCOPE: "Write access to agent run activities",
+    # Assets scopes
+    ASSETS_READ_SCOPE: "Read access to assets",
+    ASSETS_WRITE_SCOPE: "Write access to assets",
 }

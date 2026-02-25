@@ -2134,6 +2134,7 @@ export default {
           teamspaces: "팀스페이스 및 팀스페이스 관련 엔티티에 대한 액세스",
           profile: "사용자 프로필 정보에 대한 액세스",
           agents: "에이전트 및 모든 에이전트 관련 엔티티에 대한 액세스",
+          assets: "에셋 및 모든 에셋 관련 엔티티에 대한 액세스",
         },
         build_your_own_app: "나만의 앱 만들기",
         edit_app_details: "앱 세부정보 편집",
