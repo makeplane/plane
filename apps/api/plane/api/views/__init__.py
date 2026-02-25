@@ -6,6 +6,7 @@ from .project import (
     ProjectListCreateAPIEndpoint,
     ProjectDetailAPIEndpoint,
     ProjectArchiveUnarchiveAPIEndpoint,
+    ProjectSummaryAPIEndpoint,
 )
 
 from .state import (

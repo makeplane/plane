@@ -7,7 +7,8 @@ import json
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import Exists, F, Func, OuterRef, Prefetch, Q, Subquery
+from django.db.models import Exists, F, Func, OuterRef, Prefetch, Q, Subquery, Count
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -31,6 +32,11 @@ from plane.db.models import (
     DEFAULT_STATES,
     Workspace,
     UserFavorite,
+    Label,
+    Issue,
+    StateGroup,
+    IntakeIssue,
+    ProjectPage,
 )
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from .base import BaseAPIView
@@ -40,7 +46,7 @@ from plane.api.serializers import (
     ProjectCreateSerializer,
     ProjectUpdateSerializer,
 )
-from plane.app.permissions import ProjectBasePermission
+from plane.app.permissions import ProjectBasePermission, WorkSpaceAdminPermission
 from plane.utils.openapi import (
     project_docs,
     PROJECT_ID_PARAMETER,
@@ -183,9 +189,9 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(projects),
-            on_results=lambda projects: ProjectSerializer(
-                projects, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda projects: (
+                ProjectSerializer(projects, many=True, fields=self.fields, expand=self.expand).data
+            ),
         )
 
     @project_docs(
@@ -549,3 +555,116 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         project.archived_at = None
         project.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+ALLOWED_PROJECT_SUMMARY_FIELDS = [
+    "members",
+    "states",
+    "labels",
+    "cycles",
+    "modules",
+    "issues",
+    "intakes",
+    "pages",
+]
+
+
+class ProjectSummaryAPIEndpoint(BaseAPIView):
+    permission_classes = [WorkSpaceAdminPermission]
+    use_read_replica = True
+
+    def get(self, request, slug, project_id):
+        """Get project summary
+
+        Get the summary of a project
+        """
+        project = Project.objects.filter(pk=project_id, workspace__slug=slug).first()
+        if not project:
+            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+        fields = request.GET.get("fields", "").split(",")
+        requested_fields = set(filter(None, (f.strip() for f in fields))) & set(ALLOWED_PROJECT_SUMMARY_FIELDS)
+        if not requested_fields:
+            requested_fields = set(ALLOWED_PROJECT_SUMMARY_FIELDS)
+
+        # Single DB round-trip with only requested count subqueries
+        counts = self._get_all_summary_counts(project_id, requested_fields)
+        summary = {field: counts[field] for field in requested_fields}
+        summary["project_id"] = project.id
+        summary["project_name"] = project.name
+        return Response(summary, status=status.HTTP_200_OK)
+
+    # Getting all summary counts in one ORM query; only runs subqueries for requested fields.
+    def _get_all_summary_counts(self, project_id, requested_fields):
+        """Return requested summary counts in one ORM query; only runs subqueries for requested fields."""
+
+        # Using a different annotation name for 'pages' to avoid conflict with Project.pages (M2M from Page)
+        def _annotation_name(field):
+            return "pages_count" if field == "pages" else field
+
+        subquery_builders = {
+            "members": lambda: (
+                ProjectMember.objects.filter(project_id=OuterRef("pk"), is_active=True)
+                .values("project_id")
+                .annotate(count=Count("*"))
+                .values("count")
+            ),
+            "states": lambda: (
+                State.objects.filter(project_id=OuterRef("pk"))
+                .values("project_id")
+                .annotate(count=Count("*"))
+                .values("count")
+            ),
+            "labels": lambda: (
+                Label.objects.filter(project_id=OuterRef("pk"))
+                .values("project_id")
+                .annotate(count=Count("*"))
+                .values("count")
+            ),
+            "cycles": lambda: (
+                Cycle.objects.filter(project_id=OuterRef("pk"))
+                .values("project_id")
+                .annotate(count=Count("*"))
+                .values("count")
+            ),
+            "modules": lambda: (
+                Module.objects.filter(project_id=OuterRef("pk"))
+                .values("project_id")
+                .annotate(count=Count("*"))
+                .values("count")
+            ),
+            "issues": lambda: (
+                Issue.objects.filter(project_id=OuterRef("pk"))
+                .exclude(state__group=StateGroup.TRIAGE.value)
+                .values("project_id")
+                .annotate(count=Count("*"))
+                .values("count")
+            ),
+            "intakes": lambda: (
+                IntakeIssue.objects.filter(project_id=OuterRef("pk"))
+                .values("project_id")
+                .annotate(count=Count("*"))
+                .values("count")
+            ),
+            "pages": lambda: (
+                ProjectPage.objects.filter(project_id=OuterRef("pk"))
+                .values("project_id")
+                .annotate(count=Count("*"))
+                .values("count")
+            ),
+        }
+
+        # Build annotations dictionary for the requested fields
+        annotations = {
+            _annotation_name(field): Coalesce(Subquery(subquery_builders[field]()), 0) for field in requested_fields
+        }
+
+        # Prepare values list for the annotation names
+        fields_list = sorted(requested_fields)
+        values_list = [_annotation_name(f) for f in fields_list]
+        # Execute the query and get the result
+        query_result = Project.objects.filter(pk=project_id).annotate(**annotations).values(*values_list).first()
+        if not query_result:
+            return {field: 0 for field in requested_fields}
+        # Return the result as a dictionary
+        return {field: query_result[_annotation_name(field)] for field in requested_fields}
