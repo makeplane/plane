@@ -21,15 +21,14 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   const [_isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);
   // refs
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const timeoutRef = useRef<any>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
   const { joinedProjectIds } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // local storage
   const { storedValue, setValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
   // derived values
@@ -37,7 +36,12 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const disabled = joinedProjectIds.length === 0 || !canCreateIssue;
+
+  const workspaceRole = workspaceSlug ? getWorkspaceRoleByWorkspaceSlug(workspaceSlug) : undefined;
+  const roleNumber = workspaceRole ? Number(workspaceRole) : undefined;
+  const canUserCreateWorkItem = canCreateIssue && roleNumber !== EUserPermissions.SUPERVISOR && roleNumber !== EUserPermissions.EXECUTOR;
+
+  const disabled = joinedProjectIds.length === 0 || !canUserCreateWorkItem;
   const workspaceDraftIssue = workspaceSlug ? (storedValue?.[workspaceSlug] ?? undefined) : undefined;
 
   const handleMouseEnter = () => {

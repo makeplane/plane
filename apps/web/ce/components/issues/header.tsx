@@ -46,7 +46,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
   const { currentProjectDetails, loader } = useProject();
 
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { isMobile } = usePlatformOS();
 
   const SPACE_APP_URL = (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
@@ -57,6 +57,14 @@ export const IssuesHeader = observer(function IssuesHeader() {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
+
+  const currentProjectRole = workspaceSlug && projectId ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    projectId.toString()
+  ) : undefined;
+
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const canUserCreateWorkItem = canUserCreateIssue && roleNumber !== EUserPermissions.SUPERVISOR && roleNumber !== EUserPermissions.EXECUTOR;
 
   return (
     <Header>
@@ -107,10 +115,10 @@ export const IssuesHeader = observer(function IssuesHeader() {
             projectId={projectId}
             currentProjectDetails={currentProjectDetails}
             workspaceSlug={workspaceSlug}
-            canUserCreateIssue={canUserCreateIssue}
+            canUserCreateIssue={canUserCreateWorkItem}
           />
         </div>
-        {canUserCreateIssue && (
+        {canUserCreateWorkItem && (
           <Button
             variant="primary"
             size="lg"
