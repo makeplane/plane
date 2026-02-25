@@ -14,7 +14,7 @@ from django.conf import settings
 from django.db import models
 
 # Module import
-from .workspace import WorkspaceBaseModel
+from .project import ProjectOptionalBaseModel
 from plane.utils.issue_filters import issue_filters
 
 
@@ -62,7 +62,7 @@ def get_default_display_properties():
     }
 
 
-class IssueView(WorkspaceBaseModel):
+class IssueView(ProjectOptionalBaseModel):
     name = models.CharField(max_length=255, verbose_name="View Name")
     description = models.TextField(verbose_name="View Description", blank=True)
     query = models.JSONField(verbose_name="View Query")
@@ -103,4 +103,4 @@ class IssueView(WorkspaceBaseModel):
 
     def __str__(self):
         """Return name of the View"""
-        return f"{self.name} <{self.project.name}>"
+        return f"{self.name}"

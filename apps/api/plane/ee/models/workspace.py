@@ -17,7 +17,7 @@ from django.contrib.auth import get_user_model
 
 # Module imports
 from plane.db.models.base import BaseModel
-from plane.db.models.workspace import WorkspaceBaseModel
+from plane.db.models.project import ProjectOptionalBaseModel
 from plane.db.mixins import ChangeTrackerMixin
 
 
@@ -106,7 +106,7 @@ class WorkspaceLicense(ChangeTrackerMixin, BaseModel):
                 update_api_tokens.delay(self.plan, str(self.workspace_id))
 
 
-class WorkspaceActivity(WorkspaceBaseModel):
+class WorkspaceActivity(ProjectOptionalBaseModel):
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
     old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)

@@ -31,6 +31,7 @@ from plane.bgtasks.deletion_task import soft_delete_pages_on_project_deletion
 from plane.db.mixins import AuditModel, SoftDeletionManager, SoftDeletionQuerySet
 
 from .base import BaseModel
+from .workspace import WorkspaceManager
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
@@ -263,6 +264,21 @@ class Project(BaseModel):
             user_id = user.id if user and user.is_authenticated else None
 
         add_app_bots_to_project.delay(str(self.id), user_id)
+
+
+class ProjectOptionalBaseModel(BaseModel):
+    workspace = models.ForeignKey("db.Workspace", models.CASCADE, related_name="workspace_%(class)s")
+    project = models.ForeignKey("db.Project", models.CASCADE, related_name="project_%(class)s", null=True)
+
+    objects = WorkspaceManager()
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if self.project:
+            self.workspace = self.project.workspace
+        super(ProjectOptionalBaseModel, self).save(*args, **kwargs)
 
 
 class ProjectQuerySet(SoftDeletionQuerySet):

@@ -16,14 +16,14 @@ from uuid import uuid4
 from django.db import models
 
 # Module imports
-from .workspace import WorkspaceBaseModel
+from .project import ProjectOptionalBaseModel
 
 
 def get_anchor():
     return uuid4().hex
 
 
-class DeployBoard(WorkspaceBaseModel):
+class DeployBoard(ProjectOptionalBaseModel):
     class DeployBoardType(models.TextChoices):
         TEAMSPACE_PAGE = "teamspace_page", "Teamspace Page"
         PROJECT = "project", "Project"

@@ -275,17 +275,11 @@ class WorkspaceManager(SoftDeletionManager):
 
 class WorkspaceBaseModel(BaseModel):
     workspace = models.ForeignKey("db.Workspace", models.CASCADE, related_name="workspace_%(class)s")
-    project = models.ForeignKey("db.Project", models.CASCADE, related_name="project_%(class)s", null=True)
 
     objects = WorkspaceManager()
 
     class Meta:
         abstract = True
-
-    def save(self, *args, **kwargs):
-        if self.project:
-            self.workspace = self.project.workspace
-        super(WorkspaceBaseModel, self).save(*args, **kwargs)
 
 
 class WorkspaceMember(BaseModel):

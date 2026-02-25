@@ -67,6 +67,7 @@ from .project import (
     ProjectNetwork,
     ProjectPublicMember,
     ProjectUserProperty,
+    ProjectOptionalBaseModel,
 )
 from .session import Session
 from .social_connection import SocialLoginConnection
@@ -76,7 +77,6 @@ from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (
     Workspace,
-    WorkspaceBaseModel,
     WorkspaceMember,
     WorkspaceMemberInvite,
     WorkspaceTheme,

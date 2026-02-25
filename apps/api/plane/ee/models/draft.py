@@ -13,11 +13,11 @@
 from django.db import models
 
 # Module imports
-from plane.db.models import WorkspaceBaseModel
+from plane.db.models import ProjectOptionalBaseModel
 from plane.ee.models import IssueProperty, IssuePropertyOption
 
 
-class DraftIssuePropertyValue(WorkspaceBaseModel):
+class DraftIssuePropertyValue(ProjectOptionalBaseModel):
     draft_issue = models.ForeignKey("db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_properties")
     property = models.ForeignKey(IssueProperty, on_delete=models.CASCADE, related_name="draft_issue_values")
     value_text = models.TextField(blank=True)
