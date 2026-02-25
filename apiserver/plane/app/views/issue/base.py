@@ -1,5 +1,9 @@
 # Python imports
 import json
+import logging
+from collections import defaultdict
+
+logger = logging.getLogger(__name__)
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -18,7 +22,6 @@ from django.db.models import (
     Subquery,
     Case,
     When,
-    JSONField
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -42,18 +45,21 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     FileAsset,
+    IssueAssignee,
+    IssueLabel,
     IssueLink,
     IssueUserProperty,
     IssueReaction,
     IssueSubscriber,
+    ModuleIssue,
     Project,
     ProjectMember,
     CycleIssue,
+    State,
     IssueCustomProperty,
 )
 from plane.utils.grouper import (
     issue_group_values,
-    issue_on_results,
     issue_queryset_grouper,
 )
 from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects, apply_user_hub_filters
@@ -237,76 +243,174 @@ class IssueViewSet(BaseViewSet):
         "workspace__id",
     ]
 
+    FIELD_MAPPER = {
+        "labels__id": "label_ids",
+        "assignees__id": "assignee_ids",
+        "issue_module__module_id": "module_ids",
+    }
+
+    # Fields fetched in Phase 2. cycle_id is absent — injected by _enrich_issues_with_relations.
+    DETAIL_FIELDS = [
+        "id", "name", "state_id", "sort_order", "completed_at",
+        "priority", "start_date", "target_date", "sequence_id",
+        "project_id", "parent_id", "sub_issues_count",
+        "created_at", "updated_at", "created_by", "updated_by",
+        "attachment_count", "link_count", "is_draft", "archived_at",
+        "state__group", "trip_reference_number", "reference_number",
+        "hub_code", "hub_name", "customer_code", "customer_name",
+        "vendor_name", "vendor_code", "worker_code", "worker_name",
+        "business_type", "estimate_point", "source", "type_id",
+    ]
+
     def get_queryset(self, filters={}):
+        """Phase 1: lean queryset for filtering, ordering, and pagination.
+
+        Uses Issue.objects (base manager) to avoid IssueManager's expensive
+        JOINs. Only annotates cycle_id (needed by grouped paginators).
+        Expensive counts and M2M arrays are deferred to Phase 2/3.
+        """
         custom_properties = filters.get("custom_properties", {})
         custom_filters = build_custom_property_q_objects(custom_properties)
         queryset = (
-            Issue.issue_objects.filter(
-                project_id=self.kwargs.get("project_id")
+            Issue.objects
+            .filter(
+                project_id=self.kwargs.get("project_id"),
+                workspace__slug=self.kwargs.get("slug"),
+                deleted_at__isnull=True,
+                archived_at__isnull=True,
+                is_draft=False,
+                project__archived_at__isnull=True,
+                state_id__isnull=False,
             )
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
+            .filter(
+                Q(issue_inbox__status=1)
+                | Q(issue_inbox__status=-1)
+                | Q(issue_inbox__status=2)
+                | Q(issue_inbox__isnull=True)
+            )
+            .exclude(
+                state_id__in=State.objects.filter(is_triage=True).values("id")
+            )
+            # cycle_id needed for group_by=cycle_id support in grouped paginators.
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
+                        issue=OuterRef("id"),
+                        deleted_at__isnull=True,
                     ).values("cycle_id")[:1]
                 )
             )
+            .filter(*custom_filters)
+            .distinct()
+        )
+        return queryset
+    
+    def get_queryset_with_hub_filters(self, filters={}):
+        """Wrapper around get_queryset that applies user hub filtering."""
+        queryset = self.get_queryset(filters)
+        return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
+
+    @staticmethod
+    def _build_detail_queryset(page_ids):
+        """Phase 2: fetch full details + counts for a small set of IDs.
+
+        Correlated subqueries are cheap here because they run on ~100 rows
+        instead of the entire candidate set.
+        """
+        return (
+            Issue.issue_objects.filter(id__in=page_ids)
             .annotate(
+                sub_issues_count=Issue.objects.filter(
+                    parent=OuterRef("id"),
+                    deleted_at__isnull=True,
+                    is_draft=False,
+                    archived_at__isnull=True,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count"),
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
+                .values("count"),
                 attachment_count=FileAsset.objects.filter(
                     issue_id=OuterRef("id"),
                     entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
+                .values("count"),
             )
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                custom_property_values=Coalesce(
-                    ArrayAgg(
-                        Func(
-                            F('custom_properties__key'),
-                            F('custom_properties__value'),
-                            function="jsonb_build_object",
-                            template="%(function)s(%(expressions)s)",
-                            output_field=JSONField()  # Specify output field type
-                        ),
-                        distinct=True,
-                        filter=Q(custom_properties__key__isnull=False)
-                    ),
-                    Value([], output_field=ArrayField(JSONField()))
-                )
-            )
-            .filter(
-                *custom_filters
-            )
-        ).distinct()
+        )
 
-        return queryset
-    
-    def get_queryset_with_hub_filters(self, filters={}):
+    @staticmethod
+    def _enrich_issues_with_relations(results_list):
+        """Batch-load all M2M and derived fields for paginated issues.
+
+        Runs 5 flat IN-queries on ~100 IDs — no N+1, no row multiplication.
         """
-        Get queryset with hub filters applied.
-        This is a wrapper around get_queryset that applies user hub filtering.
-        """
-        queryset = self.get_queryset(filters)
-        return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
+        if not results_list:
+            return results_list
+
+        issue_ids = list({r["id"] for r in results_list})
+
+        # label_ids
+        label_map = defaultdict(list)
+        for iid, lid in IssueLabel.objects.filter(
+            issue_id__in=issue_ids, deleted_at__isnull=True
+        ).values_list("issue_id", "label_id"):
+            label_map[iid].append(lid)
+
+        # assignee_ids — only active project members
+        assignee_map = defaultdict(list)
+        for iid, aid in IssueAssignee.objects.filter(
+            issue_id__in=issue_ids,
+            deleted_at__isnull=True,
+        ).filter(
+            Exists(
+                ProjectMember.objects.filter(
+                    member_id=OuterRef("assignee_id"),
+                    project_id=OuterRef("project_id"),
+                    is_active=True,
+                    deleted_at__isnull=True,
+                )
+            )
+        ).values_list("issue_id", "assignee_id"):
+            assignee_map[iid].append(aid)
+
+        # module_ids (non-archived, non-deleted)
+        module_map = defaultdict(list)
+        for iid, mid in ModuleIssue.objects.filter(
+            issue_id__in=issue_ids,
+            deleted_at__isnull=True,
+            module__archived_at__isnull=True,
+        ).values_list("issue_id", "module_id"):
+            module_map[iid].append(mid)
+
+        # cycle_id — take the first active cycle per issue
+        cycle_map = {}
+        for iid, cid in CycleIssue.objects.filter(
+            issue_id__in=issue_ids,
+            deleted_at__isnull=True,
+        ).values_list("issue_id", "cycle_id"):
+            cycle_map.setdefault(iid, cid)
+
+        # custom_property_values
+        cp_map = defaultdict(list)
+        for row in IssueCustomProperty.objects.filter(
+            issue_id__in=issue_ids, key__isnull=False
+        ).values("issue_id", "key", "value"):
+            cp_map[row["issue_id"]].append({row["key"]: row["value"]})
+
+        for r in results_list:
+            iid = r["id"]
+            r["label_ids"] = label_map.get(iid, [])
+            r["assignee_ids"] = assignee_map.get(iid, [])
+            r["module_ids"] = module_map.get(iid, [])
+            r["cycle_id"] = cycle_map.get(iid)
+            r["custom_property_values"] = cp_map.get(iid, [])
+
+        return results_list
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -323,33 +427,11 @@ class IssueViewSet(BaseViewSet):
         filtersWithoutCustomProperties.pop('custom_properties', None)
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset_with_hub_filters(filters).filter(**filtersWithoutCustomProperties, **extra_filters)
-        # Custom ordering for priority and state
-
-        # Issue queryset
-        issue_queryset, order_by_param = order_issue_queryset(
-            issue_queryset=issue_queryset,
-            order_by_param=order_by_param,
+        issue_queryset = self.get_queryset_with_hub_filters(filters).filter(
+            **filtersWithoutCustomProperties, **extra_filters
         )
 
-        # Group by
-        group_by = request.GET.get("group_by", False)
-        sub_group_by = request.GET.get("sub_group_by", False)
-
-        # issue queryset
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset,
-            group_by=group_by,
-            sub_group_by=sub_group_by,
-        )
-
-        recent_visited_task.delay(
-            slug=slug,
-            project_id=project_id,
-            entity_name="project",
-            entity_identifier=project_id,
-            user_id=request.user.id,
-        )
+        # Guest users only see their own issues when guest_view_all_features is disabled.
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,
@@ -361,6 +443,74 @@ class IssueViewSet(BaseViewSet):
             and not project.guest_view_all_features
         ):
             issue_queryset = issue_queryset.filter(created_by=request.user)
+
+        issue_queryset, order_by_param = order_issue_queryset(
+            issue_queryset=issue_queryset,
+            order_by_param=order_by_param,
+        )
+
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project_id,
+            entity_name="project",
+            entity_identifier=project_id,
+            user_id=request.user.id,
+        )
+
+        has_m2m_group = group_by and group_by in self.FIELD_MAPPER
+        has_m2m_subgroup = sub_group_by and sub_group_by in self.FIELD_MAPPER
+
+        logger.debug(
+            "[IssueViewSet] Phase 1 SQL (project=%s, group_by=%s, sub_group_by=%s):\n%s",
+            project_id, group_by, sub_group_by, issue_queryset.query,
+        )
+
+        def on_results_fn(issues):
+            # Phase 1: extract IDs (+ raw M2M group-by keys if needed).
+            phase1_fields = ["id"]
+            if has_m2m_group:
+                phase1_fields.append(group_by)
+            if has_m2m_subgroup:
+                phase1_fields.append(sub_group_by)
+
+            phase1_rows = list(issues.values(*phase1_fields))
+            page_ids = list(dict.fromkeys(r["id"] for r in phase1_rows))  # ordered-unique
+
+            if not page_ids:
+                return []
+
+            # Phase 2: full details + counts on the small ID set.
+            detail_qs_values = self._build_detail_queryset(page_ids).values(*self.DETAIL_FIELDS)
+            logger.debug(
+                "[IssueViewSet] Phase 2 SQL (%d IDs):\n%s",
+                len(page_ids), detail_qs_values.query,
+            )
+            results = list(detail_qs_values)
+            id_to_result = {r["id"]: r for r in results}
+
+            if has_m2m_group or has_m2m_subgroup:
+                # Re-attach M2M group values to Phase 2 rows for the paginator.
+                merged = []
+                for p1 in phase1_rows:
+                    base = id_to_result.get(p1["id"])
+                    if base is None:
+                        continue
+                    row = dict(base)
+                    if has_m2m_group:
+                        row[group_by] = p1[group_by]
+                    if has_m2m_subgroup:
+                        row[sub_group_by] = p1[sub_group_by]
+                    merged.append(row)
+                results = merged
+            else:
+                # Restore Phase 1 ordering.
+                results = [id_to_result[pid] for pid in page_ids if pid in id_to_result]
+
+            # Phase 3: batch-load M2M arrays and cycle_id.
+            return self._enrich_issues_with_relations(results)
 
         if group_by:
             if sub_group_by:
@@ -376,11 +526,7 @@ class IssueViewSet(BaseViewSet):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
-                        on_results=lambda issues: issue_on_results(
-                            group_by=group_by,
-                            issues=issues,
-                            sub_group_by=sub_group_by,
-                        ),
+                        on_results=on_results_fn,
                         paginator_cls=SubGroupedOffsetPaginator,
                         group_by_fields=issue_group_values(
                             field=group_by,
@@ -407,16 +553,11 @@ class IssueViewSet(BaseViewSet):
                         skip_count=True,
                     )
             else:
-                # Group paginate
                 return self.paginate(
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
-                    on_results=lambda issues: issue_on_results(
-                        group_by=group_by,
-                        issues=issues,
-                        sub_group_by=sub_group_by,
-                    ),
+                    on_results=on_results_fn,
                     paginator_cls=GroupedOffsetPaginator,
                     group_by_fields=issue_group_values(
                         field=group_by,
@@ -440,9 +581,7 @@ class IssueViewSet(BaseViewSet):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
+                on_results=on_results_fn,
                 skip_count=True,
             )
 
@@ -477,59 +616,17 @@ class IssueViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            issue = (
-                issue_queryset_grouper(
-                    queryset=self.get_queryset().filter(
-                        pk=serializer.data["id"]
-                    ),
-                    group_by=None,
-                    sub_group_by=None,
-                )
-                .values(
-                    "id",
-                    "name",
-                    "state_id",
-                    "sort_order",
-                    "completed_at",
-                    "estimate_point",
-                    "hub_code",
-                    "customer_code",
-                    "reference_number",
-                    "trip_reference_number",
-                    "vendor_code",
-                    "worker_code",
-                    "hub_name",
-                    "customer_name",
-                    "vendor_name",
-                    "worker_name",
-                    "business_type",
-                    "priority",
-                    "start_date",
-                    "target_date",
-                    "sequence_id",
-                    "project_id",
-                    "parent_id",
-                    "cycle_id",
-                    "module_ids",
-                    "label_ids",
-                    "assignee_ids",
-                    "sub_issues_count",
-                    "created_at",
-                    "updated_at",
-                    "created_by",
-                    "updated_by",
-                    "attachment_count",
-                    "link_count",
-                    "is_draft",
-                    "archived_at",
-                    "deleted_at",
-                )
+            issue_id = serializer.data["id"]
+            result = (
+                self._build_detail_queryset([issue_id])
+                .values(*self.DETAIL_FIELDS, "deleted_at")
                 .first()
             )
+            if result:
+                result = self._enrich_issues_with_relations([result])[0]
             datetime_fields = ["created_at", "updated_at"]
-            print(issue)
             issue = user_timezone_converter(
-                issue, datetime_fields, request.user.user_timezone
+                result, datetime_fields, request.user.user_timezone
             )
             # Send the model activity
             model_activity.delay(
