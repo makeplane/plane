@@ -26,6 +26,24 @@ type ITooltipProps = {
   sideOffset?: number;
 };
 
+// [FA-CUSTOM] ErrorBoundary to prevent Tooltip crashes from breaking the whole page
+class TooltipErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
+
 export function Tooltip(props: ITooltipProps) {
   const {
     tooltipHeading,
@@ -49,39 +67,43 @@ export function Tooltip(props: ITooltipProps) {
     return { finalSide: side, finalAlign: align };
   }, [position, side, align]);
 
+  if (!children) return null;
+
   return (
-    <BaseTooltip.Provider>
-      <BaseTooltip.Root delay={openDelay} closeDelay={closeDelay} disabled={disabled}>
-        <BaseTooltip.Trigger render={children} />
-        <BaseTooltip.Portal>
-          <BaseTooltip.Positioner
-            className={cn(
-              "z-50 max-w-xs gap-1 overflow-hidden break-words rounded-lg border border-subtle-1 bg-layer-2 px-2 py-1.5 shadow-overlay-200",
-              {
-                hidden: isMobile,
-              },
-              className
-            )}
-            side={finalSide}
-            sideOffset={sideOffset}
-            align={finalAlign}
-            render={
-              <BaseTooltip.Popup>
-                {tooltipHeading && <p className="text-caption-md-medium text-primary">{tooltipHeading}</p>}
-                {tooltipContent && (
-                  <p
-                    className={cn("text-caption-sm-regular text-secondary", {
-                      "mt-1": tooltipHeading && tooltipHeading !== "",
-                    })}
-                  >
-                    {tooltipContent}
-                  </p>
-                )}
-              </BaseTooltip.Popup>
-            }
-          />
-        </BaseTooltip.Portal>
-      </BaseTooltip.Root>
-    </BaseTooltip.Provider>
+    <TooltipErrorBoundary fallback={children}>
+      <BaseTooltip.Provider>
+        <BaseTooltip.Root delay={openDelay} closeDelay={closeDelay} disabled={disabled}>
+          <BaseTooltip.Trigger render={children} />
+          <BaseTooltip.Portal>
+            <BaseTooltip.Positioner
+              className={cn(
+                "z-50 max-w-xs gap-1 overflow-hidden break-words rounded-lg border border-subtle-1 bg-layer-2 px-2 py-1.5 shadow-overlay-200",
+                {
+                  hidden: isMobile,
+                },
+                className
+              )}
+              side={finalSide}
+              sideOffset={sideOffset}
+              align={finalAlign}
+              render={
+                <BaseTooltip.Popup>
+                  {tooltipHeading && <p className="text-caption-md-medium text-primary">{tooltipHeading}</p>}
+                  {tooltipContent && (
+                    <p
+                      className={cn("text-caption-sm-regular text-secondary", {
+                        "mt-1": tooltipHeading && tooltipHeading !== "",
+                      })}
+                    >
+                      {tooltipContent}
+                    </p>
+                  )}
+                </BaseTooltip.Popup>
+              }
+            />
+          </BaseTooltip.Portal>
+        </BaseTooltip.Root>
+      </BaseTooltip.Provider>
+    </TooltipErrorBoundary>
   );
 }

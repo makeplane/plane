@@ -1,3 +1,7 @@
+# Production docker-compose for plane-fa fork
+# Uses custom-built images from GitHub Container Registry (GHCR)
+# Env vars are loaded from variables.env (created during initial setup)
+
 x-db-env: &db-env
   PGHOST: ${PGHOST:-plane-db}
   PGDATABASE: ${PGDATABASE:-plane}
@@ -59,9 +63,14 @@ x-app-env: &app-env
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
   LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
 
+# ---------------------------------------------------------------------------
+# GHCR image prefix – override with IMAGE_PREFIX env var if needed
+# ---------------------------------------------------------------------------
+x-ghcr-image: &ghcr-prefix "ghcr.io/dadenegarco/plane-fa"
+
 services:
   web:
-    image: ghcr.io/dadenegarco/plane-fa/plane-frontend:latest
+    image: ${IMAGE_PREFIX:-ghcr.io/dadenegarco/plane-fa}/plane-frontend:latest
     deploy:
       replicas: ${WEB_REPLICAS:-1}
       restart_policy:
@@ -71,7 +80,7 @@ services:
       - worker
 
   space:
-    image: ghcr.io/dadenegarco/plane-fa/plane-space:latest
+    image: ${IMAGE_PREFIX:-ghcr.io/dadenegarco/plane-fa}/plane-space:latest
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
       restart_policy:
@@ -82,7 +91,7 @@ services:
       - web
 
   admin:
-    image: ghcr.io/dadenegarco/plane-fa/plane-admin:latest
+    image: ${IMAGE_PREFIX:-ghcr.io/dadenegarco/plane-fa}/plane-admin:latest
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
       restart_policy:
@@ -92,7 +101,7 @@ services:
       - web
 
   live:
-    image: ghcr.io/dadenegarco/plane-fa/plane-live:latest
+    image: ${IMAGE_PREFIX:-ghcr.io/dadenegarco/plane-fa}/plane-live:latest
     environment:
       <<: [*live-env, *redis-env]
     deploy:
@@ -104,7 +113,7 @@ services:
       - web
 
   api:
-    image: ghcr.io/dadenegarco/plane-fa/plane-backend:latest
+    image: ${IMAGE_PREFIX:-ghcr.io/dadenegarco/plane-fa}/plane-backend:latest
     command: ./bin/docker-entrypoint-api.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
@@ -120,7 +129,7 @@ services:
       - plane-mq
 
   worker:
-    image: ghcr.io/dadenegarco/plane-fa/plane-backend:latest
+    image: ${IMAGE_PREFIX:-ghcr.io/dadenegarco/plane-fa}/plane-backend:latest
     command: ./bin/docker-entrypoint-worker.sh
     deploy:
       replicas: ${WORKER_REPLICAS:-1}
@@ -137,7 +146,7 @@ services:
       - plane-mq
 
   beat-worker:
-    image: ghcr.io/dadenegarco/plane-fa/plane-backend:latest
+    image: ${IMAGE_PREFIX:-ghcr.io/dadenegarco/plane-fa}/plane-backend:latest
     command: ./bin/docker-entrypoint-beat.sh
     deploy:
       replicas: ${BEAT_WORKER_REPLICAS:-1}
@@ -154,7 +163,7 @@ services:
       - plane-mq
 
   migrator:
-    image: ghcr.io/dadenegarco/plane-fa/plane-backend:latest
+    image: ${IMAGE_PREFIX:-ghcr.io/dadenegarco/plane-fa}/plane-backend:latest
     command: ./bin/docker-entrypoint-migrator.sh
     deploy:
       replicas: 1
@@ -213,7 +222,7 @@ services:
       - uploads:/export
 
   proxy:
-    image: ghcr.io/dadenegarco/plane-fa/plane-proxy:latest
+    image: ${IMAGE_PREFIX:-ghcr.io/dadenegarco/plane-fa}/plane-proxy:latest
     deploy:
       replicas: 1
       restart_policy:

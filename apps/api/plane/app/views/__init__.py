@@ -225,6 +225,14 @@ from .notification.base import (
 
 from .exporter.base import ExportIssuesEndpoint
 
+# [FA-CUSTOM] File-based CSV/XLSX import
+from .importer_job.base import (
+    ImportHistoryEndpoint,
+    ImportJobDetailEndpoint,
+    ImportStartEndpoint,
+    ImportUploadEndpoint,
+)
+
 
 from .webhook.base import (
     WebhookEndpoint,

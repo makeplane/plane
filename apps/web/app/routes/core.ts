@@ -345,6 +345,11 @@ export const coreRoutes: RouteConfigEntry[] = [
                 "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/automations/page.tsx"
               ),
             ]),
+            // [FA-CUSTOM] Project Import
+            route(
+              ":workspaceSlug/settings/projects/:projectId/import",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/import/page.tsx"
+            ),
           ]),
         ]),
       ]),
