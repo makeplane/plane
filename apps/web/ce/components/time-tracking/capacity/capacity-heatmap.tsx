@@ -23,9 +23,9 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
     !dateFrom || !dateTo
       ? []
       : eachDayOfInterval({
-        start: parseISO(dateFrom),
-        end: parseISO(dateTo),
-      });
+          start: parseISO(dateFrom),
+          end: parseISO(dateTo),
+        });
 
   const getDailyCellInfo = (minutes: number = 0) => {
     if (minutes > 480) {
@@ -230,7 +230,7 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
                   const dailyIssues = projectDailyTotals?.[dateStr]?.issue_count ?? 0;
                   return (
                     <td key={dateStr} className="px-3 py-2 text-center text-[11px] text-secondary font-medium">
-                      {dailyIssues > 0 ? `${dailyIssues} items` : "-"}
+                      {dailyIssues > 0 ? `${dailyIssues} ${t("capacity_items")}` : "-"}
                     </td>
                   );
                 })}
