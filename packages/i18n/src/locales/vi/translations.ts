@@ -336,7 +336,9 @@ export default {
   project_created_successfully_description:
     "Dự án đã được tạo thành công. Bây giờ bạn có thể bắt đầu thêm mục công việc.",
   project_name_already_taken: "Tên dự án đã được sử dụng.",
+  project_name_cannot_contain_special_characters: "Tên dự án không được chứa ký tự đặc biệt.",
   project_identifier_already_taken: "ID dự án đã được sử dụng.",
+  project_identifier_cannot_contain_special_characters: "ID dự án không được chứa ký tự đặc biệt.",
   project_cover_image_alt: "Ảnh bìa dự án",
   name_is_required: "Tên là bắt buộc",
   title_should_be_less_than_255_characters: "Tiêu đề phải ít hơn 255 ký tự",
@@ -818,6 +820,7 @@ export default {
       open_in_new_tab: "Mở trong tab mới",
       copy_link: "Sao chép liên kết",
       archive: "Lưu trữ",
+      restore: "Khôi phục",
       delete: "Xóa",
       remove_relation: "Xóa mối quan hệ",
       subscribe: "Đăng ký",
@@ -901,6 +904,7 @@ export default {
     deactivated_user: "Người dùng bị vô hiệu hóa",
     apply: "Áp dụng",
     applying: "Đang áp dụng",
+    overview: "Tổng quan",
     users: "Người dùng",
     admins: "Quản trị viên",
     guests: "Khách",
@@ -1428,6 +1432,7 @@ export default {
       label: "Thêm dự án",
     },
     network: {
+      label: "Mạng lưới",
       private: {
         title: "Riêng tư",
         description: "Chỉ truy cập bằng lời mời",
@@ -1648,14 +1653,20 @@ export default {
         },
       },
       billing_and_plans: {
+        heading: "Thanh toán và Kế hoạch",
+        description: "Chọn gói của bạn, quản lý đăng ký và dễ dàng nâng cấp khi nhu cầu tăng lên.",
         title: "Thanh toán và Kế hoạch",
         current_plan: "Kế hoạch hiện tại",
         free_plan: "Bạn đang sử dụng kế hoạch miễn phí",
         view_plans: "Xem kế hoạch",
       },
       exports: {
+        heading: "Xuất",
+        description: "Xuất dữ liệu dự án ở nhiều định dạng và truy cập lịch sử xuất với liên kết tải xuống.",
         title: "Xuất",
         exporting: "Đang xuất",
+        exporting_projects: "Đang xuất dự án",
+        format: "Định dạng",
         previous_exports: "Xuất trước đây",
         export_separate_files: "Xuất dữ liệu thành các tệp riêng biệt",
         filters_info: "Áp dụng bộ lọc để xuất các mục công việc cụ thể dựa trên tiêu chí của bạn.",
@@ -1674,6 +1685,8 @@ export default {
         },
       },
       webhooks: {
+        heading: "Webhooks",
+        description: "Tự động thông báo đến các dịch vụ bên ngoài khi có sự kiện dự án xảy ra.",
         title: "Webhooks",
         add_webhook: "Thêm webhook",
         modal: {
@@ -1805,8 +1818,10 @@ export default {
       profile: "Hồ sơ",
       security: "Bảo mật",
       activity: "Hoạt động",
+      preferences: "Tùy chọn",
       appearance: "Giao diện",
       notifications: "Thông báo",
+      "api-tokens": "Token truy cập cá nhân",
     },
     tabs: {
       summary: "Tóm tắt",
@@ -1871,6 +1886,8 @@ export default {
       },
     },
     states: {
+      heading: "Trạng thái",
+      description: "Định nghĩa và tùy chỉnh trạng thái quy trình để theo dõi tiến độ mục công việc.",
       describe_this_state_for_your_members: "Mô tả trạng thái này cho thành viên của bạn.",
       empty_state: {
         title: "Không có trạng thái trong nhóm {groupKey}",
@@ -1878,6 +1895,8 @@ export default {
       },
     },
     labels: {
+      heading: "Nhãn",
+      description: "Tạo nhãn tùy chỉnh để phân loại và tổ chức các mục công việc",
       label_title: "Tiêu đề nhãn",
       label_title_is_required: "Tiêu đề nhãn là bắt buộc",
       label_max_char: "Tên nhãn không nên vượt quá 255 ký tự",
@@ -1886,9 +1905,11 @@ export default {
       },
     },
     estimates: {
+      heading: "Ước tính",
       label: "Ước tính",
       title: "Bật ước tính cho dự án của tôi",
-      description: "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm.",
+      enable_description: "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm.",
+      description: "Thiết lập hệ thống ước tính để theo dõi và truyền đạt nỗ lực cần thiết cho mỗi mục công việc.",
       no_estimate: "Không có ước tính",
       new: "Hệ thống ước tính mới",
       create: {
@@ -1946,6 +1967,8 @@ export default {
         empty: "Giá trị ước tính không được để trống",
         already_exists: "Giá trị ước tính này đã tồn tại",
         unsaved_changes: "Bạn có thay đổi chưa lưu. Vui lòng lưu trước khi nhấn 'xong'",
+        remove_empty:
+          "Ước tính không được để trống. Nhập giá trị vào mỗi trường hoặc xóa các trường bạn không có giá trị.",
       },
       systems: {
         points: {
@@ -1968,6 +1991,9 @@ export default {
       },
     },
     automations: {
+      heading: "Tự động hóa",
+      description:
+        "Cấu hình các hành động tự động để tối ưu hóa quy trình quản lý dự án và giảm thiểu công việc thủ công.",
       label: "Tự động hóa",
       "auto-archive": {
         title: "Tự động lưu trữ mục công việc đã đóng",
