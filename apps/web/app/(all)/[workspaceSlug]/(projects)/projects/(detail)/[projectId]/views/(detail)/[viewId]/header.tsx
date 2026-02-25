@@ -44,7 +44,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
 
   const { currentProjectDetails, loader } = useProject();
   const { projectViewIds, getViewById } = useProjectView();
@@ -54,7 +54,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId || !viewId) return;
-      updateFilters(
+      void updateFilters(
         workspaceSlug.toString(),
         projectId.toString(),
         EIssueFilterType.DISPLAY_FILTERS,
@@ -68,7 +68,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId || !viewId) return;
-      updateFilters(
+      void updateFilters(
         workspaceSlug.toString(),
         projectId.toString(),
         EIssueFilterType.DISPLAY_FILTERS,
@@ -82,7 +82,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId || !viewId) return;
-      updateFilters(
+      void updateFilters(
         workspaceSlug.toString(),
         projectId.toString(),
         EIssueFilterType.DISPLAY_PROPERTIES,
@@ -99,6 +99,14 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
+
+  const currentProjectRole = workspaceSlug && projectId ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    projectId.toString()
+  ) : undefined;
+
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const canUserCreateWorkItem = canUserCreateIssue && roleNumber !== EUserPermissions.SUPERVISOR && roleNumber !== EUserPermissions.EXECUTOR;
 
   if (!viewDetails) return;
 
@@ -190,7 +198,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
             </FiltersDropdown>
           )}
         </>
-        {canUserCreateIssue && (
+        {canUserCreateWorkItem && (
           <Button
             variant="primary"
             size="lg"

@@ -62,7 +62,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   const { updateFilters } = useIssuesActions(EIssuesStoreType.MODULE);
   const { projectModuleIds, getModuleById } = useModule();
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
   // local storage
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
@@ -74,6 +74,13 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
+  const currentProjectRole = workspaceSlug && projectId ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    projectId.toString()
+  ) : undefined;
+
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const canUserCreateWorkItem = canUserCreateIssue && roleNumber !== EUserPermissions.SUPERVISOR && roleNumber !== EUserPermissions.EXECUTOR;
   const workItemsCount = getGroupIssueCount(undefined, undefined, false);
 
   const toggleSidebar = () => {
@@ -83,7 +90,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!projectId) return;
-      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
+      void updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
     [projectId, updateFilters]
   );
@@ -91,7 +98,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!projectId) return;
-      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      void updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
     [projectId, updateFilters]
   );
@@ -99,7 +106,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!projectId) return;
-      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
+      void updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
     [projectId, updateFilters]
   );
@@ -158,9 +165,8 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
             {workItemsCount && workItemsCount > 0 ? (
               <Tooltip
                 isMobile={isMobile}
-                tooltipContent={`There are ${workItemsCount} ${
-                  workItemsCount > 1 ? "work items" : "work item"
-                } in this module`}
+                tooltipContent={`There are ${workItemsCount} ${workItemsCount > 1 ? "work items" : "work item"
+                  } in this module`}
                 position="bottom"
               >
                 <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
@@ -227,17 +233,19 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                   <ChartNoAxesColumn className="size-3.5" />
                 </span>
               </Button>
-              <Button
-                variant="primary"
-                size="lg"
-                className="hidden sm:flex"
-                onClick={() => {
-                  toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
-                }}
-                data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.MODULE}
-              >
-                Add work item
-              </Button>
+              {canUserCreateWorkItem && (
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="hidden sm:flex"
+                  onClick={() => {
+                    toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
+                  }}
+                  data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.MODULE}
+                >
+                  Add work item
+                </Button>
+              )}
             </>
           ) : (
             <></>
