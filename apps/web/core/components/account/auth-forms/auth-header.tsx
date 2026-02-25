@@ -24,36 +24,36 @@ type TAuthHeader = {
   currentAuthStep: EAuthSteps;
 };
 
-const Titles = {
+const Titles = (t: (key: string) => string) => ({
   [EAuthModes.SIGN_IN]: {
     [EAuthSteps.EMAIL]: {
-      header: "Work in all dimensions.",
-      subHeader: "Welcome back to Plane.",
+      header: t("auth.common.header.work_in_all_dimensions"),
+      subHeader: t("auth.common.header.welcome_back_jms"),
     },
     [EAuthSteps.PASSWORD]: {
-      header: "Work in all dimensions.",
-      subHeader: "Welcome back to Plane.",
+      header: t("auth.common.header.work_in_all_dimensions"),
+      subHeader: t("auth.common.header.welcome_back_jms"),
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "Work in all dimensions.",
-      subHeader: "Welcome back to Plane.",
+      header: t("auth.common.header.work_in_all_dimensions"),
+      subHeader: t("auth.common.header.welcome_back_jms"),
     },
   },
   [EAuthModes.SIGN_UP]: {
     [EAuthSteps.EMAIL]: {
-      header: "Work in all dimensions.",
-      subHeader: "Create your Plane account.",
+      header: t("auth.common.header.work_in_all_dimensions"),
+      subHeader: t("auth.common.header.create_jms_account"),
     },
     [EAuthSteps.PASSWORD]: {
-      header: "Work in all dimensions.",
-      subHeader: "Create your Plane account.",
+      header: t("auth.common.header.work_in_all_dimensions"),
+      subHeader: t("auth.common.header.create_jms_account"),
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "Work in all dimensions.",
-      subHeader: "Create your Plane account.",
+      header: t("auth.common.header.work_in_all_dimensions"),
+      subHeader: t("auth.common.header.create_jms_account"),
     },
   },
-};
+});
 
 const workSpaceService = new WorkspaceService();
 
@@ -94,7 +94,7 @@ export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
       };
     }
 
-    return Titles[mode][step];
+    return Titles(t)[mode][step];
   };
 
   const { header, subHeader } = getHeaderSubHeader(currentAuthStep, authMode, invitation || undefined, invitationEmail);

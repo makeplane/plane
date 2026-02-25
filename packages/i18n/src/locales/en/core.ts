@@ -90,7 +90,12 @@ export default {
       already_have_an_account: "Already have an account?",
       login: "Log in",
       create_account: "Create an account",
-      new_to_plane: "New to Plane?",
+      new_to_plane: "New to JMS?",
+      header: {
+        work_in_all_dimensions: "Work in all dimensions.",
+        welcome_back_jms: "Welcome back to JMS (Job Management System).",
+        create_jms_account: "Create your JMS account.",
+      },
       back_to_sign_in: "Back to sign in",
       resend_in: "Resend in {seconds} seconds",
       sign_in_with_unique_code: "Sign in with unique code",
@@ -174,6 +179,9 @@ export default {
           message: "Failed to sign out. Please try again.",
         },
       },
+    },
+    footer: {
+      custom_powered_by: "SHBVN JMS - Job Management System (Built on Plane Architecture)",
     },
   },
 } as const;
