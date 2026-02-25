@@ -115,7 +115,11 @@ export class StaffService extends APIService {
    */
   async getStaffList(workspaceSlug: string, params?: Record<string, any>): Promise<IStaff[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/staff/`, { params })
-      .then((response) => response?.data)
+      .then((response) => {
+        const data = response?.data as IStaff[] | { results: IStaff[] };
+        // Backend returns paginated response { results: [...], ... }
+        return Array.isArray(data) ? data : (data?.results ?? []);
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
