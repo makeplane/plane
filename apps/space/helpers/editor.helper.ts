@@ -14,10 +14,11 @@
 // plane imports
 import { MAX_FILE_SIZE } from "@plane/constants";
 import type { TFileHandler } from "@plane/editor";
-import { SitesFileService } from "@plane/services";
+import { LiveService, SitesFileService } from "@plane/services";
 import { getFileURL } from "@plane/utils";
-// services
+
 const sitesFileService = new SitesFileService();
+const liveService = new LiveService();
 
 /**
  * @description generate the file source using assetId
@@ -52,16 +53,9 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
 
   const getFileContent = async (src: string): Promise<string> => {
     if (!src) return "";
-    try {
-      const fileUrl = src.startsWith("http") ? src : (getEditorAssetSrc(anchor, src) ?? "");
-      if (!fileUrl) return "";
-      const response = await fetch(fileUrl);
-      if (!response.ok) return "";
-      return await response.text();
-    } catch (error) {
-      console.error("Error loading file content:", error);
-      return "";
-    }
+    const fileUrl = src.startsWith("http") ? src : (getEditorAssetSrc(anchor, src) ?? "");
+    if (!fileUrl) return "";
+    return liveService.getFileContent(fileUrl);
   };
 
   return {

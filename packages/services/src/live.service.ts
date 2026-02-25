@@ -11,11 +11,20 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { API_BASE_URL } from "@plane/constants";
+import { LIVE_URL } from "@plane/constants";
 import { APIService } from "./api.service";
 
-export abstract class LiveService extends APIService {
+export class LiveService extends APIService {
   constructor(BASE_URL?: string) {
-    super(BASE_URL || API_BASE_URL);
+    super(BASE_URL || LIVE_URL);
+  }
+
+  async getFileContent(fileUrl: string): Promise<string> {
+    return this.get("/content", { params: { url: fileUrl } })
+      .then((response) => response?.data?.content ?? "")
+      .catch((error) => {
+        console.error("Error loading file content:", error);
+        return "";
+      });
   }
 }

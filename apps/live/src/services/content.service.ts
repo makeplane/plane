@@ -53,10 +53,9 @@ export class ContentService extends APIService {
   async getFileContent(params: ContentParams) {
     const { url, cookie } = params;
 
-    // We have to add the server/ to the url because the asset endpoint server expects it
-    // by removing this, the request will fail since server will server asset assuming it is a browser request and it expect some redirect to the asset url
-    const serverAssetUrl = url + (url.endsWith("/") ? "server/" : "/server/");
-    return this.get(serverAssetUrl, {
+    const isPublicAsset = url.includes("/api/public/");
+    const fetchUrl = isPublicAsset ? url : url + (url.endsWith("/") ? "server/" : "/server/");
+    return this.get(fetchUrl, {
       headers: this.getHeaders({ cookie }),
       withCredentials: true,
     })

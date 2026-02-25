@@ -19,6 +19,7 @@ export * from "./cycle";
 export * from "./dashboards";
 export * from "./instance";
 export * from "./intake";
+export * from "./live.service";
 export * from "./module";
 export * from "./user";
 export * from "./project";
