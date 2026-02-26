@@ -75,6 +75,7 @@ from .member import (
     ProjectMemberDetailAPIEndpoint,
     WorkspaceMemberAPIEndpoint,
     ProjectMemberSiloEndpoint,
+    WorkspaceMemberRemoveEndpoint,
 )
 
 from .milestone import MilestoneViewSet, MilestoneWorkItemsViewSet

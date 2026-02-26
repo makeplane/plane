@@ -11,47 +11,59 @@
 
 # Python imports
 import uuid
+import logging
+import requests as http_requests
 
 # Django imports
-from django.core.validators import validate_email
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
-
+from django.core.validators import validate_email
+from django.db.models import Count, Q
+from django.utils import timezone
+from drf_spectacular.utils import (
+    OpenApiRequest,
+    OpenApiResponse,
+    extend_schema,
+)
+from rest_framework import status
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import status
-from drf_spectacular.utils import (
-    extend_schema,
-    OpenApiResponse,
-    OpenApiRequest,
+
+from plane.api.serializers import ProjectMemberSerializer, UserLiteSerializer
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.db.models import Project, ProjectMember, User, Workspace, WorkspaceMember, WorkspaceMemberInvite
+from plane.db.models.workspace import ROLE as WORKSPACE_ROLE
+from plane.ee.bgtasks.workspace_member_activities_task import workspace_members_activity
+from plane.ee.models import PageUser, TeamspaceMember, WorkspaceLicense
+from plane.payment.bgtasks.member_sync_task import member_sync_task
+from plane.utils.exception_logger import log_exception
+from plane.utils.oauth import (
+    PROJECTS_MEMBERS_READ_SCOPE,
+    PROJECTS_MEMBERS_WRITE_SCOPE,
+    READ_SCOPE,
+    WORKSPACES_MEMBERS_READ_SCOPE,
+    WORKSPACES_MEMBERS_WRITE_SCOPE,
+    WRITE_SCOPE,
 )
+from plane.utils.openapi import (
+    FORBIDDEN_RESPONSE,
+    PROJECT_ID_PARAMETER,
+    PROJECT_MEMBER_EXAMPLE,
+    PROJECT_NOT_FOUND_RESPONSE,
+    UNAUTHORIZED_RESPONSE,
+    WORKSPACE_MEMBER_EXAMPLE,
+    WORKSPACE_NOT_FOUND_RESPONSE,
+    WORKSPACE_SLUG_PARAMETER,
+)
+from plane.utils.permissions import ProjectAdminPermission, ProjectMemberPermission, WorkSpaceAdminPermission
 
 # Module imports
 from .base import BaseAPIView
-from plane.api.serializers import UserLiteSerializer, ProjectMemberSerializer
-from plane.db.models import User, Workspace, WorkspaceMember, ProjectMember, Project
-from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
-from plane.utils.openapi import (
-    WORKSPACE_SLUG_PARAMETER,
-    PROJECT_ID_PARAMETER,
-    UNAUTHORIZED_RESPONSE,
-    FORBIDDEN_RESPONSE,
-    WORKSPACE_NOT_FOUND_RESPONSE,
-    PROJECT_NOT_FOUND_RESPONSE,
-    WORKSPACE_MEMBER_EXAMPLE,
-    PROJECT_MEMBER_EXAMPLE,
-)
 
-from plane.payment.bgtasks.member_sync_task import member_sync_task
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
-from plane.utils.oauth import (
-    READ_SCOPE,
-    WRITE_SCOPE,
-    WORKSPACES_MEMBERS_READ_SCOPE,
-    PROJECTS_MEMBERS_READ_SCOPE,
-    PROJECTS_MEMBERS_WRITE_SCOPE,
-)
+
+logger = logging.getLogger("plane.api")
 
 
 class WorkspaceMemberAPIEndpoint(BaseAPIView):
@@ -390,3 +402,203 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         project_member.is_active = False
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkspaceMemberRemoveEndpoint(BaseAPIView):
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "POST": [[WRITE_SCOPE], [WORKSPACES_MEMBERS_WRITE_SCOPE]],
+    }
+
+    @extend_schema(
+        operation_id="remove_workspace_member",
+        summary="Remove workspace member",
+        description="Remove a member from the workspace, deactivate them from all projects, and reduce the seat count.",
+        tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER],
+        responses={
+            204: OpenApiResponse(description="Member removed successfully"),
+            400: OpenApiResponse(description="Validation error"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug):
+        """Remove workspace member
+
+        Remove a member from the specified workspace. This deactivates the member
+        from all projects, removes them from teamspaces and pages, syncs with the
+        payment server, and reduces the purchased seat count.
+        """
+
+        email = request.data.get("email", False)
+        remove_seat = request.data.get("remove_seat", False)
+
+        if not email:
+            return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get the workspace member to be removed
+        try:
+            workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member__email=email, member__is_bot=False, is_active=True
+            )
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "Workspace member not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Get the requesting user's workspace member record
+        try:
+            requesting_workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user, is_active=True
+            )
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "You are not a member of this workspace"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Cannot remove yourself
+        if str(workspace_member.id) == str(requesting_workspace_member.id):
+            return Response(
+                {"error": "You cannot remove yourself from the workspace. Please use leave workspace"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Cannot remove a member with a higher role
+        if requesting_workspace_member.role < workspace_member.role:
+            return Response(
+                {"error": "You cannot remove a user having role higher than you"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Cannot remove if user is the sole admin of any project
+        if (
+            Project.objects.annotate(
+                total_members=Count("project_projectmember"),
+                member_with_role=Count(
+                    "project_projectmember",
+                    filter=Q(
+                        project_projectmember__member_id=workspace_member.member_id,
+                        project_projectmember__role=20,
+                    ),
+                ),
+            )
+            .filter(total_members=1, member_with_role=1, workspace__slug=slug)
+            .exists()
+        ):
+            return Response(
+                {
+                    "error": "User is a part of some projects where they are the only admin, they should either leave that project or promote another user to admin."  # noqa: E501
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Deactivate the user from all projects
+        ProjectMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id, is_active=True).update(
+            is_active=False, updated_at=timezone.now()
+        )
+
+        # Deactivate the workspace member
+        removed_member_name = workspace_member.member.display_name
+        workspace_member.is_active = False
+        workspace_member.save()
+
+        # Remove from teamspaces and pages
+        TeamspaceMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).delete()
+        PageUser.objects.filter(workspace__slug=slug, user_id=workspace_member.member_id).delete()
+
+        # Sync workspace members with the payment server
+        member_sync_task.delay(slug)
+
+        # Remove seats on the payment server if requested
+        if remove_seat:
+            # Reduce seats on the payment server
+            self._reduce_seat(slug, request.user.id)
+
+        # Log activity
+        workspace_members_activity.delay(
+            type="workspace_member.activity.removed",
+            requested_data={"name": removed_member_name},
+            current_instance=None,
+            actor_id=request.user.id,
+            workspace_id=workspace_member.workspace_id,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def _reduce_seat(self, slug, actor_id):
+        """Reduce purchased seats to match current active paid members + invites."""
+        try:
+            if not settings.PAYMENT_SERVER_BASE_URL:
+                return
+
+            workspace_license = WorkspaceLicense.objects.filter(workspace__slug=slug).first()
+            if not workspace_license or workspace_license.is_cancelled:
+                return
+
+            previous_purchased_seats = workspace_license.purchased_seats
+
+            # Count active paid members (Admin/Member roles, i.e. role >= 15)
+            workspace_member_count = WorkspaceMember.objects.filter(
+                workspace__slug=slug, is_active=True, member__is_bot=False, role__gte=WORKSPACE_ROLE.MEMBER.value
+            ).count()
+
+            # Count pending invites for paid roles
+            invited_member_count = WorkspaceMemberInvite.objects.filter(
+                workspace__slug=slug, role__gte=WORKSPACE_ROLE.MEMBER.value
+            ).count()
+
+            required_seats = workspace_member_count + invited_member_count
+
+            # No unused seats to remove
+            if workspace_license.purchased_seats <= required_seats:
+                logger.info(f"Workspace {slug} has no unused seats to remove.")
+                return
+
+            ## Just reduce one seat
+            updated_seat_count = workspace_license.purchased_seats - 1
+
+            workspace = Workspace.objects.get(slug=slug)
+
+            # Call payment server to reduce seats
+            response = http_requests.post(
+                f"{settings.PAYMENT_SERVER_BASE_URL}/api/licenses/modify-seats/",
+                headers={
+                    "content-type": "application/json",
+                    "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                },
+                json={
+                    "workspace_id": str(workspace.id),
+                    "quantity": updated_seat_count,
+                    "workspace_slug": slug,
+                },
+            )
+            response.raise_for_status()
+            response_data = response.json()
+
+            # Update local seat count
+            workspace_license.purchased_seats = response_data["seats"]
+            workspace_license.save()
+
+            # Log seat removal activity
+            workspace_members_activity.delay(
+                type="workspace_member.activity.removed_unused_seats",
+                requested_data={"required_seats": required_seats},
+                current_instance={"purchased_seats": previous_purchased_seats},
+                actor_id=actor_id,
+                workspace_id=workspace.id,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+            )
+            return
+        except http_requests.exceptions.RequestException as e:
+            log_exception(e)
+            return
+        except Exception as e:
+            log_exception(e)
+            return

@@ -88,6 +88,7 @@ INITIATIVES_LABELS_WRITE_SCOPE = "initiatives.labels:write"
 
 # WORKSPACES SCOPES
 WORKSPACES_MEMBERS_READ_SCOPE = "workspaces.members:read"
+WORKSPACES_MEMBERS_WRITE_SCOPE = "workspaces.members:write"
 WORKSPACES_FEATURES_READ_SCOPE = "workspaces.features:read"
 WORKSPACES_FEATURES_WRITE_SCOPE = "workspaces.features:write"
 
@@ -191,6 +192,7 @@ ALL_OAUTH_SCOPES = {
     INITIATIVES_LABELS_WRITE_SCOPE: "Write access to initiatives labels",
     # Workspace scopes
     WORKSPACES_MEMBERS_READ_SCOPE: "Read access to workspace members",
+    WORKSPACES_MEMBERS_WRITE_SCOPE: "Write access to workspace members",
     WORKSPACES_FEATURES_READ_SCOPE: "Read access to workspace features",
     WORKSPACES_FEATURES_WRITE_SCOPE: "Write access to workspace features",
     # Stickies scopes
