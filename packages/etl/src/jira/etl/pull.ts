@@ -17,7 +17,6 @@ import type {
   Comment as JComment,
   IssueTypeDetails as JiraIssueTypeDetails,
   FieldDetails,
-  CustomFieldContextProjectMapping,
   IssueTypeToContextMapping,
   CustomFieldContextOption,
 } from "jira.js/out/version3/models/index.js";
@@ -226,78 +225,64 @@ export const pullIssueFields = async (
       // skip if field has no id
       if (!field.id) continue;
 
-      // Get project contexts for each field
-      const projectPageFieldContexts: CustomFieldContextProjectMapping[] = [];
+      const issueTypeContexts: IssueTypeToContextMapping[] = [];
 
+      // get issue type contexts
       try {
         await fetchPaginatedData(
-          (startAt) => client.getProjectFieldContexts(field.id as string, startAt),
-          (values) => projectPageFieldContexts.push(...(values as CustomFieldContextProjectMapping[])),
+          (startAt) => client.getIssueTypeFieldContexts(field.id as string, undefined, startAt),
+          (values) => issueTypeContexts.push(...(values as IssueTypeToContextMapping[])),
           "values"
         );
       } catch (e: any) {
-        console.error(`Could not fetch field contexts for field ${field.id}`, e.response?.data);
+        console.error(`Could not fetch issue type contexts for field ${field.id}`, e.response?.data);
       }
 
-      // get field values for each issue
-      const fieldProjectContext = projectPageFieldContexts?.filter((context) => context?.projectId === projectId);
+      // get issue type for each issue type context
+      if (!issueTypeContexts) continue;
 
-      // get field values for each issue type
-      if (fieldProjectContext?.length) {
-        // get context ids
-        const contextIds: number[] = fieldProjectContext
-          .filter((context) => !!context?.contextId)
-          .map((context) => Number(context?.contextId));
+      for (const issueTypeContext of issueTypeContexts) {
+        const issueTypesToAdd = [];
 
-        const issueTypeContexts: IssueTypeToContextMapping[] = [];
-
-        // get issue type contexts
-        try {
-          await fetchPaginatedData(
-            (startAt) => client.getIssueTypeFieldContexts(field.id as string, contextIds, startAt),
-            (values) => issueTypeContexts.push(...(values as IssueTypeToContextMapping[])),
-            "values"
-          );
-        } catch (e: any) {
-          console.error(`Could not fetch issue type contexts for field ${field.id}`, e.response?.data);
+        if (issueTypeContext.isAnyIssueType) {
+          // Add for all available issue types
+          issueTypesToAdd.push(...issueTypes);
+        } else {
+          const issueType = issueTypes.find((issueType) => issueType.id === issueTypeContext.issueTypeId);
+          if (issueType) issueTypesToAdd.push(issueType);
         }
 
-        // get issue type for each issue type context
-        if (!issueTypeContexts) continue;
+        if (issueTypesToAdd.length === 0) continue;
 
-        for (const issueTypeContext of issueTypeContexts) {
-          const issueType = issueTypes.find((issueType) => issueType.id === issueTypeContext.issueTypeId);
+        const fieldOptions: JiraIssueFieldOptions[] = [];
+        if (OPTION_CUSTOM_FIELD_TYPES.includes(field.schema?.custom as JiraCustomFieldKeys)) {
+          // get field options
+          await fetchPaginatedData(
+            (startAt) => client.getIssueFieldOptions(field.id as string, Number(issueTypeContext.contextId), startAt),
+            (values: CustomFieldContextOption[]) => {
+              values.map((value) => {
+                if (field.id)
+                  fieldOptions.push({
+                    ...value,
+                    fieldId: field.id.includes("customfield_") ? field.id.split("_").pop()! : field.id,
+                  });
+              });
+            },
+            "values"
+          );
+        }
 
-          if (!issueType) continue;
-
-          const fieldOptions: JiraIssueFieldOptions[] = [];
-          if (OPTION_CUSTOM_FIELD_TYPES.includes(field.schema?.custom as JiraCustomFieldKeys)) {
-            // get field options
-            await fetchPaginatedData(
-              (startAt) => client.getIssueFieldOptions(field.id as string, Number(issueTypeContext.contextId), startAt),
-              (values: CustomFieldContextOption[]) => {
-                values.map((value) => {
-                  if (field.id)
-                    fieldOptions.push({
-                      ...value,
-                      fieldId: field.id.includes("customfield_") ? field.id.split("_").pop()! : field.id,
-                    });
-                });
-              },
-              "values"
-            );
-          }
-
-          // add field to custom fields
+        // add field to custom fields
+        issueTypesToAdd.forEach((type) => {
           customFields.push({
             ...field,
             scope: {
               project: { id: projectId },
-              type: issueType.id,
+              type: type.id,
             },
             options: fieldOptions,
           });
-        }
+        });
       }
     }
   } catch (e: any) {

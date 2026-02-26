@@ -35,7 +35,9 @@ import {
   getTargetAttachments,
   getTargetPriority,
   getTargetState,
+  OPTION_CUSTOM_FIELD_TYPES,
   SUPPORTED_CUSTOM_FIELD_ATTRIBUTES,
+  SUPPORTED_CUSTOM_FIELD_TYPES,
 } from "../helpers";
 import type {
   IJiraIssue,
@@ -246,64 +248,93 @@ export const transformIssueFields = (
   issueField: JiraIssueField
 ): Partial<ExIssueProperty> | undefined => {
   const { resourceId, projectId, source } = ctx;
-  if (
-    !issueField.schema ||
-    !issueField.scope?.type ||
-    !issueField.schema.custom ||
-    !SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[issueField.schema.custom as JiraCustomFieldKeys]
-  ) {
+
+  // Must have schema and scope
+  if (!issueField.schema || !issueField.scope?.type) {
+    return undefined;
+  }
+
+  // Check if this is a supported custom field OR a supported system field
+  const isCustomField =
+    issueField.schema.custom && SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[issueField.schema.custom as JiraCustomFieldKeys];
+
+  const isSystemField = issueField.schema.type && SUPPORTED_CUSTOM_FIELD_TYPES[issueField.schema.type];
+
+  const isArrayField =
+    issueField.schema.type === "array" &&
+    issueField.schema.items &&
+    SUPPORTED_CUSTOM_FIELD_TYPES[`array-${issueField.schema.items}`];
+
+  // If none of the types are supported, skip this field
+  if (!isCustomField && !isSystemField && !isArrayField) {
     return undefined;
   }
 
   const fieldId = issueField.id?.startsWith("customfield_") ? issueField.id.split("_").pop() : issueField.id;
 
+  // Extract options if this is an OPTION type field
+  const isOptionField =
+    issueField.schema?.custom && OPTION_CUSTOM_FIELD_TYPES.includes(issueField.schema.custom as JiraCustomFieldKeys);
+
+  const options = isOptionField
+    ? (issueField.options || [])
+        .map((option) => transformIssueFieldOptions(ctx, issueField.scope?.type ?? "", option))
+        .filter(Boolean)
+    : undefined;
+
   return {
-    external_id: `${projectId}_${resourceId}_${fieldId}`,
+    external_id: `${projectId}_${resourceId}_${issueField.scope?.type}_${fieldId}`,
     external_source: source,
     display_name: issueField.name,
     type_id: issueField.scope?.type ? `${projectId}_${resourceId}_${issueField.scope?.type}` : undefined,
     is_required: false,
     is_active: true,
     ...getPropertyAttributes(issueField),
+    ...(options && options.length > 0 ? { options } : {}),
   };
 };
 
 export const transformIssueFieldOptions = (
   ctx: TTransformationContext,
+  typeId: string,
   issueFieldOption: JiraIssueFieldOptions
 ): Partial<ExIssuePropertyOption> => {
   const { resourceId, projectId, source } = ctx;
   return {
-    external_id: `${projectId}_${resourceId}_${issueFieldOption.id}`,
+    external_id: `${projectId}_${resourceId}_${typeId}_${issueFieldOption.fieldId}_${issueFieldOption.id}`,
     external_source: source,
     name: issueFieldOption.value,
     is_active: issueFieldOption.disabled ? false : true,
-    property_id: `${projectId}_${resourceId}_${issueFieldOption.fieldId}`,
+    property_id: `${projectId}_${resourceId}_${typeId}_${issueFieldOption.fieldId}`,
   };
 };
 
 export const transformIssuePropertyValues = (
   ctx: TTransformationContext,
   issue: IJiraIssue,
+  typeId: string,
 
   planeIssueProperties: Map<string, Partial<ExIssueProperty>>, // TODO: replace Map with Record<string, Partial<ExIssueProperty>> in the future
 
-  jiraCustomFieldMap: Map<string, string> // TODO: replace Map with Record<string, string> in the future
+  jiraFieldTypeMap: Map<string, string> // TODO: replace Map with Record<string, string> in the future
 ): TPropertyValuesPayload => {
   const { resourceId, projectId } = ctx;
   // Get all custom fields that are present in the issue and are also present in the plane issue properties
   const customFieldKeysToTransform = Object.keys(issue.fields).filter(
-    (key) => key.startsWith("customfield_") && planeIssueProperties.has(key)
+    (key) => key.startsWith("customfield_") && planeIssueProperties.has(`${typeId}_${key}`)
   );
   // Get transformed values for property_id -> property_values
   const propertyValuesPayload: TPropertyValuesPayload = {};
   customFieldKeysToTransform.forEach((key) => {
-    const property = planeIssueProperties.get(key);
-    if (property && property.external_id && jiraCustomFieldMap.has(key)) {
+    const property = planeIssueProperties.get(`${typeId}_${key}`);
+    const jiraPropertyId = property?.external_id?.split("_").pop();
+    if (property && property.external_id && jiraFieldTypeMap.has(key)) {
       propertyValuesPayload[property.external_id] = getPropertyValues(
         resourceId,
         projectId,
-        jiraCustomFieldMap.get(key) as JiraCustomFieldKeys,
+        typeId,
+        jiraPropertyId ?? "",
+        jiraFieldTypeMap.get(key) as string,
         issue.fields[key],
         (issue.renderedFields as any)?.[key]
       );
@@ -350,6 +381,45 @@ export const transformDefaultPropertyValues = (
         value: issue.fields.reporter.emailAddress || issue.fields.reporter.displayName || "",
       },
     ];
+  }
+
+  // Original Estimate
+  if (issue.fields.timeoriginalestimate) {
+    const originalEstimateExternalId = `${resourceId}-${projectId}-${issueTypeId}-original_estimate`;
+    propertyValuesPayload[originalEstimateExternalId] = [
+      {
+        external_source: source,
+        value:
+          issue.fields.timeoriginalestimate && !isNaN(issue.fields.timeoriginalestimate)
+            ? Number(issue.fields.timeoriginalestimate) / 60
+            : 0,
+      },
+    ];
+  }
+
+  // Resolution State
+  if (issue.fields.resolution) {
+    const resolutionExternalId = `${resourceId}-${projectId}-${issueTypeId}-resolution_state`;
+    propertyValuesPayload[resolutionExternalId] = [
+      {
+        external_source: source,
+        value: issue.fields.resolution.name || "",
+      },
+    ];
+  }
+
+  // Resolution as Resolution Date
+  if (issue.fields.resolutiondate) {
+    const resolutionDateExternalId = `${resourceId}-${projectId}-${issueTypeId}-resolution`;
+    const formattedDate = getFormattedDate(issue.fields.resolutiondate);
+    if (formattedDate) {
+      propertyValuesPayload[resolutionDateExternalId] = [
+        {
+          external_source: source,
+          value: formattedDate,
+        },
+      ];
+    }
   }
 
   return propertyValuesPayload;

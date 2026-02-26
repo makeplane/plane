@@ -79,6 +79,7 @@ export type ExIssueProperty = ExIssueTypeBase & {
   is_active?: boolean;
   is_multi?: boolean;
   type_id?: string;
+  options?: Partial<ExIssuePropertyOption>[];
 };
 
 // ====== issue type options ======

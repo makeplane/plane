@@ -212,7 +212,7 @@ export class JiraService {
     });
   }
 
-  async getIssueTypeFieldContexts(fieldId: string, contextIds: number[], startAt = 0) {
+  async getIssueTypeFieldContexts(fieldId: string, contextIds?: number[], startAt = 0) {
     return this.jiraClient.issueCustomFieldContexts.getIssueTypeMappingsForContexts({
       fieldId: fieldId,
       contextId: contextIds,

@@ -17,8 +17,8 @@ import type {
   ComponentWithIssueCount,
   Comment as JComment,
   IssueTypeDetails as JiraIssueTypeDetails,
-  FieldDetails,
   Worklog,
+  FieldDetails,
 } from "jira.js/out/version2/models/index.js";
 import type {
   ImportedJiraUser,
@@ -30,6 +30,7 @@ import type {
   JiraV2Service,
 } from "..";
 import { fetchPaginatedDataByKey, formatDateStringForHHMM, OPTION_CUSTOM_FIELD_TYPES } from "../helpers";
+import { isAxiosError } from "axios";
 
 type BasePaginationContext = {
   client: JiraV2Service;
@@ -283,45 +284,46 @@ export async function pullIssueFieldsV2(
 
   try {
     // Get custom fields directly
-    const fields: FieldDetails[] = await client.getCustomFields();
-    const fieldsWithCtx = await client.getCustomFieldsWithContext(projectId);
+    const fieldInfos: FieldDetails[] = await client.getCustomFields();
+    const fieldsWithCtx = await client.getCustomFieldsWithContext();
 
-    const mappedFields = fieldsWithCtx
-      .map((field) => ({
-        ...field,
-        fieldInfo: fields.find((f) => f.id === field.id),
-      }))
-      .filter((field) => field.isAllProjects || field.projectIds.includes(Number(projectId)));
+    for (const field of fieldsWithCtx) {
+      let associatedIssueTypes = projectIssueTypes;
 
-    for (const field of mappedFields) {
-      if (!field.fieldInfo) continue;
+      if (field.issueTypeIds && field.issueTypeIds.length > 0) {
+        associatedIssueTypes = projectIssueTypes.filter((projectIssueType) =>
+          field.issueTypeIds.includes(projectIssueType.id ?? "")
+        );
+      }
 
-      const resolveFieldPromises = field.issueTypeIds.map(async (issueTypeId: any) => {
-        const issueType = projectIssueTypes.find((type) => type.id === issueTypeId);
+      const fieldInfo = fieldInfos.find((fieldInfo) => fieldInfo.id === field.id);
+      if (!fieldInfo) continue;
 
-        if (!issueType) return;
+      const fieldOptions: JiraIssueFieldOptions[] = OPTION_CUSTOM_FIELD_TYPES.includes(
+        fieldInfo?.schema?.custom as JiraCustomFieldKeys
+      )
+        ? await getFieldOptionsV2(client, field.numericId.toString())
+        : [];
 
-        const fieldOptions: JiraIssueFieldOptions[] = OPTION_CUSTOM_FIELD_TYPES.includes(
-          field.fieldInfo?.schema?.custom as JiraCustomFieldKeys
-        )
-          ? await getFieldOptionsV2(client, field.numericId.toString(), projectId, issueTypeId)
-          : [];
-
-        return {
-          ...field.fieldInfo,
+      associatedIssueTypes.forEach((issueType) => {
+        const payload = {
+          ...fieldInfo,
           scope: {
             project: { id: projectId },
-            type: issueTypeId,
+            type: issueType.id,
           },
           options: fieldOptions,
         };
-      });
 
-      const resolvedFields: any = (await Promise.all(resolveFieldPromises)).filter((field) => field !== undefined);
-      customFields.push(...resolvedFields);
+        customFields.push(payload);
+      });
     }
-  } catch (e: any) {
-    console.error("Error fetching custom fields", e.response?.data);
+  } catch (e) {
+    if (isAxiosError(e)) {
+      console.error("Error fetching custom fields", e.response?.data);
+    } else {
+      console.error("Error fetching custom fields", e);
+    }
   }
 
   return customFields;
@@ -333,8 +335,8 @@ export async function pullIssueFieldsV2(
 async function getFieldOptionsV2(
   client: JiraV2Service,
   fieldId: string,
-  projectId: string,
-  issueTypeId: string
+  projectId?: string,
+  issueTypeId?: string
 ): Promise<JiraIssueFieldOptions[]> {
   const fieldOptions: JiraIssueFieldOptions[] = [];
 
@@ -349,8 +351,12 @@ async function getFieldOptionsV2(
         });
       });
     }
-  } catch (e: any) {
-    console.error(`Could not fetch field options for field ${fieldId}`, e.response?.data);
+  } catch (e) {
+    if (isAxiosError(e)) {
+      console.error(`Could not fetch field options for field ${fieldId}`, e.response?.data);
+    } else {
+      console.error(`Could not fetch field options for field ${fieldId}`, e);
+    }
   }
 
   return fieldOptions;

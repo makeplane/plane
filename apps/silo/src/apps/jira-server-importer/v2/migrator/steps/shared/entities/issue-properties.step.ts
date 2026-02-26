@@ -16,24 +16,27 @@ import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { JiraConfig, JiraIssueField } from "@plane/etl/jira-server";
 import { pullIssueFieldsV2, transformIssueFields } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
-import type { ExIssueProperty, ExIssueType } from "@plane/sdk";
+import type { ExIssueProperty, ExIssuePropertyOption, ExIssueType } from "@plane/sdk";
 import type { TImportJob } from "@plane/types";
-import { withCache } from "@/apps/jira-server-importer/v2/helpers/cache";
 import { createEmptyContext, createSuccessContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
+import { extractJobData } from "@/apps/jira-server-importer/v2/helpers/job";
+import { getSupportedDefaultProperties } from "@/apps/jira-server-importer/v2/helpers/properties";
 import type {
   IStep,
   IStorageService,
   TIssuePropertiesData,
   TIssueTypesData,
   TJobContext,
+  TKnownFieldMapping,
   TStepExecutionContext,
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
 import { E_ADDITIONAL_STORAGE_KEYS, EJiraStep } from "@/apps/jira-server-importer/v2/types";
-import { createOrUpdateIssueProperties } from "@/etl/migrator/issue-types/issue-property.migrator";
+import { getAPIClientInternal } from "@/services/client";
 import { extractErrorMetadata } from "@/helpers/errors";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import { KNOWN_CUSTOM_FIELDS_REVERSE_MAP } from "@/apps/jira-server-importer/v2/helpers/constants";
 
 /**
  * Jira Server Issue Properties Step
@@ -73,6 +76,8 @@ export class JiraIssuePropertiesStep implements IStep {
 
       // Pull all fields (no pagination)
       const pulled = await this.pull(jobContext, projectId, issueTypesData);
+      const defaultProperties = this.generateDefaultProperties(job, issueTypesData);
+      const knownCustomFieldMapping = this.extractKnownCustomFields(pulled);
 
       if (pulled.length === 0) {
         logger.info(`[${jobContext.job.id}] [${this.name}] No custom fields found`, { jobId: job.id });
@@ -80,11 +85,12 @@ export class JiraIssuePropertiesStep implements IStep {
       }
 
       const transformed = this.transform(job, pulled);
-      const pushed = await this.push(jobContext, transformed, issueTypesData);
+      const allProperties = [...transformed, ...defaultProperties];
+      const pushed = await this.push(jobContext, allProperties, issueTypesData);
 
       await Promise.all([
         this.storePropertiesData(this.name, jobContext.job, pushed, storage),
-        this.storeAdditionalData(jobContext.job, storage, { rawFields: pulled }),
+        this.storeAdditionalData(jobContext.job, storage, { rawFields: pulled, knownCustomFieldMapping }),
       ]);
 
       logger.info(`[${jobContext.job.id}] [${this.name}] Completed`, {
@@ -169,81 +175,181 @@ export class JiraIssuePropertiesStep implements IStep {
   }
 
   /**
-   * Push properties to Plane and store mappings
+   * Generate default properties for each issue type
+   * Creates properties like fixVersion, Version, Reporter, etc.
+   */
+  private generateDefaultProperties(
+    job: TImportJob<JiraConfig>,
+    issueTypesData: TIssueTypesData
+  ): Partial<ExIssueProperty>[] {
+    const { resourceId, projectId } = extractJobData(job);
+    const defaultProperties: Partial<ExIssueProperty>[] = [];
+
+    for (const issueType of issueTypesData) {
+      const properties = getSupportedDefaultProperties(
+        resourceId,
+        projectId,
+        issueType.id,
+        issueType.external_id,
+        this.source
+      );
+      defaultProperties.push(...properties);
+    }
+
+    logger.info(`[${job.id}] [${this.name}] Generated default properties`, {
+      jobId: job.id,
+      count: defaultProperties.length,
+    });
+
+    return defaultProperties;
+  }
+
+  /**
+   * Push properties to Plane using bulk API
    */
   protected async push(
     jobContext: TJobContext,
     properties: Partial<ExIssueProperty>[],
     issueTypesData: TIssueTypesData
   ): Promise<ExIssueProperty[]> {
-    // Build dependencies for push
+    const { job } = jobContext;
     const issueTypesMap = this.buildIssueTypesMap(issueTypesData);
-    const defaultIssueType = this.getDefaultIssueType(issueTypesData);
-    const existingProperties = await this.fetchExistingProperties(jobContext, issueTypesData);
 
-    // Separate create vs update
-    const { toCreate, toUpdate } = this.separateCreateAndUpdate(properties, existingProperties);
+    // Group properties by issue type
+    const propertiesByType = new Map<string, Partial<ExIssueProperty>[]>();
 
-    // Create and update
-    const created = await this.putProperties(jobContext, toCreate, issueTypesMap, defaultIssueType, "create");
-    const updated = await this.putProperties(jobContext, toUpdate, issueTypesMap, defaultIssueType, "update");
+    for (const property of properties) {
+      const issueType = issueTypesMap.get(property.type_id || "");
 
-    const allProperties = [...created, ...updated];
+      if (issueType) {
+        const typeId = issueType.id ?? "";
+
+        if (!propertiesByType.has(typeId)) {
+          propertiesByType.set(typeId, []);
+        }
+
+        // Set the correct type_id
+        property.type_id = typeId;
+        propertiesByType.get(typeId)!.push(property);
+      } else {
+        logger.warn(`[${job.id}] Issue Properties, issue type not found`, {
+          type_id: property.type_id,
+          issue_type_map: issueTypesMap,
+        });
+      }
+    }
+
+    // Process each issue type's properties using bulk API
+    const apiClient = getAPIClientInternal();
+    const allProperties: ExIssueProperty[] = [];
+    const allErrors: Array<{ payload: Partial<ExIssueProperty>; error: string }> = [];
+
+    const BATCH_SIZE = 50;
+
+    for (const [typeId, typeProperties] of propertiesByType.entries()) {
+      try {
+        logger.info(`[${job.id}] [${this.name}] Starting bulk operation for type ${typeId}`, {
+          jobId: job.id,
+          typeId,
+          totalCount: typeProperties.length,
+          batchSize: BATCH_SIZE,
+        });
+
+        let typeCreatedCount = 0;
+        let typeUpdatedCount = 0;
+        let typeErroredCount = 0;
+        const typeCreatedNames: string[] = [];
+
+        for (let i = 0; i < typeProperties.length; i += BATCH_SIZE) {
+          const chunk = typeProperties.slice(i, i + BATCH_SIZE);
+
+          logger.info(`[${job.id}] [${this.name}] Processing batch for type ${typeId}`, {
+            jobId: job.id,
+            typeId,
+            batchRange: `${i + 1}-${Math.min(i + BATCH_SIZE, typeProperties.length)}`,
+            total: typeProperties.length,
+          });
+
+          const result = await apiClient.workItemProperty.bulkCreateOrUpdateIssueProperties(
+            job.workspace_slug,
+            job.project_id,
+            typeId,
+            chunk
+          );
+
+          allProperties.push(...result.created, ...result.updated);
+          allErrors.push(...result.errored);
+
+          // Update type-level metrics
+          typeCreatedCount += result.created.length;
+          typeUpdatedCount += result.updated.length;
+          typeErroredCount += result.errored.length;
+          typeCreatedNames.push(...result.created.map((p) => p.display_name));
+        }
+
+        logger.info(`[${job.id}] [${this.name}] Bulk operation completed for type ${typeId}`, {
+          jobId: job.id,
+          typeId,
+          created: typeCreatedCount,
+          updated: typeUpdatedCount,
+          errored: typeErroredCount,
+        });
+
+        executionLog.collect(job.id, {
+          entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
+          phase: "CREATE_PROPERTIES",
+          level: EExecutionLogLevel.INFO,
+          metrics: {
+            imported: typeCreatedCount,
+            errored: typeErroredCount,
+          },
+          additional_data: {
+            propertyNames: typeCreatedNames,
+          },
+        });
+      } catch (error) {
+        logger.error(`[${job.id}] [${this.name}] Error in bulk operation for type ${typeId}`, {
+          jobId: job.id,
+          typeId,
+          error: error instanceof Error ? error.message : String(error),
+        });
+        // Add all properties for this type to errors
+        typeProperties.forEach((prop) => {
+          allErrors.push({
+            payload: prop,
+            error: error instanceof Error ? error.message : String(error),
+          });
+        });
+      }
+    }
+
+    if (allErrors.length > 0) {
+      logger.warn(`[${job.id}] [${this.name}] Some properties failed to create/update`, {
+        jobId: job.id,
+        errorCount: allErrors.length,
+        errors: allErrors,
+      });
+    }
 
     return allProperties;
   }
 
   /**
-   * Create or update properties in Plane
+   * @param jiraFields
+   * @returns knownCustomFieldMapping
    */
-  private async putProperties(
-    jobContext: TJobContext,
-    properties: Partial<ExIssueProperty>[],
-    issueTypesMap: Map<string, ExIssueType>,
-    defaultIssueType: ExIssueType | undefined,
-    method: "create" | "update"
-  ): Promise<ExIssueProperty[]> {
-    if (properties.length === 0) return [];
-
-    const { job, planeClient } = jobContext;
-
-    logger.info(`[${job.id}] [${this.name}] Putting Properties: ${method} mode`, {
-      jobId: job.id,
-      count: properties.length,
-    });
-
-    try {
-      // Summary is collected inside createOrUpdateIssueProperties
-      return await createOrUpdateIssueProperties({
-        jobId: job.id,
-        issueTypesMap,
-        defaultIssueType,
-        issueProperties: properties,
-        planeClient,
-        workspaceSlug: job.workspace_slug,
-        projectId: job.project_id,
-        method,
-      });
-    } catch (error) {
-      logger.error(`[${job.id}][${this.name}] Unable to ${method} properties`, error);
-
-      executionLog.collect(job.id, {
-        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
-        phase: method === "create" ? "CREATE_PROPERTIES" : "UPDATE_PROPERTIES",
-        level: EExecutionLogLevel.ERROR,
-        error: extractErrorMetadata(error),
-        additional_data: {
-          attemptedCount: properties.length,
-        },
-      });
-
-      throw error;
-    }
+  protected extractKnownCustomFields(jiraFields: JiraIssueField[]): TKnownFieldMapping[] {
+    return jiraFields.reduce((acc, field) => {
+      if (field.name && field.name in KNOWN_CUSTOM_FIELDS_REVERSE_MAP) {
+        acc.push({
+          name: KNOWN_CUSTOM_FIELDS_REVERSE_MAP[field.name],
+          data: field,
+        });
+      }
+      return acc;
+    }, [] as TKnownFieldMapping[]);
   }
 
-  /**
-   * Build issue types map from Plane
-   */
   /**
    * Build issue types map from dependency data (no API call)
    */
@@ -259,82 +365,6 @@ export class JiraIssuePropertiesStep implements IStep {
         } as ExIssueType,
       ])
     );
-  }
-
-  /**
-   * Get default issue type from dependency data (no API call)
-   */
-  private getDefaultIssueType(issueTypesData: TIssueTypesData): ExIssueType | undefined {
-    return issueTypesData.find((type) => type.is_default) as ExIssueType;
-  }
-
-  /**
-   * Fetch existing properties from Plane
-   */
-  private async fetchExistingProperties(
-    jobContext: TJobContext,
-    issueTypesData: TIssueTypesData
-  ): Promise<Map<string, ExIssueProperty>> {
-    const { job, planeClient } = jobContext;
-    const existingProperties = new Map<string, ExIssueProperty>();
-
-    try {
-      for (const issueType of issueTypesData) {
-        const properties: ExIssueProperty[] = await withCache(
-          `${this.name}:${issueType.id}`,
-          job,
-          async () => await planeClient.issueProperty.fetch(job.workspace_slug, job.project_id, issueType.id)
-        );
-        properties.forEach((prop) => existingProperties.set(prop.external_id, prop));
-      }
-
-      executionLog.collect(job.id, {
-        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
-        phase: "FETCH_EXISTING_PROPERTIES",
-        level: EExecutionLogLevel.INFO,
-        metrics: {
-          already_existed: existingProperties.size,
-        },
-        additional_data: {
-          propertyNames: Array.from(existingProperties.values()).map((p) => p.display_name),
-        },
-      });
-
-      logger.info(`[${job.id}] [${this.name}] Found existing properties`, {
-        jobId: job.id,
-        count: existingProperties.size,
-      });
-    } catch (error) {
-      logger.error(`[${job.id}] [${this.name}] Error fetching existing properties`, { jobId: job.id, error });
-
-      executionLog.collect(job.id, {
-        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
-        phase: "FETCH_EXISTING_PROPERTIES",
-        level: EExecutionLogLevel.ERROR,
-        error: extractErrorMetadata(error),
-      });
-    }
-
-    return existingProperties;
-  }
-
-  /**
-   * Separate properties into create vs update
-   */
-  private separateCreateAndUpdate(
-    properties: Partial<ExIssueProperty>[],
-    existingProperties: Map<string, ExIssueProperty>
-  ): { toCreate: Partial<ExIssueProperty>[]; toUpdate: Partial<ExIssueProperty>[] } {
-    const toCreate = properties.filter((prop) => !existingProperties.has(prop.external_id || ""));
-
-    const toUpdate = properties
-      .filter((prop) => existingProperties.has(prop.external_id || ""))
-      .map((prop) => ({
-        ...existingProperties.get(prop.external_id || ""),
-        ...prop,
-      }));
-
-    return { toCreate, toUpdate };
   }
 
   /**
@@ -364,9 +394,29 @@ export class JiraIssuePropertiesStep implements IStep {
       display_name: prop.display_name,
       property_type: prop.property_type,
       relation_type: prop.relation_type,
+      options: prop.options as Partial<ExIssuePropertyOption>[],
     }));
 
-    await storage.storeData(job.id, name, propertiesData, "external_id");
+    await storage.storeData(job.id, name, propertiesData, ["external_id"]);
+
+    // Extract and store options separately for backward compatibility with issues step
+    const allOptions = properties.flatMap((prop) => prop.options || []);
+    if (allOptions.length > 0) {
+      const optionMappings = allOptions
+        .filter((option) => option.external_id && option.id)
+        .map((option) => ({
+          externalId: option.external_id!,
+          planeId: option.id!,
+        }));
+
+      await storage.storeMapping(job.id, EJiraStep.ISSUE_PROPERTY_OPTIONS, optionMappings);
+      await storage.storeData(job.id, EJiraStep.ISSUE_PROPERTY_OPTIONS, allOptions, ["external_id"]);
+
+      logger.info(`[${job.id}] [${this.name}] Stored options mappings and data`, {
+        jobId: job.id,
+        optionsCount: allOptions.length,
+      });
+    }
 
     logger.info(`[${job.id}] [${this.name}] Stored mappings and data`, {
       jobId: job.id,
@@ -379,8 +429,19 @@ export class JiraIssuePropertiesStep implements IStep {
     storage: IStorageService,
     additionalData: {
       rawFields: JiraIssueField[];
+      knownCustomFieldMapping: TKnownFieldMapping[];
     }
   ): Promise<void> {
-    await storage.storeData(job.id, E_ADDITIONAL_STORAGE_KEYS.JIRA_RAW_FIELDS, additionalData.rawFields, "id");
+    await storage.storeData(job.id, E_ADDITIONAL_STORAGE_KEYS.JIRA_RAW_FIELDS, additionalData.rawFields, [
+      "id",
+      "scope.type",
+    ]);
+
+    await storage.storeData(
+      job.id,
+      E_ADDITIONAL_STORAGE_KEYS.JIRA_KNOWN_FIELD_MAPPING,
+      additionalData.knownCustomFieldMapping,
+      ["name"]
+    );
   }
 }

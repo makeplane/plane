@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-FileCopyrightText: 2026-present Plane Software, Inc.
  * SPDX-License-Identifier: LicenseRef-Plane-Commercial
  *
  * Licensed under the Plane Commercial License (the "License");
@@ -11,5 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./summary.step";
-export * from "./toggle-issue-properties.step";
+export const KNOWN_CUSTOM_FIELDS = {
+  EPIC_LINK: "Epic Link",
+};
+
+export const KNOWN_CUSTOM_FIELDS_REVERSE_MAP = Object.entries(KNOWN_CUSTOM_FIELDS).reduce(
+  (acc, [key, value]) => {
+    acc[value] = key as keyof typeof KNOWN_CUSTOM_FIELDS;
+    return acc;
+  },
+  {} as Record<string, keyof typeof KNOWN_CUSTOM_FIELDS>
+);

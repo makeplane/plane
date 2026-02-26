@@ -11,6 +11,7 @@
 
 from .issue_properties import (
     IssueProperty,
+    IssueTypeProperty,
     IssuePropertyOption,
     IssuePropertyValue,
     IssuePropertyActivity,

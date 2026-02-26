@@ -30,6 +30,7 @@ import type {
   JiraV2Service,
 } from "..";
 import { fetchPaginatedDataByKey, formatDateStringForHHMM, OPTION_CUSTOM_FIELD_TYPES } from "../helpers";
+import { isAxiosError } from "axios";
 
 export async function pullUsers(client: JiraV2Service): Promise<ImportedJiraUser[]> {
   const jiraUsers = await client.getJiraUsers();
@@ -210,8 +211,12 @@ async function getFieldOptions(
         });
       });
     }
-  } catch (e: any) {
-    console.error(`Could not fetch field options for field ${fieldId}`, e.response?.data);
+  } catch (e) {
+    if (isAxiosError(e)) {
+      console.error(`Could not fetch field options for field ${fieldId}`, e.response?.data);
+    } else {
+      console.error(`Could not fetch field options for field ${fieldId}`, e);
+    }
   }
 
   return fieldOptions;

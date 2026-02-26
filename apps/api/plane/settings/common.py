@@ -428,6 +428,7 @@ CELERY_IMPORTS = (
     "plane.ee.bgtasks.recurring_work_item_task",
     "plane.ee.bgtasks.cycle_automation_task",
     # silo tasks
+    "plane.silo.bgtasks.toggle_issue_properties_task",
     "plane.silo.bgtasks.integration_apps_task",
     "plane.silo.bgtasks.bulk_update_issue_relations_task",
     "plane.silo.bgtasks.bulk_update_issue_relations_task_v2",

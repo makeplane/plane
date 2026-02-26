@@ -11,9 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { JiraV2Service } from "@plane/etl/jira-server";
+import type { JiraIssueField, JiraV2Service } from "@plane/etl/jira-server";
 import type { Client as PlaneClient, TWorklog } from "@plane/sdk";
 import type { TImportJob, TWorkspaceCredential } from "@plane/types";
+import type { KNOWN_CUSTOM_FIELDS } from "../helpers/constants";
 
 export enum EJiraStep {
   // Pre-run
@@ -38,6 +39,7 @@ export enum EJiraStep {
   RELATIONS = "relations",
 
   // Post Run
+  TOGGLE_ISSUE_PROPERTIES = "toggle_issue_properties",
   SUMMARY = "summary",
 }
 
@@ -59,6 +61,11 @@ export type TIssuesAssociationsData = {
   cycles: Map<string, string[]>;
   modules: Map<string, string[]>;
   worklogs: Map<string, Partial<TWorklog>[]>;
+};
+
+export type TKnownFieldMapping = {
+  name: keyof typeof KNOWN_CUSTOM_FIELDS;
+  data: JiraIssueField;
 };
 
 /**
@@ -93,6 +100,7 @@ export type TOrchestratorState = {
 export enum E_ADDITIONAL_STORAGE_KEYS {
   JIRA_RAW_FIELDS = "JIRA_RAW_FIELDS",
   JIRA_ISSUE_RELATIONS = "JIRA_ISSUE_RELATIONS",
+  JIRA_KNOWN_FIELD_MAPPING = "JIRA_KNOWN_FIELD_MAPPING",
 }
 
 /**
@@ -224,7 +232,7 @@ export interface IStorageService {
   ): Promise<void>;
 
   /** Store shared data from a step for dependent steps to use */
-  storeData<T>(jobId: string, stepName: string, data: T[], deduplicateBy: keyof T): Promise<void>;
+  storeData<T>(jobId: string, stepName: string, data: T[], deduplicateBy: string[]): Promise<void>;
 
   /** Get shared data from a step for dependent steps to use */
   retrieveData<T>(jobId: string, stepName: string): Promise<T | null>;

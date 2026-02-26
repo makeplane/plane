@@ -22,3 +22,4 @@ from .importer_report import (
     ImportJobSummaryAPIView,
 )
 from .page import WikiBulkOperationAPIView, ProjectPageBulkOperationAPIView, TeamspacePageBulkOperationAPIView
+from .work_item_property import IssuePropertyBulkOperationAPIView

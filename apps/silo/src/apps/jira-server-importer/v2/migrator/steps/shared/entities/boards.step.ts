@@ -180,7 +180,7 @@ export class JiraBoardsStep implements IStep {
           type: board.type,
         })) as TBoardData;
 
-      await storage.storeData(jobId, this.name, boardData, "id");
+      await storage.storeData(jobId, this.name, boardData, ["id"]);
 
       executionLog.collect(jobId, {
         entity_type: EExecutionLogEntityType.BOARDS,

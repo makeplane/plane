@@ -15,14 +15,13 @@ import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import {
   JiraBoardsStep,
   JiraCyclesStep,
-  JiraDefaultPropertiesStep,
   JiraExecutionSummaryStep,
   JiraIssuePropertiesStep,
-  JiraIssuePropertyOptionsStep,
   JiraIssuesStep,
   JiraIssueTypesStep,
   JiraModulesStep,
   JiraRelationsStep,
+  JiraToggleIssuePropertiesStep,
   JiraUsersStep,
   PlaneProjectConfigurationStep,
   WaitForCeleryStep,
@@ -38,14 +37,13 @@ const JIRA_SERVER_STEPS = [
   new JiraCyclesStep(E_IMPORTER_KEYS.JIRA_SERVER),
   new JiraIssueTypesStep(E_IMPORTER_KEYS.JIRA_SERVER),
   new JiraIssuePropertiesStep(E_IMPORTER_KEYS.JIRA_SERVER),
-  new JiraDefaultPropertiesStep(E_IMPORTER_KEYS.JIRA_SERVER),
-  new JiraIssuePropertyOptionsStep(E_IMPORTER_KEYS.JIRA_SERVER),
   // Issue steps
   new JiraIssuesStep(E_IMPORTER_KEYS.JIRA_SERVER),
   new WaitForCeleryStep(),
   // Association steps
   new JiraRelationsStep(E_IMPORTER_KEYS.JIRA_SERVER),
   // Post Run Steps
+  new JiraToggleIssuePropertiesStep(),
   new JiraExecutionSummaryStep(),
 ];
 

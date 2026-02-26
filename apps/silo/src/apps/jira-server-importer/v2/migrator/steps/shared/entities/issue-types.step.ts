@@ -412,7 +412,7 @@ export class JiraIssueTypesStep implements IStep {
       is_default: type.is_default || false,
       is_epic: type.is_epic || false,
     }));
-    await storage.storeData(job.id, this.name, issueTypesData, "external_id");
+    await storage.storeData(job.id, this.name, issueTypesData, ["external_id"]);
 
     logger.info(`[${job.id}] [${this.name}] Stored mappings for page`, {
       jobId: job.id,

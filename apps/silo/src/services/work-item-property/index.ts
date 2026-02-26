@@ -11,5 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./summary.step";
-export * from "./toggle-issue-properties.step";
+export * from "./work-item-property.service";

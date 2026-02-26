@@ -35,6 +35,7 @@ import {
   transformIssueFields,
   transformIssuePropertyValues,
   transformDefaultPropertyValues,
+  resolveFieldTypeKey,
 } from "@plane/etl/jira-server";
 import type {
   ExCycle,
@@ -189,6 +190,7 @@ export const getTransformedIssueFieldOptions = (
             projectId: job.project_id,
             source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
           },
+          "",
           fieldOption
         )
       )
@@ -212,11 +214,11 @@ export const getTransformedIssuePropertyValues = (
         return [`customfield_${customFieldKey}`, property];
       })
   );
-  // Get the jira custom field map to get the type of the custom field
-  const jiraCustomFieldMap = new Map<string, string>(
+  // Get the jira field type map to get the type of the custom field (supports both custom attributes and system types)
+  const jiraFieldTypeMap = new Map<string, string>(
     entities.issueFields
-      .filter((property) => property.id && property.schema?.custom)
-      .map((property) => [property.id as string, property.schema?.custom as string])
+      .filter((property) => property.id && resolveFieldTypeKey(property.schema))
+      .map((property) => [property.id as string, resolveFieldTypeKey(property.schema) as string])
   );
   // Get transformed values for issue_id -> property_id -> property_values
   const transformedIssuePropertyValues: TIssuePropertyValuesPayload = {};
@@ -225,8 +227,9 @@ export const getTransformedIssuePropertyValues = (
       transformedIssuePropertyValues[`${projectId}_${resourceId}_${issue.id}`] = transformIssuePropertyValues(
         { resourceId, projectId, source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA },
         issue,
+        "",
         planeIssuePropertiesMap,
-        jiraCustomFieldMap
+        jiraFieldTypeMap
       );
     }
   });
@@ -244,19 +247,25 @@ export const getTransformedIssuePropertyValuesV2 = (
   const projectId = job.project_id;
   const transformedIssuePropertyValues: TIssuePropertyValuesPayload = {};
   // Get the plane issue properties map to only transform values for the properties that are present in the plane
+  //
   const planeIssuePropertiesMap = new Map<string, Partial<ExIssueProperty>>(
     planeIssueProperties
       .filter((property) => property.external_id)
       .map((property) => {
-        const customFieldKey = property.external_id?.split("_").pop();
-        return [`customfield_${customFieldKey}`, property];
+        const parts = property.external_id?.split("_") || [];
+        const customFieldKey = parts[parts.length - 1]; // Last part
+        const issueTypeId = parts[parts.length - 2]; // Second-to-last part
+        return { issueTypeId, customFieldKey, property };
       })
+      .filter(({ issueTypeId }) => issueTypeId)
+      .map(({ issueTypeId, customFieldKey, property }) => [`${issueTypeId}_customfield_${customFieldKey}`, property])
   );
-  // Get the jira custom field map to get the type of the custom field
-  const jiraCustomFieldMap = new Map<string, string>(
+
+  // Get the jira field type map to get the type of the custom field (supports both custom attributes and system types)
+  const jiraFieldTypeMap = new Map<string, string>(
     issueFields
-      .filter((property) => property.id && property.schema?.custom)
-      .map((property) => [property.id as string, property.schema?.custom as string])
+      .filter((property) => property.id && resolveFieldTypeKey(property.schema))
+      .map((property) => [property.id as string, resolveFieldTypeKey(property.schema) as string])
   );
   // Transform values for each issue
   issues.forEach((issue: IJiraIssue) => {
@@ -272,8 +281,9 @@ export const getTransformedIssuePropertyValuesV2 = (
       const customPropertyValues = transformIssuePropertyValues(
         { resourceId, projectId, source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA },
         issue,
+        issue.fields.issuetype?.id ?? "",
         planeIssuePropertiesMap,
-        jiraCustomFieldMap
+        jiraFieldTypeMap
       );
 
       // Transform default property values (fix versions, affected versions, reporter)

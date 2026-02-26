@@ -326,7 +326,7 @@ export class JiraV2Service {
     });
   }
 
-  async getIssueFieldOptions(fieldId: string, projectId: string, issueTypeId: string) {
+  async getIssueFieldOptions(fieldId: string, projectId?: string, issueTypeId?: string) {
     const response = await axios.get(`${this.hostname}/rest/api/2/customFields/${fieldId}/options`, {
       params: {
         projectIds: projectId,
