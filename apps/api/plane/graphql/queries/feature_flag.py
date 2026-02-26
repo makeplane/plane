@@ -144,10 +144,10 @@ class FeatureFlagQuery:
             # Timeline dependency
             timeline_dependency=feature_flags.get(FeatureFlagsTypesEnum.TIMELINE_DEPENDENCY.value, False),
             # PI
-            pi_chat=feature_flags.get(FeatureFlagsTypesEnum.AI_CHAT.value, False),
-            pi_dedupe=feature_flags.get(FeatureFlagsTypesEnum.AI_DEDUPE.value, False),
-            pi_converse=feature_flags.get(FeatureFlagsTypesEnum.AI_CONVERSE.value, False),
-            pi_file_uploads=feature_flags.get(FeatureFlagsTypesEnum.AI_FILE_UPLOADS.value, False),
+            pi_chat=feature_flags.get(FeatureFlagsTypesEnum.PI_CHAT.value, False),
+            pi_dedupe=feature_flags.get(FeatureFlagsTypesEnum.PI_DEDUPE.value, False),
+            pi_converse=feature_flags.get(FeatureFlagsTypesEnum.PI_CONVERSE.value, False),
+            pi_file_uploads=feature_flags.get(FeatureFlagsTypesEnum.PI_FILE_UPLOADS.value, False),
             # advanced search
             advanced_search=feature_flags.get(FeatureFlagsTypesEnum.ADVANCED_SEARCH.value, False),
         )
