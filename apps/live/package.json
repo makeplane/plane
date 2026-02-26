@@ -25,6 +25,7 @@
   },
   "author": "Plane Software Inc.",
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.989.0",
     "@dotenvx/dotenvx": "catalog:",
     "@effect/platform": "^0.94.0",
     "@effect/platform-node": "^0.104.0",

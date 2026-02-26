@@ -15,57 +15,58 @@ import { S3Client, HeadBucketCommand, CreateBucketCommand } from "@aws-sdk/clien
 import { logger } from "@plane/logger";
 import { env } from "@/env";
 
-// Where should I keep the initialisation of the S3Client?
-// Configure S3Client to use MinIO running on port 9000
+export let s3Client: S3Client | undefined;
 
-export let s3Client: S3Client | undefined = undefined;
-
-export const initializeS3Client = async () => {
-  const isSupported = env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY && env.AWS_REGION;
-
-  if (!isSupported) {
-    logger.error("AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_REGION must be set");
+export const initializeS3Client = async (): Promise<S3Client | undefined> => {
+  if (!env.AWS_REGION) {
+    logger.error("AWS_REGION must be set");
     return;
   }
 
   if (!s3Client) {
-    // Construct endpoint URL if not provided
-    const endpointUrl = env.AWS_S3_ENDPOINT_URL || `https://s3.${env.AWS_REGION}.amazonaws.com`;
+    const isMinio = !!env.AWS_S3_ENDPOINT_URL;
 
-    s3Client = new S3Client({
+    const clientConfig: any = {
       region: env.AWS_REGION,
-      endpoint: endpointUrl,
-      forcePathStyle: true,
-      credentials: {
-        accessKeyId: env.AWS_ACCESS_KEY_ID as string,
-        secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string,
-      },
-    });
+    };
+
+    // Only set endpoint if explicitly provided (MinIO or custom S3)
+    if (isMinio) {
+      clientConfig.endpoint = env.AWS_S3_ENDPOINT_URL;
+      clientConfig.forcePathStyle = true;
+    }
+
+    // Only set static credentials if BOTH exist
+    if (env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY) {
+      clientConfig.credentials = {
+        accessKeyId: env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+      };
+    }
+
+    // If no credentials provided → AWS SDK v3 uses default provider chain (IRSA works)
+    s3Client = new S3Client(clientConfig);
   }
 
-  // Ensure bucket exists during initialization
-  const bucketName = env.AWS_S3_BUCKET_NAME || "silo";
+  const bucketName = env.AWS_S3_BUCKET_NAME;
+  if (!bucketName) {
+    logger.error("AWS_S3_BUCKET_NAME must be set");
+    return s3Client;
+  }
 
   try {
-    // Check if bucket exists
     await s3Client.send(new HeadBucketCommand({ Bucket: bucketName }));
     logger.info(`Bucket ${bucketName} exists`);
   } catch (error: any) {
-    // If error code is 404, bucket doesn't exist
-    if (error.name === "NotFound" || error.$metadata?.httpStatusCode === 404) {
+    if (error?.$metadata?.httpStatusCode === 404) {
       try {
         logger.info(`Bucket ${bucketName} not found, creating...`);
-        await s3Client.send(
-          new CreateBucketCommand({
-            Bucket: bucketName,
-          })
-        );
+        await s3Client.send(new CreateBucketCommand({ Bucket: bucketName }));
         logger.info(`Bucket ${bucketName} created successfully`);
       } catch (createError) {
         logger.error(`Failed to create bucket ${bucketName}:`, createError);
       }
     } else {
-      // Other error (access denied, etc.)
       logger.error(`Error checking bucket ${bucketName}:`, error);
     }
   }
