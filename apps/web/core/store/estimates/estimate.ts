@@ -276,13 +276,16 @@ export class Estimate implements IEstimate {
       newEstimatePointId ? { new_estimate_id: newEstimatePointId } : undefined
     );
 
-    const currentIssues = Object.values(this.store.issue.issues.issuesMap || {});
-    if (currentIssues) {
-      currentIssues.map((issue) => {
-        if (issue.estimate_point === estimatePointId) {
-          this.store.issue.issues.updateIssue(issue.id, { estimate_point: newEstimatePointId });
-        }
-      });
+    // Collect all unique work item IDs and epic IDs for the current project
+    const projectWorkItemIds = new Set([
+      ...this.store.issue.issues.getProjectWorkItemIds(projectId),
+      ...this.store.issue.issues.getProjectEpicIds(projectId),
+    ]);
+    for (const workItemId of projectWorkItemIds) {
+      const workItem = this.store.issue.issues.getIssueById(workItemId);
+      if (workItem && workItem.estimate_point === estimatePointId) {
+        this.store.issue.issues.updateIssue(workItemId, { estimate_point: newEstimatePointId });
+      }
     }
 
     runInAction(() => {

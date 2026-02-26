@@ -27,7 +27,6 @@ import type {
   TGroupedIssues,
   TIssue,
   IIssueDisplayProperties,
-  IIssueMap,
   TSubGroupedIssues,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -57,7 +56,7 @@ import { KanbanIssueBlocksList } from "./blocks-list";
 
 interface IKanbanGroup {
   groupId: string;
-  issuesMap: IIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
   displayProperties: IIssueDisplayProperties | undefined;
   sub_group_by: TIssueGroupByOptions | undefined;
@@ -87,7 +86,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     group_by,
     orderBy,
     sub_group_by,
-    issuesMap,
+    getWorkItemById,
     displayProperties,
     groupedIssueIds,
     isDropDisabled,
@@ -315,7 +314,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
       <KanbanIssueBlocksList
         sub_group_id={sub_group_id}
         groupId={groupId}
-        issuesMap={issuesMap}
+        getWorkItemById={getWorkItemById}
         issueIds={issueIds || []}
         displayProperties={displayProperties}
         updateIssue={updateIssue}

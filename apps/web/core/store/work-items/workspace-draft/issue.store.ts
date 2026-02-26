@@ -41,7 +41,6 @@ export interface IWorkspaceDraftIssues {
   // observables
   loader: TWorkspaceDraftIssueLoader;
   paginationInfo: Omit<TWorkspaceDraftPaginationInfo<TWorkspaceDraftIssue>, "results"> | undefined;
-  issuesMap: Record<string, TWorkspaceDraftIssue>; // issue_id -> issue;
   issueMapIds: Record<string, string[]>; // workspace_id -> issue_ids;
   // computed
   issueIds: string[];
@@ -131,14 +130,14 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
   // observables
   loader: TWorkspaceDraftIssueLoader = undefined;
   paginationInfo: Omit<TWorkspaceDraftPaginationInfo<TWorkspaceDraftIssue>, "results"> | undefined = undefined;
-  issuesMap: Record<string, TWorkspaceDraftIssue> = {};
+  private workItemsMap: Record<string, TWorkspaceDraftIssue> = {};
   issueMapIds: Record<string, string[]> = {};
 
   constructor(public issueStore: IIssueRootStore) {
-    makeObservable(this, {
+    makeObservable<WorkspaceDraftIssues, "workItemsMap">(this, {
       loader: observable.ref,
       paginationInfo: observable,
-      issuesMap: observable,
+      workItemsMap: observable,
       issueMapIds: observable,
       // computed
       issueIds: computed,
@@ -166,13 +165,13 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     if (!workspaceSlug) return [];
     if (!this.issueMapIds[workspaceSlug]) return [];
     const issueIds = this.issueMapIds[workspaceSlug];
-    return orderBy(issueIds, (issueId) => convertToISODateString(this.issuesMap[issueId]?.created_at), ["desc"]);
+    return orderBy(issueIds, (issueId) => convertToISODateString(this.workItemsMap[issueId]?.created_at), ["desc"]);
   }
 
   // computed functions
   getIssueById = computedFn((issueId: string) => {
-    if (!issueId || !this.issuesMap[issueId]) return undefined;
-    return this.issuesMap[issueId];
+    if (!issueId || !this.workItemsMap[issueId]) return undefined;
+    return this.workItemsMap[issueId];
   });
 
   // helper actions
@@ -180,25 +179,25 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     if (issues && issues.length <= 0) return;
     runInAction(() => {
       issues.forEach((issue) => {
-        if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
-        else update(this.issuesMap, issue.id, (prevIssue) => ({ ...prevIssue, ...issue }));
+        if (!this.workItemsMap[issue.id]) set(this.workItemsMap, issue.id, issue);
+        else update(this.workItemsMap, issue.id, (prevIssue) => ({ ...prevIssue, ...issue }));
       });
     });
   };
 
   mutateIssue = (issueId: string, issue: Partial<TWorkspaceDraftIssue>) => {
-    if (!issue || !issueId || !this.issuesMap[issueId]) return;
+    if (!issue || !issueId || !this.workItemsMap[issueId]) return;
     runInAction(() => {
-      set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
+      set(this.workItemsMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
       Object.keys(issue).forEach((key) => {
-        set(this.issuesMap, [issueId, key], issue[key as keyof TWorkspaceDraftIssue]);
+        set(this.workItemsMap, [issueId, key], issue[key as keyof TWorkspaceDraftIssue]);
       });
     });
   };
 
   removeIssue = async (issueId: string) => {
-    if (!issueId || !this.issuesMap[issueId]) return;
-    runInAction(() => unset(this.issuesMap, issueId));
+    if (!issueId || !this.workItemsMap[issueId]) return;
+    runInAction(() => unset(this.workItemsMap, issueId));
   };
 
   generateNotificationQueryParams = (
@@ -302,7 +301,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     try {
       this.loader = "update";
       runInAction(() => {
-        set(this.issuesMap, [issueId], {
+        set(this.workItemsMap, [issueId], {
           ...issueBeforeUpdate,
           ...payload,
           ...{ updated_at: getCurrentDateTimeInISO() },
@@ -314,7 +313,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     } catch (error) {
       this.loader = undefined;
       runInAction(() => {
-        set(this.issuesMap, [issueId], issueBeforeUpdate);
+        set(this.workItemsMap, [issueId], issueBeforeUpdate);
       });
       throw error;
     }
@@ -328,8 +327,8 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       runInAction(() => {
         // Remove the issue from the issueMapIds
         this.issueMapIds[workspaceSlug] = (this.issueMapIds[workspaceSlug] || []).filter((id) => id !== issueId);
-        // Remove the issue from the issuesMap
-        delete this.issuesMap[issueId];
+        // Remove the issue from the workItemsMap
+        delete this.workItemsMap[issueId];
         // reduce the count of issues in the pagination info
         if (this.paginationInfo?.total_count) {
           set(this, "paginationInfo", {
@@ -357,8 +356,8 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       runInAction(() => {
         // Remove the issue from the issueMapIds
         this.issueMapIds[workspaceSlug] = (this.issueMapIds[workspaceSlug] || []).filter((id) => id !== issueId);
-        // Remove the issue from the issuesMap
-        delete this.issuesMap[issueId];
+        // Remove the issue from the workItemsMap
+        delete this.workItemsMap[issueId];
         // reduce the count of issues in the pagination info
         if (this.paginationInfo?.total_count) {
           set(this, "paginationInfo", {

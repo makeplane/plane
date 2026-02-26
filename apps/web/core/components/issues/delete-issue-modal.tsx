@@ -44,7 +44,7 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
   const { workspaceSlug } = useParams();
-  const { issueMap } = useIssues();
+  const { getWorkItemById } = useIssues();
   const { getProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
@@ -58,7 +58,7 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
   if (!dataId && !data) return null;
 
   // derived values
-  const issue = data ? data : issueMap[dataId!];
+  const issue = data ? data : dataId ? getWorkItemById(dataId) : undefined;
   const projectDetails = getProjectById(issue?.project_id);
   const isIssueCreator = issue?.created_by === currentUser?.id;
 

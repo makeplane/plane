@@ -39,12 +39,12 @@ export function ArchiveIssueModal(props: Props) {
   const [isArchiving, setIsArchiving] = useState(false);
   // store hooks
   const { getProjectById } = useProject();
-  const { issueMap } = useIssues();
+  const { getWorkItemById } = useIssues();
 
   if (!dataId && !data) return null;
 
-  const issue = data ? data : issueMap[dataId!];
-  const projectDetails = getProjectById(issue.project_id);
+  const issue = data ? data : dataId ? getWorkItemById(dataId) : undefined;
+  const projectDetails = issue ? getProjectById(issue.project_id) : undefined;
 
   const onClose = () => {
     setIsArchiving(false);
@@ -79,7 +79,8 @@ export function ArchiveIssueModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.LG}>
       <div className="px-5 py-4">
         <h3 className="text-18 font-medium 2xl:text-20">
-          {isEpic ? t("epic.archive.label") : t("issue.archive.label")} {projectDetails?.identifier} {issue.sequence_id}
+          {isEpic ? t("epic.archive.label") : t("issue.archive.label")} {projectDetails?.identifier}{" "}
+          {issue?.sequence_id}
         </h3>
         <p className="mt-3 text-13 text-secondary">
           {isEpic ? t("epic.archive.confirm_message") : t("issue.archive.confirm_message")}

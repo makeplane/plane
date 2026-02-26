@@ -234,8 +234,9 @@ export const getPreviousIssuesState = (issues: TIssue[]) => {
   const issueIds = issues.map((issue) => issue.id);
   const issuesPreviousState: Record<string, TIssue> = {};
   issueIds.forEach((issueId) => {
-    if (store.issue.issues.issuesMap[issueId]) {
-      issuesPreviousState[issueId] = cloneDeep(store.issue.issues.issuesMap[issueId]);
+    const workItem = store.issue.issues.getIssueById(issueId);
+    if (workItem) {
+      issuesPreviousState[issueId] = cloneDeep(workItem);
     }
   });
   return issuesPreviousState;

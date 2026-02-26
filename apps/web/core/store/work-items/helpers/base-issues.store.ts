@@ -1029,7 +1029,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // For Each issue update module Ids by calling current store's update Issue, without making an API call
     issueIds.forEach((issueId) => {
-      const issueModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
+      const issueModuleIds = this.rootIssueStore.issues.getIssueById(issueId)?.module_ids ?? [];
       const updatedIssueModuleIds = uniq(concat(issueModuleIds, [moduleId]));
       this.issueUpdate(workspaceSlug, projectId, issueId, { module_ids: updatedIssueModuleIds }, false);
     });
@@ -1058,7 +1058,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // For Each issue update module Ids by calling current store's update Issue, without making an API call
     runInAction(() => {
       issueIds.forEach((issueId) => {
-        const issueModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
+        const issueModuleIds = this.rootIssueStore.issues.getIssueById(issueId)?.module_ids ?? [];
         const updatedIssueModuleIds = pull(issueModuleIds, moduleId);
         this.issueUpdate(workspaceSlug, projectId, issueId, { module_ids: updatedIssueModuleIds }, false);
       });
@@ -1076,7 +1076,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    */
   async addModulesToIssue(workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) {
     // keep a copy of the original module ids
-    const originalModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
+    const originalModuleIds = this.rootIssueStore.issues.getIssueById(issueId)?.module_ids ?? [];
     //Perform API call
     await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
       modules: moduleIds,
@@ -1117,7 +1117,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   ) {
     // keep a copy of the original module ids
     const issueBeforeChanges = clone(this.rootIssueStore.issues.getIssueById(issueId));
-    const originalModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
+    const originalModuleIds = this.rootIssueStore.issues.getIssueById(issueId)?.module_ids ?? [];
     try {
       runInAction(() => {
         // get current Module Ids of the issue

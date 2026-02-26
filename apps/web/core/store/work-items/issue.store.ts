@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { set, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -23,9 +22,6 @@ import { rootStore } from "@/lib/store-context";
 import { IssueService } from "@/services/issue";
 
 export type IIssueStore = {
-  // observables
-  issuesMap: Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
-  issuesIdentifierMap: Record<string, string>; // Record defines issue_identifier as key and issue_id as value
   // actions
   fetchWorkItems(workspaceSlug: string, projectId: string, issueIds: string[]): Promise<TIssue[]>;
   addIssue(issues: TIssue[]): void;
@@ -36,21 +32,22 @@ export type IIssueStore = {
   getIssueById(issueId: string): undefined | TIssue;
   getIssueIdByIdentifier(issueIdentifier: string): undefined | string;
   getIssuesByIds(issueIds: string[], type: "archived" | "un-archived"): TIssue[]; // Record defines issue_id as key and TIssue as value
+  getProjectWorkItemIds(projectId: string): string[];
   getProjectEpicIds(projectId: string): string[];
 };
 
 export class IssueStore implements IIssueStore {
   // observables
-  issuesMap: { [issue_id: string]: TIssue } = {};
-  issuesIdentifierMap: { [issue_identifier: string]: string } = {};
+  private workItemsMap: Map<string, TIssue> = new Map();
+  private workItemsIdentifierMap: Map<string, string> = new Map();
   // service
   issueService;
 
   constructor() {
-    makeObservable(this, {
+    makeObservable<IssueStore, "workItemsMap" | "workItemsIdentifierMap">(this, {
       // observable
-      issuesMap: observable,
-      issuesIdentifierMap: observable,
+      workItemsMap: observable,
+      workItemsIdentifierMap: observable,
       // actions
       addIssue: action,
       addIssueIdentifier: action,
@@ -62,36 +59,36 @@ export class IssueStore implements IIssueStore {
 
   // actions
   /**
-   * @description This method will add issues to the issuesMap
+   * @description This method will add issues to the workItemsMap
    * @param {TIssue[]} issues
    * @returns {void}
    */
-  addIssue = (issues: TIssue[]) => {
+  addIssue = (issues: TIssue[]): void => {
     if (issues && issues.length <= 0) return;
     runInAction(() => {
       issues.forEach((issue) => {
-        // add issue identifier to the issuesIdentifierMap
+        // add issue identifier to the workItemsIdentifierMap
         const projectIdentifier = rootStore.projectRoot.project.getProjectIdentifierById(issue?.project_id);
         const workItemSequenceId = issue?.sequence_id;
         const issueIdentifier = `${projectIdentifier}-${workItemSequenceId}`;
-        set(this.issuesIdentifierMap, issueIdentifier, issue.id);
-
-        if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
-        else update(this.issuesMap, issue.id, (prevIssue) => ({ ...prevIssue, ...issue }));
+        this.workItemsIdentifierMap.set(issueIdentifier, issue.id);
+        const existingWorkItem = this.workItemsMap.get(issue.id);
+        if (!existingWorkItem) this.workItemsMap.set(issue.id, issue);
+        else this.workItemsMap.set(issue.id, { ...existingWorkItem, ...issue });
       });
     });
   };
 
   /**
-   * @description This method will add issue_identifier to the issuesIdentifierMap
+   * @description This method will add issue_identifier to the workItemsIdentifierMap
    * @param issueIdentifier
    * @param issueId
    * @returns {void}
    */
-  addIssueIdentifier = (issueIdentifier: string, issueId: string) => {
+  addIssueIdentifier = (issueIdentifier: string, issueId: string): void => {
     if (!issueIdentifier || !issueId) return;
     runInAction(() => {
-      set(this.issuesIdentifierMap, issueIdentifier, issueId);
+      this.workItemsIdentifierMap.set(issueIdentifier, issueId);
     });
   };
 
@@ -100,7 +97,9 @@ export class IssueStore implements IIssueStore {
 
     runInAction(() => {
       issues.forEach((issue) => {
-        if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
+        const existingWorkItem = this.workItemsMap.get(issue.id);
+        if (!existingWorkItem) this.workItemsMap.set(issue.id, issue);
+        else this.workItemsMap.set(issue.id, { ...existingWorkItem, ...issue });
       });
     });
 
@@ -108,56 +107,59 @@ export class IssueStore implements IIssueStore {
   };
 
   /**
-   * @description This method will update the issue in the issuesMap
+   * @description This method will update the issue in the workItemsMap
    * @param {string} issueId
    * @param {Partial<TIssue>} issue
    * @returns {void}
    */
-  updateIssue = (issueId: string, issue: Partial<TIssue>) => {
-    if (!issue || !issueId || !this.issuesMap[issueId]) return;
+  updateIssue = (issueId: string, issue: Partial<TIssue>): void => {
     runInAction(() => {
-      set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
-      Object.keys(issue).forEach((key) => {
-        set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
-      });
+      const existingWorkItem = this.workItemsMap.get(issueId);
+      if (!existingWorkItem) return;
+      const updatedIssue: TIssue = {
+        ...existingWorkItem,
+        ...issue,
+        updated_at: getCurrentDateTimeInISO(),
+      };
+      this.workItemsMap.set(issueId, updatedIssue);
     });
   };
 
   /**
-   * @description This method will remove the issue from the issuesMap
+   * @description This method will remove the issue from the workItemsMap
    * @param {string} issueId
    * @returns {void}
    */
-  removeIssue = (issueId: string) => {
-    if (!issueId || !this.issuesMap[issueId]) return;
+  removeIssue = (issueId: string): void => {
+    if (!issueId || !this.workItemsMap.has(issueId)) return;
     runInAction(() => {
-      delete this.issuesMap[issueId];
+      this.workItemsMap.delete(issueId);
     });
   };
 
   // helper methods
   /**
-   * @description This method will return the issue from the issuesMap
+   * @description This method will return the issue from the workItemsMap
    * @param {string} issueId
    * @returns {TIssue | undefined}
    */
   getIssueById = computedFn((issueId: string) => {
-    if (!issueId || !this.issuesMap[issueId]) return undefined;
-    return this.issuesMap[issueId];
+    if (!issueId || !this.workItemsMap.has(issueId)) return undefined;
+    return this.workItemsMap.get(issueId);
   });
 
   /**
-   * @description This method will return the issue_id from the issuesIdentifierMap
+   * @description This method will return the issue_id from the workItemsIdentifierMap
    * @param {string} issueIdentifier
    * @returns {string | undefined}
    */
   getIssueIdByIdentifier = computedFn((issueIdentifier: string) => {
-    if (!issueIdentifier || !this.issuesIdentifierMap[issueIdentifier]) return undefined;
-    return this.issuesIdentifierMap[issueIdentifier];
+    if (!issueIdentifier || !this.workItemsIdentifierMap.has(issueIdentifier)) return undefined;
+    return this.workItemsIdentifierMap.get(issueIdentifier);
   });
 
   /**
-   * @description This method will return the issues from the issuesMap
+   * @description This method will return the issues from the workItemsMap
    * @param {string[]} issueIds
    * @param {boolean} archivedIssues
    * @returns {Record<string, TIssue> | undefined}
@@ -168,7 +170,7 @@ export class IssueStore implements IIssueStore {
     Object.values(issueIds).forEach((issueId) => {
       // if type is archived then check archived_at is not null
       // if type is un-archived then check archived_at is null
-      const issue = this.issuesMap[issueId];
+      const issue = this.workItemsMap.get(issueId);
       if (issue && ((type === "archived" && issue.archived_at) || (type === "un-archived" && !issue?.archived_at))) {
         filteredIssues.push(issue);
       }
@@ -177,12 +179,23 @@ export class IssueStore implements IIssueStore {
   });
 
   /**
+   * @description This method will return the work item ids for the project
+   * @param {string} projectId
+   * @returns {string[]}
+   */
+  getProjectWorkItemIds = computedFn((projectId: string) => {
+    return Array.from(this.workItemsMap.values())
+      .filter((issue) => issue.project_id === projectId && !issue.is_epic)
+      .map((issue) => issue.id);
+  });
+
+  /**
    * @description This method will return the epic ids for the project
    * @param {string} projectId
    * @returns {string[]}
    */
   getProjectEpicIds = computedFn((projectId: string) => {
-    return Object.values(this.issuesMap)
+    return Array.from(this.workItemsMap.values())
       .filter((issue) => issue.project_id === projectId && issue.is_epic)
       .map((issue) => issue.id);
   });

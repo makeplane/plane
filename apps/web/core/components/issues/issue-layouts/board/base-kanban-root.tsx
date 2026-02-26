@@ -74,7 +74,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   // store hooks
   const storeType = useIssueStoreType() as KanbanStoreType;
   const { allowPermissions } = useUserPermissions();
-  const { issueMap, issuesFilter, issues } = useIssues(storeType);
+  const { getWorkItemById, issuesFilter, issues } = useIssues(storeType);
   const {
     issue: { getIssueById },
   } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
@@ -275,7 +275,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
           <div className="relative h-full w-max min-w-full bg-surface-2">
             <div className="h-full w-max">
               <KanBanView
-                issuesMap={issueMap}
+                getWorkItemById={getWorkItemById}
                 groupedIssueIds={groupedIssueIds ?? {}}
                 getGroupIssueCount={issues.getGroupIssueCount}
                 displayProperties={displayProperties}

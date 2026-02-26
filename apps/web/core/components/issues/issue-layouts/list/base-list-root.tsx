@@ -80,7 +80,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
   } = useIssuesActions(storeType);
   // mobx store
   const { allowPermissions } = useUserPermissions();
-  const { issueMap } = useIssues();
+  const { getWorkItemById } = useIssues();
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
   const displayProperties = issuesFilter?.issueFilters?.displayProperties;
@@ -164,7 +164,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
       <div className={`relative size-full bg-surface-2`}>
         <List
-          issuesMap={issueMap}
+          getWorkItemById={getWorkItemById}
           displayProperties={displayProperties}
           group_by={group_by}
           orderBy={orderBy}

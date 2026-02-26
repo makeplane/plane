@@ -37,7 +37,7 @@ export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
-  const { issueMap } = useIssues();
+  const { getWorkItemById } = useIssues();
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
   const { data: currentUser } = useUser();
@@ -52,7 +52,7 @@ export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
   if (!dataId && !data) return null;
 
   // derived values
-  const issue = data ? data : issueMap[dataId!];
+  const issue = data ? data : dataId ? getWorkItemById(dataId) : undefined;
   const isIssueCreator = issue?.created_by === currentUser?.id;
   const authorized = isIssueCreator || canPerformProjectAdminActions;
 

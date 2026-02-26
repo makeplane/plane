@@ -23,7 +23,6 @@ import type {
   TGroupedIssues,
   TIssue,
   IIssueDisplayProperties,
-  TIssueMap,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   IGroupByColumn,
@@ -45,7 +44,7 @@ import type { TRenderQuickActions } from "./list-view-types";
 
 export interface IList {
   groupedIssueIds: TGroupedIssues;
-  issuesMap: TIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   group_by: TIssueGroupByOptions | null;
   orderBy: TIssueOrderByOptions | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -68,7 +67,7 @@ export interface IList {
 export const List = observer(function List(props: IList) {
   const {
     groupedIssueIds,
-    issuesMap,
+    getWorkItemById,
     group_by,
     orderBy,
     updateIssue,
@@ -153,7 +152,7 @@ export const List = observer(function List(props: IList) {
                   <ListGroup
                     key={group.id}
                     groupIssueIds={groupedIssueIds?.[group.id]}
-                    issuesMap={issuesMap}
+                    getWorkItemById={getWorkItemById}
                     group_by={group_by}
                     group={group}
                     updateIssue={updateIssue}

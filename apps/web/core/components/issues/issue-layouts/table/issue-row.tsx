@@ -85,9 +85,10 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
   const [isExpanded, setExpanded] = useState<boolean>(false);
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
-  const { issueMap } = useIssues();
+  const { getWorkItemById } = useIssues();
 
   // derived values
+  const workItem = getWorkItemById(issueId);
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueId);
   const isIssueActive = selectionHelpers.getIsEntityActive(issueId);
@@ -111,7 +112,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
         })}
         verticalOffset={100}
         shouldRecordHeights={false}
-        defaultValue={shouldRenderByDefault || isWorkItemNew(issueMap[issueId])}
+        defaultValue={shouldRenderByDefault || (workItem ? isWorkItemNew(workItem) : false)}
       >
         <IssueRowDetails
           issueId={issueId}

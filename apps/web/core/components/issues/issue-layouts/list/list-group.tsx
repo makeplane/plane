@@ -22,7 +22,6 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type {
   IGroupByColumn,
-  TIssueMap,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssue,
@@ -59,7 +58,7 @@ import type { TRenderQuickActions } from "./list-view-types";
 interface Props {
   groupIssueIds: string[] | undefined;
   group: IGroupByColumn;
-  issuesMap: TIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   group_by: TIssueGroupByOptions | null;
   orderBy: TIssueOrderByOptions | undefined;
   getGroupIndex: (groupId: string | undefined) => number;
@@ -86,7 +85,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   const {
     groupIssueIds = [],
     group,
-    issuesMap,
+    getWorkItemById,
     group_by,
     orderBy,
     getGroupIndex,
@@ -311,7 +310,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
             <IssueBlocksList
               issueIds={groupIssueIds}
               groupId={group.id}
-              issuesMap={issuesMap}
+              getWorkItemById={getWorkItemById}
               updateIssue={updateIssue}
               quickActions={quickActions}
               displayProperties={displayProperties}

@@ -19,7 +19,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { MONTHS_LIST } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate } from "@plane/types";
+import type { TGroupedIssues, TIssue, TPaginationData, ICalendarDate } from "@plane/types";
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
 // helpers
 import { highlightOnDrop } from "@/helpers/common";
@@ -41,7 +41,7 @@ type Props = {
     | IProjectViewIssuesFilter
     | IWorkspaceIssuesFilter;
   date: ICalendarDate;
-  issues: TIssueMap | undefined;
+  getWorkItemById: (workItemId: string) => TIssue | undefined;
   groupedIssueIds: TGroupedIssues;
   loadMoreIssues: (dateString: string) => void;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
@@ -68,7 +68,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
   const {
     issuesFilterStore,
     date,
-    issues,
+    getWorkItemById,
     groupedIssueIds,
     loadMoreIssues,
     getPaginationData,
@@ -115,7 +115,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
           const destinationData = self?.data as { date: string } | undefined;
           if (!sourceData || !destinationData) return;
 
-          const issueDetails = issues?.[sourceData?.id];
+          const issueDetails = getWorkItemById(sourceData?.id);
           if (issueDetails?.start_date) {
             const issueStartDate = new Date(issueDetails.start_date);
             const targetDate = new Date(destinationData?.date);

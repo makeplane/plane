@@ -67,7 +67,7 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
   const fallbackStoreType = useIssueStoreType() as CalendarStoreType;
   const storeType = isEpic ? EIssuesStoreType.EPIC : fallbackStoreType;
   const { allowPermissions } = useUserPermissions();
-  const { issues, issuesFilter, issueMap } = useIssues(storeType);
+  const { issues, issuesFilter, getWorkItemById } = useIssues(storeType);
   const {
     fetchIssues,
     fetchNextIssues,
@@ -168,7 +168,7 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
       <div className="h-full w-full overflow-hidden bg-surface-1 pt-4">
         <CalendarChart
           issuesFilterStore={issuesFilter}
-          issues={issueMap}
+          getWorkItemById={getWorkItemById}
           groupedIssueIds={groupedIssueIds}
           layout={displayFilters?.calendar?.layout}
           showWeekends={displayFilters?.calendar?.show_weekends ?? false}
@@ -197,6 +197,7 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
           handleDragAndDrop={handleDragAndDrop}
           canEditProperties={canEditProperties}
           isEpic={isEpic}
+          isLoading={issues.getIssueLoader() === "init-loader"}
         />
       </div>
     </>

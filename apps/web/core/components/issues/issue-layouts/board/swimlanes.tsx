@@ -20,7 +20,6 @@ import type {
   TGroupedIssues,
   TIssue,
   IIssueDisplayProperties,
-  IIssueMap,
   TSubGroupedIssues,
   TIssueKanbanFilters,
   TIssueGroupByOptions,
@@ -127,7 +126,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   isEpic?: boolean;
-  issuesMap: IIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   orderBy: TIssueOrderByOptions | undefined;
   quickActions: TRenderQuickActions;
@@ -151,7 +150,7 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
     handleCollapsedGroups,
     handleOnDrop,
     isEpic = false,
-    issuesMap,
+    getWorkItemById,
     list,
     loadMoreIssues,
     orderBy,
@@ -207,7 +206,7 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
               {subGroupByVisibilityToggle.showIssues && (
                 <div className="relative">
                   <KanBan
-                    issuesMap={issuesMap}
+                    getWorkItemById={getWorkItemById}
                     groupedIssueIds={groupedIssueIds}
                     getGroupIssueCount={getGroupIssueCount}
                     displayProperties={displayProperties}
@@ -259,7 +258,7 @@ export interface IKanBanSwimLanes {
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   isEpic?: boolean;
-  issuesMap: IIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   orderBy: TIssueOrderByOptions | undefined;
   quickActions: TRenderQuickActions;
@@ -272,7 +271,7 @@ export interface IKanBanSwimLanes {
 
 export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanSwimLanes) {
   const {
-    issuesMap,
+    getWorkItemById,
     groupedIssueIds,
     getGroupIssueCount,
     displayProperties,
@@ -329,7 +328,7 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
 
       {sub_group_by && (
         <SubGroupSwimlane
-          issuesMap={issuesMap}
+          getWorkItemById={getWorkItemById}
           list={subGroupByList}
           groupedIssueIds={groupedIssueIds}
           getGroupIssueCount={getGroupIssueCount}

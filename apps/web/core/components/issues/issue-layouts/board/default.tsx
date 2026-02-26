@@ -21,7 +21,6 @@ import type {
   TGroupedIssues,
   TIssue,
   IIssueDisplayProperties,
-  IIssueMap,
   TSubGroupedIssues,
   TIssueKanbanFilters,
   TIssueGroupByOptions,
@@ -46,7 +45,7 @@ import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
 
 export interface IKanBan {
-  issuesMap: IIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
   getGroupIssueCount: (
     groupId: string | undefined,
@@ -80,7 +79,7 @@ export interface IKanBan {
 
 export const KanBan = observer(function KanBan(props: IKanBan) {
   const {
-    issuesMap,
+    getWorkItemById,
     groupedIssueIds,
     getGroupIssueCount,
     displayProperties,
@@ -218,7 +217,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                 >
                   <KanbanGroup
                     groupId={subList.id}
-                    issuesMap={issuesMap}
+                    getWorkItemById={getWorkItemById}
                     groupedIssueIds={groupedIssueIds}
                     displayProperties={displayProperties}
                     sub_group_by={sub_group_by}

@@ -21,7 +21,7 @@ import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import type { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
+import type { TIssue, IIssueDisplayProperties } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
 import { Spinner, ControlLink, Row } from "@plane/ui";
@@ -46,7 +46,7 @@ import type { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
   issueId: string;
-  issuesMap: TIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   groupId: string;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
@@ -65,7 +65,7 @@ interface IssueBlockProps {
 
 export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const {
-    issuesMap,
+    getWorkItemById,
     issueId,
     groupId,
     updateIssue,
@@ -113,7 +113,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     });
 
   // derived values
-  const issue = issuesMap[issueId];
+  const issue = getWorkItemById(issueId);
   const subIssuesCount = issue?.sub_issues_count ?? 0;
   const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
   const isDraggingAllowed = canDrag && canEditIssueProperties;

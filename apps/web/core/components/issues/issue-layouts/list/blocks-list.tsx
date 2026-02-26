@@ -11,9 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC, MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 // components
-import type { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
+import type { TIssue, IIssueDisplayProperties, TGroupedIssues } from "@plane/types";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
@@ -22,7 +22,7 @@ import type { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
   issueIds: TGroupedIssues | any;
-  issuesMap: TIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   groupId: string;
   canEditProperties: (projectId: string | undefined) => boolean;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -38,7 +38,7 @@ interface Props {
 export function IssueBlocksList(props: Props) {
   const {
     issueIds,
-    issuesMap,
+    getWorkItemById,
     groupId,
     updateIssue,
     quickActions,
@@ -59,7 +59,7 @@ export function IssueBlocksList(props: Props) {
           <IssueBlockRoot
             key={issueId}
             issueId={issueId}
-            issuesMap={issuesMap}
+            getWorkItemById={getWorkItemById}
             updateIssue={updateIssue}
             quickActions={quickActions}
             canEditProperties={canEditProperties}

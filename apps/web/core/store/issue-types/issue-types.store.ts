@@ -445,12 +445,10 @@ export class IssueTypes implements IIssueTypesStore {
         // add issue type to the store
         this.addOrUpdateIssueTypes([issueType]);
         // get all issues
-        const currentProjectIssues = Object.values(this.rootStore.issue.issues.issuesMap).filter(
-          (issue) => issue.project_id === projectId
-        );
+        const currentProjectWorkItemIds = this.rootStore.issue.issues.getProjectWorkItemIds(projectId);
         // attach issue type to all project issues
-        for (const issue of currentProjectIssues) {
-          this.rootStore.issue.issues.updateIssue(issue.id, { type_id: issueType.id });
+        for (const workItemId of currentProjectWorkItemIds) {
+          this.rootStore.issue.issues.updateIssue(workItemId, { type_id: issueType.id });
         }
         // update work item templates with default type
         this.rootStore.templatesRoot.workItemTemplates.updateWorkItemTemplatesWithDefaultType(workspaceSlug, projectId);

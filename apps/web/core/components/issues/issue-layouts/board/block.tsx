@@ -23,7 +23,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import type { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+import type { TIssue, IIssueDisplayProperties } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
 import { ControlLink, DropIndicator } from "@plane/ui";
@@ -51,7 +51,7 @@ interface IssueBlockProps {
   issueId: string;
   groupId: string;
   subGroupId: string;
-  issuesMap: IIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   draggableId: string;
   canDropOverIssue: boolean;
@@ -166,7 +166,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
     issueId,
     groupId,
     subGroupId,
-    issuesMap,
+    getWorkItemById,
     displayProperties,
     canDropOverIssue,
     canDragIssuesInCurrentGrouping,
@@ -191,7 +191,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
   // handlers
   const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
 
-  const issue = issuesMap[issueId];
+  const issue = getWorkItemById(issueId);
 
   const { setIsDragging: setIsKanbanDragging } = useKanbanView();
 
