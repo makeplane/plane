@@ -2,7 +2,7 @@ services:
   web:
     container_name: web
     build:
-      context: .
+      context: ./src
       dockerfile: ./apps/web/Dockerfile.web
       args:
         DOCKER_BUILDKIT: 1
@@ -13,7 +13,7 @@ services:
   admin:
     container_name: admin
     build:
-      context: .
+      context: ./src
       dockerfile: ./apps/admin/Dockerfile.admin
       args:
         DOCKER_BUILDKIT: 1
@@ -25,7 +25,7 @@ services:
   space:
     container_name: space
     build:
-      context: .
+      context: ./src
       dockerfile: ./apps/space/Dockerfile.space
       args:
         DOCKER_BUILDKIT: 1
@@ -37,14 +37,14 @@ services:
   api:
     container_name: api
     build:
-      context: ./apps/api
+      context: ./src/apps/api
       dockerfile: Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: always
     command: ./bin/docker-entrypoint-api.sh
     env_file:
-      - ./apps/api/.env
+      - ./src/apps/api/.env
     depends_on:
       - plane-db
       - plane-redis
@@ -52,14 +52,14 @@ services:
   worker:
     container_name: bgworker
     build:
-      context: ./apps/api
+      context: ./src/apps/api
       dockerfile: Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: always
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
-      - ./apps/api/.env
+      - ./src/apps/api/.env
     depends_on:
       - api
       - plane-db
@@ -68,14 +68,14 @@ services:
   beat-worker:
     container_name: beatworker
     build:
-      context: ./apps/api
+      context: ./src/apps/api
       dockerfile: Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: always
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
-      - ./apps/api/.env
+      - ./src/apps/api/.env
     depends_on:
       - api
       - plane-db
@@ -84,14 +84,14 @@ services:
   migrator:
     container_name: plane-migrator
     build:
-      context: ./apps/api
+      context: ./src/apps/api
       dockerfile: Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: no
     command: ./bin/docker-entrypoint-migrator.sh
     env_file:
-      - ./apps/api/.env
+      - ./src/apps/api/.env
     depends_on:
       - plane-db
       - plane-redis
@@ -99,7 +99,7 @@ services:
   live:
     container_name: plane-live
     build:
-      context: .
+      context: ./src
       dockerfile: ./apps/live/Dockerfile.live
       args:
         DOCKER_BUILDKIT: 1
@@ -155,7 +155,7 @@ services:
   proxy:
     container_name: proxy
     build:
-      context: ./apps/proxy
+      context: ./src/apps/proxy
       dockerfile: Dockerfile.ce
     restart: always
     ports:

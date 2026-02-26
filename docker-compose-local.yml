@@ -65,28 +65,28 @@ services:
 
   # web:
   #   build:
-  #     context: .
-  #     dockerfile: ./web/Dockerfile.dev
+  #     context: ./src
+  #     dockerfile: ./apps/web/Dockerfile.dev
   #   restart: unless-stopped
   #   networks:
   #     - dev_env
   #   volumes:
-  #     - ./web:/app/web
+  #     - ./src/apps/web:/app/web
   #   env_file:
-  #     - ./web/.env
+  #     - ./src/apps/web/.env
   #   depends_on:
   #     - api
   #     - worker
 
   # space:
   #   build:
-  #     context: .
-  #     dockerfile: ./space/Dockerfile.dev
+  #     context: ./src
+  #     dockerfile: ./apps/space/Dockerfile.dev
   #   restart: unless-stopped
   #   networks:
   #     - dev_env
   #   volumes:
-  #     - ./space:/app/space
+  #     - ./src/apps/space:/app/space
   #   depends_on:
   #     - api
   #     - worker
@@ -94,13 +94,13 @@ services:
 
   # admin:
   #   build:
-  #     context: .
-  #     dockerfile: ./admin/Dockerfile.dev
+  #     context: ./src
+  #     dockerfile: ./apps/admin/Dockerfile.dev
   #   restart: unless-stopped
   #   networks:
   #     - dev_env
   #   volumes:
-  #     - ./admin:/app/admin
+  #     - ./src/apps/admin:/app/admin
   #   depends_on:
   #     - api
   #     - worker
@@ -108,13 +108,13 @@ services:
 
   # live:
   #   build:
-  #     context: .
-  #     dockerfile: ./live/Dockerfile.dev
+  #     context: ./src
+  #     dockerfile: ./apps/live/Dockerfile.dev
   #   restart: unless-stopped
   #   networks:
   #     - dev_env
   #   volumes:
-  #     - ./live:/app/live
+  #     - ./src/apps/live:/app/live
   #   depends_on:
   #     - api
   #     - worker
@@ -122,7 +122,7 @@ services:
 
   api:
     build:
-      context: ./apps/api
+      context: ./src/apps/api
       dockerfile: Dockerfile.dev
       args:
         DOCKER_BUILDKIT: 1
@@ -130,10 +130,10 @@ services:
     networks:
       - dev_env
     volumes:
-      - ./apps/api:/code
+      - ./src/apps/api:/code
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
-      - ./apps/api/.env
+      - ./src/apps/api/.env
     depends_on:
       - plane-db
       - plane-redis
@@ -143,7 +143,7 @@ services:
 
   worker:
     build:
-      context: ./apps/api
+      context: ./src/apps/api
       dockerfile: Dockerfile.dev
       args:
         DOCKER_BUILDKIT: 1
@@ -151,10 +151,10 @@ services:
     networks:
       - dev_env
     volumes:
-      - ./apps/api:/code
+      - ./src/apps/api:/code
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
-      - ./apps/api/.env
+      - ./src/apps/api/.env
     depends_on:
       - api
       - plane-db
@@ -162,7 +162,7 @@ services:
 
   beat-worker:
     build:
-      context: ./apps/api
+      context: ./src/apps/api
       dockerfile: Dockerfile.dev
       args:
         DOCKER_BUILDKIT: 1
@@ -170,10 +170,10 @@ services:
     networks:
       - dev_env
     volumes:
-      - ./apps/api:/code
+      - ./src/apps/api:/code
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
-      - ./apps/api/.env
+      - ./src/apps/api/.env
     depends_on:
       - api
       - plane-db
@@ -181,7 +181,7 @@ services:
 
   migrator:
     build:
-      context: ./apps/api
+      context: ./src/apps/api
       dockerfile: Dockerfile.dev
       args:
         DOCKER_BUILDKIT: 1
@@ -189,17 +189,17 @@ services:
     networks:
       - dev_env
     volumes:
-      - ./apps/api:/code
+      - ./src/apps/api:/code
     command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
-      - ./apps/api/.env
+      - ./src/apps/api/.env
     depends_on:
       - plane-db
       - plane-redis
 
   # proxy:
   #   build:
-  #     context: ./apps/proxy
+  #     context: ./src/apps/proxy
   #     dockerfile: Dockerfile.ce
   #   restart: unless-stopped
   #   networks:
