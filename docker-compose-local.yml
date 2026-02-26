@@ -46,7 +46,7 @@ services:
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
     ports:
       - "9000:9000"
-      - "9090:9090"
+      - ${MINIO_PORT:-9090}:9090
 
   plane-db:
     image: postgres:15.7-alpine
