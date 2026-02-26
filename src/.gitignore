@@ -1,0 +1,112 @@
+node_modules
+.next
+.yarn
+
+### NextJS ###
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+dist/
+out/
+build/
+.react-router/
+
+# Misc
+.DS_Store
+*.pem
+.history
+tsconfig.tsbuildinfo
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# Turborepo
+.turbo
+
+## Django ##
+venv
+.venv
+*.pyc
+staticfiles
+mediafiles
+.env
+.DS_Store
+logs/
+htmlcov/
+.coverage
+
+node_modules/
+assets/dist/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+package-lock.json
+.vscode
+
+# Sentry
+.sentryclirc
+
+# lock files
+package-lock.json
+
+
+
+.secrets
+tmp/
+
+## packages
+dist
+.temp/
+deploy/selfhost/plane-app/
+
+## Storybook
+*storybook.log
+output.css
+
+dev-editor
+# Redis
+*.rdb
+*.rdb.gz
+
+storybook-static
+
+CLAUDE.md
+
+build/
+.react-router/
+
+build/
+.react-router/
+temp/
+scripts/
