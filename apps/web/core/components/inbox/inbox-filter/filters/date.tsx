@@ -9,6 +9,7 @@ import { useState } from "react";
 import { concat, uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import type { TInboxIssueFilterDateKeys } from "@plane/types";
 // components
 import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
@@ -31,6 +32,7 @@ const isDate = (date: string) => {
 export const FilterDate = observer(function FilterDate(props: Props) {
   const { filterKey, label, searchQuery } = props;
   // hooks
+  const { t } = useTranslation();
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   // state
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -65,11 +67,11 @@ export const FilterDate = observer(function FilterDate(props: Props) {
           handleClose={() => setIsDateFilterModalOpen(false)}
           isOpen={isDateFilterModalOpen}
           onSelect={(val) => handleInboxIssueFilters(filterKey, val)}
-          title="Created date"
+          title={t("common.created_date")}
         />
       )}
       <FilterHeader
-        title={`${label || "Created date"}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${label || t("common.created_date")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -86,15 +88,15 @@ export const FilterDate = observer(function FilterDate(props: Props) {
                   multiple={false}
                 />
               ))}
-              <FilterOption
-                isChecked={isCustomDateSelected()}
-                onClick={handleCustomDate}
-                title="Custom"
-                multiple={false}
-              />
+                <FilterOption
+                  isChecked={isCustomDateSelected()}
+                  onClick={handleCustomDate}
+                  title={t("common.custom")}
+                  multiple={false}
+                />
             </>
           ) : (
-            <p className="text-11 italic text-placeholder">No matches found</p>
+            <p className="text-11 italic text-placeholder">{t("command_palette.search.no_matches_found")}</p>
           )}
         </div>
       )}

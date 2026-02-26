@@ -25,6 +25,7 @@ import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useInstance } from "@/hooks/store/use-instance";
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -34,6 +35,114 @@ import { WorkspaceService } from "@/services/workspace.service";
 import { AIService } from "@/services/ai.service";
 const workspaceService = new WorkspaceService();
 const aiService = new AIService();
+
+const normalizeText = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+const inferDocumentGuidance = (documentName: string) => {
+  const normalized = normalizeText(documentName);
+  const has = (terms: string[]) => terms.some((term) => normalized.includes(term));
+
+  const formats = new Set<string>(["PDF"]);
+  const annexes = new Set<string>(["Anexos técnicos necesarios para sustento y trazabilidad del documento."]);
+  let docType = "Documento técnico de expediente";
+
+  if (has(["plano", "topograf", "arquitect", "estructur", "instalac", "seccion", "perfil"])) {
+    docType = "Plano técnico";
+    formats.add("DWG");
+    annexes.add("Leyenda, escalas, cuadro de coordenadas/puntos de control (si aplica).");
+  }
+  if (has(["memoria", "informe", "estudio", "especificaciones", "manual", "calculo"])) {
+    docType = "Documento técnico narrativo";
+    formats.add("DOCX");
+    annexes.add("Referencias normativas y criterios técnicos aplicados.");
+  }
+  if (has(["metrados", "presupuesto", "costos", "valorizacion", "valuacion", "apu"])) {
+    docType = "Documento de costos y metrados";
+    formats.add("XLSX");
+    annexes.add("Cuadros de cálculo, metrados y trazabilidad de partidas.");
+  }
+  if (has(["cronograma", "programacion", "plan de trabajo"])) {
+    docType = "Documento de planificación";
+    formats.add("XLSX");
+    annexes.add("Ruta crítica, hitos y supuestos de programación.");
+  }
+
+  return {
+    docType,
+    formatList: Array.from(formats).join(", "),
+    annexList: Array.from(annexes)
+      .map((item) => `- ${item}`)
+      .join("\n"),
+  };
+};
+
+const buildStandardTemplateTask = (documentName: string, projectName?: string) => {
+  const safeProjectName = projectName?.trim() ? projectName.trim() : "No especificado";
+  const { docType, formatList, annexList } = inferDocumentGuidance(documentName);
+  return `Redacta una historia de usuario para gestión documental de expedientes de ingeniería civil.
+Genera la salida en español y usa exactamente la plantilla indicada.
+Tipo de documento inferido: ${docType}.
+Variables de contexto:
+- nombre_documento: "${documentName}"
+- nombre_proyecto: "${safeProjectName}"
+Debes usar las variables en el contenido final, sin mostrar la palabra "variable".
+Debes completar todas las secciones con contenido útil, concreto y verificable.
+El contenido debe ser coherente con un expediente técnico de obra civil y mantenerse en tono formal.
+No uses lenguaje de software ni programación.
+No menciones: código, API, backend, frontend, base de datos, deploy, sprint, bug, feature, ticket.
+No inventes normativa específica que no esté en el título; usa referencias genéricas como "normativa vigente aplicable".
+Mantén cada sección breve y accionable.
+
+PLANTILLA ESTÁNDAR
+1. Identificación
+Documento / Entregable:
+${documentName}
+
+2. Objetivo de la Tarea
+Elaborar / Revisar / Subsanar / Aprobar el documento indicado, conforme al alcance del expediente técnico.
+En esta sección agrega 2 a 4 líneas específicas del documento detectado con enfoque constructivo.
+
+3. Alcance del Documento
+
+Debe incluir:
+
+- Contenido técnico según normativa vigente aplicable.
+- Información técnica específica del tipo de documento.
+- Compatibilidad con otras especialidades.
+- Formato institucional requerido.
+- Anexos recomendados para este documento:
+${annexList}
+
+En esta sección agrega puntos concretos verificables para este tipo de documento.
+
+4. Entregable Esperado
+
+Archivo en formato correspondiente (${formatList}).
+
+Documento completo y coherente
+
+Listo para revisión técnica
+En esta sección indica claramente:
+- Archivo principal.
+- Anexos mínimos realmente aplicables al tipo de documento.
+- Proyecto asociado: ${safeProjectName}.
+
+5. Criterios de Aceptación
+Nº	Condición
+1	Documento cumple normativa aplicable
+2	Contenido completo según índice del expediente
+3	Compatible con demás especialidades
+4	Formato correcto
+5	Sin observaciones pendientes
+
+No agregues secciones extra fuera de la plantilla.
+No incluyas "Flujo de Estado".
+No incluyas contenido de programación.`;
+};
 
 type TIssueDescriptionEditorProps = {
   control: Control<TIssue>;
@@ -79,7 +188,9 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
+  const { getProjectById } = useProject();
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "";
+  const projectName = projectId ? (getProjectById(projectId)?.name ?? "") : "";
   const { config } = useInstance();
   const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // platform
@@ -122,7 +233,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
     aiService
       .createGptTask(workspaceSlug.toString(), {
         prompt: issueName,
-        task: "Generate a proper description for this work item.",
+        task: buildStandardTemplateTask(issueName.trim(), projectName),
       })
       .then((res) => {
         if (res.response === "")
@@ -255,10 +366,11 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
                 tabIndex={getIndex("feeling_lucky")}
               >
                 {iAmFeelingLucky ? (
-                  "Generating response"
+                  t("generating_response")
                 ) : (
                   <>
-                    <Sparkle className="h-3.5 w-3.5" />I{"'"}m feeling lucky
+                    <Sparkle className="h-3.5 w-3.5" />
+                    {t("im_feeling_lucky")}
                   </>
                 )}
               </button>

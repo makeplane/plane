@@ -192,7 +192,7 @@ export function ExistingIssuesListModal(props: Props) {
             </div>
           )}
           {workspaceLevelToggle && (
-            <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
+            <Tooltip tooltipContent={t("common.toggle_workspace_level_search")} isMobile={isMobile}>
               <div
                 className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-11 ${
                   isWorkspaceLevel ? "text-primary" : "text-secondary"
@@ -212,16 +212,16 @@ export function ExistingIssuesListModal(props: Props) {
         </div>
 
         <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
-          {/* TODO: Translate here */}
           {searchTerm !== "" && (
             <h5 className="mx-2 text-13 text-secondary">
-              Search results for{" "}
+              {t("common.search_results_for")}{" "}
               <span className="text-primary">
                 {'"'}
                 {searchTerm}
                 {'"'}
-              </span>{" "}
-              in project:
+              </span>
+              {" "}
+              {t("common.in_project")}:
             </h5>
           )}
 

@@ -36,6 +36,8 @@ export default {
   display_name: "Display name",
   role: "Role",
   timezone: "Timezone",
+  select_timezone: "Select a timezone",
+  count: "Count",
   avatar: "Avatar",
   cover_image: "Cover image",
   password: "Password",
@@ -254,6 +256,7 @@ export default {
   we_see_that_someone_has_invited_you_to_join_a_workspace_description:
     "We see that someone has invited you to join a workspace",
   join_a_workspace_description: "Join a workspace",
+  ai_data_sharing_consent: "By using this feature, you consent to sharing the message with a 3rd party service.",
   accept_and_join: "Accept & Join",
   go_home: "Go Home",
   no_pending_invites: "No pending invites",
@@ -276,6 +279,11 @@ export default {
   issue_could_not_be_updated: "Work item could not be updated",
   create_a_draft: "Create a draft",
   save_to_drafts: "Save to Drafts",
+  save_draft_question: "Save this draft?",
+  save_draft_description: "You can save this work item to Drafts so you can come back to it later.",
+  saving: "Saving",
+  im_feeling_lucky: "I'm feeling lucky",
+  generating_response: "Generating response",
   save: "Save",
   update: "Update",
   updating: "Updating",
@@ -306,6 +314,13 @@ export default {
   start_date: "Start date",
   end_date: "End date",
   due_date: "Due date",
+  updated_date: "Updated date",
+  last_updated_date: "Last updated date",
+  work_items_closed: "Work items closed",
+  work_items_in_cycle: "{count, plural, one {There is # work item in this cycle} other {There are # work items in this cycle}}",
+  work_items_in_module: "{count, plural, one {There is # work item in this module} other {There are # work items in this module}}",
+  work_items_in_archives:
+    "{count, plural, one {There is # work item in project's archived} other {There are # work items in project's archived}}",
   estimate: "Estimate",
   change_parent_issue: "Change parent work item",
   remove_parent_issue: "Remove parent work item",
@@ -317,6 +332,8 @@ export default {
   Cancel: "Cancel",
   edit: "Edit",
   edit_view: "Edit view",
+  save_view: "Save view",
+  update_view: "Update view",
   archive: "Archive",
   restore: "Restore",
   open_in_new_tab: "Open in new tab",
@@ -329,6 +346,20 @@ export default {
   morning: "morning",
   afternoon: "afternoon",
   evening: "evening",
+  good_morning: "Good morning",
+  good_afternoon: "Good afternoon",
+  good_evening: "Good evening",
+  more: "more",
+  remove_filter: "Remove filter",
+  invalid_filter: "Invalid filter",
+  invalid_filter_tooltip:
+    "This filter condition is no longer valid. The property may have been deleted or your access to it may have changed.",
+  filter_options_selected: "{count} option(s) selected",
+  filter_operator: {
+    is: "is",
+    is_any_of: "is any of",
+    between: "between",
+  },
   show_all: "Show all",
   show_less: "Show less",
   no_data_yet: "No Data yet",
@@ -353,6 +384,20 @@ export default {
   current: "Current",
   no_matching_members: "No matching members",
   no_work_items_found: "No work items found",
+  latest_feature_block: {
+    message: "Pages got a facelift! Write anything and use Galileo to help you start.",
+    image_alt: "Plane work items",
+  },
+  webhooks: {
+    work_item_comments: "Work item comments",
+    event: {
+      projects: "Project created, updated, or deleted",
+      cycles: "Cycle created, updated, or deleted",
+      work_items: "Work item created, updated, deleted, added to a cycle or module",
+      modules: "Module created, updated, or deleted",
+      work_item_comments: "Comment posted, updated, or deleted",
+    },
+  },
   leaving: "Leaving",
   removing: "Removing",
   leave: "Leave",
@@ -377,6 +422,11 @@ export default {
       created_at: "Created at",
       updated_at: "Updated at",
       name: "Name",
+    },
+    empty_state: {
+      title: "View work items will appear here",
+      description:
+        "Work items help you track individual pieces of work. With work items, keep track of what's going on, who is working on it, and what's done.",
     },
   },
   toast: {
@@ -599,6 +649,7 @@ export default {
     created_by: "Created by",
     none: "None",
     link: "Link",
+    links: "Links",
     estimates: "Estimates",
     estimate: "Estimate",
     created_at: "Created at",
@@ -772,6 +823,10 @@ export default {
     offline_description: "You can continue making changes. They will be synced when you are back online.",
     search_shortcuts: "Search for shortcuts",
     search_projects: "Search for projects",
+    search_results_for: "Search results for",
+    in_project: "in project",
+    in_workspace: "in workspace",
+    toggle_workspace_level_search: "Toggle workspace level search",
     status: "Status",
     danger_zone: "Danger zone",
     customize_navigation_description: "Selected items will always stay visible in your sidebar. You can still find the others anytime from the More menu. These changes are personal to you and won't affect anyone else on your workspace.",
@@ -1073,7 +1128,9 @@ export default {
     },
     sibling: {
       label: "Sibling work items",
+      empty: "No sibling work items",
     },
+    deleted_message: "This work item has been deleted",
     archive: {
       description: "Only completed or canceled\nwork items can be archived",
       label: "Archive Work item",
@@ -3135,6 +3192,7 @@ export default {
   sidebar: {
     stickies: "Stickies",
     your_work: "Your work",
+    new_work_item: "New work item",
   },
   pages_modals: {
     export: {
@@ -3152,6 +3210,7 @@ export default {
     },
   },
   notifications: {
+    connector_to: "to",
     actions: {
       duplicate: {
         created: "marked that this work item is a duplicate of",

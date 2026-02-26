@@ -31,8 +31,10 @@ export type TTourSteps = "welcome" | "work-items" | "cycles" | "modules" | "view
 
 const TOUR_STEPS: {
   key: TTourSteps;
-  titleKey: string;
-  descriptionKey: string;
+  titleKey?: string;
+  descriptionKey?: string;
+  title?: string;
+  description?: string;
   image: string;
   prevStep?: TTourSteps;
   nextStep?: TTourSteps;
@@ -147,11 +149,21 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                 currentStepIndex % 2 === 0 ? "justify-end" : "justify-start"
               }`}
             >
-              <img src={currentStep?.image} className="w-full h-full object-cover" alt={currentStep?.title} />
+              <img
+                src={currentStep?.image}
+                className="w-full h-full object-cover"
+                alt={currentStep?.titleKey ? t(currentStep.titleKey) : (currentStep?.title ?? "")}
+              />
             </div>
             <div className="flex h-1/2 flex-col overflow-y-auto p-4 sm:h-2/5">
-              <h3 className="font-semibold sm:text-18">{t(currentStep?.titleKey ?? "")}</h3>
-              <p className="mt-3 text-13 text-secondary">{t(currentStep?.descriptionKey ?? "")}</p>
+              <h3 className="font-semibold sm:text-18">
+                {currentStep?.titleKey ? t(currentStep.titleKey) : (currentStep?.title ?? "")}
+              </h3>
+              <p className="mt-3 text-13 text-secondary">
+                {currentStep?.descriptionKey
+                  ? t(currentStep.descriptionKey)
+                  : (currentStep?.description ?? "")}
+              </p>
               <div className="mt-3 flex h-full items-end justify-between gap-4">
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (

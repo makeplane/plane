@@ -110,7 +110,12 @@ export class UserService extends APIService {
   }
 
   async updateUser(data: Partial<IUser>): Promise<any> {
-    return this.patch("/api/users/me/", data)
+    const payload: Record<string, any> = { ...data };
+    if ("avatar_url" in payload) {
+      payload.avatar = payload.avatar_url;
+      delete payload.avatar_url;
+    }
+    return this.patch("/api/users/me/", payload)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

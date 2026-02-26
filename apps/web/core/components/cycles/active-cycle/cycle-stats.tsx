@@ -55,8 +55,14 @@ export type ActiveCycleStatsProps = {
 
 export const ActiveCycleStats = observer(function ActiveCycleStats(props: ActiveCycleStatsProps) {
   const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
+  type TActiveCycleTab = "priority-issues" | "assignees" | "labels";
+  const TAB_KEYS = {
+    PRIORITY: "priority-issues",
+    ASSIGNEES: "assignees",
+    LABELS: "labels",
+  } as const satisfies Record<Uppercase<"priority" | "assignees" | "labels">, TActiveCycleTab>;
   // local storage
-  const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
+  const { storedValue: tab, setValue: setTab } = useLocalStorage<TActiveCycleTab>("activeCycleTab", TAB_KEYS.ASSIGNEES);
   // refs
   const issuesContainerRef = useRef<HTMLDivElement | null>(null);
   // states
@@ -72,11 +78,11 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
-      case "Priority-Issues":
+      case TAB_KEYS.PRIORITY:
         return 0;
-      case "Assignees":
+      case TAB_KEYS.ASSIGNEES:
         return 1;
-      case "Labels":
+      case TAB_KEYS.LABELS:
         return 2;
       default:
         return 0;
@@ -113,14 +119,14 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
         onChange={(i) => {
           switch (i) {
             case 0:
-              return setTab("Priority-Issues");
+              return setTab(TAB_KEYS.PRIORITY);
             case 1:
-              return setTab("Assignees");
+              return setTab(TAB_KEYS.ASSIGNEES);
             case 2:
-              return setTab("Labels");
+              return setTab(TAB_KEYS.LABELS);
 
             default:
-              return setTab("Priority-Issues");
+              return setTab(TAB_KEYS.PRIORITY);
           }
         }}
       >
@@ -209,7 +215,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                         >
                           <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
                             <IssueIdentifier issueId={issue.id} projectId={projectId} size="xs" variant="secondary" />
-                            <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
+                            <Tooltip position="top-start" tooltipHeading={t("title")} tooltipContent={issue.name}>
                               <span className="text-13 text-primary truncate">{issue.name}</span>
                             </Tooltip>
                           </div>

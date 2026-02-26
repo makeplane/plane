@@ -7,6 +7,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { WORKSPACE_DEFAULT_SEARCH_RESULT } from "@plane/constants";
 import type { IWorkspaceSearchResults } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -42,6 +43,7 @@ export function PowerKModalSearchMenu(props: Props) {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { togglePowerKModal } = usePowerK();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (activePage || !workspaceSlug) return;
@@ -89,13 +91,14 @@ export function PowerKModalSearchMenu(props: Props) {
               "animate-pulse": isSearching,
             })}
           >
-            Search results for{" "}
+            {t("common.search_results_for")}{" "}
             <span className="font-medium">
               {'"'}
               {searchTerm}
               {'"'}
-            </span>{" "}
-            in {isWorkspaceLevel ? "workspace" : "project"}:
+            </span>
+            {" "}
+            {isWorkspaceLevel ? t("common.in_workspace") : t("common.in_project")}:
           </h5>
         </div>
       )}

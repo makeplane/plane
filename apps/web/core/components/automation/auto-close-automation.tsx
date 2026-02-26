@@ -121,9 +121,9 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                   <div className="w-1/2">
                     <CustomSelect
                       value={currentProjectDetails?.close_in}
-                      label={`${currentProjectDetails?.close_in} ${
-                        currentProjectDetails?.close_in === 1 ? "month" : "months"
-                      }`}
+                      label={t("workspace_projects.filters.months_count", {
+                        months: currentProjectDetails?.close_in ?? 0,
+                      })}
                       onChange={(val: number) => void handleChange({ close_in: val })}
                       input
                       disabled={!isAdmin}

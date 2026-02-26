@@ -36,6 +36,8 @@ export default {
   display_name: "Nombre para mostrar",
   role: "Rol",
   timezone: "Zona horaria",
+  select_timezone: "Selecciona una zona horaria",
+  count: "Cantidad",
   avatar: "Avatar",
   cover_image: "Imagen de portada",
   password: "Contraseña",
@@ -261,6 +263,8 @@ export default {
   we_see_that_someone_has_invited_you_to_join_a_workspace_description:
     "Vemos que alguien te ha invitado a unirte a un espacio de trabajo",
   join_a_workspace_description: "Únete a un espacio de trabajo",
+  ai_data_sharing_consent:
+    "Al usar esta función, aceptas compartir el mensaje con un servicio de terceros.",
   accept_and_join: "Aceptar y unirse",
   go_home: "Ir a inicio",
   no_pending_invites: "No hay invitaciones pendientes",
@@ -284,6 +288,11 @@ export default {
   issue_could_not_be_updated: "El elemento de trabajo no pudo ser actualizado",
   create_a_draft: "Crear un borrador",
   save_to_drafts: "Guardar en borradores",
+  save_draft_question: "¿Guardar este borrador?",
+  save_draft_description: "Puedes guardar este elemento de trabajo en Borradores para volver más tarde.",
+  saving: "Guardando",
+  im_feeling_lucky: "Me siento con suerte",
+  generating_response: "Generando respuesta",
   save: "Guardar",
   update: "Actualizar",
   updating: "Actualizando",
@@ -314,6 +323,15 @@ export default {
   start_date: "Fecha de inicio",
   end_date: "Fecha de fin",
   due_date: "Fecha de vencimiento",
+  updated_date: "Fecha de actualización",
+  last_updated_date: "Fecha de última actualización",
+  work_items_closed: "elementos de trabajo cerrados",
+  work_items_in_cycle:
+    "{count, plural, one {Hay # elemento de trabajo en este ciclo} other {Hay # elementos de trabajo en este ciclo}}",
+  work_items_in_module:
+    "{count, plural, one {Hay # elemento de trabajo en este módulo} other {Hay # elementos de trabajo en este módulo}}",
+  work_items_in_archives:
+    "{count, plural, one {Hay # elemento de trabajo en los archivados del proyecto} other {Hay # elementos de trabajo en los archivados del proyecto}}",
   estimate: "Estimación",
   change_parent_issue: "Cambiar elemento de trabajo padre",
   remove_parent_issue: "Eliminar elemento de trabajo padre",
@@ -325,6 +343,8 @@ export default {
   Cancel: "Cancelar",
   edit: "Editar",
   edit_view: "Editar vista",
+  save_view: "Guardar vista",
+  update_view: "Actualizar vista",
   archive: "Archivar",
   restore: "Restaurar",
   open_in_new_tab: "Abrir en nueva pestaña",
@@ -337,6 +357,20 @@ export default {
   morning: "días",
   afternoon: "tardes",
   evening: "noches",
+  good_morning: "Buenos días",
+  good_afternoon: "Buenas tardes",
+  good_evening: "Buenas noches",
+  more: "más",
+  remove_filter: "Quitar filtro",
+  invalid_filter: "Filtro inválido",
+  invalid_filter_tooltip:
+    "Esta condición de filtro ya no es válida. La propiedad puede haber sido eliminada o tu acceso a ella pudo haber cambiado.",
+  filter_options_selected: "{count} opción(es) seleccionada(s)",
+  filter_operator: {
+    is: "es",
+    is_any_of: "es cualquiera de",
+    between: "entre",
+  },
   show_all: "Mostrar todo",
   show_less: "Mostrar menos",
   no_data_yet: "Aún no hay datos",
@@ -361,6 +395,20 @@ export default {
   current: "Actual",
   no_matching_members: "No hay miembros coincidentes",
   no_work_items_found: "No se encontraron elementos de trabajo",
+  latest_feature_block: {
+    message: "¡Pages se renovó! Escribe lo que necesites y usa Galileo para empezar.",
+    image_alt: "Elementos de trabajo de Plane",
+  },
+  webhooks: {
+    work_item_comments: "Comentarios de elementos de trabajo",
+    event: {
+      projects: "Proyecto creado, actualizado o eliminado",
+      cycles: "Ciclo creado, actualizado o eliminado",
+      work_items: "Elemento de trabajo creado, actualizado, eliminado, agregado a un ciclo o módulo",
+      modules: "Módulo creado, actualizado o eliminado",
+      work_item_comments: "Comentario publicado, actualizado o eliminado",
+    },
+  },
   leaving: "Abandonando",
   removing: "Eliminando",
   leave: "Abandonar",
@@ -382,6 +430,11 @@ export default {
       created_at: "Creado el",
       updated_at: "Actualizado el",
       name: "Nombre",
+    },
+    empty_state: {
+      title: "Los elementos de trabajo de la vista aparecerán aquí",
+      description:
+        "Los elementos de trabajo te ayudan a rastrear partes individuales del trabajo. Con ellos, puedes seguir qué está pasando, quién está trabajando en ello y qué está hecho.",
     },
   },
   toast: {
@@ -602,6 +655,7 @@ export default {
     created_by: "Creado por",
     none: "Ninguno",
     link: "Enlace",
+    links: "Enlaces",
     estimates: "Estimaciones",
     estimate: "Estimación",
     created_at: "Creado en",
@@ -775,6 +829,10 @@ export default {
     offline_description: "Puedes continuar haciendo cambios. Se sincronizarán cuando vuelvas a estar en línea.",
     search_shortcuts: "Buscar atajos",
     search_projects: "Buscar proyectos",
+    search_results_for: "Resultados de búsqueda para",
+    in_project: "en el proyecto",
+    in_workspace: "en el espacio de trabajo",
+    toggle_workspace_level_search: "Alternar búsqueda a nivel de espacio de trabajo",
     status: "Estado",
     danger_zone: "Zona de peligro",
     customize_navigation_description: "Los elementos seleccionados siempre permanecerán visibles en tu barra lateral. Aún puedes encontrar los demás en cualquier momento desde el menú Más. Estos cambios son personales y no afectarán a nadie más en tu espacio de trabajo.",
@@ -1080,7 +1138,9 @@ export default {
     },
     sibling: {
       label: "Elementos de trabajo hermanos",
+      empty: "No hay elementos de trabajo hermanos",
     },
+    deleted_message: "Este elemento de trabajo ha sido eliminado",
     archive: {
       description: "Solo los elementos de trabajo completados\no cancelados pueden ser archivados",
       label: "Archivar elemento de trabajo",
@@ -3004,6 +3064,7 @@ export default {
   sidebar: {
     stickies: "Notas adhesivas",
     your_work: "Tu trabajo",
+    new_work_item: "Nuevo elemento de trabajo",
   },
   pages_modals: {
     export: {
@@ -3203,6 +3264,7 @@ export default {
     },
   },
   notifications: {
+    connector_to: "a",
     actions: {
       duplicate: {
         created: "marcó que este elemento de trabajo es un duplicado de",

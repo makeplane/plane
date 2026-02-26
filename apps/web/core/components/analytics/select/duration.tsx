@@ -27,8 +27,8 @@ type Props = TDropdownProps & {
   tabIndex?: number;
 };
 
-function DurationDropdown({ placeholder = "Duration", onChange, value }: Props) {
-  useTranslation();
+function DurationDropdown({ placeholder, onChange, value }: Props) {
+  const { t } = useTranslation();
 
   const options = ANALYTICS_DURATION_FILTER_OPTIONS.map((option) => ({
     value: option.value,
@@ -47,7 +47,9 @@ function DurationDropdown({ placeholder = "Duration", onChange, value }: Props) 
       label={
         <div className="flex items-center gap-2 p-1 ">
           <Calendar className="h-4 w-4" />
-          {value ? ANALYTICS_DURATION_FILTER_OPTIONS.find((opt) => opt.value === value)?.name : placeholder}
+          {value
+            ? ANALYTICS_DURATION_FILTER_OPTIONS.find((opt) => opt.value === value)?.name
+            : (placeholder ?? t("common.duration.label"))}
         </div>
       }
     />

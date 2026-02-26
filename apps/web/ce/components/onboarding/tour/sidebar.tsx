@@ -68,7 +68,7 @@ export function TourSidebar({ step, setStep }: Props) {
             role="button"
           >
             <option.Icon className="h-4 w-4" aria-hidden="true" />
-            {option.label}
+            {t(option.labelKey)}
           </h5>
         ))}
       </div>

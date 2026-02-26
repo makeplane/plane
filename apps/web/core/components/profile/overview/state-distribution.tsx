@@ -51,7 +51,7 @@ export function ProfileStateDistribution({ stateDistribution, userProfile }: Pro
                 fill: STATE_GROUPS[group.state_group]?.color,
               }))}
               showTooltip
-              tooltipLabel="Count"
+              tooltipLabel={t("count")}
               paddingAngle={5}
               cornerRadius={4}
               innerRadius="50%"

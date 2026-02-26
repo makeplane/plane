@@ -69,7 +69,7 @@ export const FilterTargetDate = observer(function FilterTargetDate(props: Props)
                   key={option.value}
                   isChecked={appliedFilters?.includes(option.value) ? true : false}
                   onClick={() => handleUpdate(option.value)}
-                  title={t(option.i18n_name)}
+                  title={option.name}
                   multiple
                 />
               ))}

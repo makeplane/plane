@@ -17,6 +17,7 @@ export const STATE_GROUPS: {
     label: string;
     defaultStateName: string;
     color: string;
+    i18n_label?: string;
   };
 } = {
   backlog: {

@@ -251,7 +251,7 @@ export function ExportPageModal(props: Props) {
                   >
                     {CONTENT_VARIETY.map((variety) => (
                       <CustomSelect.Option key={variety.key} value={variety.key}>
-                        {variety.label}
+                        {t(variety.labelKey)}
                       </CustomSelect.Option>
                     ))}
                   </CustomSelect>
@@ -260,7 +260,7 @@ export function ExportPageModal(props: Props) {
             </div>
             {isPDFSelected && (
               <div className="flex items-center justify-between gap-2">
-                <h6 className="flex-shrink-0 text-13 text-secondary">Page format</h6>
+                <h6 className="flex-shrink-0 text-13 text-secondary">{t("pages_modals.export.page_format")}</h6>
                 <Controller
                   control={control}
                   name="page_format"
