@@ -22,7 +22,16 @@ import {
   getYear as jalaliGetYear,
   getMonth as jalaliGetMonth,
 } from "date-fns-jalali";
+// [FA-CUSTOM] English locale for date-fns-jalali — ensures month names are never in Persian script
+import { enUS as jalaliEnUS } from "date-fns-jalali/locale/en-US";
 import { isNumber } from "lodash-es";
+
+// [FA-CUSTOM] Jalali wrappers that always use English locale (en-US)
+// so month names are never rendered in Persian script (e.g., "Esf" not "اسف")
+const jalaliFormatEN: typeof gregorianFormat = (date, formatStr, options) =>
+  jalaliFormat(date, formatStr, { locale: jalaliEnUS, ...options });
+
+const jalaliFDTNEN: typeof gregorianFDTN = (date, options) => jalaliFDTN(date, { locale: jalaliEnUS, ...options });
 
 // [FA-CUSTOM] Module-level calendar system state
 type TCalendarSystem = "gregorian" | "jalali";
@@ -40,8 +49,8 @@ let activeGetMonth = gregorianGetMonth;
 export const setCalendarSystem = (system: TCalendarSystem) => {
   _calendarSystem = system;
   if (system === "jalali") {
-    activeFormat = jalaliFormat;
-    activeFDTN = jalaliFDTN;
+    activeFormat = jalaliFormatEN;
+    activeFDTN = jalaliFDTNEN;
     activeGetYear = jalaliGetYear;
     activeGetMonth = jalaliGetMonth;
   } else {

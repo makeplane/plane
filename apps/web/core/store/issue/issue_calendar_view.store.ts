@@ -10,7 +10,7 @@ import { observable, action, makeObservable, runInAction, computed, reaction } f
 import { computedFn } from "mobx-utils";
 import type { ICalendarPayload, ICalendarWeek } from "@plane/types";
 import { EStartOfTheWeek } from "@plane/types";
-import { generateCalendarData, getWeekNumberOfDate, getCalendarSystem } from "@plane/utils"; // [FA-CUSTOM] added getCalendarSystem
+import { generateCalendarData, getWeekNumberOfDate, getCalendarSystem, setCalendarSystem } from "@plane/utils"; // [FA-CUSTOM] added getCalendarSystem, setCalendarSystem
 // [FA-CUSTOM] Jalali calendar support
 import {
   getYear as jalaliGetYear,
@@ -91,9 +91,12 @@ export class CalendarStore implements ICalendarStore {
     );
 
     // [FA-CUSTOM] Watch for calendar system changes and regenerate
+    // setCalendarSystem is called first to update module state before regenerateCalendar reads it,
+    // avoiding the race condition where StoreWrapper's useEffect runs after this reaction fires.
     reaction(
       () => this.rootStore.rootStore.user.userProfile.data?.calendar_system,
-      () => {
+      (calendarSystem) => {
+        if (calendarSystem) setCalendarSystem(calendarSystem);
         this.regenerateCalendar();
       }
     );

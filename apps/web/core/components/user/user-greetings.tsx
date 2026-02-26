@@ -8,10 +8,9 @@
 import { useTranslation } from "@plane/i18n";
 // hooks
 import type { IUser } from "@plane/types";
-// [FA-CUSTOM] Calendar-aware date formatting (English text, Jalali calendar)
-import { getCalendarSystem } from "@plane/utils";
 import { useCurrentTime } from "@/hooks/use-current-time";
-// types
+// [FA-CUSTOM] useCalendarSystem reads from reactive profile store — re-renders immediately on switch
+import { useCalendarSystem } from "@/hooks/fa/use-calendar-system";
 
 export interface IUserGreetingsView {
   user: IUser;
@@ -23,6 +22,8 @@ export function UserGreetingsView(props: IUserGreetingsView) {
   const { currentTime } = useCurrentTime();
   // store hooks
   const { t } = useTranslation();
+  // [FA-CUSTOM] Reactive calendar system — triggers re-render immediately when user switches
+  const { isJalali } = useCalendarSystem();
 
   const hour = new Intl.DateTimeFormat("en-US", {
     hour12: false,
@@ -30,10 +31,12 @@ export function UserGreetingsView(props: IUserGreetingsView) {
   }).format(currentTime);
 
   // [FA-CUSTOM] Use Intl with persian calendar for Jalali — always English text
-  const dateLocale = getCalendarSystem() === "jalali" ? "en-US-u-ca-persian" : "en-US";
+  const dateLocale = isJalali ? "en-US-u-ca-persian" : "en-US";
   const date = new Intl.DateTimeFormat(dateLocale, { month: "short", day: "numeric" }).format(currentTime);
   const weekDay = new Intl.DateTimeFormat(dateLocale, { weekday: "long" }).format(currentTime);
-  const timeString = new Intl.DateTimeFormat("en-US", { hour: "2-digit", minute: "2-digit", hour12: false }).format(currentTime);
+  const timeString = new Intl.DateTimeFormat("en-US", { hour: "2-digit", minute: "2-digit", hour12: false }).format(
+    currentTime
+  );
 
   const greeting = parseInt(hour, 10) < 12 ? "morning" : parseInt(hour, 10) < 18 ? "afternoon" : "evening";
 

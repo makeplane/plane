@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -17,14 +18,25 @@ import PlaneBackgroundPattern from "@/app/assets/auth/background-pattern.svg?url
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { InstanceFailureView } from "@/components/instance/instance-failure-view";
+// [FA-CUSTOM] Calendar system sync for Space app
+import { setSpaceCalendarSystem } from "@/helpers/date-time.helper";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser } from "@/hooks/store/use-user";
+import { useUserProfile } from "@/hooks/store/use-user-profile";
 
 export const InstanceProvider = observer(function InstanceProvider({ children }: { children: React.ReactNode }) {
   const { fetchInstanceInfo, instance, error } = useInstance();
   const { fetchCurrentUser } = useUser();
   const { resolvedTheme } = useTheme();
+  const userProfile = useUserProfile();
+  const calendarSystem = userProfile.data?.calendar_system;
+
+  // [FA-CUSTOM] Sync calendar system preference (Gregorian/Jalali) for Space app
+  useEffect(() => {
+    if (!calendarSystem) return;
+    setSpaceCalendarSystem(calendarSystem);
+  }, [calendarSystem]);
 
   const patternBackground = resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern;
 

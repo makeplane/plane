@@ -7,15 +7,21 @@
 import { format as gregorianFormat, isValid } from "date-fns";
 // [FA-CUSTOM] Jalali calendar support
 import { format as jalaliFormat } from "date-fns-jalali";
+// [FA-CUSTOM] English locale for date-fns-jalali — ensures month names are never in Persian script
+import { enUS as jalaliEnUS } from "date-fns-jalali/locale/en-US";
 import { isNumber } from "lodash-es";
+
+// [FA-CUSTOM] Jalali format wrapper that always uses English locale
+const jalaliFormatEN: typeof gregorianFormat = (date, formatStr, options) =>
+  jalaliFormat(date, formatStr, { locale: jalaliEnUS, ...options });
 
 // [FA-CUSTOM] Module-level calendar system state for Space app
 let _spaceCalendarSystem: "gregorian" | "jalali" = "gregorian";
-let activeFormat = gregorianFormat;
+let activeFormat: typeof gregorianFormat = gregorianFormat;
 
 export const setSpaceCalendarSystem = (system: "gregorian" | "jalali") => {
   _spaceCalendarSystem = system;
-  activeFormat = system === "jalali" ? jalaliFormat : gregorianFormat;
+  activeFormat = system === "jalali" ? jalaliFormatEN : gregorianFormat;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
