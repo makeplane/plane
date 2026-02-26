@@ -184,7 +184,7 @@ export type TWorkObjectFieldValue =
       link?: string;
       long?: boolean;
     } & (
-      | { markdown?: boolean }
+      | { format?: "markdown" }
       | { type: EWorkObjectFieldType.STRING; value: string; tag_color?: TWorkObjectTagColor }
       | { type: EWorkObjectFieldType.STRING; value: string; icon?: TWorkObjectIcon }
     ))

@@ -35,11 +35,31 @@ import type {
 import { getIssueUrlFromSequenceId, getUserProfileUrl } from "@/helpers/urls";
 import { logger } from "@plane/logger";
 import type { ExIssueProperty, ExIssuePropertyOption } from "@plane/sdk";
+import TurndownService from "turndown";
 
 /**
  * Available tag colors for visual categorization in Slack Work Objects
  */
 const TAG_COLORS: TWorkObjectTagColor[] = ["red", "yellow", "green", "gray", "blue"];
+
+/**
+ * Converts issue description HTML to markdown, falling back to stripped plain text.
+ *
+ * @param descriptionHtml - HTML description content (may be null/undefined)
+ * @param descriptionStripped - Plain text fallback (may be null/undefined)
+ * @returns Markdown string or empty string
+ */
+const getDescriptionMarkdown = (
+  descriptionHtml: string | null | undefined,
+  descriptionStripped: string | null | undefined
+): string =>
+  descriptionHtml
+    ? new TurndownService({
+        headingStyle: "atx",
+        bulletListMarker: "-",
+        codeBlockStyle: "fenced",
+      }).turndown(descriptionHtml)
+    : (descriptionStripped ?? "");
 
 /**
  * Service responsible for transforming Plane issue data into Slack Work Object view format.
@@ -200,7 +220,8 @@ export class IssueWorkObjectViewService implements IIssueWorkObjectViewService {
         /* ----------- Available Properties --------------- */
         description: {
           type: EWorkObjectFieldType.STRING,
-          value: issueDetails.description_stripped ? `${issueDetails.description_stripped.substring(0, 100)}...` : "",
+          value: getDescriptionMarkdown(issueDetails.description_html, issueDetails.description_stripped),
+          format: "markdown",
         },
         status: {
           type: EWorkObjectFieldType.STRING,
@@ -358,8 +379,8 @@ export class IssueWorkObjectViewService implements IIssueWorkObjectViewService {
         /* ----------- Available Properties --------------- */
         description: {
           type: EWorkObjectFieldType.STRING,
-          value: issueDetails.description_stripped,
-          long: true,
+          value: getDescriptionMarkdown(issueDetails.description_html, issueDetails.description_stripped),
+          format: "markdown",
         },
         date_created: {
           type: EWorkObjectFieldType.TIMESTAMP,
