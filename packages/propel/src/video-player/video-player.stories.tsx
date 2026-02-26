@@ -37,9 +37,9 @@ export const Default = meta.story({
   },
 });
 
-export const IOSMode = Default.extend({
+export const NativeControls = Default.extend({
   args: {
-    isIOS: true,
+    useNativeControls: true,
   },
 });
 
@@ -63,7 +63,7 @@ export const WithCallbacks = Default.extend({
   },
 });
 
-export const IOSWithCallbacks = IOSMode.extend({
+export const NativeControlsWithCallbacks = NativeControls.extend({
   args: {
     onLoadedMetadata: fn(),
     className: "rounded-lg",
@@ -345,7 +345,7 @@ export const VolumeInteraction = Default.extend({
   },
 });
 
-export const IOSInteraction = IOSMode.extend({});
+export const NativeControlsInteraction = NativeControls.extend({});
 
 export const VideoEvents = Default.extend({
   async play({ canvasElement, userEvent }) {

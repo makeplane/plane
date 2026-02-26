@@ -9,15 +9,25 @@ const viteConfig = ({ mode }) => {
       "process.env": env,
       "process.browser": true,
     },
+    server: {
+      port: 3001,
+    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
       },
     },
-    build: {
-      outDir: "out",
-    },
     plugins: [react()],
+    build: {
+      chunkSizeWarningLimit: 10000,
+      cssCodeSplit: false,
+      rollupOptions: {
+        output: {
+          inlineDynamicImports: true,
+          entryFileNames: "assets/mobile-editor.js",
+        },
+      },
+    },
   });
 };
 

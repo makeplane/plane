@@ -18,6 +18,12 @@ export type TEditorParams = {
   placeholder: string;
   variant: TEditorVariant;
   editable: boolean;
+  workspaceSlug: string;
+  userDisplayName: string;
+  cookie: string;
+  liveServerUrl: string;
+  token: string;
+  scrollMargin?: number;
 };
 export type TDocumentEditorParams = {
   editable: boolean;
@@ -27,7 +33,7 @@ export type TDocumentEditorParams = {
   workspaceSlug: string;
   projectId?: string;
   parentPageId?: string;
-  userId: string;
+  currentUserId: string;
   userDisplayName: string;
   cookie: string;
   liveServerUrl: string;
@@ -39,3 +45,15 @@ export enum TEditorVariant {
   rich = "rich",
   document = "document",
 }
+export type TScrollIntoViewProps = {
+  variant: TEditorVariant;
+
+  scrollBehavior?: ScrollBehavior;
+  extraPadding?: number;
+  scrollMargin?: number;
+};
+
+export type TOnEditorFocusProps = {
+  variant: TEditorVariant;
+  scrollIntoView?: boolean;
+};

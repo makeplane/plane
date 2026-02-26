@@ -14,6 +14,8 @@
 import type { NodeViewProps } from "@tiptap/core";
 // version diff support
 import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
+// plane utils
+import { cn } from "@plane/ui";
 // types
 import type { TExternalEmbedBlockAttributes } from "@/types";
 // components
@@ -29,13 +31,16 @@ export type ExternalEmbedNodeViewProps = Omit<NodeViewProps, "extension"> & {
 };
 
 export function ExternalEmbedNodeView(props: ExternalEmbedNodeViewProps) {
-  const { decorations, extension, node, selected } = props;
+  const { decorations, editor, extension, node, selected } = props;
   const ExternalEmbedComponent = extension.options.externalEmbedCallbackComponent;
+  const isTouchDevice = !!editor.storage.utility.isTouchDevice;
 
   return (
     <YChangeNodeViewWrapper
       decorations={decorations}
-      className="editor-embed-component relative"
+      className={cn("editor-embed-component relative", {
+        "touch-select-none": isTouchDevice,
+      })}
       contentEditable={false}
     >
       {!node.attrs.src || node.attrs.src.trim() === "" ? (

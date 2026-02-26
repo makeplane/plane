@@ -13,3 +13,4 @@
 
 export * from "./editor";
 export * from "./mention";
+export * from "./page";

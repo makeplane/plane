@@ -34,13 +34,15 @@ export type BlockMathNodeViewProps = Omit<NodeViewProps, "extension"> & {
 export function BlockMathNodeView(props: BlockMathNodeViewProps) {
   const { decorations, getPos, editor, node, extension, selected } = props;
 
+  const isTouchDevice = !!editor.storage.utility.isTouchDevice;
+
   return (
     <YChangeNodeViewWrapper
       decorations={decorations}
-      className={cn(
-        "block-math-component editor-mathematics-component relative",
-        editor.isEditable && "cursor-pointer"
-      )}
+      className={cn("block-math-component editor-mathematics-component relative", {
+        "cursor-pointer": editor.isEditable,
+        "touch-select-none": isTouchDevice,
+      })}
       contentEditable={false}
     >
       <BlockMathBlock node={node} editor={editor} getPos={getPos} extension={extension} selected={selected} />

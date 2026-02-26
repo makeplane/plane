@@ -16,55 +16,39 @@ import { useCallback, useEffect } from "react";
 import type { TMentionSection, TMentionSuggestion } from "@plane/editor";
 // plane ui
 import { Avatar } from "@plane/ui";
-// constants
-import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
-// helpers
-import { callNative, transformMentionSuggestions } from "@/helpers";
 // store
-import { useMembers } from "@/hooks/store";
+import { useMentions } from "@/hooks/store";
 // types
-import type { TMentionSuggestionResponse } from "@/types/mention";
+import type { TMemberResponse } from "@/types/mention";
 
-export const useEditorMention = () => {
-  const { setMembers: setMembersList, filterMembersByQuery } = useMembers();
-
-  // Retrieves members from the native side
-  const getMembers = useCallback(async (): Promise<TMentionSuggestionResponse[]> => {
-    await callNative(CallbackHandlerStrings.getMembers).then((members) => {
-      const mentionSuggestions = transformMentionSuggestions(members);
-      if (mentionSuggestions?.length > 0) {
-        setMembersList(mentionSuggestions);
-      }
-      return mentionSuggestions;
-    });
-    return [];
-  }, [setMembersList]);
+export const useEditorMentions = () => {
+  const { setMembers: setMembersList, filterMembersByQuery, fetchMembers } = useMentions();
 
   // Sets the members list
   const setMembers = useCallback(
-    (members?: TMentionSuggestionResponse[]) => {
+    (members?: TMemberResponse[]) => {
       if (!members) return;
-      const mentionSuggestions = transformMentionSuggestions(members);
-      setMembersList(mentionSuggestions);
+      setMembersList(members);
     },
     [setMembersList]
   );
 
   // Fetch members on component mount
   useEffect(() => {
-    getMembers();
+    void fetchMembers();
     // This is a one-time fetch to get the members list
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  window.getMembers = getMembers;
-  window.setMembers = setMembers;
+  useEffect(() => {
+    window.setMembers = setMembers;
+  }, [setMembers]);
 
   // Fetch mentions based on the query
   // This function is called when the user types in the mention input
   // It filters the members list based on the query and returns the matching members
-  const fetchMentions = useCallback(
-    async (query: string): Promise<TMentionSection[]> => {
+  const getMentionSuggestions = useCallback(
+    (query: string): Promise<TMentionSection[]> => {
       try {
         const response = filterMembersByQuery(query);
         const suggestionSections: TMentionSection[] = [];
@@ -92,10 +76,10 @@ export const useEditorMention = () => {
             items,
           });
         }
-        return suggestionSections;
+        return Promise.resolve(suggestionSections);
       } catch (error) {
         console.error("Error in fetching mentions for project pages:", error);
-        throw error;
+        return Promise.reject(error instanceof Error ? error : new Error(String(error)));
       }
     },
 
@@ -103,6 +87,6 @@ export const useEditorMention = () => {
   );
 
   return {
-    fetchMentions,
+    getMentionSuggestions,
   };
 };

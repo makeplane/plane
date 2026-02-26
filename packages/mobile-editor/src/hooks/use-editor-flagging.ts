@@ -26,18 +26,18 @@ const disabledExtensions: TExtensions[] = ["ai", "slash-commands"];
 export const useEditorFlagging = () => {
   const [featureFlags, setFeatureFlags] = useState<TFeatureFlagsResponse | null>(null);
 
-  const getFeatureFlags = useCallback(() => {
+  const getFeatureFlags = useCallback(async () => {
     try {
-      callNative(CallbackHandlerStrings.getFeatureFlags).then((flags: string) => setFeatureFlags(JSON.parse(flags)));
+      const flags = await callNative<string>(CallbackHandlerStrings.getFeatureFlags);
+      setFeatureFlags(JSON.parse(flags ?? "{}") as TFeatureFlagsResponse);
     } catch (error) {
       console.error("Error fetching feature flags", error);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Get the feature flags from the native code
   useEffect(() => {
-    getFeatureFlags();
+    void getFeatureFlags();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -46,10 +46,15 @@ export const useEditorFlagging = () => {
     const isCollaborationCursorEnabled = featureFlags?.collaborationCursor ?? false;
     const isNestedPagesEnabled = featureFlags?.nestedPages ?? false;
     const isEditorAttachmentsEnabled = featureFlags?.editorAttachments ?? false;
+    const isVideoAttachmentsEnabled = featureFlags?.videoAttachments ?? false;
+    const isEditorMathematicsEnabled = featureFlags?.editorMathematics ?? false;
+    const isExternalEmbedEnabled = featureFlags?.editorExternalEmbeds ?? false;
+    const isCommentsEnabled = featureFlags?.pageComments ?? false;
 
     const documentFlaggedArr: TExtensions[] = [];
     const documentDisabledArr = [...disabledExtensions];
     const richTextFlaggedArr: TExtensions[] = [];
+    const liteTextFlaggedArr: TExtensions[] = [];
 
     if (!isWorkItemEmbedEnabled) {
       documentFlaggedArr.push("issue-embed");
@@ -63,6 +68,26 @@ export const useEditorFlagging = () => {
     if (!isEditorAttachmentsEnabled) {
       documentFlaggedArr.push("attachments");
       richTextFlaggedArr.push("attachments");
+      liteTextFlaggedArr.push("attachments");
+    }
+    if (!isVideoAttachmentsEnabled) {
+      documentFlaggedArr.push("video-attachments");
+      richTextFlaggedArr.push("video-attachments");
+      liteTextFlaggedArr.push("video-attachments");
+    }
+    if (!isEditorMathematicsEnabled) {
+      documentFlaggedArr.push("mathematics");
+      richTextFlaggedArr.push("mathematics");
+      liteTextFlaggedArr.push("mathematics");
+    }
+    if (!isExternalEmbedEnabled) {
+      documentFlaggedArr.push("external-embed");
+      richTextFlaggedArr.push("external-embed");
+      liteTextFlaggedArr.push("external-embed");
+    }
+
+    if (!isCommentsEnabled) {
+      documentFlaggedArr.push("comments");
     }
 
     return {
@@ -71,8 +96,8 @@ export const useEditorFlagging = () => {
         flagged: documentFlaggedArr,
       },
       liteText: {
-        disabled: <TExtensions[]>[...disabledExtensions, "enter-key"],
-        flagged: [],
+        disabled: <TExtensions[]>[...disabledExtensions, "enter-key", "external-embed"],
+        flagged: liteTextFlaggedArr,
       },
       richText: {
         disabled: disabledExtensions,

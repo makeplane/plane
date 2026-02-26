@@ -17,6 +17,10 @@ export enum E_FEATURE_FLAGS {
   PAGE_ISSUE_EMBEDS = "pageIssueEmbeds",
   NESTED_PAGES = "nestedPages",
   EDITOR_ATTACHMENTS = "editorAttachments",
+  VIDEO_ATTACHMENTS = "videoAttachments",
+  EDITOR_MATHEMATICS = "editorMathematics",
+  EDITOR_EXTERNAL_EMBEDS = "editorExternalEmbeds",
+  COMMENTS = "pageComments",
 }
 
 export type TFeatureFlagsResponse = {

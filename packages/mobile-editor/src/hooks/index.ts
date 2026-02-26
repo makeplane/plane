@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./use-editor-mention";
+export * from "./use-editor-mentions";
 export * from "./use-mobile-editor";
 export * from "./use-toolbar";
 export * from "./use-disable-zoom";
@@ -19,3 +19,4 @@ export * from "./use-editor-flagging";
 export * from "./use-realtime-events";
 export * from "./use-editor-embeds";
 export * from "./use-initial-content-load";
+export * from "./use-scroll-sync";

@@ -24,7 +24,6 @@ export const useToolbar = (editorRef: React.MutableRefObject<EditorRefApi | null
   // Notifies the native code to with active toolbar state.
   const updateActiveStates = useCallback(() => {
     if (!editorRef.current) return;
-
     const newActiveStates: Record<string, boolean> = {};
     Object.values(TOOLBAR_ITEMS)
       .flat()
@@ -35,7 +34,7 @@ export const useToolbar = (editorRef: React.MutableRefObject<EditorRefApi | null
             itemKey: item.key,
           }) ?? false;
       });
-    callNative(CallbackHandlerStrings.getActiveToolbarState, JSON.stringify(newActiveStates));
+    void callNative(CallbackHandlerStrings.getActiveToolbarState, JSON.stringify(newActiveStates));
   }, [editorRef]);
 
   return {

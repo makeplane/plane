@@ -11,21 +11,21 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { TEditorCommands } from "@plane/editor";
-import { TEditorParams, TMentionSuggestionResponse } from "@/types";
+import type { TCommandWithPropsWithItemKey, TEditorCommands } from "@plane/editor";
+import type { TEditorParams, TMemberResponse } from "@/types";
 
 declare global {
   interface Window {
     // app.tsx
     setEditorVariant: (variant: string) => void;
     flutter_inappwebview: {
-      callHandler(method: string, args?: string): Promise<any>;
+      callHandler(method: string, args?: string): Promise<unknown>;
     } | null;
     // use-editor-wrapper.ts
     resetInitialParams: (params: TEditorParams) => void;
     // use-mobile-editor.ts
+    executeAction: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
     sendContent: () => string | undefined;
-    executeAction: (actionKey: TEditorCommands) => void;
     undo: () => void;
     redo: () => void;
     unfocus: () => void;
@@ -36,9 +36,13 @@ declare global {
     getSelectedText: () => string | null | undefined;
     createSelectionAtCursorPosition: () => void;
     setEditorValue: (content: string) => void;
+    insertMathEquation: (commandKey: "inline-equation" | "block-equation", latex: string) => void;
+    resolveCommentMark: (commentId: string) => void;
+    unresolveCommentMark: (commentId: string) => void;
     // use-editor-mention.ts
-    getMembers: () => Promise<TMentionSuggestionResponse[]>;
-    setMembers: (members: TMentionSuggestionResponse[]) => void;
+    setMembers: (members: TMemberResponse[]) => void;
     getUserId: () => void;
+    // page
+    updatePageAccess: (pageId: string) => Promise<void>;
   }
 }

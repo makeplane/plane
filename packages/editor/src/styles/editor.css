@@ -561,7 +561,7 @@ span[data-name][data-type="emoji"] img {
 }
 
 /* touch device styles */
-.touch-select-none {
+@utility touch-select-none {
   user-select: none;
   -webkit-user-select: none;
 }

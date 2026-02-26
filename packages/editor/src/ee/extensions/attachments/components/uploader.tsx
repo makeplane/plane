@@ -11,14 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Editor } from "@tiptap/react";
-import { useEditorState } from "@tiptap/react";
 import { FileUp, RotateCcw } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-// icons
-import { VideoFileIcon } from "@plane/propel/icons";
 // plane imports
-import { AttachmentUploadFailedIcon } from "@plane/propel/icons";
+import { AttachmentUploadFailedIcon, VideoFileIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -235,13 +231,13 @@ export function CustomAttachmentUploader(props: CustomAttachmentUploaderProps) {
       aria-label="Click to upload attachment"
       aria-disabled={!editor.isEditable}
     >
-      <div className="flex-shrink-0 mt-1 size-8 grid place-items-center">
+      <div className="shrink-0 mt-1 size-8 grid place-items-center">
         {isVideoUploader ? (
-          <VideoFileIcon className="flex-shrink-0 size-8 text-tertiary" />
+          <VideoFileIcon className="shrink-0 size-8 text-tertiary" />
         ) : hasDuplicationFailed || fileUploadError ? (
-          <AttachmentUploadFailedIcon className="flex-shrink-0 size-8 text-custom-text-300" />
+          <AttachmentUploadFailedIcon className="shrink-0 size-8 text-custom-text-300" />
         ) : (
-          <FileUp className="flex-shrink-0 size-8 text-tertiary" />
+          <FileUp className="shrink-0 size-8 text-tertiary" />
         )}
       </div>
       <CustomAttachmentUploaderDetails

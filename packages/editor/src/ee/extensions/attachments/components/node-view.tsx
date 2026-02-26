@@ -131,14 +131,12 @@ export function CustomAttachmentNodeView(props: CustomAttachmentNodeViewProps) {
         <div className="p-0 mx-0 py-2 not-prose" ref={attachmentComponentRef} contentEditable={false}>
           {shouldShowBlock ? (
             <>
-              {resolvedSource && resolvedDownloadSource && (
-                <CustomAttachmentBlock
-                  {...props}
-                  resolvedDownloadSource={resolvedDownloadSource}
-                  resolvedSource={resolvedSource}
-                  isTouchDevice={isTouchDevice}
-                />
-              )}
+              <CustomAttachmentBlock
+                {...props}
+                resolvedDownloadSource={resolvedDownloadSource}
+                resolvedSource={resolvedSource}
+                isTouchDevice={isTouchDevice}
+              />
             </>
           ) : (
             <CustomAttachmentUploader {...props} hasDuplicationFailed={hasDuplicationFailed} />

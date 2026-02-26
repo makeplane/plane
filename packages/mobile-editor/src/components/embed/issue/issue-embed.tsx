@@ -13,10 +13,11 @@
 
 import { AlertTriangle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-// plane imports
+// plane types
 import type { IIssueDisplayProperties } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
+import { ClickableDiv } from "@/components/common";
 import { IssueIdentifier } from "@/components/embed/issue/issue-identifier";
 // constants
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
@@ -32,12 +33,12 @@ type Props = {
   workspaceSlug?: string;
 };
 
-export function IssueEmbedCard(props: Props) {
+export const IssueEmbedCard: React.FC<Props> = (props) => {
   const { issueId, projectId, workspaceSlug } = props;
 
   // states
   const [issueDetails, setIssueDetails] = useState<TIssue | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   // issue display properties
   const displayProperties: IIssueDisplayProperties = {};
 
@@ -48,14 +49,16 @@ export function IssueEmbedCard(props: Props) {
   const fetchIssueDetails = useCallback(async () => {
     try {
       setIsLoading(true);
-      await callNative(
+      const issue = await callNative<string>(
         CallbackHandlerStrings.getIssueDetails,
         JSON.stringify({
           issueId,
           projectId,
           workspaceSlug,
         })
-      ).then((issue: string) => setIssueDetails(JSON.parse(issue)));
+      );
+      if (!issue) return;
+      setIssueDetails(JSON.parse(issue) as TIssue);
     } catch (error) {
       console.error(error);
     } finally {
@@ -63,9 +66,20 @@ export function IssueEmbedCard(props: Props) {
     }
   }, [issueId, projectId, workspaceSlug]);
 
+  const handleClick = useCallback(() => {
+    if (!issueId || !projectId) return;
+    void callNative(
+      CallbackHandlerStrings.onOpenWorkItemDetails,
+      JSON.stringify({
+        workItemId: issueId,
+        projectId,
+      })
+    );
+  }, [issueId, projectId]);
+
   // get the issue details from the native code.
   useEffect(() => {
-    if (!issueDetails) fetchIssueDetails();
+    if (!issueDetails) void fetchIssueDetails();
   }, [issueDetails, fetchIssueDetails]);
 
   if (!issueDetails && isLoading)
@@ -83,20 +97,23 @@ export function IssueEmbedCard(props: Props) {
 
   if (!issueDetails && !isLoading)
     return (
-      <div className="flex items-center gap-3 rounded-md border-2 border-orange-500 bg-orange-500/10 text-orange-500 py-3 my-2 text-14">
-        <AlertTriangle className="text-orange-500 size-8" />
+      <div className="flex items-center gap-3 rounded-md border-2 border-orange-500 bg-orange-500/10 text-orange-500 py-3 my-2 text-base">
+        <AlertTriangle className="text-orange-500 size-8 pl-3 flex-shrink-0" />
         This work item embed is not found in any project. It can no longer be updated or accessed from here.
       </div>
     );
 
   return (
-    <div className="issue-embed cursor-pointer space-y-2 rounded-lg border border-strong bg-surface-1 shadow-raised-100 p-3 px-4 my-2">
+    <ClickableDiv
+      onClick={handleClick}
+      className="issue-embed cursor-pointer space-y-2 rounded-lg border border-strong bg-surface-1 shadow-raised-100 p-3 px-4 my-2"
+    >
       <IssueIdentifier
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         issueIdentifier={issueDetails?.sequenceId?.toString() ?? ""}
       />
-      <h4 className="!text-16 !font-medium !mt-2 line-clamp-2 break-words">{issueDetails?.name}</h4>
-    </div>
+      <h4 className="!text-base !font-medium !mb-2 !line-clamp-2 break-words">{issueDetails?.name}</h4>
+    </ClickableDiv>
   );
-}
+};

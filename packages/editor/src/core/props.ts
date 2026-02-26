@@ -52,6 +52,7 @@ export const CoreEditorProps = (props: TArgs): EditorProps => {
         "prose prose-brand max-w-full prose-headings:font-display font-default focus:outline-none",
         editorClassName
       ),
+      inputMode: "text",
     },
     handleDOMEvents: {
       keydown: (_view, event) => {

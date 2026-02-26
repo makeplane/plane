@@ -11,5 +11,5 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export const callNative = async (method: string, args?: string) =>
-  await window.flutter_inappwebview?.callHandler(method, args);
+export const callNative = async <T = unknown>(method: string, args?: string): Promise<T | undefined> =>
+  (await window.flutter_inappwebview?.callHandler(method, args)) as Promise<T | undefined>;

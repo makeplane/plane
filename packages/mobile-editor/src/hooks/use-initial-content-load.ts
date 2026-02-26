@@ -15,20 +15,21 @@ import { useCallback, useState } from "react";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
 import { callNative } from "@/helpers/flutter-callback.helper";
 
-export const useInitialContentLoad = () => {
+export const useInitialContentLoad = (isEditorReady: boolean) => {
   const [isInitialContentLoaded, setIsInitialContentLoaded] = useState<boolean>(false);
   // Verifies editor initialization with initial content and triggers a callback with the content height
   const onInitialContentLoad = useCallback(() => {
-    const editorContainer = document.querySelector(".tiptap");
+    if (!isEditorReady) return;
+    const editorContainer = document.querySelector(".editor-container");
     if (
       editorContainer &&
       '<p class="editor-paragraph-block"></p>' !== editorContainer.innerHTML &&
       !isInitialContentLoaded
     ) {
       setIsInitialContentLoaded(true);
-      callNative(CallbackHandlerStrings.onInitialContentLoad, editorContainer.clientHeight.toString());
+      void callNative(CallbackHandlerStrings.onInitialContentLoad, editorContainer.clientHeight.toString());
     }
-  }, [isInitialContentLoaded]);
+  }, [isInitialContentLoaded, isEditorReady]);
 
   return { onInitialContentLoad };
 };

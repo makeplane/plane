@@ -14,9 +14,10 @@
 import { FileText } from "lucide-react";
 import { observer } from "mobx-react";
 import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
-import { ArchiveIcon, EmptyPageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 // ui
-import { Loader, Logo } from "@plane/ui";
+import { ArchiveIcon, EmptyPageIcon, RestrictedPageIcon } from "@plane/propel/icons";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { Loader } from "@plane/ui";
 // utils
 import { cn } from "@plane/utils";
 // components
@@ -43,7 +44,7 @@ type PageDisplayState = {
   text: string;
 };
 
-export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Props) {
+export const PageEmbedCardRoot: React.FC<Props> = observer((props) => {
   const { workspaceSlug, pageId, projectId, isNestedPagesEnabled } = props;
   // store hooks
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -77,7 +78,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
 
   useEffect(() => {
     if (!pageId || !workspaceSlug) return;
-    if (!page) fetchPageEmbed();
+    if (!page) void fetchPageEmbed();
   }, [pageId, projectId, workspaceSlug, page, fetchPageEmbed]);
 
   useEffect(() => {
@@ -90,7 +91,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
       } else if (page?.archivedAt && canCurrentUserAccessPage) {
         return {
           text: getPageName(page?.name),
-          badge: <Badge text="Archived" icon={<ArchiveIcon className="size-2.5 text-tertiary de" />} />,
+          badge: <Badge text="Archived" icon={<ArchiveIcon className="size-2.5 text-custom-text-300" />} />,
         };
       } else if (!canCurrentUserAccessPage && page?.id) {
         return {
@@ -131,7 +132,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
   // Handle the actual click/tap action
   const handlePageEmbedClick = useCallback(() => {
     if (!isNestedPagesEnabled) return;
-    callNative(
+    void callNative(
       CallbackHandlerStrings.onPageEmbedClick,
       JSON.stringify({
         pageId: pageId,
@@ -143,7 +144,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
 
   if (page?.name == null) {
     return (
-      <Loader className="not-prose relative h-10 page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline hover:bg-layer-1 w-full bg-layer-1">
+      <Loader className="not-prose relative h-10 page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline hover:bg-custom-background-80 w-full bg-custom-background-80">
         <Loader.Item className="h-9" />
       </Loader>
     );
@@ -171,7 +172,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
   return (
     <div
       className={cn(
-        "not-prose relative page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline hover:bg-layer-1"
+        "not-prose relative page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors flex items-center gap-1.5 !no-underline bg-custom-background-90"
       )}
       onTouchStart={(event) => {
         // Record touch start position and time
@@ -221,7 +222,7 @@ export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Prop
     >
       <div className="flex-shrink-0">{pageEmbedLogo}</div>
       <div className="flex items-center gap-3 truncate">
-        <p className="not-prose text-14 font-medium break truncate underline decoration-custom-text-300 underline-offset-4">
+        <p className="not-prose text-base font-medium break truncate underline decoration-custom-text-300 underline-offset-4">
           {displayState.text}
         </p>
         <div className="flex-shrink-0">{displayState?.badge}</div>

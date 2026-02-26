@@ -21,37 +21,66 @@ import { callNative, checkURLValidity } from "@/helpers";
  */
 export const getEditorFileHandlers = (): TFileHandler => ({
   assetsUploadStatus: {},
-  getAssetDownloadSrc: async (src) => src,
+  duplicate: (assetId: string) => Promise.resolve(assetId),
+  getAssetDownloadSrc: async (src) => {
+    if (!src) return "";
+    if (checkURLValidity(src)) {
+      return src;
+    } else {
+      return (await callNative<string>(CallbackHandlerStrings.getDownloadAssetSrc, src)) ?? src;
+    }
+  },
   getAssetSrc: async (src) => {
     if (!src) return "";
     if (checkURLValidity(src)) {
       return src;
     } else {
-      return (await callNative(CallbackHandlerStrings.getResolvedImageUrl, src)) ?? src;
+      const resolved = (await callNative<string>(CallbackHandlerStrings.getResolvedImageUrl, src)) ?? src;
+      return resolved;
     }
   },
   upload: async (_, file: File) => {
-    const base64Data = Buffer.from(await file.arrayBuffer()).toString("base64");
-    const assetId = await callNative(
-      CallbackHandlerStrings.uploadImage,
-      JSON.stringify({
-        base64Data,
-        fileName: file.name,
-        fileType: file.type,
-      })
-    );
-    return assetId ?? "";
+    try {
+      const base64Data = await fileToBase64(file);
+      const assetId = await callNative<string>(
+        CallbackHandlerStrings.uploadImage,
+        JSON.stringify({
+          base64Data,
+          fileName: file.name,
+          fileType: file.type,
+        })
+      );
+      return assetId ?? "";
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      return "";
+    }
   },
-  delete: async (src: string) => await callNative(CallbackHandlerStrings.deleteImage, src),
-  restore: async (src: string) => await callNative(CallbackHandlerStrings.restoreImage, src),
+  delete: async (src: string) => {
+    await callNative(CallbackHandlerStrings.deleteImage, src);
+  },
+  restore: async (src: string) => {
+    await callNative(CallbackHandlerStrings.restoreImage, src);
+  },
   cancel: () => {},
   validation: {
     maxFileSize: MAX_FILE_SIZE,
   },
   checkIfAssetExists: async (assetId) => {
-    const exists = await callNative(CallbackHandlerStrings.checkIfAssetExists, assetId);
-    return exists;
+    const exists = await callNative<boolean>(CallbackHandlerStrings.checkIfAssetExists, assetId);
+    return exists === true;
   },
 });
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024;
+
+/**
+ * Converts a File to base64 string (without data URI prefix)
+ */
+const fileToBase64 = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve((reader.result as string).split(",")[1]);
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 // mobx store provider
 import { StoreProvider } from "@/lib/store-context";
@@ -22,7 +22,7 @@ export interface IAppProvider {
 
 const themes = ["light", "dark"];
 
-export function AppProvider(props: IAppProvider) {
+export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
   return (
     <>
@@ -33,4 +33,4 @@ export function AppProvider(props: IAppProvider) {
       </StoreProvider>
     </>
   );
-}
+};

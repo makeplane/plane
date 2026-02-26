@@ -16,6 +16,8 @@ import type { Decoration } from "@tiptap/pm/view";
 import { useEffect, useRef, useState } from "react";
 // version diff support
 import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
+// plane utils
+import { cn } from "@plane/utils";
 // local imports
 import type { CustomImageExtensionType, TCustomImageAttributes } from "../types";
 import { ECustomImageStatus } from "../types";
@@ -44,6 +46,8 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
 
   const [editorContainer, setEditorContainer] = useState<HTMLDivElement | null>(null);
   const imageComponentRef = useRef<HTMLDivElement>(null);
+  const isTouchDevice = !!editor.storage.utility.isTouchDevice;
+
   const hasRetriedOnMount = useRef(false);
   const isDuplicatingRef = useRef(false);
 
@@ -155,7 +159,12 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
   const shouldShowBlock = hasValidImageSource && !failedToLoadImage && !hasDuplicationFailed;
 
   return (
-    <YChangeNodeViewWrapper decorations={decorations} className="custom-image-node">
+    <YChangeNodeViewWrapper
+      decorations={decorations}
+      className={cn("custom-image-node", {
+        "touch-select-none": isTouchDevice,
+      })}
+    >
       <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
         {shouldShowBlock && !hasDuplicationFailed ? (
           <CustomImageBlock

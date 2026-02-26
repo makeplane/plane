@@ -75,6 +75,7 @@ function CollaborativeDocumentEditorInner(props: ICollaborativeDocumentEditorPro
     editable,
     editorClassName,
     editorProps,
+    extendedDocumentEditorProps,
     extendedEditorProps,
     extensions,
     fileHandler,

@@ -135,69 +135,76 @@ export class BasePageStore implements IBasePageStore {
   /**
    * @description make the page public
    */
-  makePublic = async () => {
+  makePublic = () => {
     runInAction(() => {
       this.access = EPageAccess.PUBLIC;
     });
+    return Promise.resolve();
   };
 
   /**
    * @description make the page private
    */
-  makePrivate = async () => {
+  makePrivate = () => {
     runInAction(() => {
       this.access = EPageAccess.PRIVATE;
     });
+    return Promise.resolve();
   };
 
   /**
    * @description lock the page
    */
-  lock = async () => {
+  lock = () => {
     runInAction(() => (this.isLocked = true));
+    return Promise.resolve();
   };
 
   /**
    * @description unlock the page
    */
-  unlock = async () => {
+  unlock = () => {
     runInAction(() => (this.isLocked = false));
+    return Promise.resolve();
   };
 
   /**
    * @description archive the page
    */
-  archive = async () => {
-    if (!this.id) return undefined;
+  archive = () => {
+    if (!this.id) return Promise.resolve();
 
     try {
       runInAction(() => {
         this.archivedAt = new Date().toISOString();
       });
+      return Promise.resolve();
     } catch (error) {
       console.error(error);
       runInAction(() => {
         this.archivedAt = null;
       });
+      return Promise.reject(error instanceof Error ? error : new Error(String(error)));
     }
   };
 
   /**
    * @description restore the page
    */
-  restore = async () => {
+  restore = () => {
     const archivedAtBeforeRestore = this.archivedAt;
 
     try {
       runInAction(() => {
         this.archivedAt = null;
       });
+      return Promise.resolve();
     } catch (error) {
       console.error(error);
       runInAction(() => {
         this.archivedAt = archivedAtBeforeRestore;
       });
-      throw error;
+      return Promise.reject(error instanceof Error ? error : new Error(String(error)));
     }
   };
 

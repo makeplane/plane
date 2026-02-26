@@ -45,7 +45,7 @@ type Props = {
   onBlur?: () => void;
   onFocus?: () => void;
   onHandleKeyDown?: (event: KeyboardEvent) => boolean;
-  isIOS?: boolean;
+  useNativeControls?: boolean;
 };
 
 export type VideoPlayerRef = {
@@ -53,7 +53,16 @@ export type VideoPlayerRef = {
 };
 
 export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: React.ForwardedRef<VideoPlayerRef>) {
-  const { src, className, selected, onLoadedMetadata, onBlur, onFocus, onHandleKeyDown, isIOS = false } = props;
+  const {
+    src,
+    className,
+    selected,
+    onLoadedMetadata,
+    onBlur,
+    onFocus,
+    onHandleKeyDown,
+    useNativeControls = false,
+  } = props;
 
   // refs
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -158,8 +167,8 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
   const bufferedProgress = duration > 0 ? (buffered / duration) * 100 : 0;
 
-  // For iOS devices, return a simple video with native controls
-  if (isIOS) {
+  // For mobile devices, return a simple video with native controls
+  if (useNativeControls) {
     return (
       <div
         className={cn("relative rounded-md overflow-hidden group !select-none !touch-select-none", className)}

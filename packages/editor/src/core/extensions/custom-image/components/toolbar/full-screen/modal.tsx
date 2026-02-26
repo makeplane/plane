@@ -118,6 +118,9 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
   );
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (!imgRef.current) return;
 
     const imgWidth = imgRef.current.offsetWidth * magnification;

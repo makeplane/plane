@@ -11,5 +11,5 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./use-members";
+export * from "./use-mentions";
 export * from "./use-pages";

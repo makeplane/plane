@@ -23,13 +23,20 @@ export class CallbackHandlerStrings {
   static readonly onEditorClick = "onEditorClick";
   static readonly onInitialContentLoad = "onInitialContentLoad";
   static readonly onContentChange = "onContentChange";
+  static readonly onNodeSelection = "onNodeSelection";
+  static readonly getSelectedNodes = "getSelectedNodes";
+  static readonly onOpenLink = "onOpenLink";
+  static readonly onOpenWorkItemDetails = "onOpenWorkItemDetails";
+  static readonly onContentSizeChange = "onContentSizeChange";
   // Mention callbacks
-  static readonly getMembers = "getMembers";
-  static readonly getUserId = "getUserId";
+  static readonly fetchMembers = "fetchMembers";
+  static readonly fetchAllMentions = "fetchAllMentions";
+  static readonly fetchWorkItemMentionById = "fetchWorkItemMentionById";
   // Feature flag callbacks
   static readonly getFeatureFlags = "getFeatureFlags";
   // Asset callbacks
   static readonly getResolvedImageUrl = "getResolvedImageUrl";
+  static readonly getDownloadAssetSrc = "getDownloadAssetSrc";
   static readonly uploadImage = "uploadImage";
   static readonly deleteImage = "deleteImage";
   static readonly restoreImage = "restoreImage";
@@ -53,4 +60,18 @@ export class CallbackHandlerStrings {
   static readonly updatePageTitle = "updatePageTitle";
   static readonly pageMoved = "pageMoved";
   static readonly pageMovedInternally = "pageMovedInternally";
+
+  // Math callbacks
+  static readonly updateMathEquation = "updateMathEquation";
+
+  // External embed callbacks
+  static readonly fetchExternalEmbed = "fetchExternalEmbed";
+  static readonly onExternalEmbedBlockClick = "onExternalEmbedBlockClick";
+
+  // Page inline comments
+  static readonly onCommentClick = "onCommentClick";
+  static readonly onCommentResolve = "onCommentResolve";
+
+  // Drawio callbacks
+  static readonly onDrawioBlockClick = "onDrawioBlockClick";
 }

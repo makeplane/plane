@@ -49,3 +49,4 @@ export { TrailingNode } from "./core/extensions/trailing-node";
 export { CustomAIBlockUI } from "./ee/extensions/ai-block/block-ui";
 export type { CustomAIBlockUIProps } from "./ee/extensions/ai-block/block-ui";
 export type { TAIBlockNodeViewProps, TAIBlockWidgetProps } from "./ee/extensions/ai-block/types";
+export { EnterKeyExtension } from "./core/extensions/enter-key";

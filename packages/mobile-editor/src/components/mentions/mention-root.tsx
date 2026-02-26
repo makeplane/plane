@@ -13,20 +13,26 @@
 
 // plane imports
 import type { TCallbackMentionComponentProps } from "@plane/editor";
+import type { TEditorMentionType } from "@plane/types";
+// local types
+import type { TWorkItemMentionResponse } from "@/types";
 // local components
+import { EditorAdditionalMentionsRoot } from "./additional-mentions-root";
 import { EditorUserMention } from "./user-mention";
 
-type EditorMentionsRootProps = TCallbackMentionComponentProps & {
+export type TEditorMentionComponentProps = TCallbackMentionComponentProps & {
+  getMentionDetails?: (mentionType: TEditorMentionType, entityId: string) => TWorkItemMentionResponse | undefined;
+  workspaceSlug: string;
   currentUserId: string;
 };
 
-export function EditorMentionsRoot(props: EditorMentionsRootProps) {
+export const EditorMentionsRoot: React.FC<TEditorMentionComponentProps> = (props) => {
   const { entity_identifier, entity_name, currentUserId } = props;
 
   switch (entity_name) {
     case "user_mention":
       return <EditorUserMention id={entity_identifier} currentUserId={currentUserId} />;
     default:
-      return null;
+      return <EditorAdditionalMentionsRoot {...props} />;
   }
-}
+};

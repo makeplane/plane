@@ -12,3 +12,5 @@
  */
 
 export * from "./badge";
+export * from "./clickable-div";
+export * from "./issue-type-logo";

@@ -20,12 +20,6 @@
   white-space: nowrap;
 }
 
-/* Placeholder only for the first line in an empty editor. */
-.ProseMirror p.is-editor-empty:first-child::before {
-  display: block !important;
-}
-
-/* Display Placeholders on every new line. */
-.ProseMirror p.is-empty::before {
-  display: none;
+body {
+  background-color: transparent !important;
 }

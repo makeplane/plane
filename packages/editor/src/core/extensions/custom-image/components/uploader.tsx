@@ -57,6 +57,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
   const { id: imageEntityId } = node.attrs;
   // derived values
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
+  // Touch handling state
   const isTouchDevice = !!editor.storage.utility.isTouchDevice;
 
   const onUpload = useCallback(

@@ -11,9 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { MutableRefObject, useCallback, useEffect, useMemo, useState } from "react";
 // types
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { MutableRefObject } from "react";
+// plane types
 import type { EditorRefApi, EventToPayloadMap, TDocumentEventEmitter, TDocumentEventsClient } from "@plane/editor";
+// plane utils
+import { getMoveSourceAndTargetFromMoveType } from "@plane/utils";
 // constants
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
 // helpers
@@ -41,12 +45,7 @@ interface UsePageEventsProps {
   customRealtimeEventHandlers?: TCustomEventHandlers;
 }
 
-export const useRealtimePageEvents = ({
-  currentPageId,
-  currentProjectId,
-  currentUserId,
-  editorRef,
-}: UsePageEventsProps) => {
+export const useRealtimePageEvents = ({ currentPageId, currentUserId, editorRef }: UsePageEventsProps) => {
   const [isEditable, setIsEditable] = useState<boolean | null>(null);
 
   // CurrentUserAction local state to track if the current action is being processed
@@ -55,34 +54,11 @@ export const useRealtimePageEvents = ({
   const [refInitialized, setRefInitialized] = useState(false);
   const { getSubPageById } = usePages();
 
-  const customRealtimeEventHandlers: TCustomEventHandlers = useMemo(
-    () =>
-      currentProjectId
-        ? {
-            moved: async ({ pageIds, data }) => {
-              if (data.new_project_id && data.new_page_id) {
-                // For project pages, handle the move to a different project
-                // Call the actual movePage implementation
-                if (pageIds.includes(currentPageId)) {
-                  callNative(
-                    CallbackHandlerStrings.getCollaborativeDocumentEvents,
-                    JSON.stringify({
-                      event: "moved",
-                      payload: data,
-                    })
-                  );
-                }
-              }
-            },
-          }
-        : {},
-    [currentPageId, currentProjectId]
-  );
-
   const updatePageAccess = useCallback(
     async (pageId: string) => {
-      const response = await callNative(CallbackHandlerStrings.getPageAccess);
-      const access = JSON.parse(response);
+      const response = await callNative<string>(CallbackHandlerStrings.getPageAccess);
+      if (!response) return;
+      const access = JSON.parse(response) as { canEdit?: boolean; canView?: boolean };
       const canEdit = access["canEdit"] === true;
       const canView = access["canView"] === true;
       const pageItem = getSubPageById(pageId);
@@ -95,6 +71,10 @@ export const useRealtimePageEvents = ({
     [getSubPageById]
   );
 
+  useEffect(() => {
+    window.updatePageAccess = updatePageAccess;
+  }, [updatePageAccess]);
+
   const ACTION_HANDLERS = useMemo<
     Partial<{
       [K in keyof EventToPayloadMap]: PageUpdateHandler<K>;
@@ -104,16 +84,16 @@ export const useRealtimePageEvents = ({
       archived: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getSubPageById(pageId);
-          if (pageItem) pageItem.archive();
+          if (pageItem) void pageItem.archive();
           if (currentPageId === pageId) {
-            callNative(
+            void callNative(
               CallbackHandlerStrings.getCollaborativeDocumentEvents,
               JSON.stringify({
                 event: "archived",
                 payload: data,
               })
             );
-            updatePageAccess(pageId);
+            void updatePageAccess(pageId);
             setIsEditable(false);
           }
         });
@@ -121,34 +101,34 @@ export const useRealtimePageEvents = ({
       unarchived: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getSubPageById(pageId);
-          if (pageItem) pageItem.restore();
+          if (pageItem) void pageItem.restore();
 
           if (currentPageId === pageId) {
-            callNative(
+            void callNative(
               CallbackHandlerStrings.getCollaborativeDocumentEvents,
               JSON.stringify({
                 event: "unarchived",
                 payload: data,
               })
             );
-            updatePageAccess(pageId);
+            void updatePageAccess(pageId);
           }
         });
       },
       locked: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getSubPageById(pageId);
-          if (pageItem) pageItem.lock();
+          if (pageItem) void pageItem.lock();
           if (currentPageId === pageId) {
             setIsEditable(false);
-            callNative(
+            void callNative(
               CallbackHandlerStrings.getCollaborativeDocumentEvents,
               JSON.stringify({
                 event: "locked",
                 payload: data,
               })
             );
-            updatePageAccess(pageId);
+            void updatePageAccess(pageId);
             setIsEditable(false);
           }
         });
@@ -156,55 +136,55 @@ export const useRealtimePageEvents = ({
       unlocked: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getSubPageById(pageId);
-          if (pageItem) pageItem.unlock();
+          if (pageItem) void pageItem.unlock();
           if (currentPageId === pageId) {
-            callNative(
+            void callNative(
               CallbackHandlerStrings.getCollaborativeDocumentEvents,
               JSON.stringify({
                 event: "unlocked",
                 payload: data,
               })
             );
-            updatePageAccess(pageId);
+            void updatePageAccess(pageId);
           }
         });
       },
       "made-public": ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getSubPageById(pageId);
-          if (pageItem) pageItem.makePublic();
+          if (pageItem) void pageItem.makePublic();
           if (currentPageId === pageId) {
-            callNative(
+            void callNative(
               CallbackHandlerStrings.getCollaborativeDocumentEvents,
               JSON.stringify({
                 event: "made-public",
                 payload: data,
               })
             );
-            updatePageAccess(pageId);
+            void updatePageAccess(pageId);
           }
         });
       },
       "made-private": ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getSubPageById(pageId);
-          if (pageItem) pageItem.makePrivate();
+          if (pageItem) void pageItem.makePrivate();
           if (currentPageId === pageId) {
-            callNative(
+            void callNative(
               CallbackHandlerStrings.getCollaborativeDocumentEvents,
               JSON.stringify({
                 event: "made-private",
                 payload: data,
               })
             );
-            updatePageAccess(pageId);
+            void updatePageAccess(pageId);
           }
         });
       },
       deleted: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           if (currentPageId === pageId) {
-            callNative(
+            void callNative(
               CallbackHandlerStrings.getCollaborativeDocumentEvents,
               JSON.stringify({
                 event: "deleted",
@@ -221,7 +201,7 @@ export const useRealtimePageEvents = ({
           if (updatedName != null) {
             pageInstance?.updateTitle(updatedName);
             if (pageId === currentPageId) {
-              callNative(
+              void callNative(
                 CallbackHandlerStrings.updatePageTitle,
                 JSON.stringify({
                   pageId: pageId,
@@ -237,7 +217,7 @@ export const useRealtimePageEvents = ({
         pageIds.forEach((pageId) => {
           if (data.parent_id !== undefined) {
             if (pageId === currentPageId) {
-              callNative(
+              void callNative(
                 CallbackHandlerStrings.getCollaborativeDocumentEvents,
                 JSON.stringify({
                   event: "moved_internally",
@@ -248,13 +228,13 @@ export const useRealtimePageEvents = ({
           }
         });
       },
-      shared: async ({ data }) => {
+      shared: ({ data }) => {
         const { users_and_access } = data;
         for (const user of users_and_access) {
           const { user_id, access, page_id: pageIds } = user;
           for (const pageId of pageIds) {
             if (currentUserId === user_id && pageId === currentPageId) {
-              callNative(
+              void callNative(
                 CallbackHandlerStrings.getCollaborativeDocumentEvents,
                 JSON.stringify({
                   event: "shared",
@@ -263,19 +243,19 @@ export const useRealtimePageEvents = ({
                   },
                 })
               );
-              updatePageAccess(pageId);
+              void updatePageAccess(pageId);
             }
           }
         }
       },
-      unshared: async ({ data }) => {
+      unshared: ({ data }) => {
         const { users_and_access } = data;
         for (const user of users_and_access) {
           const { user_id, access, page_id: pageIds } = user;
           for (const pageId of pageIds) {
             if (pageId === currentPageId && currentUserId === user_id) {
               setIsEditable(false);
-              callNative(
+              void callNative(
                 CallbackHandlerStrings.getCollaborativeDocumentEvents,
                 JSON.stringify({
                   event: "unshared",
@@ -288,14 +268,36 @@ export const useRealtimePageEvents = ({
           }
         }
       },
+      moved: ({ pageIds, data }) => {
+        const moveType = data.move_type;
+        const newEntityIdentifier = data.new_entity_identifier;
+
+        if (moveType && newEntityIdentifier && currentPageId) {
+          const { target: moveTarget } = getMoveSourceAndTargetFromMoveType(moveType);
+
+          // remove the old page instance from the store
+          if (pageIds.includes(currentPageId)) {
+            void callNative(
+              CallbackHandlerStrings.getCollaborativeDocumentEvents,
+              JSON.stringify({
+                event: "moved",
+                payload: {
+                  moveTarget: moveTarget,
+                  newEntityIdentifier: newEntityIdentifier,
+                  newPageId: currentPageId,
+                },
+              })
+            );
+          }
+        }
+      },
       published: () => {},
       unpublished: () => {},
       "collaborators-updated": () => {},
       restored: () => {},
       duplicated: () => {},
-      ...customRealtimeEventHandlers,
     }),
-    [getSubPageById, currentPageId, currentUserId, customRealtimeEventHandlers, updatePageAccess]
+    [getSubPageById, currentPageId, currentUserId, updatePageAccess]
   );
 
   // The main function that will be returned from this hook

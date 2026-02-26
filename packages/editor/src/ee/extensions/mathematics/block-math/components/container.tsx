@@ -35,6 +35,8 @@ export function BlockMathContainer({
   className,
   isEditable = true,
 }: TBlockMathContainerProps) {
+  const isTouchDevice = !!editor?.storage.utility.isTouchDevice;
+
   const baseClasses = "rounded-lg  px-4 my-2 min-h-[48px] transition-all duration-300 ease-in-out";
 
   const borderColor =
@@ -47,13 +49,13 @@ export function BlockMathContainer({
       "flex items-center justify-start gap-2 py-3 text-tertiary bg-layer-3 border border-dashed transition-all duration-200 ease-in-out cursor-default",
       {
         "border-subtle-1": !(selected && editor?.isEditable),
-        "hover:text-secondary hover:bg-layer-3-hover cursor-pointer": isEditable,
+        "hover:text-secondary hover:bg-layer-3-hover cursor-pointer": isEditable && !isTouchDevice,
         "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
           selected && isEditable,
       }
     ),
-    error: `flex bg-layer-3 py-3 text-primary ${isEditable ? "hover:bg-layer-3-hover hover:shadow-md cursor-pointer" : "cursor-default"}`,
-    content: `text-center bg-layer-3 text-primary overflow-hidden ${isEditable ? "cursor-pointer hover:bg-layer-3-hover hover:shadow-md" : "cursor-default"}`,
+    error: `flex bg-layer-3 py-3 text-primary ${isEditable && !isTouchDevice ? "hover:bg-layer-3-hover hover:shadow-md cursor-pointer" : "cursor-default"}`,
+    content: `text-center bg-layer-3 text-primary overflow-hidden ${isEditable && !isTouchDevice ? "cursor-pointer hover:bg-layer-3-hover hover:shadow-md" : "cursor-default"}`,
   };
 
   return (

@@ -4,13 +4,14 @@
   "version": "2.3.0",
   "scripts": {
     "dev": "vite",
+    "build": "vite build",
     "lint-mobile": "eslint .",
     "preview": "vite preview",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=28",
+    "check:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=0",
     "check:types-mobile": "tsc --noEmit",
     "check:format-mobile": "oxfmt . --check",
-    "fix:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=28",
+    "fix:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=0",
     "fix:format-mobile": "oxfmt . --write"
   },
   "dependencies": {
@@ -20,13 +21,13 @@
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
     "lodash-es": "catalog:",
+    "mobx": "catalog:",
+    "mobx-react": "catalog:",
+    "mobx-utils": "catalog:",
     "lucide-react": "^0.454.0",
-    "mobx": "^6.15.0",
-    "mobx-react": "^9.2.1",
-    "mobx-utils": "^6.1.1",
     "next-themes": "0.4.6",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@plane/tailwind-config": "workspace:*",
@@ -36,8 +37,8 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "^5.1.4",
-    "globals": "^15.9.0",
     "vite": "catalog:",
+    "typescript": "catalog:",
     "vite-plugin-node-polyfills": "^0.25.0"
   }
 }

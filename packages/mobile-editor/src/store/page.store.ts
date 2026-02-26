@@ -14,25 +14,30 @@
 import { set, unset } from "lodash-es";
 import { makeObservable, observable, runInAction, action, computed } from "mobx";
 import { computedFn } from "mobx-utils";
+// constants
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
+// helpers
 import { callNative } from "@/helpers";
-import { BasePageStore, IBasePageStore } from "@/store/base-page.store";
-import type { TPage } from "@/types/page";
+// store
+import { BasePageStore } from "@/store/base-page.store";
+import type { IBasePageStore } from "@/store/base-page.store";
+// local types
+import type { TPage } from "@/types";
 
 type TBasePage = IBasePageStore;
+
+type TFetchParams = {
+  workspaceSlug: string;
+  projectId: string | undefined;
+  pageId: string;
+};
+
 export interface IPageStore {
   subPages: Record<string, TBasePage>; // pageId => Page
   //actions
-  fetchPages: (pageId: string) => void;
-  fetchPageDetails: ({
-    workspaceSlug,
-    pageId,
-    projectId,
-  }: {
-    workspaceSlug: string;
-    pageId: string;
-    projectId?: string;
-  }) => void;
+  fetchPages: (pageId: string) => Promise<void>;
+  fetchPageDetails: (params: TFetchParams) => Promise<void>;
+
   // computed
   subPageIds: string[];
 
@@ -81,7 +86,8 @@ export class PageStore implements IPageStore {
    * @description Fetches the sub pages for the given page id
    */
   fetchPages = async (pageId: string) => {
-    const response = await callNative(CallbackHandlerStrings.getPages, pageId);
+    const response = await callNative<string>(CallbackHandlerStrings.getPages, pageId);
+    if (!response) return;
     const pages = this._parsePages(response);
     runInAction(() => {
       this.subPages = pages;
@@ -91,18 +97,11 @@ export class PageStore implements IPageStore {
   /**
    * @description Fetches the page details for the given page id
    */
-  fetchPageDetails = async ({
-    workspaceSlug,
-    pageId,
-    projectId,
-  }: {
-    workspaceSlug: string;
-    pageId: string;
-    projectId?: string;
-  }) => {
+  fetchPageDetails = async (params: TFetchParams) => {
+    const { workspaceSlug, projectId, pageId } = params;
     try {
       if (this.getSubPageById(pageId)) return;
-      const response = await callNative(
+      const response = await callNative<string>(
         CallbackHandlerStrings.getPageDetails,
         JSON.stringify({
           workspaceSlug: workspaceSlug,
@@ -110,9 +109,10 @@ export class PageStore implements IPageStore {
           pageId: pageId,
         })
       );
-      const pageDetails = JSON.parse(response);
+      if (!response) return;
+      const pageDetails = JSON.parse(response) as TPage;
       runInAction(() => {
-        set(this.subPages, [pageId], new BasePageStore(pageDetails as unknown as TPage));
+        set(this.subPages, [pageId], new BasePageStore(pageDetails));
       });
     } catch (error) {
       console.error("Error fetching page details", error);
@@ -125,10 +125,10 @@ export class PageStore implements IPageStore {
    * @returns @type {Record<string, IBasePageStore>}
    */
   _parsePages = (pagesResponse: string) => {
-    const parsedPages = JSON.parse(pagesResponse);
+    const parsedPages = JSON.parse(pagesResponse) as Record<string, TPage>;
     const pages: Record<string, IBasePageStore> = {};
     Object.values(parsedPages).forEach((page) => {
-      const pageInstance = new BasePageStore(page as unknown as TPage);
+      const pageInstance = new BasePageStore(page);
       if (pageInstance.id) set(pages, [pageInstance.id], pageInstance);
     });
     return pages;
