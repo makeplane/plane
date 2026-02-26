@@ -59,7 +59,8 @@
     "VITE_TURNSTILE_SITE_KEY",
     "VITE_FLATFILE_PUBLISHABLE_KEY",
     "SENTRY_AUTH_TOKEN",
-    "DD_TRACE_ENABLED"
+    "DD_TRACE_ENABLED",
+    "AWS_SECRET_CACHE_TTL"
   ],
   "remoteCache": {
     "apiUrl": "https://turborepo-remote-cache.vamsi-906.workers.dev",

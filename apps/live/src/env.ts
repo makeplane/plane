@@ -36,6 +36,14 @@ const envSchema = z.object({
   REDIS_HOST: z.string().optional(),
   REDIS_PORT: z.string().default("6379").transform(Number),
   REDIS_URL: z.string().optional(),
+  // AWS Secrets Manager (ElastiCache) - same env vars as API for consistency
+  ELASTICACHE_SECRET_ARN: z.string().optional(),
+  AWS_ROLE_ARN: z.string().optional(),
+  AWS_REGION: z.string().default("us-east-1"),
+  REDIS_AUTH_TOKEN_KEY: z.string().optional(),
+  REDIS_HOST_KEY: z.string().optional(),
+  REDIS_PORT_KEY: z.string().optional(),
+  AWS_SECRET_CACHE_TTL: z.string().default("300").transform(Number),
   // Iframely configuration
   IFRAMELY_URL: z.string().optional(),
 });

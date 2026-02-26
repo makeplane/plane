@@ -198,8 +198,56 @@ if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
     MIDDLEWARE.append("plane.middleware.db_routing.ReadReplicaRoutingMiddleware")
 
 
+# AWS Secrets Manager: When AWS_ROLE_ARN and RDS_SECRET_ARN are both set,
+# IRSA is used to fetch DB credentials from Secrets Manager.
+# Rotation is handled automatically by the custom backend (cache + retry).
+# DATABASE_URL (and DATABASE_READ_REPLICA_URL) take precedence when set.
+if (
+    (os.environ.get("AWS_ROLE_ARN") or "").strip()
+    and os.environ.get("RDS_SECRET_ARN")
+    and not os.environ.get("DATABASE_URL")
+):
+    _aws_region = os.environ.get("AWS_REGION", "us-east-1")
+    DATABASES["default"]["ENGINE"] = "plane.db.backends.secrets_manager"
+    DATABASES["default"]["SECRET_ARN"] = os.environ.get("RDS_SECRET_ARN")
+    DATABASES["default"]["AWS_REGION"] = _aws_region
+    if "replica" in DATABASES and not os.environ.get("DATABASE_READ_REPLICA_URL"):
+        DATABASES["replica"]["ENGINE"] = "plane.db.backends.secrets_manager"
+        DATABASES["replica"]["SECRET_ARN"] = os.environ.get("RDS_SECRET_ARN")
+        DATABASES["replica"]["AWS_REGION"] = _aws_region
+        DATABASES["replica"]["RDS_READ_REPLICA_URI"] = "RDS_READ_REPLICA_URI"
+
+
 # Redis Config
+def _is_bare_redis_host_port(url: str) -> bool:
+    return bool(url) and not url.startswith(("redis://", "rediss://"))
+
+
 REDIS_URL = os.environ.get("REDIS_URL")
+_aws_region = os.environ.get("AWS_REGION", "us-east-1")
+_has_elasticache = (
+    (os.environ.get("AWS_ROLE_ARN") or "").strip()
+    and os.environ.get("ELASTICACHE_SECRET_ARN")
+)
+
+# ElastiCache case 3: REDIS_URL not set — fetch host, port, token from Secrets Manager.
+if not REDIS_URL and _has_elasticache:
+    from plane.utils.aws_secrets import get_secret
+
+    _ec_secret = get_secret(os.environ["ELASTICACHE_SECRET_ARN"], _aws_region)
+    REDIS_URL = "rediss://:{token}@{host}:{port}".format(
+        token=_ec_secret.get(os.environ.get("REDIS_AUTH_TOKEN_KEY"), ""),
+        host=_ec_secret.get(os.environ.get("REDIS_HOST_KEY"), ""),
+        port=_ec_secret.get(os.environ.get("REDIS_PORT_KEY"), 6379),
+    )
+# ElastiCache case 4: REDIS_URL is bare host:port — fetch token from Secrets Manager only.
+elif REDIS_URL and _is_bare_redis_host_port(REDIS_URL) and _has_elasticache:
+    from plane.utils.aws_secrets import get_secret
+
+    _ec_secret = get_secret(os.environ["ELASTICACHE_SECRET_ARN"], _aws_region)
+    _token = _ec_secret.get(os.environ.get("REDIS_AUTH_TOKEN_KEY", "token"), "")
+    REDIS_URL = f"rediss://:{_token}@{REDIS_URL}"
+
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
 if REDIS_SSL:
@@ -282,7 +330,43 @@ RABBITMQ_PORT = os.environ.get("RABBITMQ_PORT", "5672")
 RABBITMQ_USER = os.environ.get("RABBITMQ_USER", "guest")
 RABBITMQ_PASSWORD = os.environ.get("RABBITMQ_PASSWORD", "guest")
 RABBITMQ_VHOST = os.environ.get("RABBITMQ_VHOST", "/")
+
+
+def _is_bare_amqp_host_port(url: str) -> bool:
+    return bool(url) and not url.startswith(("amqp://", "amqps://"))
+
+
 AMQP_URL = os.environ.get("AMQP_URL")
+_aws_region_mq = os.environ.get("AWS_REGION", "us-east-1")
+_has_amazonmq = (
+    (os.environ.get("AWS_ROLE_ARN") or "").strip()
+    and os.environ.get("AMAZONMQ_SECRET_ARN")
+)
+
+# AmazonMQ: AMQP_URL not set — build URL from full secret (user, password, host, port, vhost) in Secrets Manager.
+if not AMQP_URL and _has_amazonmq:
+    from plane.utils.aws_secrets import get_secret
+
+    _mq_secret = get_secret(os.environ["AMAZONMQ_SECRET_ARN"], _aws_region_mq)
+    AMQP_URL = "amqps://{user}:{password}@{host}:{port}/{vhost}".format(
+        user=_mq_secret.get(os.environ.get("RABBITMQ_USER_KEY"), ""),
+        password=_mq_secret.get(os.environ.get("RABBITMQ_PASSWORD_KEY"), ""),
+        host=_mq_secret.get(os.environ.get("RABBITMQ_HOST_KEY"), ""),
+        port=_mq_secret.get(os.environ.get("RABBITMQ_PORT_KEY"), 5671),
+        vhost=_mq_secret.get(os.environ.get("RABBITMQ_VHOST_KEY"), "/"),
+    )
+# AmazonMQ: AMQP_URL is bare host:port — build amqps URL with username/password from Secrets Manager, vhost from env.
+elif AMQP_URL and _is_bare_amqp_host_port(AMQP_URL) and _has_amazonmq:
+    from plane.utils.aws_secrets import get_secret
+
+    _mq_secret = get_secret(os.environ["AMAZONMQ_SECRET_ARN"], _aws_region_mq)
+    _vhost = os.environ.get("RABBITMQ_VHOST", "/")
+    AMQP_URL = "amqps://{user}:{password}@{host}/{vhost}".format(
+        user=_mq_secret.get(os.environ.get("RABBITMQ_USER_KEY"), ""),
+        password=_mq_secret.get(os.environ.get("RABBITMQ_PASSWORD_KEY"), ""),
+        host=AMQP_URL,
+        vhost=_vhost,
+    )
 
 # Celery Configuration
 if AMQP_URL:

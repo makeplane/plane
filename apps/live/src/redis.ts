@@ -13,6 +13,7 @@
 
 import Redis from "ioredis";
 import { logger } from "@plane/logger";
+import { getSecret } from "./lib/aws-secrets";
 import { env } from "./env";
 
 export class RedisManager {
@@ -20,6 +21,9 @@ export class RedisManager {
   private redisClient: Redis | null = null;
   private isConnected: boolean = false;
   private connectionPromise: Promise<void> | null = null;
+  private resolvedRedisUrl: string = "";
+  private refreshIntervalId: ReturnType<typeof setInterval> | null = null;
+  private isRefreshing: boolean = false;
 
   private constructor() {}
 
@@ -44,27 +48,57 @@ export class RedisManager {
 
     this.connectionPromise = this.connect();
     await this.connectionPromise;
+    if (this.redisClient && env.ELASTICACHE_SECRET_ARN) {
+      this.scheduleSecretRefresh();
+    }
   }
 
-  private getRedisUrl(): string {
-    const redisUrl = env.REDIS_URL;
-    const redisHost = env.REDIS_HOST;
-    const redisPort = env.REDIS_PORT;
+  private isBareRedisHostPort(url: string): boolean {
+    return Boolean(url) && !url.startsWith("redis://") && !url.startsWith("rediss://");
+  }
 
-    if (redisUrl) {
-      return redisUrl;
+  /**
+   * Resolves Redis URL: REDIS_URL takes precedence; else if AWS_ROLE_ARN + ELASTICACHE_SECRET_ARN
+   * are set, fetches from AWS Secrets Manager (with optional forceRefresh); else REDIS_HOST:REDIS_PORT.
+   */
+  private async resolveRedisUrl(forceRefresh = false): Promise<string> {
+    const awsRoleArn = (env.AWS_ROLE_ARN ?? "").trim();
+    const hasElasticache = Boolean(awsRoleArn && env.ELASTICACHE_SECRET_ARN);
+
+    if (env.REDIS_URL && !this.isBareRedisHostPort(env.REDIS_URL)) {
+      return env.REDIS_URL;
     }
 
+    if (env.REDIS_URL && this.isBareRedisHostPort(env.REDIS_URL) && hasElasticache) {
+      const secret = await getSecret(env.ELASTICACHE_SECRET_ARN!, env.AWS_REGION, forceRefresh);
+      const tokenKey = env.REDIS_AUTH_TOKEN_KEY ?? "REDIS_AUTH_TOKEN";
+      const token = (secret[tokenKey] as string) ?? "";
+      return `rediss://:${encodeURIComponent(token)}@${env.REDIS_URL}`;
+    }
+
+    if (!env.REDIS_URL && hasElasticache) {
+      const secret = await getSecret(env.ELASTICACHE_SECRET_ARN!, env.AWS_REGION, forceRefresh);
+      const tokenKey = env.REDIS_AUTH_TOKEN_KEY ?? "REDIS_AUTH_TOKEN";
+      const hostKey = env.REDIS_HOST_KEY ?? "REDIS_HOST";
+      const portKey = env.REDIS_PORT_KEY ?? "REDIS_PORT";
+      const token = (secret[tokenKey] as string) ?? "";
+      const host = (secret[hostKey] as string) ?? "";
+      const port = Number(secret[portKey] ?? 6379);
+      return `rediss://:${encodeURIComponent(token)}@${host}:${port}`;
+    }
+
+    const redisHost = env.REDIS_HOST;
+    const redisPort = env.REDIS_PORT;
     if (redisHost && redisPort && !Number.isNaN(Number(redisPort))) {
       return `redis://${redisHost}:${redisPort}`;
     }
-
     return "";
   }
 
   private async connect(): Promise<void> {
     try {
-      const redisUrl = this.getRedisUrl();
+      const redisUrl = await this.resolveRedisUrl();
+      this.resolvedRedisUrl = redisUrl;
 
       if (!redisUrl) {
         logger.warn("REDIS_MANAGER: No Redis URL provided, Redis functionality will be disabled");
@@ -99,9 +133,14 @@ export class RedisManager {
         this.isConnected = true;
       });
 
-      this.redisClient.on("error", (error) => {
+      this.redisClient.on("error", (error: Error & { code?: string }) => {
         logger.error("REDIS_MANAGER: Redis client error:", error);
         this.isConnected = false;
+        const msg = error?.message ?? "";
+        if (env.ELASTICACHE_SECRET_ARN && (msg.includes("WRONGPASS") || msg.includes("NOAUTH"))) {
+          logger.info("REDIS_MANAGER: Auth error detected, refreshing credentials and reconnecting");
+          void this.refreshCredentialsAndReconnect();
+        }
       });
 
       this.redisClient.on("close", () => {
@@ -125,6 +164,48 @@ export class RedisManager {
     }
   }
 
+  private async refreshCredentialsAndReconnect(): Promise<void> {
+    if (this.isRefreshing) return;
+    this.isRefreshing = true;
+    try {
+      await this.disconnect();
+      this.connectionPromise = this.connect();
+      await this.connectionPromise;
+    } catch (err) {
+      logger.error("REDIS_MANAGER: Failed to refresh credentials and reconnect:", err);
+    } finally {
+      this.isRefreshing = false;
+    }
+  }
+
+  /**
+   * When using ElastiCache (ELASTICACHE_SECRET_ARN), periodically re-resolve URL from Secrets Manager
+   * and reconnect if the URL changed (e.g. after credential rotation).
+   */
+  private scheduleSecretRefresh(): void {
+    if (this.refreshIntervalId) return;
+    const ttlMs = (env.AWS_SECRET_CACHE_TTL ?? 300) * 1000;
+    this.refreshIntervalId = setInterval(() => {
+      void (async () => {
+        try {
+          const newUrl = await this.resolveRedisUrl(true);
+          if (newUrl && newUrl !== this.resolvedRedisUrl) {
+            logger.info("REDIS_MANAGER: Secret changed, reconnecting with new credentials");
+            if (this.refreshIntervalId) {
+              clearInterval(this.refreshIntervalId);
+              this.refreshIntervalId = null;
+            }
+            await this.disconnect();
+            await this.connect();
+            if (env.ELASTICACHE_SECRET_ARN) this.scheduleSecretRefresh();
+          }
+        } catch (err) {
+          logger.error("REDIS_MANAGER: Error during scheduled secret refresh:", err);
+        }
+      })();
+    }, ttlMs);
+  }
+
   public getClient(): Redis | null {
     if (!this.redisClient || !this.isConnected) {
       logger.warn("REDIS_MANAGER: Redis client not available or not connected");
@@ -138,6 +219,10 @@ export class RedisManager {
   }
 
   public async disconnect(): Promise<void> {
+    if (this.refreshIntervalId) {
+      clearInterval(this.refreshIntervalId);
+      this.refreshIntervalId = null;
+    }
     if (this.redisClient) {
       try {
         await this.redisClient.quit();

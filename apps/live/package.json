@@ -27,6 +27,7 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.989.0",
     "@dotenvx/dotenvx": "catalog:",
     "@effect/platform": "^0.94.4",
     "@effect/platform-node": "^0.104.0",
