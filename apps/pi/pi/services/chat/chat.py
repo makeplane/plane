@@ -62,10 +62,6 @@ log = logger.getChild(__name__)
 MAX_CHAT_LENGTH = settings.chat.MAX_CHAT_LENGTH
 MENTION_TAGS = settings.chat.MENTION_TAGS
 
-# Feature flag constant for action execution - using settings
-PI_ACTION_EXECUTION = settings.feature_flags.PI_ACTION_EXECUTION
-
-
 # mask_uuids_in_text moved to utils.py
 
 

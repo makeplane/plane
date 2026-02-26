@@ -126,13 +126,13 @@ def create_app() -> FastAPI:
     # Only protect get-answer endpoints for now
     endpoint_feature_map = {
         # Web endpoints
-        "/api/v1/chat/get-answer/": settings.feature_flags.PI_CHAT,
-        "/api/v1/chat/initialize-chat/": settings.feature_flags.PI_CHAT,
-        "/api/v1/chat/queue-answer/": settings.feature_flags.PI_CHAT,
-        # "/api/v1/transcription/transcribe": settings.feature_flags.PI_CONVERSE,
+        "/api/v1/chat/get-answer/": settings.feature_flags.AI_CHAT,
+        "/api/v1/chat/initialize-chat/": settings.feature_flags.AI_CHAT,
+        "/api/v1/chat/queue-answer/": settings.feature_flags.AI_CHAT,
+        # "/api/v1/transcription/transcribe": settings.feature_flags.AI_CONVERSE,
         # Mobile endpoints
-        "/api/v1/mobile/chat/get-answer/": settings.feature_flags.PI_CHAT,
-        # "/api/v1/mobile/transcription/transcribe": settings.feature_flags.PI_CONVERSE,
+        "/api/v1/mobile/chat/get-answer/": settings.feature_flags.AI_CHAT,
+        # "/api/v1/mobile/transcription/transcribe": settings.feature_flags.AI_CONVERSE,
     }
     app.add_middleware(FeatureFlagMiddleware, endpoint_feature_map=endpoint_feature_map)
 

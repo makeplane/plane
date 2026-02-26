@@ -31,13 +31,17 @@ export const useDebouncedDuplicateIssues = (
   workspaceSlug: string | undefined,
   workspaceId: string | undefined,
   projectId: string | undefined,
-  formData: { name: string | undefined; description_html?: string | undefined; issueId?: string | undefined }
+  formData: {
+    name: string | undefined;
+    description_html?: string | undefined;
+    issueId?: string | undefined;
+  }
 ) => {
   const [debouncedFormData, setDebouncedFormData] = useState(formData);
 
   // Check if the feature flag is enabled
   const isFeatureEnabled =
-    useFlag(workspaceSlug, "PI_DEDUPE") &&
+    useFlag(workspaceSlug, "AI_DEDUPE") &&
     store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
 
   // Debounce the name and description

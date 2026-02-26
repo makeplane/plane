@@ -72,7 +72,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
   );
 
   const shouldRenderPiChat =
-    useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.PI_CHAT) &&
+    useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.AI_CHAT) &&
     isPiAllowed(pathname, workspaceSlug, projectId, workItem) &&
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
 

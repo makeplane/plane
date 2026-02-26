@@ -37,7 +37,7 @@ function PiLayout({ params }: Route.ComponentProps) {
           <PiAppSidebar />
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
             {isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) ? (
-              <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<EmptyPiChat />}>
+              <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_CHAT" fallback={<EmptyPiChat />}>
                 <PiChatLayout shouldRenderSidebarToggle isFullScreen>
                   <Outlet />
                 </PiChatLayout>

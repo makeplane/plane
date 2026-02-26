@@ -20,7 +20,7 @@ export const usePageFlag = (args: TPageFlagHookArgs): TPageFlagHookReturnType =>
   const { workspaceSlug } = args;
   // feature flag
   const isMovePageEnabled = useFlag(workspaceSlug, "MOVE_PAGES");
-  const isPageAiSummaryEnabled = useFlag(workspaceSlug, "PAGE_AI_SUMMARY");
+  const isPageAiSummaryEnabled = useFlag(workspaceSlug, "AI_PAGES_SUMMARY");
   const isPageSharingEnabled = useFlag(workspaceSlug, "SHARED_PAGES");
   return {
     isMovePageEnabled,

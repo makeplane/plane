@@ -65,12 +65,12 @@ class FeatureFlags:
 
     # https://github.com/makeplane/plane-ee/blob/preview/packages/constants/src/feature-flag.ts#L59
 
-    PI_DEDUPE = "PI_DEDUPE"
-    PI_CHAT = "PI_CHAT"
-    PI_CONVERSE = "PI_CONVERSE"  # Voice input in chat
-    PI_ACTION_EXECUTION = "PI_ACTIONS"  # Action execution in chat (create/update work-items, etc.)
-    PI_SONNET_4 = "PI_SONNET_4"
-    PI_FILE_UPLOADS = "PI_FILE_UPLOADS"
+    AI_DEDUPE = "AI_DEDUPE"
+    AI_CHAT = "AI_CHAT"
+    AI_CONVERSE = "AI_CONVERSE"
+    AI_FILE_UPLOADS = "AI_FILE_UPLOADS"
+    AI_PAGES_BLOCKS = "AI_PAGES_BLOCKS"
+    AI_PAGES_SUMMARY = "AI_PAGES_SUMMARY"
 
 
 @dataclass

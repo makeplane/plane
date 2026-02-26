@@ -74,7 +74,7 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
   const {
     attachmentStore: { createAttachment },
   } = usePiChat();
-  const isFileUploadsEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.PI_FILE_UPLOADS);
+  const isFileUploadsEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.AI_FILE_UPLOADS);
 
   // file size
   const { maxFileSize } = useFileSize();

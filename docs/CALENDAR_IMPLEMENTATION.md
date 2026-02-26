@@ -74,7 +74,7 @@ Add calendar to the feature key mapping:
 const SidebarFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS> = {
   // ... existing mappings
   wiki: E_FEATURE_FLAGS.WIKI,
-  "pi-chat": E_FEATURE_FLAGS.PI_CHAT,
+  "pi-chat": E_FEATURE_FLAGS.AI_CHAT,
   calendar: E_FEATURE_FLAGS.CALENDAR,
 };
 ```

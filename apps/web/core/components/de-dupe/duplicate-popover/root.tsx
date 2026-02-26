@@ -112,7 +112,7 @@ export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(p
   if (!workspaceSlug || !projectId || !rootIssueId || !isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED))
     return <></>;
   return (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_DEDUPE" fallback={<></>}>
+    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_DEDUPE" fallback={<></>}>
       <Popover as="div" className={cn("relative")}>
         <>
           <Popover.Button as={React.Fragment}>

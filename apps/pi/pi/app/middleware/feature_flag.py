@@ -47,7 +47,7 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
         Args:
             app: The FastAPI application
             endpoint_feature_map: Mapping of endpoint patterns to required feature flags
-                                 e.g., {"/api/v1/chat/": "PI_CHAT", "/api/v1/dupes/": "PI_DEDUPE"}
+                                 e.g., {"/api/v1/chat/": "AI_CHAT", "/api/v1/dupes/": "AI_DEDUPE"}
         """
         super().__init__(app)
         self.endpoint_feature_map = endpoint_feature_map or {}

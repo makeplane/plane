@@ -41,7 +41,7 @@ export const HomePageHeader = observer(function HomePageHeader() {
 
   if (!isPiEnabled) return;
   return (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<></>}>
+    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_CHAT" fallback={<></>}>
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between w-full gap-2">
           <div className="flex items-center gap-2">

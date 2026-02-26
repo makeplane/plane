@@ -428,7 +428,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
                       {/* speech recorder */}
                       <WithFeatureFlagHOC
                         workspaceSlug={workspaceSlug?.toString()}
-                        flag={E_FEATURE_FLAGS.PI_CONVERSE}
+                        flag={E_FEATURE_FLAGS.AI_CONVERSE}
                         fallback={<></>}
                       >
                         <AudioRecorder
@@ -448,7 +448,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
                       {!SPEECH_LOADERS.includes(loader) && (
                         <WithFeatureFlagHOC
                           workspaceSlug={workspaceSlug?.toString()}
-                          flag={E_FEATURE_FLAGS.PI_FILE_UPLOADS}
+                          flag={E_FEATURE_FLAGS.AI_FILE_UPLOADS}
                           fallback={<></>}
                         >
                           {workspaceId && <AttachmentActionButton open={open} isLoading={isUploading} />}

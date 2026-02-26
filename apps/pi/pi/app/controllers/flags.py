@@ -36,9 +36,9 @@ log = logger.getChild("controllers.flags")
 
 # Dependency map: children depend on parent.
 _DEPENDENCIES: dict[FeatureKey, list[FeatureKey]] = {
-    settings.feature_flags.PI_CHAT: [
-        settings.feature_flags.PI_CONVERSE,
-        settings.feature_flags.PI_FILE_UPLOADS,
+    settings.feature_flags.AI_CHAT: [
+        settings.feature_flags.AI_CONVERSE,
+        settings.feature_flags.AI_FILE_UPLOADS,
     ]
 }
 
@@ -71,12 +71,12 @@ async def _get_ml_model_id_source() -> tuple[bool, str]:
 
 @dataclass(frozen=True)
 class _EnvCapabilities:
-    llm_present: bool  # OpenAI, Claude, or Custom LLM configured
-    embedding_present: bool  # ML_MODEL_ID or EMBEDDING_MODEL configured
+    llm_present: bool
+    embedding_present: bool
     opensearch: bool
     cohere: bool
     ml_model_id: bool
-    ml_model_id_source: str  # "env" | "db" | "missing"
+    ml_model_id_source: str
     groq: bool
     uploads: bool
 
@@ -137,21 +137,23 @@ async def _compute_env_capabilities() -> _EnvCapabilities:
 
 def _env_readiness_from_caps(caps: _EnvCapabilities) -> Dict[FeatureKey, bool]:
     return {
-        # PI_CHAT requires: LLM model + Embedding model + OpenSearch
-        settings.feature_flags.PI_CHAT: bool(caps.llm_present and caps.embedding_present and caps.opensearch),
-        # PI_DEDUPE requires: LLM model + Embedding model
-        settings.feature_flags.PI_DEDUPE: bool(caps.llm_present and caps.embedding_present),
-        settings.feature_flags.PI_CONVERSE: bool(caps.groq),
-        settings.feature_flags.PI_FILE_UPLOADS: bool(caps.uploads),
+        settings.feature_flags.AI_CHAT: bool(caps.llm_present and caps.embedding_present and caps.opensearch),
+        settings.feature_flags.AI_DEDUPE: bool(caps.llm_present and caps.embedding_present),
+        settings.feature_flags.AI_CONVERSE: bool(caps.groq),
+        settings.feature_flags.AI_FILE_UPLOADS: bool(caps.uploads),
+        settings.feature_flags.AI_PAGES_BLOCKS: bool(caps.llm_present),
+        settings.feature_flags.AI_PAGES_SUMMARY: bool(caps.llm_present),
     }
 
 
 def _remote_gated_features() -> Iterable[FeatureKey]:
     return (
-        settings.feature_flags.PI_CHAT,
-        settings.feature_flags.PI_DEDUPE,
-        settings.feature_flags.PI_CONVERSE,
-        settings.feature_flags.PI_FILE_UPLOADS,
+        settings.feature_flags.AI_CHAT,
+        settings.feature_flags.AI_DEDUPE,
+        settings.feature_flags.AI_CONVERSE,
+        settings.feature_flags.AI_FILE_UPLOADS,
+        settings.feature_flags.AI_PAGES_BLOCKS,
+        settings.feature_flags.AI_PAGES_SUMMARY,
     )
 
 

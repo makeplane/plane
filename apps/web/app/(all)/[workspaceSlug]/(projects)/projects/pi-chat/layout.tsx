@@ -26,7 +26,7 @@ function Layout({ params }: Route.ComponentProps) {
   const { workspaceSlug } = params;
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   return isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) ? (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag="PI_CHAT" fallback={<EmptyPiChat />}>
+    <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag="AI_CHAT" fallback={<EmptyPiChat />}>
       <PiChatLayout isFullScreen isProjectLevel shouldRenderSidebarToggle>
         <Outlet />
       </PiChatLayout>

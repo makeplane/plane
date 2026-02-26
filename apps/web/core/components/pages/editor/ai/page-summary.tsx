@@ -51,7 +51,7 @@ export const PageSummary = observer(function PageSummary({
   const updatedAt = summaryData?.updated_at;
 
   // fetch page AI summary
-  useSWR(pageId ? ["PAGE_AI_SUMMARY", pageId] : null, pageId ? () => fetchPageAiSummary(pageId) : null, {
+  useSWR(pageId ? ["AI_PAGES_SUMMARY", pageId] : null, pageId ? () => fetchPageAiSummary(pageId) : null, {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,

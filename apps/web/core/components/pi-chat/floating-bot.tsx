@@ -61,7 +61,7 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot(props: TPro
   if (!isPiEnabled || !shouldRenderPiChat) return <></>;
 
   return (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString() || ""} flag="PI_CHAT" fallback={<></>}>
+    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString() || ""} flag="AI_CHAT" fallback={<></>}>
       <div
         className={cn(
           "transform transition-all duration-300 ease-in-out overflow-x-hidden",

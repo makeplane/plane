@@ -31,7 +31,7 @@ export const DeDupeButtonRoot = observer(function DeDupeButtonRoot(props: TDeDup
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   if (!isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;
   return (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_DEDUPE" fallback={<></>}>
+    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_DEDUPE" fallback={<></>}>
       <button
         onClick={(e) => {
           e.stopPropagation();

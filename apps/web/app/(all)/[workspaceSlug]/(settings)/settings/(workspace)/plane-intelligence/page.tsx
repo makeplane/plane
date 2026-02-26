@@ -84,7 +84,7 @@ function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
       <PageHead title={pageTitle} />
       <SettingsHeading title="Plane AI" description={t("workspace_settings.settings.plane-intelligence.description")} />
       <WithFeatureFlagHOC
-        flag={E_FEATURE_FLAGS.PI_CHAT || E_FEATURE_FLAGS.PI_DEDUPE || E_FEATURE_FLAGS.EDITOR_AI_OPS}
+        flag={E_FEATURE_FLAGS.AI_CHAT || E_FEATURE_FLAGS.AI_DEDUPE || E_FEATURE_FLAGS.EDITOR_AI_OPS}
         fallback={<PiChatUpgrade />}
         workspaceSlug={workspaceSlug}
       >

@@ -23,7 +23,7 @@ const SidebarFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefi
   "your-work": undefined,
   notifications: undefined,
   drafts: undefined,
-  pi_chat: E_FEATURE_FLAGS.PI_CHAT,
+  pi_chat: E_FEATURE_FLAGS.AI_CHAT,
   "workspace-dashboards": E_FEATURE_FLAGS.DASHBOARDS,
   projects: undefined,
   stickies: undefined,

@@ -19,7 +19,7 @@ import { EWorkspaceFeatures } from "@/types/workspace-feature";
 const SidebarFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
   home: undefined,
   wiki: E_FEATURE_FLAGS.WORKSPACE_PAGES,
-  "pi-chat": E_FEATURE_FLAGS.PI_CHAT,
+  "pi-chat": E_FEATURE_FLAGS.AI_CHAT,
 };
 
 export const isAppRailFeatureEnabled = (workspaceSlug: string, featureKey: string) => {
