@@ -90,7 +90,8 @@
     "streamdown": "^2.2.0",
     "swr": "catalog:",
     "use-font-face-observer": "^1.2.2",
-    "uuid": "catalog:"
+    "uuid": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "catalog:",

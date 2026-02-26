@@ -13,7 +13,6 @@
 Also includes tools for ask mode."""
 
 import json
-import re
 from collections.abc import AsyncIterator
 from typing import Any
 from typing import Dict
@@ -40,7 +39,6 @@ from pi.services.chat.helpers.tool_utils import extract_text_from_content
 from pi.services.chat.helpers.tool_utils import format_tool_query_for_display
 from pi.services.chat.helpers.tool_utils import stream_content_in_chunks
 from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
-from pi.services.chat.plotting import PLOTTING_TOOL_NAMES
 from pi.services.chat.prompts import pai_ask_system_prompt
 from pi.services.chat.utils import reasoning_dict_maker
 from pi.services.llm.cache_utils import create_claude_cached_system_message
@@ -207,8 +205,6 @@ async def execute_tools_for_ask_mode(
         # Delimiter-based routing: all reasoning flows until ππANSWERππ, then final answer
         final_answer_streamed = False
         final_response_marker_emitted = False
-        # Track if any plotting tool produced a result (to conditionalize URL buffering)
-        has_plotting_tool_result = False
 
         async def _orchestrate_llm_step_with_ui_ticks(
             *,
@@ -238,8 +234,8 @@ async def execute_tools_for_ask_mode(
             streamed_reasoning_chunks = False
             ai_message: Any = None
 
-            # Buffer for final answer to prevent splitting plane-attachment:// URLs
-            final_answer_buffer = ""
+            # Word-level batcher to reduce browser SSE event overhead
+            _batcher = WordBatcher(words_per_batch=15)
 
             # Word-level batcher to reduce browser SSE event overhead
             _batcher = WordBatcher(words_per_batch=15)
@@ -270,69 +266,9 @@ async def execute_tools_for_ask_mode(
                                     "content": "",
                                     "stage": "final_response",
                                 }
-                        if not has_plotting_tool_result:
-                            # Fast path: No plotting tools used, so no plane-attachment:// URLs expected.
-                            # Batch tokens by word count to reduce browser event overhead.
-                            batched = _batcher.add(content)
-                            if batched:
-                                yield batched
-                        else:
-                            final_answer_buffer += content
-
-                            # --- Buffering Logic for plane-attachment:// ---
-
-                        PREFIX = "plane-attachment://"
-
-                        # Case 1: Buffer contains the full prefix
-                        if PREFIX in final_answer_buffer:
-                            # Search for complete URL pattern: plane-attachment://UUID/UUID
-                            # We look for the pattern followed by a non-URL character or end of string if sufficient length
-                            # But safest is to look for the known structure: 36 chars + / + 36 chars
-                            match = re.search(r"plane-attachment://[a-f0-9-]{36}/[a-f0-9-]{36}", final_answer_buffer)
-
-                            if match:
-                                # Found a complete URL!
-                                end_idx = match.end()
-                                to_yield = final_answer_buffer[:end_idx]
-                                remaining = final_answer_buffer[end_idx:]
-
-                                batched = _batcher.add(to_yield)
-                                if batched:
-                                    yield batched
-                                final_answer_buffer = remaining
-                            elif len(final_answer_buffer) > 300:
-                                # Safety valve: if buffer gets too huge without a match, flush it
-                                # This prevents infinite buffering if something malformed appears
-                                batched = _batcher.add(final_answer_buffer)
-                                if batched:
-                                    yield batched
-                                final_answer_buffer = ""
-                            # Else: keep buffering (wait for rest of URL)
-
-                        else:
-                            # Case 2: Buffer might end with a partial prefix
-                            partial_match = False
-                            # Check suffixes up to len(PREFIX)-1
-                            for i in range(1, len(PREFIX)):
-                                suffix = final_answer_buffer[-i:]
-                                if PREFIX.startswith(suffix):
-                                    partial_match = True
-                                    # We have a partial match at the end.
-                                    # Yield everything BEFORE that suffix.
-                                    to_yield = final_answer_buffer[:-i]
-                                    if to_yield:
-                                        batched = _batcher.add(to_yield)
-                                        if batched:
-                                            yield batched
-                                    final_answer_buffer = suffix
-                                    break
-
-                            if not partial_match:
-                                # No prefix, no partial prefix. Safe to yield everything.
-                                batched = _batcher.add(final_answer_buffer)
-                                if batched:
-                                    yield batched
-                                final_answer_buffer = ""
+                        batched = _batcher.add(content)
+                        if batched:
+                            yield batched
 
                 elif event_type == "tool_detected":
                     # Ask mode announces individual tools during streaming
@@ -392,14 +328,9 @@ async def execute_tools_for_ask_mode(
                                 # Batch the fallback content through word batcher
                                 # (could be large accumulated text)
                                 batched = _batcher.add(content)
+
                                 if batched:
                                     yield batched
-
-            # Flush any remaining URL buffer through the word batcher
-            if final_answer_buffer:
-                batched = _batcher.add(final_answer_buffer)
-                if batched:
-                    yield batched
 
             # Flush any remaining word batch
             remaining_batch = _batcher.flush()
@@ -588,9 +519,6 @@ async def execute_tools_for_ask_mode(
                     # Find and execute the tool (decorator persists success/error)
                     tool_to_execute = next((t for t in tools if t.name == tool_name), None)
                     if tool_to_execute:
-                        if tool_name in PLOTTING_TOOL_NAMES:
-                            has_plotting_tool_result = True
-
                         if tool_name == "web_search_tool":
                             original_query = enhanced_query_for_processing
                             tool_query = tool_args.get("query") if isinstance(tool_args, dict) else None

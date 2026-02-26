@@ -65,6 +65,7 @@ catalog:
   typescript: 5.9.3
   uuid: 13.0.0
   vite: 7.3.1
+  zod: ^4.0.0
 
 onlyBuiltDependencies:
 - turbo

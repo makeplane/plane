@@ -78,7 +78,7 @@ export const Feedback = observer(function Feedback(props: TProps) {
   };
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 mt-2">
       {/* Copy */}
       <Tooltip tooltipContent="Copy to clipboard" position="bottom" className="mb-4">
         <CopyIcon

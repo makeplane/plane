@@ -25,6 +25,7 @@ import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TDialogue } from "@/types";
 // local imports
 import { Feedback } from "./feedback";
+import { JsonRenderPreBlock } from "@/components/common/json-renderer/pi-chat-registry";
 import { ReasoningBlock } from "./reasoning";
 
 type TProps = {
@@ -67,6 +68,7 @@ export const AiMessage = observer(function AiMessage(props: TProps) {
               ),
               th: ({ children }) => <th className="px-2 py-3 border-subtle-1"> {children}</th>,
               td: ({ children }) => <td className="px-2 py-3 border-subtle-1">{children}</td>,
+              pre: JsonRenderPreBlock,
             }}
           >
             {answer}

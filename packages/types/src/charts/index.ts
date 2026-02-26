@@ -59,6 +59,20 @@ export type TAxisChartProps<K extends string, T extends string> = TBaseChartProp
     strokeColor?: string;
     offset?: number;
     dx?: number;
+    /** Recharts Label position for Y-axis label (e.g. "bottom" | "insideLeft" for vertical center) */
+    position?:
+      | "top"
+      | "left"
+      | "right"
+      | "bottom"
+      | "insideLeft"
+      | "insideRight"
+      | "insideTop"
+      | "insideBottom"
+      | "inside"
+      | "outside"
+      | "center";
+    style?: React.CSSProperties;
   };
   tickCount?: {
     x?: number;
