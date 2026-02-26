@@ -257,9 +257,8 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
                     type="button"
                     onClick={handleMenuButtonClick}
                     disabled={disabled}
-                    className={`relative grid place-items-center rounded-sm p-1 text-secondary outline-none hover:text-primary ${
-                      disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-layer-transparent-hover"
-                    } ${buttonClassName}`}
+                    className={`relative grid place-items-center rounded-sm p-1 text-secondary outline-none hover:text-primary ${disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-layer-transparent-hover"
+                      } ${buttonClassName}`}
                     tabIndex={customButtonTabIndex}
                     aria-label={ariaLabel}
                   >
@@ -271,11 +270,9 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
                   <button
                     ref={setReferenceElement}
                     type="button"
-                    className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-11 duration-300 ${
-                      open ? "text-primary" : "text-secondary"
-                    } ${noBorder ? "" : "border border-strong shadow-sm focus:outline-none"} ${
-                      disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
-                    } ${buttonClassName}`}
+                    className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-11 duration-300 ${open ? "text-primary" : "text-secondary"
+                      } ${noBorder ? "" : "border border-strong shadow-sm focus:outline-none"} ${disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
+                      } ${buttonClassName}`}
                     onClick={handleMenuButtonClick}
                     tabIndex={customButtonTabIndex}
                     disabled={disabled}

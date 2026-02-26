@@ -177,11 +177,16 @@ export class InstanceStore implements IInstanceStore {
     try {
       const response = await this.instanceService.updateConfigurations(data);
       runInAction(() => {
-        this.instanceConfigurations = this.instanceConfigurations?.map((config) => {
-          const item = response.find((item) => item.key === config.key);
-          if (item) return item;
-          return config;
+        const updatedConfigs = [...(this.instanceConfigurations || [])];
+        response.forEach((newItem) => {
+          const index = updatedConfigs.findIndex((item) => item.key === newItem.key);
+          if (index !== -1) {
+            updatedConfigs[index] = newItem;
+          } else {
+            updatedConfigs.push(newItem);
+          }
         });
+        this.instanceConfigurations = updatedConfigs;
       });
       return response;
     } catch (error) {

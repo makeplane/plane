@@ -165,7 +165,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
         <Menu as="div" className="relative w-min text-left">
           <Menu.Button
             type="button"
-            onClick={() => {}}
+            onClick={() => { }}
             className="relative grid cursor-pointer place-items-center rounded-sm p-1 text-tertiary outline-none hover:bg-layer-transparent-hover"
           >
             <MoreVertical className="size-4" strokeWidth={2} />
@@ -189,9 +189,8 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                       onClick={() => {
                         setIsEditing(true);
                       }}
-                      className={`w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary hover:bg-layer-transparent-hover ${
-                        active ? "bg-layer-transparent-hover" : ""
-                      }`}
+                      className={`w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary hover:bg-layer-transparent-hover ${active ? "bg-layer-transparent-hover" : ""
+                        }`}
                     >
                       Edit
                     </button>
@@ -204,9 +203,8 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                     <button
                       type="button"
                       onClick={handleDelete}
-                      className={`w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary hover:bg-layer-transparent-hover ${
-                        active ? "bg-layer-transparent-hover" : ""
-                      }`}
+                      className={`w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary hover:bg-layer-transparent-hover ${active ? "bg-layer-transparent-hover" : ""
+                        }`}
                     >
                       Delete
                     </button>

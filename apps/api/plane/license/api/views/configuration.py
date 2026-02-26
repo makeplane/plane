@@ -38,6 +38,27 @@ class InstanceConfigurationEndpoint(BaseAPIView):
     @invalidate_cache(path="/api/instances/", user=False)
     def patch(self, request):
         configurations = InstanceConfiguration.objects.filter(key__in=request.data.keys())
+        existing_keys = {config.key for config in configurations}
+
+        # Create missing configurations
+        missing_keys = set(request.data.keys()) - existing_keys
+        if missing_keys:
+            new_configs = []
+            for key in missing_keys:
+                category = "AUTHENTICATION" # default for auth ones
+                # Some heuristics for category if needed, but mostly they are AUTHENTICATION or other based on names. 
+                # Ideally, if it's missing, we just create it with a safe default category.
+                # All google ones are auth. 
+                new_configs.append(InstanceConfiguration(
+                    key=key, 
+                    value=request.data.get(key), 
+                    category=category, 
+                    is_encrypted=False
+                ))
+            if new_configs:
+                InstanceConfiguration.objects.bulk_create(new_configs)
+            # Re-fetch configurations to include the newly created ones
+            configurations = InstanceConfiguration.objects.filter(key__in=request.data.keys())
 
         bulk_configurations = []
         for configuration in configurations:
