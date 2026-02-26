@@ -23,6 +23,7 @@ import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { PiChatDetail } from "./detail";
 import { PiChatLayout } from "./layout";
 import { isPiAllowed } from "@/helpers/pi-chat";
+import { WithAiFeatureFlagHOC } from "../feature-flags/with-ai-feature-flag-hoc";
 
 type TProps = {
   isOpen: boolean;
@@ -61,7 +62,7 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot(props: TPro
   if (!isPiEnabled || !shouldRenderPiChat) return <></>;
 
   return (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString() || ""} flag="AI_CHAT" fallback={<></>}>
+    <WithAiFeatureFlagHOC workspaceSlug={workspaceSlug?.toString() || ""} flag="AI_CHAT">
       <div
         className={cn(
           "transform transition-all duration-300 ease-in-out overflow-x-hidden",
@@ -74,6 +75,6 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot(props: TPro
           <PiChatDetail isFullScreen={false} shouldRedirect={false} isProjectLevel contextData={contextData} />
         </PiChatLayout>
       </div>
-    </WithFeatureFlagHOC>
+    </WithAiFeatureFlagHOC>
   );
 });

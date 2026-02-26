@@ -16,8 +16,8 @@ import { observer } from "mobx-react";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
-import { WithFeatureFlagHOC } from "../../../core/components/feature-flags";
 import { DeDupeIssueButtonLabel } from "./issue-block/button-label";
+import { WithAiFeatureFlagHOC } from "../feature-flags/with-ai-feature-flag-hoc";
 
 type TDeDupeButtonRoot = {
   workspaceSlug: string;
@@ -31,7 +31,7 @@ export const DeDupeButtonRoot = observer(function DeDupeButtonRoot(props: TDeDup
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   if (!isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;
   return (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_DEDUPE" fallback={<></>}>
+    <WithAiFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_DEDUPE">
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -41,6 +41,6 @@ export const DeDupeButtonRoot = observer(function DeDupeButtonRoot(props: TDeDup
       >
         <DeDupeIssueButtonLabel isOpen={isDuplicateModalOpen} buttonLabel={label} />
       </button>
-    </WithFeatureFlagHOC>
+    </WithAiFeatureFlagHOC>
   );
 });

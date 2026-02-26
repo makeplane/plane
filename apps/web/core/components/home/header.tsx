@@ -22,7 +22,7 @@ import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import { BetaBadge } from "@/components/common/beta";
-import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { WithAiFeatureFlagHOC } from "@/components/feature-flags/with-ai-feature-flag-hoc";
 import { InputBox } from "@/components/pi-chat/input";
 import { UnauthorizedView } from "@/components/pi-chat/unauthorized";
 
@@ -41,7 +41,7 @@ export const HomePageHeader = observer(function HomePageHeader() {
 
   if (!isPiEnabled) return;
   return (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_CHAT" fallback={<></>}>
+    <WithAiFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_CHAT">
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between w-full gap-2">
           <div className="flex items-center gap-2">
@@ -70,6 +70,6 @@ export const HomePageHeader = observer(function HomePageHeader() {
           />
         )}
       </div>
-    </WithFeatureFlagHOC>
+    </WithAiFeatureFlagHOC>
   );
 });

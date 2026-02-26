@@ -96,6 +96,6 @@ export const bootstrapWorkspace = async (workspaceSlug: string) =>
         );
       }),
       preloadAndPrimeSWR(featureFlagsKey, () => store.featureFlags.fetchFeatureFlags(workspaceSlug)),
-      preloadAndPrimeSWR(aiFlagsKey, () => store.featureFlags.fetchAiFeatureFlags(workspaceSlug)),
+      preloadAndPrimeSWR(aiFlagsKey, () => store.aiFeatureFlags.fetchAiFeatureFlags(workspaceSlug)),
     ]);
   });

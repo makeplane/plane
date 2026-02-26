@@ -45,6 +45,7 @@ import { NotificationsPopoverRoot } from "@/components/notifications/popover/roo
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import useSWR from "swr";
 import { Button } from "@plane/propel/button";
+import { useAiFlag } from "@/plane-web/hooks/store/use-ai-flag";
 
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // store hooks
@@ -72,6 +73,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
   );
 
   const shouldRenderPiChat =
+    useAiFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.AI_CHAT) &&
     useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.AI_CHAT) &&
     isPiAllowed(pathname, workspaceSlug, projectId, workItem) &&
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);

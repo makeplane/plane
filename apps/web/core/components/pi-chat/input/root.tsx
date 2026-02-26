@@ -32,7 +32,6 @@ import useEvent from "@/plane-web/hooks/use-event";
 import type { TChatContextData, TFocus, TPiAttachment, TPiLoaders } from "@/types";
 // local imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import AudioRecorder, { SPEECH_LOADERS } from "../converse/voice-input";
 import { formatSearchQuery } from "../helper";
 import { InputPreviewUploads } from "../uploads/input-preview-uploads";
@@ -41,6 +40,7 @@ import { FocusFilter } from "./focus-filter";
 import { AiMode } from "./mode";
 import { AttachmentActionButton } from "./quick-action-button";
 import { ContextualTemplates } from "../conversation/contextual-templates";
+import { WithAiFeatureFlagHOC } from "@/components/feature-flags/with-ai-feature-flag-hoc";
 
 type TEditCommands = {
   getHTML: () => string;
@@ -426,10 +426,9 @@ export const InputBox = observer(function InputBox(props: TProps) {
                   <div className="flex items-center w-full justify-end gap-2">
                     <div className="flex w-full justify-end">
                       {/* speech recorder */}
-                      <WithFeatureFlagHOC
+                      <WithAiFeatureFlagHOC
                         workspaceSlug={workspaceSlug?.toString()}
                         flag={E_FEATURE_FLAGS.AI_CONVERSE}
-                        fallback={<></>}
                       >
                         <AudioRecorder
                           workspaceId={workspaceId}
@@ -444,15 +443,14 @@ export const InputBox = observer(function InputBox(props: TProps) {
                           mode={aiMode}
                           is_websearch_enabled={isWebSerachEnabled}
                         />
-                      </WithFeatureFlagHOC>
+                      </WithAiFeatureFlagHOC>
                       {!SPEECH_LOADERS.includes(loader) && (
-                        <WithFeatureFlagHOC
+                        <WithAiFeatureFlagHOC
                           workspaceSlug={workspaceSlug?.toString()}
                           flag={E_FEATURE_FLAGS.AI_FILE_UPLOADS}
-                          fallback={<></>}
                         >
                           {workspaceId && <AttachmentActionButton open={open} isLoading={isUploading} />}
-                        </WithFeatureFlagHOC>
+                        </WithAiFeatureFlagHOC>
                       )}
                     </div>
                     {!SPEECH_LOADERS.includes(loader) && (

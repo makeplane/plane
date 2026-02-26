@@ -23,7 +23,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane web hooks
 import { cn } from "@plane/utils";
 import { getFileIcon } from "@/components/icons";
-import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import { useAiFlag } from "@/plane-web/hooks/store/use-ai-flag";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 import type { TFocus, TPiAttachment } from "@/types/pi-chat";
@@ -74,7 +74,7 @@ export const DndWrapper = observer(function DndWrapper(props: Props) {
   const {
     attachmentStore: { createAttachment },
   } = usePiChat();
-  const isFileUploadsEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.AI_FILE_UPLOADS);
+  const isFileUploadsEnabled = useAiFlag(workspaceSlug, E_FEATURE_FLAGS.AI_FILE_UPLOADS);
 
   // file size
   const { maxFileSize } = useFileSize();

@@ -15,7 +15,6 @@ import { observer } from "mobx-react";
 import { Outlet } from "react-router";
 // plane web imports
 import { PlaneAiAppPowerKProvider } from "@/components/command-palette/plane-ai/provider";
-import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { EmptyPiChat } from "@/components/pi-chat/empty";
 import { PiChatLayout } from "@/components/pi-chat/layout";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
@@ -23,6 +22,8 @@ import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import type { Route } from "./+types/layout";
 import { PiAppSidebar } from "./sidebar";
+import { WithAiFeatureFlagHOC } from "@/components/feature-flags/with-ai-feature-flag-hoc";
+import PageNotFound from "@/app/not-found";
 
 function PiLayout({ params }: Route.ComponentProps) {
   // router
@@ -37,11 +38,16 @@ function PiLayout({ params }: Route.ComponentProps) {
           <PiAppSidebar />
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
             {isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) ? (
-              <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_CHAT" fallback={<EmptyPiChat />}>
+              <WithAiFeatureFlagHOC
+                workspaceSlug={workspaceSlug?.toString()}
+                flag="AI_CHAT"
+                disabledFallback={<EmptyPiChat />}
+                notConfiguredFallback={<PageNotFound />}
+              >
                 <PiChatLayout shouldRenderSidebarToggle isFullScreen>
                   <Outlet />
                 </PiChatLayout>
-              </WithFeatureFlagHOC>
+              </WithAiFeatureFlagHOC>
             ) : (
               <EmptyPiChat />
             )}

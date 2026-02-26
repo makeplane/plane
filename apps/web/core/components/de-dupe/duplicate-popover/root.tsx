@@ -35,6 +35,7 @@ import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import { DeDupeIssueButtonLabel } from "../issue-block/button-label";
 import { DeDupeIssueBlockRoot } from "./block-root";
+import { WithAiFeatureFlagHOC } from "@/components/feature-flags/with-ai-feature-flag-hoc";
 
 type TDeDupeIssuePopoverRootProps = {
   workspaceSlug: string;
@@ -112,7 +113,7 @@ export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(p
   if (!workspaceSlug || !projectId || !rootIssueId || !isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED))
     return <></>;
   return (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_DEDUPE" fallback={<></>}>
+    <WithAiFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_DEDUPE">
       <Popover as="div" className={cn("relative")}>
         <>
           <Popover.Button as={React.Fragment}>
@@ -195,6 +196,6 @@ export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(p
           )}
         </>
       </Popover>
-    </WithFeatureFlagHOC>
+    </WithAiFeatureFlagHOC>
   );
 });

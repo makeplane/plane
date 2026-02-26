@@ -23,7 +23,7 @@ import useDebounce from "@/hooks/use-debounce";
 import { store } from "@/lib/store-context";
 import { PIService } from "@/services/pi.service";
 import { EWorkspaceFeatures } from "../../core/types/workspace-feature";
-import { useFlag } from "./store";
+import { useAiFlag } from "./store/use-ai-flag";
 
 const piService = new PIService();
 
@@ -41,7 +41,7 @@ export const useDebouncedDuplicateIssues = (
 
   // Check if the feature flag is enabled
   const isFeatureEnabled =
-    useFlag(workspaceSlug, "AI_DEDUPE") &&
+    useAiFlag(workspaceSlug, "AI_DEDUPE") &&
     store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
 
   // Debounce the name and description

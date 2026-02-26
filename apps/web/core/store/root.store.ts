@@ -101,6 +101,9 @@ import { ApplicationStore } from "./marketplace/application.store";
 // Plane AI
 import type { IPiChatStore } from "./pi-chat/pi-chat";
 import { PiChatStore } from "./pi-chat/pi-chat";
+// Plane AI feature flags
+import type { IAiFeatureFlagsStore } from "./pi-chat/ai-feature-flags.store";
+import { AiFeatureFlagsStore } from "./pi-chat/ai-feature-flags.store";
 // teamspaces
 import type { ITeamspaceRootStore } from "./teamspace";
 import { TeamspaceRootStore } from "./teamspace";
@@ -239,6 +242,7 @@ export class CoreRootStore {
   automationsRoot: IAutomationsRootStore;
   applicationStore: IApplicationStore;
   piChat: IPiChatStore;
+  aiFeatureFlags: IAiFeatureFlagsStore;
   teamspaceRoot: ITeamspaceRootStore;
   customersStore: ICustomersStore;
   customerPropertiesStore: ICustomerPropertiesStore;
@@ -322,6 +326,7 @@ export class CoreRootStore {
     this.automationsRoot = new AutomationsRootStore(this as unknown as RootStore);
     this.applicationStore = new ApplicationStore(this as unknown as RootStore);
     this.piChat = new PiChatStore(this as unknown as RootStore);
+    this.aiFeatureFlags = new AiFeatureFlagsStore(this as unknown as RootStore);
     this.teamspaceRoot = new TeamspaceRootStore(this as unknown as RootStore);
     this.customersStore = new CustomerStore(this as unknown as RootStore);
     this.customerPropertiesStore = new CustomerProperties(this as unknown as RootStore);
@@ -407,6 +412,7 @@ export class CoreRootStore {
     this.automationsRoot = new AutomationsRootStore(this as unknown as RootStore);
     this.applicationStore = new ApplicationStore(this as unknown as RootStore);
     this.piChat = new PiChatStore(this as unknown as RootStore);
+    this.aiFeatureFlags = new AiFeatureFlagsStore(this as unknown as RootStore);
     this.teamspaceRoot = new TeamspaceRootStore(this as unknown as RootStore);
     this.customersStore = new CustomerStore(this as unknown as RootStore);
     this.customerPropertiesStore = new CustomerProperties(this as unknown as RootStore);

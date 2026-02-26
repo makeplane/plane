@@ -18,7 +18,7 @@ import { useParams } from "next/navigation";
 import { PlaneNewIcon, PiIcon, WikiIcon } from "@plane/propel/icons";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
 import { useWorkspacePaths } from "@/hooks/use-workspace-paths";
-import { isAppRailFeatureEnabled } from "@/helpers/app-rail";
+import { isAppRailFeatureConfigured, isAppRailFeatureEnabled } from "@/helpers/app-rail";
 
 type WithDockItemsProps = {
   dockItems: (AppSidebarItemData & { shouldRender: boolean })[];
@@ -49,7 +49,8 @@ export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: Re
         icon: <PiIcon className="size-5" />,
         href: `/${workspaceSlug}/ai-chat`,
         isActive: isAiPath,
-        shouldRender: isAppRailFeatureEnabled(workspaceSlug, "pi-chat"),
+        shouldRender:
+          isAppRailFeatureEnabled(workspaceSlug, "pi-chat") && isAppRailFeatureConfigured(workspaceSlug, "pi-chat"),
       },
     ];
 

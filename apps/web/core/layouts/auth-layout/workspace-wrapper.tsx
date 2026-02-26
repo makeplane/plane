@@ -62,6 +62,7 @@ import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { TFeatureFlagsResponse } from "@/services/feature-flag.service";
 import { useRunners } from "@/plane-web/hooks/store";
+import { useAiFeatureFlags } from "@/plane-web/hooks/store/use-ai-feature-flags";
 
 type WorkspaceAuthWrapper = {
   children: ReactNode;
@@ -82,7 +83,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
   const { fetchWorkspaceStates } = useProjectState();
-  const { flags, fetchFeatureFlags, fetchIntegrations, fetchAiFeatureFlags } = useFeatureFlags();
+  const { flags, fetchFeatureFlags, fetchIntegrations } = useFeatureFlags();
+  const { fetchAiFeatureFlags } = useAiFeatureFlags();
   const { fetchWorkspaceFeatures, isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { fetchProjectFeatures } = useProjectAdvanced();
   const { fetchProjectStates } = useWorkspaceProjectStates();
@@ -260,7 +262,11 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   useSWR(
     isWorkItemTemplatesEnabled ? ["workItemTemplates", workspaceSlug, isWorkItemTemplatesEnabled] : null,
     isWorkItemTemplatesEnabled
-      ? () => fetchAllWorkItemTemplates({ workspaceSlug: workspaceSlug, level: ETemplateLevel.WORKSPACE })
+      ? () =>
+          fetchAllWorkItemTemplates({
+            workspaceSlug: workspaceSlug,
+            level: ETemplateLevel.WORKSPACE,
+          })
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
@@ -269,7 +275,11 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   useSWR(
     isPageTemplatesEnabled ? ["pageTemplates", workspaceSlug, isPageTemplatesEnabled] : null,
     isPageTemplatesEnabled
-      ? () => fetchAllPageTemplates({ workspaceSlug: workspaceSlug, level: ETemplateLevel.WORKSPACE })
+      ? () =>
+          fetchAllPageTemplates({
+            workspaceSlug: workspaceSlug,
+            level: ETemplateLevel.WORKSPACE,
+          })
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

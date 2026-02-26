@@ -25,6 +25,7 @@ import { EPageStoreType, useFlag, usePageStore } from "@/plane-web/hooks/store";
 // hooks
 import { useFeatureFlags } from "../hooks/store/use-feature-flags";
 import { EWorkspaceFeatures } from "../../core/types/workspace-feature";
+import { useAiFlag } from "./store/use-ai-flag";
 
 /**
  * @description extensions disabled in various editors
@@ -40,7 +41,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const isEditorAIOpsEnabled =
     useFlag(workspaceSlug, "EDITOR_AI_OPS") &&
     store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
-  const isEditorAiBlocksEnabled = useFlag(workspaceSlug, "AI_PAGES_BLOCKS");
+  const isEditorAiBlocksEnabled = useAiFlag(workspaceSlug, "AI_PAGES_BLOCKS");
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
   const { isNestedPagesEnabled, isCommentsEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
