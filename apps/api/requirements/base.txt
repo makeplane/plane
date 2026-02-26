@@ -95,6 +95,7 @@ nh3==0.2.18
 
 # OpenSearch Integration
 opensearch-py==2.8.0
+requests-aws4auth==1.2.3
 django-opensearch-dsl==0.7.0
 
 # pika for rabbitmq

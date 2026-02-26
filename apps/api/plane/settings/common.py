@@ -660,16 +660,40 @@ if OPENSEARCH_ENABLED:
         os.environ.get("OPENSEARCH_UPDATE_CHUNK_SIZE", "1000")
     )  # Chunk size for processing queued updates
 
-    # OpenSearch Config
+    # OpenSearch Config: If explicit creds (OPENSEARCH_USERNAME / OPENSEARCH_PASSWORD) are provided,
+    # they take precedence over AWS_ROLE_ARN IAM auth. IAM auth is only used when AWS_ROLE_ARN is set
+    # and no explicit credentials are given.
+    _os_username = os.environ.get("OPENSEARCH_USERNAME")
+    _os_password = os.environ.get("OPENSEARCH_PASSWORD")
+
+    if (os.environ.get("AWS_ROLE_ARN") or "").strip() and not (_os_username and _os_password):
+        import boto3
+        from opensearchpy import RequestsHttpConnection
+        from requests_aws4auth import AWS4Auth
+
+        _os_credentials = boto3.Session().get_credentials().get_frozen_credentials()
+        _os_awsauth = AWS4Auth(
+            _os_credentials.access_key,
+            _os_credentials.secret_key,
+            os.environ.get("AWS_REGION", "us-east-1"),
+            "es",
+            session_token=_os_credentials.token,
+        )
+        _os_auth_config = {
+            "http_auth": _os_awsauth,
+            "connection_class": RequestsHttpConnection,
+            "verify_certs": True,
+        }
+    else:
+        _os_auth_config = {
+            "http_auth": (_os_username, _os_password) if _os_username and _os_password else None,
+            "verify_certs": False,
+        }
+
     OPENSEARCH_DSL = {
         "default": {
             "hosts": os.environ.get("OPENSEARCH_URL"),
-            "http_auth": (
-                os.environ.get("OPENSEARCH_USERNAME"),
-                os.environ.get("OPENSEARCH_PASSWORD"),
-            ),
             "use_ssl": True,
-            "verify_certs": False,
             "ssl_show_warn": False,
             "timeout": OPENSEARCH_SEARCH_TIMEOUT,
             # Connection pool optimization for 2-data-node setup
@@ -678,6 +702,7 @@ if OPENSEARCH_ENABLED:
             "retry_on_timeout": True,
             # Bulk indexing optimizations
             "http_compress": True,  # Reduce network overhead
+            **_os_auth_config,
         }
     }
     # Use batched signal processor (only supported mode)
