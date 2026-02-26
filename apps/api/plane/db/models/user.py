@@ -255,7 +255,7 @@ class Profile(TimeAuditModel):
         ("gregorian", "Gregorian"),
         ("jalali", "Jalali"),
     )
-    calendar_system = models.CharField(max_length=20, choices=CALENDAR_SYSTEM_CHOICES, default="gregorian")
+    calendar_system = models.CharField(max_length=20, choices=CALENDAR_SYSTEM_CHOICES, default="jalali")
     goals = models.JSONField(default=dict)
     background_color = models.CharField(max_length=255, default=get_random_color)
 

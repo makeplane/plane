@@ -63,7 +63,7 @@ export class ProfileStore implements IUserProfileStore {
     updated_at: "",
     language: "",
     start_of_the_week: EStartOfTheWeek.SUNDAY,
-    calendar_system: ECalendarSystem.GREGORIAN, // [FA-CUSTOM]
+    calendar_system: ECalendarSystem.JALALI, // [FA-CUSTOM]
   };
 
   // services
