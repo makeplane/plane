@@ -557,7 +557,6 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
 ALLOWED_PROJECT_SUMMARY_FIELDS = [
     "members",
     "states",
@@ -589,9 +588,13 @@ class ProjectSummaryAPIEndpoint(BaseAPIView):
 
         # Single DB round-trip with only requested count subqueries
         counts = self._get_all_summary_counts(project_id, requested_fields)
-        summary = {field: counts[field] for field in requested_fields}
-        summary["project_id"] = project.id
-        summary["project_name"] = project.name
+        counts_dict = {field: counts[field] for field in requested_fields}
+        summary = {
+            "id": project.id,
+            "name": project.name,
+            "identifier": project.identifier,
+            "counts": counts_dict,
+        }
         return Response(summary, status=status.HTTP_200_OK)
 
     # Getting all summary counts in one ORM query; only runs subqueries for requested fields.
