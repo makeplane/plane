@@ -11,13 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { ImportedJiraUser, JiraConfig, JiraV2Service } from "@plane/etl/jira-server";
+import type { ImportedJiraUser, JiraConfig, JiraV2Service, PaginatedResult } from "@plane/etl/jira-server";
 import { pullUsersV2, transformUser } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
 import type { Client as PlaneClient, PlaneUser } from "@plane/sdk";
 import type { TImportJob, TWorkspaceCredential } from "@plane/types";
 import { withCache } from "@/apps/jira-server-importer/v2/helpers/cache";
-import { createEmptyContext, createPaginationContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
+import { createPaginationContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
 import type {
   IStep,
   IStorageService,
@@ -50,7 +50,7 @@ export class JiraUsersStep implements IStep {
   /**
    * Check if user import should be skipped based on job configuration
    */
-  private shouldExecute(input: TStepExecutionInput): boolean {
+  private shouldPullUsers(input: TStepExecutionInput): boolean {
     const { jobContext } = input;
     const job = jobContext.job as TImportJob<JiraConfig>;
     return !job.config.skipUserImport;
@@ -75,17 +75,6 @@ export class JiraUsersStep implements IStep {
     const { job, sourceClient } = jobContext;
 
     try {
-      // Check if user import should be skipped
-      if (!this.shouldExecute(input)) {
-        logger.info(`[${job.id}] [${this.name}] Skipping - skipUserImport is configured`, {
-          jobId: job.id,
-        });
-        return {
-          pageCtx: { startAt: 0, hasMore: false, totalProcessed: 0 },
-          results: { pulled: 0, pushed: 0, errors: [] },
-        };
-      }
-
       // Get pagination state
       const startAt = previousContext?.pageCtx.startAt ?? 0;
       const totalProcessed = previousContext?.pageCtx.totalProcessed ?? 0;
@@ -96,13 +85,12 @@ export class JiraUsersStep implements IStep {
         totalProcessed,
       });
 
-      // Pull users from Jira Server (paginated)
-      const pulledUsers = await this.pull(jobContext, sourceClient, startAt, job.id);
+      const shouldPullUsers = this.shouldPullUsers(input);
 
-      if (pulledUsers.items.length === 0) {
-        logger.info(`[${job.id}] [${this.name}] No users found`, { jobId: job.id });
-        return createEmptyContext();
-      }
+      // Pull users from Jira Server (paginated)
+      const pulledUsers = shouldPullUsers
+        ? await this.pull(jobContext, sourceClient, startAt, job.id)
+        : this.createMockPaginationPayload();
 
       // Transform users
       const transformedUsers = this.transform(pulledUsers.items);
@@ -178,6 +166,16 @@ export class JiraUsersStep implements IStep {
     }
   }
 
+  private createMockPaginationPayload(): PaginatedResult<any> {
+    return {
+      items: [],
+      hasMore: false,
+      total: 0,
+      startAt: 0,
+      maxResults: this.PAGE_SIZE,
+    };
+  }
+
   /**
    * Transforms Jira Server users to Plane user format.
    *
@@ -207,7 +205,7 @@ export class JiraUsersStep implements IStep {
   ): Promise<number> {
     const { planeClient, job, credentials } = jobContext;
 
-    const existingUsers = await this.fetchExistingUsers(planeClient, job);
+    const existingUsers = await this.fetchExistingUsers(planeClient, job, transformedUsers);
 
     executionLog.collect(job.id, {
       entity_type: EExecutionLogEntityType.USER,
@@ -247,15 +245,42 @@ export class JiraUsersStep implements IStep {
    * @param job - The import job containing workspace and project info
    * @returns Array of existing Plane users
    */
-  private async fetchExistingUsers(planeClient: PlaneClient, job: TImportJob<JiraConfig>): Promise<PlaneUser[]> {
+  private async fetchExistingUsers(
+    planeClient: PlaneClient,
+    job: TImportJob<JiraConfig>,
+    transformedUsers: Partial<PlaneUser>[]
+  ): Promise<PlaneUser[]> {
     try {
-      return withCache(
+      const existingUsers = await withCache(
         this.name,
         job,
         async () => await protect(planeClient.users.list.bind(planeClient.users), job.workspace_slug, job.project_id)
       );
+
+      /*
+       * Say if a user already have an account in plane and he is just not part of the
+       * workspace, in that case we're adding him to the workspace member, but we can't
+       * expect to update him display name. Hence if we're mapping anything using the
+       * display name, there will be a mismatch between the existing user display name
+       * and imported user display name, and you'll never find the exact match.
+       */
+      return existingUsers.map((existingUser) => {
+        const existingUserEmail = existingUser.email;
+        const externalSourceUser = transformedUsers.find(
+          (transformedUser) => transformedUser.email === existingUserEmail
+        );
+
+        if (externalSourceUser) {
+          return {
+            ...existingUser,
+            display_name: externalSourceUser.display_name ?? existingUser.display_name,
+          };
+        } else {
+          return existingUser;
+        }
+      });
     } catch (error) {
-      logger.error(`[${job.id}] Unable to pull existing users from plane`, extractErrorMetadata(error));
+      logger.error(`[${job.id}] Unable to pull existing users from plane`, error);
       executionLog.collect(job.id, {
         entity_type: EExecutionLogEntityType.USER,
         level: EExecutionLogLevel.ERROR,

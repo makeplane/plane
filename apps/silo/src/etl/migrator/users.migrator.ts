@@ -120,7 +120,16 @@ export const createUsers = async (
         entity_name: createdUser.display_name,
       });
 
-      return createdUser;
+      return {
+        ...createdUser,
+        /*
+         * In case the user already exists in the database with a differnt display name,
+         * here we will only be adding him to the workspace and the project, but we'll not
+         * be updating his display name, now in that case we'll be returning the user's
+         * display name from the source system
+         */
+        display_name: user.display_name,
+      };
     } catch (error) {
       logger.error(`Error while creating the user: ${user.display_name}`, {
         jobId: jobId,
