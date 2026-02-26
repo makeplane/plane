@@ -15,7 +15,9 @@
 import useSWR from "swr";
 import type { E_FEATURE_FLAGS } from "@plane/constants";
 import type { TExtensions } from "@plane/editor";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import type { TEditorFlaggingHookReturnType } from "ce/hooks/use-editor-flagging";
+import { usePublish } from "@/hooks/store/publish";
 import { useFeatureFlags } from "./store";
 
 const flagsToFetch: ReadonlyArray<keyof typeof E_FEATURE_FLAGS> = [
@@ -31,6 +33,7 @@ const flagsToFetch: ReadonlyArray<keyof typeof E_FEATURE_FLAGS> = [
  */
 export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType => {
   const { fetchFeatureFlags, getFeatureFlag } = useFeatureFlags();
+  const { installed_apps } = usePublish(anchor);
 
   useSWR(
     anchor ? `EDITOR_FEATURE_FLAGS_${anchor}` : null,
@@ -81,6 +84,15 @@ export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType
     documentFlagged.push("multi-column");
     richTextFlagged.push("multi-column");
     liteTextFlagged.push("multi-column");
+  }
+
+  if (!installed_apps.includes(E_INTEGRATION_KEYS.MERMAID)) {
+    documentFlagged.push("mermaid-diagrams");
+    richTextFlagged.push("mermaid-diagrams");
+  }
+
+  if (!installed_apps.includes(E_INTEGRATION_KEYS.DRAWIO)) {
+    documentFlagged.push("drawio");
   }
 
   return {

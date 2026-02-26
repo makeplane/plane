@@ -13,7 +13,6 @@
 
 import type { IProject, IProjectLite } from "./project";
 import type { IWorkspaceLite } from "./workspace";
-
 export type TPublishEntityType = "project" | "page";
 
 export type TProjectPublishLayouts = "calendar" | "gantt" | "kanban" | "list" | "spreadsheet";
@@ -37,6 +36,7 @@ export type TPublishSettings = {
   entity_name: TPublishEntityType | undefined;
   id: string | undefined;
   inbox: unknown;
+  installed_apps: string[];
   is_comments_enabled: boolean;
   is_reactions_enabled: boolean;
   is_votes_enabled: boolean;

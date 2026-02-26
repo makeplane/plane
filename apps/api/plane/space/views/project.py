@@ -21,6 +21,7 @@ from rest_framework.permissions import AllowAny
 from .base import BaseAPIView
 from plane.app.serializers import DeployBoardSerializer
 from plane.db.models import Project, DeployBoard, ProjectMember, WorkspaceMember
+from plane.authentication.models import WorkspaceAppInstallation
 
 # EE
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -54,6 +55,16 @@ class DeployBoardPublicSettingsEndpoint(BaseAPIView):
 
         return True
 
+    def get_installed_apps(self, workspace_id):
+        return list(
+            WorkspaceAppInstallation.objects.filter(
+                workspace_id=workspace_id,
+                status=WorkspaceAppInstallation.Status.INSTALLED,
+            )
+            .values_list("application__slug", flat=True)
+            .distinct()
+        )
+
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.get(anchor=anchor)
         if deploy_board.entity_name in [
@@ -66,7 +77,9 @@ class DeployBoardPublicSettingsEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
         serializer = DeployBoardSerializer(deploy_board)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        data = serializer.data
+        data["installed_apps"] = self.get_installed_apps(deploy_board.workspace_id)
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
