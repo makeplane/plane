@@ -9,5 +9,5 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from .base import ProjectLiteType, ProjectMemberType, ProjectType
+from .base import ProjectLiteType, ProjectMemberType, ProjectType, ProjectPublicLiteType
 from .feature import ProjectFeatureType

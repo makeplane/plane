@@ -10,14 +10,14 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python Imports
-from typing import Optional
+from typing import Optional, Union
 
 # Third-Party Imports
 import strawberry
 
 # Django Imports
 from asgiref.sync import sync_to_async
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Q, UUIDField
 
 # Strawberry Imports
 from strawberry.exceptions import GraphQLError
@@ -26,19 +26,72 @@ from strawberry.scalars import JSON
 from strawberry.types import Info
 
 # Module Imports
-from plane.db.models import Project, ProjectMember, UserFavorite
+from plane.db.models import Project, ProjectMember, ProjectNetwork, UserFavorite
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 from plane.graphql.helpers import (
     build_teamspace_project_access_filter_async,
     project_member_filter_via_teamspaces_async,
 )
+from plane.graphql.helpers.project import get_project
 from plane.graphql.helpers.workspace import get_workspace_async
-from plane.graphql.permissions.project import ProjectBasePermission
-from plane.graphql.permissions.workspace import WorkspaceBasePermission
+from plane.graphql.permissions.project import ProjectBasePermission, ProjectPermission
+from plane.graphql.permissions.workspace import WorkspaceBasePermission, WorkspacePermission
 from plane.graphql.types.paginator import PaginatorResponse
-from plane.graphql.types.project import ProjectMemberType, ProjectType
+from plane.graphql.types.project import ProjectMemberType, ProjectType, ProjectPublicLiteType
 from plane.graphql.types.teamspace import TeamspaceProjectQueryPathEnum
 from plane.graphql.utils.paginator import paginate
+from plane.graphql.utils.roles import Roles
+
+
+@sync_to_async
+def get_project_details_async(
+    user_id: Union[str, UUIDField], workspace_id: Union[str, UUIDField], project_id: Union[str, UUIDField]
+) -> Optional[ProjectType]:
+    try:
+        project = (
+            Project.objects.filter(pk=project_id, deleted_at__isnull=True)
+            .annotate(
+                is_favorite=Exists(
+                    UserFavorite.objects.filter(
+                        user_id=user_id,
+                        entity_identifier=OuterRef("pk"),
+                        entity_type="project",
+                        project_id=OuterRef("pk"),
+                    )
+                )
+            )
+            .annotate(
+                is_member=Exists(
+                    ProjectMember.objects.filter(
+                        member_id=user_id,
+                        project_id=OuterRef("pk"),
+                        workspace_id=workspace_id,
+                        is_active=True,
+                    )
+                )
+            )
+            .first()
+        )
+
+        if not project:
+            message = "Project not found."
+            error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
+            raise GraphQLError(message, extensions=error_extensions)
+
+        if project.archived_at is not None:
+            message = "Project is archived."
+            error_extensions = {"code": "ARCHIVED", "statusCode": 400}
+            raise GraphQLError(message, extensions=error_extensions)
+
+        return project
+    except Project.DoesNotExist:
+        message = "Project not found."
+        error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
+        raise GraphQLError(message, extensions=error_extensions)
+    except Exception as e:
+        message = f"Something went wrong while fetching project details: {e}"
+        error_extensions = {"code": "INTERNAL_SERVER_ERROR", "statusCode": 500}
+        raise GraphQLError(message, extensions=error_extensions)
 
 
 @strawberry.type
@@ -172,47 +225,23 @@ class ProjectQuery:
 
         return paginate(results_object=project_list, cursor=cursor)
 
-    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def project(self, info: Info, slug: str, project: strawberry.ID) -> Optional[ProjectType]:
-        user = info.context.user
-        user_id = str(user.id)
+        try:
+            # fetching the user
+            user = info.context.user
+            user_id = str(user.id)
 
-        def get_project() -> Optional[ProjectType]:
-            return (
-                Project.objects.filter(
-                    workspace__slug=slug,
-                    pk=project,
-                    archived_at__isnull=True,
-                    deleted_at__isnull=True,
-                )
-                .annotate(
-                    is_favorite=Exists(
-                        UserFavorite.objects.filter(
-                            user_id=user_id,
-                            entity_identifier=OuterRef("pk"),
-                            entity_type="project",
-                            project_id=OuterRef("pk"),
-                        )
-                    )
-                )
-                .annotate(
-                    is_member=Exists(
-                        ProjectMember.objects.filter(
-                            member_id=user_id,
-                            project_id=OuterRef("pk"),
-                            workspace__slug=slug,
-                            is_active=True,
-                        )
-                    )
-                )
-                .first()
+            # fetching the workspace
+            workspace = await get_workspace_async(slug=slug)
+            workspace_id = str(workspace.id)
+
+            # fetching the project details
+            project_detail = await get_project_details_async(
+                user_id=user_id, workspace_id=workspace_id, project_id=project
             )
 
-        try:
-            _ = await sync_to_async(Project.objects.get)(pk=project)
-            project_detail = await sync_to_async(get_project)()
-
-            # Background task to update recent visited project
+            # updating the recent visited project
             recent_visited_task.delay(
                 slug=slug,
                 project_id=project,
@@ -222,9 +251,9 @@ class ProjectQuery:
             )
 
             return project_detail
-        except Project.DoesNotExist:
-            message = "Project not found"
-            error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
+        except Exception as e:
+            message = f"Something went wrong while fetching project: {e}"
+            error_extensions = {"code": "INTERNAL_SERVER_ERROR", "statusCode": 500}
             raise GraphQLError(message, extensions=error_extensions)
 
 
@@ -242,3 +271,26 @@ class ProjectMembersQuery:
         )
 
         return project_members
+
+
+@strawberry.type
+class IsProjectPublicQuery:
+    @strawberry.field(
+        extensions=[
+            PermissionExtension(permissions=[WorkspacePermission(roles=[Roles.ADMIN, Roles.MEMBER, Roles.GUEST])])
+        ]
+    )
+    async def is_project_public(self, info: Info, slug: str, project: strawberry.ID) -> Optional[ProjectPublicLiteType]:
+        # fetching the workspace
+        workspace = await get_workspace_async(slug=slug)
+        workspace_slug = workspace.slug
+
+        # fetching the project
+        project = await get_project(workspace_slug=workspace_slug, project_id=str(project))
+
+        if project.network == ProjectNetwork.PUBLIC.value:
+            return project
+        else:
+            message = "Project is not public."
+            error_extensions = {"code": "NOT_PUBLIC", "statusCode": 403}
+            raise GraphQLError(message, extensions=error_extensions)

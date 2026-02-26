@@ -34,6 +34,7 @@ from plane.graphql.helpers import (
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.epics.base import EpicCountType, EpicStatsType, EpicType
 from plane.graphql.types.paginator import PaginatorResponse
+from plane.graphql.utils.archive import ArchivedFilterTypes
 from plane.graphql.utils.paginator import paginate
 from plane.graphql.utils.work_item_filters import work_item_filters
 
@@ -132,7 +133,9 @@ class EpicQuery:
         # check if the epic is enabled for the project
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
-        epic = await get_epic(workspace_slug=slug, project_id=project, epic_id=epic)
+        epic = await get_epic(
+            workspace_slug=slug, project_id=project, epic_id=epic, archived_filter=ArchivedFilterTypes.INCLUDE
+        )
         epic_id = str(epic.id)
 
         recent_visited_task.delay(

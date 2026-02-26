@@ -158,6 +158,11 @@ class EpicType:
         return converted_date
 
     @strawberry.field
+    def archived_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.archived_at)
+        return converted_date
+
+    @strawberry.field
     async def analytics(self) -> EpicAnalyticsType:
         sub_work_items = await sync_to_async(lambda: get_all_related_work_items(work_item_id=self.id))()
 

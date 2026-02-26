@@ -31,6 +31,7 @@ from plane.db.models import (
     IssueActivity,
     IssueType,
     ProjectUserProperty,
+    StateGroup,
 )
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
@@ -174,11 +175,15 @@ class IssueQuery:
                 workspace_slug=slug,
             )
             issue_detail = await sync_to_async(list)(
-                Issue.issue_objects.filter(
+                Issue.objects.filter(
                     workspace__slug=slug,
                     project_id=project,
                     id=issue,
                 )
+                .exclude(state__group=StateGroup.TRIAGE.value)
+                .exclude(project__archived_at__isnull=False)
+                .exclude(is_draft=True)
+                .filter(Q(type__is_epic=False) | Q(type__isnull=True))
                 .filter(project_teamspace_filter.query)
                 .distinct()
             )

@@ -24,6 +24,7 @@ from strawberry.exceptions import GraphQLError
 # Module Imports
 from plane.db.models import Issue
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
+from plane.graphql.utils.archive import ArchivedFilter, apply_archived_filter
 
 
 def work_item_base_query(
@@ -31,7 +32,7 @@ def work_item_base_query(
     project_id: Optional[str] = None,
     user_id: Optional[str] = None,
     filters: Optional[dict] = None,
-    include_archived: Optional[bool] = False,
+    archived_filter: Optional[ArchivedFilter] = None,
 ):
     """
     Get the work item base query for objects and all objects the given workspace slug
@@ -52,12 +53,6 @@ def work_item_base_query(
         .filter(is_draft=False)
     )
 
-    # archived filters
-    if include_archived:
-        work_item_base_query = work_item_base_query.filter(archived_at__isnull=False)
-    else:
-        work_item_base_query = work_item_base_query.filter(archived_at__isnull=True)
-
     # workspace filters
     if workspace_slug:
         work_item_base_query = work_item_base_query.filter(workspace__slug=workspace_slug)
@@ -67,6 +62,9 @@ def work_item_base_query(
         work_item_base_query = work_item_base_query.filter(project_id=project_id).filter(
             project__archived_at__isnull=True
         )
+
+    # archived filters
+    work_item_base_query = apply_archived_filter(queryset=work_item_base_query, archived_filter=archived_filter)
 
     # project member filters
     if user_id:
@@ -90,7 +88,7 @@ def get_work_item(
     project_id: Optional[str] = None,
     user_id: Optional[str] = None,
     filters: Optional[dict] = None,
-    include_archived: Optional[bool] = False,
+    archived_filter: Optional[ArchivedFilter] = None,
 ):
     """
     Get the work item for the given project and work item id
@@ -100,7 +98,7 @@ def get_work_item(
         project_id=project_id,
         user_id=user_id,
         filters=filters,
-        include_archived=include_archived,
+        archived_filter=archived_filter,
     )
 
     try:

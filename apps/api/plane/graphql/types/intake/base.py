@@ -160,3 +160,11 @@ class IntakeWorkItemType:
 
         converted_date = user_timezone_converter(user, updated_at)
         return converted_date
+
+    @strawberry.field
+    def archived_at(self, info: Info) -> Optional[datetime]:
+        user = info.context.user
+        archived_at = self.archived_at
+
+        converted_date = user_timezone_converter(user, archived_at)
+        return converted_date

@@ -208,6 +208,11 @@ class IssuesType:
         return converted_date
 
     @strawberry.field
+    def archived_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.archived_at)
+        return converted_date
+
+    @strawberry.field
     async def is_epic(self, info: Info) -> bool:
         try:
             user = info.context.user

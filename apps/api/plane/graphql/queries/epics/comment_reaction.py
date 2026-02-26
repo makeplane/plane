@@ -22,9 +22,10 @@ from strawberry.types import Info
 
 # Module imports
 from plane.db.models import CommentReaction
-from plane.graphql.helpers import get_work_item, project_member_filter_via_teamspaces
+from plane.graphql.helpers import get_epic, project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.types.issues.comment_reaction import CommentReactionType
+from plane.graphql.utils.archive import ArchivedFilterTypes
 
 
 @sync_to_async
@@ -52,7 +53,9 @@ class EpicCommentReactionQuery:
         user = info.context.user
         user_id = str(user.id)
 
-        await get_work_item(workspace_slug=slug, project_id=project, work_item_id=epic)
+        await get_epic(
+            workspace_slug=slug, project_id=project, epic_id=epic, archived_filter=ArchivedFilterTypes.INCLUDE
+        )
 
         comment_reactions = await get_epic_comment_reactions(
             workspace_slug=slug, project_id=project, comment_id=comment, user_id=user_id
