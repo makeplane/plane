@@ -62,12 +62,13 @@ def sync_workspace_groups(config: GroupSyncConfig):
     """Sync groups for all users in a workspace."""
     workspace_id = config.workspace_id
 
-    if settings.IS_MULTI_TENANT:
+    if settings.IS_SELF_MANAGED:
         # Cloud OIDC provider for syncing user groups
-        provider = OIDCGroupCloudProvider()
-    else:
         # Self hosted OIDC provider for syncing user groups
         provider = OIDCGroupProvider()
+    else:
+        # Cloud OIDC provider for syncing user groups
+        provider = OIDCGroupCloudProvider()
 
     # Initialize the group sync service
     sync_service = GroupSyncService()

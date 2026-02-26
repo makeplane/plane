@@ -147,10 +147,10 @@ EE_JOBS = {
         "task": "plane.ee.bgtasks.recurring_work_item_scheduler.schedule_batch",
         "schedule": crontab(minute="*/15"),  # Every 15 minutes
     },
-    # IdP group sync - runs every 6 hours
+    # IdP group sync - runs every 2 hours
     "sync-idp-groups-offline": {
         "task": "plane.authentication.bgtasks.group_sync_task.sync_oidc_groups_offline",
-        "schedule": crontab(hour="*/6", minute=10),  # Every 6 hours at minute 10
+        "schedule": crontab(hour="*/2", minute=10),  # Every 2 hours at minute 10
     },
 }
 
