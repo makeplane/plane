@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
@@ -23,6 +24,7 @@ import { EOnboardingSteps } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // local imports
 import { CommonOnboardingHeader } from "../common";
 import type { TProfileSetupFormValues } from "../profile/root";
@@ -38,6 +40,12 @@ const defaultValues = {
 export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepChange }: Props) {
   // store hooks
   const { data: profile, updateUserProfile } = useUserProfile();
+  const { fetchWorkspaces } = useWorkspace();
+
+  // fetch workspaces when component mounts
+  useEffect(() => {
+    void fetchWorkspaces();
+  }, [fetchWorkspaces]);
   // form info
   const {
     handleSubmit,
