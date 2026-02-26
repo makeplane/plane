@@ -13,7 +13,16 @@
 
 import { FloatingOverlay } from "@floating-ui/react";
 import type { SuggestionProps } from "@tiptap/suggestion";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
@@ -26,10 +35,11 @@ import { CommandMenuItem } from "./command-menu-item";
 
 export type SlashCommandsMenuProps = SuggestionProps<TSlashCommandSection, ISlashCommandItem> & {
   onClose: () => void;
+  registerOnKeyDownHandler?: (handler: ((event: KeyboardEvent) => boolean) | null) => void;
 };
 
 export const SlashCommandsMenu = forwardRef(function SlashCommandsMenu(props: SlashCommandsMenuProps, ref) {
-  const { items: sections, command, query, onClose } = props;
+  const { items: sections, command, query, onClose, registerOnKeyDownHandler } = props;
   // states
   const [selectedIndex, setSelectedIndex] = useState({
     section: 0,
@@ -45,77 +55,33 @@ export const SlashCommandsMenu = forwardRef(function SlashCommandsMenu(props: Sl
     },
     [command, sections]
   );
-  // handle arrow key navigation
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (DROPDOWN_NAVIGATION_KEYS.includes(e.key)) {
-        e.preventDefault();
-        const currentSection = selectedIndex.section;
-        const currentItem = selectedIndex.item;
-        let nextSection = currentSection;
-        let nextItem = currentItem;
+  const hasResults = sections.some((s) => s.items?.length > 0);
+  const selectedIndexForRender = useMemo(() => {
+    if (!hasResults) return selectedIndex;
 
-        if (e.key === "ArrowUp") {
-          nextItem = currentItem - 1;
-          if (nextItem < 0) {
-            nextSection = currentSection - 1;
-            if (nextSection < 0) nextSection = sections.length - 1;
-            nextItem = sections[nextSection]?.items?.length - 1;
-          }
-        }
-        if (e.key === "ArrowDown") {
-          nextItem = currentItem + 1;
-          if (nextItem >= sections[currentSection]?.items?.length) {
-            nextSection = currentSection + 1;
-            if (nextSection >= sections.length) nextSection = 0;
-            nextItem = 0;
-          }
-        }
-        if (e.key === "Enter") {
-          selectItem(currentSection, currentItem);
-        }
-        setSelectedIndex({
-          section: nextSection,
-          item: nextItem,
-        });
-      }
-    };
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [sections, selectedIndex, setSelectedIndex, selectItem]);
-  // initialize the select index to 0 by default
-  useEffect(() => {
-    setSelectedIndex({
+    const section = sections[selectedIndex.section];
+    if (section?.items?.[selectedIndex.item]) return selectedIndex;
+
+    return {
       section: 0,
       item: 0,
-    });
-  }, [sections]);
-  // scroll to the dropdown item when navigating via keyboard
-  useLayoutEffect(() => {
-    const container = commandListContainer?.current;
-    if (!container) return;
+    };
+  }, [hasResults, sections, selectedIndex]);
 
-    const item = container.querySelector(`#item-${selectedIndex.section}-${selectedIndex.item}`) as HTMLElement;
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent): boolean => {
+      if (![...DROPDOWN_NAVIGATION_KEYS, "Tab"].includes(event.key)) return false;
+      if (!hasResults) return false;
 
-    // use scroll into view to bring the item in view if it is not in view
-    item?.scrollIntoView({ block: "nearest" });
-  }, [sections, selectedIndex]);
-
-  useImperativeHandle(ref, () => ({
-    onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-      if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return false;
-
-      if (event.key === "Enter") {
-        selectItem(selectedIndex.section, selectedIndex.item);
+      if (event.key === "Enter" || event.key === "Tab") {
+        selectItem(selectedIndexForRender.section, selectedIndexForRender.item);
         return true;
       }
 
       const newIndex = getNextValidIndex({
         event,
         sections,
-        selectedIndex,
+        selectedIndex: selectedIndexForRender,
       });
 
       if (newIndex) {
@@ -124,13 +90,37 @@ export const SlashCommandsMenu = forwardRef(function SlashCommandsMenu(props: Sl
 
       return true;
     },
+    [hasResults, sections, selectItem, selectedIndexForRender]
+  );
+
+  // scroll to the dropdown item when navigating via keyboard
+  useLayoutEffect(() => {
+    const container = commandListContainer?.current;
+    if (!container) return;
+
+    const item = container.querySelector(
+      `#item-${selectedIndexForRender.section}-${selectedIndexForRender.item}`
+    ) as HTMLElement;
+
+    // use scroll into view to bring the item in view if it is not in view
+    item?.scrollIntoView({ block: "nearest" });
+  }, [selectedIndexForRender]);
+
+  useImperativeHandle(ref, () => ({
+    onKeyDown: ({ event }: { event: KeyboardEvent }) => handleKeyDown(event),
   }));
+
+  useEffect(() => {
+    registerOnKeyDownHandler?.(handleKeyDown);
+
+    return () => {
+      registerOnKeyDownHandler?.(null);
+    };
+  }, [handleKeyDown, registerOnKeyDownHandler]);
 
   useOutsideClickDetector(commandListContainer, onClose);
 
-  const areSearchResultsEmpty = sections.map((s) => s.items?.length).reduce((acc, curr) => acc + curr, 0) === 0;
-
-  if (areSearchResultsEmpty) return null;
+  if (!hasResults) return null;
 
   return (
     <>
@@ -148,12 +138,6 @@ export const SlashCommandsMenu = forwardRef(function SlashCommandsMenu(props: Sl
         style={{
           zIndex: 100,
         }}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-        onMouseDown={(e) => {
-          e.stopPropagation();
-        }}
       >
         {sections.map((section, sectionIndex) => (
           <div key={section.key} className="space-y-2">
@@ -162,7 +146,9 @@ export const SlashCommandsMenu = forwardRef(function SlashCommandsMenu(props: Sl
               {section.items?.map((item, itemIndex) => (
                 <CommandMenuItem
                   key={item.key}
-                  isSelected={sectionIndex === selectedIndex.section && itemIndex === selectedIndex.item}
+                  isSelected={
+                    sectionIndex === selectedIndexForRender.section && itemIndex === selectedIndexForRender.item
+                  }
                   item={item}
                   itemIndex={itemIndex}
                   onClick={(e) => {

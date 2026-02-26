@@ -26,14 +26,14 @@ type Props = {
   query?: string;
 };
 
-// Utility to highlight matched text in a string
+// Utility to highlight matched text in a string (supports fuzzy matching)
 const highlightMatch = (text: string, query: string): React.ReactNode => {
   if (!query || query.trim() === "") return text;
 
   const queryLower = query.toLowerCase().trim();
   const textLower = text.toLowerCase();
 
-  // Check for direct substring match
+  // 1. Direct substring match
   const index = textLower.indexOf(queryLower);
   if (index >= 0) {
     const before = text.substring(0, index);
@@ -49,7 +49,42 @@ const highlightMatch = (text: string, query: string): React.ReactNode => {
     );
   }
 
-  // Otherwise just return the text
+  // 2. Fuzzy subsequence match — greedily match query chars left-to-right
+  const matchedIndices: number[] = [];
+  let qi = 0;
+  for (let ti = 0; ti < textLower.length && qi < queryLower.length; ti++) {
+    if (textLower[ti] === queryLower[qi]) {
+      matchedIndices.push(ti);
+      qi++;
+    }
+  }
+
+  if (matchedIndices.length === queryLower.length) {
+    const matchSet = new Set(matchedIndices);
+    const parts: React.ReactNode[] = [];
+    let i = 0;
+    while (i < text.length) {
+      if (matchSet.has(i)) {
+        // Collect consecutive matched characters into one span
+        let end = i;
+        while (end + 1 < text.length && matchSet.has(end + 1)) end++;
+        parts.push(
+          <span key={i} className="font-medium text-primary">
+            {text.substring(i, end + 1)}
+          </span>
+        );
+        i = end + 1;
+      } else {
+        // Collect consecutive unmatched characters
+        let end = i;
+        while (end + 1 < text.length && !matchSet.has(end + 1)) end++;
+        parts.push(text.substring(i, end + 1));
+        i = end + 1;
+      }
+    }
+    return <>{parts}</>;
+  }
+
   return text;
 };
 
