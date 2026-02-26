@@ -14,7 +14,6 @@
 import { redirect } from "react-router";
 import { observer } from "mobx-react";
 // plane imports
-import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components

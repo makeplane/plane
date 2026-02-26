@@ -17,6 +17,7 @@ import { WORKSPACE_SETTINGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs } from "@plane/ui";
 // components
+import { BetaBadge } from "@/components/common/beta";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SettingsPageHeader } from "@/components/settings/page-header";
 import { WORKSPACE_SETTINGS_ICONS } from "@/components/settings/workspace/sidebar/item-icon";
@@ -34,7 +35,13 @@ export const GroupSyncingWorkspaceSettingsHeader = observer(function GroupSyncin
         <Breadcrumbs>
           <Breadcrumbs.Item
             component={
-              <BreadcrumbLink label={t(settingsDetails.i18n_label)} icon={<Icon className="size-4 text-tertiary" />} />
+              <div className="flex items-center gap-1">
+                <BreadcrumbLink
+                  label={t(settingsDetails.i18n_label)}
+                  icon={<Icon className="size-4 text-tertiary" />}
+                />
+                <BetaBadge />
+              </div>
             }
           />
         </Breadcrumbs>

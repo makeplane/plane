@@ -19,6 +19,7 @@ import { EUserPermissionsLevel, GROUPED_WORKSPACE_SETTINGS, WORKSPACE_SETTINGS_C
 import { useTranslation } from "@plane/i18n";
 import { joinUrlPath } from "@plane/utils";
 // components
+import { BetaBadge } from "@/components/common/beta";
 import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
 // helpers
 import { shouldRenderSettingLink } from "@/helpers/settings/workspace";
@@ -56,7 +57,8 @@ export const WorkspaceSettingsSidebarItemCategories = observer(function Workspac
             <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t(category)}</div>
             <div className="flex flex-col">
               {accessibleItems.map((item) => {
-                if (item.key === "group-syncing" && !isGroupSyncingFeatureEnabled) return null;
+                const isGroupSyncing = item.key === "group-syncing";
+                if (isGroupSyncing && !isGroupSyncingFeatureEnabled) return null;
 
                 const isItemActive =
                   item.href === "/settings"
@@ -71,6 +73,7 @@ export const WorkspaceSettingsSidebarItemCategories = observer(function Workspac
                     isActive={isItemActive}
                     icon={WORKSPACE_SETTINGS_ICONS[item.key]}
                     label={t(item.i18n_label)}
+                    appendContent={isGroupSyncing && <BetaBadge />}
                   />
                 );
               })}
