@@ -7,7 +7,7 @@ services:
     volumes:
       - redisdata:/data
     ports:
-      - "6379:6379"
+      - ${REDIS_PORT:-6379}:6379
 
   plane-mq:
     image: rabbitmq:3.13.6-management-alpine
@@ -61,7 +61,7 @@ services:
     environment:
       PGDATA: /var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - ${POSTGRES_PORT:-5432}:5432
 
   # web:
   #   build:
@@ -139,7 +139,7 @@ services:
       - plane-redis
       - plane-mq
     ports:
-      - "8000:8000"
+      - ${API_PORT:-8000}:8000
 
   worker:
     build:
