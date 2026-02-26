@@ -115,7 +115,7 @@
     "@vitest/browser-playwright": "^4.0.18",
     "@vitest/coverage-v8": "^4.0.18",
     "playwright": "^1.58.2",
-    "storybook": "10.2.8",
+    "storybook": "10.2.10",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "^4.0.18"
