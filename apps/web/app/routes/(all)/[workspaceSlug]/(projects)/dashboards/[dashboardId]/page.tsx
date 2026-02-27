@@ -17,7 +17,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { AnalyticsDashboardWidgetGrid } from "@/plane-web/components/dashboards/analytics-dashboard-widget-grid";
 import { WidgetConfigModal } from "@/plane-web/components/dashboards/widget-config-modal";
 import type { WidgetFormData } from "@/plane-web/components/dashboards/widget-config-modal";
-import type { IAnalyticsDashboardWidget, TAnalyticsWidgetCreate, TAnalyticsWidgetUpdate } from "@plane/types";
+import type { IAnalyticsDashboardWidget, TAnalyticsWidgetCreate } from "@plane/types";
 import { DashboardToolbar } from "./dashboard-toolbar";
 
 const DashboardDetailPage = observer(function DashboardDetailPage() {
@@ -105,20 +105,20 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
 
   const handleWidgetSubmit = async (data: WidgetFormData) => {
     try {
+      const payload: TAnalyticsWidgetCreate = {
+        widget_type: data.widget_type as TAnalyticsWidgetCreate["widget_type"],
+        title: data.title,
+        chart_property: data.chart_property,
+        chart_metric: data.chart_metric,
+        config: data.config as TAnalyticsWidgetCreate["config"],
+        position: data.position,
+      };
+
       if (configWidget) {
-        await analyticsDashboardStore.updateWidget(
-          workspaceSlug,
-          dashboardId,
-          configWidget.id,
-          data as unknown as TAnalyticsWidgetUpdate
-        );
+        await analyticsDashboardStore.updateWidget(workspaceSlug, dashboardId, configWidget.id, payload);
         setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_updated") });
       } else {
-        await analyticsDashboardStore.createWidget(
-          workspaceSlug,
-          dashboardId,
-          data as unknown as TAnalyticsWidgetCreate
-        );
+        await analyticsDashboardStore.createWidget(workspaceSlug, dashboardId, payload);
         setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_added") });
       }
       setIsAddWidgetOpen(false);
@@ -192,16 +192,12 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
         widget={
           configWidget
             ? {
-                name: configWidget.title,
-                chart_type: configWidget.widget_type,
-                chart_model: "BASIC",
-                x_axis_property: configWidget.chart_property,
-                y_axis_metric: configWidget.chart_metric,
-                group_by: null,
+                title: configWidget.title,
+                widget_type: configWidget.widget_type,
+                chart_property: configWidget.chart_property,
+                chart_metric: configWidget.chart_metric,
                 config: configWidget.config as unknown as Record<string, unknown>,
-                filters: (configWidget.config?.filters ?? {}) as Record<string, unknown>,
-                width: configWidget.position?.width ?? 6,
-                height: configWidget.position?.height ?? 2,
+                position: configWidget.position ?? { row: 0, col: 0, width: 6, height: 4 },
               }
             : null
         }

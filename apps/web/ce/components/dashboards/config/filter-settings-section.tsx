@@ -97,7 +97,7 @@ export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
       <div className="flex flex-col gap-1.5">
         <span className="text-xs font-medium text-color-tertiary">{t("analytics_dashboard.filter_priority")}</span>
         <Controller
-          name="filters.priority"
+          name="config.filters.priority"
           control={control}
           defaultValue={[]}
           render={({ field }) => (
@@ -113,7 +113,7 @@ export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
       <div className="flex flex-col gap-1.5">
         <span className="text-xs font-medium text-color-tertiary">{t("analytics_dashboard.filter_state_group")}</span>
         <Controller
-          name="filters.state_group"
+          name="config.filters.state_group"
           control={control}
           defaultValue={[]}
           render={({ field }) => (
@@ -131,7 +131,7 @@ export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
         {ANALYTICS_DATE_FILTER_OPTIONS.map((opt) => (
           <Controller
             key={opt.key}
-            name={`filters.${opt.key}` as const}
+            name={`config.filters.${opt.key}` as const}
             control={control}
             defaultValue={{}}
             render={({ field }) => (

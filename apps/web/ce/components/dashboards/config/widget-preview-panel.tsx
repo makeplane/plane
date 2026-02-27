@@ -32,17 +32,52 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
 
   const renderPreview = () => {
     switch (widgetType) {
-      case "BAR_CHART":
-        return <BarChartWidget data={chartData} config={widgetConfig} chartProperty={chartProperty} chartMetric={chartMetric} />;
-      case "LINE_CHART":
-        return <LineChartWidget data={chartData} config={widgetConfig} chartProperty={chartProperty} chartMetric={chartMetric} />;
-      case "AREA_CHART":
-        return <AreaChartWidget data={chartData} config={widgetConfig} chartProperty={chartProperty} chartMetric={chartMetric} />;
-      case "DONUT_CHART":
-        return <DonutChartWidget data={chartData} config={widgetConfig} chartProperty={chartProperty} chartMetric={chartMetric} />;
-      case "PIE_CHART":
-        return <PieChartWidget data={chartData} config={widgetConfig} chartProperty={chartProperty} chartMetric={chartMetric} />;
-      case "NUMBER":
+      case "bar":
+        return (
+          <BarChartWidget
+            data={chartData}
+            config={widgetConfig}
+            chartProperty={chartProperty}
+            chartMetric={chartMetric}
+          />
+        );
+      case "line":
+        return (
+          <LineChartWidget
+            data={chartData}
+            config={widgetConfig}
+            chartProperty={chartProperty}
+            chartMetric={chartMetric}
+          />
+        );
+      case "area":
+        return (
+          <AreaChartWidget
+            data={chartData}
+            config={widgetConfig}
+            chartProperty={chartProperty}
+            chartMetric={chartMetric}
+          />
+        );
+      case "donut":
+        return (
+          <DonutChartWidget
+            data={chartData}
+            config={widgetConfig}
+            chartProperty={chartProperty}
+            chartMetric={chartMetric}
+          />
+        );
+      case "pie":
+        return (
+          <PieChartWidget
+            data={chartData}
+            config={widgetConfig}
+            chartProperty={chartProperty}
+            chartMetric={chartMetric}
+          />
+        );
+      case "number":
         return <NumberWidget data={numberData} config={widgetConfig} chartMetric={chartMetric} />;
       default:
         return <p className="text-sm text-color-tertiary">Select a widget type to see preview</p>;

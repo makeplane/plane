@@ -22,9 +22,9 @@ interface StyleSettingsSectionProps {
 
 export const StyleSettingsSection = observer(({ control, chartType }: StyleSettingsSectionProps) => {
   const { t } = useTranslation();
-  const showFillOpacity = ["BAR_CHART", "AREA_CHART"].includes(chartType);
-  const showSmoothing = ["LINE_CHART", "AREA_CHART"].includes(chartType);
-  const showBorder = chartType === "BAR_CHART";
+  const showFillOpacity = ["bar", "area"].includes(chartType);
+  const showSmoothing = ["line", "area"].includes(chartType);
+  const showBorder = chartType === "bar";
 
   return (
     <div className="space-y-4">

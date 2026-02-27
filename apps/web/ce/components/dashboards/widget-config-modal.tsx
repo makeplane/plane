@@ -18,18 +18,14 @@ import { Tab } from "@headlessui/react";
 import { WidgetConfigTabContent } from "./widget-config-tab-content";
 import { WidgetPreviewPanel } from "./config/widget-preview-panel";
 
-/** Form data shape matching backend DashboardWidget model */
+/** Form data shape matching backend AnalyticsDashboardWidget model fields */
 export interface WidgetFormData {
-  name: string;
-  chart_type: string;
-  chart_model: string;
-  x_axis_property: string;
-  y_axis_metric: string;
-  group_by: string | null;
+  title: string;
+  widget_type: string;
+  chart_property: string;
+  chart_metric: string;
   config: Record<string, unknown>;
-  filters: Record<string, unknown>;
-  width: number;
-  height: number;
+  position: { row: number; col: number; width: number; height: number };
 }
 
 interface WidgetConfigModalProps {
@@ -44,31 +40,23 @@ const CONFIG_TAB_KEYS = ["type", "basic", "style", "display", "filters"] as cons
 export type ConfigTabKey = (typeof CONFIG_TAB_KEYS)[number];
 
 const DEFAULT_FORM: WidgetFormData = {
-  name: "",
-  chart_type: "BAR_CHART",
-  chart_model: "BASIC",
-  x_axis_property: "PRIORITIES",
-  y_axis_metric: "WORK_ITEM_COUNT",
-  group_by: null,
+  title: "",
+  widget_type: "bar",
+  chart_property: "priority",
+  chart_metric: "count",
   config: { color_preset: "modern", show_legend: true, show_tooltip: true },
-  filters: {},
-  width: 6,
-  height: 2,
+  position: { row: 0, col: 0, width: 6, height: 4 },
 };
 
 const buildDefaults = (widget?: WidgetFormData | null): WidgetFormData =>
   widget
     ? {
-        name: widget.name ?? "",
-        chart_type: widget.chart_type ?? "BAR_CHART",
-        chart_model: widget.chart_model ?? "BASIC",
-        x_axis_property: widget.x_axis_property ?? "PRIORITIES",
-        y_axis_metric: widget.y_axis_metric ?? "WORK_ITEM_COUNT",
-        group_by: widget.group_by ?? "",
+        title: widget.title ?? "",
+        widget_type: widget.widget_type ?? "bar",
+        chart_property: widget.chart_property ?? "priority",
+        chart_metric: widget.chart_metric ?? "count",
         config: widget.config ?? {},
-        filters: widget.filters ?? {},
-        width: widget.width ?? 6,
-        height: widget.height ?? 2,
+        position: widget.position ?? { row: 0, col: 0, width: 6, height: 4 },
       }
     : { ...DEFAULT_FORM };
 
@@ -88,9 +76,9 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
     defaultValues: buildDefaults(widget),
   });
 
-  const chartType = watch("chart_type");
-  const xAxisProperty = watch("x_axis_property");
-  const yAxisMetric = watch("y_axis_metric");
+  const widgetType = watch("widget_type");
+  const chartProperty = watch("chart_property");
+  const chartMetric = watch("chart_metric");
   const configValue = watch("config");
 
   useEffect(() => {
@@ -154,18 +142,18 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
               </Tab.Group>
               <WidgetConfigTabContent
                 activeTab={activeTab}
-                chartType={chartType}
+                chartType={widgetType}
                 control={control}
                 errors={errors}
-                onChartTypeChange={(type) => setValue("chart_type", type)}
+                onChartTypeChange={(type) => setValue("widget_type", type)}
               />
             </div>
             <div className="w-[45%] min-w-0">
               <WidgetPreviewPanel
-                widgetType={chartType}
+                widgetType={widgetType}
                 config={configValue}
-                chartProperty={xAxisProperty}
-                chartMetric={yAxisMetric}
+                chartProperty={chartProperty}
+                chartMetric={chartMetric}
               />
             </div>
           </div>
