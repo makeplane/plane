@@ -33,6 +33,8 @@ class Command(BaseCommand):
         if not admin_email:
             raise CommandError("INSTANCE_ADMIN_EMAIL environment variable is required")
 
+        app_version = os.environ.get("APP_VERSION", "latest")
+
         user = User.objects.filter(email=admin_email).first()
         if user is None:
             user = User.objects.create(
@@ -48,16 +50,33 @@ class Command(BaseCommand):
 
             if instance is None:
                 instance = Instance.objects.create(
-                    instance_name="Plane Cloud",
+                    instance_name="Plane Cloud US",
                     instance_id=secrets.token_hex(12),
-                    current_version="latest",
-                    latest_version="latest",
+                    current_version=app_version,
+                    latest_version=app_version,
                     last_checked_at=timezone.now(),
                     is_verified=True,
                     is_setup_done=True,
                     is_signup_screen_visited=True,
                     edition=InstanceEdition.PLANE_CLOUD.value,
                 )
+                self.stdout.write(self.style.SUCCESS("Instance registered"))
+            else:
+                # Update the instance name and version
+                instance.instance_name = "Plane Cloud US"
+                instance.current_version = app_version
+                instance.edition = InstanceEdition.PLANE_CLOUD.value
+                instance.last_checked_at = timezone.now()
+                instance.save(
+                    update_fields=[
+                        "instance_name",
+                        "current_version",
+                        "last_checked_at",
+                        "edition",
+                    ]
+                )
+
+                self.stdout.write(self.style.SUCCESS("Instance already registered"))
 
             # Get or create an instance admin
             _, created = InstanceAdmin.objects.get_or_create(
