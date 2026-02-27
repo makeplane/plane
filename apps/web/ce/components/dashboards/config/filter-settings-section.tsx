@@ -9,6 +9,7 @@
 
 import { Controller } from "react-hook-form";
 import type { Control } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 import {
   ANALYTICS_PRIORITY_OPTIONS,
   ANALYTICS_STATE_GROUP_OPTIONS,
@@ -88,38 +89,45 @@ function DateRangeRow({
 }
 
 export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-5">
-      <p className="text-xs text-color-tertiary">
-        Filter widget data by specific dimensions. Only matching issues will be included in the chart.
-      </p>
+      <p className="text-xs text-color-tertiary">{t("analytics_dashboard.filter_description")}</p>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-color-tertiary">Priority</span>
+        <span className="text-xs font-medium text-color-tertiary">{t("analytics_dashboard.filter_priority")}</span>
         <Controller
           name="filters.priority"
           control={control}
           defaultValue={[]}
           render={({ field }) => (
-            <MultiSelectChips options={ANALYTICS_PRIORITY_OPTIONS} value={(field.value as string[]) ?? []} onChange={field.onChange} />
+            <MultiSelectChips
+              options={ANALYTICS_PRIORITY_OPTIONS}
+              value={(field.value as string[]) ?? []}
+              onChange={field.onChange}
+            />
           )}
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-color-tertiary">State Group</span>
+        <span className="text-xs font-medium text-color-tertiary">{t("analytics_dashboard.filter_state_group")}</span>
         <Controller
           name="filters.state_group"
           control={control}
           defaultValue={[]}
           render={({ field }) => (
-            <MultiSelectChips options={ANALYTICS_STATE_GROUP_OPTIONS} value={(field.value as string[]) ?? []} onChange={field.onChange} />
+            <MultiSelectChips
+              options={ANALYTICS_STATE_GROUP_OPTIONS}
+              value={(field.value as string[]) ?? []}
+              onChange={field.onChange}
+            />
           )}
         />
       </div>
 
       <div className="flex flex-col gap-3">
-        <span className="text-xs font-medium text-color-secondary">Date Ranges</span>
+        <span className="text-xs font-medium text-color-secondary">{t("analytics_dashboard.filter_date_ranges")}</span>
         {ANALYTICS_DATE_FILTER_OPTIONS.map((opt) => (
           <Controller
             key={opt.key}

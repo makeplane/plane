@@ -40,13 +40,13 @@ const DashboardListPage = observer(function DashboardListPage() {
       if (!workspaceSlug) return;
       try {
         await store.createDashboard(workspaceSlug, data);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Success!", message: "Dashboard created successfully." });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: t("success"), message: t("analytics_dashboard.created_success") });
       } catch (error) {
-        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to create dashboard" });
+        setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.create_failed") });
         throw error;
       }
     },
-    [workspaceSlug, store]
+    [workspaceSlug, store, t]
   );
 
   const handleUpdate = useCallback(
@@ -54,27 +54,27 @@ const DashboardListPage = observer(function DashboardListPage() {
       if (!workspaceSlug || !editDashboard) return;
       try {
         await store.updateDashboard(workspaceSlug, editDashboard.id, data);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Success!", message: "Dashboard updated successfully." });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: t("success"), message: t("analytics_dashboard.updated_success") });
         setEditDashboard(null);
       } catch (error) {
-        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to update dashboard" });
+        setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.update_failed") });
         throw error;
       }
     },
-    [workspaceSlug, editDashboard, store]
+    [workspaceSlug, editDashboard, store, t]
   );
 
   const handleDelete = useCallback(async () => {
     if (!workspaceSlug || !deleteDashboard) return;
     try {
       await store.deleteDashboard(workspaceSlug, deleteDashboard.id);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Success!", message: "Dashboard deleted successfully." });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("success"), message: t("analytics_dashboard.deleted_success") });
       setDeleteDashboard(null);
     } catch (error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to delete dashboard" });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.delete_failed") });
       throw error;
     }
-  }, [workspaceSlug, deleteDashboard, store]);
+  }, [workspaceSlug, deleteDashboard, store, t]);
 
   const pageTitle = t("dashboards");
   const { dashboards, isLoading } = store;
@@ -102,13 +102,11 @@ const DashboardListPage = observer(function DashboardListPage() {
                 <LayoutDashboard className="h-8 w-8 text-color-accent-primary" />
               </div>
               <div className="text-center">
-                <h3 className="text-lg font-medium text-color-primary">No dashboards yet</h3>
-                <p className="mt-1 text-sm text-color-secondary">
-                  Create your first dashboard to visualize work item data.
-                </p>
+                <h3 className="text-lg font-medium text-color-primary">{t("analytics_dashboard.empty")}</h3>
+                <p className="mt-1 text-sm text-color-secondary">{t("analytics_dashboard.empty_description")}</p>
               </div>
               <Button variant="primary" size="sm" onClick={() => setIsCreateOpen(true)}>
-                Create dashboard
+                {t("analytics_dashboard.create")}
               </Button>
             </div>
           ) : (

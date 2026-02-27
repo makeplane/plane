@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import { X } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { ModalCore, EModalPosition, EModalWidth, TabList } from "@plane/ui";
 import { Tab } from "@headlessui/react";
@@ -38,15 +39,9 @@ interface WidgetConfigModalProps {
   widget?: WidgetFormData | null;
 }
 
-const CONFIG_TABS = [
-  { key: "type", label: "Type" },
-  { key: "basic", label: "Basic" },
-  { key: "style", label: "Style" },
-  { key: "display", label: "Display" },
-  { key: "filters", label: "Filters" },
-] as const;
+const CONFIG_TAB_KEYS = ["type", "basic", "style", "display", "filters"] as const;
 
-export type ConfigTabKey = (typeof CONFIG_TABS)[number]["key"];
+export type ConfigTabKey = (typeof CONFIG_TAB_KEYS)[number];
 
 const DEFAULT_FORM: WidgetFormData = {
   name: "",
@@ -78,6 +73,7 @@ const buildDefaults = (widget?: WidgetFormData | null): WidgetFormData =>
     : { ...DEFAULT_FORM };
 
 export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }: WidgetConfigModalProps) => {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<ConfigTabKey>("type");
 
@@ -127,7 +123,9 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <div className="flex flex-col">
         <div className="flex items-center justify-between border-b border-color-subtle px-5 py-4">
-          <h3 className="text-lg font-semibold text-color-primary">{widget ? "Configure Widget" : "Add Widget"}</h3>
+          <h3 className="text-lg font-semibold text-color-primary">
+            {widget ? t("analytics_dashboard.configure_widget") : t("analytics_dashboard.add_widget")}
+          </h3>
           <button
             type="button"
             onClick={handleClose}
@@ -141,12 +139,15 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
           <div className="flex gap-4 px-5 py-4">
             <div className="w-[55%] min-w-0">
               <Tab.Group
-                selectedIndex={CONFIG_TABS.findIndex((t) => t.key === activeTab)}
-                onChange={(index) => setActiveTab(CONFIG_TABS[index].key)}
+                selectedIndex={CONFIG_TAB_KEYS.indexOf(activeTab)}
+                onChange={(index) => setActiveTab(CONFIG_TAB_KEYS[index])}
               >
                 <TabList
                   autoWrap={false}
-                  tabs={CONFIG_TABS.map((tab) => ({ key: tab.key, label: tab.label }))}
+                  tabs={CONFIG_TAB_KEYS.map((key) => ({
+                    key,
+                    label: t(`analytics_dashboard.tab_${key}`),
+                  }))}
                   selectedTab={activeTab}
                   tabListClassName="bg-layer-2"
                 />
@@ -171,10 +172,10 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
 
           <div className="flex items-center justify-end gap-2 border-t border-color-subtle px-5 py-4">
             <Button type="button" variant="secondary" size="sm" onClick={handleClose} disabled={isSubmitting}>
-              Cancel
+              {t("cancel")}
             </Button>
             <Button type="submit" variant="primary" size="sm" loading={isSubmitting} disabled={isSubmitting}>
-              {widget ? "Update Widget" : "Add Widget"}
+              {widget ? t("analytics_dashboard.submit_update_widget") : t("analytics_dashboard.submit_add_widget")}
             </Button>
           </div>
         </form>

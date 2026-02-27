@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -20,6 +21,7 @@ import type { IAnalyticsDashboardWidget, TAnalyticsWidgetCreate, TAnalyticsWidge
 import { DashboardToolbar } from "./dashboard-toolbar";
 
 const DashboardDetailPage = observer(function DashboardDetailPage() {
+  const { t } = useTranslation();
   const { workspaceSlug = "", dashboardId = "" } = useParams<{ workspaceSlug: string; dashboardId: string }>();
   const router = useAppRouter();
   const analyticsDashboardStore = useAnalyticsDashboard();
@@ -43,11 +45,11 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
   const handleRefresh = async () => {
     try {
       await analyticsDashboardStore.fetchDashboard(workspaceSlug, dashboardId);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Dashboard refreshed" });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.dashboard_refreshed") });
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Failed to refresh dashboard",
+        title: t("analytics_dashboard.refresh_failed"),
         message: error instanceof Error ? error.message : "Unknown error",
       });
     }
@@ -56,11 +58,11 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
   const handleDeleteWidget = async (widgetId: string) => {
     try {
       await analyticsDashboardStore.deleteWidget(workspaceSlug, dashboardId, widgetId);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget deleted" });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_deleted") });
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Failed to delete widget",
+        title: t("analytics_dashboard.delete_widget_failed"),
         message: error instanceof Error ? error.message : "Unknown error",
       });
     }
@@ -82,7 +84,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Failed to update layout",
+        title: t("analytics_dashboard.layout_update_failed"),
         message: error instanceof Error ? error.message : "Unknown error",
       });
     }
@@ -91,11 +93,11 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
   const handleDuplicateWidget = async (widgetId: string) => {
     try {
       await analyticsDashboardStore.duplicateWidget(workspaceSlug, dashboardId, widgetId);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget duplicated" });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_duplicated") });
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Failed to duplicate widget",
+        title: t("analytics_dashboard.duplicate_widget_failed"),
         message: error instanceof Error ? error.message : "Unknown error",
       });
     }
@@ -110,21 +112,23 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
           configWidget.id,
           data as unknown as TAnalyticsWidgetUpdate
         );
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget updated" });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_updated") });
       } else {
         await analyticsDashboardStore.createWidget(
           workspaceSlug,
           dashboardId,
           data as unknown as TAnalyticsWidgetCreate
         );
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget added" });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_added") });
       }
       setIsAddWidgetOpen(false);
       setConfigWidget(null);
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: configWidget ? "Failed to update widget" : "Failed to add widget",
+        title: configWidget
+          ? t("analytics_dashboard.update_widget_failed")
+          : t("analytics_dashboard.add_widget_failed"),
         message: error instanceof Error ? error.message : "Unknown error",
       });
       throw error;
@@ -157,9 +161,9 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
             </div>
           ) : sortedWidgets.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
-              <p className="text-sm text-color-tertiary">No widgets yet. Add your first widget to get started.</p>
+              <p className="text-sm text-color-tertiary">{t("analytics_dashboard.empty_widgets")}</p>
               <Button onClick={handleAddWidget} className="gap-2">
-                Add Widget
+                {t("analytics_dashboard.add_widget")}
               </Button>
             </div>
           ) : (

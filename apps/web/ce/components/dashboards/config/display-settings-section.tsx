@@ -10,6 +10,7 @@
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 import { ToggleSwitch } from "@plane/ui";
 
 interface DisplaySettingsSectionProps {
@@ -19,6 +20,7 @@ interface DisplaySettingsSectionProps {
 }
 
 export const DisplaySettingsSection = observer(({ control, chartType }: DisplaySettingsSectionProps) => {
+  const { t } = useTranslation();
   const showLegend = chartType !== "NUMBER";
   const showTooltip = chartType !== "NUMBER";
   const showCenterValue = ["DONUT_CHART", "PIE_CHART"].includes(chartType);
@@ -28,12 +30,15 @@ export const DisplaySettingsSection = observer(({ control, chartType }: DisplayS
     <div className="space-y-4">
       {showLegend && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">Show Legend</span>
+          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.show_legend")}</span>
           <Controller
             name="config.show_legend"
             control={control}
             render={({ field }) => (
-              <ToggleSwitch value={(field.value as boolean) || false} onChange={(val: boolean) => field.onChange(val)} />
+              <ToggleSwitch
+                value={(field.value as boolean) || false}
+                onChange={(val: boolean) => field.onChange(val)}
+              />
             )}
           />
         </div>
@@ -41,12 +46,15 @@ export const DisplaySettingsSection = observer(({ control, chartType }: DisplayS
 
       {showTooltip && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">Show Tooltip</span>
+          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.show_tooltip")}</span>
           <Controller
             name="config.show_tooltip"
             control={control}
             render={({ field }) => (
-              <ToggleSwitch value={(field.value as boolean) || false} onChange={(val: boolean) => field.onChange(val)} />
+              <ToggleSwitch
+                value={(field.value as boolean) || false}
+                onChange={(val: boolean) => field.onChange(val)}
+              />
             )}
           />
         </div>
@@ -54,12 +62,15 @@ export const DisplaySettingsSection = observer(({ control, chartType }: DisplayS
 
       {showCenterValue && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">Show Center Value</span>
+          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.show_center_value")}</span>
           <Controller
             name="config.center_value"
             control={control}
             render={({ field }) => (
-              <ToggleSwitch value={(field.value as boolean) || false} onChange={(val: boolean) => field.onChange(val)} />
+              <ToggleSwitch
+                value={(field.value as boolean) || false}
+                onChange={(val: boolean) => field.onChange(val)}
+              />
             )}
           />
         </div>
@@ -67,12 +78,15 @@ export const DisplaySettingsSection = observer(({ control, chartType }: DisplayS
 
       {showMarkers && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">Show Data Points</span>
+          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.show_data_points")}</span>
           <Controller
             name="config.show_markers"
             control={control}
             render={({ field }) => (
-              <ToggleSwitch value={(field.value as boolean) || false} onChange={(val: boolean) => field.onChange(val)} />
+              <ToggleSwitch
+                value={(field.value as boolean) || false}
+                onChange={(val: boolean) => field.onChange(val)}
+              />
             )}
           />
         </div>

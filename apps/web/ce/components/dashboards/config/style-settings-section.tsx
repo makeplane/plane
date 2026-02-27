@@ -10,6 +10,7 @@
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 import { ToggleSwitch } from "@plane/ui";
 import { ColorPresetSelector } from "./color-preset-selector";
 
@@ -20,6 +21,7 @@ interface StyleSettingsSectionProps {
 }
 
 export const StyleSettingsSection = observer(({ control, chartType }: StyleSettingsSectionProps) => {
+  const { t } = useTranslation();
   const showFillOpacity = ["BAR_CHART", "AREA_CHART"].includes(chartType);
   const showSmoothing = ["LINE_CHART", "AREA_CHART"].includes(chartType);
   const showBorder = chartType === "BAR_CHART";
@@ -27,19 +29,26 @@ export const StyleSettingsSection = observer(({ control, chartType }: StyleSetti
   return (
     <div className="space-y-4">
       <div>
-        <span className="mb-2 block text-sm font-medium text-color-secondary">Color Preset</span>
+        <span className="mb-2 block text-sm font-medium text-color-secondary">
+          {t("analytics_dashboard.color_preset")}
+        </span>
         <Controller
           name="config.color_preset"
           control={control}
           render={({ field }) => (
-            <ColorPresetSelector selectedPreset={field.value as string} onChange={(val: string) => field.onChange(val)} />
+            <ColorPresetSelector
+              selectedPreset={field.value as string}
+              onChange={(val: string) => field.onChange(val)}
+            />
           )}
         />
       </div>
 
       {showFillOpacity && (
         <div>
-          <span className="mb-2 block text-sm font-medium text-color-secondary">Fill Opacity</span>
+          <span className="mb-2 block text-sm font-medium text-color-secondary">
+            {t("analytics_dashboard.fill_opacity")}
+          </span>
           <Controller
             name="config.fill_opacity"
             control={control}
@@ -65,12 +74,15 @@ export const StyleSettingsSection = observer(({ control, chartType }: StyleSetti
 
       {showBorder && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">Show Border</span>
+          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.show_border")}</span>
           <Controller
             name="config.show_border"
             control={control}
             render={({ field }) => (
-              <ToggleSwitch value={(field.value as boolean) || false} onChange={(val: boolean) => field.onChange(val)} />
+              <ToggleSwitch
+                value={(field.value as boolean) || false}
+                onChange={(val: boolean) => field.onChange(val)}
+              />
             )}
           />
         </div>
@@ -78,12 +90,15 @@ export const StyleSettingsSection = observer(({ control, chartType }: StyleSetti
 
       {showSmoothing && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">Smooth Lines</span>
+          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.smooth_lines")}</span>
           <Controller
             name="config.smoothing"
             control={control}
             render={({ field }) => (
-              <ToggleSwitch value={(field.value as boolean) || false} onChange={(val: boolean) => field.onChange(val)} />
+              <ToggleSwitch
+                value={(field.value as boolean) || false}
+                onChange={(val: boolean) => field.onChange(val)}
+              />
             )}
           />
         </div>
