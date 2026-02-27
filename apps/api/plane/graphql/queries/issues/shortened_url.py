@@ -19,8 +19,7 @@ from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
 # Module Imports
-from plane.db.models import IntakeIssue, Issue, Project, ProjectMember, ProjectNetwork
-from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
+from plane.db.models import IntakeIssue, Issue, Project, ProjectMember
 from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.types.issues.meta import IssueShortenedMetaInfo
 from plane.graphql.utils.roles import Roles
