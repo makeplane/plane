@@ -110,3 +110,4 @@ build/
 temp/
 # scripts/
 /.opencode
+/.claude/scripts
