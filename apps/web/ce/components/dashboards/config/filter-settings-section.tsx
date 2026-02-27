@@ -2,6 +2,9 @@
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
+ *
+ * Widget filter settings: priority, state group, date ranges.
+ * Field paths match backend DashboardWidget.filters JSON field.
  */
 
 import { Controller } from "react-hook-form";
@@ -17,7 +20,6 @@ type FilterSettingsSectionProps = {
   control: Control<any>;
 };
 
-// Reusable multi-select chip component for entity filters
 function MultiSelectChips({
   options,
   value,
@@ -40,10 +42,11 @@ function MultiSelectChips({
             key={opt.key}
             type="button"
             onClick={() => toggle(opt.key)}
-            className={`rounded-md border px-2 py-1 text-xs transition-colors ${selected
-                ? "border-accent-strong bg-accent-subtle text-accent-primary"
-                : "border-subtle text-tertiary hover:bg-layer-2"
-              }`}
+            className={`rounded-md border px-2 py-1 text-xs transition-colors ${
+              selected
+                ? "border-color-accent-strong bg-accent-subtle text-color-accent-primary"
+                : "border-color-subtle text-color-tertiary hover:bg-layer-2"
+            }`}
           >
             {opt.label}
           </button>
@@ -53,7 +56,6 @@ function MultiSelectChips({
   );
 }
 
-// Date range picker row with after/before inputs
 function DateRangeRow({
   label,
   value,
@@ -65,22 +67,20 @@ function DateRangeRow({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-xs font-medium text-tertiary">{label}</span>
+      <span className="text-xs font-medium text-color-tertiary">{label}</span>
       <div className="flex items-center gap-2">
         <input
           type="date"
           value={value?.after ?? ""}
           onChange={(e) => onChange({ ...value, after: e.target.value || undefined })}
-          className="w-full rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
-          placeholder="After"
+          className="w-full rounded-md border border-color-subtle bg-surface-1 px-2.5 py-1.5 text-xs text-color-secondary outline-none focus:border-color-accent-strong"
         />
-        <span className="text-xs text-placeholder">to</span>
+        <span className="text-xs text-color-tertiary">to</span>
         <input
           type="date"
           value={value?.before ?? ""}
           onChange={(e) => onChange({ ...value, before: e.target.value || undefined })}
-          className="w-full rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
-          placeholder="Before"
+          className="w-full rounded-md border border-color-subtle bg-surface-1 px-2.5 py-1.5 text-xs text-color-secondary outline-none focus:border-color-accent-strong"
         />
       </div>
     </div>
@@ -90,51 +90,40 @@ function DateRangeRow({
 export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
   return (
     <div className="flex flex-col gap-5">
-      <p className="text-xs text-placeholder">
+      <p className="text-xs text-color-tertiary">
         Filter widget data by specific dimensions. Only matching issues will be included in the chart.
       </p>
 
-      {/* Priority filter */}
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-tertiary">Priority</span>
+        <span className="text-xs font-medium text-color-tertiary">Priority</span>
         <Controller
-          name="config.filters.priority"
+          name="filters.priority"
           control={control}
           defaultValue={[]}
           render={({ field }) => (
-            <MultiSelectChips
-              options={ANALYTICS_PRIORITY_OPTIONS}
-              value={(field.value as string[]) ?? []}
-              onChange={field.onChange}
-            />
+            <MultiSelectChips options={ANALYTICS_PRIORITY_OPTIONS} value={(field.value as string[]) ?? []} onChange={field.onChange} />
           )}
         />
       </div>
 
-      {/* State Group filter */}
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-tertiary">State Group</span>
+        <span className="text-xs font-medium text-color-tertiary">State Group</span>
         <Controller
-          name="config.filters.state_group"
+          name="filters.state_group"
           control={control}
           defaultValue={[]}
           render={({ field }) => (
-            <MultiSelectChips
-              options={ANALYTICS_STATE_GROUP_OPTIONS}
-              value={(field.value as string[]) ?? []}
-              onChange={field.onChange}
-            />
+            <MultiSelectChips options={ANALYTICS_STATE_GROUP_OPTIONS} value={(field.value as string[]) ?? []} onChange={field.onChange} />
           )}
         />
       </div>
 
-      {/* Date range filters */}
       <div className="flex flex-col gap-3">
-        <span className="text-xs font-medium text-secondary">Date Ranges</span>
+        <span className="text-xs font-medium text-color-secondary">Date Ranges</span>
         {ANALYTICS_DATE_FILTER_OPTIONS.map((opt) => (
           <Controller
             key={opt.key}
-            name={`config.filters.${opt.key}` as const}
+            name={`filters.${opt.key}` as const}
             control={control}
             defaultValue={{}}
             render={({ field }) => (

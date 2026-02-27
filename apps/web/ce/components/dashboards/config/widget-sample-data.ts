@@ -4,12 +4,11 @@
  * See the LICENSE file for details.
  *
  * Static sample data for widget preview rendering.
- * No API calls — used only in the config modal preview panel.
+ * No API calls -- used only in the config modal preview panel.
  */
 
 import type { IAnalyticsChartData, IAnalyticsNumberWidgetData } from "@plane/types";
 
-// Sample chart data keyed by chart_property
 const SAMPLE_CHART_DATA: Record<string, IAnalyticsChartData> = {
   priority: {
     data: [

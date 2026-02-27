@@ -2,45 +2,43 @@
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
+ *
+ * Widget configuration modal for Custom Dashboards (CE).
+ * Fields match DashboardWidget backend model fields.
  */
 
-import { observer } from "mobx-react";
 import { useState, useEffect } from "react";
+import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
-import type {
-  IAnalyticsDashboardWidget,
-  IAnalyticsWidgetConfig,
-  TAnalyticsWidgetCreate,
-  TAnalyticsWidgetUpdate,
-} from "@plane/types";
-import { EAnalyticsWidgetType } from "@plane/types";
-import { ANALYTICS_DEFAULT_WIDGET_CONFIGS, ANALYTICS_DEFAULT_WIDGET_SIZES } from "@plane/constants";
+import { X } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { ModalCore, EModalPosition, EModalWidth, TabList } from "@plane/ui";
 import { Tab } from "@headlessui/react";
-import { X } from "lucide-react";
-import { WidgetPreviewPanel } from "./config/widget-preview-panel";
 import { WidgetConfigTabContent } from "./widget-config-tab-content";
+import { WidgetPreviewPanel } from "./config/widget-preview-panel";
+
+/** Form data shape matching backend DashboardWidget model */
+export interface WidgetFormData {
+  name: string;
+  chart_type: string;
+  chart_model: string;
+  x_axis_property: string;
+  y_axis_metric: string;
+  group_by: string;
+  config: Record<string, unknown>;
+  filters: Record<string, unknown>;
+  width: number;
+  height: number;
+}
 
 interface WidgetConfigModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: TAnalyticsWidgetCreate | TAnalyticsWidgetUpdate) => Promise<void>;
-  widget?: IAnalyticsDashboardWidget | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSubmit: (data: Record<string, unknown>) => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  widget?: any | null;
 }
-
-interface FormData {
-  widget_type: EAnalyticsWidgetType;
-  title: string;
-  chart_property: string;
-  chart_metric: string;
-  config: IAnalyticsWidgetConfig;
-  position: { row: number; col: number; width: number; height: number };
-}
-
-/** Type guard for date range filter values */
-const isDateRangeFilter = (v: unknown): v is { after?: string; before?: string } =>
-  typeof v === "object" && v !== null && !Array.isArray(v) && ("after" in v || "before" in v);
 
 const CONFIG_TABS = [
   { key: "type", label: "Type" },
@@ -50,84 +48,59 @@ const CONFIG_TABS = [
   { key: "filters", label: "Filters" },
 ] as const;
 
-type ConfigTabKey = (typeof CONFIG_TABS)[number]["key"];
+export type ConfigTabKey = (typeof CONFIG_TABS)[number]["key"];
 
-const buildDefaults = (widget?: IAnalyticsDashboardWidget | null): FormData =>
+const DEFAULT_FORM: WidgetFormData = {
+  name: "",
+  chart_type: "BAR_CHART",
+  chart_model: "BASIC",
+  x_axis_property: "priority",
+  y_axis_metric: "count",
+  group_by: "",
+  config: { color_preset: "modern", show_legend: true, show_tooltip: true },
+  filters: {},
+  width: 6,
+  height: 2,
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const buildDefaults = (widget?: any | null): WidgetFormData =>
   widget
     ? {
-        widget_type: widget.widget_type,
-        title: widget.title,
-        chart_property: widget.chart_property,
-        chart_metric: widget.chart_metric,
-        config: widget.config,
-        position: widget.position,
+        name: widget.name ?? "",
+        chart_type: widget.chart_type ?? "BAR_CHART",
+        chart_model: widget.chart_model ?? "BASIC",
+        x_axis_property: widget.x_axis_property ?? "priority",
+        y_axis_metric: widget.y_axis_metric ?? "count",
+        group_by: widget.group_by ?? "",
+        config: widget.config ?? {},
+        filters: widget.filters ?? {},
+        width: widget.width ?? 6,
+        height: widget.height ?? 2,
       }
-    : {
-        widget_type: EAnalyticsWidgetType.BAR,
-        title: "",
-        chart_property: "priority",
-        chart_metric: "count",
-        config: (ANALYTICS_DEFAULT_WIDGET_CONFIGS.bar || {}) as IAnalyticsWidgetConfig,
-        position: { row: 0, col: 0, ...(ANALYTICS_DEFAULT_WIDGET_SIZES.bar || { width: 6, height: 4 }) },
-      };
+    : { ...DEFAULT_FORM };
 
 export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }: WidgetConfigModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<ConfigTabKey>("type");
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-    setValue,
-  } = useForm<FormData>({ defaultValues: buildDefaults(widget) });
+  const { control, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<WidgetFormData>({
+    defaultValues: buildDefaults(widget),
+  });
 
-  const widgetType = watch("widget_type");
-  const chartProperty = watch("chart_property");
-  const chartMetric = watch("chart_metric");
+  const chartType = watch("chart_type");
+  const xAxisProperty = watch("x_axis_property");
+  const yAxisMetric = watch("y_axis_metric");
   const configValue = watch("config");
-  const filtersValue = watch("config.filters");
-
-  // Count active filters for badge display
-  const activeFilterCount = (() => {
-    if (!filtersValue || typeof filtersValue !== "object") return 0;
-    let count = 0;
-    for (const [, v] of Object.entries(filtersValue as Record<string, unknown>)) {
-      if (Array.isArray(v) && v.length > 0) count++;
-      else if (isDateRangeFilter(v) && (v.after || v.before)) count++;
-    }
-    return count;
-  })();
 
   useEffect(() => {
-    if (isOpen) reset(buildDefaults(widget));
+    if (isOpen) { reset(buildDefaults(widget)); setActiveTab("type"); }
   }, [widget, isOpen, reset]);
 
-  useEffect(() => {
-    if (!widget && widgetType) {
-      const defaultConfig = ANALYTICS_DEFAULT_WIDGET_CONFIGS[widgetType] || {};
-      const defaultSize = ANALYTICS_DEFAULT_WIDGET_SIZES[widgetType] || { width: 6, height: 4 };
-      setValue("config", defaultConfig as FormData["config"]);
-      setValue("position", { row: 0, col: 0, ...defaultSize });
-    }
-  }, [widgetType, widget, setValue]);
-
-  const handleFormSubmit = async (data: FormData) => {
+  const handleFormSubmit = async (data: WidgetFormData) => {
     try {
       setIsSubmitting(true);
-      if (data.config.filters) {
-        const cleaned = Object.fromEntries(
-          Object.entries(data.config.filters).filter(([, v]) => {
-            if (Array.isArray(v)) return v.length > 0;
-            if (isDateRangeFilter(v)) return v.after || v.before;
-            return false;
-          })
-        );
-        data.config.filters = Object.keys(cleaned).length > 0 ? (cleaned as typeof data.config.filters) : undefined;
-      }
-      await onSubmit(data);
+      await onSubmit(data as unknown as Record<string, unknown>);
       reset();
       onClose();
     } catch (error) {
@@ -137,78 +110,52 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
     }
   };
 
-  const handleClose = () => {
-    reset();
-    setActiveTab("type");
-    onClose();
-  };
+  const handleClose = () => { reset(); setActiveTab("type"); onClose(); };
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <div className="flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-subtle px-5 py-4">
-          <h3 className="text-lg font-semibold text-primary">{widget ? "Configure Widget" : "Add Widget"}</h3>
-          <button
-            type="button"
-            onClick={handleClose}
-            className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2"
-          >
-            <X className="h-4 w-4 text-tertiary" />
+        <div className="flex items-center justify-between border-b border-color-subtle px-5 py-4">
+          <h3 className="text-lg font-semibold text-color-primary">{widget ? "Configure Widget" : "Add Widget"}</h3>
+          <button type="button" onClick={handleClose} className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2">
+            <X className="h-4 w-4 text-color-tertiary" />
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}>
           <div className="flex gap-4 px-5 py-4">
             <div className="w-[55%] min-w-0">
-              <div className="w-full">
-                <Tab.Group
-                  selectedIndex={CONFIG_TABS.findIndex((t) => t.key === activeTab)}
-                  onChange={(index) => setActiveTab(CONFIG_TABS[index].key)}
-                >
-                  <TabList
-                    autoWrap={false}
-                    tabs={CONFIG_TABS.map((tab) => ({
-                      key: tab.key,
-                      label: (
-                        <span className="flex items-center gap-1">
-                          {tab.label}
-                          {tab.key === "filters" && activeFilterCount > 0 && (
-                            <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-accent-primary px-1 text-[10px] font-medium text-white">
-                              {activeFilterCount}
-                            </span>
-                          )}
-                        </span>
-                      ),
-                    }))}
-                    selectedTab={activeTab}
-                    tabListClassName="bg-layer-2"
-                  />
-                </Tab.Group>
-              </div>
+              <Tab.Group
+                selectedIndex={CONFIG_TABS.findIndex((t) => t.key === activeTab)}
+                onChange={(index) => setActiveTab(CONFIG_TABS[index].key)}
+              >
+                <TabList
+                  autoWrap={false}
+                  tabs={CONFIG_TABS.map((tab) => ({ key: tab.key, label: tab.label }))}
+                  selectedTab={activeTab}
+                  tabListClassName="bg-layer-2"
+                />
+              </Tab.Group>
               <WidgetConfigTabContent
                 activeTab={activeTab}
-                widgetType={widgetType}
+                chartType={chartType}
                 control={control}
                 errors={errors}
-                onWidgetTypeChange={(type) => setValue("widget_type", type)}
+                onChartTypeChange={(type) => setValue("chart_type", type)}
               />
             </div>
             <div className="w-[45%] min-w-0">
               <WidgetPreviewPanel
-                widgetType={widgetType}
-                config={(configValue ? { ...configValue } : {}) as IAnalyticsWidgetConfig}
-                chartProperty={chartProperty}
-                chartMetric={chartMetric}
+                widgetType={chartType}
+                config={configValue}
+                chartProperty={xAxisProperty}
+                chartMetric={yAxisMetric}
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2 border-t border-subtle px-5 py-4">
-            <Button type="button" variant="secondary" size="sm" onClick={handleClose} disabled={isSubmitting}>
-              Cancel
-            </Button>
+          <div className="flex items-center justify-end gap-2 border-t border-color-subtle px-5 py-4">
+            <Button type="button" variant="secondary" size="sm" onClick={handleClose} disabled={isSubmitting}>Cancel</Button>
             <Button type="submit" variant="primary" size="sm" loading={isSubmitting} disabled={isSubmitting}>
               {widget ? "Update Widget" : "Add Widget"}
             </Button>

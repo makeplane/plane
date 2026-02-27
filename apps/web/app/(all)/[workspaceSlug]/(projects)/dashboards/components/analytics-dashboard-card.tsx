@@ -5,20 +5,15 @@
  */
 
 import { observer } from "mobx-react";
-import { Copy, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
-import { DashboardIcon } from "@plane/propel/icons";
-import type { IAnalyticsDashboard } from "@plane/types";
-import { FavoriteStar } from "@plane/ui";
-import { useAnalyticsDashboard } from "@/plane-web/hooks/store/use-analytics-dashboard";
+import { MoreHorizontal, Pencil, Trash2, LayoutDashboard, Lock, Globe } from "lucide-react";
 import { useAppRouter } from "@/hooks/use-app-router";
+import type { IDashboard } from "@plane/types";
 
 type Props = {
-  dashboard: IAnalyticsDashboard;
+  dashboard: IDashboard;
   workspaceSlug: string;
-  onEdit: (dashboard: IAnalyticsDashboard) => void;
-  onDelete: (dashboard: IAnalyticsDashboard) => void;
-  onDuplicate?: (dashboard: IAnalyticsDashboard) => void;
+  onEdit: (dashboard: IDashboard) => void;
+  onDelete: (dashboard: IDashboard) => void;
 };
 
 export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
@@ -26,29 +21,19 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
   workspaceSlug,
   onEdit,
   onDelete,
-  onDuplicate,
 }: Props) {
-  const { t } = useTranslation();
   const router = useAppRouter();
-  const { addDashboardToFavorites, removeDashboardFromFavorites } = useAnalyticsDashboard();
 
   const handleCardClick = () => {
     void router.push(`/${workspaceSlug}/dashboards/${dashboard.id}`);
   };
 
-  const handleToggleFavorite = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (dashboard.is_favorite) {
-      void removeDashboardFromFavorites(workspaceSlug, dashboard.id);
-    } else {
-      void addDashboardToFavorites(workspaceSlug, dashboard.id);
-    }
-  };
+  // access: 0 = private, 1 = public
+  const isPublic = dashboard.access === 1;
 
   return (
     <div
-      className="group relative flex cursor-pointer flex-col rounded-lg border border-custom-border-200 bg-custom-background-100 p-4 transition-all hover:shadow-custom-shadow-4xs"
+      className="group relative flex cursor-pointer flex-col rounded-lg border border-color-subtle bg-surface-1 p-4 transition-shadow hover:shadow-sm"
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
@@ -58,78 +43,73 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
     >
       {/* Header */}
       <div className="mb-3 flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-custom-primary-100/10">
-            <DashboardIcon className="h-5 w-5 text-custom-primary-100" />
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-accent-subtle">
+            <LayoutDashboard className="h-5 w-5 text-color-accent-primary" />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="truncate font-medium text-custom-text-100">{dashboard.name}</h3>
-            {dashboard.is_default && <span className="text-xs text-custom-text-300">{t("analytics_dashboard.default")}</span>}
+            <h3 className="truncate font-medium text-color-primary">{dashboard.name}</h3>
+            {/* Access badge */}
+            <span className="inline-flex items-center gap-1 text-xs text-color-secondary mt-0.5">
+              {isPublic ? (
+                <>
+                  <Globe className="h-3 w-3" />
+                  Public
+                </>
+              ) : (
+                <>
+                  <Lock className="h-3 w-3" />
+                  Private
+                </>
+              )}
+            </span>
           </div>
         </div>
 
-        {/* Favorite star + Actions menu */}
-        <div className="flex items-center gap-1">
-          <FavoriteStar onClick={handleToggleFavorite} selected={dashboard.is_favorite} />
-          <div className="relative flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100">
+        {/* Actions menu */}
+        <div className="relative flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100">
+          <button
+            className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <MoreHorizontal className="h-4 w-4 text-color-secondary" />
+          </button>
+          <div className="absolute right-0 top-full z-10 mt-1 hidden w-36 rounded-md border border-color-subtle bg-surface-1 py-1 shadow-sm group-hover:block">
             <button
-              className="flex h-6 w-6 items-center justify-center rounded hover:bg-custom-background-80"
+              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-color-secondary hover:bg-layer-1"
               onClick={(e) => {
                 e.stopPropagation();
+                onEdit(dashboard);
               }}
             >
-              <MoreHorizontal className="h-4 w-4 text-custom-text-300" />
+              <Pencil className="h-3.5 w-3.5" />
+              Edit
             </button>
-            <div className="absolute right-0 top-full z-10 mt-1 hidden w-36 rounded-md border border-custom-border-200 bg-custom-background-100 py-1 shadow-custom-shadow-rg group-hover:block">
-              <button
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(dashboard);
-                }}
-              >
-                <Pencil className="h-3.5 w-3.5" />
-                {t("analytics_dashboard.edit")}
-              </button>
-              {onDuplicate && (
-                <button
-                  className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDuplicate(dashboard);
-                  }}
-                >
-                  <Copy className="h-3.5 w-3.5" />
-                  {t("analytics_dashboard.duplicate")}
-                </button>
-              )}
-              <button
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-red-500 hover:bg-custom-background-80"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(dashboard);
-                }}
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-                {t("analytics_dashboard.delete")}
-              </button>
-            </div>
+            <button
+              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-color-danger-primary hover:bg-layer-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(dashboard);
+              }}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Delete
+            </button>
           </div>
         </div>
       </div>
 
       {/* Description */}
       {dashboard.description && (
-        <p className="mb-3 line-clamp-2 text-sm text-custom-text-300">{dashboard.description}</p>
+        <p className="mb-3 line-clamp-2 text-sm text-color-secondary">{dashboard.description}</p>
       )}
 
-      {/* Footer */}
-      <div className="mt-auto flex items-center gap-4 text-xs text-custom-text-300">
-        <span>{t("analytics_dashboard.widgets", { count: dashboard.widget_count })}</span>
-        {dashboard.config?.project_ids?.length > 0 && (
-          <span>{t("analytics_dashboard.projects", { count: dashboard.config.project_ids.length })}</span>
-        )}
-      </div>
+      {/* Footer: widget count */}
+      {Array.isArray(dashboard.widgets) && (
+        <div className="mt-auto text-xs text-color-tertiary">
+          {dashboard.widgets.length} {dashboard.widgets.length === 1 ? "widget" : "widgets"}
+        </div>
+      )}
     </div>
   );
 });

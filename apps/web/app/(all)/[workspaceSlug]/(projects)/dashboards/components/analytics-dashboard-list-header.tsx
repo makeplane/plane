@@ -19,10 +19,10 @@ export const AnalyticsDashboardListHeader = observer(function AnalyticsDashboard
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center justify-between border-b border-custom-border-200 px-4 py-3">
+    <div className="flex items-center justify-between border-b border-color-subtle px-4 py-3">
       <div>
-        <h1 className="text-xl font-semibold">{t("dashboards")}</h1>
-        <p className="text-sm text-custom-text-300">Create and manage analytics dashboards</p>
+        <h1 className="text-xl font-semibold text-color-primary">{t("dashboards")}</h1>
+        <p className="text-sm text-color-secondary">Create and manage dashboards</p>
       </div>
       <Button variant="primary" size="sm" onClick={onCreateClick}>
         <Plus className="h-4 w-4" />

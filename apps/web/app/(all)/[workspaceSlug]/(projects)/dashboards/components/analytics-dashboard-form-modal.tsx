@@ -7,28 +7,27 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { useTranslation } from "@plane/i18n";
-import type { IAnalyticsDashboard, TAnalyticsDashboardCreate } from "@plane/types";
 import { Button } from "@plane/propel/button";
 import { Input } from "@plane/propel/input";
-import { EModalPosition, EModalWidth, ModalCore, TextArea } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore, TextArea, ToggleSwitch } from "@plane/ui";
+import type { IDashboard } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: TAnalyticsDashboardCreate) => Promise<void>;
-  dashboard?: IAnalyticsDashboard | null;
+  onSubmit: (data: Record<string, unknown>) => Promise<void>;
+  dashboard?: IDashboard | null;
+  workspaceSlug: string;
 };
 
 type FormValues = {
   name: string;
   description: string;
+  // access: 0 = private, 1 = public
+  access: boolean;
 };
 
-const defaultValues: FormValues = {
-  name: "",
-  description: "",
-};
+const defaultValues: FormValues = { name: "", description: "", access: false };
 
 export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardFormModal({
   isOpen,
@@ -36,7 +35,6 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
   onSubmit,
   dashboard,
 }: Props) {
-  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -46,12 +44,13 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
     formState: { errors },
   } = useForm<FormValues>({ defaultValues });
 
-  // Reset form when modal opens with dashboard data
+  // Populate form when editing
   useEffect(() => {
     if (isOpen) {
       reset({
         name: dashboard?.name ?? "",
         description: dashboard?.description ?? "",
+        access: dashboard?.access === 1,
       });
     }
   }, [isOpen, dashboard, reset]);
@@ -66,42 +65,47 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
       setIsSubmitting(true);
       await onSubmit({
         name: formData.name,
-        description: formData.description || null,
-        logo_props: dashboard?.logo_props ?? {},
-        config: dashboard?.config ?? { project_ids: [] },
+        description: formData.description || "",
+        access: formData.access ? 1 : 0,
       });
       handleClose();
     } catch {
-      // Error handled by caller via toast
+      // Error toast handled by caller
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const isEditing = !!dashboard;
+
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <form onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}>
+      <form
+        onSubmit={(e) => {
+          void handleSubmit(handleFormSubmit)(e);
+        }}
+      >
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
-            {dashboard ? t("analytics_dashboard.update") : t("analytics_dashboard.create")}
+          <h3 className="text-xl font-medium text-color-primary">
+            {isEditing ? "Update Dashboard" : "Create Dashboard"}
           </h3>
 
           {/* Name */}
           <div className="space-y-1">
-            <label className="text-sm font-medium text-custom-text-300">
-              {t("analytics_dashboard.name.label")} <span className="text-red-500">*</span>
+            <label className="text-sm font-medium text-color-secondary">
+              Name <span className="text-color-danger-primary">*</span>
             </label>
             <Controller
               name="name"
               control={control}
               rules={{
-                required: t("analytics_dashboard.name_required"),
-                maxLength: { value: 255, message: t("analytics_dashboard.max_characters", { count: 255 }) },
+                required: "Name is required",
+                maxLength: { value: 255, message: "Name must be 255 characters or less" },
               }}
               render={({ field }) => (
                 <Input
                   {...field}
-                  placeholder={t("analytics_dashboard.name.placeholder")}
+                  placeholder="Dashboard name"
                   className="w-full"
                   hasError={!!errors.name}
                   // eslint-disable-next-line jsx-a11y/no-autofocus -- Modal input should auto-focus for UX
@@ -109,37 +113,57 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
                 />
               )}
             />
-            {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+            {errors.name && <p className="text-xs text-color-danger-primary">{errors.name.message}</p>}
           </div>
 
           {/* Description */}
           <div className="space-y-1">
-            <label className="text-sm font-medium text-custom-text-300">
-              {t("analytics_dashboard.description.label")}
+            <label htmlFor="description" className="text-sm font-medium text-color-secondary">
+              Description
             </label>
             <Controller
               name="description"
               control={control}
               render={({ field }) => (
                 <TextArea
+                  id="description"
                   {...field}
-                  placeholder={t("analytics_dashboard.description.placeholder")}
-                  className="w-full"
+                  placeholder="Add description (optional)"
+                  className="w-full resize-none"
                   rows={3}
                 />
               )}
             />
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-end gap-2 border-t border-custom-border-200 px-5 py-4">
-          <Button variant="secondary" size="sm" onClick={handleClose} type="button" disabled={isSubmitting}>
-            {t("cancel")}
-          </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {dashboard ? t("analytics_dashboard.update") : t("analytics_dashboard.create")}
-          </Button>
+          {/* Public toggle */}
+          <div className="flex items-center justify-between">
+            <label htmlFor="access" className="text-sm font-medium text-color-secondary">
+              Make this dashboard public
+            </label>
+            <Controller
+              name="access"
+              control={control}
+              render={({ field }) => (
+                <ToggleSwitch
+                  id="access"
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={isSubmitting}
+                />
+              )}
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="neutral" onClick={handleClose} disabled={isSubmitting}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Saving..." : isEditing ? "Update" : "Create"}
+            </Button>
+          </div>
         </div>
       </form>
     </ModalCore>

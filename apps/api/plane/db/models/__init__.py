@@ -93,6 +93,7 @@ from .description import Description, DescriptionVersion
 from .worklog import IssueWorkLog
 
 from .analytics_dashboard import AnalyticsDashboard, AnalyticsDashboardWidget
+from .dashboard import Dashboard, DashboardWidget
 
 from .department import Department
 from .staff import StaffProfile, EmploymentStatus

@@ -37,6 +37,9 @@ from plane.app.views import (
     WorkspaceStickyViewSet,
     WorkspaceUserPreferenceViewSet,
     WorkspaceWorkLogSummaryEndpoint,
+    DashboardViewSet,
+    DashboardWidgetViewSet,
+    DashboardWidgetChartEndpoint,
 )
 
 
@@ -225,6 +228,32 @@ urlpatterns = [
         "workspaces/<str:slug>/quick-links/<uuid:pk>/",
         QuickLinkViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-quick-links",
+    ),
+    # Dashboards
+    path(
+        "workspaces/<str:slug>/dashboards/",
+        DashboardViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-dashboards",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboards/<uuid:pk>/",
+        DashboardViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+        name="workspace-dashboard",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/widgets/",
+        DashboardWidgetViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-dashboard-widgets",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/widgets/<uuid:pk>/",
+        DashboardWidgetViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+        name="workspace-dashboard-widget",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/widgets/<uuid:widget_id>/charts/",
+        DashboardWidgetChartEndpoint.as_view(),
+        name="workspace-dashboard-widget-charts",
     ),
     # Widgets
     path(

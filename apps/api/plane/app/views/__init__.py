@@ -264,6 +264,8 @@ from .workspace.staff import (
     StaffStatsEndpoint,
 )
 
+from .dashboard import DashboardViewSet, DashboardWidgetViewSet, DashboardWidgetChartEndpoint
+
 from .error_404 import custom_404_view
 
 from .notification.base import MarkAllReadNotificationViewSet
