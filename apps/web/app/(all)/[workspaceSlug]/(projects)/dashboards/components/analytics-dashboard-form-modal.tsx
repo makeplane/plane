@@ -12,10 +12,12 @@ import { Input } from "@plane/propel/input";
 import { EModalPosition, EModalWidth, ModalCore, TextArea, ToggleSwitch } from "@plane/ui";
 import type { IDashboard } from "@plane/types";
 
+type DashboardFormPayload = { name: string; description: string; access: number };
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: Record<string, unknown>) => Promise<void>;
+  onSubmit: (data: DashboardFormPayload) => Promise<void>;
   dashboard?: IDashboard | null;
   workspaceSlug: string;
 };
@@ -92,7 +94,7 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
 
           {/* Name */}
           <div className="space-y-1">
-            <label className="text-sm font-medium text-color-secondary">
+            <label htmlFor="dashboard-name" className="text-sm font-medium text-color-secondary">
               Name <span className="text-color-danger-primary">*</span>
             </label>
             <Controller
@@ -104,6 +106,7 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
               }}
               render={({ field }) => (
                 <Input
+                  id="dashboard-name"
                   {...field}
                   placeholder="Dashboard name"
                   className="w-full"
@@ -145,19 +148,14 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
               name="access"
               control={control}
               render={({ field }) => (
-                <ToggleSwitch
-                  id="access"
-                  value={field.value}
-                  onChange={field.onChange}
-                  disabled={isSubmitting}
-                />
+                <ToggleSwitch id="access" value={field.value} onChange={field.onChange} disabled={isSubmitting} />
               )}
             />
           </div>
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="neutral" onClick={handleClose} disabled={isSubmitting}>
+            <Button variant="secondary" onClick={handleClose} disabled={isSubmitting}>
               Cancel
             </Button>
             <Button variant="primary" type="submit" disabled={isSubmitting}>

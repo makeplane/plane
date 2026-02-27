@@ -25,36 +25,25 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [editingWidgetId, setEditingWidgetId] = useState<string | null>(null);
 
-  // Fetch dashboard and widgets on mount
   useEffect(() => {
     if (!workspaceSlug || !dashboardId) return;
-    void store.fetchDashboard(workspaceSlug, dashboardId);
+    void store.fetchDashboards(workspaceSlug);
     void store.fetchWidgets(workspaceSlug, dashboardId);
   }, [workspaceSlug, dashboardId, store]);
 
-  // Memoized widgets to prevent infinite loops
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- Store returns untyped data
   const widgets = useMemo(() => store.dashboardWidgets[dashboardId] ?? [], [store.dashboardWidgets, dashboardId]);
 
   // Fetch chart data for each widget once widgets are loaded
   useEffect(() => {
     if (!workspaceSlug || !dashboardId || widgets.length === 0) return;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Store returns untyped data
     widgets.forEach((w) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Store returns untyped data
       if (!store.widgetChartData[w.id]) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Store returns untyped data
         void store.fetchWidgetChartData(workspaceSlug, dashboardId, w.id);
       }
     });
   }, [workspaceSlug, dashboardId, widgets, store]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- Store returns untyped data
-  const dashboard = useMemo(
-    () => store.dashboards.find((d) => d.id === dashboardId),
-    [store.dashboards, dashboardId]
-  );
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Store returns untyped data
+  const dashboard = useMemo(() => store.dashboards.find((d) => d.id === dashboardId), [store.dashboards, dashboardId]);
   const pageTitle = dashboard?.name ?? "Dashboard";
 
   const handleDeleteWidget = useCallback(
@@ -104,43 +93,27 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
             </div>
           ) : widgets.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
-              <p className="text-sm text-color-tertiary">
-                No widgets yet. Add your first widget to get started.
-              </p>
+              <p className="text-sm text-color-tertiary">No widgets yet. Add your first widget to get started.</p>
               <Button onClick={() => setIsConfigOpen(true)}>Add Widget</Button>
             </div>
           ) : (
             <div className="grid grid-cols-12 gap-4 auto-rows-[200px]">
-              {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call -- Store returns untyped widgets */}
               {widgets.map((w) => (
                 <div
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Store returns untyped data
                   key={w.id}
                   className="rounded-lg border border-color-subtle bg-surface-1 overflow-hidden"
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Store returns untyped data
                   style={{ gridColumn: `span ${w.width ?? 6}`, gridRow: `span ${w.height ?? 2}` }}
                 >
                   <div className="flex items-center justify-between px-3 py-2 border-b border-color-subtle">
-                    {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Store returns untyped data */}
-                    <span className="text-sm font-medium text-color-primary truncate">
-                      {w.name ?? "Widget"}
-                    </span>
+                    <span className="text-sm font-medium text-color-primary truncate">{w.name ?? "Widget"}</span>
                     <WidgetContextMenu
                       widget={w}
                       workspaceSlug={workspaceSlug}
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Store returns untyped data
                       onEdit={() => setEditingWidgetId(w.id)}
-                      onDelete={() => {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Store returns untyped data
-                        void handleDeleteWidget(w.id);
-                      }}
+                      onDelete={() => void handleDeleteWidget(w.id)}
                     />
                   </div>
-                  <WidgetAdapter
-                    widget={w}
-                    workspaceSlug={workspaceSlug}
-                    dashboardId={dashboardId}
-                  />
+                  <WidgetAdapter widget={w} workspaceSlug={workspaceSlug} dashboardId={dashboardId} />
                 </div>
               ))}
             </div>
@@ -167,10 +140,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
             setToast({ type: TOAST_TYPE.ERROR, title: "Failed to save widget" });
           }
         }}
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- Store returns untyped data
-        widget={
-          editingWidgetId ? widgets.find((w) => w.id === editingWidgetId) : null
-        }
+        widget={editingWidgetId ? widgets.find((w) => w.id === editingWidgetId) : null}
       />
     </>
   );

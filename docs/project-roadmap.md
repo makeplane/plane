@@ -51,6 +51,7 @@
 - ✅ Custom workflows
 - ✅ Webhook integrations
 - ✅ Analytics Dashboard Pro Feature (6 widget types, multi-dashboard CRUD, widget config UI, backend API, data aggregation, favorites/pinning)
+- ✅ Custom Dashboard Feature (project-scoped dashboards, widgets with charts, data aggregation utilities, widget layout management, favorites)
 - ✅ Department & Staff Management (hierarchical departments, employee profiles, bulk import/export, auto-sync to projects)
 
 ## Planned Roadmap (2026)

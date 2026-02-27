@@ -37,10 +37,10 @@ plane.so/
 **Key Directories**:
 
 - `app/` - React Router v7 app directory
-- `core/store/` - 33 MobX domain stores (user, workspace, issue, cycle, module, analytics-dashboard, etc.)
-- `core/components/` - 50+ component directories (includes dashboards/)
-- `core/hooks/` - 49+ custom React hooks (includes use-analytics-dashboard)
-- `core/services/` - API integration layer (31+ service dirs, includes analytics-dashboard.service.ts)
+- `core/store/` - 35 MobX domain stores (user, workspace, issue, cycle, module, analytics-dashboard, dashboard, etc.)
+- `core/components/` - 50+ component directories (includes dashboards/, custom-dashboard/)
+- `core/hooks/` - 50+ custom React hooks (includes use-analytics-dashboard, use-dashboard)
+- `core/services/` - API integration layer (33+ service dirs, includes analytics-dashboard.service.ts, dashboard.service.ts)
 - `core/layouts/` - Layout components
 
 **Main Routes**:
@@ -139,6 +139,14 @@ plane.so/
 - Permissions: `WorkSpaceAdminPermission` on all dashboard endpoints
 - Features: Multi-dashboard management, 6 widget types, widget-level analytics filters, favorites via UserFavorite system
 - Favorites: Backend annotates `is_favorite` on list queries; frontend displays in sidebar Favorites section
+
+**Custom Dashboard Backend** (`plane/db/models/dashboard.py`, `plane/utils/dashboard_chart_aggregation.py`):
+
+- Models: `Dashboard`, `DashboardWidget` (soft-delete enabled, project-scoped)
+- Views: `/api/workspaces/{slug}/dashboards/` CRUD, `/widgets/` sub-endpoints, `/charts/` data aggregation
+- Features: Custom dashboard creation, widget layout management (grid), chart type selection, metric aggregation, favorites via UserFavorite
+- Utilities: `dashboard_chart_aggregation.py` handles data computation for charts (counts, metrics, grouping)
+- Favorites: Same UserFavorite pattern as AnalyticsDashboard
 
 **API Versions**:
 
@@ -402,23 +410,23 @@ apps/api/
 
 ## Key Statistics
 
-| Metric                     | Value                       |
-| -------------------------- | --------------------------- |
-| Frontend Apps              | 4 (web, admin, space, live) |
-| Backend Apps               | 2 (api, proxy)              |
-| Shared Packages            | 12+                         |
-| Total Files (approx)       | 3,100+                      |
-| Database Models            | 34 (includes IssueWorkLog)  |
-| Django Migrations          | 120+                        |
-| Celery Tasks               | 36+                         |
-| MobX Stores (web)          | 34 (includes WorklogStore)  |
-| MobX Stores (admin)        | 5                           |
-| MobX Stores (space)        | 14                          |
-| API v0 Modules             | 18 URL modules              |
-| API v1 Modules             | 25 URL modules              |
-| Supported Languages (i18n) | 19                          |
-| Docker Compose Services    | 13                          |
-| Deployment Methods         | 4                           |
+| Metric                     | Value                                      |
+| -------------------------- | ------------------------------------------ |
+| Frontend Apps              | 4 (web, admin, space, live)                |
+| Backend Apps               | 2 (api, proxy)                             |
+| Shared Packages            | 12+                                        |
+| Total Files (approx)       | 3,100+                                     |
+| Database Models            | 36 (includes IssueWorkLog, Dashboard)      |
+| Django Migrations          | 120+                                       |
+| Celery Tasks               | 36+                                        |
+| MobX Stores (web)          | 35 (includes WorklogStore, DashboardStore) |
+| MobX Stores (admin)        | 5                                          |
+| MobX Stores (space)        | 14                                         |
+| API v0 Modules             | 18 URL modules                             |
+| API v1 Modules             | 26 URL modules (includes dashboards)       |
+| Supported Languages (i18n) | 19                                         |
+| Docker Compose Services    | 13                                         |
+| Deployment Methods         | 4                                          |
 
 ## Dependency Management
 

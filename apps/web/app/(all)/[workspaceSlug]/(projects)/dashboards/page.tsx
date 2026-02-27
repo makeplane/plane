@@ -36,7 +36,7 @@ const DashboardListPage = observer(function DashboardListPage({ params }: Route.
   }, [workspaceSlug, store]);
 
   const handleCreate = useCallback(
-    async (data: Record<string, unknown>) => {
+    async (data: { name: string; description: string; access: number }) => {
       if (!workspaceSlug) return;
       try {
         await store.createDashboard(workspaceSlug, data);
@@ -54,7 +54,7 @@ const DashboardListPage = observer(function DashboardListPage({ params }: Route.
   );
 
   const handleUpdate = useCallback(
-    async (data: Record<string, unknown>) => {
+    async (data: { name: string; description: string; access: number }) => {
       if (!workspaceSlug || !editDashboard) return;
       try {
         await store.updateDashboard(workspaceSlug, editDashboard.id, data);
@@ -159,7 +159,8 @@ const DashboardListPage = observer(function DashboardListPage({ params }: Route.
           isOpen={!!deleteDashboard}
           onClose={() => setDeleteDashboard(null)}
           onConfirm={handleDelete}
-          dashboard={deleteDashboard}
+          dashboardName={deleteDashboard.name}
+          workspaceSlug={workspaceSlug}
         />
       )}
     </>

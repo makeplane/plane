@@ -1,12 +1,11 @@
-import React from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal, ExternalLink, Link2, Pencil, Trash2 } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IDashboardWidget } from "@plane/types";
 
 interface Props {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  widget: any;
+  widget: IDashboardWidget;
   workspaceSlug: string;
   onEdit: () => void;
   onDelete: () => void;
@@ -26,10 +25,18 @@ export const WidgetContextMenu = observer(({ widget, workspaceSlug, onEdit, onDe
     window.open(targetUrl, "_blank");
   };
 
-  const handleCopyLink = () => {
-    const url = `${window.location.origin}/${workspaceSlug}/dashboards/${widget.dashboard_id}?widgetId=${widget.id}`;
-    navigator.clipboard.writeText(url);
-    setToast({ type: TOAST_TYPE.SUCCESS, title: "Link copied to clipboard" });
+  const handleCopyLink = (): void => {
+    const url = `${window.location.origin}/${workspaceSlug}/dashboards/${widget.dashboard}?widgetId=${widget.id}`;
+    void navigator.clipboard.writeText(url).then(
+      () => {
+        setToast({ type: TOAST_TYPE.SUCCESS, title: "Link copied to clipboard" });
+        return undefined;
+      },
+      () => {
+        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to copy link" });
+        return undefined;
+      }
+    );
   };
 
   return (

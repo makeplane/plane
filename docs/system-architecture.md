@@ -240,6 +240,7 @@ Plus Real-time Layer:
 │  │ - Permission checks (who can access?)         │  │
 │  │ - Serialization (ORM → JSON)                  │  │
 │  │ - Analytics dashboard CRUD & aggregation      │  │
+│  │ - Custom dashboard CRUD + widget charts       │  │
 │  │ - Business logic dispatch                     │  │
 │  └────────────┬─────────────────────────────────┘  │
 │               │                                      │
@@ -308,6 +309,10 @@ User
 │   │   ├── AnalyticsDashboard (1:N) - Pro feature
 │   │   │   ├── AnalyticsDashboardWidget (1:N)
 │   │   │   │   └── Widget config (charts, filters)
+│   │   │   └── UserFavorite (M:N, annotated as is_favorite)
+│   │   ├── Dashboard (1:N) - Custom dashboards
+│   │   │   ├── DashboardWidget (1:N)
+│   │   │   │   └── Widget config (chart type, metrics, layout)
 │   │   │   └── UserFavorite (M:N, annotated as is_favorite)
 │   │   ├── IssueView (saved filters)
 │   │   └── UserFavorite (M:N, annotated as is_favorite on views)
@@ -474,13 +479,13 @@ Request
 
 **IssueWorkLog**: Tracks time logged on issues per member
 
-| Field              | Type                 | Purpose                          |
-| ------------------ | -------------------- | -------------------------------- |
-| `issue`            | FK → Issue           | Work log belongs to issue        |
-| `logged_by`        | FK → User            | Team member who logged time      |
-| `duration_minutes` | PositiveInt          | Minutes spent (e.g., 120 = 2hrs) |
-| `description`      | TextField            | Notes on work completed          |
-| `logged_at`        | DateField            | Date work was performed          |
+| Field              | Type        | Purpose                          |
+| ------------------ | ----------- | -------------------------------- |
+| `issue`            | FK → Issue  | Work log belongs to issue        |
+| `logged_by`        | FK → User   | Team member who logged time      |
+| `duration_minutes` | PositiveInt | Minutes spent (e.g., 120 = 2hrs) |
+| `description`      | TextField   | Notes on work completed          |
+| `logged_at`        | DateField   | Date work was performed          |
 
 **Issue Fields**:
 
@@ -493,14 +498,14 @@ Request
 
 ### API Endpoints
 
-| Endpoint | Method | Purpose |
-| -------- | ------ | ------- |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/` | GET | List worklogs for issue |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/` | POST | Create worklog entry |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | PATCH | Update worklog |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | DELETE | Delete worklog |
-| `/api/v1/workspaces/{slug}/projects/{pid}/worklogs/summary/` | GET | Project summary (by member/issue) |
-| `/api/v1/workspaces/{slug}/time-tracking/summary/` | GET | Workspace summary |
+| Endpoint                                                               | Method | Purpose                           |
+| ---------------------------------------------------------------------- | ------ | --------------------------------- |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | GET    | List worklogs for issue           |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | POST   | Create worklog entry              |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | PATCH  | Update worklog                    |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | DELETE | Delete worklog                    |
+| `/api/v1/workspaces/{slug}/projects/{pid}/worklogs/summary/`           | GET    | Project summary (by member/issue) |
+| `/api/v1/workspaces/{slug}/time-tracking/summary/`                     | GET    | Workspace summary                 |
 
 **Permissions**: ROLE.ADMIN and ROLE.MEMBER; creator can edit own logs; requires `is_time_tracking_enabled`
 

@@ -1,12 +1,43 @@
 import { makeObservable, observable, action, runInAction } from "mobx";
 import { DashboardService } from "@/services/dashboards/dashboard.service";
 import type { CoreRootStore } from "@/store/root.store";
+import type {
+  IDashboard,
+  IDashboardWidget,
+  IDashboardChartDataPoint,
+  TDashboardCreate,
+  TDashboardUpdate,
+  TDashboardWidgetCreate,
+  TDashboardWidgetUpdate,
+} from "@plane/types";
 
-export class DashboardStore {
-  dashboards: any[] = [];
-  dashboardWidgets: Record<string, any[]> = {}; // Keyed by dashboardId
-  widgetChartData: Record<string, any> = {};    // Keyed by widgetId
-  isLoading: boolean = false;
+export interface IDashboardStore {
+  dashboards: IDashboard[];
+  dashboardWidgets: Record<string, IDashboardWidget[]>;
+  widgetChartData: Record<string, IDashboardChartDataPoint[]>;
+  isLoading: boolean;
+  fetchDashboards: (workspaceSlug: string) => Promise<void>;
+  createDashboard: (workspaceSlug: string, data: TDashboardCreate) => Promise<IDashboard>;
+  updateDashboard: (workspaceSlug: string, dashboardId: string, data: TDashboardUpdate) => Promise<IDashboard>;
+  deleteDashboard: (workspaceSlug: string, dashboardId: string) => Promise<void>;
+  fetchWidgets: (workspaceSlug: string, dashboardId: string) => Promise<void>;
+  createWidget: (workspaceSlug: string, dashboardId: string, data: TDashboardWidgetCreate) => Promise<void>;
+  updateWidget: (
+    workspaceSlug: string,
+    dashboardId: string,
+    widgetId: string,
+    data: TDashboardWidgetUpdate
+  ) => Promise<void>;
+  deleteWidget: (workspaceSlug: string, dashboardId: string, widgetId: string) => Promise<void>;
+  fetchWidgetChartData: (workspaceSlug: string, dashboardId: string, widgetId: string) => Promise<void>;
+  localWidgetEdit: (dashboardId: string, widgetId: string, localData: Partial<IDashboardWidget>) => void;
+}
+
+export class DashboardStore implements IDashboardStore {
+  dashboards: IDashboard[] = [];
+  dashboardWidgets: Record<string, IDashboardWidget[]> = {};
+  widgetChartData: Record<string, IDashboardChartDataPoint[]> = {};
+  isLoading = false;
 
   private dashboardService: DashboardService;
   private rootStore: CoreRootStore;
@@ -41,12 +72,14 @@ export class DashboardStore {
         this.isLoading = false;
       });
     } catch (error) {
-      runInAction(() => { this.isLoading = false; });
+      runInAction(() => {
+        this.isLoading = false;
+      });
       console.error("Failed to fetch dashboards", error);
     }
   }
 
-  async createDashboard(workspaceSlug: string, data: any) {
+  async createDashboard(workspaceSlug: string, data: TDashboardCreate) {
     try {
       const response = await this.dashboardService.createDashboard(workspaceSlug, data);
       runInAction(() => {
@@ -59,7 +92,7 @@ export class DashboardStore {
     }
   }
 
-  async updateDashboard(workspaceSlug: string, dashboardId: string, data: any) {
+  async updateDashboard(workspaceSlug: string, dashboardId: string, data: TDashboardUpdate) {
     try {
       const response = await this.dashboardService.updateDashboard(workspaceSlug, dashboardId, data);
       runInAction(() => {
@@ -96,27 +129,26 @@ export class DashboardStore {
     }
   }
 
-  async createWidget(workspaceSlug: string, dashboardId: string, data: any) {
+  async createWidget(workspaceSlug: string, dashboardId: string, data: TDashboardWidgetCreate) {
     try {
       const response = await this.dashboardService.createWidget(workspaceSlug, dashboardId, data);
       runInAction(() => {
         const widgets = this.dashboardWidgets[dashboardId] || [];
         this.dashboardWidgets[dashboardId] = [...widgets, response];
       });
-      // Fetch initial chart data
-      this.fetchWidgetChartData(workspaceSlug, dashboardId, response.id);
+      // Fire-and-forget: fetch initial chart data for the new widget
+      void this.fetchWidgetChartData(workspaceSlug, dashboardId, response.id);
     } catch (error) {
       console.error("Failed to create widget", error);
     }
   }
 
-  // FAKE LIVE PREVIEW: Only call API on close panel. Use this for visual only.
-  localWidgetEdit(dashboardId: string, widgetId: string, localData: any) {
+  // Local-only edit for "fake" live preview — no API call, used for visual config changes
+  localWidgetEdit(dashboardId: string, widgetId: string, localData: Partial<IDashboardWidget>) {
     const widgets = this.dashboardWidgets[dashboardId];
     if (widgets) {
-      const index = widgets.findIndex(w => w.id === widgetId);
+      const index = widgets.findIndex((w) => w.id === widgetId);
       if (index !== -1) {
-        // Replace array reference so MobX reactions fire reliably
         const updated = [...widgets];
         updated[index] = { ...widgets[index], ...localData };
         this.dashboardWidgets[dashboardId] = updated;
@@ -124,20 +156,17 @@ export class DashboardStore {
     }
   }
 
-  async updateWidget(workspaceSlug: string, dashboardId: string, widgetId: string, data: any) {
+  async updateWidget(workspaceSlug: string, dashboardId: string, widgetId: string, data: TDashboardWidgetUpdate) {
     try {
-      // Immediate local reflect
-      this.localWidgetEdit(dashboardId, widgetId, data);
+      this.localWidgetEdit(dashboardId, widgetId, data as Partial<IDashboardWidget>);
+      await this.dashboardService.updateWidget(workspaceSlug, dashboardId, widgetId, data);
 
-      // Perform save
-      const response = await this.dashboardService.updateWidget(workspaceSlug, dashboardId, widgetId, data);
-
-      // If config changed impacting grouping/queries, refresh chart logic
-      if (data.x_axis_property || data.y_axis_metric || data.group_by || data.filters) {
-        this.fetchWidgetChartData(workspaceSlug, dashboardId, widgetId);
+      // Re-fetch chart data if data-affecting properties changed
+      if (data.x_axis_property || data.y_axis_metric || data.group_by !== undefined || data.filters) {
+        void this.fetchWidgetChartData(workspaceSlug, dashboardId, widgetId);
       }
     } catch (error) {
-      console.error("Failed to update widget fallback UX", error);
+      console.error("Failed to update widget", error);
     }
   }
 
@@ -145,9 +174,7 @@ export class DashboardStore {
     try {
       await this.dashboardService.deleteWidget(workspaceSlug, dashboardId, widgetId);
       runInAction(() => {
-        this.dashboardWidgets[dashboardId] = this.dashboardWidgets[dashboardId].filter(
-          w => w.id !== widgetId
-        );
+        this.dashboardWidgets[dashboardId] = this.dashboardWidgets[dashboardId].filter((w) => w.id !== widgetId);
       });
     } catch (error) {
       console.error("Failed to delete widget", error);
@@ -161,7 +188,7 @@ export class DashboardStore {
         this.widgetChartData[widgetId] = response.data;
       });
     } catch (error) {
-      console.error("Failed to map widget analytics graph render block", error);
+      console.error("Failed to fetch widget chart data", error);
     }
   }
 }

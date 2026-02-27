@@ -24,7 +24,7 @@ export interface WidgetFormData {
   chart_model: string;
   x_axis_property: string;
   y_axis_metric: string;
-  group_by: string;
+  group_by: string | null;
   config: Record<string, unknown>;
   filters: Record<string, unknown>;
   width: number;
@@ -34,10 +34,8 @@ export interface WidgetFormData {
 interface WidgetConfigModalProps {
   isOpen: boolean;
   onClose: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (data: Record<string, unknown>) => Promise<void>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  widget?: any | null;
+  onSubmit: (data: WidgetFormData) => Promise<void>;
+  widget?: WidgetFormData | null;
 }
 
 const CONFIG_TABS = [
@@ -54,24 +52,23 @@ const DEFAULT_FORM: WidgetFormData = {
   name: "",
   chart_type: "BAR_CHART",
   chart_model: "BASIC",
-  x_axis_property: "priority",
-  y_axis_metric: "count",
-  group_by: "",
+  x_axis_property: "PRIORITIES",
+  y_axis_metric: "WORK_ITEM_COUNT",
+  group_by: null,
   config: { color_preset: "modern", show_legend: true, show_tooltip: true },
   filters: {},
   width: 6,
   height: 2,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const buildDefaults = (widget?: any | null): WidgetFormData =>
+const buildDefaults = (widget?: WidgetFormData | null): WidgetFormData =>
   widget
     ? {
         name: widget.name ?? "",
         chart_type: widget.chart_type ?? "BAR_CHART",
         chart_model: widget.chart_model ?? "BASIC",
-        x_axis_property: widget.x_axis_property ?? "priority",
-        y_axis_metric: widget.y_axis_metric ?? "count",
+        x_axis_property: widget.x_axis_property ?? "PRIORITIES",
+        y_axis_metric: widget.y_axis_metric ?? "WORK_ITEM_COUNT",
         group_by: widget.group_by ?? "",
         config: widget.config ?? {},
         filters: widget.filters ?? {},
@@ -84,7 +81,14 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<ConfigTabKey>("type");
 
-  const { control, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<WidgetFormData>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+    setValue,
+  } = useForm<WidgetFormData>({
     defaultValues: buildDefaults(widget),
   });
 
@@ -94,13 +98,16 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
   const configValue = watch("config");
 
   useEffect(() => {
-    if (isOpen) { reset(buildDefaults(widget)); setActiveTab("type"); }
+    if (isOpen) {
+      reset(buildDefaults(widget));
+      setActiveTab("type");
+    }
   }, [widget, isOpen, reset]);
 
   const handleFormSubmit = async (data: WidgetFormData) => {
     try {
       setIsSubmitting(true);
-      await onSubmit(data as unknown as Record<string, unknown>);
+      await onSubmit(data);
       reset();
       onClose();
     } catch (error) {
@@ -110,14 +117,22 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
     }
   };
 
-  const handleClose = () => { reset(); setActiveTab("type"); onClose(); };
+  const handleClose = () => {
+    reset();
+    setActiveTab("type");
+    onClose();
+  };
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <div className="flex flex-col">
         <div className="flex items-center justify-between border-b border-color-subtle px-5 py-4">
           <h3 className="text-lg font-semibold text-color-primary">{widget ? "Configure Widget" : "Add Widget"}</h3>
-          <button type="button" onClick={handleClose} className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2">
+          <button
+            type="button"
+            onClick={handleClose}
+            className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2"
+          >
             <X className="h-4 w-4 text-color-tertiary" />
           </button>
         </div>
@@ -155,7 +170,9 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
           </div>
 
           <div className="flex items-center justify-end gap-2 border-t border-color-subtle px-5 py-4">
-            <Button type="button" variant="secondary" size="sm" onClick={handleClose} disabled={isSubmitting}>Cancel</Button>
+            <Button type="button" variant="secondary" size="sm" onClick={handleClose} disabled={isSubmitting}>
+              Cancel
+            </Button>
             <Button type="submit" variant="primary" size="sm" loading={isSubmitting} disabled={isSubmitting}>
               {widget ? "Update Widget" : "Add Widget"}
             </Button>

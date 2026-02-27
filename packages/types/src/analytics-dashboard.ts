@@ -122,3 +122,69 @@ export type TAnalyticsWidgetCreate = Pick<
   "widget_type" | "title" | "chart_property" | "chart_metric" | "config" | "position"
 >;
 export type TAnalyticsWidgetUpdate = Partial<TAnalyticsWidgetCreate> & { sort_order?: number };
+
+// Custom Dashboard interfaces (CE workspace-level dashboards)
+
+export interface IDashboard {
+  id: string;
+  name: string;
+  description: string | null;
+  projects: string[];
+  filters: Record<string, unknown>;
+  logo_props: Record<string, unknown>;
+  access: number;
+  workspace: string;
+  widgets: IDashboardWidget[];
+  archived_at: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+  updated_by: string | null;
+}
+
+export interface IDashboardWidget {
+  id: string;
+  name: string;
+  chart_type: string;
+  chart_model: string;
+  x_axis_property: string;
+  y_axis_metric: string;
+  group_by: string | null;
+  config: Record<string, unknown>;
+  filters: Record<string, unknown>;
+  x_axis_coord: number;
+  y_axis_coord: number;
+  width: number;
+  height: number;
+  dashboard: string;
+  workspace: string;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+  updated_by: string | null;
+}
+
+export interface IDashboardChartDataPoint {
+  name: string;
+  count: number;
+  [key: string]: string | number;
+}
+
+export interface IDashboardChartResponse {
+  data: IDashboardChartDataPoint[];
+}
+
+export type TDashboardCreate = Pick<IDashboard, "name" | "description" | "access"> & {
+  project_ids?: string[];
+};
+export type TDashboardUpdate = Partial<TDashboardCreate>;
+export type TDashboardWidgetCreate = Pick<
+  IDashboardWidget,
+  "name" | "chart_type" | "chart_model" | "x_axis_property" | "y_axis_metric" | "config" | "width" | "height"
+>;
+export type TDashboardWidgetUpdate = Partial<TDashboardWidgetCreate> & {
+  group_by?: string | null;
+  filters?: Record<string, unknown>;
+  x_axis_coord?: number;
+  y_axis_coord?: number;
+};

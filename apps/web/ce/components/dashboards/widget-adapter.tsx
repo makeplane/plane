@@ -13,32 +13,35 @@ import { LineChart } from "@plane/propel/charts/line-chart";
 import { PieChart } from "@plane/propel/charts/pie-chart";
 import { AreaChart } from "@plane/propel/charts/area-chart";
 import { ANALYTICS_COLOR_PRESETS } from "@plane/constants";
+import type { IDashboardWidget } from "@plane/types";
 import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
 
 // Default color palette fallback
 const DEFAULT_COLORS = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#6366f1"];
 
 /** Resolve colors from widget config or fallback */
-const getColors = (config?: Record<string, unknown>): string[] => {
+const getColors = (config: Record<string, unknown>): string[] => {
   const presetId = (config?.color_preset as string) || "modern";
   return ANALYTICS_COLOR_PRESETS[presetId]?.colors ?? DEFAULT_COLORS;
 };
 
 interface WidgetAdapterProps {
-  widget: {
-    id: string;
-    chart_type: string;
-    chart_model?: string;
-    config?: Record<string, unknown>;
-  };
-  workspaceSlug: string;
-  dashboardId: string;
+  widget: IDashboardWidget;
+  _workspaceSlug?: string;
+  _dashboardId?: string;
 }
 
-export const WidgetAdapter = observer(({ widget, workspaceSlug, dashboardId }: WidgetAdapterProps) => {
+export const WidgetAdapter = observer(({ widget, _workspaceSlug, _dashboardId }: WidgetAdapterProps) => {
   const dashboardStore = useCustomDashboard();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- data is MobX observable and stable
   const data = dashboardStore.widgetChartData[widget.id] || [];
+
   const colors = useMemo(() => getColors(widget.config), [widget.config]);
+
+  const metricKeys = useMemo(() => {
+    if (!data || data.length === 0 || !data[0]) return ["count"];
+    return Object.keys(data[0]).filter((k) => k !== "name");
+  }, [data]);
 
   if (!data || data.length === 0) {
     return (
@@ -47,12 +50,6 @@ export const WidgetAdapter = observer(({ widget, workspaceSlug, dashboardId }: W
       </div>
     );
   }
-
-  // For grouped charts, find metric keys (all keys except "name")
-  const metricKeys = useMemo(() => {
-    if (!data[0]) return ["count"];
-    return Object.keys(data[0]).filter((k) => k !== "name");
-  }, [data]);
 
   const isGrouped = widget.chart_model === "GROUPED" && metricKeys.length > 1;
 
@@ -132,9 +129,9 @@ export const WidgetAdapter = observer(({ widget, workspaceSlug, dashboardId }: W
         <div className="w-full h-full p-2">
           <PieChart
             className="h-full w-full"
-            data={data.map((d: Record<string, unknown>, i: number) => ({ ...d, key: `cell-${i}` }))}
+            data={data.map((d, i) => ({ ...d, key: `cell-${i}` }))}
             dataKey="count"
-            cells={data.map((_: unknown, i: number) => ({ key: `cell-${i}`, fill: colors[i % colors.length] }))}
+            cells={data.map((_, i) => ({ key: `cell-${i}`, fill: colors[i % colors.length] }))}
             showLabel={false}
           />
         </div>
@@ -145,9 +142,9 @@ export const WidgetAdapter = observer(({ widget, workspaceSlug, dashboardId }: W
         <div className="w-full h-full p-2">
           <PieChart
             className="h-full w-full"
-            data={data.map((d: Record<string, unknown>, i: number) => ({ ...d, key: `cell-${i}` }))}
+            data={data.map((d, i) => ({ ...d, key: `cell-${i}` }))}
             dataKey="count"
-            cells={data.map((_: unknown, i: number) => ({ key: `cell-${i}`, fill: colors[i % colors.length] }))}
+            cells={data.map((_, i) => ({ key: `cell-${i}`, fill: colors[i % colors.length] }))}
             innerRadius="60%"
             showLabel={false}
           />
