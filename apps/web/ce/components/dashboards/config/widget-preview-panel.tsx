@@ -32,7 +32,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
 
   const renderPreview = () => {
     switch (widgetType) {
-      case "bar":
+      case "BAR_CHART":
         return (
           <BarChartWidget
             data={chartData}
@@ -41,7 +41,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
             chartMetric={chartMetric}
           />
         );
-      case "line":
+      case "LINE_CHART":
         return (
           <LineChartWidget
             data={chartData}
@@ -50,7 +50,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
             chartMetric={chartMetric}
           />
         );
-      case "area":
+      case "AREA_CHART":
         return (
           <AreaChartWidget
             data={chartData}
@@ -59,7 +59,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
             chartMetric={chartMetric}
           />
         );
-      case "donut":
+      case "DONUT_CHART":
         return (
           <DonutChartWidget
             data={chartData}
@@ -68,7 +68,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
             chartMetric={chartMetric}
           />
         );
-      case "pie":
+      case "PIE_CHART":
         return (
           <PieChartWidget
             data={chartData}
@@ -77,7 +77,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
             chartMetric={chartMetric}
           />
         );
-      case "number":
+      case "NUMBER":
         return <NumberWidget data={numberData} config={widgetConfig} chartMetric={chartMetric} />;
       default:
         return <p className="text-sm text-color-tertiary">Select a widget type to see preview</p>;

@@ -21,10 +21,10 @@ interface DisplaySettingsSectionProps {
 
 export const DisplaySettingsSection = observer(({ control, chartType }: DisplaySettingsSectionProps) => {
   const { t } = useTranslation();
-  const showLegend = chartType !== "number";
-  const showTooltip = chartType !== "number";
-  const showCenterValue = ["donut", "pie"].includes(chartType);
-  const showMarkers = chartType === "line";
+  const showLegend = chartType !== "NUMBER";
+  const showTooltip = chartType !== "NUMBER";
+  const showCenterValue = ["DONUT_CHART", "PIE_CHART"].includes(chartType);
+  const showMarkers = chartType === "LINE_CHART";
 
   return (
     <div className="space-y-4">

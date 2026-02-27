@@ -15,14 +15,13 @@ interface WidgetTypeSelectorProps {
   onChange: (type: string) => void;
 }
 
-/** Widget type values matching backend AnalyticsDashboardWidget.WidgetType choices */
 const WIDGET_TYPES = [
-  { type: "bar", label: "Bar Chart", description: "Compare values across categories", icon: BarChart3 },
-  { type: "line", label: "Line Chart", description: "Show trends over time", icon: LineChart },
-  { type: "area", label: "Area Chart", description: "Visualize cumulative data", icon: AreaChart },
-  { type: "donut", label: "Donut Chart", description: "Proportions with center hole", icon: PieChart },
-  { type: "pie", label: "Pie Chart", description: "Show proportions", icon: PieChart },
-  { type: "number", label: "Number Widget", description: "Display single metric", icon: Hash },
+  { type: "BAR_CHART", label: "Bar Chart", description: "Compare values across categories", icon: BarChart3 },
+  { type: "LINE_CHART", label: "Line Chart", description: "Show trends over time", icon: LineChart },
+  { type: "AREA_CHART", label: "Area Chart", description: "Visualize cumulative data", icon: AreaChart },
+  { type: "DONUT_CHART", label: "Donut Chart", description: "Proportions with center hole", icon: PieChart },
+  { type: "PIE_CHART", label: "Pie Chart", description: "Show proportions", icon: PieChart },
+  { type: "NUMBER", label: "Number Widget", description: "Display single metric", icon: Hash },
 ];
 
 export const WidgetTypeSelector = ({ selectedType, onChange }: WidgetTypeSelectorProps) => (

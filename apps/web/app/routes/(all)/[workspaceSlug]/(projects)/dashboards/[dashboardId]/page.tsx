@@ -12,39 +12,38 @@ import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { PageHead } from "@/components/core/page-title";
-import { useAnalyticsDashboard } from "@/plane-web/hooks/store/use-analytics-dashboard";
+import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { AnalyticsDashboardWidgetGrid } from "@/plane-web/components/dashboards/analytics-dashboard-widget-grid";
+import { CustomDashboardWidgetGrid } from "@/plane-web/components/dashboards/custom-dashboard-widget-grid";
 import { WidgetConfigModal } from "@/plane-web/components/dashboards/widget-config-modal";
 import type { WidgetFormData } from "@/plane-web/components/dashboards/widget-config-modal";
-import type { IAnalyticsDashboardWidget, TAnalyticsWidgetCreate } from "@plane/types";
+import type { IDashboardWidget, TDashboardWidgetCreate, TDashboardWidgetUpdate } from "@plane/types";
 import { DashboardToolbar } from "./dashboard-toolbar";
 
 const DashboardDetailPage = observer(function DashboardDetailPage() {
   const { t } = useTranslation();
   const { workspaceSlug = "", dashboardId = "" } = useParams<{ workspaceSlug: string; dashboardId: string }>();
   const router = useAppRouter();
-  const analyticsDashboardStore = useAnalyticsDashboard();
+  const dashboardStore = useCustomDashboard();
   const [isEditMode, setIsEditMode] = useState(false);
-  const [configWidget, setConfigWidget] = useState<IAnalyticsDashboardWidget | null>(null);
+  const [configWidget, setConfigWidget] = useState<IDashboardWidget | null>(null);
   const [isAddWidgetOpen, setIsAddWidgetOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (workspaceSlug && dashboardId) {
-      analyticsDashboardStore.setActiveDashboard(dashboardId);
-      void analyticsDashboardStore.fetchDashboard(workspaceSlug, dashboardId);
+      setIsLoading(true);
+      void dashboardStore.fetchWidgets(workspaceSlug, dashboardId).finally(() => setIsLoading(false));
     }
-    return () => {
-      analyticsDashboardStore.setActiveDashboard(null);
-    };
-  }, [workspaceSlug, dashboardId, analyticsDashboardStore]);
+  }, [workspaceSlug, dashboardId, dashboardStore]);
 
-  const { currentDashboard, sortedWidgets, loader } = analyticsDashboardStore;
+  const currentDashboard = dashboardStore.dashboards.find((d) => d.id === dashboardId);
+  const widgets = dashboardStore.dashboardWidgets[dashboardId] ?? [];
   const pageTitle = currentDashboard?.name ?? "Dashboard";
 
   const handleRefresh = async () => {
     try {
-      await analyticsDashboardStore.fetchDashboard(workspaceSlug, dashboardId);
+      await dashboardStore.fetchWidgets(workspaceSlug, dashboardId);
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.dashboard_refreshed") });
     } catch (error) {
       setToast({
@@ -57,7 +56,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
 
   const handleDeleteWidget = async (widgetId: string) => {
     try {
-      await analyticsDashboardStore.deleteWidget(workspaceSlug, dashboardId, widgetId);
+      await dashboardStore.deleteWidget(workspaceSlug, dashboardId, widgetId);
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_deleted") });
     } catch (error) {
       setToast({
@@ -73,52 +72,21 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
   };
 
   const handleConfigureWidget = (widgetId: string) => {
-    setConfigWidget(sortedWidgets.find((w) => w.id === widgetId) ?? null);
-  };
-
-  const handleLayoutChange = async (
-    positions: Array<{ id: string; position: { row: number; col: number; width: number; height: number } }>
-  ) => {
-    try {
-      await analyticsDashboardStore.updateWidgetPositions(workspaceSlug, dashboardId, positions);
-    } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("analytics_dashboard.layout_update_failed"),
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
-  };
-
-  const handleDuplicateWidget = async (widgetId: string) => {
-    try {
-      await analyticsDashboardStore.duplicateWidget(workspaceSlug, dashboardId, widgetId);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_duplicated") });
-    } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("analytics_dashboard.duplicate_widget_failed"),
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
+    setConfigWidget(widgets.find((w) => w.id === widgetId) ?? null);
   };
 
   const handleWidgetSubmit = async (data: WidgetFormData) => {
     try {
-      const payload: TAnalyticsWidgetCreate = {
-        widget_type: data.widget_type as TAnalyticsWidgetCreate["widget_type"],
-        title: data.title,
-        chart_property: data.chart_property,
-        chart_metric: data.chart_metric,
-        config: data.config as unknown as TAnalyticsWidgetCreate["config"],
-        position: data.position,
-      };
-
       if (configWidget) {
-        await analyticsDashboardStore.updateWidget(workspaceSlug, dashboardId, configWidget.id, payload);
+        await dashboardStore.updateWidget(
+          workspaceSlug,
+          dashboardId,
+          configWidget.id,
+          data as unknown as TDashboardWidgetUpdate
+        );
         setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_updated") });
       } else {
-        await analyticsDashboardStore.createWidget(workspaceSlug, dashboardId, payload);
+        await dashboardStore.createWidget(workspaceSlug, dashboardId, data as unknown as TDashboardWidgetCreate);
         setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_added") });
       }
       setIsAddWidgetOpen(false);
@@ -150,7 +118,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
         />
 
         <div className="flex-1 overflow-auto p-4 relative z-0">
-          {loader ? (
+          {isLoading ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {Array.from({ length: 4 }).map((_, i) => (
                 <Loader key={i} className="rounded-lg border border-color-subtle p-4">
@@ -159,7 +127,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
                 </Loader>
               ))}
             </div>
-          ) : sortedWidgets.length === 0 ? (
+          ) : widgets.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
               <p className="text-sm text-color-tertiary">{t("analytics_dashboard.empty_widgets")}</p>
               <Button onClick={handleAddWidget} className="gap-2">
@@ -167,16 +135,12 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
               </Button>
             </div>
           ) : (
-            <AnalyticsDashboardWidgetGrid
-              widgets={sortedWidgets}
+            <CustomDashboardWidgetGrid
+              widgets={widgets}
               workspaceSlug={workspaceSlug}
-              dashboardId={dashboardId}
               isEditMode={isEditMode}
-              onAddWidget={handleAddWidget}
               onDeleteWidget={(id) => void handleDeleteWidget(id)}
               onConfigureWidget={handleConfigureWidget}
-              onDuplicateWidget={(id) => void handleDuplicateWidget(id)}
-              onLayoutChange={(positions) => void handleLayoutChange(positions)}
             />
           )}
         </div>
@@ -192,12 +156,16 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
         widget={
           configWidget
             ? {
-                title: configWidget.title,
-                widget_type: configWidget.widget_type,
-                chart_property: configWidget.chart_property,
-                chart_metric: configWidget.chart_metric,
-                config: configWidget.config as unknown as Record<string, unknown>,
-                position: configWidget.position ?? { row: 0, col: 0, width: 6, height: 4 },
+                name: configWidget.name,
+                chart_type: configWidget.chart_type,
+                chart_model: configWidget.chart_model,
+                x_axis_property: configWidget.x_axis_property,
+                y_axis_metric: configWidget.y_axis_metric,
+                group_by: configWidget.group_by,
+                config: configWidget.config,
+                filters: configWidget.filters,
+                width: configWidget.width,
+                height: configWidget.height,
               }
             : null
         }
