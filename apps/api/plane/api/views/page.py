@@ -11,6 +11,7 @@ from django.db.models import (
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -31,7 +32,9 @@ from plane.db.models import (
     UserRecentVisit,
     Project,
 )
+from plane.db.models.project import ROLE
 from .base import BaseAPIView
+from plane.app.views.page.base import unarchive_archive_page_and_descendants
 from plane.bgtasks.page_transaction_task import page_transaction
 
 
@@ -349,5 +352,147 @@ class PageDetailAPIEndpoint(BaseAPIView):
             entity_identifier=pk,
             entity_name="page",
         ).delete(soft=False)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
+    """Page Archive and Unarchive Endpoint"""
+
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    def get_queryset(self):
+        return (
+            Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(
+                projects__id=self.kwargs.get("project_id"),
+                project_pages__deleted_at__isnull=True,
+            )
+            .filter(
+                projects__project_projectmember__member=self.request.user,
+                projects__project_projectmember__is_active=True,
+            )
+            .filter(Q(owned_by=self.request.user) | Q(access=0))
+            .filter(archived_at__isnull=False)
+            .select_related("workspace", "owned_by")
+            .prefetch_related("projects", "labels")
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "page_labels__label_id",
+                        distinct=True,
+                        filter=~Q(page_labels__label_id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                project_ids=Coalesce(
+                    ArrayAgg(
+                        "projects__id",
+                        distinct=True,
+                        filter=~Q(projects__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .order_by("-created_at")
+            .distinct()
+        )
+
+    def get(self, request, slug, project_id):
+        """List archived pages
+
+        Retrieve all pages that have been archived in the project.
+        """
+        return self.paginate(
+            request=request,
+            queryset=self.get_queryset(),
+            on_results=lambda pages: (
+                PageSerializer(
+                    pages,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                ).data
+            ),
+        )
+
+    def post(self, request, slug, project_id, page_id):
+        """Archive page
+
+        Move a page and its descendants to archived status.
+        Only the page owner or a project admin can archive.
+        """
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
+
+        # Only the owner or admin can archive
+        if (
+            ProjectMember.objects.filter(
+                project_id=project_id,
+                member=request.user,
+                is_active=True,
+                role__lte=ROLE.MEMBER.value,
+            ).exists()
+            and request.user.id != page.owned_by_id
+        ):
+            return Response(
+                {"error": "Only the owner or admin can archive the page"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        UserFavorite.objects.filter(
+            entity_type="page",
+            entity_identifier=page_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
+
+        today = timezone.now().date()
+        unarchive_archive_page_and_descendants(page_id, today)
+
+        return Response(
+            {"archived_at": str(today)},
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, slug, project_id, page_id):
+        """Unarchive page
+
+        Restore an archived page and its descendants to active status.
+        Only the page owner or a project admin can unarchive.
+        """
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
+
+        # Only the owner or admin can unarchive
+        if (
+            ProjectMember.objects.filter(
+                project_id=project_id,
+                member=request.user,
+                is_active=True,
+                role__lte=ROLE.MEMBER.value,
+            ).exists()
+            and request.user.id != page.owned_by_id
+        ):
+            return Response(
+                {"error": "Only the owner or admin can unarchive the page"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # If parent is still archived, break the hierarchy
+        if page.parent_id and page.parent.archived_at:
+            page.parent = None
+            page.save(update_fields=["parent"])
+
+        unarchive_archive_page_and_descendants(page_id, None)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
