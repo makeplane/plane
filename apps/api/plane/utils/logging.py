@@ -9,7 +9,10 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+import logging
 import logging.handlers as handlers
+import os
+import sys
 import time
 
 
@@ -17,7 +20,11 @@ class SizedTimedRotatingFileHandler(handlers.TimedRotatingFileHandler):
     """
     Handler for logging to a set of files, which switches from one file
     to the next when the current file reaches a certain size, or at certain
-    timed intervals
+    timed intervals.
+
+    If the log directory is not writable (e.g. volume mount permission issues
+    in Docker/Podman/Kubernetes), file logging is silently disabled and the
+    handler becomes a no-op. Logs remain available via stdout handlers.
     """
 
     def __init__(
@@ -31,8 +38,30 @@ class SizedTimedRotatingFileHandler(handlers.TimedRotatingFileHandler):
         interval=1,
         utc=False,
     ):
-        handlers.TimedRotatingFileHandler.__init__(self, filename, when, interval, backupCount, encoding, delay, utc)
         self.maxBytes = maxBytes
+        self._disabled = False
+
+        # Ensure the log directory exists
+        log_dir = os.path.dirname(filename)
+        try:
+            os.makedirs(log_dir, exist_ok=True)
+            handlers.TimedRotatingFileHandler.__init__(
+                self, filename, when, interval, backupCount, encoding, delay, utc
+            )
+        except (PermissionError, OSError) as e:
+            # Fall back to a no-op handler when file is not writable
+            logging.Handler.__init__(self)
+            self._disabled = True
+            print(
+                f"WARNING: Unable to open log file '{filename}': {e}. "
+                f"File logging disabled, logs are still available via stdout.",
+                file=sys.stderr,
+            )
+
+    def emit(self, record):
+        if self._disabled:
+            return
+        super().emit(record)
 
     def shouldRollover(self, record):
         """
@@ -41,6 +70,8 @@ class SizedTimedRotatingFileHandler(handlers.TimedRotatingFileHandler):
         Basically, see if the supplied record would cause the file to exceed
         the size limit we have.
         """
+        if self._disabled:
+            return 0
         if self.stream is None:  # delay was set...
             self.stream = self._open()
         if self.maxBytes > 0:  # are we rolling over?
