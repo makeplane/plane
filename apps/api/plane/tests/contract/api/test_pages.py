@@ -462,3 +462,310 @@ class TestPageDetailAPIEndpoint:
         child_page.refresh_from_db()
         assert child_page.parent is None
 
+
+@pytest.mark.contract
+class TestPageArchiveUnarchiveAPIEndpoint:
+    """Test Page Archive and Unarchive API Endpoint"""
+
+    def get_archive_url(self, workspace_slug, project_id, page_id):
+        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/pages/{page_id}/archive/"
+
+    def get_unarchive_url(self, workspace_slug, project_id, page_id):
+        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/archived-pages/{page_id}/unarchive/"
+
+    def get_archived_list_url(self, workspace_slug, project_id):
+        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/archived-pages/"
+
+    @pytest.mark.django_db
+    def test_archive_page_success(self, api_key_client, workspace, project, create_page):
+        """Test successful page archiving"""
+        url = self.get_archive_url(workspace.slug, project.id, create_page.id)
+
+        response = api_key_client.post(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert "archived_at" in response.data
+
+        # Verify the response returns a date string (YYYY-MM-DD), not a datetime
+        import re
+
+        assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", response.data["archived_at"])
+
+        create_page.refresh_from_db()
+        assert create_page.archived_at is not None
+        # Verify the response matches what's stored in the DB
+        assert response.data["archived_at"] == str(create_page.archived_at)
+
+    @pytest.mark.django_db
+    def test_archive_page_archives_descendants(self, api_key_client, workspace, project, create_page, create_user):
+        """Test that archiving a page also archives its descendants"""
+        child_page = Page.objects.create(
+            name="Child Page",
+            workspace=workspace,
+            owned_by=create_user,
+            parent=create_page,
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=child_page,
+        )
+
+        url = self.get_archive_url(workspace.slug, project.id, create_page.id)
+
+        response = api_key_client.post(url)
+
+        assert response.status_code == status.HTTP_200_OK
+
+        child_page.refresh_from_db()
+        assert child_page.archived_at is not None
+
+    @pytest.mark.django_db
+    def test_archive_page_non_owner_non_admin(self, api_key_client, workspace, project, create_user):
+        """Test that non-owner non-admin cannot archive a page"""
+        from plane.db.models import User
+
+        other_user = User.objects.create(
+            email="archowner@plane.so",
+            username=f"archowner_{uuid4().hex[:8]}",
+            first_name="Arch",
+            last_name="Owner",
+        )
+
+        page = Page.objects.create(
+            name="Other's Page",
+            workspace=workspace,
+            owned_by=other_user,
+            access=0,
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=page,
+        )
+
+        # Downgrade to member role
+        ProjectMember.objects.filter(project=project, member=create_user).update(role=15)
+
+        url = self.get_archive_url(workspace.slug, project.id, page.id)
+
+        response = api_key_client.post(url)
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert "owner or admin" in response.data["error"].lower()
+
+    @pytest.mark.django_db
+    def test_archive_page_non_owner_admin_success(self, api_key_client, workspace, project, create_user):
+        """Test that a project admin can archive a page they don't own"""
+        from plane.db.models import User
+
+        other_user = User.objects.create(
+            email="pageowner@plane.so",
+            username=f"pageowner_{uuid4().hex[:8]}",
+            first_name="Page",
+            last_name="Owner",
+        )
+
+        page = Page.objects.create(
+            name="Other's Page",
+            workspace=workspace,
+            owned_by=other_user,
+            access=0,
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=page,
+        )
+
+        # create_user is already admin (role=20) from the project fixture
+        url = self.get_archive_url(workspace.slug, project.id, page.id)
+
+        response = api_key_client.post(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert page.archived_at is not None
+
+    @pytest.mark.django_db
+    def test_unarchive_page_non_owner_non_admin(self, api_key_client, workspace, project, create_user):
+        """Test that non-owner non-admin cannot unarchive a page"""
+        from plane.db.models import User
+
+        other_user = User.objects.create(
+            email="unarchowner@plane.so",
+            username=f"unarchowner_{uuid4().hex[:8]}",
+            first_name="Unarch",
+            last_name="Owner",
+        )
+
+        page = Page.objects.create(
+            name="Other's Page",
+            workspace=workspace,
+            owned_by=other_user,
+            access=0,
+            archived_at=timezone.now().date(),
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=page,
+        )
+
+        # Downgrade to member role
+        ProjectMember.objects.filter(project=project, member=create_user).update(role=15)
+
+        url = self.get_unarchive_url(workspace.slug, project.id, page.id)
+
+        response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert "owner or admin" in response.data["error"].lower()
+
+    @pytest.mark.django_db
+    def test_unarchive_page_non_owner_admin_success(self, api_key_client, workspace, project, create_user):
+        """Test that a project admin can unarchive a page they don't own"""
+        from plane.db.models import User
+
+        other_user = User.objects.create(
+            email="unarchowner2@plane.so",
+            username=f"unarchowner2_{uuid4().hex[:8]}",
+            first_name="Unarch2",
+            last_name="Owner",
+        )
+
+        page = Page.objects.create(
+            name="Other's Page",
+            workspace=workspace,
+            owned_by=other_user,
+            access=0,
+            archived_at=timezone.now().date(),
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=page,
+        )
+
+        # create_user is already admin (role=20) from the project fixture
+        url = self.get_unarchive_url(workspace.slug, project.id, page.id)
+
+        response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        page.refresh_from_db()
+        assert page.archived_at is None
+
+    @pytest.mark.django_db
+    def test_unarchive_page_success(self, api_key_client, workspace, project, create_page):
+        """Test successful page unarchiving"""
+        create_page.archived_at = timezone.now().date()
+        create_page.save()
+
+        url = self.get_unarchive_url(workspace.slug, project.id, create_page.id)
+
+        response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        create_page.refresh_from_db()
+        assert create_page.archived_at is None
+
+    @pytest.mark.django_db
+    def test_unarchive_page_unarchives_descendants(self, api_key_client, workspace, project, create_page, create_user):
+        """Test that unarchiving a page also unarchives its descendants"""
+        now = timezone.now().date()
+        create_page.archived_at = now
+        create_page.save()
+
+        child_page = Page.objects.create(
+            name="Child Page",
+            workspace=workspace,
+            owned_by=create_user,
+            parent=create_page,
+            archived_at=now,
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=child_page,
+        )
+
+        url = self.get_unarchive_url(workspace.slug, project.id, create_page.id)
+
+        response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        child_page.refresh_from_db()
+        assert child_page.archived_at is None
+
+    @pytest.mark.django_db
+    def test_unarchive_page_breaks_archived_parent_hierarchy(
+        self, api_key_client, workspace, project, create_page, create_user
+    ):
+        """Test that unarchiving a child with an archived parent sets parent=None"""
+        now = timezone.now().date()
+        create_page.archived_at = now
+        create_page.save()
+
+        child_page = Page.objects.create(
+            name="Child Page",
+            workspace=workspace,
+            owned_by=create_user,
+            parent=create_page,
+            archived_at=now,
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=child_page,
+        )
+
+        # Unarchive only the child, not the parent
+        url = self.get_unarchive_url(workspace.slug, project.id, child_page.id)
+
+        response = api_key_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        child_page.refresh_from_db()
+        assert child_page.archived_at is None
+        assert child_page.parent is None
+
+    @pytest.mark.django_db
+    def test_list_archived_pages(self, api_key_client, workspace, project, create_user):
+        """Test listing archived pages"""
+        # Create an active page
+        active_page = Page.objects.create(
+            name="Active Page",
+            workspace=workspace,
+            owned_by=create_user,
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=active_page,
+        )
+
+        # Create an archived page
+        archived_page = Page.objects.create(
+            name="Archived Page",
+            workspace=workspace,
+            owned_by=create_user,
+            archived_at=timezone.now().date(),
+        )
+        ProjectPage.objects.create(
+            workspace=workspace,
+            project=project,
+            page=archived_page,
+        )
+
+        url = self.get_archived_list_url(workspace.slug, project.id)
+
+        response = api_key_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        page_ids = [str(p["id"]) for p in response.data["results"]]
+        assert str(archived_page.id) in page_ids
+        assert str(active_page.id) not in page_ids
