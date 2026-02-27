@@ -55,7 +55,7 @@ class WorkItemCommentReactionQuery:
         user_id = str(user.id)
 
         await get_work_item(
-            workspace_slug=slug, project_id=project, work_item_id=work_item, archived_filter=ArchivedFilterTypes.EXCLUDE
+            workspace_slug=slug, project_id=project, work_item_id=work_item, archived_filter=ArchivedFilterTypes.INCLUDE
         )
 
         comment_reactions = await get_work_item_comment_reactions(

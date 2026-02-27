@@ -119,6 +119,12 @@ class FeatureFlagsTypesEnum(Enum):
     PI_CONVERSE = "PI_CONVERSE"
     PI_FILE_UPLOADS = "PI_FILE_UPLOADS"
 
+    # AI
+    AI_CHAT = "AI_CHAT"
+    AI_DEDUPE = "AI_DEDUPE"
+    AI_CONVERSE = "AI_CONVERSE"
+    AI_FILE_UPLOADS = "AI_FILE_UPLOADS"
+
     # advanced search
     ADVANCED_SEARCH = "ADVANCED_SEARCH"
 
@@ -227,6 +233,12 @@ class FeatureFlagType:
     pi_dedupe: bool
     pi_converse: bool
     pi_file_uploads: bool
+
+    # AI
+    ai_chat: bool
+    ai_dedupe: bool
+    ai_converse: bool
+    ai_file_uploads: bool
 
     # advanced search
     advanced_search: bool

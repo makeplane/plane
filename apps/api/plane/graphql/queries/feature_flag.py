@@ -148,6 +148,11 @@ class FeatureFlagQuery:
             pi_dedupe=feature_flags.get(FeatureFlagsTypesEnum.PI_DEDUPE.value, False),
             pi_converse=feature_flags.get(FeatureFlagsTypesEnum.PI_CONVERSE.value, False),
             pi_file_uploads=feature_flags.get(FeatureFlagsTypesEnum.PI_FILE_UPLOADS.value, False),
+            # AI
+            ai_chat=feature_flags.get(FeatureFlagsTypesEnum.AI_CHAT.value, False),
+            ai_dedupe=feature_flags.get(FeatureFlagsTypesEnum.AI_DEDUPE.value, False),
+            ai_converse=feature_flags.get(FeatureFlagsTypesEnum.AI_CONVERSE.value, False),
+            ai_file_uploads=feature_flags.get(FeatureFlagsTypesEnum.AI_FILE_UPLOADS.value, False),
             # advanced search
             advanced_search=feature_flags.get(FeatureFlagsTypesEnum.ADVANCED_SEARCH.value, False),
         )
