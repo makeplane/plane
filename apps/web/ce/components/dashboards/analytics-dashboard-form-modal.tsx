@@ -10,16 +10,14 @@ import { Controller, useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
 import { Input } from "@plane/propel/input";
 import { EModalPosition, EModalWidth, ModalCore, TextArea, ToggleSwitch } from "@plane/ui";
-import type { IDashboard } from "@plane/types";
 
-type DashboardFormPayload = { name: string; description: string; access: number };
+export type DashboardFormPayload = { name: string; description: string; access: number };
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: DashboardFormPayload) => Promise<void>;
-  dashboard?: IDashboard | null;
-  workspaceSlug: string;
+  dashboard?: { name?: string; description?: string | null; access?: number } | null;
 };
 
 type FormValues = {
@@ -82,11 +80,7 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <form
-        onSubmit={(e) => {
-          void handleSubmit(handleFormSubmit)(e);
-        }}
-      >
+      <form onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}>
         <div className="space-y-5 p-5">
           <h3 className="text-xl font-medium text-color-primary">
             {isEditing ? "Update Dashboard" : "Create Dashboard"}
@@ -121,7 +115,7 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
 
           {/* Description */}
           <div className="space-y-1">
-            <label htmlFor="description" className="text-sm font-medium text-color-secondary">
+            <label htmlFor="dashboard-description" className="text-sm font-medium text-color-secondary">
               Description
             </label>
             <Controller
@@ -129,7 +123,7 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
               control={control}
               render={({ field }) => (
                 <TextArea
-                  id="description"
+                  id="dashboard-description"
                   {...field}
                   placeholder="Add description (optional)"
                   className="w-full resize-none"
@@ -139,29 +133,30 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
             />
           </div>
 
-          {/* Public toggle */}
+          {/* Access toggle */}
           <div className="flex items-center justify-between">
-            <label htmlFor="access" className="text-sm font-medium text-color-secondary">
-              Make this dashboard public
-            </label>
+            <div>
+              <p className="text-sm font-medium text-color-secondary">Public access</p>
+              <p className="text-xs text-color-tertiary">Allow all workspace members to view this dashboard</p>
+            </div>
             <Controller
               name="access"
               control={control}
               render={({ field }) => (
-                <ToggleSwitch id="access" value={field.value} onChange={field.onChange} disabled={isSubmitting} />
+                <ToggleSwitch value={field.value} onChange={field.onChange} size="sm" disabled={isSubmitting} />
               )}
             />
           </div>
+        </div>
 
-          {/* Actions */}
-          <div className="flex justify-end gap-2 pt-4">
-            <Button variant="secondary" onClick={handleClose} disabled={isSubmitting}>
-              Cancel
-            </Button>
-            <Button variant="primary" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : isEditing ? "Update" : "Create"}
-            </Button>
-          </div>
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-2 border-t border-color-subtle px-5 py-4">
+          <Button variant="secondary" size="sm" onClick={handleClose} type="button" disabled={isSubmitting}>
+            Cancel
+          </Button>
+          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+            {isEditing ? "Update" : "Create"}
+          </Button>
         </div>
       </form>
     </ModalCore>

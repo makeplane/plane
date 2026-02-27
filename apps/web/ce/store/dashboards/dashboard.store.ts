@@ -140,6 +140,7 @@ export class DashboardStore implements IDashboardStore {
       void this.fetchWidgetChartData(workspaceSlug, dashboardId, response.id);
     } catch (error) {
       console.error("Failed to create widget", error);
+      throw error;
     }
   }
 
@@ -157,6 +158,7 @@ export class DashboardStore implements IDashboardStore {
   }
 
   async updateWidget(workspaceSlug: string, dashboardId: string, widgetId: string, data: TDashboardWidgetUpdate) {
+    const original = this.dashboardWidgets[dashboardId]?.find((w) => w.id === widgetId);
     try {
       this.localWidgetEdit(dashboardId, widgetId, data as Partial<IDashboardWidget>);
       await this.dashboardService.updateWidget(workspaceSlug, dashboardId, widgetId, data);
@@ -166,7 +168,13 @@ export class DashboardStore implements IDashboardStore {
         void this.fetchWidgetChartData(workspaceSlug, dashboardId, widgetId);
       }
     } catch (error) {
-      console.error("Failed to update widget", error);
+      // Rollback optimistic update on failure
+      if (original) {
+        runInAction(() => {
+          this.localWidgetEdit(dashboardId, widgetId, original);
+        });
+      }
+      throw error;
     }
   }
 
@@ -178,6 +186,7 @@ export class DashboardStore implements IDashboardStore {
       });
     } catch (error) {
       console.error("Failed to delete widget", error);
+      throw error;
     }
   }
 

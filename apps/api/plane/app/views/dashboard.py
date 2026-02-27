@@ -1,4 +1,8 @@
+# Python imports
+import json
+
 # Django imports
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 
 # Third party imports
@@ -8,7 +12,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import WorkSpaceBasePermission, allow_permission, ROLE
 from plane.app.serializers.dashboard import DashboardSerializer, DashboardWidgetSerializer
-from plane.app.views.base import BaseViewSet, BaseAPIView
+from plane.app.views.base import BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
 from plane.db.models import Dashboard, DashboardWidget, Project, Workspace
 from plane.utils.host import base_host
@@ -57,7 +61,7 @@ class DashboardViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def partial_update(self, request, slug, pk=None):
         dashboard = self.get_queryset().get(pk=pk)
-        current_instance = DashboardSerializer(dashboard).data
+        current_instance = json.dumps(DashboardSerializer(dashboard).data, cls=DjangoJSONEncoder)
         project_ids = request.data.pop("project_ids", None)
 
         serializer = DashboardSerializer(dashboard, data=request.data, partial=True)
@@ -136,7 +140,7 @@ class DashboardWidgetViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def partial_update(self, request, slug, dashboard_id, pk=None):
         widget = self.get_queryset().get(pk=pk)
-        current_instance = DashboardWidgetSerializer(widget).data
+        current_instance = json.dumps(DashboardWidgetSerializer(widget).data, cls=DjangoJSONEncoder)
         serializer = DashboardWidgetSerializer(widget, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -166,28 +170,3 @@ class DashboardWidgetViewSet(BaseViewSet):
             origin=base_host(request=request, is_app=True),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class DashboardWidgetChartEndpoint(BaseAPIView):
-    """Returns aggregated chart data for a dashboard widget."""
-
-    permission_classes = [WorkSpaceBasePermission]
-
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def get(self, request, slug, dashboard_id, widget_id):
-        from plane.utils.dashboard_chart_aggregation import aggregate_chart_data
-
-        try:
-            widget = DashboardWidget.objects.select_related("dashboard").get(
-                pk=widget_id, dashboard_id=dashboard_id, workspace__slug=slug
-            )
-        except DashboardWidget.DoesNotExist:
-            return Response({"error": "Widget not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        # Verify user has access to the parent dashboard
-        dashboard = widget.dashboard
-        if dashboard.created_by != request.user and dashboard.access != 1:
-            return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
-
-        formatted_data = aggregate_chart_data(widget, slug)
-        return Response({"data": formatted_data})

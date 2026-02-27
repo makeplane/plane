@@ -27,11 +27,11 @@ const getColors = (config: Record<string, unknown>): string[] => {
 
 interface WidgetAdapterProps {
   widget: IDashboardWidget;
-  _workspaceSlug?: string;
-  _dashboardId?: string;
+  workspaceSlug?: string;
+  dashboardId?: string;
 }
 
-export const WidgetAdapter = observer(({ widget, _workspaceSlug, _dashboardId }: WidgetAdapterProps) => {
+export const WidgetAdapter = observer(({ widget }: WidgetAdapterProps) => {
   const dashboardStore = useCustomDashboard();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- data is MobX observable and stable
   const data = dashboardStore.widgetChartData[widget.id] || [];
