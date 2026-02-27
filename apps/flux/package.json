@@ -14,7 +14,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsc --noEmit && tsdown",
+    "build": "tsdown",
     "dev": "tsdown --watch --onSuccess \"node --env-file=.env .\"",
     "dev:consumer": "tsdown --watch --onSuccess \"node --env-file=.env ./dist/consumer.mjs\"",
     "start": "node --env-file=.env .",

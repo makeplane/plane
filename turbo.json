@@ -70,12 +70,12 @@
   },
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "check:types"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", "build/**", ".react-router/**"]
     },
     "build-storybook": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "check:types"],
       "outputs": ["storybook-static/**"]
     },
     "check": {
