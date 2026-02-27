@@ -54,6 +54,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
   const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
   const isLDAPEnabled = config?.is_ldap_enabled || false;
+  const isSMTPConfigured = config?.is_smtp_configured || false;
   const isEmailBasedAuthEnabled = config?.is_email_password_enabled || config?.is_magic_login_enabled;
   const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled && !isLDAPEnabled;
 
@@ -130,7 +131,11 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
       />
       {authMode === EAuthModes.SIGN_IN ? (
         /* Unified login — Staff ID / LDAP / Email auto-detect */
-        <StaffIdLoginForm nextPath={nextPath || undefined} isLDAPEnabled={isLDAPEnabled} />
+        <StaffIdLoginForm
+          nextPath={nextPath || undefined}
+          isLDAPEnabled={isLDAPEnabled}
+          isSMTPConfigured={isSMTPConfigured}
+        />
       ) : (
         <>
           {isOAuthEnabled && (

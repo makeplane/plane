@@ -6,18 +6,22 @@
 
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
 // icons
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { Input, Spinner } from "@plane/ui";
+// components
+import { ForgotPasswordPopover } from "@/components/account/auth-forms/forgot-password-popover";
 // services
 import { AuthService } from "@/services/auth.service";
 
 type Props = {
   nextPath: string | undefined;
   isLDAPEnabled: boolean;
+  isSMTPConfigured: boolean;
 };
 
 // Staff ID email transform constants
@@ -33,7 +37,7 @@ const isEmail = (value: string): boolean => EMAIL_PATTERN.test(value);
 const authService = new AuthService();
 
 export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props) {
-  const { nextPath, isLDAPEnabled } = props;
+  const { nextPath, isLDAPEnabled, isSMTPConfigured } = props;
   // refs
   const formRef = useRef<HTMLFormElement>(null);
   // states
@@ -186,6 +190,22 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
             )}
           </button>
         </div>
+        {isSMTPConfigured ? (
+          <Link
+            href={
+              isEmail(identifier)
+                ? `/accounts/forgot-password?email=${encodeURIComponent(identifier)}`
+                : isStaffId(identifier)
+                  ? `/accounts/forgot-password?email=${encodeURIComponent(`${STAFF_EMAIL_PREFIX}${identifier}${STAFF_EMAIL_DOMAIN}`)}`
+                  : "/accounts/forgot-password"
+            }
+            className="text-11 font-medium text-accent-primary"
+          >
+            Forgot password?
+          </Link>
+        ) : (
+          <ForgotPasswordPopover />
+        )}
       </div>
 
       <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
