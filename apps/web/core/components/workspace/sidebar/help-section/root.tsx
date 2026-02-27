@@ -14,6 +14,7 @@ import { CustomMenu } from "@plane/ui";
 // components
 import { ProductUpdatesModal } from "@/components/global";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
+import { ContactPointModal } from "./contact-point-modal";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { useChatSupport } from "@/hooks/use-chat-support";
@@ -28,10 +29,12 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   const [isProductUpdatesModalOpen, setProductUpdatesModalOpen] = useState(false);
+  const [isContactPointOpen, setIsContactPointOpen] = useState(false);
 
   return (
     <>
       <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} handleClose={() => setProductUpdatesModalOpen(false)} />
+      <ContactPointModal isOpen={isContactPointOpen} handleClose={() => setIsContactPointOpen(false)} />
 
       <CustomMenu
         customButton={
@@ -68,14 +71,14 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             </button>
           </CustomMenu.MenuItem>
         )}
-        <CustomMenu.MenuItem onClick={() => window.open("mailto:sales@plane.so", "_blank")}>
+        <CustomMenu.MenuItem onClick={() => setIsContactPointOpen(true)}>
           <div className="flex items-center gap-x-2 rounded-sm text-11">
             <User className="h-3.5 w-3.5 text-secondary" size={14} />
-            <span className="text-11">{t("contact_sales")}</span>
+            <span className="text-11">{t("contact_point")}</span>
           </div>
         </CustomMenu.MenuItem>
         <div className="my-1 border-t border-subtle" />
-        <CustomMenu.MenuItem>
+        {/* <CustomMenu.MenuItem>
           <button
             type="button"
             onClick={() => toggleShortcutsListModal(true)}
@@ -83,7 +86,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           >
             <span className="text-11">{t("keyboard_shortcuts")}</span>
           </button>
-        </CustomMenu.MenuItem>
+        </CustomMenu.MenuItem> 
         <CustomMenu.MenuItem>
           <button
             type="button"
@@ -99,7 +102,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           <div className="flex items-center gap-x-2 rounded-sm text-11">
             <span className="text-11">Discord</span>
           </div>
-        </CustomMenu.MenuItem>
+        </CustomMenu.MenuItem>*/}
         <div className="px-1 pt-2 mt-1 text-11 text-secondary border-t border-subtle">
           <PlaneVersionNumber />
         </div>
