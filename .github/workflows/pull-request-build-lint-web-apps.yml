@@ -134,16 +134,12 @@ jobs:
           path: .turbo
           key: turbo-${{ runner.os }}-${{ github.event.pull_request.base.sha }}-${{ github.sha }}
 
-  # Lint and type checks depend on build artifacts
-  check:
-    name: ${{ matrix.task }}
+  # Lint check depends on build artifacts (type checking is covered by the build step)
+  check-lint:
+    name: check:lint
     runs-on: ubuntu-22.04-4core
     needs: build
     timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        task: [check:lint, check:types]
     env:
       TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha }}
       TURBO_SCM_HEAD: ${{ github.sha }}
@@ -184,8 +180,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run ${{ matrix.task }}
-        run: pnpm turbo run ${{ matrix.task }} --affected
+      - name: Run check:lint
+        run: pnpm turbo run check:lint --affected
 
   test:
     name: test
