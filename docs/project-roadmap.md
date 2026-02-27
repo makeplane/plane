@@ -1,6 +1,6 @@
 # Project Roadmap & Status
 
-**Last Updated**: 2026-02-15 (Dashboard Pro fixes applied)
+**Last Updated**: 2026-02-27 (Dashboard i18n + comprehensive testing completed)
 **Current Version**: 1.2.1
 **Next Release Target**: Q2 2026
 
@@ -52,6 +52,9 @@
 - ✅ Webhook integrations
 - ✅ Analytics Dashboard Pro Feature (6 widget types, multi-dashboard CRUD, widget config UI, backend API, data aggregation, favorites/pinning)
 - ✅ Custom Dashboard Feature (project-scoped dashboards, widgets with charts, data aggregation utilities, widget layout management, favorites)
+  - ✅ i18n: 88+ translation keys added (en/ko/vi)
+  - ✅ Testing: 41 comprehensive backend tests (CRUD + widget aggregation)
+  - ✅ Fixes: XSS prevention in delete modal, semantic color tokens in toolbar
 - ✅ Department & Staff Management (hierarchical departments, employee profiles, bulk import/export, auto-sync to projects)
 
 ## Planned Roadmap (2026)
@@ -68,6 +71,7 @@
 - ✅ System architecture diagrams
 - ✅ Deployment guide
 - ✅ Analytics Dashboard Pro feature (backend + frontend + tests + code review fixes)
+- ✅ Custom Dashboard Feature (i18n + comprehensive testing + fixes)
 - ✅ Department & Staff Management (models, APIs, workspace settings UI, bulk import/export)
 - 🔄 ESLint enforcement migration
 - 🔄 TypeScript strict mode rollout
