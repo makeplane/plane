@@ -44,6 +44,8 @@ const envSchema = z.object({
   REDIS_HOST_KEY: z.string().optional(),
   REDIS_PORT_KEY: z.string().optional(),
   AWS_SECRET_CACHE_TTL: z.string().default("300").transform(Number),
+  // EKS Pod Identity (alternative to AWS_ROLE_ARN for Secrets Manager)
+  AWS_CONTAINER_CREDENTIALS_FULL_URI: z.string().optional(),
   // Iframely configuration
   IFRAMELY_URL: z.string().optional(),
 });

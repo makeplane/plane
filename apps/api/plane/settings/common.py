@@ -198,12 +198,19 @@ if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
     MIDDLEWARE.append("plane.middleware.db_routing.ReadReplicaRoutingMiddleware")
 
 
-# AWS Secrets Manager: When AWS_ROLE_ARN and RDS_SECRET_ARN are both set,
-# IRSA is used to fetch DB credentials from Secrets Manager.
+# True when either IRSA (AWS_ROLE_ARN) or EKS Pod Identity
+# (AWS_CONTAINER_CREDENTIALS_FULL_URI) is present.
+_has_aws_credentials = bool(
+    os.environ.get("AWS_ROLE_ARN", "")
+    or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
+)
+
+# AWS Secrets Manager: When _has_aws_credentials and RDS_SECRET_ARN are both set,
+# IRSA or Pod Identity is used to fetch DB credentials from Secrets Manager.
 # Rotation is handled automatically by the custom backend (cache + retry).
 # DATABASE_URL (and DATABASE_READ_REPLICA_URL) take precedence when set.
 if (
-    (os.environ.get("AWS_ROLE_ARN") or "").strip()
+    _has_aws_credentials
     and os.environ.get("RDS_SECRET_ARN")
     and not os.environ.get("DATABASE_URL")
 ):
@@ -226,7 +233,7 @@ def _is_bare_redis_host_port(url: str) -> bool:
 REDIS_URL = os.environ.get("REDIS_URL")
 _aws_region = os.environ.get("AWS_REGION", "us-east-1")
 _has_elasticache = (
-    (os.environ.get("AWS_ROLE_ARN") or "").strip()
+    _has_aws_credentials
     and os.environ.get("ELASTICACHE_SECRET_ARN")
 )
 
@@ -339,7 +346,7 @@ def _is_bare_amqp_host_port(url: str) -> bool:
 AMQP_URL = os.environ.get("AMQP_URL")
 _aws_region_mq = os.environ.get("AWS_REGION", "us-east-1")
 _has_amazonmq = (
-    (os.environ.get("AWS_ROLE_ARN") or "").strip()
+    _has_aws_credentials
     and os.environ.get("AMAZONMQ_SECRET_ARN")
 )
 
@@ -746,12 +753,12 @@ if OPENSEARCH_ENABLED:
     )  # Chunk size for processing queued updates
 
     # OpenSearch Config: If explicit creds (OPENSEARCH_USERNAME / OPENSEARCH_PASSWORD) are provided,
-    # they take precedence over AWS_ROLE_ARN IAM auth. IAM auth is only used when AWS_ROLE_ARN is set
-    # and no explicit credentials are given.
+    # they take precedence over IAM auth. IAM auth (SigV4) is used when AWS credentials are present
+    # via IRSA (AWS_ROLE_ARN) or EKS Pod Identity (AWS_CONTAINER_CREDENTIALS_FULL_URI).
     _os_username = os.environ.get("OPENSEARCH_USERNAME")
     _os_password = os.environ.get("OPENSEARCH_PASSWORD")
 
-    if (os.environ.get("AWS_ROLE_ARN") or "").strip() and not (_os_username and _os_password):
+    if _has_aws_credentials and not (_os_username and _os_password):
         import boto3
         from opensearchpy import RequestsHttpConnection
         from requests_aws4auth import AWS4Auth

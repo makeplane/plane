@@ -268,6 +268,30 @@ describe("RedisManager", () => {
       expect(redisInstances).toHaveLength(1);
     });
 
+    it("uses Secrets Manager when Pod Identity credentials are present", async () => {
+      setEnv({
+        AWS_CONTAINER_CREDENTIALS_FULL_URI: "http://169.254.170.23/v1/credentials",
+        AWS_REGION: "us-east-1",
+        ELASTICACHE_SECRET_ARN: "arn:aws:secretsmanager:us-east-1:123:secret:redis",
+        REDIS_AUTH_TOKEN_KEY: "token",
+        REDIS_HOST_KEY: "host",
+        REDIS_PORT_KEY: "port",
+        AWS_SECRET_CACHE_TTL: 300,
+      });
+
+      mockGetSecret.mockResolvedValue({ token: "pass1", host: "redis.test", port: "6379" });
+
+      const manager = await freshRedisManager();
+      await manager.initialize();
+
+      expect(mockGetSecret).toHaveBeenCalledWith(
+        "arn:aws:secretsmanager:us-east-1:123:secret:redis",
+        "us-east-1",
+        false
+      );
+      expect(redisInstances).toHaveLength(1);
+    });
+
     it("disables Redis when no URL source is configured", async () => {
       setEnv({});
 

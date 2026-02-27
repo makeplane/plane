@@ -66,6 +66,12 @@ COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
+# node:22-alpine ships with a built-in "node" user at UID 1000.
+# Set ownership so the non-root user can read all files.
+RUN chown -R node:node /app
+
+USER node
+
 EXPOSE 3000
 
 CMD ["node", "apps/live"]
