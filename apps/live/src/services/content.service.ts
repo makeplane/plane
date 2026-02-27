@@ -54,7 +54,14 @@ export class ContentService extends APIService {
     const { url, cookie } = params;
 
     const isPublicAsset = url.includes("/api/public/");
-    const fetchUrl = isPublicAsset ? url : url + (url.endsWith("/") ? "server/" : "/server/");
+    let fetchUrl: string;
+    if (isPublicAsset) {
+      fetchUrl = url;
+    } else {
+      const [path, query] = url.split("?");
+      const pathWithServer = path.endsWith("/") ? `${path}server/` : `${path}/server/`;
+      fetchUrl = query ? `${pathWithServer}?${query}` : pathWithServer;
+    }
     return this.get(fetchUrl, {
       headers: this.getHeaders({ cookie }),
       withCredentials: true,
