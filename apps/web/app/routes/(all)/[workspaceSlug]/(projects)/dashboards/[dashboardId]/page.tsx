@@ -110,7 +110,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
         title: data.title,
         chart_property: data.chart_property,
         chart_metric: data.chart_metric,
-        config: data.config as TAnalyticsWidgetCreate["config"],
+        config: data.config as unknown as TAnalyticsWidgetCreate["config"],
         position: data.position,
       };
 
