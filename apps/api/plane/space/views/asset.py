@@ -54,7 +54,7 @@ class EntityAssetEndpoint(BaseAPIView):
     def get(self, request, anchor, pk):
         # Get the deploy board
         publish_entity, _ = self.get_publish_entity(anchor)
-
+        is_server = request.query_params.get("is_server", "false").lower() == "true"
         if not publish_entity:
             return Response(
                 {"error": "Requested resource could not be found."},
@@ -81,7 +81,7 @@ class EntityAssetEndpoint(BaseAPIView):
             )
 
         # Get the presigned URL
-        storage = S3Storage(request=request)
+        storage = S3Storage(request=request, is_server=is_server)
         # Generate a presigned URL to share an S3 object
         signed_url = storage.generate_presigned_url(object_name=asset.asset.name)
         # Redirect to the signed URL
