@@ -2024,11 +2024,19 @@ def issue_activity(
 
         # Save all the values to database
         issue_activities_created = IssueActivity.objects.bulk_create(
-            [issue_activity for issue_activity in issue_activities if not issue_activity._skip_bulk_create]
+            [
+                issue_activity
+                for issue_activity in issue_activities
+                if not getattr(issue_activity, "_skip_bulk_create", False)
+            ]
         )
 
         issue_activities_created.extend(
-            [issue_activity for issue_activity in issue_activities if issue_activity._skip_bulk_create]
+            [
+                issue_activity
+                for issue_activity in issue_activities
+                if getattr(issue_activity, "_skip_bulk_create", False)
+            ]
         )
 
         # Post the updates to segway for integrations and webhooks
