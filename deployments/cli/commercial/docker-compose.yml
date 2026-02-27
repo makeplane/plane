@@ -335,9 +335,9 @@ services:
     command: >
       /bin/sh -c '
       echo "Waiting for plane-db to be ready...";
-      until pg_isready -h plane-db -U $${POSTGRES_USER}; do sleep 2; done;
-      export PGPASSWORD=$${POSTGRES_PASSWORD};
-      psql -h plane-db -U $${POSTGRES_USER} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = \"plane_pi\"" | grep -q 1 || psql -h plane-db -U $${POSTGRES_USER} -d postgres -c "CREATE DATABASE plane_pi";
+      until pg_isready -h plane-db -U ${POSTGRES_USER}; do sleep 2; done;
+      export PGPASSWORD=${POSTGRES_PASSWORD};
+      psql -h plane-db -U ${POSTGRES_USER} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'plane_pi'" | grep -q 1 || psql -h plane-db -U ${POSTGRES_USER} -d postgres -c "CREATE DATABASE plane_pi";
       echo "Database plane_pi is ready";
       exit 0;
       '
