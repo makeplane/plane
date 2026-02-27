@@ -58,12 +58,15 @@ export class RedisManager {
   }
 
   /**
-   * Resolves Redis URL: REDIS_URL takes precedence; else if AWS_ROLE_ARN + ELASTICACHE_SECRET_ARN
-   * are set, fetches from AWS Secrets Manager (with optional forceRefresh); else REDIS_HOST:REDIS_PORT.
+   * Resolves Redis URL: REDIS_URL takes precedence; else if AWS credentials are present
+   * (IRSA via AWS_ROLE_ARN, or EKS Pod Identity via AWS_CONTAINER_CREDENTIALS_FULL_URI)
+   * and ELASTICACHE_SECRET_ARN is set, fetches from AWS Secrets Manager (with optional
+   * forceRefresh); else REDIS_HOST:REDIS_PORT.
    */
   private async resolveRedisUrl(forceRefresh = false): Promise<string> {
     const awsRoleArn = (env.AWS_ROLE_ARN ?? "").trim();
-    const hasElasticache = Boolean(awsRoleArn && env.ELASTICACHE_SECRET_ARN);
+    const hasPodIdentity = Boolean(env.AWS_CONTAINER_CREDENTIALS_FULL_URI);
+    const hasElasticache = Boolean((awsRoleArn || hasPodIdentity) && env.ELASTICACHE_SECRET_ARN);
 
     if (env.REDIS_URL && !this.isBareRedisHostPort(env.REDIS_URL)) {
       return env.REDIS_URL;
