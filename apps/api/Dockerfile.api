@@ -59,8 +59,8 @@ RUN addgroup -g 1000 plane && adduser -u 1000 -G plane -s /bin/sh -D plane
 
 RUN mkdir -p /code/plane/logs && \
     chmod +x ./bin/* && \
-    chown -R plane:plane /code && \
-    chmod -R 755 /code
+    chmod -R 755 /code && \
+    chown -R plane:plane /code
 
 USER plane
 
