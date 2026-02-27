@@ -12,6 +12,7 @@
 # Python imports
 import json
 
+
 # Django import
 from django.utils import timezone
 from django.db.models import Q, Count, OuterRef, Func, F, Prefetch, Subquery
@@ -302,10 +303,11 @@ class IntakeIssueViewSet(BaseViewSet):
                 issue_id=serializer.data["id"],
                 source=SourceType.IN_APP,
             )
+
             # Create an Issue Activity
             issue_activity.delay(
                 type="issue.activity.created",
-                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(request.data["issue"], cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(serializer.data["id"]),
                 project_id=str(project_id),

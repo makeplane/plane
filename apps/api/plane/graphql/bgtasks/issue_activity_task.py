@@ -655,6 +655,10 @@ def create_epic_activity(
     issue_activity.created_at = epic.created_at
     issue_activity.actor_id = epic.created_by_id
     issue_activity.save(update_fields=["created_at", "actor_id"])
+
+    issue_activity._skip_bulk_create = True
+    issue_activities.append(issue_activity)
+
     requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data.get("assignee_ids") is not None:
         track_assignees(
@@ -1706,6 +1710,9 @@ def create_issue_activity(
     issue_activity.created_at = issue.created_at
     issue_activity.actor_id = issue.created_by_id
     issue_activity.save(update_fields=["created_at", "actor_id"])
+    issue_activity._skip_bulk_create = True
+    issue_activities.append(issue_activity)
+
     requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data.get("assignee_ids") is not None:
         track_assignees(
@@ -1961,6 +1968,7 @@ def issue_activity(
                     issue.save(update_fields=["updated_at"])
                 except Exception:
                     pass
+
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,
             "issue.activity.updated": update_issue_activity,
@@ -2015,7 +2023,14 @@ def issue_activity(
             )
 
         # Save all the values to database
-        issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
+        issue_activities_created = IssueActivity.objects.bulk_create(
+            [issue_activity for issue_activity in issue_activities if not issue_activity._skip_bulk_create]
+        )
+
+        issue_activities_created.extend(
+            [issue_activity for issue_activity in issue_activities if issue_activity._skip_bulk_create]
+        )
+
         # Post the updates to segway for integrations and webhooks
         if len(issue_activities_created):
             for activity in issue_activities_created:

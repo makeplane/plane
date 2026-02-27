@@ -569,16 +569,10 @@ class IssueViewSet(BaseViewSet):
         if serializer.is_valid():
             serializer.save()
 
-            assignees = list(request.data.get("assignee_ids", []))
-            assignees.append(project.default_assignee_id)
-
-            requested_data = dict(request.data)
-            requested_data["assignee_ids"] = assignees
-
             # Track the issue
             issue_activity.delay(
                 type="issue.activity.created",
-                requested_data=json.dumps(requested_data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(serializer.data.get("id", None)),
                 project_id=str(project_id),

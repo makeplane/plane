@@ -547,16 +547,10 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             issue.created_by_id = request.data.get("created_by", request.user.id)
             issue.save(update_fields=["created_at", "created_by"])
 
-            assignees = list(request.data.get("assignees", []))
-            assignees.append(project.default_assignee_id)
-
-            requested_data = dict(request.data)
-            requested_data["assignee_ids"] = assignees
-
             # Track the issue
             issue_activity.delay(
                 type="issue.activity.created",
-                requested_data=json.dumps(requested_data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(serializer.data.get("id", None)),
                 project_id=str(project_id),
@@ -2896,8 +2890,10 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
             refetch_filter,
             workspace__slug=slug,
         ).select_related(
-            "issue__type", "issue__state",
-            "related_issue__type", "related_issue__state",
+            "issue__type",
+            "issue__state",
+            "related_issue__type",
+            "related_issue__state",
         )
 
         serializer_class = RelatedIssueSerializer if is_reverse else IssueRelationSerializer
@@ -2957,8 +2953,10 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
                 | Q(issue_id=issue_id, related_issue_id=related_issue)
             )
             .select_related(
-                "issue__type", "issue__state",
-                "related_issue__type", "related_issue__state",
+                "issue__type",
+                "issue__state",
+                "related_issue__type",
+                "related_issue__state",
             )
             .first()
         )
