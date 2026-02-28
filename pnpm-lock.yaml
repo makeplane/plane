@@ -408,6 +408,9 @@ importers:
 
   apps/flux:
     dependencies:
+      '@aws-sdk/client-secrets-manager':
+        specifier: ^3.989.0
+        version: 3.998.0
       '@dotenvx/dotenvx':
         specifier: 'catalog:'
         version: 1.52.0
@@ -16670,7 +16673,7 @@ snapshots:
 
   '@smithy/chunked-blob-reader-native@4.2.1':
     dependencies:
-      '@smithy/util-base64': 4.3.0
+      '@smithy/util-base64': 4.3.1
       tslib: 2.8.1
 
   '@smithy/chunked-blob-reader@5.2.0':
@@ -16818,6 +16821,11 @@ snapshots:
   '@smithy/invalid-dependency@4.2.8':
     dependencies:
       '@smithy/types': 4.12.0
+      tslib: 2.8.1
+
+  '@smithy/invalid-dependency@4.2.10':
+    dependencies:
+      '@smithy/types': 4.13.0
       tslib: 2.8.1
 
   '@smithy/is-array-buffer@2.2.0':
@@ -17098,6 +17106,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@smithy/util-body-length-node@4.2.2':
+    dependencies:
+      tslib: 2.8.1
+
   '@smithy/util-buffer-from@2.2.0':
     dependencies:
       '@smithy/is-array-buffer': 2.2.0
@@ -17159,6 +17171,12 @@ snapshots:
     dependencies:
       '@smithy/node-config-provider': 4.3.8
       '@smithy/types': 4.12.0
+      tslib: 2.8.1
+
+  '@smithy/util-endpoints@3.3.1':
+    dependencies:
+      '@smithy/node-config-provider': 4.3.10
+      '@smithy/types': 4.13.0
       tslib: 2.8.1
 
   '@smithy/util-endpoints@3.3.1':
@@ -24555,6 +24573,8 @@ snapshots:
   strip-json-comments@2.0.1: {}
 
   strip-json-comments@3.1.1: {}
+
+  strnum@2.1.2: {}
 
   strnum@2.1.2: {}
 
