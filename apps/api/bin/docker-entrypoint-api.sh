@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+if [ "$(id -u)" = "0" ]; then
+  chown -R plane:plane /code/plane/logs
+  exec su-exec plane "$0" "$@"
+fi
+
 # Collect system information
 HOSTNAME=$(hostname)
 MAC_ADDRESS=$(ip link show | awk '/ether/ {print $2}' | head -n 1)

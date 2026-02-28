@@ -17,11 +17,19 @@ RUN goreleaser build --snapshot --clean --single-target --output=./prime-monitor
 
 FROM alpine:latest AS run
 WORKDIR /app
+
+RUN apk add --no-cache su-exec && \
+	addgroup -g 1000 plane && adduser -u 1000 -G plane -s /bin/sh -D plane
+
 COPY --from=build /app/prime-monitor /usr/local/bin/prime-monitor
+COPY bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 COPY LICENSE.txt .
 RUN mkdir -p /usr/share/licenses/plane/
 COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
 
-CMD [ "prime-monitor", "start" ]
+RUN chown -R plane:plane /app
+
+CMD [ "/usr/local/bin/docker-entrypoint.sh" ]
 
