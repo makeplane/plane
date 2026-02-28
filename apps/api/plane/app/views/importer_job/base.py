@@ -6,7 +6,14 @@ from rest_framework.response import Response
 
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.serializers import ImportJobSerializer
-from plane.db.models import ImportJob, Project, ProjectMember, State
+from plane.db.models import (
+    ImportJob,
+    Project,
+    ProjectMember,
+    State,
+    WorkspaceMember,
+    WorkspaceMemberInvite,
+)
 
 from .. import BaseAPIView
 
@@ -81,14 +88,17 @@ class ImportUploadEndpoint(BaseAPIView):
             )
         if assignee_col and assignee_col in headers:
             col_idx = headers.index(assignee_col)
-            assignee_set = set()
+            # Case-insensitive dedup: normalized_key -> first-seen original form
+            assignee_seen = {}
             for row in rows:
                 if col_idx < len(row) and row[col_idx].strip():
                     for name in row[col_idx].split(","):
                         name = name.strip()
                         if name:
-                            assignee_set.add(name)
-            unique_assignees = sorted(assignee_set)
+                            normalized = " ".join(name.lower().split())
+                            if normalized not in assignee_seen:
+                                assignee_seen[normalized] = name
+            unique_assignees = sorted(assignee_seen.values(), key=str.lower)
 
         # Create ImportJob
         project = Project.objects.get(pk=project_id)
@@ -131,12 +141,37 @@ class ImportUploadEndpoint(BaseAPIView):
             .select_related("member")
             .values("member__id", "member__display_name", "member__email")
         )
+        project_member_ids = set(
+            pm["member__id"] for pm in project_members
+        )
+
+        # Workspace members who are NOT yet project members
+        workspace_only_members = list(
+            WorkspaceMember.objects.filter(
+                workspace_id=project.workspace_id,
+                is_active=True,
+                role__gte=15,
+            )
+            .exclude(member__id__in=project_member_ids)
+            .select_related("member")
+            .values("member__id", "member__display_name", "member__email")
+        )
+
+        # Pending workspace invitations (display-only, no user ID yet)
+        pending_invites = list(
+            WorkspaceMemberInvite.objects.filter(
+                workspace_id=project.workspace_id,
+                accepted=False,
+            ).values("email", "role")
+        )
 
         status_suggestions = suggest_status_mapping(
             unique_statuses, project_states
         )
+        # Include workspace members in fuzzy matching
+        all_members = project_members + workspace_only_members
         assignee_suggestions = suggest_assignee_mapping(
-            unique_assignees, project_members
+            unique_assignees, all_members
         )
 
         return Response(
@@ -155,6 +190,8 @@ class ImportUploadEndpoint(BaseAPIView):
                 "assignee_suggestions": assignee_suggestions,
                 "project_states": project_states,
                 "project_members": project_members,
+                "workspace_members": workspace_only_members,
+                "pending_invites": pending_invites,
             },
             status=status.HTTP_201_CREATED,
         )

@@ -75,11 +75,18 @@ export type TProjectMember = {
   member__email: string;
 };
 
+export type TPendingInvite = {
+  email: string;
+  role: number;
+};
+
 export type TUploadResponse = TImportJob & {
   status_suggestions: Record<string, TStatusSuggestion>;
   assignee_suggestions: Record<string, TAssigneeSuggestion>;
   project_states: TProjectState[];
   project_members: TProjectMember[];
+  workspace_members: TProjectMember[];
+  pending_invites: TPendingInvite[];
 };
 
 // === Service ===

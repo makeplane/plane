@@ -13,6 +13,8 @@ export function StepAssigneeMapping({ wizard }: Props) {
 
   const assignees = uploadData.unique_assignees;
   const projectMembers = uploadData.project_members;
+  const workspaceMembers = uploadData.workspace_members ?? [];
+  const pendingInvites = uploadData.pending_invites ?? [];
 
   const handleChange = (assigneeValue: string, userId: string) => {
     setAssigneeMapping((prev) => {
@@ -69,12 +71,32 @@ export function StepAssigneeMapping({ wizard }: Props) {
                     onChange={(e) => handleChange(assigneeValue, e.target.value)}
                     className="w-full rounded border border-custom-border-200 bg-custom-background-100 px-3 py-1.5 text-sm text-custom-text-100"
                   >
-                    <option value="">— Leave Unassigned —</option>
-                    {projectMembers.map((member) => (
-                      <option key={member.member__id} value={member.member__id}>
-                        {member.member__display_name} ({member.member__email})
-                      </option>
-                    ))}
+                    <option value="">— بدون مسئول —</option>
+                    <optgroup label="اعضای پروژه">
+                      {projectMembers.map((member) => (
+                        <option key={member.member__id} value={member.member__id}>
+                          {member.member__display_name} ({member.member__email})
+                        </option>
+                      ))}
+                    </optgroup>
+                    {workspaceMembers.length > 0 && (
+                      <optgroup label="اعضای ورک‌اسپیس (به پروژه اضافه می‌شوند)">
+                        {workspaceMembers.map((member) => (
+                          <option key={member.member__id} value={member.member__id}>
+                            {member.member__display_name} ({member.member__email})
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                    {pendingInvites.length > 0 && (
+                      <optgroup label="دعوت‌های در انتظار (قابل انتخاب نیست)">
+                        {pendingInvites.map((invite) => (
+                          <option key={invite.email} value="" disabled>
+                            {invite.email} — در انتظار پذیرش
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
                   </select>
                 </td>
               </tr>

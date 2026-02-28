@@ -16,6 +16,7 @@ from plane.db.models import (
     Label,
     ProjectMember,
     State,
+    WorkspaceMember,
 )
 from plane.utils.exception_logger import log_exception
 from plane.utils.importers.presets import get_priority_map
@@ -41,6 +42,11 @@ def issue_import_task(import_job_id: str, actor_id: str):
         col_map = import_job.column_mapping
         status_map = import_job.status_mapping
         assignee_map = import_job.assignee_mapping
+        # Build case-insensitive assignee map for robust matching
+        assignee_map_normalized = {
+            " ".join(k.lower().split()): v
+            for k, v in assignee_map.items()
+        }
         rows = import_job.parsed_data
         total = len(rows)
 
@@ -65,6 +71,15 @@ def issue_import_task(import_job_id: str, actor_id: str):
             project=project, is_active=True, role__gte=15
         ).select_related("member"):
             member_lookup[str(pm.member.id)] = pm.member
+
+        # Workspace members not yet in the project (for auto-add during import)
+        workspace_member_lookup = {}
+        for wm in WorkspaceMember.objects.filter(
+            workspace=workspace, is_active=True, role__gte=15
+        ).exclude(
+            member__id__in=[m.id for m in member_lookup.values()]
+        ).select_related("member"):
+            workspace_member_lookup[str(wm.member.id)] = wm.member
 
         label_lookup = {
             label.name.lower(): label
@@ -170,11 +185,38 @@ def issue_import_task(import_job_id: str, actor_id: str):
                         if n.strip()
                     ]
                     for raw_name in raw_names:
-                        mapped_user_id = assignee_map.get(raw_name)
-                        if mapped_user_id and mapped_user_id in member_lookup:
+                        normalized_name = " ".join(raw_name.lower().split())
+                        mapped_user_id = assignee_map_normalized.get(
+                            normalized_name
+                        )
+                        if not mapped_user_id:
+                            continue
+
+                        assignee_user = member_lookup.get(mapped_user_id)
+
+                        if (
+                            not assignee_user
+                            and mapped_user_id in workspace_member_lookup
+                        ):
+                            # Auto-add workspace member to project
+                            ws_user = workspace_member_lookup[mapped_user_id]
+                            ProjectMember.objects.get_or_create(
+                                project=project,
+                                member=ws_user,
+                                defaults={
+                                    "role": 15,
+                                    "is_active": True,
+                                    "workspace": workspace,
+                                    "created_by_id": actor_id,
+                                },
+                            )
+                            member_lookup[mapped_user_id] = ws_user
+                            assignee_user = ws_user
+
+                        if assignee_user:
                             IssueAssignee.objects.create(
                                 issue=issue,
-                                assignee=member_lookup[mapped_user_id],
+                                assignee=assignee_user,
                                 project=project,
                                 workspace=workspace,
                                 created_by_id=actor_id,
