@@ -14,10 +14,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { EditorRefApi, CollaborationState } from "@plane/editor";
 // plane editor
-import {
-  convertBinaryDataToBase64String,
-  getBinaryDataFromDocumentEditorHTMLString,
-} from "@plane/editor";
+import { convertBinaryDataToBase64String, getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
 // plane types
 import type { TDocumentPayload } from "@plane/types";
 // hooks
@@ -41,7 +38,7 @@ async function performFallbackSave(
   editor: EditorRefApi,
   page: TPageInstance,
   fetchPageDescription: () => Promise<ArrayBuffer>,
-  updatePageDescription: (data: TDocumentPayload) => Promise<void>,
+  updatePageDescription: (data: TDocumentPayload) => Promise<void>
 ) {
   const latestEncodedDescription = await fetchPageDescription();
   let latestDecodedDescription: Uint8Array;
@@ -49,10 +46,7 @@ async function performFallbackSave(
   if (latestEncodedDescription && latestEncodedDescription.byteLength > 0) {
     latestDecodedDescription = new Uint8Array(latestEncodedDescription);
   } else {
-    latestDecodedDescription = getBinaryDataFromDocumentEditorHTMLString(
-      page.description_html ?? "<p></p>",
-      page.name,
-    );
+    latestDecodedDescription = getBinaryDataFromDocumentEditorHTMLString(page.description_html ?? "<p></p>", page.name);
   }
 
   editor.setProviderDocument(latestDecodedDescription);
@@ -68,18 +62,11 @@ async function performFallbackSave(
 }
 
 export const usePageFallback = (args: TArgs) => {
-  const {
-    editorRef,
-    fetchPageDescription,
-    collaborationState,
-    updatePageDescription,
-    page,
-  } = args;
+  const { editorRef, fetchPageDescription, collaborationState, updatePageDescription, page } = args;
   const hasShownFallbackToast = useRef(false);
   const isSavingRef = useRef(false);
 
-  const [isFetchingFallbackBinary, setIsFetchingFallbackBinary] =
-    useState(false);
+  const [isFetchingFallbackBinary, setIsFetchingFallbackBinary] = useState(false);
 
   // Derive connection failure from collaboration state
   const hasConnectionFailed = collaborationState?.stage.kind === "disconnected";
@@ -93,9 +80,7 @@ export const usePageFallback = (args: TArgs) => {
 
     // Show toast notification when fallback mechanism kicks in (only once)
     if (!hasShownFallbackToast.current) {
-      console.warn(
-        "Websocket Connection lost, your changes are being saved using backup mechanism.",
-      );
+      console.warn("Websocket Connection lost, your changes are being saved using backup mechanism.");
       hasShownFallbackToast.current = true;
     }
 
@@ -103,12 +88,7 @@ export const usePageFallback = (args: TArgs) => {
       isSavingRef.current = true;
       setIsFetchingFallbackBinary(true);
       // Read latest page/functions at call time, not at callback creation time
-      await performFallbackSave(
-        editor,
-        page,
-        fetchPageDescription,
-        updatePageDescription,
-      );
+      await performFallbackSave(editor, page, fetchPageDescription, updatePageDescription);
     } catch (error: any) {
       console.error(error);
     } finally {
