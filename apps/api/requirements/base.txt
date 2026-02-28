@@ -73,6 +73,7 @@ python3-saml==1.16.0
 # feature flag
 openfeature-sdk==0.7.0
 # graphql
+strawberry-graphql==0.289.2
 strawberry-graphql-django==0.48.0
 # django rest framework jwt
 djangorestframework-simplejwt==5.5.1
@@ -95,6 +96,7 @@ nh3==0.2.18
 
 # OpenSearch Integration
 opensearch-py==2.8.0
+requests-aws4auth==1.2.3
 django-opensearch-dsl==0.7.0
 
 # pika for rabbitmq

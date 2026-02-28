@@ -200,8 +200,63 @@ if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
     MIDDLEWARE.append("plane.middleware.db_routing.ReadReplicaRoutingMiddleware")
 
 
+# True when either IRSA (AWS_ROLE_ARN) or EKS Pod Identity
+# (AWS_CONTAINER_CREDENTIALS_FULL_URI) is present.
+_has_aws_credentials = bool(
+    os.environ.get("AWS_ROLE_ARN", "")
+    or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
+)
+
+# AWS Secrets Manager: When _has_aws_credentials and RDS_SECRET_ARN are both set,
+# IRSA or Pod Identity is used to fetch DB credentials from Secrets Manager.
+# Rotation is handled automatically by the custom backend (cache + retry).
+# DATABASE_URL (and DATABASE_READ_REPLICA_URL) take precedence when set.
+if (
+    _has_aws_credentials
+    and os.environ.get("RDS_SECRET_ARN")
+    and not os.environ.get("DATABASE_URL")
+):
+    _aws_region = os.environ.get("AWS_REGION", "us-east-1")
+    DATABASES["default"]["ENGINE"] = "plane.db.backends.secrets_manager"
+    DATABASES["default"]["SECRET_ARN"] = os.environ.get("RDS_SECRET_ARN")
+    DATABASES["default"]["AWS_REGION"] = _aws_region
+    if "replica" in DATABASES and not os.environ.get("DATABASE_READ_REPLICA_URL"):
+        DATABASES["replica"]["ENGINE"] = "plane.db.backends.secrets_manager"
+        DATABASES["replica"]["SECRET_ARN"] = os.environ.get("RDS_SECRET_ARN")
+        DATABASES["replica"]["AWS_REGION"] = _aws_region
+        DATABASES["replica"]["RDS_READ_REPLICA_URI"] = "RDS_READ_REPLICA_URI"
+
+
 # Redis Config
+def _is_bare_redis_host_port(url: str) -> bool:
+    return bool(url) and not url.startswith(("redis://", "rediss://"))
+
+
 REDIS_URL = os.environ.get("REDIS_URL")
+_aws_region = os.environ.get("AWS_REGION", "us-east-1")
+_has_elasticache = (
+    _has_aws_credentials
+    and os.environ.get("ELASTICACHE_SECRET_ARN")
+)
+
+# ElastiCache case 3: REDIS_URL not set — fetch host, port, token from Secrets Manager.
+if not REDIS_URL and _has_elasticache:
+    from plane.utils.aws_secrets import get_secret
+
+    _ec_secret = get_secret(os.environ["ELASTICACHE_SECRET_ARN"], _aws_region)
+    REDIS_URL = "rediss://:{token}@{host}:{port}".format(
+        token=_ec_secret.get(os.environ.get("REDIS_AUTH_TOKEN_KEY"), ""),
+        host=_ec_secret.get(os.environ.get("REDIS_HOST_KEY"), ""),
+        port=_ec_secret.get(os.environ.get("REDIS_PORT_KEY"), 6379),
+    )
+# ElastiCache case 4: REDIS_URL is bare host:port — fetch token from Secrets Manager only.
+elif REDIS_URL and _is_bare_redis_host_port(REDIS_URL) and _has_elasticache:
+    from plane.utils.aws_secrets import get_secret
+
+    _ec_secret = get_secret(os.environ["ELASTICACHE_SECRET_ARN"], _aws_region)
+    _token = _ec_secret.get(os.environ.get("REDIS_AUTH_TOKEN_KEY", "token"), "")
+    REDIS_URL = f"rediss://:{_token}@{REDIS_URL}"
+
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
 if REDIS_SSL:
@@ -284,7 +339,43 @@ RABBITMQ_PORT = os.environ.get("RABBITMQ_PORT", "5672")
 RABBITMQ_USER = os.environ.get("RABBITMQ_USER", "guest")
 RABBITMQ_PASSWORD = os.environ.get("RABBITMQ_PASSWORD", "guest")
 RABBITMQ_VHOST = os.environ.get("RABBITMQ_VHOST", "/")
+
+
+def _is_bare_amqp_host_port(url: str) -> bool:
+    return bool(url) and not url.startswith(("amqp://", "amqps://"))
+
+
 AMQP_URL = os.environ.get("AMQP_URL")
+_aws_region_mq = os.environ.get("AWS_REGION", "us-east-1")
+_has_amazonmq = (
+    _has_aws_credentials
+    and os.environ.get("AMAZONMQ_SECRET_ARN")
+)
+
+# AmazonMQ: AMQP_URL not set — build URL from full secret (user, password, host, port, vhost) in Secrets Manager.
+if not AMQP_URL and _has_amazonmq:
+    from plane.utils.aws_secrets import get_secret
+
+    _mq_secret = get_secret(os.environ["AMAZONMQ_SECRET_ARN"], _aws_region_mq)
+    AMQP_URL = "amqps://{user}:{password}@{host}:{port}/{vhost}".format(
+        user=_mq_secret.get(os.environ.get("RABBITMQ_USER_KEY"), ""),
+        password=_mq_secret.get(os.environ.get("RABBITMQ_PASSWORD_KEY"), ""),
+        host=_mq_secret.get(os.environ.get("RABBITMQ_HOST_KEY"), ""),
+        port=_mq_secret.get(os.environ.get("RABBITMQ_PORT_KEY"), 5671),
+        vhost=_mq_secret.get(os.environ.get("RABBITMQ_VHOST_KEY"), "/"),
+    )
+# AmazonMQ: AMQP_URL is bare host:port — build amqps URL with username/password from Secrets Manager, vhost from env.
+elif AMQP_URL and _is_bare_amqp_host_port(AMQP_URL) and _has_amazonmq:
+    from plane.utils.aws_secrets import get_secret
+
+    _mq_secret = get_secret(os.environ["AMAZONMQ_SECRET_ARN"], _aws_region_mq)
+    _vhost = os.environ.get("RABBITMQ_VHOST", "/")
+    AMQP_URL = "amqps://{user}:{password}@{host}/{vhost}".format(
+        user=_mq_secret.get(os.environ.get("RABBITMQ_USER_KEY"), ""),
+        password=_mq_secret.get(os.environ.get("RABBITMQ_PASSWORD_KEY"), ""),
+        host=AMQP_URL,
+        vhost=_vhost,
+    )
 
 # Celery Configuration
 if AMQP_URL:
@@ -643,16 +734,40 @@ if OPENSEARCH_ENABLED:
         os.environ.get("OPENSEARCH_UPDATE_CHUNK_SIZE", "1000")
     )  # Chunk size for processing queued updates
 
-    # OpenSearch Config
+    # OpenSearch Config: If explicit creds (OPENSEARCH_USERNAME / OPENSEARCH_PASSWORD) are provided,
+    # they take precedence over IAM auth. IAM auth (SigV4) is used when AWS credentials are present
+    # via IRSA (AWS_ROLE_ARN) or EKS Pod Identity (AWS_CONTAINER_CREDENTIALS_FULL_URI).
+    _os_username = os.environ.get("OPENSEARCH_USERNAME")
+    _os_password = os.environ.get("OPENSEARCH_PASSWORD")
+
+    if _has_aws_credentials and not (_os_username and _os_password):
+        import boto3
+        from opensearchpy import RequestsHttpConnection
+        from requests_aws4auth import AWS4Auth
+
+        _os_credentials = boto3.Session().get_credentials().get_frozen_credentials()
+        _os_awsauth = AWS4Auth(
+            _os_credentials.access_key,
+            _os_credentials.secret_key,
+            os.environ.get("AWS_REGION", "us-east-1"),
+            "es",
+            session_token=_os_credentials.token,
+        )
+        _os_auth_config = {
+            "http_auth": _os_awsauth,
+            "connection_class": RequestsHttpConnection,
+            "verify_certs": True,
+        }
+    else:
+        _os_auth_config = {
+            "http_auth": (_os_username, _os_password) if _os_username and _os_password else None,
+            "verify_certs": False,
+        }
+
     OPENSEARCH_DSL = {
         "default": {
             "hosts": os.environ.get("OPENSEARCH_URL"),
-            "http_auth": (
-                os.environ.get("OPENSEARCH_USERNAME"),
-                os.environ.get("OPENSEARCH_PASSWORD"),
-            ),
             "use_ssl": True,
-            "verify_certs": False,
             "ssl_show_warn": False,
             "timeout": OPENSEARCH_SEARCH_TIMEOUT,
             # Connection pool optimization for 2-data-node setup
@@ -661,6 +776,7 @@ if OPENSEARCH_ENABLED:
             "retry_on_timeout": True,
             # Bulk indexing optimizations
             "http_compress": True,  # Reduce network overhead
+            **_os_auth_config,
         }
     }
     # Use batched signal processor (only supported mode)

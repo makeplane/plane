@@ -49,7 +49,7 @@ env:
 jobs:
   branch_build_setup:
     name: Build Setup
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     outputs:
       gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
       gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
@@ -162,7 +162,7 @@ jobs:
 
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Admin Build and Push
@@ -184,7 +184,7 @@ jobs:
 
   branch_build_push_web:
     name: Build-Push Web Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Web Build and Push
@@ -206,7 +206,7 @@ jobs:
 
   branch_build_push_space:
     name: Build-Push Space Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Space Build and Push
@@ -228,7 +228,7 @@ jobs:
 
   branch_build_push_live:
     name: Build-Push Live Collaboration Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Live Build and Push
@@ -250,7 +250,7 @@ jobs:
 
   branch_build_push_silo:
     name: Build-Push Silo Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Silo Build and Push
@@ -272,7 +272,7 @@ jobs:
 
   branch_build_push_api:
     name: Build-Push API Server Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Backend Build and Push
@@ -294,7 +294,7 @@ jobs:
 
   branch_build_push_proxy:
     name: Build-Push Proxy Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Proxy Build and Push
@@ -316,7 +316,7 @@ jobs:
 
   branch_build_push_monitor:
     name: Build-Push Monitor Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Generate Keypair
@@ -354,7 +354,7 @@ jobs:
 
   branch_build_push_email:
     name: Build-Push Email Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - id: checkout_files
@@ -381,8 +381,9 @@ jobs:
   branch_build_push_aio:
     if: ${{ needs.branch_build_setup.outputs.aio_build == 'true' }}
     name: Build-Push AIO Docker Image
-    runs-on: ubuntu-22.04
-    needs: [
+    runs-on: ubuntu-22.04-4core
+    needs:
+      [
         branch_build_setup,
         branch_build_push_admin,
         branch_build_push_web,
@@ -402,7 +403,7 @@ jobs:
         id: prepare_aio_assets
         run: |
           cd deployments/aio/commercial
-          
+
           if [ "${{ needs.branch_build_setup.outputs.build_type }}" == "Release" ]; then
             aio_version=${{ needs.branch_build_setup.outputs.release_version }}
           else
@@ -446,7 +447,7 @@ jobs:
   upload_artifacts_s3:
     if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' || needs.branch_build_setup.outputs.airgapped_build == 'true' }}
     name: Upload artifacts to S3 Bucket
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     container:
       image: docker:20.10.7
@@ -565,7 +566,7 @@ jobs:
         with:
           name: podman-quadlets.tar.gz
           path: ~/${{ env.ARTIFACT_SUFFIX }}/podman-quadlets.tar.gz
-      
+
       - name: Upload docker-compose.yml
         uses: actions/upload-artifact@v4
         with:
@@ -577,7 +578,7 @@ jobs:
         with:
           name: coolify-compose.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose.yml
-      
+
       - name: Upload portainer-compose.yml
         uses: actions/upload-artifact@v4
         with:
@@ -589,11 +590,11 @@ jobs:
         with:
           name: variables.env
           path: ~/${{ env.ARTIFACT_SUFFIX }}/variables.env
-      
+
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs:
       [
         branch_build_setup,
@@ -660,7 +661,7 @@ jobs:
   package_airgapped_artifacts:
     if: ${{ needs.branch_build_setup.outputs.airgapped_build == 'true' || needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Package Airgapped Artifacts
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs:
       [
         branch_build_setup,
