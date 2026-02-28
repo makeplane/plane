@@ -49,8 +49,13 @@ class SizedTimedRotatingFileHandler(handlers.TimedRotatingFileHandler):
                 self, filename, when, interval, backupCount, encoding, delay, utc
             )
         except (PermissionError, OSError) as e:
-            # Fall back to a no-op handler when file is not writable
+            # Fall back to a no-op handler when file is not writable.
+            # Set attributes that parent classes (StreamHandler, FileHandler,
+            # BaseRotatingHandler) expect so close() and other inherited
+            # methods don't raise AttributeError.
             logging.Handler.__init__(self)
+            self.stream = None
+            self.baseFilename = os.path.abspath(filename)
             self._disabled = True
             print(
                 f"WARNING: Unable to open log file '{filename}': {e}. "
@@ -62,6 +67,12 @@ class SizedTimedRotatingFileHandler(handlers.TimedRotatingFileHandler):
         if self._disabled:
             return
         super().emit(record)
+
+    def close(self):
+        if self._disabled:
+            logging.Handler.close(self)
+            return
+        super().close()
 
     def shouldRollover(self, record):
         """
