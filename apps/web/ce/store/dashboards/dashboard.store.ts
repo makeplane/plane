@@ -1,4 +1,4 @@
-import { makeObservable, observable, action, runInAction } from "mobx";
+import { makeObservable, observable, action, runInAction, set } from "mobx";
 import { DashboardService } from "@/services/dashboards/dashboard.service";
 import type { CoreRootStore } from "@/store/root.store";
 import type {
@@ -133,7 +133,7 @@ export class DashboardStore implements IDashboardStore {
     try {
       const response = await this.dashboardService.getWidgets(workspaceSlug, dashboardId);
       runInAction(() => {
-        this.dashboardWidgets[dashboardId] = response;
+        set(this.dashboardWidgets, dashboardId, response);
       });
     } catch (error) {
       console.error("Failed to fetch widgets", error);
@@ -145,7 +145,7 @@ export class DashboardStore implements IDashboardStore {
       const response = await this.dashboardService.createWidget(workspaceSlug, dashboardId, data);
       runInAction(() => {
         const widgets = this.dashboardWidgets[dashboardId] || [];
-        this.dashboardWidgets[dashboardId] = [...widgets, response];
+        set(this.dashboardWidgets, dashboardId, [...widgets, response]);
       });
       // Fire-and-forget: fetch initial chart data for the new widget
       void this.fetchWidgetChartData(workspaceSlug, dashboardId, response.id);
@@ -163,7 +163,7 @@ export class DashboardStore implements IDashboardStore {
       if (index !== -1) {
         const updated = [...widgets];
         updated[index] = { ...widgets[index], ...localData };
-        this.dashboardWidgets[dashboardId] = updated;
+        set(this.dashboardWidgets, dashboardId, updated);
       }
     }
   }
@@ -193,7 +193,11 @@ export class DashboardStore implements IDashboardStore {
     try {
       await this.dashboardService.deleteWidget(workspaceSlug, dashboardId, widgetId);
       runInAction(() => {
-        this.dashboardWidgets[dashboardId] = this.dashboardWidgets[dashboardId].filter((w) => w.id !== widgetId);
+        set(
+          this.dashboardWidgets,
+          dashboardId,
+          this.dashboardWidgets[dashboardId].filter((w) => w.id !== widgetId)
+        );
       });
     } catch (error) {
       console.error("Failed to delete widget", error);
@@ -205,7 +209,7 @@ export class DashboardStore implements IDashboardStore {
     try {
       const response = await this.dashboardService.getWidgetChartData(workspaceSlug, dashboardId, widgetId);
       runInAction(() => {
-        this.widgetChartData[widgetId] = response.data;
+        set(this.widgetChartData, widgetId, response.data);
       });
     } catch (error) {
       console.error("Failed to fetch widget chart data", error);
@@ -224,10 +228,14 @@ export class DashboardStore implements IDashboardStore {
       const widgets = this.dashboardWidgets[dashboardId];
       if (!widgets) return;
       const posMap = new Map(positions.map((p) => [p.id, p]));
-      this.dashboardWidgets[dashboardId] = widgets.map((w) => {
-        const pos = posMap.get(w.id);
-        return pos ? { ...w, ...pos } : w;
-      });
+      set(
+        this.dashboardWidgets,
+        dashboardId,
+        widgets.map((w) => {
+          const pos = posMap.get(w.id);
+          return pos ? { ...w, ...pos } : w;
+        })
+      );
     });
 
     try {
@@ -235,7 +243,7 @@ export class DashboardStore implements IDashboardStore {
     } catch (error) {
       // Rollback on API failure
       runInAction(() => {
-        this.dashboardWidgets[dashboardId] = prevWidgets;
+        set(this.dashboardWidgets, dashboardId, prevWidgets);
       });
       console.error("Failed to bulk update widget positions", error);
       throw error;

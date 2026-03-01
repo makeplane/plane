@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { Button } from "@plane/propel/button";
@@ -31,17 +31,18 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
     void store.fetchWidgets(workspaceSlug, dashboardId);
   }, [workspaceSlug, dashboardId, store]);
 
-  const widgets = useMemo(() => store.dashboardWidgets[dashboardId] ?? [], [store, dashboardId]);
+  const widgets = store.dashboardWidgets[dashboardId] ?? [];
 
   // Fetch chart data for each widget once widgets are loaded
+  const widgetIds = widgets.map((w) => w.id).join(",");
   useEffect(() => {
-    if (!workspaceSlug || !dashboardId || widgets.length === 0) return;
-    widgets.forEach((w) => {
-      if (!store.widgetChartData[w.id]) {
-        void store.fetchWidgetChartData(workspaceSlug, dashboardId, w.id);
+    if (!workspaceSlug || !dashboardId || !widgetIds) return;
+    widgetIds.split(",").forEach((id) => {
+      if (!store.widgetChartData[id]) {
+        void store.fetchWidgetChartData(workspaceSlug, dashboardId, id);
       }
     });
-  }, [workspaceSlug, dashboardId, widgets, store]);
+  }, [workspaceSlug, dashboardId, widgetIds, store]);
 
   const dashboard = store.dashboards.find((d) => d.id === dashboardId);
   const pageTitle = dashboard?.name ?? "Dashboard";
