@@ -40,6 +40,7 @@ from plane.app.views import (
     DashboardViewSet,
     DashboardWidgetViewSet,
     DashboardWidgetChartEndpoint,
+    DashboardWidgetBulkPositionEndpoint,
 )
 
 
@@ -254,6 +255,11 @@ urlpatterns = [
         "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/widgets/<uuid:widget_id>/charts/",
         DashboardWidgetChartEndpoint.as_view(),
         name="workspace-dashboard-widget-charts",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/widgets/positions/",
+        DashboardWidgetBulkPositionEndpoint.as_view(),
+        name="workspace-dashboard-widget-positions",
     ),
     # Widgets
     path(

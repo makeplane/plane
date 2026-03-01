@@ -104,6 +104,19 @@ export class DashboardService extends APIService {
       });
   }
 
+  // Bulk position update for drag-and-drop grid layout
+  async updateWidgetPositions(
+    workspaceSlug: string,
+    dashboardId: string,
+    widgets: Array<{ id: string; x_axis_coord: number; y_axis_coord: number; width: number; height: number }>
+  ): Promise<void> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/positions/`, { widgets })
+      .then(() => undefined)
+      .catch((err: IErrorResponse) => {
+        throw err?.response?.data;
+      });
+  }
+
   // Charts
   async getWidgetChartData(
     workspaceSlug: string,

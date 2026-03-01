@@ -34,7 +34,7 @@ export const WidgetConfigTabContent = ({
 }: WidgetConfigTabContentProps) => (
   <div className="mt-4 max-h-96 overflow-y-auto">
     {activeTab === "type" && <WidgetTypeSelector selectedType={chartType} onChange={onChartTypeChange} />}
-    {activeTab === "basic" && <BasicSettingsSection control={control} errors={errors} />}
+    {activeTab === "basic" && <BasicSettingsSection control={control} errors={errors} chartType={chartType} />}
     {activeTab === "style" && <StyleSettingsSection control={control} chartType={chartType} />}
     {activeTab === "display" && <DisplaySettingsSection control={control} chartType={chartType} />}
     {activeTab === "filters" && <FilterSettingsSection control={control} />}

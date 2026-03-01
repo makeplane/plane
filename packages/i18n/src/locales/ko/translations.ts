@@ -3227,5 +3227,23 @@ export default {
     list_description: "대시보드 생성 및 관리",
     delete_confirm_prefix: "삭제하시겠습니까?",
     delete_confirm_suffix: "? 이 작업은 되돌릴 수 없으며 모든 위젯이 영구적으로 삭제됩니다.",
+    // Project picker in dashboard form
+    projects_label: "프로젝트",
+    projects_hint: "위젯 데이터 범위를 지정할 프로젝트를 선택하세요",
+    projects_selected: "개 프로젝트 선택됨",
+    no_projects: "이 워크스페이스에 사용 가능한 프로젝트가 없습니다",
+    // M2: line type options
+    line_type: "선 유형",
+    line_type_solid: "실선",
+    line_type_dashed: "점선",
+    line_type_stepped: "계단형",
+    // M1: bar orientation
+    orientation: "방향",
+    orientation_vertical: "세로",
+    orientation_horizontal: "가로",
+    // M4: number widget display
+    text_align: "텍스트 정렬",
+    text_color: "텍스트 색상",
+    text_color_default: "기본값",
   },
 } as const;

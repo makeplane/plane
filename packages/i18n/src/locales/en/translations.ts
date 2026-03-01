@@ -3242,5 +3242,23 @@ export default {
     list_description: "Create and manage dashboards",
     delete_confirm_prefix: "Are you sure you want to delete",
     delete_confirm_suffix: "? This action cannot be undone and all widgets will be permanently removed.",
+    // Project picker in dashboard form
+    projects_label: "Projects",
+    projects_hint: "Select projects to scope widget data",
+    projects_selected: "project(s) selected",
+    no_projects: "No projects available in this workspace",
+    // M2: line type options
+    line_type: "Line Type",
+    line_type_solid: "Solid",
+    line_type_dashed: "Dashed",
+    line_type_stepped: "Stepped",
+    // M1: bar orientation
+    orientation: "Orientation",
+    orientation_vertical: "Vertical",
+    orientation_horizontal: "Horizontal",
+    // M4: number widget display
+    text_align: "Text Align",
+    text_color: "Text Color",
+    text_color_default: "Default",
   },
 } as const;

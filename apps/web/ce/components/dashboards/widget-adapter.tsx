@@ -3,27 +3,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  *
- * Widget adapter: maps backend chart data to propel chart components.
+ * Widget adapter: maps backend chart data to drill-down chart renderers.
+ * Handles H2 (click drill-down), M1 (bar orientation), M2 (line type),
+ * M3 (donut center value), M4 (number text align + color).
  */
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { BarChart } from "@plane/propel/charts/bar-chart";
-import { LineChart } from "@plane/propel/charts/line-chart";
-import { PieChart } from "@plane/propel/charts/pie-chart";
-import { AreaChart } from "@plane/propel/charts/area-chart";
-import { ANALYTICS_COLOR_PRESETS } from "@plane/constants";
+import { useAppRouter } from "@/hooks/use-app-router";
 import type { IDashboardWidget } from "@plane/types";
 import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
-
-// Default color palette fallback
-const DEFAULT_COLORS = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#6366f1"];
-
-/** Resolve colors from widget config or fallback */
-const getColors = (config: Record<string, unknown>): string[] => {
-  const presetId = (config?.color_preset as string) || "modern";
-  return ANALYTICS_COLOR_PRESETS[presetId]?.colors ?? DEFAULT_COLORS;
-};
+import { DrillDownBarChart } from "./chart-renderers/drill-down-bar-chart";
+import { DrillDownLineChart } from "./chart-renderers/drill-down-line-chart";
+import { DrillDownAreaChart } from "./chart-renderers/drill-down-area-chart";
+import { DrillDownPieChart } from "./chart-renderers/drill-down-pie-chart";
 
 interface WidgetAdapterProps {
   widget: IDashboardWidget;
@@ -31,17 +24,29 @@ interface WidgetAdapterProps {
   dashboardId?: string;
 }
 
-export const WidgetAdapter = observer(({ widget }: WidgetAdapterProps) => {
+export const WidgetAdapter = observer(({ widget, workspaceSlug }: WidgetAdapterProps) => {
+  const router = useAppRouter();
   const dashboardStore = useCustomDashboard();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- data is MobX observable and stable
   const data = dashboardStore.widgetChartData[widget.id] || [];
-
-  const colors = useMemo(() => getColors(widget.config), [widget.config]);
 
   const metricKeys = useMemo(() => {
     if (!data || data.length === 0 || !data[0]) return ["count"];
     return Object.keys(data[0]).filter((k) => k !== "name");
   }, [data]);
+
+  const isGrouped = widget.chart_model === "GROUPED" && metricKeys.length > 1;
+
+  // H2: Build drill-down URL and navigate to filtered issue list
+  const handleDrillDown = useCallback(
+    (filterKey: string, filterValue: string) => {
+      if (!workspaceSlug) return;
+      const params = new URLSearchParams();
+      params.set(filterKey, filterValue);
+      router.push(`/${workspaceSlug}/issues/?${params.toString()}`);
+    },
+    [router, workspaceSlug]
+  );
 
   if (!data || data.length === 0) {
     return (
@@ -51,105 +56,62 @@ export const WidgetAdapter = observer(({ widget }: WidgetAdapterProps) => {
     );
   }
 
-  const isGrouped = widget.chart_model === "GROUPED" && metricKeys.length > 1;
-
   switch (widget.chart_type) {
-    case "NUMBER":
+    case "NUMBER": {
+      // M4: text_align and text_color from widget config
+      const textAlign = (widget.config?.text_align as string) || "center";
+      const rawColor = widget.config?.text_color as string | undefined;
+      // Only allow valid hex color values to prevent style injection
+      const textColor = rawColor && /^#[\da-fA-F]{3,8}$/.test(rawColor) ? rawColor : undefined;
+      const alignClass =
+        textAlign === "left" ? "justify-start pl-6" : textAlign === "right" ? "justify-end pr-6" : "justify-center";
       return (
-        <div className="flex items-center justify-center h-full">
-          <span className="text-4xl font-bold text-color-primary">{data[0]?.count ?? 0}</span>
+        <div className={`flex items-center h-full ${alignClass}`}>
+          <span className="text-4xl font-bold" style={textColor ? { color: textColor } : undefined}>
+            {data[0]?.count ?? 0}
+          </span>
         </div>
       );
+    }
 
     case "BAR_CHART":
       return (
-        <div className="w-full h-full p-2">
-          <BarChart
-            className="h-full w-full"
-            data={data}
-            bars={(isGrouped ? metricKeys : ["count"]).map((key, i) => ({
-              key,
-              label: key.replace(/_/g, " "),
-              fill: colors[i % colors.length],
-              textClassName: "text-color-secondary",
-              stackId: "s",
-            }))}
-            xAxis={{ key: "name" }}
-            yAxis={{ key: isGrouped ? metricKeys[0] : "count" }}
-          />
-        </div>
+        <DrillDownBarChart
+          widget={widget}
+          data={data}
+          isGrouped={isGrouped}
+          metricKeys={metricKeys}
+          onDrillDown={handleDrillDown}
+        />
       );
 
     case "LINE_CHART":
       return (
-        <div className="w-full h-full p-2">
-          <LineChart
-            className="h-full w-full"
-            data={data}
-            lines={(isGrouped ? metricKeys : ["count"]).map((key, i) => ({
-              key,
-              label: key.replace(/_/g, " "),
-              stroke: colors[i % colors.length],
-              fill: colors[i % colors.length],
-              dashedLine: false,
-              showDot: true,
-              smoothCurves: true,
-            }))}
-            xAxis={{ key: "name" }}
-            yAxis={{ key: isGrouped ? metricKeys[0] : "count" }}
-          />
-        </div>
+        <DrillDownLineChart
+          widget={widget}
+          data={data}
+          isGrouped={isGrouped}
+          metricKeys={metricKeys}
+          onDrillDown={handleDrillDown}
+        />
       );
 
     case "AREA_CHART":
       return (
-        <div className="w-full h-full p-2">
-          <AreaChart
-            className="h-full w-full"
-            data={data}
-            areas={(isGrouped ? metricKeys : ["count"]).map((key, i) => ({
-              key,
-              label: key.replace(/_/g, " "),
-              stackId: "s",
-              fill: colors[i % colors.length],
-              fillOpacity: 0.3,
-              showDot: false,
-              smoothCurves: true,
-              strokeColor: colors[i % colors.length],
-              strokeOpacity: 1,
-            }))}
-            xAxis={{ key: "name" }}
-            yAxis={{ key: isGrouped ? metricKeys[0] : "count" }}
-          />
-        </div>
+        <DrillDownAreaChart
+          widget={widget}
+          data={data}
+          isGrouped={isGrouped}
+          metricKeys={metricKeys}
+          onDrillDown={handleDrillDown}
+        />
       );
 
     case "PIE_CHART":
-      return (
-        <div className="w-full h-full p-2">
-          <PieChart
-            className="h-full w-full"
-            data={data.map((d, i) => ({ ...d, key: `cell-${i}` }))}
-            dataKey="count"
-            cells={data.map((_, i) => ({ key: `cell-${i}`, fill: colors[i % colors.length] }))}
-            showLabel={false}
-          />
-        </div>
-      );
+      return <DrillDownPieChart widget={widget} data={data} isDonut={false} onDrillDown={handleDrillDown} />;
 
     case "DONUT_CHART":
-      return (
-        <div className="w-full h-full p-2">
-          <PieChart
-            className="h-full w-full"
-            data={data.map((d, i) => ({ ...d, key: `cell-${i}` }))}
-            dataKey="count"
-            cells={data.map((_, i) => ({ key: `cell-${i}`, fill: colors[i % colors.length] }))}
-            innerRadius="60%"
-            showLabel={false}
-          />
-        </div>
-      );
+      return <DrillDownPieChart widget={widget} data={data} isDonut={true} onDrillDown={handleDrillDown} />;
 
     default:
       return (

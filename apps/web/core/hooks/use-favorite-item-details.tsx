@@ -14,7 +14,7 @@ import {
 } from "@/components/workspace/sidebar/favorites/favorite-items/common";
 // helpers
 // hooks
-import { useAnalyticsDashboard } from "@/plane-web/hooks/store/use-analytics-dashboard";
+import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
@@ -31,7 +31,7 @@ export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorit
   } = favorite;
   const favoriteItemName = favorite?.entity_data?.name || favorite?.name;
   // store hooks
-  const { getDashboardById } = useAnalyticsDashboard();
+  const { dashboards } = useCustomDashboard();
   const { getViewById } = useProjectView();
   const { getProjectById } = useProject();
   const { getCycleById } = useCycle();
@@ -74,7 +74,7 @@ export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorit
       itemIcon = getFavoriteItemIcon("module");
       break;
     case "analytics_dashboard": {
-      const dashboardDetail = getDashboardById(favoriteItemId ?? "");
+      const dashboardDetail = dashboards.find((d) => d.id === (favoriteItemId ?? ""));
       itemTitle = dashboardDetail?.name ?? favoriteItemName;
       itemIcon = getFavoriteItemIcon("analytics_dashboard");
       break;

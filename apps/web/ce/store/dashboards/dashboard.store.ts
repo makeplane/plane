@@ -11,6 +11,15 @@ import type {
   TDashboardWidgetUpdate,
 } from "@plane/types";
 
+/** Minimal position payload per widget for bulk grid layout updates */
+export type TWidgetPositionItem = {
+  id: string;
+  x_axis_coord: number;
+  y_axis_coord: number;
+  width: number;
+  height: number;
+};
+
 export interface IDashboardStore {
   dashboards: IDashboard[];
   dashboardWidgets: Record<string, IDashboardWidget[]>;
@@ -31,6 +40,7 @@ export interface IDashboardStore {
   deleteWidget: (workspaceSlug: string, dashboardId: string, widgetId: string) => Promise<void>;
   fetchWidgetChartData: (workspaceSlug: string, dashboardId: string, widgetId: string) => Promise<void>;
   localWidgetEdit: (dashboardId: string, widgetId: string, localData: Partial<IDashboardWidget>) => void;
+  bulkUpdatePositions: (workspaceSlug: string, dashboardId: string, positions: TWidgetPositionItem[]) => Promise<void>;
 }
 
 export class DashboardStore implements IDashboardStore {
@@ -58,6 +68,7 @@ export class DashboardStore implements IDashboardStore {
       deleteWidget: action,
       fetchWidgetChartData: action,
       localWidgetEdit: action,
+      bulkUpdatePositions: action,
     });
     this.dashboardService = new DashboardService();
     this.rootStore = rootStore;
@@ -198,6 +209,36 @@ export class DashboardStore implements IDashboardStore {
       });
     } catch (error) {
       console.error("Failed to fetch widget chart data", error);
+    }
+  }
+
+  /**
+   * Optimistically update widget positions locally, then persist via bulk API.
+   * Rolls back on failure.
+   */
+  async bulkUpdatePositions(workspaceSlug: string, dashboardId: string, positions: TWidgetPositionItem[]) {
+    const prevWidgets = this.dashboardWidgets[dashboardId]?.slice() ?? [];
+
+    // Optimistic update
+    runInAction(() => {
+      const widgets = this.dashboardWidgets[dashboardId];
+      if (!widgets) return;
+      const posMap = new Map(positions.map((p) => [p.id, p]));
+      this.dashboardWidgets[dashboardId] = widgets.map((w) => {
+        const pos = posMap.get(w.id);
+        return pos ? { ...w, ...pos } : w;
+      });
+    });
+
+    try {
+      await this.dashboardService.updateWidgetPositions(workspaceSlug, dashboardId, positions);
+    } catch (error) {
+      // Rollback on API failure
+      runInAction(() => {
+        this.dashboardWidgets[dashboardId] = prevWidgets;
+      });
+      console.error("Failed to bulk update widget positions", error);
+      throw error;
     }
   }
 }

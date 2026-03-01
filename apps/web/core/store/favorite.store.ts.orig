@@ -341,18 +341,17 @@ export class FavoriteStore implements IFavoriteStore {
         );
       case "analytics_dashboard": {
         // analytics_dashboard entity type maps to V2 customDashboard store (V1 removed)
-        /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
+        /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
         const store = (this.rootStore as any).customDashboard;
         if (store?.dashboards) {
           const idx = (store.dashboards as Array<{ id: string; is_favorite?: boolean }>).findIndex(
             (d) => d.id === entity_identifier
           );
-          if (idx !== -1) {
-             
+            (store.dashboards[idx].is_favorite = false); // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             store.dashboards[idx].is_favorite = false;
           }
         }
-        /* eslint-enable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
+        /* eslint-enable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
         return;
       }
       default:

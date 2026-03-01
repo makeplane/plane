@@ -6,8 +6,8 @@
 
 import { observer } from "mobx-react";
 import { MoreHorizontal, Pencil, Trash2, LayoutDashboard, Lock, Globe } from "lucide-react";
-import type { IDashboard } from "@plane/types";
 import { useAppRouter } from "@/hooks/use-app-router";
+import type { IDashboard } from "@plane/types";
 
 type Props = {
   dashboard: IDashboard;
@@ -16,12 +16,7 @@ type Props = {
   onDelete: (dashboard: IDashboard) => void;
 };
 
-export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
-  dashboard,
-  workspaceSlug,
-  onEdit,
-  onDelete,
-}: Props) {
+export const DashboardCard = observer(function DashboardCard({ dashboard, workspaceSlug, onEdit, onDelete }: Props) {
   const router = useAppRouter();
 
   const handleCardClick = () => {

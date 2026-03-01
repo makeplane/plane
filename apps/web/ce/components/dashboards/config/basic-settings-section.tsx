@@ -13,16 +13,23 @@ import type { Control, FieldErrors } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import { Input } from "@plane/propel/input";
 import { CustomSelect } from "@plane/ui";
-import { ANALYTICS_CHART_PROPERTY_OPTIONS, ANALYTICS_CHART_METRIC_OPTIONS } from "@plane/constants";
+import {
+  ANALYTICS_CHART_PROPERTY_OPTIONS,
+  ANALYTICS_CHART_METRIC_OPTIONS,
+  ANALYTICS_NUMBER_METRIC_OPTIONS,
+} from "@plane/constants";
 
 interface BasicSettingsSectionProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   errors: FieldErrors<any>;
+  chartType?: string;
 }
 
-export const BasicSettingsSection = observer(({ control, errors }: BasicSettingsSectionProps) => {
+export const BasicSettingsSection = observer(({ control, errors, chartType }: BasicSettingsSectionProps) => {
+  // NUMBER widgets support all 8 metrics; other chart types use the 2 standard metrics
+  const metricOptions = chartType === "number" ? ANALYTICS_NUMBER_METRIC_OPTIONS : ANALYTICS_CHART_METRIC_OPTIONS;
   const { t } = useTranslation();
 
   const chartModelOptions = [
@@ -96,13 +103,10 @@ export const BasicSettingsSection = observer(({ control, errors }: BasicSettings
             <CustomSelect
               value={field.value as string}
               onChange={(val: string) => field.onChange(val)}
-              label={
-                ANALYTICS_CHART_METRIC_OPTIONS.find((o) => o.key === field.value)?.label ||
-                t("analytics_dashboard.select_metric")
-              }
+              label={metricOptions.find((o) => o.key === field.value)?.label || t("analytics_dashboard.select_metric")}
               input
             >
-              {ANALYTICS_CHART_METRIC_OPTIONS.map((opt) => (
+              {metricOptions.map((opt) => (
                 <CustomSelect.Option key={opt.key} value={opt.key}>
                   {opt.label}
                 </CustomSelect.Option>

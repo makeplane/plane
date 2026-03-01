@@ -8,11 +8,12 @@ from django.db.models import Q
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 # Module imports
 from plane.app.permissions import WorkSpaceBasePermission, allow_permission, ROLE
 from plane.app.serializers.dashboard import DashboardSerializer, DashboardWidgetSerializer
-from plane.app.views.base import BaseViewSet
+from plane.app.views.base import BaseViewSet, BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
 from plane.db.models import Dashboard, DashboardWidget, Project, Workspace
 from plane.utils.host import base_host
@@ -169,4 +170,53 @@ class DashboardWidgetViewSet(BaseViewSet):
             slug=slug,
             origin=base_host(request=request, is_app=True),
         )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class DashboardWidgetBulkPositionEndpoint(BaseAPIView):
+    """Bulk update widget grid positions in a single DB call."""
+
+    permission_classes = [WorkSpaceBasePermission]
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def patch(self, request, slug, dashboard_id):
+        widgets_data = request.data.get("widgets", [])
+        if not isinstance(widgets_data, list) or not widgets_data:
+            return Response(
+                {"error": "widgets must be a non-empty list"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Fetch all widgets in one query — verify they belong to this dashboard/workspace
+        widget_ids = [item.get("id") for item in widgets_data if item.get("id")]
+        widgets_qs = DashboardWidget.objects.filter(
+            id__in=widget_ids,
+            dashboard_id=dashboard_id,
+            workspace__slug=slug,
+        )
+        widget_map = {str(w.id): w for w in widgets_qs}
+
+        updated_widgets = []
+        for item in widgets_data:
+            widget_id = str(item.get("id", ""))
+            widget = widget_map.get(widget_id)
+            if widget is None:
+                continue
+            x = int(item.get("x_axis_coord", widget.x_axis_coord))
+            y = int(item.get("y_axis_coord", widget.y_axis_coord))
+            w = int(item.get("width", widget.width))
+            h = int(item.get("height", widget.height))
+            # Clamp coordinates to non-negative, dimensions to at least 1
+            widget.x_axis_coord = max(0, x)
+            widget.y_axis_coord = max(0, y)
+            widget.width = max(1, min(w, 12))
+            widget.height = max(1, min(h, 24))
+            updated_widgets.append(widget)
+
+        if updated_widgets:
+            DashboardWidget.objects.bulk_update(
+                updated_widgets,
+                ["x_axis_coord", "y_axis_coord", "width", "height"],
+            )
+
         return Response(status=status.HTTP_204_NO_CONTENT)

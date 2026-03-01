@@ -15,10 +15,11 @@ import { Loader } from "@plane/ui";
 import type { IDashboard } from "@plane/types";
 import { PageHead } from "@/components/core/page-title";
 import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
-import { AnalyticsDashboardCard } from "./components/analytics-dashboard-card";
-import { AnalyticsDashboardDeleteModal } from "./components/analytics-dashboard-delete-modal";
-import { AnalyticsDashboardFormModal } from "@/plane-web/components/dashboards/analytics-dashboard-form-modal";
-import { AnalyticsDashboardListHeader } from "./components/analytics-dashboard-list-header";
+import { DashboardCard } from "./components/dashboard-card";
+import { DashboardDeleteModal } from "./components/dashboard-delete-modal";
+import { DashboardFormModal  } from "@/plane-web/components/dashboards/dashboard-form-modal";
+import type {DashboardFormPayload} from "@/plane-web/components/dashboards/dashboard-form-modal";
+import { DashboardListHeader } from "./components/dashboard-list-header";
 
 const DashboardListPage = observer(function DashboardListPage() {
   const { t } = useTranslation();
@@ -36,7 +37,7 @@ const DashboardListPage = observer(function DashboardListPage() {
   }, [workspaceSlug, store]);
 
   const handleCreate = useCallback(
-    async (data: { name: string; description: string; access: number }) => {
+    async (data: DashboardFormPayload) => {
       if (!workspaceSlug) return;
       try {
         await store.createDashboard(workspaceSlug, data);
@@ -50,7 +51,7 @@ const DashboardListPage = observer(function DashboardListPage() {
   );
 
   const handleUpdate = useCallback(
-    async (data: { name: string; description: string; access: number }) => {
+    async (data: DashboardFormPayload) => {
       if (!workspaceSlug || !editDashboard) return;
       try {
         await store.updateDashboard(workspaceSlug, editDashboard.id, data);
@@ -83,7 +84,7 @@ const DashboardListPage = observer(function DashboardListPage() {
     <>
       <PageHead title={pageTitle} />
       <div className="flex h-full flex-col overflow-hidden">
-        <AnalyticsDashboardListHeader onCreateClick={() => setIsCreateOpen(true)} />
+        <DashboardListHeader onCreateClick={() => setIsCreateOpen(true)} />
 
         <div className="flex-1 overflow-auto">
           {isLoading ? (
@@ -112,7 +113,7 @@ const DashboardListPage = observer(function DashboardListPage() {
           ) : (
             <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
               {dashboards.map((dashboard) => (
-                <AnalyticsDashboardCard
+                <DashboardCard
                   key={dashboard.id}
                   dashboard={dashboard}
                   workspaceSlug={workspaceSlug ?? ""}
@@ -126,14 +127,10 @@ const DashboardListPage = observer(function DashboardListPage() {
       </div>
 
       {/* Create modal */}
-      <AnalyticsDashboardFormModal
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        onSubmit={handleCreate}
-      />
+      <DashboardFormModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSubmit={handleCreate} />
 
       {/* Edit modal */}
-      <AnalyticsDashboardFormModal
+      <DashboardFormModal
         isOpen={!!editDashboard}
         onClose={() => setEditDashboard(null)}
         onSubmit={handleUpdate}
@@ -141,7 +138,7 @@ const DashboardListPage = observer(function DashboardListPage() {
       />
 
       {/* Delete modal */}
-      <AnalyticsDashboardDeleteModal
+      <DashboardDeleteModal
         isOpen={!!deleteDashboard}
         onClose={() => setDeleteDashboard(null)}
         onConfirm={handleDelete}

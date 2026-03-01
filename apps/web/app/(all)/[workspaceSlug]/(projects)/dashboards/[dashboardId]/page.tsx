@@ -31,7 +31,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
     void store.fetchWidgets(workspaceSlug, dashboardId);
   }, [workspaceSlug, dashboardId, store]);
 
-  const widgets = useMemo(() => store.dashboardWidgets[dashboardId] ?? [], [store.dashboardWidgets, dashboardId]);
+  const widgets = useMemo(() => store.dashboardWidgets[dashboardId] ?? [], [store, dashboardId]);
 
   // Fetch chart data for each widget once widgets are loaded
   useEffect(() => {
@@ -43,7 +43,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
     });
   }, [workspaceSlug, dashboardId, widgets, store]);
 
-  const dashboard = useMemo(() => store.dashboards.find((d) => d.id === dashboardId), [store.dashboards, dashboardId]);
+  const dashboard = store.dashboards.find((d) => d.id === dashboardId);
   const pageTitle = dashboard?.name ?? "Dashboard";
 
   const handleDeleteWidget = useCallback(

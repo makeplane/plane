@@ -51,7 +51,7 @@ export const CustomDashboardWidgetCard = observer(function CustomDashboardWidget
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           {isEditMode && (
-            <div className="widget-drag-handle cursor-grab active:cursor-grabbing">
+            <div className="drag-handle cursor-grab active:cursor-grabbing">
               <GripVertical className="h-4 w-4 text-color-placeholder" />
             </div>
           )}

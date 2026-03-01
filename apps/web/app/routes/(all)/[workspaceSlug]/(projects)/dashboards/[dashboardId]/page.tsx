@@ -138,6 +138,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
             <CustomDashboardWidgetGrid
               widgets={widgets}
               workspaceSlug={workspaceSlug}
+              dashboardId={dashboardId}
               isEditMode={isEditMode}
               onDeleteWidget={(id) => void handleDeleteWidget(id)}
               onConfigureWidget={handleConfigureWidget}

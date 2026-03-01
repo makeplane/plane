@@ -3255,5 +3255,23 @@ export default {
     list_description: "Tạo và quản lý bảng phân tích",
     delete_confirm_prefix: "Bạn có chắc chắn muốn xóa",
     delete_confirm_suffix: "? Hành động này không thể hoàn tác và tất cả widget sẽ bị xóa vĩnh viễn.",
+    // Project picker in dashboard form
+    projects_label: "Dự án",
+    projects_hint: "Chọn dự án để giới hạn dữ liệu widget",
+    projects_selected: "dự án đã chọn",
+    no_projects: "Không có dự án nào trong không gian làm việc này",
+    // M2: line type options
+    line_type: "Kiểu đường",
+    line_type_solid: "Liền nét",
+    line_type_dashed: "Nét đứt",
+    line_type_stepped: "Bậc thang",
+    // M1: bar orientation
+    orientation: "Hướng",
+    orientation_vertical: "Dọc",
+    orientation_horizontal: "Ngang",
+    // M4: number widget display
+    text_align: "Căn chỉnh văn bản",
+    text_color: "Màu văn bản",
+    text_color_default: "Mặc định",
   },
 } as const;

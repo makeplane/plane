@@ -239,14 +239,6 @@ from .webhook.base import (
     WebhookSecretRegenerateEndpoint,
 )
 
-from .analytics_dashboard import (
-    AnalyticsDashboardEndpoint,
-    AnalyticsDashboardDetailEndpoint,
-    AnalyticsDashboardWidgetEndpoint,
-    AnalyticsDashboardWidgetDetailEndpoint,
-    AnalyticsDashboardWidgetDataEndpoint,
-)
-
 from .workspace.department import (
     DepartmentEndpoint,
     DepartmentDetailEndpoint,
@@ -264,7 +256,7 @@ from .workspace.staff import (
     StaffStatsEndpoint,
 )
 
-from .dashboard import DashboardViewSet, DashboardWidgetViewSet
+from .dashboard import DashboardViewSet, DashboardWidgetViewSet, DashboardWidgetBulkPositionEndpoint
 from .dashboard_chart import DashboardWidgetChartEndpoint
 
 from .error_404 import custom_404_view
