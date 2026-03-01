@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { observer } from "mobx-react";
 import Link from "next/link";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -27,7 +28,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export function ImportersListItem(props: Props) {
+export const ImportersListItem = observer(function ImportersListItem(props: Props) {
   const { provider, workspaceSlug } = props;
   // translation
   const { t } = useTranslation();
@@ -63,4 +64,4 @@ export function ImportersListItem(props: Props) {
       </Link>
     </div>
   );
-}
+});
