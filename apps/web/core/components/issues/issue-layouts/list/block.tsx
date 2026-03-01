@@ -66,7 +66,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     displayProperties,
     canEditProperties,
     nestingLevel,
-    spacingLeft = 14,
+    //spacingLeft = 14,
     isExpanded,
     setExpanded,
     selectionHelpers,
@@ -121,7 +121,10 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     return combine(
       draggable({
         element,
-        canDrag: () => isDraggingAllowed,
+        canDrag: () => {
+          if (window.getSelection()?.toString()) return false;
+          return isDraggingAllowed;
+        },
         getInitialData: () => ({ id: issueId, type: "ISSUE", groupId }),
         onDragStart: () => {
           setIsCurrentBlockDragging(true);
@@ -138,10 +141,10 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issue.id);
   const isIssueActive = selectionHelpers.getIsEntityActive(issue.id);
-  const isSubIssue = nestingLevel !== 0;
+  //const isSubIssue = nestingLevel !== 0;
   const canSelectIssues = canEditIssueProperties && !selectionHelpers.isSelectionDisabled;
 
-  const marginLeft = `${spacingLeft}px`;
+  //const marginLeft = `${spacingLeft}px`;
 
   const handleToggleExpand = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -151,7 +154,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     } else {
       setExpanded((prevState) => {
         if (!prevState && workspaceSlug && issue && issue.project_id)
-          subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issue.project_id, issue.id);
+          void subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issue.project_id, issue.id);
         return !prevState;
       });
     }
@@ -177,12 +180,20 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     <ControlLink
       id={`issue-${issue.id}`}
       href={workItemLink}
-      onClick={() => handleIssuePeekOverview(issue)}
+      onClick={(e) => {
+        const selection = window.getSelection();
+        if (selection && selection.toString().length > 0) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+
+        handleIssuePeekOverview(issue);
+      }}
       className="w-full cursor-pointer"
       disabled={!!issue?.tempId || issue?.is_draft}
     >
       <Row
-        ref={issueRef}
         className={cn(
           "group/list-block min-h-11 relative flex flex-col gap-3 bg-layer-transparent hover:bg-layer-transparent-hover py-3 text-13 transition-colors",
           {
@@ -207,92 +218,120 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           }
         }}
       >
-        <div className="flex gap-2 w-full truncate">
-          <div className="flex flex-grow items-center gap-0.5 truncate">
-            <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
-              {/* select checkbox */}
-              {projectId && canSelectIssues && !isEpic && (
-                <Tooltip
-                  tooltipContent={
-                    <>
-                      Only work items within the current
-                      <br />
-                      project can be selected.
-                    </>
+        <div className="flex gap-2 w-full">
+          <div className=" relative flex items-center gap-2" style={{ flexBasis: "95%" }}>
+            <div
+              ref={issueRef}
+              className="absolute left-0 top-0 h-full"
+              style={{ width: "100%", pointerEvents: "auto" }}
+            />
+            <div className="flex items-center gap-1 relative z-10 pointer-events-none">
+              {/* eslint-disable jsx-a11y/no-static-element-interactions */}
+              {/* eslint-disable jsx-a11y/click-events-have-key-events */}
+              <div
+                className="flex items-center gap-1 pointer-events-auto"
+                onClick={(e) => {
+                  if (window.getSelection()?.toString()) {
+                    e.preventDefault();
+                    e.stopPropagation();
                   }
-                  disabled={issue.project_id === projectId}
-                >
-                  <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1">
-                    <MultipleSelectEntityAction
-                      className={cn(
-                        "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
-                        {
-                          "opacity-100 pointer-events-auto": isIssueSelected,
-                        }
-                      )}
-                      groupId={groupId}
-                      id={issue.id}
-                      selectionHelpers={selectionHelpers}
-                      disabled={issue.project_id !== projectId}
-                    />
+                }}
+              >
+                {/* select checkbox */}
+                {projectId && canSelectIssues && !isEpic && (
+                  <Tooltip
+                    tooltipContent={
+                      <>
+                        Only work items within the current
+                        <br />
+                        project can be selected.
+                      </>
+                    }
+                    disabled={issue.project_id === projectId}
+                  >
+                    <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1 pointer-events-auto">
+                      <MultipleSelectEntityAction
+                        className={cn(
+                          "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                          {
+                            "opacity-100 pointer-events-auto": isIssueSelected,
+                          }
+                        )}
+                        groupId={groupId}
+                        id={issue.id}
+                        selectionHelpers={selectionHelpers}
+                        disabled={issue.project_id !== projectId}
+                      />
+                    </div>
+                  </Tooltip>
+                )}
+                {displayProperties && (displayProperties.key || displayProperties.issue_type) && (
+                  <div className="select-text flex-shrink-0" style={{ minWidth: `${keyMinWidth}px` }}>
+                    {issue.project_id && (
+                      <IssueIdentifier
+                        issueId={issueId}
+                        projectId={issue.project_id}
+                        size="xs"
+                        variant="tertiary"
+                        displayProperties={displayProperties}
+                      />
+                    )}
                   </div>
-                </Tooltip>
-              )}
-              {displayProperties && (displayProperties.key || displayProperties.issue_type) && (
-                <div className="flex-shrink-0" style={{ minWidth: `${keyMinWidth}px` }}>
-                  {issue.project_id && (
-                    <IssueIdentifier
-                      issueId={issueId}
-                      projectId={issue.project_id}
-                      size="xs"
-                      variant="tertiary"
-                      displayProperties={displayProperties}
-                    />
+                )}
+
+                {/* sub-issues chevron */}
+                <div className="size-4 grid place-items-center flex-shrink-0 pointer-events-auto">
+                  {subIssuesCount > 0 && !isEpic && (
+                    <button
+                      type="button"
+                      className="size-4 grid place-items-center rounded-xs text-placeholder hover:text-tertiary"
+                      onClick={(e) => {
+                        if (window.getSelection()?.toString()) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          return;
+                        }
+                        handleToggleExpand(e);
+                      }}
+                    >
+                      <ChevronRightIcon
+                        className={cn("size-4", {
+                          "rotate-90": isExpanded,
+                        })}
+                        strokeWidth={2.5}
+                      />
+                    </button>
                   )}
                 </div>
-              )}
 
-              {/* sub-issues chevron */}
-              <div className="size-4 grid place-items-center flex-shrink-0">
-                {subIssuesCount > 0 && !isEpic && (
-                  <button
-                    type="button"
-                    className="size-4 grid place-items-center rounded-xs text-placeholder hover:text-tertiary"
-                    onClick={handleToggleExpand}
+                {issue?.tempId !== undefined && (
+                  <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-surface-1/20" />
+                )}
+                <Tooltip
+                  tooltipContent={issue.name}
+                  isMobile={isMobile}
+                  position="top-start"
+                  disabled={isCurrentBlockDragging}
+                  renderByDefault={false}
+                >
+                  <p
+                    className="select-text cursor-text text-body-xs-medium text-primary pointer-events-auto"
+                    style={{ userSelect: "text" }}
                   >
-                    <ChevronRightIcon
-                      className={cn("size-4", {
-                        "rotate-90": isExpanded,
-                      })}
-                      strokeWidth={2.5}
-                    />
-                  </button>
+                    {issue.name}
+                  </p>
+                </Tooltip>
+                {isEpic && displayProperties && (
+                  <WithDisplayPropertiesHOC
+                    displayProperties={displayProperties}
+                    displayPropertyKey="sub_issue_count"
+                    shouldRenderProperty={(properties) => !!properties.sub_issue_count}
+                  >
+                    <IssueStats issueId={issue.id} className="ml-2 text-body-xs-medium text-tertiary" />
+                  </WithDisplayPropertiesHOC>
                 )}
               </div>
-
-              {issue?.tempId !== undefined && (
-                <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-surface-1/20" />
-              )}
             </div>
-
-            <Tooltip
-              tooltipContent={issue.name}
-              isMobile={isMobile}
-              position="top-start"
-              disabled={isCurrentBlockDragging}
-              renderByDefault={false}
-            >
-              <p className="truncate cursor-pointer text-body-xs-medium text-primary">{issue.name}</p>
-            </Tooltip>
-            {isEpic && displayProperties && (
-              <WithDisplayPropertiesHOC
-                displayProperties={displayProperties}
-                displayPropertyKey="sub_issue_count"
-                shouldRenderProperty={(properties) => !!properties.sub_issue_count}
-              >
-                <IssueStats issueId={issue.id} className="ml-2 text-body-xs-medium text-tertiary" />
-              </WithDisplayPropertiesHOC>
-            )}
           </div>
           {!issue?.tempId && (
             <div
@@ -308,7 +347,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
             </div>
           )}
         </div>
-        <div className="flex flex-shrink-0 items-center gap-2">
+        <div className="flex flex-shrink-0 items-center gap-2" onMouseDown={(e) => e.stopPropagation()}>
           {!issue?.tempId ? (
             <>
               <IssueProperties
@@ -326,6 +365,11 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                   "lg:flex": !isSidebarCollapsed,
                 })}
                 onClick={(e) => {
+                  if (window.getSelection()?.toString()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                  }
                   e.preventDefault();
                   e.stopPropagation();
                 }}
