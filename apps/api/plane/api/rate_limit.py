@@ -10,15 +10,18 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # python imports
-import os
+
+# Django imports
+from django.conf import settings
 
 # Third party imports
 from rest_framework.throttling import SimpleRateThrottle
+from plane.db.models import APIToken
 
 
 class ApiKeyRateThrottle(SimpleRateThrottle):
     scope = "api_key"
-    rate = os.environ.get("API_KEY_RATE_LIMIT", "60/minute")
+    rate = settings.DEFAULT_API_RATE_LIMIT
 
     def get_cache_key(self, request, view):
         # Retrieve the API key from the request header
@@ -94,5 +97,46 @@ class ServiceTokenRateThrottle(SimpleRateThrottle):
             # Add headers
             request.META["X-RateLimit-Remaining"] = max(0, available)
             request.META["X-RateLimit-Reset"] = reset_time
+
+        return allowed
+
+
+class WorkspaceTokenRateThrottle(SimpleRateThrottle):
+    scope = "workspace_token"
+    rate = settings.DEFAULT_API_RATE_LIMIT
+
+    def get_cache_key(self, request, view):
+        api_key = request.headers.get("X-Api-Key")
+        if not api_key:
+            return None
+
+        return f"{self.scope}:{api_key}"
+
+    def allow_request(self, request, view):
+        api_key = request.headers.get("X-Api-Key")
+
+        if api_key:
+            if settings.IS_SELF_MANAGED:
+                self.rate = settings.DEFAULT_API_RATE_LIMIT
+            else:
+                token = APIToken.objects.filter(token=api_key).only("allowed_rate_limit").first()
+                if token and token.allowed_rate_limit:
+                    self.rate = token.allowed_rate_limit
+
+            self.num_requests, self.duration = self.parse_rate(self.rate)
+
+        allowed = super().allow_request(request, view)
+
+        if allowed:
+            now = self.timer()
+            history = self.cache.get(self.key, [])
+
+            while history and history[-1] <= now - self.duration:
+                history.pop()
+
+            available = self.num_requests - len(history)
+
+            request.META["X-RateLimit-Remaining"] = max(0, available)
+            request.META["X-RateLimit-Reset"] = int(now + self.duration)
 
         return allowed

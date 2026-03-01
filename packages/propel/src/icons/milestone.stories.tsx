@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
-
+import preview from "#.storybook/preview";
 import { MilestoneIcon } from "./milestone";
 
 // Milestone variant colors (matching utils package)
@@ -24,8 +23,7 @@ const MILESTONE_COLORS = {
   started_no_progress: "#FF9500",
 } as const;
 
-const meta: Meta<typeof MilestoneIcon> = {
-  title: "Icons/MilestoneIcon",
+const meta = preview.meta({
   component: MilestoneIcon,
   argTypes: {
     fill: {
@@ -41,58 +39,32 @@ const meta: Meta<typeof MilestoneIcon> = {
   args: {
     className: "size-6",
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof MilestoneIcon>;
-
-export const AllVariants: Story = {
-  render: (args) => (
-    <div className="space-y-4">
-      <div className="flex flex-col items-center gap-1">
-        <MilestoneIcon {...args} fill={MILESTONE_COLORS.default} />
-        <span className="text-xs text-neutral-500">default</span>
-      </div>
-      <div className="flex flex-col items-center gap-1">
-        <MilestoneIcon {...args} fill={MILESTONE_COLORS.in_progress} />
-        <span className="text-xs text-neutral-500">in_progress (1-99%)</span>
-      </div>
-      <div className="flex flex-col items-center gap-1">
-        <MilestoneIcon {...args} fill={MILESTONE_COLORS.started_no_progress} />
-        <span className="text-xs text-neutral-500">started_no_progress</span>
-      </div>
-      <div className="flex flex-col items-center gap-1">
-        <MilestoneIcon {...args} fill={MILESTONE_COLORS.not_started_yet} />
-        <span className="text-xs text-neutral-500">not_started_yet (0%)</span>
-      </div>
-      <div className="flex flex-col items-center gap-1">
-        <MilestoneIcon {...args} fill={MILESTONE_COLORS.done} isDone />
-        <span className="text-xs text-neutral-500">done (100%)</span>
-      </div>
-      <div className="flex flex-col items-center gap-1">
-        <MilestoneIcon {...args} fill={MILESTONE_COLORS.in_progress} isSolid />
-        <span className="text-xs text-neutral-500">in_progress (1-99%) - solid</span>
-      </div>
-    </div>
-  ),
-};
-
-export const Default: Story = {
+export const Default = meta.story({
   args: { fill: MILESTONE_COLORS.default },
-};
+});
 
-export const InProgress: Story = {
+export const InProgress = meta.story({
   args: { fill: MILESTONE_COLORS.in_progress },
-};
+});
 
-export const StartedNoProgress: Story = {
+export const StartedNoProgress = meta.story({
   args: { fill: MILESTONE_COLORS.started_no_progress },
-};
+});
 
-export const NotStartedYet: Story = {
+export const NotStartedYet = meta.story({
   args: { fill: MILESTONE_COLORS.not_started_yet },
-};
+});
 
-export const Done: Story = {
+export const Done = meta.story({
   args: { fill: MILESTONE_COLORS.done, isDone: true },
-};
+});
+
+export const Solid = meta.story({
+  args: { fill: MILESTONE_COLORS.in_progress, isSolid: true },
+});
+
+export const NoFill = meta.story({
+  args: {},
+});

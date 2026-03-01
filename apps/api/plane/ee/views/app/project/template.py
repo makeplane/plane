@@ -32,7 +32,6 @@ from plane.db.models.asset import FileAsset
 from plane.ee.bgtasks.template_task import create_project_from_template
 from plane.db.models import (
     Workspace,
-    ProjectUserProperty,
     ProjectMember,
     State,
     UserFavorite,

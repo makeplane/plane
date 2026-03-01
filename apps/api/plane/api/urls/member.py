@@ -16,6 +16,7 @@ from plane.api.views import (
     ProjectMemberDetailAPIEndpoint,
     WorkspaceMemberAPIEndpoint,
     ProjectMemberSiloEndpoint,
+    WorkspaceMemberRemoveEndpoint,
 )
 
 urlpatterns = [
@@ -48,6 +49,11 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/members/",
         WorkspaceMemberAPIEndpoint.as_view(http_method_names=["get"]),
+        name="workspace-members",
+    ),
+    path(
+        "workspaces/<str:slug>/members/remove/",
+        WorkspaceMemberRemoveEndpoint.as_view(http_method_names=["post"]),
         name="workspace-members",
     ),
 ]

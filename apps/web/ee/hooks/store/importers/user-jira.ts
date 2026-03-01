@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { IJiraStore } from "@/plane-web/store/importers";
+import type { IJiraStore } from "@/store/importers";
 
 export const useJiraImporter = (): IJiraStore => {
   const context = useContext(StoreContext);

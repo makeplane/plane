@@ -11,7 +11,7 @@
 
 # Module imports
 from plane.ee.serializers import BaseSerializer
-from plane.ee.models import ImportJob, ImportReport
+from plane.ee.models import ImportJob, ImportReport, ImportExecutionLog
 from plane.db.models import User, Project, Workspace
 from plane.db.models.issue import IssueRelationChoices
 
@@ -23,6 +23,16 @@ class ImportReportAPISerializer(BaseSerializer):
     class Meta:
         model = ImportReport
         fields = "__all__"
+
+
+class ImportExecutionLogSerializer(BaseSerializer):
+    class Meta:
+        model = ImportExecutionLog
+        fields = "__all__"
+        read_only_fields = [
+            "job",
+            "report",
+        ]
 
 
 class ImportJobAPISerializer(BaseSerializer):

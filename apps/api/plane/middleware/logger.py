@@ -10,10 +10,14 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
+import json
 import logging
 import time
+from contextvars import ContextVar
+from urllib.parse import parse_qs, urlencode
 
 # Django imports
+from django.db import connection
 from django.http import HttpRequest
 from django.utils import timezone
 
@@ -27,10 +31,48 @@ from plane.bgtasks.logger_task import process_logs
 
 api_logger = logging.getLogger("plane.api.request")
 
+# Context variable for query counting (thread-safe)
+_query_count: ContextVar[int] = ContextVar("query_count", default=0)
+
+
+class QueryCountWrapper:
+    """Lightweight query counter using execute_wrapper (works in production)."""
+
+    def __call__(self, execute, sql, params, many, context):
+        _query_count.set(_query_count.get() + 1)
+        return execute(sql, params, many, context)
+
 
 class RequestLoggerMiddleware:
+    _SENSITIVE_FIELDS = {"client_secret", "code", "refresh_token", "password"}
+
     def __init__(self, get_response):
         self.get_response = get_response
+
+    @staticmethod
+    def _safe_decode_body(content):
+        if not content:
+            return None
+        try:
+            return content.decode("utf-8")
+        except (UnicodeDecodeError, AttributeError):
+            return "[Could not decode content]"
+
+    @staticmethod
+    def _redact_sensitive_fields(body_str):
+        if not body_str:
+            return body_str
+        try:
+            params = parse_qs(body_str, keep_blank_values=True)
+            for field in RequestLoggerMiddleware._SENSITIVE_FIELDS:
+                if field in params:
+                    params[field] = [
+                        f"****{v[-4:]}" if len(v) > 4 else "****"
+                        for v in params[field]
+                    ]
+            return urlencode(params, doseq=True)
+        except Exception:
+            return body_str
 
     def _should_log_route(self, request: Request | HttpRequest) -> bool:
         """
@@ -41,21 +83,59 @@ class RequestLoggerMiddleware:
             return False
         return True
 
+    def _get_graphql_operation(self, request: Request | HttpRequest) -> tuple[str | None, str | None]:
+        """Extract operation name and type from GraphQL request body."""
+        if request.path != "/graphql/" or request.method != "POST":
+            return None, None
+
+        try:
+            body = json.loads(request.body)
+            query_str = body.get("query", "")
+            first_line = query_str.strip().split("\n")[0]
+
+            # Determine operation type
+            if first_line.startswith("mutation"):
+                operation_type = "mutation"
+            elif first_line.startswith("subscription"):
+                operation_type = "subscription"
+            else:
+                operation_type = "query"
+
+            # Extract operation name
+            if first_line.startswith(("query", "mutation", "subscription")):
+                parts = first_line.split("{")[0].split("(")[0].split()
+                if len(parts) > 1:
+                    return parts[-1], operation_type
+        except Exception:
+            pass  # Intentionally silent - parsing failures shouldn't affect logging
+
+        return None, None
+
+    def process_exception(self, request, exception):
+        """Capture exception type for 5xx logging."""
+        request._exception_type = type(exception).__name__
+        return None  # Let other handlers process
+
     def __call__(self, request):
+        # Reset query counter
+        _query_count.set(0)
+
+        # Capture request body for specific endpoints that need payload logging on errors
+        request_body = request.body if request.path == "/auth/o/token/" else None
+
         # get the start time
         start_time = time.time()
 
-        # Get the response
-        response = self.get_response(request)
+        # Wrap database execution to count queries
+        with connection.execute_wrapper(QueryCountWrapper()):
+            response = self.get_response(request)
 
         # calculate the duration
         duration = time.time() - start_time
+        query_count = _query_count.get()
 
         # Check if logging is required
-        log_true = self._should_log_route(request=request)
-
-        # If logging is not required, return the response
-        if not log_true:
+        if not self._should_log_route(request=request):
             return response
 
         user_id = (
@@ -64,19 +144,51 @@ class RequestLoggerMiddleware:
 
         user_agent = request.META.get("HTTP_USER_AGENT", "")
 
-        # Log the request information
-        api_logger.info(
-            f"{request.method} {request.get_full_path()} {response.status_code}",
-            extra={
-                "path": request.path,
-                "method": request.method,
-                "status_code": response.status_code,
-                "duration_ms": int(duration * 1000),
-                "remote_addr": get_client_ip(request),
-                "user_agent": user_agent,
-                "user_id": user_id,
-            },
-        )
+        # Build log data
+        log_data = {
+            "path": request.path,
+            "method": request.method,
+            "status_code": response.status_code,
+            "duration_ms": int(duration * 1000),
+            "remote_addr": get_client_ip(request),
+            "user_agent": user_agent,
+            "user_id": user_id,
+            # New fields
+            "response_size": len(response.content) if hasattr(response, "content") else 0,
+            "query_count": query_count,
+            "content_type": response.get("Content-Type", ""),
+        }
+
+        # Add request/response body for OAuth token 400 errors
+        if request.path == "/auth/o/token/" and response.status_code == 400:
+            decoded_body = self._safe_decode_body(request_body)
+            log_data["request_body"] = self._redact_sensitive_fields(decoded_body)
+            log_data["response_body"] = self._safe_decode_body(
+                response.content if hasattr(response, "content") else None
+            )
+
+        # Add exception type for 5xx
+        if response.status_code >= 500:
+            log_data["exception_type"] = getattr(request, "_exception_type", None)
+
+        # Add GraphQL operation info if applicable
+        operation_name, operation_type = self._get_graphql_operation(request)
+        if operation_name:
+            log_data["operation_name"] = operation_name
+            log_data["operation_type"] = operation_type
+
+        # Log level: ERROR for 5xx, WARNING for slow (>1s), else INFO
+        if operation_name:
+            message = f"GraphQL {operation_type} {operation_name} {response.status_code}"
+        else:
+            message = f"{request.method} {request.get_full_path()} {response.status_code}"
+
+        if response.status_code >= 500:
+            api_logger.error(message, extra=log_data)
+        elif duration > 1.0:
+            api_logger.warning(message, extra=log_data)
+        else:
+            api_logger.info(message, extra=log_data)
 
         # return the response
         return response

@@ -11,8 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Disclosure, Transition } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
 // plane imports
+import { Collapsible, CollapsibleContent } from "@plane/propel/collapsible";
 import { cn } from "@plane/utils";
 // local imports
 import type { PiChatEditorMentionItem } from "./types";
@@ -29,17 +30,15 @@ export function MentionsDropdownSection(props: Props) {
   const { type, items, onClick, selectedItemIndex, isSectionSelected } = props;
 
   return (
-    <Disclosure as="div" className="flex flex-col">
+    <Collapsible open className="flex flex-col">
       <div
         className={cn(
           "shrink-0 group w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
         )}
       >
-        <>
-          <span className="text-body-xs-regular text-tertiary capitalize my-1">
-            {type === "issue" ? "Work item" : type?.replaceAll("_", " ")}
-          </span>
-        </>
+        <span className="text-body-xs-regular text-tertiary capitalize my-1">
+          {type === "issue" ? "Work item" : type?.replaceAll("_", " ")}
+        </span>
       </div>
       <Transition
         show
@@ -50,7 +49,7 @@ export function MentionsDropdownSection(props: Props) {
         leaveFrom="transform scale-100 opacity-100"
         leaveTo="transform scale-95 opacity-0"
       >
-        <Disclosure.Panel as="div" className="text-11 space-y-0 ml-0" static>
+        <CollapsibleContent className="text-11 space-y-0 ml-0">
           {items.map((item, index) => (
             <div
               key={`${type}-${index}`}
@@ -67,8 +66,8 @@ export function MentionsDropdownSection(props: Props) {
               <span className="truncate">{item.title}</span>
             </div>
           ))}
-        </Disclosure.Panel>
+        </CollapsibleContent>
       </Transition>
-    </Disclosure>
+    </Collapsible>
   );
 }

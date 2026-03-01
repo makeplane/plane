@@ -14,7 +14,7 @@ from django.db import IntegrityError
 
 # Module imports
 from plane.app.serializers.issue import IssueCreateSerializer
-from plane.db.models import Issue, IssueType, IssueAssignee, IssueLabel
+from plane.db.models import Issue, IssueType, IssueAssignee, IssueLabel, IssueSubscriber
 from plane.ee.models import IntakeResponsibility, IntakeResponsibilityTypeChoices
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -100,6 +100,21 @@ class ExtendedIssueCreateSerializer(IssueCreateSerializer):
                         ],
                         batch_size=10,
                     )
+
+                    IssueSubscriber.objects.bulk_create(
+                        [
+                            IssueSubscriber(
+                                subscriber_id=user_id,
+                                issue=issue,
+                                workspace_id=workspace_id,
+                                project_id=project_id,
+                                created_by_id=created_by_id,
+                                updated_by_id=updated_by_id,
+                            )
+                            for user_id in intake_responsibilities
+                        ]
+                    )
+
                 except IntegrityError:
                     pass
             else:

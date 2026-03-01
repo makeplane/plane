@@ -81,7 +81,7 @@ def page_version(page_id, existing_instance, user_id):
             ):
                 page_version.description_html = page.description_html
                 page_version.description_binary = page.description_binary
-                page_version.description_json = page.description
+                page_version.description_json = page.description_json
                 page_version.description_stripped = page.description_stripped
                 page_version.sub_pages_data = sub_pages
                 page_version.last_saved_at = timezone.now()
@@ -105,7 +105,7 @@ def page_version(page_id, existing_instance, user_id):
                     description_stripped=page.description_stripped,
                     owned_by_id=user_id,
                     last_saved_at=page.updated_at,
-                    description_json=page.description,
+                    description_json=page.description_json,
                     sub_pages_data=sub_pages,
                 )
 

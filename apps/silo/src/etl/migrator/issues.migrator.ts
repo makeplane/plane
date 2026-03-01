@@ -42,6 +42,9 @@ import { downloadFile, splitStringTillPart, uploadFile } from "@/helpers/utils";
 import { AssertAPIErrorResponse, protect } from "@/lib";
 import type { BulkIssuePayload } from "@/types";
 import type { IssueCreatePayload, IssueWithParentPayload } from "./types";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import { extractErrorMetadata } from "@/helpers/errors";
 // A wrapper for better readability
 export const createOrphanIssues = async (payload: IssueCreatePayload): Promise<ExIssue[]> =>
   await createIssues(payload);
@@ -129,12 +132,14 @@ export const getAssociatedComments = async (
   users: PlaneUser[],
   issueId: string,
   planeClient: PlaneClient,
-  workspaceSlug: string
+  workspaceSlug: string,
+  stepName?: string
 ): Promise<ExIssueComment[]> => {
+  const issueComments = comments.filter((comment) => comment !== undefined && comment.issue === issueId);
+
   const processedComments = await Promise.all(
-    comments
-      .filter((comment) => comment !== undefined && comment.issue === issueId)
-      .map(async (comment: Partial<ExIssueComment>) => {
+    issueComments.map(async (comment: Partial<ExIssueComment>) => {
+      try {
         // Process any attachments in the comment
         const [processedComment, assetIds] = await processCommentAttachments(
           jobId,
@@ -147,16 +152,23 @@ export const getAssociatedComments = async (
         const actor = users.find((user) => user.display_name === comment.actor);
         const createdBy = users.find((user) => user.display_name === comment.created_by);
 
-        return {
+        const finalComment = {
           ...processedComment,
           file_assets: assetIds,
           actor: actor?.id || null,
           created_by: createdBy?.id || null,
         };
-      })
+
+        return finalComment;
+      } catch (error) {
+        logger.error(`[${jobId.slice(0, 7)}] Error processing comment for issue ${issueId}:`, error);
+
+        return null;
+      }
+    })
   );
 
-  return processedComments as ExIssueComment[];
+  return processedComments.filter(Boolean) as ExIssueComment[];
 };
 
 export const getAssociatedCommentsV2 = async (
@@ -168,11 +180,12 @@ export const getAssociatedCommentsV2 = async (
   planeClient: PlaneClient,
   workspaceSlug: string
 ): Promise<ExIssueComment[]> => {
+  const issueComments = comments.filter((comment) => comment !== undefined && comment.issue === issueId);
+
   const processedComments = await Promise.all(
-    comments
-      .filter((comment) => comment !== undefined && comment.issue === issueId)
-      .map(async (comment: Partial<ExIssueComment>) => {
-        // Process any attachments in the comment
+    issueComments.map(async (comment: Partial<ExIssueComment>) => {
+      try {
+        // Process any attachments in the comment - summary collected inside
         const [processedComment, assetIds] = await processCommentAttachments(
           jobId,
           credentials,
@@ -184,16 +197,46 @@ export const getAssociatedCommentsV2 = async (
         const actor = users.find((user) => user.email === comment.actor);
         const createdBy = users.find((user) => user.email === comment.created_by);
 
-        return {
+        const finalComment = {
           ...processedComment,
           file_assets: assetIds,
           actor: actor?.id || null,
           created_by: createdBy?.id || null,
         };
-      })
+
+        executionLog.collect(jobId, {
+          entity_type: EExecutionLogEntityType.WORK_ITEM_COMMENT,
+          phase: "PROCESS_COMMENT",
+          level: EExecutionLogLevel.SUCCESS,
+          related_entity: issueId,
+          entity_external_id: comment.external_id,
+          additional_data: {
+            hasAttachments: assetIds.length > 0,
+            attachmentCount: assetIds.length,
+            actorResolved: !!actor,
+            createdByResolved: !!createdBy,
+          },
+        });
+
+        return finalComment;
+      } catch (error) {
+        logger.error(`[${jobId.slice(0, 7)}] Error processing comment for issue ${issueId}:`, error);
+
+        executionLog.collect(jobId, {
+          entity_type: EExecutionLogEntityType.WORK_ITEM_COMMENT,
+          phase: "PROCESS_COMMENT",
+          level: EExecutionLogLevel.ERROR,
+          error: extractErrorMetadata(error),
+          entity_external_id: comment.external_id,
+          related_entity: issueId,
+        });
+
+        return null;
+      }
+    })
   );
 
-  return processedComments as ExIssueComment[];
+  return processedComments.filter(Boolean) as ExIssueComment[];
 };
 
 export const generateIssuePayload = async (payload: BulkIssueCreatePayload): Promise<ExIssue[]> => {
@@ -302,6 +345,11 @@ export const generateIssuePayloadV2 = async (payload: {
 
   const bulkIssuePayload: BulkIssuePayload[] = [];
 
+  let successfulIssues = 0;
+  let failedIssues = 0;
+  let totalAttachmentsProcessed = 0;
+  let attachmentErrors = 0;
+
   // Build planeUsers array for existing functions
   const planeUsers: PlaneUser[] = Array.from(userMap.entries()).map(
     ([email, userId]) =>
@@ -313,8 +361,13 @@ export const generateIssuePayloadV2 = async (payload: {
 
   for (const issue of issues) {
     try {
-      // Process attachments first (download + upload)
+      // Process attachments first (download + upload) - summary collected inside
       const [processedIssue, assets] = await processAttachments(jobId, credentials, issue, planeClient, workspaceSlug);
+
+      totalAttachmentsProcessed += assets.length;
+      if (issue.attachments && issue.attachments.length > assets.length) {
+        attachmentErrors += issue.attachments.length - assets.length;
+      }
 
       processedIssue.created_by = userMap.get(processedIssue.created_by || "") || "";
 
@@ -330,7 +383,7 @@ export const generateIssuePayloadV2 = async (payload: {
       // Strip parent (handled in relations step)
       processedIssue.parent = null;
 
-      // Get associated comments for this issue
+      // Get associated comments for this issue - summary collected inside
       const associatedComments = await getAssociatedCommentsV2(
         jobId,
         credentials,
@@ -341,13 +394,14 @@ export const generateIssuePayloadV2 = async (payload: {
         workspaceSlug
       );
 
-      // Get associated property values (uses existing function!)
+      // Get associated property values (uses existing function!) - summary collected inside
       const associatedIssuePropertyValues = getAssociatedIssuePropertyValues({
         issueId: processedIssue.external_id || "",
         planeUsers,
         planeIssueProperties,
         planeIssuePropertiesOptions,
         planeIssuePropertyValues,
+        jobId,
       });
 
       const associatedCycles = associations.cycles.get(processedIssue.external_id) || [];
@@ -368,10 +422,41 @@ export const generateIssuePayloadV2 = async (payload: {
         modules: associatedModuleIds.filter(Boolean) as string[],
         issue_property_values: associatedIssuePropertyValues,
       });
+
+      successfulIssues++;
     } catch (error) {
+      failedIssues++;
       logger.error(`[${jobId.slice(0, 7)}] Error while processing issue: ${issue.external_id}`, error);
+
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM,
+        phase: "TRANSFORM",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        entity_external_id: issue.external_id,
+        entity_name: issue.name,
+      });
     }
   }
+
+  executionLog.collect(jobId, {
+    entity_type: EExecutionLogEntityType.WORK_ITEM,
+    phase: "GENERATE_ISSUE_PAYLOAD",
+    ignore_summarization: true,
+    level: EExecutionLogLevel.INFO,
+    additional_data: {
+      totalIssuesAttempted: issues.length,
+      successfulIssues,
+      failedIssues,
+      totalAttachmentsProcessed,
+      attachmentErrors,
+      issuesWithResolution: {
+        resolvedCreatedBy: bulkIssuePayload.filter((i) => i.created_by).length,
+        resolvedAssignees: bulkIssuePayload.filter((i) => i.assignees && i.assignees.length > 0).length,
+        resolvedIssueType: bulkIssuePayload.filter((i) => i.type_id).length,
+      },
+    },
+  });
 
   return bulkIssuePayload;
 };
@@ -431,11 +516,35 @@ const processAttachments = async (
 
       // Skip the attachment if the given size is zero
       if (attachment.attributes.size === 0) {
+        executionLog.collect(jobId, {
+          entity_type: EExecutionLogEntityType.WORK_ITEM_ATTACHMENT,
+          phase: "PROCESS_ATTACHMENT",
+          level: EExecutionLogLevel.ERROR,
+          related_entity: issue.external_id,
+          entity_external_id: attachment.id,
+          entity_name: attachment.attributes.name,
+          error: {
+            message: "Zero size attachment skipped",
+          },
+        });
         continue;
       }
 
       const blob = await downloadFile(attachment.asset, authToken);
-      if (!blob) continue;
+      if (!blob) {
+        executionLog.collect(jobId, {
+          entity_type: EExecutionLogEntityType.WORK_ITEM_ATTACHMENT,
+          phase: "PROCESS_ATTACHMENT",
+          level: EExecutionLogLevel.ERROR,
+          related_entity: issue.external_id,
+          entity_name: attachment.attributes.name,
+          entity_external_id: attachment.external_id,
+          error: {
+            message: "Failed to download attachment",
+          },
+        });
+        continue;
+      }
 
       // Upload the asset and mark it as uploaded in one go
       const assetId = await protect(
@@ -471,8 +580,28 @@ const processAttachments = async (
       );
 
       assets.push(assetId);
+
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM_ATTACHMENT,
+        phase: "PROCESS_ATTACHMENT",
+        level: EExecutionLogLevel.SUCCESS,
+        related_entity: issue.external_id,
+        entity_external_id: attachment.external_id,
+        entity_plane_id: attachment.id,
+        entity_name: attachment.attributes.name,
+      });
     } catch (error) {
       logger.error(`[${jobId.slice(0, 7)}] Error processing attachment for issue "${issue.name}":`, error);
+
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM_ATTACHMENT,
+        phase: "PROCESS_ATTACHMENT",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        related_entity: issue.external_id,
+        entity_external_id: attachment.external_id,
+        entity_name: attachment.attributes.name,
+      });
     }
   }
 
@@ -485,9 +614,12 @@ export const getAssociatedIssuePropertyValues = (props: {
   planeIssueProperties: ExIssueProperty[];
   planeIssuePropertiesOptions: ExIssuePropertyOption[];
   planeIssuePropertyValues?: TIssuePropertyValuesPayload;
+  jobId?: string;
 }) => {
   let associatedIssuePropertyValues: { id: string; values: ExIssuePropertyValue }[] = [];
-  const { issueId, planeUsers, planeIssueProperties, planeIssuePropertiesOptions, planeIssuePropertyValues } = props;
+  const { issueId, planeUsers, planeIssueProperties, planeIssuePropertiesOptions, planeIssuePropertyValues, jobId } =
+    props;
+
   if (planeIssuePropertyValues && planeIssuePropertyValues[issueId]) {
     associatedIssuePropertyValues =
       getIssuePropertyValues({
@@ -496,6 +628,19 @@ export const getAssociatedIssuePropertyValues = (props: {
         planeIssuePropertiesOptions,
         issuePropertyValues: planeIssuePropertyValues[issueId],
       }) ?? [];
+
+    if (jobId) {
+      associatedIssuePropertyValues.map((value) => {
+        executionLog.collect(jobId, {
+          entity_type: EExecutionLogEntityType.ISSUE_PROPERTY_VALUE,
+          phase: "PROCESS_PROPERTY_VALUES",
+          level: EExecutionLogLevel.SUCCESS,
+          related_entity: issueId,
+          entity_plane_id: value.id,
+          entity_external_id: value.id,
+        });
+      });
+    }
   }
 
   return associatedIssuePropertyValues;
@@ -1204,7 +1349,16 @@ const processCommentAttachments = async (
     // Extract image URLs from comment HTML
     const assetIds = [];
     const imageUrls = extractImageUrlsFromHtml(processedComment.comment_html || "");
-    for (const imageUrl of imageUrls) {
+    for (const recievedImageUrl of imageUrls) {
+      let imageUrl = recievedImageUrl;
+      if (!recievedImageUrl.startsWith("http")) {
+        if (!credentials.source_hostname) {
+          logger.error("Source hostname not found, skipping comment attachment");
+          continue;
+        }
+        imageUrl = `${credentials.source_hostname}${recievedImageUrl}`;
+      }
+
       // Set up auth token based on source
       let sourceAccessToken = credentials.source_access_token;
       let authPrefix = "Bearer";
@@ -1233,46 +1387,87 @@ const processCommentAttachments = async (
         authPrefix = "";
       }
 
-      // Download the file
-      const blob = await downloadFile(imageUrl, authToken);
-      if (!blob) continue;
-
-      // Generate a filename from the URL
-      const fileName = getFileNameFromUrl(imageUrl);
-
-      // Upload the asset and mark it as uploaded in one go
-      const assetId = await protect(
-        planeClient.assets.uploadAsset.bind(planeClient.assets),
-        workspaceSlug,
-        blob,
-        fileName,
-        blob.size,
-        {
-          external_source: credentials.source,
+      try {
+        // Download the file
+        const blob = await downloadFile(imageUrl, authToken);
+        if (!blob) {
+          executionLog.collect(jobId, {
+            entity_type: EExecutionLogEntityType.WORK_ITEM_COMMENT_ATTACHMENT,
+            phase: "PROCESS_COMMENT_ATTACHMENT",
+            level: EExecutionLogLevel.ERROR,
+            entity_external_id: comment.external_id,
+            error: {
+              message: "Failed to donwload comment attachment",
+            },
+            additional_data: {
+              imageUrl,
+            },
+          });
+          continue;
         }
-      );
 
-      assetIds.push(assetId);
+        // Generate a filename from the URL
+        const fileName = getFileNameFromUrl(imageUrl);
 
-      // Update comment HTML with new asset URL
-      const url = new URL(imageUrl);
-      let sourceAttachmentPathname = "";
-      if (url.pathname.includes("rest")) {
-        sourceAttachmentPathname = splitStringTillPart(url.pathname, "rest");
-      } else {
-        if (credentials.source === E_IMPORTER_KEYS.JIRA_SERVER) {
-          sourceAttachmentPathname = convertJiraImageURL(imageUrl);
+        // Upload the asset and mark it as uploaded in one go
+        const assetId = await protect(
+          planeClient.assets.uploadAsset.bind(planeClient.assets),
+          workspaceSlug,
+          blob,
+          fileName,
+          blob.size,
+          {
+            external_source: credentials.source,
+          }
+        );
+
+        assetIds.push(assetId);
+
+        // Update comment HTML with new asset URL
+        const url = new URL(imageUrl);
+        let sourceAttachmentPathname = "";
+        if (url.pathname.includes("rest")) {
+          sourceAttachmentPathname = splitStringTillPart(url.pathname, "rest");
         } else {
-          sourceAttachmentPathname = imageUrl;
+          if (credentials.source === E_IMPORTER_KEYS.JIRA_SERVER) {
+            sourceAttachmentPathname = convertJiraImageURL(imageUrl);
+          } else {
+            sourceAttachmentPathname = imageUrl;
+          }
         }
-      }
 
-      processedComment.comment_html = replaceImageComponent(
-        processedComment.comment_html || "",
-        assetId,
-        sourceAttachmentPathname,
-        credentials.source
-      );
+        processedComment.comment_html = replaceImageComponent(
+          processedComment.comment_html || "",
+          assetId,
+          sourceAttachmentPathname,
+          credentials.source
+        );
+
+        executionLog.collect(jobId, {
+          entity_type: EExecutionLogEntityType.WORK_ITEM_COMMENT_ATTACHMENT,
+          phase: "PROCESS_COMMENT_ATTACHMENT",
+          level: EExecutionLogLevel.SUCCESS,
+          entity_external_id: comment.external_id,
+          entity_plane_id: assetId,
+          additional_data: {
+            fileName,
+            fileSize: blob.size,
+          },
+        });
+      } catch (attachmentError) {
+        logger.error(`[${jobId.slice(0, 7)}] Error processing comment attachment:`, attachmentError);
+
+        executionLog.collect(jobId, {
+          entity_type: EExecutionLogEntityType.WORK_ITEM_COMMENT_ATTACHMENT,
+          phase: "PROCESS_COMMENT_ATTACHMENT",
+          level: EExecutionLogLevel.ERROR,
+          error: extractErrorMetadata(attachmentError),
+          entity_external_id: comment.external_id,
+          additional_data: {
+            imageUrl,
+          },
+        });
+      }
     }
 
     return [processedComment, assetIds];

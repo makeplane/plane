@@ -54,6 +54,21 @@ from django.db.models.functions import Cast
 from django.core.exceptions import ValidationError
 from .base import BaseAPIView
 from plane.utils.openapi.responses import WORKSPACE_NOT_FOUND_RESPONSE, create_paginated_response
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    CUSTOMERS_READ_SCOPE,
+    CUSTOMERS_WRITE_SCOPE,
+    CUSTOMER_REQUESTS_READ_SCOPE,
+    CUSTOMER_REQUESTS_WRITE_SCOPE,
+    CUSTOMER_WORK_ITEMS_READ_SCOPE,
+    CUSTOMER_WORK_ITEMS_WRITE_SCOPE,
+    CUSTOMER_PROPERTIES_READ_SCOPE,
+    CUSTOMER_PROPERTIES_WRITE_SCOPE,
+    CUSTOMER_PROPERTY_VALUES_READ_SCOPE,
+    CUSTOMER_PROPERTY_VALUES_WRITE_SCOPE,
+)
 
 
 class CustomerAPIEndpoint(BaseAPIView):
@@ -62,7 +77,14 @@ class CustomerAPIEndpoint(BaseAPIView):
     """
 
     model = Customer
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [CUSTOMERS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [CUSTOMERS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [CUSTOMERS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [CUSTOMERS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [CUSTOMERS_WRITE_SCOPE]],
+    }
     serializer_class = CustomerSerializer
     use_read_replica = True
 
@@ -145,7 +167,14 @@ class CustomerDetailAPIEndpoint(BaseAPIView):
     """
 
     model = Customer
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [CUSTOMERS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [CUSTOMERS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [CUSTOMERS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [CUSTOMERS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [CUSTOMERS_WRITE_SCOPE]],
+    }
     serializer_class = CustomerSerializer
     use_read_replica = True
 
@@ -245,7 +274,14 @@ class CustomerRequestAPIEndpoint(BaseAPIView):
     """
 
     model = CustomerRequest
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [CUSTOMER_REQUESTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [CUSTOMER_REQUESTS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [CUSTOMER_REQUESTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [CUSTOMER_REQUESTS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [CUSTOMER_REQUESTS_WRITE_SCOPE]],
+    }
     serializer_class = CustomerRequestSerializer
     use_read_replica = True
 
@@ -326,7 +362,14 @@ class CustomerRequestDetailAPIEndpoint(BaseAPIView):
     """
 
     model = CustomerRequest
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [CUSTOMER_REQUESTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [CUSTOMER_REQUESTS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [CUSTOMER_REQUESTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [CUSTOMER_REQUESTS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [CUSTOMER_REQUESTS_WRITE_SCOPE]],
+    }
     serializer_class = CustomerRequestSerializer
     use_read_replica = True
 
@@ -421,7 +464,14 @@ class CustomerIssuesAPIEndpoint(BaseAPIView):
     """
 
     model = Issue
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [CUSTOMER_WORK_ITEMS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [CUSTOMER_WORK_ITEMS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [CUSTOMER_WORK_ITEMS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [CUSTOMER_WORK_ITEMS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [CUSTOMER_WORK_ITEMS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_serializer_class(self):
@@ -621,7 +671,14 @@ class CustomerIssueDetailAPIEndpoint(BaseAPIView):
     """
 
     model = Issue
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [CUSTOMER_WORK_ITEMS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [CUSTOMER_WORK_ITEMS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [CUSTOMER_WORK_ITEMS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [CUSTOMER_WORK_ITEMS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [CUSTOMER_WORK_ITEMS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_serializer_class(self):
@@ -682,7 +739,14 @@ class CustomerPropertiesAPIEndpoint(BaseAPIView):
     """
 
     model = CustomerProperty
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [CUSTOMER_PROPERTIES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [CUSTOMER_PROPERTIES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [CUSTOMER_PROPERTIES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [CUSTOMER_PROPERTIES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [CUSTOMER_PROPERTIES_WRITE_SCOPE]],
+    }
     serializer_class = CustomerPropertySerializer
     use_read_replica = True
 
@@ -814,7 +878,14 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
     """
 
     model = CustomerProperty
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [CUSTOMER_PROPERTIES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [CUSTOMER_PROPERTIES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [CUSTOMER_PROPERTIES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [CUSTOMER_PROPERTIES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [CUSTOMER_PROPERTIES_WRITE_SCOPE]],
+    }
     serializer_class = CustomerPropertySerializer
     use_read_replica = True
 
@@ -1000,7 +1071,14 @@ class CustomerPropertyValuesAPIEndpoint(BaseAPIView):
     """
 
     model = CustomerPropertyValue
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [CUSTOMER_PROPERTY_VALUES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [CUSTOMER_PROPERTY_VALUES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [CUSTOMER_PROPERTY_VALUES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [CUSTOMER_PROPERTY_VALUES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [CUSTOMER_PROPERTY_VALUES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def _query_annotator(self, query):
@@ -1188,7 +1266,14 @@ class CustomerPropertyValueDetailAPIEndpoint(BaseAPIView):
     """
 
     model = CustomerPropertyValue
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [CUSTOMER_PROPERTY_VALUES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [CUSTOMER_PROPERTY_VALUES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [CUSTOMER_PROPERTY_VALUES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [CUSTOMER_PROPERTY_VALUES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [CUSTOMER_PROPERTY_VALUES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def _query_annotator(self, query):

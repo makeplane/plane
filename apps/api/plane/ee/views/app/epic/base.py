@@ -60,6 +60,8 @@ from plane.db.models import (
     ProjectMember,
     IssueSubscriber,
     IssueDescriptionVersion,
+    IssueLabel,
+    IssueAssignee,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
@@ -76,7 +78,7 @@ from plane.payment.flags.flag_decorator import (
     check_feature_flag,
 )
 from plane.payment.flags.flag import FeatureFlag
-from plane.utils.grouper import issue_group_values, issue_on_results
+from plane.utils.grouper import issue_group_values, issue_on_results, issue_queryset_grouper
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.ee.utils.nested_issue_children import get_all_related_issues
 from plane.ee.utils.workflow import WorkflowStateManager
@@ -125,40 +127,6 @@ class EpicViewSet(BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(assignees__id__isnull=True)
-                            & Q(assignees__member_project__is_active=True)
-                            & Q(issue_assignee__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(issue_module__module_id__isnull=True)
-                            & Q(issue_module__module__archived_at__isnull=True)
-                            & Q(issue_module__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
             )
             .annotate(
                 customer_ids=Coalesce(
@@ -218,7 +186,9 @@ class EpicViewSet(BaseViewSet):
 
     def get_queryset(self):
         return (
-            Issue.objects.filter(project_id=self.kwargs.get("project_id"))
+            Issue.issue_and_epics_objects.filter(
+                project_id=self.kwargs.get("project_id"),
+            )
             .filter(Q(type__isnull=False) & Q(type__is_epic=True))
             .filter(workspace__slug=self.kwargs.get("slug"))
         ).distinct()
@@ -319,6 +289,8 @@ class EpicViewSet(BaseViewSet):
         # Group by
         group_by = request.GET.get("group_by", False)
         sub_group_by = request.GET.get("sub_group_by", False)
+
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
 
         if group_by:
             if sub_group_by:
@@ -431,6 +403,29 @@ class EpicViewSet(BaseViewSet):
                         subscriber=request.user,
                     )
                 )
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    Subquery(
+                        IssueLabel.objects.filter(issue_id=OuterRef("pk"))
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("label_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    Subquery(
+                        IssueAssignee.objects.filter(
+                            issue_id=OuterRef("pk"),
+                            assignee__member_project__is_active=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("assignee_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
         )
 
@@ -580,6 +575,18 @@ class EpicViewSet(BaseViewSet):
                 project_feature.save()
 
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class EpicMetaListEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @check_feature_flag(FeatureFlag.EPICS)
+    def get(self, request, slug, project_id):
+        epics = (
+            Issue.objects.filter(project_id=project_id, workspace__slug=slug)
+            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .values("id", "name", "sequence_id", project_identifier=F("project__identifier"))
+        )
+        return Response(epics, status=status.HTTP_200_OK)
 
 
 class EpicUserDisplayPropertyEndpoint(BaseAPIView):
@@ -927,8 +934,6 @@ class EpicDetailIdentifierEndpoint(BaseAPIView):
 
         # Fetch the project
         project = Project.objects.get(identifier__iexact=project_identifier, workspace__slug=slug)
-
-        print()
 
         # Fetch the issue
         issue = self.get_queryset().filter(sequence_id=epic_identifier, project_id=project.id).first()

@@ -25,4 +25,4 @@ def process_webhook_event(body: dict):
     """
     Process a webhook event from the event stream.
     """
-    logger.info("Processing webhook event: ", body)
+    logger.info("Processing webhook event: ", extra={"body": body})

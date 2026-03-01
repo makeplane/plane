@@ -42,8 +42,8 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         try:
-            # Check the multi-tenant environment
-            if settings.IS_MULTI_TENANT:
+            # Check if the environment is not self-managed
+            if not settings.IS_SELF_MANAGED:
                 return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
             workspace = Workspace.objects.get(slug=slug)
@@ -63,8 +63,8 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
                 return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, slug):
-        # Check the multi-tenant environment
-        if settings.IS_MULTI_TENANT:
+        # Check if the environment is not self-managed
+        if not settings.IS_SELF_MANAGED:
             return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
         license_key = request.data.get("license_key", False)
@@ -140,8 +140,8 @@ class LicenseDeActivateEndpoint(BaseAPIView):
         return True
 
     def post(self, request, slug):
-        # Check the multi-tenant environment
-        if settings.IS_MULTI_TENANT:
+        # Check if the environment is not self-managed
+        if not settings.IS_SELF_MANAGED:
             return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
         if settings.PAYMENT_SERVER_BASE_URL:
@@ -198,8 +198,8 @@ class LicenseActivateUploadEndpoint(BaseAPIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, slug):
-        # Check the multi-tenant environment
-        if settings.IS_MULTI_TENANT:
+        # Check if the environment is not self-managed
+        if not settings.IS_SELF_MANAGED:
             return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
         if not settings.IS_AIRGAPPED:
@@ -320,8 +320,8 @@ class LicenseFileFetchEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug):
-        # Check the multi-tenant environment
-        if settings.IS_MULTI_TENANT:
+        # Check if the environment is not self-managed
+        if not settings.IS_SELF_MANAGED:
             return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
         if not settings.IS_AIRGAPPED:

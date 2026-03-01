@@ -13,26 +13,37 @@
 
 import { API_BASE_URL } from "@plane/constants";
 import type {
+  EViewAccess,
+  IBlockUpdateDependencyData,
+  ILastActiveWorkspaceDetails,
+  IProductUpdateResponse,
+  ISearchIssueResponse,
+  IUserProjectsRole,
   IWorkspace,
-  IWorkspaceMemberMe,
+  IWorkspaceBulkInviteFormData,
   IWorkspaceMember,
   IWorkspaceMemberInvitation,
-  ILastActiveWorkspaceDetails,
+  IWorkspaceMemberMe,
   IWorkspaceSearchResults,
-  IProductUpdateResponse,
-  IWorkspaceBulkInviteFormData,
-  IWorkspaceViewProps,
-  IUserProjectsRole,
+  IWorkspaceSidebarNavigation,
+  IWorkspaceSidebarNavigationItem,
+  IWorkspaceUserPropertiesResponse,
   IWorkspaceView,
+  IWorkspaceViewProps,
+  TActivityEntityData,
+  TEditorWorkItemMention,
   TIssuesResponse,
   TLink,
-  TSearchResponse,
   TSearchEntityRequestPayload,
+  TSearchResponse,
+  TSearchResults,
   TWidgetEntityData,
-  TActivityEntityData,
-  IWorkspaceSidebarNavigationItem,
-  IWorkspaceSidebarNavigation,
-  IWorkspaceUserPropertiesResponse,
+  TWorkspaceEpicsSearchParams,
+  TWorkspaceMemberImportSummary,
+  TExploredFeatures,
+  TTips,
+  TGettingStartedChecklistKeys,
+  TWorkspaceWithProductDetails,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
@@ -129,6 +140,21 @@ export class WorkspaceService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
+      });
+  }
+
+  async updateMemberOnboarding(
+    workspaceSlug: string,
+    data: {
+      explored_features?: Partial<Record<TExploredFeatures, boolean>>;
+      tips?: Partial<Record<TTips, boolean>>;
+      getting_started_checklist?: Partial<Record<TGettingStartedChecklistKeys, boolean>>;
+    }
+  ): Promise<IWorkspaceMemberMe> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/workspace-member/me/onboarding/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
       });
   }
 
@@ -428,6 +454,84 @@ export class WorkspaceService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
+      });
+  }
+
+  async updateViewAccess(workspaceSlug: string, viewId: string, access: EViewAccess): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/views/${viewId}/access/`, { access }).catch((error) => {
+      throw error?.response?.data;
+    });
+  }
+
+  async lockView(workspaceSlug: string, viewId: string): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/views/${viewId}/lock/`).catch((error) => {
+      throw error?.response?.data;
+    });
+  }
+
+  async unLockView(workspaceSlug: string, viewId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/views/${viewId}/lock/`).catch((error) => {
+      throw error?.response?.data;
+    });
+  }
+
+  async searchAcrossWorkspace(
+    workspaceSlug: string,
+    params: { search: string; workspace_search?: boolean; project_id?: string }
+  ): Promise<{ results: TSearchResults }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/search/`, { params }).then((response) => response?.data);
+  }
+
+  /**
+   * Enhanced search across workspace. This endpoint is similar to searchAcrossWorkspace
+   * but it returns more detailed results for each item. It is used in the search bar.
+   *
+   * @param {string} workspaceSlug - The workspace slug.
+   * @param {Object} params - The search params.
+   * @param {string} params.search - The search string.
+   * @param {boolean} [params.workspace_search=false] - If true, search in the whole workspace.
+   * @param {string} [params.projectId] - The project id to search in.
+   * @returns {Promise<Object[]>} - The search results.
+   */
+  async enhancedSearchAcrossWorkspace(
+    workspaceSlug: string,
+    params: { search: string; workspace_search?: boolean; projectId?: string }
+  ) {
+    return this.get(`/api/workspaces/${workspaceSlug}/enhanced-search/`, { params }).then((response) => response?.data);
+  }
+
+  async fetchWorkspaceEpics(
+    workspaceSlug: string,
+    params: TWorkspaceEpicsSearchParams
+  ): Promise<ISearchIssueResponse[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/epics/`, { params }).then((response) => response?.data);
+  }
+
+  async updateWorkItemDates(workspaceSlug: string, updates: IBlockUpdateDependencyData[]): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/issue-dates/`, { updates }).then((response) => response?.data);
+  }
+
+  async retrieveWorkspaceWorkItem(workspaceSlug: string, workItemId: string): Promise<TEditorWorkItemMention> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issues/${workItemId}/`).then((response) => response?.data);
+  }
+
+  async importMembers(workspaceSlug: string, assetId: string): Promise<TWorkspaceMemberImportSummary> {
+    return this.post(`/api/workspaces/${workspaceSlug}/members-import/`, { asset_id: assetId })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Get workspaces with plan details. This endpoint is only available and used for Plane cloud instance.
+   * @returns {Promise<TWorkspaceWithProductDetails[]>} - The workspaces with plan details.
+   */
+  async getWorkspacesWithPlanDetails(): Promise<TWorkspaceWithProductDetails[]> {
+    return this.get(`/api/payments/website/workspaces/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
       });
   }
 }

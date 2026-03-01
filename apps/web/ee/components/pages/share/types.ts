@@ -17,7 +17,7 @@ import type { EPageSharedUserAccess } from "@plane/types";
 // local imports
 import type { TPageShareFormReturn } from "@/plane-web/hooks/pages/use-page-share-form";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
-import type { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
+import type { TPageSharedUser } from "@/services/page/page-share.service";
 import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TSharePageModalProps = {

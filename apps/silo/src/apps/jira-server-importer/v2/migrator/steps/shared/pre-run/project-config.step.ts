@@ -23,6 +23,9 @@ import { createEmptyContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
 import type { IStep, TStepExecutionContext, TStepExecutionInput } from "@/apps/jira-server-importer/v2/types";
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
+import { extractErrorMetadata } from "@/helpers/errors";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 
 export type TRequiredFlags = {
   epics: boolean;
@@ -40,35 +43,78 @@ export class PlaneProjectConfigurationStep implements IStep {
 
     const { workspace_slug, project_id } = job;
 
-    const allFeatureFlags = await this.fetchFeatureFlags(workspace_slug, job.initiator_id);
-    const requiredFlags = this.collectRequiredFlags(allFeatureFlags);
+    try {
+      const allFeatureFlags = await this.fetchFeatureFlags(workspace_slug, job.initiator_id);
+      const requiredFlags = this.collectRequiredFlags(allFeatureFlags);
 
-    logger.info(`[${job.id.slice(0, 7)}] Project configuration: ${JSON.stringify(requiredFlags)}`, {
-      workspace_slug,
-      project_id,
-      requiredFlags,
-    });
+      logger.info(`[${job.id.slice(0, 7)}] Project configuration: ${JSON.stringify(requiredFlags)}`, {
+        workspace_slug,
+        project_id,
+        requiredFlags,
+      });
 
-    // Todo, once the features api supports time tracking, we can remove this
-    const result = await planeClient.project.update(workspace_slug, project_id, {
-      is_time_tracking_enabled: requiredFlags.issue_worklog,
-    });
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.PROJECT,
+        phase: "FETCH_FEATURE_FLAGS",
+        ignore_summarization: true,
+        level: EExecutionLogLevel.INFO,
+        additional_data: {
+          featureFlags: requiredFlags,
+        },
+      });
 
-    const featureUpdate = await planeClient.project.toggleProjectFeatures(workspace_slug, project_id, {
-      epics: requiredFlags.epics,
-      modules: true,
-      cycles: true,
-      work_item_types: requiredFlags.issue_types,
-    });
+      // Todo, once the features api supports time tracking, we can remove this
+      const result = await planeClient.project.update(workspace_slug, project_id, {
+        is_time_tracking_enabled: requiredFlags.issue_worklog,
+      });
 
-    logger.info(`[${job.id.slice(0, 7)}] Project configuration updated:`, {
-      workspace_slug,
-      project_id,
-      result,
-      featureUpdate,
-    });
+      const featureUpdate = await planeClient.project.toggleProjectFeatures(workspace_slug, project_id, {
+        epics: requiredFlags.epics,
+        modules: true,
+        cycles: true,
+        work_item_types: requiredFlags.issue_types,
+      });
 
-    return createEmptyContext();
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.PROJECT,
+        phase: "UPDATE_PROJECT_CONFIG",
+        ignore_summarization: true,
+        level: EExecutionLogLevel.SUCCESS,
+        additional_data: {
+          projectUpdated: {
+            is_time_tracking_enabled: requiredFlags.issue_worklog,
+            featuresUpdated: {
+              epics: requiredFlags.epics,
+              modules: true,
+              cycles: true,
+              work_item_types: requiredFlags.issue_types,
+            },
+          },
+        },
+      });
+
+      logger.info(`[${job.id.slice(0, 7)}] Project configuration updated:`, {
+        workspace_slug,
+        project_id,
+        result,
+        featureUpdate,
+      });
+
+      return createEmptyContext();
+    } catch (error) {
+      logger.error(`[${job.id}][${this.name}] Failed to configure project`, error);
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.PROJECT,
+        ignore_summarization: true,
+        phase: "UPDATE_PROJECT_CONFIG",
+
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+      });
+
+      throw error;
+    }
   }
 
   async fetchFeatureFlags(workspace_slug: string, user_id: string): Promise<Record<string, boolean>> {

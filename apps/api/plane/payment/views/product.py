@@ -67,7 +67,8 @@ class ProductEndpoint(BaseAPIView):
                 # If paid users are currently the pay workspace count
                 workspace_count = paid_count
 
-                # If free users are more than 5 times the paid users, then workspace count is free users - 5 * paid users
+                # If free users are more than 5 times the paid users,
+                # then workspace count is free users - 5 * paid users
                 if free_count > 5 * paid_count:
                     workspace_count = free_count - 5 * paid_count
 
@@ -141,8 +142,8 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
         )
 
     def post(self, request, slug):
-        # On the multi-tenant version, the workspace license is synced from the payment server
-        if settings.IS_MULTI_TENANT:
+        # On the cloud version, the workspace license is synced from the payment server
+        if not settings.IS_SELF_MANAGED:
             # Resync the workspace license
             _ = resync_workspace_license(workspace_slug=slug, force=True)
 
@@ -196,7 +197,7 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
 
 
 class WorkspaceLicenseSyncEndpoint(BaseAPIView):
-    """This endpoint is used to sync the workspace license from the payment server: - This is used by the payment server"""
+    """This endpoint is used to sync the workspace license from the payment server: - This is used by the payment server"""  # noqa: E501
 
     permission_classes = [AllowAny]
 

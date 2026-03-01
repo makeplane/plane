@@ -131,7 +131,7 @@ from plane.ee.views.app.page.live import (
     PagesLiveServerSubPagesViewSet,
 )
 from plane.ee.views.app.page.move import MovePageEndpoint
-from plane.ee.views.app.page.entities import PageEmbedEndpoint, PageMentionEndpoint
+from plane.ee.views.app.page.entities import PageEmbedEndpoint, PageMentionEndpoint, PageFetchMetadataEndpoint
 
 from plane.ee.views.app.search.base import EnhancedGlobalSearchEndpoint
 

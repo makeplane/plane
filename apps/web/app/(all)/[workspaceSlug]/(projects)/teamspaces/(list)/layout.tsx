@@ -16,7 +16,7 @@ import { Outlet } from "react-router";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 // plane web components
-import { TeamspaceListItemHeader } from "@/plane-web/components/teamspaces/headers/list-header";
+import { TeamspaceListItemHeader } from "@/components/teamspaces/headers/list-header";
 
 export default function TeamspaceListItemLayout() {
   return (

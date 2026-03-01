@@ -11,11 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { FileUp } from "lucide-react";
+import { FileUp, RotateCcw } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-// icons
-import { VideoFileIcon } from "@plane/propel/icons";
 // plane imports
+import { AttachmentUploadFailedIcon, VideoFileIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -24,13 +23,18 @@ import { EFileError } from "@/helpers/file";
 // hooks
 import { uploadFirstFileAndInsertRemaining, useDropZone, useUploader } from "@/hooks/use-file-upload";
 // local imports
-import { EAttachmentBlockAttributeNames } from "../types";
+import { EAttachmentBlockAttributeNames, EAttachmentStatus } from "../types";
 import { getAttachmentExtensionFileMap, getMimeTypesFromFileType } from "../utils";
 import type { CustomAttachmentNodeViewProps } from "./node-view";
 import { CustomAttachmentUploaderDetails } from "./uploader-details";
 
-export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
-  const { editor, extension, getPos, node, updateAttributes } = props;
+type CustomAttachmentUploaderProps = CustomAttachmentNodeViewProps & {
+  hasDuplicationFailed?: boolean;
+};
+
+export function CustomAttachmentUploader(props: CustomAttachmentUploaderProps) {
+  const { editor, extension, getPos, node, updateAttributes, hasDuplicationFailed = false, selected } = props;
+
   // states
   const [fileBeingUploaded, setFileBeingUploaded] = useState<File | null>(null);
   const [fileUploadError, setFileUploadError] = useState<{ error: EFileError; file: File } | null>(null);
@@ -44,6 +48,7 @@ export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
   const maxFileSize = editor.storage.attachmentComponent?.maxFileSize;
   const attachmentExtensionFileMap = useMemo(() => getAttachmentExtensionFileMap(editor), [editor]);
   const isTouchDevice = !!editor.storage.utility.isTouchDevice;
+
   // extension options
   const { onClick } = extension.options;
   // get accepted file type from node attributes or default to "all"
@@ -62,6 +67,7 @@ export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
         [EAttachmentBlockAttributeNames.FILE_NAME]: file.name,
         [EAttachmentBlockAttributeNames.FILE_TYPE]: file.type,
         [EAttachmentBlockAttributeNames.FILE_SIZE]: file.size,
+        [EAttachmentBlockAttributeNames.STATUS]: EAttachmentStatus.UPLOADED,
       });
       // delete from the attachment file map
       attachmentExtensionFileMap?.delete(attachmentBlockId);
@@ -98,16 +104,19 @@ export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
   const uploadAttachmentEditorCommand = useCallback(
     async (file: File) => {
       try {
+        updateAttributes({ [EAttachmentBlockAttributeNames.STATUS]: EAttachmentStatus.UPLOADING });
         setFileBeingUploaded(file);
         return await extension.options.uploadAttachment?.(attachmentBlockId ?? "", file);
       } catch (error) {
         setFileUploadError({ error: EFileError.UPLOAD_FAILED, file });
         console.error("Error in uploading attachment via uploader:", error);
+        // Reset status to PENDING on error so user can retry
+        updateAttributes({ [EAttachmentBlockAttributeNames.STATUS]: EAttachmentStatus.PENDING });
       } finally {
         setFileBeingUploaded(null);
       }
     },
-    [attachmentBlockId, extension.options]
+    [attachmentBlockId, extension.options, updateAttributes]
   );
 
   const handleProgressStatus = useCallback(
@@ -139,8 +148,7 @@ export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
     uploader: uploadFile,
   });
 
-  const isErrorState = !!fileUploadError;
-  const { selected } = props;
+  const isErrorState = !!fileUploadError || hasDuplicationFailed;
 
   const borderColor =
     selected && editor.isEditable && !isErrorState
@@ -223,11 +231,13 @@ export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
       aria-label="Click to upload attachment"
       aria-disabled={!editor.isEditable}
     >
-      <div className="flex-shrink-0 mt-1 size-8 grid place-items-center">
+      <div className="shrink-0 mt-1 size-8 grid place-items-center">
         {isVideoUploader ? (
-          <VideoFileIcon className="flex-shrink-0 size-8 text-tertiary" />
+          <VideoFileIcon className="shrink-0 size-8 text-tertiary" />
+        ) : hasDuplicationFailed || fileUploadError ? (
+          <AttachmentUploadFailedIcon className="shrink-0 size-8 text-custom-text-300" />
         ) : (
-          <FileUp className="flex-shrink-0 size-8 text-tertiary" />
+          <FileUp className="shrink-0 size-8 text-tertiary" />
         )}
       </div>
       <CustomAttachmentUploaderDetails
@@ -235,8 +245,29 @@ export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
         editor={editor}
         fileBeingUploaded={fileBeingUploaded}
         fileUploadError={fileUploadError}
+        hasDuplicationFailed={hasDuplicationFailed}
         maxFileSize={maxFileSize}
       />
+      {hasDuplicationFailed && editor.isEditable && (
+        <button
+          type="button"
+          onClick={() => {
+            if (hasDuplicationFailed && editor.isEditable) {
+              updateAttributes({ [EAttachmentBlockAttributeNames.STATUS]: EAttachmentStatus.DUPLICATING });
+            }
+          }}
+          className={cn(
+            "flex items-center gap-1 px-2 py-1 text-11 font-medium text-tertiary hover:bg-layer-2-hover hover:text-secondary rounded-md transition-all duration-200 ease-in-out",
+            {
+              "hover:bg-red-500/20": selected,
+            }
+          )}
+          title="Retry duplication"
+        >
+          <RotateCcw className="size-3" />
+          Retry
+        </button>
+      )}
       <input
         className="size-0 overflow-hidden"
         ref={fileInputRef}

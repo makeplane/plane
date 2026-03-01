@@ -21,7 +21,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import { MovePageModalListItem } from "../list-item";
 import type { TMovePageSelectedValue } from "../root";

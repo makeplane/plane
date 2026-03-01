@@ -15,7 +15,7 @@ RUN apk update
 RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
-ARG TURBO_VERSION=2.5.6
+ARG TURBO_VERSION=2.8.7
 RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
 COPY . .
 RUN turbo prune --scope=silo --docker
@@ -58,6 +58,10 @@ COPY --from=installer /app/apps/silo/dist ./apps/silo/dist
 COPY --from=installer /app/apps/silo/node_modules ./apps/silo/node_modules
 COPY --from=installer /app/node_modules ./node_modules
 COPY --from=installer /app/apps/silo/package.json ./apps/silo/package.json
+
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
 
 ENV TURBO_TELEMETRY_DISABLED=1
 

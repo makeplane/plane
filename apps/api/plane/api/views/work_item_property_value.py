@@ -38,6 +38,13 @@ from plane.api.views.base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.openapi.decorators import issue_property_value_docs
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_WORK_ITEM_PROPERTY_VALUES_READ_SCOPE,
+    PROJECTS_WORK_ITEM_PROPERTY_VALUES_WRITE_SCOPE,
+)
 
 
 class IssuePropertyValueAPIEndpoint(BaseAPIView):
@@ -49,7 +56,11 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
 
     model = IssuePropertyValue
     serializer_class = IssuePropertyValueAPISerializer
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_WRITE_SCOPE]],
+    }
     webhook_event = "issue_property_value"
 
     def query_annotator(self, query):
@@ -160,7 +171,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, issue_id, property_id):
         workspace = Workspace.objects.get(slug=slug)
-        issue_property = IssueProperty.objects.get(pk=property_id)
+        issue_property = IssueProperty.objects.get(pk=property_id, workspace=workspace, project_id=project_id)
 
         # existing issue property values
         existing_issue_property_values = self.model.objects.filter(
@@ -229,7 +240,10 @@ class IssuePropertyValueListAPIEndpoint(IssuePropertyValueAPIEndpoint):
 
     model = IssuePropertyValue
     serializer_class = IssuePropertyValueAPISerializer
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_READ_SCOPE]],
+    }
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     @issue_property_value_docs(
@@ -277,7 +291,13 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
     """
 
     model = IssuePropertyValue
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_WRITE_SCOPE]],
+    }
     webhook_event = "issue_property_value"
 
     def get_serializer_class(self):

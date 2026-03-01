@@ -29,7 +29,6 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 from plane.db.models import (
     Cycle,
     Intake,
-    ProjectUserProperty,
     Module,
     Project,
     DeployBoard,
@@ -38,6 +37,8 @@ from plane.db.models import (
     DEFAULT_STATES,
     Workspace,
     UserFavorite,
+    IssueType,
+    ProjectIssueType,
 )
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.api.views.base import BaseAPIView
@@ -75,6 +76,15 @@ from plane.utils.openapi import (
 )
 
 from plane.ee.models import ProjectFeature
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_READ_SCOPE,
+    PROJECTS_WRITE_SCOPE,
+    PROJECTS_FEATURES_READ_SCOPE,
+    PROJECTS_FEATURES_WRITE_SCOPE,
+)
 
 
 class ProjectListCreateAPIEndpoint(BaseAPIView):
@@ -83,7 +93,11 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
     serializer_class = ProjectSerializer
     model = Project
     webhook_event = "project"
-    permission_classes = [ProjectBasePermission]
+    permission_classes = [ProjectBasePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -238,6 +252,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         Create a new project in the workspace with default states and member assignments.
         Automatically adds the creator as admin and sets up default workflow states.
         """
+
         try:
             workspace = Workspace.objects.get(slug=slug)
 
@@ -265,7 +280,50 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_409_CONFLICT,
                     )
+
                 serializer.save()
+
+                intake_view = request.data.get("intake_view", None)
+                is_issue_type_enabled = request.data.get("is_issue_type_enabled", False)
+
+                if intake_view:
+                    intake = Intake.objects.filter(project=serializer.instance.id, is_default=True).first()
+
+                    if not intake:
+                        Intake.objects.create(
+                            name=f"{serializer.instance.name} Intake",
+                            project_id=serializer.instance.id,
+                            is_default=True,
+                            workspace_id=serializer.instance.workspace.id,
+                        )
+
+                if is_issue_type_enabled:
+                    issue_type = IssueType.objects.filter(
+                        workspace_id=serializer.instance.workspace.id,
+                        project_issue_types__project_id__in=[serializer.instance.id],
+                        is_default=True,
+                    ).first()
+
+                    if not issue_type:
+                        # Create a new default issue type
+                        issue_type = IssueType.objects.create(
+                            workspace_id=serializer.instance.workspace.id,
+                            name="Task",
+                            is_default=True,
+                            description="Default work item type with the option to add new properties",
+                            logo_props={
+                                "in_use": "icon",
+                                "icon": {"color": "#ffffff", "background_color": "#6695FF"},
+                            },
+                        )
+
+                        ProjectIssueType.objects.create(
+                            issue_type_id=issue_type.id,
+                            is_default=True,
+                            project_id=serializer.instance.id,
+                            workspace_id=serializer.instance.workspace.id,
+                            level=0,
+                        )
 
                 # Add the user as Administrator to the project
                 _ = ProjectMember.objects.create(project_id=serializer.instance.id, member=request.user, role=20)
@@ -333,7 +391,12 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
     model = Project
     webhook_event = "project"
 
-    permission_classes = [ProjectBasePermission]
+    permission_classes = [ProjectBasePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -450,7 +513,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         """
         try:
             workspace = Workspace.objects.get(slug=slug)
-            project = Project.objects.get(pk=pk)
+            project = Project.objects.get(pk=pk, workspace=workspace)
             current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
 
             intake_view = request.data.get("intake_view", project.intake_view)
@@ -489,9 +552,11 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_409_CONFLICT,
                     )
+
                 serializer.save()
                 if serializer.data["intake_view"]:
                     intake = Intake.objects.filter(project=project, is_default=True).first()
+
                     if not intake:
                         Intake.objects.create(
                             name=f"{project.name} Intake",
@@ -568,7 +633,11 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
 class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     """Project Archive and Unarchive Endpoint"""
 
-    permission_classes = [ProjectBasePermission]
+    permission_classes = [ProjectBasePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "POST": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
+    }
 
     @project_docs(
         operation_id="archive_project",
@@ -619,7 +688,11 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
 
 class ProjectFeatureAPIEndpoint(BaseAPIView):
-    permission_classes = [ProjectMemberPermission]
+    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_FEATURES_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_FEATURES_WRITE_SCOPE]],
+    }
     serializer_class = ProjectFeatureSerializer
 
     def get_queryset(self):

@@ -26,16 +26,17 @@ export type TWorkspaceSettingsTabs =
   | "integrations"
   | "import"
   | "worklogs"
+  | "group-syncing"
   | "identity"
   | "project_states"
   | "teamspaces"
   | "initiatives"
   | "customers"
-  | "applications"
   | "templates"
   | "plane-intelligence"
-  | "wiki"
-  | "connections";
+  | "connections"
+  | "scripts"
+  | "access-tokens";
 export type TWorkspaceSettingsItem = {
   key: TWorkspaceSettingsTabs;
   i18n_label: string;
@@ -47,7 +48,14 @@ export type TWorkspaceSettingsItem = {
 export type TProjectSettingsTabs =
   | "general"
   | "members"
-  | "features"
+  | "worklogs"
+  | "features_cycles"
+  | "features_modules"
+  | "features_views"
+  | "features_pages"
+  | "features_intake"
+  | "features_time_tracking"
+  | "features_milestones"
   | "states"
   | "labels"
   | "estimates"

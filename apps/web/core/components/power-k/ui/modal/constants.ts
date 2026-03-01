@@ -12,7 +12,7 @@
  */
 
 // plane web imports
-import { POWER_K_MODAL_PAGE_DETAILS_EXTENDED } from "@/plane-web/components/command-palette/power-k/constants";
+import { POWER_K_MODAL_PAGE_DETAILS_EXTENDED } from "@/components/command-palette/power-k/constants";
 // local imports
 import type { TPowerKPageType } from "../../core/types";
 

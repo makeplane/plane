@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { IWorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
+import type { IWorkspaceProjectStatesStore } from "@/store/workspace-project-states";
 
 export const useWorkspaceProjectStates = (): IWorkspaceProjectStatesStore => {
   const context = useContext(StoreContext);

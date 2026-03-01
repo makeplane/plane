@@ -56,7 +56,7 @@ export class ProjectService extends APIService {
   }
 
   async getProject(slug: string, id: string): Promise<ExProject> {
-    return this.get(`/api/v1/workspaces/${slug}/projects/${id}`)
+    return this.get(`/api/v1/workspaces/${slug}/projects/${id}/`)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -28,6 +28,7 @@ export * from "./new-tab-icon";
 export * from "./search-icon";
 export * from "./plus-icon";
 export * from "./preferences-icon";
+export * from "./command-icon";
 export * from "./copy-link";
 export * from "./upgrade-icon";
 export * from "./trash-icon";

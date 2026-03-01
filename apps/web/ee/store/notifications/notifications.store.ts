@@ -19,7 +19,7 @@ import { ENotificationLoader } from "@plane/constants";
 // helpers
 import { convertToEpoch } from "@plane/utils";
 // services
-import inboxService from "@/plane-web/services/inbox.service";
+import inboxService from "@/services/inbox.service";
 // store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { INotification } from "@/store/notifications/notification";

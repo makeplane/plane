@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { IProjectAttachmentStore } from "@/plane-web/store/projects/project-details/attachment.store";
+import type { IProjectAttachmentStore } from "@/store/project/project-details/attachment.store";
 
 export const useProjectAttachments = (): IProjectAttachmentStore => {
   const context = useContext(StoreContext);

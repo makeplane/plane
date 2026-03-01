@@ -89,7 +89,7 @@ export interface IProjectInboxStore {
   deleteInboxIssue: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<void>;
 }
 
-export class ProjectInboxStore implements IProjectInboxStore {
+export abstract class ProjectInboxStore implements IProjectInboxStore {
   // constants
   PER_PAGE_COUNT = 10;
   // observables

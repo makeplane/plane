@@ -1,15 +1,20 @@
 {
-  "extends": "@plane/typescript-config/base.json",
+  "extends": "@plane/typescript-config/node-library.json",
   "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noImplicitOverride": false,
+    "noImplicitReturns": false,
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "noUnusedLocals": false,
-    "noImplicitReturns": false,
-    "exactOptionalPropertyTypes": false,
-    "noUnusedParameters": false,
-    "noImplicitOverride": false
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
   "include": ["src"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules", "*.config.ts"],
+  "references": [{ "path": "../types" }, { "path": "../constants" }, { "path": "../sdk" }]
 }

@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { ITeamspaceFilterStore } from "@/plane-web/store/teamspace/teamspace-filter.store";
+import type { ITeamspaceFilterStore } from "@/store/teamspace/teamspace-filter.store";
 
 export const useTeamspaceFilter = (): ITeamspaceFilterStore => {
   const context = useContext(StoreContext);

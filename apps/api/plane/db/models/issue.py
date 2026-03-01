@@ -35,7 +35,6 @@ from plane.db.mixins import ChangeTrackerMixin
 from .state import StateGroup
 
 # ee imports
-from plane.db.models.intake import IntakeIssueStatus
 
 
 def get_default_properties():
@@ -160,7 +159,7 @@ class Issue(ProjectBaseModel):
         blank=True,
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, default=dict)
+    description_json = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
@@ -333,12 +332,12 @@ class IssueRelation(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "related_issue", "deleted_at"]
+        unique_together = ["issue", "related_issue", "relation_type", "deleted_at"]
         constraints = [
             models.UniqueConstraint(
-                fields=["issue", "related_issue"],
+                fields=["issue", "related_issue", "relation_type"],
                 condition=Q(deleted_at__isnull=True),
-                name="issue_relation_unique_issue_related_issue_when_deleted_at_null",
+                name="issue_relation_unique_issue_related_issue_relation_type_when_deleted_at_null",
             )
         ]
         verbose_name = "Issue Relation"
@@ -398,18 +397,30 @@ class IssueAssignee(ProjectBaseModel):
         return f"{self.issue.name} {self.assignee.email}"
 
 
-
-class IssueLink(ProjectBaseModel):
+class IssueLink(ChangeTrackerMixin, ProjectBaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField()
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_link")
     metadata = models.JSONField(default=dict)
+
+    TRACKED_FIELDS = ["url"]
 
     class Meta:
         verbose_name = "Issue Link"
         verbose_name_plural = "Issue Links"
         db_table = "issue_links"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        url_changed = self.has_changed("url") if not is_new else False
+
+        super().save(*args, **kwargs)
+
+        if (is_new or url_changed) and self.url:
+            from plane.bgtasks.link_crawler_task import link_crawler
+
+            link_crawler.delay(str(self.id), self.url, "issue")
 
     def __str__(self):
         return f"{self.issue.name} {self.url}"
@@ -509,6 +520,9 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
         blank=True,
         related_name="parent_issue_comment",  # TODO (Dheeraj): The related_name should be changed to replies
     )
+    source = models.OneToOneField(
+        "db.WorkItemCommentSource", on_delete=models.CASCADE, related_name="issue_comment", null=True, blank=True
+    )
 
     TRACKED_FIELDS = ["comment_stripped", "comment_json", "comment_html", "access"]
 
@@ -587,6 +601,27 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
     def __str__(self):
         """Return issue of the comment"""
         return str(self.issue)
+
+
+class WorkItemCommentSource(ProjectBaseModel):
+    class SOURCE_CHOICES(models.TextChoices):
+        IN_APP = "IN_APP", "In App"
+        PUBLISHED_BOARD = "PUBLISHED_BOARD", "Published Board"
+        TRACKABLE_LINK = "TRACKABLE_LINK", "Trackable Link"
+        EMAIL = "EMAIL", "Email"
+
+    source_type = models.CharField(max_length=255, choices=SOURCE_CHOICES.choices, default=SOURCE_CHOICES.IN_APP)
+    source_email = models.EmailField(null=True, blank=True)
+    extra = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Work Item Comment Source"
+        verbose_name_plural = "Work Item Comment Sources"
+        db_table = "work_item_comment_sources"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue_comment.id} {self.source_type}"
 
 
 class IssueLabel(ProjectBaseModel):
@@ -863,7 +898,7 @@ class IssueDescriptionVersion(ProjectBaseModel):
                 description_binary=issue.description_binary,
                 description_html=issue.description_html,
                 description_stripped=issue.description_stripped,
-                description_json=issue.description,
+                description_json=issue.description_json,
             )
             return True
         except Exception as e:

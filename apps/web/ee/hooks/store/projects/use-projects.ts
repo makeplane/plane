@@ -15,9 +15,9 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { IProjectStore } from "@/plane-web/store/projects/projects";
+import type { IProjectDetailsStore } from "@/store/project/project-details";
 
-export const useProjectAdvanced = (): IProjectStore => {
+export const useProjectAdvanced = (): IProjectDetailsStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useProject must be used within StoreProvider");
   return context.projectDetails;

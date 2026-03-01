@@ -43,6 +43,7 @@ export function CustomAttachmentExtension(props: Props) {
 
     addOptions() {
       const upload = "upload" in fileHandler ? fileHandler.upload : undefined;
+      const duplicate = "duplicate" in fileHandler ? fileHandler.duplicate : undefined;
 
       return {
         checkIfAttachmentExists: checkIfAssetExists,
@@ -52,6 +53,7 @@ export function CustomAttachmentExtension(props: Props) {
         isVideoAttachmentsFlagged,
         restoreAttachment: restore,
         uploadAttachment: upload,
+        duplicateAttachment: duplicate,
       };
     },
 

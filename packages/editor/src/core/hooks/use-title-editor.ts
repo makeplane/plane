@@ -12,7 +12,7 @@
  */
 
 import type { HocuspocusProvider } from "@hocuspocus/provider";
-import type { Extensions } from "@tiptap/core";
+import type { Content, Extensions } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { useEditor } from "@tiptap/react";
 import { useImperativeHandle } from "react";
@@ -27,6 +27,7 @@ import { SmoothCursorExtension } from "@/plane-editor/extensions/smooth-cursor";
 // types
 import type { IEditorPropsExtended } from "@/types";
 import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps, IEditorProps } from "@/types/editor";
+import type { Fragment, Node as ProseMirrorNode } from "@tiptap/pm/model";
 
 export type TUseTitleEditorProps = {
   editable?: boolean;
@@ -106,7 +107,7 @@ export const useTitleEditor = (props: TUseTitleEditorProps) => {
         .clearContent(emitUpdate)
         .run();
     },
-    setEditorValue: (content: string) => {
+    setEditorValue: (content: Content | Fragment | ProseMirrorNode) => {
       editor?.commands.setContent(content, false);
     },
   }));

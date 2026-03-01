@@ -16,6 +16,9 @@ import type { ExIssue, ExModule, Client as PlaneClient } from "@plane/sdk";
 import { getJobData } from "@/helpers/job";
 import { processBatchPromises } from "@/helpers/methods";
 import { AssertAPIErrorResponse, protect } from "@/lib";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import { extractErrorMetadata } from "@/helpers/errors";
 
 export const createModules = async (
   jobId: string,
@@ -153,6 +156,16 @@ export const createAllModulesV2 = async (
         projectId,
         module
       );
+
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.MODULE,
+        phase: "CREATE_MODULE",
+        level: EExecutionLogLevel.SUCCESS,
+        entity_external_id: module.external_id,
+        entity_plane_id: createdModule.id,
+        entity_name: module.name,
+      });
+
       return { external_id: module.external_id, id: createdModule.id };
     } catch (error) {
       logger.warn(`Warning while creating the module: ${module.name}`, {
@@ -161,6 +174,16 @@ export const createAllModulesV2 = async (
       if (AssertAPIErrorResponse(error)) {
         if (error.error && error.error.includes("already exists")) {
           logger.info(`[${jobId.slice(0, 7)}] Module "${module.name}" already exists. Skipping...`);
+
+          executionLog.collect(jobId, {
+            entity_type: EExecutionLogEntityType.MODULE,
+            phase: "CREATE_MODULE",
+            level: EExecutionLogLevel.SUCCESS,
+            entity_external_id: module.external_id,
+            entity_plane_id: error.id,
+            already_existed: true,
+          });
+
           return { external_id: module.external_id, id: error.id };
           // Get the id from the module
         } else {
@@ -168,7 +191,25 @@ export const createAllModulesV2 = async (
             jobId: jobId,
             error: error,
           });
+
+          executionLog.collect(jobId, {
+            entity_type: EExecutionLogEntityType.MODULE,
+            phase: "CREATE_MODULE",
+            level: EExecutionLogLevel.ERROR,
+            error: extractErrorMetadata(error),
+            entity_name: module.name,
+            entity_external_id: module.external_id,
+          });
         }
+      } else {
+        executionLog.collect(jobId, {
+          entity_type: EExecutionLogEntityType.MODULE,
+          phase: "CREATE_MODULE",
+          level: EExecutionLogLevel.ERROR,
+          error: extractErrorMetadata(error),
+          entity_name: module.name,
+          entity_external_id: module.external_id,
+        });
       }
       return undefined;
     }

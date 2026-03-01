@@ -15,7 +15,9 @@
 import useSWR from "swr";
 import type { E_FEATURE_FLAGS } from "@plane/constants";
 import type { TExtensions } from "@plane/editor";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import type { TEditorFlaggingHookReturnType } from "ce/hooks/use-editor-flagging";
+import { usePublish } from "@/hooks/store/publish";
 import { useFeatureFlags } from "./store";
 
 const flagsToFetch: ReadonlyArray<keyof typeof E_FEATURE_FLAGS> = [
@@ -23,6 +25,7 @@ const flagsToFetch: ReadonlyArray<keyof typeof E_FEATURE_FLAGS> = [
   "EDITOR_EXTERNAL_EMBEDS",
   "EDITOR_VIDEO_ATTACHMENTS",
   "EDITOR_ATTACHMENTS",
+  "EDITOR_MULTI_COLUMN",
 ] as const;
 
 /**
@@ -30,6 +33,7 @@ const flagsToFetch: ReadonlyArray<keyof typeof E_FEATURE_FLAGS> = [
  */
 export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType => {
   const { fetchFeatureFlags, getFeatureFlag } = useFeatureFlags();
+  const { installed_apps } = usePublish(anchor);
 
   useSWR(
     anchor ? `EDITOR_FEATURE_FLAGS_${anchor}` : null,
@@ -40,6 +44,7 @@ export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType
   const isVideoAttachmentsEnabled = getFeatureFlag(anchor, "EDITOR_VIDEO_ATTACHMENTS", false);
   const isMathematicsEnabled = getFeatureFlag(anchor, "EDITOR_MATHEMATICS", false);
   const isExternalEmbedEnabled = getFeatureFlag(anchor, "EDITOR_EXTERNAL_EMBEDS", false);
+  const isMultiColumnEnabled = getFeatureFlag(anchor, "EDITOR_MULTI_COLUMN", false);
 
   const documentDisabled: TExtensions[] = [];
   const documentFlagged: TExtensions[] = [];
@@ -73,6 +78,21 @@ export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType
     documentFlagged.push("video-attachments");
     richTextFlagged.push("video-attachments");
     liteTextFlagged.push("video-attachments");
+  }
+
+  if (!isMultiColumnEnabled) {
+    documentFlagged.push("multi-column");
+    richTextFlagged.push("multi-column");
+    liteTextFlagged.push("multi-column");
+  }
+
+  if (!installed_apps.includes(E_INTEGRATION_KEYS.MERMAID)) {
+    documentFlagged.push("mermaid-diagrams");
+    richTextFlagged.push("mermaid-diagrams");
+  }
+
+  if (!installed_apps.includes(E_INTEGRATION_KEYS.DRAWIO)) {
+    documentFlagged.push("drawio");
   }
 
   return {

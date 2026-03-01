@@ -19,7 +19,7 @@ import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // plane web components
-import { DashboardsListSearch } from "@/plane-web/components/dashboards/list/search";
+import { DashboardsListSearch } from "@/components/dashboards/list/search";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 

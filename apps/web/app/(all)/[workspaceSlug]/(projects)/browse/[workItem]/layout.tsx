@@ -15,11 +15,13 @@
 import { Outlet } from "react-router";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { ProjectWorkItemDetailsHeader } from "./header";
+import type { Route } from "./+types/layout";
 
-export default function ProjectIssueDetailsLayout() {
+export default function ProjectIssueDetailsLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug, workItem } = params;
   return (
     <>
-      <ProjectWorkItemDetailsHeader />
+      <ProjectWorkItemDetailsHeader workspaceSlug={workspaceSlug} workItem={workItem} />
       <ContentWrapper className="overflow-hidden">
         <Outlet />
       </ContentWrapper>

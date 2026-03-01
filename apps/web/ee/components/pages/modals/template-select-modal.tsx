@@ -32,7 +32,7 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 // plane web hooks
 import { usePageTemplates } from "@/plane-web/hooks/store";
 // store
-import type { IBaseTemplateInstance } from "@/plane-web/store/templates";
+import type { IBaseTemplateInstance } from "@/store/templates";
 import type { TPageInstance } from "@/store/pages/base-page";
 
 const fileService = new FileService();

@@ -13,18 +13,21 @@
 
 import { Selection, TextSelection } from "@tiptap/pm/state";
 import { ReactNodeViewRenderer } from "@tiptap/react";
-import ts from "highlight.js/lib/languages/typescript";
-import { common, createLowlight } from "lowlight";
 // components
-import { CodeBlockLowlight } from "./code-block-lowlight";
+import { CodeBlock } from "./code-block";
 import { CodeBlockComponent } from "./code-block-node-view";
+import type { CodeBlockNodeViewProps } from "./code-block-node-view";
+import { ShikiPlugin } from "./shiki-plugin";
 
-const lowlight = createLowlight(common);
-lowlight.register("ts", ts);
-
-export const CustomCodeBlockExtension = CodeBlockLowlight.extend({
+export const CustomCodeBlockExtension = CodeBlock.extend({
   addNodeView() {
-    return ReactNodeViewRenderer(CodeBlockComponent);
+    return ReactNodeViewRenderer((props) => (
+      <CodeBlockComponent {...props} node={props.node as CodeBlockNodeViewProps["node"]} />
+    ));
+  },
+
+  addProseMirrorPlugins() {
+    return [...(this.parent?.() || []), ShikiPlugin({ name: this.name })];
   },
 
   // @ts-expect-error keyboard shortcuts are not typed
@@ -269,7 +272,6 @@ export const CustomCodeBlockExtension = CodeBlockLowlight.extend({
     };
   },
 }).configure({
-  lowlight,
   defaultLanguage: "plaintext",
   exitOnTripleEnter: false,
   HTMLAttributes: {

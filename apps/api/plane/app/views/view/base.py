@@ -12,6 +12,9 @@
 import copy
 
 # Django imports
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models.functions import Coalesce
 from django.db.models import (
     Exists,
     F,
@@ -19,7 +22,8 @@ from django.db.models import (
     OuterRef,
     Q,
     Subquery,
-    Prefetch,
+    UUIDField,
+    Value,
 )
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -31,7 +35,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import allow_permission, ROLE
-from plane.app.serializers import IssueViewSerializer, ViewIssueListSerializer
+from plane.app.serializers import IssueViewSerializer
 from plane.db.models import (
     Issue,
     FileAsset,
@@ -48,6 +52,7 @@ from plane.db.models import (
     ModuleIssue,
     DeployBoard,
 )
+from plane.ee.models import MilestoneIssue
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.issue_filters import issue_filters
@@ -58,9 +63,10 @@ from plane.db.models import UserFavorite
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
-from plane.ee.models import CustomerRequestIssue
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
+from plane.utils.grouper import issue_on_results, issue_group_values
+from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 
 
 class WorkspaceViewViewSet(BaseViewSet):
@@ -226,7 +232,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             return "-created_at"
 
     def apply_annotations(self, issues):
-        return (
+        issues = (
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
@@ -253,25 +259,88 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .prefetch_related(
-                Prefetch(
-                    "issue_assignee",
-                    queryset=IssueAssignee.objects.all(),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "label_issue",
-                    queryset=IssueLabel.objects.all(),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_module",
-                    queryset=ModuleIssue.objects.all(),
-                )
+            .annotate(
+                label_ids=Coalesce(
+                    Subquery(
+                        IssueLabel.objects.filter(issue_id=OuterRef("pk"))
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("label_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    Subquery(
+                        IssueAssignee.objects.filter(
+                            issue_id=OuterRef("pk"),
+                            assignee__member_project__is_active=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("assignee_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    Subquery(
+                        ModuleIssue.objects.filter(
+                            issue_id=OuterRef("pk"),
+                            module__archived_at__isnull=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("module_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
         )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.CUSTOMERS,
+            slug=self.kwargs.get("slug"),
+            user_id=str(self.request.user.id),
+        ):
+            issues = issues.annotate(
+                customer_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=True,
+                            customer_request_issues__issue_id__isnull=False,
+                        ),
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            ).annotate(
+                customer_request_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_request_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=False,
+                        ),
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.MILESTONES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(self.request.user.id),
+        ):
+            issues = issues.annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
+                        :1
+                    ]
+                )
+            )
+        return issues
 
     def get_queryset(self):
         return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug")).accessible_to(
@@ -310,33 +379,96 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         # Apply annotations to the issue queryset
         issue_queryset = self.apply_annotations(issue_queryset)
 
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.CUSTOMERS,
-            slug=self.kwargs.get("slug"),
-            user_id=str(self.request.user.id),
-        ):
-            issue_queryset = issue_queryset.prefetch_related(
-                Prefetch(
-                    "customer_request_issues",
-                    queryset=CustomerRequestIssue.objects.all(),
-                )
-            )
-
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset, order_by_param=order_by_param
         )
 
-        # List Paginate
-        return self.paginate(
-            order_by=order_by_param,
-            request=request,
-            queryset=issue_queryset,
-            on_results=lambda issues: ViewIssueListSerializer(
-                issues, many=True, context={"slug": slug, "user_id": request.user.id}
-            ).data,
-            total_count_queryset=total_issue_count_queryset,
-        )
+        # Group by
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+
+        if group_by:
+            if sub_group_by:
+                if group_by == sub_group_by:
+                    return Response(
+                        {"error": "Group by and sub group by cannot have same parameters"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                else:
+                    return self.paginate(
+                        request=request,
+                        order_by=order_by_param,
+                        queryset=issue_queryset,
+                        total_count_queryset=total_issue_count_queryset,
+                        on_results=lambda issues: issue_on_results(
+                            group_by=group_by,
+                            issues=issues,
+                            sub_group_by=sub_group_by,
+                            slug=slug,
+                            user_id=request.user.id,
+                        ),
+                        paginator_cls=SubGroupedOffsetPaginator,
+                        group_by_fields=issue_group_values(
+                            field=group_by, slug=slug, filters=filters, queryset=total_issue_count_queryset
+                        ),
+                        sub_group_by_fields=issue_group_values(
+                            field=sub_group_by, slug=slug, filters=filters, queryset=total_issue_count_queryset
+                        ),
+                        group_by_field_name=group_by,
+                        sub_group_by_field_name=sub_group_by,
+                        count_filter=Q(
+                            Q(issue_intake__status=1)
+                            | Q(issue_intake__status=-1)
+                            | Q(issue_intake__status=2)
+                            | Q(issue_intake__isnull=True),
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+            else:
+                # Grouped pagination
+                return self.paginate(
+                    request=request,
+                    order_by=order_by_param,
+                    queryset=issue_queryset,
+                    total_count_queryset=total_issue_count_queryset,
+                    on_results=lambda issues: issue_on_results(
+                        group_by=group_by,
+                        issues=issues,
+                        sub_group_by=sub_group_by,
+                        slug=slug,
+                        user_id=request.user.id,
+                    ),
+                    paginator_cls=GroupedOffsetPaginator,
+                    group_by_fields=issue_group_values(
+                        field=group_by, slug=slug, filters=filters, queryset=total_issue_count_queryset
+                    ),
+                    group_by_field_name=group_by,
+                    count_filter=Q(
+                        Q(issue_intake__status=1)
+                        | Q(issue_intake__status=-1)
+                        | Q(issue_intake__status=2)
+                        | Q(issue_intake__isnull=True),
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
+        else:
+            # List Paginate
+            return self.paginate(
+                order_by=order_by_param,
+                request=request,
+                queryset=issue_queryset,
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by,
+                    issues=issues,
+                    sub_group_by=sub_group_by,
+                    slug=slug,
+                    user_id=request.user.id,
+                ),
+                total_count_queryset=total_issue_count_queryset,
+            )
 
 
 class IssueViewViewSet(BaseViewSet):

@@ -32,12 +32,22 @@ from plane.utils.openapi.examples import SAMPLE_PAGE
 from plane.bgtasks.copy_s3_object import sync_with_external_service
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    WIKI_PAGES_READ_SCOPE,
+    WIKI_PAGES_WRITE_SCOPE,
+)
 
 
 class WorkspacePageDetailAPIEndpoint(BaseAPIView):
     model = Page
     serializer_class = PageDetailAPISerializer
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [WorkspacePagePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [WIKI_PAGES_READ_SCOPE]],
+    }
 
     def get_queryset(self):
         return Page.objects.filter(workspace__slug=self.kwargs["slug"], is_global=True)
@@ -65,7 +75,10 @@ class WorkspacePageDetailAPIEndpoint(BaseAPIView):
 
 class WorkspacePageAPIEndpoint(BaseAPIView):
     serializer_class = PageCreateAPISerializer
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [WorkspacePagePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "POST": [[WRITE_SCOPE], [WIKI_PAGES_WRITE_SCOPE]],
+    }
 
     @page_docs(
         operation_id="create_workspace_page",
@@ -90,7 +103,7 @@ class WorkspacePageAPIEndpoint(BaseAPIView):
                 "description_binary": (
                     base64.b64decode(external_data.get("description_binary")) if external_data else None
                 ),
-                "description": (external_data.get("description", {}) if external_data else {}),
+                "description_json": (external_data.get("description_json", {}) if external_data else {}),
             },
         )
 

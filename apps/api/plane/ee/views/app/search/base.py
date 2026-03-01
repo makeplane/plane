@@ -108,7 +108,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             {"active_member_user_ids": self.request.user.id},
             {"is_archived": False},
         ]
-        search_fields = ["name", "identifier"]
+        search_fields = ["name", "identifier"]  # noqa: F841
         fields_to_retrieve = [
             "name",
             "id",
@@ -141,7 +141,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             {"active_project_member_user_ids": self.request.user.id},
             {"project_is_archived": False},
         ]
-        search_fields = ["name", "description"]
+        search_fields = ["name", "description"]  # noqa: F841
         fields_to_retrieve = [
             "name",
             "id",
@@ -175,7 +175,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             {"active_project_member_user_ids": self.request.user.id},
             {"project_is_archived": False},
         ]
-        search_fields = ["name", "description"]
+        search_fields = ["name", "description"]  # noqa: F841
         fields_to_retrieve = [
             "name",
             "id",
@@ -252,7 +252,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             {"active_project_member_user_ids": self.request.user.id},
             {"project_is_archived": False},
         ]
-        search_fields = ["name", "description"]
+        search_fields = ["name", "description"]  # noqa: F841
         fields_to_retrieve = [
             "name",
             "id",

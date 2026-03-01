@@ -23,12 +23,12 @@ import type {
   EGanttBlockType,
 } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
-import { currentViewDataWithView } from "@/components/gantt-chart/data";
+import { currentViewDataWithView } from "@/components/timeline/data";
 import {
   getDateFromPositionOnGantt,
   getItemPositionWidth,
   getPositionFromDate,
-} from "@/components/gantt-chart/views/helpers";
+} from "@/components/timeline/views/helpers";
 // helpers
 // store
 import type { RootStore } from "@/plane-web/store/root.store";

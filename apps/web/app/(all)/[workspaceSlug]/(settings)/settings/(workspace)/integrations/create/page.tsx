@@ -27,7 +27,7 @@ import { APPLICATION_CATEGORIES_LIST } from "@/constants/fetch-keys";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { CreateUpdateApplication } from "@/plane-web/components/marketplace";
+import { CreateUpdateApplication } from "@/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";
 // local imports
 import type { Route } from "./+types/page";

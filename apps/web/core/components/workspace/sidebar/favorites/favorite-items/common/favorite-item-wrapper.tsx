@@ -19,18 +19,20 @@ type Props = {
   children: React.ReactNode;
   elementRef: React.RefObject<HTMLDivElement>;
   isMenuActive?: boolean;
+  isActive?: boolean;
 };
 
 export function FavoriteItemWrapper(props: Props) {
-  const { children, elementRef, isMenuActive = false } = props;
+  const { children, elementRef, isMenuActive = false, isActive = false } = props;
   return (
     <>
       <div
         ref={elementRef}
         className={cn(
-          "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
+          "group/project-item relative w-full p-1 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
           {
             "bg-surface-2": isMenuActive,
+            "!bg-layer-transparent-active text-primary": isActive,
           }
         )}
       >

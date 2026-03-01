@@ -79,7 +79,7 @@ class IssueSerializer(BaseSerializer):
     class Meta:
         model = Issue
         read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
-        exclude = ["description"]
+        exclude = ["description_json"]
 
     def validate(self, data):
         if (
@@ -675,6 +675,7 @@ class IssueExpandSerializer(BaseSerializer):
     labels = serializers.SerializerMethodField()
     assignees = serializers.SerializerMethodField()
     state = StateLiteSerializer(read_only=True)
+    description = serializers.JSONField(source="description_json", required=False, allow_null=True)
 
     def get_labels(self, obj):
         expand = self.context.get("expand", [])
@@ -950,4 +951,4 @@ class IssueDetailSerializer(IssueSerializer):
     class Meta:
         model = Issue
         read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
-        exclude = ["description"]
+        exclude = ["description_json"]

@@ -25,6 +25,15 @@ export enum EAttachmentBlockAttributeNames {
   FILE_SIZE = "data-file-size",
   PREVIEW = "data-preview",
   ACCEPTED_FILE_TYPE = "data-accepted-file-type",
+  STATUS = "status",
+}
+
+export enum EAttachmentStatus {
+  PENDING = "pending",
+  UPLOADING = "uploading",
+  UPLOADED = "uploaded",
+  DUPLICATING = "duplicating",
+  DUPLICATION_FAILED = "duplication-failed",
 }
 
 export type TAttachmentBlockAttributes = {
@@ -35,6 +44,7 @@ export type TAttachmentBlockAttributes = {
   [EAttachmentBlockAttributeNames.FILE_SIZE]: number | string | null;
   [EAttachmentBlockAttributeNames.PREVIEW]: boolean;
   [EAttachmentBlockAttributeNames.ACCEPTED_FILE_TYPE]: string | null;
+  [EAttachmentBlockAttributeNames.STATUS]: EAttachmentStatus;
 };
 
 export type InsertAttachmentComponentProps = InsertImageComponentProps & {
@@ -51,12 +61,12 @@ export type AttachmentExtensionOptions = {
   onClick?: (src?: string) => void;
   restoreAttachment: TFileHandler["restore"];
   uploadAttachment?: TFileHandler["upload"];
+  duplicateAttachment?: TFileHandler["duplicate"];
 };
 
 export type AttachmentUploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & {
   hasOpenedFileInputOnce?: boolean;
 };
-
 export type AttachmentExtensionStorage = {
   deletedAttachmentSet: Map<string, boolean>;
   fileMap: Map<string, AttachmentUploadEntity>;

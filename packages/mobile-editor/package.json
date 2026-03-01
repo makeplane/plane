@@ -1,43 +1,44 @@
 {
   "name": "@plane/mobile-editor",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.3.0",
   "scripts": {
     "dev": "vite",
+    "build": "vite build",
     "lint-mobile": "eslint .",
     "preview": "vite preview",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=28",
+    "check:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=0",
     "check:types-mobile": "tsc --noEmit",
-    "check:format-mobile": "prettier . --cache --check",
-    "fix:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=28",
-    "fix:format-mobile": "prettier . --cache --write"
+    "check:format-mobile": "oxfmt . --check",
+    "fix:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=0",
+    "fix:format-mobile": "oxfmt . --write"
   },
   "dependencies": {
     "@plane/constants": "workspace:*",
     "@plane/editor": "workspace:*",
+    "@plane/propel": "workspace:*",
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
-    "@plane/propel": "workspace:*",
+    "lodash-es": "catalog:",
+    "mobx": "catalog:",
+    "mobx-react": "catalog:",
+    "mobx-utils": "catalog:",
     "lucide-react": "^0.454.0",
-    "lodash": "^4.17.21",
-    "mobx": "^6.10.0",
-    "mobx-react": "^9.1.1",
-    "mobx-utils": "^6.0.8",
     "next-themes": "0.4.6",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@plane/tailwind-config": "workspace:*",
     "@plane/types": "workspace:*",
     "@tailwindcss/typography": "0.5.19",
-    "@types/lodash": "^4.17.6",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.2.18",
-    "@vitejs/plugin-react": "^4.3.1",
-    "globals": "^15.9.0",
+    "@types/lodash-es": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "^5.1.4",
     "vite": "catalog:",
-    "vite-plugin-node-polyfills": "^0.22.0"
+    "typescript": "catalog:",
+    "vite-plugin-node-polyfills": "^0.25.0"
   }
 }

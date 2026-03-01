@@ -27,12 +27,12 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane-web imports
-import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
+import { DuplicateWorkItemModal } from "@/components/issues/duplicate-modal";
 import { useIssueType } from "@/plane-web/hooks/store";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
-import { CreateUpdateIssueModal } from "../../issue-modal/modal";
+import { CreateUpdateIssueModal } from "../../issue-modal/root";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
 import { useProjectIssueMenuItems } from "./helper";

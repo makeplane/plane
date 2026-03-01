@@ -21,6 +21,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi import settings
 from pi.app.models.enums import MessageMetaStepType
+from pi.services.llm.llms import _is_custom_model
 from pi.services.retrievers.pg_store.message import upsert_message_meta
 from pi.services.retrievers.pg_store.model import get_llm_model_id_from_key
 from pi.services.retrievers.pg_store.model import get_llm_pricing
@@ -278,6 +279,9 @@ class TokenTracker:
             # Get LLM model ID
             llm_model_id = await get_llm_model_id_from_key(model_key, self.db)
             if not llm_model_id:
+                if _is_custom_model(model_key):
+                    log.warning(f"Custom model '{model_key}' not found in DB — run 'sync-llms'. Skipping tracking.")
+                    return {"message": "skipped", "reason": "custom model not synced"}
                 log.error(f"Could not find LLM model ID for key: {model_key}")
                 return {"message": "error", "error": f"LLM model not found: {model_key}"}
 
@@ -350,6 +354,9 @@ class TokenTracker:
             # Get LLM model ID
             llm_model_id = await get_llm_model_id_from_key(model_key, self.db)
             if not llm_model_id:
+                if _is_custom_model(model_key):
+                    log.warning(f"Custom model '{model_key}' not found in DB — run 'sync-llms'. Skipping entity tracking.")
+                    return {"success": True, "message": "skipped", "reason": "custom model not synced"}
                 log.error(f"Could not find LLM model ID for key: {model_key}")
                 return {"success": False, "error": f"LLM model not found: {model_key}"}
 
@@ -379,6 +386,78 @@ class TokenTracker:
         except Exception as e:
             log.error(f"Error tracking entity LLM usage: {e}")
             return {"success": False, "error": str(e)}
+
+    async def track_web_search_usage(
+        self,
+        *,
+        model_key: str,
+        input_tokens: int,
+        output_tokens: int,
+        cached_input_tokens: int = 0,
+        message_id: Optional[UUID] = None,
+    ) -> Dict[str, Any]:
+        """
+        Track web search usage and store in MessageMeta with WEB_SEARCH step type.
+
+        Args:
+            model_key: Model key used for the web search call
+            input_tokens: Total input tokens
+            output_tokens: Output tokens
+            cached_input_tokens: Cached input tokens (if any)
+            message_id: Optional message ID (uses instance default if not provided)
+
+        Returns:
+            Dictionary with tracking results
+        """
+        try:
+            msg_id = message_id or self.message_id
+            if not msg_id:
+                log.warning("No message ID provided for web search tracking")
+                return {"message": "error", "error": "No message ID provided"}
+
+            llm_model_id = await get_llm_model_id_from_key(model_key, self.db)
+            if not llm_model_id:
+                log.warning(f"Web search model not found in llm_models: {model_key}")
+                return {"message": "error", "error": f"LLM model not found: {model_key}"}
+
+            non_cached_input_tokens = max(0, int(input_tokens or 0) - int(cached_input_tokens or 0))
+
+            costs = await self.calculate_token_costs(
+                non_cached_input_tokens,
+                int(output_tokens or 0),
+                int(cached_input_tokens or 0),
+                llm_model_id,
+            )
+
+            input_price = costs["input_price"]
+            output_price = costs["output_price"]
+            cached_input_price = costs["cached_input_price"]
+            pricing_id = costs["pricing_id"]
+
+            pricing = await get_llm_pricing(llm_model_id, self.db)
+            if pricing and pricing.web_search_call_price:
+                input_price += float(pricing.web_search_call_price)
+                if pricing_id is None:
+                    pricing_id = pricing.id
+
+            result = await upsert_message_meta(
+                db=self.db,
+                message_id=msg_id,
+                llm_model_id=llm_model_id,
+                step_type=MessageMetaStepType.WEB_SEARCH,
+                input_text_tokens=int(input_tokens or 0),
+                output_text_tokens=int(output_tokens or 0),
+                cached_input_text_tokens=int(cached_input_tokens or 0),
+                input_text_price=input_price,
+                output_text_price=output_price,
+                cached_input_text_price=cached_input_price,
+                llm_model_pricing_id=pricing_id,
+            )
+
+            return result
+        except Exception as e:
+            log.error(f"Error tracking web search usage: {e}")
+            return {"message": "error", "error": str(e)}
 
 
 async def track_llm_call(

@@ -17,7 +17,7 @@ import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
-import { ProjectEpicsLayoutRoot } from "@/plane-web/components/issues/issue-layouts/epic-layout-root";
+import { ProjectEpicsLayoutRoot } from "@/components/issues/issue-layouts/roots/epic-layout-root";
 import type { Route } from "./+types/page";
 
 function ProjectEpicsPage({ params }: Route.ComponentProps) {

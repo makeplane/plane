@@ -19,7 +19,7 @@ import { Selection } from "@tiptap/pm/state";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { ADDITIONAL_EXTENSIONS, CORE_EXTENSIONS } from "@plane/utils";
+import { CORE_EXTENSIONS, ADDITIONAL_EXTENSIONS } from "@plane/utils";
 // constants
 import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions

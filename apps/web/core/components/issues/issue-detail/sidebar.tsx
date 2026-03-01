@@ -12,9 +12,8 @@
  */
 
 import { observer } from "mobx-react";
-// i18n
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// ui
 import {
   CycleIcon,
   StatePropertyIcon,
@@ -36,24 +35,27 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { IssueParentSelectRoot } from "@/components/issues/issue-detail/parent-select-root";
+import { DateAlert } from "@/components/issues/issue-detail/date-alert";
+import { TransferHopInfo } from "@/components/issues/issue-detail/transfer-hop-info";
+import { IssueWorklogProperty } from "@/components/issues/worklog/property";
+import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
+import { WorkItemCustomPropertyValuesUpdate } from "@/components/work-item-types/values/addition-properties-update";
+// local imports
+import { IssueCycleSelect } from "./cycle-select";
+import { IssueLabel } from "./label";
+import { IssueModuleSelect } from "./module-select";
+import type { TIssueOperations } from "./root";
+import { WorkItemSidebarCustomers } from "./customers/root";
+import { WorkItemSideBarMilestoneItem } from "./milestones/root";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-// plane web components
-// components
-import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
-import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
-import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
-import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
-import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
-import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
-import { IssueCycleSelect } from "./cycle-select";
-import { IssueLabel } from "./label";
-import { IssueModuleSelect } from "./module-select";
-import type { TIssueOperations } from "./root";
+import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
+import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
 type Props = {
   workspaceSlug: string;
@@ -74,6 +76,9 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   } = useIssueDetail();
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
+  const { isCustomersFeatureEnabled } = useCustomers();
+  const { isMilestonesEnabled } = useMilestones();
+
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
 
@@ -82,6 +87,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   // derived values
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
+  const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -273,13 +279,29 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               disabled={!isEditable}
             />
 
-            <WorkItemAdditionalSidebarProperties
-              workItemId={issue.id}
-              workItemTypeId={issue.type_id}
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-              isEditable={isEditable}
-            />
+            {isCustomersFeatureEnabled && (
+              <WorkItemSidebarCustomers workItemId={issue.id} workspaceSlug={workspaceSlug} />
+            )}
+
+            {isMilestonesFeatureEnabled && (
+              <WorkItemSideBarMilestoneItem
+                projectId={projectId}
+                milestoneId={issue.milestone_id}
+                updateWorkItemMilestone={(milestoneId) =>
+                  issueOperations.updateWorkItemMilestone?.(workspaceSlug, projectId, issueId, milestoneId)
+                }
+              />
+            )}
+
+            {issue.type_id && (
+              <WorkItemCustomPropertyValuesUpdate
+                issueId={issue.id}
+                issueTypeId={issue.type_id}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+                isDisabled={!isEditable}
+              />
+            )}
           </div>
         </div>
       </div>

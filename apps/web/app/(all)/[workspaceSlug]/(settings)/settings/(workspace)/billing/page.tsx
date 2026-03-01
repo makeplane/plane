@@ -21,7 +21,7 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { BillingRoot } from "@/plane-web/components/workspace/billing";
+import { BillingRoot } from "@/components/workspace/settings/billing";
 // local imports
 import { BillingWorkspaceSettingsHeader } from "./header";
 

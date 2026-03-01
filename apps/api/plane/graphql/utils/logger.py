@@ -17,10 +17,11 @@ from typing import Optional
 from strawberry.types import Info
 
 logger = logging.getLogger("plane.graphql")
+exception_logger = logging.getLogger("plane.graphql.exception")
 
 
 def log_graphql_error(message: str, error: Optional[Exception] = None):
-    logger.error(message, exc_info=error)
+    exception_logger.error(message, exc_info=error)
     return
 
 

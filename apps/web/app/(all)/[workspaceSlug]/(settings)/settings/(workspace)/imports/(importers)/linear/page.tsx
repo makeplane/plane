@@ -15,10 +15,10 @@ import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane web components
-import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
-import { AuthenticationRoot, StepsRoot } from "@/plane-web/components/importers/linear";
+import { DashboardLoaderRoot } from "@/components/importers/common/dashboard";
+import { AuthenticationRoot, StepsRoot } from "@/components/importers/linear";
 //  plane web hooks
-import { LinearDashboardRoot } from "@/plane-web/components/importers/linear/dashboard/root";
+import { LinearDashboardRoot } from "@/components/importers/linear/dashboard/root";
 import { useLinearImporter } from "@/plane-web/hooks/store";
 
 function LinearImporter() {

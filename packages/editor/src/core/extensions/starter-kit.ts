@@ -50,10 +50,7 @@ export const CustomStarterKitExtension = (args: TArgs) => {
         class: "editor-heading-block",
       },
     },
-    dropcursor: {
-      class:
-        "text-tertiary transition-all motion-reduce:transition-none motion-reduce:hover:transform-none duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
-    },
+    dropcursor: false, // Disabled - using unified column drop cursor instead
     ...(enableHistory ? {} : { history: false }),
   });
 };

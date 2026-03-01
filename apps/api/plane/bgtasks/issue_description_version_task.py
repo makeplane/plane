@@ -30,7 +30,7 @@ def should_update_existing_version(
 
 
 def update_existing_version(version: IssueDescriptionVersion, issue) -> None:
-    version.description_json = issue.description
+    version.description_json = issue.description_json
     version.description_html = issue.description_html
     version.description_binary = issue.description_binary
     version.description_stripped = issue.description_stripped

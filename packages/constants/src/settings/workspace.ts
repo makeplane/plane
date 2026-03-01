@@ -70,6 +70,13 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/integrations/`),
   },
+  scripts: {
+    key: "scripts",
+    i18n_label: "workspace_settings.settings.runners.title",
+    href: `/settings/runner`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/runner/`,
+  },
   connections: {
     key: "connections",
     i18n_label: "profile.actions.connections",
@@ -90,6 +97,13 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     href: `/settings/worklogs`,
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/worklogs/`,
+  },
+  "group-syncing": {
+    key: "group-syncing",
+    i18n_label: "workspace_settings.settings.group_syncing.title",
+    href: `/settings/group-syncing`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/group-syncing/`,
   },
   identity: {
     key: "identity",
@@ -126,13 +140,6 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/customers/`,
   },
-  applications: {
-    key: "applications",
-    i18n_label: "workspace_settings.settings.applications.title",
-    href: "/settings/applications",
-    access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/applications/`),
-  },
   templates: {
     key: "templates",
     i18n_label: "common.templates",
@@ -147,12 +154,12 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/plane-intelligence/`,
   },
-  wiki: {
-    key: "wiki",
-    i18n_label: "workspace_settings.settings.wiki.title",
-    href: `/settings/wiki`,
+  "access-tokens": {
+    key: "access-tokens",
+    i18n_label: "workspace_settings.settings.api_tokens.title",
+    href: `/settings/access-tokens`,
     access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/wiki/`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/access-tokens/`,
   },
 };
 
@@ -168,11 +175,14 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
     WORKSPACE_SETTINGS["import"],
     WORKSPACE_SETTINGS["export"],
     WORKSPACE_SETTINGS["worklogs"],
+    WORKSPACE_SETTINGS["group-syncing"],
     // WORKSPACE_SETTINGS["identity"], // TODO: Enable it back once production testing is complete
+    WORKSPACE_SETTINGS["identity"],
   ],
   [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: [
     WORKSPACE_SETTINGS["project_states"],
     WORKSPACE_SETTINGS["integrations"],
+    WORKSPACE_SETTINGS["scripts"],
     WORKSPACE_SETTINGS["connections"],
     WORKSPACE_SETTINGS["teamspaces"],
     WORKSPACE_SETTINGS["initiatives"],
@@ -180,5 +190,5 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
     WORKSPACE_SETTINGS["templates"],
     WORKSPACE_SETTINGS["plane-intelligence"],
   ],
-  [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: [WORKSPACE_SETTINGS["webhooks"]],
+  [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: [WORKSPACE_SETTINGS["webhooks"], WORKSPACE_SETTINGS["access-tokens"]],
 };

@@ -23,9 +23,8 @@ import { PlusIcon } from "lucide-react";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
 import { cn, createIssuePayload } from "@plane/utils";
-// plane web imports
-import { QuickAddIssueFormRoot } from "@/plane-web/components/issues/quick-add";
 // local imports
+import { QuickAddIssueFormRoot } from "./form/root";
 import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
 
 export type TQuickAddIssueForm = {
@@ -122,7 +121,6 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
           title: t("common.success"),
           message: () => `${isEpic ? t("epic.create.success") : t("issue.create.success")}`,
           actionItems: (data) => (
-            // TODO: Translate here
             <CreateIssueToastActionItems
               workspaceSlug={workspaceSlug.toString()}
               projectId={projectId.toString()}

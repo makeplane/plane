@@ -66,7 +66,7 @@ export class Page implements IPage {
   hasLoadedEmbedsAndMentions: boolean;
   // page properties
   created_at: Date | undefined;
-  description: object | undefined;
+  description_json: object | undefined;
   id: string | undefined;
   logo_props: TLogoProps | undefined;
   name: string | undefined;
@@ -87,7 +87,7 @@ export class Page implements IPage {
     this.embedsAndMentionsInfo = {};
     this.hasLoadedEmbedsAndMentions = false;
     this.created_at = page.created_at || undefined;
-    this.description = page.description || undefined;
+    this.description_json = page.description_json || undefined;
     this.id = page.id || undefined;
     this.logo_props = page.logo_props || undefined;
     this.name = page.name || undefined;
@@ -104,7 +104,7 @@ export class Page implements IPage {
       hasLoadedEmbedsAndMentions: observable.ref,
       // page properties
       created_at: observable,
-      description: observable,
+      description_json: observable,
       id: observable.ref,
       logo_props: observable,
       name: observable.ref,
@@ -127,7 +127,7 @@ export class Page implements IPage {
   get asJSON() {
     return {
       created_at: this.created_at,
-      description: this.description,
+      description_json: this.description_json,
       id: this.id,
       logo_props: this.logo_props,
       name: this.name,
@@ -184,7 +184,7 @@ export class Page implements IPage {
     runInAction(() => {
       // Update basic properties
       if (data.created_at !== undefined) this.created_at = data.created_at;
-      if (data.description !== undefined) this.description = data.description;
+      if (data.description_json !== undefined) this.description_json = data.description_json;
       if (data.id !== undefined) this.id = data.id;
       if (data.logo_props !== undefined) this.logo_props = data.logo_props;
       if (shouldUpdateName && data.name !== undefined) this.name = data.name;

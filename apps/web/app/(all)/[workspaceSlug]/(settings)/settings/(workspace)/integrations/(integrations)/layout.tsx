@@ -19,8 +19,8 @@ import { SILO_BASE_URL, SILO_BASE_PATH, E_FEATURE_FLAGS } from "@plane/constants
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserProfile } from "@/hooks/store/user";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { IntegrationsEmptyState } from "@/plane-web/components/integrations";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { IntegrationsEmptyState } from "@/components/integrations";
 import type { Route } from "./+types/layout";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 

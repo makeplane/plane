@@ -39,7 +39,7 @@ type ActivityProps = {
 export const createActivityLinkback = (activity: ActivityProps) => {
   const { header, activities, workspaceSlug, projectId, issueId, userMap } = activity;
 
-  const blocks: any[] = [];
+  const blocks: unknown[] = [];
   const planeToSlackUserMap = invertStringMap(userMap);
 
   const title = `*${header ?? "Work Item Updated"}*\n\n`;
@@ -113,15 +113,17 @@ export const createActivityLinkback = (activity: ActivityProps) => {
       },
     });
 
-    blocks.push({
-      type: "context",
-      elements: [
-        {
-          type: "mrkdwn",
-          text: mutationContext,
-        },
-      ],
-    });
+    if (mutationContext?.length) {
+      blocks.push({
+        type: "context",
+        elements: [
+          {
+            type: "mrkdwn",
+            text: mutationContext,
+          },
+        ],
+      });
+    }
   }
 
   // Action buttons

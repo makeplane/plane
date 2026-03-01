@@ -1,4 +1,4 @@
-# Plane PI Tests
+# Plane AI Tests
 
 ## Overview
 Tests for Plane API method signature validation and compliance with the Plane SDK specifications.

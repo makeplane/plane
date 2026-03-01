@@ -23,9 +23,10 @@ import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-
 // constants
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
+import { ProjectBreadcrumb } from "@/components/breadcrumbs/project/root";
 // services
 import { IssueService } from "@/services/issue";
 
@@ -33,9 +34,31 @@ const issueService = new IssueService();
 
 export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchivedIssueDetailsHeader() {
   // router
-  const { workspaceSlug, projectId, archivedIssueId } = useParams();
+  const {
+    workspaceSlug,
+    projectId: projectIdFromRouter,
+    archivedIssueId: archivedIssueIdFromRouter,
+    workItem,
+  } = useParams();
   // store hooks
-  const { currentProjectDetails, loader } = useProject();
+  const {
+    issue: { getIssueIdByIdentifier },
+  } = useIssueDetail();
+  const { getProjectByIdentifier, getPartialProjectById, loader } = useProject();
+  // derived values
+  const archivedIssueId = archivedIssueIdFromRouter
+    ? archivedIssueIdFromRouter?.toString()
+    : (getIssueIdByIdentifier(workItem?.toString()) ?? "");
+
+  const [projectIdentifier] = workItem ? workItem.toString().split("-") : [];
+
+  const projectId = projectIdFromRouter
+    ? projectIdFromRouter?.toString()
+    : projectIdentifier
+      ? getProjectByIdentifier(projectIdentifier)?.id
+      : undefined;
+
+  const currentProjectDetails = getPartialProjectById(projectId);
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId.toString()) : null,
@@ -43,6 +66,8 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
       ? () => issueService.retrieve(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
       : null
   );
+
+  if (!projectId) return null;
 
   return (
     <Header>

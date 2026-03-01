@@ -11,11 +11,13 @@
 
 from .issue_properties import (
     IssueProperty,
+    IssueTypeProperty,
     IssuePropertyOption,
     IssuePropertyValue,
     IssuePropertyActivity,
     PropertyTypeEnum,
     RelationTypeEnum,
+    FormulaProperty,
 )
 
 from .draft import DraftIssuePropertyValue
@@ -43,6 +45,7 @@ from .project import (
     ProjectMemberActivity,
     ProjectLabel,
     ProjectLabelAssociation,
+    ProjectSubscriber,
 )
 from .workspace import (
     WorkspaceFeature,
@@ -54,7 +57,14 @@ from .workspace import (
     WorkspaceEntityConnection,
 )
 
-from .intake import IntakeSetting, IntakeForm, IntakeFormField, IntakeResponsibility, IntakeResponsibilityTypeChoices
+from .intake import (
+    IntakeSetting,
+    IntakeForm,
+    IntakeFormField,
+    IntakeResponsibility,
+    IntakeResponsibilityTypeChoices,
+    IntakeEmail,
+)
 
 from .initiative import (
     Initiative,
@@ -90,7 +100,7 @@ from .workflow import (
     WorkflowTransitionActivity,
 )
 
-from .job import ImportReport, ImportJob
+from .job import ImportReport, ImportJob, ImportExecutionLog
 
 from .customer import (
     Customer,

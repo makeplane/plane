@@ -132,3 +132,16 @@ class State(ProjectBaseModel):
                 self.sequence = last_id + 15000
 
         return super().save(*args, **kwargs)
+
+    @classmethod
+    def create_triage_state(cls, project_id: str, workspace_id: str):
+        return cls.objects.create(
+            workspace_id=workspace_id,
+            project_id=project_id,
+            name="Triage",
+            color="#4E5355",
+            sequence=65000,
+            group=StateGroup.TRIAGE.value,
+            is_triage=True,
+            default=False,
+        )

@@ -22,11 +22,11 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { SentryIntegrationRoot } from "@/plane-web/components/integrations/sentry";
+import { SentryIntegrationRoot } from "@/components/integrations/sentry";
 //  plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web constants
-import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+import { SiloAppService } from "@/services/integrations/silo.service";
 import type { Route } from "./+types/page";
 
 const siloAppService = new SiloAppService();

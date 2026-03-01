@@ -27,6 +27,11 @@ from plane.api.views import (
     IssueRelationRemoveAPIEndpoint,
     IssueSearchEndpoint,
     WorkItemAdvancedSearchEndpoint,
+    WorkItemCreateAPIEndpoint,
+    WorkItemPageListCreateAPIEndpoint,
+    WorkItemPageDetailAPIEndpoint,
+    WorkItemPropertiesAPIEndpoint,
+    WorkItemTypeSchemaAPIEndpoint,
     WorkspaceIssueAPIEndpoint,
 )
 
@@ -198,6 +203,19 @@ new_url_patterns = [
     ),
 ]
 
+work_item_page_url_patterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/pages/",
+        WorkItemPageListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="work-item-page-list",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/pages/<uuid:pk>/",
+        WorkItemPageDetailAPIEndpoint.as_view(http_method_names=["get", "delete"]),
+        name="work-item-page-detail",
+    ),
+]
+
 advanced_search_url_patterns = [
     path(
         "workspaces/<str:slug>/work-items/advanced-search/",
@@ -206,4 +224,36 @@ advanced_search_url_patterns = [
     ),
 ]
 
-urlpatterns = old_url_patterns + new_url_patterns + advanced_search_url_patterns
+work_item_properties_url_patterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:pk>/properties/",
+        WorkItemPropertiesAPIEndpoint.as_view(http_method_names=["get", "patch"]),
+        name="work-item-properties",
+    ),
+]
+
+work_item_type_schema_url_patterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-types/schema/",
+        WorkItemTypeSchemaAPIEndpoint.as_view(http_method_names=["get"]),
+        name="work-item-type-schema",
+    ),
+]
+
+work_item_create_url_patterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/create/",
+        WorkItemCreateAPIEndpoint.as_view(http_method_names=["post"]),
+        name="work-item-create",
+    ),
+]
+
+urlpatterns = (
+    old_url_patterns
+    + new_url_patterns
+    + work_item_page_url_patterns
+    + advanced_search_url_patterns
+    + work_item_properties_url_patterns
+    + work_item_type_schema_url_patterns
+    + work_item_create_url_patterns
+)

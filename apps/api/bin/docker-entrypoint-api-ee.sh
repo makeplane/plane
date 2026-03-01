@@ -1,11 +1,10 @@
 #!/bin/bash
 set -e
-python manage.py wait_for_db
-# Wait for migrations
-python manage.py wait_for_migrations
 
-# Create the default bucket
-#!/bin/bash
+if [ "$(id -u)" = "0" ]; then
+  chown -R plane:plane /code/plane/logs
+  exec su-exec plane "$0" "$@"
+fi
 
 # Collect system information
 HOSTNAME=$(hostname)
@@ -21,19 +20,7 @@ SIGNATURE=$(echo "$HOSTNAME$MAC_ADDRESS$CPU_INFO$MEMORY_INFO$DISK_INFO" | sha256
 MACHINE_SIGNATURE=${MACHINE_SIGNATURE:-$SIGNATURE}
 export SKIP_ENV_VAR=1
 
-# Register instance
-python manage.py register_instance_ee "$MACHINE_SIGNATURE"
-
-# Load the configuration variable
-python manage.py configure_instance
-
-# Create the default bucket
-python manage.py create_bucket
-
-# Clear Cache before starting to remove stale values
-python manage.py clear_cache
-
-# Fetch latest information from monitor and update all licenses
-python manage.py update_licenses
+# Run consolidated startup
+python manage.py startup commercial --machine-signature "$MACHINE_SIGNATURE"
 
 exec gunicorn -w "$GUNICORN_WORKERS" -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:"${PORT:-8000}" --max-requests 1200 --max-requests-jitter 1000 --access-logfile -

@@ -11,10 +11,25 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export type TMentionSuggestionResponse = {
+export type TMemberResponse = {
   id?: string;
   displayName?: string;
   firstName?: string;
   lastName?: string;
   avatarUrl?: string;
+};
+
+export type TPageMentionResponse = {
+  workitem: TWorkItemMentionResponse;
+};
+
+export type TWorkItemMentionResponse = {
+  id: string | undefined;
+  name: string | undefined;
+  sequenceId: string | undefined;
+  projectId: string | undefined;
+  typeId: string | undefined;
+  projectIdentifier: string | undefined;
+  stateGroup: string | undefined;
+  stateName: string | undefined;
 };

@@ -199,7 +199,7 @@ async def oauth_callback(
 async def _build_redirect_url(oauth_state, workspace_slug: str, db: AsyncSession) -> str:
     """Build the appropriate redirect URL based on OAuth state context."""
     if not oauth_state:
-        return f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/pi-chat/?oauth_success=true"
+        return f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/ai-chat/?oauth_success=true"
 
     # Handle message token parameter
     message_token_param = ""
@@ -230,13 +230,13 @@ async def _build_redirect_url(oauth_state, workspace_slug: str, db: AsyncSession
         # Project chat redirect
         if getattr(oauth_state, "is_project_chat", False):
             return (
-                f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/projects/pi-chat/{oauth_state.chat_id}/?oauth_success=true{message_token_param}"
+                f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/projects/ai-chat/{oauth_state.chat_id}/?oauth_success=true{message_token_param}"
             )
         # Default chat redirect
-        return f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/pi-chat/{oauth_state.chat_id}/?oauth_success=true{message_token_param}"
+        return f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/ai-chat/{oauth_state.chat_id}/?oauth_success=true{message_token_param}"
 
     # Fallback to default success page
-    return f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/pi-chat/?oauth_success=true"
+    return f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/ai-chat/?oauth_success=true"
 
 
 @router.post("/status/", response_model=OAuthStatusResponse)
@@ -372,7 +372,7 @@ async def reset_oauth_states(
 async def clean_oauth_init(
     encoded_params: str,
     sidebar_open_url: Optional[str] = Query(None, description="Sidebar open URL from frontend"),
-    pi_sidebar_open: Optional[str] = Query(None, description="Pi sidebar open flag from frontend"),
+    pi_sidebar_open: Optional[str] = Query(None, description="AI sidebar open flag from frontend"),
     db: AsyncSession = Depends(get_async_session),
 ):
     """

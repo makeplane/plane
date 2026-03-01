@@ -292,7 +292,8 @@ def maintain_future_cycles():
                     last_upcoming.start_date + timedelta(days=cooldown_period) if last_upcoming else now
                 )
 
-                # if the last cycles is not found then check for which every is the upcoming cycle as the end date (if none of them have end date then skip the project)
+                # if the last cycles is not found then check for which every is the upcoming cycle as the end date
+                # (if none of them have end date then skip the project)
                 upcoming_cycles = Cycle.objects.filter(
                     project_id=project_id, start_date__gt=now, deleted_at__isnull=True
                 )
@@ -308,7 +309,8 @@ def maintain_future_cycles():
             # check the difference between the number of cycles and the upcoming cycles
             number_of_cycles_diff = number_of_cycles - upcoming_cycles.count()
 
-            # if its greater than create the new cycles from the last cycle end date and add the cooldown period bulk create the cycle
+            # if its greater than create the new cycles from the last cycle end date and
+            # add the cool down period and bulk create the cycles
 
             # first we need to check if any of the cycles exists with the same dates in the database
             if number_of_cycles_diff > 0:
@@ -358,7 +360,7 @@ def maintain_future_cycles():
                             project_id=project_id,
                             action="cycle_created",
                             status="success",
-                            message=f"Cycle created successfully for {cycle.start_date.date()} - {cycle.end_date.date()}",
+                            message=f"Cycle created successfully for {cycle.start_date.date()} - {cycle.end_date.date()}",  # noqa: E501
                             scheduled_at=timezone.now(),
                         )
                         for cycle in cycles

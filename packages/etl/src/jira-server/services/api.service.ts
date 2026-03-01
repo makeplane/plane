@@ -15,8 +15,8 @@
 import type { AxiosError } from "axios";
 import axios from "axios";
 import type { Paginated } from "jira.js";
-import { Board as BoardClient } from "jira.js/out/agile";
-import { Version2Client } from "jira.js/out/version2";
+import { Board as BoardClient } from "jira.js/out/agile/index.js";
+import { Version2Client } from "jira.js/out/version2/index.js";
 import type {
   CustomFieldContextOption,
   FieldDetails,
@@ -24,7 +24,7 @@ import type {
   JiraStatus,
   Project,
   IssueTypeDetails,
-} from "jira.js/out/version2/models";
+} from "jira.js/out/version2/models/index.js";
 import type { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
 import type { JiraApiUser, JiraProps } from "..";
 import { fetchPaginatedData, EJiraAuthenticationType } from "..";
@@ -109,9 +109,9 @@ export class JiraV2Service {
   }
 
   // Verified
-  async getNumberOfIssues(projectKey: string) {
+  async getNumberOfIssues(projectKey: string, jql?: string) {
     const issues = await this.jiraClient.issueSearch.searchForIssuesUsingJql({
-      jql: `project = "${projectKey}"`,
+      jql: jql ? jql : `project = "${projectKey}"`,
       maxResults: 0,
     });
     return issues.total;
@@ -326,7 +326,7 @@ export class JiraV2Service {
     });
   }
 
-  async getIssueFieldOptions(fieldId: string, projectId: string, issueTypeId: string) {
+  async getIssueFieldOptions(fieldId: string, projectId?: string, issueTypeId?: string) {
     const response = await axios.get(`${this.hostname}/rest/api/2/customFields/${fieldId}/options`, {
       params: {
         projectIds: projectId,
@@ -350,11 +350,13 @@ export class JiraV2Service {
     });
   }
 
-  async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string, maxResults = 100) {
+  async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string, maxResults = 100, jql?: string) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({
-      jql: createdAfter
-        ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}") ORDER BY created ASC`
-        : `project = "${projectKey}" ORDER BY created ASC`,
+      jql: jql
+        ? jql
+        : createdAfter
+          ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}") ORDER BY created ASC`
+          : `project = "${projectKey}" ORDER BY created ASC`,
       expand: "renderedFields",
       fields: ["*all", "sprints", "closedSprints"],
       startAt,

@@ -66,11 +66,7 @@ class DataExporter:
 
     def serialize(self, queryset) -> List[Dict]:
         """QuerySet → list of dicts"""
-        serializer = self.serializer_class(
-            queryset,
-            many=True,
-            **self.serializer_kwargs
-        )
+        serializer = self.serializer_class(queryset, many=True, **self.serializer_kwargs)
         return serializer.data
 
     def export(self, filename: str, queryset) -> tuple[str, Union[str, bytes]]:
@@ -104,7 +100,7 @@ class DataExporter:
     def to_file(self, queryset, filepath: str, formatter: BaseFormatter) -> str:
         """Export to file (legacy interface)"""
         content = self.to_string(queryset, formatter)
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             f.write(content)
         return filepath
 

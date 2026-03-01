@@ -39,6 +39,7 @@ class Chat(BaseModel, table=True):
     is_favorite: bool = Field(default=False, nullable=False, sa_column_kwargs={"server_default": text("false")})
     is_project_chat: bool = Field(default=False, nullable=False, sa_column_kwargs={"server_default": text("false")})
     workspace_in_context: Optional[bool] = Field(default=None, nullable=True)
+    is_websearch_enabled: bool = Field(default=False, nullable=False)
 
 
 class UserChatPreference(BaseModel, table=True):
@@ -46,6 +47,7 @@ class UserChatPreference(BaseModel, table=True):
 
     # Fields
     is_focus_enabled: bool = Field(default=True, nullable=False)
+    is_websearch_enabled: bool = Field(default=False, nullable=False)
     # Polymorphic focus context - replaces focus_project_id and focus_workspace_id
     focus_entity_type: Optional[str] = Field(default=None, nullable=True, max_length=50)
     focus_entity_id: Optional[uuid.UUID] = Field(default=None, nullable=True)

@@ -11,7 +11,7 @@
 
 from django.urls import path
 
-from plane.api.views import TeamspaceViewSet
+from plane.api.views import TeamspaceViewSet, TeamspaceProjectViewSet, TeamspaceMemberViewSet
 
 urlpatterns = [
     path(
@@ -26,12 +26,12 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/teamspaces/<uuid:teamspace_id>/projects/",
-        TeamspaceViewSet.as_view({"get": "get_projects", "post": "add_projects", "delete": "remove_projects"}),
+        TeamspaceProjectViewSet.as_view({"get": "get_projects", "post": "add_projects", "delete": "remove_projects"}),
         name="workspace-teamspaces-projects",
     ),
     path(
         "workspaces/<str:slug>/teamspaces/<uuid:teamspace_id>/members/",
-        TeamspaceViewSet.as_view({"get": "get_members", "post": "add_members", "delete": "remove_members"}),
+        TeamspaceMemberViewSet.as_view({"get": "get_members", "post": "add_members", "delete": "remove_members"}),
         name="workspace-teamspaces-members",
     ),
 ]

@@ -51,7 +51,7 @@ class RecordCreatedTrigger(TriggerNode):
         """
         # Check if this is a creation event
         event_type = event.get("event_type", "")
-        if event_type == "issue.created":
+        if event_type in ["workitem.created", "issue.created"]:
             return {
                 "success": True,
                 "action": "record_created",
@@ -104,7 +104,7 @@ class RecordUpdatedTrigger(TriggerNode):
         """
         # Check if this is an update event
         event_type = event.get("event_type", "")
-        if event_type == "issue.updated":
+        if event_type in ["workitem.updated", "issue.updated"]:
             return {
                 "success": True,
                 "action": "record_updated",
@@ -137,8 +137,8 @@ class StateChangedTrigger(TriggerNode):
     Trigger that fires when an issue's state changes.
 
     This specialized trigger handles ONLY the high-value specific event
-    (issue.state.updated).
-    It does NOT handle generic issue.updated events to avoid duplicate triggers.
+    (workitem.state.updated or issue.state.updated for backward compatibility).
+    It does NOT handle generic workitem.updated events to avoid duplicate triggers.
 
     For generic field-level updates, use the record_updated trigger instead.
     """
@@ -159,8 +159,11 @@ class StateChangedTrigger(TriggerNode):
         """
         event_type = event.get("event_type", "")
 
-        # ONLY handle high-value specific event: issue.state.updated
-        if event_type == "issue.state.updated":
+        # ONLY handle high-value specific event:
+        # workitem.state.updated
+        # issue.state.updated
+        # epic.state.updated
+        if event_type in ["workitem.state.updated", "issue.state.updated"]:
             return {
                 "success": True,
                 "action": "state_changed",
@@ -193,8 +196,8 @@ class AssigneeChangedTrigger(TriggerNode):
     Trigger that fires when an issue's assignees change.
 
     This specialized trigger handles ONLY the high-value specific events
-    (issue.assignee.added and issue.assignee.removed).
-    It does NOT handle generic issue.updated events to avoid duplicate triggers.
+    (workitem.assignee.added/removed or issue.assignee.added/removed for backward compatibility).
+    It does NOT handle generic workitem.updated events to avoid duplicate triggers.
 
     For generic field-level updates, use the record_updated trigger instead.
     """
@@ -215,8 +218,16 @@ class AssigneeChangedTrigger(TriggerNode):
         """
         event_type = event.get("event_type", "")
 
-        # ONLY handle high-value specific events: issue.assignee.added/removed
-        if event_type in ["issue.assignee.added", "issue.assignee.removed"]:
+        # ONLY handle high-value specific events:
+        # workitem.assignee.added/removed
+        # issue.assignee.added/removed
+        # epic.assignee.added/removed
+        if event_type in [
+            "workitem.assignee.added",
+            "workitem.assignee.removed",
+            "issue.assignee.added",
+            "issue.assignee.removed",
+        ]:
             return {
                 "success": True,
                 "action": "assignee_changed",
@@ -247,8 +258,8 @@ class CommentCreatedParams(BaseModel):
 class CommentCreatedTrigger(TriggerNode):
     """
     Trigger that fires when a comment is added to an issue.
-
-    This trigger handles ONLY the high-value specific event (issue.comment.created).
+    This trigger handles ONLY the high-value specific event
+    (workitem.comment.created or issue.comment.created for backward compatibility).
     """
 
     schema = CommentCreatedParams
@@ -267,8 +278,8 @@ class CommentCreatedTrigger(TriggerNode):
         """
         event_type = event.get("event_type", "")
 
-        # Only handle issue.comment.created events
-        if event_type == "issue.comment.created":
+        # Only handle workitem.comment.created events (or issue.comment.created for backward compatibility)
+        if event_type in ["workitem.comment.created", "issue.comment.created"]:
             event_data = event.get("data", {})
             comment = event_data.get("comment", {})
             return {

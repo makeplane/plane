@@ -15,12 +15,12 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { AddWorkItemIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
 // components
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 import { SidebarAddButton } from "@/components/sidebar/add-button";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -89,14 +89,13 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
           label={
             <>
               <AddWorkItemIcon className="size-4" />
-              <span className="text-13 font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
+              <span className="text-body-sm-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
             </>
           }
           onClick={() => toggleCreateIssueModal(true)}
           disabled={disabled}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          data-ph-element={SIDEBAR_TRACKER_ELEMENTS.CREATE_WORK_ITEM_BUTTON}
         />
       </div>
     </>

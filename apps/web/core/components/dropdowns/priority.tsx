@@ -13,6 +13,7 @@
 
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -469,56 +470,58 @@ export function PriorityDropdown(props: Props) {
       button={comboButton}
       renderByDefault={renderByDefault}
     >
-      {isOpen && (
-        <Combobox.Options className="fixed z-10" static>
-          <div
-            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
-            <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
-              <Combobox.Input
-                as="input"
-                ref={inputRef}
-                className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t("search")}
-                displayValue={(assigned: any) => assigned?.name}
-                onKeyDown={searchInputKeyDown}
-              />
+      {isOpen &&
+        createPortal(
+          <Combobox.Options data-prevent-outside-click static>
+            <div
+              className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none z-30"
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
+            >
+              <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
+                <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+                <Combobox.Input
+                  as="input"
+                  ref={inputRef}
+                  className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t("search")}
+                  displayValue={(assigned: any) => assigned?.name}
+                  onKeyDown={searchInputKeyDown}
+                />
+              </div>
+              <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
+                {filteredOptions.length > 0 ? (
+                  filteredOptions.map((option) => (
+                    <Combobox.Option
+                      key={option.value}
+                      value={option.value}
+                      className={({ active, selected }) =>
+                        cn(
+                          `w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none ${
+                            active ? "bg-layer-transparent-hover" : ""
+                          } ${selected ? "text-primary" : "text-secondary"}`
+                        )
+                      }
+                    >
+                      {({ selected }) => (
+                        <>
+                          <span className="flex-grow truncate">{option.content}</span>
+                          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                        </>
+                      )}
+                    </Combobox.Option>
+                  ))
+                ) : (
+                  <p className="text-placeholder italic py-1 px-1.5">{t("no_matching_results")}</p>
+                )}
+              </div>
             </div>
-            <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
-              {filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
-                  <Combobox.Option
-                    key={option.value}
-                    value={option.value}
-                    className={({ active, selected }) =>
-                      cn(
-                        `w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none ${
-                          active ? "bg-layer-transparent-hover" : ""
-                        } ${selected ? "text-primary" : "text-secondary"}`
-                      )
-                    }
-                  >
-                    {({ selected }) => (
-                      <>
-                        <span className="flex-grow truncate">{option.content}</span>
-                        {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
-                      </>
-                    )}
-                  </Combobox.Option>
-                ))
-              ) : (
-                <p className="text-placeholder italic py-1 px-1.5">{t("no_matching_results")}</p>
-              )}
-            </div>
-          </div>
-        </Combobox.Options>
-      )}
+          </Combobox.Options>,
+          document.body
+        )}
     </ComboDropDown>
   );
 }

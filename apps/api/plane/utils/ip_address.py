@@ -9,6 +9,7 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+
 def get_client_ip(request):
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:

@@ -11,118 +11,65 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
+import { expect, fn } from "storybook/test";
 import { Button } from "./button";
 
-const meta = {
-  title: "Components/Button",
+const meta = preview.meta({
   component: Button,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   args: {
     children: "Button",
   },
-} satisfies Meta<typeof Button>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-export const Primary: Story = {
+export const Default = meta.story({
   args: {
-    variant: "primary",
-    children: "Primary Button",
+    onClick: fn(),
   },
-};
+});
 
-export const ErrorFill: Story = {
+export const ClickTest = meta.story({
   args: {
-    variant: "error-fill",
-    children: "Error Button",
+    ...Default.composed.args,
   },
-};
-
-export const ErrorOutline: Story = {
-  args: {
-    variant: "error-outline",
-    children: "Error Outline Button",
+  async play({ canvas, userEvent, args }) {
+    const button = canvas.getByRole("button");
+    await expect(button).toBeVisible();
+    await userEvent.click(button);
+    await expect(args.onClick).toHaveBeenCalledOnce();
   },
-};
+});
 
-export const Secondary: Story = {
-  args: {
-    variant: "secondary",
-    children: "Secondary Button",
-  },
-};
+export const Primary = Default.extend({ args: { variant: "primary", children: "Primary Button" } });
 
-export const Tertiary: Story = {
-  args: {
-    variant: "tertiary",
-    children: "Tertiary Button",
-  },
-};
+export const ErrorFill = Default.extend({ args: { variant: "error-fill", children: "Error Button" } });
 
-export const Ghost: Story = {
-  args: {
-    variant: "ghost",
-    children: "Ghost Button",
-  },
-};
+export const ErrorOutline = Default.extend({ args: { variant: "error-outline", children: "Error Outline Button" } });
 
-export const Link: Story = {
-  args: {
-    variant: "link",
-    children: "Link Button",
-  },
-};
+export const Secondary = Default.extend({ args: { variant: "secondary", children: "Secondary Button" } });
 
-export const Small: Story = {
-  args: {
-    size: "sm",
-    children: "Small Button",
-  },
-};
+export const Tertiary = Default.extend({ args: { variant: "tertiary", children: "Tertiary Button" } });
 
-export const Base: Story = {
-  args: {
-    size: "base",
-    children: "Base Button",
-  },
-};
+export const Ghost = Default.extend({ args: { variant: "ghost", children: "Ghost Button" } });
 
-export const Large: Story = {
-  args: {
-    size: "lg",
-    children: "Large Button",
-  },
-};
+export const Link = Default.extend({ args: { variant: "link", children: "Link Button" } });
 
-export const ExtraLarge: Story = {
-  args: {
-    size: "xl",
-    children: "Extra Large Button",
-  },
-};
+export const Small = Default.extend({ args: { size: "sm", children: "Small Button" } });
 
-export const Loading: Story = {
-  args: {
-    loading: true,
-    children: "Loading Button",
-  },
-};
+export const Base = Default.extend({ args: { size: "base", children: "Base Button" } });
 
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    children: "Disabled Button",
-  },
-};
+export const Large = Default.extend({ args: { size: "lg", children: "Large Button" } });
 
-export const WithPrependIcon: Story = {
+export const ExtraLarge = Default.extend({ args: { size: "xl", children: "Extra Large Button" } });
+
+export const Loading = Default.extend({ args: { loading: true, children: "Loading Button" } });
+
+export const Disabled = Default.extend({ args: { disabled: true, children: "Disabled Button" } });
+
+export const WithPrependIcon = Default.extend({
   args: {
     prependIcon: (
       <svg
@@ -140,9 +87,9 @@ export const WithPrependIcon: Story = {
     ),
     children: "With Prepend Icon",
   },
-};
+});
 
-export const WithAppendIcon: Story = {
+export const WithAppendIcon = Default.extend({
   args: {
     appendIcon: (
       <svg
@@ -160,57 +107,4 @@ export const WithAppendIcon: Story = {
     ),
     children: "With Append Icon",
   },
-};
-
-export const AllVariants: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-16 font-semibold">Primary Variants</h3>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="primary">Primary</Button>
-            <Button variant="error-fill">Error Fill</Button>
-            <Button variant="error-outline">Error Outline</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="tertiary">Tertiary</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="link">Link</Button>
-          </div>
-        </div>
-      </div>
-    );
-  },
-};
-
-export const AllSizes: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Button size="sm">Small</Button>
-          <Button size="base">Base</Button>
-          <Button size="lg">Large</Button>
-          <Button size="xl">Extra Large</Button>
-        </div>
-      </div>
-    );
-  },
-};
-
-export const AllStates: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-16 font-semibold">Button States</h3>
-          <div className="flex flex-wrap gap-2">
-            <Button>Default</Button>
-            <Button loading>Loading</Button>
-            <Button disabled>Disabled</Button>
-          </div>
-        </div>
-      </div>
-    );
-  },
-};
+});

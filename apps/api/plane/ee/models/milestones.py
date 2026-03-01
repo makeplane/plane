@@ -26,6 +26,17 @@ class Milestone(ProjectBaseModel):
     target_date = models.DateField(null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
+    archived_at = models.DateTimeField(null=True)
+
+    @classmethod
+    def is_valid_title(cls, title, project_id, exclude_id=None):
+        """Validate that the milestone title is unique within the project."""
+        qs = cls.objects.filter(title=title, project_id=project_id)
+        if exclude_id:
+            qs = qs.exclude(id=exclude_id)
+        if qs.exists():
+            return False
+        return True
 
     class Meta:
         verbose_name = "Milestone"

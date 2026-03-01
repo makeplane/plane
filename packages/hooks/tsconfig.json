@@ -1,5 +1,10 @@
 {
   "extends": "@plane/typescript-config/react-library.json",
-  "include": ["./src"],
-  "exclude": ["dist", "build", "node_modules"]
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+  },
+  "include": ["src"],
+  "exclude": ["dist", "node_modules", "*.config.ts"]
 }

@@ -20,6 +20,7 @@ from typing import Tuple
 from typing import TypeVar
 from typing import Union
 
+import psycopg2
 from asyncpg import create_pool
 from asyncpg.pool import Pool
 
@@ -131,3 +132,47 @@ class PlaneDBPool:
                 log.error(f"Query failed: {r}")
 
         return valid_results
+
+
+class PlaneDBSync:
+    """Synchronous connection helper for Plane PostgreSQL database."""
+
+    @classmethod
+    def fetchrow(cls, query: str, params: SQLParams = None) -> Optional[Dict[str, Any]]:
+        """Execute a query and return the first row (synchronous)."""
+        try:
+            conn = psycopg2.connect(settings.FOLLOWER_POSTGRES_URI)
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(query, params if params else ())
+                    row = cur.fetchone()
+                    if row:
+                        # Get column names from cursor description
+                        columns = [desc[0] for desc in cur.description]
+                        return dict(zip(columns, row))
+                    return None
+            finally:
+                conn.close()
+        except Exception as e:
+            log.error(f"Error executing sync query: {e}")
+            return None
+
+    @classmethod
+    def fetch(cls, query: str, params: SQLParams = None) -> List[Dict[str, Any]]:
+        """Execute a query and return all results (synchronous)."""
+        try:
+            conn = psycopg2.connect(settings.FOLLOWER_POSTGRES_URI)
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(query, params if params else ())
+                    rows = cur.fetchall()
+                    if rows:
+                        # Get column names from cursor description
+                        columns = [desc[0] for desc in cur.description]
+                        return [dict(zip(columns, row)) for row in rows]
+                    return []
+            finally:
+                conn.close()
+        except Exception as e:
+            log.error(f"Error executing sync query: {e}")
+            return []

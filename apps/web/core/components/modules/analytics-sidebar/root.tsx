@@ -13,10 +13,10 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { SquareUser } from "lucide-react";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
@@ -27,8 +27,8 @@ import {
   WorkItemsIcon,
   StartDatePropertyIcon,
   ChevronDownIcon,
-  ChevronRightIcon,
   InfoIcon,
+  ChevronRightIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
@@ -53,6 +53,84 @@ const defaultValues: Partial<IModule> = {
   status: "backlog",
 };
 
+const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible({
+  moduleDetails,
+  isEditingAllowed,
+  isArchived,
+  moduleId,
+  handleEditLink,
+  handleDeleteLink,
+  setModuleLinkModal,
+}: {
+  moduleDetails: IModule;
+  isEditingAllowed: boolean;
+  isArchived: boolean;
+  moduleId: string;
+  handleEditLink: (link: ILinkDetails) => void;
+  handleDeleteLink: (linkId: string) => void;
+  setModuleLinkModal: (value: boolean) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(!!moduleDetails?.link_module?.length);
+  const { t } = useTranslation();
+
+  return (
+    <Collapsible defaultOpen={!!moduleDetails?.link_module?.length} open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 p-1.5 flex-1">
+        <div className="flex items-center justify-start gap-2 text-13">
+          <span className="font-medium text-secondary">{t("common.links")}</span>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <ChevronDownIcon className={`h-3.5 w-3.5 ${isOpen ? "rotate-180 transform" : ""}`} aria-hidden="true" />
+        </div>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div className="my-2 flex flex-col min-h-72 w-full overflow-y-auto">
+          {isEditingAllowed && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
+            <>
+              {!isArchived && (
+                <div className="flex w-full items-center justify-end">
+                  <button
+                    className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
+                    onClick={() => setModuleLinkModal(true)}
+                  >
+                    <PlusIcon className="h-3 w-3" />
+                    {t("add_link")}
+                  </button>
+                </div>
+              )}
+
+              {moduleId && (
+                <ModuleLinksList
+                  moduleId={moduleId}
+                  handleEditLink={handleEditLink}
+                  handleDeleteLink={handleDeleteLink}
+                  disabled={!isEditingAllowed || isArchived}
+                />
+              )}
+            </>
+          ) : (
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <InfoIcon className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
+                <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
+              </div>
+              {isEditingAllowed && !isArchived && (
+                <button
+                  className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
+                  onClick={() => setModuleLinkModal(true)}
+                >
+                  <PlusIcon className="h-3 w-3" />
+                  {t("add_link")}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+});
+
 type Props = {
   moduleId: string;
   handleClose: () => void;
@@ -67,7 +145,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // router
   const { workspaceSlug, projectId } = useParams();
-
+  const searchParams = useSearchParams();
+  const peekModule = searchParams.get("peekModule");
   // store hooks
   const { t } = useTranslation();
   const { allowPermissions } = useUserPermissions();
@@ -191,17 +270,18 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         updateLink={handleUpdateLink}
       />
       <>
-        <div className={`sticky z-10 top-0 flex items-center justify-between bg-surface-1 pb-5 pt-5`}>
-          <div>
-            <button
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-layer-3"
-              onClick={() => handleClose()}
-            >
-              <ChevronRightIcon className="h-3 w-3 stroke-2 text-on-color" />
-            </button>
+        {peekModule && (
+          <div className={`sticky z-10 top-0 flex items-center justify-between bg-surface-1 pb-5 pt-5`}>
+            <div>
+              <button
+                className="flex h-5 w-5 items-center justify-center rounded-full bg-layer-3"
+                onClick={() => handleClose()}
+              >
+                <ChevronRightIcon className="h-3 w-3 stroke-2 text-on-color" />
+              </button>
+            </div>
           </div>
-        </div>
-
+        )}
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-5 pt-2">
             <Controller
@@ -379,74 +459,16 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           />
         )}
 
-        <div className="flex flex-col">
-          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-subtle px-1.5 py-5">
-            {/* Accessing link outside the disclosure as mobx is not  considering the children inside Disclosure as part of the component hence not observing their state change*/}
-            <Disclosure defaultOpen={!!moduleDetails?.link_module?.length}>
-              {({ open }) => (
-                <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                  <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
-                    <div className="flex items-center justify-start gap-2 text-13">
-                      <span className="font-medium text-secondary">{t("common.links")}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <ChevronDownIcon
-                        className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`}
-                        aria-hidden="true"
-                      />
-                    </div>
-                  </Disclosure.Button>
-                  <Transition show={open}>
-                    <Disclosure.Panel>
-                      <div className="mt-2 flex min-h-72 w-full flex-col space-y-3 overflow-y-auto">
-                        {isEditingAllowed && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
-                          <>
-                            {isEditingAllowed && !isArchived && (
-                              <div className="flex w-full items-center justify-end">
-                                <button
-                                  className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
-                                  onClick={() => setModuleLinkModal(true)}
-                                >
-                                  <PlusIcon className="h-3 w-3" />
-                                  {t("add_link")}
-                                </button>
-                              </div>
-                            )}
-
-                            {moduleId && (
-                              <ModuleLinksList
-                                moduleId={moduleId}
-                                handleEditLink={handleEditLink}
-                                handleDeleteLink={handleDeleteLink}
-                                disabled={!isEditingAllowed || isArchived}
-                              />
-                            )}
-                          </>
-                        ) : (
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2">
-                              <InfoIcon className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
-                              <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
-                            </div>
-                            {isEditingAllowed && !isArchived && (
-                              <button
-                                className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
-                                onClick={() => setModuleLinkModal(true)}
-                              >
-                                <PlusIcon className="h-3 w-3" />
-                                {t("add_link")}
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </Disclosure.Panel>
-                  </Transition>
-                </div>
-              )}
-            </Disclosure>
-          </div>
-        </div>
+        <ModuleLinksCollapsible
+          moduleDetails={moduleDetails}
+          isEditingAllowed={isEditingAllowed}
+          isArchived={!!isArchived}
+          moduleId={moduleId}
+          handleEditLink={handleEditLink}
+          handleDeleteLink={handleDeleteLink}
+          setModuleLinkModal={setModuleLinkModal}
+        />
+        <div className="pb-5"></div>
       </>
     </div>
   );

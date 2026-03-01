@@ -44,7 +44,7 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
 
   // store hooks
   const isIssueEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
-  const { getPageById, createPage } = usePageStore(storeType);
+  const { getPageById, createPage, movePageInternally } = usePageStore(storeType);
 
   // Issue Embed Implementation
   const fetchIssues = useCallback(
@@ -144,15 +144,29 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
           console.log(error);
         }
       },
-      widgetCallback: ({ pageId: pageIdFromNode, updateAttributes }) => (
+      widgetCallback: ({ pageId: pageIdFromNode, updateAttributes, editor: _editor }) => (
         <PageEmbedCardRoot
           parentPage={page}
           embedPageId={pageIdFromNode}
           storeType={storeType}
           redirectLink={getRedirectionLink(pageIdFromNode)}
           onPageDrop={(droppedPageId: string) => {
-            const droppedPageDetails = getPageById(droppedPageId);
-            droppedPageDetails?.update({ parent_id: pageIdFromNode });
+            const targetPage = getPageById(pageIdFromNode);
+            movePageInternally(droppedPageId, { parent_id: pageIdFromNode })
+              .then(() => {
+                setToast({
+                  type: TOAST_TYPE.SUCCESS,
+                  title: "Page moved",
+                  message: targetPage?.name ? `Page moved to "${targetPage.name}"` : "Page moved successfully.",
+                });
+              })
+              .catch(() => {
+                setToast({
+                  type: TOAST_TYPE.ERROR,
+                  title: "Error!",
+                  message: "Failed to move page. Please try again later.",
+                });
+              });
           }}
           isDroppable
           updateAttributes={updateAttributes}
@@ -257,7 +271,7 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
         });
       },
     };
-  }, [storeType, page, getPageById, createPage, getRedirectionLink, workspaceSlug]);
+  }, [storeType, page, getPageById, createPage, getRedirectionLink, workspaceSlug, movePageInternally]);
 
   const embedProps: TEmbedConfig = useMemo(
     () => ({

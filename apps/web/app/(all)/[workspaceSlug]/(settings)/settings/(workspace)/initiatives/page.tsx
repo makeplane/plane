@@ -15,9 +15,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
-// components
+// component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
@@ -27,11 +27,11 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { InitiativeLabelList } from "@/plane-web/components/initiatives/components/labels/initiative-label-list";
-import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { InitiativeLabelList } from "@/components/initiatives/components/labels/initiative-label-list";
+import { InitiativesUpgrade } from "@/components/initiatives/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import type { Route } from "./+types/page";
 import { InitiativesWorkspaceSettingsHeader } from "./header";
@@ -96,9 +96,7 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
             <SettingsBoxedControlItem
               title={t("project_settings.initiatives.title")}
               description={t("project_settings.initiatives.description")}
-              control={
-                <ToggleSwitch value={isInitiativesFeatureEnabled} onChange={toggleInitiativesFeature} size="sm" />
-              }
+              control={<Switch value={isInitiativesFeatureEnabled} onChange={toggleInitiativesFeature} />}
             />
           </div>
           <div className="mt-12">

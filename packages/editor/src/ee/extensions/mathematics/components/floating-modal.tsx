@@ -100,7 +100,13 @@ export function FloatingMathModal({
       />
 
       {/* Modal content */}
-      <div ref={refs.setFloating} style={{ ...floatingStyles, zIndex: 100 }} {...getFloatingProps()}>
+      <div
+        ref={refs.setFloating}
+        style={{ ...floatingStyles, zIndex: 100 }}
+        {...getFloatingProps()}
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
         {isFlagged ? (
           <UpgradeNowModal />
         ) : (

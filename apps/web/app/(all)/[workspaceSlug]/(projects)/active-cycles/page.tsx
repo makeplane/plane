@@ -17,9 +17,14 @@ import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
-import { WorkspaceActiveCyclesRoot } from "@/plane-web/components/active-cycles";
+import { WorkspaceActiveCyclesRoot } from "@/components/cycles/active-cycles/workspace/root";
+// local imports
+import type { Route } from "./+types/page";
 
-function WorkspaceActiveCyclesPage() {
+function WorkspaceActiveCyclesPage(props: Route.ComponentProps) {
+  const { params } = props;
+  const { workspaceSlug } = params;
+  // store hooks
   const { currentWorkspace } = useWorkspace();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Active Cycles` : undefined;
@@ -27,7 +32,7 @@ function WorkspaceActiveCyclesPage() {
   return (
     <>
       <PageHead title={pageTitle} />
-      <WorkspaceActiveCyclesRoot />
+      <WorkspaceActiveCyclesRoot workspaceSlug={workspaceSlug} />
     </>
   );
 }

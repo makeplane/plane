@@ -11,8 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC, MutableRefObject } from "react";
-import React, { useEffect, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -20,7 +20,7 @@ import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import type { IIssueDisplayProperties, TIssue, TIssueMap } from "@plane/types";
+import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // components
 import { DropIndicator } from "@plane/ui";
@@ -30,14 +30,16 @@ import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-lo
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// helpers
+import { HIGHLIGHT_CLASS } from "@/helpers/common";
+import { getWorkItemBlockId, isWorkItemNew } from "@/helpers/work-item-layout";
 // types
-import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { IssueBlock } from "./block";
 import type { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
   issueId: string;
-  issuesMap: TIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -58,7 +60,7 @@ type Props = {
 export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   const {
     issueId,
-    issuesMap,
+    getWorkItemById,
     groupId,
     updateIssue,
     quickActions,
@@ -85,7 +87,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   const { isMobile } = usePlatformOS();
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
-
+  const workItem = getWorkItemById(issueId);
   const isSubIssue = nestingLevel !== 0;
 
   useEffect(() => {
@@ -134,24 +136,24 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
     issueBlockRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
   });
 
-  if (!issueId || !issuesMap[issueId]?.created_at) return null;
+  if (!issueId || !workItem?.created_at) return null;
 
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   return (
-    <div className="relative" ref={issueBlockRef} id={getIssueBlockId(issueId, groupId)}>
+    <div className="relative" ref={issueBlockRef} id={getWorkItemBlockId(issueId, groupId)}>
       <DropIndicator classNames={"absolute top-0 z-[2]"} isVisible={instruction === "DRAG_OVER"} />
       <RenderIfVisible
         key={`${issueId}`}
         root={containerRef}
         classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-subtle"}`}
         verticalOffset={100}
-        defaultValue={shouldRenderByDefault || isIssueNew(issuesMap[issueId])}
+        defaultValue={shouldRenderByDefault || (workItem ? isWorkItemNew(workItem) : false)}
         placeholderChildren={<ListLoaderItemRow shouldAnimate={false} renderForPlaceHolder defaultPropertyCount={4} />}
         shouldRecordHeights={isMobile}
       >
         <IssueBlock
           issueId={issueId}
-          issuesMap={issuesMap}
+          getWorkItemById={getWorkItemById}
           groupId={groupId}
           updateIssue={updateIssue}
           quickActions={quickActions}
@@ -175,7 +177,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
           <IssueBlockRoot
             key={`${subIssueId}`}
             issueId={subIssueId}
-            issuesMap={issuesMap}
+            getWorkItemById={getWorkItemById}
             updateIssue={updateIssue}
             quickActions={quickActions}
             canEditProperties={canEditProperties}

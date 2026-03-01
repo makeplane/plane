@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { IClickUpStore } from "@/plane-web/store/importers";
+import type { IClickUpStore } from "@/store/importers";
 
 export const useClickUpImporter = (): IClickUpStore => {
   const context = useContext(StoreContext);

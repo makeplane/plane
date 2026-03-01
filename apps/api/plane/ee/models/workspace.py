@@ -17,7 +17,8 @@ from django.contrib.auth import get_user_model
 
 # Module imports
 from plane.db.models.base import BaseModel
-from plane.db.models.workspace import WorkspaceBaseModel, WorkspaceRole
+from plane.db.models.project import ProjectOptionalBaseModel
+from plane.db.mixins import ChangeTrackerMixin
 
 
 class WorkspaceFeature(BaseModel):
@@ -36,7 +37,7 @@ class WorkspaceFeature(BaseModel):
         ordering = ("-created_at",)
 
 
-class WorkspaceLicense(BaseModel):
+class WorkspaceLicense(ChangeTrackerMixin, BaseModel):
     class PlanChoice(models.TextChoices):
         FREE = "FREE", "Free"
         PRO = "PRO", "Pro"
@@ -48,6 +49,13 @@ class WorkspaceLicense(BaseModel):
         MONTHLY = "MONTHLY", "Monthly"
         YEARLY = "YEARLY", "Yearly"
         QUARTERLY = "QUARTERLY", "Quarterly"
+
+    PLAN_API_RATE_LIMITS = {
+        PlanChoice.FREE: settings.DEFAULT_API_RATE_LIMIT,
+        PlanChoice.PRO: settings.PRO_PLAN_API_RATE_LIMIT,
+        PlanChoice.BUSINESS: settings.BUSINESS_PLAN_API_RATE_LIMIT,
+        PlanChoice.ENTERPRISE: settings.ENTERPRISE_PLAN_API_RATE_LIMIT,
+    }
 
     # The workspace that this license is for
     workspace = models.OneToOneField("db.Workspace", on_delete=models.CASCADE, related_name="license")
@@ -78,14 +86,27 @@ class WorkspaceLicense(BaseModel):
     # last license validity check date
     last_verified_at = models.DateTimeField(null=True, blank=True)
 
+    TRACKED_FIELDS = ["plan"]
+
     class Meta:
         verbose_name = "Workspace License"
         verbose_name_plural = "Workspace Licenses"
         db_table = "workspace_licenses"
         ordering = ("-created_at",)
 
+    def save(self, *args, **kwargs):
+        plan_changed = self.has_changed("plan") if self.pk else False
 
-class WorkspaceActivity(WorkspaceBaseModel):
+        super(WorkspaceLicense, self).save(*args, **kwargs)
+
+        if not settings.IS_SELF_MANAGED:
+            if plan_changed:
+                from plane.ee.bgtasks import update_api_tokens
+
+                update_api_tokens.delay(self.plan, str(self.workspace_id))
+
+
+class WorkspaceActivity(ProjectOptionalBaseModel):
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
     old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)

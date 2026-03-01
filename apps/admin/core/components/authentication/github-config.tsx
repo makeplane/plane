@@ -17,8 +17,8 @@ import Link from "next/link";
 import { Settings2 } from "lucide-react";
 // plane internal packages
 import { getButtonStyling } from "@plane/propel/button";
+import { Switch } from "@plane/propel/switch";
 import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
@@ -43,13 +43,12 @@ export const GithubConfiguration = observer(function GithubConfiguration(props: 
           <Link href="/authentication/github" className={cn(getButtonStyling("link", "base"), "font-medium")}>
             Edit
           </Link>
-          <ToggleSwitch
+          <Switch
             value={Boolean(parseInt(enableGithubConfig))}
             onChange={() => {
               const newEnableGithubConfig = Boolean(parseInt(enableGithubConfig)) === true ? "0" : "1";
               updateConfig("IS_GITHUB_ENABLED", newEnableGithubConfig);
             }}
-            size="sm"
             disabled={disabled}
           />
         </div>

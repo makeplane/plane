@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Starting Plane PI Celery Beat Scheduler..."
+echo "Starting Plane AI Celery Beat Scheduler..."
 
 # Set default values if not provided
 export CELERY_LOGLEVEL=${CELERY_LOGLEVEL:-info}

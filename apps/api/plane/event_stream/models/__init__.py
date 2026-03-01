@@ -13,3 +13,5 @@ from .outbox import Outbox
 from .issue import IssueProxy
 from .cycle import CycleIssueProxy
 from .module import ModuleIssueProxy
+from .state import StateProxy
+from .label import LabelProxy

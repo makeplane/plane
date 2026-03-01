@@ -18,6 +18,7 @@ import { restorePublicImages } from "@/helpers/image-helpers";
 // plugins
 import type { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/utils";
 import { DropHandlerPlugin } from "@/plugins/drop";
+import { DropCursorPlugin } from "@/plugins/drop-cursor";
 import { FilePlugins } from "@/plugins/file/root";
 import { NodeHighlightPlugin } from "@/plugins/highlight";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
@@ -93,6 +94,12 @@ export const UtilityExtension = (props: Props) => {
           disabledExtensions,
           flaggedExtensions,
           editor: this.editor,
+        }),
+        DropCursorPlugin({
+          color: false,
+          class:
+            "text-custom-text-300 transition-all motion-reduce:transition-none motion-reduce:hover:transform-none duration-100 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
+          isMultiColumnFlagged: !!flaggedExtensions?.includes("multi-column"),
         }),
         NodeHighlightPlugin(),
       ];

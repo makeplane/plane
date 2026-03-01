@@ -19,7 +19,7 @@ import { useSocketEvent } from "./root";
 
 type TUseWorkItemDetailRevalidationProps = {
   workItemId: string | undefined;
-  entityType: "issue" | "epic";
+  entityType: "workitem" | "epic";
   mutateFn: {
     detail: KeyedMutator<TIssue>;
     comments: KeyedMutator<TIssueComment[]>;

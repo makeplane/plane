@@ -208,9 +208,8 @@ export const useRealtimePageEvents = ({
       },
       restored: ({ data }: { data: EventToPayloadMap["restored"] }) => {
         if (page.id) {
-          let descriptionHTML: string | null = null;
           if (page?.restoration.versionId) {
-            descriptionHTML = page.restoration.descriptionHTML;
+            const descriptionJSON = page.restoration.descriptionJSON;
             if (!editorRef) {
               page?.setVersionToBeRestored(null, null);
               page?.setRestorationStatus(false);
@@ -221,13 +220,15 @@ export const useRealtimePageEvents = ({
               });
               return;
             }
-            editorRef?.clearEditor(true);
+            editorRef?.clearEditor(false);
+
+            // Set editor value BEFORE clearing store to avoid MobX proxy invalidation
+            if (descriptionJSON) {
+              editorRef?.setEditorValue(descriptionJSON, true);
+            }
 
             page?.setVersionToBeRestored(null, null);
             page?.setRestorationStatus(false);
-            if (descriptionHTML) {
-              editorRef?.setEditorValue(descriptionHTML);
-            }
 
             dismissToast("restoring-version");
             setToast({

@@ -18,12 +18,12 @@ import {
   // Entity steps
   JiraBoardsStep,
   JiraCyclesStep,
-  JiraDefaultPropertiesStep,
-  JiraIssuePropertyOptionsStep,
   JiraModulesStep,
   WaitForCeleryStep,
   // Association steps
+  JiraToggleIssuePropertiesStep,
   JiraRelationsStep,
+  JiraExecutionSummaryStep,
 } from "../shared";
 import { JiraCloudUserStep, JiraCloudIssuePropertiesStep, JiraCloudIssueTypesStep } from "./entities";
 import { JiraCloudIssuesStep } from "./issues";
@@ -38,13 +38,14 @@ const JIRA_CLOUD_STEPS = [
   new JiraCyclesStep(E_IMPORTER_KEYS.JIRA),
   new JiraCloudIssueTypesStep(E_IMPORTER_KEYS.JIRA),
   new JiraCloudIssuePropertiesStep(E_IMPORTER_KEYS.JIRA),
-  new JiraDefaultPropertiesStep(E_IMPORTER_KEYS.JIRA),
-  new JiraIssuePropertyOptionsStep(E_IMPORTER_KEYS.JIRA),
   // Issue steps
   new JiraCloudIssuesStep(E_IMPORTER_KEYS.JIRA),
   new WaitForCeleryStep(),
   // Association steps
   new JiraRelationsStep(E_IMPORTER_KEYS.JIRA),
+  // Post Run Steps
+  new JiraToggleIssuePropertiesStep(),
+  new JiraExecutionSummaryStep(),
 ];
 
 export default JIRA_CLOUD_STEPS;

@@ -24,6 +24,8 @@ from typing import Any, Dict, List, Union
 
 from openpyxl import Workbook, load_workbook
 
+from plane.utils.csv_utils import sanitize_csv_row
+
 
 class BaseFormatter(ABC):
     @abstractmethod
@@ -75,6 +77,8 @@ class CSVFormatter(BaseFormatter):
 
     def _normalize_header(self, header: str) -> str:
         """Transform 'Display Name' → 'display_name' (reverse of prettify)"""
+        if not header:
+            return ""
         return header.strip().lower().replace(" ", "_")
 
     def _flatten(self, row: Dict, parent_key: str = "") -> Dict:
@@ -131,15 +135,16 @@ class CSVFormatter(BaseFormatter):
 
             # Write pretty headers manually, then write data rows
             writer = csv.writer(output, delimiter=self.delimiter)
-            writer.writerow(pretty_headers)
+            writer.writerow(sanitize_csv_row(pretty_headers))
 
             # Write data rows in the same field order
             for row in data:
-                writer.writerow([row.get(key, "") for key in fieldnames])
+                writer.writerow(sanitize_csv_row([row.get(key, "") for key in fieldnames]))
         else:
-            writer = csv.DictWriter(output, fieldnames=fieldnames, delimiter=self.delimiter)
-            writer.writeheader()
-            writer.writerows(data)
+            writer = csv.writer(output, delimiter=self.delimiter)
+            writer.writerow(sanitize_csv_row(fieldnames))
+            for row in data:
+                writer.writerow(sanitize_csv_row([row.get(key, "") for key in fieldnames]))
 
         return output.getvalue()
 
@@ -155,7 +160,10 @@ class CSVFormatter(BaseFormatter):
 
         # Normalize headers: 'Email' → 'email', 'Display Name' → 'display_name'
         if normalize_headers:
-            rows = [{self._normalize_header(k): v for k, v in row.items()} for row in rows]
+            rows = [{self._normalize_header(k): v for k, v in row.items() if self._normalize_header(k)} for row in rows]
+        else:
+            # Filter out None/empty headers even without normalization
+            rows = [{k: v for k, v in row.items() if k} for row in rows]
 
         if self.flatten:
             rows = [self._unflatten(row) for row in rows]
@@ -185,6 +193,8 @@ class XLSXFormatter(BaseFormatter):
 
     def _normalize_header(self, header: str) -> str:
         """Transform 'Display Name' → 'display_name' (reverse of prettify)"""
+        if not header:
+            return ""
         return header.strip().lower().replace(" ", "_")
 
     def _format_value(self, value: Any) -> Any:

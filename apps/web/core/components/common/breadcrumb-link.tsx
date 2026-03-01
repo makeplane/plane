@@ -23,6 +23,7 @@ type Props = {
   icon?: React.ReactNode;
   disableTooltip?: boolean;
   isLast?: boolean;
+  className?: string;
 };
 
 const IconWrapper = React.memo(function IconWrapper({ icon }: { icon: React.ReactNode }) {
@@ -66,7 +67,7 @@ const ItemWrapper = React.memo(function ItemWrapper({
 ItemWrapper.displayName = "ItemWrapper";
 
 export const BreadcrumbLink = observer(function BreadcrumbLink(props: Props) {
-  const { href, label, icon, disableTooltip = false, isLast = false } = props;
+  const { href, label, icon, disableTooltip = false, isLast = false, className } = props;
   const { isMobile } = usePlatformOS();
 
   const itemWrapperProps = useMemo(
@@ -75,8 +76,9 @@ export const BreadcrumbLink = observer(function BreadcrumbLink(props: Props) {
       disableTooltip: isMobile || disableTooltip,
       type: href && href !== "" ? "link" : "text",
       isLast,
+      className,
     }),
-    [href, label, isMobile, disableTooltip, isLast]
+    [href, label, isMobile, disableTooltip, isLast, className]
   );
 
   const content = useMemo(() => <BreadcrumbContent icon={icon} label={label} />, [icon, label]);

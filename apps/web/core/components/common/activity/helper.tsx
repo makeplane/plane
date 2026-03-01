@@ -47,7 +47,7 @@ import {
   StatePropertyIcon,
 } from "@plane/propel/icons";
 import { store } from "@/lib/store-context";
-import type { TProjectActivity } from "@/plane-web/types";
+import type { TProjectActivity } from "@/types";
 
 type ActivityIconMap = {
   [key: string]: FC<{ className?: string }>;

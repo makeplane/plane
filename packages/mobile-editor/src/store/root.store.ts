@@ -11,15 +11,16 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { MembersStore } from "./members.store";
+import type { IMentionsStore } from "./mentions.store";
+import { MentionsStore } from "./mentions.store";
 import { PageStore } from "./page.store";
 
 export class RootStore {
-  members: MembersStore;
+  mentions: IMentionsStore;
   page: PageStore;
 
   constructor() {
-    this.members = new MembersStore();
+    this.mentions = new MentionsStore();
     this.page = new PageStore();
   }
 }

@@ -31,6 +31,13 @@ from .project.member import (
     ProjectMemberPreferenceEndpoint,
 )
 
+from .project.label import (
+    ProjectLabelsEndpoint,
+    ProjectLabelDetailEndpoint,
+)
+
+from .project.subscriber import ProjectSubscriberEndpoint
+
 from .user.base import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
@@ -66,6 +73,7 @@ from .workspace.member import (
     WorkspaceMemberUserEndpoint,
     WorkspaceProjectMemberEndpoint,
     WorkspaceMemberUserViewsEndpoint,
+    WorkspaceMemberUserOnboardingEndpoint,
 )
 from .workspace.invite import (
     WorkspaceInvitationsViewset,
@@ -177,7 +185,7 @@ from .module.issue import ModuleIssueViewSet
 
 from .module.archive import ModuleArchiveUnarchiveEndpoint
 
-from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
+from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint, WorkspaceAPITokenEndpoint
 
 from .page.base import (
     PageViewSet,

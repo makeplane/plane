@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { IGithubStore, IGithubEnterpriseStore } from "@/plane-web/store/integrations";
+import type { IGithubStore, IGithubEnterpriseStore } from "@/store/integrations";
 
 export const useGithubIntegration = (isEnterprise: boolean = false): IGithubStore | IGithubEnterpriseStore => {
   const context = useContext(StoreContext);

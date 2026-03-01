@@ -14,9 +14,9 @@
 import { useParams } from "next/navigation";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EIssuesStoreType, TIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
-import type { GroupDropLocation } from "@/components/issues/issue-layouts/utils";
-import { handleGroupDragDrop } from "@/components/issues/issue-layouts/utils";
-import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
+import type { GroupDropLocation } from "@/helpers/work-item-layout";
+import { handleGroupDragDrop } from "@/helpers/work-item-layout";
+import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/work-items/helpers/base-issues.store";
 import { useIssueDetail } from "./store/use-issue-detail";
 import { useIssues } from "./store/use-issues";
 import { useIssuesActions } from "./use-issues-actions";
@@ -28,11 +28,13 @@ type DNDStoreType =
   | EIssuesStoreType.PROJECT_VIEW
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.ARCHIVED
+  | EIssuesStoreType.ARCHIVED_EPIC
   | EIssuesStoreType.WORKSPACE_DRAFT
   | EIssuesStoreType.TEAM
   | EIssuesStoreType.TEAM_VIEW
   | EIssuesStoreType.EPIC
-  | EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS;
+  | EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS
+  | EIssuesStoreType.GLOBAL;
 
 export const useGroupIssuesDragNDrop = (
   storeType: DNDStoreType,

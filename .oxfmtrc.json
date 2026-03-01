@@ -1,0 +1,13 @@
+{
+  "printWidth": 120,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "overrides": [
+    {
+      "files": ["packages/codemods/**/*"],
+      "options": {
+        "printWidth": 80
+      }
+    }
+  ]
+}

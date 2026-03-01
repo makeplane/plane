@@ -28,7 +28,7 @@ import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-propert
 // plane web imports
 import { useNotificationPreview } from "@/plane-web/hooks/use-notification-preview";
 // local imports
-import { InboxContentRoot } from "../inbox/content";
+import { InboxContentRoot } from "../intake/content";
 
 type NotificationsRootProps = {
   workspaceSlug?: string;

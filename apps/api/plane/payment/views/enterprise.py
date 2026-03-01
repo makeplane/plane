@@ -51,7 +51,7 @@ class EnterpriseLicenseActivateEndpoint(BaseAPIView):
 
     def post(self, request):
         try:
-            if settings.IS_MULTI_TENANT:
+            if not settings.IS_SELF_MANAGED:
                 return Response(
                     {"error": "Forbidden"},
                     status=status.HTTP_403_FORBIDDEN,
@@ -128,8 +128,8 @@ class EnterpriseLicenseDeactivateEndpoint(BaseAPIView):
 
     def post(self, request):
         try:
-            # Check the multi-tenant environment
-            if settings.IS_MULTI_TENANT:
+            # Check if the environment is not self-managed
+            if not settings.IS_SELF_MANAGED:
                 return Response(
                     {"error": "Forbidden"},
                     status=status.HTTP_403_FORBIDDEN,
@@ -257,8 +257,8 @@ class EnterpriseModifySeatsEndpoint(BaseAPIView):
 
     def post(self, request):
         try:
-            # Check the multi-tenant environment
-            if settings.IS_MULTI_TENANT:
+            # Check if the environment is not self-managed
+            if not settings.IS_SELF_MANAGED:
                 return Response(
                     {"error": "Forbidden"},
                     status=status.HTTP_403_FORBIDDEN,
@@ -284,7 +284,7 @@ class EnterpriseModifySeatsEndpoint(BaseAPIView):
                 # Return an error response
                 return Response(
                     {
-                        "error": "The number of seats cannot be less than the number of active paid users in the workspace including the invites"
+                        "error": "The number of seats cannot be less than the number of active paid users in the workspace including the invites",  # noqa: E501
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -450,8 +450,8 @@ class EnterpriseLicenseActivateUploadEndpoint(BaseAPIView):
 
     def post(self, request):
         try:
-            # Check the multi-tenant environment
-            if settings.IS_MULTI_TENANT:
+            # Check if the environment is not self-managed
+            if not settings.IS_SELF_MANAGED:
                 return Response(
                     {"error": "Forbidden"},
                     status=status.HTTP_403_FORBIDDEN,
@@ -616,8 +616,8 @@ class EnterpriseLicenseRemoveUnusedSeatsEndpoint(BaseAPIView):
 
     def post(self, request):
         try:
-            # Check the multi-tenant environment
-            if settings.IS_MULTI_TENANT:
+            # Check if the environment is not self-managed
+            if not settings.IS_SELF_MANAGED:
                 return Response(
                     {"error": "Forbidden"},
                     status=status.HTTP_403_FORBIDDEN,

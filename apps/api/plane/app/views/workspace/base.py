@@ -61,6 +61,7 @@ from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.workspace_seed_task import workspace_seed
 from plane.bgtasks.event_tracking_task import track_event
+from plane.utils.csv_utils import sanitize_csv_row
 from plane.utils.url import contains_url
 from plane.utils.analytics_events import WORKSPACE_CREATED, WORKSPACE_DELETED
 from plane.payment.bgtasks.member_sync_task import member_sync_task
@@ -97,12 +98,14 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def create(self, request):
         try:
-            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value([
-                {
-                    "key": "DISABLE_WORKSPACE_CREATION",
-                    "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
-                }
-            ])
+            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value(
+                [
+                    {
+                        "key": "DISABLE_WORKSPACE_CREATION",
+                        "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
+                    }
+                ]
+            )
 
             if DISABLE_WORKSPACE_CREATION == "1":
                 return Response(
@@ -157,7 +160,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 track_event.delay(
                     user_id=request.user.id,
                     event_name=WORKSPACE_CREATED,
-                    slug=data["slug"],
+                    workspace_slug=data["slug"],
                     event_properties={
                         "user_id": request.user.id,
                         "workspace_id": data["id"],
@@ -224,7 +227,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 track_event.delay(
                     user_id=request.user.id,
                     event_name=WORKSPACE_DELETED,
-                    slug=workspace.slug,
+                    workspace_slug=workspace.slug,
                     event_properties={
                         "user_id": request.user.id,
                         "workspace_id": workspace.id,
@@ -431,7 +434,8 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
         """Generate CSV buffer from rows."""
         csv_buffer = io.StringIO()
         writer = csv.writer(csv_buffer, delimiter=",", quoting=csv.QUOTE_ALL)
-        [writer.writerow(row) for row in rows]
+        for row in rows:
+            writer.writerow(sanitize_csv_row(row))
         csv_buffer.seek(0)
         return csv_buffer
 

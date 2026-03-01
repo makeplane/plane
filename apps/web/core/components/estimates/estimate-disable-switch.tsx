@@ -14,7 +14,7 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
@@ -60,12 +60,5 @@ export const EstimateDisableSwitch = observer(function EstimateDisableSwitch(pro
     }
   };
 
-  return (
-    <ToggleSwitch
-      value={Boolean(currentProjectActiveEstimate)}
-      onChange={disableEstimate}
-      disabled={!isAdmin}
-      size="sm"
-    />
-  );
+  return <Switch value={Boolean(currentProjectActiveEstimate)} onChange={disableEstimate} disabled={!isAdmin} />;
 });

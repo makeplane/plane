@@ -42,7 +42,7 @@ def split_github_entity_connections(
     workspace_entity_connection_model = workspace_entity_connection_model or WorkspaceEntityConnection
 
     logger.info(
-        f"Getting GitHub entity connections from {workspace_entity_connection_model.objects.count()} workspace entity connections..."
+        f"Getting GitHub entity connections from {workspace_entity_connection_model.objects.count()} workspace entity connections..."  # noqa: E501
     )
 
     # Get the entity connections that have already been split

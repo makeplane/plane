@@ -37,6 +37,7 @@ from .mobile import urlpatterns as mobile_patterns
 from .automation import urlpatterns as automation_patterns
 from .milestone import urlpatterns as milestone_patterns
 from .exporter import urlpatterns as exporter_patterns
+from .importer import urlpatterns as importer_patterns
 
 urlpatterns = [
     *ai_patterns,
@@ -69,4 +70,5 @@ urlpatterns = [
     *automation_patterns,
     *milestone_patterns,
     *exporter_patterns,
+    *importer_patterns,
 ]

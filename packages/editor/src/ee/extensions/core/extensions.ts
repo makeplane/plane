@@ -24,6 +24,7 @@ import { CustomAttachmentExtension } from "../attachments/extension";
 import { ExternalEmbedExtension } from "../external-embed/extension";
 import { MathematicsExtension } from "../mathematics/extension";
 import { SmoothCursorExtension } from "../smooth-cursor";
+import { MultiColumnExtension } from "../multi-column/extension";
 
 type Props = TCoreAdditionalExtensionsProps & { extendedEditorProps?: IEditorPropsExtended } & {
   provider: HocuspocusProvider | undefined;
@@ -41,11 +42,19 @@ export const CoreEditorAdditionalExtensions = (props: Props): Extensions => {
       ...extensionOptions?.[ADDITIONAL_EXTENSIONS.MATHEMATICS],
     })
   );
+
   const widgetCallback: TExternalEmbedConfig["widgetCallback"] =
     embedHandler?.externalEmbedComponent?.widgetCallback ?? (() => null);
   if (!disabledExtensions?.includes("external-embed")) {
     extensions.push(
       ExternalEmbedExtension({ isFlagged: !!flaggedExtensions?.includes("external-embed"), widgetCallback })
+    );
+  }
+  if (!disabledExtensions?.includes("multi-column")) {
+    extensions.push(
+      MultiColumnExtension({
+        isFlagged: !!flaggedExtensions?.includes("multi-column"),
+      })
     );
   }
   if (isSmoothCursorEnabled) {

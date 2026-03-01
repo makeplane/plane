@@ -16,10 +16,10 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane web components
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { AuthenticationRoot, StepsRoot } from "@/plane-web/components/importers/clickup";
+import { AuthenticationRoot, StepsRoot } from "@/components/importers/clickup";
 //  plane web hooks
-import { ClickUpDashboardRoot } from "@/plane-web/components/importers/clickup/dashboard/root";
-import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
+import { ClickUpDashboardRoot } from "@/components/importers/clickup/dashboard/root";
+import { DashboardLoaderRoot } from "@/components/importers/common/dashboard";
 import { useClickUpImporter, useFlag } from "@/plane-web/hooks/store";
 
 function ClickUpImporter() {

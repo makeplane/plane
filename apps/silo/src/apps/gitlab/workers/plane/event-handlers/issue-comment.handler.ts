@@ -125,7 +125,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
 
     let glService: GitLabService;
     if (payload.isEnterprise) {
-      const appConfig = (workspaceConnection as TGitlabWorkspaceConnection).connection_data?.appConfig;
+      const appConfig = workspaceConnection.connection_data?.appConfig;
       glService = await getGitlabClientService(
         workspaceConnection.workspace_id,
         glIntegrationKey,

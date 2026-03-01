@@ -18,7 +18,7 @@ import { cn } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";
 // hooks
 // plane web imports
-import { InputBox } from "@/plane-web/components/pi-chat/input";
+import { InputBox } from "@/components/pi-chat/input";
 
 function NewChatPage() {
   // store hooks

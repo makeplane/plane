@@ -50,10 +50,26 @@ from plane.utils.openapi import (
     asset_docs,
 )
 from plane.utils.exception_logger import log_exception
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    ASSETS_READ_SCOPE,
+    ASSETS_WRITE_SCOPE,
+)
 
 
 class UserAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload user profile images."""
+
+    permission_classes = [TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [ASSETS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+    }
 
     def asset_delete(self, asset_id):
         asset = FileAsset.objects.filter(id=asset_id).first()
@@ -253,6 +269,15 @@ class UserAssetEndpoint(BaseAPIView):
 class UserServerAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload user profile images."""
 
+    permission_classes = [TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [ASSETS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+    }
+
     def asset_delete(self, asset_id):
         asset = FileAsset.objects.filter(id=asset_id).first()
         if asset is None:
@@ -410,6 +435,14 @@ class UserServerAssetEndpoint(BaseAPIView):
 class GenericAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload generic assets that can be later bound to entities."""
 
+    permission_classes = [TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [ASSETS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     @asset_docs(
@@ -442,8 +475,6 @@ class GenericAssetEndpoint(BaseAPIView):
                     {"error": "Asset not yet uploaded"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            size_limit = settings.FILE_SIZE_LIMIT
 
             # Generate presigned URL for GET
             storage = S3Storage(request=request, is_server=True)

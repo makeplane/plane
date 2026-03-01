@@ -13,7 +13,7 @@
 
 import { useContext } from "react";
 import { StoreContext } from "@/lib/store-context";
-import type { IIntakeTypeFormStore } from "@/plane-web/store/intake-type-form.store";
+import type { IIntakeTypeFormStore } from "@/store/intake-type-form.store";
 
 export const useIntakeTypeForms = (): IIntakeTypeFormStore => {
   const context = useContext(StoreContext);

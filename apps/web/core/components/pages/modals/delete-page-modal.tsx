@@ -15,7 +15,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";

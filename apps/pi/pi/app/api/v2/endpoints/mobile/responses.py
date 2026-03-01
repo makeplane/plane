@@ -314,6 +314,17 @@ async def create_response(
                         heartbeat_task.cancel()
                         with contextlib.suppress(asyncio.CancelledError):
                             await heartbeat_task
+                    # Cancel the in-flight chunk task so the inner generator
+                    # receives CancelledError and can persist partial content
+                    # while the DB session is still open.
+                    if next_chunk_task and not next_chunk_task.done():
+                        next_chunk_task.cancel()
+                        with contextlib.suppress(asyncio.CancelledError, StopAsyncIteration):
+                            await next_chunk_task
+                    # Throw CancelledError into the generator so
+                    # _process_chat_stream_core's except block can save partial state.
+                    with contextlib.suppress(asyncio.CancelledError, StopAsyncIteration, GeneratorExit):
+                        await base_iter.athrow(asyncio.CancelledError())
 
             # Extract token_id from data.context if available for background task (Fix #2: Remove duplicate)
             if hasattr(data, "context") and isinstance(data.context, dict):
@@ -535,6 +546,7 @@ async def queue_response(
             if resolved_workspace_slug is not None:
                 existing_chat.workspace_slug = resolved_workspace_slug
             existing_chat.workspace_in_context = data.workspace_in_context
+            existing_chat.is_websearch_enabled = data.is_websearch_enabled
             await db.commit()
         else:
             log.warning(f"Chat {data.chat_id} not found for backfill")

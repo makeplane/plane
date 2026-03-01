@@ -20,6 +20,9 @@ import { getJobCredentials } from "@/helpers/job";
 import { withCache } from "../../../../helpers/cache";
 import { buildExternalId } from "../../../../helpers/job";
 import { JiraIssuesStep } from "../../shared/issues";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import { extractErrorMetadata } from "@/helpers/errors";
 
 /**
  * Jira Cloud Issues Step
@@ -45,41 +48,72 @@ export class JiraCloudIssuesStep extends JiraIssuesStep {
   protected async pull(props: {
     jobContext: TJobContext;
     projectKey: string;
+    jql?: string;
     paginationCtx: { startAt: number; totalProcessed: number; nextPageToken?: string };
   }) {
     const { job } = props.jobContext;
-    const credentials = await getJobCredentials(job);
-    const client = createJiraClient(job, credentials);
 
-    // Get total number of issues first
-    const total = await withCache(
-      `jira-cloud-issues-total-${props.projectKey}`,
-      job,
-      async () => await client.getNumberOfIssues(props.projectKey)
-    );
+    try {
+      const credentials = await getJobCredentials(job);
+      const client = createJiraClient(job, credentials);
 
-    const result = await pullIssuesV2(
-      {
-        client,
-        nextPageToken: props.paginationCtx.nextPageToken,
-      },
-      props.projectKey,
-      total
-    );
+      // Get total number of issues first
+      const total = await withCache(
+        `jira-cloud-issues-total-${props.projectKey}`,
+        job,
+        async () => await client.getNumberOfIssues(props.projectKey)
+      );
 
-    logger.info(`[${job.id}] [${this.name}] Pulled issues from Jira Cloud`, {
-      jobId: job.id,
-      count: result.items.length,
-      hasMore: result.hasMore,
-      nextPageToken: result.nextPageToken ? "present" : "none",
-    });
+      const result = await pullIssuesV2(
+        {
+          client,
+          nextPageToken: props.paginationCtx.nextPageToken,
+        },
+        props.projectKey,
+        total,
+        undefined,
+        props.jql
+      );
 
-    return {
-      items: result.items as any[],
-      hasMore: result.hasMore,
-      total: total ?? 0,
-      nextPageToken: result.nextPageToken,
-    };
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM,
+        phase: "PULL_ISSUES",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          total: result.total,
+          pulled: result.items.length,
+        },
+      });
+
+      logger.info(`[${job.id}] [${this.name}] Pulled issues from Jira Cloud`, {
+        jobId: job.id,
+        count: result.items.length,
+        hasMore: result.hasMore,
+        nextPageToken: result.nextPageToken ? "present" : "none",
+      });
+
+      return {
+        items: result.items as any[],
+        hasMore: result.hasMore,
+        total: total ?? 0,
+        nextPageToken: result.nextPageToken,
+      };
+    } catch (error) {
+      logger.error(`[${job.id}][${this.name}] Unable to pull issues from Jira Cloud`, error);
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM,
+        phase: "PULL_ISSUES",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        is_fatal: true,
+        additional_data: {
+          nextPageToken: props.paginationCtx.nextPageToken,
+        },
+      });
+
+      throw error;
+    }
   }
 
   /**
@@ -158,7 +192,9 @@ export class JiraCloudIssuesStep extends JiraIssuesStep {
     for (const [fieldKey, fieldValue] of Object.entries(issue.fields)) {
       if (!fieldKey.startsWith("customfield_")) continue;
       if (isSprintField(fieldValue)) {
-        return (fieldValue as any[]).map((s: any) => buildExternalId(projectId, resourceId, s.id.toString()));
+        // Handle both array and non-array cases
+        const sprints = Array.isArray(fieldValue) ? fieldValue : [fieldValue];
+        return sprints.map((s: any) => buildExternalId(projectId, resourceId, s.id.toString()));
       }
     }
 

@@ -11,8 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { IActiveCycle } from "./active-cycle";
 import type { TPaginationInfo } from "./common";
-import type { ICycle } from "./cycle";
 import type { TUserPermissions } from "./enums";
 import type { EProductSubscriptionEnum } from "./payment";
 import type { TProjectMembership } from "./project";
@@ -91,6 +91,21 @@ export type Properties = {
   updated_on: boolean;
 };
 
+export type TExploredFeatures = "github_integrated" | "slack_integrated" | "ai_chat_tried";
+
+export type TTips = "mobile_app_download";
+
+export type TGettingStartedChecklistKeys =
+  | "ai_chat_tried"
+  | "integration_linked"
+  | "page_created"
+  | "project_created"
+  | "project_joined"
+  | "sticky_created"
+  | "team_members_invited"
+  | "view_created"
+  | "work_item_created";
+
 export interface IWorkspaceMember {
   id: string;
   member: IUserLite;
@@ -120,6 +135,9 @@ export interface IWorkspaceMemberMe {
   workspace: string;
   draft_issue_count: number;
   active_cycles_count: number;
+  explored_features: Record<TExploredFeatures, boolean | null>;
+  tips: Record<TTips, boolean | null>;
+  getting_started_checklist?: Record<TGettingStartedChecklistKeys, boolean | null>;
 }
 
 export interface ILastActiveWorkspaceDetails {
@@ -236,7 +254,7 @@ export interface IWorkspaceActiveCyclesResponse {
   next_page_results: boolean;
   prev_cursor: string;
   prev_page_results: boolean;
-  results: ICycle[];
+  results: IActiveCycle[];
   total_pages: number;
 }
 

@@ -1,0 +1,67 @@
+[
+  {
+    "model": "runnerctl.Script",
+    "pk": "a28ee0b4-eb42-4ebb-a5cf-3b2fff9722b9",
+    "fields": {
+      "name": "Mark parent as done if all children are done",
+      "description": "When a work item is marked as done (completed state group), checks all siblings. If every sibling is also completed, automatically updates the parent work item to a completed state.",
+      "workspace": null,
+      "project": null,
+      "is_system": true,
+      "platform": "node22",
+      "code": "export async function main(input: AutomationEventInput, variables: Record<string, string>) {\n  var projectId = input.event.project_id;\n  var workItemId = input.event.entity_id;\n\n  // 1. Get the current work item to check if it's completed and has a parent\n  var item = await Plane.workItems.retrieve(workspaceSlug, projectId, workItemId);\n  if (!item.parent) return { skipped: true, reason: \"No parent\" };\n\n  // 2. Fetch all states for the project and build a state_id -> group map\n  var statesResult = await Plane.states.list(workspaceSlug, projectId);\n  var states = statesResult.results || statesResult;\n  var stateGroupMap = {};\n  for (var i = 0; i < states.length; i++) {\n    stateGroupMap[states[i].id] = states[i].group;\n  }\n\n  // 3. Verify the current item is in the \"completed\" state group\n  if (stateGroupMap[item.state] !== \"completed\") {\n    return { skipped: true, reason: \"Current item not in completed state group\" };\n  }\n\n  // 4. Get all siblings (same parent, excluding self)\n  var siblings = await Functions.getSiblings({ projectId: projectId, workItemId: workItemId });\n\n  // 5. Check if all siblings are in the \"completed\" state group\n  var allDone = siblings.every(function (s) {\n    return stateGroupMap[s.state_id] === \"completed\";\n  });\n\n  if (!allDone) {\n    return { skipped: true, reason: \"Not all siblings are completed\" };\n  }\n\n  // 6. Find a \"completed\" group state to set on the parent\n  var completedState = states.find(function (s) {\n    return s.group === \"completed\";\n  });\n\n  // 7. Update parent to completed state\n  await Plane.workItems.update(workspaceSlug, projectId, item.parent, {\n    state: completedState.id,\n  });\n\n  return { updated: true, parentId: item.parent, stateId: completedState.id };\n}",
+      "code_type": "main_fn",
+      "build": null,
+      "function_names": ["getSiblings"],
+      "env_variables": null,
+      "allowed_domains": null,
+      "variables": null,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "created_by": null,
+      "updated_by": null
+    }
+  },
+  {
+    "model": "runnerctl.Script",
+    "pk": "1423794b-bc83-4895-a4f9-dae4089efd74",
+    "fields": {
+      "name": "Create linked work item in another project on state change",
+      "description": "When a work item in the source project moves to a specified state, creates a copy in the destination project and adds a relates_to relation between them.",
+      "workspace": null,
+      "project": null,
+      "is_system": true,
+      "platform": "node22",
+      "code": "export async function main(input: AutomationEventInput, variables: Record<string, string>) {\n  var sourceProjectId = variables.sourceProjectId;\n  var sourceProjectStateName = variables.sourceProjectStateName;\n  var destinationProjectId = variables.destinationProjectId;\n  var projectId = input.event.project_id;\n  var workItemId = input.event.entity_id;\n\n  // Only trigger for work items in the source project\n  if (projectId !== sourceProjectId) {\n    return { skipped: true, reason: \"Not in source project\" };\n  }\n\n  // 1. Fetch states for source project and find the target state by name\n  var statesResult = await Plane.states.list(workspaceSlug, sourceProjectId);\n  var states = statesResult.results || statesResult;\n  var targetState = states.find(function (s) {\n    return s.name.toLowerCase() === sourceProjectStateName.toLowerCase();\n  });\n  if (!targetState) {\n    return { skipped: true, reason: \"State not found: \" + sourceProjectStateName };\n  }\n\n  // 2. Get the current work item and check if it moved to the target state\n  var item = await Plane.workItems.retrieve(workspaceSlug, sourceProjectId, workItemId);\n  if (item.state !== targetState.id) {\n    return { skipped: true, reason: \"Work item not in target state\" };\n  }\n\n  // 3. Create a new work item in the destination project\n  var newItem = await Plane.workItems.create(workspaceSlug, destinationProjectId, {\n    name: item.name,\n    description_html: item.description_html,\n    priority: item.priority,\n  });\n\n  // 4. Add a \"relates_to\" relation between the source and new work item\n  await Plane.workItems.relations.create(workspaceSlug, sourceProjectId, workItemId, {\n    relation_type: \"relates_to\",\n    issues: [newItem.id],\n  });\n\n  return { created: true, newWorkItemId: newItem.id, destinationProjectId: destinationProjectId };\n}",
+      "code_type": "main_fn",
+      "build": null,
+      "function_names": [],
+      "env_variables": null,
+      "allowed_domains": null,
+      "variables": [
+        {
+          "key": "sourceProjectId",
+          "type": "string",
+          "description": "Project ID to watch for state changes",
+          "required": true
+        },
+        {
+          "key": "sourceProjectStateName",
+          "type": "string",
+          "description": "State name that triggers the copy (e.g. Ready for QA)",
+          "required": true
+        },
+        {
+          "key": "destinationProjectId",
+          "type": "string",
+          "description": "Project ID where the new work item is created",
+          "required": true
+        }
+      ],
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "created_by": null,
+      "updated_by": null
+    }
+  }
+]

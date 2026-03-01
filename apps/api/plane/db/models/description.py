@@ -11,10 +11,10 @@
 
 from django.db import models
 from django.utils.html import strip_tags
-from .workspace import WorkspaceBaseModel
+from .project import ProjectOptionalBaseModel
 
 
-class Description(WorkspaceBaseModel):
+class Description(ProjectOptionalBaseModel):
     description_json = models.JSONField(default=dict, blank=True)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_binary = models.BinaryField(null=True)
@@ -36,7 +36,7 @@ class Description(WorkspaceBaseModel):
         super(Description, self).save(*args, **kwargs)
 
 
-class DescriptionVersion(WorkspaceBaseModel):
+class DescriptionVersion(ProjectOptionalBaseModel):
     """
     DescriptionVersion is a model used to store historical versions of a Description.
     """

@@ -9,6 +9,11 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+"""
+Initial documentation feed utilities.
+Handles fetching and processing documentation from GitHub repositories.
+"""
+
 import json
 import re
 from typing import Any
@@ -17,11 +22,9 @@ import requests
 
 from pi import logger
 from pi import settings
-
-from .process import process_file_content
-from .update_mechanism import get_file_content
-from .update_mechanism import parse_path
-from .update_mechanism import process_mdx_file
+from pi.vectorizer.docs.api_code_generator import generate_api_code_examples
+from pi.vectorizer.docs.mdx_processor import parse_path
+from pi.vectorizer.docs.mdx_processor import process_mdx_file
 
 log = logger
 
@@ -43,11 +46,10 @@ def clean_text(text: str | None) -> str:
 
 
 def get_repo_contents(repo_name: str, path: str = "") -> list[dict] | str:
-    """Fetch repository contents from GitHub API for a specific repository."""
+    """Fetch repository contents from GitHub API for a specific repository (public repo, no auth needed)."""
     url = f"https://api.github.com/repos/{settings.vector_db.DOCS_REPO_OWNER}/{repo_name}/contents/{path}"
-    headers = {"Authorization": f"token {settings.vector_db.DOCS_GITHUB_API_TOKEN}"}
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -56,8 +58,41 @@ def get_repo_contents(repo_name: str, path: str = "") -> list[dict] | str:
         return error_message
 
 
+def get_file_content(repo_name: str, file_path: str) -> str:
+    """
+    Retrieves file content from GitHub repository using API (public repo, no auth needed).
+
+    Args:
+        repo_name: Repository name (e.g., "docs")
+        file_path: Path to file in repository
+
+    Returns:
+        File content as string, or empty string if failed
+    """
+    url = f"https://api.github.com/repos/{settings.vector_db.DOCS_REPO_OWNER}/{repo_name}/contents/{file_path}"
+    try:
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+        import base64
+
+        content = response.json()["content"]
+        return base64.b64decode(content).decode("utf-8")
+    except requests.RequestException as e:
+        log.error(f"Failed to fetch file content for {file_path}: {e}")
+        return ""
+
+
 def process_file(repo_name: str, file_path: str) -> dict[str, Any]:
-    """Process a single file and return its content as a dictionary."""
+    """
+    Process a single file and return its content as a dictionary.
+
+    Args:
+        repo_name: Repository name
+        file_path: Path to file in repository
+
+    Returns:
+        Dictionary with processed file data
+    """
     unique_id = file_path.replace("/", "_").replace("-", "_").replace(".mdx", "").replace(".txt", "")
     content = get_file_content(repo_name, file_path)
     if content is None or content.strip() == "":
@@ -66,7 +101,7 @@ def process_file(repo_name: str, file_path: str) -> dict[str, Any]:
     else:
         txt_content = process_mdx_file(content)
         if "api-reference" in file_path:
-            content = process_file_content(txt_content)
+            content = generate_api_code_examples(txt_content)
         else:
             content = txt_content
     section, subsection = parse_path(file_path)

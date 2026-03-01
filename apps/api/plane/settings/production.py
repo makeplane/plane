@@ -48,10 +48,15 @@ LOGGING = {
         },
     },
     "handlers": {
-        "console": {
+        "console_json": {
             "class": "logging.StreamHandler",
             "formatter": "json",
             "level": "INFO",
+        },
+        "console_verbose": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+            "level": "DEBUG",
         },
         "file": {
             "class": "plane.utils.logging.SizedTimedRotatingFileHandler",
@@ -69,73 +74,87 @@ LOGGING = {
         },
     },
     "loggers": {
+        # Root logger - catches any unconfigured loggers
+        "": {
+            "level": "WARNING",
+            "handlers": ["console_json"],
+        },
+        # Django loggers - explicitly configured with our JSON handler
+        "django": {
+            "level": "WARNING",
+            "handlers": ["console_json"],
+            "propagate": False,
+        },
+        # Parent logger for all plane.* loggers
+        "plane": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": ["console_json"],
+            "propagate": False,
+        },
         "plane.api.request": {
             "level": "DEBUG" if DEBUG else "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.api": {
             "level": "DEBUG" if DEBUG else "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.worker": {
             "level": "DEBUG" if DEBUG else "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.exception": {
             "level": "DEBUG" if DEBUG else "ERROR",
-            "handlers": ["console", "file"],
+            "handlers": ["console_json", "file"],
             "propagate": False,
         },
         "plane.external": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.mongo": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.migrations": {
             "level": "DEBUG" if DEBUG else "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.silo": {
             "level": "DEBUG" if DEBUG else "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.event_stream": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.automations.consumer": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.authentication": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.payments": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
         "plane.webhook": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": ["console_json"],
             "propagate": False,
         },
     },
 }
-
-
-IS_HEROKU = os.environ.get("IS_HEROKU", "0") == "1"

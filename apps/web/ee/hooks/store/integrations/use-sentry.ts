@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { ISentryStore } from "@/plane-web/store/integrations";
+import type { ISentryStore } from "@/store/integrations";
 
 export const useSentryIntegration = (): ISentryStore => {
   const context = useContext(StoreContext);

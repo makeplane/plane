@@ -26,17 +26,20 @@ import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PAGE_NAVIGATION_PANE_WIDTH } 
 import type { TVersionEditorProps } from "./editor";
 import { PageVersionsMainContent } from "./main-content";
 
+// Hoist static style object outside component (rendering-hoist-jsx)
+const OVERLAY_STYLE = { width: `calc(100% - ${PAGE_NAVIGATION_PANE_WIDTH}px)` } as const;
+
 type Props = {
   editorComponent: React.FC<TVersionEditorProps>;
-  fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
-  handleRestore: (descriptionHTML: string) => Promise<void>;
+  fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
+  handleRestore: (descriptionJSON: object) => Promise<void>;
   pageId: string;
   restoreEnabled: boolean;
   storeType: EPageStoreType;
 };
 
 export const PageVersionsOverlay = observer(function PageVersionsOverlay(props: Props) {
-  const { editorComponent, fetchVersionDetails, handleRestore, pageId, restoreEnabled, storeType } = props;
+  const { editorComponent, fetchAllVersions, handleRestore, pageId, restoreEnabled, storeType } = props;
   // navigation
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -61,14 +64,12 @@ export const PageVersionsOverlay = observer(function PageVersionsOverlay(props: 
           "opacity-100 pointer-events-auto": isOpen,
         }
       )}
-      style={{
-        width: `calc(100% - ${PAGE_NAVIGATION_PANE_WIDTH}px)`,
-      }}
+      style={OVERLAY_STYLE}
     >
       <PageVersionsMainContent
         activeVersion={activeVersion}
         editorComponent={editorComponent}
-        fetchVersionDetails={fetchVersionDetails}
+        fetchAllVersions={fetchAllVersions}
         handleClose={handleClose}
         handleRestore={handleRestore}
         pageId={pageId}

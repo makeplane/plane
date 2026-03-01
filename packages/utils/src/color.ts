@@ -288,11 +288,13 @@ export function generateIconColors(color: string) {
  * @example
  * generateRandomColor("hello") // returns consistent HSL color for "hello"
  * generateRandomColor("") // returns { h: 0, s: 0, l: 0 }
+ *
+ * @note This function is deterministic. Always use a stable input string (like user ID)
+ * to ensure the same user gets the same color across renders and sessions.
+ * Never pass Math.random() or empty strings without a stable fallback.
  */
 export const generateRandomColor = (input: string): THsl => {
-  // If input is falsy, generate a random seed string.
-  // The random seed is created by converting a random number to base-36 and taking a substring.
-  const seed = input || Math.random().toString(36).substring(2, 8);
+  const seed = input && input.trim() ? input : "default-color-seed";
 
   const uniqueId = seed.length.toString() + seed; // Unique identifier based on string length
   const combinedString = uniqueId + seed;
@@ -303,8 +305,15 @@ export const generateRandomColor = (input: string): THsl => {
     return (acc << 5) - acc + charCode;
   }, 0);
 
-  // Derive the HSL values from the hash.
-  const hue = Math.abs(hash % 360);
+  // Derive the HSL values from the hash, excluding red shades (0-20° and 340-360°)
+  let hue = Math.abs(hash % 360);
+
+  // Skip red range: if hue falls in red zone, shift it to orange-yellow range
+  if (hue < 20 || hue >= 340) {
+    // Map red range to orange-yellow (20-50°)
+    hue = 20 + (hue % 30);
+  }
+
   const saturation = 70; // Maintains a good amount of color
   const lightness = 70; // Increased lightness for a pastel look
 

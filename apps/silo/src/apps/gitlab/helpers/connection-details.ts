@@ -150,7 +150,7 @@ export const getConnDetailsForGitlabToPlaneSync = async (
   return {
     workspaceConnection: wsConnection as TGitlabWorkspaceConnection,
     entityConnection: entityConnection as TGitlabEntityConnection,
-    credential: userCredentials as TWorkspaceCredential,
+    credential: userCredentials,
   };
 };
 

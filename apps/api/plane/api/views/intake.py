@@ -41,7 +41,6 @@ from plane.db.models import (
     Project,
     ProjectMember,
     State,
-    StateGroup,
     IssueType,
 )
 from plane.utils.host import base_host
@@ -67,6 +66,13 @@ from plane.utils.openapi import (
     INVALID_REQUEST_RESPONSE,
     DELETED_RESPONSE,
 )
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_INTAKES_READ_SCOPE,
+    PROJECTS_INTAKES_WRITE_SCOPE,
+)
 
 
 class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
@@ -75,7 +81,11 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
     serializer_class = IntakeIssueSerializer
 
     model = Intake
-    permission_classes = [ProjectLitePermission]
+    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_INTAKES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -191,26 +201,21 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         triage_state = State.triage_objects.filter(project_id=project_id, workspace__slug=slug).first()
 
         if not triage_state:
-            triage_state = State.objects.create(
-                name="Triage",
-                group=StateGroup.TRIAGE.value,
-                project_id=project_id,
-                workspace_id=project.workspace_id,
-                color="#4E5355",
-                sequence=65000,
-                default=False,
-            )
+            triage_state = State.create_triage_state(workspace_id=project.workspace_id, project_id=project_id)
         # Get the issue type
         issue_type = IssueType.objects.filter(
             project_issue_types__project_id=project_id, is_epic=False, is_default=True
         ).first()
 
+        issue_data = request.data.get("issue", {})
+        description_json = issue_data.get("description_json") or issue_data.get("description") or {}
+
         # create an issue
         issue = Issue.objects.create(
-            name=request.data.get("issue", {}).get("name"),
-            description=request.data.get("issue", {}).get("description", {}),
-            description_html=request.data.get("issue", {}).get("description_html", "<p></p>"),
-            priority=request.data.get("issue", {}).get("priority", "none"),
+            name=issue_data.get("name"),
+            description_json=description_json,
+            description_html=issue_data.get("description_html", "<p></p>"),
+            priority=issue_data.get("priority", "none"),
             project_id=project_id,
             state_id=triage_state.id,
             type=issue_type,
@@ -242,8 +247,14 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
 class IntakeIssueDetailAPIEndpoint(BaseAPIView):
     """Intake Issue API Endpoint"""
 
-    permission_classes = [ProjectLitePermission]
-
+    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_INTAKES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
+    }
     serializer_class = IntakeIssueSerializer
     model = IntakeIssue
     use_read_replica = True
@@ -414,10 +425,11 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
 
             # Only allow guests to edit name and description
             if project_member.role <= 5:
+                issue_description_json = issue_data.get("description_json") or issue_data.get("description") or {}
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
                     "description_html": issue_data.get("description_html", issue.description_html),
-                    "description": issue_data.get("description", issue.description),
+                    "description_json": issue_description_json,
                 }
 
             issue_serializer = IssueSerializer(issue, data=issue_data, partial=True)

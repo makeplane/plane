@@ -37,7 +37,7 @@ import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { AccessController } from "@/plane-web/components/views/access-controller";
+import { AccessController } from "@/components/views/access-controller";
 // local imports
 import { LayoutDropDown } from "../dropdowns/layout";
 import { ProjectLevelWorkItemFiltersHOC } from "../work-item-filters/filters-hoc/project-level";

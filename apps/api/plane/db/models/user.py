@@ -205,6 +205,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         )
 
 
+def get_default_product_tour():
+    return {
+        "work_items": False,
+        "cycles": False,
+        "modules": False,
+        "intake": False,
+        "pages": False,
+    }
+
+
 class Profile(TimeAuditModel):
     SUNDAY = 0
     MONDAY = 1
@@ -267,6 +277,7 @@ class Profile(TimeAuditModel):
     # marketing
     has_marketing_email_consent = models.BooleanField(default=False)
     is_subscribed_to_changelog = models.BooleanField(default=False)
+    product_tour = models.JSONField(default=get_default_product_tour)
 
     class Meta:
         verbose_name = "Profile"

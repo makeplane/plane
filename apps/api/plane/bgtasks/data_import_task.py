@@ -22,6 +22,8 @@ from django.conf import settings
 
 from plane.utils.exception_logger import log_exception
 from plane.utils.helpers import get_boolean_value
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.api.serializers.issue import IssueSerializer
 from plane.db.models.issue import Issue, IssueLink, IssueComment, IssueLabel
 from plane.db.models.label import Label
@@ -39,8 +41,52 @@ from plane.ee.utils.external_issue_property_validator import (
 from plane.silo.bgtasks.bulk_update_issue_relations_task import (
     bulk_update_issue_relations_task,
 )
+from plane.ee.models import ImportExecutionLog
 
 logger = logging.getLogger("plane.worker")
+
+
+def collect_execution_log(logs, workspace_slug=None):
+    """
+    Abstracted function to collect execution logs and handle feature flags.
+    Accepts either a single log dictionary or a list of log dictionaries.
+    """
+    if not logs:
+        return None
+
+    try:
+        # Check for report_id
+        first_log = logs[0] if isinstance(logs, list) else logs
+        if not first_log.get("report_id"):
+            return None
+
+        # Check if we should create the log at all
+        if workspace_slug and not check_workspace_feature_flag(FeatureFlag.IMPORT_SUMMARY, workspace_slug):
+            return None
+
+        if isinstance(logs, dict):
+            # Ensure default values for JSON fields if missing
+            for field in ["metrics", "error", "additional_data"]:
+                if logs.get(field) is None:
+                    logs[field] = {}
+            return ImportExecutionLog.objects.create(**logs)
+
+        if isinstance(logs, list):
+            log_objs = []
+            for log_data in logs:
+                # Ensure default values for JSON fields if missing
+                for field in ["metrics", "error", "additional_data"]:
+                    if log_data.get(field) is None:
+                        log_data[field] = {}
+                log_objs.append(ImportExecutionLog(**log_data))
+
+            if log_objs:
+                return ImportExecutionLog.objects.bulk_create(log_objs, batch_size=100)
+
+        return None
+    except Exception as e:
+        logger.warning(f"Failed to collect execution log: {str(e)}")
+        return None
 
 
 def dispatch_job_completion(job_id, phase="issues", is_last_batch=False):
@@ -177,7 +223,7 @@ def sanitize_issue_data(issue_data):
     return issue_data
 
 
-def process_single_issue(slug, project, user_id, issue_data):
+def process_single_issue(slug, project, user_id, issue_data, report_id=None, job_id=None):
     try:
         with connection.cursor() as cur:
             cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
@@ -209,6 +255,20 @@ def process_single_issue(slug, project, user_id, issue_data):
             # Create an exception for serializer.errors
             exception = Exception(serializer.errors)
             log_exception(exception)
+
+            collect_execution_log(
+                logs={
+                    "report_id": report_id,
+                    "job_id": job_id,
+                    "entity_type": "WORK_ITEM",
+                    "level": "error",
+                    "phase": "PROCESS_ISSUES",
+                    "error": {"message": str(serializer.errors)},
+                    "additional_data": issue_data,
+                    "is_fatal": False,
+                },
+                workspace_slug=slug,
+            )
             return None
 
         external_id = issue_data.get("external_id")
@@ -216,6 +276,7 @@ def process_single_issue(slug, project, user_id, issue_data):
 
         # Check if issue exists
         issue = None
+        issue_already_existed = False
         if external_id and external_source:
             issue = Issue.objects.filter(
                 project_id=project.id,
@@ -226,6 +287,7 @@ def process_single_issue(slug, project, user_id, issue_data):
 
         if issue:
             serializer.instance = issue
+            issue_already_existed = True
 
         issue = serializer.save()
 
@@ -234,30 +296,58 @@ def process_single_issue(slug, project, user_id, issue_data):
         issue.updated_by_id = issue_data.get("created_by")
         issue.save(disable_auto_set_user=True)
 
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM",
+                "level": "info",
+                "phase": "PROCESS_ISSUES",
+                "entity_name": issue.name,
+                "entity_plane_id": str(issue.id),
+                "entity_external_id": external_id,
+                "already_exists": issue_already_existed,
+                "metrics": {
+                    "imported": 0 if issue_already_existed else 1,
+                    "already_existed": 1 if issue_already_existed else 0,
+                },
+            },
+            workspace_slug=slug,
+        )
+
         # Process links
-        process_issue_links(issue, issue_data.get("links", []))
+        process_issue_links(slug, issue, issue_data.get("links", []), report_id=report_id, job_id=job_id)
 
         # Process comments
-        process_issue_comments(user_id=user_id, issue=issue, comments=issue_data.get("comments", []))
+        process_issue_comments(
+            slug,
+            user_id=user_id,
+            issue=issue,
+            comments=issue_data.get("comments", []),
+            report_id=report_id,
+            job_id=job_id,
+        )
 
         # Process cycles
-        process_issue_cycles(issue, issue_data.get("cycles", []))
+        process_issue_cycles(slug, issue, issue_data.get("cycles", []), report_id=report_id, job_id=job_id)
 
         # Process modules
-        process_issue_modules(issue, issue_data.get("modules", []))
+        process_issue_modules(slug, issue, issue_data.get("modules", []), report_id=report_id, job_id=job_id)
 
         # Process file assets
-        process_issue_file_assets(issue, issue_data.get("file_assets", []))
+        process_issue_file_assets(slug, issue, issue_data.get("file_assets", []), report_id=report_id, job_id=job_id)
 
         # Process issue property values
-        process_issue_property_values(issue, issue_data.get("issue_property_values", []))
+        process_issue_property_values(
+            slug, issue, issue_data.get("issue_property_values", []), report_id=report_id, job_id=job_id
+        )
 
         # Process labels
-        process_issue_labels(issue, labels, user_id)
+        process_issue_labels(slug, issue, labels, user_id, report_id=report_id, job_id=job_id)
 
         # Process worklogs
         if issue_data.get("worklogs"):
-            process_issue_worklogs(issue, issue_data.get("worklogs"))
+            process_issue_worklogs(slug, issue, issue_data.get("worklogs"), report_id=report_id, job_id=job_id)
 
         return issue
     except Exception as e:
@@ -266,10 +356,23 @@ def process_single_issue(slug, project, user_id, issue_data):
             extra={"issueId": issue_data.get("id")},
         )
         log_exception(e)
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM",
+                "level": "error",
+                "phase": "PROCESS_ISSUES",
+                "error": {"message": str(e)},
+                "additional_data": issue_data,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
         return None
 
 
-def process_issue_worklogs(issue, worklogs):
+def process_issue_worklogs(slug, issue, worklogs, report_id=None, job_id=None):
     try:
         # We need to filter out, if the same duration, logged_by and created_at is present, then update else create
         existing_worklogs = IssueWorkLog.objects.filter(
@@ -330,6 +433,26 @@ def process_issue_worklogs(issue, worklogs):
                 batch_size=100,
             )
 
+            # Log success for created worklogs
+            collect_execution_log(
+                logs=[
+                    {
+                        "report_id": report_id,
+                        "job_id": job_id,
+                        "entity_type": "WORK_LOG",
+                        "level": "info",
+                        "phase": "PROCESS_WORKLOGS",
+                        "entity_plane_id": str(worklog.id),
+                        "related_entity": str(issue.external_id) if issue.external_id else None,
+                        "metrics": {
+                            "imported": 1,
+                        },
+                    }
+                    for worklog in created_worklogs
+                ],
+                workspace_slug=slug,
+            )
+
         # Bulk update existing worklogs
         if bulk_update_worklogs:
             IssueWorkLog.objects.bulk_update(
@@ -337,13 +460,48 @@ def process_issue_worklogs(issue, worklogs):
                 ["description", "duration", "updated_at", "updated_by_id"],
                 batch_size=100,
             )
+
+            # Log already existed worklogs
+            collect_execution_log(
+                logs=[
+                    {
+                        "report_id": report_id,
+                        "job_id": job_id,
+                        "entity_type": "WORK_LOG",
+                        "level": "info",
+                        "phase": "PROCESS_WORKLOGS",
+                        "entity_plane_id": str(worklog.id),
+                        "related_entity": str(issue.external_id) if issue.external_id else None,
+                        "already_exists": True,
+                        "metrics": {
+                            "already_existed": 1,
+                        },
+                    }
+                    for worklog in bulk_update_worklogs
+                ],
+                workspace_slug=slug,
+            )
+
     except Exception as e:
         logger.warning(f"Failed to process worklogs for issue {issue.id}: {str(e)}")
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_LOG",
+                "level": "error",
+                "phase": "PROCESS_WORKLOGS",
+                "error": {"message": str(e)},
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
 
     return
 
 
-def process_issue_links(issue, links):
+def process_issue_links(slug, issue, links, report_id=None, job_id=None):
     try:
         bulk_create_links = []
 
@@ -371,12 +529,43 @@ def process_issue_links(issue, links):
                 )
 
         IssueLink.objects.bulk_create(bulk_create_links, batch_size=100, ignore_conflicts=True)
+
+        # Log success summary
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_LINK",  # Explicit link type
+                "level": "info",
+                "phase": "PROCESS_LINKS",
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "metrics": {
+                    "total": len(links),
+                    "imported": len(bulk_create_links),
+                },
+            },
+            workspace_slug=slug,
+        )
+
     except Exception as e:
         logger.warning(f"Failed to process links for issue {issue.id}: {str(e)}")
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_LINK",
+                "level": "error",
+                "phase": "PROCESS_LINKS",
+                "error": {"message": str(e)},
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
     return
 
 
-def process_issue_comments(user_id, issue, comments):
+def process_issue_comments(slug, user_id, issue, comments, report_id=None, job_id=None):
     if not comments:
         return
 
@@ -450,6 +639,27 @@ def process_issue_comments(user_id, issue, comments):
                     comment.updated_at = timestamps["updated_at"] or timestamps["created_at"]
                     comments_to_update_timestamps.append(comment)
 
+            # Log success for created comments
+            collect_execution_log(
+                logs=[
+                    {
+                        "report_id": report_id,
+                        "job_id": job_id,
+                        "entity_type": "WORK_ITEM_COMMENT",
+                        "level": "info",
+                        "phase": "PROCESS_COMMENTS",
+                        "entity_plane_id": str(comment.id),
+                        "entity_external_id": comment.external_id,
+                        "related_entity": str(issue.external_id) if issue.external_id else None,
+                        "metrics": {
+                            "imported": 1,
+                        },
+                    }
+                    for comment in created_comments
+                ],
+                workspace_slug=slug,
+            )
+
             if comments_to_update_timestamps:
                 IssueComment.objects.bulk_update(
                     comments_to_update_timestamps,
@@ -465,6 +675,28 @@ def process_issue_comments(user_id, issue, comments):
                 batch_size=100,
             )
 
+            # Log already existed comments
+            collect_execution_log(
+                logs=[
+                    {
+                        "report_id": report_id,
+                        "job_id": job_id,
+                        "entity_type": "WORK_ITEM_COMMENT",
+                        "level": "info",
+                        "phase": "PROCESS_COMMENTS",
+                        "entity_plane_id": str(comment.id),
+                        "entity_external_id": comment.external_id,
+                        "related_entity": str(issue.external_id) if issue.external_id else None,
+                        "already_exists": True,
+                        "metrics": {
+                            "already_existed": 1,
+                        },
+                    }
+                    for comment in bulk_update_comments
+                ],
+                workspace_slug=slug,
+            )
+
         # Process file assets for each comment - ensure comments is not None
         if comments and created_comments:
             for comment in created_comments:
@@ -473,7 +705,9 @@ def process_issue_comments(user_id, issue, comments):
                     None,
                 )
                 if comment_data and comment_data.get("file_assets"):
-                    process_comment_file_assets(comment, comment_data["file_assets"])
+                    process_comment_file_assets(
+                        slug, comment, comment_data["file_assets"], report_id=report_id, job_id=job_id
+                    )
 
         if comments and bulk_update_comments:
             for comment in bulk_update_comments:
@@ -482,18 +716,34 @@ def process_issue_comments(user_id, issue, comments):
                     None,
                 )
                 if comment_data and comment_data.get("file_assets"):
-                    process_comment_file_assets(comment, comment_data["file_assets"])
+                    process_comment_file_assets(
+                        slug, comment, comment_data["file_assets"], report_id=report_id, job_id=job_id
+                    )
     except Exception as e:
         logger.warning(f"Failed to process comments for issue {issue.id}: {str(e)}")
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_COMMENT",
+                "level": "error",
+                "phase": "PROCESS_COMMENTS",
+                "error": {"message": str(e)},
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
 
     return
 
 
-def process_issue_cycles(issue, cycle_ids):
+def process_issue_cycles(slug, issue, cycle_ids, report_id=None, job_id=None):
     try:
+        logs_to_create = []
         # Create new cycle associations without deleting existing ones
         for cycle_id in cycle_ids:
-            CycleIssue.objects.get_or_create(
+            cycle_issue, created = CycleIssue.objects.get_or_create(
                 issue=issue,
                 project_id=issue.project_id,
                 workspace_id=issue.workspace_id,
@@ -503,12 +753,49 @@ def process_issue_cycles(issue, cycle_ids):
                     "updated_by_id": issue.created_by_id,
                 },
             )
+
+            # Log individual cycle association
+            logs_to_create.append(
+                {
+                    "report_id": report_id,
+                    "job_id": job_id,
+                    "entity_type": "WORK_ITEM_CYCLE",
+                    "level": "info",
+                    "phase": "PROCESS_CYCLES",
+                    "entity_plane_id": str(cycle_issue.id),
+                    "related_entity": str(issue.external_id) if issue.external_id else None,
+                    "already_exists": not created,
+                    "metrics": {
+                        "imported": 1 if created else 0,
+                        "already_existed": 0 if created else 1,
+                    },
+                }
+            )
+
+        collect_execution_log(
+            logs=logs_to_create,
+            workspace_slug=slug,
+        )
+
     except Exception as e:
         logger.warning(f"Failed to process cycles for issue {issue.id}: {str(e)}")
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_CYCLE",
+                "level": "error",
+                "phase": "PROCESS_CYCLES",
+                "error": {"message": str(e)},
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
     return
 
 
-def process_issue_labels(issue, labels, user_id):
+def process_issue_labels(slug, issue, labels, user_id, report_id=None, job_id=None):
     """
     Process and assign labels to an issue.
     Creates labels if they don't exist and assigns them to the issue.
@@ -517,6 +804,7 @@ def process_issue_labels(issue, labels, user_id):
         issue: The issue instance to assign labels to
         labels: List of label names (strings)
         user_id: The user ID for created_by and updated_by fields
+        report_id: The report ID for execution logging
     """
     if not labels:
         return
@@ -578,21 +866,51 @@ def process_issue_labels(issue, labels, user_id):
                 batch_size=10,
                 ignore_conflicts=True,
             )
+
+            # Log success summary
+            collect_execution_log(
+                logs={
+                    "report_id": report_id,
+                    "job_id": job_id,
+                    "entity_type": "WORK_ITEM_LABEL",
+                    "level": "info",
+                    "phase": "PROCESS_LABELS",
+                    "related_entity": str(issue.external_id) if issue.external_id else None,
+                    "metrics": {"total": len(labels), "imported": len(valid_label_ids), "labels": labels},
+                },
+                workspace_slug=slug,
+            )
+
     except Exception as e:
         # Log but don't crash - label failures shouldn't block the entire import
         logger.warning(
             f"Failed to process labels for issue {issue.id}: {str(e)}",
             extra={"issue_id": str(issue.id), "labels": labels},
         )
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_LABEL",
+                "level": "error",
+                "phase": "PROCESS_LABELS",
+                "error": {"message": str(e)},
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "additional_data": {"labels": labels},
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
 
     return
 
 
-def process_issue_modules(issue, module_ids):
+def process_issue_modules(slug, issue, module_ids, report_id=None, job_id=None):
     try:
+        logs_to_create = []
         # Create new module associations without deleting existing ones
         for module_id in module_ids:
-            ModuleIssue.objects.get_or_create(
+            module_issue, created = ModuleIssue.objects.get_or_create(
                 issue=issue,
                 project_id=issue.project_id,
                 workspace_id=issue.workspace_id,
@@ -602,33 +920,104 @@ def process_issue_modules(issue, module_ids):
                     "updated_by_id": issue.created_by_id,
                 },
             )
+
+            # Log individual module association
+            logs_to_create.append(
+                {
+                    "report_id": report_id,
+                    "job_id": job_id,
+                    "entity_type": "WORK_ITEM_MODULE",
+                    "level": "info",
+                    "phase": "PROCESS_MODULES",
+                    "entity_plane_id": str(module_issue.id),
+                    "related_entity": str(issue.external_id) if issue.external_id else None,
+                    "already_exists": not created,
+                    "metrics": {
+                        "imported": 1 if created else 0,
+                        "already_existed": 0 if created else 1,
+                    },
+                }
+            )
+
+        collect_execution_log(
+            logs=logs_to_create,
+            workspace_slug=slug,
+        )
+
     except Exception as e:
         logger.warning(f"Failed to process modules for issue {issue.id}: {str(e)}")
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_MODULE",
+                "level": "error",
+                "phase": "PROCESS_MODULES",
+                "error": {"message": str(e)},
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
     return
 
 
-def process_comment_file_assets(comment, file_assets):
+def process_comment_file_assets(slug, comment, file_assets, report_id=None, job_id=None):
     if not file_assets:
         return
 
-    # Get all assets by their IDs
-    asset_ids = [asset_id for asset_id in file_assets if asset_id]
-    if not asset_ids:
-        return
+    try:
+        # Get all assets by their IDs
+        asset_ids = [asset_id for asset_id in file_assets if asset_id]
+        if not asset_ids:
+            return
 
-    # Bulk update all assets
-    FileAsset.objects.filter(id__in=asset_ids).update(
-        entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
-        comment_id=comment.id,
-        project_id=comment.project_id,
-        workspace_id=comment.workspace_id,
-        created_by_id=comment.created_by_id,
-        updated_by_id=comment.updated_by_id,
-    )
+        # Bulk update all assets
+        FileAsset.objects.filter(id__in=asset_ids).update(
+            entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+            comment_id=comment.id,
+            project_id=comment.project_id,
+            workspace_id=comment.workspace_id,
+            created_by_id=comment.created_by_id,
+            updated_by_id=comment.updated_by_id,
+        )
+
+        # Log success summary
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_COMMENT_FILE_ASSET",
+                "level": "info",
+                "phase": "PROCESS_COMMENT_FILE_ASSETS",
+                "related_entity": str(comment.external_id) if comment.external_id else None,
+                "metrics": {
+                    "total": len(file_assets),
+                    "imported": len(asset_ids),
+                },
+            },
+            workspace_slug=slug,
+        )
+
+    except Exception as e:
+        logger.warning(f"Failed to process comment file assets for comment {comment.id}: {str(e)}")
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_COMMENT_FILE_ASSET",
+                "level": "error",
+                "phase": "PROCESS_COMMENT_FILE_ASSETS",
+                "error": {"message": str(e)},
+                "related_entity": str(comment.external_id) if comment.external_id else None,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
     return
 
 
-def process_issue_file_assets(issue, file_assets):
+def process_issue_file_assets(slug, issue, file_assets, report_id=None, job_id=None):
     if not file_assets:
         return
 
@@ -647,14 +1036,46 @@ def process_issue_file_assets(issue, file_assets):
             created_by_id=issue.created_by_id,
             updated_by_id=issue.created_by_id,
         )
+
+        # Log success summary
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_FILE_ASSET",  # Or generic WORK_ITEM
+                "level": "info",
+                "phase": "PROCESS_FILE_ASSETS",
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "metrics": {
+                    "total": len(file_assets),
+                    "imported": len(asset_ids),
+                },
+            },
+            workspace_slug=slug,
+        )
+
     except Exception as e:
         logger.warning(f"Failed to process file assets for issue {issue.id}: {str(e)}")
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_FILE_ASSET",
+                "level": "error",
+                "phase": "PROCESS_FILE_ASSETS",
+                "error": {"message": str(e)},
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
     return
 
 
-def process_issue_property_values(issue, issue_property_values):
+def process_issue_property_values(slug, issue, issue_property_values, report_id=None, job_id=None):
     try:
         workspace = Workspace.objects.get(pk=issue.workspace_id)
+        saved_count = 0
 
         for property_data in issue_property_values:
             property_id = property_data.get("id")
@@ -672,19 +1093,36 @@ def process_issue_property_values(issue, issue_property_values):
                 property__issue_type__is_epic=False,
             )
 
-            issue_property_values = property_data.get("values", [])
+            issue_property_values_data = property_data.get("values", [])
 
-            if not issue_property_values:
+            if not issue_property_values_data:
                 continue
 
             # validate the property value
             bulk_external_issue_property_values = []
-            for value in issue_property_values:
+            for value in issue_property_values_data:
                 # check if ant external id and external source is provided
                 property_value = value.get("value", None)
 
                 if property_value:
-                    externalIssuePropertyValueValidator(issue_property=issue_property, value=property_value)
+                    try:
+                        externalIssuePropertyValueValidator(issue_property=issue_property, value=property_value)
+                    except Exception as e:
+                        collect_execution_log(
+                            logs={
+                                "report_id": report_id,
+                                "job_id": job_id,
+                                "entity_type": "ISSUE_PROPERTY_VALUE",
+                                "level": "error",
+                                "phase": "PROCESS_PROPERTY_VALUES",
+                                "error": {"message": f"Validation failed for property {property_id}: {str(e)}"},
+                                "related_entity": str(issue.external_id) if issue.external_id else None,
+                                "additional_data": {"property_id": property_id, "value": property_value},
+                                "is_fatal": False,
+                            },
+                            workspace_slug=slug,
+                        )
+                        continue
 
                     # check if issue property with the same external id and external source already exists
                     property_external_id = value.get("external_id", None)
@@ -706,16 +1144,50 @@ def process_issue_property_values(issue, issue_property_values):
                         )
                     )
 
-            #  remove the existing issue property values
-            existing_issue_property_values.delete()
+            if bulk_external_issue_property_values:
+                #  remove the existing issue property values
+                existing_issue_property_values.delete()
 
-            # Bulk create the issue property values
-            IssuePropertyValue.objects.bulk_create(bulk_external_issue_property_values, batch_size=10)
+                # Bulk create the issue property values
+                IssuePropertyValue.objects.bulk_create(bulk_external_issue_property_values, batch_size=10)
+                saved_count += len(bulk_external_issue_property_values)
+
+        # Log success summary
+        if saved_count > 0:
+            collect_execution_log(
+                logs={
+                    "report_id": report_id,
+                    "job_id": job_id,
+                    "entity_type": "ISSUE_PROPERTY_VALUE",
+                    "level": "info",
+                    "phase": "PROCESS_PROPERTY_VALUES",
+                    "related_entity": str(issue.external_id) if issue.external_id else None,
+                    "metrics": {
+                        "total": len(issue_property_values),
+                        "imported": saved_count,
+                    },
+                },
+                workspace_slug=slug,
+            )
+
     except Exception as e:
         logger.warning(f"Failed to process property values for issue {issue.id}: {str(e)}")
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "ISSUE_PROPERTY_VALUE",
+                "level": "error",
+                "phase": "PROCESS_PROPERTY_VALUES",
+                "error": {"message": str(e)},
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
 
 
-def process_issues(slug, project, user_id, issue_list):
+def process_issues(slug, project, user_id, issue_list, report_id=None, job_id=None):
     """
     Process issues for import
     Args:
@@ -723,6 +1195,7 @@ def process_issues(slug, project, user_id, issue_list):
         project (Project): Project object
         user_id (str): User ID
         issue_list (list): List of issue data dictionaries
+        report_id (str): Report ID for execution log collection
     Returns:
         tuple: (imported_issues_count, total_issues_count, external_id_map)
     """
@@ -737,7 +1210,7 @@ def process_issues(slug, project, user_id, issue_list):
     for issue_data in issue_list:
         try:
             if issue_data.get("parent") is None:
-                issue = process_single_issue(slug, project, user_id, issue_data)
+                issue = process_single_issue(slug, project, user_id, issue_data, report_id=report_id, job_id=job_id)
                 if issue:
                     imported_issues += 1
                     if issue_data.get("external_id"):
@@ -761,7 +1234,7 @@ def process_issues(slug, project, user_id, issue_list):
                     ).first()
                     issue_data["parent"] = str(parent_issue.id) if parent_issue else None
 
-                issue = process_single_issue(slug, project, user_id, issue_data)
+                issue = process_single_issue(slug, project, user_id, issue_data, report_id=report_id, job_id=job_id)
                 if issue:
                     imported_issues += 1
                     if issue_data.get("external_id"):
@@ -913,6 +1386,16 @@ def import_data(slug, project_id, user_id, job_id, payload):
         payload (dict): Dictionary containing lists of 'issues' and 'pages'.
     """
     try:
+        from plane.ee.models import ImportJob
+
+        # Get the job and its report ID
+        try:
+            job = ImportJob.objects.select_related("report").get(pk=job_id)
+            report_id = job.report.id if job.report else None
+        except ImportJob.DoesNotExist:
+            report_id = None
+            logger.warning(f"Job not found with id {job_id}, proceeding without execution logging")
+
         project = Project.objects.get(pk=project_id)
         imported_issues = 0
         total_issues = 0
@@ -935,7 +1418,9 @@ def import_data(slug, project_id, user_id, job_id, payload):
         )
 
         if issue_list:
-            imported_issues, total_issues, external_id_map = process_issues(slug, project, user_id, issue_list)
+            imported_issues, total_issues, external_id_map = process_issues(
+                slug, project, user_id, issue_list, report_id=report_id, job_id=job_id
+            )
             update_job_batch_completion(job_id, 1, total_issues, imported_issues, job_phase, is_last_batch)
 
         # Handle edge-case where a batch contains no issues.

@@ -12,11 +12,12 @@
 # Python imports
 import json
 import base64
+import logging
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import OuterRef, Q, Value, UUIDField, Func, F, Exists
-from django.http import StreamingHttpResponse
+from django.http import HttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.functions import Coalesce
@@ -38,6 +39,8 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.authentication.secret import SecretKeyAuthentication
 from plane.ee.models import PageUser
+
+logger = logging.getLogger(__name__)
 
 
 class PagesLiveServerSubPagesViewSet(BaseViewSet):
@@ -79,18 +82,19 @@ class PagesLiveServerDescriptionViewSet(BaseViewSet):
     permission_classes = [AllowAny]
 
     def retrieve(self, request, page_id):
-        page = Page.objects.filter(pk=page_id).first()
+        page = (
+            Page.objects.filter(pk=page_id)
+            .only("description_binary")
+            .first()
+        )
         if page is None:
             return Response({"error": "Page not found"}, status=404)
         binary_data = page.description_binary
-
-        def stream_data():
-            if binary_data:
-                yield binary_data
-            else:
-                yield b""
-
-        response = StreamingHttpResponse(stream_data(), content_type="application/octet-stream")
+        logger.info(
+            "Page description retrieved (live)",
+            extra={"page_id": page_id, "size": len(binary_data) if binary_data else 0},
+        )
+        response = HttpResponse(binary_data or b"", content_type="application/octet-stream")
         response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
 
@@ -121,7 +125,7 @@ class PagesLiveServerDescriptionViewSet(BaseViewSet):
             page.name = request.data.get("name", page.name)
             page.description_binary = new_binary_data
             page.description_html = request.data.get("description_html")
-            page.description = request.data.get("description")
+            page.description_json = request.data.get("description_json")
             page.save()
             # Return a success response
             page_version.delay(

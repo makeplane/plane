@@ -12,3 +12,7 @@ RUN apk add --no-cache nss-tools bash curl
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 
 COPY Caddyfile.ee /etc/caddy/Caddyfile
+
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt

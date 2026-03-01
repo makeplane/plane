@@ -16,13 +16,13 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import NotionLogo from "@/app/assets/services/notion.svg?url";
-import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
-import { ZipImporterDashboard } from "@/plane-web/components/importers/zip-importer";
-import { StepsRoot } from "@/plane-web/components/importers/zip-importer/steps/root";
+import { DashboardLoaderRoot } from "@/components/importers/common/dashboard";
+import { ZipImporterDashboard } from "@/components/importers/zip-importer";
+import { StepsRoot } from "@/components/importers/zip-importer/steps/root";
 import { useFlag } from "@/plane-web/hooks/store";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
-import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
-import { EZipDriverType } from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/types/importers/zip-importer";
+import { EZipDriverType } from "@/types/importers/zip-importer";
 
 function NotionImporter() {
   const {

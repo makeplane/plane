@@ -11,50 +11,72 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { lazy, Suspense } from "react";
+import type { ComponentType, LazyExoticComponent } from "react";
 // plane web components
 import { EIssuesStoreType } from "@plane/types";
-import { TeamEmptyState } from "@/plane-web/components/issues/issue-layouts/empty-states/team-issues";
-import { TeamProjectWorkItemEmptyState } from "@/plane-web/components/issues/issue-layouts/empty-states/team-project";
-import { TeamViewEmptyState } from "@/plane-web/components/issues/issue-layouts/empty-states/team-view-issues";
-// components
-import { ProjectArchivedEmptyState } from "./archived-issues";
-import { CycleEmptyState } from "./cycle";
-import { GlobalViewEmptyState } from "./global-view";
-import { ModuleEmptyState } from "./module";
-import { ProfileViewEmptyState } from "./profile-view";
-import { ProjectEpicsEmptyState } from "./project-epic";
-import { ProjectEmptyState } from "./project-issues";
-import { ProjectViewEmptyState } from "./project-view";
 
-interface Props {
+// Lazy load empty state components
+const ProjectEmptyState = lazy(() =>
+  import("./project-issues").then((module) => ({ default: module.ProjectEmptyState }))
+);
+const ProjectViewEmptyState = lazy(() =>
+  import("./project-view").then((module) => ({ default: module.ProjectViewEmptyState }))
+);
+const ProjectArchivedEmptyState = lazy(() =>
+  import("./archived-issues").then((module) => ({ default: module.ProjectArchivedEmptyState }))
+);
+const ProjectArchivedEpicsEmptyState = lazy(() =>
+  import("./archived-epics").then((module) => ({ default: module.ProjectArchivedEpicsEmptyState }))
+);
+const CycleEmptyState = lazy(() => import("./cycle").then((module) => ({ default: module.CycleEmptyState })));
+const ModuleEmptyState = lazy(() => import("./module").then((module) => ({ default: module.ModuleEmptyState })));
+const GlobalViewEmptyState = lazy(() =>
+  import("./global-view").then((module) => ({ default: module.GlobalViewEmptyState }))
+);
+const ProfileViewEmptyState = lazy(() =>
+  import("./profile-view").then((module) => ({ default: module.ProfileViewEmptyState }))
+);
+const ProjectEpicsEmptyState = lazy(() =>
+  import("./project-epic").then((module) => ({ default: module.ProjectEpicsEmptyState }))
+);
+const TeamEmptyState = lazy(() => import("./team-issues").then((module) => ({ default: module.TeamEmptyState })));
+const TeamViewEmptyState = lazy(() =>
+  import("./team-view-issues").then((module) => ({ default: module.TeamViewEmptyState }))
+);
+const TeamProjectWorkItemEmptyState = lazy(() =>
+  import("./team-project").then((module) => ({ default: module.TeamProjectWorkItemEmptyState }))
+);
+
+const WORK_ITEM_LAYOUT_EMPTY_STATES: Record<EIssuesStoreType, LazyExoticComponent<ComponentType> | undefined> = {
+  [EIssuesStoreType.PROJECT]: ProjectEmptyState,
+  [EIssuesStoreType.PROJECT_VIEW]: ProjectViewEmptyState,
+  [EIssuesStoreType.ARCHIVED]: ProjectArchivedEmptyState,
+  [EIssuesStoreType.ARCHIVED_EPIC]: ProjectArchivedEpicsEmptyState,
+  [EIssuesStoreType.DEFAULT]: undefined,
+  [EIssuesStoreType.WORKSPACE_DRAFT]: undefined,
+  [EIssuesStoreType.CYCLE]: CycleEmptyState,
+  [EIssuesStoreType.MODULE]: ModuleEmptyState,
+  [EIssuesStoreType.GLOBAL]: GlobalViewEmptyState,
+  [EIssuesStoreType.PROFILE]: ProfileViewEmptyState,
+  [EIssuesStoreType.EPIC]: ProjectEpicsEmptyState,
+  [EIssuesStoreType.TEAM]: TeamEmptyState,
+  [EIssuesStoreType.TEAM_VIEW]: TeamViewEmptyState,
+  [EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS]: TeamProjectWorkItemEmptyState,
+};
+
+type TIssueLayoutEmptyStateProps = {
   storeType: EIssuesStoreType;
-}
+};
 
-export function IssueLayoutEmptyState(props: Props) {
-  switch (props.storeType) {
-    case EIssuesStoreType.PROJECT:
-      return <ProjectEmptyState />;
-    case EIssuesStoreType.PROJECT_VIEW:
-      return <ProjectViewEmptyState />;
-    case EIssuesStoreType.ARCHIVED:
-      return <ProjectArchivedEmptyState />;
-    case EIssuesStoreType.CYCLE:
-      return <CycleEmptyState />;
-    case EIssuesStoreType.MODULE:
-      return <ModuleEmptyState />;
-    case EIssuesStoreType.GLOBAL:
-      return <GlobalViewEmptyState />;
-    case EIssuesStoreType.PROFILE:
-      return <ProfileViewEmptyState />;
-    case EIssuesStoreType.EPIC:
-      return <ProjectEpicsEmptyState />;
-    case EIssuesStoreType.TEAM:
-      return <TeamEmptyState />;
-    case EIssuesStoreType.TEAM_VIEW:
-      return <TeamViewEmptyState />;
-    case EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS:
-      return <TeamProjectWorkItemEmptyState />;
-    default:
-      return null;
-  }
+export function IssueLayoutEmptyState(props: TIssueLayoutEmptyStateProps) {
+  const WorkItemLayoutEmptyStateComponent: React.LazyExoticComponent<React.ComponentType> | undefined =
+    WORK_ITEM_LAYOUT_EMPTY_STATES[props.storeType];
+
+  if (!WorkItemLayoutEmptyStateComponent) return <></>;
+  return (
+    <Suspense fallback={<div />}>
+      <WorkItemLayoutEmptyStateComponent />
+    </Suspense>
+  );
 }

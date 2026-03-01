@@ -16,10 +16,12 @@ import { LayoutGroup } from "framer-motion";
 import { cn } from "../utils";
 import type { TTabNavigationListProps } from "./tab-navigation-types";
 
-export function TabNavigationList({ children, className }: TTabNavigationListProps) {
+export function TabNavigationList({ children, className, ...props }: TTabNavigationListProps) {
   return (
     <LayoutGroup id="tab-navigation">
-      <div className={cn("relative flex items-center gap-1 rounded-md", className)}>{children}</div>
+      <div className={cn("relative flex items-center gap-1 rounded-md", className)} {...props}>
+        {children}
+      </div>
     </LayoutGroup>
   );
 }

@@ -23,6 +23,7 @@ import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/eleme
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
+import { usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -46,6 +47,8 @@ type Props = {
 export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
   // props
   const { isLastChild, parentId, workspaceSlug, favorite, handleRemoveFromFavorites, handleDrop } = props;
+  // router hooks
+  const pathname = usePathname();
   // store hooks
   const { itemLink, itemIcon, itemTitle } = useFavoriteItemDetails(workspaceSlug, favorite);
   //state
@@ -131,12 +134,14 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
+  const isSelected = pathname === itemLink;
+
   return (
     <>
       {isDragging && <DropIndicator isVisible={instruction === "reorder-above"} />}
-      <FavoriteItemWrapper elementRef={elementRef} isMenuActive={isMenuActive}>
+      <FavoriteItemWrapper elementRef={elementRef} isMenuActive={isMenuActive} isActive={isSelected}>
         <FavoriteItemDragHandle isDragging={isDragging} sort_order={favorite.sort_order} />
-        <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} />
+        <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} isActive={isSelected} />
         <FavoriteItemQuickAction
           favorite={favorite}
           ref={actionSectionRef}

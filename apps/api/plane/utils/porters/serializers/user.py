@@ -48,9 +48,7 @@ class UserImportListSerializer(serializers.ListSerializer):
         if not workspace_id:
             return
 
-        workspace_license = WorkspaceLicense.objects.filter(
-            workspace_id=workspace_id
-        ).first()
+        workspace_license = WorkspaceLicense.objects.filter(workspace_id=workspace_id).first()
 
         if not workspace_license:
             return  # No license means no restrictions
@@ -293,9 +291,7 @@ class UserImportSerializer(UserSerializer):
 
         project_member, pm_created = None, False
         if project_id:
-            project_member, pm_created = self._get_or_create_member(
-                ProjectMember, user, role, project_id=project_id
-            )
+            project_member, pm_created = self._get_or_create_member(ProjectMember, user, role, project_id=project_id)
 
         return {
             "user": user,
@@ -305,4 +301,3 @@ class UserImportSerializer(UserSerializer):
             "project_member": project_member,
             "project_member_created": pm_created,
         }
-

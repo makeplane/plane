@@ -17,7 +17,13 @@ export {
   DocumentEditorWithRef,
   LiteTextEditorWithRef,
   RichTextEditorWithRef,
+  VersionDiffEditor,
+  createColorMapping,
+  getUserColor,
+  createUserColor,
+  YChangeTooltipContainer,
 } from "@/components/editors";
+export type { TVersionDiffEditorProps, TPrecomputedDiff, TUserInfo, UserColor } from "@/components/editors";
 export { PiChatEditorWithRef } from "./ee/components/editors/pi-chat-editor/editor";
 
 // constants
@@ -26,10 +32,12 @@ export * from "@/constants/common";
 // helpers
 export * from "@/helpers/common";
 export * from "@/helpers/yjs-utils";
+export * from "@/helpers/version-diff-utils";
 export * from "@/helpers/parser";
 
 export { CORE_EXTENSIONS } from "@/constants/extension";
 export { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+export { EDrawioMode } from "./ee/extensions/drawio/types";
 
 // types
 export * from "@/types";
@@ -41,3 +49,4 @@ export { TrailingNode } from "./core/extensions/trailing-node";
 export { CustomAIBlockUI } from "./ee/extensions/ai-block/block-ui";
 export type { CustomAIBlockUIProps } from "./ee/extensions/ai-block/block-ui";
 export type { TAIBlockNodeViewProps, TAIBlockWidgetProps } from "./ee/extensions/ai-block/types";
+export { EnterKeyExtension } from "./core/extensions/enter-key";

@@ -17,8 +17,8 @@ import Link from "next/link";
 import { Settings2 } from "lucide-react";
 // plane internal packages
 import { getButtonStyling } from "@plane/propel/button";
+import { Switch } from "@plane/propel/switch";
 import type { TInstanceEnterpriseAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
@@ -51,13 +51,12 @@ export const OIDCConfiguration = observer(function OIDCConfiguration(props: Prop
           <Link href="/authentication/oidc" className={cn(getButtonStyling("link", "base"), "font-medium")}>
             Edit
           </Link>
-          <ToggleSwitch
+          <Switch
             value={Boolean(parseInt(enableOIDCConfig))}
             onChange={() => {
               const newEnableOIDCConfig = Boolean(parseInt(enableOIDCConfig)) === true ? "0" : "1";
               updateConfig("IS_OIDC_ENABLED", newEnableOIDCConfig);
             }}
-            size="sm"
             disabled={disabled}
           />
         </div>

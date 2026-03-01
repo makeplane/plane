@@ -46,7 +46,7 @@ import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 import { EditorAIMenu } from "@/plane-web/components/pages";
 import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { EPageStoreType } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -54,6 +54,8 @@ import type { TPageInstance } from "@/store/pages/base-page";
 import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
 import { PageContentBrowser } from "./summary";
+import { PageSummary } from "./ai/page-summary";
+import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 // types
 
 // Add a CSS keyframe animation
@@ -85,6 +87,8 @@ type Props = {
   extendedEditorProps: TExtendedEditorExtensionsConfig;
   isFetchingFallbackBinary?: boolean;
   onCollaborationStateChange?: (state: CollaborationState) => void;
+  isGeneratingPageSummary: boolean;
+  setIsGeneratingPageSummary: (isGenerating: boolean) => void;
 };
 
 export const PageEditorBody = observer(function PageEditorBody(props: Props) {
@@ -104,6 +108,8 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     extendedEditorProps,
     isFetchingFallbackBinary,
     onCollaborationStateChange,
+    isGeneratingPageSummary,
+    setIsGeneratingPageSummary,
   } = props;
 
   // states
@@ -114,6 +120,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
   const { getUserDetails } = useMember();
+  const { isPageAiSummaryEnabled } = usePageFlag({ workspaceSlug: workspaceSlug?.toString() ?? "" });
 
   // derived values
   const {
@@ -236,14 +243,16 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     }
   }, [webhookConnectionParams]);
 
-  const userConfig = useMemo(
-    () => ({
+  const userConfig = useMemo(() => {
+    const userId = currentUser?.id || "default-user";
+    const colorObj = generateRandomColor(userId);
+    const hexColor = hslToHex(colorObj);
+    return {
       id: currentUser?.id ?? "",
       name: currentUser?.display_name ?? "",
-      color: hslToHex(generateRandomColor(currentUser?.id ?? "")),
-    }),
-    [currentUser?.display_name, currentUser?.id]
-  );
+      color: hexColor,
+    };
+  }, [currentUser?.display_name, currentUser?.id]);
 
   const blockWidthClassName = cn(
     "block bg-transparent w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out",
@@ -285,6 +294,15 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
         <div>
           <div className="page-header-container group/page-header">
             <div className={blockWidthClassName}>
+              {isPageAiSummaryEnabled && (
+                <PageSummary
+                  workspaceSlug={workspaceSlug}
+                  isGeneratingPageSummary={isGeneratingPageSummary}
+                  pageId={pageId}
+                  storeType={storeType}
+                  setIsGeneratingPageSummary={setIsGeneratingPageSummary}
+                />
+              )}
               <PageEditorHeaderRoot
                 isEditorContentEmpty={isDescriptionEmpty && isTitleEmpty}
                 isPageLoading={isPageLoading}

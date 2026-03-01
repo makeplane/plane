@@ -30,6 +30,8 @@ import { ProjectPagesListView } from "@/components/pages/pages-list-view";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// components
+import { FeatureTour } from "@/components/tour";
 // plane web hooks
 import type { Route } from "./+types/page";
 
@@ -80,6 +82,7 @@ function ProjectPagesPage({ params }: Route.ComponentProps) {
   return (
     <>
       <PageHead title={pageTitle} />
+      <FeatureTour tourType="pages" />
       <ProjectPagesListView pageType={pageType} projectId={projectId} workspaceSlug={workspaceSlug} />
     </>
   );

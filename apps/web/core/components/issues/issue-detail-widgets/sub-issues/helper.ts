@@ -22,8 +22,8 @@ import { copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectState } from "@/hooks/store/use-project-state";
-// plane web helpers
-import { updateEpicAnalytics } from "@/plane-web/helpers/epic-analytics";
+// plane web imports
+import { useEpicAnalytics } from "@/plane-web/hooks/store/epics/use-epic-analytics";
 
 export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSubIssueOperations => {
   // router
@@ -42,8 +42,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
   } = useIssueDetail(issueServiceType);
   const { getStateById } = useProjectState();
   const { peekIssue: epicPeekIssue } = useIssueDetail(EIssueServiceType.EPICS);
-  // const { updateEpicAnalytics } = useIssueTypes();
-  const { updateAnalytics } = updateEpicAnalytics();
+  const { updateEpicAnalytics } = useEpicAnalytics();
 
   // derived values
   const epicId = epicIdParam || epicPeekIssue?.issueId;
@@ -124,7 +123,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
             if (oldState && oldIssue && issueData && epicId) {
               // Check if parent_id is changed if yes then decrement the epic analytics count
               if (issueData.parent_id && oldIssue?.parent_id && issueData.parent_id !== oldIssue?.parent_id) {
-                updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
+                updateEpicAnalytics(workspaceSlug, projectId, epicId.toString(), {
                   decrementStateGroupCount: `${oldState}_issues`,
                 });
               }
@@ -133,7 +132,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
               if (issueData.state_id) {
                 const newState = getStateById(issueData.state_id)?.group;
                 if (oldState && newState && oldState !== newState) {
-                  updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
+                  updateEpicAnalytics(workspaceSlug, projectId, epicId.toString(), {
                     decrementStateGroupCount: `${oldState}_issues`,
                     incrementStateGroupCount: `${newState}_issues`,
                   });
@@ -164,7 +163,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
             const oldState = getStateById(issueBeforeRemoval?.state_id)?.group;
 
             if (epicId && oldState) {
-              updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
+              updateEpicAnalytics(workspaceSlug, projectId, epicId.toString(), {
                 decrementStateGroupCount: `${oldState}_issues`,
               });
             }
@@ -224,7 +223,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
       removeSubIssue,
       setSubIssueHelpers,
       t,
-      updateAnalytics,
+      updateEpicAnalytics,
       updateSubIssue,
     ]
   );

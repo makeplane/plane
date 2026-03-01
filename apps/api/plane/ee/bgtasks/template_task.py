@@ -223,7 +223,7 @@ def create_estimates(estimate_data, project_id, project, user_id):
         created_by_id=user_id,
         project=project,
     )
-    estimate.save(created_by_id=user_id)
+    estimate.save()
     logger.info(f"Estimate created: {estimate.id}")
     estimate_point_map = {}
     # Create Estimate Points
@@ -235,7 +235,7 @@ def create_estimates(estimate_data, project_id, project, user_id):
             created_by_id=user_id,
             project_id=project_id,
         )
-        created_estimate_point.save(created_by_id=user_id)
+        created_estimate_point.save()
         estimate_point_map[str(point_data.get("id"))] = str(created_estimate_point.id)
     logger.info("Estimate points created")
     project.estimate = estimate
@@ -267,7 +267,7 @@ def create_labels(label_data, project_id, workspace_id, user_id):
             sort_order=random.randint(0, 65535),
             created_by_id=user_id,
         )
-        created_label.save(created_by_id=user_id)
+        created_label.save()
         label_map[str(label.get("id"))] = str(created_label.id)
     logger.info("Labels created")
     return label_map
@@ -299,7 +299,7 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id, user_id)
             logo_props=type.get("logo_props", {}),
             created_by_id=user_id,
         )
-        created_issue_type.save(created_by_id=user_id)
+        created_issue_type.save()
         workitem_type_map[str(type.get("id"))] = str(created_issue_type.id)
         logger.info(f"Issue type created: {created_issue_type.id}")
         # Create ProjectIssueType
@@ -309,7 +309,7 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id, user_id)
             is_default=type.get("is_default", False),
             created_by_id=user_id,
         )
-        created_project_issue_type.save(created_by_id=user_id)
+        created_project_issue_type.save()
         logger.info(f"Project issue type created: {created_project_issue_type.id}")
         for property in type.get("properties", []):
             created_issue_property = IssueProperty(
@@ -325,8 +325,9 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id, user_id)
                 settings=property.get("settings", {}),
                 is_active=property.get("is_active", True),
                 is_multi=property.get("is_multi", False),
+                created_by_id=user_id,
             )
-            created_issue_property.save(created_by_id=user_id)
+            created_issue_property.save()
             workitem_property_map[str(property.get("id"))] = str(created_issue_property.id)
             logger.info(f"Issue property created: {created_issue_property.id}")
             # create options
@@ -341,8 +342,9 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id, user_id)
                         logo_props=value.get("logo_props", {}),
                         workspace_id=workspace_id,
                         project_id=project_id,
+                        created_by_id=user_id,
                     )
-                    created_issue_property_option.save(created_by_id=user_id)
+                    created_issue_property_option.save()
                     workitem_property_option_map[str(value.get("id"))] = str(created_issue_property_option.id)
                     logger.info(f"Issue property option created: {created_issue_property_option.id}")
     return workitem_type_map, workitem_property_map, workitem_property_option_map
@@ -367,10 +369,12 @@ def create_epics(epic_data, project_id, workspace_id, user_id):
         level=1,
         created_by_id=user_id,
     )
-    issue_type.save(created_by_id=user_id)
+    issue_type.save()
     logger.info(f"Epic created: {issue_type.id}")
-    created_project_issue_type = ProjectIssueType(project_id=project_id, issue_type=issue_type, level=1)
-    created_project_issue_type.save(created_by_id=user_id)
+    created_project_issue_type = ProjectIssueType(
+        project_id=project_id, issue_type=issue_type, level=1, created_by_id=user_id
+    )
+    created_project_issue_type.save()
     logger.info(f"Epic project issue type created: {created_project_issue_type.id}")
     for property in epic_data.get("properties", []):
         epic_property = IssueProperty(
@@ -388,7 +392,7 @@ def create_epics(epic_data, project_id, workspace_id, user_id):
             is_multi=property.get("is_multi", False),
             created_by_id=user_id,
         )
-        epic_property.save(created_by_id=user_id)
+        epic_property.save()
         logger.info(f"Epic property created: {epic_property.id}")
         # create options
         if epic_property.property_type == PropertyTypeEnum.OPTION:
@@ -568,7 +572,7 @@ def create_workitems(
             state_id=state_id,
             parent_id=None,
             name=blueprint.name,
-            description=blueprint.description,
+            description_json=blueprint.description,
             description_html=blueprint.description_html,
             description_stripped=blueprint.description_stripped,
             description_binary=blueprint.description_binary,
@@ -786,7 +790,7 @@ def create_subworkitems(workitem_template_id, project_id, workitem_id, user_id):
             issue = Issue.objects.create(
                 project_id=project_id,
                 name=sub_workitem_template.name,
-                description=sub_workitem_template.description,
+                description_json=sub_workitem_template.description,
                 description_html=sub_workitem_template.description_html,
                 description_binary=sub_workitem_template.description_binary,
                 description_stripped=sub_workitem_template.description_stripped,

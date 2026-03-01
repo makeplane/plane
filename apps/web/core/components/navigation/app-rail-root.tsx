@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-"use client";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { SettingsIcon } from "lucide-react";
@@ -29,7 +28,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // lib
 import { useAppRailVisibility } from "@/lib/app-rail/context";
 // plane web imports
-import { DesktopSidebarWorkspaceMenu } from "@/plane-web/components/desktop";
+import { DesktopSidebarWorkspaceMenu } from "@/components/desktop";
 // local imports
 import { AppSidebarItemsRoot } from "./items-root";
 
@@ -63,7 +62,7 @@ export const AppRailRoot = observer(() => {
     >
       <ContextMenu>
         <ContextMenu.Trigger className="h-full">
-          <div className="flex flex-col justify-between gap-4 px-2 py-3 h-full">
+          <div id="app-rail" className="flex flex-col justify-between gap-4 px-2 py-3 h-full">
             <div
               className={cn("flex flex-col", {
                 "gap-4": showLabel,

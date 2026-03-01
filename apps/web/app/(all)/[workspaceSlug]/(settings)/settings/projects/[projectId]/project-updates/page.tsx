@@ -13,25 +13,26 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { UpdatesIcon } from "@plane/propel/icons";
+import { UpgradeIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import { EUserProjectRoles } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+// components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
-// store hooks
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+// hooks
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web components
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-// plane web constants
-import { ProjectUpdatesUpgrade } from "@/plane-web/components/project-overview/upgrade";
+// plane web imports
+import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+// local imports
 import type { Route } from "./+types/page";
 import { ProjectUpdatesProjectSettingsHeader } from "./header";
-import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 
 function UpdatesSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -40,13 +41,16 @@ function UpdatesSettingsPage({ params }: Route.ComponentProps) {
   const { allowPermissions } = useUserPermissions();
   const { getProjectFeatures, toggleProjectFeatures } = useProjectAdvanced();
   const { t } = useTranslation();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
   const currentProjectDetails = getProjectFeatures(projectId);
   const canPerformProjectAdminActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+  const isProjectUpdatesAvailableInPlan = useFlag(workspaceSlug, E_FEATURE_FLAGS.PROJECT_UPDATES);
 
   if (!canPerformProjectAdminActions) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
+
   if (!canPerformProjectAdminActions)
     return (
       <>
@@ -84,22 +88,28 @@ function UpdatesSettingsPage({ params }: Route.ComponentProps) {
           title={t("project_settings.project_updates.heading")}
           description={t("project_settings.project_updates.description")}
         />
-        <div className="mt-6">
-          <WithFeatureFlagHOC flag="PROJECT_UPDATES" fallback={<ProjectUpdatesUpgrade />} workspaceSlug={workspaceSlug}>
-            <SettingsBoxedControlItem
-              title="Turn on Project Updates"
-              description="See all updates on demand from anyone in this project. Easily track updates across four preset categories."
-              control={
-                currentProjectDetails && (
-                  <ToggleSwitch
-                    value={currentProjectDetails?.["is_project_updates_enabled"]}
-                    onChange={toggleUpdatesFeature}
-                    size="sm"
-                  />
-                )
-              }
-            />
-          </WithFeatureFlagHOC>
+        <div className="mt-7">
+          <SettingsBoxedControlItem
+            title="Turn on Project Updates"
+            description="See all updates on demand from anyone in this project. Easily track updates across four preset categories."
+            control={
+              isProjectUpdatesAvailableInPlan ? (
+                <Switch
+                  value={!!currentProjectDetails?.["is_project_updates_enabled"]}
+                  onChange={toggleUpdatesFeature}
+                />
+              ) : (
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  prependIcon={<UpgradeIcon />}
+                  onClick={() => togglePaidPlanModal(true)}
+                >
+                  {t("upgrade")}
+                </Button>
+              )
+            }
+          />
         </div>
       </div>
     </SettingsContentWrapper>

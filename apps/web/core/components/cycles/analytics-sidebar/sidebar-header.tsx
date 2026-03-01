@@ -12,13 +12,13 @@
  */
 
 import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronRightIcon } from "lucide-react";
 // Plane Imports
 import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ICycle } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
@@ -53,6 +53,8 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
   const { updateCycleDetails } = useCycle();
   const { t } = useTranslation();
   const { renderFormattedDateInUserTimezone, getProjectUTCOffset } = useTimeZoneConverter(projectId);
+  const searchParams = useSearchParams();
+  const peekCycle = searchParams.get("peekCycle");
 
   // derived values
   const projectUTCOffset = getProjectUTCOffset();
@@ -128,16 +130,18 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
 
   return (
     <>
-      <div className="sticky z-10 top-0 pt-2 flex items-center justify-between bg-surface-1">
-        <div className="flex items-center justify-center size-5">
-          <button
-            className="flex size-6 items-center justify-center rounded-full bg-layer-3 hover:bg-layer-3-hover flex-shrink-0"
-            onClick={() => handleClose()}
-          >
-            <ChevronRightIcon className="size-4 stroke-2 text-secondary" />
-          </button>
+      {peekCycle && (
+        <div className="sticky z-10 top-0 pt-2 flex items-center justify-between bg-surface-1">
+          <div className="flex items-center justify-center size-5">
+            <button
+              className="flex size-6 items-center justify-center rounded-full bg-layer-3 hover:bg-layer-3-hover flex-shrink-0"
+              onClick={() => handleClose()}
+            >
+              <ChevronRightIcon className="size-4 stroke-2 text-secondary" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
       <div className="flex flex-col gap-2 w-full">
         <div className="flex items-start justify-between gap-3 pt-2">
           <h4 className="w-full break-words text-18 font-semibold text-primary">{cycleDetails.name}</h4>

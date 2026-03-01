@@ -59,26 +59,26 @@ export type TClientToServerEvents = Record<string, never>;
  */
 export type TEventDataMap = {
   // Work item events
-  "issue.created": Partial<TIssue>;
-  "issue.updated": Partial<TIssue>;
-  "issue.deleted": Partial<TIssue>;
-  "issue.state.updated": Partial<TIssue>;
-  "issue.assignee.added": Partial<TIssue>;
-  "issue.assignee.removed": Partial<TIssue>;
-  "issue.module.added": Partial<TIssue>;
-  "issue.module.removed": Partial<TIssue>;
-  "issue.label.added": Partial<TIssue>;
-  "issue.label.removed": Partial<TIssue>;
-  "issue.cycle.added": Partial<TIssue>;
-  "issue.cycle.removed": Partial<TIssue>;
-  "issue.link.added": Partial<TIssue>;
-  "issue.link.updated": Partial<TIssue>;
-  "issue.link.removed": Partial<TIssue>;
-  "issue.comment.created": Partial<TWorkItemWithComment>;
-  "issue.comment.updated": Partial<TWorkItemWithComment>;
-  "issue.comment.deleted": Partial<TWorkItemWithComment>;
-  "issue.relation.added": Partial<TIssue>;
-  "issue.relation.removed": Partial<TIssue>;
+  "workitem.created": Partial<TIssue>;
+  "workitem.updated": Partial<TIssue>;
+  "workitem.deleted": Partial<TIssue>;
+  "workitem.state.updated": Partial<TIssue>;
+  "workitem.assignee.added": Partial<TIssue>;
+  "workitem.assignee.removed": Partial<TIssue>;
+  "workitem.module.added": Partial<TIssue>;
+  "workitem.module.removed": Partial<TIssue>;
+  "workitem.label.added": Partial<TIssue>;
+  "workitem.label.removed": Partial<TIssue>;
+  "workitem.cycle.added": Partial<TIssue>;
+  "workitem.cycle.removed": Partial<TIssue>;
+  "workitem.link.added": Partial<TIssue>;
+  "workitem.link.updated": Partial<TIssue>;
+  "workitem.link.removed": Partial<TIssue>;
+  "workitem.comment.created": Partial<TWorkItemWithComment>;
+  "workitem.comment.updated": Partial<TWorkItemWithComment>;
+  "workitem.comment.deleted": Partial<TWorkItemWithComment>;
+  "workitem.relation.added": Partial<TIssue>;
+  "workitem.relation.removed": Partial<TIssue>;
   // Epic events
   "epic.created": Partial<TIssue>;
   "epic.updated": Partial<TIssue>;
@@ -114,14 +114,14 @@ export type TWorkItemEventType = keyof TEventDataMap;
 export type TEventData<T extends TWorkItemEventType> = T extends keyof TEventDataMap ? TEventDataMap[T] : unknown;
 
 /**
- * Work item event payload structure from relay server (consumer.ts lines 64-73)
+ * Work item event payload structure from flux server (consumer.ts lines 64-73)
  * Generic type parameter T allows type-safe payload.data based on event_type
  *
  * @example
  * ```typescript
- * // When event_type is "issue.created", payload.data is typed as Partial<TIssue>
+ * // When event_type is "workitem.created", payload.data is typed as Partial<TIssue>
  * useSocketEvent("work-item:updated", (event) => {
- *   if (event.event_type === "issue.created") {
+ *   if (event.event_type === "workitem.created") {
  *     const data = event.payload?.data; // Type: Partial<TIssue>
  *   }
  * });

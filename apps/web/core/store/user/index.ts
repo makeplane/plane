@@ -18,12 +18,12 @@ import { EUserPermissions, API_BASE_URL } from "@plane/constants";
 import type { IUser, TUserPermissions } from "@plane/types";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
-import type { IUserPermissionStore } from "@/plane-web/store/user/permission.store";
-import { UserPermissionStore } from "@/plane-web/store/user/permission.store";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
 // stores
+import type { IUserPermissionStore } from "@/store/user/permissions.store";
+import { UserPermissionStore } from "@/store/user/permissions.store";
 import type { IAccountStore } from "@/store/user/account.store";
 import type { IUserProfileStore } from "@/store/user/profile.store";
 import { ProfileStore } from "@/store/user/profile.store";
@@ -47,6 +47,8 @@ export interface IUserStore {
   userSettings: IUserSettingsStore;
   accounts: Record<string, IAccountStore>;
   permission: IUserPermissionStore;
+  // computed
+  preferredWorkspaceSlug: string | undefined;
   // actions
   fetchCurrentUser: () => Promise<IUser | undefined>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
@@ -98,6 +100,8 @@ export class UserStore implements IUserStore {
       userSettings: observable,
       accounts: observable,
       permission: observable,
+      // computed
+      preferredWorkspaceSlug: computed,
       // actions
       fetchCurrentUser: action,
       updateCurrentUser: action,
@@ -110,6 +114,17 @@ export class UserStore implements IUserStore {
       canPerformAnyCreateAction: computed,
       projectsWithCreatePermissions: computed,
     });
+  }
+
+  /**
+   * @description returns the user's preferred workspace slug (last visited or fallback)
+   * @returns {string | undefined}
+   */
+  get preferredWorkspaceSlug(): IUserStore["preferredWorkspaceSlug"] {
+    return (
+      this.userSettings.data?.workspace?.last_workspace_slug ||
+      this.userSettings.data?.workspace?.fallback_workspace_slug
+    );
   }
 
   /**

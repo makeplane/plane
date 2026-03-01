@@ -43,5 +43,14 @@
     "group": "cancelled",
     "default": false,
     "project_id": 1
+  },
+  {
+    "id": 6,
+    "name": "Triage",
+    "color": "#4E5355",
+    "sequence": 65000,
+    "group": "triage",
+    "default": false,
+    "project_id": 1
   }
 ]

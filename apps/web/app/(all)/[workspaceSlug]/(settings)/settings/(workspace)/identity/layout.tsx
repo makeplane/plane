@@ -23,8 +23,8 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags/with-feature-flag-hoc";
-import { IdentityUpgrade } from "@/plane-web/components/workspace/settings/identity/upgrade";
+import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
+import { IdentityUpgrade } from "@/components/workspace/settings/identity/upgrade";
 import { useDomains } from "@/plane-web/hooks/sso/use-domains";
 import { useProviders } from "@/plane-web/hooks/sso/use-providers";
 // types

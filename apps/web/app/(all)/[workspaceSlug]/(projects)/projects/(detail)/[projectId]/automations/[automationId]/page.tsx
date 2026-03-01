@@ -21,8 +21,8 @@ import { PageHead } from "@/components/core/page-title";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // plane web components
-import { AutomationDetailsMainContentRoot } from "@/plane-web/components/automations/details/main-content/root";
-import { AutomationDetailsSidebarRoot } from "@/plane-web/components/automations/details/sidebar/root";
+import { AutomationDetailsMainContentRoot } from "@/components/automations/details/main-content/root";
+import { AutomationDetailsSidebarRoot } from "@/components/automations/details/sidebar/root";
 import type { Route } from "./+types/page";
 
 function AutomationDetailsPage({ params }: Route.ComponentProps) {

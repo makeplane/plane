@@ -11,6 +11,7 @@
 
 # Python imports
 import json
+import logging
 from datetime import datetime
 
 # Django imports
@@ -29,7 +30,7 @@ from django.db.models import (
     When,
     IntegerField,
 )
-from django.http import StreamingHttpResponse
+from django.http import HttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.functions import Coalesce
@@ -71,8 +72,8 @@ from plane.ee.permissions.page import ProjectPagePermission
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
-from plane.payment.flags.flag import FeatureFlag
-from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+
+logger = logging.getLogger(__name__)
 
 
 class PageExtendedViewSet(BaseViewSet):
@@ -173,7 +174,7 @@ class PageExtendedViewSet(BaseViewSet):
             context={
                 "project_id": project_id,
                 "owned_by_id": request.user.id,
-                "description": request.data.get("description", {}),
+                "description_json": request.data.get("description_json", {}),
                 "description_binary": request.data.get("description_binary", None),
                 "description_html": request.data.get("description_html", "<p></p>"),
             },
@@ -754,22 +755,25 @@ class PagesDescriptionExtendedViewSet(BaseViewSet):
     model = Page
 
     def retrieve(self, request, slug, project_id, page_id):
-        page = Page.objects.get(
-            Q(owned_by=self.request.user) | Q(access=0),
-            pk=page_id,
-            workspace__slug=slug,
-            project_pages__project_id=project_id,
-            project_pages__deleted_at__isnull=True,
+        page = (
+            Page.objects.filter(
+                Q(owned_by=self.request.user) | Q(access=0),
+                pk=page_id,
+                workspace__slug=slug,
+                project_pages__project_id=project_id,
+                project_pages__deleted_at__isnull=True,
+            )
+            .only("description_binary")
+            .first()
         )
+        if page is None:
+            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         binary_data = page.description_binary
-
-        def stream_data():
-            if binary_data:
-                yield binary_data
-            else:
-                yield b""
-
-        response = StreamingHttpResponse(stream_data(), content_type="application/octet-stream")
+        logger.info(
+            "Page description retrieved",
+            extra={"page_id": page_id, "project_id": project_id, "size": len(binary_data) if binary_data else 0},
+        )
+        response = HttpResponse(binary_data or b"", content_type="application/octet-stream")
         response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
 

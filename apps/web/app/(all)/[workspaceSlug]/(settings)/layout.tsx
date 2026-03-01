@@ -16,7 +16,7 @@ import { Outlet } from "react-router";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { ProjectsAppPowerKProvider } from "@/components/power-k/projects-app-provider";
 // plane web imports
-import { LicenseSeatsBanner } from "@/plane-web/components/license";
+import { LicenseSeatsBanner } from "@/components/workspace/license";
 
 export default function SettingsLayout() {
   return (

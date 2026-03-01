@@ -19,7 +19,7 @@ import { EPageAccess } from "@plane/constants";
 import type { TPage } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
 // services
-import { WorkspacePageService } from "@/plane-web/services/page";
+import { WorkspacePageService } from "@/services/page/workspace-page.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // store

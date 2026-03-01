@@ -28,7 +28,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-import { TeamspaceProjectDetailHeaderActions } from "@/plane-web/components/teamspaces/headers/detail-header/work-items";
+import { TeamspaceProjectDetailHeaderActions } from "@/components/teamspaces/headers/detail-header/work-items";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
 export const TeamspaceProjectDetailHeader = observer(function TeamspaceProjectDetailHeader() {

@@ -74,7 +74,7 @@ Add calendar to the feature key mapping:
 const SidebarFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS> = {
   // ... existing mappings
   wiki: E_FEATURE_FLAGS.WIKI,
-  "pi-chat": E_FEATURE_FLAGS.PI_CHAT,
+  "pi-chat": E_FEATURE_FLAGS.AI_CHAT,
   calendar: E_FEATURE_FLAGS.CALENDAR,
 };
 ```
@@ -117,7 +117,7 @@ const dockItems: TDockItem[] = [
   {
     label: "AI",
     icon: <PiIcon className="size-5" />,
-    href: `/${workspaceSlug}/pi-chat`,
+    href: `/${workspaceSlug}/ai-chat`,
     isActive: isPiPath,
     shouldRender: isAppRailFeatureEnabled("pi-chat"),
   },
@@ -140,8 +140,6 @@ apps/web/app/(all)/[workspaceSlug]/(calendar)/
 **File**: `apps/web/app/(all)/[workspaceSlug]/(calendar)/layout.tsx`
 
 ```typescript
-"use client";
-
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
 import type { Route } from "./+types/layout";
@@ -165,8 +163,6 @@ export default CalendarLayout;
 **File**: `apps/web/app/(all)/[workspaceSlug]/(calendar)/calendar/page.tsx`
 
 ```typescript
-"use client";
-
 import { observer } from "mobx-react";
 import type { Route } from "./+types/page";
 

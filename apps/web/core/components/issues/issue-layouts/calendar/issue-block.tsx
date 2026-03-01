@@ -30,7 +30,7 @@ import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // local components
 import { WorkItemPreviewCard } from "../../preview-card";
 import type { TRenderQuickActions } from "../list/list-view-types";
@@ -97,9 +97,11 @@ export const CalendarIssueBlock = observer(
     });
 
     return (
-      <Popover delay={100} openOnHover>
-        <Popover.Button
+      <Popover>
+        <Popover.Trigger
           className="w-full"
+          delay={100}
+          openOnHover
           render={
             <ControlLink
               id={`issue-${issue.id}`}
@@ -165,7 +167,7 @@ export const CalendarIssueBlock = observer(
             </ControlLink>
           }
         />
-        <Popover.Panel side="bottom" align="start">
+        <Popover.Content side="bottom" align="start">
           <>
             {issue.project_id && (
               <WorkItemPreviewCard
@@ -177,7 +179,7 @@ export const CalendarIssueBlock = observer(
               />
             )}
           </>
-        </Popover.Panel>
+        </Popover.Content>
       </Popover>
     );
   })

@@ -15,6 +15,7 @@ import { NodeSelection } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 // extensions
 import type { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
+import { columnResizePluginKey } from "@/plane-editor/extensions/multi-column/column/plugins/column-resize";
 // plugins
 import { nodeDOMAtCoords } from "@/plugins/drag-handle";
 
@@ -57,6 +58,24 @@ const calcNodePos = (pos: number, view: EditorView, node: Element) => {
 
 export const AIHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOptions => {
   let aiHandleElement: HTMLButtonElement | null = null;
+
+  // AI handle view actions
+  const showAIHandle = (view?: EditorView) => {
+    // Check if column resize is active and hide AI handle if so
+    if (view) {
+      const columnResizeState = columnResizePluginKey.getState(view.state);
+      if (columnResizeState && columnResizeState.type !== "default") {
+        // Hide AI handle when column resize is active (hover or resize state)
+        hideAIHandle();
+        return;
+      }
+    }
+    aiHandleElement?.classList.remove("handle-hidden");
+  };
+
+  const hideAIHandle = () => {
+    if (!aiHandleElement?.classList.contains("handle-hidden")) aiHandleElement?.classList.add("handle-hidden");
+  };
 
   const handleClick = (event: MouseEvent, view: EditorView) => {
     view.focus();
@@ -113,6 +132,8 @@ export const AIHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOpti
     // bind events
     aiHandleElement.addEventListener("click", (e) => handleClick(e, view));
 
+    hideAIHandle();
+
     sideMenu?.appendChild(aiHandleElement);
 
     return {
@@ -124,7 +145,9 @@ export const AIHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOpti
     };
   };
 
-  const domEvents = {};
+  const domEvents = {
+    mousemove: (view: EditorView) => showAIHandle(view),
+  };
 
   return {
     view,

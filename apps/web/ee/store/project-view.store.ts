@@ -15,7 +15,7 @@ import { set } from "lodash-es";
 import { action, makeObservable, runInAction } from "mobx";
 import type { IProjectView, TPublishViewDetails, TPublishViewSettings } from "@plane/types";
 import { EViewAccess } from "@plane/types";
-import { ViewService } from "@/plane-web/services/project/view.service";
+import { ViewService } from "@/services/project/view.service";
 import type { IProjectViewStore as ICoreProjectViewStore } from "@/store/project-view.store";
 import { ProjectViewStore as CoreProjectViewStore } from "@/store/project-view.store";
 import type { RootStore } from "./root.store";

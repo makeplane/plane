@@ -9,10 +9,15 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Django import
+from django.utils import timezone
+
+# Third party import
+from rest_framework import serializers
+
+# Module import
 from .base import BaseSerializer
 from plane.db.models import APIToken, APIActivityLog
-from rest_framework import serializers
-from django.utils import timezone
 
 
 class APITokenSerializer(BaseSerializer):
@@ -28,6 +33,9 @@ class APITokenSerializer(BaseSerializer):
             "user",
             "allowed_rate_limit",
             "is_service",
+            "is_active",
+            "last_used",
+            "user_type",
         ]
 
 

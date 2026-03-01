@@ -14,5 +14,6 @@
 export enum EActionNodeHandlerName {
   ADD_COMMENT = "add_comment",
   CHANGE_PROPERTY = "change_property",
+  RUN_SCRIPT = "run_script",
 }
 export type TActionNodeHandlerName = EActionNodeHandlerName;

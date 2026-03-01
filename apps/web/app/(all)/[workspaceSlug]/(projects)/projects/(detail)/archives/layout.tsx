@@ -17,13 +17,18 @@ import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 // local components
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
-import { ProjectsListHeader } from "@/plane-web/components/projects/header";
-import { ProjectsListMobileHeader } from "@/plane-web/components/projects/mobile-header";
+import { ProjectsListHeader } from "@/components/projects/header/root";
+import { ProjectsListMobileHeader } from "@/components/projects/header/mobile-root";
+// types
+import type { Route } from "./+types/layout";
 
-export default function ProjectListLayout() {
+export default function ProjectArchivedListLayout(props: Route.ComponentProps) {
   return (
     <WorkspaceAccessWrapper pageKey="archives">
-      <AppHeader header={<ProjectsListHeader />} mobileHeader={<ProjectsListMobileHeader />} />
+      <AppHeader
+        header={<ProjectsListHeader workspaceSlug={props.params.workspaceSlug} isArchived />}
+        mobileHeader={<ProjectsListMobileHeader workspaceSlug={props.params.workspaceSlug} isArchived />}
+      />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

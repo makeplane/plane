@@ -11,9 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export const DRAWIO_DIAGRAM_URL = "https://embed.diagrams.net/?embed=1&spin=1&modified=unsavedChanges&proto=json";
+export const DRAWIO_DIAGRAM_URL =
+  "https://embed.diagrams.net/?embed=1&spin=1&modified=unsavedChanges&proto=json&saveAndExit=0&noExitBtn=0";
 
 export const DRAWIO_BOARD_URL =
-  "https://embed.diagrams.net/?embed=1&ui=sketch&spin=1&modified=unsavedChanges&proto=json&sketch=1&rough=1&lib=general;basic;mockup;infographic&noSaveBtn=0&freehand=1";
+  "https://embed.diagrams.net/?embed=1&ui=sketch&spin=1&modified=unsavedChanges&proto=json&sketch=1&rough=1&lib=general;basic;mockup;infographic&freehand=1&saveAndExit=0&noExitBtn=0";
 
-export const DRAWIO_EMPTY_CONTENT_LENGTH = 430;
+export const DRAWIO_EMPTY_CONTENT_LENGTH = 142;

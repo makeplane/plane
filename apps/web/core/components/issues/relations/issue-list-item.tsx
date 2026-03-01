@@ -28,8 +28,8 @@ import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
-import type { TIssueRelationTypes } from "@/plane-web/types";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import type { TIssueRelationTypes } from "@/types";
 // local imports
 import { useRelationOperations } from "../issue-detail-widgets/relations/helper";
 import { RelationIssueProperty } from "./properties";

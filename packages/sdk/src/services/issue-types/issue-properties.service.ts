@@ -13,6 +13,7 @@
 
 import { APIService } from "@/services/api.service";
 // types
+import type { AxiosError } from "axios";
 import type { ClientOptions, ExIssueProperty } from "@/types";
 
 export class IssuePropertyService extends APIService {
@@ -21,10 +22,12 @@ export class IssuePropertyService extends APIService {
   }
 
   async fetch(workspaceSlug: string, projectId: string, typeId: string): Promise<ExIssueProperty[]> {
-    return this.get(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/issue-properties/`)
+    return this.get<ExIssueProperty[]>(
+      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/issue-properties/`
+    )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
@@ -34,12 +37,12 @@ export class IssuePropertyService extends APIService {
     typeId: string,
     propertyId: string
   ): Promise<ExIssueProperty> {
-    return this.get(
+    return this.get<ExIssueProperty>(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/issue-properties/${propertyId}/`
     )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
@@ -49,13 +52,13 @@ export class IssuePropertyService extends APIService {
     typeId: string,
     data: Partial<ExIssueProperty>
   ): Promise<ExIssueProperty> {
-    return this.post(
+    return this.post<ExIssueProperty>(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/issue-properties/`,
       data
     )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
@@ -66,23 +69,23 @@ export class IssuePropertyService extends APIService {
     propertyId: string,
     data: Partial<ExIssueProperty>
   ): Promise<ExIssueProperty> {
-    return this.patch(
+    return this.patch<ExIssueProperty>(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/issue-properties/${propertyId}/`,
       data
     )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
   async remove(workspaceSlug: string, projectId: string, typeId: string, propertyId: string): Promise<void> {
-    return this.delete(
+    return this.delete<void>(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/issue-properties/${propertyId}/`
     )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 }

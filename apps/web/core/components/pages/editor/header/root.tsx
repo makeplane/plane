@@ -44,7 +44,11 @@ export const PageEditorHeaderRoot = observer(function PageEditorHeaderRoot(props
 
   return (
     <>
-      <div className="h-[48px] flex items-end text-left">
+      <div
+        className={cn("h-0 flex items-end text-left", {
+          "h-[48px]": isEditorContentEmpty || !isLogoSelected,
+        })}
+      >
         <div
           className={cn(
             "opacity-0 group-hover/page-header:opacity-100 flex items-center gap-1 transition-all duration-200",

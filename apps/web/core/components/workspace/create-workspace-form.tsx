@@ -27,7 +27,7 @@ import { validateWorkspaceName, validateSlug } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;

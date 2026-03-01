@@ -11,11 +11,9 @@ import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
 import reactRefreshPlugin from "eslint-plugin-react-refresh";
 import turboPlugin from "eslint-plugin-turbo";
-import vitestPlugin from "@vitest/eslint-plugin";
-// import storybookPlugin from "eslint-plugin-storybook";
-
-import prettierConfig from "eslint-config-prettier/flat";
+import storybookPlugin from "eslint-plugin-storybook";
 import globals from "globals";
+import prettierConfig from "eslint-config-prettier/flat";
 
 export default defineConfig([
   globalIgnores([
@@ -44,11 +42,11 @@ export default defineConfig([
   jsxA11yPlugin.flatConfigs.recommended,
   reactRefreshPlugin.configs.recommended,
   reactRefreshPlugin.configs.vite,
+  // @ts-expect-error turbo plugin does not yet expose flat config types
   turboPlugin.configs["flat/recommended"],
   tseslint.configs.recommendedTypeChecked,
-  vitestPlugin.configs.recommended,
   // TODO: enable storybook linting once issues are resolved
-  // storybookPlugin.configs["flat/recommended"],
+  storybookPlugin.configs["flat/recommended"],
   {
     settings: {
       react: {
@@ -138,7 +136,24 @@ export default defineConfig([
       "react-hooks/static-components": "warn",
       "react-refresh/only-export-components": [
         "warn",
-        { allowExportNames: ["meta", "links", "headers", "loader", "action"] },
+        {
+          allowExportNames: [
+            "action",
+            "clientAction",
+            "clientLoader",
+            "clientMiddleware",
+            "ErrorBoundary",
+            "handle",
+            "headers",
+            "HydrateFallback",
+            "links",
+            "loader",
+            "meta",
+            "middleware",
+            "shouldRevalidate",
+          ],
+          extraHOCs: ["observer"],
+        },
       ],
       "react/display-name": "warn",
       "react/jsx-no-target-blank": "warn",
@@ -149,9 +164,12 @@ export default defineConfig([
   },
   {
     files: ["**/*.{ts,tsx}"],
-    extends: [importPlugin.flatConfigs.recommended, importPlugin.flatConfigs.typescript],
+    extends: [
+      importPlugin.flatConfigs.recommended,
+      importPlugin.flatConfigs.typescript,
+    ],
     settings: {
-      "import/ignore": ["next/link", "next/navigation", "next/script"],
+      "import/ignore": ["next/link", "next/navigation"],
       "import/resolver": {
         typescript: {
           alwaysTryTypes: true,
@@ -162,7 +180,33 @@ export default defineConfig([
     },
     rules: {
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
-      "import/no-unresolved": ["error", { ignore: ["next/link", "next/navigation", "next/script"] }],
+      "import/no-unresolved": [
+        "error",
+        { ignore: ["next/link", "next/navigation"] },
+      ],
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@headlessui/react",
+              importNames: ["Disclosure", "Switch", "Tabs"],
+              message:
+                "Use @plane/propel components instead of @headlessui/react",
+            },
+            {
+              name: "@plane/ui",
+              importNames: [
+                "Collapsible",
+                "CollapsibleButton",
+                "Switch",
+                "Tabs",
+              ],
+              message: "Use @plane/propel components instead of @plane/ui",
+            },
+          ],
+        },
+      ],
     },
   },
   {
@@ -170,7 +214,7 @@ export default defineConfig([
     extends: [tseslint.configs.disableTypeChecked],
   },
   {
-    files: ["**/*.cjs"],
+    files: ["**/*.{mjs,cjs}"],
     languageOptions: {
       globals: {
         ...globals.node,

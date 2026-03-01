@@ -41,6 +41,12 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
     model = Notification
     serializer_class = NotificationSerializer
 
+    supported_entity_names = [
+        EntityName.ISSUE.value,
+        EntityName.EPIC.value,
+        EntityName.INTAKE.value,
+    ]
+
     def get_queryset(self):
         return (
             super()
@@ -70,14 +76,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
         notifications = (
             Notification.objects.filter(workspace__slug=slug, receiver_id=request.user.id)
-            .filter(
-                entity_name__in=[
-                    EntityName.ISSUE.value,
-                    EntityName.EPIC.value,
-                    EntityName.INITIATIVE.value,
-                    EntityName.TEAMSPACE.value,
-                ]
-            )
+            .filter(entity_name__in=self.supported_entity_names)
             .annotate(is_inbox_issue=Exists(intake_issue))
             .annotate(is_intake_issue=Exists(intake_issue))
             .annotate(
@@ -87,7 +86,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                     output_field=BooleanField(),
                 )
             )
-            .select_related("workspace", "project", "triggered_by", "receiver")
+            .select_related("workspace", "project", "triggered_by", "triggered_by__avatar_asset")
             .order_by("snoozed_till", "-created_at")
         )
 
@@ -226,6 +225,12 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 class UnreadNotificationEndpoint(BaseAPIView):
     use_read_replica = True
 
+    supported_entity_names = [
+        EntityName.ISSUE.value,
+        EntityName.EPIC.value,
+        EntityName.INTAKE.value,
+    ]
+
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
         # Watching Issues Count
@@ -236,6 +241,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
                 read_at__isnull=True,
                 archived_at__isnull=True,
                 snoozed_till__isnull=True,
+                entity_name__in=self.supported_entity_names,
             )
             .exclude(sender__icontains="mentioned")
             .count()
@@ -248,6 +254,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
             archived_at__isnull=True,
             snoozed_till__isnull=True,
             sender__icontains="mentioned",
+            entity_name__in=self.supported_entity_names,
         ).count()
 
         return Response(

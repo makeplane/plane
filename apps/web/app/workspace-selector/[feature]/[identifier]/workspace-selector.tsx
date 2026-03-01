@@ -25,7 +25,7 @@ import { orderWorkspacesList } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { ApplicationService, OAuthService } from "@/plane-web/services/marketplace";
+import { ApplicationService, OAuthService } from "@/services/marketplace";
 // local imports
 import { WorkspaceSelectorEmptyState } from "./empty-state";
 import { WorkspaceList } from "./workspace-list";

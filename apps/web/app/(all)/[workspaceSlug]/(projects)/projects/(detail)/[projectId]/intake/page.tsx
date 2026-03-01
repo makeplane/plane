@@ -24,11 +24,14 @@ import lightIntakeAsset from "@/app/assets/empty-state/disabled-feature/intake-l
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { InboxIssueRoot } from "@/components/inbox";
+import { InboxIssueRoot } from "@/components/intake";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// components
+import { FeatureTour } from "@/components/tour";
+// types
 import type { Route } from "./+types/page";
 
 function ProjectInboxPage({ params }: Route.ComponentProps) {
@@ -86,6 +89,7 @@ function ProjectInboxPage({ params }: Route.ComponentProps) {
   return (
     <div className="flex h-full flex-col">
       <PageHead title={pageTitle} />
+      <FeatureTour tourType="intake" />
       <div className="w-full h-full overflow-hidden">
         <InboxIssueRoot
           workspaceSlug={workspaceSlug}

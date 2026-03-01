@@ -24,7 +24,7 @@ export class EpicService extends APIService {
     return this.get(`/api/v1/workspaces/${slug}/projects/${projectId}/epics/`)
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 
@@ -32,7 +32,7 @@ export class EpicService extends APIService {
     return this.get(`/api/v1/workspaces/${slug}/projects/${projectId}/epics/${epicId}/`)
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 }

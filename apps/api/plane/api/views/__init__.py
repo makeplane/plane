@@ -46,7 +46,7 @@ from .intake import (
 
 from .invite import WorkspaceInvitationsViewset
 
-from .initiative import InitiativeViewSet, InitiativeLabelViewSet
+from .initiative import InitiativeViewSet, InitiativeLabelViewSet, InitiativeEpicsViewSet, InitiativeProjectsViewSet
 
 from .issue import (
     WorkspaceIssueAPIEndpoint,
@@ -75,7 +75,10 @@ from .member import (
     ProjectMemberDetailAPIEndpoint,
     WorkspaceMemberAPIEndpoint,
     ProjectMemberSiloEndpoint,
+    WorkspaceMemberRemoveEndpoint,
 )
+
+from .milestone import MilestoneViewSet, MilestoneWorkItemsViewSet
 
 from .module import (
     ModuleListCreateAPIEndpoint,
@@ -105,10 +108,9 @@ from .state import (
 
 from .sticky import StickyViewSet
 
-from .teamspace import TeamspaceViewSet
+from .teamspace import TeamspaceViewSet, TeamspaceProjectViewSet, TeamspaceMemberViewSet
 
 from .user import UserEndpoint
-
 
 from .worklog import (
     WorkItemWorklogEndpoint,
@@ -133,11 +135,27 @@ from .work_item_property_value import (
 
 from .work_item_search import WorkItemAdvancedSearchEndpoint
 
+from .work_item_properties import WorkItemPropertiesAPIEndpoint
+
 from .workspace import (
     WorkspaceFeatureAPIEndpoint,
+)
+
+from .project_label import (
+    ProjectLabelListCreateAPIEndpoint,
+    ProjectLabelDetailAPIEndpoint,
 )
 
 from .workspace_page import (
     WorkspacePageDetailAPIEndpoint,
     WorkspacePageAPIEndpoint,
 )
+
+from .work_item_page import (
+    WorkItemPageListCreateAPIEndpoint,
+    WorkItemPageDetailAPIEndpoint,
+)
+
+from .work_item_type_schema import WorkItemTypeSchemaAPIEndpoint
+
+from .work_item_type_create import WorkItemCreateAPIEndpoint

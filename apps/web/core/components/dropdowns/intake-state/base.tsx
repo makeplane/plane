@@ -29,7 +29,7 @@ import type { TDropdownProps } from "@/components/dropdowns/types";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports
-import { StateOption } from "@/plane-web/components/workflow";
+import { WorkItemStateOption } from "@/components/workflow";
 
 export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
   alwaysAllowStateChange?: boolean;
@@ -245,7 +245,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
               {filteredOptions ? (
                 filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
-                    <StateOption
+                    <WorkItemStateOption
                       {...props}
                       key={option.value}
                       option={option}

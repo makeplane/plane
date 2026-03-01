@@ -18,5 +18,5 @@ urlpatterns = [
         "workspaces/<str:slug>/runs/<uuid:pk>/",
         AgentRunAPIViewSet.as_view({"get": "retrieve"}),
         name="agent-run-detail",
-    )
+    ),
 ]

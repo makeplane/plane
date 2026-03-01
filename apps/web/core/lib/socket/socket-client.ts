@@ -81,8 +81,8 @@ export class SocketClient {
     this.currentWorkspaceId = workspaceId;
     this.setStatus("connecting");
 
-    // Build namespace: /events/{workspaceId} (for relay server)
-    // Full URL will be: http://host:port/events/{workspaceId} with path /relay/socket.io
+    // Build namespace: /events/{workspaceId} (for flux server)
+    // Full URL will be: http://host:port/events/{workspaceId} with path /flux/socket.io
     const namespace = `/events/${workspaceId}`;
     const serverUrl = this.options.url;
 

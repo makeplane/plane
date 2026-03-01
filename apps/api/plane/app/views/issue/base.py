@@ -420,6 +420,7 @@ class IssueViewSet(BaseViewSet):
 
         # Group by
         group_by = request.GET.get("group_by", False)
+
         sub_group_by = request.GET.get("sub_group_by", False)
 
         # issue queryset
@@ -893,12 +894,12 @@ class IssueViewSet(BaseViewSet):
 
         current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
         # TODO: review this and remove if it is unnecessary
-        estimate_type = Project.objects.filter(
-            workspace__slug=slug,
-            pk=project_id,
-            estimate__isnull=False,
-            estimate__type="points",
-        ).exists()
+        # estimate_type = Project.objects.filter(
+        #     workspace__slug=slug,
+        #     pk=project_id,
+        #     estimate__isnull=False,
+        #     estimate__type="points",
+        # ).exists()
 
         # Check if state is updated then is the transition allowed
         workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
@@ -912,7 +913,6 @@ class IssueViewSet(BaseViewSet):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(
             issue,
             data=request.data,
@@ -936,6 +936,9 @@ class IssueViewSet(BaseViewSet):
 
             # Check if the update is a migration description update
             is_migration_description_update = skip_activity and is_description_update
+
+            requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
+
             # Log all the updates
             if not is_migration_description_update:
                 issue_activity.delay(

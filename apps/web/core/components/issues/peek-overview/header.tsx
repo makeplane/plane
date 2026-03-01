@@ -34,8 +34,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { ConvertWorkItemAction } from "@/components/epics/conversions";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 // local imports
 import { IssueSubscription } from "../issue-detail/subscription";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";

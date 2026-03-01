@@ -129,7 +129,7 @@ class LDAPProvider(CredentialAdapter):
                 error_message="LDAP_SERVER_DOWN",
                 payload=self.exception_payload,
             )
-        except Exception as e:
+        except Exception:
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["LDAP_CONNECTION_ERROR"],
                 error_message="LDAP_CONNECTION_ERROR",
@@ -144,7 +144,7 @@ class LDAPProvider(CredentialAdapter):
             # Validate that search filter is not empty
             if not search_filter or not search_filter.strip():
                 logger.error(
-                    "LDAP search filter is empty. Please set LDAP_USER_SEARCH_FILTER (e.g., '(cn={username})' for Authentik or '(uid={username})' for OpenLDAP)"
+                    "LDAP search filter is empty. Please set LDAP_USER_SEARCH_FILTER (e.g., '(cn={username})' for Authentik or '(uid={username})' for OpenLDAP)"  # noqa: E501
                 )
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES["LDAP_SEARCH_ERROR"],
@@ -153,7 +153,7 @@ class LDAPProvider(CredentialAdapter):
                 )
 
             logger.info(
-                f"LDAP Search - Base: {self.ldap_user_search_base}, Filter: {search_filter}, Attrs: {self.ldap_user_attributes}"
+                f"LDAP Search - Base: {self.ldap_user_search_base}, Filter: {search_filter}, Attrs: {self.ldap_user_attributes}"  # noqa: E501
             )
 
             # Use search_ext_s with explicit parameters for better compatibility
@@ -174,7 +174,7 @@ class LDAPProvider(CredentialAdapter):
             return result[0]  # Return first match (dn, attributes)
         except ldap.OPERATIONS_ERROR as e:
             logger.error(
-                f"LDAP OPERATIONS_ERROR - This often means the bind user lacks search permissions or the search base is incorrect. Error: {e}"
+                f"LDAP OPERATIONS_ERROR - This often means the bind user lacks search permissions or the search base is incorrect. Error: {e}"  # noqa: E501
             )
             log_exception(e)
             raise AuthenticationException(

@@ -67,27 +67,27 @@ export abstract class APIService {
     );
   }
 
-  get(url: string, config = {}) {
-    return this.axiosInstance.get(url, config);
+  get<T = any>(url: string, config = {}) {
+    return this.axiosInstance.get<T>(url, config);
   }
 
-  post(url: string, data = {}, config = {}) {
-    return this.axiosInstance.post(url, data, config);
+  post<T = any>(url: string, data = {}, config = {}) {
+    return this.axiosInstance.post<T>(url, data, config);
   }
 
-  put(url: string, data = {}, config = {}) {
-    return this.axiosInstance.put(url, data, config);
+  put<T = any>(url: string, data = {}, config = {}) {
+    return this.axiosInstance.put<T>(url, data, config);
   }
 
-  patch(url: string, data = {}, config = {}) {
-    return this.axiosInstance.patch(url, data, config);
+  patch<T = any>(url: string, data = {}, config = {}) {
+    return this.axiosInstance.patch<T>(url, data, config);
   }
 
-  delete(url: string, data?: any, config = {}) {
-    return this.axiosInstance.delete(url, { data, ...config });
+  delete<T = any>(url: string, data?: any, config = {}) {
+    return this.axiosInstance.delete<T>(url, { data, ...config });
   }
 
-  request(config = {}) {
-    return this.axiosInstance(config);
+  request<T = any>(config = {}) {
+    return this.axiosInstance<T>(config);
   }
 }

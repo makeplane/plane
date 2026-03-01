@@ -37,7 +37,7 @@ export const DescriptionVersionsDropdown = observer(function DescriptionVersions
   const { getUserDetails } = useMember();
   // derived values
   const latestVersion = versions?.[0];
-  const lastUpdatedAt = latestVersion?.created_at ?? entityInformation.createdAt;
+  const lastUpdatedAt = latestVersion?.last_saved_at ?? entityInformation.createdAt;
   const lastUpdatedByUserDisplayName = latestVersion?.owned_by
     ? getUserDetails(latestVersion?.owned_by)?.display_name
     : entityInformation.createdByDisplayName;

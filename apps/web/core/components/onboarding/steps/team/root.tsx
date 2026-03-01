@@ -37,7 +37,7 @@ import { Input, Spinner } from "@plane/ui";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // components
 import { CommonOnboardingHeader } from "../common";
 

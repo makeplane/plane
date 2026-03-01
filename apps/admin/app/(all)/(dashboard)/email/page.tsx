@@ -15,7 +15,8 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
+import { Loader } from "@plane/ui";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
 // hooks
@@ -82,7 +83,7 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
             <Loader.Item width="24px" height="16px" className="rounded-full" />
           </Loader>
         ) : (
-          <ToggleSwitch value={isSMTPEnabled} onChange={handleToggle} size="sm" disabled={isSubmitting} />
+          <Switch value={isSMTPEnabled} onChange={handleToggle} disabled={isSubmitting} />
         ),
       }}
     >

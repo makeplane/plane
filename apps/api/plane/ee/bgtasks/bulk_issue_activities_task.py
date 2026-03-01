@@ -145,17 +145,20 @@ def create_cycle_issue_activity(
         new_cycle = Cycle.objects.filter(pk=requested_data.get("cycle_id")).first()
         old_cycle = Cycle.objects.filter(pk=current_instance.get("cycle_id")).first()
 
+        old_value = old_cycle.name if old_cycle else None
+        new_value = new_cycle.name if new_cycle else None
+        comment = f"updated cycle from {old_value} to {new_value}"
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=old_cycle.name if old_cycle else None,
-                new_value=new_cycle.name if new_cycle else None,
+                old_value=old_value,
+                new_value=new_value,
                 field="cycles",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated cycle from {old_cycle.name if old_cycle else 'None'} to {new_cycle.name if new_cycle else 'None'}",
+                comment=comment,
                 old_identifier=old_cycle.id if old_cycle else None,
                 new_identifier=new_cycle.id if new_cycle else None,
                 epoch=epoch,

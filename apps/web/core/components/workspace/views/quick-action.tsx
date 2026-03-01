@@ -20,7 +20,7 @@ import type { IWorkspaceView } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
-import { useViewMenuItems } from "@/components/common/quick-actions-helper";
+import { useViewMenuItems } from "@/components/common/quick-actions/helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // local imports

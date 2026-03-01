@@ -5,7 +5,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"crypto/rsa"
-	"crypto/sha1"
+	"crypto/sha256"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
@@ -121,7 +121,7 @@ func decryptWithPrivateKey(data EncryptedData, privateKey *rsa.PrivateKey) ([]by
 		return nil, err
 	}
 
-	decryptedAESKey, err := rsa.DecryptOAEP(sha1.New(), rand.Reader, privateKey, aesKey, nil)
+	decryptedAESKey, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, aesKey, nil)
 	if err != nil {
 		fmt.Printf("Error decrypting AES key: %v\n", err)
 		return nil, err

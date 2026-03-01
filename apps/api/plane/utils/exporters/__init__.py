@@ -27,7 +27,7 @@ from .schemas import (
 )
 
 
-from .extended.schemas import ExtendedIssueExportSchema as IssueExportSchema
+from .extended.schemas import ExtendedIssueExportSchema as IssueExportSchema  # noqa: F811
 
 __all__ = [
     # Core Exporter

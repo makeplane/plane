@@ -27,9 +27,12 @@ from plane.payment.views.base import BaseAPIView
 from plane.db.models import DeployBoard
 from plane.utils.exception_logger import log_exception
 from plane.space.rate_limit import AnchorBasedRateThrottle, SpaceRateThrottle
+from plane.app.permissions.workspace import WorkspaceUserPermission
 
 
 class FeatureFlagProxyEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceUserPermission]
+
     def get(self, request, slug):
         try:
             url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"

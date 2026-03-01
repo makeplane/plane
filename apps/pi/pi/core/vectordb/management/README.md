@@ -15,6 +15,15 @@ The management commands are organized into separate files for different aspects 
 2. **Index Creation**: Run the commands in `index_setup.md` to create the required indices
 3. **Update Environment**: Update your environment variables with the generated IDs
 
+## Automated Setup
+
+The application includes management commands to automate this setup:
+
+- **`init-embedding-model`**: Checks for and creates the embedding model if missing.
+- **`init-vector-indexes`**: Checks for and creates required OpenSearch indices.
+
+These are automatically run during the migration process.
+
 ## Important Notes
 
 - These commands should be run in OpenSearch Dev Tools (Kibana/OpenSearch Dashboards)

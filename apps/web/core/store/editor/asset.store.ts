@@ -15,11 +15,12 @@ import { debounce, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
-// plane types
+// plane imports
 import type { EFileAssetType, TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+// store
+import type { TAttachmentUploadStatus } from "@/store/work-items/details/attachment.store";
 // services
 import { FileService } from "@/services/file.service";
-import type { TAttachmentUploadStatus } from "../issue/issue-details/attachment.store";
 
 export interface IEditorAssetStore {
   // computed

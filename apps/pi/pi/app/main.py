@@ -49,18 +49,22 @@ def before_send(event, hint):
 
 def configure_sentry():
     """Configure Sentry error tracking if enabled"""
-    if not settings.DEBUG and settings.SENTRY_DSN and settings.SENTRY_DSN.startswith("https://"):
-        sentry_sdk.init(
-            dsn=settings.SENTRY_DSN,
-            integrations=[
-                FastApiIntegration(),
-                LoggingIntegration(level=logging.WARNING, event_level=logging.ERROR),
-            ],
-            before_send=before_send,
-            traces_sample_rate=1.0,
-            send_default_pii=True,
-            environment=settings.SENTRY_ENVIRONMENT,
-        )
+    if not settings.DEBUG and settings.SENTRY_DSN and settings.SENTRY_DSN.strip() and settings.SENTRY_DSN.startswith("https://"):
+        try:
+            sentry_sdk.init(
+                dsn=settings.SENTRY_DSN,
+                integrations=[
+                    FastApiIntegration(),
+                    LoggingIntegration(level=logging.WARNING, event_level=logging.ERROR),
+                ],
+                before_send=before_send,
+                traces_sample_rate=1.0,
+                send_default_pii=True,
+                environment=settings.SENTRY_ENVIRONMENT,
+            )
+            log.info("Sentry SDK initialized successfully")
+        except Exception as e:
+            log.warning(f"Failed to initialize Sentry SDK: {e}. Continuing without Sentry.")
 
 
 def configure_datadog():
@@ -122,13 +126,13 @@ def create_app() -> FastAPI:
     # Only protect get-answer endpoints for now
     endpoint_feature_map = {
         # Web endpoints
-        "/api/v1/chat/get-answer/": settings.feature_flags.PI_CHAT,
-        "/api/v1/chat/initialize-chat/": settings.feature_flags.PI_CHAT,
-        "/api/v1/chat/queue-answer/": settings.feature_flags.PI_CHAT,
-        # "/api/v1/transcription/transcribe": settings.feature_flags.PI_CONVERSE,
+        "/api/v1/chat/get-answer/": settings.feature_flags.AI_CHAT,
+        "/api/v1/chat/initialize-chat/": settings.feature_flags.AI_CHAT,
+        "/api/v1/chat/queue-answer/": settings.feature_flags.AI_CHAT,
+        # "/api/v1/transcription/transcribe": settings.feature_flags.AI_CONVERSE,
         # Mobile endpoints
-        "/api/v1/mobile/chat/get-answer/": settings.feature_flags.PI_CHAT,
-        # "/api/v1/mobile/transcription/transcribe": settings.feature_flags.PI_CONVERSE,
+        "/api/v1/mobile/chat/get-answer/": settings.feature_flags.AI_CHAT,
+        # "/api/v1/mobile/transcription/transcribe": settings.feature_flags.AI_CONVERSE,
     }
     app.add_middleware(FeatureFlagMiddleware, endpoint_feature_map=endpoint_feature_map)
 

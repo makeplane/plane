@@ -11,18 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Home, Settings, Briefcase, GridIcon, Layers2, FileIcon } from "lucide-react";
 import * as React from "react";
 import { ContrastIcon, EpicIcon, LayersIcon } from "@plane/propel/icons";
 import { Breadcrumbs } from "./breadcrumbs";
 import { BreadcrumbNavigationDropdown } from "./navigation-dropdown";
 
-const meta: Meta<typeof Breadcrumbs> = {
+const meta = {
   title: "UI/Breadcrumbs",
   component: Breadcrumbs,
-  tags: ["autodocs"],
-};
+} satisfies Meta<typeof Breadcrumbs>;
 
 type TBreadcrumbBlockProps = {
   href?: string;
@@ -46,7 +45,7 @@ function BreadcrumbBlock(props: TBreadcrumbBlockProps) {
 }
 
 export default meta;
-type Story = StoryObj<typeof Breadcrumbs>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {

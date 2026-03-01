@@ -41,6 +41,7 @@ from plane.authentication.adapter.error import (
 )
 from plane.authentication.rate_limit import AuthenticationLimitedThrottle
 from plane.authentication.rate_limit import RateLimitedView
+from plane.authentication.utils.session_limit import invalidate_all_user_sessions
 
 
 def generate_password_token(user):
@@ -191,6 +192,8 @@ class ResetPasswordEndpoint(RateLimitedView):
             user.set_password(password)
             user.is_password_autoset = False
             user.save()
+            # Invalidate all sessions for security
+            invalidate_all_user_sessions(user)
 
             url = urljoin(
                 base_host(request=request, is_app=True),

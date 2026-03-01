@@ -141,7 +141,7 @@ export function InstanceOIDCConfigForm(props: Props) {
 
   const OIDC_FORM_SWITCH_FIELD: TControllerSwitchFormField<OIDCConfigFormValues> = {
     name: "ENABLE_OIDC_IDP_SYNC",
-    label: "IdP",
+    label: "Refresh user attributes from IdP during sign in",
   };
 
   const OIDC_SERVICE_DETAILS: TCopyField[] = [

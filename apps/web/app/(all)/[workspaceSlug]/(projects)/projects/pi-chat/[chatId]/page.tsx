@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 // plane web imports
-import { PiChatDetail } from "@/plane-web/components/pi-chat/detail";
+import { PiChatDetail } from "@/components/pi-chat/detail";
 
 function PiChatPage() {
   return <PiChatDetail isFullScreen isProjectLevel />;

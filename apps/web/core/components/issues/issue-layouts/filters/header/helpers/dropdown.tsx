@@ -53,7 +53,7 @@ export function FiltersDropdown(props: Props) {
   });
 
   return (
-    <Popover as="div">
+    <Popover as="div" data-tour="work-item-step-3">
       {({ open }) => (
         <>
           <Popover.Button as={React.Fragment}>

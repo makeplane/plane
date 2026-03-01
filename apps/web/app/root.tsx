@@ -11,14 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import * as Sentry from "@sentry/react-router";
-import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
-import { ThemeProvider, useTheme } from "next-themes";
+import { ThemeProvider } from "next-themes";
 // plane imports
-import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
+import { SITE_DESCRIPTION, SITE_NAME, IOS_APP_ID } from "@plane/constants";
 import { cn } from "@plane/utils";
 // types
 // assets
@@ -28,12 +28,17 @@ import faviconIco from "@/app/assets/favicon/favicon.ico?url";
 import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 import ogImage from "@/app/assets/og-image.png?url";
+import clarityTrackingScript from "@/app/assets/runtime/clarity-tracking.js?url";
 import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
+import { GetMobileApp } from "@/components/mobile";
 // plane web imports
-import { TrialBanner } from "@/plane-web/components/license/banner/trial-banner";
+import { TrialBanner } from "@/components/workspace/license/banner/trial-banner";
+import { bootstrapInstance } from "@/lib/bootstrap/client-bootstrap";
+// store
+import { store } from "@/lib/store-context";
 // local
 import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";
@@ -44,6 +49,11 @@ import "@fontsource/material-symbols-rounded";
 import "@fontsource/ibm-plex-mono";
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
+
+// Inline theme initializer — runs synchronously in <head> before first paint.
+// Reads "theme" from localStorage, resolves "system" via matchMedia, then sets
+// data-theme on <html> + colorScheme + theme-color meta.
+const THEME_INIT_SCRIPT = `(function(){try{var d=document.documentElement,s=localStorage.getItem("theme")||"system",t=s==="system"?window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light":s;d.setAttribute("data-theme",t);d.style.colorScheme=t.includes("dark")?"dark":"light";var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",t.includes("dark")?"#0e0f10":"#eff0f0")}catch(e){}})()`;
 
 export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
@@ -72,7 +82,18 @@ export function Layout({ children }: { children: ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#fff" />
+        <script id="theme-init" dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {/* Critical inline CSS — sets html background before globals.css loads to prevent flash.
+            Values must match packages/tailwind-config/variables.css:
+            Light: --neutral-300 = oklch(0.9543 0.001 230.67)
+            Dark: --neutral-black = oklch(0.1689 0.0021 230.81) */}
+        <style
+          id="theme-critical-css"
+          dangerouslySetInnerHTML={{
+            __html: `html{background:oklch(0.9543 0.001 230.67)}html[data-theme*="dark"]{background:oklch(0.1689 0.0021 230.81)}`,
+          }}
+        />
+        <meta name="theme-color" content="#eff0f0" />
         {/* Meta info for PWA */}
         <meta name="application-name" content="Plane" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -80,6 +101,8 @@ export function Layout({ children }: { children: ReactNode }) {
         <meta name="apple-mobile-web-app-title" content={SITE_NAME} />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
+        {/* Meta info for ios smart banner */}
+        <meta name="apple-itunes-app" content={`app-id=${IOS_APP_ID}`} />
         <Meta />
         <Links />
       </head>
@@ -89,13 +112,11 @@ export function Layout({ children }: { children: ReactNode }) {
         {children}
         <Scripts />
         {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
-          <Script id="clarity-tracking">
-            {`(function(c,l,a,r,i,t,y){
-              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-              y=l.getElementsByTagName(r)[0];if(y){y.parentNode.insertBefore(t,y);}
-          })(window, document, "clarity", "script", "${process.env.VITE_SESSION_RECORDER_KEY}");`}
-          </Script>
+          <script
+            id="clarity-tracking"
+            src={clarityTrackingScript}
+            data-clarity-key={process.env.VITE_SESSION_RECORDER_KEY}
+          />
         )}
       </body>
     </html>
@@ -128,17 +149,51 @@ export const meta: Route.MetaFunction = () => [
   { name: "twitter:image:alt", content: "Plane - Modern project management" },
 ];
 
+const syncRouterParamsMiddleware: Route.ClientMiddlewareFunction = async ({ params }, next) => {
+  store.router.setQuery({ ...params });
+  await next();
+};
+
+export const clientMiddleware = [syncRouterParamsMiddleware];
+
+export async function clientLoader() {
+  await bootstrapInstance();
+  return null;
+}
+clientLoader.hydrate = true as const;
+
 export default function Root() {
+  const [isContentVisible, setIsContentVisible] = useState(false);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setIsContentVisible(true);
+    });
+
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
   return (
     <ThemeProvider
       attribute="data-theme"
+      storageKey="theme"
       themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]}
       defaultTheme="system"
+      enableSystem
+      enableColorScheme
+      disableTransitionOnChange
     >
       <AppProvider>
         <div
-          className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}
+          className={cn(
+            "h-screen w-full overflow-hidden bg-canvas relative flex flex-col transition-opacity duration-300 ease-out",
+            isContentVisible ? "opacity-100" : "opacity-0",
+            "desktop-app-container"
+          )}
         >
+          <GetMobileApp />
           {/* free trial banner */}
           <TrialBanner />
           <main className="w-full h-full overflow-hidden relative">
@@ -151,21 +206,10 @@ export default function Root() {
 }
 
 export function HydrateFallback() {
-  const { resolvedTheme } = useTheme();
-
-  // if we are on the server or the theme is not resolved, return an empty div
-  if (typeof window === "undefined" || resolvedTheme === undefined) return <div />;
-
   return (
-    <ThemeProvider
-      attribute="data-theme"
-      themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]}
-      defaultTheme="system"
-    >
-      <div className="relative flex bg-canvas h-screen w-full items-center justify-center">
-        <LogoSpinner />
-      </div>
-    </ThemeProvider>
+    <div className="relative flex bg-canvas h-screen w-full items-center justify-center">
+      <LogoSpinner />
+    </div>
   );
 }
 

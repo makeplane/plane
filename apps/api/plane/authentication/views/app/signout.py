@@ -32,8 +32,8 @@ class SignOutAuthEndpoint(View):
             user.last_logout_time = timezone.now()
             user.save()
 
-            # If not multi tenant, logout the user from the oidc provider
-            if not settings.IS_MULTI_TENANT:
+            # If self managed, logout the user from the oidc provider
+            if settings.IS_SELF_MANAGED:
                 # Check if the last medium of user is oidc
                 if request.user.last_login_medium == "oidc":
                     provider = OIDCOAuthProvider(request=request)

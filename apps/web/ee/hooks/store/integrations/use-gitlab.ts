@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { IGitlabStore, IGitlabEnterpriseStore } from "@/plane-web/store/integrations";
+import type { IGitlabStore, IGitlabEnterpriseStore } from "@/store/integrations";
 
 export const useGitlabIntegration = (isEnterprise: boolean = false): IGitlabStore | IGitlabEnterpriseStore => {
   const context = useContext(StoreContext);

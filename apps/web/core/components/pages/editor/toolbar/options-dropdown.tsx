@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -63,7 +63,7 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
           customContent: (
             <>
               Full width
-              <ToggleSwitch value={isFullWidth} onChange={() => {}} />
+              <Switch value={isFullWidth} onChange={() => {}} />
             </>
           ),
           className: "flex items-center justify-between gap-2",
@@ -74,7 +74,7 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
           customContent: (
             <>
               Sticky toolbar
-              <ToggleSwitch value={isStickyToolbarEnabled} onChange={() => {}} />
+              <Switch value={isStickyToolbarEnabled} onChange={() => {}} />
             </>
           ),
           className: "flex items-center justify-between gap-2",
@@ -135,10 +135,13 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
   return (
     <>
       <ExportPageModal
+        key={page.id}
         editorRef={editorRef}
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
         pageTitle={name ?? ""}
+        pageId={page.id ?? ""}
+        teamspaceId={page.team ?? undefined}
       />
       <PageActions
         extraOptions={EXTRA_MENU_OPTIONS}

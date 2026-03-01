@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./base.json",
   "compilerOptions": {
-    "lib": ["es2023"],
+    "emitDeclarationOnly": true,
     "types": ["node"]
   }
 }

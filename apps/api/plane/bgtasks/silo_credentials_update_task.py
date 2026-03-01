@@ -10,7 +10,6 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Django imports
-from time import timezone
 from plane.bgtasks.silo_data_migration_task import DatabaseMigration
 from django.db import transaction
 from django.utils import timezone

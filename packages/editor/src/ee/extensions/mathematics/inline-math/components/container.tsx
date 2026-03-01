@@ -25,7 +25,6 @@ type TInlineMathContainerProps = TMathComponentProps & {
 };
 
 export function InlineMathContainer({
-  onClick,
   children,
   variant = "content",
   className,
@@ -44,7 +43,6 @@ export function InlineMathContainer({
   return (
     <span
       className={cn(baseClasses, variantClasses[variant], className)}
-      onMouseDown={onClick}
       title={title}
       {...(isEditable && { role: "button" })}
     >

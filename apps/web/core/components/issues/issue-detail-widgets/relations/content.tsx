@@ -18,15 +18,15 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // components
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
-import type { TIssueRelationTypes } from "@/plane-web/types";
+import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
+import { useTimeLineRelationOptions } from "@/components/relations";
+import type { TIssueRelationTypes } from "@/types";
 // helper
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { RelationIssueList } from "../../relations/issue-list";
@@ -146,25 +146,24 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
       <div className="flex flex-col gap-">
         {filteredRelationsArray.map((relation) => (
           <div key={relation.relationKey}>
-            <Collapsible
-              buttonClassName="w-full"
-              title={
+            <Collapsible defaultOpen>
+              <CollapsibleTrigger className="w-full">
                 <div className={`flex items-center gap-1 px-2.5 py-1 h-9  w-full ${relation.className}`}>
                   <span>{relation.icon ? relation.icon(14) : null}</span>
                   <span className="text-13 font-medium leading-5">{relation.label}</span>
                 </div>
-              }
-              defaultOpen
-            >
-              <RelationIssueList
-                workspaceSlug={workspaceSlug}
-                issueId={issueId}
-                relationKey={relation.relationKey}
-                issueIds={relation.issueIds}
-                disabled={disabled}
-                handleIssueCrudState={handleIssueCrudState}
-                issueServiceType={issueServiceType}
-              />
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <RelationIssueList
+                  workspaceSlug={workspaceSlug}
+                  issueId={issueId}
+                  relationKey={relation.relationKey}
+                  issueIds={relation.issueIds}
+                  disabled={disabled}
+                  handleIssueCrudState={handleIssueCrudState}
+                  issueServiceType={issueServiceType}
+                />
+              </CollapsibleContent>
             </Collapsible>
           </div>
         ))}

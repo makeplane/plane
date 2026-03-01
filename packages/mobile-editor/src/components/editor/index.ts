@@ -12,3 +12,5 @@
  */
 
 export * from "./editor-wrapper";
+export * from "./editor-scroll-config";
+export * from "./lite-text-editor";

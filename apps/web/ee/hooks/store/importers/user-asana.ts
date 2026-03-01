@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { IAsanaStore } from "@/plane-web/store/importers";
+import type { IAsanaStore } from "@/store/importers";
 
 export const useAsanaImporter = (): IAsanaStore => {
   const context = useContext(StoreContext);

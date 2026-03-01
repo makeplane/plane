@@ -69,3 +69,8 @@ export interface IJiraResponseAvatarUrls {
   "16x16": string;
   "32x32": string;
 }
+
+export interface IJiraValidateJQLResponse {
+  issueCount: number;
+  executedJQL: string;
+}

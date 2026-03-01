@@ -50,7 +50,7 @@ env:
 jobs:
   branch_build_setup:
     name: Build Setup
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     outputs:
       gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
       gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
@@ -138,7 +138,7 @@ jobs:
 
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Admin Build and Push
@@ -160,7 +160,7 @@ jobs:
 
   branch_build_push_web:
     name: Build-Push Web Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Web Build and Push
@@ -182,7 +182,7 @@ jobs:
 
   branch_build_push_space:
     name: Build-Push Space Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Space Build and Push
@@ -204,7 +204,7 @@ jobs:
 
   branch_build_push_live:
     name: Build-Push Live Collaboration Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Live Build and Push
@@ -226,7 +226,7 @@ jobs:
 
   branch_build_push_api:
     name: Build-Push API Server Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Backend Build and Push
@@ -248,7 +248,7 @@ jobs:
 
   branch_build_push_proxy:
     name: Build-Push Proxy Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Proxy Build and Push
@@ -271,7 +271,7 @@ jobs:
   branch_build_push_aio:
     if: ${{ needs.branch_build_setup.outputs.aio_build == 'true' }}
     name: Build-Push AIO Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs:
       - branch_build_setup
       - branch_build_push_admin
@@ -326,7 +326,7 @@ jobs:
 
   upload_build_assets:
     name: Upload Build Assets
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs:
       - branch_build_setup
       - branch_build_push_admin
@@ -366,7 +366,7 @@ jobs:
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs:
       [
         branch_build_setup,

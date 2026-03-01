@@ -21,5 +21,6 @@ export * from "./types";
 export const PAGE_NAVIGATION_PANE_WIDTH = 294;
 export const PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM = "paneTab";
 export const PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM = "version";
+export const PAGE_NAVIGATION_PANE_HIGHLIGHT_CHANGES_QUERY_PARAM = "highlightChanges";
 
 export const PAGE_NAVIGATION_PANE_TAB_KEYS = ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => tab.key);

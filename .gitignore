@@ -9,7 +9,7 @@ node_modules
 .pnp.js
 
 # Testing
-/coverage
+coverage/
 
 # Next.js
 /.next/
@@ -73,6 +73,7 @@ pnpm-debug.log
 *.sln
 package-lock.json
 .vscode
+.zed
 
 # Sentry
 .sentryclirc
@@ -106,7 +107,6 @@ monitor/prime.key
 monitor/prime.key.pub
 monitor.db
 
-.cursorrules
 .cursor
 
 build/
@@ -118,3 +118,5 @@ temp/
 apps/pi/tests/test_results.json
 
 scripts/
+
+.agents

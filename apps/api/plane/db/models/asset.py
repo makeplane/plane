@@ -47,6 +47,7 @@ class FileAsset(BaseModel):
         USER_AVATAR = "USER_AVATAR"
         WORKSPACE_LOGO = "WORKSPACE_LOGO"
         WORKSPACE_MEMBERS_IMPORT = "WORKSPACE_MEMBERS_IMPORT"
+        WORK_ITEM_IMPORT = "WORK_ITEM_IMPORT"
         PROJECT_COVER = "PROJECT_COVER"
         DRAFT_ISSUE_ATTACHMENT = "DRAFT_ISSUE_ATTACHMENT"
         DRAFT_ISSUE_DESCRIPTION = "DRAFT_ISSUE_DESCRIPTION"
@@ -127,10 +128,10 @@ class FileAsset(BaseModel):
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/attachments/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.INITIATIVE_ATTACHMENT:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/initiatives/{self.entity_identifier}/attachments/{self.id}/"
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/initiatives/{self.entity_identifier}/attachments/{self.id}/"  # noqa: E501
 
         if self.entity_type == FileAsset.EntityTypeContext.CUSTOMER_REQUEST_ATTACHMENT:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/customer-requests/{self.entity_identifier}/attachments/{self.id}/"
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/customer-requests/{self.entity_identifier}/attachments/{self.id}/"  # noqa: E501
 
         if self.entity_type in [
             self.EntityTypeContext.ISSUE_DESCRIPTION,

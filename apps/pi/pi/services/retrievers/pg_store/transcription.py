@@ -15,16 +15,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi.app.models.transcription import Transcription
-from pi.config import settings
 
 log = logger.getChild(__name__)
-
-
-def calculate_transcription_cost(audio_duration: int) -> float:
-    """Calculate Deepgram transcription cost based on audio duration."""
-    per_hour_rate = settings.DEEPGRAM_PRICING_PER_HOUR
-    hours = audio_duration / 3600
-    return hours * per_hour_rate
 
 
 async def create_transcription(

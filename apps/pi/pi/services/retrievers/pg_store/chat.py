@@ -58,6 +58,62 @@ internal_reasoning_format_dict = {
 }
 
 
+async def replace_plot_attachment_urls(content: str, db) -> str:
+    """
+    Replace plane-attachment:// placeholders with fresh presigned S3 URLs.
+
+    Plot images use plane-attachment://<attachment_id>/<chat_id> scheme which
+    gets replaced with a fresh presigned URL on each chat history fetch.
+    This ensures plots work forever (same pattern as user attachments).
+
+    Args:
+        content: Message content that may contain plane-attachment:// URLs
+        db: Database session
+
+    Returns:
+        Content with plane-attachment:// URLs replaced with presigned S3 URLs
+    """
+    import re
+    import uuid
+
+    from sqlmodel import select
+
+    if "plane-attachment://" not in content:
+        return content
+
+    # Pattern: plane-attachment://<attachment_id>/<chat_id>
+    pattern = r"plane-attachment://([a-f0-9-]+)/([a-f0-9-]+)"
+    matches = re.findall(pattern, content)
+
+    if not matches:
+        return content
+
+    result_content = content
+    for attachment_id_str, chat_id_str in matches:
+        try:
+            attachment_uuid = uuid.UUID(attachment_id_str)
+
+            # Fetch attachment from database
+            stmt = select(MessageAttachment).where(
+                MessageAttachment.id == attachment_uuid,
+                MessageAttachment.status == "uploaded",
+            )
+            result = await db.execute(stmt)
+            attachment = result.scalar_one_or_none()
+
+            if attachment:
+                # Generate fresh presigned URL
+                presigned_url = get_presigned_url_preview(attachment)
+                if presigned_url:
+                    old_url = f"plane-attachment://{attachment_id_str}/{chat_id_str}"
+                    result_content = result_content.replace(old_url, presigned_url)
+        except Exception as e:
+            log.warning(f"Failed to replace plot attachment URL {attachment_id_str}: {e}")
+            continue
+
+    return result_content
+
+
 def parse_flow_step_content(content: str) -> Union[str, Dict[str, Any], List[Any], int, float, bool, None]:
     """
     Parse content from MessageFlowStep.
@@ -373,7 +429,11 @@ async def extract_execution_status_from_flow_steps(
 
 
 async def retrieve_chat_history(
-    chat_id: UUID4, db: AsyncSession, pi_internal: bool = False, dialogue_object: bool = False, user_id: Optional[UUID4] = None
+    chat_id: UUID4,
+    db: AsyncSession,
+    pi_internal: bool = False,
+    dialogue_object: bool = False,
+    user_id: Optional[UUID4] = None,
 ) -> dict[str, Any]:
     """Retrieves chat history for a specific chat ID with optional formatting options using database."""
     try:
@@ -506,7 +566,7 @@ async def retrieve_chat_history(
 
                         qa_pair: Dict[str, Any] = {
                             "query": user_message.content or "",
-                            "answer": assistant_message.content or "",
+                            "answer": await replace_plot_attachment_urls(assistant_message.content or "", db),
                             "reasoning": assistant_message.reasoning or "",
                             "feedback": feedback,
                             "llm": assistant_message.llm_model or "",
@@ -611,7 +671,7 @@ async def retrieve_chat_history(
                                                         sql_query_str = content_parsed.get("sql_query")
 
                                             # Build display exactly as live stream intent: success prelude + rows
-                                            prelude = "✅ Database querying execution completed"
+                                            prelude = "Database querying execution completed"
                                             rows_text = ""
                                             if results_obj is not None:
                                                 # Use bullet points formatter (async)
@@ -628,7 +688,7 @@ async def retrieve_chat_history(
                                                 cleaned_blocks.append(mask_uuids_in_text(block))
                                         except Exception:
                                             # Fail-safe: fall back to generic formatting
-                                            prelude = f"✅ {(tool_name or "Tool")} execution completed"
+                                            prelude = f"{(tool_name or "Tool")} execution completed"
                                             formatted = format_tool_message_for_display(f"{prelude}\n\nResult: {raw_str}")
                                             if formatted and formatted.strip():
                                                 cleaned_blocks.append(mask_uuids_in_text(formatted))
@@ -654,14 +714,14 @@ async def retrieve_chat_history(
 
                                         from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
 
-                                        prelude = f"✅ {tool_name_shown_to_user(tool_name or "Tool")} execution completed"
+                                        prelude = f"{tool_name_shown_to_user(tool_name or "Tool")} execution completed"
                                         formatted = f"{prelude}\n\nResult: {truncated}"
                                         cleaned_blocks.append(mask_uuids_in_text(formatted.strip()))
 
                                     else:
                                         from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
 
-                                        prelude = f"✅ {tool_name_shown_to_user(tool_name or "Tool")} execution completed"
+                                        prelude = f"{tool_name_shown_to_user(tool_name or "Tool")} execution completed"
                                         # Include query context when available (helps external readers)
                                         if isinstance(exec_data, dict) and exec_data.get("tool_query"):
                                             try:
@@ -1252,6 +1312,9 @@ async def retrieve_chat_history(
             "reasoning": "",
             "llm": chat_llm,
             "is_focus_enabled": user_chat_preference.is_focus_enabled if user_chat_preference else False,
+            "is_websearch_enabled": (
+                user_chat_preference.is_websearch_enabled if user_chat_preference else (chat.is_websearch_enabled if chat else False)
+            ),
             # New polymorphic structure
             "focus_entity_type": user_chat_preference.focus_entity_type if user_chat_preference and user_chat_preference.focus_entity_type else None,
             "focus_entity_id": str(user_chat_preference.focus_entity_id) if user_chat_preference and user_chat_preference.focus_entity_id else None,
@@ -1276,6 +1339,7 @@ async def retrieve_chat_history(
             "reasoning": "",
             "llm": "",
             "is_focus_enabled": False,
+            "is_websearch_enabled": False,
             "focus_entity_type": None,
             "focus_entity_id": None,
             "focus_project_id": None,
@@ -1327,6 +1391,7 @@ async def upsert_chat(
     workspace_slug: Optional[str] = None,
     is_project_chat: Optional[bool] = False,
     workspace_in_context: Optional[bool] = None,
+    is_websearch_enabled: Optional[bool] = None,
 ) -> Dict[str, Any]:
     """
     Creates a new chat or updates an existing one.
@@ -1350,6 +1415,8 @@ async def upsert_chat(
                 existing_chat.is_project_chat = is_project_chat
             if workspace_in_context is not None:
                 existing_chat.workspace_in_context = workspace_in_context
+            if is_websearch_enabled is not None:
+                existing_chat.is_websearch_enabled = is_websearch_enabled
             # updated_at will be handled by SQLAlchemy
             db.add(existing_chat)
             await db.commit()
@@ -1371,6 +1438,8 @@ async def upsert_chat(
                 chat_kwargs["workspace_slug"] = workspace_slug
             if workspace_in_context is not None:
                 chat_kwargs["workspace_in_context"] = workspace_in_context
+            if is_websearch_enabled is not None:
+                chat_kwargs["is_websearch_enabled"] = is_websearch_enabled
             new_chat = Chat(**chat_kwargs)
             db.add(new_chat)
             await db.commit()
@@ -1742,6 +1811,7 @@ async def upsert_user_chat_preference(
     chat_id: UUID4,
     db: AsyncSession,
     is_focus_enabled: Optional[bool] = None,
+    is_websearch_enabled: Optional[bool] = None,
     # New polymorphic parameters
     focus_entity_type: Optional[str] = None,
     focus_entity_id: Optional[UUID4] = None,
@@ -1779,6 +1849,8 @@ async def upsert_user_chat_preference(
         if existing_user_chat_preference:
             if is_focus_enabled is not None:
                 existing_user_chat_preference.is_focus_enabled = is_focus_enabled
+            if is_websearch_enabled is not None:
+                existing_user_chat_preference.is_websearch_enabled = is_websearch_enabled
             if final_focus_entity_type is not None:
                 existing_user_chat_preference.focus_entity_type = final_focus_entity_type
             if final_focus_entity_id is not None:
@@ -1800,6 +1872,8 @@ async def upsert_user_chat_preference(
             }
             if is_focus_enabled is not None:
                 new_user_chat_preference_kwargs["is_focus_enabled"] = is_focus_enabled
+            if is_websearch_enabled is not None:
+                new_user_chat_preference_kwargs["is_websearch_enabled"] = is_websearch_enabled
             if final_focus_entity_type is not None:
                 new_user_chat_preference_kwargs["focus_entity_type"] = final_focus_entity_type
             if final_focus_entity_id is not None:

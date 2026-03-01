@@ -16,7 +16,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane internal packages
 import { setPromiseToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
+import { Loader } from "@plane/ui";
 // assets
 import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
 // components
@@ -79,12 +80,11 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
           description="Allow members to login or sign up to plane with their Gitea accounts."
           icon={<img src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
           config={
-            <ToggleSwitch
+            <Switch
               value={isGiteaEnabled}
               onChange={() => {
                 updateConfig("IS_GITEA_ENABLED", isGiteaEnabled ? "0" : "1");
               }}
-              size="sm"
               disabled={isSubmitting || !formattedConfig}
             />
           }

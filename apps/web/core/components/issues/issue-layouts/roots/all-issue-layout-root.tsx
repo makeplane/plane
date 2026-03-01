@@ -11,20 +11,16 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useCallback, useMemo } from "react";
+import { lazy, Suspense, useMemo } from "react";
+import type { ComponentType, LazyExoticComponent } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import type { EIssueLayoutTypes } from "@plane/types";
-import { EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
-// assets
-import emptyView from "@/app/assets/empty-state/view.svg?url";
+import { EIssueLayoutTypes, EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
 // components
-import { IssuePeekOverview } from "@/components/issues/peek-overview";
-import { WorkspaceActiveLayout } from "@/components/views/helper";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
@@ -34,14 +30,72 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
+// Lazy load peek overview
+const WorkItemPeekOverview = lazy(() =>
+  import("@/components/issues/peek-overview/root").then((module) => ({ default: module.IssuePeekOverview }))
+);
+
+// Lazy load workspace spreadsheet root
+const WorkspaceSpreadsheetRoot = lazy(() =>
+  import("@/components/issues/issue-layouts/table/roots/workspace-root").then((module) => ({
+    default: module.WorkspaceSpreadsheetRoot,
+  }))
+);
+const WorkspaceTimelineRoot = lazy(() =>
+  import("@/components/issues/issue-layouts/timeline/workspace-timeline/root").then((module) => ({
+    default: module.WorkspaceTimelineRoot,
+  }))
+);
+const WorkspaceViewBoardLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/board/roots/workspace-view-root").then((module) => ({
+    default: module.WorkspaceViewBoardLayout,
+  }))
+);
+const WorkspaceCalendarLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/calendar/roots/workspace-view-root").then((module) => ({
+    default: module.WorkspaceCalendarLayout,
+  }))
+);
+
+type TWorkspaceLayoutProps = {
+  activeLayout: EIssueLayoutTypes | undefined;
+  isDefaultView: boolean;
+  workspaceSlug: string;
+  globalViewId: string;
+  routeFilters: {
+    [key: string]: string;
+  };
+  globalViewsLoading: boolean;
+  filtersLoading: boolean;
+};
+
+// Layout components map
+const WORKSPACE_WORK_ITEM_LAYOUTS: Partial<
+  Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<TWorkspaceLayoutProps>>>
+> = {
+  [EIssueLayoutTypes.GANTT]: WorkspaceTimelineRoot,
+  [EIssueLayoutTypes.KANBAN]: WorkspaceViewBoardLayout,
+  [EIssueLayoutTypes.CALENDAR]: WorkspaceCalendarLayout,
+  [EIssueLayoutTypes.SPREADSHEET]: WorkspaceSpreadsheetRoot,
+};
+
+function WorkspaceActiveLayout(props: TWorkspaceLayoutProps) {
+  const { activeLayout = EIssueLayoutTypes.SPREADSHEET } = props;
+  const WorkspaceActiveLayoutComponent = WORKSPACE_WORK_ITEM_LAYOUTS[activeLayout];
+  if (!WorkspaceActiveLayoutComponent) return null;
+  return (
+    <Suspense>
+      <WorkspaceActiveLayoutComponent {...props} />
+    </Suspense>
+  );
+}
+
 type Props = {
   isDefaultView: boolean;
-  isLoading?: boolean;
-  toggleLoading: (value: boolean) => void;
 };
 
 export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Props) {
-  const { isDefaultView, isLoading = false, toggleLoading } = props;
+  const { isDefaultView } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug, globalViewId: routerGlobalViewId } = useParams();
@@ -52,7 +106,7 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   // store hooks
   const {
     issuesFilter: { filters, fetchFilters, updateFilterExpression },
-    issues: { clear, groupedIssueIds, fetchIssues, fetchNextIssues },
+    issues: { clear },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { fetchAllGlobalViews, getViewDetailsById } = useGlobalView();
   // Derived values
@@ -85,11 +139,6 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
     routeFilters[key] = value;
   });
 
-  // Fetch next pages callback
-  const fetchNextPages = useCallback(() => {
-    if (workspaceSlug && globalViewId) fetchNextIssues(workspaceSlug, globalViewId);
-  }, [fetchNextIssues, workspaceSlug, globalViewId]);
-
   // Fetch global views
   const { isLoading: globalViewsLoading } = useSWR(
     workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS_${workspaceSlug}` : null,
@@ -101,26 +150,19 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  // Fetch issues
-  const { isLoading: issuesLoading } = useSWR(
+  const { isLoading: filtersLoading } = useSWR(
     workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
     async () => {
       if (workspaceSlug && globalViewId) {
         clear();
-        toggleLoading(true);
         await fetchFilters(workspaceSlug, globalViewId);
-        await fetchIssues(workspaceSlug, globalViewId, groupedIssueIds ? "mutation" : "init-loader", {
-          canGroup: false,
-          perPageCount: 100,
-        });
-        toggleLoading(false);
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // Empty state
-  if (!isLoading && !globalViewsLoading && !issuesLoading && !viewDetails && !isDefaultView) {
+  if (!globalViewsLoading && !viewDetails && !isDefaultView) {
     return (
       <EmptyStateDetailed
         title="View does not exist"
@@ -156,29 +198,21 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
         {({ filter: globalWorkItemsFilter }) => (
           <div className="h-full overflow-hidden bg-surface-1">
             <div className="flex h-full w-full flex-col border-b border-strong">
-              {globalWorkItemsFilter && (
-                <WorkItemFiltersRow
-                  filter={globalWorkItemsFilter}
-                  trackerElements={{
-                    saveView: GLOBAL_VIEW_TRACKER_ELEMENTS.HEADER_SAVE_VIEW_BUTTON,
-                  }}
-                />
-              )}
+              {globalWorkItemsFilter && <WorkItemFiltersRow filter={globalWorkItemsFilter} />}
               <WorkspaceActiveLayout
                 activeLayout={activeLayout}
                 isDefaultView={isDefaultView}
-                isLoading={isLoading}
-                toggleLoading={toggleLoading}
                 workspaceSlug={workspaceSlug}
                 globalViewId={globalViewId}
                 routeFilters={routeFilters}
-                fetchNextPages={fetchNextPages}
                 globalViewsLoading={globalViewsLoading}
-                issuesLoading={issuesLoading}
+                filtersLoading={filtersLoading}
               />
             </div>
             {/* peek overview */}
-            <IssuePeekOverview />
+            <Suspense>
+              <WorkItemPeekOverview />
+            </Suspense>
           </div>
         )}
       </WorkspaceLevelWorkItemFiltersHOC>

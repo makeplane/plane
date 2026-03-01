@@ -62,7 +62,7 @@ def is_trial_allowed(workspace_license):
     The free trial is only allowed if the workspace has not activated
     the free trial and the workspace does not have a subscription
     """
-    if settings.IS_MULTI_TENANT and not workspace_license.has_activated_free_trial:
+    if not settings.IS_SELF_MANAGED and not workspace_license.has_activated_free_trial:
         return True
     return False
 
@@ -138,7 +138,7 @@ def show_trial_banner(workspace_license):
 
 def is_trial_ended(workspace_license):
     """Check if the trial has ended"""
-    if settings.IS_MULTI_TENANT and workspace_license.plan == WorkspaceLicense.PlanChoice.FREE:
+    if not settings.IS_SELF_MANAGED and workspace_license.plan == WorkspaceLicense.PlanChoice.FREE:
         # If the workspace is on free product then check if the trial is allowed
         return not is_trial_allowed(workspace_license)
     return False
@@ -270,7 +270,7 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_activated_free_trial": workspace_license.has_activated_free_trial,
                 "has_added_payment_method": workspace_license.has_added_payment_method,
                 "subscription": workspace_license.subscription,
-                "is_self_managed": (not settings.IS_MULTI_TENANT),
+                "is_self_managed": settings.IS_SELF_MANAGED,
                 "is_on_trial": is_on_trial(workspace_license),
                 "is_trial_allowed": is_trial_allowed(workspace_license),
                 "remaining_trial_days": trial_remaining_days(workspace_license),
@@ -299,7 +299,7 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_activated_free_trial": workspace_license.has_activated_free_trial,
                 "has_added_payment_method": workspace_license.has_added_payment_method,
                 "subscription": workspace_license.subscription,
-                "is_self_managed": (not settings.IS_MULTI_TENANT),
+                "is_self_managed": settings.IS_SELF_MANAGED,
                 "is_on_trial": is_on_trial(workspace_license),
                 "is_trial_allowed": is_trial_allowed(workspace_license),
                 "remaining_trial_days": trial_remaining_days(workspace_license),
@@ -360,7 +360,7 @@ def resync_workspace_license(workspace_slug, force=False):
             "has_activated_free_trial": workspace_license.has_activated_free_trial,
             "has_added_payment_method": workspace_license.has_added_payment_method,
             "subscription": workspace_license.subscription,
-            "is_self_managed": (not settings.IS_MULTI_TENANT),
+            "is_self_managed": settings.IS_SELF_MANAGED,
             "is_on_trial": is_on_trial(workspace_license),
             "is_trial_allowed": is_trial_allowed(workspace_license),
             "remaining_trial_days": trial_remaining_days(workspace_license),

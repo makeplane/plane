@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { EmojiRoot } from "../emoji-icon-picker/emoji/emoji";
 import { emojiToString } from "../emoji-icon-picker/helper";
 import { Popover } from "../popover";
@@ -52,6 +52,14 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
     align = "start",
   } = props;
 
+  // local search state
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // clear search when picker closes
+  useEffect(() => {
+    if (!isOpen) setSearchQuery("");
+  }, [isOpen]);
+
   // side and align calculations
   const { finalSide, finalAlign } = useMemo(() => {
     if (placement) {
@@ -72,10 +80,10 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
 
   return (
     <Popover open={isOpen} onOpenChange={handleToggle}>
-      <Popover.Button className={cn("outline-none", buttonClassName)} disabled={disabled}>
+      <Popover.Trigger className={cn("outline-none", buttonClassName)} disabled={disabled}>
         {label}
-      </Popover.Button>
-      <Popover.Panel
+      </Popover.Trigger>
+      <Popover.Content
         positionerClassName="z-50"
         className={cn("w-80 bg-surface-1 rounded-md border-[0.5px] border-strong overflow-hidden", dropdownClassName)}
         side={finalSide}
@@ -88,9 +96,11 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
             onChange={handleEmojiChange}
             searchPlaceholder={searchPlaceholder}
             searchDisabled={searchDisabled}
+            searchQuery={searchQuery}
+            onSearchQueryChange={setSearchQuery}
           />
         </div>
-      </Popover.Panel>
+      </Popover.Content>
     </Popover>
   );
 }

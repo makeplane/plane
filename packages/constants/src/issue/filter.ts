@@ -19,21 +19,12 @@ import type {
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import type { TIssueFilterPriorityObject } from "./common";
-import { ISSUE_DISPLAY_PROPERTIES_KEYS, SUB_ISSUES_DISPLAY_PROPERTIES_KEYS } from "./common";
-
 import {
-  ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
-  ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
-  shouldRenderActivity,
-  ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS,
-  EE_ACTIVITY_FILTER_TYPE_OPTIONS,
-  EE_DEFAULT_ACTIVITY_FILTERS,
-} from "./filter-extended";
-import type { TActivityFiltersEE } from "./filter-extended";
+  EPICS_DISPLAY_PROPERTIES_KEYS,
+  ISSUE_DISPLAY_PROPERTIES_KEYS,
+  SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
+} from "./common";
 import type { TIssueLayout } from "./layout";
-
-// EE : Extended filters
 
 export type TIssueFilterKeys = "priority" | "state" | "labels";
 
@@ -49,6 +40,7 @@ export enum EServerGroupByToFilterOptions {
   "project_id" = "project",
   "created_by" = "created_by",
   "milestone_id" = "milestone",
+  "parent_id" = "epic",
 }
 
 export enum EIssueFilterType {
@@ -131,7 +123,7 @@ export type TIssueFiltersToDisplayByPageType = {
 
 export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   profile_issues: {
-    filters: ["priority", "state_group", "label_id", "start_date", "target_date", ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS],
+    filters: ["priority", "state_group", "label_id", "start_date", "target_date", "name", "milestone_id"],
     layoutOptions: {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
@@ -172,7 +164,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "start_date",
       "target_date",
       "type_id",
-      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
+      "name",
+      "milestone_id",
     ],
     layoutOptions: {
       list: {
@@ -200,7 +193,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "project_id",
       "start_date",
       "target_date",
-      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
+      "name",
+      "milestone_id",
     ],
     layoutOptions: {
       spreadsheet: {
@@ -224,7 +218,38 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
           values: [],
         },
       },
-      ...ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
+      gantt_chart: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["sub_issue"],
+        },
+      },
+      kanban: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          group_by: ["state_detail.group", "priority", "assignees", "labels", "created_by", "project"],
+          sub_group_by: ["state_detail.group", "priority", "assignees", "labels", "created_by", "project", null],
+        },
+        extra_options: {
+          access: true,
+          values: ["sub_issue", "show_empty_groups"],
+        },
+      },
+      calendar: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: [],
+        },
+      },
     },
   },
   issues: {
@@ -241,7 +266,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "start_date",
       "target_date",
       "type_id",
-      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
+      "name",
+      "milestone_id",
     ],
     layoutOptions: {
       list: {
@@ -255,7 +281,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
             "labels",
             "assignees",
             "created_by",
-            ...ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS,
+            "milestone",
+            "epic",
             null,
           ],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
@@ -269,17 +296,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: [
-            "state",
-            "priority",
-            "cycle",
-            "module",
-            "labels",
-            "assignees",
-            "created_by",
-            ...ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS,
-          ],
-          sub_group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
+          group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", "milestone", "epic"],
+          sub_group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", "epic", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],
         },
@@ -322,6 +340,254 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       },
     },
   },
+  team_issues: {
+    filters: [
+      "priority",
+      "state_group",
+      "assignee_id",
+      "mention_id",
+      "created_by_id",
+      "start_date",
+      "target_date",
+      "team_project_id",
+      "name",
+      "milestone_id",
+    ],
+    layoutOptions: {
+      list: {
+        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          group_by: ["state_detail.group", "priority", "team_project", "assignees", null],
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["show_empty_groups", "sub_issue"],
+        },
+      },
+      kanban: {
+        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          group_by: ["state_detail.group", "priority", "team_project", "assignees", null],
+          sub_group_by: ["state_detail.group", "priority", "team_project", "assignees", null],
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["show_empty_groups", "sub_issue"],
+        },
+      },
+      calendar: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["sub_issue"],
+        },
+      },
+      spreadsheet: {
+        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["sub_issue"],
+        },
+      },
+      gantt_chart: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["sub_issue"],
+        },
+      },
+    },
+  },
+  // TODO: Check if this is even required now? Because we can uses project issues properties for this case.
+  team_project_work_items: {
+    filters: [
+      "priority",
+      "state_group",
+      "assignee_id",
+      "mention_id",
+      "created_by_id",
+      "start_date",
+      "target_date",
+      "name",
+      "milestone_id",
+    ],
+    layoutOptions: {
+      list: {
+        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          group_by: ["state_detail.group", "priority", "assignees", null],
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["show_empty_groups", "sub_issue"],
+        },
+      },
+      kanban: {
+        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          group_by: ["state_detail.group", "priority", "assignees", null],
+          sub_group_by: ["state_detail.group", "priority", "assignees", null],
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["show_empty_groups", "sub_issue"],
+        },
+      },
+      calendar: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["sub_issue"],
+        },
+      },
+      spreadsheet: {
+        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["sub_issue"],
+        },
+      },
+      gantt_chart: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["sub_issue"],
+        },
+      },
+    },
+  },
+  epics: {
+    filters: [
+      "priority",
+      "state_group",
+      "state_id",
+      "assignee_id",
+      "mention_id",
+      "created_by_id",
+      "label_id",
+      "start_date",
+      "target_date",
+      "name",
+      "milestone_id",
+    ],
+    layoutOptions: {
+      list: {
+        display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          group_by: ["state", "priority", "labels", "assignees", "created_by", "milestone", null],
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["show_empty_groups"],
+        },
+      },
+      kanban: {
+        display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          group_by: ["state", "priority", "labels", "assignees", "created_by", "milestone"],
+          sub_group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["show_empty_groups"],
+        },
+      },
+      calendar: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: [],
+        },
+      },
+      spreadsheet: {
+        display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: [],
+        },
+      },
+      gantt_chart: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: [],
+        },
+      },
+    },
+  },
+  archived_epics: {
+    filters: [
+      "priority",
+      "state_group",
+      "state_id",
+      "assignee_id",
+      "created_by_id",
+      "label_id",
+      "start_date",
+      "target_date",
+      "name",
+      "milestone_id",
+    ],
+    layoutOptions: {
+      list: {
+        display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["show_empty_groups"],
+        },
+      },
+    },
+  },
   sub_work_items: {
     filters: ["priority", "state_id", "assignee_id", "start_date", "target_date", "type_id"],
     layoutOptions: {
@@ -338,12 +604,28 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       },
     },
   },
-  ...ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE, // EE: Additional issue display filters by page.
+  initiatives: {
+    filters: ["priority", "state_group", "project_id", "type_id", "assignee_id", "start_date", "target_date"],
+    layoutOptions: {
+      list: {
+        display_properties: SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          order_by: ["-created_at", "-updated_at", "start_date", "-priority"],
+          group_by: ["state_detail.group", "priority", "assignees", null],
+        },
+        extra_options: {
+          access: true,
+          values: ["sub_issue"],
+        },
+      },
+    },
+  },
 };
 
 export const ISSUE_STORE_TO_FILTERS_MAP: Partial<Record<EIssuesStoreType, TFilterPropertiesByPageType>> = {
   [EIssuesStoreType.PROJECT]: ISSUE_DISPLAY_FILTERS_BY_PAGE.issues,
   [EIssuesStoreType.EPIC]: ISSUE_DISPLAY_FILTERS_BY_PAGE.epics,
+  [EIssuesStoreType.ARCHIVED_EPIC]: ISSUE_DISPLAY_FILTERS_BY_PAGE.archived_epics,
 };
 
 export const SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE: (keyof IIssueFilterOptions)[] = [
@@ -361,9 +643,11 @@ export enum EActivityFilterType {
   STATE = "STATE",
   ASSIGNEE = "ASSIGNEE",
   DEFAULT = "DEFAULT",
+  WORKLOG = "WORKLOG",
+  ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY = "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY",
 }
 
-export type TActivityFilters = EActivityFilterType | TActivityFiltersEE;
+export type TActivityFilters = EActivityFilterType;
 
 export type TActivityFilterOptionsKey = Exclude<TActivityFilters, EActivityFilterType.DEFAULT>;
 
@@ -380,7 +664,12 @@ export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilterOptionsKey, { l
   [EActivityFilterType.ASSIGNEE]: {
     labelTranslationKey: "common.assignee",
   },
-  ...EE_ACTIVITY_FILTER_TYPE_OPTIONS, // EE: Extended activity filters
+  [EActivityFilterType.WORKLOG]: {
+    labelTranslationKey: "common.worklogs",
+  },
+  [EActivityFilterType.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY]: {
+    labelTranslationKey: "common.additional_updates",
+  },
 };
 
 export type TActivityFilterOption = {
@@ -395,8 +684,12 @@ export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.COMMENT,
   EActivityFilterType.STATE,
   EActivityFilterType.ASSIGNEE,
-  ...EE_DEFAULT_ACTIVITY_FILTERS, // EE: Extended default activity filters
+  EActivityFilterType.WORKLOG,
+  EActivityFilterType.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY,
 ];
+
+export const shouldRenderActivity = (activity: TIssueActivityComment, filter: TActivityFilters): boolean =>
+  activity.activity_type === filter;
 
 export const filterActivityOnSelectedFilters = (
   activity: TIssueActivityComment[],
@@ -414,4 +707,14 @@ export const BASE_ACTIVITY_FILTER_TYPES = [
   EActivityFilterType.STATE,
   EActivityFilterType.ASSIGNEE,
   EActivityFilterType.DEFAULT,
+];
+
+export const SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_INITIATIVES_PAGE: (keyof IIssueFilterOptions)[] = [
+  "priority",
+  "state_group",
+  "project",
+  "issue_type",
+  "assignees",
+  "start_date",
+  "target_date",
 ];

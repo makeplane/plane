@@ -19,6 +19,7 @@ from typing import Dict
 from typing import List
 from typing import Tuple
 from typing import Union
+from typing import cast
 
 from langchain_core.messages import BaseMessage
 from langchain_core.messages import HumanMessage
@@ -31,8 +32,10 @@ from pi.services.chat.helpers import ask_mode_helpers
 from pi.services.chat.helpers.flow_tracking import check_and_build_clarification
 from pi.services.chat.helpers.flow_tracking import execute_tool_step
 from pi.services.chat.helpers.flow_tracking import orchestrate_llm_step
+from pi.services.chat.helpers.flow_tracking import persist_precomputed_ai_message
 from pi.services.chat.helpers.flow_tracking import store_and_format_clarification
-from pi.services.chat.helpers.tool_utils import format_tool_message_for_display
+from pi.services.chat.helpers.tool_utils import WordBatcher
+from pi.services.chat.helpers.tool_utils import extract_text_from_content
 from pi.services.chat.helpers.tool_utils import format_tool_query_for_display
 from pi.services.chat.helpers.tool_utils import stream_content_in_chunks
 from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
@@ -115,6 +118,8 @@ async def execute_tools_for_ask_mode(
     db,
     parsed_query,
     reasoning_container=None,
+    websearch_enabled: bool = False,
+    web_search_context: str | None = None,
 ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """Execute tools for ask mode"""
     log.info(f"ChatID: {chat_id} - Executing tools for ask mode with enhanced_conversation_history: {enhanced_conversation_history}")
@@ -145,6 +150,7 @@ async def execute_tools_for_ask_mode(
             conversation_history,
             query_id,
             workspace_in_context=workspace_in_context,
+            websearch_enabled=websearch_enabled,
             chatbot_instance=chatbot_instance,
         )
 
@@ -174,6 +180,7 @@ async def execute_tools_for_ask_mode(
             user_id=user_id,
             user_meta=user_meta,
             workspace_in_context=workspace_in_context,
+            web_search_context=web_search_context,
         )
 
         # Bind tools to the LLM - explicitly set tool_choice to 'auto' to ensure tool use is enabled
@@ -195,6 +202,182 @@ async def execute_tools_for_ask_mode(
         current_step = step_order
         messages: List[BaseMessage] = []  # type: ignore[no-redef]
         responses: List[Tuple[str, str, Union[str, Dict[str, Any]]]] = []
+        # Delimiter-based routing: all reasoning flows until ππANSWERππ, then final answer
+        final_answer_streamed = False
+        final_response_marker_emitted = False
+
+        async def _orchestrate_llm_step_with_ui_ticks(
+            *,
+            include_context: bool,
+            result_holder: Dict[str, Any],
+            stream_final_answer: bool = False,
+        ) -> AsyncIterator[Union[Dict[str, Any], str]]:
+            """
+            Ask-mode streaming using the shared smart buffering utility.
+            Maps StreamEvent events to Ask Mode-specific behavior including tool announcements.
+            """
+            nonlocal current_step
+            nonlocal final_answer_streamed
+            nonlocal final_response_marker_emitted
+
+            from pi.services.chat.helpers.tool_utils import stream_llm_with_delimiter
+
+            # Emit an immediate "planning" tick so UI updates even before first model event arrives
+            stage = "planner_tool_selection_calling"
+            tick = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+            if reasoning_container is not None:
+                reasoning_container["content"] += tick["header"] + tick["content"]
+            yield tick
+
+            announced_tools: set[str] = set()
+            answer_streaming_started = False
+            streamed_reasoning_chunks = False
+            ai_message: Any = None
+
+            # Word-level batcher to reduce browser SSE event overhead
+            _batcher = WordBatcher(words_per_batch=15)
+
+            # Word-level batcher to reduce browser SSE event overhead
+            _batcher = WordBatcher(words_per_batch=15)
+
+            async for event in stream_llm_with_delimiter(llm_with_tools, messages, stream_final_answer=stream_final_answer):
+                event_type = event.get("type", "")
+
+                if event_type == "reasoning_chunk":
+                    content = event.get("content", "")
+                    if content:
+                        streamed_reasoning_chunks = True
+                        if reasoning_container is not None:
+                            reasoning_container["content"] += content
+                        yield {"chunk_type": "reasoning", "header": "", "content": content}
+
+                elif event_type == "final_answer_chunk":
+                    content = event.get("content", "")
+                    if content:
+                        # Emit final response marker on first chunk
+                        if not answer_streaming_started:
+                            answer_streaming_started = True
+                            final_answer_streamed = True
+                            if not final_response_marker_emitted:
+                                final_response_marker_emitted = True
+                                yield {
+                                    "chunk_type": "reasoning",
+                                    "header": "Generating final response...\n\n",
+                                    "content": "",
+                                    "stage": "final_response",
+                                }
+                        batched = _batcher.add(content)
+                        if batched:
+                            yield batched
+
+                elif event_type == "tool_detected":
+                    # Ask mode announces individual tools during streaming
+                    tool_name = event.get("tool_name", "")
+                    if tool_name and tool_name not in announced_tools:
+                        announced_tools.add(tool_name)
+                        user_friendly = tool_name_shown_to_user(tool_name)
+                        stage = "planner_tool_selection_final"
+                        tick = reasoning_dict_maker(stage=stage, tool_name=user_friendly, tool_query="", content="")
+                        if reasoning_container is not None:
+                            reasoning_container["content"] += tick["header"] + tick["content"]
+                        yield tick
+
+                elif event_type == "complete":
+                    ai_message = event.get("accumulated_message")
+
+                    # FALLBACK: If we streamed reasoning but never got a final_answer_chunk,
+                    # the LLM didn't output the delimiter. Emit the final_response marker
+                    # to close the reasoning panel, and re-emit the content as the answer.
+                    # IMPORTANT: Only apply fallback for TRUE final responses (no tool_calls).
+                    # Intermediate responses (with tool_calls) should NOT trigger this fallback.
+                    has_tool_calls = ai_message and hasattr(ai_message, "tool_calls") and bool(getattr(ai_message, "tool_calls", None))
+
+                    if (
+                        streamed_reasoning_chunks
+                        and not answer_streaming_started
+                        and stream_final_answer
+                        and not has_tool_calls  # Only for final responses without tool calls
+                    ):
+                        log.warning(f"ChatID: {chat_id} - LLM did not output delimiter; falling back to treat reasoning as answer")
+                        # Emit final_response stage marker to close reasoning panel
+                        if not final_response_marker_emitted:
+                            final_response_marker_emitted = True
+                            yield {
+                                "chunk_type": "reasoning",
+                                "header": "",
+                                "content": "",
+                                "stage": "final_response",
+                            }
+
+                        # Extract content from the accumulated message and emit as answer
+                        if ai_message and hasattr(ai_message, "content") and ai_message.content:
+                            content = str(ai_message.content).strip()
+                            # Handle case where delimiter exists but answer is empty (fallback to reasoning)
+                            ANSWER_DELIMITER = "ππANSWERππ"
+                            if ANSWER_DELIMITER in content:
+                                parts = content.split(ANSWER_DELIMITER, 1)
+                                answer_part = parts[-1].strip()
+                                if answer_part:
+                                    content = answer_part
+                                else:
+                                    content = parts[0].strip()
+
+                            if content:
+                                answer_streaming_started = True
+                                final_answer_streamed = True
+                                # Batch the fallback content through word batcher
+                                # (could be large accumulated text)
+                                batched = _batcher.add(content)
+
+                                if batched:
+                                    yield batched
+
+            # Flush any remaining word batch
+            remaining_batch = _batcher.flush()
+            if remaining_batch:
+                yield remaining_batch
+
+            # If streaming produced no message (unexpected), fail fast
+            if ai_message is None:
+                raise RuntimeError("astream_events returned no chunks; cannot build AI message")
+
+            # Some providers don't populate `tool_call_chunks` during streaming.
+            # Emit tool-selection ticks based on the final message as a fallback.
+            try:
+                tool_calls = getattr(ai_message, "tool_calls", None)
+                if isinstance(tool_calls, list) and tool_calls:
+                    for tc in tool_calls:
+                        if not isinstance(tc, dict):
+                            continue
+                        name = str(tc.get("name") or "").strip()
+                        if not name or name in announced_tools:
+                            continue
+                        announced_tools.add(name)
+                        user_friendly = tool_name_shown_to_user(name)
+                        stage = "planner_tool_selection_final"
+                        tick = reasoning_dict_maker(stage=stage, tool_name=user_friendly, tool_query="", content="")
+                        if reasoning_container is not None:
+                            reasoning_container["content"] += tick["header"] + tick["content"]
+                        yield tick
+            except Exception:
+                pass
+
+            # Persist tool selection + reasoning steps based on the final message
+            ai_message, current_step = await persist_precomputed_ai_message(
+                ai_message=ai_message,
+                query_id=query_id,
+                chat_id=chat_id,
+                db=db,
+                current_step=current_step,
+                include_context=include_context,
+                enhanced_conversation_history=enhanced_conversation_history if include_context else None,
+                enhanced_query_for_processing=enhanced_query_for_processing if include_context else None,
+                tools=tools,
+            )
+
+            result_holder["ai_message"] = ai_message
+            result_holder["current_step"] = current_step
+            result_holder["streamed_reasoning_chunks"] = streamed_reasoning_chunks
 
         # CRITICAL FOR CACHING: Separate static (cacheable) from dynamic (conversation history) content
         # Static content (system prompt + context_block) should remain constant for cache hits
@@ -226,18 +409,31 @@ async def execute_tools_for_ask_mode(
         yield reasoning_chunk_dict
 
         # Initial invocation of LLM with tools (decorator persists selection/context/reasoning)
-        ai_message, current_step = await orchestrate_llm_step(
-            llm_with_tools,
-            messages,
-            query_id=query_id,
-            chat_id=chat_id,
-            db=db,
-            current_step=current_step,
-            include_context=True,
-            enhanced_conversation_history=enhanced_conversation_history,
-            enhanced_query_for_processing=enhanced_query_for_processing,
-            tools=tools,
-        )
+        # Stream tool-selection ticks during the LLM call (UI-visible stage tracking)
+        try:
+            stream_result: Dict[str, Any] = {}
+            async for tick in _orchestrate_llm_step_with_ui_ticks(include_context=True, result_holder=stream_result, stream_final_answer=True):
+                yield tick
+            ai_message = stream_result.get("ai_message")
+            current_step = int(stream_result.get("current_step", current_step))
+        except Exception:
+            # Fallback to non-streaming orchestration on unexpected streaming errors
+            ai_message, current_step = await orchestrate_llm_step(
+                llm_with_tools,
+                messages,
+                query_id=query_id,
+                chat_id=chat_id,
+                db=db,
+                current_step=current_step,
+                include_context=True,
+                enhanced_conversation_history=enhanced_conversation_history,
+                enhanced_query_for_processing=enhanced_query_for_processing,
+                tools=tools,
+            )
+
+        # Defensive typing guard: streaming helper should always produce a message (falls back to `ainvoke`),
+        # and the except-path above falls back to `orchestrate_llm_step`.
+        assert ai_message is not None
 
         # Log LLM's initial response for debugging
         log.info(f"ChatID: {chat_id} - Has Tool Calls: {hasattr(ai_message, "tool_calls") and bool(getattr(ai_message, "tool_calls", None))}")
@@ -245,15 +441,19 @@ async def execute_tools_for_ask_mode(
         # Check if LLM made any tool calls
         if not ai_message.tool_calls:
             log.info(f"ChatID: {chat_id} - No tool calls found in the initial LLM response.")
-            stage = "final_response"
-            reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
-            if reasoning_container is not None:
-                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
-            yield reasoning_chunk_dict
 
-            if ai_message.content:
+            if not final_response_marker_emitted:
+                stage = "final_response"
+                reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+                if reasoning_container is not None:
+                    reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                yield reasoning_chunk_dict
+
+            if ai_message.content and not final_answer_streamed:
                 # Stream the final answer in chunks to simulate streaming
-                async for chunk in stream_content_in_chunks(str(ai_message.content)):
+                # Only if smart streaming didn't already handle it (which splits out the delimiter)
+                final_text = extract_text_from_content(ai_message.content)
+                async for chunk in stream_content_in_chunks(final_text):
                     yield chunk
             return
 
@@ -261,21 +461,34 @@ async def execute_tools_for_ask_mode(
         # Only stream as reasoning if there ARE tool calls (otherwise it's the final answer)
         try:
             if hasattr(ai_message, "content") and ai_message.content:
-                reasoning_content = str(ai_message.content).strip()
+                reasoning_content = extract_text_from_content(ai_message.content).strip()
                 if reasoning_content:
-                    stage = "planner_tool_selection"
-                    reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content=reasoning_content)
-                    if reasoning_container is not None:
-                        reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
-                    yield reasoning_chunk_dict
+                    # If we already streamed content deltas during astream_events, don't emit the full block again
+                    # (would duplicate text in the UI).
+                    if not bool(stream_result.get("streamed_reasoning_chunks")):
+                        stage = "planner_tool_selection"
+                        reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content=reasoning_content)
+                        if reasoning_container is not None:
+                            # Persist the same reasoning content shown in UI so it is available in history.
+                            reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                        content_preview = str(reasoning_chunk_dict.get("content", ""))[:1500]
+                        log.info(f"ChatID: {chat_id} - LLM tool-selection content (final aggregated): {content_preview}")
+                        yield reasoning_chunk_dict
         except Exception:
             pass
 
         # Add the AIMessage with tool_calls to conversation BEFORE processing tool calls
-        messages.append(ai_message)
+        messages.append(cast(BaseMessage, ai_message))
 
         # Process tool calls iteratively; persist steps via decorators
-        while ai_message.tool_calls:
+        # Add safety limit to prevent infinite loops
+        MAX_TOOL_ITERATIONS = 15  # Lower than build mode (25) since ask mode is simpler
+        iteration_count = 0
+
+        while ai_message.tool_calls and iteration_count < MAX_TOOL_ITERATIONS:
+            iteration_count += 1
+            log.debug(f"ChatID: {chat_id} - Ask mode tool iteration {iteration_count}/{MAX_TOOL_ITERATIONS}")
+
             # Execute all tool calls
             tool_messages: List[ToolMessage] = []
             for tool_call in ai_message.tool_calls:
@@ -306,6 +519,11 @@ async def execute_tools_for_ask_mode(
                     # Find and execute the tool (decorator persists success/error)
                     tool_to_execute = next((t for t in tools if t.name == tool_name), None)
                     if tool_to_execute:
+                        if tool_name == "web_search_tool":
+                            original_query = enhanced_query_for_processing
+                            tool_query = tool_args.get("query") if isinstance(tool_args, dict) else None
+                            if tool_query and tool_query != original_query:
+                                log.info(f"ChatID: {chat_id} - Web search query rewritten. Original: '{original_query}' | Tool: '{tool_query}'")
                         log.info(f"ChatID: {chat_id} - Executing tool: {tool_name} with args: {str(tool_args)[:100]}")
                         try:
                             # Yield tool execution status
@@ -368,16 +586,19 @@ async def execute_tools_for_ask_mode(
                                 tool_content = str(tool_result)
 
                             # Format and stream tool message content for user-friendly display (remove UUIDs, URLs, etc.)
-                            cleaned_content = format_tool_message_for_display(tool_content)
-                            if cleaned_content and cleaned_content.strip():
-                                stage = "retrieval_tool_execution_message"
-                                content = f"{user_friendly_tool_name}'s result: {cleaned_content}\n\n"
-                                reasoning_chunk_dict = reasoning_dict_maker(
-                                    stage=stage, tool_name=user_friendly_tool_name, tool_query=tool_query_str, content=content
-                                )
-                                if reasoning_container is not None:
-                                    reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
-                                yield reasoning_chunk_dict
+                            # IMPORTANT: For structured DB queries, do not stream raw row/column output to the UI.
+                            # The LLM still receives the full ToolMessage above to generate the final answer.
+                            # if tool_name not in ["structured_db_tool"] + list(PLOTTING_TOOL_NAMES):
+                            #     cleaned_content = format_tool_message_for_display(tool_content)
+                            #     if cleaned_content and cleaned_content.strip():
+                            #         stage = "retrieval_tool_execution_message"
+                            #         content = f"{user_friendly_tool_name}'s result: {cleaned_content}\n\n"
+                            #         reasoning_chunk_dict = reasoning_dict_maker(
+                            #             stage=stage, tool_name=user_friendly_tool_name, tool_query=tool_query_str, content=content
+                            #         )
+                            #         if reasoning_container is not None:
+                            #             reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                            #         yield reasoning_chunk_dict
 
                         except Exception as e:
                             log.error(f"ChatID: {chat_id} - Error executing tool {tool_name}: {str(e)}")
@@ -434,18 +655,43 @@ async def execute_tools_for_ask_mode(
             yield reasoning_chunk_dict
 
             # Get next response from LLM (persist follow-up selection/reasoning)
-            ai_message, current_step = await orchestrate_llm_step(
-                llm_with_tools,
-                messages,
-                query_id=query_id,
-                chat_id=chat_id,
-                db=db,
-                current_step=current_step,
-                include_context=False,
-                enhanced_conversation_history=None,
-                enhanced_query_for_processing=None,
-                tools=tools,
-            )
+            try:
+                stream_result_followup: Dict[str, Any] = {}
+
+                async for tick in _orchestrate_llm_step_with_ui_ticks(
+                    include_context=False,
+                    result_holder=stream_result_followup,
+                    stream_final_answer=True,
+                ):
+                    yield tick
+                ai_message = stream_result_followup.get("ai_message")
+                current_step = int(stream_result_followup.get("current_step", current_step))
+            except Exception:
+                ai_message, current_step = await orchestrate_llm_step(
+                    llm_with_tools,
+                    messages,
+                    query_id=query_id,
+                    chat_id=chat_id,
+                    db=db,
+                    current_step=current_step,
+                    include_context=False,
+                    enhanced_conversation_history=None,
+                    enhanced_query_for_processing=None,
+                    tools=tools,
+                )
+            if ai_message is None:
+                ai_message, current_step = await orchestrate_llm_step(
+                    llm_with_tools,
+                    messages,
+                    query_id=query_id,
+                    chat_id=chat_id,
+                    db=db,
+                    current_step=current_step,
+                    include_context=False,
+                    enhanced_conversation_history=None,
+                    enhanced_query_for_processing=None,
+                    tools=tools,
+                )
             # Handle failure case
             if ai_message == "TOOL_ORCHESTRATION_FAILURE":
                 stage = "final_response"
@@ -462,7 +708,11 @@ async def execute_tools_for_ask_mode(
             if has_more_tool_calls:
                 try:
                     if hasattr(ai_message, "content") and ai_message.content:
-                        reasoning_content = str(ai_message.content).strip()
+                        reasoning_content = extract_text_from_content(ai_message.content).strip()
+                        # Strip content after delimiter (keep only reasoning part)
+                        ANSWER_DELIMITER = "ππANSWERππ"
+                        if ANSWER_DELIMITER in reasoning_content:
+                            reasoning_content = reasoning_content.split(ANSWER_DELIMITER, 1)[0].strip()
                         if reasoning_content:
                             stage = "planner_tool_selection"
                             reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content=reasoning_content)
@@ -472,25 +722,79 @@ async def execute_tools_for_ask_mode(
                 except Exception:
                     pass
 
-            messages.append(ai_message)
+            messages.append(cast(BaseMessage, ai_message))
 
             # Follow-up selection persisted by decorator above
+
+        # Check if we exited due to max iterations
+        if iteration_count >= MAX_TOOL_ITERATIONS and ai_message.tool_calls:
+            log.warning(
+                f"ChatID: {chat_id} - Ask mode reached max tool iterations ({MAX_TOOL_ITERATIONS}) "
+                f"with pending tool calls. Proceeding with partial results."
+            )
+            # Emit final response stage to close reasoning panel
+            stage = "final_response"
+            reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+            if reasoning_container is not None:
+                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+            yield reasoning_chunk_dict
+
+            # Inform user about partial results
+            yield "I've gathered information from multiple sources but reached the query complexity limit. Here's what I found:\n\n"
+
+            # Try to extract any partial content from the last message
+            if ai_message.content:
+                final_content = extract_text_from_content(ai_message.content)
+                ANSWER_DELIMITER = "ππANSWERππ"
+                if ANSWER_DELIMITER in final_content:
+                    parts = final_content.split(ANSWER_DELIMITER, 1)
+                    answer_part = parts[-1].strip()
+                    if answer_part:
+                        final_content = answer_part
+                    else:
+                        final_content = parts[0].strip()
+                if final_content:
+                    async for chunk in stream_content_in_chunks(final_content):
+                        yield chunk
+                else:
+                    yield "Please try refining your question or breaking it into smaller parts."
+            else:
+                yield "Please try refining your question or breaking it into smaller parts."
+            return
 
         # Final response from LLM (no more tool calls)
         log.info(f"ChatID: {chat_id} - Tool orchestration complete, generating final response")
 
-        # Yield final response generation status
-        stage = "final_response"
-        reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
-        if reasoning_container is not None:
-            reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
-        yield reasoning_chunk_dict
+        # Yield final response generation status (unless we already emitted it when starting token streaming).
+        # NOTE: `chat.py` uses stage=="final_response" to start collecting the final streamed answer
+        # for persistence (and title generation). Even if we've stopped emitting reasoning for UI,
+        # we must emit a final_response marker dict.
+        if not final_response_marker_emitted:
+            stage = "final_response"
+            reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+            if reasoning_container is not None:
+                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+            yield reasoning_chunk_dict
 
         # Stream the final answer back to caller
+        if final_answer_streamed:
+            # Already streamed token-by-token from the LLM call above.
+            return
         if ai_message.content:
-            final_content = str(ai_message.content)
+            final_content = extract_text_from_content(ai_message.content)
+            # Strip content before delimiter (keep only answer part)
+            ANSWER_DELIMITER = "ππANSWERππ"
+            if ANSWER_DELIMITER in final_content:
+                parts = final_content.split(ANSWER_DELIMITER, 1)
+                answer_part = parts[-1].strip()
+                if answer_part:
+                    final_content = answer_part
+                else:
+                    final_content = parts[0].strip()
             log.info(f"ChatID: {chat_id} - Final response length: {len(final_content)} chars")
             # Stream the final answer in chunks to simulate streaming
+            # Note: plane-attachment:// placeholders are replaced with presigned URLs in chat.py
+            # before yielding to the client, while the original placeholders are stored in DB
             async for chunk in stream_content_in_chunks(final_content):
                 yield chunk
         else:

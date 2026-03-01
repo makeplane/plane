@@ -16,7 +16,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 import type { TLink, TLinkIdMap, TLinkMap } from "@plane/types";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 export interface IWorkspaceLinkStoreActions {
   addLinks: (projectId: string, links: TLink[]) => void;

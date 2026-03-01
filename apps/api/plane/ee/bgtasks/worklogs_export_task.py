@@ -26,6 +26,7 @@ from openpyxl import Workbook
 # Module imports
 from plane.db.models import ExporterHistory
 from plane.ee.models import IssueWorkLog
+from plane.utils.csv_utils import sanitize_csv_row
 from plane.utils.exception_logger import log_exception
 
 
@@ -45,7 +46,7 @@ def create_csv_file(data):
     csv_writer = csv.writer(csv_buffer, delimiter=",", quoting=csv.QUOTE_ALL)
 
     for row in data:
-        csv_writer.writerow(row)
+        csv_writer.writerow(sanitize_csv_row(row))
 
     csv_buffer.seek(0)
 
@@ -90,9 +91,10 @@ def upload_to_s3(files, workspace_id, token_id, slug, provider):
         )
 
         # Generate presigned url for the uploaded file with different base
+        endpoint_url = f"{settings.AWS_S3_URL_PROTOCOL}//{str(settings.AWS_S3_CUSTOM_DOMAIN).replace('/uploads', '')}/"
         presign_s3 = boto3.client(
             "s3",
-            endpoint_url=f"{settings.AWS_S3_URL_PROTOCOL}//{str(settings.AWS_S3_CUSTOM_DOMAIN).replace('/uploads', '')}/",
+            endpoint_url=endpoint_url,
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             config=Config(signature_version="s3v4"),
@@ -190,20 +192,24 @@ def generate_xlsx(header, workspace_id, worklogs, files):
 
 
 @shared_task
-def worklogs_export_task(provider, workspace_id, user_id, token_id, slug, filters):
+def worklogs_export_task(provider, workspace_id, user_id, token_id, slug, filters, project_id=None):
     try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
         exporter_instance.status = "processing"
         exporter_instance.save(update_fields=["status"])
 
+        worklogs = IssueWorkLog.objects.filter(
+            project__project_projectmember__member_id=user_id,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
+            workspace__slug=slug,
+        )
+
+        if project_id:
+            worklogs = worklogs.objects.filter(project_id=project_id)
+
         worklogs = (
-            IssueWorkLog.objects.filter(
-                project__project_projectmember__member_id=user_id,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-                workspace__slug=slug,
-            )
-            .filter(**filters)
+            worklogs.filter(**filters)
             .order_by("created_at")
             .select_related("logged_by", "issue", "project", "workspace")
             .values(

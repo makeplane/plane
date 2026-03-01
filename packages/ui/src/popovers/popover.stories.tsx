@@ -11,19 +11,16 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Popover } from "./popover";
 
-const meta: Meta<typeof Popover> = {
+const meta = {
   title: "Popover",
   component: Popover,
-};
+} satisfies Meta<typeof Popover>;
 
 export default meta;
-
-// types
-type Story = StoryObj<typeof Popover>;
+type Story = StoryObj<typeof meta>;
 
 // data
 

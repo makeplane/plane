@@ -13,6 +13,7 @@
 
 import { APIService } from "@/services/api.service";
 // types
+import type { AxiosError } from "axios";
 import type { ClientOptions, ExIssuePropertyValue } from "@/types";
 
 export class IssuePropertyValueService extends APIService {
@@ -26,12 +27,12 @@ export class IssuePropertyValueService extends APIService {
     issueId: string,
     propertyId: string
   ): Promise<ExIssuePropertyValue> {
-    return this.get(
+    return this.get<ExIssuePropertyValue>(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-properties/${propertyId}/values/`
     )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
@@ -42,13 +43,13 @@ export class IssuePropertyValueService extends APIService {
     propertyId: string,
     data: { values: ExIssuePropertyValue }
   ): Promise<ExIssuePropertyValue> {
-    return this.post(
+    return this.post<ExIssuePropertyValue>(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-properties/${propertyId}/values/`,
       data
     )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 }

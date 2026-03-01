@@ -1,12 +1,17 @@
 {
   "name": "@plane/editor",
-  "version": "1.2.0",
-  "description": "Core Editor that powers Plane",
-  "license": "AGPL-3.0",
+  "version": "2.3.0",
   "private": true,
+  "description": "Core Editor that powers Plane",
+  "keywords": [
+    "editor",
+    "markdown",
+    "nextjs",
+    "react",
+    "rich-text"
+  ],
+  "license": "AGPL-3.0",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
@@ -16,19 +21,14 @@
     "./styles": "./dist/styles/index.css"
   },
   "scripts": {
-    "build": "tsc && tsdown",
+    "build": "tsdown",
     "dev": "tsdown --watch",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1435",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt . --check",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1435",
-    "fix:format": "prettier . --cache --write",
+    "fix:format": "oxfmt . --write",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
-  },
-  "peerDependencies": {
-    "nanoid": "^3.3.8",
-    "react": "catalog:",
-    "react-dom": "catalog:"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.1",
@@ -37,14 +37,17 @@
     "@hocuspocus/provider": "2.15.2",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
+    "@plane/propel": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/ui": "workspace:*",
-    "@plane/propel": "workspace:*",
     "@plane/utils": "workspace:*",
+    "@shikijs/core": "^3.7.0",
+    "@shikijs/engine-javascript": "^3.7.0",
+    "@shikijs/langs-precompiled": "^3.7.0",
+    "@shikijs/themes": "^3.7.0",
     "@tiptap/core": "catalog:",
     "@tiptap/extension-blockquote": "^2.22.3",
     "@tiptap/extension-character-count": "^2.22.3",
-    "buffer": "^6.0.3",
     "@tiptap/extension-collaboration": "^2.22.3",
     "@tiptap/extension-collaboration-cursor": "^2.22.3",
     "@tiptap/extension-document": "^2.22.3",
@@ -65,21 +68,22 @@
     "@tiptap/react": "^2.22.3",
     "@tiptap/starter-kit": "^2.22.3",
     "@tiptap/suggestion": "^2.22.3",
-    "lodash-es": "catalog:",
+    "buffer": "^6.0.3",
     "emoji-regex": "^10.3.0",
-    "highlight.js": "^11.8.0",
     "is-emoji-supported": "^0.0.5",
     "jsx-dom-cjs": "^8.0.3",
     "katex": "^0.16.22",
     "linkifyjs": "^4.3.2",
-    "lowlight": "^3.0.0",
+    "lodash-es": "catalog:",
     "lucide-react": "catalog:",
+    "mermaid": "^11.6.0",
+    "prosemirror-highlight": "^0.13.0",
     "prosemirror-safari-ime-span": "^1.0.2",
     "prosemirror-utils": "^1.2.2",
     "smooth-scroll-into-view-if-needed": "^2.0.2",
     "tippy.js": "^6.3.7",
-    "tldjs": "^2.3.2",
     "tiptap-markdown": "^0.8.10",
+    "tldjs": "^2.3.2",
     "uuid": "catalog:",
     "y-indexeddb": "^9.0.12",
     "y-prosemirror": "^1.2.15",
@@ -89,20 +93,18 @@
   "devDependencies": {
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
-    "@types/tldjs": "^2.3.4",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/lodash-es": "catalog:",
+    "@types/tldjs": "catalog:",
     "postcss": "^8.4.38",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
-  "keywords": [
-    "editor",
-    "rich-text",
-    "markdown",
-    "nextjs",
-    "react"
-  ]
+  "peerDependencies": {
+    "nanoid": "3.3.8",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  }
 }

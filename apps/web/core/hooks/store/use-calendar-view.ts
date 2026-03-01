@@ -15,7 +15,7 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
 // types
-import type { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
+import type { ICalendarStore } from "@/store/work-items/issue_calendar_view.store";
 
 export const useCalendarView = (): ICalendarStore => {
   const context = useContext(StoreContext);

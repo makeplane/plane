@@ -15,6 +15,7 @@ from pi.app.models.agent_artifact import AgentArtifact
 from pi.app.models.chat import Chat
 from pi.app.models.chat import UserChatPreference
 from pi.app.models.dupes_tracking import DupesTracking
+from pi.app.models.embedding_model import EmbeddingModel
 from pi.app.models.feedback import Feedback
 from pi.app.models.github_webhook import GitHubWebhook
 from pi.app.models.llm import LlmModel
@@ -39,6 +40,7 @@ __all__ = [
     "AgentArtifact",
     "Chat",
     "DupesTracking",
+    "EmbeddingModel",
     "Feedback",
     "GitHubWebhook",
     "LlmModel",
@@ -54,8 +56,6 @@ __all__ = [
     "Transcription",
     "UserChatPreference",
     "WorkspaceVectorization",
-    "ActionArtifact",
-    "ActionArtifactVersion",
     "MessageClarification",
     "PlaneOAuthState",
     "PlaneOAuthToken",

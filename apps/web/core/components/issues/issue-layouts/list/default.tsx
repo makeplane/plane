@@ -23,7 +23,6 @@ import type {
   TGroupedIssues,
   TIssue,
   IIssueDisplayProperties,
-  TIssueMap,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   IGroupByColumn,
@@ -34,18 +33,18 @@ import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // plane web components
-import { IssueBulkOperationsRoot } from "@/plane-web/components/issues/bulk-operations";
+import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 // plane web hooks
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // utils
-import type { GroupDropLocation } from "../utils";
-import { getGroupByColumns, isWorkspaceLevel, isSubGrouped } from "../utils";
+import type { GroupDropLocation } from "@/helpers/work-item-layout";
+import { getGroupByColumns, isWorkspaceLevel, isSubGrouped } from "@/helpers/work-item-layout";
 import { ListGroup } from "./list-group";
 import type { TRenderQuickActions } from "./list-view-types";
 
 export interface IList {
   groupedIssueIds: TGroupedIssues;
-  issuesMap: TIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   group_by: TIssueGroupByOptions | null;
   orderBy: TIssueOrderByOptions | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -68,7 +67,7 @@ export interface IList {
 export const List = observer(function List(props: IList) {
   const {
     groupedIssueIds,
-    issuesMap,
+    getWorkItemById,
     group_by,
     orderBy,
     updateIssue,
@@ -153,7 +152,7 @@ export const List = observer(function List(props: IList) {
                   <ListGroup
                     key={group.id}
                     groupIssueIds={groupedIssueIds?.[group.id]}
-                    issuesMap={issuesMap}
+                    getWorkItemById={getWorkItemById}
                     group_by={group_by}
                     group={group}
                     updateIssue={updateIssue}

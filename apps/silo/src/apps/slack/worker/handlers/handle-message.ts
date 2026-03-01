@@ -64,7 +64,7 @@ export const handleSlackEvent = async (data: SlackEventPayload) => {
       default:
         break;
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (data.event.type === "app_uninstalled") {
       logger.error("[SLACK] App uninstalled event", { data });
       return;
@@ -79,7 +79,9 @@ export const handleSlackEvent = async (data: SlackEventPayload) => {
 
     const { slackService } = details;
 
-    const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
+    const errorObj = error as Record<string, unknown> | undefined;
+    const isPermissionError =
+      typeof errorObj?.detail === "string" && errorObj.detail.includes(CONSTANTS.NO_PERMISSION_ERROR);
     const errorMessage = isPermissionError ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE : CONSTANTS.SOMETHING_WENT_WRONG;
 
     await slackService.sendEphemeralMessage(data.event.user, errorMessage, data.event.channel, data.event.event_ts);
@@ -149,8 +151,9 @@ export const handleEntityDetailsRequestedEvent = async (data: SlackEventPayload)
     });
 
     logger.info("Detailed Presented to Slack", response);
-  } catch (error: any) {
-    const errorString = error?.detail || error?.error;
+  } catch (error: unknown) {
+    const errorObj = error as Record<string, unknown> | undefined;
+    const errorString = errorObj?.detail || errorObj?.error;
 
     if (errorString && typeof errorString === "string") {
       const response: unknown = await slackService.entityPresentDetails(data.event.trigger_id, {
@@ -248,6 +251,23 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
     const unfurlMap: UnfurlMap = {};
     const metadataEntities: TWorkObjectView[] = [];
 
+    let workObjectEnabled = false;
+
+    try {
+      const featureFlagService = await getPlaneFeatureFlagService();
+      const planeUserId = userMap.get(userId);
+
+      const featureFlagResponse = await featureFlagService.featureFlags({
+        workspace_slug: workspaceConnection.workspace_slug,
+        flag_key: E_FEATURE_FLAGS.SLACK_WORK_OBJECTS,
+        user_id: planeUserId || "",
+      });
+
+      workObjectEnabled = featureFlagResponse || false;
+    } catch (error) {
+      logger.error("Work Object feature flag error", error);
+    }
+
     await Promise.all(
       data.event.links.map(async (link) => {
         const resource = extractPlaneResource(link.url);
@@ -255,24 +275,6 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
 
         if (resource.type === "issue") {
           if (resource.workspaceSlug !== workspaceConnection.workspace_slug) return;
-
-          let workObjectEnabled = false;
-
-          try {
-            const featureFlagService = await getPlaneFeatureFlagService();
-            const planeUserId = userMap.get(userId);
-
-            const featureFlagResponse = await featureFlagService.featureFlags({
-              workspace_slug: workspaceConnection.workspace_slug,
-              user_id: planeUserId ?? "",
-              // @ts-expect-error we will need to check the feature key
-              flag_key: E_FEATURE_FLAGS.SLACK_WORK_OBJECTS,
-            });
-
-            workObjectEnabled = featureFlagResponse || false;
-          } catch (error) {
-            logger.error("Work Object feature flag error", error);
-          }
 
           if (workObjectEnabled) {
             /* ----------------- Work Object Creation --------------------- */

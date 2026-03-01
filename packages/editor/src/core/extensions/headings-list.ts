@@ -28,17 +28,16 @@ declare module "@tiptap/core" {
   }
 }
 
-export const HeadingListExtension = Extension.create<unknown, HeadingExtensionStorage>({
+export const HeadingListExtension = Extension.create<never, HeadingExtensionStorage>({
   name: CORE_EXTENSIONS.HEADINGS_LIST,
 
-  addStorage() {
+  addStorage(): HeadingExtensionStorage {
     return {
-      headings: [] as IMarking[],
+      headings: [],
     };
   },
 
   addProseMirrorPlugins() {
-    const extension = this;
     const plugin = new Plugin({
       key: new PluginKey("heading-list"),
       appendTransaction: (transactions, oldState, newState) => {
@@ -52,7 +51,7 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
         // Use a Map to handle all heading levels (1-6) correctly
         const sequenceByLevel = new Map<number, number>();
 
-        newState.doc.descendants((node, pos) => {
+        newState.doc.descendants((node, _pos) => {
           if (node.type.name === "heading") {
             const level = node.attrs.level as number;
             const text = node.textContent;
@@ -69,7 +68,7 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
         });
 
         // Only update storage if headings actually changed
-        const prevHeadings = extension.storage.headings;
+        const prevHeadings = this.storage.headings;
         const headingsChanged =
           prevHeadings.length !== headings.length ||
           headings.some(
@@ -80,7 +79,7 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
           );
 
         if (headingsChanged) {
-          extension.storage.headings = headings;
+          this.storage.headings = headings;
         }
 
         return null;
@@ -91,6 +90,6 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
   },
 
   getHeadings() {
-    return this.storage.headings;
+    return (this.storage as HeadingExtensionStorage).headings;
   },
-});
+} as const);

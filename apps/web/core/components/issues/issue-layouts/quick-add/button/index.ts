@@ -13,5 +13,5 @@
 
 export * from "./list";
 export * from "./kanban";
-export * from "./gantt";
+export * from "./timeline";
 export * from "./spreadsheet";

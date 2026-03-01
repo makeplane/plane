@@ -16,10 +16,6 @@ from typing import Any
 from typing import Dict
 from typing import Tuple
 
-import assemblyai as aai
-from deepgram import DeepgramClient
-from deepgram import FileSource
-from deepgram import PrerecordedOptions
 from fastapi import HTTPException
 from fastapi import UploadFile
 from groq import Groq
@@ -46,65 +42,10 @@ def calculate_transcription_cost(audio_duration: float, provider: str, model: st
     """
     hours = audio_duration / 3600
 
-    if provider == "deepgram":
-        return hours * settings.transcription.DEEPGRAM_MODEL_PRICING_PER_HOUR[model]
-    elif provider == "groq":
+    if provider == "groq":
         return hours * settings.transcription.GROQ_MODEL_PRICING_PER_HOUR[model]
-    elif provider == "assemblyai":
-        return hours * settings.transcription.ASSEMBLYAI_MODEL_PRICING_PER_HOUR[model]
     else:
         raise ValueError(f"Unknown provider: {provider}")
-
-
-async def transcribe_with_deepgram(audio_content: bytes, model: str = "nova-3-general") -> Tuple[str, Dict[str, Any]]:
-    """Transcribe audio using Deepgram.
-
-    Args:
-        audio_content: Raw audio file bytes
-        model: Deepgram model to use
-
-    Returns:
-        Tuple of (transcript_text, metadata)
-    """
-    try:
-        start_time = time.time()
-
-        # Configure Deepgram client
-        deepgram_client = DeepgramClient(api_key=settings.transcription.DEEPGRAM_API_KEY)
-
-        # Prepare payload
-        payload: FileSource = {
-            "buffer": audio_content,
-        }
-
-        # Configure options
-        options = PrerecordedOptions(model=model)
-
-        # Call transcription
-        response = deepgram_client.listen.rest.v("1").transcribe_file(payload, options)
-
-        processing_time = time.time() - start_time
-
-        # Extract results
-        if not response.results or not response.results.channels or not response.results.channels[0].alternatives:
-            raise HTTPException(status_code=500, detail="No transcription results returned from Deepgram")
-
-        transcript_text = response.results.channels[0].alternatives[0].transcript
-
-        metadata = {
-            "transcription_id": response.metadata.request_id,
-            "audio_duration": response.metadata.duration,
-            "speech_model": model,
-            "processing_time": processing_time,
-            "provider": "deepgram",
-            "cost": calculate_transcription_cost(response.metadata.duration, "deepgram", model),
-        }
-
-        return transcript_text, metadata
-
-    except Exception as e:
-        log.error(f"Deepgram transcription failed: {str(e)}")
-        raise
 
 
 async def transcribe_with_groq(audio_content: bytes, filename: str, model: str) -> Tuple[str, Dict[str, Any]]:
@@ -121,8 +62,8 @@ async def transcribe_with_groq(audio_content: bytes, filename: str, model: str) 
     try:
         start_time = time.time()
 
-        # Configure Groq client
-        client = Groq(api_key=settings.transcription.GROQ_API_KEY)
+        # Configure Groq client with optional custom base URL
+        client = Groq(api_key=settings.llm_config.GROQ_API_KEY, base_url=settings.llm_config.GROQ_BASE_URL)
 
         # Create a temporary file-like object with proper filename
         import io
@@ -161,72 +102,13 @@ async def transcribe_with_groq(audio_content: bytes, filename: str, model: str) 
         raise
 
 
-async def transcribe_with_assemblyai(audio_content: bytes, model: str = "best") -> Tuple[str, Dict[str, Any]]:
-    """Transcribe audio using AssemblyAI.
-
-    Args:
-        audio_content: Raw audio file bytes
-        model: AssemblyAI model to use
-
-    Returns:
-        Tuple of (transcript_text, metadata)
-    """
-    try:
-        start_time = time.time()
-
-        # Configure AssemblyAI
-        aai.settings.api_key = settings.transcription.ASSEMBLYAI_API_KEY
-
-        # Create transcriber
-        transcriber = aai.Transcriber()
-
-        # Create a temporary file for AssemblyAI
-        import tempfile
-
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_file:
-            temp_file.write(audio_content)
-            temp_file_path = temp_file.name
-
-        try:
-            # Transcribe
-            transcript = transcriber.transcribe(temp_file_path)
-            processing_time = time.time() - start_time
-
-            if transcript.status == aai.TranscriptStatus.error:
-                raise HTTPException(status_code=500, detail=f"AssemblyAI transcription failed: {transcript.error}")
-
-            # Get audio duration (AssemblyAI provides this)
-            audio_duration = transcript.audio_duration / 1000  # Convert from ms to seconds
-
-            metadata = {
-                "transcription_id": transcript.id,
-                "audio_duration": audio_duration,
-                "speech_model": model,
-                "processing_time": processing_time,
-                "provider": "assemblyai",
-                "cost": calculate_transcription_cost(audio_duration, "assemblyai", model),
-            }
-
-            return transcript.text, metadata
-
-        finally:
-            # Clean up temp file
-            import os
-
-            os.unlink(temp_file_path)
-
-    except Exception as e:
-        log.error(f"AssemblyAI transcription failed: {str(e)}")
-        raise
-
-
 async def transcribe_audio(audio_content: bytes, filename: str, provider: str, model: str, **kwargs) -> Tuple[str, Dict[str, Any]]:
     """Main transcription function that routes to appropriate provider.
 
     Args:
         audio_content: Raw audio file bytes
         filename: Original filename for format detection
-        provider: Provider to use ('groq', 'deepgram', 'assemblyai')
+        provider: Provider to use ('groq', 'deepgram')
         model: Model to use (provider-specific)
         **kwargs: Additional provider-specific arguments
 
@@ -235,10 +117,6 @@ async def transcribe_audio(audio_content: bytes, filename: str, provider: str, m
     """
     if provider == "groq":
         return await transcribe_with_groq(audio_content, filename, model)
-    elif provider == "deepgram":
-        return await transcribe_with_deepgram(audio_content, model)
-    elif provider == "assemblyai":
-        return await transcribe_with_assemblyai(audio_content, model)
     else:
         raise ValueError(f"Unknown transcription provider: {provider}")
 

@@ -27,26 +27,18 @@ class BaseModel(AuditModel):
     class Meta:
         abstract = True
 
-    def save(self, *args, created_by_id=None, disable_auto_set_user=False, **kwargs):
+    def save(self, *args, disable_auto_set_user=False, **kwargs):
         if not disable_auto_set_user:
-            # Check if created_by_id is provided
-            if created_by_id:
-                self.created_by_id = created_by_id
-            else:
-                user = get_current_user()
+            user = get_current_user()
 
-                if user is None or user.is_anonymous:
-                    self.created_by = None
-                    self.updated_by = None
+            if user is not None and not user.is_anonymous:
+                if self._state.adding:
+                    # Only auto-set created_by if not already set on the instance
+                    if self.created_by_id is None:
+                        self.created_by_id = user.pk
                 else:
-                    # Check if the model is being created or updated
-                    if self._state.adding:
-                        # If creating, set created_by and leave updated_by as None
-                        self.created_by = user
-                        self.updated_by = None
-                    else:
-                        # If updating, set updated_by only
-                        self.updated_by = user
+                    # On update, track who made the change
+                    self.updated_by_id = user.pk
 
         super(BaseModel, self).save(*args, **kwargs)
 

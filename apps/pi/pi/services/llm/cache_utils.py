@@ -26,13 +26,13 @@ def should_enable_claude_caching(llm_model: str | None) -> bool:
         True if the model is a Claude model that supports caching, False otherwise.
     """
     # Check if the model is a Claude model that supports caching
-    if llm_model in [settings.llm_model.CLAUDE_SONNET_4_0, settings.llm_model.CLAUDE_SONNET_4_5]:
+    if llm_model in [settings.llm_model.CLAUDE_SONNET_4_0, settings.llm_model.CLAUDE_SONNET_4_5, settings.llm_model.CLAUDE_SONNET_4_6]:
         return True
 
     # Also check default model if llm_model is None
     if llm_model is None:
         default_model = settings.llm_model.DEFAULT
-        if default_model in [settings.llm_model.CLAUDE_SONNET_4_0, settings.llm_model.CLAUDE_SONNET_4_5]:
+        if default_model in [settings.llm_model.CLAUDE_SONNET_4_0, settings.llm_model.CLAUDE_SONNET_4_5, settings.llm_model.CLAUDE_SONNET_4_6]:
             return True
 
     return False

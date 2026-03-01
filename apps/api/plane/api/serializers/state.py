@@ -23,6 +23,11 @@ class StateSerializer(BaseSerializer):
     and automatic default state switching for workflow management.
     """
 
+    def validate_name(self, value):
+        if value.strip().lower() == "triage":
+            raise serializers.ValidationError("Triage is a reserved state name")
+        return value
+
     def validate(self, data):
         # If the default is being provided then make all other states default False
         if data.get("default", False):

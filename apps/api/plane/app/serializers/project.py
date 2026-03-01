@@ -25,6 +25,7 @@ from plane.db.models import (
     ProjectPublicMember,
     IssueSequence,
 )
+from plane.ee.models import ProjectLabel, ProjectSubscriber
 from plane.utils.content_validator import (
     validate_html_content,
 )
@@ -294,3 +295,48 @@ class ProjectPublicMemberSerializer(BaseSerializer):
         model = ProjectPublicMember
         fields = "__all__"
         read_only_fields = ["workspace", "project", "member"]
+
+
+class ProjectLabelSerializer(BaseSerializer):
+    class Meta:
+        model = ProjectLabel
+        fields = [
+            "id",
+            "name",
+            "description",
+            "color",
+            "sort_order",
+            "workspace",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "workspace",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+    def validate_name(self, name):
+        project_label_id = self.instance.id if self.instance else None
+        workspace_id = self.context["workspace_id"]
+
+        project_labels = ProjectLabel.objects.filter(
+            name=name,
+            workspace_id=workspace_id,
+        ).exclude(id=project_label_id)
+
+        if project_labels.exists():
+            raise serializers.ValidationError(detail="PROJECT_LABEL_NAME_ALREADY_EXISTS")
+
+        return name
+
+
+class ProjectSubscriberSerializer(BaseSerializer):
+    class Meta:
+        model = ProjectSubscriber
+        fields = "__all__"
+        read_only_fields = ["workspace", "deleted_at"]

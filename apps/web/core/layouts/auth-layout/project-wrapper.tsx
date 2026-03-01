@@ -32,6 +32,11 @@ import {
   PROJECT_MODULES,
   PROJECT_VIEWS,
   PROJECT_INTAKE_STATE,
+  WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS,
+  EPICS_PROPERTIES_AND_OPTIONS,
+  PROJECT_WORKFLOWS,
+  PROJECT_MILESTONES,
+  PROJECT_EPICS_META,
 } from "@/constants/fetch-keys";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -44,16 +49,20 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
+// plane web imports
+import { useEpicMeta } from "@/hooks/store/use-epic-meta";
+import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
+import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 interface IProjectAuthWrapper {
   workspaceSlug: string;
   projectId: string;
   children: ReactNode;
-  isLoading?: boolean;
 }
 
 export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IProjectAuthWrapper) {
-  const { workspaceSlug, projectId, children, isLoading: isParentLoading = false } = props;
+  const { workspaceSlug, projectId, children } = props;
   // states
   const [isJoiningProject, setIsJoiningProject] = useState(false);
   // store hooks
@@ -67,10 +76,18 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   const {
     project: { fetchProjectMembers, fetchProjectUserProperties },
   } = useMember();
-  const { fetchProjectStates, fetchProjectIntakeState } = useProjectState();
+  const { fetchProjectStates, fetchProjectIntakeState, fetchWorkflowStates } = useProjectState();
   const { data: currentUserData } = useUser();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
+  const {
+    isWorkItemTypeEnabledForProject,
+    isEpicEnabledForProject,
+    fetchAllWorkItemTypePropertiesAndOptions,
+    fetchAllEpicPropertiesAndOptions,
+  } = useIssueTypes();
+  const { fetchMilestones, isMilestonesEnabled } = useMilestones();
+  const { fetchEpicsMeta } = useEpicMeta();
   // derived values
   const hasPermissionToCurrentProject = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
@@ -80,6 +97,10 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   );
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
   const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
+  const isWorkItemTypeEnabled = projectId ? isWorkItemTypeEnabledForProject(workspaceSlug, projectId) : false;
+  const isEpicEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;
+  const isWorkflowFeatureFlagEnabled = useFlag(workspaceSlug, "WORKFLOWS");
+  const isMilestonesFeatureEnabled = projectId ? isMilestonesEnabled(workspaceSlug, projectId) : false;
   // Initialize module timeline chart
   useEffect(() => {
     initGantt();
@@ -143,13 +164,64 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     revalidateOnFocus: false,
   });
 
+  // fetching all work item types and properties
+  useSWR(
+    isWorkItemTypeEnabled ? WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS(projectId, currentProjectRole) : null,
+    isWorkItemTypeEnabled ? () => fetchAllWorkItemTypePropertiesAndOptions(workspaceSlug, projectId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching all epic types and properties
+  useSWR(
+    isEpicEnabled ? EPICS_PROPERTIES_AND_OPTIONS(projectId, currentProjectRole) : null,
+    isEpicEnabled ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug, projectId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching project level workflow states
+  useSWR(
+    isWorkflowFeatureFlagEnabled ? PROJECT_WORKFLOWS(projectId, currentProjectRole) : null,
+    () => fetchWorkflowStates(workspaceSlug, projectId),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  );
+
+  // fetching project level milestones
+  useSWR(
+    isMilestonesFeatureEnabled ? PROJECT_MILESTONES(projectId, currentProjectRole) : null,
+    isMilestonesFeatureEnabled ? () => fetchMilestones(workspaceSlug, projectId) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  // fetching project level epic meta
+  useSWR(
+    isEpicEnabled ? PROJECT_EPICS_META(projectId, currentProjectRole) : null,
+    isEpicEnabled ? () => fetchEpicsMeta(workspaceSlug, projectId) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
   // handle join project
   const handleJoinProject = () => {
     setIsJoiningProject(true);
-    joinProject(workspaceSlug, projectId).finally(() => setIsJoiningProject(false));
+    joinProject(workspaceSlug, projectId)
+      .finally(() => setIsJoiningProject(false))
+      .catch((error) => {
+        console.error("Error joining project", error);
+        setIsJoiningProject(false);
+      });
   };
 
-  const isProjectLoading = (isParentLoading || isProjectDetailsLoading) && !projectDetailsError;
+  const isProjectLoading = isProjectDetailsLoading && !projectDetailsError;
 
   if (isProjectLoading) return null;
 

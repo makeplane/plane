@@ -24,6 +24,7 @@ import { createOrUpdateCredentials, getValidCredentials } from "@/helpers/creden
 import { responseHandler } from "@/helpers/response-handler";
 import { createPlaneClient } from "@/helpers/utils";
 import { useValidateUserAuthentication } from "@/lib/decorators";
+import axios from "axios";
 
 @Controller("/api/jira-server")
 class JiraDataCenterController {
@@ -150,14 +151,47 @@ class JiraDataCenterController {
   @Post("/issue-count")
   @useValidateUserAuthentication()
   async getIssueCount(req: Request, res: Response) {
-    const { workspaceId, userId, projectId } = req.body;
+    const { workspaceId, userId, projectId, jql } = req.body;
 
     try {
       const jiraClient = await createJiraServerClient(workspaceId, userId);
-      const issueCount = await jiraClient.getNumberOfIssues(projectId);
+      const issueCount = await jiraClient.getNumberOfIssues(projectId, jql);
       return res.json({
         count: issueCount,
       });
+    } catch (error: any) {
+      responseHandler(res, 500, error);
+    }
+  }
+
+  @Post("/validate-jql")
+  @useValidateUserAuthentication()
+  async validateJQL(req: Request, res: Response) {
+    const { workspaceId, userId, projectKey, jql } = req.body;
+
+    try {
+      const finalJQL = `PROJECT = "${projectKey}" AND ${jql}`;
+      const jiraClient = await createJiraServerClient(workspaceId, userId);
+      try {
+        const issueCount = await jiraClient.getNumberOfIssues(projectKey, finalJQL);
+        return res.json({
+          issueCount,
+          executedJQL: finalJQL,
+        });
+      } catch (error: unknown) {
+        let errorMessage = "Invalid JQL provided, please verify the jql is valid";
+
+        if (axios.isAxiosError(error)) {
+          const errorData = error.response?.data;
+          if (errorData) {
+            errorMessage = errorData.errorMessages?.join(", ") || errorData.error || errorMessage;
+          }
+        }
+
+        return res.status(400).json({
+          error: errorMessage,
+        });
+      }
     } catch (error: any) {
       responseHandler(res, 500, error);
     }

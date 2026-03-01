@@ -11,17 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Preview } from "@storybook/react-vite";
+import { definePreview } from "@storybook/react-vite";
+import addonDocs from "@storybook/addon-docs";
+import addonA11y from "@storybook/addon-a11y";
+import addonDesigns from "@storybook/addon-designs";
+import addonVitest from "@storybook/addon-vitest";
 import "./tailwind.css";
 
-const parameters: Preview["parameters"] = {
-  controls: {
-    matchers: {},
+export default definePreview({
+  addons: [addonDocs(), addonA11y(), addonDesigns(), addonVitest()],
+  parameters: {
+    controls: {
+      matchers: {},
+    },
   },
-};
-
-const preview: Preview = {
-  parameters,
   tags: ["autodocs"],
-};
-export default preview;
+});

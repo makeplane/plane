@@ -22,6 +22,7 @@ class Dashboard(BaseModel):
     logo_props = models.JSONField(default=dict)
     owned_by = models.ForeignKey("db.User", on_delete=models.CASCADE, related_name="dashboard")
     access = models.PositiveSmallIntegerField(default=1, choices=((0, "Private"), (1, "Public")))
+    archived_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = "Dashboard"

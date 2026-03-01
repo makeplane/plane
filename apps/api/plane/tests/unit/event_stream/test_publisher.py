@@ -141,7 +141,7 @@ class TestEventStreamPublisher:
     @override_settings(AMQP_URL="amqp://test:test@localhost:5672/test")
     def test_setup_connection_params_with_amqp_url(self, mock_rabbitmq):
         """Test connection parameters setup using AMQP_URL."""
-        publisher = EventStreamPublisher()
+        _ = EventStreamPublisher()
 
         # Verify URLParameters was called with the AMQP_URL
         mock_rabbitmq["url_params"].assert_called_once_with("amqp://test:test@localhost:5672/test")
@@ -157,7 +157,7 @@ class TestEventStreamPublisher:
         """Test connection parameters setup using individual settings."""
         # Remove AMQP_URL if it exists to test fallback
         with patch.object(settings, "AMQP_URL", None, create=True):
-            publisher = EventStreamPublisher()
+            _ = EventStreamPublisher()
 
         # Verify PlainCredentials and ConnectionParameters were called
         mock_rabbitmq["credentials"].assert_called_once_with("testuser", "testpass")
@@ -332,7 +332,7 @@ class TestEventStreamPublisher:
 
         data = {"event_type": "test_event"}
 
-        with patch("time.sleep") as mock_sleep:
+        with patch("time.sleep") as _:
             result = publisher.publish(data)
 
         assert result is True
@@ -442,7 +442,7 @@ class TestGlobalPublisherManagement:
             for publisher in _publisher_instances.values():
                 try:
                     publisher.close()
-                except:
+                except Exception:
                     pass
             _publisher_instances.clear()
 

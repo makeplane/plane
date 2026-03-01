@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -19,12 +18,18 @@ import { useParams, usePathname } from "next/navigation";
 import type { IProject } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
 
 const ARCHIVES_TAB_LIST: {
   key: string;
   label: string;
-  shouldRender: (projectDetails: IProject) => boolean;
+  shouldRender: (projectDetails: IProject & { epic_view: boolean }) => boolean;
 }[] = [
+  {
+    key: "epics",
+    label: "Epics",
+    shouldRender: (projectDetails) => projectDetails.epic_view,
+  },
   {
     key: "issues",
     label: "Work items",
@@ -48,11 +53,15 @@ export const ArchiveTabsList = observer(function ArchiveTabsList() {
   const pathname = usePathname();
   // store hooks
   const { getProjectById } = useProject();
-
+  const { isEpicEnabledForProject } = useIssueTypes();
   // derived values
   if (!projectId) return null;
-  const projectDetails = getProjectById(projectId?.toString());
-  if (!projectDetails) return null;
+  const project = getProjectById(projectId?.toString());
+  const isEpicEnabled = isEpicEnabledForProject(workspaceSlug, projectId);
+
+  if (!project) return null;
+
+  const projectDetails = { ...project, epic_view: isEpicEnabled };
 
   return (
     <>

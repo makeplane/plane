@@ -594,3 +594,18 @@ TEAMSPACE_ID_PARAMETER = OpenApiParameter(
     type=OpenApiTypes.UUID,
     location=OpenApiParameter.PATH,
 )
+
+PROJECT_LABEL_ID_PARAMETER = OpenApiParameter(
+    name="pk",
+    description="Project Label ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example project label ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical project label UUID",
+        )
+    ],
+)

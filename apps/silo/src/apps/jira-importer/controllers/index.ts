@@ -200,14 +200,47 @@ class JiraController {
   @Post("/issue-count")
   @useValidateUserAuthentication()
   async getIssueCount(req: Request, res: Response) {
-    const { workspaceId, userId, cloudId, projectId } = req.body;
+    const { workspaceId, userId, cloudId, projectId, jql } = req.body;
 
     try {
       const jiraClient = await createJiraClient(workspaceId, userId, cloudId);
-      const issueCount = await jiraClient.getNumberOfIssues(projectId);
+      const issueCount = await jiraClient.getNumberOfIssues(projectId, jql);
       return res.json(issueCount);
     } catch (error: any) {
       return responseHandler(res, 500, error);
+    }
+  }
+
+  @Post("/validate-jql")
+  @useValidateUserAuthentication()
+  async validateJQL(req: Request, res: Response) {
+    const { workspaceId, userId, cloudId, jql, projectKey } = req.body;
+
+    try {
+      const finalJQL = `PROJECT = "${projectKey}" AND ${jql}`;
+      const jiraClient = await createJiraClient(workspaceId, userId, cloudId);
+      try {
+        const issueCount = await jiraClient.getNumberOfIssues(projectKey, finalJQL);
+        return res.json({
+          issueCount,
+          executedJQL: finalJQL,
+        });
+      } catch (error: unknown) {
+        let errorMessage = "Invalid JQL provided, please verify the jql is valid";
+
+        if (axios.isAxiosError(error)) {
+          const errorData = error.response?.data;
+          if (errorData) {
+            errorMessage = errorData.errorMessages?.join(", ") || errorData.error || errorMessage;
+          }
+        }
+
+        return res.status(400).json({
+          error: errorMessage,
+        });
+      }
+    } catch (error: any) {
+      responseHandler(res, 500, error);
     }
   }
 

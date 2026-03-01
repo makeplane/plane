@@ -40,6 +40,20 @@ export class IssueArchiveService extends APIService {
       });
   }
 
+  async getArchivedEpics(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-epics/`,
+      {
+        params: { ...queries },
+      },
+      config
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async archiveIssue(
     workspaceSlug: string,
     projectId: string,

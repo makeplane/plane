@@ -22,21 +22,21 @@ import { Table } from "@plane/ui";
 import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
 import type { RowData } from "@/components/workspace/settings/member-columns";
+import { useWorkspaceMembersColumns } from "@/components/workspace/settings/useWorkspaceMemberColumns";
 // hooks
+
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions, useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web imports
-import { useMemberColumns } from "@/plane-web/components/workspace/settings/useMemberColumns";
 
 type Props = {
   memberDetails: (IWorkspaceMember | null)[];
+  workspaceSlug: string;
 };
 
 export const WorkspaceMembersListItem = observer(function WorkspaceMembersListItem(props: Props) {
-  const { memberDetails } = props;
-  const { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal } = useMemberColumns();
+  const { memberDetails, workspaceSlug } = props;
   // router
   const router = useAppRouter();
   // store hooks
@@ -49,6 +49,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
   const { fetchCurrentUserSettings } = useUserSettings();
   const { t } = useTranslation();
   // derived values
+  const { columns, removeMemberModal, setRemoveMemberModal } = useWorkspaceMembersColumns({ workspaceSlug });
 
   const handleLeaveWorkspace = async () => {
     if (!workspaceSlug || !currentUser) return;

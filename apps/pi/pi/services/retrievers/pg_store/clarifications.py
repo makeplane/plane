@@ -33,21 +33,53 @@ async def create_clarification(
     method_tool_names: List[str],
     bound_tool_names: List[str],
 ) -> uuid.UUID:
-    clarification = MessageClarification(
-        chat_id=chat_id,
-        message_id=message_id,
-        pending=True,
-        kind=kind,
-        original_query=original_query,
-        payload=payload,
-        categories=categories,
-        method_tool_names=method_tool_names,
-        bound_tool_names=bound_tool_names,
-    )
-    db.add(clarification)
-    await db.commit()
-    await db.refresh(clarification)
-    return clarification.id
+    """
+    Create or update a clarification record for a message.
+
+    Uses upsert pattern: if a clarification already exists for this message_id
+    (e.g., on rewrite), update it instead of creating a new one. This handles
+    the unique constraint on message_id when the user hits "rewrite".
+    """
+    from sqlmodel import select
+
+    # Check if a clarification already exists for this message_id
+    existing = await db.exec(select(MessageClarification).where(MessageClarification.message_id == message_id))
+    existing_clarification = existing.first()
+
+    if existing_clarification:
+        # Update existing clarification (rewrite scenario)
+        existing_clarification.chat_id = chat_id
+        existing_clarification.pending = True
+        existing_clarification.kind = kind
+        existing_clarification.original_query = original_query
+        existing_clarification.payload = payload
+        existing_clarification.categories = categories
+        existing_clarification.method_tool_names = method_tool_names
+        existing_clarification.bound_tool_names = bound_tool_names
+        # Reset resolution fields since this is a new clarification attempt
+        existing_clarification.answer_text = None
+        existing_clarification.resolved_by_message_id = None
+        existing_clarification.resolved_at = None
+        await db.commit()
+        await db.refresh(existing_clarification)
+        return existing_clarification.id
+    else:
+        # Create new clarification
+        clarification = MessageClarification(
+            chat_id=chat_id,
+            message_id=message_id,
+            pending=True,
+            kind=kind,
+            original_query=original_query,
+            payload=payload,
+            categories=categories,
+            method_tool_names=method_tool_names,
+            bound_tool_names=bound_tool_names,
+        )
+        db.add(clarification)
+        await db.commit()
+        await db.refresh(clarification)
+        return clarification.id
 
 
 async def get_latest_pending_for_chat(db: AsyncSession, *, chat_id: uuid.UUID) -> Optional[MessageClarification]:

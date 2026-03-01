@@ -20,6 +20,10 @@ RUN apk update && \
 
 WORKDIR /opt/email
 
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
+
 LABEL maintainer="engineering@plane.so" \
       app="email-server" \
       version="1.0.0"

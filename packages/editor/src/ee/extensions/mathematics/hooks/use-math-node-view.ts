@@ -74,20 +74,9 @@ export const useMathNodeView = (props: UseMathNodeViewProps) => {
     [getPos, nodeType, editor]
   );
 
-  const handleMouseDown = useCallback(
-    (event: React.MouseEvent) => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (editor.isEditable) {
-        if (isTouchDevice) {
-          extension.options.onClick?.(nodeAttrs, updateMathNode);
-        } else {
-          setIsModalOpen(true);
-        }
-      }
-    },
-    [editor, extension.options, isTouchDevice, nodeAttrs, updateMathNode]
-  );
+  const handleMouseDown = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
+  }, []);
 
   const cleanLatex = useCallback(
     (latex: string) =>

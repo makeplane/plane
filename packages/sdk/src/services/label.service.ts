@@ -24,7 +24,7 @@ export class LabelService extends APIService {
     return this.get(`/api/v1/workspaces/${slug}/projects/${projectId}/labels/`)
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 
@@ -36,7 +36,7 @@ export class LabelService extends APIService {
     return this.post(`/api/v1/workspaces/${slug}/projects/${projectId}/labels/`, payload)
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 
@@ -44,7 +44,7 @@ export class LabelService extends APIService {
     return this.patch(`/api/v1/workspaces/${slug}/projects/${projectId}/labels/${labelId}/`, payload)
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 
@@ -52,7 +52,7 @@ export class LabelService extends APIService {
     return this.delete(`/api/v1/workspaces/${slug}/projects/${projectId}/labels/${labelId}/`)
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 }

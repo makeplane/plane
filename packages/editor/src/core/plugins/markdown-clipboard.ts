@@ -16,6 +16,8 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 // plane imports
 import { convertHTMLToMarkdown } from "@plane/utils";
 import type { TCustomComponentsMetaData } from "@plane/utils";
+import { parseEditorHTMLtoGlobalHTML } from "../utils/editor-html-parser";
+import { cleanEditorHTML } from "../utils/editor-clean-html";
 
 type TArgs = {
   editor: Editor;
@@ -39,13 +41,17 @@ export const MarkdownClipboardPlugin = (args: TArgs): Plugin => {
             // meta data from selection
             const clipboardHTML = view.serializeForClipboard(view.state.selection.content()).dom.innerHTML;
             // convert to markdown
+            const convertedHTML = parseEditorHTMLtoGlobalHTML(clipboardHTML);
+            // clean the HTML
+            const cleanedHTML = cleanEditorHTML(clipboardHTML);
+
             const markdown = convertHTMLToMarkdown({
               description_html: clipboardHTML,
               metaData,
             });
             event.clipboardData?.setData("text/plain", markdown);
-            event.clipboardData?.setData("text/html", clipboardHTML);
-            event.clipboardData?.setData("text/plane-editor-html", clipboardHTML);
+            event.clipboardData?.setData("text/html", convertedHTML);
+            event.clipboardData?.setData("text/plane-editor-html", cleanedHTML);
             return true;
           } catch (error) {
             console.error("Failed to copy markdown content to clipboard:", error);

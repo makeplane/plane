@@ -17,7 +17,6 @@ from urllib.parse import urlencode
 import pytz
 
 # Django imports
-from django.conf import settings
 
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
@@ -64,7 +63,7 @@ class GoogleOAuthProvider(OauthAdapter):
         client_id = GOOGLE_CLIENT_ID
         client_secret = GOOGLE_CLIENT_SECRET
 
-        scheme = "https" if settings.IS_HEROKU else "https" if request.is_secure() else "http"
+        scheme = "https" if request.is_secure() else "http"
 
         redirect_uri = redirect_uri if redirect_uri else (f"""{scheme}://{request.get_host()}/auth/google/callback/""")
 

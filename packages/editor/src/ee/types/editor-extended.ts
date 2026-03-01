@@ -57,7 +57,8 @@ export type TExtendedEditorCommands =
   | "block-equation"
   | "inline-equation"
   | "drawio-board"
-  | "drawio-diagram";
+  | "drawio-diagram"
+  | "multi-column";
 
 export type TExtendedCommandExtraProps = {
   attachment: {

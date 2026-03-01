@@ -82,14 +82,14 @@ def is_project_intakes_enabled_async(workspace_slug: str, project_id: str, raise
 
 
 # ====== check if the intake is enabled for the project with settings ======
-def project_intakes_settings(workspace_slug: str, project_id: str, raise_exception: bool = True):
+def project_intakes_settings(workspace_slug: str, workspace_id: str, project_id: str, raise_exception: bool = True):
     try:
         intake = get_intake(workspace_slug=workspace_slug, project_id=project_id)
         intake_id = intake.id
 
-        project_intake_settings = IntakeSetting.objects.filter(
-            workspace__slug=workspace_slug, project_id=project_id, intake_id=intake_id
-        ).first()
+        project_intake_settings, _ = IntakeSetting.objects.get_or_create(
+            workspace_id=workspace_id, project_id=project_id, intake_id=intake_id
+        )
 
         if not project_intake_settings:
             if raise_exception:
@@ -101,12 +101,6 @@ def project_intakes_settings(workspace_slug: str, project_id: str, raise_excepti
                 raise GraphQLError(message, extensions=error_extensions)
             return None
         return project_intake_settings
-    except IntakeSetting.DoesNotExist:
-        if raise_exception:
-            message = "Intake setting not found"
-            error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
-            raise GraphQLError(message, extensions=error_extensions)
-        return None
     except Exception as e:
         if raise_exception:
             message = e.message or "Error checking if project intakes are enabled"
@@ -119,9 +113,12 @@ def project_intakes_settings(workspace_slug: str, project_id: str, raise_excepti
 
 
 @sync_to_async
-def project_intakes_settings_async(workspace_slug: str, project_id: str, raise_exception: bool = True):
+def project_intakes_settings_async(
+    workspace_slug: str, workspace_id: str, project_id: str, raise_exception: bool = True
+):
     return project_intakes_settings(
         workspace_slug=workspace_slug,
+        workspace_id=workspace_id,
         project_id=project_id,
         raise_exception=raise_exception,
     )
@@ -130,12 +127,14 @@ def project_intakes_settings_async(workspace_slug: str, project_id: str, raise_e
 # ====== check if the project settings are enabled by settings key ======
 def is_project_settings_enabled_by_settings_key(
     workspace_slug: str,
+    workspace_id: str,
     project_id: str,
     raise_exception: bool = True,
     settings_key: Optional[IntakeSettingsType] = IntakeSettingsType.IN_APP,
 ):
     project_intake_settings = project_intakes_settings(
         workspace_slug=workspace_slug,
+        workspace_id=workspace_id,
         project_id=project_id,
         raise_exception=raise_exception,
     )
@@ -148,12 +147,14 @@ def is_project_settings_enabled_by_settings_key(
 @sync_to_async
 def is_project_settings_enabled_by_settings_key_async(
     workspace_slug: str,
+    workspace_id: str,
     project_id: str,
     raise_exception: bool = True,
     settings_key: Optional[IntakeSettingsType] = IntakeSettingsType.IN_APP,
 ):
     return is_project_settings_enabled_by_settings_key(
         workspace_slug=workspace_slug,
+        workspace_id=workspace_id,
         project_id=project_id,
         settings_key=settings_key,
         raise_exception=raise_exception,

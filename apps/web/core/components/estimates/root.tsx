@@ -18,17 +18,15 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 // components
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
-import { SettingsHeading2 } from "@/components/settings/heading-2";
+import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
-// plane web components
-import { UpdateEstimateModal } from "@/plane-web/components/estimates";
 // local imports
-import { SettingsHeading } from "../settings/heading";
 import { CreateEstimateModal } from "./create/modal";
 import { DeleteEstimateModal } from "./delete/modal";
+import { UpdateEstimateModal } from "./update/modal";
 import { EstimateDisableSwitch } from "./estimate-disable-switch";
 import { EstimateList } from "./estimate-list";
 import { EstimateLoaderScreen } from "./loader-screen";
@@ -82,7 +80,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
               />
               {/* active estimates section */}
               <div className="mt-12 flex flex-col gap-y-4">
-                <SettingsHeading2 title="Estimates list" />
+                <SettingsHeading title="Estimates list" variant="h6" />
                 <EstimateList
                   estimateIds={[currentActiveEstimateId]}
                   isAdmin={isAdmin}
@@ -112,7 +110,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
           {/* archived estimates section */}
           {archivedEstimateIds && archivedEstimateIds.length > 0 && (
             <div className="mt-12 flex flex-col gap-y-4">
-              <SettingsHeading2
+              <SettingsHeading
                 title="Archived estimates"
                 description={
                   <>
@@ -128,6 +126,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
                     </a>
                   </>
                 }
+                variant="h6"
               />
               <EstimateList estimateIds={archivedEstimateIds} isAdmin={isAdmin} />
             </div>

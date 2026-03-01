@@ -19,7 +19,7 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 // constants
 import { useUserPermissions } from "@/hooks/store/user";
 

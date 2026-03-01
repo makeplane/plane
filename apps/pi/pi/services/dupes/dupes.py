@@ -248,7 +248,7 @@ async def get_dupes(data: DupeSearchRequest):
 
         # Get model key for token tracking
         dupes_llm = get_dupes_llm()
-        tracking_data["model_key"] = getattr(dupes_llm, "model_name", "gpt-4o-mini")
+        tracking_data["model_key"] = getattr(dupes_llm, "model_name", "unknown")
 
         log.info(f"LLM identified {len(llm_identified_dupes)} duplicates from {len(candidates_for_llm)} candidates")
 

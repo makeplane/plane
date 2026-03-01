@@ -15,7 +15,7 @@ import { memo, useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader } from "lucide-react";
-import { Disclosure } from "@headlessui/react";
+import { CollapsibleContent } from "@plane/propel/collapsible";
 // plane imports
 import { EPageAccess, PAGE_SORT_ORDER_INCREMENT } from "@plane/constants";
 import type { TPage } from "@plane/types";
@@ -158,7 +158,7 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
   );
 
   return (
-    <Disclosure.Panel as="div" className="ml-1 mt-2 pb-4">
+    <CollapsibleContent className="ml-1 mt-2 pb-4">
       {pageIds.length > 0 ? (
         <div>
           {pageIds.map((pageId, index) => {
@@ -219,7 +219,7 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
           No {sectionType === "public" ? "workspace" : sectionType} pages
         </p>
       )}
-    </Disclosure.Panel>
+    </CollapsibleContent>
   );
 });
 

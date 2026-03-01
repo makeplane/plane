@@ -49,29 +49,30 @@ def execute_automation_task(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         Dict containing execution results and status
     """
-    event_id = event_data.get("event_id")
-    event_type = event_data.get("event_type")
-
-    # Get the workspace slug
-    workspace_id = event_data.get("workspace_id")
-
-    workspace = Workspace.objects.get(id=workspace_id)
-
-    # Check if the automation quota is exceeded
-    is_automation_enabled = check_workspace_feature_flag(
-        feature_key=FeatureFlag.PROJECT_AUTOMATIONS,
-        slug=workspace.slug,
-    )
-
-    if not is_automation_enabled:
-        logger.info(f"Automation is not enabled for workspace {workspace.slug}")
-        return {
-            "success": True,
-        }
-
-    logger.info(f"Starting automation task for event {event_id} ({event_type})")
 
     try:
+        event_id = event_data.get("event_id")
+        event_type = event_data.get("event_type")
+
+        # Get the workspace slug
+        workspace_id = event_data.get("workspace_id")
+        logger.info(f"Executing automation task for event in Workspace : {workspace_id}")
+        workspace = Workspace.objects.get(id=workspace_id)
+
+        # Check if the automation quota is exceeded
+        is_automation_enabled = check_workspace_feature_flag(
+            feature_key=FeatureFlag.PROJECT_AUTOMATIONS,
+            slug=workspace.slug,
+        )
+
+        if not is_automation_enabled:
+            logger.info(f"Automation is not enabled for workspace {workspace.slug}")
+            return {
+                "success": True,
+            }
+
+        logger.info(f"Starting automation task for event {event_id} ({event_type})")
+
         with transaction.atomic():
             # Mark event as processing
             # TODO: Do we need this logic? (might be required when we have multiple consumers running)
@@ -117,7 +118,14 @@ def execute_automation_task(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
                     "automations_triggered": 0,
                     "message": "No automations triggered for this event",
                 }
-
+    except Workspace.DoesNotExist:
+        logger.warning(f"Workspace {workspace_id} does not exist")
+        return {
+            "success": False,
+            "event_id": event_id,
+            "automations_triggered": 0,
+            "error": f"Workspace {workspace_id} does not exist",
+        }
     except Exception as e:
         logger.error(f"Error processing automation for event {event_id}: {e}")
         log_exception(e)

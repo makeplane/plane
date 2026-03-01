@@ -18,7 +18,6 @@ from pi import settings
 
 log = logger.getChild(__name__)
 MAX_RETRIES = 10
-ML_MODEL_ID = settings.vector_db.ML_MODEL_ID
 KNN_TOP_K = settings.vector_db.KNN_TOP_K
 
 
@@ -46,12 +45,16 @@ def build_issue_semantic_query(
     query_title_search = query_title
     query_description_search = query_description or None
 
+    # Import here to avoid circular dependency
+    from pi.services.retrievers.pg_store import get_ml_model_id_sync
+
     # Query against name_semantic field with filter
+    ml_model_id = get_ml_model_id_sync()
     name_query: Dict[str, Any] = {
         "neural": {
             "name_semantic": {
                 "query_text": query_title_search,
-                "model_id": ML_MODEL_ID,
+                "model_id": ml_model_id,
                 "k": KNN_TOP_K,
                 "filter": combined_filter,
             }
@@ -61,7 +64,7 @@ def build_issue_semantic_query(
 
     # Query against content_semantic field with filter
     content_query: Dict[str, Any] = {
-        "neural": {"content_semantic": {"query_text": query_title_search, "model_id": ML_MODEL_ID, "k": KNN_TOP_K, "filter": combined_filter}}
+        "neural": {"content_semantic": {"query_text": query_title_search, "model_id": ml_model_id, "k": KNN_TOP_K, "filter": combined_filter}}
     }
     should_queries.append(content_query)
 
@@ -71,7 +74,7 @@ def build_issue_semantic_query(
             "neural": {
                 "description_semantic": {
                     "query_text": query_description_search,
-                    "model_id": ML_MODEL_ID,
+                    "model_id": ml_model_id,
                     "k": KNN_TOP_K,
                     "filter": combined_filter,
                 }
@@ -80,7 +83,7 @@ def build_issue_semantic_query(
         should_queries.append(desc_query)
 
         content_desc_query: Dict[str, Any] = {
-            "neural": {"content_semantic": {"query_text": query_description, "model_id": ML_MODEL_ID, "k": KNN_TOP_K, "filter": combined_filter}}
+            "neural": {"content_semantic": {"query_text": query_description, "model_id": ml_model_id, "k": KNN_TOP_K, "filter": combined_filter}}
         }
         should_queries.append(content_desc_query)
 
@@ -88,19 +91,19 @@ def build_issue_semantic_query(
         combined_query_text = f"{query_title} {query_description}"
 
         combined_name_query: Dict[str, Any] = {
-            "neural": {"name_semantic": {"query_text": combined_query_text, "model_id": ML_MODEL_ID, "k": KNN_TOP_K, "filter": combined_filter}}
+            "neural": {"name_semantic": {"query_text": combined_query_text, "model_id": ml_model_id, "k": KNN_TOP_K, "filter": combined_filter}}
         }
         should_queries.append(combined_name_query)
 
         combined_desc_query: Dict[str, Any] = {
             "neural": {
-                "description_semantic": {"query_text": combined_query_text, "model_id": ML_MODEL_ID, "k": KNN_TOP_K, "filter": combined_filter}
+                "description_semantic": {"query_text": combined_query_text, "model_id": ml_model_id, "k": KNN_TOP_K, "filter": combined_filter}
             }
         }
         should_queries.append(combined_desc_query)
 
         combined_content_query: Dict[str, Any] = {
-            "neural": {"content_semantic": {"query_text": combined_query_text, "model_id": ML_MODEL_ID, "k": KNN_TOP_K, "filter": combined_filter}}
+            "neural": {"content_semantic": {"query_text": combined_query_text, "model_id": ml_model_id, "k": KNN_TOP_K, "filter": combined_filter}}
         }
         should_queries.append(combined_content_query)
 
@@ -144,13 +147,17 @@ def build_pages_semantic_query(query: str, workspace_id: str, user_id: str, proj
     # Combine all filters
     combined_filter: Dict[str, Any] = {"bool": {"must": [scope_filter, access_filter, {"term": {"is_deleted": "false"}}]}}
 
+    # Import here to avoid circular dependency
+    from pi.services.retrievers.pg_store import get_ml_model_id_sync
+
     # Neural search queries with efficient filtering
+    ml_model_id = get_ml_model_id_sync()
     name_query: Dict[str, Any] = {
-        "neural": {"name_semantic": {"query_text": query, "model_id": ML_MODEL_ID, "k": KNN_TOP_K, "filter": combined_filter}}
+        "neural": {"name_semantic": {"query_text": query, "model_id": ml_model_id, "k": KNN_TOP_K, "filter": combined_filter}}
     }
 
     desc_query: Dict[str, Any] = {
-        "neural": {"description_semantic": {"query_text": query, "model_id": ML_MODEL_ID, "k": KNN_TOP_K, "filter": combined_filter}}
+        "neural": {"description_semantic": {"query_text": query, "model_id": ml_model_id, "k": KNN_TOP_K, "filter": combined_filter}}
     }
 
     neural_queries: List[Dict[str, Any]] = [name_query, desc_query]

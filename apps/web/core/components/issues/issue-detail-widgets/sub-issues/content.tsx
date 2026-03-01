@@ -20,7 +20,7 @@ import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
-import { CreateUpdateIssueModal } from "../../issue-modal/modal";
+import { CreateUpdateIssueModal } from "../../issue-modal/root";
 import { useSubIssueOperations } from "./helper";
 import { SubIssuesListRoot } from "./issues-list/root";
 

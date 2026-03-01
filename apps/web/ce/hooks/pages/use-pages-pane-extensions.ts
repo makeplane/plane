@@ -23,7 +23,7 @@ import {
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useQueryParams } from "@/hooks/use-query-params";
 import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
-import type { INavigationPaneExtension } from "@/plane-web/types/pages/pane-extensions";
+import type { INavigationPaneExtension } from "@/types/pages/pane-extensions";
 import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageExtensionHookParams = {

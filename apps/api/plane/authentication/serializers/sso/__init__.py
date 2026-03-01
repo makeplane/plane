@@ -11,5 +11,17 @@
 
 from .domain import DomainSerializer
 from .provider import IdentityProviderCreateSerializer, IdentityProviderSerializer
+from .group_sync import (
+    GroupSyncConfigSerializer,
+    GroupMappingSerializer,
+    GroupMappingCreateSerializer,
+)
 
-__all__ = ["DomainSerializer", "IdentityProviderCreateSerializer", "IdentityProviderSerializer"]
+__all__ = [
+    "DomainSerializer",
+    "IdentityProviderCreateSerializer",
+    "IdentityProviderSerializer",
+    "GroupSyncConfigSerializer",
+    "GroupMappingSerializer",
+    "GroupMappingCreateSerializer",
+]

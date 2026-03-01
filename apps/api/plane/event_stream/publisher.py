@@ -34,7 +34,7 @@ from django.conf import settings
 import pika
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.connection import Connection
-from pika.exceptions import AMQPConnectionError, AMQPChannelError, ConnectionClosed
+from pika.exceptions import AMQPConnectionError, AMQPChannelError, ConnectionClosed, StreamLostError
 
 # Local imports
 from plane.event_stream.models.outbox import OutboxEvent
@@ -211,17 +211,17 @@ class EventStreamPublisher:
     def _ensure_connection(self):
         """
         Context manager to ensure connection is available.
-        Thread-safe and handles reconnection on failures.
+        Thread-safe with proper cleanup on failures.
+        Reconnection is handled by _retry_operation at the caller level.
         """
         try:
             self._connect()
             yield
-        except (ConnectionClosed, AMQPConnectionError, AMQPChannelError) as e:
-            logger.warning(f"[{self.instance_id}] Connection lost, attempting to reconnect: {e}")
+        except (StreamLostError, ConnectionClosed, AMQPConnectionError, AMQPChannelError) as e:
+            logger.warning(f"[{self.instance_id}] Connection lost during operation: {e}")
             with self._connection_lock:
                 self._disconnect_unsafe()
-                self._connect()
-            yield
+            raise
         except Exception as e:
             logger.error(f"[{self.instance_id}] Unexpected connection error: {e}")
             with self._connection_lock:

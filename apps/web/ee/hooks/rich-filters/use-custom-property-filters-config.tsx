@@ -35,7 +35,7 @@ import {
 } from "@plane/utils";
 // ce imports
 import type { TFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
-import { CUSTOM_PROPERTY_ICON_MAP } from "@/plane-web/components/issue-types/properties/property-icon";
+import { CUSTOM_PROPERTY_ICON_MAP } from "@/components/work-item-types/properties/property-icon";
 
 interface TUseCustomPropertyFiltersConfigProps {
   customProperties: IIssueProperty<EIssuePropertyType>[];

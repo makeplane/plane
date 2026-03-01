@@ -1,0 +1,809 @@
+/**
+ * Version Diff Editor Styles
+ * 
+ * Unified styling system for Yjs snapshot diffing in ProseMirror.
+ * Uses data-attribute driven selectors inspired by @pierre/diffs.
+ * 
+ * Architecture:
+ * - All ychange styling uses `data-ychange-type` attribute (added|removed)
+ * - Per-user colors via CSS variables: --ychange-color-light, --ychange-color-dark
+ * - Theme variants via [data-theme*="light"] and [data-theme*="dark"]
+ * 
+ * Node categories:
+ * 1. INLINE MARKS: <ychange> elements for text-level changes
+ * 2. BLOCK NODES: Elements with data-ychange-type via GlobalAttributes (p, h1-h6, blockquote, lists, hr)
+ * 3. NODEVIEW BLOCKS: Elements with data-ychange-type via Decorations (table, image, callout, code, embeds)
+ */
+
+/* ============================================================================
+   CSS CUSTOM PROPERTIES - Fallback colors (used when user color not available)
+   ============================================================================ */
+.version-diff-editor {
+  /* Fallback addition colors - green tones (only used when --ychange-color-* not set) */
+  --ychange-addition-light: rgba(34, 197, 94, 0.15);
+  --ychange-addition-dark: rgba(34, 197, 94, 0.25);
+  --ychange-addition-solid: rgb(22, 163, 74);
+  --ychange-addition-border-light: rgba(34, 197, 94, 0.6);
+  --ychange-addition-border-dark: rgba(74, 222, 128, 0.8);
+
+  /* Fallback removal colors - red tones (only used when --ychange-color-* not set) */
+  --ychange-removal-light: rgba(239, 68, 68, 0.15);
+  --ychange-removal-dark: rgba(239, 68, 68, 0.25);
+  --ychange-removal-solid: rgb(220, 38, 38);
+  --ychange-removal-border-light: rgba(239, 68, 68, 0.5);
+  --ychange-removal-border-dark: rgba(239, 68, 68, 0.6);
+}
+
+/* ============================================================================
+   SECTION 1: INLINE MARKS - <ychange> elements for text changes
+   
+   These are rendered by YChangeMark extension via y-prosemirror.
+   Attributes: ychange_type, data-ychange-user
+   ============================================================================ */
+
+.version-diff-editor {
+  /* Base positioning for inline marks */
+  & ychange {
+    position: relative;
+
+    /* Added text - user color background highlight with solid text color for contrast */
+    &[ychange_type="added"] {
+      color: var(--ychange-color-solid, var(--ychange-addition-solid));
+
+      @variant light {
+        background-color: var(--ychange-color-light, var(--ychange-addition-light));
+      }
+
+      @variant dark {
+        background-color: var(--ychange-color-dark, var(--ychange-addition-dark));
+      }
+    }
+
+    /* Removed text - strikethrough with user color, NO background */
+    &[ychange_type="removed"] {
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+      background-color: transparent !important;
+      opacity: 0.6;
+      color: var(--ychange-color-solid, var(--ychange-removal-solid));
+    }
+  }
+
+  /* Prevent double-highlighting: when inside a block with ychange, suppress inline background */
+  & [data-ychange-type] ychange[ychange_type="added"] {
+    background-color: transparent !important;
+  }
+}
+
+/* ============================================================================
+   SECTION 2: BLOCK NODES - Via GlobalAttributes (renderHTML flow)
+   
+   Applies to: paragraph, heading, blockquote, lists, list items, hr
+   Attributes: data-ychange-type, data-ychange-user
+   CSS variables: --ychange-color-light, --ychange-color-dark (per-user colors)
+   ============================================================================ */
+
+/* --- 2.1 Simple blocks: p, h1-h6, blockquote --- */
+
+/* Added blocks - user color background */
+.version-diff-editor [data-ychange-type="added"]:where(p, h1, h2, h3, h4, h5, h6, blockquote) {
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-addition-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-addition-dark));
+  }
+}
+
+/* Removed blocks - user color background + diagonal hatching pattern */
+.version-diff-editor [data-ychange-type="removed"]:where(p, h1, h2, h3, h4, h5, h6, blockquote) {
+  position: relative;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-removal-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-removal-dark));
+  }
+}
+
+/* Diagonal hatching overlay for removed blocks */
+.version-diff-editor [data-ychange-type="removed"]:where(p, h1, h2, h3, h4, h5, h6, blockquote)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+}
+
+/* --- 2.2 Lists: ul, ol, task-list --- */
+/* 
+ * Lists use left border indicator instead of full background to avoid
+ * extending beyond editor container (markers are positioned outside).
+ * Removed negative margins that caused overflow issues.
+ */
+
+/* Added lists - left border indicator only (no background on container) */
+.version-diff-editor [data-ychange-type="added"]:where(ul, ol, [data-type="taskList"]) {
+  border-left: 3px solid var(--ychange-color-solid, var(--ychange-addition-solid));
+}
+
+/* Removed lists - left border with dashed style to indicate removal */
+.version-diff-editor [data-ychange-type="removed"]:where(ul, ol, [data-type="taskList"]) {
+  border-left: 3px dashed var(--ychange-color-solid, var(--ychange-removal-solid));
+  opacity: 0.7;
+}
+
+/* --- 2.3 List items --- */
+/*
+ * When the parent list already has ychange styling (left border),
+ * don't add heavy backgrounds to individual items - just subtle text color change.
+ * Only show background for items that changed independently of their parent list.
+ */
+
+/* Added list items inside a list that also has ychange - no background, just inherit */
+.version-diff-editor [data-ychange-type] li[data-ychange-type="added"] {
+  background-color: transparent;
+}
+
+/* Added list items where only the item changed (not the parent list) */
+.version-diff-editor :where(ul, ol, [data-type="taskList"]):not([data-ychange-type]) li[data-ychange-type="added"] {
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-addition-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-addition-dark));
+  }
+}
+
+/* Removed list items inside a list that also has ychange - no background */
+.version-diff-editor [data-ychange-type] li[data-ychange-type="removed"] {
+  background-color: transparent;
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+/* Removed list items where only the item changed (not the parent list) */
+.version-diff-editor :where(ul, ol, [data-type="taskList"]):not([data-ychange-type]) li[data-ychange-type="removed"] {
+  position: relative;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-removal-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-removal-dark));
+  }
+}
+
+.version-diff-editor
+  :where(ul, ol, [data-type="taskList"]):not([data-ychange-type])
+  li[data-ychange-type="removed"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+}
+
+/* --- 2.4 Horizontal rule --- */
+
+.version-diff-editor hr[data-ychange-type="added"] {
+  @variant light {
+    border-color: var(--ychange-color-light, var(--ychange-addition-border-light));
+  }
+
+  @variant dark {
+    border-color: var(--ychange-color-dark, var(--ychange-addition-border-dark));
+  }
+}
+
+/* Removed hr - use solid color for visibility with hatching indicator */
+.version-diff-editor hr[data-ychange-type="removed"] {
+  position: relative;
+  border-color: var(--ychange-color-solid, var(--ychange-removal-border-light));
+}
+
+.version-diff-editor hr[data-ychange-type="removed"]::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+}
+
+/* ============================================================================
+   SECTION 3: NODEVIEW BLOCKS - Via Decorations (NodeView flow)
+   
+   Applies to: table, image, callout, code-block, work-item-embed, page-embed,
+               attachment, block-math, external-embed, page-link, drawio
+   
+   Classes: .ychange-node--added, .ychange-node--removed
+   Attributes: data-ychange-type, data-ychange-user
+   CSS variables: --ychange-color-light, --ychange-color-dark
+   ============================================================================ */
+
+/* --- 3.1 Generic NodeView styling --- */
+
+/* Added NodeView blocks - user color background */
+.version-diff-editor [data-ychange-type="added"].ychange-node {
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-addition-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-addition-dark));
+  }
+}
+
+/* Removed NodeView blocks - user color background + diagonal hatching */
+.version-diff-editor [data-ychange-type="removed"].ychange-node {
+  position: relative;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-removal-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-removal-dark));
+  }
+}
+
+.version-diff-editor [data-ychange-type="removed"].ychange-node::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+  border-radius: inherit;
+}
+
+/* --- 3.2 Tables --- */
+
+/* Tables need border-collapse: separate for background to show properly */
+.version-diff-editor table[data-ychange-type] {
+  border-collapse: separate;
+}
+
+.version-diff-editor table[data-ychange-type="added"] {
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-addition-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-addition-dark));
+  }
+}
+
+/* Removed tables - user color background + diagonal hatching */
+.version-diff-editor table[data-ychange-type="removed"] {
+  position: relative;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-removal-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-removal-dark));
+  }
+}
+
+.version-diff-editor table[data-ychange-type="removed"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+}
+
+/* Prevent double-highlighting for content inside tables */
+.version-diff-editor table[data-ychange-type] pre {
+  --ychange-color-light: transparent !important;
+  --ychange-color-dark: transparent !important;
+}
+
+/* --- 3.3 Code blocks - Use border indicator instead of background --- */
+
+/* Code blocks have their own background, so use left border */
+.code-block[data-ychange-type="added"] pre {
+  @variant light {
+    border-left: 4px solid var(--ychange-color-light, var(--ychange-addition-border-light));
+    background-color: var(--ychange-color-light, var(--ychange-addition-light));
+  }
+
+  @variant dark {
+    border-left: 4px solid var(--ychange-color-dark, var(--ychange-addition-border-dark));
+    background-color: var(--ychange-color-dark, var(--ychange-addition-dark));
+  }
+}
+
+/* Removed code blocks - user color background + diagonal hatching */
+.code-block[data-ychange-type="removed"] {
+  position: relative;
+}
+
+.code-block[data-ychange-type="removed"] pre {
+  @variant light {
+    border-left: 4px solid var(--ychange-color-solid, var(--ychange-removal-border-light));
+    background-color: var(--ychange-color-light, var(--ychange-removal-light));
+  }
+
+  @variant dark {
+    border-left: 4px solid var(--ychange-color-solid, var(--ychange-removal-border-dark));
+    background-color: var(--ychange-color-dark, var(--ychange-removal-dark));
+  }
+}
+
+.code-block[data-ychange-type="removed"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+  border-radius: 0.5rem;
+}
+
+/* --- 3.4 Images --- */
+
+/* Reset outer wrapper background - prevent double styling */
+.custom-image-node[data-ychange-type] {
+  background-color: transparent !important;
+}
+
+/* Added images - semi-transparent color overlay via pseudo-element */
+.group\/image-component[data-ychange-type="added"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 0.375rem;
+  background-color: var(--ychange-color-solid, var(--ychange-addition-solid));
+  opacity: 0.4;
+}
+
+/* Removed images - semi-transparent color overlay + diagonal hatching */
+.group\/image-component[data-ychange-type="removed"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 0.375rem;
+  background-color: var(--ychange-color-solid, var(--ychange-removal-solid));
+  opacity: 0.4;
+}
+
+.group\/image-component[data-ychange-type="removed"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 11;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+  border-radius: 0.375rem;
+}
+
+/* Image uploader state (when image is not yet uploaded) - ychange styling */
+.custom-image-node[data-ychange-type] .image-upload-component {
+  border: none !important;
+  border-radius: 0.5rem;
+}
+
+.custom-image-node[data-ychange-type="added"] .image-upload-component {
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-addition-light)) !important;
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-addition-dark)) !important;
+  }
+}
+
+.custom-image-node[data-ychange-type="removed"] .image-upload-component {
+  position: relative;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-removal-light)) !important;
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-removal-dark)) !important;
+  }
+}
+
+.custom-image-node[data-ychange-type="removed"] .image-upload-component::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+  border-radius: inherit;
+}
+
+/* --- 3.5 Callouts --- */
+/*
+ * Callouts have inline backgroundColor set via JS.
+ * Reset to neutral background and apply ychange color overlay for consistency.
+ */
+
+/* Reset callout background to neutral when ychange is applied */
+.callout-component[data-ychange-type] {
+  background-color: var(--color-background-layer-2) !important;
+}
+
+/* Added callouts - user color background */
+.callout-component[data-ychange-type="added"] {
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-addition-light)) !important;
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-addition-dark)) !important;
+  }
+}
+
+/* Removed callouts - user color background + diagonal hatching */
+.callout-component[data-ychange-type="removed"] {
+  position: relative;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-removal-light)) !important;
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-removal-dark)) !important;
+  }
+}
+
+.callout-component[data-ychange-type="removed"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+  border-radius: 0.5rem;
+}
+
+/* --- 3.6 Embeds (work-item, page, external, page-link) --- */
+/*
+ * Embed components may have inner backgrounds.
+ * Reset inner background and apply ychange color for consistency.
+ */
+
+/* Reset inner embed backgrounds when ychange is applied */
+.version-diff-editor
+  [data-ychange-type]:where(
+    .work-item-embed-component,
+    .page-embed-component,
+    .editor-embed-component,
+    .page-link-component
+  )
+  > div {
+  background-color: transparent !important;
+}
+
+/* Added embeds - user color background */
+.version-diff-editor
+  [data-ychange-type="added"]:where(
+    .work-item-embed-component,
+    .page-embed-component,
+    .editor-embed-component,
+    .page-link-component
+  ) {
+  border-radius: 0.5rem;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-addition-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-addition-dark));
+  }
+}
+
+/* Removed embeds - user color background + diagonal hatching */
+.version-diff-editor
+  [data-ychange-type="removed"]:where(
+    .work-item-embed-component,
+    .page-embed-component,
+    .editor-embed-component,
+    .page-link-component
+  ) {
+  position: relative;
+  border-radius: 0.5rem;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-removal-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-removal-dark));
+  }
+}
+
+.version-diff-editor
+  [data-ychange-type="removed"]:where(
+    .work-item-embed-component,
+    .page-embed-component,
+    .editor-embed-component,
+    .page-link-component
+  )::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+  border-radius: 0.5rem;
+}
+
+/* --- 3.7 Attachments --- */
+/*
+ * Attachments have inner container with bg-layer-3.
+ * Reset inner background and apply ychange color for consistency.
+ */
+
+/* Reset inner attachment block background when ychange is applied */
+.editor-attachment-component[data-ychange-type] > div > div {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+/* Added attachments - user color background */
+.editor-attachment-component[data-ychange-type="added"] {
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-addition-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-addition-dark));
+  }
+}
+
+/* Removed attachments - user color background + diagonal hatching */
+.editor-attachment-component[data-ychange-type="removed"] {
+  position: relative;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-removal-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-removal-dark));
+  }
+}
+
+.editor-attachment-component[data-ychange-type="removed"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+  border-radius: 0.5rem;
+}
+
+/* --- 3.8 Math blocks --- */
+/*
+ * Math blocks have inner container with bg-layer-3.
+ * Reset inner background and apply ychange color for consistency.
+ */
+
+/* Reset inner math container background when ychange is applied */
+.block-math-component[data-ychange-type] > div {
+  background-color: transparent !important;
+}
+
+/* Added math blocks - user color background */
+.block-math-component[data-ychange-type="added"] {
+  border-radius: 0.5rem;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-addition-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-addition-dark));
+  }
+}
+
+/* Removed math blocks - user color background + diagonal hatching */
+.block-math-component[data-ychange-type="removed"] {
+  position: relative;
+  border-radius: 0.5rem;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-removal-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-removal-dark));
+  }
+}
+
+.block-math-component[data-ychange-type="removed"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+  border-radius: 0.5rem;
+}
+
+/* --- 3.9 DrawIO diagrams --- */
+/*
+ * DrawIO components may have inner backgrounds.
+ * Reset inner background and apply ychange color for consistency.
+ */
+
+/* Reset inner drawio container background when ychange is applied */
+.editor-drawio-component[data-ychange-type] > div {
+  background-color: transparent !important;
+}
+
+/* Added drawio - user color background */
+.editor-drawio-component[data-ychange-type="added"] {
+  border-radius: 0.5rem;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-addition-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-addition-dark));
+  }
+}
+
+/* Removed drawio - user color background + diagonal hatching */
+.editor-drawio-component[data-ychange-type="removed"] {
+  position: relative;
+  border-radius: 0.5rem;
+
+  @variant light {
+    background-color: var(--ychange-color-light, var(--ychange-removal-light));
+  }
+
+  @variant dark {
+    background-color: var(--ychange-color-dark, var(--ychange-removal-dark));
+  }
+}
+
+.editor-drawio-component[data-ychange-type="removed"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 4px,
+    var(--ychange-color-solid, var(--ychange-removal-solid)) 5px
+  );
+  background-attachment: fixed;
+  opacity: 0.5;
+  border-radius: 0.5rem;
+}
+
+/* ============================================================================
+   SECTION 4: ACCESSIBILITY - Reduced motion support
+   ============================================================================ */
+
+/* Honor prefers-reduced-motion for users who prefer reduced animations */
+@media (prefers-reduced-motion: reduce) {
+  .version-diff-editor,
+  .version-diff-editor * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

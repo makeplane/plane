@@ -75,6 +75,7 @@ class MessageMetaStepType(str, Enum):
     ACTION_CATEGORY_ROUTING = "action_category_routing"
     ACTION_METHOD_PLANNING = "action_method_planning"
     ACTION_EXECUTION = "action_execution"
+    WEB_SEARCH = "web_search"
 
     def __str__(self):
         return self.value

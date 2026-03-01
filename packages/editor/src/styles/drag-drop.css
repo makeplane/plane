@@ -24,6 +24,18 @@
 }
 /* end drag handle */
 
+#column-list-drag-handle {
+  position: fixed;
+  z-index: 50;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+
+  &.column-list-drag-handle-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
 /* ai handle */
 #ai-handle {
   opacity: 1;

@@ -42,3 +42,5 @@ export const SUPPORT_EMAIL = process.env.VITE_SUPPORT_EMAIL || "support@plane.so
 export const MARKETING_PRICING_PAGE_LINK = "https://plane.so/pricing";
 export const MARKETING_CONTACT_US_PAGE_LINK = "https://plane.so/contact";
 export const MARKETING_PLANE_ONE_PAGE_LINK = "https://plane.so/one";
+// Google Analytics ID
+export const GOOGLE_ANALYTICS_ID = process.env.VITE_GOOGLE_ANALYTICS_ID || "";

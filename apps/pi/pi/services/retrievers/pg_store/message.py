@@ -664,6 +664,7 @@ async def reconstruct_chat_request_from_message(db: AsyncSession, user_message: 
     user_preferences = preferences_result.scalar_one_or_none()
     mode = user_preferences.mode if user_preferences and user_preferences.mode else "ask"
     project_id = user_preferences.focus_project_id if user_preferences and user_preferences.focus_project_id else None
+    websearch_enabled = user_preferences.is_websearch_enabled if user_preferences else None
 
     # Get source from message, default to "web" if not set
     source = user_message.source or "web"
@@ -679,6 +680,7 @@ async def reconstruct_chat_request_from_message(db: AsyncSession, user_message: 
         workspace_id=chat.workspace_id if chat else None,
         workspace_slug=chat.workspace_slug if chat else None,
         workspace_in_context=chat.workspace_in_context if chat else False,
+        is_websearch_enabled=websearch_enabled if websearch_enabled is not None else (chat.is_websearch_enabled if chat else False),
         is_project_chat=chat.is_project_chat if chat else False,
         project_id=project_id,
         attachment_ids=attachment_ids,

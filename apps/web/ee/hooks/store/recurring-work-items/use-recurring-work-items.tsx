@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { IRecurringWorkItemStore } from "@/plane-web/store/recurring-work-items/base.store";
+import type { IRecurringWorkItemStore } from "@/store/recurring-work-items/base.store";
 
 export const useRecurringWorkItems = (): IRecurringWorkItemStore => {
   const context = useContext(StoreContext);

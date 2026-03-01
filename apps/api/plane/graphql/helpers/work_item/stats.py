@@ -65,6 +65,9 @@ def get_work_item_stats_count(
     attachments_count = FileAsset.objects.filter(
         entity_type=FileAssetEntityType.ISSUE_ATTACHMENT.value,
         issue_id=work_item_id,
+        is_uploaded=True,
+        is_deleted=False,
+        is_archived=False,
     ).count()
     relations_count = IssueRelation.objects.filter(Q(issue_id=work_item_id) | Q(related_issue_id=work_item_id)).count()
     links_count = IssueLink.objects.filter(issue_id=work_item_id).count()

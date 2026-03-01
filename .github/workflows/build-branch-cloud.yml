@@ -15,11 +15,6 @@ on:
         description: "Release Version"
         type: string
         default: v0.0.0-cloud
-      useVaultSecrets:
-        description: "Use Vault Secrets"
-        type: boolean
-        default: false
-        required: true
       isPrerelease:
         description: "Is Pre-release"
         type: boolean
@@ -28,7 +23,6 @@ on:
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
-  VAULT_KP_PREFIX: plane-ee-cloud-builds
   BUILD_TYPE: ${{ github.event.inputs.build_type }}
   RELEASE_VERSION: ${{ github.event.inputs.releaseVersion }}
   IS_PRERELEASE: ${{ github.event.inputs.isPrerelease }}
@@ -36,7 +30,7 @@ env:
 jobs:
   branch_build_setup:
     name: Build Setup
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     outputs:
       gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
       gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
@@ -52,14 +46,13 @@ jobs:
       dh_img_backend: ${{ steps.set_env_variables.outputs.DH_IMG_BACKEND }}
       dh_img_email: ${{ steps.set_env_variables.outputs.DH_IMG_EMAIL }}
       dh_img_pi: ${{ steps.set_env_variables.outputs.dh_img_pi }}
-      dh_img_relay: ${{ steps.set_env_variables.outputs.DH_IMG_RELAY }}
+      dh_img_flux: ${{ steps.set_env_variables.outputs.DH_IMG_FLUX }}
+      dh_img_node_runner: ${{ steps.set_env_variables.outputs.DH_IMG_NODE_RUNNER }}
 
       build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
       build_prerelease: ${{ steps.set_env_variables.outputs.BUILD_PRERELEASE }}
       release_version: ${{ steps.set_env_variables.outputs.RELEASE_VERSION }}
-      vault_secrets: ${{ steps.get_vault_secrets.outputs.VAULT_SECRETS }}
-      build_args: ${{ steps.prepare_build_args.outputs.BUILD_ARGS }}
     steps:
       - id: set_env_variables
         name: Set Environment Variables
@@ -80,7 +73,8 @@ jobs:
           echo "DH_IMG_BACKEND=backend-cloud" >> $GITHUB_OUTPUT
           echo "DH_IMG_EMAIL=email-cloud" >> $GITHUB_OUTPUT
           echo "dh_img_pi=plane-pi-cloud" >> $GITHUB_OUTPUT
-          echo "DH_IMG_RELAY=relay-cloud" >> $GITHUB_OUTPUT
+          echo "DH_IMG_FLUX=flux-cloud" >> $GITHUB_OUTPUT
+          echo "DH_IMG_NODE_RUNNER=node-runner-cloud" >> $GITHUB_OUTPUT
 
           echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
@@ -110,71 +104,9 @@ jobs:
           echo "BUILD_PRERELEASE=${BUILD_PRERELEASE}" >> $GITHUB_OUTPUT
           echo "RELEASE_VERSION=${RELVERSION}" >> $GITHUB_OUTPUT
 
-      - name: Tailscale
-        uses: tailscale/github-action@v2
-        if: ${{github.event.inputs.useVaultSecrets == 'true'}}
-        with:
-          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_CLIENT_SECRET }}
-          tags: tag:ci
-
-      - name: Get the ENV values from Vault
-        id: get_vault_secrets
-        if: ${{github.event.inputs.useVaultSecrets == 'true'}}
-        run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            ENV_NAME="prod"
-          else
-            ENV_NAME="stage"
-          fi
-
-          curl -fsSL \
-            --header "X-Vault-Token: ${{ secrets.VAULT_TOKEN }}" \
-            --request GET \
-            ${{ vars.VAULT_HOST }}/v1/kv/git-builds/data/${{ env.VAULT_KP_PREFIX }}-${ENV_NAME} | jq .data.data > vault_secrets.json
-
-          if [ $? != 0 ]; then
-            echo "Failed to get the ENV values from Vault"
-            exit 1
-          fi
-
-          VAULT_SECRETS=$(cat vault_secrets.json | base64 -w 0)
-          echo "VAULT_SECRETS=${VAULT_SECRETS}" >> $GITHUB_OUTPUT
-
-      - name: Prepare Docker Build Args
-        id: prepare_build_args
-        if: ${{github.event.inputs.useVaultSecrets == 'true'}}
-        run: |
-          BUILD_ARGS=""
-          add_build_arg() {
-            if [ -n "$2" ]; then
-              BUILD_ARGS="$BUILD_ARGS $1=$2"
-            fi
-          }
-          add_build_arg "VITE_API_BASE_URL" "${{ env.VITE_API_BASE_URL }}"
-          add_build_arg "VITE_API_BASE_PATH" "${{ env.VITE_API_BASE_PATH }}"
-
-          add_build_arg "VITE_ADMIN_BASE_URL" "${{ env.VITE_ADMIN_BASE_URL }}"
-          add_build_arg "VITE_ADMIN_BASE_PATH" "${{ env.VITE_ADMIN_BASE_PATH }}"
-
-          add_build_arg "VITE_SPACE_BASE_URL" "${{ env.VITE_SPACE_BASE_URL }}"
-          add_build_arg "VITE_SPACE_BASE_PATH" "${{ env.VITE_SPACE_BASE_PATH }}"
-
-          add_build_arg "VITE_LIVE_BASE_URL" "${{ env.VITE_LIVE_BASE_URL }}"
-          add_build_arg "VITE_LIVE_BASE_PATH" "${{ env.VITE_LIVE_BASE_PATH }}"
-
-          add_build_arg "VITE_SILO_BASE_URL" "${{ env.VITE_SILO_BASE_URL }}"
-          add_build_arg "VITE_SILO_BASE_PATH" "${{ env.VITE_SILO_BASE_PATH }}"
-
-          add_build_arg "VITE_WEB_BASE_URL" "${{ env.VITE_WEB_BASE_URL }}"
-
-          add_build_arg "SENTRY_AUTH_TOKEN" "${{ secrets.SENTRY_AUTH_TOKEN }}"
-
-          echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_OUTPUT
-
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Admin Build and Push
@@ -193,18 +125,12 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
-          build-args: ${{ needs.branch_build_setup.outputs.build_args }}
 
   branch_build_push_web:
     name: Build-Push Web Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
-      - name: Load Vault Secrets
-        run: |
-          echo ${{ needs.branch_build_setup.outputs.vault_secrets }} | base64 -d > vault_secrets.json
-          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' vault_secrets.json >> $GITHUB_ENV
-
       - name: Web Build and Push
         uses: makeplane/actions/build-push@v1.0.0
         with:
@@ -221,18 +147,14 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
-          build-args: ${{ needs.branch_build_setup.outputs.build_args }}
+          build-args: |
+            VITE_APP_VERSION=${{ needs.branch_build_setup.outputs.release_version }}
 
   branch_build_push_space:
     name: Build-Push Space Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
-      - name: Load Vault Secrets
-        run: |
-          echo ${{ needs.branch_build_setup.outputs.vault_secrets }} | base64 -d > vault_secrets.json
-          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' vault_secrets.json >> $GITHUB_ENV
-
       - name: Space Build and Push
         uses: makeplane/actions/build-push@v1.0.0
         with:
@@ -249,11 +171,13 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
-          build-args: ${{ needs.branch_build_setup.outputs.build_args }}
+          build-args: |
+            VITE_APP_VERSION=${{ needs.branch_build_setup.outputs.release_version }}
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
 
   branch_build_push_live:
     name: Build-Push Live Collaboration Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Live Build and Push
@@ -275,7 +199,7 @@ jobs:
 
   branch_build_push_silo:
     name: Build-Push Silo Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Silo Build and Push
@@ -293,7 +217,7 @@ jobs:
 
   branch_build_push_api:
     name: Build-Push API Server Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Backend Build and Push
@@ -315,7 +239,7 @@ jobs:
 
   branch_build_push_email:
     name: Build-Push Email Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - id: checkout_files
@@ -341,7 +265,7 @@ jobs:
 
   branch_build_push_plane_pi:
     name: Build-Push Plane PI Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Plane PI Build and Push
@@ -361,12 +285,12 @@ jobs:
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
-  branch_build_push_relay:
-    name: Build-Push Relay Docker Image
-    runs-on: ubuntu-22.04
+  branch_build_push_flux:
+    name: Build-Push Flux Docker Image
+    runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
-      - name: Relay Build and Push
+      - name: Flux Build and Push
         uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
@@ -375,9 +299,31 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
-          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_relay }}
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_flux }}
           build-context: .
-          dockerfile-path: ./apps/relay/Dockerfile.relay
+          dockerfile-path: ./apps/flux/Dockerfile.flux
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+
+  branch_build_push_node_runner:
+    name: Build-Push Node Runner Docker Image
+    runs-on: ubuntu-22.04-4core
+    needs: [branch_build_setup]
+    steps:
+      - name: Node Runner Build and Push
+        uses: makeplane/actions/build-push@v1.0.0
+        with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_node_runner }}
+          build-context: .
+          dockerfile-path: ./apps/runners/node-runner/Dockerfile.runner
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -386,7 +332,7 @@ jobs:
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs:
       [
         branch_build_setup,
@@ -398,7 +344,8 @@ jobs:
         branch_build_push_api,
         branch_build_push_email,
         branch_build_push_plane_pi,
-        branch_build_push_relay,
+        branch_build_push_flux,
+        branch_build_push_node_runner,
       ]
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}

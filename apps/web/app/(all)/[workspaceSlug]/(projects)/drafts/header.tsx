@@ -23,7 +23,7 @@ import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CountChip } from "@/components/common/count-chip";
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 
 // hooks
 import { useProject } from "@/hooks/store/use-project";

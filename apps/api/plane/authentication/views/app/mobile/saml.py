@@ -10,7 +10,10 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
+import json
+import os
 from urllib.parse import urlencode, urljoin
+from xml.sax.saxutils import escape as xml_escape
 
 from django.contrib.auth import logout
 
@@ -26,11 +29,13 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
-from plane.authentication.adapter.saml import SAMLAdapter
+from plane.authentication.adapter.saml import SAMLAdapter, DEFAULT_ATTRIBUTE_MAPPING, DEFAULT_NAME_ID_FORMAT
 from plane.authentication.utils.host import base_host
 from plane.authentication.utils.mobile.login import ValidateAuthToken
+from plane.authentication.views.app.saml import build_metadata_requested_attributes_xml
 from plane.db.models import Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.license.models import Instance
+from plane.license.utils.instance_value import get_configuration_value
 
 
 class MobileSAMLAuthInitiateEndpoint(View):
@@ -122,6 +127,32 @@ class MobileSAMLLogoutEndpoint(View):
 @method_decorator(csrf_exempt, name="dispatch")
 class MobileSAMLMetadataEndpoint(View):
     def get(self, request):
+        # Fetch configurable NameID format and attribute mapping from instance config
+        (SAML_NAME_ID_FORMAT, SAML_ATTRIBUTE_MAPPING) = get_configuration_value(
+            [
+                {
+                    "key": "SAML_NAME_ID_FORMAT",
+                    "default": os.environ.get("SAML_NAME_ID_FORMAT", DEFAULT_NAME_ID_FORMAT),
+                },
+                {
+                    "key": "SAML_ATTRIBUTE_MAPPING",
+                    "default": os.environ.get("SAML_ATTRIBUTE_MAPPING", ""),
+                },
+            ]
+        )
+
+        name_id_format = SAML_NAME_ID_FORMAT or DEFAULT_NAME_ID_FORMAT
+        attribute_mapping = DEFAULT_ATTRIBUTE_MAPPING.copy()
+        if SAML_ATTRIBUTE_MAPPING:
+            try:
+                parsed = json.loads(SAML_ATTRIBUTE_MAPPING)
+                if isinstance(parsed, dict):
+                    attribute_mapping = parsed
+            except (json.JSONDecodeError, TypeError):
+                pass
+
+        requested_attrs_xml = build_metadata_requested_attributes_xml(attribute_mapping)
+
         xml_template = f"""<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
                   entityID="{request.scheme}://{request.get_host()}/auth/mobile/saml/metadata/">
     <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
@@ -130,21 +161,10 @@ class MobileSAMLMetadataEndpoint(View):
                                   index="1"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
                              Location="{request.scheme}://{request.get_host()}/auth/mobile/saml/logout/"/>
-        <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+        <NameIDFormat>{xml_escape(name_id_format)}</NameIDFormat>
         <AttributeConsumingService index="1">
             <ServiceName xml:lang="en">Plane</ServiceName>
-            <RequestedAttribute Name="user.firstName"
-                                FriendlyName="first_name"
-                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-                                isRequired="false"/>
-            <RequestedAttribute Name="user.lastName"
-                                FriendlyName="last_name"
-                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-                                isRequired="false"/>
-            <RequestedAttribute Name="user.email"
-                                FriendlyName="email"
-                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-                                isRequired="true"/>
+{requested_attrs_xml}
         </AttributeConsumingService>
     </SPSSODescriptor>
 </EntityDescriptor>

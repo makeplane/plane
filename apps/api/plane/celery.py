@@ -142,10 +142,15 @@ EE_JOBS = {
         "task": "plane.ee.bgtasks.cycle_automation_task.maintain_future_cycles",
         "schedule": crontab(minute="*/2"),  # Every 2 minutes
     },
-    # Batch scheduler for recurring work items - runs every 6 hours
+    # Batch scheduler for recurring work items - runs every 15 minutes
     "recurring-batch-scheduler": {
         "task": "plane.ee.bgtasks.recurring_work_item_scheduler.schedule_batch",
-        "schedule": crontab(hour="*/6", minute=0),  # Every 6 hours at minute 0
+        "schedule": crontab(minute="*/15"),  # Every 15 minutes
+    },
+    # IdP group sync - runs every 2 hours
+    "sync-idp-groups-offline": {
+        "task": "plane.authentication.bgtasks.group_sync_task.sync_oidc_groups_offline",
+        "schedule": crontab(hour="*/2", minute=10),  # Every 2 hours at minute 10
     },
 }
 

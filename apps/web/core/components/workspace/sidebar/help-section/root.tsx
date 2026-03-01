@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { HelpCircle, MessagesSquare, User } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -19,13 +19,13 @@ import { PageIcon } from "@plane/propel/icons";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
-import { ProductUpdatesModal } from "@/components/global";
+import { ProductUpdatesModal } from "@/components/common/product-updates";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { useChatSupport } from "@/hooks/use-chat-support";
 // plane web components
-import { PlaneVersionNumber } from "@/plane-web/components/global";
+import { PlaneVersionNumber } from "@/components/common/version-number";
 
 export const HelpMenuRoot = observer(function HelpMenuRoot() {
   // store hooks

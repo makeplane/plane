@@ -30,23 +30,12 @@ export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilte
   disabledAllOperations?: boolean;
   filter: IFilterInstance<K, E>;
   variant?: "modal" | "header";
-  trackerElements?: {
-    clearFilter?: string;
-    saveView?: string;
-    updateView?: string;
-  };
 };
 
 export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty, E extends TExternalFilter>(
   props: TFiltersRowProps<K, E>
 ) {
-  const {
-    buttonConfig,
-    disabledAllOperations: disabledAllOperationsProp = false,
-    filter,
-    variant = "header",
-    trackerElements,
-  } = props;
+  const { buttonConfig, disabledAllOperations: disabledAllOperationsProp = false, filter, variant = "header" } = props;
   // states
   const [isUpdating, setIsUpdating] = useState(false);
   // derived values
@@ -97,22 +86,12 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   const rightContent = !disabledAllOperations && (
     <>
       <ElementTransition show={filter.canClearFilters}>
-        <Button
-          variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
-          onClick={filter.clearFilters}
-          data-ph-element={trackerElements?.clearFilter}
-        >
+        <Button variant="secondary" className={COMMON_OPERATION_BUTTON_CLASSNAME} onClick={filter.clearFilters}>
           {filter.clearFilterOptions?.label ?? "Clear all"}
         </Button>
       </ElementTransition>
       <ElementTransition show={filter.canSaveView}>
-        <Button
-          variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
-          onClick={filter.saveView}
-          data-ph-element={trackerElements?.saveView}
-        >
+        <Button variant="secondary" className={COMMON_OPERATION_BUTTON_CLASSNAME} onClick={filter.saveView}>
           {filter.saveViewOptions?.label ?? "Save view"}
         </Button>
       </ElementTransition>
@@ -123,7 +102,6 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
           onClick={handleUpdate}
           loading={isUpdating}
           disabled={isUpdating}
-          data-ph-element={trackerElements?.updateView}
         >
           {isUpdating ? "Confirming" : (filter.updateViewOptions?.label ?? "Update view")}
         </Button>

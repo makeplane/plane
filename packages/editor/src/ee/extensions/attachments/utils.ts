@@ -15,7 +15,7 @@ import type { Editor } from "@tiptap/core";
 // constants
 import { ACCEPTED_ATTACHMENT_MIME_TYPES, ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 // local imports
-import { EAttachmentBlockAttributeNames } from "./types";
+import { EAttachmentBlockAttributeNames, EAttachmentStatus } from "./types";
 import type { TAttachmentBlockAttributes } from "./types";
 
 export const DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES: TAttachmentBlockAttributes = {
@@ -26,6 +26,7 @@ export const DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES: TAttachmentBlockAttributes = {
   [EAttachmentBlockAttributeNames.FILE_SIZE]: null,
   [EAttachmentBlockAttributeNames.PREVIEW]: false,
   [EAttachmentBlockAttributeNames.ACCEPTED_FILE_TYPE]: "all",
+  [EAttachmentBlockAttributeNames.STATUS]: EAttachmentStatus.PENDING,
 };
 
 export const ACCEPTED_VIDEO_MIME_TYPES = [
@@ -97,3 +98,11 @@ export const getFileTypeFromMimeTypes = (mimeTypes: string[] | null | undefined)
 export const getAttachmentExtensionFileMap = (editor: Editor) => editor.storage.attachmentComponent?.fileMap;
 
 export const getAttachmentBlockId = (id: string) => `editor-attachment-block-${id}`;
+
+export const isAttachmentDuplicating = (status: EAttachmentStatus) => status === EAttachmentStatus.DUPLICATING;
+
+export const isAttachmentDuplicationComplete = (status: EAttachmentStatus) =>
+  status === EAttachmentStatus.UPLOADED || status === EAttachmentStatus.DUPLICATION_FAILED;
+
+export const hasAttachmentDuplicationFailed = (status: EAttachmentStatus) =>
+  status === EAttachmentStatus.DUPLICATION_FAILED;

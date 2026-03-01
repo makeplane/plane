@@ -22,7 +22,7 @@ import { PageHead } from "@/components/core/page-title";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // plane web imports
-import { EpicsEmptyState } from "@/plane-web/components/epics/settings/empty-state";
+import { EpicsEmptyState } from "@/components/epics/settings/empty-state";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import type { Route } from "./+types/layout";
 

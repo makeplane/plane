@@ -362,6 +362,42 @@ async def _workitems_pre_handler(
         if not issues:
             raise ValueError("At least one related issue ID must be provided in the 'issues' parameter")
 
+    # Auto-resolve context from issue_id for retrieve/delete tools
+    # This handles cases where LLM knows the issue_id (UUID) but lost the project/workspace context
+    if tool_name in ["workitems_retrieve", "workitems_delete"] and kwargs.get("issue_id"):
+        issue_id = kwargs.get("issue_id")
+        need_project = not project_id
+        need_workspace = not workspace_slug
+
+        if (need_project or need_workspace) and issue_id:
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+                from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_slug
+                from pi.app.api.v1.helpers.plane_sql_queries import resolve_workspace_id_from_project_id
+
+                # 1. Try to get project_id from issue_id
+                identifier_info = await get_issue_identifier_for_artifact(issue_id)
+                if identifier_info and identifier_info.get("project_id"):
+                    found_project_id = str(identifier_info["project_id"])
+
+                    # Set project_id if missing
+                    if need_project:
+                        kwargs["project_id"] = found_project_id
+                        project_id = found_project_id  # Update for workspace lookup below
+                        log.info(f"Auto-resolved project_id {project_id} from issue_id {issue_id}")
+
+                    # 2. Try to get workspace_slug using project_id
+                    if need_workspace and project_id:
+                        workspace_id = await resolve_workspace_id_from_project_id(project_id)
+                        if workspace_id:
+                            found_slug = await get_workspace_slug(workspace_id)
+                            if found_slug:
+                                kwargs["workspace_slug"] = found_slug
+                                log.info(f"Auto-resolved workspace_slug {found_slug} from issue_id {issue_id}")
+
+            except Exception as e:
+                log.warning(f"Failed to auto-resolve context from issue_id {issue_id}: {e}")
+
     #  Fix for list: Pass filter args to SDK (BUG FIX)
     if tool_name == "workitems_list":
         # Build filter arguments and merge them into kwargs
@@ -842,6 +878,7 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
         name="workitems_retrieve",
         description="Retrieve a single work item by ID",
         sdk_method="retrieve_work_item",
+        pre_handler=_workitems_pre_handler,
         parameters=[
             ToolParameter(name="issue_id", type="str", required=True, description="Work item ID (required)"),
             ToolParameter(
@@ -898,6 +935,7 @@ WORKITEMS_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
         name="workitems_delete",
         description="Delete a work item/issue",
         sdk_method="delete_work_item",
+        pre_handler=_workitems_pre_handler,
         parameters=[
             ToolParameter(name="issue_id", type="str", required=True, description="Work item ID to delete (required)"),
             ToolParameter(

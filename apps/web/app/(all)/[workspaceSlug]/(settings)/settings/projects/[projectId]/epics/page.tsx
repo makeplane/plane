@@ -23,9 +23,9 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // plane-web imports
-import { EpicsRoot } from "@/plane-web/components/epics/settings";
-import { EpicsUpgrade } from "@/plane-web/components/epics/upgrade";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { EpicsRoot } from "@/components/epics/settings";
+import { EpicsUpgrade } from "@/components/epics/upgrade";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 // local imports
 import type { Route } from "./+types/page";
 import { EpicsProjectSettingsHeader } from "./header";

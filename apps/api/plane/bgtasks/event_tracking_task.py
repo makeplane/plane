@@ -48,25 +48,35 @@ def posthogConfiguration():
 
 
 def preprocess_data_properties(
-    user_id: uuid.UUID, event_name: str, slug: str, data_properties: Dict[str, Any]
+    user_id: uuid.UUID,
+    event_name: str,
+    workspace_slug: str | None = None,
+    data_properties: Dict[str, Any] = {},
 ) -> Dict[str, Any]:
     if event_name == USER_INVITED_TO_WORKSPACE or event_name == WORKSPACE_DELETED:
         try:
             # Check if the current user is the workspace owner
-            workspace = Workspace.objects.get(slug=slug)
+            workspace = Workspace.objects.get(slug=workspace_slug)
             if str(workspace.owner_id) == str(user_id):
                 data_properties["role"] = "owner"
             else:
                 data_properties["role"] = "admin"
         except Workspace.DoesNotExist:
-            logger.warning(f"Workspace {slug} does not exist while sending event {event_name} for user {user_id}")
+            logger.warning(
+                f"Workspace {workspace_slug} does not exist while sending event {event_name} for user {user_id}"
+            )
             data_properties["role"] = "unknown"
 
     return data_properties
 
 
 @shared_task
-def track_event(user_id: uuid.UUID, event_name: str, slug: str, event_properties: Dict[str, Any]):
+def track_event(
+    user_id: uuid.UUID,
+    event_name: str,
+    workspace_slug: str | None = None,
+    event_properties: Dict[str, Any] = {},
+):
     POSTHOG_API_KEY, POSTHOG_HOST = posthogConfiguration()
 
     if not (POSTHOG_API_KEY and POSTHOG_HOST):
@@ -76,10 +86,14 @@ def track_event(user_id: uuid.UUID, event_name: str, slug: str, event_properties
     try:
         # preprocess the data properties for massaging the payload
         # in the correct format for posthog
-        data_properties = preprocess_data_properties(user_id, event_name, slug, event_properties)
-        groups = {
-            "workspace": slug,
-        }
+        data_properties = preprocess_data_properties(user_id, event_name, workspace_slug, event_properties)
+
+        if workspace_slug:
+            groups = {
+                "workspace": workspace_slug,
+            }
+        else:
+            groups = {}
         # track the event using posthog
         posthog = Posthog(POSTHOG_API_KEY, host=POSTHOG_HOST)
         posthog.capture(distinct_id=str(user_id), event=event_name, properties=data_properties, groups=groups)

@@ -292,7 +292,9 @@ async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: Async
         log.error(f"Error validating plane token: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid Plane token"})
 
-    plane_apps_llm = "claude-sonnet-4-5"
+    # Use Claude if available, otherwise fall back to default model (e.g., custom LLM)
+    has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
+    plane_apps_llm = "claude-sonnet-4-6" if has_claude_key else settings.llm_model.DEFAULT
     chatbot = PlaneChatBot(llm=plane_apps_llm, token=access_token)
 
     final_response = ""
@@ -381,10 +383,12 @@ async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: Async
             # Add this action's artifact to the list
             artifact_data_objects.append(ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data))
 
-        # Type assertions for mypy (validated above)
-        assert workspace_id is not None
-        assert chat_id is not None
-        assert message_id is not None
+        # Validate that all required IDs are present (not None)
+        if workspace_id is None or chat_id is None or message_id is None:
+            return JSONResponse(
+                status_code=400,
+                content={"detail": "Missing required fields: workspace_id, chat_id, or message_id cannot be None"},
+            )
 
         # Execute batch actions using the service with ALL artifacts
         service = BuildModeToolExecutor(chatbot=PlaneChatBot(plane_apps_llm), db=db)
@@ -449,7 +453,9 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
         log.error(f"Error validating plane token: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid Plane token"})
 
-    slack_ai_llm = "claude-sonnet-4-5"
+    # Use Claude if available, otherwise fall back to default model (e.g., custom LLM)
+    has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
+    slack_ai_llm = "claude-sonnet-4-6" if has_claude_key else settings.llm_model.DEFAULT
     chatbot = PlaneChatBot(llm=slack_ai_llm, token=access_token)
 
     final_response = ""
@@ -521,10 +527,12 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
             # Add this action's artifact to the list
             artifact_data_objects.append(ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data))
 
-        # Type assertions for mypy (validated above)
-        assert workspace_id is not None
-        assert chat_id is not None
-        assert message_id is not None
+        # Validate that all required IDs are present (not None)
+        if workspace_id is None or chat_id is None or message_id is None:
+            return JSONResponse(
+                status_code=400,
+                content={"detail": "Missing required fields: workspace_id, chat_id, or message_id cannot be None"},
+            )
 
         # Execute batch actions using the service with ALL artifacts
         service = BuildModeToolExecutor(chatbot=PlaneChatBot(slack_ai_llm), db=db)
@@ -687,6 +695,17 @@ async def get_answer(data: ChatRequest, current_user=Depends(get_current_user)):
                         heartbeat_task.cancel()
                         with contextlib.suppress(asyncio.CancelledError):
                             await heartbeat_task
+                    # Cancel the in-flight chunk task so the inner generator
+                    # receives CancelledError and can persist partial content
+                    # while the DB session is still open.
+                    if next_chunk_task and not next_chunk_task.done():
+                        next_chunk_task.cancel()
+                        with contextlib.suppress(asyncio.CancelledError, StopAsyncIteration):
+                            await next_chunk_task
+                    # Throw CancelledError into the generator so
+                    # _process_chat_stream_core's except block can save partial state.
+                    with contextlib.suppress(asyncio.CancelledError, StopAsyncIteration, GeneratorExit):
+                        await base_iter.athrow(asyncio.CancelledError())
 
             # Extract token_id from data.context if available for background task
             if hasattr(data, "context") and isinstance(data.context, dict):
@@ -812,7 +831,12 @@ async def get_chat_history_object(
     try:
         user_id = current_user.id
         log.info(f"chat history retrieve request received for chat_id: {chat_id}")
-        results: dict[str, Any] = await retrieve_chat_history(chat_id=chat_id, dialogue_object=True, db=db, user_id=user_id)
+        results: dict[str, Any] = await retrieve_chat_history(
+            chat_id=chat_id,
+            dialogue_object=True,
+            db=db,
+            user_id=user_id,
+        )
         error_type = results.get("error")
         if error_type == "not_found":
             return JSONResponse(status_code=404, content={"detail": results["detail"]})
@@ -828,6 +852,7 @@ async def get_chat_history_object(
                     "feedback": results["feedback"],
                     "reasoning": results.get("reasoning", ""),
                     "is_focus_enabled": results.get("is_focus_enabled", False),
+                    "is_websearch_enabled": results.get("is_websearch_enabled", False),
                     "focus_entity_type": results.get("focus_entity_type", None),
                     "focus_entity_id": results.get("focus_entity_id", None),
                     "focus_project_id": results.get("focus_project_id", None),
@@ -1091,6 +1116,7 @@ async def queue_answer(data: ChatRequest, db: AsyncSession = Depends(get_async_s
                 existing_chat.workspace_slug = resolved_workspace_slug
             # Always update workspace_in_context as it's a required field in ChatRequest
             existing_chat.workspace_in_context = data.workspace_in_context
+            existing_chat.is_websearch_enabled = data.is_websearch_enabled
             await db.commit()
         else:
             log.warning(f"Chat {data.chat_id} not found for backfill")
@@ -1224,7 +1250,7 @@ async def execute_action(request: ActionBatchExecutionRequest, db: AsyncSession 
 
         llm_model = await chosen_llm(db=db, message_id=request.message_id)
         # Use default model if none was found in the message
-        chatbot = PlaneChatBot(llm_model or "gpt-4.1")
+        chatbot = PlaneChatBot(llm_model or settings.llm_model.DEFAULT)
         build_mode_tool_executor = BuildModeToolExecutor(chatbot=chatbot, db=db)
         result = await build_mode_tool_executor.execute(request, user_id)
 

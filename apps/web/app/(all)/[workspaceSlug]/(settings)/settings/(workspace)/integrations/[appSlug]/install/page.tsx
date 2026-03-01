@@ -24,7 +24,7 @@ import { APPLICATION_DETAILS } from "@/constants/fetch-keys";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { ApplicationInstallationDetails } from "@/plane-web/components/marketplace/applications";
+import { ApplicationInstallationDetails } from "@/components/marketplace/applications";
 import { useApplications } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/page";
 

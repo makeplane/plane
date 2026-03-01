@@ -32,14 +32,16 @@ const WORKSPACE_PAGES_STORAGE_KEYS: TPageFilterStorageKeys = {
   filters: "workspace-pages-filters",
 };
 // plane web services
-import { WorkspacePageService } from "@/plane-web/services/page";
+import { WorkspacePageService } from "@/services/page/workspace-page.service";
 // services
-import type { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
-import { PageShareService } from "@/plane-web/services/page/page-share.service";
+import type { TPageSharedUser } from "@/services/page/page-share.service";
+import { PageShareService } from "@/services/page/page-share.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { TWorkspacePage } from "./workspace-page";
 import { WorkspacePage } from "./workspace-page";
+import { PiChatService } from "@/services/pi-chat.service";
+import { createPageAiSummaryActions } from "@/store/pages/page-ai-summary.helpers";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 type TPaginationLoader = "pagination" | undefined;
@@ -70,6 +72,7 @@ export interface IWorkspacePageStore {
   error: TError | undefined;
   filters: TPageFilters;
   pagesSummary: TPagesSummary | undefined;
+  pageAiSummary: Map<string, { summary: string | undefined; updated_at: string }>;
   // page type arrays
   publicPageIds: string[];
   privatePageIds: string[];
@@ -87,6 +90,7 @@ export interface IWorkspacePageStore {
   isAnyPageAvailable: boolean;
   currentWorkspacePageIds: string[] | undefined;
   // helper actions
+  getPageAiSummary: (pageId: string) => { summary: string | undefined; updated_at: string } | undefined;
   getCurrentWorkspacePageIdsByType: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentWorkspaceFilteredPageIdsByType: (pageType: TPageNavigationTabs) => string[] | undefined;
   getPageById: (pageId: string) => TWorkspacePage | undefined;
@@ -134,6 +138,13 @@ export interface IWorkspacePageStore {
   // page sharing actions
   fetchPageSharedUsers: (pageId: string) => Promise<void>;
   bulkUpdatePageSharedUsers: (pageId: string, sharedUsers: TPageSharedUser[]) => Promise<void>;
+  generatePageAiSummary: (
+    pageId: string,
+    workspaceId: string,
+    callbacks?: { onComplete?: () => void; onError?: (error: { code: string; message: string }) => void }
+  ) => (() => void) | undefined;
+  removePageAiSummary: (pageId: string) => void;
+  fetchPageAiSummary: (pageId: string) => Promise<string | undefined>;
 }
 
 export class WorkspacePageStore implements IWorkspacePageStore {
@@ -147,6 +158,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     sortBy: "desc",
   };
   pagesSummary: TPagesSummary | undefined = undefined;
+  pageAiSummary: Map<string, { summary: string | undefined; updated_at: string }> = new Map();
   // page type arrays
   publicPageIds: string[] = [];
   privatePageIds: string[] = [];
@@ -177,6 +189,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   // services
   pageService: WorkspacePageService;
   pageShareService: PageShareService;
+  piChatService: PiChatService;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
@@ -186,6 +199,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       error: observable,
       filters: observable,
       pagesSummary: observable,
+      pageAiSummary: observable,
       // page type arrays
       publicPageIds: observable,
       privatePageIds: observable,
@@ -221,7 +235,15 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     // service
     this.pageService = new WorkspacePageService();
     this.pageShareService = new PageShareService();
-
+    this.piChatService = new PiChatService();
+    const pageAiSummaryActions = createPageAiSummaryActions({
+      piChatService: this.piChatService,
+      pageAiSummary: this.pageAiSummary,
+      entityType: "wiki",
+    });
+    this.fetchPageAiSummary = pageAiSummaryActions.fetchPageAiSummary;
+    this.generatePageAiSummary = pageAiSummaryActions.generatePageAiSummary;
+    this.removePageAiSummary = pageAiSummaryActions.removePageAiSummary;
     // Set up reactions to automatically update page type arrays
     this.setupReactions();
 
@@ -292,6 +314,8 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     this.disposers.forEach((dispose) => dispose());
     this.disposers = [];
   }
+
+  getPageAiSummary = computedFn((pageId: string) => this.pageAiSummary.get(pageId));
 
   /**
    * @description check if any page is available
@@ -1092,6 +1116,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   clearRootParentCache = () => {
     this._rootParentMap.clear();
   };
+
+  fetchPageAiSummary!: (pageId: string) => Promise<string | undefined>;
+  generatePageAiSummary!: (
+    pageId: string,
+    workspaceId: string,
+    callbacks?: { onComplete?: () => void; onError?: (error: { code: string; message: string }) => void }
+  ) => (() => void) | undefined;
+  removePageAiSummary!: (pageId: string) => void;
 
   // Page sharing actions
   fetchPageSharedUsers = async (pageId: string) => {

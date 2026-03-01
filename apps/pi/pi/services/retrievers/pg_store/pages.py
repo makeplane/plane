@@ -9,6 +9,8 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+from datetime import datetime
+from datetime import timezone
 from typing import Any
 from typing import Dict
 from typing import List
@@ -113,6 +115,7 @@ async def update_page_ai_block(
     user_id: UUID4,
     block_type: Optional[str] = None,
     content: Optional[str] = None,
+    generated_content: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Update an existing page AI block.
@@ -122,6 +125,7 @@ async def update_page_ai_block(
         block_id: ID of the block to update
         block_type: New block type (optional)
         content: New content (optional)
+        generated_content: New generated content (optional)
 
     Returns:
         Dictionary with success status and block object or error details
@@ -143,6 +147,8 @@ async def update_page_ai_block(
             block.block_type = block_type
         if content is not None:
             block.content = content
+        if generated_content is not None:
+            block.generated_content = generated_content
 
         db.add(block)
         await db.commit()
@@ -182,6 +188,7 @@ async def update_page_ai_block_generated_content(
             return {"success": False, "error": f"Page AI block with ID {block_id} not found"}
 
         block.generated_content = generated_content
+        block.updated_at = datetime.now(timezone.utc)
 
         db.add(block)
         await db.commit()
@@ -277,6 +284,106 @@ async def get_ai_block_config(
 
     except Exception as e:
         log.error(f"Error retrieving AI block config for {block_id}: {str(e)}")
+        return None
+
+
+async def upsert_page_summary_block(
+    db: AsyncSession,
+    user_id: UUID4,
+    entity_type: str,
+    entity_id: UUID4,
+    workspace_id: UUID4,
+    generated_content: str,
+    project_id: Optional[UUID4] = None,
+) -> Dict[str, Any]:
+    """
+    Create or update the page_summary.
+
+    Args:
+        db: Database session
+        user_id: ID of the user
+        entity_type: Type of entity (page, wiki)
+        entity_id: ID of the entity (page_id)
+        workspace_id: Workspace ID
+        generated_content: AI-generated summary to store
+        project_id: Optional project ID
+
+    Returns:
+        Dictionary with success status and block object or error details
+    """
+    try:
+        # Look up existing page_summary block for this entity
+        stmt = (
+            select(PageAIBlock)
+            .where(PageAIBlock.entity_id == entity_id)  # type: ignore[arg-type]
+            .where(PageAIBlock.block_type == "page_summary")  # type: ignore[arg-type]
+            .order_by(desc(PageAIBlock.updated_at))  # type: ignore[union-attr,arg-type]
+            .limit(1)
+        )
+        result = await db.execute(stmt)
+        existing_block = result.scalar_one_or_none()
+
+        if existing_block:
+            # Reuse shared helper — update generated_content only
+            return await update_page_ai_block_generated_content(
+                db=db,
+                block_id=existing_block.id,
+                user_id=user_id,
+                generated_content=generated_content,
+            )
+
+        # No existing block — create one (page_summary is internal, skip validation)
+        now = datetime.now(timezone.utc)
+        block = PageAIBlock(
+            user_id=user_id,
+            block_type="page_summary",
+            entity_type=entity_type,
+            entity_id=entity_id,
+            workspace_id=workspace_id,
+            project_id=project_id,
+            content=None,
+            generated_content=generated_content,
+            created_at=now,
+            updated_at=now,
+        )
+        db.add(block)
+        await db.commit()
+        await db.refresh(block)
+
+        return {"success": True, "block": block}
+
+    except Exception as e:
+        await db.rollback()
+        log.error(f"Error upserting page summary block for entity {entity_id}: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+
+async def get_page_summary_block(
+    db: AsyncSession,
+    page_id: UUID4,
+) -> Optional[PageAIBlock]:
+    """
+    Retrieve the page_summary AI block for a given page.
+
+    Args:
+        db: Database session
+        page_id: ID of the page
+
+    Returns:
+        PageAIBlock with block_type='page_summary', or None if not found
+    """
+    try:
+        stmt = (
+            select(PageAIBlock)
+            .where(PageAIBlock.entity_id == page_id)  # type: ignore[arg-type]
+            .where(PageAIBlock.block_type == "page_summary")  # type: ignore[arg-type]
+            .order_by(desc(PageAIBlock.updated_at))  # type: ignore[union-attr,arg-type]
+            .limit(1)
+        )
+        result = await db.execute(stmt)
+        return result.scalar_one_or_none()
+    except Exception as e:
+        log.error(f"Error retrieving page summary block for page {page_id}: {str(e)}")
         return None
 
 

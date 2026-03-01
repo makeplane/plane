@@ -30,7 +30,7 @@ from strawberry.types import Info
 # Module imports
 from plane.db.models import CycleIssue
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
-from plane.graphql.helpers import get_workspace_async
+from plane.graphql.helpers import get_workspace
 from plane.graphql.permissions.project import ProjectMemberPermission
 
 
@@ -129,7 +129,7 @@ def create_cycle_issue(
 ) -> bool:
     try:
         # get workspace
-        workspace = get_workspace_async(slug=workspace_slug)
+        workspace = get_workspace(slug=workspace_slug)
 
         # create cycle issue
         cycle_issue = CycleIssue.objects.create(

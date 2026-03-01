@@ -28,7 +28,6 @@ from plane.db.models import IssueLink
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
 
 class EpicLinkViewSet(BaseViewSet):
@@ -57,7 +56,6 @@ class EpicLinkViewSet(BaseViewSet):
         serializer = EpicLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=epic_id)
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "issue")
 
             issue_activity.delay(
                 type="link.activity.created",
@@ -81,7 +79,6 @@ class EpicLinkViewSet(BaseViewSet):
         serializer = EpicLinkSerializer(epic_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "issue")
 
             issue_activity.delay(
                 type="link.activity.updated",

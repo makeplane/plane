@@ -12,9 +12,15 @@
  */
 
 import type { Editor } from "@tiptap/core";
+import type { Selection } from "@tiptap/pm/state";
+import { TableMap } from "@tiptap/pm/tables";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
 import { CORE_EDITOR_META } from "@/constants/meta";
+// extensions
+import { getSelectedRect, isCellSelection } from "@/extensions/table/table/utilities/helpers";
+import type { TableNodeLocation } from "@/extensions/table/table/utilities/helpers";
+// local imports
+import { updateTransactionMeta } from "../drag-state";
 
 /**
  * @description Construct a pseudo table element which will act as a parent for column and row drag previews.
@@ -54,20 +60,41 @@ export const cloneTableCell = (
 };
 
 /**
- * @description This function updates the `hideContent` attribute of the table cells and headers.
- * @param {Editor} editor - The editor instance.
- * @param {boolean} hideContent - Whether to hide the content.
- * @returns {boolean} Whether the content visibility was updated.
+ * @description Get positions of all cells in the current selection.
+ * @param {Selection} selection - The selection.
+ * @param {TableNodeLocation} table - The table node location.
+ * @returns {number[]} Array of cell positions.
  */
-export const updateCellContentVisibility = (editor: Editor, hideContent: boolean): boolean =>
-  editor
-    .chain()
-    .focus()
-    .setMeta(CORE_EDITOR_META.ADD_TO_HISTORY, false)
-    .updateAttributes(CORE_EXTENSIONS.TABLE_CELL, {
-      hideContent,
-    })
-    .updateAttributes(CORE_EXTENSIONS.TABLE_HEADER, {
-      hideContent,
-    })
-    .run();
+export const getSelectedCellPositions = (selection: Selection, table: TableNodeLocation): number[] => {
+  if (!isCellSelection(selection)) return [];
+
+  const tableMap = TableMap.get(table.node);
+  const selectedRect = getSelectedRect(selection, tableMap);
+  const cellsInSelection = tableMap.cellsInRect(selectedRect);
+
+  // Convert relative positions to absolute document positions
+  return cellsInSelection.map((cellPos) => table.start + cellPos);
+};
+
+/**
+ * @description Hide cell content using decorations (local only, not persisted).
+ * @param {Editor} editor - The editor instance.
+ * @param {number[]} cellPositions - Array of cell positions to hide.
+ */
+export const hideCellContent = (editor: Editor, cellPositions: number[]): void => {
+  const tr = editor.view.state.tr;
+  updateTransactionMeta(tr, cellPositions);
+  tr.setMeta(CORE_EDITOR_META.ADD_TO_HISTORY, false);
+  editor.view.dispatch(tr);
+};
+
+/**
+ * @description Show cell content by clearing decorations.
+ * @param {Editor} editor - The editor instance.
+ */
+export const showCellContent = (editor: Editor): void => {
+  const tr = editor.view.state.tr;
+  updateTransactionMeta(tr, null);
+  tr.setMeta(CORE_EDITOR_META.ADD_TO_HISTORY, true);
+  editor.view.dispatch(tr);
+};

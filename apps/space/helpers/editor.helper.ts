@@ -14,19 +14,27 @@
 // plane imports
 import { MAX_FILE_SIZE } from "@plane/constants";
 import type { TFileHandler } from "@plane/editor";
-import { SitesFileService } from "@plane/services";
+import { LiveService, SitesFileService } from "@plane/services";
 import { getFileURL } from "@plane/utils";
-// services
+
 const sitesFileService = new SitesFileService();
+const liveService = new LiveService();
 
 /**
- * @description generate the file source using assetId
+ * @description generate the relative API path for a public asset
  * @param {string} anchor
+ * @param {string} assetId
  */
-export const getEditorAssetSrc = (anchor: string, assetId: string): string | undefined => {
-  const url = getFileURL(`/api/public/assets/v2/anchor/${anchor}/${assetId}/`);
-  return url;
-};
+const getEditorAssetPath = (anchor: string, assetId: string): string =>
+  `/api/public/assets/v2/anchor/${anchor}/${assetId}/`;
+
+/**
+ * @description generate the full browser-accessible URL for a public asset
+ * @param {string} anchor
+ * @param {string} assetId
+ */
+export const getEditorAssetSrc = (anchor: string, assetId: string): string | undefined =>
+  getFileURL(getEditorAssetPath(anchor, assetId));
 
 type TArgs = {
   anchor: string;
@@ -50,11 +58,19 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
     }
   };
 
+  const getFileContent = async (src: string): Promise<string> => {
+    if (!src) return "";
+    const fileUrl = src.startsWith("http") ? src : getEditorAssetPath(anchor, src);
+    if (!fileUrl) return "";
+    return liveService.getFileContent(fileUrl);
+  };
+
   return {
     checkIfAssetExists: async () => true,
     assetsUploadStatus: {},
     getAssetDownloadSrc: getAssetSrc,
     getAssetSrc: getAssetSrc,
+    getFileContent,
     upload: uploadFile,
     delete: async (src: string) => {
       if (src?.startsWith("http")) {

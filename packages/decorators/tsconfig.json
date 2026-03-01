@@ -1,12 +1,15 @@
 {
   "extends": "@plane/typescript-config/node-library.json",
   "compilerOptions": {
-    "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
   "include": ["src"],
-  "exclude": ["dist", "build", "node_modules"]
+  "exclude": ["dist", "node_modules", "*.config.ts"]
 }

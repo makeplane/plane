@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { PiChatDetail } from "@/plane-web/components/pi-chat/detail";
+import { PiChatDetail } from "@/components/pi-chat/detail";
 
 function PiChatPage() {
   return <PiChatDetail isFullScreen />;

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { observable, action, makeObservable } from "mobx";
+import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import type { TCreateModalStoreTypes, TCreatePageModal } from "@plane/constants";
 import { DEFAULT_CREATE_PAGE_MODAL_DATA, EPageAccess } from "@plane/constants";
@@ -22,6 +22,10 @@ export interface ModalData {
   store: EIssuesStoreType;
   viewId: string;
 }
+
+export type TWorkItemDataFromQueryParams = {
+  params: Record<string, unknown>;
+};
 
 export interface IBaseCommandPaletteStore {
   // observables
@@ -37,6 +41,7 @@ export interface IBaseCommandPaletteStore {
   createWorkItemAllowedProjectIds: string[] | undefined;
   allStickiesModal: boolean;
   projectListOpenMap: Record<string, boolean>;
+  workItemModalDataFromQueryParams: TWorkItemDataFromQueryParams | null;
   getIsProjectListOpen: (projectId: string) => boolean;
   // toggle actions
   toggleCreateProjectModal: (value?: boolean) => void;
@@ -49,6 +54,7 @@ export interface IBaseCommandPaletteStore {
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
   toggleAllStickiesModal: (value?: boolean) => void;
   toggleProjectListOpen: (projectId: string, value?: boolean) => void;
+  updateWorkItemModalDataFromQueryParams: (value: TWorkItemDataFromQueryParams | null) => void;
 }
 
 export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStore {
@@ -65,6 +71,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   createWorkItemAllowedProjectIds: IBaseCommandPaletteStore["createWorkItemAllowedProjectIds"] = undefined;
   allStickiesModal: boolean = false;
   projectListOpenMap: Record<string, boolean> = {};
+  workItemModalDataFromQueryParams: TWorkItemDataFromQueryParams | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -81,6 +88,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createWorkItemAllowedProjectIds: observable,
       allStickiesModal: observable,
       projectListOpenMap: observable,
+      workItemModalDataFromQueryParams: observable,
       // toggle actions
       toggleCreateProjectModal: action,
       toggleCreateCycleModal: action,
@@ -92,6 +100,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleBulkDeleteIssueModal: action,
       toggleAllStickiesModal: action,
       toggleProjectListOpen: action,
+      updateWorkItemModalDataFromQueryParams: action,
     });
   }
 
@@ -114,7 +123,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
     );
   }
   // computedFn
-  getIsProjectListOpen = computedFn((projectId: string) => this.projectListOpenMap[projectId]);
+  getIsProjectListOpen = computedFn((projectId: string) => this.projectListOpenMap[projectId] ?? false);
 
   /**
    * Toggles the project list open state
@@ -252,5 +261,17 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
     } else {
       this.allStickiesModal = !this.allStickiesModal;
     }
+  };
+
+  /**
+   * Updates the work item modal data from query params
+   * @param value
+   */
+  updateWorkItemModalDataFromQueryParams: IBaseCommandPaletteStore["updateWorkItemModalDataFromQueryParams"] = (
+    value
+  ) => {
+    runInAction(() => {
+      this.workItemModalDataFromQueryParams = value;
+    });
   };
 }

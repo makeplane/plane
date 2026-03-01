@@ -14,7 +14,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // types
-import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { SearchIcon } from "@plane/propel/icons";
@@ -25,23 +25,21 @@ import { cn } from "@plane/utils";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { CountChip } from "@/components/common/count-chip";
 import { PageHead } from "@/components/core/page-title";
-import { MemberListFiltersDropdown } from "@/components/project/dropdowns/filters/member-list";
+import { MemberListFiltersDropdown } from "@/components/projects/dropdowns/filters/member-list";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
+import { MembersImportModal } from "@/components/workspace/settings/members/members-import-modal";
+import { MembersActivityButton } from "@/components/workspace/settings/members/members-activity-button";
+import { BillingActionsButton } from "@/components/workspace/settings/billing/billing-actions-button";
+import { SendWorkspaceInvitationModal } from "@/components/workspace/settings/members/invite-modal/root";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
-import {
-  SendWorkspaceInvitationModal,
-  MembersImportModal,
-  MembersActivityButton,
-} from "@/plane-web/components/workspace/members";
 import { useFlag } from "@/plane-web/hooks/store";
-// local imports
+// types
 import type { Route } from "./+types/page";
+// local imports
 import { MembersWorkspaceSettingsHeader } from "./header";
 
 const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
@@ -161,12 +159,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
                     Import
                   </Button>
                 )}
-                <Button
-                  variant="primary"
-                  size="lg"
-                  onClick={() => setInviteModal(true)}
-                  data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
-                >
+                <Button variant="primary" size="lg" onClick={() => setInviteModal(true)}>
                   {t("workspace_settings.settings.members.add_member")}
                 </Button>
               </>
@@ -174,7 +167,11 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
             <BillingActionsButton canPerformWorkspaceAdminActions={canPerformWorkspaceAdminActions} />
           </div>
         </div>
-        <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />
+        <WorkspaceMembersList
+          workspaceSlug={workspaceSlug}
+          searchQuery={searchQuery}
+          isAdmin={canPerformWorkspaceAdminActions}
+        />
       </section>
     </SettingsContentWrapper>
   );

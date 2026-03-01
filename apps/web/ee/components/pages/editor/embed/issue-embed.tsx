@@ -27,7 +27,7 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties/al
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 
 type Props = {
   issueId: string;

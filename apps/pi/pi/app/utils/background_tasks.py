@@ -17,6 +17,7 @@ for chat search index operations, used across both web and mobile endpoints.
 """
 
 from pi import logger
+from pi import settings
 
 log = logger.getChild(__name__)
 
@@ -30,6 +31,10 @@ def schedule_chat_search_upsert(token_id: str) -> None:
     """
     try:
         from pi.celery_app import celery_app
+
+        if not settings.celery.PI_MESSAGES_INDEX_SYNC_ENABLED:
+            # log.debug("Chat search index sync is disabled, skipping upsert for token_id: %s", token_id)
+            return
 
         celery_app.send_task("pi.celery_app.upsert_chat_search_index_task", args=[token_id])
     except Exception as e:
@@ -45,6 +50,10 @@ def schedule_chat_deletion(chat_id: str) -> None:
     """
     try:
         from pi.celery_app import celery_app
+
+        if not settings.celery.PI_MESSAGES_INDEX_SYNC_ENABLED:
+            # log.debug("Chat search index sync is disabled, skipping deletion for chat_id: %s", chat_id)
+            return
 
         celery_app.send_task("pi.celery_app.upsert_chat_search_index_deletion_task", args=[chat_id])
         log.debug(f"Celery task dispatched for chat deletion: {chat_id}")
@@ -62,6 +71,10 @@ def schedule_chat_rename(chat_id: str, title: str) -> None:
     """
     try:
         from pi.celery_app import celery_app
+
+        if not settings.celery.PI_MESSAGES_INDEX_SYNC_ENABLED:
+            # log.debug("Chat search index sync is disabled, skipping rename for chat_id: %s", chat_id)
+            return
 
         celery_app.send_task("pi.celery_app.upsert_chat_search_index_title_task", args=[chat_id, title])
         log.debug(f"Celery task dispatched for chat title update: {chat_id}")

@@ -50,6 +50,7 @@ export type TApplication = {
   is_default?: boolean;
   supported_plans?: string[];
   supported_environments?: string[];
+  resource_permissions?: string[];
 };
 
 export type TUserApplication = TApplication & {

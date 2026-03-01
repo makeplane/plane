@@ -17,5 +17,4 @@ export * from "./cycle-issue";
 export * from "./module-issue";
 export * from "./project-issue";
 export * from "./helper";
-export * from "../../workspace-draft/quick-action";
 export * from "./issue-detail";

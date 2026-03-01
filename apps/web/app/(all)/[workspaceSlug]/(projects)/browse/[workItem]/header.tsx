@@ -11,36 +11,63 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { Header, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { AppHeader } from "@/components/core/app-header";
+import { ProjectIntakeDetailHeader } from "@/components/intake/detail-header-root";
 import { TabNavigationRoot } from "@/components/navigation";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
+// plane web imports
 // local components
+import { ProjectArchivedIssueDetailsHeader } from "../../projects/(detail)/[projectId]/archives/issues/(detail)/header";
 import { EpicItemDetailsHeader } from "./epic-header";
 import { WorkItemDetailsHeader } from "./work-item-header";
 
-export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDetailsHeader() {
-  // router
-  const { workspaceSlug, workItem } = useParams();
+type TProjectWorkItemDetailsHeaderProps = {
+  workspaceSlug: string;
+  workItem: string;
+};
+export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDetailsHeader(
+  props: TProjectWorkItemDetailsHeaderProps
+) {
+  const { workspaceSlug, workItem } = props;
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
   // derived values
-  const issueId = getIssueIdByIdentifier(workItem?.toString());
+  const issueId = getIssueIdByIdentifier(workItem);
   const issueDetails = issueId ? getIssueById(issueId?.toString()) : undefined;
   // preferences
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
+
+  // Memoize header component selection to avoid unnecessary re-renders
+  const headerComponent = useMemo(() => {
+    if (!issueDetails) return <WorkItemDetailsHeader />;
+
+    if (issueDetails.is_epic) {
+      return <EpicItemDetailsHeader workspaceSlug={workspaceSlug} workItem={workItem} />;
+    }
+
+    if (issueDetails.archived_at) {
+      return <ProjectArchivedIssueDetailsHeader />;
+    }
+
+    if (issueDetails.is_intake) {
+      return <ProjectIntakeDetailHeader />;
+    }
+
+    return <WorkItemDetailsHeader />;
+  }, [issueDetails, workspaceSlug, workItem]);
 
   return (
     <>
@@ -67,7 +94,7 @@ export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDet
           </Row>
         </div>
       )}
-      <AppHeader header={issueDetails?.is_epic ? <EpicItemDetailsHeader /> : <WorkItemDetailsHeader />} />
+      <AppHeader header={headerComponent} />
     </>
   );
 });

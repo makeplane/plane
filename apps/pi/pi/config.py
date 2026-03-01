@@ -29,8 +29,10 @@ def get_env_bool(k: str, d: str = "") -> bool:
 
 
 def get_env_int(k: str, d: str) -> int:
-    """Get integer env var."""
-    return int(os.getenv(k, d))
+    """Get integer env var. Returns default if env var is missing or empty."""
+    value = os.getenv(k, d)
+    # Handle empty string - use default instead
+    return int(value if value and value.strip() else d)
 
 
 @dataclass
@@ -38,19 +40,20 @@ class PlaneAPI:
     """Configuration for Plane API endpoints and session."""
 
     HOST: str = os.getenv("PLANE_API_HOST", "https://api.plane.so")
+    INTERNAL_HOST: str = os.getenv("PLANE_INTERNAL_API_HOST", "") or HOST
     BASE_PATH: str = os.getenv("PI_BASE_PATH", "")
     SESSION_CHECK: str = f"{HOST}/api/users/session/"
     SESSION_COOKIE_NAME: str = os.getenv("SESSION_COOKIE_NAME", "session-id")
     FRONTEND_URL: str = os.getenv("PLANE_FRONTEND_URL", "https://app.plane.so")
 
-    # TODO: needed for feature flag (not in use)
-    DISCO_HOST_URL: str = os.getenv("DISCO_HOST_URL", "https://disco.plane.so")
-
     # OAuth Configuration
-    OAUTH_CLIENT_ID: str = os.getenv("PLANE_OAUTH_CLIENT_ID", "")
-    OAUTH_CLIENT_SECRET: str = os.getenv("PLANE_OAUTH_CLIENT_SECRET", "")
+    PI_OAUTH_SLUG: str = "plane-ai"
     OAUTH_REDIRECT_URI: str = os.getenv("PLANE_OAUTH_REDIRECT_URI", "")
     OAUTH_URL_ENCRYPTION_KEY: str = os.getenv("PLANE_OAUTH_URL_ENCRYPTION_KEY", "Ajvaq_jsqNuI8AuRWyC1y-iro7csYpab0tYn98Q68mU=")
+    PLANE_OAUTH_CLIENT_ID: str = os.getenv("PLANE_OAUTH_CLIENT_ID", "")
+    PLANE_OAUTH_CLIENT_SECRET: str = os.getenv("PLANE_OAUTH_CLIENT_SECRET", "")
+    AES_SECRET_KEY: str = os.getenv("AES_SECRET_KEY", "plane-testing")
+    AES_SALT: str = os.getenv("AES_SALT", "aes-salt")
 
     # OAuth state expiry time in seconds (default: 23 hours = 82800 seconds)
     OAUTH_STATE_EXPIRY_SECONDS: int = get_env_int("PLANE_OAUTH_STATE_EXPIRY_SECONDS", "82800")
@@ -62,12 +65,12 @@ class FeatureFlags:
 
     # https://github.com/makeplane/plane-ee/blob/preview/packages/constants/src/feature-flag.ts#L59
 
-    PI_DEDUPE = "PI_DEDUPE"
-    PI_CHAT = "PI_CHAT"
-    PI_CONVERSE = "PI_CONVERSE"  # Voice input in chat
-    PI_ACTION_EXECUTION = "PI_ACTIONS"  # Action execution in chat (create/update work-items, etc.)
-    # PI_BETA_MODEL = "PI_BETA_MODEL"  # Beta llm models in chat
-    PI_SONNET_4 = "PI_SONNET_4"
+    AI_DEDUPE = "AI_DEDUPE"
+    AI_CHAT = "AI_CHAT"
+    AI_CONVERSE = "AI_CONVERSE"
+    AI_FILE_UPLOADS = "AI_FILE_UPLOADS"
+    AI_PAGES_BLOCKS = "AI_PAGES_BLOCKS"
+    AI_PAGES_SUMMARY = "AI_PAGES_SUMMARY"
 
 
 @dataclass
@@ -77,18 +80,8 @@ class Server:
     FASTAPI_APP_HOST: str = os.getenv("FASTAPI_APP_HOST", "")
     FASTAPI_APP_PORT: str = os.getenv("FASTAPI_APP_PORT", "")
     FASTAPI_APP_WORKERS: str = os.getenv("FASTAPI_APP_WORKERS", "")
+    PLANE_PI_INTERNAL_API_SECRET: str = os.getenv("PI_INTERNAL_SECRET", "")
     FASTAPI_APP_WORKER_TIMEOUT: str = os.getenv("FASTAPI_APP_WORKER_TIMEOUT", "60")
-    PI_SECRET_KEY: str = os.getenv("PI_SECRET_KEY", "")
-    PLANE_PI_INTERNAL_API_SECRET: str = os.getenv("PLANE_PI_INTERNAL_API_SECRET", "")
-
-    # Internal API URL for Celery tasks to call back to the API
-    # Should use the same ingress URL that frontend services use
-    # Examples:
-    #   Development: https://dev.plane-pi.plane.town
-    #   Production: https://plane-pi.plane.so
-    #   Local development: http://localhost:8000
-    #   Docker local: http://host.docker.internal:8000
-    INTERNAL_API_URL: str = os.getenv("PLANE_PI_INTERNAL_API_URL", "https://plane-pi.plane.so")
 
 
 @dataclass
@@ -104,37 +97,57 @@ class VectorDB:
     FEED_SLICES: int = get_env_int("FEED_SLICES", "1")
 
     SCROLL_TIMEOUT: str = os.getenv("SCROLL_TIMEOUT", "10m")
+    CONNECTION_TIMEOUT: int = 120
     BULK_SIZE: int = 100
     BATCH_SIZE: int = get_env_int("BATCH_SIZE", "64")
 
-    # Documentation Webhook Configuration
-    DOCS_WEBHOOK_SECRET: str = os.getenv("DOCS_WEBHOOK_SECRET", "")
-    DOCS_GITHUB_API_TOKEN: str = os.getenv("DOCS_GITHUB_API_TOKEN", "")
-    DOCS_REPO_OWNER: str = os.getenv("DOCS_REPO_OWNER", "makeplane")
-    DOCS_REPO_NAME: str = os.getenv("DOCS_REPO_NAME", "docs,developer-docs")
-    DOCS_URL_BASE: str = os.getenv("DOCS_URL_BASE", "https://docs.plane.so")
-    DEVELOPER_DOCS_URL_BASE: str = os.getenv("DEVELOPER_DOCS_URL_BASE", "https://developers.plane.so")
+    # For vectorization
+    DOCS_REPO_OWNER: str = "makeplane"
+    DOCS_REPO_NAME: str = "docs,developer-docs"
+    DOCS_BRANCH: str = "master"
+
+    # For url construction in chat response
+    DOCS_URL_BASE: str = "https://docs.plane.so"
+    DEVELOPER_DOCS_URL_BASE: str = "https://developers.plane.so"
 
     # OpenSearch Configuration
     OPENSEARCH_URL: str = os.getenv("OPENSEARCH_URL", "")
-    OPENSEARCH_USER: str = os.getenv("OPENSEARCH_USER", "")
+    OPENSEARCH_USER: str = os.getenv("OPENSEARCH_USER", "") or os.getenv("OPENSEARCH_USERNAME", "")
     OPENSEARCH_PASSWORD: str = os.getenv("OPENSEARCH_PASSWORD", "")
 
     # Model Configuration
     ML_MODEL_ID: str = os.getenv("OPENSEARCH_ML_MODEL_ID", "")
-    ML_CONNECTOR_NAME: str = "cohere_azure_foundry_connector"  # unused
-    ML_MODEL_NAME: str = "cohere_4_azure"  # unused
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "cohere/embed-v4.0")
 
-    EMBEDDING_MODEL_ID: str = "embed-v-4-0"  # unused
-    EMBEDDING_DIMENSION: int = 1536  # unused
-    EMBEDDING_MODEL_API_VERSION: str = "2024-05-01-preview"  # unused
+    # EMBEDDING_DIMENSION: If explicitly set via env var, use that value.
+    # Otherwise, derive from the configured EMBEDDING_MODEL for consistency.
+    @property
+    def EMBEDDING_DIMENSION(self) -> int:
+        """
+        Get embedding dimension, preferring explicit env var, else deriving from model config.
+        """
+        # Check if explicitly overridden via environment variable
+        explicit_dim = os.getenv("OPENSEARCH_EMBEDDING_DIMENSION")
+        if explicit_dim:
+            try:
+                return int(explicit_dim)
+            except ValueError:
+                pass  # Fall through to model-based lookup
+
+        # Derive from configured embedding model
+        try:
+            from pi.core.embedding_config import get_embedding_model_config
+
+            config = get_embedding_model_config(self.EMBEDDING_MODEL)
+            return config["dimension"]
+        except (ImportError, ValueError):
+            # Fallback if import fails or model not found
+            return 1536
 
     @staticmethod
     def generate_index_name(suffix: str) -> str:
         prefix = os.getenv("OPENSEARCH_INDEX_PREFIX", "")
         if prefix:
-            # Remove trailing underscores from prefix to avoid double underscores
-            prefix = prefix.rstrip("_")
             return f"{prefix}_{suffix}"
         else:
             return suffix
@@ -177,6 +190,7 @@ class LLMModels:
     GPT_4_1: str = "gpt-4.1"
     GPT_4_1_NANO: str = "gpt-4.1-nano"
     GPT_4O_MINI: str = "gpt-4o-mini"
+    GPT_4O_SEARCH_PREVIEW: str = "gpt-4o-search-preview"  # OpenAI model with built-in web search
     LITE_LLM_CLAUDE_SONNET_4: str = "us.anthropic.claude-sonnet-4-20250514-v1:0"
     GPT_5_STANDARD: str = "gpt-5-standard"
     GPT_5_FAST: str = "gpt-5-fast"
@@ -185,17 +199,65 @@ class LLMModels:
     DEFAULT: str = GPT_5_2
     CLAUDE_SONNET_4_0: str = "claude-sonnet-4-0"
     CLAUDE_SONNET_4_5: str = "claude-sonnet-4-5"
+    CLAUDE_SONNET_4_6: str = "claude-sonnet-4-6"
+    CLAUDE_HAIKU_4_5: str = "claude-haiku-4-5"  # Lightweight Claude model for fast/cheap tasks
+    CUSTOM: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_MODEL_KEY", ""))
+
+    def __post_init__(self):
+        custom_enabled = os.getenv("CUSTOM_LLM_ENABLED", "false").lower() == "true"
+        has_openai = bool(os.getenv("OPENAI_API_KEY", "").strip())
+        has_anthropic = bool(os.getenv("CLAUDE_API_KEY", "").strip())
+        if custom_enabled and not has_openai and not has_anthropic:
+            # Custom-only deployment: override DEFAULT to custom model
+            if self.CUSTOM:
+                self.DEFAULT = self.CUSTOM
 
 
 @dataclass
 class LLMConfig:
     """Configuration for various language model APIs and settings."""
 
+    # API Keys
     OPENAI_API_KEY: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
     CLAUDE_API_KEY: str = field(default_factory=lambda: os.getenv("CLAUDE_API_KEY", ""))
+    COHERE_API_KEY: str = field(default_factory=lambda: os.getenv("COHERE_API_KEY", ""))
+    GROQ_API_KEY: str = field(default_factory=lambda: os.getenv("GROQ_API_KEY", ""))
+
+    # Base URLs (default to official endpoints; override via env for proxies/gateways)
+    OPENAI_BASE_URL: str = field(default_factory=lambda: os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"))
     CLAUDE_BASE_URL: str = field(default_factory=lambda: os.getenv("CLAUDE_BASE_URL", "https://api.anthropic.com"))
-    R1_URL_HOST: str = field(default_factory=lambda: os.getenv("R1_URL_HOST", "http://35.239.241.155:8000/v1"))
-    R1_MODEL_NAME: str = field(default_factory=lambda: os.getenv("R1_MODEL_NAME", "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"))
+    COHERE_BASE_URL: str = field(default_factory=lambda: os.getenv("COHERE_BASE_URL", "https://api.cohere.ai/v1/embed"))
+    GROQ_BASE_URL: str = field(default_factory=lambda: os.getenv("GROQ_BASE_URL", "https://api.groq.com/"))
+
+    USER_VISIBLE_MODELS_OPENAI: list[str] = field(default_factory=lambda: ["gpt-4.1", "gpt-5-fast", "gpt-5.2"])
+    USER_VISIBLE_MODELS_ANTHROPIC: list[str] = field(default_factory=lambda: ["claude-sonnet-4-0", "claude-sonnet-4-5", "claude-sonnet-4-6"])
+    ALL_USER_VISIBLE_MODELS: list[str] = field(
+        default_factory=lambda: ["gpt-4.1", "gpt-5-fast", "gpt-5.1", "claude-sonnet-4-0", "claude-sonnet-4-5", "claude-sonnet-4-6"]
+    )
+
+    # Provider default models
+    PROVIDER_DEFAULT_MODELS: dict[str, str] = field(
+        default_factory=lambda: {
+            "openai": LLMModels.GPT_5_2,
+            "anthropic": LLMModels.CLAUDE_SONNET_4_6,
+        }
+    )
+
+    PROVIDER_DEFAULT_MODELS_FAST: dict[str, str] = field(
+        default_factory=lambda: {
+            "openai": LLMModels.GPT_4_1,
+            "anthropic": LLMModels.CLAUDE_SONNET_4_0,
+        }
+    )
+
+    PROVIDER_DEFAULT_MODELS_LIGHTWEIGHT: dict[str, str] = field(
+        default_factory=lambda: {
+            "openai": LLMModels.GPT_4_1_NANO,
+            "anthropic": LLMModels.CLAUDE_HAIKU_4_5,
+        }
+    )
+
+    # Model Names
     TESTED_FOR_WORKSPACE: list = field(
         default_factory=lambda: [
             LLMModels.GPT_4_1,
@@ -205,13 +267,11 @@ class LLMConfig:
             LLMModels.GPT_5_2,
             LLMModels.CLAUDE_SONNET_4_0,
             LLMModels.CLAUDE_SONNET_4_5,
-            LLMModels.LITE_LLM_CLAUDE_SONNET_4,
+            LLMModels.CLAUDE_SONNET_4_6,
         ]
     )
     CONTEXT_OFF_TEMPERATURE: float = 0.6
     OPENAI_RANDOM_SEED: int = 314
-    LITE_LLM_HOST: str = field(default_factory=lambda: os.getenv("LITE_LLM_HOST", ""))
-    LITE_LLM_API_KEY: str = field(default_factory=lambda: os.getenv("LITE_LLM_API_KEY", ""))
     ENABLE_MODEL_VERIFICATION_LOGGING: bool = (
         False  # field(default_factory=lambda: os.getenv("ENABLE_MODEL_VERIFICATION_LOGGING", "false").lower() == "true")
     )
@@ -222,6 +282,21 @@ class LLMConfig:
     # Timeout in seconds for SQL table selection LLM calls
     # If a call exceeds this time, it will retry with a fallback model (GPT-4o)
     SQL_TABLE_SELECTION_TIMEOUT: float = 5.0
+
+    # Web Search Configuration
+    # Anthropic server-side web search tool type (versioned by Anthropic)
+    ANTHROPIC_WEB_SEARCH_TOOL_TYPE: str = "web_search_20250305"
+    # Maximum number of web search results to return
+    WEB_SEARCH_MAX_RESULTS: int = 5
+
+    # Custom Self-Hosted LLM Configuration
+    CUSTOM_LLM_ENABLED: bool = field(default_factory=lambda: os.getenv("CUSTOM_LLM_ENABLED", "false").lower() == "true")
+    CUSTOM_LLM_MODEL_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_MODEL_KEY", ""))
+    CUSTOM_LLM_BASE_URL: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_BASE_URL", ""))
+    CUSTOM_LLM_API_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_API_KEY", "not-needed"))
+    CUSTOM_LLM_NAME: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_NAME", "Self-Hosted LLM"))
+    CUSTOM_LLM_DESCRIPTION: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_DESCRIPTION", "Custom self-hosted OpenAI-compatible model"))
+    CUSTOM_LLM_MAX_TOKENS: int = field(default_factory=lambda: int(os.getenv("CUSTOM_LLM_MAX_TOKENS", "128000")))
 
 
 @dataclass
@@ -256,24 +331,7 @@ class Chat:
 class Transcription:
     """Configuration for transcription services and their pricing."""
 
-    # AssemblyAI Configuration
-    ASSEMBLYAI_API_KEY: str = os.getenv("ASSEMBLYAI_API_KEY", "")
-    ASSEMBLYAI_MODEL_PRICING_PER_HOUR: dict = field(
-        default_factory=lambda: {
-            "universal": 0.27,
-        }
-    )
-
-    # Deepgram Configuration
-    DEEPGRAM_API_KEY: str = os.getenv("DEEPGRAM_API_KEY", "")
-    DEEPGRAM_MODEL_PRICING_PER_HOUR: dict = field(
-        default_factory=lambda: {
-            "nova-3-general": 0.312,
-        }
-    )
-
-    # Groq Whisper Configuration
-    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+    # Groq Whisper Configuration (API key now in LLMConfig.GROQ_API_KEY)
     GROQ_MODEL_PRICING_PER_HOUR: dict = field(
         default_factory=lambda: {
             "whisper-large-v3": 0.111,
@@ -315,16 +373,6 @@ class Database:
 
 
 @dataclass
-class Agents:
-    prd_writer_name: str = "PRD_AGENT"  # 'connection_type' in workspace_connections table of plane database
-    prd_writer_user_name: str = (
-        "prd-agent_bot"  # 'username' in users table of plane database, append workspace_slug to the username <w_slug>_prd-agent_bot
-    )
-    prd_writer_client_id: str = os.getenv("PRD_WRITER_CLIENT_ID", "")
-    prd_writer_client_secret: str = os.getenv("PRD_WRITER_CLIENT_SECRET", "")
-
-
-@dataclass
 class Celery:
     """Configuration for Celery background tasks."""
 
@@ -332,10 +380,10 @@ class Celery:
     DEFAULT_EXCHANGE: str = "plane_pi_exchange"
     DEFAULT_ROUTING_KEY: str = "plane_pi"
 
-    # Using RabbitMQ for both message brokering and result backend (RPC)
-    # RPC backend uses RabbitMQ itself for results - no additional services needed
-    BROKER_URL: str = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost:5672//")  # RabbitMQ default
-    RESULT_BACKEND: str = os.getenv("CELERY_RESULT_BACKEND", "rpc://")  # RPC uses same RabbitMQ connection
+    # Using RabbitMQ for message brokering only (no result backend)
+    # Tasks run asynchronously but progress is tracked via logs only
+    BROKER_URL: str = os.getenv("CELERY_BROKER_URL") or os.getenv("AMQP_URL") or "pyamqp://guest@localhost:5672//"
+    RESULT_BACKEND: str | None = None
 
     TASK_SERIALIZER: str = "json"
     RESULT_SERIALIZER: str = "json"
@@ -348,10 +396,15 @@ class Celery:
     VECTOR_SYNC_INTERVAL: int = get_env_int("CELERY_VECTOR_SYNC_INTERVAL", "30")  # seconds
     VECTOR_SYNC_MAX_RETRIES: int = get_env_int("CELERY_VECTOR_SYNC_MAX_RETRIES", "3")
     VECTOR_SYNC_RETRY_DELAY: int = get_env_int("CELERY_VECTOR_SYNC_RETRY_DELAY", "30")  # seconds
+    DOCS_VECTORIZATION_ENABLED: bool = get_env_bool("CELERY_DOCS_SYNC_ENABLED", "1")
+    DOCS_VECTORIZATION_INTERVAL: int = get_env_int("CELERY_DOCS_SYNC_INTERVAL", "86400")  # 24 hours
 
     # Workspace plan sync settings (Pro/Business management)
     WORKSPACE_PLAN_SYNC_ENABLED: bool = get_env_bool("CELERY_WORKSPACE_PLAN_SYNC_ENABLED", "1")
     WORKSPACE_PLAN_SYNC_INTERVAL: int = get_env_int("CELERY_WORKSPACE_PLAN_SYNC_INTERVAL", "86400")  # 24 hours
+
+    # Chat search sync settings
+    PI_MESSAGES_INDEX_SYNC_ENABLED: bool = get_env_bool("CELERY_PI_MESSAGES_INDEX_SYNC_ENABLED", "0")
 
 
 @dataclass
@@ -368,19 +421,25 @@ class Settings:
     SENTRY_DSN: str | None = os.getenv("SENTRY_DSN")
     SENTRY_ENVIRONMENT: str = os.getenv("SENTRY_ENVIRONMENT", "development")
 
-    ASSEMBLYAI_API_KEY: str = os.getenv("ASSEMBLYAI_API_KEY", "")
-    ASSEMBLYAI_PRICING_PER_HOUR: float = 0.27  # $0.27 per hour for basic transcription
-
     # AWS Configuration for S3 attachments
-    AWS_S3_BUCKET: str = os.getenv("AWS_S3_BUCKET", "")
-    AWS_S3_REGION: str = os.getenv("AWS_S3_REGION", "us-east-2")
+    AWS_S3_BUCKET: str = os.getenv("AWS_S3_BUCKET", "") or os.getenv("AWS_S3_BUCKET_NAME", "")
+    AWS_S3_REGION: str = os.getenv("AWS_S3_REGION", "") or os.getenv("AWS_REGION", "")
     AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
     AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
+    # If AWS_S3_ENDPOINT_URL is set, use it (for MinIO or S3-compatible storage)
+    # If empty/unset, boto3 will use default AWS S3 endpoints
+    AWS_S3_ENDPOINT_URL: str | None = os.getenv("AWS_S3_ENDPOINT_URL") or None
+    # Use MinIO mode (generates public URLs using request host instead of internal endpoint)
+    # When True, presigned URLs use the request's public hostname instead of AWS_S3_ENDPOINT_URL
+    USE_MINIO: bool = get_env_bool("USE_MINIO", "0")
     FILE_SIZE_LIMIT: int = 10485760  # 10MB
     AWS_S3_ENV: str = os.getenv("AWS_S3_ENV", "")
 
-    DEEPGRAM_API_KEY: str = os.getenv("DEEPGRAM_API_KEY", "")
-    DEEPGRAM_PRICING_PER_HOUR: float = 0.312  # $0.312 per hour for Nova-3 multilingual
+    # AWS Bedrock Configuration (for embeddings) - separate credentials
+    BR_AWS_ACCESS_KEY_ID: str = os.getenv("BR_AWS_ACCESS_KEY_ID") or os.getenv("AWS_ACCESS_KEY_ID") or ""
+    BR_AWS_SECRET_ACCESS_KEY: str = os.getenv("BR_AWS_SECRET_ACCESS_KEY") or os.getenv("AWS_SECRET_ACCESS_KEY") or ""
+    BR_AWS_SESSION_TOKEN: str | None = os.getenv("BR_AWS_SESSION_TOKEN")
+    BR_AWS_REGION: str = os.getenv("BR_AWS_REGION", "us-east-1")
 
     DD_ENABLED: bool = get_env_bool("DD_ENABLED", "0")
     DD_ENV: str = os.getenv("DD_ENV", "dev")
@@ -402,11 +461,11 @@ class Settings:
     feature_flags = FeatureFlags()
     transcription = Transcription()
     database = Database()
-    agents = Agents()
     celery = Celery()
 
     # Class attribute for the configured logger
     _configured_logger: Optional[logging.Logger] = None
+    _logger_configured: bool = False
 
     @classmethod
     def setup_logger(cls):
@@ -428,9 +487,29 @@ class Settings:
         colorlog.getLogger("httpx").setLevel(colorlog.WARNING)
         colorlog.getLogger("httpcore").setLevel(colorlog.WARNING)
 
+        # Suppress urllib3 HTTP request logs (used by requests library)
+        colorlog.getLogger("urllib3").setLevel(colorlog.WARNING)
+        colorlog.getLogger("urllib3.connectionpool").setLevel(colorlog.WARNING)
+
         # Suppress Anthropic client debug logs
         colorlog.getLogger("anthropic").setLevel(colorlog.WARNING)
         colorlog.getLogger("anthropic._base_client").setLevel(colorlog.WARNING)
+
+        # Suppress watchfiles debug logs
+        colorlog.getLogger("watchfiles").setLevel(colorlog.WARNING)
+        colorlog.getLogger("watchfiles").propagate = False
+        colorlog.getLogger("watchfiles.main").setLevel(colorlog.WARNING)
+        colorlog.getLogger("watchfiles.main").propagate = False
+
+        # Suppress AMQP debug logs
+        colorlog.getLogger("amqp").setLevel(colorlog.WARNING)
+        colorlog.getLogger("amqp").propagate = False
+
+        # Suppress matplotlib debug logs (especially font_manager)
+        colorlog.getLogger("matplotlib").setLevel(colorlog.WARNING)
+
+        # Suppress markdown_it debug logs
+        colorlog.getLogger("markdown_it").setLevel(colorlog.WARNING)
 
         # Suppress boto3/botocore debug logs
         colorlog.getLogger("boto3").setLevel(colorlog.INFO)
@@ -442,20 +521,29 @@ class Settings:
         colorlog.getLogger("botocore.client").setLevel(colorlog.INFO)
         colorlog.getLogger("botocore.utils").setLevel(colorlog.INFO)
 
-        # Suppress Datadog trace debug logs
-        colorlog.getLogger("ddtrace").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.tracer").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.writer").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.internal").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.internal.module").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.internal.runtime").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.internal.runtime.container").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace._trace.processor").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace._trace.sampler").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.settings.endpoint_config").setLevel(colorlog.INFO)
-        colorlog.getLogger("ddtrace.vendor.dogstatsd").setLevel(colorlog.INFO)
-        colorlog.getLogger("datadog").setLevel(colorlog.INFO)
-        colorlog.getLogger("datadog.dogstatsd").setLevel(colorlog.INFO)
+        # Suppress Datadog trace debug logs and errors (if agent not running)
+        colorlog.getLogger("ddtrace").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace._monkey").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.tracer").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.writer").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.internal").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.internal.module").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.internal.telemetry").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.internal.telemetry.writer").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.internal.runtime").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.internal.runtime.container").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.internal.writer").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.internal.writer.writer").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace._trace.processor").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace._trace.sampler").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.settings.endpoint_config").setLevel(colorlog.WARNING)
+        colorlog.getLogger("ddtrace.vendor.dogstatsd").setLevel(colorlog.WARNING)
+        colorlog.getLogger("datadog").setLevel(colorlog.WARNING)
+        colorlog.getLogger("datadog.dogstatsd").setLevel(colorlog.WARNING)
+
+        # Suppress Alembic migration verbose logs
+        colorlog.getLogger("alembic").setLevel(colorlog.WARNING)
+        colorlog.getLogger("alembic.runtime.migration").setLevel(colorlog.WARNING)
 
         # Conditional logging format based on DD_ENABLED (Datadog)
         # When Datadog is enabled (production), use JSON logging for structured logs
@@ -501,8 +589,10 @@ class Settings:
         # Store the configured logger for consistent access
         cls._configured_logger = root_logger
 
-        # Log the configuration for confirmation
-        root_logger.info(f"Logging configured - DEBUG: {debug_enabled}, Level: {logging.getLevelName(log_level)}")
+        # Log the configuration for confirmation (only once)
+        if not hasattr(cls, "_logger_configured"):
+            root_logger.info(f"Logging configured - DEBUG: {debug_enabled}, Level: {logging.getLevelName(log_level)}")
+            cls._logger_configured = True
 
         return root_logger
 

@@ -18,7 +18,7 @@ import { cn } from "@plane/utils";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // plane web imports
-import { SubscriptionPill } from "@/plane-web/components/common/subscription/subscription-pill";
+import { SubscriptionPill } from "@/components/common/subscription/subscription-pill";
 
 type TWorkspaceList = {
   selectedWorkspaceSlug: string | null;

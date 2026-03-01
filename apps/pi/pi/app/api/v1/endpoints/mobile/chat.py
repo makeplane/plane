@@ -203,6 +203,17 @@ async def get_answer(
                         heartbeat_task.cancel()
                         with contextlib.suppress(asyncio.CancelledError):
                             await heartbeat_task
+                    # Cancel the in-flight chunk task so the inner generator
+                    # receives CancelledError and can persist partial content
+                    # while the DB session is still open.
+                    if next_chunk_task and not next_chunk_task.done():
+                        next_chunk_task.cancel()
+                        with contextlib.suppress(asyncio.CancelledError, StopAsyncIteration):
+                            await next_chunk_task
+                    # Throw CancelledError into the generator so
+                    # _process_chat_stream_core's except block can save partial state.
+                    with contextlib.suppress(asyncio.CancelledError, StopAsyncIteration, GeneratorExit):
+                        await base_iter.athrow(asyncio.CancelledError())
 
             # Extract token_id from data.context if available for background task (Fix #2: Remove duplicate)
             if hasattr(data, "context") and isinstance(data.context, dict):
@@ -403,6 +414,17 @@ async def get_answer_stream_json(
                         heartbeat_task.cancel()
                         with contextlib.suppress(asyncio.CancelledError):
                             await heartbeat_task
+                    # Cancel the in-flight chunk task so the inner generator
+                    # receives CancelledError and can persist partial content
+                    # while the DB session is still open.
+                    if next_chunk_task and not next_chunk_task.done():
+                        next_chunk_task.cancel()
+                        with contextlib.suppress(asyncio.CancelledError, StopAsyncIteration):
+                            await next_chunk_task
+                    # Throw CancelledError into the generator so
+                    # _process_chat_stream_core's except block can save partial state.
+                    with contextlib.suppress(asyncio.CancelledError, StopAsyncIteration, GeneratorExit):
+                        await base_iter.athrow(asyncio.CancelledError())
 
             # Extract token_id from data.context if available for background task
             if hasattr(data, "context") and isinstance(data.context, dict):
@@ -550,7 +572,9 @@ async def get_user_threads(
 
 @mobile_router.post("/get-chat-history/")
 async def get_chat_history(
-    data: TitleRequestMobile, token: HTTPAuthorizationCredentials = Depends(jwt_schema), db: AsyncSession = Depends(get_async_session)
+    data: TitleRequestMobile,
+    token: HTTPAuthorizationCredentials = Depends(jwt_schema),
+    db: AsyncSession = Depends(get_async_session),
 ):
     try:
         auth = await validate_jwt_token(token)
@@ -561,7 +585,11 @@ async def get_chat_history(
         log.error(f"Error validating JWT: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid JWT"})
     try:
-        results = await retrieve_chat_history(chat_id=data.chat_id, db=db, user_id=user_id)
+        results = await retrieve_chat_history(
+            chat_id=data.chat_id,
+            db=db,
+            user_id=user_id,
+        )
         error_type = results.get("error")
         if error_type == "not_found":
             return JSONResponse(status_code=404, content={"detail": results["detail"]})
@@ -577,6 +605,7 @@ async def get_chat_history(
                     "feedback": results["feedback"],
                     "reasoning": results.get("reasoning", ""),
                     "is_focus_enabled": results.get("is_focus_enabled", False),
+                    "is_websearch_enabled": results.get("is_websearch_enabled", False),
                     "focus_entity_type": results.get("focus_entity_type", None),
                     "focus_entity_id": results.get("focus_entity_id", None),
                     "focus_project_id": results.get("focus_project_id", None),
@@ -592,7 +621,9 @@ async def get_chat_history(
 
 @mobile_router.post("/get-chat-history-object/")
 async def get_chat_history_object(
-    data: TitleRequestMobile, token: HTTPAuthorizationCredentials = Depends(jwt_schema), db: AsyncSession = Depends(get_async_session)
+    data: TitleRequestMobile,
+    token: HTTPAuthorizationCredentials = Depends(jwt_schema),
+    db: AsyncSession = Depends(get_async_session),
 ):
     try:
         auth = await validate_jwt_token(token)
@@ -605,7 +636,12 @@ async def get_chat_history_object(
     try:
         chat_id = data.chat_id
         log.info(f"Mobile chat history object request received for chat_id: {chat_id}")
-        results = await retrieve_chat_history(chat_id=chat_id, dialogue_object=True, db=db, user_id=user_id)
+        results = await retrieve_chat_history(
+            chat_id=chat_id,
+            dialogue_object=True,
+            db=db,
+            user_id=user_id,
+        )
         error_type = results.get("error")
         if error_type == "not_found":
             return JSONResponse(status_code=404, content={"detail": results["detail"]})
@@ -621,6 +657,7 @@ async def get_chat_history_object(
                     "feedback": results["feedback"],
                     "reasoning": results.get("reasoning", ""),
                     "is_focus_enabled": results.get("is_focus_enabled", False),
+                    "is_websearch_enabled": results.get("is_websearch_enabled", False),
                     "focus_entity_type": results.get("focus_entity_type", None),
                     "focus_entity_id": results.get("focus_entity_id", None),
                     "focus_project_id": results.get("focus_project_id", None),

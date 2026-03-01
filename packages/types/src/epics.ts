@@ -34,3 +34,10 @@ export type TEpicStats = {
   completed_issues: number;
   cancelled_issues: number;
 };
+
+export type TEpicMeta = {
+  id: string;
+  project_identifier: string;
+  sequence_id: number;
+  name: string;
+};

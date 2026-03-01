@@ -49,6 +49,7 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "Artificial intelligence",
     description: "Configure your OpenAI creds.",
     href: `/ai/`,
+    deprecated: true,
   },
   image: {
     Icon: Image,

@@ -88,6 +88,8 @@ from .views import (
     IdentityProviderEndpoint,
     DomainEndpoint,
     DomainVerificationEndpoint,
+    GroupSyncConfigEndpoint,
+    GroupMappingEndpoint,
     MobileOIDCAuthInitiateEndpoint,
     MobileOIDCallbackEndpoint,
     MobileOIDCLogoutEndpoint,
@@ -306,6 +308,22 @@ urlpatterns = [
         "sso/workspaces/<str:slug>/domains/<uuid:pk>/verification/",
         DomainVerificationEndpoint.as_view(),
         name="sso-domain-verification",
+    ),
+    # Group Sync
+    path(
+        "sso/workspaces/<str:slug>/group-sync/config/",
+        GroupSyncConfigEndpoint.as_view(),
+        name="group-sync-config",
+    ),
+    path(
+        "sso/workspaces/<str:slug>/group-sync/mappings/",
+        GroupMappingEndpoint.as_view(),
+        name="group-mappings",
+    ),
+    path(
+        "sso/workspaces/<str:slug>/group-sync/mappings/<uuid:pk>/",
+        GroupMappingEndpoint.as_view(),
+        name="group-mappings",
     ),
     # mobile web view oidc
     path(

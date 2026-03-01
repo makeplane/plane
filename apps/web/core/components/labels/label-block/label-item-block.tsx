@@ -15,7 +15,6 @@ import type { MutableRefObject } from "react";
 import { useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 // plane helpers
-import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { CloseIcon } from "@plane/propel/icons";
@@ -108,7 +107,6 @@ export function LabelItemBlock(props: ILabelItemBlock) {
                 onClick={() => {
                   handleLabelDelete(label);
                 }}
-                data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_DELETE_BUTTON}
               >
                 <CloseIcon className="size-3.5 flex-shrink-0 text-tertiary" />
               </button>

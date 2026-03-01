@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TPartialProject } from "@/plane-web/types";
+import type { TPartialProject } from "@/types";
 // plane propel imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronDownIcon } from "@plane/propel/icons";

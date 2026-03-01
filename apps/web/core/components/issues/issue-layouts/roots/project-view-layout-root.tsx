@@ -11,12 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
+import type { ComponentType, LazyExoticComponent } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
@@ -24,29 +25,66 @@ import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
-// local imports
-import { IssuePeekOverview } from "../../peek-overview";
-import { ProjectViewCalendarLayout } from "../calendar/roots/project-view-root";
-import { BaseGanttRoot } from "../gantt";
-import { ProjectViewKanBanLayout } from "../kanban/roots/project-view-root";
-import { ProjectViewListLayout } from "../list/roots/project-view-root";
-import { ProjectViewSpreadsheetLayout } from "../spreadsheet/roots/project-view-root";
+
+// Lazy load peek overview
+const WorkItemPeekOverview = lazy(() =>
+  import("@/components/issues/peek-overview/root").then((module) => ({ default: module.IssuePeekOverview }))
+);
+
+// Lazy load layout components
+const ProjectViewListLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/list/roots/project-view-root").then((module) => ({
+    default: module.ProjectViewListLayout,
+  }))
+);
+const ProjectViewKanBanLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/board/roots/project-view-root").then((module) => ({
+    default: module.ProjectViewKanBanLayout,
+  }))
+);
+const ProjectViewCalendarLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/calendar/roots/project-view-root").then((module) => ({
+    default: module.ProjectViewCalendarLayout,
+  }))
+);
+const BaseTimelineRoot = lazy(() =>
+  import("@/components/issues/issue-layouts/timeline/base-timeline-root").then((module) => ({
+    default: module.BaseTimelineRoot,
+  }))
+);
+const ProjectViewSpreadsheetLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/table/roots/project-view-root").then((module) => ({
+    default: module.ProjectViewSpreadsheetLayout,
+  }))
+);
+
+// Layout components map
+const PROJECT_VIEW_WORK_ITEM_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<any>>>> = {
+  [EIssueLayoutTypes.LIST]: ProjectViewListLayout,
+  [EIssueLayoutTypes.KANBAN]: ProjectViewKanBanLayout,
+  [EIssueLayoutTypes.CALENDAR]: ProjectViewCalendarLayout,
+  [EIssueLayoutTypes.SPREADSHEET]: ProjectViewSpreadsheetLayout,
+};
 
 function ProjectViewIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined; viewId: string }) {
-  switch (props.activeLayout) {
-    case EIssueLayoutTypes.LIST:
-      return <ProjectViewListLayout />;
-    case EIssueLayoutTypes.KANBAN:
-      return <ProjectViewKanBanLayout />;
-    case EIssueLayoutTypes.CALENDAR:
-      return <ProjectViewCalendarLayout />;
-    case EIssueLayoutTypes.GANTT:
-      return <BaseGanttRoot viewId={props.viewId} />;
-    case EIssueLayoutTypes.SPREADSHEET:
-      return <ProjectViewSpreadsheetLayout />;
-    default:
-      return null;
+  if (!props.activeLayout) return null;
+
+  // Handle GANTT layout separately since it needs props
+  if (props.activeLayout === EIssueLayoutTypes.GANTT) {
+    return (
+      <Suspense>
+        <BaseTimelineRoot viewId={props.viewId} />
+      </Suspense>
+    );
   }
+
+  const ProjectViewIssueLayoutComponent = PROJECT_VIEW_WORK_ITEM_LAYOUTS[props.activeLayout];
+  if (!ProjectViewIssueLayoutComponent) return null;
+  return (
+    <Suspense>
+      <ProjectViewIssueLayoutComponent />
+    </Suspense>
+  );
 }
 
 export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
@@ -108,19 +146,14 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
       >
         {({ filter: projectViewWorkItemsFilter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {projectViewWorkItemsFilter && (
-              <WorkItemFiltersRow
-                filter={projectViewWorkItemsFilter}
-                trackerElements={{
-                  saveView: PROJECT_VIEW_TRACKER_ELEMENTS.HEADER_SAVE_VIEW_BUTTON,
-                }}
-              />
-            )}
+            {projectViewWorkItemsFilter && <WorkItemFiltersRow filter={projectViewWorkItemsFilter} />}
             <div className="relative h-full w-full overflow-auto">
               <ProjectViewIssueLayout activeLayout={activeLayout} viewId={viewId.toString()} />
             </div>
             {/* peek overview */}
-            <IssuePeekOverview />
+            <Suspense>
+              <WorkItemPeekOverview />
+            </Suspense>
           </div>
         )}
       </ProjectLevelWorkItemFiltersHOC>

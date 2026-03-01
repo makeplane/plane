@@ -46,6 +46,7 @@ export enum ETranslationFiles {
   ACCESSIBILITY = "accessibility",
   EDITOR = "editor",
   EMPTY_STATE = "empty-state",
+  TOUR = "tour",
   TRANSLATIONS_EXTENDED = "translations-extended",
   EDITOR_EXTENDED = "editor-extended",
   EMPTY_STATE_EXTENDED = "empty-state-extended",

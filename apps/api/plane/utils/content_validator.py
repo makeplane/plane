@@ -147,6 +147,7 @@ EE_ATTRIBUTES = {
         "data-name",
         "data-file-size",
         "data-file-type",
+        "status",
         "data-preview",
         "data-accepted-file-type",
     },
@@ -154,7 +155,7 @@ EE_ATTRIBUTES = {
     "inline-math-component": {"latex", "id"},
     "block-math-component": {"latex", "id"},
     # drawio components (generic)
-    "drawio-component": {"id", "data-image-src", "data-xml-src", "data-mode"},
+    "drawio-component": {"id", "data-image-src", "data-xml-src", "data-mode", "status"},
     "ai-block-component": {"data-id"},
 }
 
@@ -190,6 +191,8 @@ ATTRIBUTES = {
         "data-emoji-url",
         "data-logo-in-use",
         "data-block-type",
+        # multi-column attributes
+        "data-width",
     },
     "a": {"href", "target"},
     # editor node/tag attributes
@@ -219,8 +222,6 @@ ATTRIBUTES = {
         "rowspan",
         "colwidth",
         "background",
-        "hideContent",
-        "hidecontent",
         "style",
     },
     "td": {
@@ -230,8 +231,6 @@ ATTRIBUTES = {
         "background",
         "textColor",
         "textcolor",
-        "hideContent",
-        "hidecontent",
         "style",
     },
     "tr": {"background", "textColor", "textcolor", "style"},

@@ -26,6 +26,7 @@ import type {
 } from "@plane/types";
 import type { APIClient } from "@/services/client";
 import { getAPIClient } from "@/services/client";
+import type { TExecutionLogRecord } from "@/lib/execution-log/types";
 class IntegrationConnectionHelper {
   private apiClient: APIClient;
   constructor() {
@@ -425,6 +426,35 @@ class IntegrationConnectionHelper {
     });
   }
 
+  // execution log
+  /**
+   * Pushes execution logs to the server
+   * @param {string} report_id
+   * @param {TExecutionLogRecord[]} execution_logs
+   * @returns {Promise<void>}
+   */
+  async pushExecutionLogs({
+    job_id,
+    report_id,
+    execution_logs,
+  }: {
+    job_id: string;
+    report_id: string;
+    execution_logs: TExecutionLogRecord[];
+  }): Promise<void> {
+    return this.apiClient.importExecutionLog.createExecutionLogs(job_id, report_id, execution_logs);
+  }
+
+  async triggerExecutionSummaryGenerationForJob({
+    job_id,
+    report_id,
+  }: {
+    job_id: string;
+    report_id: string;
+  }): Promise<void> {
+    return this.apiClient.importExecutionLog.triggerExecutionSummaryGeneration(job_id, report_id);
+  }
+
   // import job
   async updateImportJob({
     job_id,
@@ -433,16 +463,19 @@ class IntegrationConnectionHelper {
     error_metadata,
     cancelled_at,
     relation_map,
+    config,
   }: {
     job_id: string;
     status?: string;
     success_metadata?: object;
     error_metadata?: object;
+    config?: object;
     cancelled_at?: string;
     relation_map?: TClickUpRelationMap;
   }): Promise<TImportJob> {
     return this.apiClient.importJob.updateImportJob(job_id, {
       status,
+      config,
       success_metadata,
       error_metadata,
       cancelled_at,

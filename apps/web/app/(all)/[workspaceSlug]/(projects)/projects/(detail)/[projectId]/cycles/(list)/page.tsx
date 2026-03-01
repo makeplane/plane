@@ -15,7 +15,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTheme } from "next-themes";
-import { EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TCycleFilters } from "@plane/types";
@@ -39,6 +39,9 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// components
+import { FeatureTour } from "@/components/tour";
+// types
 import type { Route } from "./+types/page";
 
 function ProjectCyclesPage({ params }: Route.ComponentProps) {
@@ -108,6 +111,7 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
           isOpen={createModal}
           handleClose={() => setCreateModal(false)}
         />
+        <FeatureTour tourType="cycles" />
         {totalCycles === 0 ? (
           <div className="h-full place-items-center">
             <EmptyStateDetailed
@@ -120,7 +124,6 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
                   onClick: () => setCreateModal(true),
                   variant: "primary",
                   disabled: !hasMemberLevelPermission,
-                  "data-ph-element": CYCLE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON,
                 },
               ]}
             />

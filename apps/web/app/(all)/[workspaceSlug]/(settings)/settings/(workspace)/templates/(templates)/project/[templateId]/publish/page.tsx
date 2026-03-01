@@ -15,9 +15,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { TemplatesUpgrade } from "@/plane-web/components/templates/settings";
-import { PublishTemplate } from "@/plane-web/components/templates/settings/publish";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { TemplatesUpgrade } from "@/components/templates/settings";
+import { PublishTemplate } from "@/components/templates/settings/publish";
 import { useProjectTemplates } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/page";
 

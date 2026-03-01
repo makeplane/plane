@@ -10,17 +10,15 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
-
-import ts from "highlight.js/lib/languages/typescript";
-import { common, createLowlight } from "lowlight";
 // components
-import { CodeBlockLowlight } from "./code-block-lowlight";
+import { CodeBlock } from "./code-block";
+import { ShikiPlugin } from "./shiki-plugin";
 
-const lowlight = createLowlight(common);
-lowlight.register("ts", ts);
-
-export const CustomCodeBlockExtensionWithoutProps = CodeBlockLowlight.configure({
-  lowlight,
+export const CustomCodeBlockExtensionWithoutProps = CodeBlock.extend({
+  addProseMirrorPlugins() {
+    return [...(this.parent?.() || []), ShikiPlugin({ name: this.name })];
+  },
+}).configure({
   defaultLanguage: "plaintext",
   exitOnTripleEnter: false,
 });

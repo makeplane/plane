@@ -14,7 +14,8 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Ellipsis } from "lucide-react";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // plane imports
 import {
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS,
@@ -34,8 +35,8 @@ import {
   usePersonalNavigationPreferences,
   useWorkspaceNavigationPreferences,
 } from "@/hooks/use-navigation-preferences";
-// plane-web imports
-import { SidebarItem } from "@/plane-web/components/workspace/sidebar/sidebar-item";
+// local components
+import { SidebarItem } from "./sidebar-item";
 
 export const SidebarMenuItems = observer(function SidebarMenuItems() {
   // routers
@@ -108,10 +109,9 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
           <SidebarItem key={`static_${_index}`} item={item} />
         ))}
       </div>
-      <Disclosure as="div" className="flex flex-col" defaultOpen={!!isWorkspaceMenuOpen}>
-        <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-layer-transparent-hover">
-          <Disclosure.Button
-            as="button"
+      <Collapsible className="flex flex-col" open={!!isWorkspaceMenuOpen} onOpenChange={toggleListDisclosure}>
+        <div className="group w-full flex items-center justify-between px-1.5  py-2 rounded-sm text-placeholder hover:bg-layer-transparent-hover">
+          <CollapsibleTrigger
             type="button"
             className="w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
             onClick={() => toggleListDisclosure(!isWorkspaceMenuOpen)}
@@ -122,10 +122,9 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
             )}
           >
             <span className="text-13 font-semibold">{t("common.workspace")}</span>
-          </Disclosure.Button>
+          </CollapsibleTrigger>
           <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
-            <Disclosure.Button
-              as="button"
+            <CollapsibleTrigger
               type="button"
               className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0"
               onClick={() => toggleListDisclosure(!isWorkspaceMenuOpen)}
@@ -140,7 +139,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
                   "rotate-90": isWorkspaceMenuOpen,
                 })}
               />
-            </Disclosure.Button>
+            </CollapsibleTrigger>
           </div>
         </div>
         <Transition
@@ -153,7 +152,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
           leaveTo="transform scale-95 opacity-0"
         >
           {isWorkspaceMenuOpen && (
-            <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
+            <CollapsibleContent className="flex flex-col gap-0.5">
               <>
                 {WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS.map((item, _index) => (
                   <SidebarItem key={`static_${_index}`} item={item} />
@@ -178,10 +177,10 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
                   </button>
                 </SidebarNavItem>
               </>
-            </Disclosure.Panel>
+            </CollapsibleContent>
           )}
         </Transition>
-      </Disclosure>
+      </Collapsible>
     </>
   );
 });

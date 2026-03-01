@@ -19,8 +19,9 @@ import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissionsLevel } from "@plane/constan
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IWorkspaceView, TWorkItemFilterExpression } from "@plane/types";
 import { EUserProjectRoles, EViewAccess } from "@plane/types";
+// helpers
+import { removeNillKeys } from "@/helpers/common";
 // components
-import { removeNillKeys } from "@/components/issues/issue-layouts/utils";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace/views/modal";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";

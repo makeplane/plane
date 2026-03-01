@@ -27,19 +27,16 @@ function GlobalViewIssuesPage({ params }: Route.ComponentProps) {
   const { globalViewId } = params;
   // store hooks
   const { currentWorkspace } = useWorkspace();
-  // states
-  const [isLoading, setIsLoading] = useState(false);
 
   // derived values
   const defaultView = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === globalViewId);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - All Views` : undefined;
 
   // handlers
-  const toggleLoading = (value: boolean) => setIsLoading(value);
   return (
     <>
       <PageHead title={pageTitle} />
-      <AllIssueLayoutRoot isDefaultView={!!defaultView} isLoading={isLoading} toggleLoading={toggleLoading} />
+      <AllIssueLayoutRoot isDefaultView={!!defaultView} />
     </>
   );
 }

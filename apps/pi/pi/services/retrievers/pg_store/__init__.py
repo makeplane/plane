@@ -21,6 +21,14 @@ from .chat import soft_delete_chat
 from .chat import unfavorite_chat
 from .chat import upsert_chat
 from .chat import upsert_user_chat_preference
+from .embedding_model import create_embedding_model
+from .embedding_model import deactivate_all_embedding_models
+from .embedding_model import deactivate_embedding_model
+from .embedding_model import get_active_embedding_model
+from .embedding_model import get_all_active_embedding_models
+from .embedding_model import get_ml_model_id
+from .embedding_model import get_ml_model_id_sync
+from .embedding_model import update_embedding_model_status
 from .feedback import create_feedback
 from .message import get_chat_messages
 from .message import get_tool_results_from_chat_history
@@ -34,27 +42,36 @@ from .webhook import get_webhook_by_commit
 from .webhook import update_webhook_record
 
 __all__ = [
-    "retrieve_chat_history",
-    "soft_delete_chat",
-    "upsert_chat",
+    "create_embedding_model",
+    "create_webhook_record",
+    "deactivate_all_embedding_models",
+    "deactivate_embedding_model",
+    "favorite_chat",
+    "get_active_embedding_model",
+    "get_all_active_embedding_models",
+    "get_active_models",
+    "get_chat_messages",
+    "get_favorite_chats",
+    "get_last_processed_commit",
+    "get_latest_agent_artifact",
+    "get_ml_model_id",
+    "get_ml_model_id_sync",
+    "get_tool_results_from_chat_history",
     "get_user_chat_threads",
     "get_user_chat_threads_paginated",
+    "get_webhook_by_commit",
+    "rename_chat_title",
+    "retrieve_chat_history",
+    "soft_delete_chat",
+    "unfavorite_chat",
+    "update_embedding_model_status",
     "update_message_feedback",
+    "update_webhook_record",
+    "upsert_agent_artifact",
+    "upsert_chat",
     "create_feedback",
     "get_chat_messages",
     "upsert_message",
     "upsert_message_flow_steps",
-    "get_tool_results_from_chat_history",
-    "get_active_models",
-    "upsert_agent_artifact",
-    "get_latest_agent_artifact",
-    "get_last_processed_commit",
-    "create_webhook_record",
-    "update_webhook_record",
-    "get_webhook_by_commit",
-    "favorite_chat",
-    "unfavorite_chat",
-    "get_favorite_chats",
-    "rename_chat_title",
     "upsert_user_chat_preference",
 ]

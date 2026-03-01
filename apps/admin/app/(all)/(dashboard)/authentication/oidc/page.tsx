@@ -16,7 +16,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // ui
 import { setPromiseToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
+import { Loader } from "@plane/ui";
 // assets
 import OIDCLogo from "@/app/assets/logos/oidc-logo.svg?url";
 // components
@@ -97,7 +98,7 @@ const InstanceOIDCAuthenticationPage = observer(function InstanceOIDCAuthenticat
             description="Authenticate your users via the OpenID connect protocol."
             icon={<img src={OIDCLogo} height={24} width={24} alt="OIDC Logo" />}
             config={
-              <ToggleSwitch
+              <Switch
                 value={Boolean(parseInt(enableOIDCConfig))}
                 onChange={() => {
                   if (Boolean(parseInt(enableOIDCConfig)) === true) {
@@ -106,7 +107,6 @@ const InstanceOIDCAuthenticationPage = observer(function InstanceOIDCAuthenticat
                     updateConfig("IS_OIDC_ENABLED", "1");
                   }
                 }}
-                size="sm"
                 disabled={isSubmitting || !formattedConfig}
               />
             }

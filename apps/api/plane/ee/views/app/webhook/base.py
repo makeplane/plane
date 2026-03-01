@@ -65,7 +65,7 @@ class InternalWebhookEndpoint(BaseAPIView):
             )
 
         for addr in ip_addresses:
-            ip = ipaddress.ip_address(addr[4][0])
+            _ip = ipaddress.ip_address(addr[4][0])
             # if ip.is_loopback:
             #     return Response(
             #         {"url": "URL resolves to a blocked IP address."},
@@ -73,7 +73,7 @@ class InternalWebhookEndpoint(BaseAPIView):
             #     )
 
             # if in cloud environment, private IP addresses are also not allowed
-            # if settings.IS_MULTI_TENANT and ip.is_private:
+            # if not settings.IS_SELF_MANAGED and ip.is_private:
             #     return Response(
             #         {"url": "URL resolves to a blocked IP address."},
             #         status=status.HTTP_400_BAD_REQUEST,

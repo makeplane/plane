@@ -11,7 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
+import { expect, fn } from "storybook/test";
 import { IconButton } from "./icon-button";
 
 const icon = () => (
@@ -29,159 +30,51 @@ const icon = () => (
   </svg>
 );
 
-const meta = {
-  title: "Components/IconButton",
+const meta = preview.meta({
   component: IconButton,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   args: {
     icon,
   },
-} satisfies Meta<typeof IconButton>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
-    icon,
+    onClick: fn(),
   },
-};
+});
 
-export const Primary: Story = {
-  args: {
-    variant: "primary",
-    icon,
+export const ClickTest = Default.extend({
+  async play({ canvas, userEvent, args }) {
+    const button = canvas.getByRole("button");
+    await expect(button).toBeVisible();
+    await userEvent.click(button);
+    await expect(args.onClick).toHaveBeenCalledOnce();
   },
-};
+});
 
-export const ErrorFill: Story = {
-  args: {
-    variant: "error-fill",
-    icon,
-  },
-};
+export const Primary = Default.extend({ args: { variant: "primary" } });
 
-export const ErrorOutline: Story = {
-  args: {
-    variant: "error-outline",
-    icon,
-  },
-};
+export const ErrorFill = Default.extend({ args: { variant: "error-fill" } });
 
-export const Secondary: Story = {
-  args: {
-    variant: "secondary",
-    icon,
-  },
-};
+export const ErrorOutline = Default.extend({ args: { variant: "error-outline" } });
 
-export const Tertiary: Story = {
-  args: {
-    variant: "tertiary",
-    icon,
-  },
-};
+export const Secondary = Default.extend({ args: { variant: "secondary" } });
 
-export const Ghost: Story = {
-  args: {
-    variant: "ghost",
-    icon,
-  },
-};
+export const Tertiary = Default.extend({ args: { variant: "tertiary" } });
 
-export const Small: Story = {
-  args: {
-    size: "sm",
-    icon,
-  },
-};
+export const Ghost = Default.extend({ args: { variant: "ghost" } });
 
-export const Base: Story = {
-  args: {
-    size: "base",
-    icon,
-  },
-};
+export const Small = Default.extend({ args: { size: "sm" } });
 
-export const Large: Story = {
-  args: {
-    size: "lg",
-    icon,
-  },
-};
+export const Base = Default.extend({ args: { size: "base" } });
 
-export const ExtraLarge: Story = {
-  args: {
-    size: "xl",
-    icon,
-  },
-};
+export const Large = Default.extend({ args: { size: "lg" } });
 
-export const Loading: Story = {
-  args: {
-    loading: true,
-    icon,
-  },
-};
+export const ExtraLarge = Default.extend({ args: { size: "xl" } });
 
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    icon,
-  },
-};
+export const Loading = Default.extend({ args: { loading: true } });
 
-export const AllVariants: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-16 font-semibold">Primary Variants</h3>
-          <div className="flex flex-wrap gap-2">
-            <IconButton variant="primary" icon={icon} />
-            <IconButton variant="error-fill" icon={icon} />
-            <IconButton variant="error-outline" icon={icon} />
-            <IconButton variant="secondary" icon={icon} />
-            <IconButton variant="tertiary" icon={icon} />
-            <IconButton variant="ghost" icon={icon} />
-          </div>
-        </div>
-      </div>
-    );
-  },
-};
-
-export const AllSizes: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <IconButton size="sm" icon={icon} />
-          <IconButton size="base" icon={icon} />
-          <IconButton size="lg" icon={icon} />
-          <IconButton size="xl" icon={icon} />
-        </div>
-      </div>
-    );
-  },
-};
-
-export const AllStates: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-16 font-semibold">Button States</h3>
-          <div className="flex flex-wrap gap-2">
-            <IconButton icon={icon} />
-            <IconButton loading icon={icon} />
-            <IconButton disabled icon={icon} />
-          </div>
-        </div>
-      </div>
-    );
-  },
-};
+export const Disabled = Default.extend({ args: { disabled: true } });

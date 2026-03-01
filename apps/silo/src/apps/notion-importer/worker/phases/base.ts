@@ -179,10 +179,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
       try {
         await this.processNodes(context, data);
       } catch (error) {
-        logger.error(`Error migrating job ${jobId}`, {
-          error,
-          jobId,
-        });
+        logger.error(`Error migrating job ${jobId}`, error);
         await this.cleanup(context.fileId, context.headers.jobId);
         await context.zipManager.cleanup(context.fileId);
         throw error;
@@ -190,10 +187,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
 
       return true;
     } catch (error) {
-      logger.error(`Error migrating job ${jobId}`, {
-        error,
-        jobId,
-      });
+      logger.error(`Error migrating job ${jobId}`, error);
       await apiClient.importJob.updateImportJob(jobId, {
         status: E_JOB_STATUS.ERROR,
       });

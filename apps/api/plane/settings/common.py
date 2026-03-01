@@ -13,22 +13,18 @@
 
 # Python imports
 import os
-from urllib.parse import urlparse
-from urllib.parse import urljoin
 from datetime import timedelta
-
+from urllib.parse import urljoin, urlparse
 
 # Third party imports
 import dj_database_url
+from corsheaders.defaults import default_headers
 
 # Django imports
 from django.core.management.utils import get_random_secret_key
-from corsheaders.defaults import default_headers
-
 
 # Module imports
 from plane.utils.url import is_valid_url
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -41,7 +37,8 @@ AES_SALT = os.environ.get("AES_SALT", "aes-salt")
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Self-hosted mode
-IS_SELF_MANAGED = True
+IS_SELF_MANAGED = os.environ.get("IS_SELF_MANAGED", "1") == "1"
+
 
 # Allowed Hosts
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
@@ -72,6 +69,7 @@ INSTALLED_APPS = [
     "plane.event_stream",
     "plane.agents",
     "plane.webhook",
+    "plane.runnerctl",
     # Third-party things
     "strawberry.django",
     "rest_framework",
@@ -390,12 +388,11 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["application/json"]
 
 # Automation Consumer Settings
-AUTOMATION_EVENT_TYPES = os.environ.get("AUTOMATION_EVENT_TYPES", "issue.").split(",")
 AUTOMATION_EVENT_STREAM_QUEUE_NAME = os.environ.get(
     "AUTOMATION_EVENT_STREAM_QUEUE_NAME", "plane.event_stream.automations"
 )
 AUTOMATION_EXCHANGE_NAME = os.environ.get("AUTOMATION_EXCHANGE_NAME", "plane.event_stream")
-
+AUTOMATION_EVENT_TYPES = ["workitem.", "issue."]
 
 CELERY_IMPORTS = (
     # scheduled tasks
@@ -413,12 +410,23 @@ CELERY_IMPORTS = (
     "plane.payment.bgtasks.free_seat_sync",
     "plane.payment.bgtasks.update_license_task",
     # management tasks
+    "plane.bgtasks.transfer_api_log_task",
+    "plane.bgtasks.hard_delete_api_log_task",
+    "plane.bgtasks.transfer_email_notification_log_task",
+    "plane.bgtasks.hard_delete_email_notification_log_task",
+    "plane.bgtasks.transfer_webhook_log_task",
+    "plane.bgtasks.hard_delete_webhook_log_task",
+    "plane.bgtasks.hard_delete_user_recent_visit_task",
     "plane.bgtasks.dummy_data_task",
+    "plane.bgtasks.copy_project_data_task",
+    "plane.bgtasks.copy_workspace_data_task",
     # issue version tasks
     "plane.bgtasks.issue_version_sync",
     "plane.bgtasks.issue_description_version_sync",
     "plane.bgtasks.silo_data_migration_task",
     "plane.bgtasks.silo_credentials_update_task",
+    "plane.bgtasks.project_subscriber_task",
+    "plane.bgtasks.link_crawler_task",
     # ee tasks
     "plane.ee.bgtasks.entity_issue_state_progress_task",
     "plane.ee.bgtasks.app_bot_task",
@@ -427,9 +435,11 @@ CELERY_IMPORTS = (
     "plane.ee.bgtasks.recurring_work_item_task",
     "plane.ee.bgtasks.cycle_automation_task",
     # silo tasks
+    "plane.silo.bgtasks.toggle_issue_properties_task",
     "plane.silo.bgtasks.integration_apps_task",
     "plane.silo.bgtasks.bulk_update_issue_relations_task",
     "plane.silo.bgtasks.bulk_update_issue_relations_task_v2",
+    "plane.silo.bgtasks.generate_job_summary",
     # event stream tasks
     "plane.event_stream.bgtasks.outbox_cleaner",
     # webhook tasks
@@ -439,6 +449,8 @@ CELERY_IMPORTS = (
     "plane.agents.bgtasks.agent_run_user_comment_task",
     "plane.agents.bgtasks.agent_run_activity_webhook",
     "plane.agents.bgtasks.agent_run_webhook",
+    # authentication tasks
+    "plane.authentication.bgtasks.group_sync_task",
 )
 
 # Application Envs
@@ -473,10 +485,10 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = "plane.db.models.session"
 SESSION_COOKIE_AGE = int(os.environ.get("SESSION_COOKIE_AGE", 604800))
 SESSION_COOKIE_NAME = os.environ.get("SESSION_COOKIE_NAME", "session-id")
-SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
+SESSION_COOKIE_DOMAIN = os.environ.get("SESSION_COOKIE_DOMAIN", None)
 SESSION_SAVE_EVERY_REQUEST = os.environ.get("SESSION_SAVE_EVERY_REQUEST", "0") == "1"
 # If on cloud, set the session cookie domain to the cloud domain else None
-if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+if not IS_SELF_MANAGED:
     SESSION_COOKIE_DOMAIN = os.environ.get("SESSION_COOKIE_DOMAIN", ".plane.so")
 else:
     SESSION_COOKIE_DOMAIN = None
@@ -493,7 +505,7 @@ MAX_CONCURRENT_SESSIONS = int(os.environ.get("MAX_CONCURRENT_SESSIONS", 5))
 CSRF_COOKIE_SECURE = secure_origins
 CSRF_COOKIE_HTTPONLY = True
 CSRF_TRUSTED_ORIGINS = cors_allowed_origins
-CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
+CSRF_COOKIE_DOMAIN = os.environ.get("SESSION_COOKIE_DOMAIN", None)
 CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 
 ######  Base URLs ######
@@ -527,7 +539,8 @@ LIVE_SERVER_SECRET_KEY = os.environ.get("LIVE_SERVER_SECRET_KEY", "")
 
 PI_BASE_URL = os.environ.get("PI_BASE_URL", "")
 PI_BASE_PATH = os.environ.get("PI_BASE_PATH", "/pi")
-PI_URL = urljoin(PI_BASE_URL, PI_BASE_PATH)
+PI_URL = urljoin(PI_BASE_URL, PI_BASE_PATH).rstrip("/")
+PI_INTERNAL_SECRET = os.environ.get("PI_INTERNAL_SECRET", "")
 
 # WEB URL
 WEB_URL = os.environ.get("WEB_URL")
@@ -538,6 +551,8 @@ if not SILO_BASE_URL:
     SILO_BASE_URL = WEB_URL or APP_BASE_URL
 SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
 SILO_URL = urljoin(SILO_BASE_URL, SILO_BASE_PATH)
+
+RUNNER_BASE_URL = os.environ.get("RUNNER_BASE_URL", "")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
@@ -631,6 +646,8 @@ ATTACHMENT_MIME_TYPES = [
     "application/x-gzip",
     # SQL
     "application/x-sql",
+    # Markdown
+    "text/markdown",
 ]
 
 
@@ -648,9 +665,6 @@ PAYMENT_SERVER_AUTH_TOKEN = os.environ.get("PAYMENT_SERVER_AUTH_TOKEN", "")
 # feature flag server base urls
 FEATURE_FLAG_SERVER_BASE_URL = os.environ.get("FEATURE_FLAG_SERVER_BASE_URL", False)
 FEATURE_FLAG_SERVER_AUTH_TOKEN = os.environ.get("FEATURE_FLAG_SERVER_AUTH_TOKEN", "")
-
-# Check if multi tenant
-IS_MULTI_TENANT = os.environ.get("IS_MULTI_TENANT", "0") == "1"
 
 # Instance Changelog URL
 INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")
@@ -675,6 +689,7 @@ SIMPLE_JWT = {
 
 # silo hmac secret key
 SILO_HMAC_SECRET_KEY = os.environ.get("SILO_HMAC_SECRET_KEY", "")
+RUNNER_HMAC_SECRET_KEY = os.environ.get("RUNNER_HMAC_SECRET_KEY", "")
 
 
 # firebase settings
@@ -688,6 +703,7 @@ FIREBASE_CLIENT_CERT_URL = os.environ.get("FIREBASE_CLIENT_CERT_URL", "")
 
 # Oauth Provider Settings
 from plane.authentication.utils import is_pkce_required  # noqa
+from plane.utils.oauth import ALL_OAUTH_SCOPES, READ_SCOPE, WRITE_SCOPE  # noqa
 
 OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "authentication.AccessToken"
 OAUTH2_PROVIDER_APPLICATION_MODEL = "authentication.Application"
@@ -705,6 +721,8 @@ OAUTH2_PROVIDER = {
         "refresh_token",
     ],
     "PKCE_REQUIRED": is_pkce_required,
+    "SCOPES": ALL_OAUTH_SCOPES,
+    "DEFAULT_SCOPES": [READ_SCOPE, WRITE_SCOPE],
 }
 
 # OpenSearch settings
@@ -815,5 +833,17 @@ ENABLE_OUTBOX_POLLER = os.environ.get("ENABLE_OUTBOX_POLLER", "0") == "1"
 
 USE_STORAGE_PROXY = os.environ.get("USE_STORAGE_PROXY", "0") == "1"
 
+# API Token limit settings
+
+DEFAULT_API_RATE_LIMIT = os.environ.get("DEFAULT_API_RATE_LIMIT", "60/min")
+PRO_PLAN_API_RATE_LIMIT = os.environ.get("PRO_PLAN_API_RATE_LIMIT", "300/min")
+BUSINESS_PLAN_API_RATE_LIMIT = os.environ.get("BUSINESS_PLAN_API_RATE_LIMIT", "1000/min")
+ENTERPRISE_PLAN_API_RATE_LIMIT = os.environ.get("ENTERPRISE_PLAN_API_RATE_LIMIT", "3000/min")
+
 # Agent settings
 AGENT_RUN_STALE_TIMEOUT_IN_MINS = int(os.environ.get("AGENT_RUN_STALE_TIMEOUT_IN_MINS", 5))
+
+# IDP sync rate limit delay
+IDP_SYNC_RATE_LIMIT_DELAY = os.environ.get("IDP_SYNC_RATE_LIMIT_DELAY", 0.5)
+# Chat Support Identity Verification
+CHAT_SUPPORT_IDENTITY_VERIFICATION_SECRET = os.environ.get("CHAT_SUPPORT_IDENTITY_VERIFICATION_SECRET", "")

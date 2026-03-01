@@ -21,7 +21,7 @@ import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import type { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
+import type { TIssue, IIssueDisplayProperties } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
 import { Spinner, ControlLink, Row } from "@plane/ui";
@@ -37,16 +37,16 @@ import { useProject } from "@/hooks/store/use-project";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
-import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import { IssueStats } from "@/components/issues/issue-layouts/issue-stats";
 // types
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { calculateIdentifierWidth } from "../utils";
+import { calculateIdentifierWidth } from "@/helpers/work-item-layout";
 import type { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
   issueId: string;
-  issuesMap: TIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   groupId: string;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
@@ -65,7 +65,7 @@ interface IssueBlockProps {
 
 export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const {
-    issuesMap,
+    getWorkItemById,
     issueId,
     groupId,
     updateIssue,
@@ -113,7 +113,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     });
 
   // derived values
-  const issue = issuesMap[issueId];
+  const issue = getWorkItemById(issueId);
   const subIssuesCount = issue?.sub_issues_count ?? 0;
   const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
   const isDraggingAllowed = canDrag && canEditIssueProperties;
@@ -206,9 +206,9 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           if (!isDraggingAllowed) {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Cannot move work item",
+              title: `Cannot move ${isEpic ? "epic" : "work item"}`,
               message: !canEditIssueProperties
-                ? "You are not allowed to move this work item"
+                ? `You are not allowed to move this ${isEpic ? "epic" : "work item"}`
                 : "Drag and drop is disabled for the current grouping",
             });
           }

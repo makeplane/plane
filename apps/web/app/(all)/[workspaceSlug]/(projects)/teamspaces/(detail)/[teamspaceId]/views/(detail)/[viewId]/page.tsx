@@ -21,7 +21,7 @@ import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
-import { TeamspaceViewLayoutRoot } from "@/plane-web/components/issues/issue-layouts/roots/teamspace-view-layout-root";
+import { TeamspaceViewLayoutRoot } from "@/components/issues/issue-layouts/roots/teamspace-view-layout-root";
 // plane web hooks
 import { useTeamspaces, useTeamspaceViews } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/page";

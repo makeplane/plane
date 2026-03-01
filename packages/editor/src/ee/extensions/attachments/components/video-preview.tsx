@@ -23,22 +23,27 @@ import { getAttachmentBlockId } from "../utils";
 import type { CustomAttachmentNodeViewProps } from "./node-view";
 
 type Props = CustomAttachmentNodeViewProps & {
-  resolvedDownloadSource: string;
-  resolvedSource: string;
   isTouchDevice: boolean;
   onDownloadClick: ((src?: string) => void) | undefined;
+  resolvedDownloadSource: string | null;
+  resolvedSource: string | null;
 };
 
-const isIOSDevice = () => {
+const isMobileAgent = (): boolean => {
   if (typeof window === "undefined") return false;
-  return /iPhone|iPad|iPod/i.test(window.navigator.userAgent);
+  const ua = window.navigator.userAgent;
+  // iOS detection
+  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+  // Android detection
+  const isAndroid = /Android/i.test(ua);
+  return isIOS || isAndroid;
 };
 
 export function CustomAttachmentVideoPreview(props: Props) {
   const { editor, node, resolvedDownloadSource, resolvedSource, selected, isTouchDevice, onDownloadClick } = props;
-  const isIOS = isIOSDevice();
+  const isMobileOS = isMobileAgent(); // use native controls for mobile OS
   // states
-  const [isVideoLoaded, setIsVideoLoaded] = useState(isIOS);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(isMobileOS);
 
   // derived values
   const fileName = node.attrs[EAttachmentBlockAttributeNames.FILE_NAME];
@@ -48,14 +53,14 @@ export function CustomAttachmentVideoPreview(props: Props) {
     setIsVideoLoaded(false);
   }, [resolvedSource]);
 
-  // If it's an iOS device, set the video loaded state to true
+  // If it's a mobile device, set the video loaded state to true
   useEffect(() => {
     if (!resolvedSource) return;
 
-    if (isIOS) {
+    if (isMobileOS) {
       setIsVideoLoaded(true);
     }
-  }, [resolvedSource, isIOS]);
+  }, [resolvedSource, isMobileOS]);
 
   const videoPreviewPlaceholder = (
     <div
@@ -90,12 +95,12 @@ export function CustomAttachmentVideoPreview(props: Props) {
           </div>
           <p className="not-prose text-11 text-tertiary flex-shrink-0">{fileSize}</p>
           <a
-            href={isTouchDevice ? undefined : resolvedDownloadSource}
+            href={!isTouchDevice && resolvedDownloadSource ? resolvedDownloadSource : undefined}
             download={fileName}
             className="flex-shrink-0 p-1 rounded hover:bg-layer-1-hover text-tertiary hover:text-secondary transition-colors"
             title="Download"
             onClick={() => {
-              if (isTouchDevice) onDownloadClick?.(resolvedDownloadSource);
+              if (isTouchDevice && resolvedDownloadSource) onDownloadClick?.(resolvedDownloadSource);
             }}
           >
             <Download className="size-4" />
@@ -103,27 +108,29 @@ export function CustomAttachmentVideoPreview(props: Props) {
         </div>
         <div className="relative aspect-video">
           {!isVideoLoaded && <div className="absolute inset-0 animate-pulse bg-layer-3 rounded-md" />}
-          <VideoPlayer
-            src={resolvedSource}
-            className={`w-full h-full ${isVideoLoaded ? "block" : "hidden"}`}
-            selected={selected}
-            onLoadedMetadata={() => setIsVideoLoaded(true)}
-            onBlur={() => editor?.commands.blur()}
-            onFocus={() => editor?.commands.focus()}
-            onHandleKeyDown={(event: KeyboardEvent) => {
-              if (!editor) return false;
-              const view = editor.view;
-              let handled = false;
+          {resolvedSource && (
+            <VideoPlayer
+              src={resolvedSource}
+              className={`size-full ${isVideoLoaded ? "block" : "hidden"}`}
+              selected={selected}
+              onLoadedMetadata={() => setIsVideoLoaded(true)}
+              onBlur={() => editor?.commands.blur()}
+              onFocus={() => editor?.commands.focus()}
+              onHandleKeyDown={(event) => {
+                if (!editor) return false;
+                const view = editor.view;
+                let handled = false;
 
-              view.someProp("handleKeyDown", (handler) => {
-                if (handler(view, event)) handled = true;
+                view.someProp("handleKeyDown", (handler) => {
+                  if (handler(view, event)) handled = true;
+                  return handled;
+                });
+
                 return handled;
-              });
-
-              return handled;
-            }}
-            isIOS={isIOS}
-          />
+              }}
+              useNativeControls={isMobileOS}
+            />
+          )}
         </div>
       </div>
     </InViewportRenderer>

@@ -32,6 +32,7 @@ from pi.app.api.v1.helpers.plane_sql_queries import get_state_details_for_artifa
 from pi.app.api.v1.helpers.plane_sql_queries import get_user_name
 from pi.app.api.v1.helpers.plane_sql_queries import get_workitem_details_for_artifact
 from pi.config import settings
+from pi.services.retrievers.pg_store.action_artifact import batch_get_latest_artifact_versions
 from pi.services.retrievers.pg_store.action_artifact import get_latest_artifact_data_for_display
 
 log = logger.getChild(__name__)
@@ -584,6 +585,11 @@ async def resolve_project_id_to_object(data: dict) -> dict:
         if not project_id:
             return data
 
+        # Skip resolution if project_id is a placeholder (not yet resolved from execution)
+        if project_id.startswith("<id of"):
+            log.debug(f"Skipping resolution for placeholder project_id: {project_id}")
+            return data
+
         project_details = await get_project_details_for_artifact(project_id)
         if project_details:
             # Create a copy to avoid modifying the original
@@ -596,7 +602,6 @@ async def resolve_project_id_to_object(data: dict) -> dict:
             }
             # Remove the old project_id if it exists
             resolved_data.pop("project_id", None)
-            log.debug(f"Resolved project_id {project_id} to project object")
             return resolved_data
         else:
             log.warning(f"Could not resolve project_id {project_id}")
@@ -910,70 +915,6 @@ async def prepare_edited_unknown_artifact_data(artifact_data: dict) -> dict:
     """Fallback for unknown edited artifact entity types."""
     log.warning("No edited preparation function found for unknown entity type, returning data as-is")
     return artifact_data
-
-
-async def prepare_artifact_data_with_entity_info(entity_type: str, artifact_data: dict) -> tuple[dict, dict]:
-    """
-    Route to appropriate preparation function and return both clean parameters and entity info separately.
-
-    Returns:
-        tuple: (clean_parameters, entity_info)
-    """
-    preparation_functions = {
-        "workitem": prepare_workitem_artifact_data,
-        "epic": prepare_epic_artifact_data,  # Epics have their own preparation function
-        "project": prepare_project_artifact_data,
-        "cycle": prepare_cycle_artifact_data,
-        "module": prepare_module_artifact_data,
-        "page": prepare_page_artifact_data,
-        "comment": prepare_comment_artifact_data,
-        "state": prepare_state_artifact_data,
-        "label": prepare_label_artifact_data,
-    }
-
-    preparation_function = preparation_functions.get(entity_type, prepare_unknown_artifact_data)
-    prepared_data = await preparation_function(artifact_data)
-
-    # Resolve project_id to full project object if present
-    resolved_data = await resolve_project_id_to_object(prepared_data)
-
-    # Extract entity_info if present
-    entity_info = {}
-    clean_parameters = resolved_data.copy() if isinstance(resolved_data, dict) else resolved_data
-
-    if isinstance(resolved_data, dict) and "entity_info" in resolved_data:
-        entity_info = resolved_data.get("entity_info", {})
-        # Remove entity_info from parameters to avoid duplication
-        clean_parameters.pop("entity_info", None)
-
-    return clean_parameters, entity_info
-
-
-def _flatten_main_entity_parameters(parameters: dict, main_key: str) -> dict:
-    """Flatten planning parameters by promoting the main entity block to top level.
-
-    Example:
-        parameters = {"workitem": {"name": "X", "properties": {...}}, "project": {...}}
-        -> {"name": "X", "properties": {...}, "project": {...}}
-    """
-    try:
-        flattened: dict = {}
-
-        # Promote main entity dictionary fields to top-level
-        main_block = parameters.get(main_key)
-        if isinstance(main_block, dict):
-            for key, value in main_block.items():
-                flattened[key] = value
-
-        # Copy all other parameters except the main entity key
-        for key, value in parameters.items():
-            if key != main_key:
-                flattened[key] = value
-
-        return flattened
-    except Exception:
-        # If anything goes wrong, return original parameters to avoid breaking responses
-        return parameters
 
 
 async def prepare_state_artifact_data(state_data: dict):
@@ -1568,3 +1509,157 @@ async def prepare_artifact_response_data(db, artifact, is_latest=False) -> dict:
         "issue_identifier": issue_identifier,
         "entity_identifier": entity_identifier,
     }
+
+
+async def batch_prepare_artifact_response_data(db, artifacts: List[Any], latest_message_ids: Dict[str, Any]) -> List[dict]:
+    """
+    Batch version of prepare_artifact_response_data.
+
+    Args:
+        db: Database session
+        artifacts: List of artifact objects
+        latest_message_ids: Dictionary mapping chat_id (str) to latest message_id
+
+    Returns:
+        List of prepared artifact response dictionaries
+    """
+    if not artifacts:
+        return []
+
+    try:
+        # Step 1: Batch load all latest executed versions for all artifacts
+        artifact_ids = [artifact.id for artifact in artifacts]
+        version_map = await batch_get_latest_artifact_versions(db, artifact_ids)
+
+        # Step 2: Process each artifact with pre-loaded version data
+        artifacts_data = []
+        for artifact in artifacts:
+            # Determine if this is the latest query for editability
+            chat_id_str = str(artifact.chat_id)
+            is_latest_query = artifact.message_id == latest_message_ids.get(chat_id_str)
+
+            # Get version data from pre-loaded map
+            latest_version = version_map.get(artifact.id)
+
+            if latest_version and latest_version.data:
+                artifact_data_to_use = latest_version.data
+                is_edited = True
+                actual_is_executed = latest_version.is_executed
+                actual_success = latest_version.success
+            else:
+                # No executed versions, use original artifact data
+                artifact_data_to_use = artifact.data
+                is_edited = False
+                actual_is_executed = artifact.is_executed
+                actual_success = artifact.success
+
+            # Extract tool_name
+            tool_name: Optional[str] = None
+            if isinstance(artifact_data_to_use, dict):
+                pd = artifact_data_to_use.get("planning_data")
+                if isinstance(pd, dict):
+                    tn = pd.get("tool_name")
+                    if isinstance(tn, str) and tn:
+                        tool_name = tn
+
+            try:
+                if is_edited and artifact.entity in ["workitem", "project"]:
+                    # Use special handling for edited artifacts
+                    enhanced_data = await prepare_edited_artifact_data(artifact.entity, artifact_data_to_use)
+                else:
+                    # Use existing logic for unedited artifacts
+                    enhanced_data = await prepare_artifact_data(
+                        entity_type=artifact.entity,
+                        artifact_data=artifact_data_to_use,
+                        action=artifact.action,
+                        entity_id=str(artifact.entity_id) if artifact.entity_id else None,
+                    )
+            except Exception as e:
+                log.warning(f"Error preparing artifact data for {artifact.id}: {e}")
+                enhanced_data = artifact_data_to_use
+
+            # Extract entity info
+            entity_id = None
+            entity_url = None
+            entity_name = None
+            entity_type = None
+            issue_identifier = None
+            entity_identifier = None
+
+            clean_parameters = enhanced_data.copy() if isinstance(enhanced_data, dict) else enhanced_data
+
+            if isinstance(enhanced_data, dict) and "entity_info" in enhanced_data:
+                entity_info = enhanced_data.get("entity_info", {})
+                if isinstance(entity_info, dict):
+                    entity_id = entity_info.get("entity_id")
+                    entity_url = entity_info.get("entity_url")
+                    entity_name = entity_info.get("entity_name")
+                    entity_type = entity_info.get("entity_type")
+                    issue_identifier = entity_info.get("issue_identifier")
+                    entity_identifier = entity_info.get("entity_identifier")
+                clean_parameters.pop("entity_info", None)
+            elif actual_is_executed and artifact.entity_id:
+                entity_id, entity_url, entity_name, entity_type, issue_identifier, entity_identifier = await populate_entity_info_from_artifact(
+                    artifact
+                )
+
+            # Make entity_url absolute
+            if isinstance(entity_url, str) and entity_url.startswith("/"):
+                base = str(getattr(settings.plane_api, "FRONTEND_URL", "") or "").rstrip("/")
+                if base:
+                    entity_url = f"{base}{entity_url}"
+
+            # Extract clean parameters
+            if isinstance(clean_parameters, dict):
+                if (
+                    "action" in clean_parameters
+                    and "tool_name" in clean_parameters
+                    and "parameters" in clean_parameters
+                    and isinstance(clean_parameters.get("parameters"), dict)
+                ):
+                    tn = clean_parameters.get("tool_name")
+                    if tool_name is None and isinstance(tn, str) and tn:
+                        tool_name = tn
+                    clean_parameters = clean_parameters["parameters"].copy()
+                elif "planning_data" in clean_parameters and isinstance(clean_parameters.get("planning_data"), dict):
+                    pd = clean_parameters.get("planning_data", {})
+                    tn = pd.get("tool_name")
+                    if tool_name is None and isinstance(tn, str) and tn:
+                        tool_name = tn
+                    inner = pd.get("parameters")
+                    if isinstance(inner, dict):
+                        clean_parameters = inner.copy()
+
+            artifact_dict = {
+                "artifact_id": str(artifact.id),
+                "sequence": artifact.sequence,
+                "artifact_type": artifact.entity,
+                "action": artifact.action,
+                "tool_name": tool_name,
+                "parameters": serialize_for_json(clean_parameters),
+                "message_id": str(artifact.message_id) if artifact.message_id else None,
+                "is_executed": actual_is_executed,
+                "success": actual_success,
+                "is_editable": (artifact.entity == "workitem" and is_latest_query and not actual_is_executed),
+                "entity_id": entity_id,
+                "entity_url": entity_url,
+                "entity_name": entity_name,
+                "entity_type": entity_type,
+                "issue_identifier": issue_identifier,
+                "entity_identifier": entity_identifier,
+            }
+            artifacts_data.append(artifact_dict)
+
+        log.debug(f"Batch prepared {len(artifacts_data)} artifacts with optimized queries")
+        return artifacts_data
+
+    except Exception as e:
+        log.error(f"Error in batch_prepare_artifact_response_data: {e}")
+        # Fallback to individual processing
+        artifacts_data = []
+        for artifact in artifacts:
+            chat_id_str = str(artifact.chat_id)
+            is_latest_query = artifact.message_id == latest_message_ids.get(chat_id_str)
+            artifact_dict = await prepare_artifact_response_data(db, artifact, is_latest_query)
+            artifacts_data.append(artifact_dict)
+        return artifacts_data

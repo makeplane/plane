@@ -21,7 +21,7 @@ export type TPage = {
   color: string | undefined;
   created_at: Date | undefined;
   created_by: string | undefined;
-  description: object | undefined;
+  description_json: object | undefined;
   description_html: string | undefined;
   is_description_empty: boolean;
   id: string | undefined;
@@ -83,12 +83,32 @@ export type TPageVersion = {
   updated_by: string;
   workspace: string;
   sub_pages_data: Partial<TPage>[];
+  // Client-side only: populated from Yjs PermanentUserData after loading version diff
+  editors?: string[];
+};
+
+// Version diff response from live server
+export type TVersionDiffData = {
+  docUpdate: string;
+  oldSnapshot: string;
+  newSnapshot: string;
+};
+
+export type TVersionDiffResponse = {
+  currentVersion: {
+    id: string;
+    last_saved_at: string;
+    created_by: string;
+    owned_by: string;
+  };
+  diffData: TVersionDiffData;
+  editors: string[];
 };
 
 export type TDocumentPayload = {
   description_binary: string;
   description_html: string;
-  description: object;
+  description_json: object;
   name?: string;
 };
 
@@ -102,7 +122,7 @@ export type TWebhookConnectionQueryParams = {
 export type TPublicPageResponse = Pick<
   TPage,
   | "created_at"
-  | "description"
+  | "description_json"
   | "id"
   | "logo_props"
   | "name"

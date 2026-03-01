@@ -21,6 +21,7 @@ import { isCommentEmpty } from "@plane/utils";
 // components
 import { STICKY_COLORS_LIST } from "@/components/editor/sticky-editor/color-palette";
 // hooks
+import { useMember } from "@/hooks/store/use-member";
 import { useSticky } from "@/hooks/use-stickies";
 
 export type TOperations = {
@@ -49,6 +50,9 @@ export const useStickyOperations = (props: TProps) => {
   // store hooks
   const { stickies, getWorkspaceStickyIds, createSticky, updateSticky, deleteSticky, updateStickyPosition } =
     useSticky();
+  const {
+    workspace: { updateChecklistIfNotDoneAlready },
+  } = useMember();
   const { t } = useTranslation();
 
   const isValid = (data: Partial<TSticky>) => {
@@ -87,6 +91,8 @@ export const useStickyOperations = (props: TProps) => {
           if (!workspaceSlug) throw new Error("Missing required fields");
           if (!isValid(payload)) return;
           await createSticky(workspaceSlug, payload);
+          // Auto-complete getting started checklist
+          void updateChecklistIfNotDoneAlready(workspaceSlug, "sticky_created");
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("stickies.toasts.created.title"),
@@ -152,7 +158,16 @@ export const useStickyOperations = (props: TProps) => {
         }
       },
     }),
-    [createSticky, deleteSticky, getWorkspaceStickyIds, stickies, updateSticky, updateStickyPosition, workspaceSlug]
+    [
+      createSticky,
+      deleteSticky,
+      getWorkspaceStickyIds,
+      stickies,
+      updateChecklistIfNotDoneAlready,
+      updateSticky,
+      updateStickyPosition,
+      workspaceSlug,
+    ]
   );
 
   return {

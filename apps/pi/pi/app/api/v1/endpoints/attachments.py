@@ -17,6 +17,7 @@ from fastapi import File
 from fastapi import Form
 from fastapi import UploadFile
 from fastapi.responses import JSONResponse
+from fastapi.responses import RedirectResponse
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -27,8 +28,8 @@ from pi.app.schemas.attachment import AttachmentCompleteRequest
 from pi.app.schemas.attachment import AttachmentDetailResponse
 from pi.app.utils.attachments import allowed_attachment_types
 from pi.app.utils.attachments import detect_file_type
+from pi.app.utils.attachments import get_attachment_urls_internal
 from pi.app.utils.attachments import get_presigned_url_download
-from pi.app.utils.attachments import get_presigned_url_preview
 from pi.app.utils.attachments import get_s3_client
 from pi.app.utils.attachments import sanitize_filename
 from pi.app.utils.attachments import scan_file_for_malware
@@ -221,50 +222,52 @@ async def get_attachment_url(
     """Get pre-signed URLs (download & preview) for an attachment"""
     try:
         user_id = current_user.id
-        # Convert string IDs to UUIDs
-        attachment_uuid = uuid.UUID(attachment_id)
-        chat_uuid = uuid.UUID(chat_id)
-
-        # Get attachment owned by this user
-        stmt = select(MessageAttachment).where(
-            MessageAttachment.id == attachment_uuid,
-            MessageAttachment.chat_id == chat_uuid,
-            MessageAttachment.user_id == user_id,
-            MessageAttachment.status == "uploaded",
-        )
-        result = await db.execute(stmt)
-        attachment = result.scalar_one_or_none()
-
-        if not attachment:
-            return JSONResponse(status_code=404, content={"detail": "Attachment not found"})
-
-        # Verify file exists in S3
-        try:
-            s3_client = get_s3_client()
-            s3_client.head_object(Bucket=S3_BUCKET, Key=attachment.file_path)
-        except Exception as s3_error:
-            log.error(f"S3 file verification failed for {attachment.file_path}: {s3_error}")
-            return JSONResponse(status_code=404, content={"detail": "File not found in S3"})
-
-        # Use utility functions for URL generation
-        download_url = get_presigned_url_download(attachment)
-        preview_url = get_presigned_url_preview(attachment)
-
-        return JSONResponse(
-            content={
-                "download_url": download_url,
-                "preview_url": preview_url,
-                "filename": attachment.original_filename,
-                "content_type": attachment.content_type,
-                "file_size": attachment.file_size,
-            }
-        )
+        # Use shared utility function
+        result = await get_attachment_urls_internal(attachment_id, chat_id, user_id, db)
+        return JSONResponse(content=result)
 
     except ValueError as e:
         log.error(f"Invalid UUID format: {e}")
         return JSONResponse(status_code=400, content={"detail": "Invalid ID format"})
+    except FileNotFoundError as e:
+        return JSONResponse(status_code=404, content={"detail": str(e)})
     except Exception as e:
         log.error(f"Error generating attachment URLs: {e!s}")
+        return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
+
+
+@router.get("/view/")
+async def view_attachment(
+    attachment_id: str,
+    chat_id: str,
+    db: AsyncSession = Depends(get_async_session),
+    current_user=Depends(get_current_user),
+):
+    """Redirect to attachment preview URL for direct rendering in <img> tags and markdown.
+
+    This endpoint allows using attachment URLs directly in markdown image syntax:
+    ![alt text](/api/v1/attachments/view/?attachment_id=xxx&chat_id=yyy)
+
+    The browser will automatically follow the redirect to the S3 presigned URL.
+    """
+    try:
+        user_id = current_user.id
+        # Use shared utility function
+        result = await get_attachment_urls_internal(attachment_id, chat_id, user_id, db)
+        preview_url = result.get("preview_url")
+
+        if not preview_url:
+            return JSONResponse(status_code=404, content={"detail": "Preview URL not available"})
+
+        return RedirectResponse(preview_url)
+
+    except ValueError as e:
+        log.error(f"Invalid UUID format: {e}")
+        return JSONResponse(status_code=400, content={"detail": "Invalid ID format"})
+    except FileNotFoundError as e:
+        return JSONResponse(status_code=404, content={"detail": str(e)})
+    except Exception as e:
+        log.error(f"Error redirecting to attachment: {e!s}")
         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
 
 
@@ -293,7 +296,7 @@ async def get_attachments_by_chat(
         # Build response with attachment details and URLs
         attachment_list = []
         for attachment in attachments:
-            # Generate download and preview URLs
+            # Generate download URL
             download_url = get_presigned_url_download(attachment)
 
             attachment_data = {

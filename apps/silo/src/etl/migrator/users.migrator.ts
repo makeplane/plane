@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { AxiosError } from "axios";
 import { logger } from "@plane/logger";
 import type { Client as PlaneClient, PlaneUser, UserResponsePayload } from "@plane/sdk";
 import type { TWorkspaceCredential } from "@plane/types";
@@ -19,6 +18,9 @@ import { processBatchPromises } from "@/helpers/methods";
 import { downloadFile, uploadFile } from "@/helpers/utils";
 import { protect } from "@/lib";
 import { generateFileUploadPayload } from "./issues.migrator";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import { extractErrorMetadata } from "@/helpers/errors";
 
 /* ----------------------------- User Creation Utilities ----------------------------- */
 export const createUsers = async (
@@ -34,31 +36,62 @@ export const createUsers = async (
       let avatarId;
 
       if (user.avatar) {
-        const blob = await downloadFile(user.avatar, `Bearer ${credentials.source_access_token}`);
-        if (blob) {
-          const entityType = blob.type.split(";")[0];
-          if (
-            entityType === "image/jpeg" ||
-            entityType === "image/png" ||
-            entityType === "image/gif" ||
-            entityType === "image/jpg"
-          ) {
-            try {
-              const response = await planeClient.users.getAvatarUploadAvatar(user.display_name, blob.size, entityType);
-              const data = generateFileUploadPayload(response.upload_data, blob, user.display_name);
-              const upload = await uploadFile({
-                url: response.upload_data.url,
-                data: data,
-              });
+        try {
+          const blob = await downloadFile(user.avatar, `Bearer ${credentials.source_access_token}`);
+          if (blob) {
+            const entityType = blob.type.split(";")[0];
+            if (
+              entityType === "image/jpeg" ||
+              entityType === "image/png" ||
+              entityType === "image/gif" ||
+              entityType === "image/jpg"
+            ) {
+              try {
+                const response = await planeClient.users.getAvatarUploadAvatar(
+                  user.display_name,
+                  blob.size,
+                  entityType
+                );
+                const data = generateFileUploadPayload(response.upload_data, blob, user.display_name);
+                const upload = await uploadFile({
+                  url: response.upload_data.url,
+                  data: data,
+                });
 
-              if (upload) {
-                avatarId = response.asset_id;
-                await planeClient.users.markAvatarAsUploaded(avatarId);
+                if (upload) {
+                  avatarId = response.asset_id;
+                  await planeClient.users.markAvatarAsUploaded(avatarId);
+
+                  executionLog.collect(jobId, {
+                    entity_type: EExecutionLogEntityType.USER,
+                    phase: "UPLOAD_AVATAR",
+                    level: EExecutionLogLevel.SUCCESS,
+                    entity_external_id: user.email,
+                  });
+                }
+              } catch (error) {
+                logger.error(`Error while uploading avatar: ${user.display_name}`);
+
+                executionLog.collect(jobId, {
+                  entity_type: EExecutionLogEntityType.USER,
+                  phase: "UPLOAD_AVATAR",
+                  ignore_summarization: true,
+                  level: EExecutionLogLevel.ERROR,
+                  entity_external_id: user.id,
+                  error: extractErrorMetadata(error),
+                });
               }
-            } catch (error) {
-              logger.error(`Error while uploading avatar: ${user.display_name}`);
             }
           }
+        } catch (error) {
+          executionLog.collect(jobId, {
+            entity_type: EExecutionLogEntityType.USER,
+            phase: "UPLOAD_AVATAR",
+            ignore_summarization: true,
+            level: EExecutionLogLevel.ERROR,
+            entity_external_id: user.id,
+            error: extractErrorMetadata(error),
+          });
         }
       }
 
@@ -78,16 +111,45 @@ export const createUsers = async (
         }
       );
 
-      return createdUser;
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.USER,
+        phase: "CREATE_USER",
+        level: EExecutionLogLevel.SUCCESS,
+        entity_external_id: user.email,
+        entity_plane_id: createdUser.id,
+        entity_name: createdUser.display_name,
+      });
+
+      return {
+        ...createdUser,
+        /*
+         * In case the user already exists in the database with a differnt display name,
+         * here we will only be adding him to the workspace and the project, but we'll not
+         * be updating his display name, now in that case we'll be returning the user's
+         * display name from the source system
+         */
+        display_name: user.display_name,
+      };
     } catch (error) {
       logger.error(`Error while creating the user: ${user.display_name}`, {
         jobId: jobId,
         error: error,
       });
+
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.USER,
+        phase: "CREATE_USER",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        entity_external_id: user.email,
+      });
+
       return undefined;
     }
   };
 
   const createdUsers = await processBatchPromises(users, createOrUpdateUser, 2);
-  return createdUsers?.filter((user) => user !== undefined) ?? [];
+  const allCreatedUsers = createdUsers?.filter((user) => user !== undefined) ?? [];
+
+  return allCreatedUsers;
 };

@@ -12,11 +12,12 @@
  */
 
 import type { NodeViewProps } from "@tiptap/core";
-import { NodeViewWrapper } from "@tiptap/react";
-import { memo } from "react";
+import { memo, useEffect, useRef } from "react";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 // types
-import { EDrawioAttributeNames } from "../types";
 import type { TDrawioBlockAttributes, TDrawioExtension } from "../types";
+import { EDrawioAttributeNames, EDrawioStatus } from "../types";
 // components
 import { DrawioBlock } from "./block";
 
@@ -29,17 +30,80 @@ export type DrawioNodeViewProps = Omit<NodeViewProps, "extension"> & {
 };
 
 export const DrawioNodeView = memo(function DrawioNodeView(props: DrawioNodeViewProps) {
-  const { selected, node } = props;
-  const hasImage = !!node.attrs[EDrawioAttributeNames.IMAGE_SRC];
+  const { decorations, node, updateAttributes, extension } = props;
+  const imageSrc = node.attrs[EDrawioAttributeNames.IMAGE_SRC];
+  const xmlSrc = node.attrs[EDrawioAttributeNames.XML_SRC];
+  const status = node.attrs[EDrawioAttributeNames.STATUS];
+
+  // refs
+  const hasRetriedOnMount = useRef(false);
+  const isDuplicatingRef = useRef(false);
+
+  // Handle drawio duplication when status is duplicating
+  useEffect(() => {
+    const handleDuplication = async () => {
+      if (status !== EDrawioStatus.DUPLICATING || !extension.options.duplicateDiagram) return;
+      if (!imageSrc || !xmlSrc) return;
+      if (isDuplicatingRef.current) return;
+
+      isDuplicatingRef.current = true;
+      try {
+        let newImageSrc: string | null = null;
+        let newXmlSrc: string | null = null;
+
+        if (imageSrc.startsWith("http")) {
+          newImageSrc = imageSrc;
+        } else {
+          newImageSrc = await extension.options.duplicateDiagram(imageSrc);
+        }
+
+        if (xmlSrc.startsWith("http")) {
+          newXmlSrc = xmlSrc;
+        } else {
+          newXmlSrc = await extension.options.duplicateDiagram(xmlSrc);
+        }
+
+        if (!newImageSrc || !newXmlSrc) {
+          throw new Error("Diagram duplication failed");
+        }
+
+        updateAttributes({
+          [EDrawioAttributeNames.STATUS]: EDrawioStatus.UPLOADED,
+          [EDrawioAttributeNames.IMAGE_SRC]: newImageSrc,
+          [EDrawioAttributeNames.XML_SRC]: newXmlSrc,
+        });
+      } catch {
+        updateAttributes({ [EDrawioAttributeNames.STATUS]: EDrawioStatus.DUPLICATION_FAILED });
+      } finally {
+        isDuplicatingRef.current = false;
+      }
+    };
+
+    handleDuplication();
+  }, [status, imageSrc, xmlSrc, extension.options.duplicateDiagram, updateAttributes]);
+
+  useEffect(() => {
+    if (status === EDrawioStatus.DUPLICATION_FAILED && !hasRetriedOnMount.current && imageSrc && xmlSrc) {
+      hasRetriedOnMount.current = true;
+      updateAttributes({ [EDrawioAttributeNames.STATUS]: EDrawioStatus.DUPLICATING });
+    }
+  }, [status, imageSrc, xmlSrc, updateAttributes]);
+
+  useEffect(() => {
+    if (status === EDrawioStatus.UPLOADED) {
+      hasRetriedOnMount.current = false;
+    }
+  }, [status]);
 
   return (
-    <NodeViewWrapper className="editor-drawio-component relative" contentEditable={false}>
+    <YChangeNodeViewWrapper
+      decorations={decorations}
+      className="editor-drawio-component relative"
+      contentEditable={false}
+    >
       <div className="relative" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
         <DrawioBlock {...props} />
-        {selected && hasImage && (
-          <div className="absolute inset-0 size-full bg-accent-primary/30 pointer-events-none rounded-md" />
-        )}
       </div>
-    </NodeViewWrapper>
+    </YChangeNodeViewWrapper>
   );
 });

@@ -10,10 +10,12 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 from typing import AsyncGenerator
+from typing import Generator
 from typing import Optional
 
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -23,8 +25,9 @@ from pi.core.context import get_current_user_context
 
 log = logger.getChild(__name__)
 
-# Store the engine in module scope (but initialize in lifespan)
+# Store the engines in module scope (but initialize in lifespan/on-demand)
 _async_engine = None
+_sync_engine = None
 
 
 async def init_async_db(app: Optional[FastAPI] = None):
@@ -113,3 +116,51 @@ def get_streaming_db_session():
     async_session_factory = sessionmaker(_async_engine, class_=AsyncSession, expire_on_commit=False)  # type: ignore[call-overload]
     session = async_session_factory()
     return _UserAwareSession(session)
+
+
+def init_sync_db():
+    """Initialize the sync database engine (lazy initialization)."""
+    global _sync_engine
+
+    log.info("Initializing sync database engine...")
+    from sqlmodel import create_engine
+
+    _sync_engine = create_engine(settings.database.connection_url(), pool_pre_ping=True, echo=False)
+
+    log.info("Sync database engine initialized.")
+    return _sync_engine
+
+
+def close_sync_db():
+    """Close the sync database engine."""
+    global _sync_engine
+
+    if _sync_engine is None:
+        return
+
+    log.info("Disposing sync database engine...")
+    _sync_engine.dispose()
+    _sync_engine = None
+    log.info("Sync database engine disposed.")
+
+
+def get_sync_session() -> Generator[Session, None, None]:
+    """
+    Get a sync database session.
+
+    Usage:
+        for session in get_sync_session():
+            # use session
+            break
+
+    Or with context manager pattern:
+        with next(get_sync_session()) as session:
+            # use session
+    """
+    if _sync_engine is None:
+        init_sync_db()
+
+    sync_session_factory = sessionmaker(_sync_engine, class_=Session, expire_on_commit=False)
+
+    with sync_session_factory() as session:
+        yield session

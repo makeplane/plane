@@ -65,7 +65,11 @@ export const createSlackLinkbackMutationContext = (params: {
       ? issueCtx.updatedBy.display_name
       : "Unknown User";
 
-  let content = `_${user}_ ${itemType === E_MUTATION_CONTEXT_ITEM_TYPE.INTAKE ? "created" : "added"} this ${itemType}`;
+  let content = "";
+  if (user) {
+    content += `_${user}_ `;
+    content += `${itemType === E_MUTATION_CONTEXT_ITEM_TYPE.INTAKE ? "created" : "added"} this ${itemType}`;
+  }
 
   // Add update information if requested and available
   if (format === E_MUTATION_CONTEXT_FORMAT_TYPE.CREATION_AND_UPDATE && showUpdateInfo && issueCtx.updatedBy) {

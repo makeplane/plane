@@ -25,12 +25,12 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import {
   CreateTemplatesButton,
   TemplatesUpgrade,
   WorkspaceTemplatesSettingsRoot,
-} from "@/plane-web/components/templates/settings";
+} from "@/components/templates/settings";
 import { useFlag, useProjectTemplates, useWorkItemTemplates, usePageTemplates } from "@/plane-web/hooks/store";
 // local imports
 import type { Route } from "./+types/page";
@@ -72,7 +72,7 @@ function TemplatesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
       <SettingsHeading
         title={t("workspace_settings.settings.templates.heading")}
         description={t("workspace_settings.settings.templates.description")}
-        appendToRight={
+        control={
           <>
             {isAnyTemplatesEnabled && isAnyTemplatesAvailable && hasAdminPermission && (
               <CreateTemplatesButton

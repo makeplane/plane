@@ -256,10 +256,10 @@ def issue_push_notifications(notification):
             old_identifier=old_identifier,
             new_identifier=new_identifier,
         )
-        body = issue_notification_description_builder.build_notification() or ""
+        body, should_send_notification = issue_notification_description_builder.build_notification()
 
-        if body is None:
-            print("=== notification body is None ===")
+        if body is None or not should_send_notification:
+            print("=== notification body is None or not required ===")
             return
 
         # push notification

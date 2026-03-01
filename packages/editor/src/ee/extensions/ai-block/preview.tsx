@@ -12,14 +12,9 @@
  */
 
 import { NodeViewContent } from "@tiptap/react";
-import type { TAIBlockHandlers, TAIBlockRevisionType } from "@plane/types";
 
 type CustomAIBlockPreviewProps = {
   hasContent: boolean;
-  blockId: string | null;
-  revisionTypes: TAIBlockRevisionType[];
-  aiBlockHandlers: TAIBlockHandlers;
-  backToSettings: () => void;
 };
 const CustomAIBlockPreview = (props: CustomAIBlockPreviewProps) => {
   const { hasContent } = props;

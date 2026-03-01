@@ -11,21 +11,21 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { Paperclip } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
-import { LinkIcon, ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
 // plane imports
+import { E_FEATURE_FLAGS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { LinkIcon, ViewsIcon, RelationPropertyIcon, PageIcon } from "@plane/propel/icons";
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
-// plane web imports
-import { WorkItemAdditionalWidgetActionButtons } from "@/plane-web/components/issues/issue-detail-widgets/action-buttons";
+// components
+import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
 // local imports
 import { IssueAttachmentActionButton } from "./attachments";
 import { IssueLinksActionButton } from "./links";
 import { RelationActionButton } from "./relations";
 import { SubIssuesActionButton } from "./sub-issues";
 import { IssueDetailWidgetButton } from "./widget-button";
+import { PagesActionButton } from "./pages";
 
 type Props = {
   workspaceSlug: string;
@@ -100,14 +100,22 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           issueServiceType={issueServiceType}
         />
       )}
-      <WorkItemAdditionalWidgetActionButtons
-        disabled={disabled}
-        hideWidgets={hideWidgets ?? []}
-        issueServiceType={issueServiceType}
-        projectId={projectId}
-        workItemId={issueId}
-        workspaceSlug={workspaceSlug}
-      />
+      {!hideWidgets?.includes("pages") && (
+        <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={E_FEATURE_FLAGS.LINK_PAGES} fallback={<></>}>
+          <PagesActionButton
+            issueServiceType={issueServiceType}
+            disabled={disabled}
+            workItemId={issueId}
+            customButton={
+              <IssueDetailWidgetButton
+                title={t("issue.pages.link_pages")}
+                icon={<PageIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+                disabled={disabled}
+              />
+            }
+          />
+        </WithFeatureFlagHOC>
+      )}
     </div>
   );
 }

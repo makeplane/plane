@@ -13,11 +13,11 @@
 
 import { useContext } from "react";
 // plane web context
-import type { TIssuePropertyOptionsContext } from "@/plane-web/lib";
-import { IssuePropertyOptionContext } from "@/plane-web/lib";
+import type { TWorkItemPropertyOptionsContext } from "@/lib/context/work-item-property-option";
+import { WorkItemPropertyOptionContext } from "@/lib/context/work-item-property-option";
 
-export const usePropertyOptions = (): TIssuePropertyOptionsContext => {
-  const context = useContext(IssuePropertyOptionContext);
-  if (context === undefined) throw new Error("usePropertyOptions must be used within IssuePropertyOptionsProvider");
+export const usePropertyOptions = (): TWorkItemPropertyOptionsContext => {
+  const context = useContext(WorkItemPropertyOptionContext);
+  if (context === undefined) throw new Error("usePropertyOptions must be used within WorkItemPropertyOptionsProvider");
   return context;
 };

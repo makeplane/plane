@@ -67,7 +67,7 @@ def process_batched_opensearch_updates():
                             )
 
                         logger.info(
-                            f"OpenSearch batch processed {chunk_processed} {model_name} instances with registry-powered cascades"
+                            f"OpenSearch batch processed {chunk_processed} {model_name} instances with registry-powered cascades"  # noqa: E501
                         )
                     except Exception as e:
                         logger.error(f"Error processing chunk {chunk_info['chunk_number']} for {model_name}: {e}")
@@ -82,7 +82,7 @@ def process_batched_opensearch_updates():
 
         if total_processed > 0:
             logger.info(
-                f"OpenSearch batch processing completed: {total_processed} total instances processed across all models"
+                f"OpenSearch batch processing completed: {total_processed} total instances processed across all models"  # noqa: E501
             )
 
     except Exception as e:

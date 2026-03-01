@@ -17,14 +17,15 @@ import { Telescope } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import type { IInstance, IInstanceAdmin } from "@plane/types";
-import { Input, ToggleSwitch } from "@plane/ui";
+import { Input } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components
-import { IntercomConfig } from "./intercom";
+import { ChatSupportConfig } from "./chat-support";
 
 export interface IGeneralConfigurationForm {
   instance: IInstance;
@@ -52,12 +53,12 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
   const onSubmit = async (formData: Partial<IInstance>) => {
     const payload: Partial<IInstance> = { ...formData };
 
-    // update the intercom configuration
-    const isIntercomEnabled =
-      instanceConfigurations?.find((config) => config.key === "IS_INTERCOM_ENABLED")?.value === "1";
-    if (!payload.is_telemetry_enabled && isIntercomEnabled) {
+    // update the chat support configuration
+    const isChatSupportEnabled =
+      instanceConfigurations?.find((config) => config.key === "IS_CHAT_SUPPORT_ENABLED")?.value === "1";
+    if (!payload.is_telemetry_enabled && isChatSupportEnabled) {
       try {
-        await updateInstanceConfigurations({ IS_INTERCOM_ENABLED: "0" });
+        await updateInstanceConfigurations({ IS_CHAT_SUPPORT_ENABLED: "0" });
       } catch (error) {
         console.error(error);
       }
@@ -120,7 +121,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
 
       <div className="space-y-6">
         <div className="text-16 font-medium text-primary pb-1.5 border-b border-subtle">Chat + telemetry</div>
-        <IntercomConfig isTelemetryEnabled={watch("is_telemetry_enabled") ?? false} />
+        <ChatSupportConfig isTelemetryEnabled={watch("is_telemetry_enabled") ?? false} />
         <div className="flex items-center gap-14">
           <div className="grow flex items-center gap-4">
             <div className="shrink-0">
@@ -149,7 +150,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               control={control}
               name="is_telemetry_enabled"
               render={({ field: { value, onChange } }) => (
-                <ToggleSwitch value={value ?? false} onChange={onChange} size="sm" disabled={isSubmitting} />
+                <Switch value={value ?? false} onChange={onChange} disabled={isSubmitting} />
               )}
             />
           </div>

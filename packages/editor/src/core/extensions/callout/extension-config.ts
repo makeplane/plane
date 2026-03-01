@@ -54,6 +54,7 @@ export const CustomCalloutExtensionConfig: CustomCalloutExtensionType = Node.cre
 
   addStorage() {
     return {
+      openedLogoPickerId: null as string | null,
       markdown: {
         serialize(state: MarkdownSerializerState, node: ProseMirrorNode) {
           const attrs = node.attrs as TCalloutBlockAttributes;

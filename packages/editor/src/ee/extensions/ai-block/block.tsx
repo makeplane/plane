@@ -20,7 +20,7 @@ import type { CustomAIBlockNodeViewProps } from "./block-ui";
  */
 export function CustomAIBlock(props: CustomAIBlockNodeViewProps) {
   const { extension } = props;
-  const { widgetCallback: WidgetCallback } = extension.options;
+  const { aiBlockWidgetCallback: WidgetCallback } = extension.options;
 
   // If widget callback is provided, render it (web app handles data fetching)
   if (WidgetCallback) {

@@ -17,7 +17,7 @@ import { SUPPORTED_LANGUAGES, useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { CustomSelect } from "@plane/ui";
 // components
-import { TimezoneSelect } from "@/components/global";
+import { TimezoneSelect } from "@/components/common/timezone-select";
 import { StartOfWeekPreference } from "@/components/profile/start-of-week-preference";
 import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks

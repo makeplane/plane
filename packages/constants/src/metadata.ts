@@ -19,6 +19,9 @@ export const SITE_KEYWORDS =
   "software development, plan, ship, software, accelerate, code management, release management, project management, work items tracking, agile, scrum, kanban, collaboration";
 export const SITE_URL = "https://app.plane.so/";
 export const TWITTER_USER_NAME = "Plane | Simple, extensible, open-source project management tool.";
+export const IOS_APP_ID = "6657986465";
+export const ANDROID_APP_ID = "com.plane.so";
+export const ANDROID_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.plane.so";
 
 // Plane Sites Metadata
 export const SPACE_SITE_NAME = "Plane Publish | Make your Plane boards and roadmaps pubic with just one-click. ";

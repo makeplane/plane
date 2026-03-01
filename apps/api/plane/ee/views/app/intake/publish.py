@@ -25,7 +25,7 @@ from plane.ee.permissions import ProjectMemberPermission
 from plane.db.models import DeployBoard, Intake
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.ee.models import IntakeForm
+from plane.ee.models import IntakeForm, IntakeEmail
 
 
 class ProjectInTakePublishViewSet(BaseViewSet):
@@ -39,27 +39,27 @@ class ProjectInTakePublishViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.INTAKE_FORM)
     @check_feature_flag(FeatureFlag.INTAKE_EMAIL)
     def regenerate(self, request, slug, project_id, type=None):
-        # generate the entity name
-        entity_name = (
-            DeployBoard.DeployBoardType.INTAKE_EMAIL if type == "intake_email" else DeployBoard.DeployBoardType.INTAKE
-        )
-
-        # fetch the deploy board
-        deploy_board = DeployBoard.objects.get(entity_name=entity_name, project_id=project_id, workspace__slug=slug)
-
-        # Update the anchor
         new_anchor = uuid4().hex
-        deploy_board.anchor = new_anchor
-        deploy_board.save(update_fields=["anchor"])
 
-        # new anchor
-        anchor = deploy_board.anchor
-
-        # update the anchor with full email address if entity is intake_email
         if type == "intake_email":
-            # Get the deploy board
+            # Fetch and update the IntakeEmail record
+            intake_email = IntakeEmail.objects.get(project_id=project_id, workspace__slug=slug)
+            intake_email.anchor = new_anchor
+            intake_email.save(update_fields=["anchor"])
+
+            # Return the full email address
             email_domain = self.get_intake_email_domain()
             anchor = f"{slug}-{new_anchor}@{email_domain}"
+        else:
+            # Fetch and update the DeployBoard for intake form
+            deploy_board = DeployBoard.objects.get(
+                entity_name=DeployBoard.DeployBoardType.INTAKE,
+                project_id=project_id,
+                workspace__slug=slug,
+            )
+            deploy_board.anchor = new_anchor
+            deploy_board.save(update_fields=["anchor"])
+            anchor = new_anchor
 
         return Response({"anchor": anchor}, status=status.HTTP_200_OK)
 

@@ -9,6 +9,7 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+
 def get_boolean_value(value) -> bool | None:
     if value is None:
         return None

@@ -22,7 +22,7 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
-import { EpicService } from "@/plane-web/services/issue-types";
+import { EpicService } from "@/services/issue-types";
 // types
 import type { Route } from "./+types/page";
 

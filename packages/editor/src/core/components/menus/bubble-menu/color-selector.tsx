@@ -13,8 +13,6 @@
 
 import type { Editor } from "@tiptap/react";
 import { ALargeSmall, Ban } from "lucide-react";
-import { useMemo } from "react";
-import type { FC } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -35,8 +33,8 @@ export function BubbleMenuColorSelector(props: Props) {
   // floating ui
   const { options, getReferenceProps, getFloatingProps } = useFloatingMenu({});
 
-  const activeTextColor = useMemo(() => editorState.color, [editorState.color]);
-  const activeBackgroundColor = useMemo(() => editorState.backgroundColor, [editorState.backgroundColor]);
+  const activeTextColor = editorState.color;
+  const activeBackgroundColor = editorState.backgroundColor;
 
   return (
     <FloatingMenuRoot
@@ -83,13 +81,19 @@ export function BubbleMenuColorSelector(props: Props) {
                 style={{
                   backgroundColor: color.textColor,
                 }}
-                onClick={() => TextColorItem(editor).command({ color: color.key })}
+                onClick={() => {
+                  TextColorItem(editor).command({ color: color.key });
+                  options.context.onOpenChange(false);
+                }}
               />
             ))}
             <button
               type="button"
               className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
-              onClick={() => TextColorItem(editor).command({ color: undefined })}
+              onClick={() => {
+                TextColorItem(editor).command({ color: undefined });
+                options.context.onOpenChange(false);
+              }}
             >
               <Ban className="size-4" />
             </button>
@@ -106,13 +110,19 @@ export function BubbleMenuColorSelector(props: Props) {
                 style={{
                   backgroundColor: color.backgroundColor,
                 }}
-                onClick={() => BackgroundColorItem(editor).command({ color: color.key })}
+                onClick={() => {
+                  BackgroundColorItem(editor).command({ color: color.key });
+                  options.context.onOpenChange(false);
+                }}
               />
             ))}
             <button
               type="button"
               className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
-              onClick={() => BackgroundColorItem(editor).command({ color: undefined })}
+              onClick={() => {
+                BackgroundColorItem(editor).command({ color: undefined });
+                options.context.onOpenChange(false);
+              }}
             >
               <Ban className="size-4" />
             </button>

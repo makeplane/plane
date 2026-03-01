@@ -21,9 +21,10 @@ import type { EUserWorkspaceRoles } from "@plane/types";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
-// plane-web imports
-import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar/extended-sidebar-item";
-import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+// helpers
+import { isSidebarFeatureEnabled } from "@/helpers/sidebar";
+// local components
+import { ExtendedSidebarItem } from "./extended-sidebar-item";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
 export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {

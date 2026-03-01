@@ -11,9 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { PriorityEnum } from "@makeplane/plane-node-sdk";
+import type { PlaneClient, PriorityEnum } from "@makeplane/plane-node-sdk";
 import { SILO_FORM_OPTIONS_CACHE_KEY } from "@/helpers/cache-keys";
-import type { PlaneClientV2 } from "@/helpers/plane-api-client-v2";
 import { getPlaneClientV2 } from "@/helpers/plane-api-client-v2";
 import type { SelectOption } from "@/types/form/base";
 import { Store } from "@/worker/base";
@@ -42,25 +41,22 @@ export interface GetOptionsForEntityParams {
 }
 
 export class FormUtils {
-  private planeAPIClient: PlaneClientV2;
+  private planeAPIClient: PlaneClient;
 
   constructor(accessToken: string) {
     this.planeAPIClient = getPlaneClientV2({ accessToken });
   }
 
   async getProjectConfig(slug: string, projectId: string): Promise<ProjectConfig> {
-    const project = await this.planeAPIClient.projectsApi.retrieveProject({
-      pk: projectId,
-      slug,
-    });
+    const project = await this.planeAPIClient.projects.retrieve(slug, projectId);
     if (!project?.id) {
       throw new Error("Project not found");
     }
     return {
       id: project.id,
       name: project.name,
-      isIntakeEnabled: project.intakeView ?? false,
-      isIssueTypeEnabled: project.isIssueTypeEnabled ?? false,
+      isIntakeEnabled: project.intake_view ?? false,
+      isIssueTypeEnabled: project.is_issue_type_enabled ?? false,
     };
   }
 
@@ -89,10 +85,7 @@ export class FormUtils {
       switch (typeIdentifier) {
         case OptionsEntity.LABEL:
           // eslint-disable-next-line no-case-declarations
-          const labels = await this.planeAPIClient.labelsApi.listLabels({
-            projectId,
-            slug,
-          });
+          const labels = await this.planeAPIClient.labels.list(slug, projectId);
           options = labels.results.map((label) => ({
             value: label.id ?? "",
             label: label.name ?? "",
@@ -100,10 +93,7 @@ export class FormUtils {
           break;
         case OptionsEntity.STATE:
           // eslint-disable-next-line no-case-declarations
-          const states = await this.planeAPIClient.statesApi.listStates({
-            projectId,
-            slug,
-          });
+          const states = await this.planeAPIClient.states.list(slug, projectId);
           options = states.results.map((state) => ({
             value: state.id ?? "",
             label: state.name ?? "",
@@ -111,7 +101,9 @@ export class FormUtils {
           break;
         case OptionsEntity.PRIORITY:
           // eslint-disable-next-line no-case-declarations
-          const priorities = Object.values(PriorityEnum).map((priority) => ({
+          const priorityValues: PriorityEnum[] = ["urgent", "high", "medium", "low", "none"];
+          // eslint-disable-next-line no-case-declarations
+          const priorities = priorityValues.map((priority) => ({
             value: priority,
             label: priority.charAt(0).toUpperCase() + priority.slice(1),
           }));
@@ -119,10 +111,7 @@ export class FormUtils {
           break;
         case OptionsEntity.WORK_ITEM_TYPES:
           // eslint-disable-next-line no-case-declarations
-          const workItemTypes = await this.planeAPIClient.workItemTypesApi.listIssueTypes({
-            projectId,
-            slug,
-          });
+          const workItemTypes = await this.planeAPIClient.workItemTypes.list(slug, projectId);
           options = workItemTypes.map((workItemType) => ({
             value: workItemType.id ?? "",
             label: workItemType.name ?? "",
@@ -130,13 +119,10 @@ export class FormUtils {
           break;
         case OptionsEntity.ASSIGNEE:
           // eslint-disable-next-line no-case-declarations
-          const assignees = await this.planeAPIClient.membersApi.getProjectMembers({
-            projectId,
-            slug,
-          });
+          const assignees = await this.planeAPIClient.projects.getMembers(slug, projectId);
           options = assignees.map((assignee) => ({
             value: assignee.id ?? "",
-            label: assignee.displayName ?? "",
+            label: assignee.display_name ?? "",
           }));
           break;
         default:
@@ -147,31 +133,28 @@ export class FormUtils {
             throw new Error("Invalid type identifier");
           }
           // eslint-disable-next-line no-case-declarations
-          const workItemProperty = await this.planeAPIClient.workItemPropertiesApi.retrieveIssueProperty({
-            projectId,
-            propertyId,
+          const workItemProperty = await this.planeAPIClient.workItemProperties.retrieve(
             slug,
-            typeId: issueTypeId,
-          });
-          if (!["RELATION", "OPTION"].includes(workItemProperty.propertyType)) {
+            projectId,
+            issueTypeId,
+            propertyId
+          );
+          if (!["RELATION", "OPTION"].includes(workItemProperty.property_type)) {
             return [];
           }
 
-          if (workItemProperty.propertyType === "RELATION") {
-            const assignees = await this.planeAPIClient.membersApi.getProjectMembers({
-              projectId,
-              slug,
-            });
+          if (workItemProperty.property_type === "RELATION") {
+            const assignees = await this.planeAPIClient.projects.getMembers(slug, projectId);
             options = assignees.map((assignee) => ({
               value: assignee.id ?? "",
-              label: assignee.displayName ?? "",
+              label: assignee.display_name ?? "",
             }));
-          } else if (workItemProperty.propertyType === "OPTION") {
-            const propertyOptions = await this.planeAPIClient.workItemPropertiesApi.listIssuePropertyOptions({
-              projectId,
-              propertyId,
+          } else if (workItemProperty.property_type === "OPTION") {
+            const propertyOptions = await this.planeAPIClient.workItemProperties.options.list(
               slug,
-            });
+              projectId,
+              propertyId
+            );
             options = propertyOptions.map((option) => ({
               value: option.id ?? "",
               label: option.name ?? "",

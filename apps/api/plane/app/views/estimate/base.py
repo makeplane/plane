@@ -299,11 +299,6 @@ class EstimatePointEndpoint(BaseViewSet):
             ).first()
             if cycle:
                 cycle_id = str(cycle.id)
-                new_estimate_value = (
-                    EstimatePoint.objects.filter(pk=new_estimate_id).values_list("value", flat=True).first()
-                    if new_estimate_id
-                    else None
-                )
 
                 issues = Issue.objects.filter(
                     estimate_point_id=(new_estimate_id if new_estimate_id else estimate_point_id),

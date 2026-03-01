@@ -17,7 +17,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 // constants
 import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslationFiles } from "../constants";
 // core translations imports
-import { enCore, locales, enCoreExtended } from "../locales";
+import { locales } from "../locales";
 // types
 import type { TLanguage, ILanguageOption, ITranslations } from "../types";
 
@@ -27,10 +27,6 @@ import type { TLanguage, ILanguageOption, ITranslations } from "../types";
  * Uses IntlMessageFormat to format the translations
  */
 export class TranslationStore {
-  // Core translations that are always loaded
-  private coreTranslations: ITranslations = {
-    en: merge({}, enCore, enCoreExtended),
-  };
   // List of translations for each language
   private translations: ITranslations = {};
   // Cache for IntlMessageFormat instances
@@ -48,8 +44,6 @@ export class TranslationStore {
    */
   constructor() {
     makeAutoObservable(this);
-    // Initialize with core translations immediately
-    this.translations = this.coreTranslations;
     // Initialize language
     this.initializeLanguage();
     // Load all the translations
@@ -130,7 +124,7 @@ export class TranslationStore {
       const translations = await this.importLanguageFile(language);
       runInAction(() => {
         // Use lodash merge for deep merging
-        this.translations[language] = merge({}, this.coreTranslations[language] || {}, translations.default);
+        this.translations[language] = translations.default as ITranslations[typeof language];
         // Add to loaded languages
         this.loadedLanguages.add(language);
         // Clear cache

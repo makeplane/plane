@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import axios from "axios";
-import type { HTMLElement } from "node-html-parser";
+import axios, { isAxiosError } from "axios";
 import { parse } from "node-html-parser";
 import { validate as uuidValidate } from "uuid";
 
@@ -62,17 +61,36 @@ export const splitStringTillPart = (input: string, part: string): string => {
 
 export const downloadFile = async (url: string, authToken?: string): Promise<Blob | undefined> => {
   try {
+    if (!authToken) {
+      logger.error("Auth token not found", { url });
+      return;
+    }
+
+    // Make a head call to get the content-length
+    const headResponse = await axios({
+      url,
+      method: "HEAD",
+      headers: {
+        Authorization: authToken,
+      },
+    });
+
+    if (Number(headResponse.headers["content-length"]) > Number(env.SILO_FILE_SIZE_LIMIT)) {
+      logger.error("File size exceeds the limit", { fileSize: headResponse.headers["content-length"], url });
+      return;
+    }
+
     const response = await axios({
       url,
       method: "GET",
       responseType: "arraybuffer",
       headers: {
-        Authorization: authToken ? authToken : undefined,
+        Authorization: authToken,
       },
     });
 
     if (!response.data) {
-      logger.error("Asset download failed with status code:", response.status);
+      logger.error("Asset download failed with status code:", response.status, { url });
       return;
     }
 
@@ -80,8 +98,12 @@ export const downloadFile = async (url: string, authToken?: string): Promise<Blo
     const blob = new Blob([buffer], { type: response.headers["content-type"] });
     return blob;
   } catch (e) {
-    const buffer = Buffer.from((e as any).response?.data);
-    logger.error("Assest download failed:", buffer.toString("utf-8"));
+    if (isAxiosError(e)) {
+      const buffer = Buffer.from(e.response?.data);
+      logger.error("Assest download failed:", buffer.toString("utf-8"));
+    } else {
+      logger.error("Assest download failed:", e);
+    }
   }
 };
 

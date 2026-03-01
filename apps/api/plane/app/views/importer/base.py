@@ -73,7 +73,7 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
             if not access_tokens_url:
                 return Response(
                     {
-                        "error": "There was an error during the installation of the GitHub app. To resolve this issue, we recommend reinstalling the GitHub app."
+                        "error": "There was an error during the installation of the GitHub app. To resolve this issue, we recommend reinstalling the GitHub app."  # noqa: E501
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )

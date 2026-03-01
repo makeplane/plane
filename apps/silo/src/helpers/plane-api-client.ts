@@ -27,7 +27,7 @@ import { planeOAuthService } from "@/services/oauth/auth";
  */
 export const getPlaneAPIClient = async (credential: TWorkspaceCredential, appName: TAppKeys): Promise<PlaneClient> => {
   try {
-    const baseURL = env.API_BASE_URL;
+    const baseURL = env.API_INTERNAL_BASE_URL || env.API_BASE_URL;
     // checks if the credential is not an OAuth credential
     if (!credential.target_authorization_type) {
       if (!credential.target_access_token) {

@@ -40,7 +40,7 @@ export function SwitcherIcon({ logo_props, logo_url, LabelIcon, size = 12, type 
       />
     );
   }
-  return <LabelIcon height={size} width={size} />;
+  return <LabelIcon height={size} width={size} className="flex-shrink-0" />;
 }
 
 type TSwitcherLabelProps = {

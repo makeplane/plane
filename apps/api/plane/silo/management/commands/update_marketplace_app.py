@@ -148,7 +148,7 @@ class Command(BaseCommand):
     def assign_owner(self, app_slug, workspace_slug, user_email):
         """
         python manage.py update_marketplace_app assign-owner <app_slug>  --workspace-slug <w_slug> --user-email <user_email>
-        """
+        """  # noqa: E501
 
         app_owner = ApplicationOwner.objects.filter(application__slug=app_slug).first()
 

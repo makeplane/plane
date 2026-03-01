@@ -23,7 +23,7 @@ import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
-import { useModuleMenuItems } from "@/components/common/quick-actions-helper";
+import { useModuleMenuItems } from "@/components/common/quick-actions/helper";
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
 // hooks
 import { useModule } from "@/hooks/store/use-module";

@@ -60,9 +60,6 @@ export const TableCell = Node.create<TableCellOptions>({
       textColor: {
         default: null,
       },
-      hideContent: {
-        default: false,
-      },
     };
   },
 
@@ -123,8 +120,6 @@ export const TableCell = Node.create<TableCellOptions>({
     return [
       "td",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        // TODO: add a better logic to hide a cell while dragging
-        // class: node.attrs.hideContent ? "content-hidden" : "",
         style: `background-color: ${node.attrs.background}; color: ${node.attrs.textColor};`,
       }),
       0,

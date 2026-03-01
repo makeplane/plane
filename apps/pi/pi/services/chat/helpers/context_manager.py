@@ -35,6 +35,7 @@ async def initialize_chat_context(chatbot_instance, data, chat_exists, db):
     # This backward compatibility code no longer does workspace resolution
 
     is_focus_enabled = data.workspace_in_context
+    is_websearch_enabled = bool(getattr(data, "is_websearch_enabled", False))
 
     # Use new polymorphic fields if available, otherwise fall back to legacy fields
     focus_entity_type = getattr(data, "focus_entity_type", None)
@@ -59,6 +60,7 @@ async def initialize_chat_context(chatbot_instance, data, chat_exists, db):
                 workspace_slug=None,  # Will be backfilled in queue_answer
                 is_project_chat=is_project_chat,
                 workspace_in_context=data.workspace_in_context,
+                is_websearch_enabled=is_websearch_enabled,
             )
             if chat_result["message"] != "success":
                 return None, "An unexpected error occurred. Please try again"
@@ -71,6 +73,7 @@ async def initialize_chat_context(chatbot_instance, data, chat_exists, db):
             chat_id=chat_id,
             db=db,
             is_focus_enabled=is_focus_enabled,
+            is_websearch_enabled=is_websearch_enabled,
             focus_entity_type=focus_entity_type,
             focus_entity_id=focus_entity_id,
             focus_project_id=focus_project_id,

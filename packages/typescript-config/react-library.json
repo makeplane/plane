@@ -2,7 +2,8 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./base.json",
   "compilerOptions": {
+    "emitDeclarationOnly": true,
     "jsx": "react-jsx",
-    "lib": ["es2023", "DOM", "DOM.Iterable"]
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
   }
 }

@@ -20,14 +20,16 @@ from plane.utils.content_validator import validate_html_content
 
 class PageDetailAPISerializer(BaseSerializer):
     anchor = serializers.CharField(read_only=True)
+    description = serializers.JSONField(source="description_json", required=False, allow_null=True)
 
     class Meta:
         model = Page
         fields = [
             "id",
             "name",
-            "description_stripped",
             "description",
+            "description_stripped",
+            "description_json",
             "description_html",
             "description_binary",
             "created_at",
@@ -104,7 +106,7 @@ class PageCreateAPISerializer(BaseSerializer):
         project_id = self.context.get("project_id", None)
         owned_by_id = self.context["owned_by_id"]
         description_binary = self.context["description_binary"]
-        description = self.context["description"]
+        description_json = self.context["description_json"]
 
         # Create the page
         page = Page.objects.create(
@@ -112,7 +114,7 @@ class PageCreateAPISerializer(BaseSerializer):
             owned_by_id=owned_by_id,
             workspace_id=workspace_id,
             description_binary=description_binary,
-            description=description,
+            description_json=description_json,
         )
 
         # Create the project page

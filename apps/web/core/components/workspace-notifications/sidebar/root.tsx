@@ -24,7 +24,7 @@ import { cn, getNumberCount } from "@plane/utils";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
-import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/root";
+import { NotificationListRoot } from "@/components/workspace-notifications/sidebar/list-root";
 // local imports
 import type { TNotificationsViewMode } from "@/store/notifications/workspace-notifications.store";
 import { getIconButtonStyling, IconButton } from "@plane/propel/icon-button";

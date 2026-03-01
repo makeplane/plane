@@ -1062,6 +1062,30 @@ async def get_workspace_plans_batch(workspace_ids: List[str]) -> Dict[str, str]:
         return {}
 
 
+async def get_all_workspace_ids() -> List[str]:
+    """
+    Get all workspace IDs from the Plane database.
+
+    Returns:
+        List of workspace IDs (as strings)
+    """
+    query = """
+    SELECT id::text as workspace_id
+    FROM workspaces
+    WHERE deleted_at IS NULL
+    ORDER BY created_at DESC
+    """
+
+    try:
+        results = await PlaneDBPool.fetch(query)
+        workspace_ids = [row["workspace_id"] for row in results]
+        log.info(f"Fetched {len(workspace_ids)} workspace IDs")
+        return workspace_ids
+    except Exception as e:
+        log.error(f"Error fetching all workspace IDs: {e}")
+        return []
+
+
 async def search_workitem_by_identifier(identifier: str, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """
     Search for a work item by its unique identifier (e.g., 'WEB-821').

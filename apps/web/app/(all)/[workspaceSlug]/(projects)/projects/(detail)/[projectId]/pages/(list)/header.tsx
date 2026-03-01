@@ -28,7 +28,7 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesListHeader = observer(function PagesListHeader() {
@@ -69,7 +69,10 @@ export const PagesListHeader = observer(function PagesListHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <ProjectBreadcrumbWithPreference
+            workspaceSlug={workspaceSlug?.toString()}
+            projectId={projectId?.toString()}
+          />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink

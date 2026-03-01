@@ -16,8 +16,8 @@ import useSWR from "swr";
 import { CustomAIBlockUI } from "@plane/editor";
 import type { TAIBlockNodeViewProps } from "@plane/editor";
 import { useParams } from "next/navigation";
-import { AIService } from "@/plane-web/services/ai.service";
-const aiService = new AIService();
+import { PIService } from "@/services/pi.service";
+const piService = new PIService();
 
 /**
  * AIBlockWidget - Web app component that fetches data and renders the AI block UI.
@@ -29,28 +29,15 @@ export function AIBlockWidget(props: TAIBlockNodeViewProps) {
 
   // Fetch block types
   const { data: blockTypesData } = useSWR("ai-block-types", async () => {
-    const response = await aiService.getBlockTypes();
-    return response?.types ?? [];
-  });
-
-  // Fetch revision types
-  const { data: revisionTypesData } = useSWR("ai-block-revision-types", async () => {
-    const response = await aiService.getRevisionTypes();
+    const response = await piService.getBlockTypes();
     return response?.types ?? [];
   });
 
   // Fetch blocks list
   const { data: blocksData } = useSWR(pageId ? `ai-block-list-${pageId}` : null, async () => {
-    const response = await aiService.listBlocks(pageId);
+    const response = await piService.listBlocks(pageId);
     return response?.blocks ?? [];
   });
 
-  return (
-    <CustomAIBlockUI
-      {...props}
-      blockTypes={blockTypesData ?? []}
-      revisionTypes={revisionTypesData ?? []}
-      blocks={blocksData ?? []}
-    />
-  );
+  return <CustomAIBlockUI {...props} blockTypes={blockTypesData ?? []} blocks={blocksData ?? []} />;
 }

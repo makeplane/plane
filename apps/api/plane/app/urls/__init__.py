@@ -40,6 +40,9 @@ from plane.ee.urls.app import urlpatterns as ee_urls
 # agents imports
 from plane.agents.urls.app import urlpatterns as agents_app_urls
 
+# runnerctl imports
+from plane.runnerctl.urls.app import urlpatterns as runnerctl_app_urls
+
 urlpatterns = [
     *analytic_urls,
     *asset_urls,
@@ -66,4 +69,5 @@ urlpatterns = [
     *ee_urls,
     *page_urls,
     *agents_app_urls,
+    *runnerctl_app_urls,
 ]

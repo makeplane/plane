@@ -12,7 +12,7 @@
  */
 
 // plane web imports
-import { SAMLRoot } from "@/plane-web/components/workspace/settings/identity/provider/saml/root";
+import { SAMLRoot } from "@/components/workspace/settings/identity/provider/saml/root";
 // types
 import type { Route } from "./+types/page";
 

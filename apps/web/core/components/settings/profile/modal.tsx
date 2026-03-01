@@ -55,7 +55,7 @@ export const ProfileSettingsModal = observer(function ProfileSettingsModal() {
             className="w-[250px] rounded-l-xl"
             updateActiveTab={(tab) => toggleProfileSettingsModal({ activeTab: tab })}
           />
-          <ProfileSettingsContent activeTab={activeTab} className="grow px-8 py-9 w-fit rounded-r-xl" />
+          <ProfileSettingsContent activeTab={activeTab} className="flex-1 rounded-r-xl" />
         </div>
         <div className="absolute top-3.5 right-3.5">
           <IconButton size="base" variant="tertiary" icon={X} onClick={handleClose} />

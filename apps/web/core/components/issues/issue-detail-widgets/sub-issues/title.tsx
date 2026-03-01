@@ -17,7 +17,8 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { CircularProgressIndicator, CollapsibleButton } from "@plane/ui";
+import { CollapsibleButton } from "@plane/propel/collapsible";
+import { CircularProgressIndicator } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { SubWorkItemTitleActions } from "./title-actions";

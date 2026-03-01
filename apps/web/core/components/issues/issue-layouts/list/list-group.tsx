@@ -17,12 +17,11 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 // plane imports
-import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
+import { DRAG_ALLOWED_GROUPS, isWorkItemPriority } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type {
   IGroupByColumn,
-  TIssueMap,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssue,
@@ -40,17 +39,18 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // Plane-web
-import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
+import { useWorkFlowFDragNDrop } from "@/components/workflow";
 //
 import { GroupDragOverlay } from "../group-drag-overlay";
 import { ListQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
-import type { GroupDropLocation } from "../utils";
+// helpers
+import { highlightOnDrop } from "@/helpers/common";
+import type { GroupDropLocation } from "@/helpers/work-item-layout";
 import {
   getDestinationFromDropPayload,
-  getIssueBlockId,
+  getWorkItemBlockId,
   getSourceFromDropPayload,
-  highlightIssueOnDrop,
-} from "../utils";
+} from "@/helpers/work-item-layout";
 import { IssueBlocksList } from "./blocks-list";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import type { TRenderQuickActions } from "./list-view-types";
@@ -58,7 +58,7 @@ import type { TRenderQuickActions } from "./list-view-types";
 interface Props {
   groupIssueIds: string[] | undefined;
   group: IGroupByColumn;
-  issuesMap: TIssueMap;
+  getWorkItemById: (issueId: string) => TIssue | undefined;
   group_by: TIssueGroupByOptions | null;
   orderBy: TIssueOrderByOptions | undefined;
   getGroupIndex: (groupId: string | undefined) => number;
@@ -85,7 +85,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   const {
     groupIssueIds = [],
     group,
-    issuesMap,
+    getWorkItemById,
     group_by,
     orderBy,
     getGroupIndex,
@@ -154,16 +154,16 @@ export const ListGroup = observer(function ListGroup(props: Props) {
     return true;
   };
 
-  const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
+  const prePopulateQuickAddData = (groupByKey: TIssueGroupByOptions | null, value: string) => {
     const defaultState = projectState.projectStates?.find((state) => state.default);
-    let preloadedData: object = { state_id: defaultState?.id };
+    let preloadedData: Partial<TIssue> = { state_id: defaultState?.id };
 
     if (groupByKey === null) {
       preloadedData = { ...preloadedData };
     } else {
       if (groupByKey === "state") {
         preloadedData = { ...preloadedData, state_id: value };
-      } else if (groupByKey === "priority") {
+      } else if (groupByKey === "priority" && isWorkItemPriority(value)) {
         preloadedData = { ...preloadedData, priority: value };
       } else if (groupByKey === "labels" && value != "None") {
         preloadedData = { ...preloadedData, label_ids: [value] };
@@ -175,6 +175,10 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         preloadedData = { ...preloadedData, module_ids: [value] };
       } else if (groupByKey === "created_by") {
         preloadedData = { ...preloadedData };
+      } else if (groupByKey === "milestone" && value != "None") {
+        preloadedData = { ...preloadedData, milestone_id: value };
+      } else if (groupByKey === "epic" && value != "None") {
+        preloadedData = { ...preloadedData, parent_id: value };
       } else {
         preloadedData = { ...preloadedData, [groupByKey]: value };
       }
@@ -235,7 +239,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
 
           handleOnDrop(source, destination);
 
-          highlightIssueOnDrop(getIssueBlockId(source.id, destination?.groupId), orderBy !== "sort_order");
+          highlightOnDrop(getWorkItemBlockId(source.id, destination?.groupId), orderBy !== "sort_order");
 
           if (!isExpanded) {
             handleCollapsedGroups(group.id);
@@ -306,7 +310,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
             <IssueBlocksList
               issueIds={groupIssueIds}
               groupId={group.id}
-              issuesMap={issuesMap}
+              getWorkItemById={getWorkItemById}
               updateIssue={updateIssue}
               quickActions={quickActions}
               displayProperties={displayProperties}

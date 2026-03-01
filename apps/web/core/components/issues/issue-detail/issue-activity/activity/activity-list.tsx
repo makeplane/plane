@@ -12,36 +12,40 @@
  */
 
 import { observer } from "mobx-react";
-// helpers
+// plane imports
 import { getValidKeysFromObject } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// plane web components
-import { AdditionalActivityRoot } from "@/plane-web/components/issues/issue-details/additional-activity-root";
-import { IssueTypeActivity } from "@/plane-web/components/issues/issue-details/issue-type-activity";
-import { IssuePageActivity } from "@/plane-web/components/issues/issue-details/page";
-
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+// components
+import { useTimeLineRelationOptions } from "@/components/relations";
 // local components
 import {
-  IssueDefaultActivity,
-  IssueNameActivity,
-  IssueDescriptionActivity,
-  IssueStateActivity,
+  CustomerActivity,
+  CustomerRequestActivity,
+  EpicActivity,
+  IssueArchivedAtActivity,
   IssueAssigneeActivity,
-  IssuePriorityActivity,
-  IssueEstimateActivity,
-  IssueParentActivity,
-  IssueRelationActivity,
-  IssueStartDateActivity,
-  IssueTargetDateActivity,
+  IssueAttachmentActivity,
   IssueCycleActivity,
-  IssueModuleActivity,
+  IssueDefaultActivity,
+  IssueDescriptionActivity,
+  IssueEstimateActivity,
+  IssueEstimateTimeActivity,
+  IssueInboxActivity,
   IssueLabelActivity,
   IssueLinkActivity,
-  IssueAttachmentActivity,
-  IssueArchivedAtActivity,
-  IssueInboxActivity,
+  IssueModuleActivity,
+  IssueNameActivity,
+  IssuePageActivity,
+  IssueParentActivity,
+  IssuePriorityActivity,
+  IssueRelationActivity,
+  IssueStartDateActivity,
+  IssueStateActivity,
+  IssueTargetDateActivity,
+  IssueTypeActivity,
+  MilestoneActivity,
+  WorkItemConvertActivity,
 } from "./actions";
 
 type TIssueActivityItem = {
@@ -106,7 +110,19 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
       return <IssueTypeActivity {...componentDefaultProps} />;
     case "page":
       return <IssuePageActivity {...componentDefaultProps} />;
+    case "estimate_time":
+      return <IssueEstimateTimeActivity activityId={activityId} ends={ends} showIssue={false} />;
+    case "customer":
+      return <CustomerActivity activityId={activityId} ends={ends} />;
+    case "customer_request":
+      return <CustomerRequestActivity activityId={activityId} ends={ends} />;
+    case "work_item":
+      return <WorkItemConvertActivity activityId={activityId} ends={ends} />;
+    case "epic":
+      return <EpicActivity activityId={activityId} ends={ends} />;
+    case "milestones":
+      return <MilestoneActivity activityId={activityId} ends={ends} />;
     default:
-      return <AdditionalActivityRoot {...componentDefaultProps} field={activityField} />;
+      return <></>;
   }
 });

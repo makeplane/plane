@@ -14,6 +14,9 @@
 import { marked } from "marked";
 import { parse, HTMLElement } from "node-html-parser";
 import TurndownService from "turndown";
+
+import { logger } from "@plane/logger";
+
 import type { IParserExtension } from "./types";
 
 export class ContentParser {
@@ -132,7 +135,11 @@ export class ContentParser {
     let currentNode = node;
     for (const extension of extensions) {
       if (extension.shouldParse(currentNode)) {
-        currentNode = await extension.mutate(currentNode);
+        try {
+          currentNode = await extension.mutate(currentNode);
+        } catch (error) {
+          logger.error("Unable to process extension", error);
+        }
       }
     }
 

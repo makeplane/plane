@@ -17,7 +17,7 @@ import { useParams } from "react-router";
 import { StateGroupIcon } from "@plane/propel/icons";
 import type { TIssue, TStateGroups } from "@plane/types";
 // plane web imports
-import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
+import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 
 type Props = {

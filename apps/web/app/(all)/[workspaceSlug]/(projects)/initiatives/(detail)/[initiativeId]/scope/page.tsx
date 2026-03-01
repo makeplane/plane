@@ -25,15 +25,15 @@ import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loa
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { InitiativeScopeRoot } from "@/plane-web/components/initiatives/scope/root";
+import { InitiativeScopeRoot } from "@/components/initiatives/scope/root";
 // Plane-web
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { Route } from "./+types/page";
 
-function IssueDetailsPage({ params }: Route.ComponentProps) {
+function InitiativeScopePage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
   const { workspaceSlug, initiativeId } = params;
@@ -46,7 +46,9 @@ function IssueDetailsPage({ params }: Route.ComponentProps) {
     initiative: {
       getInitiativeById,
       fetchInitiativeDetails,
-      epics: { fetchInitiativeEpicsDetail },
+      scope: {
+        epics: { fetchInitiativeEpicsDetail },
+      },
     },
   } = useInitiatives();
 
@@ -105,7 +107,7 @@ function IssueDetailsPage({ params }: Route.ComponentProps) {
           title={t("initiatives.empty_state.not_found.title")}
           description={t("initiatives.empty_state.not_found.description")}
           primaryButton={{
-            text: t("initiatives.empty_state.not_found.primary_button.title"),
+            text: t("initiatives.empty_state.not_found.primary_button.text"),
             onClick: () => router.push(`/${workspaceSlug}/initiatives`),
           }}
         />
@@ -118,4 +120,4 @@ function IssueDetailsPage({ params }: Route.ComponentProps) {
   );
 }
 
-export default observer(IssueDetailsPage);
+export default observer(InitiativeScopePage);

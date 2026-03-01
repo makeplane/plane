@@ -20,8 +20,8 @@ import type { TEstimateSystemKeys } from "@plane/types";
 // components
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // plane web imports
-import { isEstimateSystemEnabled } from "@/plane-web/components/estimates/helper";
-import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
+import { isEstimateSystemEnabled } from "@/components/estimates/helper";
+import { UpgradeBadge } from "@/components/workspace/upgrade-badge";
 import { RadioInput } from "../radio-select";
 // local imports
 

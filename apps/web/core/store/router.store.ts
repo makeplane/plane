@@ -11,15 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { ParsedUrlQuery } from "node:querystring";
+import type { Params } from "react-router";
 import { action, makeObservable, observable, computed, runInAction } from "mobx";
 
 import type { TProfileViews } from "@plane/types";
 export interface IRouterStore {
   // observables
-  query: ParsedUrlQuery;
+  query: Params;
   // actions
-  setQuery: (query: ParsedUrlQuery) => void;
+  setQuery: (query: Params) => void;
   // computed
   workspaceSlug: string | undefined;
   teamspaceId: string | undefined;
@@ -39,7 +39,7 @@ export interface IRouterStore {
 
 export class RouterStore implements IRouterStore {
   // observables
-  query: ParsedUrlQuery = {};
+  query: Params = {};
 
   constructor() {
     makeObservable(this, {
@@ -69,7 +69,7 @@ export class RouterStore implements IRouterStore {
    * Sets the query
    * @param query
    */
-  setQuery = (query: ParsedUrlQuery) => {
+  setQuery = (query: Params) => {
     runInAction(() => {
       this.query = query;
     });

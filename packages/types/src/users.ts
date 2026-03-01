@@ -12,7 +12,7 @@
  */
 
 import type { TUserPermissions } from "./enums";
-import type { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
+import type { IIssueActivity, TIssuePriorities, TProductTour, TStateGroups } from ".";
 import type { TLoginMediums } from "./instance";
 
 /**
@@ -47,6 +47,7 @@ export interface IUser extends IUserLite {
   cover_image_url: string | null;
   date_joined: string;
   email: string;
+  email_hash: string | null;
   is_active: boolean;
   is_email_verified: boolean;
   is_password_autoset: boolean;
@@ -102,6 +103,8 @@ export type TUserProfile = {
   start_of_the_week: EStartOfTheWeek;
   is_app_rail_docked?: boolean;
   notification_view_mode: TNotificationsViewMode;
+  is_navigation_tour_completed?: boolean;
+  product_tour?: TProductTour;
 };
 
 export interface IInstanceAdminStatus {

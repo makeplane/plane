@@ -15,10 +15,10 @@ from django.conf import settings
 
 
 # Module imports
-from .workspace import WorkspaceBaseModel
+from .project import ProjectOptionalBaseModel
 
 
-class UserFavorite(WorkspaceBaseModel):
+class UserFavorite(ProjectOptionalBaseModel):
     """_summary_
     UserFavorite (model): To store all the favorites of the user
     """

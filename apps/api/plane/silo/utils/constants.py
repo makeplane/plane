@@ -19,6 +19,7 @@ APPLICATIONS = {
         "short_description": "Github Enterprise Server Integration",
         "description_html": "<p>Github Enterprise Server Integration</p>",
         "redirect_uris": f"{settings.SILO_URL}/api/oauth/github-enterprise/plane-oauth/callback",
+        "resource_permissions": ["read", "write"],
     },
     "github": {
         "key": "github",
@@ -27,6 +28,7 @@ APPLICATIONS = {
         "short_description": "Github Integration",
         "description_html": "<p>Github Integration</p>",
         "redirect_uris": f"{settings.SILO_URL}/api/github/plane-oauth/callback",
+        "resource_permissions": ["read", "write"],
     },
     "gitlab_enterprise": {
         "key": "gitlab_enterprise",
@@ -35,6 +37,7 @@ APPLICATIONS = {
         "short_description": "Gitlab Enterprise Server Integration",
         "description_html": "<p>Gitlab Enterprise Server Integration</p>",
         "redirect_uris": f"{settings.SILO_URL}/api/oauth/gitlab-enterprise/auth/callback",
+        "resource_permissions": ["read", "write"],
     },
     "gitlab": {
         "key": "gitlab",
@@ -43,6 +46,7 @@ APPLICATIONS = {
         "short_description": "Gitlab Integration",
         "description_html": "<p>Gitlab Integration</p>",
         "redirect_uris": f"{settings.SILO_URL}/api/gitlab/plane-oauth/callback",
+        "resource_permissions": ["read", "write"],
     },
     "slack": {
         "key": "slack",
@@ -51,6 +55,7 @@ APPLICATIONS = {
         "short_description": "Slack Integration",
         "description_html": "<p>Slack Integration</p>",
         "redirect_uris": f"{settings.SILO_URL}/api/slack/plane-oauth/callback",
+        "resource_permissions": ["read", "write"],
     },
     "sentry": {
         "key": "sentry",
@@ -60,6 +65,7 @@ APPLICATIONS = {
         "description_html": "<p>Sentry Integration</p>",
         "redirect_uris": f"{settings.SILO_URL}/api/oauth/sentry/plane-oauth/callback",
         "webhook_url": f"{settings.SILO_URL}/api/sentry/plane/events",
+        "resource_permissions": ["read", "write"],
     },
     "importer": {
         "key": "importer",
@@ -68,15 +74,38 @@ APPLICATIONS = {
         "short_description": "Importer",
         "description_html": "<p>Importer</p>",
         "redirect_uris": f"{settings.SILO_URL}/api/importer/plane-oauth/callback",
+        "resource_permissions": ["read", "write"],
     },
     "drawio": {
         "key": "drawio",
         "name": "Drawio",
         "slug": "drawio",
-        "short_description": "Create and edit powerful diagrams and whiteboards directly inside Plane Pages with draw.io.",
+        "short_description": "Create and edit powerful diagrams and whiteboards directly inside Plane Pages with draw.io.",  # noqa: E501
         "description_html": "<p>Drawio Integration</p>",
         "setup_url": f"{settings.SILO_URL}/api/apps/drawio/auth/consent-url/",
         "redirect_uris": f"{settings.SILO_URL}/api/apps/drawio/auth/callback",
         "skip_authorization": False,
+        "resource_permissions": ["read", "write"],
+    },
+    "plane_ai": {
+        "key": "plane_ai",
+        "name": "Plane AI",
+        "slug": "plane-ai",
+        "short_description": "Plane AI Integration",
+        "description_html": "<p>Plane AI Integration</p>",
+        "redirect_uris": f"{settings.PI_URL}/api/v1/oauth/callback/",
+        "skip_authorization": True,
+        "resource_permissions": ["read", "write"],
+    },
+    "runner": {
+        "key": "runner",
+        "name": "Runner",
+        "slug": "runner",
+        "short_description": "Runner",
+        "description_html": "<p>Runner</p>",
+        "setup_url": f"{settings.SILO_URL}/api/apps/runner/auth/consent-url/",
+        "redirect_uris": f"{settings.SILO_URL}/api/apps/runner/auth/callback",
+        "skip_authorization": False,
+        "resource_permissions": ["read", "write"],
     },
 }

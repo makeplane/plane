@@ -16,7 +16,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { TIssueServiceType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
@@ -40,9 +40,14 @@ export const SubIssuesCollapsible = observer(function SubIssuesCollapsible(props
 
   return (
     <Collapsible
-      isOpen={isCollapsibleOpen}
-      onToggle={() => toggleOpenWidget("sub-work-items")}
-      title={
+      open={isCollapsibleOpen}
+      onOpenChange={(open) => {
+        if (open !== isCollapsibleOpen) {
+          toggleOpenWidget("sub-work-items");
+        }
+      }}
+    >
+      <CollapsibleTrigger className="w-full">
         <SubIssuesCollapsibleTitle
           isOpen={isCollapsibleOpen}
           parentIssueId={issueId}
@@ -50,16 +55,16 @@ export const SubIssuesCollapsible = observer(function SubIssuesCollapsible(props
           projectId={projectId}
           workspaceSlug={workspaceSlug}
         />
-      }
-      buttonClassName="w-full"
-    >
-      <SubIssuesCollapsibleContent
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        parentIssueId={issueId}
-        disabled={disabled}
-        issueServiceType={issueServiceType}
-      />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <SubIssuesCollapsibleContent
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          parentIssueId={issueId}
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
+      </CollapsibleContent>
     </Collapsible>
   );
 });

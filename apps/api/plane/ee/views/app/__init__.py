@@ -80,3 +80,5 @@ from plane.ee.views.app.milestone import (
     MilestoneWorkItemsSearchEndpoint,
     WorkItemMilestoneEndpoint,
 )
+
+from plane.ee.views.app.importer import ProjectWorkItemImportEndpoint

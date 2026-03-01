@@ -25,11 +25,12 @@ type Props = {
   editor: Editor;
   fileBeingUploaded: File | null;
   fileUploadError: { error: EFileError; file: File } | null;
+  hasDuplicationFailed?: boolean;
   maxFileSize: number;
 };
 
 export function CustomAttachmentUploaderDetails(props: Props) {
-  const { blockId, editor, fileBeingUploaded, fileUploadError, maxFileSize } = props;
+  const { blockId, editor, fileBeingUploaded, fileUploadError, hasDuplicationFailed = false, maxFileSize } = props;
 
   const errorMessage = useMemo(() => {
     let title = "";
@@ -75,32 +76,38 @@ export function CustomAttachmentUploaderDetails(props: Props) {
     };
   }, [fileUploadError, maxFileSize]);
 
+  const hasError = (!fileBeingUploaded && fileUploadError) || hasDuplicationFailed;
+
   return (
-    <div className="truncate">
+    <div className="truncate flex-1">
       <p
         className={cn("not-prose text-13 truncate", {
-          "text-danger-primary": !fileBeingUploaded && fileUploadError,
+          "text-danger-primary": hasError,
         })}
       >
         {fileBeingUploaded
           ? fileBeingUploaded?.name
           : fileUploadError
             ? `${fileUploadError.file.name}- ${errorMessage.title}`
-            : // : t("attachmentComponent.uploader.drag_and_drop")
-              "Drop files here or click to upload"}
+            : hasDuplicationFailed
+              ? errorMessage.title
+              : // : t("attachmentComponent.uploader.drag_and_drop")
+                "Drop files here or click to upload"}
       </p>
-      <p className="not-prose text-11 text-tertiary">
-        {fileBeingUploaded ? (
-          <CustomAttachmentUploadStatus editor={editor} nodeId={blockId} />
-        ) : fileUploadError ? (
-          errorMessage.description
-        ) : (
-          // t("attachmentComponent.errors.file_too_large.description", {
-          //   maxFileSize: maxFileSize / 1024 / 1024,
-          // })
-          `Maximum size per file is ${maxFileSize / 1024 / 1024}MB`
-        )}
-      </p>
+      <div className="flex items-center gap-2">
+        <p className="not-prose text-11 text-tertiary">
+          {fileBeingUploaded ? (
+            <CustomAttachmentUploadStatus editor={editor} nodeId={blockId} />
+          ) : fileUploadError || hasDuplicationFailed ? (
+            errorMessage.description
+          ) : (
+            // t("attachmentComponent.errors.file_too_large.description", {
+            //   maxFileSize: maxFileSize / 1024 / 1024,
+            // })
+            `Maximum size per file is ${maxFileSize / 1024 / 1024}MB`
+          )}
+        </p>
+      </div>
     </div>
   );
 }

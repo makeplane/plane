@@ -28,10 +28,12 @@ import allFiltersDark from "@/app/assets/empty-state/wiki/all-filters-dark.svg?u
 import allFiltersLight from "@/app/assets/empty-state/wiki/all-filters-light.svg?url";
 import nameFilterDark from "@/app/assets/empty-state/wiki/name-filter-dark.svg?url";
 import nameFilterLight from "@/app/assets/empty-state/wiki/name-filter-light.svg?url";
+import { PageHead } from "@/components/core/page-title";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
@@ -40,6 +42,13 @@ import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
   pageType: TPageNavigationTabs;
+};
+
+const PAGE_TYPE_LABELS: Record<TPageNavigationTabs, string> = {
+  public: "Public",
+  private: "Private",
+  archived: "Archived",
+  shared: "Shared",
 };
 
 export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot(props: Props) {
@@ -52,6 +61,7 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
   const { t } = useTranslation();
   // store hooks
   const { allowPermissions } = useUserPermissions();
+  const { currentWorkspace } = useWorkspace();
   const pageStore = usePageStore(EPageStoreType.WORKSPACE);
   const {
     filters,
@@ -71,6 +81,9 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
   // derived values
   const resolvedAllFiltersImage = resolvedTheme === "light" ? allFiltersLight : allFiltersDark;
   const resolvedNameFilterImage = resolvedTheme === "light" ? nameFilterLight : nameFilterDark;
+  const pageTitle = currentWorkspace?.name
+    ? `${currentWorkspace?.name} - Wiki - ${PAGE_TYPE_LABELS[pageType]}`
+    : undefined;
   // pagination hooks
   const paginationInfo = getPaginationInfo(pageType);
   const paginationLoader = getPaginationLoader(pageType);
@@ -140,7 +153,13 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
     `100% 0% 100% 0%`
   );
 
-  if (isLoading) return <PageLoader />;
+  if (isLoading)
+    return (
+      <>
+        <PageHead title={pageTitle} />
+        <PageLoader />
+      </>
+    );
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
     const payload: Partial<TPage> = {
@@ -258,6 +277,7 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
 
   return (
     <div ref={containerRef} className="size-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
+      <PageHead title={pageTitle} />
       {pageIds.map((pageId) => (
         <PageListBlockRoot
           key={pageId}

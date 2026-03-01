@@ -17,8 +17,9 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import type { TInstanceConfigurationKeys, TInstanceAuthenticationModes } from "@plane/types";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { cn, resolveGeneralTheme } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
@@ -135,7 +136,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
             </div>
             <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
               <div className="flex items-center gap-4">
-                <ToggleSwitch
+                <Switch
                   value={Boolean(parseInt(enableSignUpConfig))}
                   onChange={() => {
                     if (Boolean(parseInt(enableSignUpConfig)) === true) {
@@ -144,7 +145,6 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
                       updateConfig("ENABLE_SIGNUP", "1");
                     }
                   }}
-                  size="sm"
                   disabled={isSubmitting}
                 />
               </div>

@@ -11,7 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Disclosure } from "@headlessui/react";
+import { useState } from "react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import type { Editor } from "@tiptap/core";
 import { Ban, Palette } from "lucide-react";
 // plane imports
@@ -50,29 +51,22 @@ const handleBackgroundColorChange = (editor: Editor, color: string | null) => {
 
 export function TableDragHandleDropdownColorSelector(props: Props) {
   const { editor, onSelect } = props;
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <Disclosure defaultOpen>
-      <Disclosure.Button
-        as="button"
-        type="button"
-        className="flex items-center justify-between gap-2 w-full rounded-sm px-1 py-1.5 text-11 text-left truncate text-secondary hover:bg-layer-1"
-      >
-        {({ open }) => (
-          <>
-            <span className="flex items-center gap-2">
-              <Palette className="shrink-0 size-3" />
-              Color
-            </span>
-            <ChevronRightIcon
-              className={cn("shrink-0 size-3 transition-transform duration-200", {
-                "rotate-90": open,
-              })}
-            />
-          </>
-        )}
-      </Disclosure.Button>
-      <Disclosure.Panel className="p-1 space-y-2 mb-1.5">
+    <Collapsible defaultOpen open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger className="flex items-center justify-between gap-2 w-full rounded-sm px-1 py-1.5 text-11 text-left truncate text-secondary hover:bg-layer-1">
+        <span className="flex items-center gap-2">
+          <Palette className="shrink-0 size-3" />
+          Color
+        </span>
+        <ChevronRightIcon
+          className={cn("shrink-0 size-3 transition-transform duration-200", {
+            "rotate-90": isOpen,
+          })}
+        />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="p-1 space-y-2 mb-1.5">
         {/* <div className="space-y-1.5">
           <p className="text-11 text-tertiary font-semibold">Text colors</p>
           <div className="flex items-center flex-wrap gap-2">
@@ -125,7 +119,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
             </button>
           </div>
         </div>
-      </Disclosure.Panel>
-    </Disclosure>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }

@@ -17,10 +17,10 @@ import { useSearchParams } from "next/navigation";
 import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
-import { TemplatesUpgrade } from "@/plane-web/components/templates/settings";
-import { CreateUpdateWorkItemTemplate } from "@/plane-web/components/templates/settings/work-item";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { IssueModalProvider } from "@/components/issues/issue-modal/context/provider";
+import { TemplatesUpgrade } from "@/components/templates/settings";
+import { CreateUpdateWorkItemTemplate } from "@/components/templates/settings/work-item";
 import type { Route } from "./+types/page";
 
 function CreateWorkspaceLevelWorkItemTemplatePage({ params }: Route.ComponentProps) {

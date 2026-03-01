@@ -19,10 +19,11 @@ import { cn } from "@plane/utils";
 // components
 import { TabNavigationRoot } from "@/components/navigation/tab-navigation-root";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
+// layouts
+import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
-import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 // local imports
 import type { Route } from "./+types/layout";
 

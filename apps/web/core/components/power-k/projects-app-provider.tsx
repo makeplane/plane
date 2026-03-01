@@ -20,9 +20,9 @@ import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { ProjectLevelModals } from "@/plane-web/components/command-palette/modals/project-level";
-import { WorkItemLevelModals } from "@/plane-web/components/command-palette/modals/work-item-level";
-import { WorkspaceLevelModals } from "@/plane-web/components/command-palette/modals/workspace-level";
+import { ProjectLevelModals } from "@/components/command-palette/modals/project-level";
+import { WorkItemLevelModals } from "@/components/command-palette/modals/work-item-level";
+import { WorkspaceLevelModals } from "@/components/command-palette/modals/workspace-level";
 // local imports
 import { useProjectsAppPowerKCommands } from "./config/commands";
 import type { TPowerKCommandConfig, TPowerKContext } from "./core/types";
@@ -86,11 +86,11 @@ export const ProjectsAppPowerKProvider = observer(function ProjectsAppPowerKProv
   return (
     <>
       <GlobalShortcutsProvider context={context} commands={commands} />
-      {workspaceSlug && <WorkspaceLevelModals workspaceSlug={workspaceSlug.toString()} />}
-      {workspaceSlug && projectId && (
-        <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+      {workspaceSlug && <WorkspaceLevelModals workspaceSlug={workspaceSlug} />}
+      {workspaceSlug && projectId && <ProjectLevelModals workspaceSlug={workspaceSlug} projectId={projectId} />}
+      {workspaceSlug && workItemIdentifier && (
+        <WorkItemLevelModals workspaceSlug={workspaceSlug} workItemIdentifier={workItemIdentifier} />
       )}
-      <WorkItemLevelModals workItemIdentifier={workItemIdentifier?.toString()} />
       <ProjectsAppPowerKModalWrapper
         commandsListComponent={ProjectsAppPowerKCommandsList}
         context={context}

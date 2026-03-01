@@ -52,7 +52,7 @@ class WebhookSerializer(DynamicBaseSerializer):
                 raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
 
             # if in cloud environment, private IP addresses are also not allowed
-            if settings.IS_MULTI_TENANT and ip.is_private:
+            if not settings.IS_SELF_MANAGED and ip.is_private:
                 raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
 
         # Additional validation for multiple request domains and their subdomains
@@ -91,7 +91,7 @@ class WebhookSerializer(DynamicBaseSerializer):
                     raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
 
                 # if in cloud environment, private IP addresses are also not allowed
-                if settings.IS_MULTI_TENANT and ip.is_private:
+                if not settings.IS_SELF_MANAGED and ip.is_private:
                     raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
 
             # Additional validation for multiple request domains and their subdomains

@@ -14,7 +14,8 @@
 import { ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
 import type { EPageSharedUserAccess, IWorkspaceMember } from "@plane/types";
-import { Avatar, Collapsible, Loader } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
+import { Avatar, Loader } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import type { TPageShareFormUser } from "../../../hooks/pages/use-page-share-form";
 import { UserListItem } from "./user-list-item";
@@ -66,9 +67,15 @@ export function ExistingUsersSection({
   return (
     <div className="mt-3 transition-all duration-300 ease-in-out">
       <Collapsible
-        isOpen={isAccordionOpen}
-        onToggle={onToggleAccordion}
-        title={
+        open={isAccordionOpen}
+        onOpenChange={(open) => {
+          if (open !== isAccordionOpen) {
+            onToggleAccordion();
+          }
+        }}
+        className="w-full"
+      >
+        <CollapsibleTrigger className="w-full hover:bg-layer-1 rounded-sm transition-colors">
           <div className="flex items-center justify-between w-full p-1 hover:bg-layer-transparent-hover">
             <div className="flex items-center gap-3">
               {!isAccordionOpen && (
@@ -112,32 +119,32 @@ export function ExistingUsersSection({
               />
             </div>
           </div>
-        }
-        buttonClassName="w-full hover:bg-layer-1 rounded-sm transition-colors"
-      >
-        {/* User list */}
-        <div className="mt-2 space-y-2 transition-all duration-300 ease-in-out">
-          {existingUsers.map((user) => {
-            const memberDetails = getMemberDetails(user.user_id);
-            const isOwner = Boolean(user.isOwner);
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          {/* User list */}
+          <div className="mt-2 space-y-2 transition-all duration-300 ease-in-out">
+            {existingUsers.map((user) => {
+              const memberDetails = getMemberDetails(user.user_id);
+              const isOwner = Boolean(user.isOwner);
 
-            return (
-              <UserListItem
-                key={user.user_id}
-                userId={user.user_id}
-                displayName={memberDetails?.member?.display_name}
-                avatarUrl={memberDetails?.member?.avatar_url}
-                access={user.access}
-                isModified={isUserModified(user.user_id)}
-                isOwner={isOwner}
-                onUpdateAccess={canCurrentUserChangeAccess ? onUpdateAccess : () => {}}
-                onRemove={canCurrentUserChangeAccess ? onRemove : () => {}}
-                canCurrentUserChangeAccess={canCurrentUserChangeAccess}
-                className="hover:bg-layer-1 rounded-sm transition-colors p-1"
-              />
-            );
-          })}
-        </div>
+              return (
+                <UserListItem
+                  key={user.user_id}
+                  userId={user.user_id}
+                  displayName={memberDetails?.member?.display_name}
+                  avatarUrl={memberDetails?.member?.avatar_url}
+                  access={user.access}
+                  isModified={isUserModified(user.user_id)}
+                  isOwner={isOwner}
+                  onUpdateAccess={canCurrentUserChangeAccess ? onUpdateAccess : () => {}}
+                  onRemove={canCurrentUserChangeAccess ? onRemove : () => {}}
+                  canCurrentUserChangeAccess={canCurrentUserChangeAccess}
+                  className="hover:bg-layer-1 rounded-sm transition-colors p-1"
+                />
+              );
+            })}
+          </div>
+        </CollapsibleContent>
       </Collapsible>
     </div>
   );

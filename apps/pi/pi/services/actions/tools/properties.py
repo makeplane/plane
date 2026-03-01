@@ -13,6 +13,9 @@
 Properties API tools for Plane custom property management.
 """
 
+from typing import Any
+from typing import Dict
+
 from pi.services.actions.tool_generator import generate_tools_for_category
 from pi.services.actions.tool_metadata import ToolMetadata
 from pi.services.actions.tool_metadata import ToolParameter
@@ -20,6 +23,65 @@ from pi.services.actions.tool_metadata import ToolParameter
 # ============================================================================
 # TOOL METADATA DEFINITIONS
 # ============================================================================
+
+TEXT_DISPLAY_FORMAT_MAP = {
+    "single": "single-line",
+    "single-line": "single-line",
+    "single_line": "single-line",
+    "single line": "single-line",
+    "singleline": "single-line",
+    "paragraph": "multi-line",
+    "multi": "multi-line",
+    "multi-line": "multi-line",
+    "multi_line": "multi-line",
+    "multi line": "multi-line",
+    "multiline": "multi-line",
+    "read-only": "readonly",
+    "read_only": "readonly",
+    "read only": "readonly",
+    "readonly": "readonly",
+}
+
+DATE_DISPLAY_FORMAT_MAP = {
+    "mmm dd, yyyy": "MMM dd, yyyy",
+    "dd/mm/yyyy": "dd/MM/yyyy",
+    "mm/dd/yyyy": "MM/dd/yyyy",
+    "yyyy/mm/dd": "yyyy/MM/dd",
+}
+
+
+async def _properties_create_pre_handler(
+    metadata: ToolMetadata,
+    kwargs: Dict[str, Any],
+    context: Dict[str, Any],
+    category: str,
+    method_key: str,
+    method_executor: Any,
+) -> Dict[str, Any]:
+    """Normalize type-specific helpers into settings payloads."""
+
+    prop_type = kwargs.get("property_type")
+    if isinstance(prop_type, str):
+        kwargs["property_type"] = prop_type.upper()
+    normalized_type = kwargs.get("property_type")
+
+    # Handle friendly text display selectors
+    text_format = kwargs.pop("text_display_format", None)
+    if text_format and normalized_type == "TEXT":
+        key = str(text_format).strip().lower().replace("_", "-")
+        mapped = TEXT_DISPLAY_FORMAT_MAP.get(key)
+        if mapped:
+            kwargs["settings"] = {"display_format": mapped}
+
+    # Handle date display helper
+    date_format = kwargs.pop("date_display_format", None)
+    if date_format and normalized_type == "DATETIME":
+        key = str(date_format).strip().lower()
+        mapped = DATE_DISPLAY_FORMAT_MAP.get(key, date_format)
+        kwargs["settings"] = {"display_format": mapped}
+
+    return kwargs
+
 
 PROPERTIES_TOOL_DEFINITIONS = {
     # ==========================================================================
@@ -55,6 +117,18 @@ PROPERTIES_TOOL_DEFINITIONS = {
                 required=False,
                 description="Property settings (TextAttributeSettings for TEXT, DateAttributeSettings for DATETIME)",
             ),
+            ToolParameter(
+                name="text_display_format",
+                type="Optional[str]",
+                required=False,
+                description="Shortcut for TEXT properties: choose 'single-line', 'multi-line', or 'readonly' to set the display format",
+            ),
+            ToolParameter(
+                name="date_display_format",
+                type="Optional[str]",
+                required=False,
+                description="Shortcut for DATETIME properties: 'MMM dd, yyyy', 'dd/MM/yyyy', 'MM/dd/yyyy', or 'yyyy/MM/dd'",
+            ),
             ToolParameter(name="is_active", type="Optional[bool]", required=False, description="Whether the property is active"),
             ToolParameter(name="is_multi", type="Optional[bool]", required=False, description="Whether this property supports multiple values"),
             ToolParameter(name="validation_rules", type="Optional[dict]", required=False, description="Validation rules for the property"),
@@ -64,6 +138,7 @@ PROPERTIES_TOOL_DEFINITIONS = {
             ),
             ToolParameter(name="external_id", type="Optional[str]", required=False, description="External system's identifier for this property"),
         ],
+        pre_handler=_properties_create_pre_handler,
         returns_entity_type="property",
     ),
     "list": ToolMetadata(

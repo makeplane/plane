@@ -9,16 +9,23 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+from datetime import timezone
 from typing import Any
+from typing import AsyncGenerator
 from typing import Dict
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import JSONResponse
+from fastapi.responses import StreamingResponse
 from pydantic import UUID4
 
 from pi import logger
 from pi.app.api.dependencies import get_current_user
+from pi.app.api.v1.endpoints._sse import sse_done
+from pi.app.api.v1.endpoints._sse import sse_event
+from pi.app.api.v1.helpers.plane_sql_queries import get_user_current_time
 from pi.app.schemas.pages import PageAIBlockConfigResponse
 from pi.app.schemas.pages import PageAIBlockCreateRequest
 from pi.app.schemas.pages import PageAIBlockGenerateResponse
@@ -26,18 +33,22 @@ from pi.app.schemas.pages import PageAIBlockRevisionCreateRequest
 from pi.app.schemas.pages import PageAIBlockRevisionResponse
 from pi.app.schemas.pages import PageAIBlockRevisionTypesResponse
 from pi.app.schemas.pages import PageAIBlockTypesResponse
+from pi.app.schemas.pages import PageSummarizeRequest
 from pi.core.db.plane_pi.lifecycle import get_async_session
+from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
+from pi.services.pages.ai_block import AIBlockService
 from pi.services.pages.constants import PAGE_BLOCK_TYPES
 from pi.services.pages.constants import REVISION_BLOCK_TYPES
-from pi.services.pages.pages import generate_page_ai_block_content
-from pi.services.pages.pages import generate_page_ai_block_revision
+from pi.services.pages.summarize import SummarizeService
 from pi.services.pages.utils import has_content_for_block
 from pi.services.pages.utils import validate_block_type
 from pi.services.pages.utils import validate_revision_type
 from pi.services.retrievers.pg_store.pages import create_page_ai_block
 from pi.services.retrievers.pg_store.pages import get_ai_block_config
 from pi.services.retrievers.pg_store.pages import get_page_ai_blocks_by_page_id
+from pi.services.retrievers.pg_store.pages import get_page_summary_block
 from pi.services.retrievers.pg_store.pages import update_page_ai_block
+from pi.services.retrievers.pg_store.pages import upsert_page_summary_block
 
 log = logger.getChild(__name__)
 router = APIRouter()
@@ -112,6 +123,50 @@ async def get_page_ai_blocks(
     return JSONResponse(status_code=200, content={"blocks": blocks})
 
 
+@router.get("/{page_id}/summary/")
+async def get_page_summary(
+    page_id: UUID4,
+    current_user=Depends(get_current_user),
+    db=Depends(get_async_session),
+):
+    """
+    Retrieve the stored AI-generated summary for a page.
+    """
+    block = await get_page_summary_block(db, page_id)
+    if not block:
+        return JSONResponse(
+            status_code=200,
+            content={"summary": "", "generated_at": None},
+        )
+
+    # Convert generated_at (UTC) to the user's profile timezone
+    generated_at = None
+    if block.updated_at:
+        try:
+            ts = block.updated_at
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
+
+            # Fetch user's timezone from Plane DB
+            tz_info = await get_user_current_time(str(current_user.id))
+            if tz_info and tz_info.get("timezone"):
+                ts = ts.astimezone(ZoneInfo(tz_info["timezone"]))
+
+            generated_at = ts.isoformat()
+        except Exception as e:
+            # Fallback: return as UTC with Z suffix
+            log.warning(f"Failed to convert generated_at to user timezone: {block.updated_at} {e}")
+            generated_at = block.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%f") + "Z"
+
+    return JSONResponse(
+        status_code=200,
+        content={
+            "summary": block.generated_content,
+            "generated_at": generated_at,
+        },
+    )
+
+
 @router.post("/blocks/generate/", response_model=PageAIBlockGenerateResponse)
 async def create_or_generate_ai_block(
     request: PageAIBlockCreateRequest,
@@ -119,7 +174,7 @@ async def create_or_generate_ai_block(
     db=Depends(get_async_session),
 ):
     """
-    Generate content for an AI block.
+    Generate content for an AI block using the service-oriented approach.
 
     If request.block_id is provided, generates using that existing block.
     Otherwise, creates a new block using the provided configuration and generates content for it.
@@ -150,7 +205,12 @@ async def create_or_generate_ai_block(
         if not block_result:
             return JSONResponse(status_code=400, content=result)
 
-    generated_content = await generate_page_ai_block_content(block_result, db, current_user.id)
+    service = AIBlockService(db=db, block_type=request.block_type)
+    generated_content = await service.generate_block_content(
+        block=block_result,
+        user_id=current_user.id,
+        user_input=request.content,
+    )
 
     if generated_content is None:
         return JSONResponse(
@@ -202,7 +262,13 @@ async def generate_ai_block_revision(
     if error_response:
         return error_response
 
-    revised_content = await generate_page_ai_block_revision(request, db, current_user.id)
+    service = AIBlockService(db=db, block_type=request.revision_type)
+    revised_content = await service.generate_revision(
+        block_id=request.block_id,
+        revision_type=request.revision_type,
+        user_id=current_user.id,
+    )
+
     if not revised_content:
         return JSONResponse(status_code=400, content={"error": "Failed to generate revision"})
 
@@ -213,3 +279,62 @@ async def generate_ai_block_revision(
             "revised_content": revised_content,
         },
     )
+
+
+@router.post("/summarize/")
+async def summarize_page(
+    request: PageSummarizeRequest,
+    current_user=Depends(get_current_user),
+):
+    """
+    Generate a summary for a page using SSE streaming.
+
+    Streams the summary in real-time using Server-Sent Events (SSE) to prevent
+    timeout issues with large pages and provide immediate user feedback.
+
+    Returns:
+        StreamingResponse with text/event-stream media type
+
+    Event Types:
+        - delta: Content chunks containing summary text
+        - error: Error messages if generation fails
+        - done: Stream completion signal
+    """
+
+    async def stream_summary() -> AsyncGenerator[str, None]:
+        try:
+            async with get_streaming_db_session() as stream_db:
+                service = SummarizeService(db=stream_db)
+
+                # Collect chunks to save the summary after streaming completes
+                full_content_parts: list[str] = []
+                async for chunk in service.generate_content_stream(
+                    page_id=request.page_id,
+                    entity_type=request.entity_type,
+                    workspace_id=request.workspace_id,
+                    user_id=current_user.id,
+                ):
+                    full_content_parts.append(chunk)
+                    yield sse_event("delta", {"chunk": chunk})
+
+                # Save summary block after streaming + usage tracking are done
+                if full_content_parts:
+                    async with get_streaming_db_session() as save_db:
+                        await upsert_page_summary_block(
+                            db=save_db,
+                            user_id=current_user.id,
+                            entity_type=request.entity_type,
+                            entity_id=request.page_id,
+                            workspace_id=request.workspace_id,
+                            generated_content="".join(full_content_parts),
+                            project_id=request.project_id,
+                        )
+
+                yield sse_done()
+
+        except Exception as e:
+            log.error(f"Error streaming summary: {e}")
+            yield sse_event("error", {"message": "Failed to generate summary. The page may be empty or an error occurred."})
+            yield sse_done()
+
+    return StreamingResponse(stream_summary(), media_type="text/event-stream")

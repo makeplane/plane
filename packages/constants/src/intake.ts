@@ -52,6 +52,17 @@ export const INBOX_STATUS: {
   },
 ];
 
+export const INTAKE_DISABLED_STATUSES = [
+  EInboxIssueStatus.DECLINED, // -1
+  EInboxIssueStatus.ACCEPTED, // 1
+  EInboxIssueStatus.DUPLICATE, // 2
+] as const;
+
+export const INTAKE_ACTIONABLE_STATUSES = [
+  EInboxIssueStatus.PENDING, // 0
+  EInboxIssueStatus.SNOOZED, // -2
+] as const;
+
 export const INBOX_ISSUE_ORDER_BY_OPTIONS = [
   {
     key: "issue__created_at",

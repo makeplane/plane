@@ -186,6 +186,7 @@ class PlaneToolBase:
                             entity["entity_name"] = url_info.get("entity_name")
                             entity["entity_type"] = url_info.get("entity_type") or entity_type
                             entity["entity_id"] = url_info.get("entity_id")
+
                             # Carry identifier fields where applicable
                             if url_info.get("issue_identifier"):
                                 entity["issue_identifier"] = url_info["issue_identifier"]

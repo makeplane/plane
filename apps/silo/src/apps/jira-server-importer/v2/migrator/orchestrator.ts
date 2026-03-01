@@ -16,7 +16,7 @@ import type { JiraConfig } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
 import type { TImportJob } from "@plane/types";
 import { createJiraClient } from "@/apps/jira-server-importer/helpers/migration-helpers";
-import { flushJob } from "@/apps/jira-server-importer/v2/helpers/cache";
+import { flushJob, withCache } from "@/apps/jira-server-importer/v2/helpers/cache";
 import type {
   IStep,
   IStorageService,
@@ -26,11 +26,13 @@ import type {
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
 import { getJobCredentials, getJobData } from "@/helpers/job";
-import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { getAPIClient, getAPIClientInternal } from "@/services/client";
+import { getPlaneAPIClient, getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
+import { getAPIClientInternal } from "@/services/client";
 import type { TaskHandler, TaskHeaders } from "@/types";
 import type { MQ, Store } from "@/worker/base";
 import { redisStorageService } from "../services/storage.service";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 
 /**
  * Task types for orchestrator
@@ -69,6 +71,7 @@ export class JiraImportOrchestrator implements TaskHandler {
 
       // Check if job is cancelled
       if (await this.isJobCancelled(jobId)) {
+        await flushJob(jobId);
         logger.info(`Job cancelled, aborting`, { jobId });
         return true;
       }
@@ -171,7 +174,8 @@ export class JiraImportOrchestrator implements TaskHandler {
     step: IStep,
     error: unknown
   ): Promise<void> {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage =
+      error instanceof Error ? error.message : typeof error === "object" ? JSON.stringify(error) : String(error);
 
     logger.error(`[ORCHESTRATOR] Step failed, continuing to next step`, {
       jobId: state.jobId,
@@ -190,6 +194,9 @@ export class JiraImportOrchestrator implements TaskHandler {
       error: errorMessage,
       failedAt: new Date().toISOString(),
     });
+
+    // Push execution logs after step error
+    await this.pushExecutionLog(state.jobId);
 
     // Move to next step
     state.currentStepIndex++;
@@ -277,6 +284,9 @@ export class JiraImportOrchestrator implements TaskHandler {
   ): Promise<void> {
     // Execute ONE iteration
     const context = await this.executeStep(step, jobContext, state);
+
+    // Push execution logs after each step execution, regardless of outcome
+    await this.pushExecutionLog(state.jobId);
 
     // Check if step has more pages
     if (context.pageCtx.hasMore) {
@@ -369,6 +379,9 @@ export class JiraImportOrchestrator implements TaskHandler {
     const jobId = headers.jobId;
     logger.info(`[ORCHESTRATOR] Completing job`, { jobId });
 
+    // Ensure final logs are pushed before completing
+    await this.pushExecutionLog(jobId);
+
     const { stateSnapshot, timestamp, stateKey } = await this.captureJobStateSnapshot(jobId);
 
     // Append to existing success_metadata
@@ -376,8 +389,6 @@ export class JiraImportOrchestrator implements TaskHandler {
       [timestamp]: stateSnapshot,
     };
 
-    // Mark job complete
-    const client = getAPIClient();
     await client.importJob.updateImportJob(jobId, {
       success_metadata: updatedMetadata,
       status: "FINISHED",
@@ -489,11 +500,19 @@ export class JiraImportOrchestrator implements TaskHandler {
    * Mark job as failed
    */
   private async failJob(jobId: string, error: any): Promise<void> {
+    // Push logs before marking job as failed
+    try {
+      await this.pushExecutionLog(jobId);
+    } catch (logError) {
+      // If getting job context fails, don't block the failJob process
+      logger.error(`Failed to push execution logs for failed job`, { jobId, error: logError });
+    }
+
     const { stateSnapshot, timestamp, stateKey } = await this.captureJobStateSnapshot(jobId);
 
     // Append to existing error_metadata
     const updatedErrorMetadata = {
-      error: error instanceof Error ? error.message : String(error),
+      error: error instanceof Error ? error.message : typeof error === "object" ? JSON.stringify(error) : String(error),
       stateSnapshots: {
         [timestamp]: stateSnapshot,
       },
@@ -506,5 +525,29 @@ export class JiraImportOrchestrator implements TaskHandler {
 
     // Delete orchestrator state
     await this.store.del(stateKey);
+  }
+
+  private async pushExecutionLog(jobId: string): Promise<void> {
+    const jobContext = await this.initializeJobContext(jobId);
+    const featureFlagService = await getPlaneFeatureFlagService();
+
+    const isImportSummaryEnabled = await withCache(
+      "IMPORT_SUMMARY_ENABLED",
+      jobContext.job,
+      async () =>
+        await featureFlagService.featureFlags({
+          workspace_slug: jobContext.job.workspace_slug,
+          user_id: jobContext.job.initiator_id,
+          flag_key: E_FEATURE_FLAGS.IMPORT_SUMMARY,
+        })
+    );
+
+    logger.info(`[${jobId}][ORCHESTRATOR] Import summary enabled`, { isImportSummaryEnabled });
+
+    if (!isImportSummaryEnabled) {
+      return;
+    }
+
+    await executionLog.push(jobId, jobContext.job.report_id);
   }
 }

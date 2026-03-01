@@ -11,6 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+// plane imports
+import { ScrollArea } from "@plane/propel/scrollarea";
 // plane web imports
 import { PageNavigationPaneOutlineTabEmptyState } from "@/plane-web/components/pages/navigation-pane/tab-panels/empty-states/outline";
 // store
@@ -30,12 +32,18 @@ export function PageNavigationPaneOutlineTabPanel(props: Props) {
   } = page;
 
   return (
-    <div className="size-full pt-3 space-y-1">
+    <ScrollArea
+      orientation="vertical"
+      size="sm"
+      scrollType="hover"
+      className="size-full overflow-y-auto hide-scrollbar"
+      viewportClassName="px-4"
+    >
       <PageContentBrowser
         className="mt-0"
         editorRef={editorRef}
         emptyState={<PageNavigationPaneOutlineTabEmptyState />}
       />
-    </div>
+    </ScrollArea>
   );
 }

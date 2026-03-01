@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import { Row } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { ExtendedAppHeader } from "@/plane-web/components/common/extended-app-header";
+import { ExtendedAppHeader } from "@/components/common/extended-app-header";
 
 export interface AppHeaderProps {
   header: ReactNode;

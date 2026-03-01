@@ -83,34 +83,6 @@ async def is_valid_session(session: str) -> AuthResponse:
     raise HTTPException(status_code=HTTP_503_SERVICE_UNAVAILABLE, detail="Session validation service unavailable")
 
 
-async def verify_internal_secret_key(x_internal_api_secret: Annotated[str | None, Header(description="Api Secret for internal endpoints")] = None):
-    """Verify the Internal Api Secret for protected operations."""
-    expected_key = settings.server.PLANE_PI_INTERNAL_API_SECRET
-
-    if not expected_key:
-        log.error("Internal Api Secret not configured on server")
-        raise HTTPException(
-            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal Api Secret not configured on server",
-        )
-
-    if not x_internal_api_secret:
-        log.error("Missing Internal Api Secret header")
-        raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED,
-            detail="Missing X-Internal-Secret-Key header",
-        )
-
-    if x_internal_api_secret != expected_key:
-        log.error("Invalid Internal Api Secret")
-        raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED,
-            detail="Invalid Internal Api Secret",
-        )
-
-    return True
-
-
 async def is_jwt_valid(token: str) -> AuthResponse:
     if not token:
         log.error("Missing or empty JWT token")
@@ -253,6 +225,34 @@ async def validate_plane_token(token_header: str) -> AuthResponse:
     # Set user in context for audit field population
     set_current_user(user_obj)
     return AuthResponse(is_authenticated=True, user=user_obj, plane_token=token)
+
+
+async def verify_internal_secret_key(x_internal_api_secret: Annotated[str | None, Header(description="Api Secret for internal endpoints")] = None):
+    """Verify the Internal Api Secret for protected operations."""
+    expected_key = settings.server.PLANE_PI_INTERNAL_API_SECRET
+
+    if not expected_key:
+        log.error("Internal Api Secret not configured on server")
+        raise HTTPException(
+            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal Api Secret not configured on server",
+        )
+
+    if not x_internal_api_secret:
+        log.error("Missing Internal Api Secret header")
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="Missing X-Internal-Secret-Key header",
+        )
+
+    if x_internal_api_secret != expected_key:
+        log.error("Invalid Internal Api Secret")
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="Invalid Internal Api Secret",
+        )
+
+    return True
 
 
 async def get_current_user(session: str = Depends(cookie_schema)) -> User:

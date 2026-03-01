@@ -33,6 +33,8 @@ import {
   WebhookHorizontalStackIllustration,
   WorkItemHorizontalStackIllustration,
   WorklogHorizontalStackIllustration,
+  RunnerScriptsHorizontalStackIllustration,
+  RunnerFunctionsHorizontalStackIllustration,
 } from "./";
 
 export const HorizontalStackAssetsMap = [
@@ -119,5 +121,13 @@ export const HorizontalStackAssetsMap = [
   {
     asset: <WorklogHorizontalStackIllustration className="w-20 h-20" />,
     title: "Worklog",
+  },
+  {
+    asset: <RunnerScriptsHorizontalStackIllustration className="w-20 h-20" />,
+    title: "Runner Scripts",
+  },
+  {
+    asset: <RunnerFunctionsHorizontalStackIllustration className="w-20 h-20" />,
+    title: "Runner Functions",
   },
 ];

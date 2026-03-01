@@ -1,6 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
-  "globalDependencies": [".npmrc", ".prettierrc", "eslint.config.mjs"],
+  "globalDependencies": [".npmrc", ".oxfmtrc.json", "eslint.config.mjs"],
   "globalEnv": [
     "API_BASE_URL",
     "APP_BASE_URL",
@@ -11,6 +11,7 @@
     "GITLAB_CLIENT_SECRET",
     "LOG_LEVEL",
     "NODE_ENV",
+    "VERCEL",
     "REQUEST_INTERVAL",
     "SENTRY_DSN",
     "SENTRY_ENVIRONMENT",
@@ -28,8 +29,8 @@
     "VITE_POSTHOG_DEBUG",
     "VITE_POSTHOG_HOST",
     "VITE_POSTHOG_KEY",
-    "VITE_RELAY_BASE_PATH",
-    "VITE_RELAY_BASE_URL",
+    "VITE_FLUX_BASE_PATH",
+    "VITE_FLUX_BASE_URL",
     "VITE_SENTRY_DSN",
     "VITE_SENTRY_ENVIRONMENT",
     "VITE_SENTRY_PROFILES_SAMPLE_RATE",
@@ -46,19 +47,35 @@
     "VITE_WEB_BASE_PATH",
     "VITE_WEB_BASE_URL",
     "VITE_WEBSITE_URL",
-    "WEB_BASE_URL"
+    "WEB_BASE_URL",
+    "VITE_GOOGLE_ANALYTICS_ID",
+    "VITE_PRO_SELFHOSTED_MONTHLY_PAYMENT_URL",
+    "VITE_PRO_SELFHOSTED_YEARLY_PAYMENT_URL",
+    "VITE_BUSINESS_SELFHOSTED_MONTHLY_PAYMENT_URL",
+    "VITE_BUSINESS_SELFHOSTED_YEARLY_PAYMENT_URL",
+    "VITE_ENTERPRISE_SELFHOSTED_MONTHLY_PAYMENT_URL",
+    "VITE_ENTERPRISE_SELFHOSTED_YEARLY_PAYMENT_URL",
+    "ENABLE_EXPERIMENTAL_COREPACK",
+    "VITE_TURNSTILE_SITE_KEY",
+    "VITE_FLATFILE_PUBLISHABLE_KEY",
+    "SENTRY_AUTH_TOKEN",
+    "DD_TRACE_ENABLED",
+    "AWS_SECRET_CACHE_TTL"
   ],
   "remoteCache": {
-    "enabled": false
+    "apiUrl": "https://turborepo-remote-cache.vamsi-906.workers.dev",
+    "enabled": true,
+    "signature": true,
+    "teamSlug": "plane"
   },
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "check:types"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", "build/**", ".react-router/**"]
     },
     "build-storybook": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "check:types"],
       "outputs": ["storybook-static/**"]
     },
     "check": {
@@ -66,7 +83,7 @@
     },
     "check:format": {
       "inputs": ["$TURBO_DEFAULT$"],
-      "outputs": ["node_modules/.cache/prettier/**"]
+      "outputs": []
     },
     "check:lint": {
       "dependsOn": ["^build"],
@@ -91,13 +108,12 @@
       "dependsOn": ["fix:format", "fix:lint"]
     },
     "fix:format": {
-      "inputs": ["$TURBO_DEFAULT$"],
-      "outputs": ["node_modules/.cache/prettier/**"]
+      "cache": false
     },
     "fix:lint": {
+      "cache": false,
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
-      "outputs": ["node_modules/.cache/eslint/**"]
+      "inputs": ["$TURBO_DEFAULT$", "!**/*.md"]
     },
     "start": {
       "cache": false,

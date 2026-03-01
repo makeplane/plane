@@ -14,9 +14,9 @@
 // services
 import type { AxiosError } from "axios";
 import axios from "axios";
-import { Board } from "jira.js/out/agile";
-import { Version3Client } from "jira.js/out/version3";
-import type { FieldDetails, PageString } from "jira.js/out/version3/models";
+import { Board } from "jira.js/out/agile/index.js";
+import { Version3Client } from "jira.js/out/version3/index.js";
+import type { FieldDetails, PageString } from "jira.js/out/version3/models/index.js";
 import type { JiraProps, JiraResource } from "@/jira/types";
 
 export class JiraService {
@@ -99,9 +99,9 @@ export class JiraService {
     return await this.jiraClient.myself.getCurrentUser();
   }
 
-  async getNumberOfIssues(projectKey: string) {
+  async getNumberOfIssues(projectKey: string, jql?: string) {
     const issues = await this.jiraClient.issueSearch.countIssues({
-      jql: `project = "${projectKey}"`,
+      jql: jql ? jql : `project = "${projectKey}"`,
     });
     return issues.count;
   }
@@ -212,7 +212,7 @@ export class JiraService {
     });
   }
 
-  async getIssueTypeFieldContexts(fieldId: string, contextIds: number[], startAt = 0) {
+  async getIssueTypeFieldContexts(fieldId: string, contextIds?: number[], startAt = 0) {
     return this.jiraClient.issueCustomFieldContexts.getIssueTypeMappingsForContexts({
       fieldId: fieldId,
       contextId: contextIds,
@@ -235,11 +235,14 @@ export class JiraService {
     });
   }
 
-  async getProjectIssues(projectKey: string, nextPageToken?: string, createdAfter?: string) {
+  async getProjectIssues(projectKey: string, nextPageToken?: string, createdAfter?: string, jql?: string) {
+    // Assertion: Project key is appended to the provided jql
     return this.jiraClient.issueSearch.searchForIssuesUsingJqlEnhancedSearch({
-      jql: createdAfter
-        ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
-        : `project = "${projectKey}"`,
+      jql: jql
+        ? jql
+        : createdAfter
+          ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
+          : `project = "${projectKey}"`,
       expand: "renderedFields",
       fields: ["*all"],
       nextPageToken: nextPageToken,

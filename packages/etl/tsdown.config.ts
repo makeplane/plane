@@ -2,7 +2,6 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: [
-    "src/parser/index.ts",
     "src/asana/index.ts",
     "src/core/index.ts",
     "src/github/index.ts",
@@ -17,8 +16,6 @@ export default defineConfig({
   ],
   format: ["esm"],
   dts: true,
-  clean: true,
-  minify: true,
-  sourcemap: true,
   exports: true,
+  platform: "neutral",
 });

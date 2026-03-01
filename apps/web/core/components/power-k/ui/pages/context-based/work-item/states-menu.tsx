@@ -20,7 +20,7 @@ import { Spinner } from "@plane/ui";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
-import { PowerKProjectStatesMenuItems } from "@/plane-web/components/command-palette/power-k/pages/context-based/work-item/state-menu-item";
+import { PowerKProjectStatesMenuItems } from "@/components/command-palette/power-k/pages/context-based/work-item/state-menu-item";
 
 type Props = {
   handleSelect: (stateId: string) => void;

@@ -11,13 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Extension } from "@tiptap/core";
+import { Editor, Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // plugins
 import { AIHandlePlugin } from "@/plugins/ai-handle";
+import { ColumnListDragHandlePlugin } from "@/plugins/column-list-drag-handle";
 import { DragHandlePlugin, nodeDOMAtCoords } from "@/plugins/drag-handle";
 
 type Props = {
@@ -35,6 +36,7 @@ export type SideMenuPluginProps = {
     up: number;
     down: number;
   };
+  editor: Editor;
 };
 
 export type SideMenuHandleOptions = {
@@ -58,6 +60,7 @@ export const SideMenuExtension = (props: Props) => {
             dragDrop: dragDropEnabled,
           },
           scrollThreshold: { up: 200, down: 150 },
+          editor: this.editor,
         }),
       ];
     },
@@ -86,6 +89,8 @@ const SideMenu = (options: SideMenuPluginProps) => {
   // side menu elements
   const { view: dragHandleView, domEvents: dragHandleDOMEvents } = DragHandlePlugin(options);
   const { view: aiHandleView, domEvents: aiHandleDOMEvents } = AIHandlePlugin(options);
+  const { view: columnListDragHandleView, domEvents: columnListDragHandleDOMEvents } =
+    ColumnListDragHandlePlugin(options);
 
   return new Plugin({
     key: new PluginKey("sideMenu"),
@@ -99,6 +104,10 @@ const SideMenu = (options: SideMenuPluginProps) => {
 
       if (handlesConfig.dragDrop && !editorSideMenu.querySelector("#drag-handle")) {
         dragHandleView(view, editorSideMenu);
+      }
+
+      if (handlesConfig.dragDrop && !editorSideMenu.querySelector("#column-list-drag-handle")) {
+        columnListDragHandleView(view, editorSideMenu);
       }
 
       return {
@@ -157,10 +166,11 @@ const SideMenu = (options: SideMenuPluginProps) => {
           editorSideMenu.style.top = `${rect.top}px`;
           showSideMenu();
           if (handlesConfig.dragDrop) {
-            dragHandleDOMEvents?.mousemove();
+            dragHandleDOMEvents?.mousemove(view);
+            columnListDragHandleDOMEvents?.mousemove?.(view, event);
           }
           if (handlesConfig.ai) {
-            aiHandleDOMEvents?.mousemove?.();
+            aiHandleDOMEvents?.mousemove?.(view);
           }
         },
         // keydown: () => hideSideMenu(),
@@ -168,16 +178,19 @@ const SideMenu = (options: SideMenuPluginProps) => {
         dragenter: (view) => {
           if (handlesConfig.dragDrop) {
             dragHandleDOMEvents?.dragenter?.(view);
+            columnListDragHandleDOMEvents?.dragenter?.(view);
           }
         },
         drop: (view, event) => {
           if (handlesConfig.dragDrop) {
             dragHandleDOMEvents?.drop?.(view, event);
+            columnListDragHandleDOMEvents?.drop?.(view);
           }
         },
         dragend: (view) => {
           if (handlesConfig.dragDrop) {
             dragHandleDOMEvents?.dragend?.(view);
+            columnListDragHandleDOMEvents?.dragend?.(view);
           }
         },
       },

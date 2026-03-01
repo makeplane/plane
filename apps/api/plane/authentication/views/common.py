@@ -22,6 +22,7 @@ from zxcvbn import zxcvbn
 ## Module imports
 from plane.app.serializers import UserSerializer
 from plane.authentication.utils.login import user_login
+from plane.authentication.utils.session_limit import invalidate_all_user_sessions
 from plane.db.models import User
 from plane.authentication.adapter.error import (
     AuthenticationException,
@@ -109,6 +110,8 @@ class ChangePasswordEndpoint(APIView):
         user.is_password_autoset = False
         user.save()
         user_login(user=user, request=request, is_app=True)
+        # Invalidate all other sessions for security
+        invalidate_all_user_sessions(user, exclude_session_key=request.session.session_key)
         return Response({"message": "Password updated successfully"}, status=status.HTTP_200_OK)
 
 
@@ -149,6 +152,8 @@ class SetUserPasswordEndpoint(APIView):
         user.save()
         # Login the user as the session is invalidated
         user_login(user=user, request=request, is_app=True)
+        # Invalidate all other sessions for security
+        invalidate_all_user_sessions(user, exclude_session_key=request.session.session_key)
         # Return the user
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)

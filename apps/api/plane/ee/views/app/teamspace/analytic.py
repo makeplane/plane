@@ -141,7 +141,7 @@ class TeamspaceProgressChartEndpoint(TeamspaceBaseEndpoint):
         issues = Issue.issue_objects.filter(project_id__in=project_ids, workspace__slug=slug)
 
         x_axis = request.GET.get("x_axis", "target_date")
-        y_axis = request.GET.get("y_axis", "issues")
+        _y_axis = request.GET.get("y_axis", "issues")
 
         X_AXIS_MAP = {
             "target_date": "target_date",
@@ -194,37 +194,32 @@ class TeamspaceProgressChartEndpoint(TeamspaceBaseEndpoint):
 
 class TeamspaceProgressSummaryEndpoint(TeamspaceBaseEndpoint):
     def get(self, request, slug, team_space_id):
-        project_ids = TeamspaceProject.objects.filter(team_space_id=team_space_id).values_list("project_id", flat=True)
+        project_ids = TeamspaceProject.objects.filter(
+            team_space_id=team_space_id, project__archived_at__isnull=True, workspace__slug=slug
+        ).values_list("project_id", flat=True)
 
-        issues = Issue.issue_objects.filter(project_id__in=project_ids, workspace__slug=slug)
-
-        # Get the count of completed, pending, backlog, cancelled issues
-        completed_issues = issues.filter(state__group="completed").count()
-        pending_issues = issues.filter(state__group__in=["backlog", "unstarted", "started"]).count()
-
-        # Get the count of overdue issues
-        overdue_issues = issues.filter(
-            state__group__in=["backlog", "unstarted", "started"],
-            target_date__lt=timezone.now(),
-        ).count()
-
-        # Get the count of issues in each state
-        backlog_issues = issues.filter(state__group="backlog").count()
-        cancelled_issues = issues.filter(state__group="cancelled").count()
-
-        no_due_date_issues = issues.filter(target_date__isnull=True).count()
-
-        return Response(
-            {
-                "backlog_issues": backlog_issues,
-                "cancelled_issues": cancelled_issues,
-                "completed_issues": completed_issues,
-                "pending_issues": pending_issues,
-                "overdue_issues": overdue_issues,
-                "no_due_date_issues": no_due_date_issues,
-            },
-            status=status.HTTP_200_OK,
+        team_member_ids = TeamspaceMember.objects.filter(team_space_id=team_space_id, workspace__slug=slug).values_list(
+            "member_id", flat=True
         )
+
+        issue_ids = IssueAssignee.objects.filter(workspace__slug=slug, assignee_id__in=team_member_ids).values_list(
+            "issue_id", flat=True
+        )
+
+        issue_counts = Issue.issue_objects.filter(
+            id__in=issue_ids, project_id__in=project_ids, workspace__slug=slug
+        ).aggregate(
+            completed_issues=Count("id", filter=Q(state__group="completed")),
+            pending_issues=Count("id", filter=Q(state__group__in=["backlog", "unstarted", "started"])),
+            overdue_issues=Count(
+                "id", filter=Q(state__group__in=["backlog", "unstarted", "started"], target_date__lt=timezone.now())
+            ),
+            backlog_issues=Count("id", filter=Q(state__group="backlog")),
+            cancelled_issues=Count("id", filter=Q(state__group="cancelled")),
+            no_due_date_issues=Count("id", filter=Q(target_date__isnull=True)),
+        )
+
+        return Response(issue_counts, status=status.HTTP_200_OK)
 
 
 class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):

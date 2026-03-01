@@ -23,11 +23,11 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { UserAuthentication, IntegrationRoot, GitlabHeader } from "@/plane-web/components/integrations/gitlab";
+import { UserAuthentication, IntegrationRoot, GitlabHeader } from "@/components/integrations/gitlab";
 // plane web hooks
 import { useFlag, useGitlabIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // public images
-import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+import { SiloAppService } from "@/services/integrations/silo.service";
 
 const siloAppService = new SiloAppService();
 

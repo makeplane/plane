@@ -12,7 +12,7 @@
  */
 
 // components
-import { DashboardsListLayoutRoot } from "@/plane-web/components/dashboards/list";
+import { DashboardsListLayoutRoot } from "@/components/dashboards/list";
 
 export default function WorkspaceDashboardsListPage() {
   return <DashboardsListLayoutRoot />;

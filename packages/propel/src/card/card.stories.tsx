@@ -11,16 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
+
 import { Card, ECardVariant, ECardSpacing, ECardDirection } from "./card";
 
-const meta = {
-  title: "Components/Card",
+const meta = preview.meta({
   component: Card,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   args: {
     children: (
       <>
@@ -29,14 +28,11 @@ const meta = {
       </>
     ),
   },
-} satisfies Meta<typeof Card>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export const Default = meta.story({});
 
-export const Default: Story = {};
-
-export const WithShadow: Story = {
+export const WithShadow = meta.story({
   args: {
     variant: ECardVariant.WITH_SHADOW,
     children: (
@@ -46,9 +42,9 @@ export const WithShadow: Story = {
       </>
     ),
   },
-};
+});
 
-export const WithoutShadow: Story = {
+export const WithoutShadow = meta.story({
   args: {
     variant: ECardVariant.WITHOUT_SHADOW,
     children: (
@@ -58,9 +54,9 @@ export const WithoutShadow: Story = {
       </>
     ),
   },
-};
+});
 
-export const SmallSpacing: Story = {
+export const SmallSpacing = meta.story({
   args: {
     spacing: ECardSpacing.SM,
     children: (
@@ -70,9 +66,9 @@ export const SmallSpacing: Story = {
       </>
     ),
   },
-};
+});
 
-export const LargeSpacing: Story = {
+export const LargeSpacing = meta.story({
   args: {
     spacing: ECardSpacing.LG,
     children: (
@@ -82,9 +78,9 @@ export const LargeSpacing: Story = {
       </>
     ),
   },
-};
+});
 
-export const ColumnDirection: Story = {
+export const ColumnDirection = meta.story({
   args: {
     direction: ECardDirection.COLUMN,
     children: (
@@ -95,9 +91,9 @@ export const ColumnDirection: Story = {
       </>
     ),
   },
-};
+});
 
-export const RowDirection: Story = {
+export const RowDirection = meta.story({
   args: {
     direction: ECardDirection.ROW,
     children: (
@@ -112,9 +108,9 @@ export const RowDirection: Story = {
       </>
     ),
   },
-};
+});
 
-export const ProductCard: Story = {
+export const ProductCard = meta.story({
   args: {
     variant: ECardVariant.WITH_SHADOW,
     spacing: ECardSpacing.LG,
@@ -131,9 +127,9 @@ export const ProductCard: Story = {
       </>
     ),
   },
-};
+});
 
-export const UserCard: Story = {
+export const UserCard = meta.story({
   args: {
     variant: ECardVariant.WITH_SHADOW,
     spacing: ECardSpacing.LG,
@@ -149,9 +145,9 @@ export const UserCard: Story = {
       </>
     ),
   },
-};
+});
 
-export const NotificationCard: Story = {
+export const NotificationCard = meta.story({
   args: {
     variant: ECardVariant.WITHOUT_SHADOW,
     spacing: ECardSpacing.SM,
@@ -166,59 +162,4 @@ export const NotificationCard: Story = {
       </>
     ),
   },
-};
-
-export const AllVariants: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <Card variant={ECardVariant.WITH_SHADOW}>
-          <h3 className="font-semibold">With Shadow</h3>
-          <p className="text-13 text-gray-600">Hover to see the shadow effect</p>
-        </Card>
-        <Card variant={ECardVariant.WITHOUT_SHADOW}>
-          <h3 className="font-semibold">Without Shadow</h3>
-          <p className="text-13 text-gray-600">No shadow on hover</p>
-        </Card>
-      </div>
-    );
-  },
-};
-
-export const AllSpacings: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <Card spacing={ECardSpacing.SM}>
-          <h3 className="font-semibold">Small Spacing (p-4)</h3>
-          <p className="text-13 text-gray-600">Compact padding</p>
-        </Card>
-        <Card spacing={ECardSpacing.LG}>
-          <h3 className="font-semibold">Large Spacing (p-6)</h3>
-          <p className="text-13 text-gray-600">More generous padding</p>
-        </Card>
-      </div>
-    );
-  },
-};
-
-export const AllDirections: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <Card direction={ECardDirection.COLUMN}>
-          <h3 className="font-semibold">Column Direction</h3>
-          <p className="text-13 text-gray-600">Vertical layout</p>
-          <button className="w-fit rounded-sm bg-blue-500 px-4 py-2 text-on-color">Button</button>
-        </Card>
-        <Card direction={ECardDirection.ROW}>
-          <div className="h-12 w-12 flex-shrink-0 rounded-sm bg-blue-500" />
-          <div>
-            <h3 className="font-semibold">Row Direction</h3>
-            <p className="text-13 text-gray-600">Horizontal layout</p>
-          </div>
-        </Card>
-      </div>
-    );
-  },
-};
+});

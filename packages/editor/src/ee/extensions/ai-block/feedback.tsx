@@ -25,23 +25,25 @@ export const AIBlockFeedback = ({
   blockId,
   aiBlockHandlers,
   type,
+  isFlagged,
 }: {
   feedback: EAiFeedback | null | undefined;
   blockId: string | null;
-  aiBlockHandlers: TAIBlockHandlers;
+  aiBlockHandlers: TAIBlockHandlers | undefined;
   type: "revision" | "settings";
+  isFlagged?: boolean;
 }) => {
   const [feedback, setFeedback] = useState<EAiFeedback | undefined | null>(undefined);
   const handleFeedback = async (feedbackValue: EAiFeedback) => {
     const initialValue = feedback;
     try {
-      if (!blockId) return;
+      if (!blockId || isFlagged) return;
       if (feedbackValue === initialValue) {
         setFeedback(undefined);
         return;
       }
       setFeedback(feedbackValue);
-      await aiBlockHandlers.postFeedback({
+      await aiBlockHandlers?.postFeedback({
         usage_type: type === "revision" ? "ai_block_revision" : "ai_block",
         usage_id: blockId,
         feedback: feedbackValue,

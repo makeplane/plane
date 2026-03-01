@@ -82,6 +82,8 @@ class FeatureFlag(Enum):
     PROJECT_TEMPLATES = "PROJECT_TEMPLATES"
     # Workspace gantt view
     GLOBAL_VIEWS_TIMELINE = "GLOBAL_VIEWS_TIMELINE"
+    # Workspace additional layouts
+    GLOBAL_VIEWS_CAL_BOARD = "GLOBAL_VIEWS_CAL_BOARD"
     # Shared Pages
     SHARED_PAGES = "SHARED_PAGES"
     # Copy Work Item
@@ -111,11 +113,17 @@ class FeatureFlag(Enum):
     # Intake form workitem types
     WORKITEM_TYPE_INTAKE_FORM = "WORKITEM_TYPE_INTAKE_FORM"
     # PI Chat
-    PI_CHAT = "PI_CHAT"
+    AI_CHAT = "AI_CHAT"
     # Project member activity
     PROJECT_MEMBER_ACTIVITY = "PROJECT_MEMBER_ACTIVITY"
     # CLOUD_SSO
     CLOUD_SSO = "CLOUD_SSO"
+    # IDP_GROUP_SYNC
+    IDP_GROUP_SYNC = "IDP_GROUP_SYNC"
+    # Workspace api token
+    WORKSPACE_API_TOKEN = "WORKSPACE_API_TOKEN"
+    # Import summary
+    IMPORT_SUMMARY = "IMPORT_SUMMARY"
 
 
 class AdminFeatureFlag(Enum):

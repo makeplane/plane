@@ -27,6 +27,6 @@ class WebhookConsumer(BaseConsumer):
 
     def process_message(self, properties, body):
         """Process a message from the queue."""
-        logger.info(f"WebhookConsumer processing message: {body}")
+        logger.info("WebhookConsumer processing message: ", extra={"body": body})
         process_webhook_event.delay(body=body)
         return True

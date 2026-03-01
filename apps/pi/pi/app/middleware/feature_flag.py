@@ -47,7 +47,7 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
         Args:
             app: The FastAPI application
             endpoint_feature_map: Mapping of endpoint patterns to required feature flags
-                                 e.g., {"/api/v1/chat/": "PI_CHAT", "/api/v1/dupes/": "PI_DEDUPE"}
+                                 e.g., {"/api/v1/chat/": "AI_CHAT", "/api/v1/dupes/": "AI_DEDUPE"}
         """
         super().__init__(app)
         self.endpoint_feature_map = endpoint_feature_map or {}
@@ -132,8 +132,9 @@ class FeatureFlagMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         # Skip feature flag checks if server is not configured
-        if not settings.FEATURE_FLAG_SERVER_AUTH_TOKEN or not settings.FEATURE_FLAG_SERVER_BASE_URL:
-            logger.warning("Feature flag server not configured - skipping feature flag checks")
+        if not settings.FEATURE_FLAG_SERVER_BASE_URL:
+            # if not settings.FEATURE_FLAG_SERVER_AUTH_TOKEN or not settings.FEATURE_FLAG_SERVER_BASE_URL:
+            logger.warning("Feature flag base url not configured - skipping feature flag checks")
             return await call_next(request)
 
         # Check if this endpoint requires feature flag validation

@@ -17,6 +17,23 @@ from django.utils import timezone
 from plane.db.models import Session
 
 
+def invalidate_all_user_sessions(user, exclude_session_key=None):
+    """
+    Invalidate all sessions for a user except the current one.
+
+    This should be called when a user changes their password to ensure
+    all other sessions are logged out for security.
+
+    Args:
+        user: The user object for whom to invalidate sessions
+        exclude_session_key: The session key to exclude from deletion (usually the current session)
+    """
+    sessions = Session.objects.filter(user_id=str(user.id))
+    if exclude_session_key:
+        sessions = sessions.exclude(session_key=exclude_session_key)
+    sessions.delete()
+
+
 def enforce_session_limit(user, current_session_key=None):
     """
     Enforce the maximum concurrent session limit for a user.
@@ -34,9 +51,7 @@ def enforce_session_limit(user, current_session_key=None):
     # Get all active web sessions for this user, ordered by expiry date (oldest first)
     # Only count sessions with session_type "web" in device_info
     active_sessions = Session.objects.filter(
-        user_id=str(user.id),
-        expire_date__gt=timezone.now(),
-        device_info__session_type="web"
+        user_id=str(user.id), expire_date__gt=timezone.now(), device_info__session_type="web"
     ).order_by("expire_date")
 
     # Exclude current session if provided

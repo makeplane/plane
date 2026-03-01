@@ -25,7 +25,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 // plane web imports
-import { useCommentRepliesOperations } from "@/plane-web/components/comments/replies/helper";
+import { useCommentRepliesOperations } from "@/components/comments/card/replies/helper";
 
 export const useWorkItemCommentOperations = (
   workspaceSlug: string | undefined,

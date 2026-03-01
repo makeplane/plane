@@ -11,9 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane helpers
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { PreferencesIcon } from "@plane/propel/icons";
 import { ScrollArea } from "@plane/propel/scrollarea";
@@ -21,11 +22,14 @@ import { ScrollArea } from "@plane/propel/scrollarea";
 import { CustomizeNavigationDialog } from "@/components/navigation/customize-navigation-dialog";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import useSize from "@/hooks/use-window-size";
 // plane web components
-import { WorkspaceEditionBadge } from "@/plane-web/components/workspace/edition-badge";
+import { WorkspaceEditionBadge } from "@/components/workspace/edition-badge";
 import { AppSidebarToggleButton } from "./sidebar-toggle-button";
 import { IconButton } from "@plane/propel/icon-button";
+import { SidebarTipSection } from "../workspace/sidebar/sidebar-tip-section";
+import { SidebarTrySection } from "../workspace/sidebar/sidebar-try-section";
 
 type TSidebarWrapperProps = {
   title: string;
@@ -40,8 +44,15 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const windowSize = useSize();
+  const { allowPermissions } = useUserPermissions();
+
   // refs
   const ref = useRef<HTMLDivElement>(null);
+
+  const isWorkspaceAdmin = useMemo(
+    () => allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE),
+    [allowPermissions]
+  );
 
   useOutsideClickDetector(ref, () => {
     if (sidebarCollapsed === false && window.innerWidth < 768) {
@@ -57,7 +68,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
   return (
     <>
       <CustomizeNavigationDialog isOpen={isCustomizeNavDialogOpen} onClose={() => setIsCustomizeNavDialogOpen(false)} />
-      <div ref={ref} className="animate-fade-in flex flex-col h-full w-full">
+      <div ref={ref} className="relative animate-fade-in flex flex-col h-full w-full">
         <div className="flex flex-col gap-3 px-3">
           {/* Workspace switcher and settings */}
 
@@ -71,6 +82,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
                   variant="ghost"
                   icon={PreferencesIcon}
                   onClick={() => setIsCustomizeNavDialogOpen(true)}
+                  data-tour="navigation-step-3"
                 />
               )}
               <AppSidebarToggleButton />
@@ -88,15 +100,18 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
           viewportClassName="flex flex-col gap-3 overflow-x-hidden h-full w-full overflow-y-auto px-3 pt-3 pb-0.5"
         >
           {children}
+          {isWorkspaceAdmin && (
+            <div className="flex flex-col gap-2">
+              <SidebarTrySection />
+              <SidebarTipSection />
+            </div>
+          )}
         </ScrollArea>
         {/* Help Section */}
-        <div className="flex items-center justify-between p-3 border-t border-subtle bg-surface-1 h-12">
-          <WorkspaceEditionBadge />
-          {/* TODO: To be checked if we need this */}
-          {/* <div className="flex items-center gap-2">
-          {!shouldRenderAppRail && <HelpMenu />}
-          {!isAppRailEnabled && <AppSidebarToggleButton />}
-        </div> */}
+        <div className="flex flex-col">
+          <div className="flex items-center justify-between p-3 border-t border-subtle bg-surface-1 h-12">
+            <WorkspaceEditionBadge />
+          </div>
         </div>
       </div>
     </>

@@ -30,6 +30,7 @@ from plane.authentication.utils.host import base_host
 from plane.authentication.utils.mobile.login import ValidateAuthToken
 from plane.db.models import Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.license.models import Instance
+from plane.authentication.utils.group_sync import process_group_sync_on_login
 
 
 class MobileOIDCAuthInitiateEndpoint(View):
@@ -91,6 +92,13 @@ class MobileOIDCallbackEndpoint(View):
 
             # getting the user from the oidc provider
             user = provider.authenticate()
+
+            # Process group sync (self-hosted - syncs across all workspaces)
+            process_group_sync_on_login(
+                user=user,
+                userinfo_response=provider.userinfo_response,
+                is_cloud=False,
+            )
 
             user_id = str(user.id)
             user_email = user.email

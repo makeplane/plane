@@ -16,15 +16,13 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-// hooks
+import { ImportersList } from "@/components/importers/list";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { ImportersList } from "@/plane-web/components/importers";
-// local imports
+// plane web components
 import type { Route } from "./+types/page";
 import { ImportsWorkspaceSettingsHeader } from "./header";
 

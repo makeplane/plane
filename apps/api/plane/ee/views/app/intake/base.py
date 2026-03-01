@@ -23,7 +23,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.ee.models import IntakeSetting
+from plane.ee.models import IntakeSetting, IntakeEmail
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.db.models import (
@@ -147,25 +147,36 @@ class IntakeSettingEndpoint(BaseAPIView):
         if not intake_setting:
             intake_setting = IntakeSetting.objects.create(project_id=project_id, intake=intake)
 
-        deployboards = DeployBoard.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            entity_name__in=["intake", "intake_email"],
-        ).values("entity_name", "anchor")
-
         data = IntakeSettingSerializer(intake_setting).data
-
         data["anchors"] = {}
 
-        for deployboard in deployboards:
-            if deployboard["entity_name"] == "intake_email":
-                if check_workspace_feature_flag(FeatureFlag.INTAKE_EMAIL, slug, user_id=request.user.id):
-                    data["anchors"]["intake_email"] = f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
-            elif deployboard["entity_name"] == "intake":
-                if check_workspace_feature_flag(FeatureFlag.INTAKE_FORM, slug, user_id=request.user.id):
-                    data["anchors"][deployboard["entity_name"]] = deployboard["anchor"]
-            else:
-                data["anchors"] = {}
+        # Get intake form anchor from DeployBoard
+        intake_deploy_board = (
+            DeployBoard.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                entity_name="intake",
+            )
+            .values("anchor")
+            .first()
+        )
+
+        if intake_deploy_board and check_workspace_feature_flag(FeatureFlag.INTAKE_FORM, slug, user_id=request.user.id):
+            data["anchors"]["intake"] = intake_deploy_board["anchor"]
+
+        # Get intake email anchor from IntakeEmail
+        intake_email = (
+            IntakeEmail.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                intake=intake,
+            )
+            .values("anchor")
+            .first()
+        )
+
+        if intake_email and check_workspace_feature_flag(FeatureFlag.INTAKE_EMAIL, slug, user_id=request.user.id):
+            data["anchors"]["intake_email"] = f"{slug}-{intake_email['anchor']}@{self.get_intake_email_domain()}"
 
         return Response(data, status=status.HTTP_200_OK)
 
@@ -221,44 +232,61 @@ class IntakeSettingEndpoint(BaseAPIView):
                         project_id=project_id,
                         workspace=workspace,
                     )
-                    # create the user botß
+                    # create the user bot
                 self.create_intake_user_bot(workspace=workspace, request=request, slug=slug)
 
-            # If the email is enabled, create a deploy board for the intake email
+            # If the email is enabled, create an IntakeEmail record
             if request.data.get("is_email_enabled"):
-                deploy_board = DeployBoard.objects.filter(
-                    entity_identifier=intake.id,
-                    entity_name="intake_email",
+                intake_email_obj = IntakeEmail.objects.filter(
+                    intake=intake,
                     project_id=project_id,
                     workspace__slug=slug,
                 ).first()
-                if not deploy_board:
-                    deploy_board = DeployBoard.objects.create(
-                        entity_identifier=intake.id,
-                        entity_name="intake_email",
+                if not intake_email_obj:
+                    intake_email_obj = IntakeEmail.objects.create(
+                        intake=intake,
                         project_id=project_id,
                         workspace=workspace,
                     )
                     # create the user bot
                 self.create_intake_user_bot(workspace=workspace, request=request, slug=slug)
 
-        # Get the deployboards for the project
-        deployboards = DeployBoard.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            entity_name__in=["intake", "intake_email"],
-        ).values("entity_name", "anchor")
+        # Build anchors response
+        anchors = {}
 
-        # for the intake email return the complete email address
-        for deployboard in deployboards:
-            if deployboard["entity_name"] == "intake_email":
-                deployboard["anchor"] = f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
+        # Get intake form anchor from DeployBoard
+        intake_deploy_board = (
+            DeployBoard.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                entity_name="intake",
+            )
+            .values("anchor")
+            .first()
+        )
+
+        if intake_deploy_board:
+            anchors["intake"] = intake_deploy_board["anchor"]
+
+        # Get intake email anchor from IntakeEmail
+        intake_email_obj = (
+            IntakeEmail.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                intake=intake,
+            )
+            .values("anchor")
+            .first()
+        )
+
+        if intake_email_obj:
+            anchors["intake_email"] = f"{slug}-{intake_email_obj['anchor']}@{self.get_intake_email_domain()}"
 
         serializer = IntakeSettingSerializer(intake_setting, data=request_data, partial=True)
         if serializer.is_valid():
             serializer.save()
             data = serializer.data
             # Serializer and return
-            data["anchors"] = {deployboard["entity_name"]: deployboard["anchor"] for deployboard in deployboards}
+            data["anchors"] = anchors
             return Response(data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

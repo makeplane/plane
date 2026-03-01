@@ -18,4 +18,5 @@ export type TSidebarMenuItem = {
   name: string;
   description: string;
   href: string;
+  deprecated?: boolean;
 };

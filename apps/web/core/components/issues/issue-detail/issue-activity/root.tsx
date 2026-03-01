@@ -29,8 +29,8 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { ActivityFilterRoot } from "@/plane-web/components/issues/worklog/activity/filter-root";
-import { IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog/activity/worklog-create-button";
+import { ActivityFilterRoot } from "@/components/issues/worklog/activity/filter-root";
+import { IssueActivityWorklogCreateButton } from "@/components/issues/worklog/activity/worklog-create-button";
 import { IssueActivityCommentRoot } from "./activity-comment-root";
 import { useWorkItemCommentOperations } from "./helper";
 import { ActivitySortRoot } from "./sort-root";

@@ -19,7 +19,7 @@ import { ALL_ISSUES } from "@plane/constants";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import type { IGroupByColumn, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { cn } from "@plane/utils";
 import { SubIssuesListItem } from "./list-item";
 
@@ -64,14 +64,11 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
   const [isCollapsibleOpen, setIsCollapsibleOpen] = useState(true);
 
   if (!workItemIds.length) return null;
-
   return (
     <>
-      <Collapsible
-        isOpen={isCollapsibleOpen}
-        onToggle={() => setIsCollapsibleOpen(!isCollapsibleOpen)}
-        title={
-          !isAllIssues && (
+      <Collapsible open={isCollapsibleOpen} onOpenChange={setIsCollapsibleOpen}>
+        {!isAllIssues && (
+          <CollapsibleTrigger className={cn("hidden", !isAllIssues && "block")}>
             <div className="flex items-center gap-2 p-3">
               <ChevronRightIcon
                 className={cn("size-3.5 transition-all text-placeholder", {
@@ -85,26 +82,26 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
               <span className="text-13 text-primary font-medium">{group.name}</span>
               <span className="text-13 text-placeholder">{workItemIds.length}</span>
             </div>
-          )
-        }
-        buttonClassName={cn("hidden", !isAllIssues && "block")}
-      >
-        {workItemIds?.map((workItemId) => (
-          <SubIssuesListItem
-            key={workItemId}
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            parentIssueId={parentIssueId}
-            rootIssueId={rootIssueId}
-            issueId={workItemId}
-            canEdit={canEdit}
-            handleIssueCrudState={handleIssueCrudState}
-            subIssueOperations={subIssueOperations}
-            issueServiceType={serviceType}
-            spacingLeft={spacingLeft}
-            storeType={storeType}
-          />
-        ))}
+          </CollapsibleTrigger>
+        )}
+        <CollapsibleContent>
+          {workItemIds?.map((workItemId) => (
+            <SubIssuesListItem
+              key={workItemId}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              parentIssueId={parentIssueId}
+              rootIssueId={rootIssueId}
+              issueId={workItemId}
+              canEdit={canEdit}
+              handleIssueCrudState={handleIssueCrudState}
+              subIssueOperations={subIssueOperations}
+              issueServiceType={serviceType}
+              spacingLeft={spacingLeft}
+              storeType={storeType}
+            />
+          ))}
+        </CollapsibleContent>
       </Collapsible>
     </>
   );

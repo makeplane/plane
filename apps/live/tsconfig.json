@@ -1,11 +1,18 @@
 {
   "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "incremental": false,
+    "noEmit": true,
     "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
     "noUnusedParameters": false,
     "noImplicitOverride": false,
     "noImplicitReturns": false,
     "noUnusedLocals": false,
+    "jsx": "react-jsx",
     "paths": {
       "@/*": ["./src/*"],
       "@/plane-live/*": ["./src/ee/*"]
@@ -35,6 +42,6 @@
       }
     ]
   },
-  "include": ["src"],
+  "include": ["src", "tests"],
   "exclude": ["node_modules", "dist"]
 }

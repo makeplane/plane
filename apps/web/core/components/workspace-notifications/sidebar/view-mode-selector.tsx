@@ -13,6 +13,7 @@
 
 import type { TNotificationsViewMode } from "@/store/notifications/workspace-notifications.store";
 import { useTranslation } from "@plane/i18n";
+import { getIconButtonStyling } from "@plane/propel/icon-button";
 import { CenterPanelIcon, FullScreenPanelIcon } from "@plane/propel/icons";
 import { Menu } from "@plane/propel/menu";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -32,16 +33,17 @@ export function ViewModeSelector({ value, onChange }: ViewModeSelectorProps) {
   const CurrentIcon = VIEW_MODES.find((m) => m.key === value)?.icon;
   const { t } = useTranslation();
 
+  const Icon = CurrentIcon ?? CenterPanelIcon;
+
   return (
     <Menu
       ariaLabel={t("account_settings.notifications.select_default_view")}
       customButton={
         <Tooltip tooltipContent={t("account_settings.notifications.select_default_view")} position="bottom">
-          <span className="flex items-center justify-center">
-            {CurrentIcon && <CurrentIcon className="h-4 w-4 text-tertiary hover:text-secondary" />}
-          </span>
+          <Icon className="h-3.5 w-3.5" />
         </Tooltip>
       }
+      customButtonClassName={getIconButtonStyling("ghost", "base")}
       optionsClassName="p-1"
     >
       <div className="text-tertiary text-12 px-2 py-1">{t("account_settings.notifications.select_default_view")}</div>

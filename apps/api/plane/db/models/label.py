@@ -12,10 +12,10 @@
 from django.db import models
 from django.db.models import Q
 
-from .workspace import WorkspaceBaseModel
+from .project import ProjectOptionalBaseModel
 
 
-class Label(WorkspaceBaseModel):
+class Label(ProjectOptionalBaseModel):
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,

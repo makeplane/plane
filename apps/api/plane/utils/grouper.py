@@ -174,6 +174,19 @@ def issue_group_values(
             return list(queryset.filter(project_id=project_id))
         return list(queryset)
 
+    if field == "parent_id":
+        # Grouping by parent_id currently only includes epic parents; other parent
+        # types should be added for full support.
+
+        queryset = Issue.objects.filter(
+            Q(parent__type__isnull=False, parent__type__is_epic=True), workspace__slug=slug
+        ).values_list("parent_id", flat=True)
+
+        if project_id:
+            return list(queryset.filter(project_id=project_id)) + ["None"]
+
+        return list(queryset) + ["None"]
+
     if field == "labels__id":
         queryset = Label.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         if project_id:

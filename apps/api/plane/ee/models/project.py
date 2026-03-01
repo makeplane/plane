@@ -16,6 +16,7 @@ from django.conf import settings
 # Module imports
 from plane.db.models.base import BaseModel
 from plane.db.models.project import ProjectBaseModel
+from plane.db.mixins import ChangeTrackerMixin
 from plane.utils.html_processor import strip_tags
 
 
@@ -113,16 +114,29 @@ class ProjectFeature(ProjectBaseModel):
         return str(self.project)
 
 
-class ProjectLink(ProjectBaseModel):
+class ProjectLink(ChangeTrackerMixin, ProjectBaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField()
     metadata = models.JSONField(default=dict)
+
+    TRACKED_FIELDS = ["url"]
 
     class Meta:
         verbose_name = "Project Link"
         verbose_name_plural = "Project Links"
         db_table = "project_links"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        url_changed = self.has_changed("url") if not is_new else False
+
+        super().save(*args, **kwargs)
+
+        if (is_new or url_changed) and self.url:
+            from plane.bgtasks.link_crawler_task import link_crawler
+
+            link_crawler.delay(str(self.id), self.url, "project")
 
     def __str__(self):
         return f"{self.project.name} {self.url}"
@@ -310,9 +324,9 @@ class ProjectLabel(BaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            last_id = ProjectLabel.objects.filter(workspace=self.workspace).aggregate(
-                largest=models.Max("sort_order")
-            )["largest"]
+            last_id = ProjectLabel.objects.filter(workspace=self.workspace).aggregate(largest=models.Max("sort_order"))[
+                "largest"
+            ]
 
             if last_id is not None:
                 self.sort_order = last_id + 10000
@@ -354,3 +368,28 @@ class ProjectLabelAssociation(BaseModel):
 
     def __str__(self):
         return f"{self.project.name} {self.label.name}"
+
+
+class ProjectSubscriber(ProjectBaseModel):
+    subscriber = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="project_subscribers",
+    )
+
+    class Meta:
+        unique_together = ["project", "subscriber", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "subscriber"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="project_subscriber_unique_project_subscriber_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Project Subscriber"
+        verbose_name_plural = "Project Subscribers"
+        db_table = "project_subscribers"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.project.name} {self.subscriber.email}"

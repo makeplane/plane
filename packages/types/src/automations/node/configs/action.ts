@@ -36,10 +36,18 @@ export type TChangePropertyActionConfig = {
   property_value: string[];
 };
 
+export type TRunScriptActionConfig = {
+  script_id: string;
+  execution_variables?: Record<string, string>;
+};
+
 export type TChangePropertyActionFormConfig = {
   change_type?: EAutomationChangeType;
   property_name?: EAutomationChangePropertyType;
   property_value: string[];
 };
 
-export type TAutomationActionNodeConfig = TAddCommentActionConfig | TChangePropertyActionConfig;
+export type TAutomationActionNodeConfig =
+  | TAddCommentActionConfig
+  | TChangePropertyActionConfig
+  | TRunScriptActionConfig;

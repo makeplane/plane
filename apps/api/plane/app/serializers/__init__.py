@@ -35,6 +35,7 @@ from .workspace import (
     WorkspaceHomePreferenceSerializer,
     StickySerializer,
     WorkspaceUserMeSerializer,
+    WorkspaceMemberUserOnboardingSerializer,
 )
 from .project import (
     ProjectSerializer,
@@ -49,6 +50,8 @@ from .project import (
     ProjectPublicMemberSerializer,
     ProjectMemberRoleSerializer,
     ProjectMemberPreferenceSerializer,
+    ProjectLabelSerializer,
+    ProjectSubscriberSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import IssueViewSerializer, ViewIssueListSerializer
@@ -202,6 +205,7 @@ __all__ = [
     "ProjectMemberAdminSerializer",
     "ProjectPublicMemberSerializer",
     "ProjectMemberRoleSerializer",
+    "ProjectSubscriberSerializer",
     # State serializers
     "StateSerializer",
     "StateLiteSerializer",

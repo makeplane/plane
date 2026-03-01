@@ -21,15 +21,21 @@ import type { TSupportedFilterForUpdate } from "@plane/types";
 import { Row } from "@plane/ui";
 // icons
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
-import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import type { ICycleIssuesFilter } from "@/store/issue/cycle";
-import type { IModuleIssuesFilter } from "@/store/issue/module";
-import type { IProjectIssuesFilter } from "@/store/issue/project";
-import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { IProjectEpicsFilter } from "@/store/work-items/epic";
+import type { ICycleIssuesFilter } from "@/store/work-items/cycle";
+import type { IModuleIssuesFilter } from "@/store/work-items/module";
+import type { IProjectIssuesFilter } from "@/store/work-items/project";
+import type { IProjectViewIssuesFilter } from "@/store/work-items/project-views";
 import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "./dropdowns";
+import type { IWorkspaceIssuesFilter } from "@/store/work-items/workspace";
 
 interface ICalendarHeader {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IWorkspaceIssuesFilter;
   updateFilters?: (
     projectId: string,
     filterType: TSupportedFilterTypeForUpdate,

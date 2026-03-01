@@ -53,7 +53,7 @@ class PageType:
     id: strawberry.ID
     parent: Optional[strawberry.ID]
     name: str
-    description: Optional[JSON]
+    description_json: Optional[JSON]
     description_html: Optional[str]
     description_stripped: Optional[str]
     description_binary: Optional[str]
@@ -82,6 +82,10 @@ class PageType:
     external_source: Optional[str]
     # teams: list[strawberry.ID]
     # labels: list[strawberry.ID]
+
+    @strawberry.field
+    def description(self) -> Optional[JSON]:
+        return self.description_json
 
     @strawberry.field
     def workspace(self) -> int:

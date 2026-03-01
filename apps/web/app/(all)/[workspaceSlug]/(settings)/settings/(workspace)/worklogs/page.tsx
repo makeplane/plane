@@ -21,8 +21,8 @@ import { PageHead } from "@/components/core/page-title";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { WorkspaceWorklogRoot, WorkspaceWorklogsUpgrade } from "@/plane-web/components/worklogs";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { WorkspaceWorklogRoot, WorkspaceWorklogsUpgrade } from "@/components/worklogs";
 import { useFlag } from "@/plane-web/hooks/store";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // local imports

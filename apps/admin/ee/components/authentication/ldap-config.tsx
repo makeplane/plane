@@ -17,7 +17,7 @@ import Link from "next/link";
 import { Settings2 } from "lucide-react";
 // plane internal packages
 import type { TInstanceEnterpriseAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // hooks
@@ -55,13 +55,12 @@ export const LDAPConfiguration: React.FC<Props> = observer((props) => {
           <Link href="/authentication/ldap" className={cn(getButtonStyling("link", "base"), "font-medium")}>
             Edit
           </Link>
-          <ToggleSwitch
+          <Switch
             value={Boolean(parseInt(enableLDAPConfig))}
             onChange={() => {
               const newEnableLDAPConfig = Boolean(parseInt(enableLDAPConfig)) === true ? "0" : "1";
               updateConfig("IS_LDAP_ENABLED", newEnableLDAPConfig);
             }}
-            size="sm"
             disabled={disabled}
           />
         </div>

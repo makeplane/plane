@@ -15,13 +15,18 @@
 import { Outlet } from "react-router";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
-import { ProjectIssuesHeader } from "./header";
-import { ProjectIssuesMobileHeader } from "./mobile-header";
+import { ProjectWorkItemsHeader } from "./header/root";
+import { ProjectWorkItemsMobileHeader } from "./header/mobile";
+import type { Route } from "./+types/layout";
 
-export default function ProjectIssuesLayout() {
+export default function ProjectWorkItemsLayout(props: Route.ComponentProps) {
+  const { workspaceSlug } = props.params;
   return (
     <>
-      <AppHeader header={<ProjectIssuesHeader />} mobileHeader={<ProjectIssuesMobileHeader />} />
+      <AppHeader
+        header={<ProjectWorkItemsHeader workspaceSlug={workspaceSlug} />}
+        mobileHeader={<ProjectWorkItemsMobileHeader />}
+      />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

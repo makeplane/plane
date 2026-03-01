@@ -20,7 +20,14 @@ import { useParams } from "next/navigation";
 import { Paperclip } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
+import {
+  LinkIcon,
+  StartDatePropertyIcon,
+  ViewsIcon,
+  DueDatePropertyIcon,
+  CustomersIcon,
+  CustomerRequestIcon,
+} from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
@@ -49,11 +56,10 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { WorkItemLayoutAdditionalProperties } from "@/plane-web/components/issues/issue-layouts/additional-properties";
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
+import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -67,30 +73,31 @@ export interface IIssueProperties {
 
 export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
   const { issue, updateIssue, displayProperties, isReadOnly, className, isEpic = false } = props;
-  // i18n
+  // router
+  const router = useAppRouter();
+  const { workspaceSlug, projectId: projectIdParam } = useParams();
+  const projectId = projectIdParam?.toString() ?? issue.project_id;
+  // plane hooks
   const { t } = useTranslation();
   // store hooks
+  const storeType = useIssueStoreType();
   const { getProjectById } = useProject();
   const { labelMap } = useLabel();
-  const storeType = useIssueStoreType();
   const {
-    issues: { changeModulesInIssue },
-  } = useIssues(storeType);
-  const {
-    issues: { addCycleToIssue, removeCycleFromIssue },
+    issues: { addCycleToIssue, removeCycleFromIssue, changeModulesInIssue },
   } = useIssues(storeType);
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
   const projectDetails = getProjectById(issue.project_id);
-
-  // router
-  const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
-
+  const {
+    isCustomersFeatureEnabled,
+    workItems: { getCustomerCountByWorkItemId },
+  } = useCustomers();
   // derived values
   const stateDetails = getStateById(issue.state_id);
   const subIssueCount = issue?.sub_issues_count ?? 0;
+  const customerCount = getCustomerCountByWorkItemId(issue.id);
 
   const issueOperations = useMemo(
     () => ({
@@ -478,8 +485,54 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         </Tooltip>
       </WithDisplayPropertiesHOC>
 
-      {/* Additional Properties */}
-      <WorkItemLayoutAdditionalProperties displayProperties={displayProperties} issue={issue} />
+      {/* Customer Request Count */}
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey="customer_request_count"
+        shouldRenderProperty={(properties) =>
+          !!properties.customer_request_count && !!issue.customer_request_ids?.length && !!isCustomersFeatureEnabled
+        }
+      >
+        <Tooltip
+          tooltipHeading={t("issue.display.properties.customer_request_count")}
+          tooltipContent={`${issue.customer_request_ids?.length ?? 0}`}
+          isMobile={isMobile}
+          renderByDefault={false}
+        >
+          <div
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-subtle-1 px-2.5 py-1"
+            onFocus={handleEventPropagation}
+            onClick={handleEventPropagation}
+          >
+            <CustomerRequestIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <div className="text-11">{issue.customer_request_ids?.length ?? 0}</div>
+          </div>
+        </Tooltip>
+      </WithDisplayPropertiesHOC>
+      {/* Customer Count */}
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey="customer_count"
+        shouldRenderProperty={(properties) =>
+          !!properties.customer_count && !!customerCount && !!isCustomersFeatureEnabled
+        }
+      >
+        <Tooltip
+          tooltipHeading={t("issue.display.properties.customer_count")}
+          tooltipContent={`${customerCount}`}
+          isMobile={isMobile}
+          renderByDefault={false}
+        >
+          <div
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-subtle-1 px-2.5 py-1"
+            onFocus={handleEventPropagation}
+            onClick={handleEventPropagation}
+          >
+            <CustomersIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <div className="text-11">{customerCount}</div>
+          </div>
+        </Tooltip>
+      </WithDisplayPropertiesHOC>
 
       {/* label */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">

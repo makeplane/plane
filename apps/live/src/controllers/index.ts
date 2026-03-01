@@ -20,6 +20,8 @@ import { HealthController } from "./health.controller";
 import { IframelyController } from "./iframely.controller";
 import { LiveDocumentController } from "./live-document.controller";
 import { MarkdownConversionController } from "./markdown-conversion.controller";
+import { PdfExportController } from "./pdf-export.controller";
+import { VersionDiffController } from "./version-diff.controller";
 
 export const CONTROLLERS = [
   // Core system controllers (health checks, status endpoints)
@@ -29,10 +31,13 @@ export const CONTROLLERS = [
   // Document management controllers
   DocumentController,
   LiveDocumentController,
+  PdfExportController,
   // Content service
   ContentController,
   IframelyController,
   MarkdownConversionController,
+  // Version diff (for page version history)
+  VersionDiffController,
   // websocket
   CollaborationController,
   BroadcastController,

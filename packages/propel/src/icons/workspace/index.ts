@@ -20,3 +20,4 @@ export * from "./inbox-icon";
 export * from "./multiple-sticky-icon";
 export * from "./project-icon";
 export * from "./your-work-icon";
+export * from "./light-icon";

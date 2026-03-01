@@ -1,0 +1,60 @@
+{
+  "name": "flux",
+  "version": "2.3.0",
+  "private": true,
+  "description": "WebSocket flux service for horizontal scaling with Redis pub/sub",
+  "license": "AGPL-3.0",
+  "author": "Plane Software Inc.",
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./consumer": "./dist/consumer.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch --onSuccess \"node --env-file=.env .\"",
+    "dev:consumer": "tsdown --watch --onSuccess \"node --env-file=.env ./dist/consumer.mjs\"",
+    "start": "node --env-file=.env .",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/",
+    "check:types": "tsc --noEmit",
+    "check:format": "oxfmt . --check",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix",
+    "fix:format": "oxfmt . --write",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "dependencies": {
+    "@dotenvx/dotenvx": "catalog:",
+    "@effect/opentelemetry": "0.61.0",
+    "@effect/platform": "0.94.2",
+    "@effect/platform-node": "0.104.1",
+    "@opentelemetry/api": "1.9.0",
+    "@opentelemetry/context-async-hooks": "2.5.1",
+    "@opentelemetry/core": "2.5.1",
+    "@opentelemetry/resources": "2.5.1",
+    "@opentelemetry/sdk-logs": "0.211.0",
+    "@opentelemetry/sdk-trace-base": "2.5.1",
+    "@opentelemetry/sdk-trace-node": "2.5.1",
+    "@opentelemetry/sdk-trace-web": "2.5.1",
+    "@opentelemetry/semantic-conventions": "1.39.0",
+    "@sentry/node": "catalog:",
+    "@sentry/opentelemetry": "10.38.0",
+    "@socket.io/redis-adapter": "8.3.0",
+    "@socket.io/redis-emitter": "5.1.0",
+    "amqplib": "0.10.5",
+    "axios": "catalog:",
+    "dd-trace": "^5.45.0",
+    "effect": "3.19.16",
+    "ioredis": "5.9.3",
+    "socket.io": "4.8.3"
+  },
+  "devDependencies": {
+    "@plane/typescript-config": "workspace:*",
+    "@types/amqplib": "catalog:",
+    "@types/node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  }
+}

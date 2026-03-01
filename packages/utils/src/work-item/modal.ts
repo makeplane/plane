@@ -13,8 +13,17 @@
 
 import { set } from "lodash-es";
 // plane imports
-import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
-import type { IPartialProject, ISearchIssueResponse, IState, TIssue } from "@plane/types";
+import { DEFAULT_WORK_ITEM_FORM_VALUES, ISSUE_PRIORITIES } from "@plane/constants";
+import type {
+  IPartialProject,
+  IProject,
+  ISearchIssueResponse,
+  IState,
+  IUser,
+  TIssue,
+  TIssuePriorities,
+} from "@plane/types";
+import { renderFormattedPayloadDate } from "../datetime";
 
 export const getUpdateFormDataForReset = (projectId: string | null | undefined, formData: Partial<TIssue>) => ({
   ...DEFAULT_WORK_ITEM_FORM_VALUES,
@@ -57,4 +66,86 @@ export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { 
   }
 
   return changedFields as Partial<TIssue>;
+}
+
+export function parseQueryParamsToFormData(args: {
+  currentUserId: string;
+  projects: Pick<IProject, "id" | "identifier">[];
+  queryParams: Record<string, unknown>;
+  users: Pick<IUser, "id" | "display_name">[];
+}): Partial<TIssue> {
+  const { currentUserId, projects, queryParams, users } = args;
+  const formData: Partial<TIssue> = {};
+  try {
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (typeof value !== "string") return;
+      switch (key) {
+        case "description":
+          formData.description_html = value;
+          break;
+        case "title":
+          formData.name = value;
+          break;
+        case "project": {
+          const project = projects.find((p) => p.identifier.toLowerCase() === value.toLowerCase() || p.id === value);
+          if (project) {
+            formData.project_id = project.id;
+          }
+          break;
+        }
+        case "priority": {
+          const priority = ISSUE_PRIORITIES.find(
+            (p) => p.key.toLowerCase() === (value.toLowerCase() as TIssuePriorities)
+          );
+          if (priority) {
+            formData.priority = priority.key;
+          }
+          break;
+        }
+        case "assignee": {
+          const userIds = value.split(",");
+          const assigneeIds: string[] = [];
+          userIds.forEach((userId) => {
+            if (userId === "me" && !assigneeIds.includes(currentUserId)) {
+              assigneeIds.push(currentUserId);
+            }
+
+            const user = users.find((u) => u.display_name.toLowerCase() === userId.toLowerCase() || u.id === userId);
+            if (user && !assigneeIds.includes(user.id)) {
+              assigneeIds.push(user.id);
+            }
+          });
+          if (assigneeIds.length > 0) {
+            formData.assignee_ids = assigneeIds;
+          }
+          break;
+        }
+        case "start_date": {
+          const normalizedDate = new Date(value);
+          if (!Number.isNaN(normalizedDate.getTime())) {
+            const formattedStartDate = renderFormattedPayloadDate(normalizedDate);
+            if (formattedStartDate) {
+              formData.start_date = formattedStartDate;
+            }
+          }
+          break;
+        }
+        case "due_date": {
+          const normalizedDate = new Date(value);
+          if (!Number.isNaN(normalizedDate.getTime())) {
+            const formattedTargetDate = renderFormattedPayloadDate(normalizedDate);
+            if (formattedTargetDate) {
+              formData.target_date = formattedTargetDate;
+            }
+          }
+          break;
+        }
+        default:
+          break;
+      }
+    });
+  } catch {
+    throw new Error("Failed to parse query params to form data");
+  }
+  return formData;
 }

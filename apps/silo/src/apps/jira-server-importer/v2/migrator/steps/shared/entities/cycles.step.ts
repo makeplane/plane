@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Sprint } from "jira.js/out/agile/models";
+import type { Sprint } from "jira.js/out/agile/models/index.js";
 import { v4 as uuid } from "uuid";
 import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { JiraConfig, JiraSprint } from "@plane/etl/jira-server";
@@ -30,6 +30,9 @@ import type {
 } from "@/apps/jira-server-importer/v2/types";
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createAllCyclesV2 } from "@/etl/migrator/cycles.migrator";
+import { extractErrorMetadata } from "@/helpers/errors";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 
 /**
  * Jira Server Sprints Step (Cycles in Plane)
@@ -75,7 +78,7 @@ export class JiraCyclesStep implements IStep {
       const transformed = this.transform(jobContext.job, pulled.items);
       const pushed = await this.push(jobContext, transformed, storage);
 
-      // Determine next step: more sprints? next board? done?
+      // Determine next recordType: more sprints? next board? done?
       return this.determineNextContext(input, pulled, pushed);
     } catch (error) {
       logger.error(`[${jobContext.job.id}] [${this.name}] Step failed`, {
@@ -134,24 +137,50 @@ export class JiraCyclesStep implements IStep {
    * Pull sprints from Jira Server for a specific board
    */
   private async pull(jobCtx: TJobContext, boardId: number, startAt: number) {
-    const result = await pullSprintsForBoardV2(
-      {
-        client: jobCtx.sourceClient,
+    try {
+      const result = await pullSprintsForBoardV2(
+        {
+          client: jobCtx.sourceClient,
+          startAt,
+          maxResults: this.PAGE_SIZE,
+        },
+        boardId
+      );
+
+      executionLog.collect(jobCtx.job.id, {
+        entity_type: EExecutionLogEntityType.CYCLE,
+        phase: "PULL_SPRINTS",
+        level: EExecutionLogLevel.INFO,
+        related_entity: boardId.toString(),
+        metrics: {
+          total: result.total,
+          pulled: result.items.length,
+        },
+      });
+
+      logger.info(`[${jobCtx.job.id}] [${this.name}] Pulled sprints`, {
+        jobId: jobCtx.job.id,
+        boardId,
+        count: result.items.length,
+        hasMore: result.hasMore,
         startAt,
-        maxResults: this.PAGE_SIZE,
-      },
-      boardId
-    );
+      });
 
-    logger.info(`[${jobCtx.job.id}] [${this.name}] Pulled sprints`, {
-      jobId: jobCtx.job.id,
-      boardId,
-      count: result.items.length,
-      hasMore: result.hasMore,
-      startAt,
-    });
+      return result;
+    } catch (error) {
+      logger.error(`[${jobCtx.job.id}][${this.name}] Unable to pull sprints from Jira`, error);
 
-    return result;
+      executionLog.collect(jobCtx.job.id, {
+        entity_type: EExecutionLogEntityType.CYCLE,
+        phase: "PULL_SPRINTS",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        related_entity: boardId.toString(),
+        is_fatal: true,
+      });
+
+      throw error;
+    }
   }
 
   /**
@@ -188,31 +217,48 @@ export class JiraCyclesStep implements IStep {
 
     const { job, planeClient } = jobContext;
 
-    // Create cycles in Plane (without issues - issues handled in separate step)
-    const created = await createAllCyclesV2(
-      job.id,
-      cycles as ExCycle[],
-      planeClient,
-      job.workspace_slug,
-      job.project_id
-    );
+    try {
+      // Create cycles in Plane (without issues - issues handled in separate step)
+      // Summary is collected inside createAllCyclesV2
+      const created = await createAllCyclesV2(
+        job.id,
+        cycles as ExCycle[],
+        planeClient,
+        job.workspace_slug,
+        job.project_id
+      );
 
-    logger.info(`[${job.id}] [${this.name}] Pushed cycles`, {
-      jobId: job.id,
-      count: created?.length ?? 0,
-    });
+      logger.info(`[${job.id}] [${this.name}] Pushed cycles`, {
+        jobId: job.id,
+        count: created?.length ?? 0,
+      });
 
-    // Store mappings: sprint_external_id -> cycle_id
-    const mappings = created
-      ?.map((c) => ({
-        externalId: c.external_id,
-        planeId: c.id,
-      }))
-      .filter((m) => m.externalId && m.planeId);
+      // Store mappings: sprint_external_id -> cycle_id
+      const mappings = created
+        ?.map((c) => ({
+          externalId: c.external_id,
+          planeId: c.id,
+        }))
+        .filter((m) => m.externalId && m.planeId);
 
-    await storage.storeMapping(job.id, this.name, mappings ?? []);
+      await storage.storeMapping(job.id, this.name, mappings ?? []);
 
-    return created?.length ?? 0;
+      return created?.length ?? 0;
+    } catch (error) {
+      logger.error(`[${job.id}][${this.name}] Unable to push cycles to Plane`, error);
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.CYCLE,
+        phase: "PUSH_CYCLES",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        additional_data: {
+          attemptedCount: cycles.length,
+        },
+      });
+
+      throw error;
+    }
   }
 
   /**
@@ -236,7 +282,7 @@ export class JiraCyclesStep implements IStep {
     if (pulled.hasMore) {
       return {
         pageCtx: {
-          startAt: sprintsStartAt + this.PAGE_SIZE,
+          startAt: sprintsStartAt + pulled.items.length,
           hasMore: true,
           totalProcessed: newTotalProcessed,
         },
@@ -247,7 +293,7 @@ export class JiraCyclesStep implements IStep {
         },
         state: {
           currentBoardIndex,
-          sprintsStartAt: sprintsStartAt + this.PAGE_SIZE,
+          sprintsStartAt: sprintsStartAt + pulled.items.length,
         },
       };
     }

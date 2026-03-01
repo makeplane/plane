@@ -11,13 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Sortable } from "./sortable";
 
 type StoryItem = { id: string; name: string };
 
-const meta: Meta<typeof Sortable<StoryItem>> = {
+const meta = {
   title: "Sortable",
   component: Sortable,
   args: {
@@ -36,7 +35,7 @@ const meta: Meta<typeof Sortable<StoryItem>> = {
     onChange: (data) => console.log(data.map(({ id }) => id)),
     keyExtractor: (item) => item.id,
   },
-};
+} satisfies Meta<typeof Sortable<StoryItem>>;
 
 export default meta;
 

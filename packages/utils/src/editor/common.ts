@@ -122,6 +122,9 @@ export enum ADDITIONAL_EXTENSIONS {
   PAGE_LINK_COMPONENT = "pageLinkComponent",
   DRAWIO = "drawIoComponent",
   AI_BLOCK = "aiBlockComponent",
+  COLUMN = "column",
+  COLUMN_LIST = "columnList",
+  MULTI_COLUMN = "multiColumn",
 }
 
 export enum PI_CHAT_EXTENSIONS {

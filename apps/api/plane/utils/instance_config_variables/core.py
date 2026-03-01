@@ -239,17 +239,17 @@ unsplash_config_variables = [
     },
 ]
 
-intercom_config_variables = [
+chat_support_config_variables = [
     {
-        "key": "IS_INTERCOM_ENABLED",
-        "value": os.environ.get("IS_INTERCOM_ENABLED", "1"),
-        "category": "INTERCOM",
+        "key": "IS_CHAT_SUPPORT_ENABLED",
+        "value": os.environ.get("IS_CHAT_SUPPORT_ENABLED", "1"),
+        "category": "CHAT_SUPPORT",
         "is_encrypted": False,
     },
     {
-        "key": "INTERCOM_APP_ID",
-        "value": os.environ.get("INTERCOM_APP_ID", ""),
-        "category": "INTERCOM",
+        "key": "CHAT_SUPPORT_APP_ID",
+        "value": os.environ.get("CHAT_SUPPORT_APP_ID", ""),
+        "category": "CHAT_SUPPORT",
         "is_encrypted": False,
     },
 ]
@@ -264,5 +264,5 @@ core_config_variables = [
     *smtp_config_variables,
     *llm_config_variables,
     *unsplash_config_variables,
-    *intercom_config_variables,
+    *chat_support_config_variables,
 ]

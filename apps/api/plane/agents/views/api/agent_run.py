@@ -19,11 +19,21 @@ from plane.app.permissions import WorkSpaceAdminPermission
 from plane.db.models import Workspace, BotTypeEnum, User, IssueComment
 from plane.authentication.models.oauth import Application
 
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import READ_SCOPE, WRITE_SCOPE, AGENT_RUNS_READ_SCOPE, AGENT_RUNS_WRITE_SCOPE
+
 
 class AgentRunAPIViewSet(BaseViewSet):
     serializer_class = AgentRunAPISerializer
     model = AgentRun
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [AGENT_RUNS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [AGENT_RUNS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [AGENT_RUNS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [AGENT_RUNS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [AGENT_RUNS_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         queryset = super().get_queryset().filter(workspace__slug=self.kwargs.get("slug"))

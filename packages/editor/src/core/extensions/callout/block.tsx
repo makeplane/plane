@@ -12,10 +12,13 @@
  */
 
 import type { NodeViewProps } from "@tiptap/react";
-import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
-import { useState } from "react";
+import { NodeViewContent, useEditorState } from "@tiptap/react";
+import { useCallback, useState } from "react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 // local components
 import { CalloutBlockColorSelector } from "./color-selector";
 import { CalloutBlockLogoSelector } from "./logo-selector";
@@ -33,26 +36,48 @@ export type CustomCalloutNodeViewProps = NodeViewProps & {
 };
 
 export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
-  const { editor, node, updateAttributes } = props;
+  const { decorations, editor, node, updateAttributes } = props;
+
+  const isEmojiPickerOpen = useEditorState({
+    editor,
+    selector: (ctx) => {
+      const calloutStorage = ctx.editor.storage[CORE_EXTENSIONS.CALLOUT];
+      const id = node.attrs.id;
+      if (!id) return false;
+      return calloutStorage?.openedLogoPickerId === id;
+    },
+  });
+
   // states
-  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+
+  // callbacks
+  const handleEmojiPickerOpen = useCallback(
+    (val: boolean) => {
+      const calloutStorage = editor.storage[CORE_EXTENSIONS.CALLOUT];
+      const id = node.attrs.id;
+      if (!calloutStorage) return;
+      if (val && !id) return;
+      calloutStorage.openedLogoPickerId = val ? id : null;
+      editor.view.dispatch(editor.state.tr);
+    },
+    [editor, node.attrs.id]
+  );
+
   // derived values
   const activeBackgroundColor = COLORS_LIST.find((c) => node.attrs["data-background"] === c.key)?.backgroundColor;
 
   return (
-    <NodeViewWrapper
-      className="editor-callout-component group/callout-node relative bg-layer-3 rounded-lg text-primary p-4 my-2 flex items-start gap-4 transition-colors duration-500 break-words"
-      style={{
-        backgroundColor: activeBackgroundColor,
-      }}
+    <YChangeNodeViewWrapper
+      decorations={decorations}
+      className="callout-component editor-callout-component group/callout-node relative bg-layer-3 rounded-lg text-primary p-4 my-2 flex items-start gap-4 transition-colors duration-500 break-words min-w-0"
+      style={{ backgroundColor: activeBackgroundColor }}
     >
       <CalloutBlockLogoSelector
-        key={node.attrs["id"]}
         blockAttributes={node.attrs}
         disabled={!editor.isEditable}
         isOpen={isEmojiPickerOpen}
-        handleOpen={(val) => setIsEmojiPickerOpen(val)}
+        handleOpen={handleEmojiPickerOpen}
         updateAttributes={updateAttributes}
       />
       <CalloutBlockColorSelector
@@ -66,7 +91,7 @@ export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
           updateStoredBackgroundColor(val);
         }}
       />
-      <NodeViewContent as="div" className="w-full break-words" />
-    </NodeViewWrapper>
+      <NodeViewContent as="div" className="w-full break-words min-w-0" />
+    </YChangeNodeViewWrapper>
   );
 }

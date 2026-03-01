@@ -20,7 +20,7 @@ import { useLocalStorage } from "@plane/hooks";
 // hooks
 import { ResizableSidebar } from "@/components/sidebar/resizable-sidebar";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { PiSidebar } from "@/plane-web/components/pi-chat/sidebar";
+import { PiSidebar } from "@/components/pi-chat/sidebar";
 
 export const PiAppSidebar = observer(function PiAppSidebar() {
   // store hooks

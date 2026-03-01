@@ -90,9 +90,9 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
             <span className="text-14">{t("lead")}</span>
           </div>
           <div className="flex w-3/5 items-center rounded-xs">
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2.5 truncate">
               <Avatar name={cycleOwnerDetails?.display_name} src={getFileURL(cycleOwnerDetails?.avatar_url ?? "")} />
-              <span className="text-13 text-secondary">{cycleOwnerDetails?.display_name}</span>
+              <span className="text-13 text-secondary truncate">{cycleOwnerDetails?.display_name}</span>
             </div>
           </div>
         </div>

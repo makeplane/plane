@@ -1,1 +1,6 @@
-eslint.config.mjs   @lifeiscontent
+eslint.config.mjs   @sriramveeraghanta @lifeiscontent
+apps/silo/          @Prashant-Surya
+apps/api/           @dheeru0198 @pablohashescobar
+apps/pi/            @sunder-ch
+apps/flux/          @sriramveeraghanta
+deployments/        @mguptahub @pratapalakshmi

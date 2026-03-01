@@ -18,9 +18,25 @@ from typing import Optional
 from typing import Tuple
 
 from pi import logger
+from pi import settings
+from pi.app.utils.encryption import decrypt_from_string
 from pi.core.db.plane import PlaneDBPool
+from pi.core.db.plane import PlaneDBSync
 
 log = logger.getChild("helpers.db_queries")
+
+# Cache for OAuth credentials to avoid repeated database queries
+_oauth_credentials_cache: Optional[Tuple[Optional[str], Optional[str]]] = None
+_oauth_cache_initialized: bool = False
+
+
+def is_placeholder_id(entity_id: str) -> bool:
+    """Check if an entity ID is a placeholder (not yet resolved from execution).
+
+    Placeholders have the format: <id of entity_type: entity_name>
+    Returns True if the ID is a placeholder, False otherwise.
+    """
+    return bool(entity_id and isinstance(entity_id, str) and entity_id.startswith("<id of"))
 
 
 async def get_issue_details(issue_id: str) -> Optional[Dict[str, Any]]:
@@ -1103,6 +1119,30 @@ async def get_workspace_plans_batch(workspace_ids: List[str]) -> Dict[str, str]:
         return {}
 
 
+async def get_all_workspace_ids() -> List[str]:
+    """
+    Get all workspace IDs from the Plane database.
+
+    Returns:
+        List of workspace IDs (as strings)
+    """
+    query = """
+    SELECT id::text as workspace_id
+    FROM workspaces
+    WHERE deleted_at IS NULL
+    ORDER BY created_at DESC
+    """
+
+    try:
+        results = await PlaneDBPool.fetch(query)
+        workspace_ids = [row["workspace_id"] for row in results]
+        log.info(f"Fetched {len(workspace_ids)} workspace IDs")
+        return workspace_ids
+    except Exception as e:
+        log.error(f"Error fetching all workspace IDs: {e}")
+        return []
+
+
 async def search_workitem_by_identifier(identifier: str, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """
     Search for a work item by its unique identifier or UUID.
@@ -1365,6 +1405,11 @@ async def get_workitem_details_for_artifact(workitem_id: str) -> Optional[Dict[s
     """
 
     try:
+        # Skip database query if workitem_id is a placeholder (not yet resolved)
+        if is_placeholder_id(workitem_id):
+            log.debug(f"Skipping database query for placeholder workitem_id: {workitem_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (workitem_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -1416,6 +1461,11 @@ async def get_project_details_for_artifact(project_id: str) -> Optional[Dict[str
     """
 
     try:
+        # Skip database query if project_id is a placeholder (not yet resolved)
+        if is_placeholder_id(project_id):
+            log.debug(f"Skipping database query for placeholder project_id: {project_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (project_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -1451,6 +1501,11 @@ async def get_cycle_details_for_artifact(cycle_id: str) -> Optional[Dict[str, An
     """
 
     try:
+        # Skip database query if cycle_id is a placeholder (not yet resolved)
+        if is_placeholder_id(cycle_id):
+            log.debug(f"Skipping database query for placeholder cycle_id: {cycle_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (cycle_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -2085,6 +2140,11 @@ async def get_module_details_for_artifact(module_id: str) -> Optional[Dict[str, 
     """
 
     try:
+        # Skip database query if module_id is a placeholder (not yet resolved)
+        if is_placeholder_id(module_id):
+            log.debug(f"Skipping database query for placeholder module_id: {module_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (module_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -2207,6 +2267,11 @@ async def get_comment_details_for_artifact(comment_id: str) -> Optional[Dict[str
     """
 
     try:
+        # Skip database query if comment_id is a placeholder (not yet resolved)
+        if is_placeholder_id(comment_id):
+            log.debug(f"Skipping database query for placeholder comment_id: {comment_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (comment_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -2222,7 +2287,8 @@ async def get_page_content(page_id: str) -> Optional[Dict[str, Any]]:
         p.description_stripped,
         p.description_html
     FROM pages p
-    WHERE p.id = $1;
+    WHERE p.id = $1
+    AND p.deleted_at IS NULL;
     """
     try:
         result = await PlaneDBPool.fetchrow(query, (page_id,))
@@ -2268,6 +2334,11 @@ async def get_page_details_for_artifact(page_id: str) -> Optional[Dict[str, Any]
     """
 
     try:
+        # Skip database query if page_id is a placeholder (not yet resolved)
+        if is_placeholder_id(page_id):
+            log.debug(f"Skipping database query for placeholder page_id: {page_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (page_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -2301,6 +2372,11 @@ async def get_state_details_for_artifact(state_id: str) -> Optional[Dict[str, An
     WHERE s.id = $1 AND s.deleted_at IS NULL
     """
     try:
+        # Skip database query if state_id is a placeholder (not yet resolved)
+        if is_placeholder_id(state_id):
+            log.debug(f"Skipping database query for placeholder state_id: {state_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (state_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -2332,8 +2408,90 @@ async def get_label_details_for_artifact(label_id: str) -> Optional[Dict[str, An
     WHERE l.id = $1 AND l.deleted_at IS NULL
     """
     try:
+        # Skip database query if label_id is a placeholder (not yet resolved)
+        if is_placeholder_id(label_id):
+            log.debug(f"Skipping database query for placeholder label_id: {label_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (label_id,))
         return dict(result) if result else None
     except Exception as e:
         log.error(f"Error fetching label details for {label_id}: {e}")
         return None
+
+
+def get_oauth_credentials_sync() -> Tuple[Optional[str], Optional[str]]:
+    """
+    Get OAuth credentials with caching (synchronous, for module-level use).
+
+    Loads from application_secrets table where plain text secrets are stored encrypted.
+
+    Returns:
+        Tuple[Optional[str], Optional[str]]: (client_id, client_secret)
+    """
+    global _oauth_credentials_cache, _oauth_cache_initialized
+
+    # Return cached value if already initialized
+    if _oauth_cache_initialized:
+        if _oauth_credentials_cache:
+            return _oauth_credentials_cache
+        return (None, None)
+
+    # Generate keys based on OAuth slug
+    # Key format: x-{slug}-client_id where slug has underscores instead of hyphens
+    slug_key = settings.plane_api.PI_OAUTH_SLUG.replace("-", "_")
+    client_id_key = f"x-{slug_key}-client_id"
+    client_secret_key = f"x-{slug_key}-client_secret"
+
+    # Load from application_secrets table
+    query = """
+    SELECT key, value, is_secured
+    FROM application_secrets
+    WHERE key IN (%s, %s)
+    """
+    try:
+        results = PlaneDBSync.fetch(query, (client_id_key, client_secret_key))
+
+        client_id = None
+        client_secret = None
+
+        if results:
+            for row in results:
+                key = row["key"]
+                value = str(row["value"]) if row["value"] is not None else None
+                is_secured = row.get("is_secured", False)
+
+                if key == client_id_key:
+                    client_id = value
+                elif key == client_secret_key:
+                    # Decrypt the client secret if it's secured
+                    if is_secured and value:
+                        try:
+                            client_secret = decrypt_from_string(value)
+                        except Exception as e:
+                            log.error(f"Failed to decrypt client_secret for slug {settings.plane_api.PI_OAUTH_SLUG}: {e}")
+                            client_secret = None
+                    else:
+                        # If not secured, use the value as-is
+                        client_secret = value
+                        log.debug(f"Loaded unencrypted client_secret for slug: {settings.plane_api.PI_OAUTH_SLUG}")
+
+            if client_id and client_secret:
+                _oauth_credentials_cache = (client_id, client_secret)
+                log.info(f"Loaded OAuth credentials for slug: {settings.plane_api.PI_OAUTH_SLUG}")
+            else:
+                log.warning(f"Incomplete OAuth credentials found for slug: {settings.plane_api.PI_OAUTH_SLUG}")
+        else:
+            log.warning(f"No OAuth credentials found in application_secrets for keys: {client_id_key}, {client_secret_key}")
+    except Exception as e:
+        log.warning(f"Could not load OAuth credentials from database: {e}")
+
+    _oauth_cache_initialized = True
+    return _oauth_credentials_cache or (None, None)
+
+
+def clear_oauth_credentials_cache() -> None:
+    """Clear cached OAuth credentials (useful for testing or credential rotation)."""
+    global _oauth_credentials_cache, _oauth_cache_initialized
+    _oauth_credentials_cache = None
+    _oauth_cache_initialized = False

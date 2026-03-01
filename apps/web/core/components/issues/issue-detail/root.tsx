@@ -29,6 +29,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 // local components
 import { IssuePeekOverview } from "../peek-overview";
 import { IssueMainContent } from "./main-content";
@@ -56,6 +57,12 @@ export type TIssueOperations = {
     addModuleIds: string[],
     removeModuleIds: string[]
   ) => Promise<void>;
+  updateWorkItemMilestone?: (
+    workspaceSlug: string,
+    projectId: string,
+    workItemId: string,
+    milestoneId: string | undefined
+  ) => Promise<void>;
 };
 
 export type TIssueDetailRoot = {
@@ -82,12 +89,26 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
     removeIssueFromCycle,
     changeModulesInIssue,
     removeIssueFromModule,
+    fetchActivities,
   } = useIssueDetail();
   const {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { allowPermissions } = useUserPermissions();
   const { issueDetailSidebarCollapsed } = useAppTheme();
+  const {
+    workItems: { updateWorkItemMilestone },
+  } = useMilestones();
+  // derived values
+  const issue = getIssueById(issueId);
+  const previousMilestoneId = issue?.milestone_id;
+  // checking if issue is editable, based on user role
+  const isEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -205,31 +226,33 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
         const promise = await changeModulesInIssue(workspaceSlug, projectId, issueId, addModuleIds, removeModuleIds);
         return promise;
       },
+      updateWorkItemMilestone: async (
+        workspaceSlug: string,
+        projectId: string,
+        workItemId: string,
+        milestoneId: string | undefined
+      ) => {
+        await updateWorkItemMilestone(workspaceSlug, projectId, workItemId, previousMilestoneId, milestoneId);
+        void fetchActivities(workspaceSlug, projectId, workItemId);
+      },
     }),
     [
-      is_archived,
-      fetchIssue,
-      updateIssue,
-      removeIssue,
-      archiveIssue,
-      removeArchivedIssue,
-      addIssueToCycle,
       addCycleToIssue,
-      removeIssueFromCycle,
+      addIssueToCycle,
+      archiveIssue,
       changeModulesInIssue,
+      fetchActivities,
+      fetchIssue,
+      is_archived,
+      previousMilestoneId,
+      removeArchivedIssue,
+      removeIssue,
+      removeIssueFromCycle,
       removeIssueFromModule,
       t,
+      updateIssue,
+      updateWorkItemMilestone,
     ]
-  );
-
-  // issue details
-  const issue = getIssueById(issueId);
-  // checking if issue is editable, based on user role
-  const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
   );
 
   return (

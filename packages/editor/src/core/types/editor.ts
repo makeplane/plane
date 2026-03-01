@@ -11,8 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Content, Extensions, JSONContent, RawCommands } from "@tiptap/core";
-import type { MarkType, NodeType } from "@tiptap/pm/model";
+import type { Content, Editor, Extensions, JSONContent, RawCommands } from "@tiptap/core";
+import type { Node as ProseMirrorNode, Fragment, MarkType, NodeType } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
 import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
@@ -162,7 +162,7 @@ export type CoreEditorRefApi = {
   scrollSummary: (marking: IMarking) => void;
 
   scrollToNodeViaDOMCoordinates: ({ pos, behavior }: { pos?: number; behavior?: ScrollBehavior }) => void;
-  setEditorValue: (content: string, emitUpdate?: boolean) => void;
+  setEditorValue: (content: Content | Fragment | ProseMirrorNode, emitUpdate?: boolean) => void;
   setEditorValueAtCursorPosition: (content: string) => void;
   setFocusAtPosition: (position: number) => void;
   setProviderDocument: (value: Uint8Array) => void;
@@ -198,7 +198,7 @@ export type IEditorProps = {
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
   onEditorFocus?: () => void;
-  onChange?: (json: object, html: string, { isMigrationUpdate }?: { isMigrationUpdate?: boolean }) => void;
+  onChange?: (json: object, html: string, options?: { isMigrationUpdate?: boolean }) => void;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, isEmpty: boolean) => string);
@@ -238,6 +238,10 @@ export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterK
   aiHandler?: TAIHandler;
   user?: TUserDetails;
   value: Content;
+  /** Optional callback to receive the TipTap Editor instance once created */
+  onEditorInstanceCreated?: (editor: Editor) => void;
+  /** Optional loader to display while editor is initializing */
+  loader?: React.ReactNode;
 };
 
 export type EditorEvents = {

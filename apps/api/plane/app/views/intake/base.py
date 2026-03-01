@@ -12,6 +12,7 @@
 # Python imports
 import json
 
+
 # Django import
 from django.utils import timezone
 from django.db.models import Q, Count, OuterRef, Func, F, Prefetch, Subquery
@@ -34,7 +35,6 @@ from plane.db.models import (
     IntakeIssue,
     Issue,
     State,
-    StateGroup,
     IssueLink,
     FileAsset,
     Project,
@@ -265,15 +265,7 @@ class IntakeIssueViewSet(BaseViewSet):
         # get the triage state
         triage_state = State.triage_objects.filter(project_id=project_id, workspace__slug=slug).first()
         if not triage_state:
-            triage_state = State.objects.create(
-                name="Triage",
-                group=StateGroup.TRIAGE.value,
-                project_id=project_id,
-                workspace_id=project.workspace_id,
-                color="#4E5355",
-                sequence=65000,
-                default=False,
-            )
+            triage_state = State.create_triage_state(workspace_id=project.workspace_id, project_id=project_id)
         request.data["issue"]["state_id"] = triage_state.id
 
         # create an issue
@@ -311,10 +303,11 @@ class IntakeIssueViewSet(BaseViewSet):
                 issue_id=serializer.data["id"],
                 source=SourceType.IN_APP,
             )
+
             # Create an Issue Activity
             issue_activity.delay(
                 type="issue.activity.created",
-                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(request.data["issue"], cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(serializer.data["id"]),
                 project_id=str(project_id),
@@ -456,7 +449,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
                     "description_html": issue_data.get("description_html", issue.description_html),
-                    "description": issue_data.get("description", issue.description),
+                    "description_json": issue_data.get("description_json", issue.description_json),
                 }
 
             issue_current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
@@ -527,7 +520,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 project_id=str(project_id),
                 current_instance=intake_current_instance,
                 epoch=int(timezone.now().timestamp()),
-                notification=False,
+                notification=True,
                 origin=base_host(request=request, is_app=True),
                 intake=str(intake_issue.id),
             )

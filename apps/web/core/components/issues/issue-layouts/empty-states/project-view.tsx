@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 // components
-import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType } from "@plane/types";
 // hooks

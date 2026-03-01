@@ -1,6 +1,7 @@
 {
   "extends": "@plane/typescript-config/react-router.json",
   "compilerOptions": {
+    "composite": false,
     "rootDirs": [".", "./.react-router/types"],
     "types": ["vite/client"],
     "paths": {
@@ -13,6 +14,7 @@
     },
     "strictNullChecks": true,
     "noImplicitOverride": false,
+    "noUncheckedIndexedAccess": false,
     "noUnusedLocals": false,
     "noImplicitReturns": false,
     "exactOptionalPropertyTypes": false,

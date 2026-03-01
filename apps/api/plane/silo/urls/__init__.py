@@ -17,7 +17,9 @@ from .connection import urlpatterns as connection_urls
 from .entity_connection import urlpatterns as entity_connection_urls
 from .importer import urlpatterns as importer_urls
 from .importer_report import urlpatterns as importer_report_urls
+from .import_execution_log import urlpatterns as import_execution_log_urls
 from .page import urlpatterns as page_urls
+from .work_item_property import urlpatterns as work_item_property_urls
 
 urlpatterns = [
     *asset_urls,
@@ -26,5 +28,7 @@ urlpatterns = [
     *entity_connection_urls,
     *importer_urls,
     *importer_report_urls,
+    *import_execution_log_urls,
     *page_urls,
+    *work_item_property_urls,
 ]

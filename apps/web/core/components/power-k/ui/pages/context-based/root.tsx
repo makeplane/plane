@@ -17,7 +17,7 @@ import type { TPowerKCommandConfig, TPowerKContextType, TPowerKPageType } from "
 import {
   PowerKContextBasedActionsExtended,
   usePowerKContextBasedExtendedActions,
-} from "@/plane-web/components/command-palette/power-k/pages/context-based";
+} from "@/components/command-palette/power-k/pages/context-based";
 // local imports
 import { usePowerKCycleContextBasedActions } from "./cycle/commands";
 import { PowerKModuleContextBasedPages } from "./module";

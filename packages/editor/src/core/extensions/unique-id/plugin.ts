@@ -56,9 +56,7 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
         const newNodes = findChildrenInRange(newState.doc, newRange, (node) => types.includes(node.type.name));
 
         // Only check duplicates within the changed range - much faster than scanning entire doc
-        const newIds = newNodes
-          .map(({ node }) => node.attrs[attributeName])
-          .filter((id) => id !== null);
+        const newIds = newNodes.map(({ node }) => node.attrs[attributeName]).filter((id) => id !== null);
         const duplicatedNewIds = findDuplicates(newIds);
 
         newNodes.forEach(({ node, pos }) => {

@@ -30,7 +30,6 @@ from typing import Dict
 from uuid import UUID
 
 from celery import Celery
-from celery import states
 from celery.signals import worker_process_init
 from celery.signals import worker_process_shutdown
 from celery.signals import worker_ready
@@ -47,7 +46,6 @@ from sqlmodel import select
 from pi import logger
 from pi.app.models.chat import Chat
 from pi.app.models.message import Message
-from pi.vectorizer.docs import process_repo_contents
 
 log = logger.getChild(__name__)
 
@@ -119,10 +117,11 @@ _db_circuit_breaker = CircuitBreaker(
 )
 
 # Create Celery app instance
+# Note: No result backend - tasks run asynchronously but progress is tracked via logs only
 celery_app = Celery(
     "plane_pi",
     broker=settings.celery.BROKER_URL,
-    backend=settings.celery.RESULT_BACKEND,
+    task_track_started=True,
     include=["pi.celery_app"],  # Include this module for task discovery
 )
 
@@ -139,6 +138,8 @@ celery_app.conf.update(
     worker_prefetch_multiplier=1,
     task_acks_late=True,
     worker_max_tasks_per_child=1000,
+    result_backend=None,
+    task_ignore_result=True,
 )
 celery_app.conf.task_default_queue = settings.celery.DEFAULT_QUEUE
 celery_app.conf.task_default_exchange = settings.celery.DEFAULT_EXCHANGE
@@ -158,18 +159,32 @@ celery_app.conf.task_queues = [
 # This is useful when running one-off heavy back-fill jobs that already
 # saturate the ML model capacity.
 
+# Initialize beat schedule
+celery_app.conf.beat_schedule = {}
+
+# Add vector sync task if enabled
 if settings.celery.VECTOR_SYNC_ENABLED and settings.celery.VECTOR_SYNC_INTERVAL > 0:
-    celery_app.conf.beat_schedule = {
-        "trigger-live-sync": {
-            "task": "pi.celery_app.trigger_live_sync",
-            "schedule": float(settings.celery.VECTOR_SYNC_INTERVAL),  # Run every N seconds
-            "options": {"expires": settings.celery.VECTOR_SYNC_INTERVAL * 2},  # Expire if not processed within 2 intervals
-        },
+    celery_app.conf.beat_schedule["trigger-live-sync"] = {
+        "task": "pi.celery_app.trigger_live_sync",
+        "schedule": float(settings.celery.VECTOR_SYNC_INTERVAL),  # Run every N seconds
+        "options": {"expires": settings.celery.VECTOR_SYNC_INTERVAL * 2},  # Expire if not processed within 2 intervals
     }
 else:
-    # No periodic tasks scheduled
-    celery_app.conf.beat_schedule = {}
     log.info("Celery vector-sync beat schedule disabled (CELERY_VECTOR_SYNC_ENABLED=%s)", settings.celery.VECTOR_SYNC_ENABLED)
+
+# Add docs sync task if enabled
+if settings.celery.DOCS_VECTORIZATION_ENABLED and settings.celery.DOCS_VECTORIZATION_INTERVAL > 0:
+    celery_app.conf.beat_schedule["sync-docs-periodic"] = {
+        "task": "pi.celery_app.sync_docs_periodic_task",
+        "schedule": float(settings.celery.DOCS_VECTORIZATION_INTERVAL),  # Run every N seconds (default: 24 hours)
+        "options": {"expires": settings.celery.DOCS_VECTORIZATION_INTERVAL * 2},  # Expire if not processed within 2 intervals
+    }
+    log.info(
+        "Celery docs sync beat schedule enabled (interval: %d seconds)",
+        settings.celery.DOCS_VECTORIZATION_INTERVAL,
+    )
+else:
+    log.info("Celery docs sync beat schedule disabled (CELERY_DOCS_SYNC_ENABLED=%s)", settings.celery.DOCS_VECTORIZATION_ENABLED)
 
 
 # Event loop utilities are no longer needed because all operations are synchronous.
@@ -762,18 +777,17 @@ def _filter_workspaces_via_opensearch(
 
         for ws_id in workspace_ids:
             total_missing = workspace_totals.get(ws_id, 0)
-            if 0 < total_missing <= threshold:
+            if total_missing > 0:
                 processable.append(ws_id)
-            elif total_missing > threshold:
+            else:
                 skipped_count += 1
-                log.info(f"Skipping workspace {ws_id} because it has {total_missing} missing vectors")
+                log.debug(f"Skipping workspace {ws_id} because it has {total_missing} missing vectors")
 
         log.info(
-            "OpenSearch filtering complete: %d/%d workspaces processable, %d skipped (>%d missing vectors)",
+            "OpenSearch filtering complete: %d/%d workspaces processable, %d skipped",
             len(processable),
             len(workspace_ids),
             skipped_count,
-            threshold,
         )
 
         return processable
@@ -1312,6 +1326,121 @@ def vectorize_workspace(self, job_config: Dict[str, Any]):
     return asyncio.run(_run())
 
 
+@celery_app.task(bind=True, name="pi.celery_app.vectorize_all_data")
+def vectorize_all_data(self, job_config: Dict[str, Any] | None = None):
+    """
+    Perform vectorization for ALL data across all workspaces.
+    Does not filter by workspace_id - processes entire indices.
+
+    This is useful for:
+    - Initial bulk vectorization of all data
+    - Re-vectorization after model changes
+    - Backfilling missing embeddings globally
+
+    Args:
+        job_config: Optional configuration dictionary containing:
+            - feed_issues: Whether to vectorize issues (default: True)
+            - feed_pages: Whether to vectorize pages (default: True)
+            - feed_docs: Whether to vectorize docs (default: True)
+            - feed_slices: Number of parallel slices (default: from settings)
+            - batch_size: Batch size for embeddings (default: from settings)
+    """
+    from pi.vectorizer.vectorize import populate_embeddings
+
+    # Use default config if none provided
+    if job_config is None:
+        job_config = {}
+
+    feed_issues = job_config.get("feed_issues", True)
+    feed_pages = job_config.get("feed_pages", True)
+    feed_docs = job_config.get("feed_docs", True)
+    feed_slices = job_config.get("feed_slices", settings.vector_db.FEED_SLICES)
+    batch_size = job_config.get("batch_size", settings.vector_db.BATCH_SIZE)
+
+    async def _run():
+        try:
+            # Log pool stats at the start
+            await log_pool_stats()
+
+            log.info("Starting global vectorization (all workspaces) - issues: %s, pages: %s, docs: %s", feed_issues, feed_pages, feed_docs)
+
+            async with VectorStore() as vdb:
+                total_tasks = sum([feed_issues, feed_pages, feed_docs])
+                completed_tasks = 0
+
+                if feed_issues:
+                    log.info("Starting global issues vectorization (all workspaces)")
+                    await populate_embeddings(
+                        vdb,
+                        settings.vector_db.ISSUE_INDEX,
+                        {"name": "name_semantic", "description": "description_semantic", "content": "content_semantic"},
+                        live=False,
+                        workspace_id=None,  # No workspace filter - process all
+                        feed_slices=feed_slices,
+                        batch_size=batch_size,
+                        bulk_size=batch_size,
+                    )
+                    completed_tasks += 1
+                    progress = int((completed_tasks / total_tasks) * 100)
+                    log.info("Global issues vectorization completed (%d%%)", progress)
+
+                    # Log pool stats mid-task
+                    await log_pool_stats()
+
+                if feed_pages:
+                    log.info("Starting global pages vectorization (all workspaces)")
+                    await populate_embeddings(
+                        vdb,
+                        settings.vector_db.PAGES_INDEX,
+                        {"name": "name_semantic", "description": "description_semantic"},
+                        live=False,
+                        workspace_id=None,  # No workspace filter - process all
+                        feed_slices=feed_slices,
+                        batch_size=batch_size,
+                        bulk_size=batch_size,
+                    )
+                    completed_tasks += 1
+                    progress = int((completed_tasks / total_tasks) * 100)
+                    log.info("Global pages vectorization completed (%d%%)", progress)
+
+                    # Log pool stats mid-task
+                    await log_pool_stats()
+
+                if feed_docs:
+                    log.info("Starting global docs vectorization (all workspaces)")
+                    await populate_embeddings(
+                        vdb,
+                        settings.vector_db.DOCS_INDEX,
+                        {"content": "content_semantic"},
+                        live=False,
+                        workspace_id=None,  # No workspace filter - process all
+                        feed_slices=feed_slices,
+                        batch_size=batch_size,
+                        bulk_size=batch_size,
+                    )
+                    completed_tasks += 1
+                    progress = int((completed_tasks / total_tasks) * 100)
+                    log.info("Global docs vectorization completed (%d%%)", progress)
+
+            # Log pool stats at the end
+            await log_pool_stats()
+
+            log.info("Global vectorization completed successfully")
+            return {
+                "status": "success",
+                "feed_issues": feed_issues,
+                "feed_pages": feed_pages,
+                "feed_docs": feed_docs,
+            }
+
+        except Exception as exc:
+            error_msg = str(exc)
+            log.error("Global vectorization failed: %s", error_msg)
+            raise Exception(error_msg)  # Let Celery retry
+
+    return asyncio.run(_run())
+
+
 @celery_app.task
 def reap_stuck_vectorization_jobs(timeout_minutes: int = 5760):
     """
@@ -1446,19 +1575,7 @@ def populate_chat_search_index(self, job_config: dict):
                     stats["total_messages"] = len(all_messages)
 
                 log.info("Found %d chats and %d messages to process", stats["total_chats"], stats["total_messages"])
-
-                # Update initial progress
-                self.update_state(
-                    state="PROGRESS",
-                    meta={
-                        "current_chats": 0,
-                        "total_chats": stats["total_chats"],
-                        "current_messages": 0,
-                        "total_messages": stats["total_messages"],
-                        "progress_percent": 0,
-                        "status": "Starting...",
-                    },
-                )
+                log.info("Starting chat search index population: %d chats, %d messages", stats["total_chats"], stats["total_messages"])
 
                 # Process chats in batches
                 for i in range(0, len(all_chats), batch_size):
@@ -1487,21 +1604,18 @@ def populate_chat_search_index(self, job_config: dict):
                                 stats["failed_chats"] += 1
                                 log.error("Failed to bulk populate chat %s: %s", chat.id, result.get("message"))
 
-                            # Update progress every 10 chats
+                            # Log progress every 10 chats
                             if stats["processed_chats"] % 10 == 0:
                                 progress_percent = int((stats["processed_chats"] / stats["total_chats"]) * 100) if stats["total_chats"] > 0 else 0
-                                self.update_state(
-                                    state="PROGRESS",
-                                    meta={
-                                        "current_chats": stats["processed_chats"],
-                                        "total_chats": stats["total_chats"],
-                                        "current_messages": stats["processed_messages"],
-                                        "total_messages": stats["total_messages"],
-                                        "progress_percent": progress_percent,
-                                        "failed_chats": stats["failed_chats"],
-                                        "failed_messages": stats["failed_messages"],
-                                        "status": f'Processing chat {stats["processed_chats"]}/{stats["total_chats"]}',
-                                    },
+                                log.info(
+                                    "Progress: %d%% (%d/%d chats, %d/%d messages processed, %d failed chats, %d failed messages)",
+                                    progress_percent,
+                                    stats["processed_chats"],
+                                    stats["total_chats"],
+                                    stats["processed_messages"],
+                                    stats["total_messages"],
+                                    stats["failed_chats"],
+                                    stats["failed_messages"],
                                 )
 
                         except Exception as e:
@@ -1639,247 +1753,315 @@ def upsert_chat_search_index_title_task(self, chat_id: str, title: str):
         raise
 
 
-@celery_app.task(bind=True, name="pi.celery_app.vectorize_docs_task")
-def vectorize_docs_task(self, repo_names: list[str] | None = None):
+# Removed vectorize_docs_task - use feed-docs command instead
+# The periodic sync_docs_periodic_task handles incremental updates
+
+
+@celery_app.task(bind=True, name="pi.celery_app.sync_docs_periodic_task")
+def sync_docs_periodic_task(self):
     """
-    Background task to vectorize documentation repositories.
+    Periodic task to sync documentation from public GitHub repositories.
 
-    Tracks detailed progress at both repository and document levels with
-    real-time updates during processing.
+    HOW INCREMENTAL SYNC WORKS:
+    ===========================
 
-    Args:
-        repo_names: Optional list of repository names.
-                    If None, defaults to settings.vector_db.DOCS_REPO_NAME
+    This task uses GitHub's commit comparison API to efficiently sync only changed files:
+
+    1. COMMIT TRACKING:
+       - Stores the last processed commit SHA in the database for each repo/branch
+       - On each run, fetches the latest commit SHA from GitHub (1 API call per repo)
+
+    2. COMMIT COMPARISON:
+       - Compares last_commit_sha vs latest_commit_sha using GitHub's compare API
+       - Returns list of changed files with status: added/modified/removed (1 API call per repo)
+       - Only processes .mdx and .txt files (documentation files)
+
+    3. INCREMENTAL PROCESSING:
+       - If commits differ:
+         * Fetches only changed files via raw.githubusercontent.com (NO API limit)
+         * Processes and indexes only modified/added files
+         * Removes deleted files from index
+         * Updates commit SHA in database
+       - If commits match:
+         * Skips processing (no changes)
+
+    4. FIRST RUN (Full Feed):
+       - If no previous commit exists:
+         * Uses git tree API to get all files (2 API calls: commit SHA + recursive tree)
+         * Processes all documentation files
+         * Stores commit SHA for future incremental syncs
+
+    API CALL OPTIMIZATION:
+    ======================
+    - Full feed: 2 API calls per repo (commit SHA + recursive tree)
+    - Incremental sync: 2 API calls per repo (latest commit + compare)
+    - File content fetching: Uses raw.githubusercontent.com (no API calls)
 
     Returns:
-        Dictionary summary with vectorization results
+        Dictionary with sync results
     """
-    log.info("Starting docs vectorization task for repositories: %s", repo_names or "default repos")
+    log.info("Starting periodic docs sync task")
 
-    async def _vectorize_docs():
-        # Determine repositories to process
-        if repo_names:
-            repos = [repo.strip() for repo in repo_names if repo.strip()]
-        else:
-            repos = [repo.strip() for repo in settings.vector_db.DOCS_REPO_NAME.split(",") if repo.strip()]
+    async def _sync_docs():
+        from pi.core.db.plane_pi.lifecycle import get_async_session
+        from pi.core.db.plane_pi.lifecycle import init_async_db
+        from pi.core.vectordb import VectorStore
+        from pi.services.retrievers.pg_store.webhook import create_webhook_record
+        from pi.services.retrievers.pg_store.webhook import get_last_processed_commit
+        from pi.services.retrievers.pg_store.webhook import update_webhook_record
+        from pi.vectorizer.docs.document_processor import fetch_and_process_files
+        from pi.vectorizer.docs.document_processor import get_all_files_for_full_feed
+        from pi.vectorizer.docs.github_fetcher import get_file_changes_between_commits
+        from pi.vectorizer.docs.github_fetcher import get_latest_commit_sha
+
+        # Initialize async database engine
+        await init_async_db()
+
+        # Get configuration
+        repos = [repo.strip() for repo in settings.vector_db.DOCS_REPO_NAME.split(",") if repo.strip()]
+        branch = settings.vector_db.DOCS_BRANCH
+        repo_owner = settings.vector_db.DOCS_REPO_OWNER
 
         if not repos:
-            log.error("No repositories specified for docs vectorization")
-            self.update_state(state="FAILURE", meta={"error": "No repositories specified"})
-            return {"status": "error", "message": "No repositories specified"}
+            log.error("No repositories configured for docs sync")
+            return {"status": "error", "message": "No repositories configured"}
 
-        log.info("Processing %d documentation repositories: %s", len(repos), repos)
+        log.info("Syncing %d documentation repositories: %s", len(repos), repos)
 
         # Initialize counters
-        total_ok = 0
+        total_added = 0
+        total_modified = 0
+        total_removed = 0
+        total_success = 0
         total_failed = 0
         results = []
 
         async with VectorStore() as vdb:
-            # Process each repository
-            for i, repo in enumerate(repos, 1):
-                repo_result: dict[str, str | int] = {"repo": repo, "ok": 0, "failed": 0}
-
-                # Calculate overall progress percentage
-                overall_progress = int(((i - 1) / len(repos)) * 100)
-
+            # Get database session
+            async for db in get_async_session():
                 try:
-                    # Update: Starting repository
-                    self.update_state(
-                        state="PROGRESS",
-                        meta={
-                            "current_repo_index": i,
-                            "total_repos": len(repos),
-                            "overall_progress_percent": overall_progress,
-                            "current_repo": repo,
-                            "status": f"Starting repository {i}/{len(repos)}: {repo}",
-                            "phase": "fetching_docs",
-                            "aggregate": {
-                                "total_ok": total_ok,
-                                "total_failed": total_failed,
-                            },
-                        },
-                    )
+                    # Process each repository
+                    for i, repo in enumerate(repos, 1):
+                        repo_result = {
+                            "repo": repo,
+                            "status": "pending",
+                            "files_added": 0,
+                            "files_modified": 0,
+                            "files_removed": 0,
+                            "success_count": 0,
+                            "failed_count": 0,
+                        }
 
-                    log.info("Repo %d/%d: Fetching documents from %s", i, len(repos), repo)
-                    docs = process_repo_contents(repo)
+                        try:
+                            log.info("Processing repository %d/%d: %s", i, len(repos), repo)
 
-                    if not docs:
-                        log.warning("No documents found in repository: %s", repo)
+                            # STEP 1: Get latest commit from GitHub (1 API call)
+                            # This tells us what the current state of the repository is
+                            latest_commit_sha, error = get_latest_commit_sha(repo_owner, repo, branch)
+                            if not latest_commit_sha:
+                                error_msg = error or f"Failed to get latest commit SHA for {repo}"
+                                log.error(error_msg)
+                                repo_result["status"] = "error"
+                                repo_result["error"] = error_msg
+                                results.append(repo_result)
+                                total_failed += 1
+                                continue
 
-                        # Update: Empty repository
-                        self.update_state(
-                            state="PROGRESS",
-                            meta={
-                                "current_repo_index": i,
-                                "total_repos": len(repos),
-                                "overall_progress_percent": overall_progress,
-                                "current_repo": repo,
-                                "status": f"Repository {i}/{len(repos)}: {repo} (no documents found)",
-                                "phase": "skipped",
-                                "aggregate": {
-                                    "total_ok": total_ok,
-                                    "total_failed": total_failed,
-                                },
-                            },
-                        )
+                            log.info("Latest commit for %s: %s", repo, latest_commit_sha)
+
+                            # STEP 2: Get last processed commit from database
+                            # This tells us what we've already processed
+                            last_commit_sha = await get_last_processed_commit(db, repo, branch)
+
+                            # STEP 3: Compare commits to determine if sync is needed
+                            # If commits match, repository is up-to-date (no changes)
+                            if last_commit_sha == latest_commit_sha:
+                                log.info("Repository %s is up to date (commit: %s)", repo, latest_commit_sha)
+                                repo_result["status"] = "up_to_date"
+                                repo_result["commit_sha"] = latest_commit_sha
+                                results.append(repo_result)
+                                continue
+
+                            # Create or get webhook record for tracking
+                            webhook_record = await create_webhook_record(db, latest_commit_sha, repo, branch, processed=False)
+
+                            # Determine files to process
+                            files_to_add: list[str] = []
+                            files_to_remove: list[str] = []
+
+                            if not last_commit_sha:
+                                # First time sync - full feed
+                                log.info("No previous commit found for %s. Performing full feed.", repo)
+                                all_files, error = get_all_files_for_full_feed(repo, branch)
+
+                                if error or not all_files:
+                                    # Error occurred
+                                    error_msg = error or "Failed to get file list"
+                                    log.error(error_msg)
+                                    await update_webhook_record(db, webhook_record, processed=False, error_message=error_msg)
+                                    repo_result["status"] = "error"
+                                    repo_result["error"] = error_msg
+                                    results.append(repo_result)
+                                    total_failed += 1
+                                    continue
+
+                                files_to_add = all_files
+                                repo_result["files_added"] = len(all_files)
+                                log.info("Full feed: %d files to process for %s", len(all_files), repo)
+
+                            else:
+                                # STEP 4: Incremental sync - only changed files
+                                # Use GitHub's compare API to get diff between commits (1 API call)
+                                # Returns: added, modified, removed file lists
+                                log.info(
+                                    "Incremental sync for %s: %s -> %s",
+                                    repo,
+                                    last_commit_sha[:7],
+                                    latest_commit_sha[:7],
+                                )
+
+                                # This API call compares two commits and returns file changes
+                                # Only processes .mdx and .txt files (documentation files)
+                                file_changes = get_file_changes_between_commits(repo_owner, repo, last_commit_sha, latest_commit_sha)
+
+                                if "error" in file_changes:
+                                    error_msg = str(file_changes.get("error", "Unknown error"))
+                                    log.error("Failed to get file changes: %s", error_msg)
+                                    await update_webhook_record(db, webhook_record, processed=False, error_message=error_msg)
+                                    repo_result["status"] = "error"
+                                    repo_result["error"] = error_msg
+                                    results.append(repo_result)
+                                    total_failed += 1
+                                    continue
+
+                                added = file_changes.get("added", [])
+                                modified = file_changes.get("modified", [])
+                                removed = file_changes.get("removed", [])
+
+                                # Type narrowing - we know these are lists at this point
+                                if isinstance(added, list) and isinstance(modified, list) and isinstance(removed, list):
+                                    files_to_add = added + modified
+                                    files_to_remove = removed
+                                else:
+                                    log.error("Unexpected type for file changes")
+                                    continue
+
+                                repo_result["files_added"] = len(added)
+                                repo_result["files_modified"] = len(modified)
+                                repo_result["files_removed"] = len(removed)
+
+                                total_added += len(added)
+                                total_modified += len(modified)
+                                total_removed += len(removed)
+
+                                log.info(
+                                    "Changes for %s: %d added, %d modified, %d removed",
+                                    repo,
+                                    len(added),
+                                    len(modified),
+                                    len(removed),
+                                )
+
+                            # Process added/modified files
+                            success_count = 0
+                            failed_files = []
+
+                            if files_to_add:
+                                log.info("Processing %d files for %s...", len(files_to_add), repo)
+                                docs_to_index, failed = fetch_and_process_files(repo, files_to_add, branch)
+                                failed_files.extend(failed)
+
+                                if docs_to_index:
+                                    log.info("Indexing %d documents for %s...", len(docs_to_index), repo)
+                                    ok, failures = await vdb.async_feed(index_name=settings.vector_db.DOCS_INDEX, docs=docs_to_index)
+                                    success_count += ok
+                                    failed_files.extend([f.get("id", "unknown") for f in failures])
+                                    log.info("Successfully indexed %d/%d documents for %s", ok, len(docs_to_index), repo)
+
+                            # Process removed files (only for incremental sync)
+                            if files_to_remove and last_commit_sha:
+                                log.info("Removing %d deleted files from index for %s...", len(files_to_remove), repo)
+                                removed_count = 0
+                                for file_path in files_to_remove:
+                                    try:
+                                        unique_id = (
+                                            file_path.replace("/", "_").replace("-", "_").replace(".mdx", "").replace(".md", "").replace(".txt", "")
+                                        )
+                                        resp = await vdb.async_delete_document(index_name=settings.vector_db.DOCS_INDEX, document_id=unique_id)
+                                        if resp.get("result") == "deleted":
+                                            success_count += 1
+                                            removed_count += 1
+                                    except Exception as e:
+                                        log.error("Error deleting file %s: %s", file_path, e)
+                                        failed_files.append(file_path)
+
+                                if removed_count > 0:
+                                    log.info("Removed %d/%d files from index for %s", removed_count, len(files_to_remove), repo)
+
+                            # Update webhook record
+                            processed_successfully = len(failed_files) == 0
+                            error_message = None if processed_successfully else f"Failed files: {", ".join(failed_files)}"
+
+                            await update_webhook_record(
+                                db,
+                                webhook_record,
+                                processed=processed_successfully,
+                                files_processed=success_count,
+                                error_message=error_message,
+                            )
+
+                            # Update counters
+                            repo_result["success_count"] = success_count
+                            repo_result["failed_count"] = len(failed_files)
+                            repo_result["status"] = "success" if processed_successfully else "partial_failure"
+                            repo_result["commit_sha"] = latest_commit_sha
+
+                            total_success += success_count
+                            total_failed += len(failed_files)
+
+                            if processed_successfully:
+                                log.info("Completed %s: %d documents processed successfully", repo, success_count)
+                            else:
+                                log.warning("⚠ Completed %s with errors: %d successful, %d failed", repo, success_count, len(failed_files))
+
+                        except Exception as e:
+                            error_msg = str(e)
+                            log.error("Error processing repository %s: %s", repo, e, exc_info=True)
+                            repo_result["status"] = "error"
+                            repo_result["error"] = error_msg
+                            total_failed += 1
 
                         results.append(repo_result)
-                        continue
 
-                    total_docs = len(docs)
-                    log.info("Repo %s: Found %d documents to vectorize", repo, total_docs)
+                finally:
+                    # Close database session
+                    await db.close()
 
-                    # Update: Starting vectorization
-                    self.update_state(
-                        state="PROGRESS",
-                        meta={
-                            "current_repo_index": i,
-                            "total_repos": len(repos),
-                            "overall_progress_percent": overall_progress,
-                            "current_repo": repo,
-                            "status": f"Repository {i}/{len(repos)}: Vectorizing {total_docs} documents from {repo}",
-                            "phase": "vectorizing",
-                            "repo_progress": {
-                                "current_docs": 0,
-                                "total_docs": total_docs,
-                                "repo_percent": 0,
-                            },
-                            "aggregate": {
-                                "total_ok": total_ok,
-                                "total_failed": total_failed,
-                            },
-                        },
-                    )
-
-                    # Process documents in batches
-                    batch_size = 10
-                    for j in range(0, total_docs, batch_size):
-                        batch = docs[j : j + batch_size]
-
-                        # Vectorize batch
-                        ok, failed_docs = await vdb.async_feed(settings.vector_db.DOCS_INDEX, batch)
-
-                        # Update counters
-                        repo_result["ok"] = int(repo_result["ok"]) + ok
-                        repo_result["failed"] = int(repo_result["failed"]) + len(failed_docs)
-                        total_ok += ok
-                        total_failed += len(failed_docs)
-
-                        # Calculate progress
-                        docs_processed = min(j + len(batch), total_docs)
-                        repo_percent = int((docs_processed / total_docs) * 100)
-
-                        # Calculate granular overall progress
-                        _ = 1 / len(repos)
-                        repo_completion = docs_processed / total_docs
-                        granular_progress = int(((i - 1 + repo_completion) / len(repos)) * 100)
-
-                        # Update: Batch progress
-                        self.update_state(
-                            state="PROGRESS",
-                            meta={
-                                "current_repo_index": i,
-                                "total_repos": len(repos),
-                                "overall_progress_percent": granular_progress,
-                                "current_repo": repo,
-                                "status": f"Repository {i}/{len(repos)} ({repo}): {repo_percent}% complete ({docs_processed}/{total_docs} docs)",
-                                "phase": "vectorizing",
-                                "repo_progress": {
-                                    "current_docs": docs_processed,
-                                    "total_docs": total_docs,
-                                    "repo_percent": repo_percent,
-                                },
-                                "aggregate": {
-                                    "total_ok": total_ok,
-                                    "total_failed": total_failed,
-                                },
-                            },
-                        )
-
-                        log.info(
-                            "Repo %s: %d/%d docs vectorized | Batch: %d ok, %d failed | Total: %d ok, %d failed",
-                            repo,
-                            docs_processed,
-                            total_docs,
-                            ok,
-                            len(failed_docs),
-                            repo_result["ok"],
-                            repo_result["failed"],
-                        )
-
-                    log.info(
-                        "Repo %s completed: %d/%d successful, %d/%d failed", repo, repo_result["ok"], total_docs, repo_result["failed"], total_docs
-                    )
-
-                except Exception as exc:
-                    log.error("Error processing repo %s: %s", repo, exc, exc_info=True)
-                    repo_result["failed"] = int(repo_result.get("failed", 0)) + 1
-                    total_failed += 1
-
-                    # Update: Error state
-                    self.update_state(
-                        state="PROGRESS",
-                        meta={
-                            "current_repo_index": i,
-                            "total_repos": len(repos),
-                            "overall_progress_percent": overall_progress,
-                            "current_repo": repo,
-                            "status": f"Repository {i}/{len(repos)}: Error processing {repo}",
-                            "phase": "error",
-                            "error": str(exc),
-                            "aggregate": {
-                                "total_ok": total_ok,
-                                "total_failed": total_failed,
-                            },
-                        },
-                    )
-
-                results.append(repo_result)
-
-        # All repos completed - final update
-        log.info("Docs vectorization complete — %d ok, %d failed across %d repos", total_ok, total_failed, len(repos))
-
-        self.update_state(
-            state="PROGRESS",
-            meta={
-                "current_repo_index": len(repos),
-                "total_repos": len(repos),
-                "overall_progress_percent": 100,
-                "status": f"Completed all {len(repos)} repositories",
-                "phase": "completed",
-                "aggregate": {
-                    "total_ok": total_ok,
-                    "total_failed": total_failed,
-                },
-            },
-        )
+        # Final summary
+        if total_failed == 0:
+            log.info("Docs sync completed successfully: %d repos, %d documents indexed", len(repos), total_success)
+        else:
+            log.warning("⚠ Docs sync completed with errors: %d repos, %d successful, %d failed", len(repos), total_success, total_failed)
 
         return {
             "status": "completed",
-            "total_ok": total_ok,
-            "total_failed": total_failed,
-            "total_docs": total_ok + total_failed,
             "repositories_processed": len(repos),
+            "total_files_added": total_added,
+            "total_files_modified": total_modified,
+            "total_files_removed": total_removed,
+            "total_success": total_success,
+            "total_failed": total_failed,
             "results": results,
-            "message": f"Successfully processed {len(repos)} repositories: {total_ok} docs vectorized, {total_failed} failed",
         }
 
-    # Run the async process
+    # Run the async sync
     try:
-        result = asyncio.run(_vectorize_docs())
-        log.info("Docs vectorization task completed successfully")
+        result = asyncio.run(_sync_docs())
+        log.info("Periodic docs sync task completed successfully")
         return result
 
     except Exception as exc:
-        self.update_state(
-            state=states.FAILURE,
-            meta={
-                "error": str(exc),
-                "error_type": type(exc).__name__,
-            },
-        )
-        log.error("Docs vectorization task failed: %s", exc, exc_info=True)
+        log.error("Periodic docs sync task failed: %s", exc, exc_info=True)
         raise
 
 
@@ -1991,19 +2173,8 @@ def remove_vector_data_task(self, workspace_ids: list[str], entities: list[str] 
                     batch_end = min(batch_start + batch_size, len(workspace_ids))
                     batch = workspace_ids[batch_start:batch_end]
 
-                    log.debug("Processing batch %d-%d of %d workspaces", batch_start + 1, batch_end, len(workspace_ids))
-
-                    # Update task progress
                     progress_pct = int((batch_start / len(workspace_ids)) * 100)
-                    self.update_state(
-                        state="PROGRESS",
-                        meta={
-                            "current": batch_start,
-                            "total": len(workspace_ids),
-                            "progress_percent": progress_pct,
-                            "status": f"Processing batch {batch_start + 1}-{batch_end} of {len(workspace_ids)}",
-                        },
-                    )
+                    log.info("Processing batch %d-%d of %d workspaces (%d%%)", batch_start + 1, batch_end, len(workspace_ids), progress_pct)
 
                     # Process batch in parallel using asyncio.gather
                     batch_tasks = [_process_single_workspace(ws_id, vdb) for ws_id in batch]

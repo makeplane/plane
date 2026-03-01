@@ -13,6 +13,7 @@
 import random
 import json
 import base64
+import logging
 from datetime import datetime
 
 # Django imports
@@ -34,7 +35,7 @@ from django.db.models import (
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.http import StreamingHttpResponse
+from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
@@ -71,6 +72,8 @@ from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 from plane.ee.bgtasks.page_update import nested_page_update
 from plane.ee.utils.page_events import PageAction
 from plane.ee.utils.page_descendants import get_all_parent_ids
+
+logger = logging.getLogger(__name__)
 
 
 class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
@@ -679,24 +682,27 @@ class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id, pk):
-        # Get the team space page
+        # Check the page belongs to the team space
         if not TeamspacePage.objects.filter(page_id=pk, workspace__slug=slug, team_space_id=team_space_id).exists():
             return Response(
                 {"error": "The page is not part of the team space"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the page
-        page = Page.objects.get(pk=pk, workspace__slug=slug)
+        # Fetch only the binary description
+        page = (
+            Page.objects.filter(pk=pk, workspace__slug=slug)
+            .only("description_binary")
+            .first()
+        )
+        if page is None:
+            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         binary_data = page.description_binary
-
-        def stream_data():
-            if binary_data:
-                yield binary_data
-            else:
-                yield b""
-
-        response = StreamingHttpResponse(stream_data(), content_type="application/octet-stream")
+        logger.info(
+            "Teamspace page description retrieved",
+            extra={"page_id": pk, "team_space_id": team_space_id, "size": len(binary_data) if binary_data else 0},
+        )
+        response = HttpResponse(binary_data or b"", content_type="application/octet-stream")
         response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
 
@@ -749,7 +755,7 @@ class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
             page.name = request.data.get("name", page.name)
             page.description_binary = new_binary_data
             page.description_html = request.data.get("description_html")
-            page.description = request.data.get("description")
+            page.description_json = request.data.get("description_json")
             page.save()
             # Return a success response
             page_version.delay(

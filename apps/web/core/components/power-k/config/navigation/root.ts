@@ -14,8 +14,8 @@
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // plane web imports
-import type { TPowerKNavigationCommandKeysExtended } from "@/plane-web/components/command-palette/power-k/commands/navigation";
-import { usePowerKNavigationCommandsRecordExtended } from "@/plane-web/components/command-palette/power-k/commands/navigation";
+import type { TPowerKNavigationCommandKeysExtended } from "@/components/command-palette/power-k/commands/navigation";
+import { usePowerKNavigationCommandsRecordExtended } from "@/components/command-palette/power-k/commands/navigation";
 // local imports
 import type { TPowerKNavigationCommandKeys } from "./commands";
 import { usePowerKNavigationCommandsRecord } from "./commands";

@@ -12,7 +12,7 @@
  */
 
 /* ----------------- Modules Migrator Step ----------------- */
-import type { ComponentWithIssueCount } from "jira.js/out/version2/models";
+import type { ComponentWithIssueCount } from "jira.js/out/version2/models/index.js";
 import { v4 as uuid } from "uuid";
 import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { JiraConfig, JiraV2Service } from "@plane/etl/jira-server";
@@ -30,6 +30,9 @@ import type {
 } from "@/apps/jira-server-importer/v2/types";
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createAllModulesV2 } from "@/etl/migrator/modules.migrator";
+import { extractErrorMetadata } from "@/helpers/errors";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 
 /**
  * Jira Server Modules Step (Components in Jira)
@@ -94,23 +97,47 @@ export class JiraModulesStep implements IStep {
    * Pull components from Jira Server
    */
   private async pull(client: JiraV2Service, projectKey: string, startAt: number, jobId: string) {
-    const result = await pullComponentsV2(
-      {
-        client,
+    try {
+      const result = await pullComponentsV2(
+        {
+          client,
+          startAt,
+          maxResults: this.PAGE_SIZE,
+        },
+        projectKey
+      );
+
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.MODULE,
+        phase: "PULL_COMPONENTS",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          pulled: result.items.length,
+          total: result.total,
+        },
+      });
+
+      logger.info(`[${jobId}] [${this.name}] Pulled components`, {
+        jobId,
+        count: result.items.length,
+        hasMore: result.hasMore,
         startAt,
-        maxResults: this.PAGE_SIZE,
-      },
-      projectKey
-    );
+      });
 
-    logger.info(`[${jobId}] [${this.name}] Pulled components`, {
-      jobId,
-      count: result.items.length,
-      hasMore: result.hasMore,
-      startAt,
-    });
+      return result;
+    } catch (error) {
+      logger.error(`[${jobId}][${this.name}] Unable to pull components from Jira`, error);
 
-    return result;
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.MODULE,
+        phase: "PULL_MODULES",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        is_fatal: true,
+      });
+
+      throw error;
+    }
   }
 
   /**
@@ -128,30 +155,45 @@ export class JiraModulesStep implements IStep {
    */
   private async push(jobContext: TJobContext, modules: Partial<ExModule>[], storage: IStorageService): Promise<number> {
     const { job, planeClient } = jobContext;
-    // Create modules in Plane
-    const created = await createAllModulesV2(
-      job.id,
-      modules as ExModule[],
-      planeClient,
-      job.workspace_slug,
-      job.project_id
-    );
 
-    logger.info(`[${job.id}] [${this.name}] Pushed modules`, {
-      jobId: job.id,
-      count: created.length,
-    });
+    try {
+      // Create modules in Plane (summary is collected inside createAllModulesV2)
+      const created = await createAllModulesV2(
+        job.id,
+        modules as ExModule[],
+        planeClient,
+        job.workspace_slug,
+        job.project_id
+      );
 
-    // Store mappings: component_id -> module_id
-    const mappings = created
-      .filter((module) => module.external_id && module.id)
-      .map((module) => ({
-        externalId: module.external_id,
-        planeId: module.id,
-      }));
+      logger.info(`[${job.id}] [${this.name}] Pushed modules`, {
+        jobId: job.id,
+        count: created.length,
+      });
 
-    await storage.storeMapping(job.id, this.name, mappings);
+      // Store mappings: component_id -> module_id
+      const mappings = created
+        .filter((module) => module.external_id && module.id)
+        .map((module) => ({
+          externalId: module.external_id,
+          planeId: module.id,
+        }));
 
-    return created.length;
+      await storage.storeMapping(job.id, this.name, mappings);
+
+      return created.length;
+    } catch (error) {
+      logger.error(`[${job.id}][${this.name}] Unable to push modules to Plane`, error);
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.MODULE,
+        ignore_summarization: true,
+        phase: "PUSH_MODULES",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+      });
+
+      throw error;
+    }
   }
 }

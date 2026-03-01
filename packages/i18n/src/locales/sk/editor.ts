@@ -11,4 +11,48 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export default {} as const;
+export default {
+  attachmentComponent: {
+    uploader: {
+      drag_and_drop: "Pretiahni a pusť pre nahranie externých súborov",
+    },
+    errors: {
+      file_too_large: {
+        title: "Súbor je príliš veľký.",
+        description: "Maximálna veľkosť na súbor je {maxFileSize} MB",
+      },
+      unsupported_file_type: {
+        title: "Nepodporovaný typ súboru.",
+        description: "Zobraziť podporované formáty",
+      },
+      default: {
+        title: "Nahrávanie zlyhalo.",
+        description: "Niečo sa pokazilo. Skúste to znovu.",
+      },
+    },
+    upgrade: {
+      description: "Upgradujte svoj plán pre zobrazenie tejto prílohy.",
+    },
+    aria: {
+      click_to_upload: "Kliknite pre nahranie prílohy",
+    },
+  },
+  externalEmbedComponent: {
+    block_menu: {
+      convert_to_embed: "Konvertovať na vložený obsah",
+      convert_to_link: "Konvertovať na odkaz",
+      convert_to_richcard: "Konvertovať na bohatú kartu",
+    },
+    placeholder: {
+      insert_embed: "Vložte sem svoj preferovaný odkaz na vloženie, napríklad video YouTube, dizajn Figma atď.",
+      link: "Zadajte alebo vložte odkaz",
+    },
+    input_modal: {
+      embed: "Vložiť",
+      works_with_links: "Funguje s YouTube, Figma, Google Docs a ďalšími",
+    },
+    error: {
+      not_valid_link: "Prosím, zadajte platnú URL adresu.",
+    },
+  },
+} as const;

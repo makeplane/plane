@@ -33,6 +33,21 @@ class SessionMiddleware(MiddlewareMixin):
             session_key = request.COOKIES.get(settings.SESSION_COOKIE_NAME)
         request.session = self.SessionStore(session_key)
 
+    def _should_refresh_session(self, request, is_admin_path):
+        """Check if the session expiry should be extended for an active user.
+
+        To avoid a database write on every request, sessions are only
+        refreshed once per day (86400 seconds). When refreshed, the
+        expire_date is reset to a full SESSION_COOKIE_AGE from now,
+        giving active users a rolling expiry window.
+        """
+        if is_admin_path:
+            return False
+
+        REFRESH_INTERVAL = 86400  # 1 day in seconds
+        last_refreshed = request.session.get("_session_refreshed_at", 0)
+        return time.time() - last_refreshed > REFRESH_INTERVAL
+
     def process_response(self, request, response):
         """
         If request.session was modified, or if the configuration is to save the
@@ -41,7 +56,6 @@ class SessionMiddleware(MiddlewareMixin):
         """
         try:
             accessed = request.session.accessed
-            modified = request.session.modified
             empty = request.session.is_empty()
         except AttributeError:
             return response
@@ -49,6 +63,15 @@ class SessionMiddleware(MiddlewareMixin):
         # The session should be deleted only if the session is entirely empty.
         is_admin_path = "instances" in request.path
         cookie_name = settings.ADMIN_SESSION_COOKIE_NAME if is_admin_path else settings.SESSION_COOKIE_NAME
+
+        # Extend session expiry for active users. Instead of saving on
+        # every request, refresh only once per day. Writing to the session
+        # marks it as modified, so the existing save logic below handles
+        # persisting the new expire_date and cookie.
+        if accessed and not empty and self._should_refresh_session(request, is_admin_path):
+            request.session["_session_refreshed_at"] = int(time.time())
+
+        modified = request.session.modified
 
         if cookie_name in request.COOKIES and empty:
             response.delete_cookie(
@@ -70,7 +93,7 @@ class SessionMiddleware(MiddlewareMixin):
                     if is_admin_path:
                         max_age = settings.ADMIN_SESSION_COOKIE_AGE
                     else:
-                        max_age = request.session.get_expiry_age()
+                        max_age = settings.SESSION_COOKIE_AGE
 
                     expires_time = time.time() + max_age
                     expires = http_date(expires_time)

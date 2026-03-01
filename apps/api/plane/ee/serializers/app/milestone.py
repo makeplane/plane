@@ -10,8 +10,8 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Third party imports
-from rest_framework import serializers
 from django.db import IntegrityError
+from rest_framework import serializers
 
 # Module imports
 from plane.app.serializers import BaseSerializer
@@ -142,6 +142,14 @@ class MilestoneWorkItemSerializer(serializers.Serializer):
 
 
 class MilestoneWriteSerializer(BaseSerializer):
+    def validate_title(self, value):
+        project_id = self.context.get("project_id") or (self.instance.project_id if self.instance else None)
+        exclude_id = self.instance.id if self.instance else None
+        if project_id:
+            if not Milestone.is_valid_title(value, project_id, exclude_id=exclude_id):
+                raise serializers.ValidationError("A milestone with this title already exists in the project.")
+        return value
+
     description = DescriptionSerializer(required=False)
 
     def create(self, validated_data):

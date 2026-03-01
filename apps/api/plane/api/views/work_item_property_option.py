@@ -26,6 +26,13 @@ from plane.api.views.base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.openapi.decorators import issue_property_option_docs
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_WORK_ITEM_PROPERTY_OPTIONS_READ_SCOPE,
+    PROJECTS_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE,
+)
 
 
 class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
@@ -35,7 +42,11 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
 
     model = IssuePropertyOption
     serializer_class = IssuePropertyOptionAPISerializer
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_OPTIONS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE]],
+    }
     webhook_event = "issue_property_option"
 
     # list issue property options and get issue property option by id
@@ -98,8 +109,8 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, property_id):
         workspace = Workspace.objects.get(slug=slug)
-        project = Project.objects.get(pk=project_id)
-        issue_property = IssueProperty.objects.get(pk=property_id)
+        project = Project.objects.get(pk=project_id, workspace=workspace)
+        issue_property = IssueProperty.objects.get(pk=property_id, workspace=workspace, project=project)
 
         # crating the issue property options if the property type is OPTION
         if issue_property.property_type == "OPTION":
@@ -186,7 +197,12 @@ class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
 
     model = IssuePropertyOption
     serializer_class = IssuePropertyOptionAPISerializer
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_OPTIONS_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE]],
+    }
     webhook_event = "issue_property_option"
 
     # list issue property options and get issue property option by id

@@ -34,8 +34,10 @@ export type TDocumentEditorAdditionalExtensionsRegistry = {
 const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   {
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
-    getExtension: ({ disabledExtensions, flaggedExtensions }) =>
-      SlashCommands({ disabledExtensions, flaggedExtensions }),
+    getExtension: ({ isEditable, disabledExtensions, flaggedExtensions }) => {
+      if (!isEditable) return undefined;
+      return SlashCommands({ disabledExtensions, flaggedExtensions });
+    },
   },
 ];
 

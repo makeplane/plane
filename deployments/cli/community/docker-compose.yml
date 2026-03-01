@@ -47,6 +47,7 @@ x-live-env: &live-env
   LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
 
 x-app-env: &app-env
+  IS_SELF_MANAGED: ${IS_SELF_MANAGED:-1}
   WEB_URL: ${WEB_URL:-http://localhost}
   DEBUG: ${DEBUG:-0}
   CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}

@@ -26,7 +26,7 @@ import { cn, sortBySelectedFirst } from "@plane/utils";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports
-import type { TProject } from "@/plane-web/types";
+import type { TProject } from "@/types";
 // local imports
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
@@ -245,7 +245,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
       multiple={multiple}
     >
       {isOpen && (
-        <Combobox.Options className="fixed z-10" static>
+        <Combobox.Options className="fixed z-30" static>
           <div
             className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
             ref={setPopperElement}
@@ -282,7 +282,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
                       >
                         {({ selected }) => (
                           <>
-                            <span className="flex-grow truncate">{option.content}</span>
+                            <span className="flex items-center flex-grow truncate">{option.content}</span>
                             {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                           </>
                         )}

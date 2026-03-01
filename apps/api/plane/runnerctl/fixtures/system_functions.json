@@ -1,0 +1,165 @@
+[
+  {
+    "model": "runnerctl.ScriptFunction",
+    "pk": "c8cc2495-b1a5-4a68-93c5-aec42109fc25",
+    "fields": {
+      "name": "httpRequest",
+      "description": "Makes an HTTP request using sandboxed fetch. Returns an object with status, headers, and parsed data (JSON or text).",
+      "category": "http",
+      "parameters": [
+        { "name": "url", "type": "string", "description": "The URL to send the request to", "required": true },
+        {
+          "name": "method",
+          "type": "string",
+          "description": "HTTP method (GET, POST, PUT, DELETE, etc.)",
+          "required": false
+        },
+        { "name": "headers", "type": "object", "description": "Request headers as key-value pairs", "required": false },
+        {
+          "name": "body",
+          "type": "any",
+          "description": "Request body (string or object, auto-serialized to JSON)",
+          "required": false
+        }
+      ],
+      "return_type": "{ status: number, headers: object, data: any }",
+      "code": "async function httpRequest({ url, method, headers, body }) {\n  var options = { method: method || \"GET\", headers: headers || {} };\n  if (body) {\n    options.body = typeof body === \"string\" ? body : JSON.stringify(body);\n    if (!options.headers[\"Content-Type\"]) options.headers[\"Content-Type\"] = \"application/json\";\n  }\n  var response = await fetch(url, options);\n  var contentType = response.headers.get(\"content-type\") || \"\";\n  var data = contentType.includes(\"application/json\") ? await response.json() : await response.text();\n  if (!response.ok) throw new Error(\"HTTP \" + response.status + \": \" + (typeof data === \"string\" ? data : JSON.stringify(data)));\n  return { status: response.status, headers: Object.fromEntries(response.headers.entries()), data: data };\n}",
+      "usage_example": "const result = await Functions.httpRequest({\n  url: \"https://api.example.com/data\",\n  method: \"POST\",\n  headers: { \"Authorization\": \"Bearer token\" },\n  body: { key: \"value\" }\n});",
+      "is_system": true,
+      "workspace": null,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "created_by": null,
+      "updated_by": null
+    }
+  },
+  {
+    "model": "runnerctl.ScriptFunction",
+    "pk": "617d4d08-1612-4897-97c1-d612ebab7e71",
+    "fields": {
+      "name": "postToSlack",
+      "description": "Posts a message to a Slack incoming webhook URL. Supports plain text and Block Kit blocks.",
+      "category": "notifications",
+      "parameters": [
+        { "name": "webhookUrl", "type": "string", "description": "Slack incoming webhook URL", "required": true },
+        { "name": "text", "type": "string", "description": "Plain text message", "required": false },
+        { "name": "blocks", "type": "array", "description": "Slack Block Kit blocks array", "required": false }
+      ],
+      "return_type": "{ ok: boolean }",
+      "code": "async function postToSlack({ webhookUrl, text, blocks }) {\n  var payload = {};\n  if (text) payload.text = text;\n  if (blocks) payload.blocks = blocks;\n  var response = await fetch(webhookUrl, {\n    method: \"POST\",\n    headers: { \"Content-Type\": \"application/json\" },\n    body: JSON.stringify(payload)\n  });\n  if (!response.ok) throw new Error(\"Slack webhook failed: HTTP \" + response.status);\n  return { ok: true };\n}",
+      "usage_example": "await Functions.postToSlack({\n  webhookUrl: \"https://hooks.slack.com/services/T.../B.../xxx\",\n  text: \"New work item created!\"\n});",
+      "is_system": true,
+      "workspace": null,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "created_by": null,
+      "updated_by": null
+    }
+  },
+  {
+    "model": "runnerctl.ScriptFunction",
+    "pk": "89747402-0a8b-475d-a49a-298e72691c76",
+    "fields": {
+      "name": "getChildren",
+      "description": "Gets all child work items of a given parent work item using the Plane SDK.",
+      "category": "data",
+      "parameters": [
+        { "name": "projectId", "type": "string", "description": "The project ID", "required": true },
+        { "name": "workItemId", "type": "string", "description": "The parent work item ID", "required": true }
+      ],
+      "return_type": "WorkItem[]",
+      "code": "async function getChildren({ projectId, workItemId }) {\n  var result = await Plane.workItems.advancedSearch(workspaceSlug, { filters: { and: [{ parent_id: workItemId }] }, project_id: projectId });\n  return result.results || result;\n}",
+      "usage_example": "const children = await Functions.getChildren({\n  projectId: \"project-uuid\",\n  workItemId: \"parent-item-uuid\"\n});",
+      "is_system": true,
+      "workspace": null,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "created_by": null,
+      "updated_by": null
+    }
+  },
+  {
+    "model": "runnerctl.ScriptFunction",
+    "pk": "fd95eada-e56d-4f8c-b5b2-92c46e537401",
+    "fields": {
+      "name": "getSiblings",
+      "description": "Gets sibling work items (same parent, excluding self). Retrieves the item to find its parent, then lists that parent's children.",
+      "category": "data",
+      "parameters": [
+        { "name": "projectId", "type": "string", "description": "The project ID", "required": true },
+        {
+          "name": "workItemId",
+          "type": "string",
+          "description": "The work item ID to find siblings of",
+          "required": true
+        }
+      ],
+      "return_type": "WorkItem[]",
+      "code": "async function getSiblings({ projectId, workItemId }) {\n  var item = await Plane.workItems.retrieve(workspaceSlug, projectId, workItemId);\n  if (!item.parent) return [];\n  var result = await Plane.workItems.advancedSearch(workspaceSlug, { filters: { and: [{ parent_id: item.parent }] }, project_id: projectId });\n  var children = result.results || result;\n  return children.filter(function(c) { return c.id !== workItemId; });\n}",
+      "usage_example": "const siblings = await Functions.getSiblings({\n  projectId: \"project-uuid\",\n  workItemId: \"item-uuid\"\n});",
+      "is_system": true,
+      "workspace": null,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "created_by": null,
+      "updated_by": null
+    }
+  },
+  {
+    "model": "runnerctl.ScriptFunction",
+    "pk": "fb3ada78-ff5e-4db1-a8e9-1c36ea8934f2",
+    "fields": {
+      "name": "addComment",
+      "description": "Adds a comment to a work item. Accepts plain text or HTML.",
+      "category": "data",
+      "parameters": [
+        { "name": "projectId", "type": "string", "description": "The project ID", "required": true },
+        { "name": "workItemId", "type": "string", "description": "The work item ID to comment on", "required": true },
+        { "name": "comment", "type": "string", "description": "Comment text (plain text or HTML)", "required": true }
+      ],
+      "return_type": "Comment",
+      "code": "async function addComment({ projectId, workItemId, comment }) {\n  var html = comment.startsWith(\"<\") ? comment : \"<p>\" + comment + \"</p>\";\n  return await Plane.workItems.comments.create(workspaceSlug, projectId, workItemId, { comment_html: html });\n}",
+      "usage_example": "await Functions.addComment({\n  projectId: \"project-uuid\",\n  workItemId: \"item-uuid\",\n  comment: \"This was auto-processed by the runner.\"\n});",
+      "is_system": true,
+      "workspace": null,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "created_by": null,
+      "updated_by": null
+    }
+  },
+  {
+    "model": "runnerctl.ScriptFunction",
+    "pk": "b9eca1aa-be6e-4453-8b7a-b14d1bed8077",
+    "fields": {
+      "name": "addLabel",
+      "description": "Finds a label by name (or creates it) and attaches it to a work item.",
+      "category": "data",
+      "parameters": [
+        { "name": "projectId", "type": "string", "description": "The project ID", "required": true },
+        { "name": "workItemId", "type": "string", "description": "The work item ID to label", "required": true },
+        {
+          "name": "labelName",
+          "type": "string",
+          "description": "Name of the label to find or create",
+          "required": true
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "description": "Hex color for new labels (default: #3a3a3a)",
+          "required": false
+        }
+      ],
+      "return_type": "Label",
+      "code": "async function addLabel({ projectId, workItemId, labelName, color }) {\n  var labelsResult = await Plane.labels.list(workspaceSlug, projectId);\n  var labels = labelsResult.results || labelsResult;\n  var existing = labels.find(function(l) { return l.name.toLowerCase() === labelName.toLowerCase(); });\n  var label = existing || await Plane.labels.create(workspaceSlug, projectId, { name: labelName, color: color || \"#3a3a3a\" });\n  var item = await Plane.workItems.retrieve(workspaceSlug, projectId, workItemId);\n  var currentLabels = item.labels || [];\n  if (currentLabels.indexOf(label.id) === -1) {\n    await Plane.workItems.update(workspaceSlug, projectId, workItemId, { labels: currentLabels.concat([label.id]) });\n  }\n  return label;\n}",
+      "usage_example": "const label = await Functions.addLabel({\n  projectId: \"project-uuid\",\n  workItemId: \"item-uuid\",\n  labelName: \"bug\",\n  color: \"#e53e3e\"\n});",
+      "is_system": true,
+      "workspace": null,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "created_by": null,
+      "updated_by": null
+    }
+  }
+]

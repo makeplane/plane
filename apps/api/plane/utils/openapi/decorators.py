@@ -495,3 +495,34 @@ def teamspace_entity_docs(**kwargs):
         },
     }
     return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def project_label_docs(**kwargs):
+    """Decorator for project label management endpoints"""
+    defaults = {
+        "tags": ["Project Labels"],
+        "summary": "Endpoints for project label create/update/delete and fetch project label details",
+        "parameters": [WORKSPACE_SLUG_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def work_item_page_docs(**kwargs):
+    """Decorator for work item page link endpoints"""
+    defaults = {
+        "tags": ["Work Item Pages"],
+        "summary": "Endpoints for work item page link create/delete and list page links",
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))

@@ -18,12 +18,7 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
-import {
-  EPageAccess,
-  EUserPermissionsLevel,
-  PROJECT_PAGE_TRACKER_ELEMENTS,
-  PROJECT_PAGE_TRACKER_EVENTS,
-} from "@plane/constants";
+import { EPageAccess, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";

@@ -76,8 +76,8 @@ class InstanceEndpoint(BaseAPIView):
             POSTHOG_HOST,
             UNSPLASH_ACCESS_KEY,
             LLM_API_KEY,
-            IS_INTERCOM_ENABLED,
-            INTERCOM_APP_ID,
+            IS_CHAT_SUPPORT_ENABLED,
+            CHAT_SUPPORT_APP_ID,
             SILO_BASE_URL,
             OPENSEARCH_ENABLED,
         ) = get_configuration_value(
@@ -163,14 +163,14 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "LLM_API_KEY",
                     "default": os.environ.get("LLM_API_KEY", ""),
                 },
-                # Intercom settings
+                # Chat support settings
                 {
-                    "key": "IS_INTERCOM_ENABLED",
-                    "default": os.environ.get("IS_INTERCOM_ENABLED", "1"),
+                    "key": "IS_CHAT_SUPPORT_ENABLED",
+                    "default": os.environ.get("IS_CHAT_SUPPORT_ENABLED", "1"),
                 },
                 {
-                    "key": "INTERCOM_APP_ID",
-                    "default": os.environ.get("INTERCOM_APP_ID", ""),
+                    "key": "CHAT_SUPPORT_APP_ID",
+                    "default": os.environ.get("CHAT_SUPPORT_APP_ID", ""),
                 },
                 {
                     "key": "SILO_BASE_URL",
@@ -222,16 +222,16 @@ class InstanceEndpoint(BaseAPIView):
         # is smtp configured
         data["is_smtp_configured"] = bool(EMAIL_HOST)
 
-        # Intercom settings
-        data["is_intercom_enabled"] = IS_INTERCOM_ENABLED == "1"
-        data["intercom_app_id"] = INTERCOM_APP_ID
+        # Chat support settings
+        data["is_chat_support_enabled"] = IS_CHAT_SUPPORT_ENABLED == "1"
+        data["chat_support_app_id"] = CHAT_SUPPORT_APP_ID
 
         # Base URL
         data["admin_base_url"] = settings.ADMIN_BASE_URL
         data["space_base_url"] = settings.SPACE_BASE_URL
         data["app_base_url"] = settings.APP_BASE_URL
         #
-        data["payment_server_base_url"] = settings.PAYMENT_SERVER_BASE_URL if settings.IS_MULTI_TENANT else ""
+        data["payment_server_base_url"] = settings.PAYMENT_SERVER_BASE_URL if not settings.IS_SELF_MANAGED else ""
         data["prime_server_base_url"] = settings.PRIME_SERVER_BASE_URL
         data["feature_flag_server_base_url"] = settings.FEATURE_FLAG_SERVER_BASE_URL
         data["silo_base_url"] = SILO_BASE_URL

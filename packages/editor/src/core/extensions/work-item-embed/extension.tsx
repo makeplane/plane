@@ -11,34 +11,22 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { ReactNodeViewRenderer, NodeViewWrapper } from "@tiptap/react";
+import { ReactNodeViewRenderer } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
 // local imports
 import { WorkItemEmbedExtensionConfig } from "./extension-config";
+import type { TWorkItemEmbedWidgetCallback } from "./node-view";
+import { WorkItemEmbedNodeView } from "./node-view";
 
 type Props = {
-  widgetCallback: ({
-    issueId,
-    projectId,
-    workspaceSlug,
-  }: {
-    issueId: string;
-    projectId: string | undefined;
-    workspaceSlug: string | undefined;
-  }) => React.ReactNode;
+  widgetCallback: TWorkItemEmbedWidgetCallback;
 };
 
 export function WorkItemEmbedExtension(props: Props) {
   return WorkItemEmbedExtensionConfig.extend({
     addNodeView() {
       return ReactNodeViewRenderer((issueProps: NodeViewProps) => (
-        <NodeViewWrapper>
-          {props.widgetCallback({
-            issueId: issueProps.node.attrs.entity_identifier,
-            projectId: issueProps.node.attrs.project_identifier,
-            workspaceSlug: issueProps.node.attrs.workspace_identifier,
-          })}
-        </NodeViewWrapper>
+        <WorkItemEmbedNodeView nodeViewProps={issueProps} widgetCallback={props.widgetCallback} />
       ));
     },
   });

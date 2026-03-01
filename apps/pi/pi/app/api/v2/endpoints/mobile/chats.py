@@ -642,6 +642,7 @@ async def get_chat(
                     "feedback": results["feedback"],
                     "reasoning": results.get("reasoning", ""),
                     "is_focus_enabled": results.get("is_focus_enabled", False),
+                    "is_websearch_enabled": results.get("is_websearch_enabled", False),
                     "focus_project_id": results.get("focus_project_id", None),
                     "focus_workspace_id": results.get("focus_workspace_id", None),
                 }

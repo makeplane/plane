@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // types
-import type { IFlatfileStore } from "@/plane-web/store/importers/flatfile";
+import type { IFlatfileStore } from "@/store/importers/flatfile";
 
 export const useFlatfileImporter = (): IFlatfileStore => {
   const context = useContext(StoreContext);

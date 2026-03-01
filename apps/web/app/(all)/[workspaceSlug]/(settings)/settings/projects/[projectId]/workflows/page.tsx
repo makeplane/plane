@@ -17,8 +17,8 @@ import useSWR from "swr";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import { EUserProjectRoles } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
@@ -29,10 +29,10 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { WorkflowSettingsQuickActions } from "@/plane-web/components/workflow/page/quick-actions";
-import { StateWorkflowRoot } from "@/plane-web/components/workflow/page/root";
-import { WorkflowUpgrade } from "@/plane-web/components/workflow/page/upgrade";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { WorkflowSettingsQuickActions } from "@/components/workflow/page/quick-actions";
+import { StateWorkflowRoot } from "@/components/workflow/page/root";
+import { WorkflowUpgrade } from "@/components/workflow/page/upgrade";
 import { useFlag } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // local imports
@@ -107,16 +107,12 @@ function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
         <SettingsHeading
           title={t("project_settings.workflows.heading")}
           description={t("project_settings.workflows.description")}
-          appendToRight={
+          control={
             <>
               {isWorkflowFeatureFlagEnabled && (
-                <div className="flex-shrink-0 flex items-center justify-center gap-2 px-4">
+                <div className="shrink-0 flex items-center justify-center gap-2 px-4">
                   <span className="text-11 text-tertiary">{t("common.live")}</span>
-                  <ToggleSwitch
-                    value={!!isWorkflowEnabled}
-                    onChange={handleEnableDisableWorkflow}
-                    disabled={isLoading}
-                  />
+                  <Switch value={!!isWorkflowEnabled} onChange={handleEnableDisableWorkflow} disabled={isLoading} />
                   <WorkflowSettingsQuickActions projectId={projectId} workspaceSlug={workspaceSlug} />
                 </div>
               )}

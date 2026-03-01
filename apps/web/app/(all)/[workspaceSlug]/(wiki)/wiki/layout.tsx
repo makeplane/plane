@@ -18,9 +18,9 @@ import { EUserPermissions } from "@plane/constants";
 // wrappers
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 // plane web components
-import { WikiAppPowerKProvider } from "@/plane-web/components/command-palette/wiki/provider";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags/with-feature-flag-hoc";
-import { WikiUpgradeScreen } from "@/plane-web/components/wiki/upgrade-screen";
+import { WikiAppPowerKProvider } from "@/components/command-palette/wiki/provider";
+import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
+import { WikiUpgradeScreen } from "@/components/wiki/upgrade-screen";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // local components
 import type { Route } from "./+types/layout";

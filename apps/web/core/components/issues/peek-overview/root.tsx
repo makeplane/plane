@@ -217,6 +217,15 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
           console.error("Error removing issue from module", error);
         }
       },
+      updateWorkItemMilestone: async (
+        workspaceSlug: string,
+        projectId: string,
+        workItemId: string,
+        milestoneId: string | undefined
+      ) => {
+        await issues.updateWorkItemMilestone(workspaceSlug, projectId, workItemId, milestoneId);
+        void fetchActivities(workspaceSlug, projectId, workItemId);
+      },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [fetchIssue, is_draft, issues, fetchActivities, pathname, removeRoutePeekId, restoreIssue]

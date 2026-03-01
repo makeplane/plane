@@ -57,7 +57,7 @@ async function performFallbackSave(
   await updatePageDescription({
     description_binary: encodedBinary,
     description_html: html,
-    description: json,
+    description_json: json,
   });
 }
 

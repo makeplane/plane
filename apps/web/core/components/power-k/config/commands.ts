@@ -15,6 +15,7 @@
 import type { TPowerKCommandConfig } from "../core/types";
 import { usePowerKContextBasedActions } from "../ui/pages/context-based";
 import { usePowerKAccountCommands } from "./account-commands";
+import { usePowerKActionsCommands } from "./actions-commands";
 import { usePowerKCreationCommands } from "./creation/root";
 import { usePowerKHelpCommands } from "./help-commands";
 import { usePowerKMiscellaneousCommands } from "./miscellaneous-commands";
@@ -22,6 +23,7 @@ import { usePowerKNavigationCommands } from "./navigation/root";
 import { usePowerKPreferencesCommands } from "./preferences-commands";
 
 export const useProjectsAppPowerKCommands = (): TPowerKCommandConfig[] => {
+  const actionsCommands = usePowerKActionsCommands();
   const navigationCommands = usePowerKNavigationCommands();
   const creationCommands = usePowerKCreationCommands();
   const contextualCommands = usePowerKContextBasedActions();
@@ -33,6 +35,7 @@ export const useProjectsAppPowerKCommands = (): TPowerKCommandConfig[] => {
   return [
     ...navigationCommands,
     ...creationCommands,
+    ...actionsCommands,
     ...contextualCommands,
     ...accountCommands,
     ...miscellaneousCommands,

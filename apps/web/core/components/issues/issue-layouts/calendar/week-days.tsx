@@ -13,22 +13,27 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate, ICalendarWeek } from "@plane/types";
+import type { TGroupedIssues, TIssue, TPaginationData, ICalendarDate, ICalendarWeek } from "@plane/types";
 import { cn, getOrderedDays, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 // types
-import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import type { ICycleIssuesFilter } from "@/store/issue/cycle";
-import type { IModuleIssuesFilter } from "@/store/issue/module";
-import type { IProjectIssuesFilter } from "@/store/issue/project";
-import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { ICycleIssuesFilter } from "@/store/work-items/cycle";
+import type { IModuleIssuesFilter } from "@/store/work-items/module";
+import type { IProjectIssuesFilter } from "@/store/work-items/project";
+import type { IProjectViewIssuesFilter } from "@/store/work-items/project-views";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarDayTile } from "./day-tile";
+import type { IWorkspaceIssuesFilter } from "@/store/work-items/workspace";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
-  issues: TIssueMap | undefined;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IWorkspaceIssuesFilter;
+  getWorkItemById: (workItemId: string) => TIssue | undefined;
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
   quickActions: TRenderQuickActions;
@@ -55,7 +60,7 @@ type Props = {
 export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props) {
   const {
     issuesFilterStore,
-    issues,
+    getWorkItemById,
     groupedIssueIds,
     handleDragAndDrop,
     week,
@@ -108,7 +113,7 @@ export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props)
             issuesFilterStore={issuesFilterStore}
             key={renderFormattedPayloadDate(date.date)}
             date={date}
-            issues={issues}
+            getWorkItemById={getWorkItemById}
             groupedIssueIds={groupedIssueIds}
             loadMoreIssues={loadMoreIssues}
             getPaginationData={getPaginationData}

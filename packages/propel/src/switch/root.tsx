@@ -12,7 +12,7 @@
  */
 
 import * as React from "react";
-import { Switch as BaseSwitch } from "@base-ui-components/react/switch";
+import { Switch as BaseSwitch } from "@base-ui/react/switch";
 import { cn } from "../utils/classname";
 
 export interface IToggleSwitchProps {
@@ -23,8 +23,22 @@ export interface IToggleSwitchProps {
   disabled?: boolean;
   className?: string;
 }
+const sizeClasses = (size: "sm" | "md" | "lg") => {
+  switch (size) {
+    case "sm":
+      return { root: "h-4 w-7", thumb: "translate-x-3" };
+    case "md":
+      return { root: "h-5 w-9", thumb: "translate-x-4" };
+    case "lg":
+      return { root: "h-6 w-10", thumb: "translate-x-5" };
+    default:
+      return { root: "h-4 w-7", thumb: "translate-x-3" };
+  }
+};
 
 function Switch({ value, onChange, label, size = "sm", disabled, className }: IToggleSwitchProps) {
+  const sizeClass = sizeClasses(size);
+
   return (
     <BaseSwitch.Root
       checked={value}
@@ -32,15 +46,14 @@ function Switch({ value, onChange, label, size = "sm", disabled, className }: IT
       onCheckedChange={onChange}
       aria-label={label}
       className={cn(
-        "relative inline-flex flex-shrink-0 cursor-pointer rounded-full border border-subtle transition-colors duration-200 ease-in-out focus:outline-none",
+        "relative inline-flex flex-shrink-0 cursor-pointer rounded-full border border-subtle transition-colors",
         // size
-        size === "sm" ? "h-4 w-6" : size === "md" ? "h-5 w-8" : "h-6 w-10",
+        sizeClass.root,
         // state
-        disabled
-          ? "cursor-not-allowed bg-layer-1"
-          : value
-            ? "cursor-pointer bg-accent-primary"
-            : "cursor-pointer bg-surface-2",
+        "bg-(--text-color-icon-placeholder)",
+        "data-[checked]:bg-accent-primary",
+        // disabled
+        "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
         className
       )}
     >
@@ -48,19 +61,12 @@ function Switch({ value, onChange, label, size = "sm", disabled, className }: IT
       <BaseSwitch.Thumb
         aria-hidden="true"
         className={cn(
-          "inline-block self-center rounded-full shadow ring-0 transition-transform duration-200 ease-in-out",
-          // size
-          size === "sm" ? "h-3 w-3" : size === "md" ? "h-4 w-4" : "h-5 w-5",
-          // position + color by state
-          value
-            ? size === "sm"
-              ? "translate-x-3 bg-white"
-              : size === "md"
-                ? "translate-x-4 bg-white"
-                : "translate-x-5 bg-white"
-            : "translate-x-0.5 bg-surface-2",
+          "aspect-square h-full rounded-full shadow ring-0 transition-transform",
+          "bg-(--text-color-icon-on-color)",
+          // position by state
+          value && sizeClass.thumb,
           // disabled
-          disabled && "cursor-not-allowed bg-surface-2"
+          "data-[disabled]:cursor-not-allowed"
         )}
       />
     </BaseSwitch.Root>

@@ -11,25 +11,21 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
+import { expect } from "storybook/test";
 import { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from "./core";
 
-const meta = {
-  title: "Components/Table",
+const meta = preview.meta({
   component: Table,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
-} satisfies Meta<typeof Table>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  render() {
+export const Default = meta.story({
+  render(args) {
     return (
-      <Table>
+      <Table {...args}>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
@@ -57,12 +53,12 @@ export const Default: Story = {
       </Table>
     );
   },
-};
+});
 
-export const WithCaption: Story = {
-  render() {
+export const WithCaption = meta.story({
+  render(args) {
     return (
-      <Table>
+      <Table {...args}>
         <TableCaption>A list of recent users</TableCaption>
         <TableHeader>
           <TableRow>
@@ -86,12 +82,12 @@ export const WithCaption: Story = {
       </Table>
     );
   },
-};
+});
 
-export const WithFooter: Story = {
-  render() {
+export const WithFooter = meta.story({
+  render(args) {
     return (
-      <Table>
+      <Table {...args}>
         <TableHeader>
           <TableRow>
             <TableHead>Product</TableHead>
@@ -131,12 +127,12 @@ export const WithFooter: Story = {
       </Table>
     );
   },
-};
+});
 
-export const WithActions: Story = {
-  render() {
+export const WithActions = meta.story({
+  render(args) {
     return (
-      <Table>
+      <Table {...args}>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
@@ -168,12 +164,12 @@ export const WithActions: Story = {
       </Table>
     );
   },
-};
+});
 
-export const WithBadges: Story = {
-  render() {
+export const WithBadges = meta.story({
+  render(args) {
     return (
-      <Table>
+      <Table {...args}>
         <TableHeader>
           <TableRow>
             <TableHead>Project</TableHead>
@@ -217,12 +213,12 @@ export const WithBadges: Story = {
       </Table>
     );
   },
-};
+});
 
-export const WithCheckboxes: Story = {
-  render() {
+export const WithCheckboxes = meta.story({
+  render(args) {
     return (
-      <Table>
+      <Table {...args}>
         <TableHeader>
           <TableRow>
             <TableHead>
@@ -262,12 +258,19 @@ export const WithCheckboxes: Story = {
       </Table>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    const selectAll = canvas.getByRole("checkbox", { name: "Select all rows" });
+    await expect(selectAll).toBeVisible();
+    const johnCheckbox = canvas.getByRole("checkbox", { name: "Select row for John Doe" });
+    await userEvent.click(johnCheckbox);
+    await expect(johnCheckbox).toBeChecked();
+  },
+});
 
-export const EmptyState: Story = {
-  render() {
+export const EmptyState = meta.story({
+  render(args) {
     return (
-      <Table>
+      <Table {...args}>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
@@ -285,12 +288,12 @@ export const EmptyState: Story = {
       </Table>
     );
   },
-};
+});
 
-export const LargeDataset: Story = {
-  render() {
+export const LargeDataset = meta.story({
+  render(args) {
     return (
-      <Table>
+      <Table {...args}>
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
@@ -322,12 +325,15 @@ export const LargeDataset: Story = {
       </Table>
     );
   },
-};
+});
 
-export const CustomStyling: Story = {
-  render() {
+export const CustomStyling = meta.story({
+  args: {
+    className: "border-2 border-blue-200",
+  },
+  render(args) {
     return (
-      <Table className="border-2 border-blue-200">
+      <Table {...args}>
         <TableHeader>
           <TableRow className="bg-blue-100">
             <TableHead className="text-blue-900">Name</TableHead>
@@ -350,13 +356,13 @@ export const CustomStyling: Story = {
       </Table>
     );
   },
-};
+});
 
-export const ResponsiveTable: Story = {
-  render() {
+export const ResponsiveTable = meta.story({
+  render(args) {
     return (
       <div className="w-full max-w-4xl">
-        <Table>
+        <Table {...args}>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
@@ -386,4 +392,4 @@ export const ResponsiveTable: Story = {
       </div>
     );
   },
-};
+});

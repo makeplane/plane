@@ -12,8 +12,8 @@
 import asyncio
 import json
 import uuid
-from collections.abc import AsyncIterator
 from typing import Any
+from typing import AsyncGenerator
 from typing import Dict
 from typing import List
 from typing import Literal
@@ -56,22 +56,17 @@ from .templates import preset_question_flow
 # from .multi_tool_orch import agent_chaining_order
 from .utils import StandardAgentResponse
 from .utils import conv_history_from_app_query
-from .utils import is_model_enabled_for_workspace
 from .utils import process_conv_history
 
 log = logger.getChild(__name__)
 MAX_CHAT_LENGTH = settings.chat.MAX_CHAT_LENGTH
 MENTION_TAGS = settings.chat.MENTION_TAGS
 
-# Feature flag constant for action execution - using settings
-PI_ACTION_EXECUTION = settings.feature_flags.PI_ACTION_EXECUTION
-
-
 # mask_uuids_in_text moved to utils.py
 
 
 class PlaneChatBot(ChatKit):
-    def __init__(self, llm: str = "gpt-4.1", token: str | None = None):
+    def __init__(self, llm: str = settings.llm_model.DEFAULT, token: str | None = None):
         """Initializes PlaneChatBot with specified LLM model."""
         super().__init__(switch_llm=llm, token=token)
         self.chat_title = None
@@ -93,6 +88,7 @@ class PlaneChatBot(ChatKit):
         is_project_chat = data.is_project_chat or False
 
         is_focus_enabled = data.workspace_in_context
+        is_websearch_enabled = bool(getattr(data, "is_websearch_enabled", False))
         # Use new polymorphic fields if available, otherwise fall back to legacy fields
         focus_entity_type = getattr(data, "focus_entity_type", None)
         focus_entity_id = getattr(data, "focus_entity_id", None)
@@ -115,6 +111,7 @@ class PlaneChatBot(ChatKit):
                     workspace_slug=data.workspace_slug,
                     is_project_chat=is_project_chat,
                     workspace_in_context=data.workspace_in_context,
+                    is_websearch_enabled=is_websearch_enabled,
                 )
 
                 # Chat search index upserted via Celery background task
@@ -130,6 +127,7 @@ class PlaneChatBot(ChatKit):
                 chat_id=chat_id,
                 db=db,
                 is_focus_enabled=is_focus_enabled,
+                is_websearch_enabled=is_websearch_enabled,
                 focus_entity_type=focus_entity_type,
                 focus_entity_id=focus_entity_id,
                 focus_project_id=focus_project_id,
@@ -167,6 +165,7 @@ class PlaneChatBot(ChatKit):
             "tool_response": "",
             "answer": "",
             "workspace_in_context": workspace_in_context,
+            "websearch_enabled": bool(getattr(data, "is_websearch_enabled", False)),
         }
 
     async def _execute_tools_for_build_mode(
@@ -190,7 +189,8 @@ class PlaneChatBot(ChatKit):
         pi_sidebar_open=None,
         sidebar_open_url=None,
         source=None,
-    ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
+        websearch_enabled: bool = False,
+    ) -> AsyncGenerator[Union[str, Dict[str, Any]], None]:
         """Execute tools for build mode"""
         async for chunk in action_planner.execute_tools_for_build_mode(
             self,
@@ -213,6 +213,7 @@ class PlaneChatBot(ChatKit):
             pi_sidebar_open,
             sidebar_open_url,
             source,
+            websearch_enabled=websearch_enabled,
         ):
             yield chunk
 
@@ -233,7 +234,9 @@ class PlaneChatBot(ChatKit):
         db,
         parsed_query,
         reasoning_container=None,
-    ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
+        websearch_enabled: bool = False,
+        web_search_context: str | None = None,
+    ) -> AsyncGenerator[Union[str, Dict[str, Any]], None]:
         """Execute tools for ask mode."""
         async for chunk in askmode_tool_executor.execute_tools_for_ask_mode(
             self,
@@ -252,6 +255,8 @@ class PlaneChatBot(ChatKit):
             db,
             parsed_query,
             reasoning_container,
+            websearch_enabled=websearch_enabled,
+            web_search_context=web_search_context,
         ):
             yield chunk
 
@@ -307,13 +312,15 @@ class PlaneChatBot(ChatKit):
         async for chunk in response_processor.process_response(base_stream, chat_id, query_id, response_id, switch_llm, db, reasoning, source):
             yield chunk
 
-    async def process_chat_stream(self, data: ChatRequest, db: AsyncSession) -> AsyncIterator[Union[str, Dict[str, Any]]]:
+    async def process_chat_stream(self, data: ChatRequest, db: AsyncSession) -> AsyncGenerator[Union[str, Dict[str, Any]], None]:
         """Unified entry point that routes internally based on data.mode."""
         mode = getattr(data, "mode", "ask") or "ask"
         async for chunk in self._process_chat_stream_core(data, db, mode=mode):
             yield chunk
 
-    async def _process_chat_stream_core(self, data: ChatRequest, db: AsyncSession, mode: str = "ask") -> AsyncIterator[Union[str, Dict[str, Any]]]:
+    async def _process_chat_stream_core(
+        self, data: ChatRequest, db: AsyncSession, mode: str = "ask"
+    ) -> AsyncGenerator[Union[str, Dict[str, Any]], None]:
         """
         This method takes a user query, processes it through various stages (parsing, tool selection, tool execution),
         and streams back the response chunks as they're generated.
@@ -363,7 +370,8 @@ class PlaneChatBot(ChatKit):
         user_id = data.user_id
         # is_temp = data.is_temp
         user_meta = data.context
-        workspace_in_context = data.workspace_in_context if await is_model_enabled_for_workspace(str(chat_id), switch_llm, db) else False
+        workspace_in_context = data.workspace_in_context
+        websearch_enabled = bool(getattr(data, "is_websearch_enabled", False))
         workspace_slug = data.workspace_slug
         attachment_ids = data.attachment_ids or []
         step_order = 0
@@ -447,6 +455,19 @@ class PlaneChatBot(ChatKit):
         if attachment_context:
             log.info(f"ChatID: {chat_id} - Enhanced query with attachment context for routing")
 
+        # Prefetch web search only when workspace context is OFF (fast path)
+        web_search_context: str | None = None
+        if websearch_enabled and not workspace_in_context:
+            try:
+                web_search_context = await self.fetch_web_search_context(
+                    parsed_query,
+                    workspace_in_context=workspace_in_context,
+                    db=db,
+                    message_id=query_id,
+                )
+            except Exception as e:
+                log.warning(f"ChatID: {chat_id} - Web search failed: {e}")
+
         # Link attachments to the created message
         if data.attachment_ids:
             await link_attachments_to_message(attachment_ids=data.attachment_ids, message_id=query_id, chat_id=data.chat_id, user_id=user_id, db=db)
@@ -460,6 +481,7 @@ class PlaneChatBot(ChatKit):
                 "workspace_in_context": workspace_in_context,
                 "workspace_slug": workspace_slug,
                 "workspace_id": workspace_id,
+                "websearch_enabled": websearch_enabled,
             },
         )
 
@@ -489,6 +511,7 @@ class PlaneChatBot(ChatKit):
             log.info(f"ChatID: {chat_id} - Using preset question flow for: {query}")
             log.info(f"ChatID: {chat_id} - Preset query steps: {preset_query_steps}")
 
+        _title_handled_on_cancel = False
         try:
             # Set token tracking context for this query
             self.set_token_tracking_context(query_id, db, chat_id=str(chat_id))
@@ -552,6 +575,7 @@ class PlaneChatBot(ChatKit):
                         enhanced_query_for_processing=enhanced_query_for_processing,
                         enhanced_conversation_history=enhanced_conversation_history,
                         reasoning_container=reasoning_container,
+                        web_search_context=web_search_context,
                     )
 
                 # Mode-specific execution branch
@@ -624,6 +648,7 @@ class PlaneChatBot(ChatKit):
                         pi_sidebar_open=data.pi_sidebar_open,
                         sidebar_open_url=data.sidebar_open_url,
                         source=getattr(data, "source", None),
+                        websearch_enabled=websearch_enabled,
                     )
                 else:
                     # Ask mode: Retrieval and answering
@@ -644,6 +669,8 @@ class PlaneChatBot(ChatKit):
                         db,
                         parsed_query,
                         reasoning_container=reasoning_container,
+                        websearch_enabled=websearch_enabled,
+                        web_search_context=web_search_context,
                     )
 
                 async for chunk in execution_stream:
@@ -714,7 +741,15 @@ class PlaneChatBot(ChatKit):
                     if collecting_final_response:
                         final_response_chunks.append(chunk)
 
-                    yield chunk
+                    # Replace plane-attachment:// placeholders with presigned URLs before yielding to client
+                    # The original placeholder is preserved in final_response_chunks for DB storage
+                    chunk_to_yield = chunk
+                    if isinstance(chunk, str) and "plane-attachment://" in chunk:
+                        from pi.services.retrievers.pg_store.chat import replace_plot_attachment_urls
+
+                        chunk_to_yield = await replace_plot_attachment_urls(chunk, db)
+
+                    yield chunk_to_yield
 
                 # Update reasoning from the container
                 reasoning = reasoning_container["content"]
@@ -725,28 +760,39 @@ class PlaneChatBot(ChatKit):
                     string_chunks = [chunk for chunk in final_response_chunks if isinstance(chunk, str)]
                     final_response = "".join(string_chunks)
 
-                # Save assistant message with reasoning blocks
-                if final_response:
-                    assistant_message_result = await upsert_message(
-                        message_id=response_id,
-                        chat_id=chat_id,
-                        content=final_response,
-                        user_type=UserTypeChoices.ASSISTANT.value,
-                        parent_id=query_id,
-                        llm_model=switch_llm,
-                        reasoning=reasoning,
-                        source=getattr(data, "source", None) or None,
-                        db=db,
+                # Ensure we always have content to persist (prevent placeholder on refresh)
+                if not final_response or not final_response.strip():
+                    fallback_message = "I wasn't able to generate a complete response. But, if you are satisfied with the action plan, click `Confirm`, else please try again."  # noqa: E501
+                    final_response = fallback_message
+                    log.warning(
+                        f"ChatID: {chat_id} - Empty final_response detected. "
+                        f"Chunks collected: {len(final_response_chunks)}, "
+                        f"Using fallback message to prevent placeholder on refresh."
                     )
+                    # Yield the fallback message to prevent frontend hanging
+                    yield fallback_message
 
-                    # Assistant message search index upserted via Celery background task
+                # Save assistant message with reasoning blocks (always persist to avoid placeholder)
+                assistant_message_result = await upsert_message(
+                    message_id=response_id,
+                    chat_id=chat_id,
+                    content=final_response,
+                    user_type=UserTypeChoices.ASSISTANT.value,
+                    parent_id=query_id,
+                    llm_model=switch_llm,
+                    reasoning=reasoning,
+                    source=getattr(data, "source", None) or None,
+                    db=db,
+                )
 
-                    if assistant_message_result["message"] != "success":
-                        final_response = "An unexpected error occurred. Please try again"  # Set final_response for title generation
-                        yield final_response
-                        return
+                # Assistant message search index upserted via Celery background task
 
-                    log.info(f"ChatID: {chat_id} - Final Response: {final_response}")
+                if assistant_message_result["message"] != "success":
+                    final_response = "An unexpected error occurred. Please try again"  # Set final_response for title generation
+                    yield final_response
+                    return
+
+                log.info(f"ChatID: {chat_id} - Final Response: {final_response}")
 
             if final_response:
                 query_flow_store["answer"] = final_response
@@ -755,25 +801,65 @@ class PlaneChatBot(ChatKit):
             query_flow_store["rewritten_query"] = parsed_query
 
         except asyncio.CancelledError:
-            # Client disconnected - save a timeout message before propagating
-            log.warning(f"ChatID: {chat_id} - Stream cancelled by client, persisting timeout message")
-            final_response = "Your request timed out. Please try again."
-            try:
-                await asyncio.shield(
-                    upsert_message(
-                        message_id=response_id,
-                        chat_id=chat_id,
-                        content=final_response,
-                        user_type=UserTypeChoices.ASSISTANT,
-                        parent_id=query_id,
-                        llm_model=switch_llm,
-                        reasoning=reasoning,
-                        source=getattr(data, "source", None) or None,
-                        db=db,
-                    )
-                )
-            except Exception as e:
-                log.error(f"ChatID: {chat_id} - Failed to persist timeout message: {e}")
+            # Client disconnected - save any partial content accumulated so far
+            log.warning(f"ChatID: {chat_id} - Stream cancelled by client, persisting partial response")
+
+            # Build partial response from chunks collected during streaming
+            if final_response_chunks:
+                string_chunks = [c for c in final_response_chunks if isinstance(c, str)]
+                partial = "".join(string_chunks).strip()
+                if partial:
+                    final_response = partial
+
+            # Use reasoning from the container if available
+            if reasoning_container and reasoning_container.get("content"):
+                reasoning = reasoning_container["content"]
+
+            # Fallback only if nothing was collected at all
+            if not final_response or not final_response.strip():
+                final_response = "Your request timed out. Please try again."
+
+            # The existing db session is likely corrupted by the task
+            # cancellation (asyncpg protocol state error).  Schedule a
+            # fire-and-forget task with a fresh DB session instead.
+            _cancel_content = final_response
+            _cancel_reasoning = reasoning
+            _cancel_chatbot = self  # capture for background task
+
+            async def _persist_on_cancel() -> None:
+                try:
+                    from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
+
+                    async with get_streaming_db_session() as cancel_db:
+                        await upsert_message(
+                            message_id=response_id,
+                            chat_id=chat_id,
+                            content=_cancel_content,
+                            user_type=UserTypeChoices.ASSISTANT,
+                            parent_id=query_id,
+                            llm_model=switch_llm,
+                            reasoning=_cancel_reasoning,
+                            source=getattr(data, "source", None) or None,
+                            db=cancel_db,
+                        )
+                        log.info(f"ChatID: {chat_id} - Successfully persisted partial response on disconnect")
+
+                        # Generate title with the fresh session (the original
+                        # session is corrupted so the finally-block can't do it)
+                        await ask_mode_helpers.generate_chat_title_if_needed(
+                            chatbot_instance=_cancel_chatbot,
+                            chat_id=chat_id,
+                            query_id=query_id,
+                            db=cancel_db,
+                            final_response=_cancel_content,
+                            parsed_query=parsed_query,
+                            query=query,
+                        )
+                except Exception as e:
+                    log.error(f"ChatID: {chat_id} - Failed to persist partial response on disconnect: {e}")
+
+            asyncio.create_task(_persist_on_cancel())
+            _title_handled_on_cancel = True
             # Re-raise so the endpoint handler can log and clean up
             raise
 
@@ -799,15 +885,17 @@ class PlaneChatBot(ChatKit):
 
         finally:
             # Generate chat title for new chats BEFORE clearing token tracking context
-            await ask_mode_helpers.generate_chat_title_if_needed(
-                chatbot_instance=self,
-                chat_id=chat_id,
-                query_id=query_id,
-                db=db,
-                final_response=final_response,
-                parsed_query=parsed_query,
-                query=query,
-            )
+            # Skip if already handled in _persist_on_cancel (CancelledError path)
+            if not _title_handled_on_cancel:
+                await ask_mode_helpers.generate_chat_title_if_needed(
+                    chatbot_instance=self,
+                    chat_id=chat_id,
+                    query_id=query_id,
+                    db=db,
+                    final_response=final_response,
+                    parsed_query=parsed_query,
+                    query=query,
+                )
 
             # Clear token tracking context and attachment blocks
             self.clear_token_tracking_context()
@@ -876,6 +964,16 @@ class PlaneChatBot(ChatKit):
             return await self.handle_pages_query(query, workspace_id, project_id, user_id, vector_search_page_ids)
         if tool == RetrievalTools.DOCS_SEARCH_TOOL:
             return await self.handle_docs_query(query)
+        if tool == RetrievalTools.WEB_SEARCH_TOOL:
+            workspace_context = True
+            if isinstance(query_flow_store, dict):
+                workspace_context = query_flow_store.get("workspace_in_context", True)
+            return await self.handle_web_search_query(
+                query,
+                workspace_in_context=workspace_context,
+                db=db,
+                message_id=message_id,
+            )
 
         return StandardAgentResponse.create_response("Sorry, I couldn't retrieve the information you asked for at this time. Please try again later.")
 

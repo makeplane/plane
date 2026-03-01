@@ -15,14 +15,13 @@ from pi.app.api.v1.endpoints import artifacts
 from pi.app.api.v1.endpoints import attachments
 from pi.app.api.v1.endpoints import chat
 from pi.app.api.v1.endpoints import chat_ctas
-from pi.app.api.v1.endpoints import docs
 from pi.app.api.v1.endpoints import dupes
 from pi.app.api.v1.endpoints import feedback
+from pi.app.api.v1.endpoints import flags
 from pi.app.api.v1.endpoints import health
 from pi.app.api.v1.endpoints import oauth
 from pi.app.api.v1.endpoints import pages
 from pi.app.api.v1.endpoints import transcription
-from pi.app.api.v1.endpoints.internal import llm
 from pi.app.api.v1.endpoints.internal import vectorize
 from pi.app.api.v1.endpoints.mobile import attachments as mobile_attachments
 from pi.app.api.v1.endpoints.mobile import chat as mobile_chat
@@ -32,14 +31,13 @@ from pi.app.api.v1.endpoints.mobile import transcription as mobile_transcription
 plane_pi_router = APIRouter()
 
 plane_pi_router.include_router(health.router, tags=["health"])
+plane_pi_router.include_router(flags.router, tags=["flags"])
 plane_pi_router.include_router(dupes.router, prefix="/dupes", tags=["dupes"])
 plane_pi_router.include_router(chat.router, prefix="/chat", tags=["chat"])
 plane_pi_router.include_router(chat_ctas.router, prefix="/chat-ctas", tags=["chat-ctas"])
 plane_pi_router.include_router(oauth.router, prefix="/oauth", tags=["oauth"])
 plane_pi_router.include_router(attachments.router, prefix="/attachments", tags=["attachments"])
-plane_pi_router.include_router(llm.router, prefix="/internal", tags=["internal"])
 plane_pi_router.include_router(vectorize.router, prefix="/internal", tags=["internal-vectorize"])
-plane_pi_router.include_router(docs.router, prefix="/docs", tags=["docs-webhook"])
 plane_pi_router.include_router(transcription.router, prefix="/transcription", tags=["transcription"])
 plane_pi_router.include_router(artifacts.router, prefix="/artifacts", tags=["artifacts"])
 plane_pi_router.include_router(pages.router, prefix="/pages", tags=["pages"])

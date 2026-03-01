@@ -27,10 +27,17 @@ export function App() {
 
   // It retrieves the variant from the native code, once the webview is loaded.
   useEffect(() => {
-    callNative(CallbackHandlerStrings.getVariant).then((variant: string) => {
-      if (!variant || !Object.keys(TEditorVariant).includes(variant)) return;
-      setVariant(variant as TEditorVariant);
-    });
+    const fetchVariant = async () => {
+      try {
+        const variant = await callNative<string>(CallbackHandlerStrings.getVariant);
+        if (!variant || !Object.keys(TEditorVariant).includes(variant)) return;
+        setVariant(variant as TEditorVariant);
+      } catch (error) {
+        console.error("Failed to fetch editor variant", error);
+      }
+    };
+
+    void fetchVariant();
   }, []);
 
   // It is used to set the variant from the native code.
@@ -39,7 +46,9 @@ export function App() {
     setVariant(variant as TEditorVariant);
   }, []);
 
-  window.setEditorVariant = setEditorVariant;
+  useEffect(() => {
+    window.setEditorVariant = setEditorVariant;
+  }, [setEditorVariant]);
 
   if (!variant) return null;
 

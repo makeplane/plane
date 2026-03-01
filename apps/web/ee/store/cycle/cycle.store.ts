@@ -16,10 +16,10 @@ import { set, sortBy } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import type { ICycle } from "@plane/types";
-import type { CYCLE_ACTION } from "@/plane-web/constants/cycle";
-import { CycleUpdateService, CycleService } from "@/plane-web/services/cycle.service";
+import type { CYCLE_ACTION } from "@/constants/cycle";
+import { CycleUpdateService, CycleService } from "@/services/cycle-updates.service";
 import type { RootStore } from "@/plane-web/store/root.store";
-import type { TCycleUpdateReaction, TCycleUpdates } from "@/plane-web/types";
+import type { TCycleUpdateReaction, TCycleUpdates } from "@/types";
 import type { ICycleStore as ICeCycleStore } from "@/store/cycle.store";
 import { CycleStore as CeCycleStore } from "@/store/cycle.store";
 

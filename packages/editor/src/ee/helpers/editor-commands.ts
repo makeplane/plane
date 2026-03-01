@@ -93,3 +93,31 @@ export const insertAIBlock = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).insertAIBlock().run();
   else editor.chain().focus().insertAIBlock().run();
 };
+
+export const findColumnAncestor = (node: Node | null): HTMLElement | null => {
+  while (node !== null) {
+    if (node instanceof HTMLElement && node.classList?.contains("editor-column")) {
+      return node;
+    }
+    node = node.parentNode;
+  }
+  return null;
+};
+
+export const insertColumnListCommand = (editor: Editor, range?: Range, columns: number = 2) => {
+  if (typeof window !== "undefined") {
+    const selection = window.getSelection();
+    if (selection) {
+      if (selection.rangeCount !== 0) {
+        const selectionRange = selection.getRangeAt(0);
+        if (findColumnAncestor(selectionRange.startContainer)) {
+          return;
+        }
+      }
+    }
+  }
+  if (range) {
+    editor.chain().focus().deleteRange(range).run();
+  }
+  editor.chain().focus().insertColumnList({ columns }).run();
+};

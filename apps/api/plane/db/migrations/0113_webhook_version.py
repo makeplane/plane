@@ -4,6 +4,18 @@ from django.db import migrations, models
 import plane.db.models.workspace
 
 
+
+
+def set_default_product_tour_to_false():
+    return {
+        "work_items": False,
+        "cycles": False,
+        "modules": False,
+        "intake": False,
+        "pages": False,
+    }
+
+
 def get_default_product_tour():
     return {
         "work_items": True,
@@ -41,7 +53,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='workspaceuserproperties',
             name='product_tour',
-            field=models.JSONField(default=plane.db.models.workspace.get_default_product_tour),
+            field=models.JSONField(default=set_default_product_tour_to_false),
         ),
          migrations.AddField(
             model_name='apitoken',

@@ -28,6 +28,7 @@ class RetrievalTools(str, Enum):
     VECTOR_SEARCH_TOOL = "vector_search_tool"
     PAGES_SEARCH_TOOL = "pages_search_tool"
     DOCS_SEARCH_TOOL = "docs_search_tool"
+    WEB_SEARCH_TOOL = "web_search_tool"
     ACTION_EXECUTOR_TOOL = "action_executor_tool"
 
 
@@ -88,6 +89,7 @@ class QueryFlowStore(TypedDict):
     rewritten_query: str  # Kept for backward compatibility - now always equal to parsed_query
     answer: str
     workspace_in_context: bool
+    websearch_enabled: bool
     project_id: str
     workspace_id: str
     # Optional: current step order to align sub-step persistence without DB lookups

@@ -50,7 +50,7 @@ class ImportAssetEndpoint(BaseServiceAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            size_limit = settings.FILE_SIZE_LIMIT
+            _ = settings.FILE_SIZE_LIMIT
 
             # Generate presigned URL for GET
             storage = S3Storage(request=request, is_server=True)
@@ -145,7 +145,7 @@ class ImportAssetEndpoint(BaseServiceAPIView):
             created_by_id=created_by,
             external_id=external_id,
             external_source=external_source,
-            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,  # Using ISSUE_ATTACHMENT since we'll bind it to issues
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,  # Using ISSUE_ATTACHMENT since we'll bind it to issues  # noqa: E501
         )
 
         # Get the presigned URL

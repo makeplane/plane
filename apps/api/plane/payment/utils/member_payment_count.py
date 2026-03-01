@@ -27,7 +27,8 @@ def count_member_payments(members_list):
     # Get the workspace paid quantity that is the quantity of admin and member users
     workspace_paid_quantity = admin_member_users
 
-    # If the viewers and guest users are more than 5 times the workspace paid quantity then increase the workspace paid quantity by the difference
+    # If the viewers and guest users are more than 5 times the workspace paid quantity then
+    # increase the workspace paid quantity by the difference
     if viewers_guest_users > 5 * workspace_paid_quantity:
         # Increase the workspace paid quantity by the difference
         workspace_paid_quantity += viewers_guest_users - 5 * workspace_paid_quantity
@@ -59,7 +60,8 @@ def handle_free_plan_invite_case(slug, requested_invite_list, workspace_license)
 def handle_free_plan_update_case(slug, requested_role, workspace_license):
     """This function handles the free plan update case"""
     # Case 1b
-    # Allow update for all roles since the total count of current members and invited members is less than or equal to workspace_license.free_seats
+    # Allow update for all roles since the total count of current members and
+    # invited members is less than or equal to workspace_license.free_seats
     return True, 0, 0
 
 
@@ -272,7 +274,7 @@ def handle_cloud_payments(slug, requested_invite_list, requested_role, workspace
                 - Allowed only if the total count of paid current users and paid invited users and paid requested invite users is less than or equal to workspace_license.purchased_seats
             ii. Update case - requested_role is a role and requested_invite_list is None
               - Allowed for roles > 10 if in the purchased seats limit and for roles <= 10 if in the 5 * purchased seats limit
-    """
+    """  # noqa: E501
 
     # Check the plan of the workspace license and trial
     if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE:
@@ -286,7 +288,8 @@ def handle_cloud_payments(slug, requested_invite_list, requested_role, workspace
             )
         else:
             # Case 1b
-            # Allow update for all roles since the total count of current members and invited members is less than or equal to workspace_license.free_seats
+            # Allow update for all roles since the total count of current members and
+            # invited members is less than or equal to workspace_license.free_seats
             return handle_free_plan_update_case(
                 slug=slug,
                 requested_role=requested_role,
@@ -328,7 +331,7 @@ def handle_self_managed_payments(slug, requested_invite_list, requested_role, wo
             - Allowed only if the total count of paid current users and paid invited users and paid requested invite users is less than or equal to workspace_license.purchased_seats
         b. Update case - requested_role is a role and requested_invite_list is None
             - Allowed for roles > 10 if in the purchased seats limit and for roles <= 10 if in the 5 * purchased seats limit
-    """
+    """  # noqa: E501
 
     if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE:
         # Free Plan Case
@@ -399,7 +402,7 @@ def workspace_member_check(slug, requested_invite_list, requested_role, current_
         workspace_license = WorkspaceLicense.objects.filter(workspace__slug=slug).first()
 
     # Get the workspace license
-    if settings.IS_MULTI_TENANT:
+    if not settings.IS_SELF_MANAGED:
         return handle_cloud_payments(
             slug=slug,
             requested_invite_list=requested_invite_list,

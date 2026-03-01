@@ -24,6 +24,8 @@ print_header(){
     echo "    SILO_HMAC_SECRET_KEY (default: tnbbvj6ATPvze4zaygdujxg4dpk4hqx0WDW)"
     echo "    AES_SECRET_KEY (default: wvRonyo2xksk00E2h0hAbR5pFETQwbBK)"
     echo "    LIVE_SERVER_SECRET_KEY (default: htbqvBJAgpm9bzvf3r4urJer0ENReatceh)"
+    echo "    ENABLE_PLANE_AI (default: 0, set to 1 to enable Plane Intelligence)"
+    echo "    PLANE_PI_DATABASE_URL (required when ENABLE_PLANE_AI=1)"
     echo ""
     echo ""
 }
@@ -160,8 +162,14 @@ update_env_file(){
     update_env_value "AWS_SECRET_ACCESS_KEY" "$AWS_SECRET_ACCESS_KEY"
     update_env_value "AWS_S3_BUCKET_NAME" "$AWS_S3_BUCKET_NAME"
     update_env_value "AWS_S3_ENDPOINT_URL" "${AWS_S3_ENDPOINT_URL:-https://s3.${AWS_REGION}.amazonaws.com}"
-    update_env_value "BUCKET_NAME" "$AWS_S3_BUCKET_NAME"
-    update_env_value "USE_MINIO" "0"
+    update_env_value "USE_MINIO" "${USE_MINIO:-0}"
+
+    # update opensearch settings
+    update_env_value "OPENSEARCH_ENABLED" "${OPENSEARCH_ENABLED:-0}"
+    update_env_value "OPENSEARCH_URL" "${OPENSEARCH_URL:-}"
+    update_env_value "OPENSEARCH_USERNAME" "${OPENSEARCH_USERNAME:-}"
+    update_env_value "OPENSEARCH_PASSWORD" "${OPENSEARCH_PASSWORD:-}"
+    update_env_value "OPENSEARCH_INDEX_PREFIX" "${OPENSEARCH_INDEX_PREFIX:-}"
 
     # Optional environment variables
     update_env_value "SECRET_KEY" "${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}"
@@ -213,6 +221,87 @@ update_env_file(){
 
     update_env_value "API_KEY_RATE_LIMIT" "${API_KEY_RATE_LIMIT:-60/minute}"
 
+    # Plane AI (PI) environment variables
+    if [ "${ENABLE_PLANE_AI:-0}" == "1" ]; then
+        update_env_value "ENABLE_PLANE_AI" "1"
+        if [ -n "$PLANE_PI_DATABASE_URL" ]; then
+            update_env_value "PLANE_PI_DATABASE_URL" "$PLANE_PI_DATABASE_URL"
+        fi
+        if [ -n "$FOLLOWER_POSTGRES_URI" ]; then
+            update_env_value "FOLLOWER_POSTGRES_URI" "$FOLLOWER_POSTGRES_URI"
+        fi
+        update_env_value "PI_INTERNAL_SECRET" "${PI_INTERNAL_SECRET:-tyfvfqvBJAgpm9bzvf3r4urJer0Ehfdubk}"
+        update_env_value "PI_BASE_URL" "$app_protocol://$DOMAIN_NAME/pi"
+        update_env_value "PI_BASE_PATH" "${PI_BASE_PATH:-/pi}"
+        update_env_value "PLANE_FRONTEND_URL" "$app_protocol://$DOMAIN_NAME"
+        update_env_value "PLANE_API_HOST" "$app_protocol://$DOMAIN_NAME"
+        update_env_value "PLANE_OAUTH_REDIRECT_URI" "$app_protocol://$DOMAIN_NAME/pi/api/v1/oauth/callback/"
+
+        if [ -n "$OPENAI_API_KEY" ]; then
+            update_env_value "OPENAI_API_KEY" "$OPENAI_API_KEY"
+        fi
+        if [ -n "$OPENAI_BASE_URL" ]; then
+            update_env_value "OPENAI_BASE_URL" "$OPENAI_BASE_URL"
+        fi
+        if [ -n "$CLAUDE_API_KEY" ]; then
+            update_env_value "CLAUDE_API_KEY" "$CLAUDE_API_KEY"
+        fi
+        if [ -n "$CLAUDE_BASE_URL" ]; then
+            update_env_value "CLAUDE_BASE_URL" "$CLAUDE_BASE_URL"
+        fi
+        if [ -n "$GROQ_API_KEY" ]; then
+            update_env_value "GROQ_API_KEY" "$GROQ_API_KEY"
+        fi
+        if [ -n "$GROQ_BASE_URL" ]; then
+            update_env_value "GROQ_BASE_URL" "$GROQ_BASE_URL"
+        fi
+        if [ -n "$COHERE_API_KEY" ]; then
+            update_env_value "COHERE_API_KEY" "$COHERE_API_KEY"
+        fi
+        if [ -n "$COHERE_BASE_URL" ]; then
+            update_env_value "COHERE_BASE_URL" "$COHERE_BASE_URL"
+        fi
+        if [ -n "$CUSTOM_LLM_ENABLED" ]; then
+            update_env_value "CUSTOM_LLM_ENABLED" "$CUSTOM_LLM_ENABLED"
+        fi
+        if [ -n "$CUSTOM_LLM_MODEL_KEY" ]; then
+            update_env_value "CUSTOM_LLM_MODEL_KEY" "$CUSTOM_LLM_MODEL_KEY"
+        fi
+        if [ -n "$CUSTOM_LLM_BASE_URL" ]; then
+            update_env_value "CUSTOM_LLM_BASE_URL" "$CUSTOM_LLM_BASE_URL"
+        fi
+        if [ -n "$CUSTOM_LLM_API_KEY" ]; then
+            update_env_value "CUSTOM_LLM_API_KEY" "$CUSTOM_LLM_API_KEY"
+        fi
+        if [ -n "$CUSTOM_LLM_NAME" ]; then
+            update_env_value "CUSTOM_LLM_NAME" "$CUSTOM_LLM_NAME"
+        fi
+        if [ -n "$CUSTOM_LLM_DESCRIPTION" ]; then
+            update_env_value "CUSTOM_LLM_DESCRIPTION" "$CUSTOM_LLM_DESCRIPTION"
+        fi
+        if [ -n "$CUSTOM_LLM_MAX_TOKENS" ]; then
+            update_env_value "CUSTOM_LLM_MAX_TOKENS" "$CUSTOM_LLM_MAX_TOKENS"
+        fi
+        if [ -n "$EMBEDDING_MODEL" ]; then
+            update_env_value "EMBEDDING_MODEL" "$EMBEDDING_MODEL"
+        fi
+        if [ -n "$EMBEDDING_MODEL_ID" ]; then
+            update_env_value "OPENSEARCH_ML_MODEL_ID" "$EMBEDDING_MODEL_ID"
+        fi
+        if [ -n "$BR_AWS_ACCESS_KEY_ID" ]; then
+            update_env_value "BR_AWS_ACCESS_KEY_ID" "$BR_AWS_ACCESS_KEY_ID"
+        fi
+        if [ -n "$BR_AWS_SECRET_ACCESS_KEY" ]; then
+            update_env_value "BR_AWS_SECRET_ACCESS_KEY" "$BR_AWS_SECRET_ACCESS_KEY"
+        fi
+        if [ -n "$BR_AWS_REGION" ]; then
+            update_env_value "BR_AWS_REGION" "$BR_AWS_REGION"
+        fi
+        if [ -n "$BR_AWS_SESSION_TOKEN" ]; then
+            update_env_value "BR_AWS_SESSION_TOKEN" "$BR_AWS_SESSION_TOKEN"
+        fi
+    fi
+
     echo "✅ Environment file updated"
     echo ""
 }
@@ -222,10 +311,23 @@ main(){
     check_pre_requisites
     update_env_file
 
-    # load plane.env as exported variables
-    export $(grep -v '^#' plane.env | xargs)
+    # Enable Plane AI supervisor programs if ENABLE_PLANE_AI=1
+    if [ "${ENABLE_PLANE_AI:-0}" == "1" ]; then
+        echo "Enabling Plane AI (PI) services..."
+        sed -i '/^\[program:pi-migrator\]/,/^\[/{s/autostart=false/autostart=true/}' /etc/supervisor/conf.d/supervisor.conf
+        sed -i '/^\[program:pi-api\]/,/^\[/{s/autostart=false/autostart=true/}' /etc/supervisor/conf.d/supervisor.conf
+        sed -i '/^\[program:pi-beat\]/,/^\[/{s/autostart=false/autostart=true/}' /etc/supervisor/conf.d/supervisor.conf
+        sed -i '/^\[program:pi-worker\]/,/^\[/{s/autostart=false/autostart=true/}' /etc/supervisor/conf.d/supervisor.conf
+        echo "✅ Plane AI services enabled"
+        echo ""
+    fi
 
-    /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisor.conf
+    # load plane.env as exported variables
+    set -a
+    source plane.env
+    set +a
+
+    supervisord -c /etc/supervisor/conf.d/supervisor.conf
 }
 
 main "$@"

@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 // components
 import { PageHead } from "@/components/core/page-title";
 // plane web components
-import { TeamspaceLayoutRoot } from "@/plane-web/components/issues/issue-layouts/roots/teamspace-layout-root";
+import { TeamspaceLayoutRoot } from "@/components/issues/issue-layouts/roots/teamspace-layout-root";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/page";

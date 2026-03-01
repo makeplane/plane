@@ -15,9 +15,9 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
 // plane web store
-import type { IWorkspaceWorklogStore } from "@/plane-web/store/workspace-worklog/workspace-worklog.store";
+import type { IWorklogStore } from "@/store/worklog/worklog.store";
 
-export const useWorkspaceWorklogs = (): IWorkspaceWorklogStore => {
+export const useWorkspaceWorklogs = (): IWorklogStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useWorkspaceWorklogs must be used within StoreProvider");
 

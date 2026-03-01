@@ -11,6 +11,7 @@
 
 # Python imports
 import json
+import logging
 from datetime import datetime, timedelta
 
 # Django imports
@@ -28,7 +29,7 @@ from django.db.models import (
     IntegerField,
 )
 from django.utils import timezone
-from django.http import StreamingHttpResponse
+from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
@@ -63,11 +64,12 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.payment.flags.flag_decorator import (
     check_feature_flag,
-    check_workspace_feature_flag,
 )
 from plane.ee.utils.page_events import PageAction
 from plane.ee.permissions.page import WorkspacePagePermission
 from plane.app.serializers import PageBinaryUpdateSerializer
+
+logger = logging.getLogger(__name__)
 
 
 class WorkspacePageViewSet(BaseViewSet):
@@ -604,19 +606,17 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
         page = (
             Page.objects.filter(pk=page_id, workspace__slug=slug)
             .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id=user_pages))
+            .only("description_binary")
             .first()
         )
         if page is None:
             return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         binary_data = page.description_binary
-
-        def stream_data():
-            if binary_data:
-                yield binary_data
-            else:
-                yield b""
-
-        response = StreamingHttpResponse(stream_data(), content_type="application/octet-stream")
+        logger.info(
+            "Workspace page description retrieved",
+            extra={"page_id": page_id, "slug": slug, "size": len(binary_data) if binary_data else 0},
+        )
+        response = HttpResponse(binary_data or b"", content_type="application/octet-stream")
         response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
 

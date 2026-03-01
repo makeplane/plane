@@ -29,8 +29,8 @@ import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import useSize from "@/hooks/use-window-size";
 // plane web components
-import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe/duplicate-popover";
-import { IssueTypeSwitcher } from "@/plane-web/components/issues/issue-details/issue-type-switcher";
+import { DeDupeIssuePopoverRoot } from "@/components/de-dupe/duplicate-popover";
+import { IssueTypeSwitcher } from "@/components/issues/issue-detail/issue-type-switcher";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { WorkItemVersionService } from "@/services/issue";
@@ -147,6 +147,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           entityId={issue.id}
           fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
           initialValue={issue.description_html}
+          key={issue.id}
           onSubmit={async (value, isMigrationUpdate) => {
             if (!issue.id || !issue.project_id) return;
             await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {

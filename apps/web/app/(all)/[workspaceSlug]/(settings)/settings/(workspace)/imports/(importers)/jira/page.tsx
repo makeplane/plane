@@ -15,8 +15,8 @@ import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane web components
-import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
-import { AuthenticationRoot, StepsRoot, JiraDashboardRoot } from "@/plane-web/components/importers/jira";
+import { DashboardLoaderRoot } from "@/components/importers/common/dashboard";
+import { AuthenticationRoot, StepsRoot, JiraDashboardRoot } from "@/components/importers/jira";
 //  plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 

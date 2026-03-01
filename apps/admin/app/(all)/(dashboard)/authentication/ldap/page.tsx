@@ -16,7 +16,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // ui
 import { setPromiseToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
+import { Loader } from "@plane/ui";
 // assets
 import ldapLogo from "@/app/assets/logos/ldap.webp?url";
 // components
@@ -97,7 +98,7 @@ const InstanceLDAPAuthenticationPage = observer(() => {
             description="Authenticate your users via LDAP directory services."
             icon={<img src={ldapLogo} height={24} width={24} alt="LDAP Logo" />}
             config={
-              <ToggleSwitch
+              <Switch
                 value={Boolean(parseInt(enableLDAPConfig))}
                 onChange={() => {
                   if (Boolean(parseInt(enableLDAPConfig)) === true) {
@@ -106,7 +107,6 @@ const InstanceLDAPAuthenticationPage = observer(() => {
                     updateConfig("IS_LDAP_ENABLED", "1");
                   }
                 }}
-                size="sm"
                 disabled={isSubmitting || !formattedConfig}
               />
             }

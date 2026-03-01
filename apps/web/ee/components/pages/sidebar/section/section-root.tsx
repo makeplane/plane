@@ -11,13 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useMemo, memo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 // lucide icons
 import { Loader } from "lucide-react";
 // ui
-import { Disclosure, Transition } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
+import { Collapsible } from "@plane/propel/collapsible";
 // plane imports
 import { EPageAccess } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -29,7 +30,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // local imports
-import { SectionHeader, SectionContent } from "./components";
+import { SectionContent, SectionHeader } from "./components";
 import { SECTION_DETAILS } from "./constants";
 import { useSectionDragAndDrop, useSectionPages } from "./hooks";
 import type { SectionRootProps } from "./types";
@@ -112,6 +113,8 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
     return sectionType === "public" || sectionType === "private" || sectionType === "shared";
   }, [sectionContainsActivePage, sectionType]);
 
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
   // Show loader if loading and no cached data
   const showLoader = isLoading && pageIds.length === 0;
 
@@ -178,45 +181,43 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
         "[&:not(:has(.is-dragging))]:bg-accent-primary/20": isDropping,
       })}
     >
-      <Disclosure defaultOpen={defaultOpen}>
-        {({ open }) => (
-          <>
-            <SectionHeader
+      <Collapsible defaultOpen={defaultOpen} open={isOpen} onOpenChange={setIsOpen}>
+        <SectionHeader
+          sectionType={sectionType}
+          sectionDetails={sectionDetails}
+          isCreatingPage={isCreatingPage}
+          handleCreatePage={handleCreatePage}
+          isOpen={isOpen}
+          onButtonClick={() => setIsOpen(!isOpen)}
+        />
+        <Transition
+          show={isOpen}
+          enter="transition-all duration-200 ease-out"
+          enterFrom="opacity-0 max-h-0 -translate-y-2"
+          enterTo="opacity-100 max-h-[1000px] translate-y-0"
+          leave="transition-all duration-150 ease-in"
+          leaveFrom="opacity-100 max-h-[1000px] translate-y-0"
+          leaveTo="opacity-0 max-h-0 -translate-y-2"
+          className="overflow-hidden"
+        >
+          {showLoader ? (
+            <div className="ml-2 mt-2 flex items-center justify-center py-3">
+              <Loader className="size-4 animate-spin text-placeholder" />
+              <span className="ml-2 text-13 text-placeholder">Loading pages...</span>
+            </div>
+          ) : (
+            <SectionContent
+              pageIds={pageIds}
               sectionType={sectionType}
-              sectionDetails={sectionDetails}
-              isCreatingPage={isCreatingPage}
-              handleCreatePage={handleCreatePage}
+              expandedPageIds={expandedPageIds}
+              setExpandedPageIds={setExpandedPageIds}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              fetchNextPage={fetchNextPage}
             />
-            <Transition
-              show={open}
-              enter="transition-all duration-200 ease-out"
-              enterFrom="opacity-0 max-h-0 -translate-y-2"
-              enterTo="opacity-100 max-h-[1000px] translate-y-0"
-              leave="transition-all duration-150 ease-in"
-              leaveFrom="opacity-100 max-h-[1000px] translate-y-0"
-              leaveTo="opacity-0 max-h-0 -translate-y-2"
-              className="overflow-hidden"
-            >
-              {showLoader ? (
-                <div className="ml-2 mt-2 flex items-center justify-center py-3">
-                  <Loader className="size-4 animate-spin text-placeholder" />
-                  <span className="ml-2 text-13 text-placeholder">Loading pages...</span>
-                </div>
-              ) : (
-                <SectionContent
-                  pageIds={pageIds}
-                  sectionType={sectionType}
-                  expandedPageIds={expandedPageIds}
-                  setExpandedPageIds={setExpandedPageIds}
-                  hasNextPage={hasNextPage}
-                  isFetchingNextPage={isFetchingNextPage}
-                  fetchNextPage={fetchNextPage}
-                />
-              )}
-            </Transition>
-          </>
-        )}
-      </Disclosure>
+          )}
+        </Transition>
+      </Collapsible>
     </div>
   );
 });

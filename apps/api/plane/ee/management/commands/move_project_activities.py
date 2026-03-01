@@ -21,7 +21,7 @@ from plane.ee.utils.move_project_activities import (
 
 
 class Command(BaseCommand):
-    help = "Move project and project members related activity from WorkspaceActivity to ProjectActivity and ProjectMemberActivity"
+    help = "Move project and project members related activity from WorkspaceActivity to ProjectActivity and ProjectMemberActivity"  # noqa: E501
 
     def handle(self, *args, **kwargs):
         try:

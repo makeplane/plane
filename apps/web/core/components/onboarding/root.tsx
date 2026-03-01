@@ -13,6 +13,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { useNavigate, useSearchParams } from "react-router";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceMemberInvitation, TOnboardingStep, TOnboardingSteps, TUserProfile } from "@plane/types";
@@ -20,6 +21,8 @@ import { EOnboardingSteps } from "@plane/types";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserProfile } from "@/hooks/store/user";
+// lib
+import { resolveWorkspaceRedirect } from "@/lib/middleware/auth-client-middleware";
 // local components
 import { OnboardingHeader } from "./header";
 import { OnboardingStepRoot } from "./steps";
@@ -33,7 +36,9 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
   // store hooks
   const { data: user } = useUser();
   const { data: userProfile, updateUserProfile, finishUserOnboarding } = useUserProfile();
-  const { workspaces } = useWorkspace();
+  const { workspaces, fetchWorkspaces } = useWorkspace();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const workspacesList = Object.values(workspaces ?? {});
 
@@ -45,6 +50,10 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
     if (!user) return;
     try {
       await finishUserOnboarding();
+      await fetchWorkspaces();
+      const nextPath = searchParams.get("next_path");
+      const redirectionRoute = resolveWorkspaceRedirect({ nextPath, isFirstTimeOnboarding: true });
+      void navigate(redirectionRoute, { replace: true });
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -52,7 +61,7 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
         message: "Failed to finish onboarding, Please try again later.",
       });
     }
-  }, [user, finishUserOnboarding]);
+  }, [user, finishUserOnboarding, fetchWorkspaces, searchParams, navigate]);
 
   // handle step change
   const stepChange = useCallback(

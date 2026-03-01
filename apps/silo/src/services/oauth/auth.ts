@@ -11,6 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
+
 import type { AxiosInstance, AxiosError } from "axios";
 import axios from "axios";
 import { logger } from "@plane/logger";
@@ -32,7 +39,8 @@ class PlaneOAuthService {
   private store: Store;
 
   constructor() {
-    this.baseURL = `${env.API_BASE_URL}/auth/o`;
+    const apiUrl = env.API_INTERNAL_BASE_URL || env.API_BASE_URL;
+    this.baseURL = `${apiUrl}/auth/o`;
     this.axiosInstance = axios.create({
       baseURL: this.baseURL,
     });
@@ -158,6 +166,7 @@ class PlaneOAuthService {
           credential_id: credential.id,
           target_access_token: tokenResponse.access_token,
         });
+
         return tokenResponse;
       }
 
@@ -209,7 +218,7 @@ class PlaneOAuthService {
    */
   getPlaneOAuthRedirectUrl(clientId: string, redirectUri: string, state: string): string {
     try {
-      const baseUrl = env.IS_MULTI_TENANT === "1" ? env.API_BASE_URL : env.APP_BASE_URL;
+      const baseUrl = env.IS_SELF_MANAGED !== "1" ? env.API_BASE_URL : env.APP_BASE_URL;
       const data = new URLSearchParams({
         client_id: clientId,
         response_type: "code",

@@ -11,15 +11,18 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TActionNodeHandlerName } from "@plane/types";
-import { EActionNodeHandlerName } from "@plane/types";
+import type { TActionNodeHandlerName, TIntegrationKeys } from "@plane/types";
+import { E_INTEGRATION_KEYS, EActionNodeHandlerName } from "@plane/types";
 
-export type TAutomationActionHandlerIconKey = "message-circle" | "circle-chevron-down";
+export type TAutomationActionHandlerIconKey = "message-circle" | "circle-chevron-down" | "file-code";
 
 export type TAutomationActionHandlerOption = {
   value: TActionNodeHandlerName;
   labelI18nKey: string;
   iconKey: TAutomationActionHandlerIconKey;
+  // Optional integrationKey, this needs to be populated if action node is related
+  // to a particular integration
+  integrationKey?: TIntegrationKeys;
 };
 
 export const AUTOMATION_ACTION_HANDLER_OPTIONS: TAutomationActionHandlerOption[] = [
@@ -32,5 +35,11 @@ export const AUTOMATION_ACTION_HANDLER_OPTIONS: TAutomationActionHandlerOption[]
     value: EActionNodeHandlerName.CHANGE_PROPERTY,
     labelI18nKey: "automations.action.handler_name.change_property",
     iconKey: "circle-chevron-down",
+  },
+  {
+    value: EActionNodeHandlerName.RUN_SCRIPT,
+    labelI18nKey: "automations.action.handler_name.run_script",
+    iconKey: "file-code",
+    integrationKey: E_INTEGRATION_KEYS.RUNNER,
   },
 ];

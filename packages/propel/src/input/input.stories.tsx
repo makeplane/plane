@@ -11,16 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
+import { expect } from "storybook/test";
 import { Input } from "./index";
 
-const meta: Meta<typeof Input> = {
-  title: "Components/Input",
+const meta = preview.meta({
   component: Input,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   argTypes: {
     mode: {
       control: "select",
@@ -45,122 +44,72 @@ const meta: Meta<typeof Input> = {
       control: "boolean",
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof Input>;
-
-const createStory = (args: Partial<React.ComponentProps<typeof Input>>): Story => ({
-  args: { placeholder: "Enter text...", className: "w-[400px]", ...args },
 });
 
-const createShowcaseStory = (
-  title: string,
-  sections: Array<{ label: string; props: Partial<React.ComponentProps<typeof Input>> }>
-): Story => ({
-  render: () => (
-    <div className="space-y-4 w-[400px]">
-      <div className="space-y-2">
-        <h3 className="text-13 font-medium">{title}</h3>
-        <div className="space-y-2">
-          {sections.map(({ label, props }, index) => (
-            <div key={index} className="w-full">
-              <label className="text-11 text-gray-500">{label}</label>
-              <Input className="w-full" {...props} />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  ),
+export const Default = meta.story({
+  args: { placeholder: "Enter text...", className: "w-[400px]" },
 });
 
-export const Default = createStory({});
-
-export const Primary = createStory({
-  mode: "primary",
-  placeholder: "Primary input",
+export const TypeTest = meta.story({
+  args: {
+    ...Default.composed.args,
+  },
+  async play({ canvas, userEvent }) {
+    const input = canvas.getByPlaceholderText("Enter text...");
+    await expect(input).toBeVisible();
+    await userEvent.type(input, "Hello World");
+    await expect(input).toHaveValue("Hello World");
+  },
 });
 
-export const Transparent = createStory({
-  mode: "transparent",
-  placeholder: "Transparent input",
+export const Primary = Default.extend({
+  args: { mode: "primary", placeholder: "Primary input" },
 });
 
-export const TrueTransparent = createStory({
-  mode: "true-transparent",
-  placeholder: "True transparent input",
+export const Transparent = Default.extend({
+  args: { mode: "transparent", placeholder: "Transparent input" },
 });
 
-export const ExtraSmall = createStory({
-  inputSize: "xs",
-  placeholder: "Extra small input",
+export const TrueTransparent = Default.extend({
+  args: { mode: "true-transparent", placeholder: "True transparent input" },
 });
 
-export const Small = createStory({
-  inputSize: "sm",
-  placeholder: "Small input",
+export const ExtraSmall = Default.extend({
+  args: { inputSize: "xs", placeholder: "Extra small input" },
 });
 
-export const Medium = createStory({
-  inputSize: "md",
-  placeholder: "Medium input",
+export const Small = Default.extend({
+  args: { inputSize: "sm", placeholder: "Small input" },
 });
 
-export const WithError = createStory({
-  hasError: true,
-  placeholder: "Input with error",
-  defaultValue: "Invalid input",
+export const Medium = Default.extend({
+  args: { inputSize: "md", placeholder: "Medium input" },
 });
 
-export const Disabled = createStory({
-  disabled: true,
-  placeholder: "Disabled input",
-  defaultValue: "Cannot edit this",
+export const WithError = Default.extend({
+  args: { hasError: true, placeholder: "Input with error", defaultValue: "Invalid input" },
 });
 
-export const WithValue = createStory({
-  defaultValue: "Pre-filled value",
-  placeholder: "Input with value",
+export const Disabled = Default.extend({
+  args: { disabled: true, placeholder: "Disabled input", defaultValue: "Cannot edit this" },
 });
 
-export const Email = createStory({
-  type: "email",
-  placeholder: "Enter your email",
-  autoComplete: "on",
+export const WithValue = Default.extend({
+  args: { defaultValue: "Pre-filled value", placeholder: "Input with value" },
 });
 
-export const Password = createStory({
-  type: "password",
-  placeholder: "Enter your password",
-  autoComplete: "off",
+export const Email = Default.extend({
+  args: { type: "email", placeholder: "Enter your email", autoComplete: "on" },
 });
 
-export const Number = createStory({
-  type: "number",
-  placeholder: "Enter a number",
+export const Password = Default.extend({
+  args: { type: "password", placeholder: "Enter your password", autoComplete: "off" },
 });
 
-export const Search = createStory({
-  type: "search",
-  placeholder: "Search...",
+export const Number = Default.extend({
+  args: { type: "number", placeholder: "Enter a number" },
 });
 
-export const AllModes = createShowcaseStory("Input Modes", [
-  { label: "Primary", props: { mode: "primary", placeholder: "Primary input" } },
-  { label: "Transparent", props: { mode: "transparent", placeholder: "Transparent input" } },
-  { label: "True Transparent", props: { mode: "true-transparent", placeholder: "True transparent input" } },
-]);
-
-export const AllSizes = createShowcaseStory("Input Sizes", [
-  { label: "Extra Small (xs)", props: { inputSize: "xs", placeholder: "Extra small input" } },
-  { label: "Small (sm)", props: { inputSize: "sm", placeholder: "Small input" } },
-  { label: "Medium (md)", props: { inputSize: "md", placeholder: "Medium input" } },
-]);
-
-export const AllStates = createShowcaseStory("Input States", [
-  { label: "Normal", props: { placeholder: "Normal input" } },
-  { label: "With Error", props: { hasError: true, placeholder: "Input with error" } },
-  { label: "Disabled", props: { disabled: true, placeholder: "Disabled input" } },
-  { label: "With Value", props: { defaultValue: "Pre-filled value", placeholder: "Input with value" } },
-]);
+export const Search = Default.extend({
+  args: { type: "search", placeholder: "Search..." },
+});

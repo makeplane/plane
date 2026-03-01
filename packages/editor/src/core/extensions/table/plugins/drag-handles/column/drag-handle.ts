@@ -41,7 +41,7 @@ import {
   updateColDragMarker,
   updateColDropMarker,
 } from "../marker-utils";
-import { updateCellContentVisibility } from "../utils";
+import { showCellContent } from "../utils";
 import { calculateColumnDropIndex, constructColumnDragPreview, getTableColumnNodesInfo } from "./utils";
 
 export type ColumnDragHandleConfig = {
@@ -359,7 +359,7 @@ export function createColumnDragHandle(config: ColumnDragHandleConfig): {
       }
 
       if (isCellSelection(editor.state.selection)) {
-        updateCellContentVisibility(editor, false);
+        showCellContent(editor);
       }
 
       // Perform drag operation if user moved

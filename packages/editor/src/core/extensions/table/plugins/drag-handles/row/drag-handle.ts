@@ -41,7 +41,7 @@ import {
   updateRowDragMarker,
   updateRowDropMarker,
 } from "../marker-utils";
-import { updateCellContentVisibility } from "../utils";
+import { showCellContent } from "../utils";
 import { calculateRowDropIndex, constructRowDragPreview, getTableRowNodesInfo } from "./utils";
 
 export type RowDragHandleConfig = {
@@ -359,7 +359,7 @@ export function createRowDragHandle(config: RowDragHandleConfig): {
       }
 
       if (isCellSelection(editor.state.selection)) {
-        updateCellContentVisibility(editor, false);
+        showCellContent(editor);
       }
 
       // Perform drag operation if user moved

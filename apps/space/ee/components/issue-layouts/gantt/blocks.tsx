@@ -62,8 +62,8 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
             </div>
           </div>
         }
-        side="top"
-        align="start"
+        position="bottom-start"
+        className="z-auto"
       >
         <div className="relative w-full overflow-hidden truncate px-2.5 py-1 text-13 text-primary">
           {issueDetails?.name}

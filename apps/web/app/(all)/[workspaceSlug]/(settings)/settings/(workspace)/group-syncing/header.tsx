@@ -1,0 +1,51 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { observer } from "mobx-react";
+// plane imports
+import { WORKSPACE_SETTINGS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { Breadcrumbs } from "@plane/ui";
+// components
+import { BetaBadge } from "@/components/common/beta";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SettingsPageHeader } from "@/components/settings/page-header";
+import { WORKSPACE_SETTINGS_ICONS } from "@/components/settings/workspace/sidebar/item-icon";
+
+export const GroupSyncingWorkspaceSettingsHeader = observer(function GroupSyncingWorkspaceSettingsHeader() {
+  // plane hooks
+  const { t } = useTranslation();
+  // derived values
+  const settingsDetails = WORKSPACE_SETTINGS["group-syncing"];
+  const Icon = WORKSPACE_SETTINGS_ICONS["group-syncing"];
+
+  return (
+    <SettingsPageHeader
+      leftItem={
+        <Breadcrumbs>
+          <Breadcrumbs.Item
+            component={
+              <div className="flex items-center gap-1">
+                <BreadcrumbLink
+                  label={t(settingsDetails.i18n_label)}
+                  icon={<Icon className="size-4 text-tertiary" />}
+                />
+                <BetaBadge />
+              </div>
+            }
+          />
+        </Breadcrumbs>
+      }
+    />
+  );
+});

@@ -83,10 +83,20 @@ from .work_item_search import (
     WorkItemAdvancedSearchResponseSerializer,
 )
 
+from .milestone import MilestoneSerializer, MilestoneWorkItemSerializer
+
 from .epic import EpicSerializer
 
 from .worklog import IssueWorkLogAPISerializer, ProjectWorklogSummarySerializer
+
 from .page import PageAPISerializer, PageCreateAPISerializer, PageDetailAPISerializer
+
+from .work_item_page import (
+    WorkItemPageSerializer,
+    WorkItemPageCreateSerializer,
+    WorkItemPageLiteSerializer,
+)
+
 from .work_item_property import (
     IssuePropertyAPISerializer,
     IssuePropertyOptionAPISerializer,
@@ -95,4 +105,20 @@ from .work_item_property import (
     IssuePropertyActivityAPISerializer,
     WorkItemPropertyValueRequestSerializer,
     WorkItemPropertyValueResponseSerializer,
+)
+
+from .work_item_properties import (
+    WorkItemWithPropertiesSerializer,
+    CustomPropertySerializer,
+)
+
+from .project_label import (
+    ProjectLabelSerializer,
+    ProjectLabelCreateUpdateSerializer,
+)
+
+from .work_item_type_schema import (
+    WorkItemTypeSchemaSerializer,
+    FieldSchemaSerializer,
+    CustomFieldSchemaSerializer,
 )

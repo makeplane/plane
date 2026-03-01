@@ -43,6 +43,7 @@ from plane.app.views import (
     WorkspaceHomePreferenceViewSet,
     WorkspaceStickyViewSet,
     WorkspaceUserPreferenceViewSet,
+    WorkspaceMemberUserOnboardingEndpoint,
 )
 
 
@@ -263,5 +264,11 @@ urlpatterns = [
         "workspaces/<str:slug>/sidebar-preferences/",
         WorkspaceUserPreferenceViewSet.as_view(),
         name="workspace-user-preference",
+    ),
+    # Onboarding product tour
+    path(
+        "workspaces/<str:slug>/workspace-member/me/onboarding/",
+        WorkspaceMemberUserOnboardingEndpoint.as_view(),
+        name="workspace-member-onboarding",
     ),
 ]

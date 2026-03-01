@@ -183,7 +183,7 @@ export const createIssueModalViewFull = (props: TIssueModalViewProps): IssueModa
                 type: "static_select" as const,
                 placeholder: {
                   type: "plain_text" as const,
-                  text: "Select an Issue Type",
+                  text: "Select a Work Item Type",
                   emoji: true,
                 },
                 initial_option: config.issueType.selectedIssueType,
@@ -192,7 +192,7 @@ export const createIssueModalViewFull = (props: TIssueModalViewProps): IssueModa
               },
               label: {
                 type: "plain_text" as const,
-                text: "Issue Type",
+                text: "Work Item Type",
                 emoji: true,
               },
             },

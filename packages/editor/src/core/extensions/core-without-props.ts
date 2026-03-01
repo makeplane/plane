@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { Extensions } from "@tiptap/core";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -37,7 +38,7 @@ import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
 import { WorkItemEmbedExtensionConfig } from "./work-item-embed/extension-config";
 
-export const CoreEditorExtensionsWithoutProps = [
+export const CoreEditorExtensionsWithoutProps: Extensions = [
   CustomStarterKitExtension({
     enableHistory: true,
   }),
@@ -73,7 +74,7 @@ export const CoreEditorExtensionsWithoutProps = [
   ...CoreEditorAdditionalExtensionsWithoutProps,
 ];
 
-export const DocumentEditorExtensionsWithoutProps = [
+export const DocumentEditorExtensionsWithoutProps: Extensions = [
   WorkItemEmbedExtensionConfig,
   ...DocumentEditorAdditionalExtensionsWithoutProps,
 ];

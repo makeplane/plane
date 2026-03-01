@@ -12,7 +12,8 @@
  */
 
 import type { NodeViewProps } from "@tiptap/react";
-import { NodeViewWrapper } from "@tiptap/react";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 // extension config
 import type { TMentionExtensionOptions } from "./extension-config";
 // extension types
@@ -29,14 +30,15 @@ export function MentionNodeView(props: MentionNodeViewProps) {
   const {
     extension,
     node: { attrs },
+    decorations,
   } = props;
 
   return (
-    <NodeViewWrapper className="mention-component inline-flex max-w-full">
+    <YChangeNodeViewWrapper decorations={decorations} className="mention-component inline-flex max-w-full">
       {(extension.options as TMentionExtensionOptions).renderComponent({
         entity_identifier: attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER] ?? "",
         entity_name: attrs[EMentionComponentAttributeNames.ENTITY_NAME] ?? "user_mention",
       })}
-    </NodeViewWrapper>
+    </YChangeNodeViewWrapper>
   );
 }

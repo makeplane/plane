@@ -13,3 +13,4 @@
 
 export * from "./job";
 export * from "./workspace";
+export * from "./work-item-property";

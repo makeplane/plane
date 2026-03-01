@@ -11,8 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { Decoration } from "@tiptap/pm/view";
 import type { Editor } from "@tiptap/react";
-import { ReactNodeViewRenderer, NodeViewWrapper } from "@tiptap/react";
+import { ReactNodeViewRenderer } from "@tiptap/react";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 // types
 import type { TPageEmbedConfig } from "@/types";
 // extension config
@@ -34,13 +37,14 @@ export function PageEmbedReadOnlyExtension(props: Props) {
           node: { attrs: PageEmbedExtensionAttributes };
           editor: Editor;
           updateAttributes: (attrs: Partial<PageEmbedExtensionAttributes>) => void;
+          decorations: readonly Decoration[];
         }) => (
-          <NodeViewWrapper>
+          <YChangeNodeViewWrapper decorations={embedProps.decorations} className="page-embed-component">
             {props.widgetCallback({
               pageId: embedProps.node.attrs.entity_identifier as string,
               workspaceSlug: embedProps.node.attrs.workspace_identifier,
             })}
-          </NodeViewWrapper>
+          </YChangeNodeViewWrapper>
         )
       );
     },

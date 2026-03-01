@@ -21,7 +21,7 @@ import type { GroupByColumnTypes, TIssue, TIssueServiceType, TSubIssueOperations
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
 import { SectionEmptyState } from "@/components/empty-state/section-empty-state-root";
-import { getGroupByColumns, isWorkspaceLevel } from "@/components/issues/issue-layouts/utils";
+import { getGroupByColumns, isWorkspaceLevel } from "@/helpers/work-item-layout";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 import { SubIssuesListGroup } from "./list-group";

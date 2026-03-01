@@ -17,3 +17,4 @@ from .reaction import ProjectReactionViewSet
 from .base import WorkspaceProjectFeatureEndpoint, ProjectFeatureEndpoint
 from .activity import ProjectActivityEndpoint, ProjectMemberActivityEndpoint
 from .template import ProjectTemplateUseEndpoint
+from .worklogs import ProjectWorkLogsEndpoint, ProjectExportWorkLogsEndpoint

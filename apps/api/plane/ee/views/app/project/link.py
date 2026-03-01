@@ -28,7 +28,6 @@ from plane.ee.serializers import ProjectLinkSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.project_activites_task import project_activity
 from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
-from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
 
 class ProjectLinkViewSet(BaseViewSet):
@@ -64,7 +63,6 @@ class ProjectLinkViewSet(BaseViewSet):
         serializer = ProjectLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id)
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "project")
 
             project_activity.delay(
                 type="link.activity.created",
@@ -97,7 +95,6 @@ class ProjectLinkViewSet(BaseViewSet):
         serializer = ProjectLinkSerializer(project_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "project")
 
             project_activity.delay(
                 type="link.activity.updated",

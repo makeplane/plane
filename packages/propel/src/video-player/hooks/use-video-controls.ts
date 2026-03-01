@@ -45,6 +45,7 @@ export const useVideoControls = ({
 
   const seekForward = useCallback(() => {
     if (!videoRef.current) return;
+    if (!Number.isFinite(videoRef.current.duration)) return;
     videoRef.current.currentTime = Math.min(videoRef.current.duration, videoRef.current.currentTime + SEEK_SECONDS);
   }, [videoRef]);
 

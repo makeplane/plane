@@ -86,7 +86,7 @@ export const syncCommentWithPlane = async (store: Store, data: GitlabNoteEvent) 
 
   let glService: GitLabService;
   if (data.isEnterprise) {
-    const appConfig = (workspaceConnection as TGitlabWorkspaceConnection).connection_data?.appConfig;
+    const appConfig = workspaceConnection.connection_data?.appConfig;
     glService = await getGitlabClientService(
       workspaceConnection.workspace_id,
       glIntegrationKey,

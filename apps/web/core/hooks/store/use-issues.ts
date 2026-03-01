@@ -13,28 +13,29 @@
 
 import { useContext } from "react";
 import { merge } from "lodash-es";
-import type { TIssueMap } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { StoreContext } from "@/lib/store-context";
 // plane web types
-import type { IProjectEpics, IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { IProjectEpics, IProjectEpicsFilter } from "@/store/work-items/epic";
 // types
-import type { ITeamIssues, ITeamIssuesFilter } from "@/plane-web/store/issue/team";
-import type { ITeamProjectWorkItemsFilter, ITeamProjectWorkItems } from "@/plane-web/store/issue/team-project";
-import type { ITeamViewIssues, ITeamViewIssuesFilter } from "@/plane-web/store/issue/team-views";
-import type { IWorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
-import type { IArchivedIssues, IArchivedIssuesFilter } from "@/store/issue/archived";
-import type { ICycleIssues, ICycleIssuesFilter } from "@/store/issue/cycle";
-import type { IModuleIssues, IModuleIssuesFilter } from "@/store/issue/module";
-import type { IProfileIssues, IProfileIssuesFilter } from "@/store/issue/profile";
-import type { IProjectIssues, IProjectIssuesFilter } from "@/store/issue/project";
-import type { IProjectViewIssues, IProjectViewIssuesFilter } from "@/store/issue/project-views";
-import type { IWorkspaceIssuesFilter } from "@/store/issue/workspace";
-import type { IWorkspaceDraftIssues, IWorkspaceDraftIssuesFilter } from "@/store/issue/workspace-draft";
+import type { ITeamIssues, ITeamIssuesFilter } from "@/store/work-items/team";
+import type { ITeamProjectWorkItemsFilter, ITeamProjectWorkItems } from "@/store/work-items/team-project";
+import type { ITeamViewIssues, ITeamViewIssuesFilter } from "@/store/work-items/team-views";
+import type { IWorkspaceIssues } from "@/store/work-items/workspace/issue.store";
+import type { IArchivedIssues, IArchivedIssuesFilter } from "@/store/work-items/archived";
+import type { IArchivedEpics, IArchivedEpicsFilter } from "@/store/issue/archived-epics";
+import type { ICycleIssues, ICycleIssuesFilter } from "@/store/work-items/cycle";
+import type { IModuleIssues, IModuleIssuesFilter } from "@/store/work-items/module";
+import type { IProfileIssues, IProfileIssuesFilter } from "@/store/work-items/profile";
+import type { IProjectIssues, IProjectIssuesFilter } from "@/store/work-items/project";
+import type { IProjectViewIssues, IProjectViewIssuesFilter } from "@/store/work-items/project-views";
+import type { IWorkspaceIssuesFilter } from "@/store/work-items/workspace";
+import type { IWorkspaceDraftIssues, IWorkspaceDraftIssuesFilter } from "@/store/work-items/workspace-draft";
 // constants
 
 type defaultIssueStore = {
-  issueMap: TIssueMap;
+  getWorkItemById: (workItemId: string) => TIssue | undefined;
 };
 
 export type TStoreIssues = {
@@ -78,6 +79,10 @@ export type TStoreIssues = {
     issues: IArchivedIssues;
     issuesFilter: IArchivedIssuesFilter;
   };
+  [EIssuesStoreType.ARCHIVED_EPIC]: defaultIssueStore & {
+    issues: IArchivedEpics;
+    issuesFilter: IArchivedEpicsFilter;
+  };
   [EIssuesStoreType.DEFAULT]: defaultIssueStore & {
     issues: IProjectIssues;
     issuesFilter: IProjectIssuesFilter;
@@ -97,7 +102,7 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
   if (context === undefined) throw new Error("useIssues must be used within StoreProvider");
 
   const defaultStore: defaultIssueStore = {
-    issueMap: context.issue.issues.issuesMap,
+    getWorkItemById: (workItemId: string) => context.issue.issues.getIssueById(workItemId),
   };
 
   switch (storeType) {
@@ -150,6 +155,11 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
       return merge(defaultStore, {
         issues: context.issue.archivedIssues,
         issuesFilter: context.issue.archivedIssuesFilter,
+      }) as TStoreIssues[T];
+    case EIssuesStoreType.ARCHIVED_EPIC:
+      return merge(defaultStore, {
+        issues: context.issue.archivedEpics,
+        issuesFilter: context.issue.archivedEpicsFilter,
       }) as TStoreIssues[T];
     case EIssuesStoreType.EPIC:
       return merge(defaultStore, {

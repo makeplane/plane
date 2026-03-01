@@ -421,7 +421,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
             # Check if the cycle id is being updated
             if "cycle_id" in properties:
-                # If the cycle id is None, create a cycle activity to delete the cycle since the issue is being moved out of the cycle
+                # If the cycle id is None, create a cycle activity to delete the cycle since the issue is being moved out of the cycle  # noqa: E501
                 if properties.get("cycle_id") is None:
                     bulk_issue_activities.append(
                         {
@@ -445,7 +445,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 ci = issue.issue_cycle.first()
                 current_cycle_id = str(ci.cycle_id) if ci else ""
 
-                # If the cycle id is not None, create a cycle activity to add the cycle since the issue is being moved into a cycle
+                # If the cycle id is not None, create a cycle activity to add the cycle since the issue is being moved into a cycle  # noqa: E501
                 if properties.get("cycle_id") is not None and current_cycle_id != properties.get("cycle_id"):
                     # New issues to create
                     bulk_cycle_issues.append(

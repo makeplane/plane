@@ -14,13 +14,13 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // components
 import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useUserProfile } from "@/hooks/store/use-user-profile";
 // local imports
-import { ThemeSwitcher } from "ce/components/preferences/theme-switcher";
+import { ThemeSwitcher } from "./theme-switcher";
 
 export const ProfileSettingsDefaultPreferencesList = observer(function ProfileSettingsDefaultPreferencesList() {
   // store hooks
@@ -43,13 +43,12 @@ export const ProfileSettingsDefaultPreferencesList = observer(function ProfileSe
         title={t("smooth_cursor")}
         description={t("select_the_cursor_motion_style_that_feels_right_for_you")}
         control={
-          <ToggleSwitch
+          <Switch
             value={is_smooth_cursor_enabled}
             onChange={(value) => {
               updateUserProfile({ is_smooth_cursor_enabled: value });
             }}
             label="smooth-cursor-toggle"
-            size="sm"
           />
         }
       />

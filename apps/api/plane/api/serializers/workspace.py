@@ -71,8 +71,8 @@ class WorkspaceFeatureSerializer(serializers.Serializer):
         return value
 
     def validate_pi(self, value):
-        if not check_workspace_feature_flag(FeatureFlag.PI_CHAT, self.context["slug"]):
-            raise serializers.ValidationError("Upgrade your plan to enable PI")
+        if not check_workspace_feature_flag(FeatureFlag.AI_CHAT, self.context["slug"]):
+            raise serializers.ValidationError("Upgrade your plan to enable AI")
         return value
 
     def update(self, instance, validated_data):

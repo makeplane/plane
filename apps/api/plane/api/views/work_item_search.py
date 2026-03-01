@@ -50,6 +50,9 @@ from plane.utils.openapi import (
 )
 
 from .base import BaseAPIView
+from plane.app.permissions import WorkSpaceAdminPermission
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE
 
 if settings.OPENSEARCH_ENABLED:
     from plane.ee.documents import IssueDocument
@@ -61,6 +64,11 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
 
     filter_backends = (ComplexFilterBackend,)
     filterset_class = IssueFilterSet
+
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "POST": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+    }
 
     @extend_schema(
         operation_id="work_item_advanced_search",

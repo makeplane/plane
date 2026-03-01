@@ -1,15 +1,13 @@
 {
   "name": "@plane/i18n",
-  "version": "1.2.0",
-  "license": "AGPL-3.0",
-  "description": "I18n shared across multiple apps internally",
+  "version": "2.3.0",
   "private": true,
+  "description": "I18n shared across multiple apps internally",
+  "license": "AGPL-3.0",
   "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
+    ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -17,9 +15,9 @@
     "build": "tsdown",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=51",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt . --check",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=51",
-    "fix:format": "prettier . --cache --write",
+    "fix:format": "oxfmt . --write",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
@@ -37,8 +35,5 @@
     "@types/react": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  }
 }

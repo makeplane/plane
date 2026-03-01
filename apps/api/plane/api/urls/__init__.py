@@ -18,8 +18,10 @@ from .intake import urlpatterns as intake_patterns
 from .invite import urlpatterns as invite_patterns
 from .label import urlpatterns as label_patterns
 from .member import urlpatterns as member_patterns
+from .milestone import urlpatterns as milestone_patterns
 from .module import urlpatterns as module_patterns
 from .project import urlpatterns as project_patterns
+from .project_label import urlpatterns as project_label_patterns
 from .state import urlpatterns as state_patterns
 from .sticky import urlpatterns as sticky_patterns
 from .teamspace import urlpatterns as teamspace_patterns
@@ -46,8 +48,10 @@ urlpatterns = [
     *invite_patterns,
     *label_patterns,
     *member_patterns,
+    *milestone_patterns,
     *module_patterns,
     *project_patterns,
+    *project_label_patterns,
     *state_patterns,
     *sticky_patterns,
     *teamspace_patterns,

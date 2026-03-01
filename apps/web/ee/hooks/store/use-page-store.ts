@@ -16,7 +16,7 @@ import { useContext } from "react";
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
 import type { IWorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
-import type { ITeamspacePageStore } from "@/plane-web/store/teamspace/pages/teamspace-page.store";
+import type { ITeamspacePageStore } from "@/store/teamspace/pages/teamspace-page.store";
 // mobx store
 import type { IProjectPageStore } from "@/store/pages/project-page.store";
 

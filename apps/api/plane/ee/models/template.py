@@ -29,12 +29,12 @@ from pydantic import (
 )
 
 # Module imports
-from plane.db.models import BaseModel, WorkspaceBaseModel
+from plane.db.models import BaseModel, ProjectOptionalBaseModel
 from plane.ee.utils import generate_short_id
 from plane.utils.html_processor import strip_tags
 
 
-class Template(WorkspaceBaseModel):
+class Template(ProjectOptionalBaseModel):
     class TemplateType(models.TextChoices):
         WORKITEM = "workitem", "Workitem"
         PAGE = "page", "Page"
@@ -175,7 +175,7 @@ class TemplateCategory(BaseModel):
         ordering = ("sort_order", "-created_at")
 
 
-class WorkitemTemplate(WorkspaceBaseModel):
+class WorkitemTemplate(ProjectOptionalBaseModel):
     class PriorityChoices(models.TextChoices):
         URGENT = "urgent", "Urgent"
         HIGH = "high", "High"
@@ -356,7 +356,7 @@ def get_view_props():
     return {"full_width": False}
 
 
-class PageTemplate(WorkspaceBaseModel):
+class PageTemplate(ProjectOptionalBaseModel):
     template = models.ForeignKey(Template, on_delete=models.CASCADE, related_name="page_templates")
     name = models.TextField(blank=True)
     description = models.JSONField(default=dict, blank=True)
@@ -452,6 +452,10 @@ class ProjectTemplate(BaseModel):
     epics = models.JSONField(default=dict)
     members = models.JSONField(default=dict)
     intake_settings = models.JSONField(default=dict)
+    milestones = models.JSONField(default=dict)
+    modules = models.JSONField(default=dict)
+    recurring_work_items = models.JSONField(default=dict)
+    automations = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["name", "workspace", "deleted_at"]

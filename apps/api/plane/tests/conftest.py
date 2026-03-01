@@ -306,45 +306,6 @@ def mock_feature_flag():
         yield mock
 
 
-@pytest.fixture
-def create_workspace_member_admin(db, workspace, create_user):
-    """Create and return a workspace member with admin role"""
-    workspace_member = WorkspaceMember.objects.create(
-        workspace=workspace,
-        member=create_user,
-        role=ROLE.ADMIN.value,  # 20
-        is_active=True,
-    )
-    return workspace_member
-
-
-@pytest.fixture
-def create_project_member_admin(db, workspace, project, create_user):
-    """Create and return a workspace member with member role"""
-    project_member = ProjectMember.objects.create(
-        workspace=workspace,
-        project=project,
-        member=create_user,
-        role=ROLE.ADMIN.value,
-        is_active=True,
-    )
-    return project_member
-
-
-@pytest.fixture
-def mock_feature_flag():
-    """Fixture to mock the feature flag check"""
-
-    def mock_decorator(flag_name, default_value=False):
-        def wrapper(func):
-            return func  # Pass through the original function
-
-        return wrapper
-
-    with patch("plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator) as mock:
-        yield mock
-
-
 def workspace_page(db, workspace, create_user):
     """Create and return a page instance"""
     from plane.tests.factories import PageFactory

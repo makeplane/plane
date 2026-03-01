@@ -17,7 +17,6 @@ import strawberry
 from asgiref.sync import sync_to_async
 
 # Django Imports
-from django.db.models import Q
 
 # Strawberry Imports
 from strawberry.exceptions import GraphQLError

@@ -47,6 +47,9 @@ def entity_issue_state_activity_task(issue_cycle_data, user_id, slug, action):
             if not cycle_id:
                 continue
 
+            if not issue.state_id:
+                continue
+
             estimate_value = (
                 issue.estimate_point.value
                 if issue.estimate_point
@@ -58,9 +61,9 @@ def entity_issue_state_activity_task(issue_cycle_data, user_id, slug, action):
             activity_records.append(
                 EntityIssueStateActivity(
                     cycle_id=cycle_id,
-                    state_id=str(issue.state_id),
+                    state_id=issue.state_id,
                     issue_id=issue.id,
-                    state_group=issue.state.group if issue.state else None,
+                    state_group=issue.state.group,
                     action=action,
                     entity_type="CYCLE",
                     estimate_point_id=issue.estimate_point_id,

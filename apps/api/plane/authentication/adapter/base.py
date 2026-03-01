@@ -14,8 +14,6 @@ import os
 import uuid
 import requests
 from io import BytesIO
-import random
-import string
 
 # Django imports
 from django.utils import timezone

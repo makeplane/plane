@@ -42,6 +42,7 @@ from .issue import (
     IssueAssignee,
     IssueBlocker,
     IssueComment,
+    WorkItemCommentSource,
     IssueLabel,
     IssueLink,
     IssueMention,
@@ -62,9 +63,11 @@ from .project import (
     ProjectIdentifier,
     ProjectMember,
     ProjectMemberInvite,
+    ProjectMemberSource,
     ProjectNetwork,
     ProjectPublicMember,
-    ProjectUserProperty
+    ProjectUserProperty,
+    ProjectOptionalBaseModel,
 )
 from .session import Session
 from .social_connection import SocialLoginConnection
@@ -74,7 +77,6 @@ from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (
     Workspace,
-    WorkspaceBaseModel,
     WorkspaceMember,
     WorkspaceMemberInvite,
     WorkspaceTheme,

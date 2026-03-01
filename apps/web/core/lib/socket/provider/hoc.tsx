@@ -40,8 +40,8 @@ export const WithSocketProviderHOC = observer(function WithSocketProviderHOC(pro
   return (
     <SocketProvider
       options={{
-        url: process.env.VITE_RELAY_BASE_URL || "",
-        path: `${process.env.VITE_RELAY_BASE_PATH || ""}/socket.io`,
+        url: process.env.VITE_FLUX_BASE_URL || "",
+        path: `${process.env.VITE_FLUX_BASE_PATH || ""}/socket.io`,
       }}
       workspaceId={currentWorkspaceId}
       enabled={isWorkspaceSocketEnabled}

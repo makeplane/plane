@@ -550,7 +550,6 @@ def create_module_issues(workspace_id, project_id, user_id, issue_count):
 
 def create_issue_types(workspace_id, project_id, user_id):
     fake = Faker()
-    name = fake.name()
 
     logo_props = [
         {

@@ -12,7 +12,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Link as Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon, EditIcon, TrashIcon, CloseIcon, ChevronRightIcon } from "@plane/propel/icons";
 // plane imports
@@ -30,7 +30,7 @@ import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // local components
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
@@ -200,7 +200,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
             </div>
 
             <div className="flex-shrink-0 text-13">
-              <CustomMenu placement="bottom-end" ellipsis>
+              <CustomMenu placement="top-end" ellipsis>
                 {canEdit && (
                   <CustomMenu.MenuItem
                     onClick={() => {

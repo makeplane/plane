@@ -210,7 +210,7 @@ export function CustomTreeMapContent({
             Q${pX},${pY} ${pX + LAYOUT.RADIUS},${pY}
           `}
           className={cn("transition-colors duration-200 hover:opacity-90", fillClassName)}
-          fill={fillColor ?? "currentColor"}
+          fill={fillColor ?? "var(--background-color-layer-1)"}
         />
 
         {/* Top section */}

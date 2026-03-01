@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Monitor, Smartphone, Cable } from "lucide-react";
@@ -19,7 +19,7 @@ import { Monitor, Smartphone, Cable } from "lucide-react";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceSAMLAuthenticationConfigurationKeys } from "@plane/types";
-import { TextArea } from "@plane/ui";
+import { CustomSelect, Input, TextArea } from "@plane/ui";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
@@ -31,7 +31,41 @@ import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
 // hooks
 import { useInstance } from "@/hooks/store";
-import { SAMLAttributeMappingTable } from "@/plane-admin/components/authentication";
+import { NAME_ID_FORMAT_OPTIONS, SAMLAttributeMappingTable } from "@/plane-admin/components/authentication";
+
+const DEFAULT_ATTRIBUTE_MAPPING: Record<string, string> = {
+  email: "email",
+  first_name: "first_name",
+  last_name: "last_name",
+};
+
+const ATTRIBUTE_MAPPING_FIELDS = [
+  { planeField: "email", label: "Email", required: true },
+  { planeField: "first_name", label: "First name", required: false },
+  { planeField: "last_name", label: "Last name", required: false },
+] as const;
+
+const SAML_FORM_SWITCH_FIELDS: TControllerSwitchFormField<SAMLConfigFormValues>[] = [
+  {
+    name: "ENABLE_SAML_IDP_SYNC",
+    label: "Refresh user attributes from IdP during sign in",
+  },
+  {
+    name: "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT",
+    label: "Disable RequestedAuthnContext to allow any authentication method",
+  },
+];
+
+function parseAttributeMapping(value: string | undefined): Record<string, string> {
+  if (!value) return { ...DEFAULT_ATTRIBUTE_MAPPING };
+  try {
+    const parsed = JSON.parse(value);
+    if (typeof parsed === "object" && parsed !== null) return parsed as Record<string, string>;
+  } catch {
+    // ignore parse errors
+  }
+  return { ...DEFAULT_ATTRIBUTE_MAPPING };
+}
 
 type Props = {
   config: IFormattedInstanceConfiguration;
@@ -50,6 +84,8 @@ export function InstanceSAMLConfigForm(props: Props) {
     handleSubmit,
     control,
     reset,
+    watch,
+    setValue,
     formState: { errors, isDirty, isSubmitting },
   } = useForm<SAMLConfigFormValues>({
     defaultValues: {
@@ -60,8 +96,20 @@ export function InstanceSAMLConfigForm(props: Props) {
       SAML_PROVIDER_NAME: config["SAML_PROVIDER_NAME"],
       ENABLE_SAML_IDP_SYNC: config["ENABLE_SAML_IDP_SYNC"] || "0",
       SAML_DISABLE_REQUESTED_AUTHN_CONTEXT: config["SAML_DISABLE_REQUESTED_AUTHN_CONTEXT"] ?? "1",
+      SAML_NAME_ID_FORMAT: config["SAML_NAME_ID_FORMAT"] || "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+      SAML_ATTRIBUTE_MAPPING: config["SAML_ATTRIBUTE_MAPPING"] || JSON.stringify(DEFAULT_ATTRIBUTE_MAPPING),
     },
   });
+
+  const watchedNameIdFormat = watch("SAML_NAME_ID_FORMAT");
+  const watchedAttributeMapping = watch("SAML_ATTRIBUTE_MAPPING");
+  const currentMapping = useMemo(() => parseAttributeMapping(watchedAttributeMapping), [watchedAttributeMapping]);
+
+  const updateAttributeMapping = (planeField: string, idpAttr: string) => {
+    setValue("SAML_ATTRIBUTE_MAPPING", JSON.stringify({ ...currentMapping, [planeField]: idpAttr }), {
+      shouldDirty: true,
+    });
+  };
 
   const originURL = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -110,17 +158,6 @@ export function InstanceSAMLConfigForm(props: Props) {
       placeholder: "Okta",
       error: Boolean(errors.SAML_PROVIDER_NAME),
       required: false,
-    },
-  ];
-
-  const SAML_FORM_SWITCH_FIELDS: TControllerSwitchFormField<SAMLConfigFormValues>[] = [
-    {
-      name: "ENABLE_SAML_IDP_SYNC",
-      label: "Refresh user attributes from IdP during sign in",
-    },
-    {
-      name: "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT",
-      label: "Disable RequestedAuthnContext to allow any authentication method",
     },
   ];
 
@@ -211,6 +248,12 @@ export function InstanceSAMLConfigForm(props: Props) {
         ENABLE_SAML_IDP_SYNC: response.find((item) => item.key === "ENABLE_SAML_IDP_SYNC")?.value,
         SAML_DISABLE_REQUESTED_AUTHN_CONTEXT:
           response.find((item) => item.key === "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT")?.value ?? "1",
+        SAML_NAME_ID_FORMAT:
+          response.find((item) => item.key === "SAML_NAME_ID_FORMAT")?.value ||
+          "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+        SAML_ATTRIBUTE_MAPPING:
+          response.find((item) => item.key === "SAML_ATTRIBUTE_MAPPING")?.value ||
+          JSON.stringify(DEFAULT_ATTRIBUTE_MAPPING),
       });
     } catch (err) {
       console.error(err);
@@ -249,7 +292,7 @@ export function InstanceSAMLConfigForm(props: Props) {
               />
             ))}
             <div className="flex flex-col gap-1">
-              <h4 className="text-13">SAML certificate</h4>
+              <h4 className="text-13 text-tertiary">SAML certificate</h4>
               <Controller
                 control={control}
                 name="SAML_CERTIFICATE"
@@ -269,6 +312,61 @@ export function InstanceSAMLConfigForm(props: Props) {
               <p className="pt-0.5 text-11 text-tertiary">
                 IdP-generated certificate for signing this Plane app as an authorized service provider for your IdP
               </p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <h4 className="text-13 text-tertiary">
+                Name ID format <span className="text-red-500">*</span>
+              </h4>
+              <Controller
+                control={control}
+                name="SAML_NAME_ID_FORMAT"
+                render={({ field: { value, onChange } }) => {
+                  const selectedOption = NAME_ID_FORMAT_OPTIONS.find((opt) => opt.value === value);
+                  const displayLabel = selectedOption ? `${selectedOption.label} (${selectedOption.value})` : value;
+                  return (
+                    <CustomSelect
+                      value={value}
+                      label={displayLabel}
+                      onChange={onChange}
+                      buttonClassName="rounded-md border-subtle text-left"
+                      input
+                    >
+                      {NAME_ID_FORMAT_OPTIONS.map((option) => (
+                        <CustomSelect.Option key={option.value} value={option.value} className="w-full">
+                          {option.label} ({option.value})
+                        </CustomSelect.Option>
+                      ))}
+                    </CustomSelect>
+                  );
+                }}
+              />
+              <p className="pt-0.5 text-11 text-tertiary">
+                The NameID format that your IdP uses to identify users. Must match what your IdP sends in the SAML
+                response.
+              </p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <h4 className="text-13 text-tertiary">Attribute mapping</h4>
+              <p className="pb-2 text-11 text-tertiary">
+                Map your IdP attribute names to Plane fields. Email is required.
+              </p>
+              <div className="flex flex-col gap-2">
+                {ATTRIBUTE_MAPPING_FIELDS.map((attr) => (
+                  <div key={attr.planeField} className="flex items-center gap-3">
+                    <span className="w-24 text-12 text-secondary shrink-0">
+                      {attr.label}
+                      {attr.required && <span className="text-red-500"> *</span>}
+                    </span>
+                    <Input
+                      type="text"
+                      value={currentMapping[attr.planeField] || ""}
+                      onChange={(e) => updateAttributeMapping(attr.planeField, e.target.value)}
+                      placeholder={attr.planeField}
+                      className="flex-1 text-12"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
             {SAML_FORM_SWITCH_FIELDS.map((field) => (
               <ControllerSwitch key={field.name} control={control} field={field} />
@@ -327,7 +425,7 @@ export function InstanceSAMLConfigForm(props: Props) {
                   Mapping
                 </div>
                 <div className="px-6 py-4 bg-layer-1">
-                  <SAMLAttributeMappingTable />
+                  <SAMLAttributeMappingTable nameIdFormat={watchedNameIdFormat} attributeMapping={currentMapping} />
                 </div>
               </div>
             </div>

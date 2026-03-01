@@ -1,5 +1,12 @@
 {
   "extends": "@plane/typescript-config/node-library.json",
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+  },
+  "include": ["src"],
+  "exclude": ["dist", "node_modules", "*.config.ts"],
+  "references": [{ "path": "../types" }]
 }

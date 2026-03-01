@@ -14,10 +14,10 @@ Recurring Work Item Scheduler
 
 This module implements a batch scheduling approach for recurring work items.
 Instead of creating individual PeriodicTasks for each recurring work item,
-it uses a single batch scheduler that runs every 6 hours.
+it uses a single batch scheduler that runs every 15 minutes.
 
 Architecture:
-- schedule_batch: Runs every 6 hours, finds all tasks due in the next 6 hours
+- schedule_batch: Runs every 15 minutes, finds all tasks due in the next 15 minutes
 - schedule_on_create_or_enable: Called directly when creating/enabling a task
 - _schedule_task: Helper to schedule a single task with unique task_id for idempotency
 
@@ -39,33 +39,35 @@ from plane.ee.bgtasks.recurring_work_item_task import create_work_item_from_temp
 logger = logging.getLogger("plane.worker")
 
 # Scheduler configuration
-BATCH_WINDOW_HOURS = 6
+BATCH_WINDOW_MINUTES = 15
 
 
 @shared_task
 def schedule_batch():
     """
-    Main batch scheduler - runs every 6 hours.
-    Finds all recurring tasks due in the next 6 hours and schedules them.
+    Main batch scheduler - runs every 15 minutes.
+    Finds all recurring tasks due in the next 15 minutes and schedules them.
 
     IMPORTANT: Only processes tasks where periodic_task IS NULL.
     Legacy tasks (with periodic_task set) are handled by the old PeriodicTask
     system until they execute and get cleaned up.
     """
     now = timezone.now()
-    window_end = now + timedelta(hours=BATCH_WINDOW_HOURS)
+    window_end = now + timedelta(minutes=BATCH_WINDOW_MINUTES)
 
     # Get all enabled, non-expired tasks due within window
     # CRITICAL: periodic_task__isnull=True ensures we don't double-schedule
     # legacy tasks that still have a PeriodicTask
-    tasks = RecurringWorkitemTask.objects.filter(
-        enabled=True,
-        periodic_task__isnull=True,  # Only NEW tasks (legacy handled by old system)
-        next_scheduled_at__isnull=False,
-        next_scheduled_at__lte=window_end,
-    ).filter(
-        Q(end_at__isnull=True) | Q(end_at__gt=now)
-    ).select_related("workitem_blueprint", "project", "workspace")
+    tasks = (
+        RecurringWorkitemTask.objects.filter(
+            enabled=True,
+            periodic_task__isnull=True,  # Only NEW tasks (legacy handled by old system)
+            next_scheduled_at__isnull=False,
+            next_scheduled_at__lte=window_end,
+        )
+        .filter(Q(end_at__isnull=True) | Q(end_at__gt=now))
+        .select_related("workitem_blueprint", "project", "workspace")
+    )
 
     scheduled_count = 0
 
@@ -77,7 +79,7 @@ def schedule_batch():
         except Exception as e:
             logger.error(f"Failed to schedule recurring task {task.id}: {e}")
 
-    logger.info(f"Recurring batch scheduler: scheduled {scheduled_count} tasks for next {BATCH_WINDOW_HOURS}h")
+    logger.info(f"Recurring batch scheduler: scheduled {scheduled_count} tasks for next {BATCH_WINDOW_MINUTES}m")
     return {"scheduled": scheduled_count}
 
 
@@ -85,7 +87,7 @@ def schedule_batch():
 def schedule_on_create_or_enable(recurring_workitem_task_id: str):
     """
     Called when a recurring task is created or enabled.
-    Schedules immediately if due within 6 hours.
+    Schedules immediately if due within 15 minutes.
 
     Skips if task has a legacy periodic_task (handled by old system).
     """
@@ -111,7 +113,7 @@ def schedule_on_create_or_enable(recurring_workitem_task_id: str):
         task.save(update_fields=["next_scheduled_at"])
 
     now = timezone.now()
-    window_end = now + timedelta(hours=BATCH_WINDOW_HOURS)
+    window_end = now + timedelta(minutes=BATCH_WINDOW_MINUTES)
 
     if task.next_scheduled_at and task.next_scheduled_at <= window_end:
         if _schedule_task(task, now):
@@ -145,20 +147,13 @@ def _schedule_task(task, now):
     # Celery will reject duplicates with same task_id
     task_id = f"recurring_{task.id}_{int(task.next_scheduled_at.timestamp())}"
 
-    if task.next_scheduled_at <= now:
-        # Past due - execute immediately
-        logger.info(f"Executing recurring task {task.id} immediately (past due)")
-        create_work_item_from_template.apply_async(
-            kwargs={"recurring_workitem_task_id": str(task.id)},
-            task_id=task_id,
-        )
-    else:
-        # Schedule for exact time using ETA
-        logger.info(f"Scheduling recurring task {task.id} for {task.next_scheduled_at}")
-        create_work_item_from_template.apply_async(
-            kwargs={"recurring_workitem_task_id": str(task.id)},
-            eta=task.next_scheduled_at,
-            task_id=task_id,
-        )
+    # Always dispatch immediately — the short 15-minute schedule interval means
+    # tasks are at most a few minutes early. Avoids long ETA holds that trigger
+    # RabbitMQ consumer_timeout redelivery storms.
+    logger.info(f"Dispatching recurring task {task.id} (scheduled for {task.next_scheduled_at})")
+    create_work_item_from_template.apply_async(
+        kwargs={"recurring_workitem_task_id": str(task.id)},
+        task_id=task_id,
+    )
 
     return True

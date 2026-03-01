@@ -44,8 +44,8 @@ def instance_traces():
         if instance is None:
             return
 
-        # If not multi-tenant and telemetry is enabled
-        if not settings.IS_MULTI_TENANT and instance.is_telemetry_enabled:
+        # If self managed and telemetry is enabled
+        if settings.IS_SELF_MANAGED and instance.is_telemetry_enabled:
             # Get the tracer
             tracer = trace.get_tracer(__name__)
             # Instance details

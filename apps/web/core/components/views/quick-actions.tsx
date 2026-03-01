@@ -24,10 +24,10 @@ import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
-import { useViewMenuItems } from "@/components/common/quick-actions-helper";
+import { useViewMenuItems } from "@/components/common/quick-actions/helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { PublishViewModal, useViewPublish } from "@/plane-web/components/views/publish";
+import { PublishViewModal, useViewPublish } from "@/components/views/publish";
 // local imports
 import { DeleteProjectViewModal } from "./delete-view-modal";
 import { CreateUpdateProjectViewModal } from "./modal";

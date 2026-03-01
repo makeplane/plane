@@ -23,6 +23,7 @@ import { ImageFullScreenActionRoot } from "./full-screen";
 
 type Props = {
   alignment: TCustomImageAlignment;
+  alt: string | undefined;
   editor: Editor;
   aspectRatio: number;
   downloadSrc: string;

@@ -24,6 +24,7 @@ const ZOOM_SPEED = 0.05;
 const ZOOM_STEPS = [0.5, 1, 1.5, 2];
 
 type Props = {
+  alt: string | undefined;
   aspectRatio: number;
   downloadSrc: string;
   isFullScreenEnabled: boolean;
@@ -34,7 +35,7 @@ type Props = {
 };
 
 function ImageFullScreenModalWithoutPortal(props: Props) {
-  const { aspectRatio, isFullScreenEnabled, isTouchDevice, downloadSrc, src, toggleFullScreenMode, width } = props;
+  const { alt, aspectRatio, isFullScreenEnabled, isTouchDevice, downloadSrc, src, toggleFullScreenMode, width } = props;
   // refs
   const dragStart = useRef({ x: 0, y: 0 });
   const dragOffset = useRef({ x: 0, y: 0 });
@@ -117,6 +118,9 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
   );
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (!imgRef.current) return;
 
     const imgWidth = imgRef.current.offsetWidth * magnification;
@@ -231,6 +235,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
         <img
           ref={setImageRef}
           src={src}
+          alt={alt}
           className="read-only-image rounded-lg"
           style={{
             width: `${widthInNumber * initialMagnification}px`,

@@ -22,7 +22,6 @@ import {
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissions,
   EUserPermissionsLevel,
-  WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { ModuleIcon } from "@plane/propel/icons";
@@ -54,7 +53,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 import { IconButton } from "@plane/propel/icon-button";
 
 export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
@@ -142,7 +141,10 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
         <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-              <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+              <ProjectBreadcrumbWithPreference
+                workspaceSlug={workspaceSlug?.toString()}
+                projectId={projectId?.toString()}
+              />
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
@@ -248,7 +250,6 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                 onClick={() => {
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
-                data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.MODULE}
               >
                 Add work item
               </Button>

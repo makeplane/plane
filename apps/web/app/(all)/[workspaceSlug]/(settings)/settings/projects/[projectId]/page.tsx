@@ -16,8 +16,8 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
 import { PageHead } from "@/components/core/page-title";
-import { ProjectDetailsForm } from "@/components/project/form";
-import { ProjectDetailsFormLoader } from "@/components/project/form-loader";
+import { ProjectDetailsForm } from "@/components/projects/settings/general/form";
+import { ProjectDetailsFormLoader } from "@/components/projects/settings/general/form-loader";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -25,7 +25,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import type { Route } from "./+types/page";
 import { GeneralProjectSettingsHeader } from "./header";
-import { GeneralProjectSettingsControlSection } from "@/components/project/settings/control-section";
+import { GeneralProjectSettingsControlSection } from "@/components/projects/settings/general/control-section";
 
 function ProjectSettingsPage({ params }: Route.ComponentProps) {
   // router

@@ -119,7 +119,7 @@ class WidgetListEndpoint(BaseAPIView):
     def get(self, request, slug, dashboard_id, widget_id):
         workspace = Workspace.objects.get(slug=slug)
 
-        dashboard = Dashboard.objects.get(id=dashboard_id, workspace_id=workspace.id)
+        _dashboard = Dashboard.objects.get(id=dashboard_id, workspace_id=workspace.id)
 
         # get the dashboard projects
         dashboard_project_ids = DashboardProject.objects.filter(

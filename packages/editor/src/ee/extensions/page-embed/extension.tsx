@@ -12,8 +12,11 @@
  */
 
 import { Plugin, PluginKey } from "@tiptap/pm/state";
-import { ReactNodeViewRenderer, NodeViewWrapper } from "@tiptap/react";
+import type { Decoration } from "@tiptap/pm/view";
+import { ReactNodeViewRenderer } from "@tiptap/react";
 import type { Editor } from "@tiptap/react";
+// version diff support
+import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plane editor imports
@@ -67,15 +70,16 @@ export function PageEmbedExtension(props: Props) {
           node: { attrs: PageEmbedExtensionAttributes };
           editor: Editor;
           updateAttributes: (attrs: Partial<PageEmbedExtensionAttributes>) => void;
+          decorations: readonly Decoration[];
         }) => (
-          <NodeViewWrapper className="page-embed-component">
+          <YChangeNodeViewWrapper decorations={embedProps.decorations} className="page-embed-component">
             {props.widgetCallback({
               pageId: embedProps.node.attrs.entity_identifier as string,
               workspaceSlug: embedProps.node.attrs.workspace_identifier,
               editor: embedProps.editor,
               updateAttributes: embedProps.updateAttributes,
             })}
-          </NodeViewWrapper>
+          </YChangeNodeViewWrapper>
         )
       );
     },

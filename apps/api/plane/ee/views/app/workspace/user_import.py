@@ -25,6 +25,7 @@ from plane.utils.porters import DataImporter, CSVFormatter, UserImportSerializer
 
 logger = logging.getLogger("plane.api")
 
+
 def fetch_file_from_storage(file_key: str) -> Optional[str]:
     """Fetch file content from S3 storage."""
     try:
@@ -40,6 +41,7 @@ def fetch_file_from_storage(file_key: str) -> Optional[str]:
     except Exception as e:
         logger.error(f"Failed to fetch file from S3: {e}")
         return None
+
 
 class WorkspaceMembersImportEndpoint(BaseAPIView):
     """Import users from CSV synchronously."""
@@ -68,18 +70,22 @@ class WorkspaceMembersImportEndpoint(BaseAPIView):
         result = importer.from_string(content, CSVFormatter())
 
         # Build response from result
-        users_created = sum(
-            1 for item in result.created if isinstance(item, dict) and item.get("user_created")
-        )
-        wm_created = sum(
-            1 for item in result.created if isinstance(item, dict) and item.get("workspace_member_created")
-        )
+        users_created = 0
+        wm_created = 0
+        for item in result.created.values():
+            if isinstance(item, dict):
+                if item.get("user_created"):
+                    users_created += 1
+                if item.get("workspace_member_created"):
+                    wm_created += 1
 
-        return Response({
-            "total_rows": result.total,
-            "successful": result.success_count,
-            "failed": result.error_count,
-            "users_created": users_created,
-            "workspace_members_created": wm_created,
-            "errors": result.errors if result.has_errors else [],
-        })
+        return Response(
+            {
+                "total_rows": result.total,
+                "successful": result.success_count,
+                "failed": result.error_count,
+                "users_created": users_created,
+                "workspace_members_created": wm_created,
+                "errors": result.errors if result.has_errors else [],
+            }
+        )

@@ -25,11 +25,6 @@ export enum ETeamspaceNavigationItem {
   PROJECTS = "projects",
 }
 
-export enum ETeamspaceEntityScope {
-  TEAM = "teams",
-  PROJECT = "projects",
-}
-
 export enum ETeamspaceAnalyticsDataKeys {
   PROJECTS = "projects",
   MEMBERS = "members",

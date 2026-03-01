@@ -17,38 +17,39 @@ such as adding comments and updating issue properties.
 """
 
 import json
+import logging
 import re
 import uuid
-import logging
 from typing import Any, Dict, List, Literal
-from pydantic import BaseModel, Field, field_validator
 
 # Django imports
-from django.db import transaction
-from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import timezone
-from django.db.models import Q, Value
-from django.contrib.postgres.fields import ArrayField
-from django.db.models.fields import UUIDField
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
+from django.db.models import Q, Value
+from django.db.models.fields import UUIDField
 from django.db.models.functions import Coalesce
+from django.utils import timezone
+from pydantic import BaseModel, Field, field_validator
 
-
-from plane.ee.models import Automation
-from plane.automations.registry import register_node, ActionNode
-from plane.db.models import (
-    Issue,
-    IssueComment,
-    User,
-    State,
-    IssueAssignee,
-    IssueLabel,
-    FileAsset,
-)
+from plane.app.serializers import IssueCommentSerializer, IssueSerializer
+from plane.automations.registry import ActionNode, register_node
 from plane.bgtasks.copy_s3_object import copy_assets, sync_with_external_service
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.app.serializers import IssueSerializer, IssueCommentSerializer
+from plane.db.models import (
+    Issue,
+    IssueAssignee,
+    IssueComment,
+    IssueLabel,
+    State,
+    User,
+)
+from plane.ee.models import Automation
+from plane.runnerctl.services import execute_sync
 from plane.utils.exception_logger import log_exception
+
+logger = logging.getLogger(__name__)
 
 
 class AddCommentParams(BaseModel):
@@ -245,13 +246,14 @@ class AddCommentAction(ActionNode):
 
         """
         try:
-            file_assets = FileAsset.objects.filter(
-                issue_id=issue.id,
-                project_id=issue.project_id,
-                workspace_id=issue.workspace_id,
-                entity_type="automation_comment",
-                entity_id=str(context.get("automation_id")),
-            ).values_list("asset_id", flat=True)
+            # TODO: review this and remove if it is unnecessary
+            # file_assets = FileAsset.objects.filter(
+            #     issue_id=issue.id,
+            #     project_id=issue.project_id,
+            #     workspace_id=issue.workspace_id,
+            #     entity_type="automation_comment",
+            #     entity_id=str(context.get("automation_id")),
+            # ).values_list("asset_id", flat=True)
 
             duplicated_assets = copy_assets(
                 entity_name="automation_comment",
@@ -657,8 +659,8 @@ class ChangePropertyAction(ActionNode):
             elif property_name == "label_ids":
                 new_label_ids = self._handle_labels_property(issue, self.params.change_type, rendered_values)
 
-                current_label_ids_set = {str(l) for l in (old_value or [])}
-                desired_label_ids_set = {str(l) for l in (new_label_ids or [])}
+                current_label_ids_set = {str(l) for l in (old_value or [])}  # noqa: E741
+                desired_label_ids_set = {str(l) for l in (new_label_ids or [])}  # noqa: E741
 
                 labels_to_remove = list(current_label_ids_set - desired_label_ids_set)
                 labels_to_add = list(desired_label_ids_set - current_label_ids_set)
@@ -747,4 +749,93 @@ class ChangePropertyAction(ActionNode):
                 "success": False,
                 "error": f"Failed to change property: {str(e)}",
                 "action": "change_property",
+            }
+
+
+class RunScriptParams(BaseModel):
+    """Parameters for the run_script action."""
+
+    script_id: str = Field(
+        ...,
+        description="UUID of the script to execute",
+        examples=["255ded71-4a9f-40aa-b1ac-2a87015c5f64"],
+    )
+
+    execution_variables: Dict[str, str] = Field(
+        default_factory=dict,
+        description="Variables to pass to the script execution",
+        examples=[{"identifier": "automation", "priority": "high"}],
+    )
+
+
+@register_node("run_script", "action", RunScriptParams)
+class RunScriptAction(ActionNode):
+    """
+    Action that executes a saved script.
+
+    Fetches the script by ID and executes it via the Node Runner service.
+    The event data is passed as input to the script.
+
+    The script execution is tracked in ScriptExecution with trigger_type="automation".
+    """
+
+    schema = RunScriptParams
+    name = "run_script"
+
+    def execute(self, event: dict, context: dict) -> Dict[str, Any]:
+        """Execute the script and return the result."""
+        script_id = self.params.script_id
+
+        # Get workspace info from the automation (needed for system scripts where workspace is null)
+        automation = Automation.objects.select_related("workspace").get(id=context.get("automation_id"))
+
+        # Prepare input data from event
+        input_data = {
+            "event": event,
+            "context": {
+                "automation_id": context.get("automation_id"),
+                "automation_run_id": context.get("automation_run_id"),
+            },
+        }
+
+        # Prepare trigger context
+        trigger_context = {
+            "automation_run_id": str(context.get("automation_run_id")),
+            "node_id": str(context.get("node_id")),
+        }
+
+        # Execute via runnerctl service
+        result = execute_sync(
+            script_id=script_id,
+            input_data=input_data,
+            execution_variables=self.params.execution_variables,
+            workspace_id=str(automation.workspace_id),
+            workspace_slug=automation.workspace.slug,
+            trigger_type="automation",
+            trigger_id=context.get("automation_id"),
+            trigger_context=trigger_context,
+        )
+
+        if result.success:
+            return {
+                "success": True,
+                "action": "run_script",
+                "result": {
+                    "script_id": result.script_id,
+                    "script_name": result.script_name,
+                    "execution_id": result.execution_id,
+                    "output_data": result.output_data,
+                },
+            }
+        else:
+            return {
+                "success": False,
+                "error": result.error,
+                "action": "run_script",
+                "result": {
+                    "script_id": result.script_id,
+                    "script_name": result.script_name,
+                    "execution_id": result.execution_id,
+                    "error_data": result.error_data,
+                },
             }

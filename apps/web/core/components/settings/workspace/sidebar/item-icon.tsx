@@ -19,16 +19,23 @@ import {
   Building,
   Cable,
   CreditCard,
-  PiIcon,
+  FileCode,
+  KeyRound,
   Shapes,
   Timer,
-  ToyBrick,
   Users,
   Webhook,
 } from "lucide-react";
 // plane imports
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CustomersIcon, InitiativeIcon, ProjectStatesIcon, TeamsIcon, WikiIcon } from "@plane/propel/icons";
+import {
+  CustomersIcon,
+  GroupSyncingIcon,
+  InitiativeIcon,
+  PiIcon,
+  ProjectStatesIcon,
+  TeamsIcon,
+} from "@plane/propel/icons";
 import type { TWorkspaceSettingsTabs } from "@plane/types";
 
 export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon | React.FC<ISvgIcons>> = {
@@ -39,6 +46,7 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   webhooks: Webhook,
   import: ArrowDownToLine,
   worklogs: Timer,
+  "group-syncing": GroupSyncingIcon,
   identity: Building,
   teamspaces: TeamsIcon,
   initiatives: InitiativeIcon,
@@ -47,7 +55,7 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   integrations: Cable,
   connections: Blocks,
   project_states: ProjectStatesIcon,
-  applications: ToyBrick,
   "plane-intelligence": PiIcon,
-  wiki: WikiIcon,
+  "access-tokens": KeyRound,
+  scripts: FileCode,
 };

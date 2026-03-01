@@ -114,7 +114,7 @@ class Command(BaseCommand):
         )
 
         # Cleanup sub-command
-        cleanup_parser = subparsers.add_parser("cleanup", help="Clean up stale queues for all models")
+        # cleanup_parser = subparsers.add_parser("cleanup", help="Clean up stale queues for all models")
 
         # Force-drain sub-command
         force_drain_parser = subparsers.add_parser(

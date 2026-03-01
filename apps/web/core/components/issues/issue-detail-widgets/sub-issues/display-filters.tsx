@@ -26,7 +26,7 @@ import {
   FilterOrderBy,
   FiltersDropdown,
 } from "@/components/issues/issue-layouts/filters";
-import { isDisplayFiltersApplied } from "@/components/issues/issue-layouts/utils";
+import { isDisplayFiltersApplied } from "@/helpers/work-item-layout";
 type TSubIssueDisplayFiltersProps = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;

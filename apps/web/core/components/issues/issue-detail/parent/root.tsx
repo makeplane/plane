@@ -28,7 +28,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // types
 import type { TIssueOperations } from "../root";
 import { IssueParentSiblings } from "./siblings";
@@ -47,14 +47,14 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
   const router = useRouter();
   const { t } = useTranslation();
   // hooks
-  const { issueMap } = useIssues();
+  const { getWorkItemById } = useIssues();
   const { getProjectStates } = useProjectState();
   const { handleRedirection } = useIssuePeekOverviewRedirection();
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
 
   // derived values
-  const parentIssue = issueMap?.[issue.parent_id || ""] || undefined;
+  const parentIssue = issue.parent_id ? getWorkItemById(issue.parent_id) : undefined;
   const isParentEpic = parentIssue?.is_epic;
   const projectIdentifier = getProjectIdentifierById(parentIssue?.project_id);
 

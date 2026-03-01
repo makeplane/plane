@@ -15,6 +15,7 @@ from django.conf import settings
 
 # Module imports
 from plane.db.models import BaseModel
+from plane.db.mixins import ChangeTrackerMixin
 from plane.utils.html_processor import strip_tags
 
 
@@ -51,6 +52,7 @@ class Initiative(BaseModel):
         related_name="initiatives",
         blank=True,
     )
+    archived_at = models.DateTimeField(null=True)
 
     class Meta:
         db_table = "initiatives"
@@ -165,18 +167,31 @@ class InitiativeLabelAssociation(BaseModel):
         return f"{self.initiative.name} {self.label.name}"
 
 
-class InitiativeLink(BaseModel):
+class InitiativeLink(ChangeTrackerMixin, BaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField()
     initiative = models.ForeignKey("ee.Initiative", on_delete=models.CASCADE, related_name="initiative_link")
     metadata = models.JSONField(default=dict)
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="initiative_links")
 
+    TRACKED_FIELDS = ["url"]
+
     class Meta:
         verbose_name = "Initiative Link"
         verbose_name_plural = "Initiative Links"
         db_table = "initiative_links"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        url_changed = self.has_changed("url") if not is_new else False
+
+        super().save(*args, **kwargs)
+
+        if (is_new or url_changed) and self.url:
+            from plane.bgtasks.link_crawler_task import link_crawler
+
+            link_crawler.delay(str(self.id), self.url, "initiative")
 
     def __str__(self):
         return f"{self.initiative.name} {self.url}"

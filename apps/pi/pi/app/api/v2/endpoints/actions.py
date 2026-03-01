@@ -15,6 +15,7 @@ from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi import settings
 from pi.app.api.dependencies import get_current_user
 
 # from pi.services.chat.helpers.action_execution_helpers import execute_batch_actions
@@ -136,7 +137,7 @@ async def execute_batch_actions_endpoint(
         # Validate session and get user
         user_id = current_user.id
 
-        build_mode_tool_executor = BuildModeToolExecutor(chatbot=PlaneChatBot("gpt-4.1"), db=db)
+        build_mode_tool_executor = BuildModeToolExecutor(chatbot=PlaneChatBot(settings.llm_model.DEFAULT), db=db)
         result = await build_mode_tool_executor.execute(request, user_id)
 
         # Check if service returned an error

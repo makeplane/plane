@@ -16,9 +16,10 @@ import { createEmptyContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
 import type { IStep, TStepExecutionContext, TStepExecutionInput } from "@/apps/jira-server-importer/v2/types";
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { wait } from "@/helpers/delay";
-import { getAPIClient } from "@/services/client";
+import { getAPIClientInternal } from "@/services/client";
 
 const MAX_STALE_POLLS = 60; // ~5 min with no progress = timeout
+const client = getAPIClientInternal();
 
 /**
  * Extracts stale poll count from previous context state
@@ -37,7 +38,6 @@ export class WaitForCeleryStep implements IStep {
 
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
     const { jobContext, previousContext } = input;
-    const client = getAPIClient();
 
     const report = await client.importReport.getImportReport(jobContext.job.report_id);
     const allBatchesProcessed = report.completed_batch_count >= report.total_batch_count;

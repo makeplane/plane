@@ -16,6 +16,7 @@ from django.db.models import Q
 
 # Module imports
 from .project import ProjectBaseModel
+from plane.db.mixins import ChangeTrackerMixin
 
 
 def get_default_filters():
@@ -178,17 +179,30 @@ class ModuleIssue(ProjectBaseModel):
         return f"{self.module.name} {self.issue.name}"
 
 
-class ModuleLink(ProjectBaseModel):
+class ModuleLink(ChangeTrackerMixin, ProjectBaseModel):
     title = models.CharField(max_length=255, blank=True, null=True)
     url = models.URLField()
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="link_module")
     metadata = models.JSONField(default=dict)
+
+    TRACKED_FIELDS = ["url"]
 
     class Meta:
         verbose_name = "Module Link"
         verbose_name_plural = "Module Links"
         db_table = "module_links"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        url_changed = self.has_changed("url") if not is_new else False
+
+        super().save(*args, **kwargs)
+
+        if (is_new or url_changed) and self.url:
+            from plane.bgtasks.link_crawler_task import link_crawler
+
+            link_crawler.delay(str(self.id), self.url, "module")
 
     def __str__(self):
         return f"{self.module.name} {self.url}"

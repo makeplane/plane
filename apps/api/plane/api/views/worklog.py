@@ -30,13 +30,27 @@ from plane.api.serializers import (
 )
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.app.permissions import allow_permission, ROLE
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 
 # OpenAPI imports
 from plane.utils.openapi import issue_worklog_docs
 
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_WORK_ITEMS_WORKLOG_READ_SCOPE,
+    PROJECTS_WORK_ITEMS_WORKLOG_WRITE_SCOPE,
+)
+
 
 class WorkItemWorklogEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WORKLOG_WRITE_SCOPE]],
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_WORKLOG_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WORKLOG_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WORKLOG_WRITE_SCOPE]],
+    }
 
     @issue_worklog_docs(
         operation_id="create_issue_worklog",
@@ -70,7 +84,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id, logged_by=request.user)
             # Get the issue to update
-            issue = Issue.objects.get(pk=issue_id)
+            issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
             issue.updated_at = timezone.now()
             issue.save(update_fields=["updated_at"])
 
@@ -148,7 +162,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
             serializer.save()
 
             # Get the issue to update
-            issue = Issue.objects.get(pk=issue_id)
+            issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
             issue.updated_at = timezone.now()
             issue.save(update_fields=["updated_at"])
 
@@ -182,7 +196,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         worklog.delete()
 
         # Get the issue to update
-        issue = Issue.objects.get(pk=issue_id)
+        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         issue.updated_at = timezone.now()
         issue.save(update_fields=["updated_at"])
 
@@ -193,6 +207,11 @@ class ProjectWorklogAPIEndpoint(BaseAPIView):
     """
     ViewSet to fetch total worklog duration for each unique issue.
     """
+
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_WORKLOG_READ_SCOPE]],
+    }
 
     @issue_worklog_docs(
         operation_id="get_project_worklog_summary",

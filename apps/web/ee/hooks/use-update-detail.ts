@@ -16,8 +16,7 @@ import type { TUpdateEntityType } from "@plane/types";
 import { EUpdateEntityType } from "@plane/types";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
-// types
-import type { IUpdateStore } from "../store/updates/base.store";
+import type { IUpdateStore } from "@/store/work-items/epic/updates/base.store";
 
 export const useUpdateDetail = (serviceType: TUpdateEntityType): IUpdateStore => {
   const context = useContext(StoreContext);

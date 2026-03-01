@@ -17,6 +17,17 @@ import { logger } from "@plane/logger";
 dotenvx.config();
 
 const envSchema = z.object({
+  // Sentry Env Variables
+  SENTRY_DSN: z.string().optional(),
+  SENTRY_ORG: z.string().default("plane-hq"),
+  SENTRY_PROJECT: z.string().default("plane-silo"),
+  SENTRY_RELEASE_VERSION: z.string().default("1.0.0"),
+  // Datadog Environment Variables
+  DD_API_KEY: z.string().optional(),
+  DD_TRACE_AGENT_HOSTNAME: z.string().optional().default("localhost"),
+  DD_ENV: z.string().default("production"),
+  DD_SERVICE: z.string().default("silo"),
+  DD_VERSION: z.string().default("1.0.0"),
   // App Env Variables
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   BATCH_SIZE: z.string().default("50"),
@@ -52,11 +63,12 @@ const envSchema = z.object({
     .string()
     .default("")
     .transform((str) => str.replace(/\/$/, "")),
-  IS_MULTI_TENANT: z.string().default("0"),
+  IS_SELF_MANAGED: z.string().default("1"),
   SILO_BASE_PATH: z.string().default("/silo"),
   WEBHOOK_SECRET: z.string().default("plane-silo"),
   MQ_PREFETCH_COUNT: z.string().default("5"),
   SILO_HMAC_SECRET_KEY: z.string().default(""),
+  SILO_FILE_SIZE_LIMIT: z.string().default("104857600"), // 100MB in bytes
   // Feature Flags Env Variables
   FEATURE_FLAG_SERVER_BASE_URL: z.string().optional(),
   FEATURE_FLAG_SERVER_AUTH_TOKEN: z.string().optional(),
@@ -107,7 +119,6 @@ const envSchema = z.object({
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
   AWS_S3_ENDPOINT_URL: z.string().optional(),
   AWS_S3_BUCKET_NAME: z.string().default("uploads"),
-
   // Internal Plane App Env Variables
   PRD_AGENT_CLIENT_ID: z.string().optional(),
   PRD_AGENT_CLIENT_SECRET: z.string().optional(),

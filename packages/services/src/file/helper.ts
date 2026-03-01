@@ -114,6 +114,16 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
     console.warn("Error detecting file type from signature:", _error);
   }
 
+  // fallback 1: trust browser provided type
+  if (file.type) {
+    return file.type;
+  }
+
+  // fallback 2: check for csv extension specifically
+  if (file.name.toLowerCase().endsWith(".csv")) {
+    return "text/csv";
+  }
+
   // fallback for unknown files
   return "";
 };

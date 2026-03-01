@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { GripVertical } from "lucide-react";
@@ -21,9 +20,8 @@ import { useTranslation } from "@plane/i18n";
 import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
-// plane web imports
-import { EstimatePointDelete } from "@/plane-web/components/estimates";
 // local imports
+import { EstimatePointDelete } from "./delete";
 import { EstimatePointUpdate } from "./update";
 
 type TEstimatePointItemPreview = {

@@ -259,6 +259,7 @@ TEAMSPACE_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 auto_fill_from_context=True,
             ),
         ],
+        returns_entity_type="teamspace",
     ),
     "list_projects": ToolMetadata(
         name="teamspaces_list_projects",

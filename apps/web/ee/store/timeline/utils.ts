@@ -15,11 +15,11 @@ import { isNil, set } from "lodash-es";
 // plane imports
 import type { ChartDataType, IGanttBlock, TIssueRelationMap } from "@plane/types";
 // components
-import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
-import { getItemPositionWidth } from "@/components/gantt-chart/views";
+import { BLOCK_HEIGHT } from "@/components/timeline/constants";
+import { getItemPositionWidth } from "@/components/timeline/views";
 // Plane-web
-import { EDependencyPosition, ETimelineRelation } from "@/plane-web/constants";
-import type { DependencyTree, Relation, TIssueRelationTypes } from "@/plane-web/types";
+import { EDependencyPosition, ETimelineRelation } from "@/constants/timeline";
+import type { DependencyTree, Relation, TIssueRelationTypes } from "@/types";
 
 /**
  * Dependency details for each relation ship type, Used while building dependency tree

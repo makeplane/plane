@@ -12,23 +12,24 @@
  */
 
 import { useMemo } from "react";
-import type { TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
+import type { ExternalEmbedNodeViewProps, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
 // plane types
 import type { TPage } from "@plane/types";
 // components
 import { IssueEmbedCard, IssueEmbedUpgradeCard, PageEmbedCardRoot } from "@/components";
+import { EmbedHandler } from "@/components/external-embed/embed-handler";
 // constants
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
 // helpers
 import { callNative } from "@/helpers";
 // store
 import { usePages } from "@/hooks/store";
-import { IBasePageStore } from "@/store/base-page.store";
+import type { IBasePageStore } from "@/store/base-page.store";
 // types
-import type { TDocumentEditorParams } from "@/types/editor";
+import type { TDocumentEditorParams, TEditorParams } from "@/types/editor";
 
 export type TEmbedHookProps = {
-  initialParams: TDocumentEditorParams | undefined;
+  initialParams: TDocumentEditorParams | TEditorParams | undefined;
   isIssueEmbedEnabled: boolean;
   isNestedPagesEnabled: boolean;
 };
@@ -49,13 +50,13 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
   );
 
   const pageEmbedHandler: TPageEmbedConfig | undefined = useMemo(() => {
-    if (!initialParams) return undefined;
+    if (!initialParams || !(typeof initialParams === "object" && "projectId" in initialParams)) return undefined;
 
     return {
       widgetCallback: ({ pageId }) => (
         <PageEmbedCardRoot
           pageId={pageId}
-          currentUserId={initialParams.userId}
+          currentUserId={initialParams.currentUserId}
           workspaceSlug={initialParams.workspaceSlug}
           projectId={initialParams.projectId}
           isNestedPagesEnabled={isNestedPagesEnabled}
@@ -72,7 +73,7 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
         } as TPage;
       },
 
-      deletePage: async (pageIds) => {
+      deletePage: (pageIds) => {
         try {
           const pages = [] as IBasePageStore[];
           for (const pageId of pageIds) {
@@ -81,8 +82,8 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
               pages.push(page);
             }
           }
-          if (!pages.length) return;
-          callNative(
+          if (!pages.length) return Promise.resolve();
+          return callNative(
             CallbackHandlerStrings.deleteSubPages,
             JSON.stringify({
               workspaceSlug: initialParams.workspaceSlug,
@@ -95,8 +96,11 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
                 })
               ),
             })
-          );
-        } catch {}
+          ).then(() => undefined);
+        } catch (error) {
+          console.error("Failed to delete sub pages", error);
+          return Promise.resolve();
+        }
       },
 
       archivePage: async (pageId) => {
@@ -127,8 +131,11 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
     () => ({
       issue: issueEmbedHandler,
       ...(pageEmbedHandler && { page: pageEmbedHandler }),
+      externalEmbedComponent: {
+        widgetCallback: (props: ExternalEmbedNodeViewProps) => initialParams && <EmbedHandler {...props} />,
+      },
     }),
-    [issueEmbedHandler, pageEmbedHandler]
+    [issueEmbedHandler, pageEmbedHandler, initialParams]
   );
 
   return {

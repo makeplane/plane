@@ -16,7 +16,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // ui
 import { setPromiseToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
+import { Loader } from "@plane/ui";
 // assets
 import SAMLLogo from "@/app/assets/logos/saml-logo.svg?url";
 // components
@@ -98,7 +99,7 @@ const InstanceSAMLAuthenticationPage = observer(function InstanceSAMLAuthenticat
           protocol."
             icon={<img src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pl-0.5" />}
             config={
-              <ToggleSwitch
+              <Switch
                 value={Boolean(parseInt(enableSAMLConfig))}
                 onChange={() => {
                   if (Boolean(parseInt(enableSAMLConfig)) === true) {
@@ -107,7 +108,6 @@ const InstanceSAMLAuthenticationPage = observer(function InstanceSAMLAuthenticat
                     updateConfig("IS_SAML_ENABLED", "1");
                   }
                 }}
-                size="sm"
                 disabled={isSubmitting || !formattedConfig}
               />
             }

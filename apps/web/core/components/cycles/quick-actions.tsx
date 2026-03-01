@@ -23,7 +23,7 @@ import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // hooks
-import { useCycleMenuItems } from "@/components/common/quick-actions-helper";
+import { useCycleMenuItems } from "@/components/common/quick-actions/helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";

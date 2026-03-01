@@ -17,7 +17,7 @@ from django.template.defaultfilters import slugify
 from django.contrib.postgres.fields import ArrayField
 
 # Module imports
-from plane.db.models import WorkspaceBaseModel
+from plane.db.models import ProjectOptionalBaseModel
 from plane.db.mixins import ChangeTrackerMixin
 
 
@@ -31,6 +31,7 @@ class PropertyTypeEnum(models.TextChoices):
     URL = "URL", "URL"
     EMAIL = "EMAIL", "Email"
     FILE = "FILE", "File"
+    FORMULA = "FORMULA", "Formula"
 
 
 class RelationTypeEnum(models.TextChoices):
@@ -38,7 +39,7 @@ class RelationTypeEnum(models.TextChoices):
     USER = "USER", "User"
 
 
-class IssueProperty(ChangeTrackerMixin, WorkspaceBaseModel):
+class IssueProperty(ChangeTrackerMixin, ProjectOptionalBaseModel):
     name = models.CharField(max_length=255)
     display_name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
@@ -57,6 +58,9 @@ class IssueProperty(ChangeTrackerMixin, WorkspaceBaseModel):
     validation_rules = models.JSONField(blank=True, default=dict)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    formula_config = models.OneToOneField(
+        "ee.FormulaProperty", on_delete=models.SET_NULL, related_name="property", null=True, blank=True
+    )
 
     TRACKED_FIELDS = [
         "is_required",
@@ -113,7 +117,7 @@ class IssueProperty(ChangeTrackerMixin, WorkspaceBaseModel):
         return self.display_name
 
 
-class IssueTypeProperty(WorkspaceBaseModel):
+class IssueTypeProperty(ProjectOptionalBaseModel):
     issue_type = models.ForeignKey("db.IssueType", on_delete=models.CASCADE, related_name="issue_type_properties")
     property = models.ForeignKey(IssueProperty, on_delete=models.CASCADE, related_name="issue_type_properties")
     is_required = models.BooleanField(default=False)
@@ -139,7 +143,7 @@ class IssueTypeProperty(WorkspaceBaseModel):
         return f"{self.issue_type.name} - {self.property.display_name}"
 
 
-class IssuePropertyOption(WorkspaceBaseModel):
+class IssuePropertyOption(ProjectOptionalBaseModel):
     name = models.CharField(max_length=255)
     sort_order = models.FloatField(default=65535)
     property = models.ForeignKey(IssueProperty, on_delete=models.CASCADE, related_name="options")
@@ -179,7 +183,7 @@ class IssuePropertyOption(WorkspaceBaseModel):
         super(IssuePropertyOption, self).save(*args, **kwargs)
 
 
-class IssuePropertyValue(WorkspaceBaseModel):
+class IssuePropertyValue(ProjectOptionalBaseModel):
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="properties")
     property = models.ForeignKey(IssueProperty, on_delete=models.CASCADE, related_name="values")
     value_text = models.TextField(blank=True)
@@ -205,7 +209,7 @@ class IssuePropertyValue(WorkspaceBaseModel):
         return f"{self.property.display_name}"
 
 
-class IssuePropertyActivity(WorkspaceBaseModel):
+class IssuePropertyActivity(ProjectOptionalBaseModel):
     old_value = models.TextField(blank=True)
     new_value = models.TextField(blank=True)
     old_identifier = models.UUIDField(blank=True, null=True)
@@ -228,3 +232,15 @@ class IssuePropertyActivity(WorkspaceBaseModel):
 
     def __str__(self):
         return f"{self.property.display_name} - {self.issue_id}"
+
+
+class FormulaProperty(ProjectOptionalBaseModel):
+    formula = models.TextField()
+    example_output = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        db_table = "formula_properties"
+
+    def __str__(self):
+        return f"{self.formula}"

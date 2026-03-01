@@ -25,10 +25,13 @@ from plane.app.views import (
     UserProjectRolesEndpoint,
     ProjectArchiveUnarchiveEndpoint,
     ProjectMemberPreferenceEndpoint,
+    ProjectLabelsEndpoint,
+    ProjectLabelDetailEndpoint,
+    ProjectSubscriberEndpoint,
 )
 
 
-urlpatterns = [
+project_patterns = [
     path(
         "workspaces/<str:slug>/projects/",
         ProjectViewSet.as_view({"get": "list", "post": "create"}),
@@ -141,4 +144,32 @@ urlpatterns = [
         ProjectMemberPreferenceEndpoint.as_view(),
         name="project-member-preference",
     ),
+]
+
+project_label_patterns = [
+    # Project Labels
+    path(
+        "workspaces/<str:slug>/project-labels/",
+        ProjectLabelsEndpoint.as_view(),
+        name="project-labels",
+    ),
+    path(
+        "workspaces/<str:slug>/project-labels/<uuid:project_label_id>/",
+        ProjectLabelDetailEndpoint.as_view(),
+        name="project-labels-detail",
+    ),
+]
+
+project_subscriber_patterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/subscribers/",
+        ProjectSubscriberEndpoint.as_view({"get": "list", "post": "create_or_update"}),
+        name="project-subscribers",
+    ),
+]
+
+urlpatterns = [
+    *project_patterns,
+    *project_label_patterns,
+    *project_subscriber_patterns,
 ]

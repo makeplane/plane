@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
@@ -20,14 +18,13 @@ import type { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets 
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// plane web imports
-import { WorkItemAdditionalWidgetModals } from "@/plane-web/components/issues/issue-detail-widgets/modals";
+// helpers
+import { useLinkOperations } from "./links/helper";
 // local imports
 import { IssueLinkCreateUpdateModal } from "../issue-detail/links/create-update-link-modal";
-// helpers
-import { CreateUpdateIssueModal } from "../issue-modal/modal";
-import { useLinkOperations } from "./links/helper";
+import { CreateUpdateIssueModal } from "../issue-modal/root";
 import { useSubIssueOperations } from "./sub-issues/helper";
+import { PagesMultiSelectModal } from "./pages/multi-select-modal";
 
 type Props = {
   workspaceSlug: string;
@@ -41,6 +38,7 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
   const { workspaceSlug, projectId, issueId, issueServiceType, hideWidgets } = props;
   // store hooks
   const {
+    issue: { getIssueById },
     isIssueLinkModalOpen,
     toggleIssueLinkModal: toggleIssueLinkModalStore,
     setIssueLinkData,
@@ -56,11 +54,14 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
     createRelation,
     issueCrudOperationState,
     setIssueCrudOperationState,
+    togglePagesModal,
+    isPagesModalOpen,
   } = useIssueDetail(issueServiceType);
 
   // helper hooks
   const subIssueOperations = useSubIssueOperations(issueServiceType);
   const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, issueId, issueServiceType);
+  const issue = getIssueById(issueId);
 
   // handlers
   const handleIssueCrudState = (
@@ -206,12 +207,16 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
         />
       )}
 
-      <WorkItemAdditionalWidgetModals
-        hideWidgets={hideWidgets ?? []}
+      <PagesMultiSelectModal
         issueServiceType={issueServiceType}
-        projectId={projectId}
-        workItemId={issueId}
         workspaceSlug={workspaceSlug}
+        projectId={issue?.project_id}
+        workItemId={issueId}
+        isOpen={isPagesModalOpen === issueId}
+        onClose={() => {
+          togglePagesModal(null);
+        }}
+        selectedPages={[]}
       />
     </>
   );

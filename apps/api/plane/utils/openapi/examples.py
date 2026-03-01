@@ -171,6 +171,27 @@ LABEL_UPDATE_EXAMPLE = OpenApiExample(
     description="Example request for updating a label",
 )
 
+# Project Label Examples
+PROJECT_LABEL_CREATE_EXAMPLE = OpenApiExample(
+    "ProjectLabelCreateUpdateSerializer",
+    value={
+        "name": "New Project Label",
+        "color": "#ff0000",
+        "description": "New project label description",
+    },
+    description="Example request for creating a project label",
+)
+
+PROJECT_LABEL_UPDATE_EXAMPLE = OpenApiExample(
+    "ProjectLabelCreateUpdateSerializer",
+    value={
+        "name": "Updated Project Label",
+        "color": "#00ff00",
+        "description": "Updated project label description",
+    },
+    description="Example request for updating a project label",
+)
+
 # Issue Link Examples
 ISSUE_LINK_CREATE_EXAMPLE = OpenApiExample(
     "IssueLinkCreateSerializer",
@@ -488,6 +509,23 @@ LABEL_EXAMPLE = OpenApiExample(
     },
 )
 
+# Project Label Response Examples
+PROJECT_LABEL_EXAMPLE = OpenApiExample(
+    name="ProjectLabel",
+    value={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "In Progress",
+        "color": "#f39c12",
+        "description": "Projects that are currently in progress",
+        "sort_order": 65535,
+        "workspace": "550e8400-e29b-41d4-a716-446655440001",
+        "created_at": "2024-01-01T10:30:00Z",
+        "updated_at": "2024-01-10T15:45:00Z",
+        "created_by": "550e8400-e29b-41d4-a716-446655440002",
+        "updated_by": "550e8400-e29b-41d4-a716-446655440002",
+    },
+)
+
 # Issue Link Response Examples
 ISSUE_LINK_EXAMPLE = OpenApiExample(
     name="IssueLink",
@@ -502,6 +540,39 @@ ISSUE_LINK_EXAMPLE = OpenApiExample(
         },
         "created_at": "2024-01-01T10:30:00Z",
         "updated_at": "2024-01-10T15:45:00Z",
+    },
+)
+
+# Work Item Page Link Request Examples
+WORK_ITEM_PAGE_CREATE_EXAMPLE = OpenApiExample(
+    "WorkItemPageCreateSerializer",
+    value={
+        "page_id": "550e8400-e29b-41d4-a716-446655440000",
+    },
+    description="Example request for linking a page to a work item",
+)
+
+# Work Item Page Link Response Examples
+WORK_ITEM_PAGE_EXAMPLE = OpenApiExample(
+    name="WorkItemPage",
+    value={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "page": {
+            "id": "550e8400-e29b-41d4-a716-446655440001",
+            "name": "Project Documentation",
+            "description_html": "<p>Documentation for the project</p>",
+            "created_at": "2024-01-01T10:30:00Z",
+            "updated_at": "2024-01-10T15:45:00Z",
+            "created_by": "550e8400-e29b-41d4-a716-446655440002",
+            "is_global": False,
+            "logo_props": {},
+        },
+        "issue": "550e8400-e29b-41d4-a716-446655440003",
+        "project": "550e8400-e29b-41d4-a716-446655440004",
+        "workspace": "550e8400-e29b-41d4-a716-446655440005",
+        "created_at": "2024-01-01T10:30:00Z",
+        "updated_at": "2024-01-10T15:45:00Z",
+        "created_by": "550e8400-e29b-41d4-a716-446655440002",
     },
 )
 

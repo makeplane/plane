@@ -37,8 +37,10 @@ import {
   PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM,
   PAGE_NAVIGATION_PANE_WIDTH,
 } from "./index";
+import type { TEditorBodyConfig } from "../editor/editor-body";
 
 type Props = {
+  config: TEditorBodyConfig;
   handleClose: () => void;
   isNavigationPaneOpen: boolean;
   page: TPageInstance;
@@ -49,7 +51,7 @@ type Props = {
 };
 
 export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(props: Props) {
-  const { handleClose, isNavigationPaneOpen, page, versionHistory, extensions = [], storeType } = props;
+  const { config, handleClose, isNavigationPaneOpen, page, versionHistory, extensions = [], storeType } = props;
 
   // navigation
   const router = useRouter();

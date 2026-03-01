@@ -181,7 +181,7 @@ const IssueForm = observer(function IssueForm(props: TProps) {
                 dragDropEnabled={false}
                 onChange={(_description: object, description_html: string) => onChange(description_html)}
                 placeholder={() => ""}
-                containerClassName="px-0 text-14"
+                containerClassName="px-3 text-14 bg-layer-2 placeholder-tertiary focus:outline-none border-[0.5px] focus:border-blue-400 border-subtle-1"
                 uploadFile={async (blockId, file) => {
                   const { asset_id } = await uploadIssueAsset(file, anchor);
                   return asset_id;

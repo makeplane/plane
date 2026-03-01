@@ -15,12 +15,13 @@ import { useState } from "react";
 import { mutate } from "swr";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { APITokenService } from "@plane/services";
+import { APITokenService, WorkspaceAPITokenService } from "@plane/services";
 import type { IApiToken } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { renderFormattedDate, csvDownload } from "@plane/utils";
 // constants
-import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { API_TOKENS_LIST, WORKSPACE_API_TOKENS_LIST } from "@/constants/fetch-keys";
+// helpers
 // local imports
 import { CreateApiTokenForm } from "./form";
 import { GeneratedTokenDetails } from "./generated-token-details";
@@ -28,13 +29,15 @@ import { GeneratedTokenDetails } from "./generated-token-details";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  workspaceSlug?: string;
 };
 
 // services
 const apiTokenService = new APITokenService();
+const workspaceApiTokenService = new WorkspaceAPITokenService();
 
 export function CreateApiTokenModal(props: Props) {
-  const { isOpen, onClose } = props;
+  const { isOpen, onClose, workspaceSlug } = props;
   // states
   const [neverExpires, setNeverExpires] = useState<boolean>(false);
   const [generatedToken, setGeneratedToken] = useState<IApiToken | null | undefined>(null);
@@ -61,14 +64,14 @@ export function CreateApiTokenModal(props: Props) {
 
   const handleCreateToken = async (data: Partial<IApiToken>) => {
     // make the request to generate the token
-    await apiTokenService
-      .create(data)
+    const apiCall = workspaceSlug ? workspaceApiTokenService.create(workspaceSlug, data) : apiTokenService.create(data);
+    await apiCall
       .then((res) => {
         setGeneratedToken(res);
         downloadSecretKey(res);
 
         mutate<IApiToken[]>(
-          API_TOKENS_LIST,
+          workspaceSlug ? WORKSPACE_API_TOKENS_LIST(workspaceSlug) : API_TOKENS_LIST,
           (prevData) => {
             if (!prevData) return;
 

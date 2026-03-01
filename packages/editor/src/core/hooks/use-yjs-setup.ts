@@ -17,7 +17,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // indexeddb
 import { IndexeddbPersistence } from "y-indexeddb";
 // yjs
-import type * as Y from "yjs";
+import * as Y from "yjs";
+import type * as YType from "yjs";
 // types
 import type { CollaborationState, CollabStage, CollaborationError } from "@/types/collaboration";
 
@@ -32,6 +33,10 @@ type UseYjsSetupArgs = {
   docId: string;
   serverUrl: string;
   authToken: string;
+  user?: {
+    id: string;
+    username?: string;
+  };
   onStateChange?: (state: CollaborationState) => void;
   options?: {
     maxConnectionAttempts?: number;
@@ -45,6 +50,7 @@ export const useYjsSetup = ({
   docId,
   serverUrl,
   authToken,
+  user,
   onStateChange,
   shouldSendSyncedEvent = true,
 }: UseYjsSetupArgs) => {
@@ -55,8 +61,12 @@ export const useYjsSetup = ({
   const [hasCachedContent, setHasCachedContent] = useState(false);
   const [isCacheReady, setIsCacheReady] = useState(false);
 
-  // Provider and Y.Doc in state (nullable until effect runs)
-  const [yjsSession, setYjsSession] = useState<{ provider: HocuspocusProvider; ydoc: Y.Doc } | null>(null);
+  // Provider, Y.Doc, and PermanentUserData in state (nullable until effect runs)
+  const [yjsSession, setYjsSession] = useState<{
+    provider: HocuspocusProvider;
+    ydoc: YType.Doc;
+    permanentUserData: Y.PermanentUserData;
+  } | null>(null);
 
   // Use refs for values that need to be mutated from callbacks
   const retryCountRef = useRef(0);
@@ -73,10 +83,20 @@ export const useYjsSetup = ({
     forcedCloseSignalRef.current = false;
     stageRef.current = { kind: "initial" };
 
+    // Create Y.Doc and initialize PermanentUserData BEFORE provider
+    const ydoc = new Y.Doc();
+
+    const permanentUserData = new Y.PermanentUserData(ydoc);
+    const userKey = user?.id ?? user?.username;
+    if (userKey) {
+      permanentUserData.setUserMapping(ydoc, ydoc.clientID, userKey);
+    }
+
     const provider = new HocuspocusProvider({
       name: docId,
       token: authToken,
       url: serverUrl,
+      document: ydoc,
       onAuthenticationFailed: () => {
         if (isDisposedRef.current) return;
         const error: CollaborationError = { type: "auth-failed", message: "Authentication failed" };
@@ -229,7 +249,7 @@ export const useYjsSetup = ({
 
     provider.on("close", handleClose);
 
-    setYjsSession({ provider, ydoc: provider.document });
+    setYjsSession({ provider, ydoc: provider.document, permanentUserData });
 
     // Handle page visibility changes (sleep/wake, tab switching)
     const handleVisibilityChange = (event?: Event) => {
@@ -300,14 +320,21 @@ export const useYjsSetup = ({
       window.removeEventListener("online", handleOnline);
 
       permanentlyStopProvider();
+
+      // Destroy Y.Doc after provider cleanup
+      try {
+        ydoc.destroy();
+      } catch (error) {
+        console.error(`Error destroying Y.Doc:`, error);
+      }
     };
-  }, [docId, serverUrl, authToken]);
+  }, [docId, serverUrl, authToken, user?.id, user?.username, shouldSendSyncedEvent]);
 
   // IndexedDB persistence lifecycle
   useEffect(() => {
     if (!yjsSession) return;
 
-    const idbPersistence = new IndexeddbPersistence(docId, yjsSession.provider.document);
+    const idbPersistence = new IndexeddbPersistence(docId, yjsSession.ydoc);
 
     const onIdbSynced = () => {
       const yFragment = idbPersistence.doc.getXmlFragment("default");
@@ -396,6 +423,7 @@ export const useYjsSetup = ({
   return {
     provider: yjsSession.provider,
     ydoc: yjsSession.ydoc,
+    permanentUserData: yjsSession.permanentUserData,
     state: {
       stage,
       hasCachedContent,
@@ -406,6 +434,11 @@ export const useYjsSetup = ({
     },
     actions: {
       signalForcedClose,
+      /**
+       * Get user mapping from permanent user data
+       * @returns Object mapping clientID to username/userId
+       */
+      getUserMapping: () => Object.fromEntries(yjsSession.permanentUserData.clients),
     },
   };
 };

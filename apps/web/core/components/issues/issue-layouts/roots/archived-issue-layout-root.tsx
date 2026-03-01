@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
+import { lazy, Suspense } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -24,9 +24,18 @@ import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/f
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
-// local imports
-import { IssuePeekOverview } from "../../peek-overview";
-import { ArchivedIssueListLayout } from "../list/roots/archived-issue-root";
+
+// Lazy load peek overview
+const WorkItemPeekOverview = lazy(() =>
+  import("@/components/issues/peek-overview/root").then((module) => ({ default: module.IssuePeekOverview }))
+);
+
+// Lazy load layout component
+const ArchivedIssueListLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/list/roots/archived-issue-root").then((module) => ({
+    default: module.ArchivedIssueListLayout,
+  }))
+);
 
 export const ArchivedIssueLayoutRoot = observer(function ArchivedIssueLayoutRoot() {
   // router
@@ -64,9 +73,14 @@ export const ArchivedIssueLayoutRoot = observer(function ArchivedIssueLayoutRoot
           <>
             {archivedWorkItemsFilter && <WorkItemFiltersRow filter={archivedWorkItemsFilter} />}
             <div className="relative h-full w-full overflow-auto">
-              <ArchivedIssueListLayout />
+              <Suspense>
+                <ArchivedIssueListLayout />
+              </Suspense>
             </div>
-            <IssuePeekOverview />
+            {/* peek overview */}
+            <Suspense>
+              <WorkItemPeekOverview />
+            </Suspense>
           </>
         )}
       </ProjectLevelWorkItemFiltersHOC>

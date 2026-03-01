@@ -11,10 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { ProjectPageRoot } from "@/plane-web/components/projects/page";
+import { ProjectsListRoot } from "@/components/projects/list/root";
+import type { Route } from "./+types/page";
 
-function ProjectsPage() {
-  return <ProjectPageRoot />;
+function ProjectsPage(props: Route.ComponentProps) {
+  return <ProjectsListRoot workspaceSlug={props.params.workspaceSlug} />;
 }
 
 export default ProjectsPage;

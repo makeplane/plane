@@ -72,7 +72,7 @@ export interface IWorkspaceNotificationStore {
   setViewMode: (viewMode: TNotificationsViewMode) => void;
 }
 
-export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
+export abstract class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   // constants
   paginatedCount = 300;
   // observables

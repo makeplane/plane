@@ -11,25 +11,100 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { EPageStoreType, usePageStore } from "@/ce/hooks/store/use-page-store";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useModule } from "@/hooks/store/use-module";
 import { useProjectView } from "@/hooks/store/use-project-view";
-import { getIcon } from "../components/pi-chat/helper";
+import { EPageStoreType, usePageStore, useTeamspaces } from "./store";
+import { useInitiatives } from "./store/use-initiatives";
 
-export const useAIAssistant = (
-  entityType: "issue" | "cycle" | "module" | "page" | "view",
-  entityIdentifier: string
-) => {
+type TEntityType =
+  | "issue"
+  | "cycle"
+  | "module"
+  | "view"
+  | "teamspace"
+  | "project_page"
+  | "teamspace_page"
+  | "wiki"
+  | "initiative";
+
+const getEntityData = (
+  params: Record<string, string | undefined>
+): {
+  entityType: TEntityType;
+  entityIdentifier: string;
+} | null => {
+  const { workItem, cycleId, moduleId, pageId, viewId, projectId, teamspaceId, initiativeId } = params;
+  if (workItem)
+    return {
+      entityType: "issue",
+      entityIdentifier: workItem,
+    };
+  if (cycleId)
+    return {
+      entityType: "cycle",
+      entityIdentifier: cycleId,
+    };
+  if (moduleId)
+    return {
+      entityType: "module",
+      entityIdentifier: moduleId,
+    };
+  if (pageId) {
+    if (projectId)
+      return {
+        entityType: "project_page",
+        entityIdentifier: pageId,
+      };
+    if (teamspaceId)
+      return {
+        entityType: "teamspace_page",
+        entityIdentifier: pageId,
+      };
+    return {
+      entityType: "wiki",
+      entityIdentifier: pageId,
+    };
+  }
+  if (initiativeId)
+    return {
+      entityType: "initiative",
+      entityIdentifier: initiativeId,
+    };
+  if (teamspaceId)
+    return {
+      entityType: "teamspace",
+      entityIdentifier: teamspaceId,
+    };
+  if (viewId)
+    return {
+      entityType: "view",
+      entityIdentifier: viewId,
+    };
+  return null;
+};
+export const useAIAssistant = (params: Record<string, string | undefined>) => {
+  const entityData = getEntityData(params);
   const { getCycleById } = useCycle();
   const { getModuleById } = useModule();
-  const { getPageById } = usePageStore(EPageStoreType.PROJECT);
+  const { getPageById } = usePageStore(
+    entityData?.entityType === "project_page"
+      ? EPageStoreType.PROJECT
+      : entityData?.entityType === "teamspace_page"
+        ? EPageStoreType.TEAMSPACE
+        : EPageStoreType.WORKSPACE
+  );
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
+  const { getTeamspaceById } = useTeamspaces();
   const { getViewById } = useProjectView();
-
+  const {
+    initiative: { getInitiativeById },
+  } = useInitiatives();
+  if (!entityData) return null;
+  const { entityType, entityIdentifier } = entityData;
   switch (entityType) {
     case "issue": {
       const [projectIdentifier, sequence_id] = entityIdentifier.split("-");
@@ -41,12 +116,6 @@ export const useAIAssistant = (
         type: "issues",
         title: issue.name,
         subTitle: `${projectIdentifier}-${sequence_id}`,
-        icon: getIcon("issue", {
-          type_id: issue.type_id,
-          project_id: issue.project_id ?? "",
-          project__identifier: projectIdentifier,
-          sequence_id: sequence_id,
-        }),
       };
     }
     case "cycle": {
@@ -56,7 +125,6 @@ export const useAIAssistant = (
         id: entityIdentifier,
         type: "cycles",
         title: cycle.name,
-        icon: getIcon("cycle"),
       };
     }
     case "module": {
@@ -66,17 +134,35 @@ export const useAIAssistant = (
         id: entityIdentifier,
         type: "modules",
         title: moduleDetails.name,
-        icon: getIcon("module"),
       };
     }
-    case "page": {
+    case "project_page":
+    case "teamspace_page":
+    case "wiki": {
       const pageDetails = getPageById(entityIdentifier);
       if (!pageDetails) return null;
       return {
         id: entityIdentifier,
         type: "pages",
         title: pageDetails.name,
-        icon: getIcon("page"),
+      };
+    }
+    case "teamspace": {
+      const teamspaceDetails = getTeamspaceById(entityIdentifier);
+      if (!teamspaceDetails) return null;
+      return {
+        id: entityIdentifier,
+        type: "teamspaces",
+        title: teamspaceDetails.name,
+      };
+    }
+    case "initiative": {
+      const initiativeDetails = getInitiativeById(entityIdentifier);
+      if (!initiativeDetails) return null;
+      return {
+        id: entityIdentifier,
+        type: "initiatives",
+        title: initiativeDetails.name,
       };
     }
     case "view": {
@@ -86,7 +172,6 @@ export const useAIAssistant = (
         id: entityIdentifier,
         type: "views",
         title: viewDetails.name,
-        icon: getIcon("view"),
       };
     }
   }

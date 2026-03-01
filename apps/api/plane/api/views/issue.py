@@ -27,10 +27,14 @@ from django.db.models import (
     Max,
     OuterRef,
     Q,
+    UUIDField,
     Value,
     When,
     Subquery,
 )
+from django.db.models.functions import Coalesce
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 from django.conf import settings
 
@@ -161,12 +165,30 @@ from plane.utils.openapi import (
     FORBIDDEN_RESPONSE,
     WORKSPACE_NOT_FOUND_RESPONSE,
 )
-from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.utils.workflow import WorkflowStateManager
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
+)
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from rest_framework.permissions import IsAuthenticated
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_WORK_ITEMS_READ_SCOPE,
+    PROJECTS_WORK_ITEMS_WRITE_SCOPE,
+    PROJECTS_LABELS_READ_SCOPE,
+    PROJECTS_LABELS_WRITE_SCOPE,
+    PROJECTS_WORK_ITEM_LINKS_READ_SCOPE,
+    PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE,
+    PROJECTS_WORK_ITEM_COMMENTS_READ_SCOPE,
+    PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE,
+    PROJECTS_WORK_ITEM_ACTIVITIES_READ_SCOPE,
+    PROJECTS_WORK_ITEM_ATTACHMENTS_READ_SCOPE,
+    PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE,
+    PROJECTS_WORK_ITEM_RELATIONS_READ_SCOPE,
+    PROJECTS_WORK_ITEM_RELATIONS_WRITE_SCOPE,
 )
 
 
@@ -193,7 +215,10 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+    }
     serializer_class = IssueSerializer
     use_read_replica = True
 
@@ -295,7 +320,11 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+    }
     serializer_class = IssueSerializer
     use_read_replica = True
 
@@ -466,7 +495,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         Create a new work item in the specified project with the provided details.
         Supports external ID tracking for integration purposes.
         """
-        project = Project.objects.get(pk=project_id)
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         serializer = IssueSerializer(
             data=request.data,
@@ -526,6 +555,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
                 issue_id=str(serializer.data.get("id", None)),
                 project_id=str(project_id),
                 current_instance=None,
+                notification=True,
                 epoch=int(timezone.now().timestamp()),
             )
 
@@ -548,7 +578,13 @@ class IssueDetailAPIEndpoint(BaseAPIView):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+    }
     serializer_class = IssueSerializer
     use_read_replica = True
 
@@ -649,9 +685,10 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         """
         # Get the entities required for putting the issue, external_id and
         # external_source are must to identify the issue here
-        project = Project.objects.get(pk=project_id)
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
         external_id = request.data.get("external_id")
         external_source = request.data.get("external_source")
+        state = request.data.get("state") or request.data.get("state_id")
 
         # If the external_id and source are present, we need to find the exact
         # issue that needs to be updated with the provided external_id and
@@ -684,9 +721,9 @@ class IssueDetailAPIEndpoint(BaseAPIView):
 
                 # Check if state is updated then is the transition allowed
                 workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
-                if request.data.get("state_id") and not workflow_state_manager.validate_state_transition(
+                if state and not workflow_state_manager.validate_state_transition(
                     issue=issue,
-                    new_state_id=request.data.get("state_id"),
+                    new_state_id=state,
                     user_id=request.user.id,
                 ):
                     return Response(
@@ -705,10 +742,11 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         issue_id=str(issue.id),
                         project_id=str(project_id),
                         current_instance=current_instance,
+                        notification=True,
                         epoch=int(timezone.now().timestamp()),
                     )
                     cycle_issue = CycleIssue.objects.filter(issue_id=issue.id).first()
-                    if cycle_issue and (request.data.get("state") or request.data.get("estimate_point")):
+                    if cycle_issue and (state or request.data.get("estimate_point")):
                         entity_issue_state_activity_task.delay(
                             issue_cycle_data=[
                                 {
@@ -817,8 +855,9 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         Partially update an existing work item with the provided fields.
         Supports external ID validation to prevent conflicts.
         """
+        state = request.data.get("state") or request.data.get("state_id")
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
-        project = Project.objects.get(pk=project_id)
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueSerializer(
@@ -830,9 +869,9 @@ class IssueDetailAPIEndpoint(BaseAPIView):
 
         # Check if state is updated then is the transition allowed
         workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
-        if request.data.get("state_id") and not workflow_state_manager.validate_state_transition(
+        if state and not workflow_state_manager.validate_state_transition(
             issue=issue,
-            new_state_id=request.data.get("state_id"),
+            new_state_id=state,
             user_id=request.user.id,
         ):
             return Response(
@@ -867,10 +906,11 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 issue_id=str(pk),
                 project_id=str(project_id),
                 current_instance=current_instance,
+                notification=True,
                 epoch=int(timezone.now().timestamp()),
             )
             cycle_issue = CycleIssue.objects.filter(issue_id=pk).first()
-            if cycle_issue and (request.data.get("state") or request.data.get("estimate_point")):
+            if cycle_issue and (state or request.data.get("estimate_point")):
                 entity_issue_state_activity_task.delay(
                     issue_cycle_data=[
                         {
@@ -947,7 +987,11 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = LabelSerializer
     model = Label
-    permission_classes = [ProjectMemberPermission]
+    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_LABELS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_LABELS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -1073,7 +1117,12 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
 
     serializer_class = LabelSerializer
     model = Label
-    permission_classes = [ProjectMemberPermission]
+    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_LABELS_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_LABELS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_LABELS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     @label_docs(
@@ -1184,7 +1233,11 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = IssueLinkSerializer
     model = IssueLink
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_LINKS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -1265,7 +1318,6 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
         serializer = IssueLinkCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
-            crawl_work_item_link_title.delay(serializer.instance.id, serializer.instance.url, "issue")
             link = IssueLink.objects.get(pk=serializer.instance.id)
             link.created_by_id = request.data.get("created_by", request.user.id)
             link.save(update_fields=["created_by"])
@@ -1286,7 +1338,13 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
 class IssueLinkDetailAPIEndpoint(BaseAPIView):
     """Issue Link Detail Endpoint"""
 
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_LINKS_READ_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
+    }
 
     model = IssueLink
     serializer_class = IssueLinkSerializer
@@ -1380,7 +1438,6 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "issue")
             issue_activity.delay(
                 type="link.activity.updated",
                 requested_data=requested_data,
@@ -1433,7 +1490,11 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
     serializer_class = IssueCommentSerializer
     model = IssueComment
     webhook_event = "issue_comment"
-    permission_classes = [ProjectLitePermission]
+    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -1605,7 +1666,13 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
     serializer_class = IssueCommentSerializer
     model = IssueComment
     webhook_event = "issue_comment"
-    permission_classes = [ProjectLitePermission]
+    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_READ_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -1685,9 +1752,15 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         """Update work item comment
 
         Modify the content of an existing comment on a work item.
+        Only the comment creator can perform this action.
         Validates external ID uniqueness if provided.
         """
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        if issue_comment.created_by_id != request.user.id:
+            return Response(
+                {"error": "Only the comment creator can update the comment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
 
@@ -1754,9 +1827,15 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         """Delete issue comment
 
         Permanently remove a comment from a work item.
+        Only the comment creator can perform this action.
         Records deletion activity for audit purposes.
         """
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        if issue_comment.created_by_id != request.user.id:
+            return Response(
+                {"error": "Only the comment creator can delete the comment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
         issue_comment.delete()
         issue_activity.delay(
@@ -1772,7 +1851,10 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
 
 
 class IssueActivityListAPIEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ACTIVITIES_READ_SCOPE]],
+    }
     use_read_replica = True
 
     @issue_activity_docs(
@@ -1826,7 +1908,10 @@ class IssueActivityListAPIEndpoint(BaseAPIView):
 class IssueActivityDetailAPIEndpoint(BaseAPIView):
     """Issue Activity Detail Endpoint"""
 
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ACTIVITIES_READ_SCOPE]],
+    }
     use_read_replica = True
 
     @issue_activity_docs(
@@ -1888,6 +1973,11 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
     use_read_replica = True
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+    }
 
     @issue_attachment_docs(
         operation_id="create_work_item_attachment",
@@ -2111,6 +2201,13 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
     use_read_replica = True
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_READ_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+    }
 
     @issue_attachment_docs(
         operation_id="delete_work_item_attachment",
@@ -2311,7 +2408,14 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
 
 class IssueAttachmentServerEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+    }
     model = FileAsset
     use_read_replica = True
 
@@ -2490,6 +2594,10 @@ class IssueSearchEndpoint(BaseAPIView):
     """Endpoint to search across multiple fields in the issues"""
 
     use_read_replica = True
+    permission_classes = [IsAuthenticated, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+    }
 
     @extend_schema(
         operation_id="search_work_items",
@@ -2572,7 +2680,11 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = IssueRelationSerializer
     model = IssueRelation
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_RELATIONS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_RELATIONS_WRITE_SCOPE]],
+    }
 
     @issue_docs(
         operation_id="list_work_item_relations",
@@ -2619,72 +2731,41 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         Retrieve all relationships for a work item organized by relation type.
         Returns a structured response with relations grouped by type.
         """
-        # Fetch all issue relations in a single query
-        issue_relations = list(
-            IssueRelation.objects.filter(Q(issue_id=issue_id) | Q(related_issue=issue_id))
-            .filter(workspace__slug=slug)
-            .select_related("project", "workspace", "issue", "related_issue")
-            .order_by("-created_at")
-            .distinct()
+        empty_uuid_array = Value([], output_field=ArrayField(UUIDField()))
+
+        def _agg_ids(field, **filter_kwargs):
+            return Coalesce(
+                ArrayAgg(field, filter=Q(**filter_kwargs), distinct=True),
+                empty_uuid_array,
+            )
+
+        issue_relation_qs = IssueRelation.objects.filter(
+            Q(issue_id=issue_id) | Q(related_issue_id=issue_id),
+            workspace__slug=slug,
         )
 
-        # Initialize lists for different relation types
-        blocking_issues = []
-        blocked_by_issues = []
-        duplicate_issues = []
-        relates_to_issues = []
-        start_after_issues = []
-        start_before_issues = []
-        finish_after_issues = []
-        finish_before_issues = []
-
-        # Process relations on application side to avoid N+1 queries
-        for relation in issue_relations:
-            if relation.relation_type == "blocked_by":
-                if relation.related_issue_id == issue_id:
-                    # This issue is blocked by the related issue
-                    blocking_issues.append(relation.issue_id)
-                elif relation.issue_id == issue_id:
-                    # This issue blocks the related issue
-                    blocked_by_issues.append(relation.related_issue_id)
-
-            elif relation.relation_type == "duplicate":
-                if relation.issue_id == issue_id:
-                    duplicate_issues.append(relation.related_issue_id)
-                elif relation.related_issue_id == issue_id:
-                    duplicate_issues.append(relation.issue_id)
-
-            elif relation.relation_type == "relates_to":
-                if relation.issue_id == issue_id:
-                    relates_to_issues.append(relation.related_issue_id)
-                elif relation.related_issue_id == issue_id:
-                    relates_to_issues.append(relation.issue_id)
-
-            elif relation.relation_type == "start_before":
-                if relation.related_issue_id == issue_id:
-                    # The related issue starts after this issue
-                    start_after_issues.append(relation.issue_id)
-                elif relation.issue_id == issue_id:
-                    # This issue starts before the related issue
-                    start_before_issues.append(relation.related_issue_id)
-
-            elif relation.relation_type == "finish_before":
-                if relation.related_issue_id == issue_id:
-                    # The related issue finishes after this issue
-                    finish_after_issues.append(relation.issue_id)
-                elif relation.issue_id == issue_id:
-                    # This issue finishes before the related issue
-                    finish_before_issues.append(relation.related_issue_id)
+        relation_ids = issue_relation_qs.aggregate(
+            blocking_ids=_agg_ids("issue_id", relation_type="blocked_by", related_issue_id=issue_id),
+            blocked_by_ids=_agg_ids("related_issue_id", relation_type="blocked_by", issue_id=issue_id),
+            duplicate_ids=_agg_ids("related_issue_id", relation_type="duplicate", issue_id=issue_id),
+            duplicate_ids_related=_agg_ids("issue_id", relation_type="duplicate", related_issue_id=issue_id),
+            relates_to_ids=_agg_ids("related_issue_id", relation_type="relates_to", issue_id=issue_id),
+            relates_to_ids_related=_agg_ids("issue_id", relation_type="relates_to", related_issue_id=issue_id),
+            start_after_ids=_agg_ids("issue_id", relation_type="start_before", related_issue_id=issue_id),
+            start_before_ids=_agg_ids("related_issue_id", relation_type="start_before", issue_id=issue_id),
+            finish_after_ids=_agg_ids("issue_id", relation_type="finish_before", related_issue_id=issue_id),
+            finish_before_ids=_agg_ids("related_issue_id", relation_type="finish_before", issue_id=issue_id),
+        )
 
         response_data = {
-            "blocking": blocking_issues,
-            "blocked_by": blocked_by_issues,
-            "duplicate": duplicate_issues,
-            "relates_to": relates_to_issues,
-            "start_after": start_after_issues,
-            "start_before": start_before_issues,
-            "finish_after": finish_after_issues,
-            "finish_before": finish_before_issues,
+            "blocking": relation_ids["blocking_ids"],
+            "blocked_by": relation_ids["blocked_by_ids"],
+            "duplicate": list(set(relation_ids["duplicate_ids"] + relation_ids["duplicate_ids_related"])),
+            "relates_to": list(set(relation_ids["relates_to_ids"] + relation_ids["relates_to_ids_related"])),
+            "start_after": relation_ids["start_after_ids"],
+            "start_before": relation_ids["start_before_ids"],
+            "finish_after": relation_ids["finish_after_ids"],
+            "finish_before": relation_ids["finish_before_ids"],
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
@@ -2755,16 +2836,17 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
 
         relation_type = serializer.validated_data["relation_type"]
         issues = serializer.validated_data["issues"]
-        project = Project.objects.get(pk=project_id)
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
-        issue_relation = IssueRelation.objects.bulk_create(
+        actual_relation = get_actual_relation(relation_type)
+        is_reverse = relation_type in ["blocking", "start_after", "finish_after"]
+
+        IssueRelation.objects.bulk_create(
             [
                 IssueRelation(
-                    issue_id=(issue if relation_type in ["blocking", "start_after", "finish_after"] else issue_id),
-                    related_issue_id=(
-                        issue_id if relation_type in ["blocking", "start_after", "finish_after"] else issue
-                    ),
-                    relation_type=(get_actual_relation(relation_type)),
+                    issue_id=(issue if is_reverse else issue_id),
+                    related_issue_id=(issue_id if is_reverse else issue),
+                    relation_type=actual_relation,
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                     created_by=request.user,
@@ -2788,22 +2870,46 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
             origin=base_host(request=request, is_app=True),
         )
 
-        if relation_type in ["blocking", "start_after", "finish_after"]:
-            return Response(
-                RelatedIssueSerializer(issue_relation, many=True).data,
-                status=status.HTTP_201_CREATED,
+        # Re-fetch with select_related to avoid N+1 queries in serializers.
+        # bulk_create with ignore_conflicts=True may not return PKs,
+        # so query by the issue/related_issue pairs and relation type.
+        if is_reverse:
+            refetch_filter = Q(
+                issue_id__in=issues,
+                related_issue_id=issue_id,
+                relation_type=actual_relation,
             )
         else:
-            return Response(
-                IssueRelationSerializer(issue_relation, many=True).data,
-                status=status.HTTP_201_CREATED,
+            refetch_filter = Q(
+                issue_id=issue_id,
+                related_issue_id__in=issues,
+                relation_type=actual_relation,
             )
+
+        refetched_relations = IssueRelation.objects.filter(
+            refetch_filter,
+            workspace__slug=slug,
+        ).select_related(
+            "issue__type",
+            "issue__state",
+            "related_issue__type",
+            "related_issue__state",
+        )
+
+        serializer_class = RelatedIssueSerializer if is_reverse else IssueRelationSerializer
+        return Response(
+            serializer_class(refetched_relations, many=True).data,
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class IssueRelationRemoveAPIEndpoint(BaseAPIView):
     """Issue Relation Remove Endpoint"""
 
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_RELATIONS_WRITE_SCOPE]],
+    }
     model = IssueRelation
 
     @issue_docs(
@@ -2840,14 +2946,29 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
 
         related_issue = serializer.validated_data["related_issue"]
 
-        issue_relations = IssueRelation.objects.filter(
-            workspace__slug=slug,
-        ).filter(
-            Q(issue_id=related_issue, related_issue_id=issue_id) | Q(issue_id=issue_id, related_issue_id=related_issue)
+        issue_relation = (
+            IssueRelation.objects.filter(workspace__slug=slug)
+            .filter(
+                Q(issue_id=related_issue, related_issue_id=issue_id)
+                | Q(issue_id=issue_id, related_issue_id=related_issue)
+            )
+            .select_related(
+                "issue__type",
+                "issue__state",
+                "related_issue__type",
+                "related_issue__state",
+            )
+            .first()
         )
-        issue_relations = issue_relations.first()
-        current_instance = json.dumps(IssueRelationSerializer(issue_relations).data, cls=DjangoJSONEncoder)
-        issue_relations.delete()
+
+        if issue_relation is None:
+            return Response(
+                {"message": "Issue relation not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        current_instance = json.dumps(IssueRelationSerializer(issue_relation).data, cls=DjangoJSONEncoder)
+        issue_relation.delete()
         issue_activity.delay(
             type="issue_relation.activity.deleted",
             requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),

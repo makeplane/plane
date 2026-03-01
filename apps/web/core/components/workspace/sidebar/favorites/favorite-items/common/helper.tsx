@@ -17,7 +17,7 @@ import { PageIcon } from "@plane/propel/icons";
 import type { IFavorite, TLogoProps } from "@plane/types";
 // components
 // plane web constants
-import { FAVORITE_ITEM_ICONS, FAVORITE_ITEM_LINKS } from "@/plane-web/constants/sidebar-favorites";
+import { FAVORITE_ITEM_ICONS, FAVORITE_ITEM_LINKS } from "@/constants/sidebar-favorites";
 
 export const getFavoriteItemIcon = (type: string, logo?: TLogoProps) => {
   const Icon = FAVORITE_ITEM_ICONS[type] || PageIcon;
@@ -43,14 +43,14 @@ export const generateFavoriteItemLink = (workspaceSlug: string, favorite: IFavor
 
   if (!entityLinkDetails) {
     console.error(`Unrecognized favorite entity type: ${favorite.entity_type}`);
-    return `/${workspaceSlug}`;
+    return `/${workspaceSlug}/`;
   }
 
   if (entityLinkDetails.itemLevel === "workspace") {
-    return `/${workspaceSlug}/${entityLinkDetails.getLink(favorite)}`;
+    return `/${workspaceSlug}/${entityLinkDetails.getLink(favorite)}/`;
   } else if (entityLinkDetails.itemLevel === "project") {
-    return `/${workspaceSlug}/projects/${favorite.project_id}/${entityLinkDetails.getLink(favorite)}`;
+    return `/${workspaceSlug}/projects/${favorite.project_id}/${entityLinkDetails.getLink(favorite)}/`;
   } else {
-    return `/${workspaceSlug}`;
+    return `/${workspaceSlug}/`;
   }
 };

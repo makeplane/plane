@@ -15,6 +15,7 @@ FROM artifacts.plane.so/makeplane/silo-commercial:${PLANE_VERSION} AS silo-img
 FROM artifacts.plane.so/makeplane/proxy-commercial:${PLANE_VERSION} AS proxy-img
 FROM artifacts.plane.so/makeplane/email-commercial:${PLANE_VERSION} AS email-img
 FROM artifacts.plane.so/makeplane/monitor-commercial:${PLANE_VERSION} AS monitor-img
+FROM artifacts.plane.so/makeplane/plane-pi-commercial:${PLANE_VERSION} AS pi-img
 FROM artifacts.plane.so/makeplane/iframely:v1.2.0 AS iframely-img
 
 # **************************************************
@@ -29,7 +30,6 @@ RUN apk add --no-cache \
     "libxslt" \
     "xmlsec" \
     "openldap-dev"
-
 
 COPY --from=node /usr/lib /usr/lib
 COPY --from=node /usr/local/lib /usr/local/lib
@@ -52,16 +52,24 @@ RUN rm -rf /app/space/apps/space/.next/cache
 COPY --from=proxy-img /usr/bin/caddy /usr/bin/caddy
 COPY dist/Caddyfile /app/proxy/Caddyfile
 
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
+
 COPY --from=email-img /opt/email /app/email
+
 
 COPY --from=backend-img /code /app/backend
 COPY --from=backend-img /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
-COPY --from=backend-img /usr/local/bin/ /usr/local/bin/
+COPY --from=backend-img --exclude=python* /usr/local/bin/ /usr/local/bin/
 
-RUN apk add --no-cache nss-tools bash curl uuidgen ncdu vim
+COPY --from=pi-img /app/pi /app/pi
+COPY --from=pi-img /app/bin /app/pi/bin
+COPY --from=pi-img /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
+COPY --from=pi-img --exclude=python* /usr/local/bin/ /usr/local/bin/
 
-RUN pip install supervisor
-RUN mkdir -p /etc/supervisor/conf.d
+RUN apk add --no-cache nss-tools bash curl uuidgen ncdu vim supervisor \
+    && mkdir -p /etc/supervisor/conf.d
 
 COPY start.sh /app/start.sh
 COPY dist/plane.env /app/plane.env

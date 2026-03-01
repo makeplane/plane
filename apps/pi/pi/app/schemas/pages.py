@@ -102,3 +102,20 @@ class PageAIBlockRevisionTypesResponse(BaseModel):
     """Response schema for listing available AI block revision types."""
 
     types: list[PageAIBlockRevisionType] = Field(description="List of available revision types")
+
+
+class PageSummarizeRequest(BaseModel):
+    """Request schema for summarizing a page."""
+
+    page_id: UUID4 = Field(description="ID of the page to summarize")
+    entity_type: str = Field(description="Type of entity (page, wiki)")
+    workspace_id: UUID4 = Field(description="Workspace ID")
+    project_id: Optional[UUID4] = Field(None, description="Optional project ID")
+
+
+class PageSummarizeResponse(BaseModel):
+    """Response schema for page summarization."""
+
+    success: bool = Field(description="Whether summarization was successful")
+    summary: Optional[str] = Field(None, description="Generated summary content")
+    message: str = Field(description="Success or error message")

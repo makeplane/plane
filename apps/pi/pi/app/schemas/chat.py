@@ -63,6 +63,7 @@ class ChatRequest(BaseModel):
     chat_id: Optional[UUID4] = None
     is_temp: bool
     workspace_in_context: bool
+    is_websearch_enabled: bool = Field(default=False, description="Enable web search for this request")
     # is_reasoning: bool = False
     # New polymorphic focus context fields
     focus_entity_type: Optional[str] = Field(default=None, description="Type of focus entity (workspace, project, cycle, module, etc.)")

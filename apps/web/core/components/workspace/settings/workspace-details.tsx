@@ -25,12 +25,12 @@ import { CustomSelect, Input } from "@plane/ui";
 import { cn, copyUrlToClipboard, getFileURL, validateWorkspaceName } from "@plane/utils";
 // components
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
-import { TimezoneSelect } from "@/components/global/timezone-select";
+import { TimezoneSelect } from "@/components/common/timezone-select";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { DeleteWorkspaceSection } from "@/plane-web/components/workspace/delete-workspace-section";
+import { DeleteWorkspaceSection } from "@/components/workspace/delete-workspace-section";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",

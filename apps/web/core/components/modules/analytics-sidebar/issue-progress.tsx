@@ -16,7 +16,7 @@ import { Fragment, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronUpIcon, ChevronDownIcon } from "@plane/propel/icons";
@@ -126,119 +126,117 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   };
 
   if (!moduleDetails) return <></>;
+  const [isOpen, setIsOpen] = useState(isModuleDateValid ? true : false);
+
   return (
-    <div className="border-t border-custom-border-200 space-y-4 py-4">
-      <Disclosure defaultOpen={isModuleDateValid ? true : false}>
-        {({ open }) => (
-          <div className="space-y-6">
-            {/* progress bar header */}
-            {isModuleDateValid ? (
-              <div className="relative w-full flex justify-between items-center gap-2">
-                <Disclosure.Button className="relative flex items-center gap-2 w-full">
-                  <div className="font-medium text-secondary text-13">{t("progress")}</div>
-                  {progressHeaderPercentage > 0 && (
-                    <div className="flex h-5 w-9 items-center justify-center rounded-sm bg-amber-500/20 text-11 font-medium text-amber-500">{`${progressHeaderPercentage}%`}</div>
-                  )}
-                </Disclosure.Button>
-                {isCurrentEstimateTypeIsPoints && (
-                  <>
-                    <div>
-                      <CustomSelect
-                        value={plotType}
-                        label={
-                          <span>
-                            {t(moduleBurnDownChartOptions.find((v) => v.value === plotType)?.i18n_label || "none")}
-                          </span>
-                        }
-                        onChange={onChange}
-                        maxHeight="lg"
-                      >
-                        {moduleBurnDownChartOptions.map((item) => (
-                          <CustomSelect.Option key={item.value} value={item.value}>
-                            {t(item.i18n_label)}
-                          </CustomSelect.Option>
-                        ))}
-                      </CustomSelect>
-                    </div>
-                    {loader && <Spinner className="h-3 w-3" />}
-                  </>
+    <div className="border-t border-subtle space-y-4 py-4">
+      <Collapsible defaultOpen={isModuleDateValid ? true : false} open={isOpen} onOpenChange={setIsOpen}>
+        <div className="space-y-6">
+          {/* progress bar header */}
+          {isModuleDateValid ? (
+            <div className="relative w-full flex justify-between items-center gap-2">
+              <CollapsibleTrigger className="relative flex items-center gap-2 w-full">
+                <div className="font-medium text-secondary text-13 capitalize">{t("progress")}</div>
+                {progressHeaderPercentage > 0 && (
+                  <div className="flex h-5 w-9 items-center justify-center rounded-sm bg-amber-500/20 text-11 font-medium text-amber-500">{`${progressHeaderPercentage}%`}</div>
                 )}
-                <Disclosure.Button className="ml-auto">
-                  {open ? (
-                    <ChevronUpIcon className="h-3.5 w-3.5" aria-hidden="true" />
-                  ) : (
-                    <ChevronDownIcon className="h-3.5 w-3.5" aria-hidden="true" />
-                  )}
-                </Disclosure.Button>
+              </CollapsibleTrigger>
+              {isCurrentEstimateTypeIsPoints && (
+                <>
+                  <div>
+                    <CustomSelect
+                      value={plotType}
+                      label={
+                        <span>
+                          {t(moduleBurnDownChartOptions.find((v) => v.value === plotType)?.i18n_label || "none")}
+                        </span>
+                      }
+                      onChange={onChange}
+                      maxHeight="lg"
+                    >
+                      {moduleBurnDownChartOptions.map((item) => (
+                        <CustomSelect.Option key={item.value} value={item.value}>
+                          {t(item.i18n_label)}
+                        </CustomSelect.Option>
+                      ))}
+                    </CustomSelect>
+                  </div>
+                  {loader && <Spinner className="h-3 w-3" />}
+                </>
+              )}
+              <CollapsibleTrigger className="ml-auto">
+                {isOpen ? (
+                  <ChevronUpIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <ChevronDownIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+              </CollapsibleTrigger>
+            </div>
+          ) : (
+            <div className="relative w-full flex justify-between items-center gap-2">
+              <div className="font-medium text-secondary text-13 capitalize">{t("progress")}</div>
+              <div className="flex items-center gap-1">
+                <AlertCircle height={14} width={14} className="text-secondary" />
+                <span className="text-11 italic text-secondary">
+                  {moduleDetails?.start_date && moduleDetails?.target_date
+                    ? t("project_module.empty_state.sidebar.in_active")
+                    : t("project_module.empty_state.sidebar.invalid_date")}
+                </span>
               </div>
-            ) : (
-              <div className="relative w-full flex justify-between items-center gap-2">
-                <div className="font-medium text-secondary text-13">Progress</div>
-                <div className="flex items-center gap-1">
-                  <AlertCircle height={14} width={14} className="text-secondary" />
-                  <span className="text-11 italic text-secondary">
-                    {moduleDetails?.start_date && moduleDetails?.target_date
-                      ? t("project_module.empty_state.sidebar.in_active")
-                      : t("project_module.empty_state.sidebar.invalid_date")}
-                  </span>
-                </div>
+            </div>
+          )}
+
+          <CollapsibleContent className="space-y-4">
+            {/* progress burndown chart */}
+            <div>
+              {moduleStartDate && moduleEndDate && completionChartDistributionData && (
+                <Fragment>
+                  {plotType === "points" ? (
+                    <ProgressChart
+                      distribution={completionChartDistributionData}
+                      totalIssues={totalEstimatePoints}
+                      plotTitle={"points"}
+                    />
+                  ) : (
+                    <ProgressChart
+                      distribution={completionChartDistributionData}
+                      totalIssues={totalIssues}
+                      plotTitle={"work items"}
+                    />
+                  )}
+                </Fragment>
+              )}
+            </div>
+
+            {/* progress detailed view */}
+            {chartDistributionData && (
+              <div className="w-full border-t border-subtle pt-5">
+                <ModuleProgressStats
+                  distribution={chartDistributionData}
+                  groupedIssues={groupedIssues}
+                  handleFiltersUpdate={updateFilterValueFromSidebar.bind(
+                    updateFilterValueFromSidebar,
+                    EIssuesStoreType.MODULE,
+                    moduleId
+                  )}
+                  isEditable={Boolean(!peekModule) && moduleFilter !== undefined}
+                  moduleId={moduleId}
+                  noBackground={false}
+                  plotType={plotType}
+                  roundedTab={false}
+                  selectedFilters={{
+                    assignees: selectedAssignees,
+                    labels: selectedLabels,
+                    stateGroups: selectedStateGroups,
+                  }}
+                  size="xs"
+                  totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
+                />
               </div>
             )}
-
-            <Transition show={open}>
-              <Disclosure.Panel className="space-y-4">
-                {/* progress burndown chart */}
-                <div>
-                  {moduleStartDate && moduleEndDate && completionChartDistributionData && (
-                    <Fragment>
-                      {plotType === "points" ? (
-                        <ProgressChart
-                          distribution={completionChartDistributionData}
-                          totalIssues={totalEstimatePoints}
-                          plotTitle={"points"}
-                        />
-                      ) : (
-                        <ProgressChart
-                          distribution={completionChartDistributionData}
-                          totalIssues={totalIssues}
-                          plotTitle={"work items"}
-                        />
-                      )}
-                    </Fragment>
-                  )}
-                </div>
-
-                {/* progress detailed view */}
-                {chartDistributionData && (
-                  <div className="w-full border-t border-subtle pt-5">
-                    <ModuleProgressStats
-                      distribution={chartDistributionData}
-                      groupedIssues={groupedIssues}
-                      handleFiltersUpdate={updateFilterValueFromSidebar.bind(
-                        updateFilterValueFromSidebar,
-                        EIssuesStoreType.MODULE,
-                        moduleId
-                      )}
-                      isEditable={Boolean(!peekModule) && moduleFilter !== undefined}
-                      moduleId={moduleId}
-                      noBackground={false}
-                      plotType={plotType}
-                      roundedTab={false}
-                      selectedFilters={{
-                        assignees: selectedAssignees,
-                        labels: selectedLabels,
-                        stateGroups: selectedStateGroups,
-                      }}
-                      size="xs"
-                      totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
-                    />
-                  </div>
-                )}
-              </Disclosure.Panel>
-            </Transition>
-          </div>
-        )}
-      </Disclosure>
+          </CollapsibleContent>
+        </div>
+      </Collapsible>
     </div>
   );
 });

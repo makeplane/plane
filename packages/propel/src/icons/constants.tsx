@@ -39,6 +39,7 @@ export const ArrowsIconsMap = [
   { icon: <Icon name="arrow.chevron-left" />, title: "ChevronLeftIcon" },
   { icon: <Icon name="arrow.chevron-right" />, title: "ChevronRightIcon" },
   { icon: <Icon name="arrow.chevron-up" />, title: "ChevronUpIcon" },
+  { icon: <Icon name="arrow.external-link" />, title: "ExternalLinkIcon" },
   { icon: <Icon name="arrow.reply" />, title: "ReplyIcon" },
 ];
 
@@ -104,4 +105,14 @@ export const PropertyIconsMap = [
   { icon: <Icon name="property.label-filled" />, title: "LabelFilledIcon" },
 ];
 
+export const OtherProductsIconsMap = [
+  { icon: <Icon name="other-products.jira" />, title: "JiraIcon" },
+  { icon: <Icon name="other-products.clickup" />, title: "ClickupIcon" },
+  { icon: <Icon name="other-products.asana" />, title: "AsanaIcon" },
+  { icon: <Icon name="other-products.linear" />, title: "LinearIcon" },
+  { icon: <Icon name="other-products.monday" />, title: "MondayIcon" },
+  { icon: <Icon name="other-products.sentry" />, title: "SentryIcon" },
+  { icon: <Icon name="other-products.raycast" />, title: "RaycastIcon" },
+  { icon: <Icon name="other-products.gitlab" />, title: "GitlabIcon" },
+];
 export const MiscIconsMap = [{ icon: <Icon name="misc.info" />, title: "InfoIcon" }];

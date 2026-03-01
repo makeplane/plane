@@ -27,11 +27,11 @@ import { PageHead } from "@/components/core/page-title";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // Plane-web
-import { InitiativeDetailRoot } from "@/plane-web/components/initiatives/details/root";
+import { InitiativeDetailRoot } from "@/components/initiatives/details/root";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { Route } from "./+types/page";
 
 function InitiativeDetailsPage({ params }: Route.ComponentProps) {
@@ -99,7 +99,7 @@ function InitiativeDetailsPage({ params }: Route.ComponentProps) {
           title={t("initiatives.empty_state.not_found.title")}
           description={t("initiatives.empty_state.not_found.description")}
           primaryButton={{
-            text: t("initiatives.empty_state.not_found.primary_button.title"),
+            text: t("initiatives.empty_state.not_found.primary_button.text"),
             onClick: () => router.push(`/${workspaceSlug}/initiatives`),
           }}
         />

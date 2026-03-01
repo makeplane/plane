@@ -17,7 +17,7 @@ import { cn } from "@plane/utils";
 type Props = {
   className?: string;
   control?: React.ReactNode;
-  description?: string;
+  description?: React.ReactNode;
   title: React.ReactNode;
 };
 

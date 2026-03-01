@@ -16,6 +16,7 @@ import type { EditorProps } from "@tiptap/pm/view";
 import { cn } from "@plane/utils";
 // helpers
 import { processAssetDuplication } from "@/helpers/paste-asset";
+import { normalizeCodeBlockHTML } from "@/utils/normalize-code-blocks";
 
 type TArgs = {
   editorClassName: string;
@@ -51,6 +52,7 @@ export const CoreEditorProps = (props: TArgs): EditorProps => {
         "prose prose-brand max-w-full prose-headings:font-display font-default focus:outline-none",
         editorClassName
       ),
+      inputMode: "text",
     },
     handleDOMEvents: {
       keydown: (_view, event) => {
@@ -72,7 +74,8 @@ export const CoreEditorProps = (props: TArgs): EditorProps => {
       return true;
     },
     transformPastedHTML(html) {
-      return stripCommentMarksFromHTML(html);
+      const stripped = stripCommentMarksFromHTML(html);
+      return normalizeCodeBlockHTML(stripped);
     },
   };
 };

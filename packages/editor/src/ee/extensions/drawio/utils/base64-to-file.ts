@@ -12,7 +12,6 @@
  */
 
 export const base64ToFile = (base64Data: string, filename: string, mimeType: string): File => {
-  // Remove data URL prefix if present
   let base64: string;
   if (base64Data.includes(",")) {
     const parts = base64Data.split(",");
@@ -24,7 +23,6 @@ export const base64ToFile = (base64Data: string, filename: string, mimeType: str
     base64 = base64Data;
   }
 
-  // Convert base64 to binary
   let binaryString: string;
   try {
     binaryString = atob(base64);
@@ -34,12 +32,10 @@ export const base64ToFile = (base64Data: string, filename: string, mimeType: str
     );
   }
 
-  // Create byte array
   const bytes = new Uint8Array(binaryString.length);
   for (let i = 0; i < binaryString.length; i++) {
     bytes[i] = binaryString.charCodeAt(i);
   }
 
-  // Create and return File object
   return new File([bytes], filename, { type: mimeType });
 };

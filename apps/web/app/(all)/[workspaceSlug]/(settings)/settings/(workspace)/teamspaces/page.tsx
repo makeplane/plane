@@ -14,27 +14,27 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TeamsIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ToggleSwitch, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { TeamspaceUpgrade } from "@/plane-web/components/teamspaces/upgrade";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { TeamspaceUpgrade } from "@/components/teamspaces/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import type { Route } from "./+types/page";
 import { TeamspacesWorkspaceSettingsHeader } from "./header";
-import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 
 function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -96,10 +96,9 @@ function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
                 disabled={!isTeamspacesFeatureEnabled}
                 position="left"
               >
-                <ToggleSwitch
+                <Switch
                   value={isTeamspacesFeatureEnabled}
                   onChange={toggleTeamsFeature}
-                  size="sm"
                   disabled={isTeamspacesFeatureEnabled}
                 />
               </Tooltip>

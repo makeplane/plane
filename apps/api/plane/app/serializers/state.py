@@ -35,6 +35,11 @@ class StateSerializer(BaseSerializer):
         ]
         read_only_fields = ["workspace", "project"]
 
+    def validate_name(self, value):
+        if value.strip().lower() == "triage":
+            raise serializers.ValidationError("Triage is a reserved state name")
+        return value
+
     def validate(self, attrs):
         if attrs.get("group") == StateGroup.TRIAGE.value:
             raise serializers.ValidationError("Cannot create triage state")

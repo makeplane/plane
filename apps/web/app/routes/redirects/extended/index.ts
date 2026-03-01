@@ -22,4 +22,18 @@ export const extendedRedirectRoutes: RouteConfigEntry[] = [
   // Pages to Wiki redirect: /:workspaceSlug/pages/:path*
   // → /:workspaceSlug/wiki/:path*
   route(":workspaceSlug/pages/*", "routes/redirects/extended/wiki.tsx"),
+
+  // ========================================================================
+  // PI-CHAT → AI-CHAT REDIRECTS
+  // ========================================================================
+
+  // Workspace-level: /:workspaceSlug/pi-chat → /:workspaceSlug/ai-chat
+  route(":workspaceSlug/pi-chat", "routes/redirects/extended/pi-chat.tsx"),
+  // Workspace-level (with sub-path): /:workspaceSlug/pi-chat/:path* → /:workspaceSlug/ai-chat/:path*
+  route(":workspaceSlug/pi-chat/*", "routes/redirects/extended/pi-chat.tsx"),
+
+  // Project-level: /:workspaceSlug/projects/pi-chat → /:workspaceSlug/projects/ai-chat
+  route(":workspaceSlug/projects/pi-chat", "routes/redirects/extended/pi-chat-project.tsx"),
+  // Project-level (with sub-path): /:workspaceSlug/projects/pi-chat/:path* → /:workspaceSlug/projects/ai-chat/:path*
+  route(":workspaceSlug/projects/pi-chat/*", "routes/redirects/extended/pi-chat-project.tsx"),
 ];

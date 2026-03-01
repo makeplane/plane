@@ -11,18 +11,23 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useCallback, useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
 import { observer } from "mobx-react";
+import { usePathname } from "next/navigation";
 // plane imports
-import { ROLE_DETAILS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Logo } from "@plane/propel/emoji-icon-picker";
 import { IconButton } from "@plane/propel/icon-button";
+import { ProjectIcon } from "@plane/propel/icons";
+import type { ICustomSearchSelectOption } from "@plane/types";
+import { CustomSearchSelect } from "@plane/ui";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+// components
+import { SwitcherLabel } from "@/components/common/switcher-label";
+import { ProjectSettingsSwitcherButton } from "./project-switcher-button";
 
 type Props = {
   projectId: string;
@@ -32,23 +37,67 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
   const { projectId } = props;
   // router
   const router = useAppRouter();
+  const pathname = usePathname();
   // store hooks
   const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { getPartialProjectById } = useProject();
+  const { getPartialProjectById, joinedProjectIds } = useProject();
   // derived values
   const projectDetails = getPartialProjectById(projectId);
   const currentProjectRole = currentWorkspace?.slug
     ? getProjectRoleByWorkspaceSlugAndProjectId(currentWorkspace.slug, projectId)
     : undefined;
   // translation
-  const { t } = useTranslation();
+
+  // utility function to extract current section from pathname
+  const extractSettingsSection = (pathname: string, workspaceSlug: string, projectId: string): string => {
+    const pattern = new RegExp(`/${workspaceSlug}/settings/projects/${projectId}/(.+?)/?$`);
+    const match = pathname.match(pattern);
+    return match ? match[1] : ""; // Empty = general settings
+  };
+
+  // memoized options for project switcher
+  const switcherOptions = useMemo<ICustomSearchSelectOption[]>(
+    () =>
+      joinedProjectIds.flatMap((id) => {
+        const project = getPartialProjectById(id);
+        if (!project) return [];
+
+        return [
+          {
+            value: id,
+            query: project.name,
+            content: (
+              <SwitcherLabel
+                name={project.name}
+                logo_props={project.logo_props}
+                LabelIcon={ProjectIcon}
+                type="material"
+              />
+            ),
+          },
+        ];
+      }),
+    [joinedProjectIds, getPartialProjectById]
+  );
+
+  // navigation handler to preserve current section
+  const handleProjectChange = useCallback(
+    (value: string) => {
+      if (value !== projectId) {
+        const currentSection = extractSettingsSection(pathname, currentWorkspace?.slug || "", projectId);
+        const targetUrl = `/${currentWorkspace?.slug}/settings/projects/${value}/${currentSection}${currentSection ? "/" : ""}`;
+        router.push(targetUrl);
+      }
+    },
+    [projectId, pathname, currentWorkspace?.slug, router]
+  );
 
   if (!currentProjectRole) return null;
 
   return (
-    <div className="shrink-0 px-5">
-      <div className="py-3 flex items-center gap-1 text-body-md-medium">
+    <div className="sticky top-0 shrink-0 bg-surface-1 pb-1.5">
+      <div className="py-3 pl-4 pr-5 flex items-center gap-1 text-body-md-medium">
         <IconButton
           variant="ghost"
           size="base"
@@ -57,14 +106,20 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
         />
         <p>Project settings</p>
       </div>
-      <div className="flex items-center gap-2 py-0.5 truncate">
-        <div className="shrink-0 size-8 grid place-items-center bg-layer-2 rounded">
-          <Logo logo={projectDetails?.logo_props} size={20} />
-        </div>
-        <div className="truncate">
-          <p className="text-body-sm-medium truncate">{projectDetails?.name}</p>
-          <p className="text-caption-md-regular truncate">{t(ROLE_DETAILS[currentProjectRole].i18n_title)}</p>
-        </div>
+      <div className="mt-1.5 px-5">
+        <CustomSearchSelect
+          options={switcherOptions}
+          value={projectDetails?.id}
+          onChange={handleProjectChange}
+          customButton={
+            projectDetails ? (
+              <ProjectSettingsSwitcherButton project={projectDetails} currentProjectRole={currentProjectRole} />
+            ) : null
+          }
+          customButtonClassName="group flex items-center gap-2 py-0.5 rounded hover:bg-surface-2 transition-colors cursor-pointer"
+          optionsClassName="max-w-52"
+          placement="bottom-start"
+        />
       </div>
     </div>
   );

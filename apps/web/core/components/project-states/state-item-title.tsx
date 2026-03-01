@@ -14,7 +14,7 @@
 import type { SetStateAction } from "react";
 import { observer } from "mobx-react";
 import { GripVertical } from "lucide-react";
-import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EIconSize } from "@plane/constants";
 // plane imports
 import { EditIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
@@ -83,7 +83,6 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
             <button
               className="flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-secondary hover:text-primary"
               onClick={() => setUpdateStateModal(true)}
-              data-ph-element={STATE_TRACKER_ELEMENTS.STATE_LIST_EDIT_BUTTON}
             >
               <EditIcon className="w-3 h-3" />
             </button>

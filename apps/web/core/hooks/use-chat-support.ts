@@ -27,7 +27,7 @@ export const useChatSupport = (): IUseChatSupport => {
   const { data: user } = useUser();
   const { config } = useInstance();
   // derived values
-  const isEnabled = Boolean(user && config?.is_intercom_enabled && config?.intercom_app_id);
+  const isEnabled = Boolean(user && config?.is_chat_support_enabled && config?.chat_support_app_id);
 
   const openChatSupport = useCallback(() => {
     if (!isEnabled) return;

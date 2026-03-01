@@ -28,4 +28,6 @@ export type TExtensions =
   | "mathematics"
   | "drawio"
   | "copy-block-link"
-  | "selection-conversion";
+  | "selection-conversion"
+  | "mermaid-diagrams"
+  | "multi-column";

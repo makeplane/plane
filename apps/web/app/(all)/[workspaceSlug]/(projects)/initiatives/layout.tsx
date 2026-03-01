@@ -19,10 +19,10 @@ import { PageHead } from "@/components/core/page-title";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
-import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
+import { InitiativesUpgrade } from "@/components/initiatives/upgrade";
 // plane web hooks
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { Route } from "./+types/layout";
 
 function InitiativesLayout({ params }: Route.ComponentProps) {

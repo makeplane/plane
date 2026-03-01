@@ -23,7 +23,7 @@ def send_app_uninstall_webhook(webhook_url: str, workspace_id: str, application_
 
     try:
         logging.getLogger("plane.worker").info(
-            f"Sending app uninstall webhook for workspace {workspace_id} and application {application_id} and app installation {app_installation_id}"
+            f"Sending app uninstall webhook for workspace {workspace_id} and application {application_id} and app installation {app_installation_id}"  # noqa: E501
         )
         payload = {
             "workspace_id": str(workspace_id),

@@ -20,7 +20,8 @@ import type { TPage } from "@plane/types";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
-import { ProjectPageService } from "@/services/page";
+import { ProjectPageService } from "@/services/page/project-page.service";
+
 const projectPageService = new ProjectPageService();
 // store
 import { BasePage } from "./base-page";

@@ -18,6 +18,10 @@ from .saml import (
     SAMLAuthCloudLogoutEndpoint,
 )
 from .auth import SSOAuthInitiateEndpoint
+from .group_sync import (
+    GroupSyncConfigEndpoint,
+    GroupMappingEndpoint,
+)
 
 __all__ = [
     "SSOAuthInitiateEndpoint",
@@ -30,4 +34,7 @@ __all__ = [
     "SAMLAuthCloudMetadataEndpoint",
     "SAMLAuthCloudCallbackEndpoint",
     "SAMLAuthCloudLogoutEndpoint",
+    # Group Sync
+    "GroupSyncConfigEndpoint",
+    "GroupMappingEndpoint",
 ]

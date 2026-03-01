@@ -11,44 +11,37 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Button } from "@plane/propel/button";
+// plane imports
 import { cn } from "@plane/ui";
 
 type Props = {
-  title: string | React.ReactNode;
-  description?: string;
-  appendToRight?: React.ReactNode;
-  showButton?: boolean;
-  customButton?: React.ReactNode;
-  button?: {
-    label: string;
-    onClick: () => void;
-  };
   className?: string;
+  control?: React.ReactNode;
+  description?: React.ReactNode;
+  title?: React.ReactNode;
+  variant?: "h3" | "h4" | "h6";
 };
 
-export function SettingsHeading({
-  title,
-  description,
-  button,
-  appendToRight,
-  customButton,
-  showButton = true,
-  className,
-}: Props) {
+export function SettingsHeading({ className, control, description, title, variant = "h3" }: Props) {
   return (
     <div className={cn("flex flex-col md:flex-row gap-4 items-start md:items-center justify-between", className)}>
       <div className="flex flex-col items-start gap-1">
-        {typeof title === "string" ? <h3 className="text-h3-medium text-primary">{title}</h3> : title}
+        {typeof title === "string" ? (
+          <h3
+            className={cn("text-h3-medium text-primary", {
+              "text-h3-medium": variant === "h3",
+              "text-h4-medium": variant === "h4",
+              "text-h6-medium": variant === "h6",
+            })}
+          >
+            {title}
+          </h3>
+        ) : (
+          title
+        )}
         {description && <p className="text-body-xs-regular text-tertiary">{description}</p>}
       </div>
-      {showButton && customButton}
-      {button && showButton && (
-        <Button variant="primary" size="lg" onClick={button.onClick} className="w-fit">
-          {button.label}
-        </Button>
-      )}
-      {appendToRight}
+      {control}
     </div>
   );
 }

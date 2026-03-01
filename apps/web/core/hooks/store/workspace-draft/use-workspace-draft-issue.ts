@@ -15,7 +15,7 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
 // types
-import type { IWorkspaceDraftIssues } from "@/store/issue/workspace-draft";
+import type { IWorkspaceDraftIssues } from "@/store/work-items/workspace-draft";
 
 export const useWorkspaceDraftIssues = (): IWorkspaceDraftIssues => {
   const context = useContext(StoreContext);

@@ -23,7 +23,7 @@ import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 // plane web imports
-import type { TProject } from "@/plane-web/types";
+import type { TProject } from "@/types";
 // local imports
 import { WorkItemsModal } from "../analytics/work-items/modal";
 import { WorkItemFiltersToggle } from "../work-item-filters/filters-toggle";
@@ -101,21 +101,23 @@ export const HeaderFilters = observer(function HeaderFilters(props: Props) {
         projectDetails={currentProjectDetails ?? undefined}
         isEpic={storeType === EIssuesStoreType.EPIC}
       />
-      <div className="hidden @4xl:flex">
+      <div className="hidden @4xl:flex" data-tour="work-item-step-4">
         <LayoutSelection
           layouts={LAYOUTS}
           onChange={(layout) => handleLayoutChange(layout)}
           selectedLayout={activeLayout}
         />
       </div>
-      <div className="flex @4xl:hidden">
+      <div className="flex @4xl:hidden" data-tour="work-item-step-4">
         <MobileLayoutSelection
           layouts={LAYOUTS}
           onChange={(layout) => handleLayoutChange(layout)}
           activeLayout={activeLayout}
         />
       </div>
-      <WorkItemFiltersToggle entityType={storeType} entityId={projectId} />
+      <div data-tour="work-item-step-2">
+        <WorkItemFiltersToggle entityType={storeType} entityId={projectId} />
+      </div>
       <FiltersDropdown
         miniIcon={<SlidersHorizontal className="size-3.5" />}
         title={t("common.display")}

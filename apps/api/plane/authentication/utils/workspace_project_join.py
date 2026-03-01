@@ -53,7 +53,7 @@ def process_workspace_project_invitations(user):
         track_event.delay(
             user_id=user.id,
             event_name=USER_JOINED_WORKSPACE,
-            slug=workspace_member_invite.workspace.slug,
+            workspace_slug=workspace_member_invite.workspace.slug,
             event_properties={
                 "user_id": user.id,
                 "workspace_id": workspace_member_invite.workspace.id,

@@ -12,6 +12,8 @@
  */
 
 import { Outlet } from "react-router";
+// lib
+import { redirectIfUserIsAuthenticated } from "@/lib/middleware/auth-client-middleware";
 // types
 import type { Route } from "./+types/layout";
 
@@ -19,6 +21,8 @@ export const meta: Route.MetaFunction = () => [
   { name: "robots", content: "index, nofollow" },
   { name: "viewport", content: "width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover" },
 ];
+
+export const clientMiddleware = [redirectIfUserIsAuthenticated];
 
 export default function HomeLayout() {
   return <Outlet />;

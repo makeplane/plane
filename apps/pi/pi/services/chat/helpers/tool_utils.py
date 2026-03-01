@@ -17,6 +17,7 @@ so that `action_executor.execute_action_with_retrieval` stays lean and readable.
 """
 
 import asyncio
+import contextlib
 import logging
 import re
 from collections.abc import AsyncIterator
@@ -25,11 +26,358 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
+from typing import TypedDict
 from typing import Union
 
 from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
 
 log = logging.getLogger(__name__)
+
+
+def extract_text_from_content(content: Any) -> str:
+    """Extract text from streaming chunk content, handling both OpenAI and Anthropic formats.
+
+    OpenAI returns `chunk.content` as a plain string during streaming.
+    Anthropic returns `chunk.content` as a list of content block dicts:
+      - Text blocks: [{'text': 'content here', 'type': 'text', 'index': 0}]
+      - Tool input deltas: [{'partial_json': '...', 'type': 'input_json_delta', 'index': 1}]
+
+    Args:
+        content: The chunk.content value from a streaming LLM response
+
+    Returns:
+        Extracted text string (empty string if no text found)
+    """
+    if content is None:
+        return ""
+
+    # OpenAI format: already a string
+    if isinstance(content, str):
+        return content
+
+    # Anthropic format: list of content block dicts
+    if isinstance(content, list):
+        text_parts = []
+        for block in content:
+            if isinstance(block, dict):
+                # Extract 'text' from text blocks (type: 'text')
+                if block.get("type") == "text" and "text" in block:
+                    text_parts.append(str(block["text"]))
+                # Skip input_json_delta blocks - those are tool call inputs, not reasoning text
+        return "".join(text_parts)
+
+    # Fallback: try converting to string (shouldn't normally reach here)
+    return str(content)
+
+
+# ------------------------------------
+# Smart Buffering Streaming Utility
+# ------------------------------------
+
+
+class StreamEvent(TypedDict, total=False):
+    """Event types yielded by stream_llm_with_smart_buffering.
+
+    Types:
+    - "reasoning_chunk": Content that should go to reasoning/thought panel
+    - "final_answer_chunk": Content that should go to final answer stream
+    - "tool_detected": A tool name was detected in the stream
+    - "complete": Streaming finished, contains the accumulated message
+    """
+
+    type: str  # "reasoning_chunk" | "final_answer_chunk" | "tool_detected" | "complete"
+    content: str  # Text content for chunks
+    tool_name: str  # For tool_detected events
+    accumulated_message: Any  # Final AIMessage for "complete" event
+    saw_tool_calls: bool  # Whether any tool calls were detected
+    streamed_reasoning: bool  # Whether any reasoning was streamed
+
+
+async def stream_llm_with_delimiter(
+    llm: Any,
+    messages: Any,
+    *,
+    stream_final_answer: bool = False,
+) -> AsyncIterator[StreamEvent]:
+    """
+    Shared streaming utility using delimiter-based answer routing.
+
+    Streams content immediately as reasoning (or pre-answer text) until
+    the answer delimiter (ππANSWERππ) is encountered, then switches to
+    streaming the final answer.
+
+    Args:
+        llm: The LangChain LLM instance (TrackedLLM or similar)
+        messages: List of messages to send to the LLM
+        stream_final_answer: If True, stream content after delimiter as final answer
+
+    Yields:
+        StreamEvent dicts with type-specific content
+
+    Example:
+        async for event in stream_llm_with_delimiter(llm, messages):
+            if event["type"] == "reasoning_chunk":
+                # Handle reasoning content
+                pass
+            elif event["type"] == "tool_detected":
+                # Handle tool announcement
+                pass
+            elif event["type"] == "complete":
+                ai_message = event["accumulated_message"]
+    """
+    from pi.services.chat.utils import mask_uuids_in_text
+
+    accumulated: Any = None
+    saw_tool_calls = False
+    streamed_reasoning = False
+    announced_tools: set[str] = set()
+
+    # State
+    content_buffer = ""
+    stream_mode: Optional[str] = None  # "final_answer" or None (reasoning by default)
+
+    # Batch reasoning chunks (~15 words) to reduce browser SSE event overhead
+    _reasoning_batcher = WordBatcher(words_per_batch=15)
+
+    try:
+        # Get event iterator
+        try:
+            event_iter = llm.astream_events(messages, version="v2")
+        except TypeError:
+            event_iter = llm.astream_events(messages)
+
+        async for event in event_iter:
+            if not isinstance(event, dict):
+                continue
+            data = event.get("data") or {}
+            chunk = data.get("chunk")
+            if chunk is None:
+                continue
+
+            # Accumulate chunks
+            if accumulated is None:
+                accumulated = chunk
+            else:
+                try:
+                    accumulated = accumulated + chunk
+                except Exception:
+                    accumulated = chunk
+
+            # 1. Extract content from chunk (handles OpenAI string and Anthropic content blocks)
+            chunk_text = getattr(chunk, "content", None)
+            if chunk_text:
+                # Use helper to normalize between OpenAI (string) and Anthropic (list of blocks)
+                text_content = extract_text_from_content(chunk_text)
+                if text_content:
+                    content_buffer += text_content
+
+            # 2. Detect and announce tool names (for UI display only, not for routing)
+            tool_call_chunks = getattr(chunk, "tool_call_chunks", None) or []
+            for tc in tool_call_chunks:
+                name = (tc.get("name") if isinstance(tc, dict) else None) or ""
+                if name and name not in announced_tools:
+                    announced_tools.add(name)
+                    saw_tool_calls = True
+                    # Flush pending buffered reasoning BEFORE emitting tool header
+                    # Check for delimiter first to avoid breaking delimiter detection
+                    ANSWER_DELIMITER = "ππANSWERππ"
+                    delimiter_pos = content_buffer.find(ANSWER_DELIMITER)
+                    if delimiter_pos != -1:
+                        # Delimiter found - emit reasoning before it, then handle rest later
+                        reasoning_content = content_buffer[:delimiter_pos]
+                        if reasoning_content:
+                            delta = mask_uuids_in_text(reasoning_content)
+                            if delta.strip():
+                                streamed_reasoning = True
+                                batched = _reasoning_batcher.add(delta)
+                                if batched:
+                                    yield StreamEvent(type="reasoning_chunk", content=batched)
+                        # Keep delimiter and answer in buffer for later processing
+                        content_buffer = content_buffer[delimiter_pos:]
+                    elif content_buffer:
+                        # No delimiter - safe to emit entire buffer
+                        delta = mask_uuids_in_text(content_buffer)
+                        if delta.strip():
+                            streamed_reasoning = True
+                            batched = _reasoning_batcher.add(delta)
+                            if batched:
+                                yield StreamEvent(type="reasoning_chunk", content=batched)
+                        content_buffer = ""
+                    # Flush reasoning batcher before tool header so UI sees all reasoning before the tool tick
+                    _remaining = _reasoning_batcher.flush()
+                    if _remaining:
+                        yield StreamEvent(type="reasoning_chunk", content=_remaining)
+                    yield StreamEvent(type="tool_detected", tool_name=name)
+
+            # 3. Delimiter-based routing (the ONLY logic for content routing)
+            # Before delimiter → reasoning, After delimiter → final_answer
+            ANSWER_DELIMITER = "ππANSWERππ"
+            delimiter_pos = content_buffer.find(ANSWER_DELIMITER)
+
+            if delimiter_pos != -1:
+                # Found delimiter! Split and emit
+
+                # Everything before delimiter goes to reasoning
+                reasoning_content = content_buffer[:delimiter_pos]
+                if reasoning_content:
+                    delta = mask_uuids_in_text(reasoning_content)
+                    if delta.strip():
+                        streamed_reasoning = True
+                        batched = _reasoning_batcher.add(delta)
+                        if batched:
+                            yield StreamEvent(type="reasoning_chunk", content=batched)
+
+                # Flush reasoning batcher before switching to final answer mode
+                _remaining = _reasoning_batcher.flush()
+                if _remaining:
+                    yield StreamEvent(type="reasoning_chunk", content=_remaining)
+
+                # Everything after delimiter goes to answer
+                answer_start = delimiter_pos + len(ANSWER_DELIMITER)
+                answer_content = content_buffer[answer_start:].lstrip("\n")
+
+                # Clear buffer and switch mode
+                content_buffer = ""
+                stream_mode = "final_answer"
+
+                if answer_content and stream_final_answer:
+                    yield StreamEvent(type="final_answer_chunk", content=answer_content)
+
+            elif stream_mode == "final_answer":
+                # Already past delimiter - stream everything to answer
+                if content_buffer and stream_final_answer:
+                    yield StreamEvent(type="final_answer_chunk", content=content_buffer)
+                    content_buffer = ""
+
+            else:
+                # Haven't found delimiter yet - stream to reasoning (with tail buffer for safety)
+                safe_tail_len = len(ANSWER_DELIMITER) - 1
+
+                if len(content_buffer) > safe_tail_len:
+                    to_emit = content_buffer[:-safe_tail_len]
+                    content_buffer = content_buffer[-safe_tail_len:]
+
+                    if to_emit:
+                        delta = mask_uuids_in_text(to_emit)
+                        if delta:
+                            streamed_reasoning = True
+                            batched = _reasoning_batcher.add(delta)
+                            if batched:
+                                yield StreamEvent(type="reasoning_chunk", content=batched)
+
+        # 5. End of Stream - Flush Remainder
+        ANSWER_DELIMITER = "ππANSWERππ"
+        if content_buffer:
+            # Check for delimiter in remaining buffer
+            delimiter_pos = content_buffer.find(ANSWER_DELIMITER)
+
+            if delimiter_pos != -1:
+                # Split at delimiter
+                reasoning_content = content_buffer[:delimiter_pos].strip()
+                if reasoning_content:
+                    delta = mask_uuids_in_text(reasoning_content)
+                    if delta.strip():
+                        streamed_reasoning = True
+                        batched = _reasoning_batcher.add(delta)
+                        if batched:
+                            yield StreamEvent(type="reasoning_chunk", content=batched)
+
+                # Flush reasoning batcher before switching to answer
+                _remaining = _reasoning_batcher.flush()
+                if _remaining:
+                    yield StreamEvent(type="reasoning_chunk", content=_remaining)
+
+                answer_start = delimiter_pos + len(ANSWER_DELIMITER)
+                answer_content = content_buffer[answer_start:].lstrip("\n")
+                if answer_content and stream_final_answer:
+                    yield StreamEvent(type="final_answer_chunk", content=answer_content)
+
+            elif stream_mode != "final_answer":
+                # Flush as reasoning
+                # If we haven't found a delimiter, we assume it's part of the reasoning/preamble
+                # (or the model failed to output a delimiter, in which case consistent reasoning events
+                # allow the consumer's fallback logic to handle the full message)
+                delta = mask_uuids_in_text(content_buffer)
+                if delta.strip():
+                    streamed_reasoning = True
+                    batched = _reasoning_batcher.add(delta)
+                    if batched:
+                        yield StreamEvent(type="reasoning_chunk", content=batched)
+            else:
+                # Flush as final answer
+                if stream_final_answer:
+                    yield StreamEvent(type="final_answer_chunk", content=content_buffer)
+
+        # Flush any remaining reasoning in the batcher
+        _remaining = _reasoning_batcher.flush()
+        if _remaining:
+            yield StreamEvent(type="reasoning_chunk", content=_remaining)
+
+        # Convert accumulated chunk to message if needed
+        response = accumulated
+        if response is not None and hasattr(response, "to_message") and callable(response.to_message):
+            with contextlib.suppress(Exception):
+                response = response.to_message()
+
+        # Log the complete LLM response for debugging
+        try:
+            response_content = getattr(response, "content", None) if response else None
+            response_tool_calls = getattr(response, "tool_calls", None) if response else None
+            content_preview = str(response_content)[:500] if response_content else "None"
+            tool_calls_preview = str(response_tool_calls)[:300] if response_tool_calls else "None"
+            log.info(
+                f"stream_llm_with_delimiter - LLM Response Summary:\n"
+                f"  - Has tool_calls: {bool(response_tool_calls)}\n"
+                f"  - Tool calls: {tool_calls_preview}\n"
+                f"  - Content preview ({len(str(response_content)) if response_content else 0} chars): {content_preview}"
+            )
+
+            # DEBUG: Log full content with delimiter analysis for debugging content leakage
+            if response_content:
+                full_content = str(response_content)
+                ANSWER_DELIMITER = "ππANSWERππ"
+                delimiter_pos = full_content.find(ANSWER_DELIMITER)
+                if delimiter_pos != -1:
+                    reasoning_part = full_content[:delimiter_pos]
+                    answer_part = full_content[delimiter_pos + len(ANSWER_DELIMITER) :]
+                    log.info(
+                        f"stream_llm_with_delimiter - DELIMITER ANALYSIS:\n"
+                        f"{"=" * 80}\n"
+                        f"REASONING SECTION (before delimiter, {len(reasoning_part)} chars):\n"
+                        f"{reasoning_part}\n"
+                        f"{"=" * 80}\n"
+                        f"ANSWER SECTION (after delimiter, {len(answer_part)} chars):\n"
+                        f"{answer_part}\n"
+                        f"{"=" * 80}"
+                    )
+                else:
+                    log.info(f"stream_llm_with_delimiter - NO DELIMITER FOUND in content:\n" f"{"=" * 80}\n" f"{full_content}\n" f"{"=" * 80}")
+        except Exception as log_err:
+            log.debug(f"stream_llm_with_delimiter - Failed to log response: {log_err}")
+
+        # Yield completion event
+        yield StreamEvent(
+            type="complete",
+            accumulated_message=response,
+            saw_tool_calls=saw_tool_calls,
+            streamed_reasoning=streamed_reasoning,
+        )
+
+    except Exception as e:
+        log.warning(f"stream_llm_with_delimiter error: {e}")
+        # Fallback: non-streaming invoke
+        try:
+            response = await llm.ainvoke(messages)
+            yield StreamEvent(
+                type="complete",
+                accumulated_message=response,
+                saw_tool_calls=False,
+                streamed_reasoning=False,
+            )
+        except Exception as fallback_err:
+            log.error(f"Fallback ainvoke also failed: {fallback_err}")
+            raise
+
 
 # build a map of tool name to category
 TOOL_NAME_TO_CATEGORY_MAP: Dict[str, Dict[str, str]] = {
@@ -142,6 +490,18 @@ TOOL_NAME_TO_CATEGORY_MAP: Dict[str, Dict[str, str]] = {
     "customers_retrieve": {"entity_type": "customer", "action_type": "retrieve", "front_facing_name": "Retrieve Customer"},
     "customers_update": {"entity_type": "customer", "action_type": "update", "front_facing_name": "Update Customer"},
     "customers_delete": {"entity_type": "customer", "action_type": "delete", "front_facing_name": "Delete Customer"},
+    # Customer Properties
+    "customers_create_property": {"entity_type": "customer", "action_type": "create", "front_facing_name": "Create Customer Property"},
+    "customers_list_properties": {"entity_type": "customer", "action_type": "list", "front_facing_name": "List Customer Properties"},
+    "customers_retrieve_property": {"entity_type": "customer", "action_type": "retrieve", "front_facing_name": "Retrieve Customer Property"},
+    "customers_update_property": {"entity_type": "customer", "action_type": "update", "front_facing_name": "Update Customer Property"},
+    "customers_delete_property": {"entity_type": "customer", "action_type": "delete", "front_facing_name": "Delete Customer Property"},
+    # Customer Requests
+    "customers_create_request": {"entity_type": "customer", "action_type": "create", "front_facing_name": "Create Customer Request"},
+    "customers_list_requests": {"entity_type": "customer", "action_type": "list", "front_facing_name": "List Customer Requests"},
+    "customers_retrieve_request": {"entity_type": "customer", "action_type": "retrieve", "front_facing_name": "Retrieve Customer Request"},
+    "customers_update_request": {"entity_type": "customer", "action_type": "update", "front_facing_name": "Update Customer Request"},
+    "customers_delete_request": {"entity_type": "customer", "action_type": "delete", "front_facing_name": "Delete Customer Request"},
     # Workspaces (SDK v0.2.2 - features)
     "workspaces_get_features": {"entity_type": "workspace", "action_type": "get", "front_facing_name": "Get Workspace Features"},
     "workspaces_update_features": {"entity_type": "workspace", "action_type": "update", "front_facing_name": "Update Workspace Features"},
@@ -178,7 +538,7 @@ def is_retrieval_tool(tool_name: Any) -> bool:
     if name.endswith("_list") or name.endswith("_retrieve"):
         return True
     # Known retrieval utilities
-    if name in {"structured_db_tool", "vector_search_tool", "pages_search_tool", "docs_search_tool", "fetch_cycle_details"}:
+    if name in {"structured_db_tool", "vector_search_tool", "pages_search_tool", "docs_search_tool", "web_search_tool", "fetch_cycle_details"}:
         return True
     return False
 
@@ -197,6 +557,7 @@ TOOL_METADATA_REGISTRY: Dict[str, Dict[str, Any]] = {
     "structured_db_tool": {"kind": "retrieval", "plan_only": False},
     "pages_search_tool": {"kind": "retrieval", "plan_only": False},
     "docs_search_tool": {"kind": "retrieval", "plan_only": False},
+    "web_search_tool": {"kind": "retrieval", "plan_only": False},
     "fetch_cycle_details": {"kind": "retrieval", "plan_only": False},
     # Planner/system helpers
     "ask_for_clarification": {"kind": "retrieval", "plan_only": False},
@@ -228,8 +589,6 @@ def is_plan_only_tool(name: str) -> bool:
     return bool(TOOL_METADATA_REGISTRY.get(name, {}).get("plan_only", False))
 
 
-import contextlib
-
 from pi.services.schemas.chat import RetrievalTools
 
 
@@ -240,6 +599,7 @@ def tool_name_to_retrieval_tool(tool_name: str) -> str:
         "structured_db_tool": RetrievalTools.STRUCTURED_DB_TOOL,
         "pages_search_tool": RetrievalTools.PAGES_SEARCH_TOOL,
         "docs_search_tool": RetrievalTools.DOCS_SEARCH_TOOL,
+        "web_search_tool": RetrievalTools.WEB_SEARCH_TOOL,
         "action_executor_agent": RetrievalTools.ACTION_EXECUTOR_TOOL,
     }
     return tool_to_enum_map.get(tool_name, tool_name)
@@ -255,6 +615,7 @@ def tool_name_shown_to_user(tool_name: str) -> str:
         "list_recent_cycles": "Recent Cycles",
         "pages_search_tool": "Semantic search of pages",
         "docs_search_tool": "Semantic search of docs",
+        "web_search_tool": "Web search",
         "action_executor_agent": "Action Execution",
         # Entity search tools
         "search_project_by_name": "Search Project",
@@ -266,6 +627,11 @@ def tool_name_shown_to_user(tool_name: str) -> str:
         "search_user_by_name": "Search User",
         "search_workitem_by_name": "Search Work-item",
         "search_workitem_by_identifier": "Search Work-item by ID",
+        # Plotting Tools
+        "create_pie_chart": "Generate a Pie Chart",
+        "create_bar_chart": "Generate a Bar Chart",
+        "create_line_chart": "Generate a Line Chart",
+        "create_stacked_bar_chart": "Generate a Stacked Bar Chart",
         # Other common tools
         "states_list": "List States",
         "projects_list": "List Projects",
@@ -531,6 +897,7 @@ def retrieval_tool_to_tool_name(retrieval_tool: str) -> str:
         "structured_db_tool": "structured_db_tool",
         "pages_search_tool": "pages_search_tool",
         "docs_search_tool": "docs_search_tool",
+        "web_search_tool": "web_search_tool",
         "action_executor_tool": "action_executor_agent",
     }
     return enum_to_tool_map.get(retrieval_tool, retrieval_tool)
@@ -614,23 +981,17 @@ def log_toolset_details(tools: List[Any], chat_id: str) -> None:
 # Action Executor helper methods
 # ------------------------------
 
-# TOOL_CALL_REASONING_INSTRUCTIONS = """**MANDATORY REASONING AND COMMUNICATION (CRITICAL - REQUIRED FOR EVERY TOOL CALL):**
-# - **BEFORE EACH TOOL CALL**: You MUST explain your reasoning and intent
-#   - State what information you're trying to gather or what action you're planning
-#   - Explain why this tool is necessary for completing the user's request
-#   - Describe what you expect to get from the tool and how you'll use it
-#   - Example: "The user wants to check workitems assigned to Anil. First, I need to search for the user 'Anil' to get their ID, then I'll use that ID to filter workitems." # noqa: E501
-# - **AFTER EACH TOOL CALL**: You MUST provide a brief summary of what you learned
-#   - Summarize key information obtained from the tool
-#   - Explain how this information helps with the next step
-#   - If the tool returned unexpected results, explain how you'll adapt
-#   - Example: "Found user Anil Kumar with ID xyz-123. Now I'll use this ID to search for workitems assigned to them." # noqa: E501
-# - **THINKING OUT LOUD**: Express your thought process naturally
-#   - Share your understanding of the user's request
-#   - Explain your strategy for accomplishing the task
-#   - Mention any assumptions you're making
-# - This reasoning is MANDATORY and helps with debugging and understanding your decision-making process
-# - NEVER skip the reasoning - it's essential for transparency and troubleshooting"""  # noqa: E501
+TOOL_CALL_REASONING_INSTRUCTIONS = """## Mandatory reasoning & communication (required for every tool call)
+
+Before each tool call, write a short, natural explanation of what you are doing and why.
+After each tool call, write a short recap of what you learned and what you will do next.
+
+### Guidelines
+- Before tool call: 5–7 sentences (intent + why + what you expect back).
+- After tool call: 3–5 sentences (key result + next step).
+- Be clear and helpful, but do not write a long essay.
+- Put this reasoning in the assistant `content` surrounding your `tool_calls` (before/after), not inside tool arguments.
+"""  # noqa: E501
 
 
 # TOOL_CALL_REASONING_REINFORCEMENT = """**FINAL MANDATORY REQUIREMENT - REASONING FOR EVERY TOOL CALL:**
@@ -824,18 +1185,34 @@ def build_method_prompt(
     clarification_context: Optional[Dict[str, Any]] = None,
     user_meta: Optional[Dict[str, Any]] = None,
     source: Optional[str] = None,
+    websearch_enabled: bool = False,
 ) -> str:
     from pi.services.chat.prompts import RETRIEVAL_TOOL_DESCRIPTIONS
+    from pi.services.chat.prompts import TOOL_CALL_REASONING_REINFORCEMENT
     from pi.services.chat.prompts import plane_context
 
     address_user_by_name = True
 
     WORK_TREE_INSTRUCTIONS = work_tree_instructions_app_response if source == "app" else work_tree_instructions_normal_response
 
+    # Add citation instructions when web search is enabled
+    web_search_citation_block = ""
+    if websearch_enabled:
+        web_search_citation_block = """
+**WEB SEARCH CITATION INSTRUCTIONS (IMPORTANT):**
+When using information from web_search_tool results:
+- Embed clickable source links directly inline after facts/claims
+- Format: fact or claim [[Source Title](URL)]
+- Example: "Plane has 44K stars [[GitHub](https://github.com/makeplane)]"
+- Use short, descriptive titles (e.g., "GitHub", "Official Blog", "Reuters")
+- Do NOT include a separate Sources section - all citations should be inline
+"""
+
     method_prompt = f"""You are an AI assistant that helps users perform actions in Plane.
 
 Context about Plane:
 {plane_context}
+{web_search_citation_block}
 
 **IMPORTANT: You are in PLANNING mode with a TWO-PHASE APPROACH:**
 
@@ -925,12 +1302,15 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - **MULTI-ACTION REQUESTS**: When handling requests with multiple actions, if ANY action requires a feature check, you MUST call `projects_retrieve` FIRST before planning any of the actions.
 - **EXCEPTION (NEW PROJECT IN CURRENT PLAN)**: If the target project is being CREATED in this same plan and does not yet have a real UUID:
     - Do NOT call `projects_retrieve` during planning (the project doesn't exist yet to retrieve)
-    - Instead, you MUST enable the required feature flag during `projects_create` itself
-    - **Example**: If planning to create a project AND a cycle in the same plan:
+    - Instead, you MUST enable the required feature flag during `projects_create` itself (for features that support it) OR plan a `projects_update_features` call immediately after project creation (for features like epics)
+    - **Example 1**: If planning to create a project AND a cycle in the same plan:
         1. Call `projects_create` with `cycle_view=True` (to enable cycles feature)
         2. Call `cycles_create` with `project_id="<id of project: project-name>"`
+    - **Example 2 (EPICS - CRITICAL)**: If planning to create a project AND epics in the same plan:
+        1. Call `projects_create` to create the project
+        2. Call `projects_update_features` with `project_id="<id of project: project-name>"` and `epics=True` (epics CANNOT be enabled via projects_create - this step is MANDATORY)
+        3. Call `create_epic` with `project_id="<id of project: project-name>"`
     - **Available feature flags for projects_create**:
-        - `epics` (boolean): Enable epics feature
         - `cycle_view` (boolean): Enable cycles feature
         - `module_view` (boolean): Enable modules feature
         - `page_view` (boolean): Enable pages feature
@@ -938,6 +1318,8 @@ Use retrieval tools to gather information, then plan the modifying actions based
         - `is_issue_type_enabled` (boolean): Enable workitem types feature
         - `is_time_tracking_enabled` (boolean): Enable time-tracking (worklogs) feature
         - `issue_views_view` (boolean): Enable workitem views feature
+    - **Features requiring `projects_update_features` call after project creation**:
+        - `epics` (boolean): Enable epics feature - MUST use `projects_update_features`, NOT available in `projects_create`
 - Available tools:
     - `projects_retrieve` tool to get details of the project features (MUST call before creating project-scoped entities for EXISTING projects)
     - `projects_update` tool to update the project features (MUST include in plan if feature needs to be enabled for EXISTING projects)
@@ -1229,7 +1611,46 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
             method_prompt += "\nIMPORTANT: The current user message is a clarification response to the original request above. Use the clarification answer to resolve missing information and continue with the ORIGINAL request, not as a new standalone request.\n"  # noqa E501
         except Exception:
             pass
+        # Reasoning guidance is added globally below so it applies to all build-mode planning.
 
+    # Ensure build-mode planning uses the same "reasoning around tool_calls" guidance as ask-mode.
+    method_prompt += f"\n\n{TOOL_CALL_REASONING_REINFORCEMENT}"
+
+    # Add answer delimiter instruction LAST (after TOOL_CALL_REASONING_REINFORCEMENT) to ensure it's the final instruction the model sees
+    # This is critical because we want the delimiter to be applied unconditionally to ALL responses
+    method_prompt += """
+
+## MANDATORY OUTPUT FORMAT (APPLIES TO ALL RESPONSES - NO EXCEPTIONS)
+
+**CRITICAL - ANSWER DELIMITER FORMAT:**
+You MUST ALWAYS structure your response with the delimiter, regardless of whether you called tools, planned actions, or are answering a general question.
+
+Format:
+1. First, write any reasoning/thinking/context (this will be shown in the "Thought" panel)
+2. Then output the EXACT delimiter: ππANSWERππ on its own line
+3. Then write your actual response to the user (this will be shown as the main response)
+
+Example 1 (with planned actions):
+```
+I've analyzed the request and will create two work items.
+
+ππANSWERππ
+
+I've planned the following actions for your approval:
+- Create work item "Fix login bug"
+```
+
+Example 2 (answering a question without tools):
+```
+The user is asking a general question that I can answer directly.
+
+ππANSWERππ
+
+Here's the answer to your question...
+```
+
+**ABSOLUTE REQUIREMENT:** The delimiter ππANSWERππ MUST appear in EVERY response you generate. This is non-negotiable. If you forget the delimiter, the user interface will break and the user won't see your answer.
+"""  # noqa: E501
     return method_prompt
 
 
@@ -1564,7 +1985,23 @@ def format_clarification_as_text(clarification_data: Dict[str, Any]) -> str:
                         else:
                             text_parts.append(f"{i}. **{display_name}**\n")
                     else:
-                        text_parts.append(f"{i}. {str(option)}\n")
+                        # Handle custom dict formats (e.g., intake items with custom keys)
+                        # Extract meaningful values and format them nicely
+                        formatted_parts = []
+                        for key, value in option.items():
+                            if key in ("id", "type", "url"):
+                                # Skip internal/metadata fields
+                                continue
+                            if isinstance(value, (str, int, float)) and value:
+                                # Format key nicely: 'intake_item_title' -> 'Intake Item Title'
+                                nice_key = key.replace("_", " ").title()
+                                formatted_parts.append(f"{nice_key}: {value}")
+
+                        if formatted_parts:
+                            text_parts.append(f"{i}. **{" | ".join(formatted_parts)}**\n")
+                        else:
+                            # Final fallback if dict has no useful data
+                            text_parts.append(f"{i}. {str(option)}\n")
                 else:
                     text_parts.append(f"{i}. {str(option)}\n")
 
@@ -2102,6 +2539,57 @@ async def stream_content_in_chunks(content: str, words_per_chunk: int = 15, dela
         yield "".join(current_chunk)
 
 
+class WordBatcher:
+    """Stateful word-level batcher that accumulates text and yields when a word threshold is reached.
+
+    Use this to reduce the number of SSE events sent to the browser by batching
+    individual LLM tokens (~1-3 chars each) into larger chunks (~15 words).
+
+    Usage::
+
+        batcher = WordBatcher(words_per_batch=15)
+        for token in tokens:
+            batched = batcher.add(token)
+            if batched:
+                yield batched
+        remaining = batcher.flush()
+        if remaining:
+            yield remaining
+    """
+
+    __slots__ = ("_batch", "_word_count", "_threshold")
+
+    def __init__(self, words_per_batch: int = 15) -> None:
+        self._batch: list[str] = []
+        self._word_count = 0
+        self._threshold = words_per_batch
+
+    def add(self, text: str) -> str | None:
+        """Add *text* to the buffer. Returns accumulated batch when threshold is reached, else ``None``."""
+        tokens = re.split(r"(\s+)", text)
+        to_yield_parts: list[str] = []
+        for token in tokens:
+            self._batch.append(token)
+            if token and not token.isspace():
+                self._word_count += 1
+            if self._word_count >= self._threshold:
+                to_yield_parts.append("".join(self._batch))
+                self._batch = []
+                self._word_count = 0
+        if to_yield_parts:
+            return "".join(to_yield_parts)
+        return None
+
+    def flush(self) -> str | None:
+        """Flush any remaining buffered text. Returns ``None`` if buffer is empty."""
+        if not self._batch:
+            return None
+        result = "".join(self._batch)
+        self._batch = []
+        self._word_count = 0
+        return result
+
+
 async def batch_llm_stream_by_words(llm_stream: AsyncIterator[Any], words_per_batch: int = 10) -> AsyncIterator[str]:
     """
     Batch LLM stream chunks in real-time by word count to reduce browser event overhead.
@@ -2118,8 +2606,7 @@ async def batch_llm_stream_by_words(llm_stream: AsyncIterator[Any], words_per_ba
     Yields:
         Batched content chunks as strings
     """
-    current_batch = []
-    word_count = 0
+    batcher = WordBatcher(words_per_batch)
 
     async for chunk in llm_stream:
         # Extract content from LLM chunk (handles different LLM response formats)
@@ -2127,24 +2614,11 @@ async def batch_llm_stream_by_words(llm_stream: AsyncIterator[Any], words_per_ba
         if not chunk_content:
             continue
 
-        chunk_str = str(chunk_content)
-
-        # Split the chunk into tokens (words and whitespace)
-        # Using the same pattern as stream_content_in_chunks to preserve formatting
-        tokens = re.split(r"(\s+)", chunk_str)
-
-        for token in tokens:
-            current_batch.append(token)
-            # Count non-whitespace tokens as words
-            if token and not token.isspace():
-                word_count += 1
-
-            # Yield batch when word count threshold is reached
-            if word_count >= words_per_batch:
-                yield "".join(current_batch)
-                current_batch = []
-                word_count = 0
+        batched = batcher.add(str(chunk_content))
+        if batched:
+            yield batched
 
     # Yield any remaining content
-    if current_batch:
-        yield "".join(current_batch)
+    remaining = batcher.flush()
+    if remaining:
+        yield remaining

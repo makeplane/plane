@@ -36,6 +36,8 @@ from plane.ee.models import (
 from plane.utils.exception_logger import log_exception
 from plane.ee.bgtasks.template_task import create_workitems
 from plane.ee.utils.workflow import WorkflowStateManager
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 logger = logging.getLogger("plane.worker")
 
@@ -56,6 +58,16 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
     # Format: recurring_{task_id}_{timestamp} for consistency and debuggability
     task_id = self.request.id or f"recurring_{recurring_workitem_task_id}_{int(timezone.now().timestamp())}"
 
+    # Idempotency guard: skip if this task_id already completed successfully
+    if RecurringWorkitemTaskLog.objects.filter(
+        task_id=task_id,
+        status=RecurringWorkitemTaskLog.TaskStatus.SUCCESS,
+    ).exists():
+        logger.info(
+            f"Recurring task {recurring_workitem_task_id} already completed (task_id={task_id}), skipping duplicate"
+        )
+        return {"status": "skipped", "message": "Duplicate execution"}
+
     try:
         # Get the recurring task
         recurring_task = (
@@ -73,9 +85,13 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
             try:
                 periodic_task_id = recurring_task.periodic_task.id
                 recurring_task.periodic_task.delete()
-                logger.info(f"Cleaned up legacy PeriodicTask {periodic_task_id} for recurring task {recurring_workitem_task_id}")
+                logger.info(
+                    f"Cleaned up legacy PeriodicTask {periodic_task_id} for recurring task {recurring_workitem_task_id}"
+                )
             except Exception as cleanup_error:
-                logger.warning(f"Failed to clean up legacy PeriodicTask for {recurring_workitem_task_id}: {cleanup_error}")
+                logger.warning(
+                    f"Failed to clean up legacy PeriodicTask for {recurring_workitem_task_id}: {cleanup_error}"
+                )
             recurring_task.periodic_task = None
             # Initialize next_scheduled_at for batch scheduler - calculate next future date
             # to avoid iterating through past dates one by one
@@ -83,6 +99,15 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
             recurring_task.save(update_fields=["periodic_task", "next_scheduled_at"])
 
         slug = recurring_task.workspace.slug
+
+        if not check_workspace_feature_flag(feature_key=FeatureFlag.RECURRING_WORKITEMS, slug=slug):
+            recurring_task.enabled = False
+            recurring_task.save()
+            logger.info(
+                f"Recurring task {recurring_workitem_task_id} disabled: feature not available for workspace plan"
+            )
+
+            return
 
         # get the user id from the recurring task
         user_id = recurring_task.created_by.id
@@ -237,7 +262,9 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
         # Advance to next scheduled time for batch scheduler
         next_scheduled = recurring_task.advance_to_next_schedule()
         if next_scheduled:
-            logger.info(f"Advanced recurring task {recurring_workitem_task_id} to next scheduled time: {next_scheduled}")
+            logger.info(
+                f"Advanced recurring task {recurring_workitem_task_id} to next scheduled time: {next_scheduled}"
+            )
 
         logger.info(f"Successfully created work item {work_item.id} from recurring task {recurring_workitem_task_id}")
 

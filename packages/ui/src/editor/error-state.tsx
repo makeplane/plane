@@ -78,7 +78,7 @@ export function ErrorState({ error, code, theme }: ErrorStateProps) {
   return (
     <div
       className={cn(
-        "flex items-center rounded-lg border border-subtle-1 bg-layer-1 h-20 my-2 transition-all duration-500",
+        "flex items-center rounded-lg border border-subtle-1 bg-layer-1 min-h-20 my-2 transition-all duration-500 overflow-hidden",
         isVisible ? "animate-fade-in opacity-100" : "opacity-0 translate-y-2.5"
       )}
     >

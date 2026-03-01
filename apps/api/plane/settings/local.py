@@ -44,90 +44,117 @@ LOG_DIR = os.path.join(BASE_DIR, "logs")  # noqa
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
 
+DEFAULT_LOG_HANDLER = "console_verbose"
+
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": False,
+    "disable_existing_loggers": True,
     "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
-        },
+        "verbose": {"format": "%(asctime)s [%(process)d] %(levelname)s %(name)s: %(message)s"},
         "json": {
             "()": "pythonjsonlogger.json.JsonFormatter",
             "fmt": "%(levelname)s %(asctime)s %(module)s %(name)s %(message)s",
         },
     },
     "handlers": {
-        "console": {
+        "console_verbose": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
             "level": "DEBUG",
+        },
+        "console_json": {
             "class": "logging.StreamHandler",
             "formatter": "json",
-        }
+            "level": "DEBUG",
+        },
     },
     "loggers": {
-        "plane.api.request": {
+        # Root logger - catches any unconfigured loggers
+        "": {
+            "level": "WARNING",
+            "handlers": [DEFAULT_LOG_HANDLER],
+        },
+        # Django loggers - explicitly configured with our handler
+        "django": {
+            "level": "WARNING",
+            "handlers": [DEFAULT_LOG_HANDLER],
+            "propagate": False,
+        },
+        # SQL query logging - set to DEBUG to see all queries
+        "django.db.backends": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": [DEFAULT_LOG_HANDLER],
+            "propagate": False,
+        },
+        # Parent logger for all plane.* loggers
+        "plane": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": [DEFAULT_LOG_HANDLER],
+            "propagate": False,
+        },
+        "plane.api.request": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.api": {
-            "level": "INFO",
-            "handlers": ["console"],
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.worker": {
-            "level": "INFO",
-            "handlers": ["console"],
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.exception": {
-            "level": "ERROR",
-            "handlers": ["console"],
+            "level": "DEBUG" if DEBUG else "ERROR",
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.external": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.mongo": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.migrations": {
-            "level": "INFO",
-            "handlers": ["console"],
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": [DEFAULT_LOG_HANDLER],
+            "propagate": False,
+        },
+        "plane.silo": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.event_stream": {
             "level": "INFO",
-            "handlers": ["console"],
-            "propagate": False,
-        },
-        "plane.automations": {
-            "level": "INFO",
-            "handlers": ["console"],
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.automations.consumer": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.authentication": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.payments": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
         "plane.webhook": {
             "level": "INFO",
-            "handlers": ["console"],
+            "handlers": [DEFAULT_LOG_HANDLER],
             "propagate": False,
         },
     },

@@ -24,7 +24,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
-import { SubscriptionPill } from "@/plane-web/components/common/subscription/subscription-pill";
+import { SubscriptionPill } from "@/components/common/subscription/subscription-pill";
 
 export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSettingsSidebarHeader() {
   // router
@@ -42,8 +42,8 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
   if (!currentWorkspaceRole) return null;
 
   return (
-    <div className="shrink-0 px-5">
-      <div className="py-3 flex items-center gap-1 text-body-md-medium">
+    <div className="sticky top-0 shrink-0 bg-surface-1 pb-1.5">
+      <div className="py-3 pl-4 pr-5 flex items-center gap-1 text-body-md-medium">
         <IconButton
           variant="ghost"
           size="base"
@@ -52,12 +52,12 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
         />
         <p>Workspace settings</p>
       </div>
-      <div className="flex items-center justify-between gap-2 py-0.5">
+      <div className="mt-1.5 flex items-center justify-between gap-2 py-0.5 px-5">
         <div className="flex items-center gap-2 truncate">
           <WorkspaceLogo
             logo={currentWorkspace?.logo_url}
             name={currentWorkspace?.name}
-            classNames="shrink-0 size-8 border border-subtle"
+            classNames="shrink-0 size-8 border border-subtle rounded-md"
           />
           <div className="truncate">
             <p className="text-body-sm-medium truncate">{currentWorkspace?.name}</p>

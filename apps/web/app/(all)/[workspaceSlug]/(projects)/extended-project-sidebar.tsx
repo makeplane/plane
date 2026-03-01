@@ -15,7 +15,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { PlusIcon, SearchIcon } from "@plane/propel/icons";
@@ -23,13 +23,13 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
 // components
-import { CreateProjectModal } from "@/components/project/create-project-modal";
+import { CreateProjectModal } from "@/components/projects/modals/create-project-modal";
 import { SidebarProjectsListItem } from "@/components/workspace/sidebar/projects-list-item";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import type { TProject } from "@/plane-web/types";
+import type { TProject } from "@/types";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
 export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar() {
@@ -124,7 +124,6 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
               <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                 <button
                   type="button"
-                  data-ph-element={PROJECT_TRACKER_ELEMENTS.EXTENDED_SIDEBAR_ADD_BUTTON}
                   className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0 text-tertiary hover:text-secondary transition-colors"
                   onClick={() => {
                     setIsProjectModalOpen(true);
@@ -157,7 +156,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
             />
           </div>
         ) : (
-          <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 pl-9 pr-2">
+          <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 px-4">
             {filteredProjects.map((projectId, index) => (
               <SidebarProjectsListItem
                 key={projectId}

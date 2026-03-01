@@ -18,6 +18,7 @@ from django.contrib.postgres.fields import ArrayField
 # Module imports
 from plane.utils.html_processor import strip_tags
 from plane.db.models import BaseModel
+from plane.db.mixins import ChangeTrackerMixin
 
 
 class PropertyTypeEnum(models.TextChoices):
@@ -37,7 +38,7 @@ class RelationTypeEnum(models.TextChoices):
     USER = "USER", "User"
 
 
-class Customer(BaseModel):
+class Customer(ChangeTrackerMixin, BaseModel):
     name = models.CharField(max_length=255)
     description = models.JSONField(blank=True, null=True)
     description_html = models.TextField(blank=True, null=True)
@@ -53,6 +54,9 @@ class Customer(BaseModel):
     contract_status = models.CharField(max_length=255, blank=True, null=True)
     revenue = models.CharField(blank=True, null=True)
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="customers")
+    archived_at = models.DateTimeField(null=True)
+
+    TRACKED_FIELDS = ["website_url"]
 
     @property
     def logo_url(self):
@@ -62,6 +66,9 @@ class Customer(BaseModel):
         return None
 
     def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        url_changed = self.has_changed("website_url") if not is_new else False
+
         self.description_stripped = (
             None
             if (self.description_html == "" or self.description_html is None)
@@ -69,6 +76,11 @@ class Customer(BaseModel):
         )
 
         super(Customer, self).save(*args, **kwargs)
+
+        if (is_new or url_changed) and self.website_url:
+            from plane.bgtasks.link_crawler_task import link_crawler
+
+            link_crawler.delay(str(self.id), self.website_url, "customer")
 
     class Meta:
         unique_together = ["name", "workspace", "deleted_at"]
@@ -223,6 +235,7 @@ class CustomerRequest(BaseModel):
     customer = models.ForeignKey("ee.Customer", on_delete=models.CASCADE, related_name="requests")
     link = models.URLField(blank=True, null=True)
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="customer_requests")
+    archived_at = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
         # Strip the html tags using html parser

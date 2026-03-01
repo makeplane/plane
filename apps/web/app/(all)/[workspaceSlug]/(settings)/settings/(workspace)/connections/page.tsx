@@ -24,7 +24,7 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { ConnectionsProfileSettingsView } from "@/plane-web/components/profile/connections-settings-view";
+import { ConnectionsProfileSettingsView } from "@/components/profile/connections-settings-view";
 // local imports
 import type { Route } from "./+types/page";
 import { ConnectionsWorkspaceSettingsHeader } from "./header";

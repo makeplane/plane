@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export enum E_FEATURE_FLAGS {
-  ISSUE_TYPES = "ISSUE_TYPES",
-}
+import type { E_FEATURE_FLAGS } from "@plane/constants";
 
 export type TFeatureFlags = keyof typeof E_FEATURE_FLAGS;

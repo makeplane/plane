@@ -20,7 +20,7 @@ import { PageHead } from "@/components/core/page-title";
 import { useUser } from "@/hooks/store/user/user-user";
 // plane web imports
 
-import { InputBox } from "@/plane-web/components/pi-chat/input";
+import { InputBox } from "@/components/pi-chat/input";
 
 function NewChatPage() {
   // store hooks

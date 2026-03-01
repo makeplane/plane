@@ -76,6 +76,7 @@ class IntakeIssue(ProjectBaseModel):
         on_delete=models.SET_NULL,
         null=True,
     )
+    trackable_anchor = models.CharField(max_length=255, null=True, blank=True)
     source = models.CharField(max_length=255, default="IN_APP", null=True, blank=True)
     source_email = models.TextField(blank=True, null=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)

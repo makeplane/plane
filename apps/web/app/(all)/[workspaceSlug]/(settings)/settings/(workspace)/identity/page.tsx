@@ -12,7 +12,7 @@
  */
 
 // ee components
-import { IdentityRoot } from "@/plane-web/components/workspace/settings/identity/root";
+import { IdentityRoot } from "@/components/workspace/settings/identity/root";
 // types
 import type { Route } from "./+types/page";
 

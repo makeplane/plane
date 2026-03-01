@@ -21,7 +21,7 @@ import { WorkspaceLogo } from "@/components/workspace/logo";
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 type TAuthHeader = {
   workspaceSlug: string | undefined;

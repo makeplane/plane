@@ -16,7 +16,6 @@ export * from "./badge";
 export * from "./breadcrumbs";
 export * from "./button";
 export * from "./card";
-export * from "./collapsible";
 export * from "./color-picker";
 export * from "./constants";
 export * from "./content-wrapper";

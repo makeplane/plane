@@ -15,11 +15,11 @@ import type {
   Attachment as JiraAttachment,
   Priority as JiraPriority,
   StatusDetails as JiraState,
-} from "jira.js/out/version2/models";
+} from "jira.js/out/version2/models/index.js";
 import type { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
 import { E_IMPORTER_KEYS } from "@/core";
 import type { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField } from "@/jira-server/types";
-import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
+import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES, SUPPORTED_CUSTOM_FIELD_TYPES } from "./custom-field-etl";
 import { getFormattedDate } from "./date";
 
 export const getTargetState = (stateMap: IStateConfig[], sourceState: JiraState): ExState | undefined => {
@@ -163,19 +163,76 @@ export const fetchPaginatedDataByKey = async <T>(
 };
 
 export const getPropertyAttributes = (jiraIssueField: JiraIssueField): Partial<ExIssueProperty> => {
-  if (!jiraIssueField.schema || !jiraIssueField.schema.custom) {
+  if (!jiraIssueField.schema) {
     return {};
   }
 
-  return {
-    ...SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[jiraIssueField.schema.custom as JiraCustomFieldKeys],
-  };
+  // Check for custom field types first (e.g., "com.atlassian.jira.plugin.system.customfieldtypes:textfield")
+  if (jiraIssueField.schema.custom) {
+    const supportedFieldAttributes =
+      SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[jiraIssueField.schema.custom as JiraCustomFieldKeys];
+
+    if (supportedFieldAttributes) {
+      return supportedFieldAttributes;
+    }
+  }
+
+  // Fallback to system field types
+  if (jiraIssueField.schema.type) {
+    // For array types, construct a composite key like "array-string"
+    if (jiraIssueField.schema.type === "array" && jiraIssueField.schema.items) {
+      const arrayKey = `array-${jiraIssueField.schema.items}`;
+      const arrayAttributes = SUPPORTED_CUSTOM_FIELD_TYPES[arrayKey];
+      if (arrayAttributes) {
+        return arrayAttributes;
+      }
+    }
+
+    // For non-array types, use the type directly
+    const typeAttributes = SUPPORTED_CUSTOM_FIELD_TYPES[jiraIssueField.schema.type];
+    if (typeAttributes) {
+      return typeAttributes;
+    }
+  }
+
+  return {};
+};
+
+/**
+ * Resolves the field type key from a Jira issue field's schema.
+ * Prefers custom attribute keys (schema.custom) over system type keys (schema.type).
+ * For array types, constructs a composite key like "array-string".
+ */
+export const resolveFieldTypeKey = (schema?: {
+  custom?: string;
+  type?: string;
+  items?: string;
+}): string | undefined => {
+  if (!schema) return undefined;
+
+  // Prefer custom attribute key
+  if (schema.custom && SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[schema.custom as JiraCustomFieldKeys]) {
+    return schema.custom;
+  }
+
+  // Fallback to system type key
+  if (schema.type) {
+    if (schema.type === "array" && schema.items) {
+      const arrayKey = `array-${schema.items}`;
+      if (SUPPORTED_CUSTOM_FIELD_TYPES[arrayKey]) return arrayKey;
+    }
+    if (SUPPORTED_CUSTOM_FIELD_TYPES[schema.type]) return schema.type;
+  }
+
+  return undefined;
 };
 
 export const getPropertyValues = (
   resourceId: string,
   projectId: string,
-  customFieldType: JiraCustomFieldKeys,
+  typeId: string,
+  propertyId: string,
+  fieldTypeKey: string,
   value: any,
   renderedValue: any
 ): ExIssuePropertyValue => {
@@ -187,7 +244,7 @@ export const getPropertyValues = (
 
   if (!value) return [];
 
-  switch (customFieldType) {
+  switch (fieldTypeKey) {
     case "com.atlassian.jira.plugin.system.customfieldtypes:textfield":
       // Handle textfield
       propertyValues.push({
@@ -216,8 +273,8 @@ export const getPropertyValues = (
       // Handle single select
       propertyValues.push({
         ...commonPropertyProp,
-        external_id: `${projectId}_${resourceId}_${value.id}`,
-        value: `${projectId}_${resourceId}_${value.id}`,
+        external_id: `${projectId}_${resourceId}_${typeId}_${propertyId}_${value.id}`,
+        value: `${projectId}_${resourceId}_${typeId}_${propertyId}_${value.id}`,
       });
       break;
     case "com.atlassian.jira.plugin.system.customfieldtypes:float":
@@ -242,8 +299,8 @@ export const getPropertyValues = (
         value.forEach((val) => {
           propertyValues.push({
             ...commonPropertyProp,
-            external_id: `${projectId}_${resourceId}_${val.id}`,
-            value: `${projectId}_${resourceId}_${val.id}`,
+            external_id: `${projectId}_${resourceId}_${typeId}_${propertyId}_${val.id}`,
+            value: `${projectId}_${resourceId}_${typeId}_${propertyId}_${val.id}`,
           });
         });
       }
@@ -263,8 +320,8 @@ export const getPropertyValues = (
       // Handle radiobuttons
       propertyValues.push({
         ...commonPropertyProp,
-        external_id: `${projectId}_${resourceId}_${value.id}`,
-        value: `${projectId}_${resourceId}_${value.id}`,
+        external_id: `${projectId}_${resourceId}_${typeId}_${propertyId}_${value.id}`,
+        value: `${projectId}_${resourceId}_${typeId}_${propertyId}_${value.id}`,
       });
       break;
     case "com.atlassian.jira.plugin.system.customfieldtypes:multiselect":
@@ -273,8 +330,8 @@ export const getPropertyValues = (
         value.forEach((val) => {
           propertyValues.push({
             ...commonPropertyProp,
-            external_id: `${projectId}_${resourceId}_${val.id}`,
-            value: `${projectId}_${resourceId}_${val.id}`,
+            external_id: `${projectId}_${resourceId}_${typeId}_${propertyId}_${val.id}`,
+            value: `${projectId}_${resourceId}_${typeId}_${propertyId}_${val.id}`,
           });
         });
       }
@@ -300,8 +357,87 @@ export const getPropertyValues = (
         });
       }
       break;
+
+    // ── System field type cases (matched via SUPPORTED_CUSTOM_FIELD_TYPES) ──
+    case "string":
+      // Plain text value
+      propertyValues.push({
+        ...commonPropertyProp,
+        value: value,
+      });
+      break;
+    case "number":
+      // Numeric value
+      propertyValues.push({
+        ...commonPropertyProp,
+        value: value,
+      });
+      break;
+    case "date":
+      // Date value (already formatted as string)
+      propertyValues.push({
+        ...commonPropertyProp,
+        value: value,
+      });
+      break;
+    case "datetime": {
+      // System datetime (format it)
+      const sysFormattedDate = getFormattedDate(value);
+      if (sysFormattedDate) {
+        propertyValues.push({
+          ...commonPropertyProp,
+          value: sysFormattedDate,
+        });
+      }
+      break;
+    }
+    case "user":
+      // Single user via system type
+      if (value.emailAddress || value.displayName) {
+        propertyValues.push({
+          ...commonPropertyProp,
+          external_id: value.emailAddress ?? value.displayName,
+          value: value.emailAddress ?? value.displayName,
+        });
+      }
+      break;
+    case "array-string":
+      // Array of strings
+      if (Array.isArray(value)) {
+        const calculatedValue = value
+          .map((val) => {
+            if (typeof val === "object") {
+              if (val.name) {
+                return val.name;
+              }
+              return JSON.stringify(val);
+            }
+            return val;
+          })
+          .join(", ");
+
+        propertyValues.push({
+          ...commonPropertyProp,
+          value: calculatedValue,
+        });
+      }
+      break;
+    case "array-user":
+      // Array of users via system type
+      if (Array.isArray(value)) {
+        value.forEach((val) => {
+          if (val.emailAddress || val.displayName) {
+            propertyValues.push({
+              ...commonPropertyProp,
+              external_id: val.emailAddress ?? val.displayName,
+              value: val.emailAddress ?? val.displayName,
+            });
+          }
+        });
+      }
+      break;
     default:
-      console.warn(`Unhandled custom field type: ${customFieldType}`);
+      console.warn(`Unhandled field type: ${fieldTypeKey}`);
   }
 
   return propertyValues;

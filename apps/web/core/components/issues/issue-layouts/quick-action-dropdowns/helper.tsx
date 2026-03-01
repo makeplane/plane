@@ -21,7 +21,7 @@ import type { EIssuesStoreType, TIssue } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // plane web imports
-import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/copy-menu-helper";
+import { store } from "@/lib/store-context";
 
 // Generic helper function to handle optional function calls gracefully
 // Overload for functions without parameters
@@ -179,7 +179,8 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   });
 
   const createCopyMenuItem = (workspaceSlug?: string): TContextMenuItem => {
-    const baseItem = {
+    const isDuplicateEnabled = workspaceSlug ? store.featureFlags.flags[workspaceSlug]?.COPY_WORK_ITEM : false;
+    const baseItem: TContextMenuItem = {
       key: "make-a-copy",
       title: t("common.actions.make_a_copy"),
       icon: CopyIcon,
@@ -189,13 +190,29 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
       shouldRender: isEditingAllowed && (issueTypeDetail?.is_active ?? true),
     };
 
-    return createCopyMenuWithDuplication({
-      baseItem,
-      activeLayout,
-      setCreateUpdateIssueModal,
-      setDuplicateWorkItemModal,
-      workspaceSlug,
-    });
+    if (setDuplicateWorkItemModal && isDuplicateEnabled) {
+      return {
+        ...baseItem,
+        nestedMenuItems: [
+          {
+            key: "copy-in-same-project",
+            title: "Copy in same project",
+            action: () => {
+              setCreateUpdateIssueModal(true);
+            },
+          },
+          {
+            key: "copy-in-different-project",
+            title: "Copy in different project",
+            action: () => {
+              setDuplicateWorkItemModal(true);
+            },
+          },
+        ],
+      };
+    }
+
+    return baseItem;
   };
 
   const createOpenInNewTabMenuItem = (): TContextMenuItem => ({

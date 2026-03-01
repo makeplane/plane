@@ -338,8 +338,11 @@ def build_planning_tools(
 
             if cat in project_scoped_cats:
                 tools_for_project = chatbot_instance._build_planning_method_tools("projects", method_executor, context)
-                # remove all tools except projects_retrieve and projects_update
-                tools_for_project = [t for t in tools_for_project if getattr(t, "name", "") in ["projects_retrieve", "projects_update"]]
+                # Include projects_retrieve, projects_update, and projects_update_features for project-scoped work
+                # projects_update_features is needed to enable features like epics before creating them
+                tools_for_project = [
+                    t for t in tools_for_project if getattr(t, "name", "") in ["projects_retrieve", "projects_update", "projects_update_features"]
+                ]
                 all_method_tools.extend(tools_for_project)
 
             if cat in workspace_scoped_cats:
@@ -1341,37 +1344,6 @@ async def handle_preflight_clarification(
         log.warning(f"ChatID: {chat_id} - Failed to create clarification record (preflight): {e}")
 
     return True, clarification_payload, clarification_tool_message, flow_step, current_step + 1
-
-
-# ------------------------------
-# Final response builders
-# ------------------------------
-
-
-async def build_and_stream_final_response(
-    *,
-    response,
-    current_step: int,
-    iteration_count: int,
-    chat_id,
-) -> Tuple[List[str], int, Optional[Dict[str, Any]]]:
-    """Build final response chunks for when actions have been planned.
-
-    Returns: (final_response_chunks, next_step, optional_step)
-    """
-
-    final_response_chunks = []
-
-    if hasattr(response, "content") and response.content:
-        content = str(response.content).strip()
-        if content:
-            final_response_chunks.append(content + "\n")
-            return final_response_chunks, current_step, None
-
-    # Fallback if no content provided
-    content = "Planned these actions for you"
-    final_response_chunks.append(content + "\n")
-    return final_response_chunks, current_step, None
 
 
 # ------------------------------

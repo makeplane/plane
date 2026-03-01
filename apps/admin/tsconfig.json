@@ -1,8 +1,10 @@
 {
   "extends": "@plane/typescript-config/react-router.json",
   "compilerOptions": {
+    "composite": false,
     "noImplicitOverride": false,
     "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
     "noUnusedParameters": false,
     "noUnusedLocals": false,
     "rootDirs": [".", "./.react-router/types"],

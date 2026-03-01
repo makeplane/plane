@@ -30,7 +30,9 @@ from pi.app.schemas.chat import ArtifactData
 from pi.services.chat.helpers.build_mode_helpers import TOOL_NAME_TO_CATEGORY_MAP
 from pi.services.chat.helpers.tool_utils import classify_tool
 from pi.services.chat.prompts import plane_context
+from pi.services.retrievers.pg_store.action_artifact import create_action_artifact_version
 from pi.services.retrievers.pg_store.action_artifact import get_action_artifacts_by_ids
+from pi.services.retrievers.pg_store.action_artifact import update_action_artifact_version_execution_status
 
 log = logger.getChild(__name__)
 
@@ -250,8 +252,16 @@ def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity
     return tool_params
 
 
-async def load_artifacts(request_data: List[ArtifactData], db: AsyncSession) -> Tuple[List[Dict], str, str]:
-    """Load and validate artifacts for execution."""
+async def load_artifacts(
+    request_data: List[ArtifactData],
+    db: AsyncSession,
+    message_id: Optional[UUID] = None,
+    chat_id: Optional[UUID] = None,
+) -> Tuple[List[Dict], str, str]:
+    """Load and validate artifacts for execution.
+
+    When is_edited=True, creates an ActionArtifactVersion to persist the edited data.
+    """
     artifacts = await get_action_artifacts_by_ids(db, [a.artifact_id for a in request_data])
 
     # Create artifact ID lookup map to ensure correct pairing regardless of database return order
@@ -349,19 +359,50 @@ async def load_artifacts(request_data: List[ArtifactData], db: AsyncSession) -> 
         # Resolve issue_id (if identifier like CARB-1) and project_id (if invalid UUID) before execution
         tool_args = await validate_and_resolve_ids(tool_args, workspace_slug)
 
+        # Track version_id if we created a version for edited artifact
+        version_id = None
+
+        # Create ActionArtifactVersion when artifact was edited to persist the changes
+        if req_item.is_edited and message_id and chat_id:
+            # Build version data matching parent artifact structure
+            version_data = {
+                "tool_args_raw": tool_args,
+                "planning_data": artifact.data.get("planning_data", {}),
+                "planning_context": artifact.data.get("planning_context", {}),
+            }
+
+            version = await create_action_artifact_version(
+                db=db,
+                artifact_id=artifact.id,
+                data=version_data,
+                change_type="manual_edit",
+                chat_id=chat_id,
+                message_id=message_id,
+            )
+
+            if version:
+                version_id = str(version.id)
+                log.info(f"Created ActionArtifactVersion {version_id} for edited artifact {artifact.id}")
+            else:
+                log.warning(f"Failed to create ActionArtifactVersion for edited artifact {artifact.id}")
+
         planned_actions.append({
             "artifact_id": str(artifact.id),
             "tool_name": artifact.data.get("planning_data", {}).get("tool_name", ""),
             "args": tool_args,
             "entity_type": entity_type,
             "action": action,
+            "version_id": version_id,  # Track version for execution status update
         })
 
     return planned_actions, original_query, conversation_context
 
 
 async def update_flow_steps(results, message_id, chat_id, db: AsyncSession):
-    """Mark executed actions in database."""
+    """Mark executed actions in database.
+
+    Also updates ActionArtifactVersion execution status if version_id is present.
+    """
     from pi.services.retrievers.pg_store.action_artifact import update_action_artifact_execution_status
 
     for r in results:
@@ -394,6 +435,22 @@ async def update_flow_steps(results, message_id, chat_id, db: AsyncSession):
                 execution_result=r.get("result", ""),
                 executed_at=r.get("executed_at"),
             )
+
+            # Update ActionArtifactVersion execution status if this was an edited artifact
+            version_id = r.get("version_id")
+            if version_id:
+                try:
+                    version_uuid = UUID(version_id)
+                    await update_action_artifact_version_execution_status(
+                        db=db,
+                        version_id=version_uuid,
+                        is_executed=True,
+                        success=r.get("success", False),
+                        entity_info=entity_info,
+                    )
+                    log.info(f"Updated ActionArtifactVersion {version_id} execution status: success={r.get("success", False)}")
+                except (ValueError, TypeError) as e:
+                    log.warning(f"Invalid version_id format: {version_id}, error: {e}")
 
 
 def format_response(planned_actions, results, start_time) -> Dict[str, Any]:

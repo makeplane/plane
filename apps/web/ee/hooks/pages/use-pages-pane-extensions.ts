@@ -24,10 +24,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useQueryParams } from "@/hooks/use-query-params";
 import { PageCommentsNavigationExtension } from "@/plane-web/components/pages/comments/comments-navigation-extension";
 import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
-import type {
-  INavigationPaneExtension,
-  TCommentsNavigationExtensionData,
-} from "@/plane-web/types/pages/pane-extensions";
+import type { INavigationPaneExtension, TCommentsNavigationExtensionData } from "@/types/pages/pane-extensions";
 import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageExtensionHookParams = {

@@ -14,7 +14,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
@@ -29,7 +29,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 
 export const ModulesListHeader = observer(function ModulesListHeader() {
   // router
@@ -54,7 +54,10 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
       <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <ProjectBreadcrumbWithPreference
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
@@ -74,11 +77,11 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
         {canUserCreateModule ? (
           <Button
             variant="primary"
-            data-ph-element={MODULE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => {
               toggleCreateModuleModal(true);
             }}
             size="lg"
+            data-tour="module-tour-step-1"
           >
             <div className="sm:hidden block">{t("add")}</div>
             <div className="hidden sm:block">{t("project_module.add_module")}</div>

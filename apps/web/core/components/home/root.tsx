@@ -16,12 +16,14 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { ContentWrapper } from "@plane/ui";
+import { NavigationTour } from "@/components/tour";
 // hooks
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useHome } from "@/hooks/store/use-home";
 import { useUserProfile, useUser } from "@/hooks/store/user";
 // plane web imports
-import { HomePeekOverviewsRoot } from "@/plane-web/components/home";
-import { TourRoot } from "@/plane-web/components/onboarding/tour/root";
+import { HomePeekOverviewsRoot } from "@/components/home/peek-overviews";
+import { TourRoot } from "@/components/onboarding/tour/root";
 // local imports
 import { DashboardWidgets } from "./home-dashboard-widgets";
 import { UserGreetingsView } from "./user-greetings";
@@ -32,6 +34,7 @@ export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
   const { data: currentUser } = useUser();
   const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
   const { fetchWidgets } = useHome();
+  const { isAnyModalOpen } = useCommandPalette();
 
   useSWR(
     workspaceSlug ? `HOME_DASHBOARD_WIDGETS_${workspaceSlug}` : null,
@@ -57,6 +60,12 @@ export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
           <TourRoot onComplete={handleTourCompleted} />
         </div>
       )}
+
+      {/* Navigation tour - shows after onboarding is completed */}
+      {currentUserProfile?.is_tour_completed &&
+        !currentUserProfile?.is_navigation_tour_completed &&
+        !isAnyModalOpen && <NavigationTour />}
+
       <>
         <HomePeekOverviewsRoot />
         <ContentWrapper className="gap-6 bg-surface-1 mx-auto scrollbar-hide px-page-x">

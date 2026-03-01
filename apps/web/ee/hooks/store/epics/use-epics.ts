@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web imports
-import type { IEpicBaseStore } from "@/plane-web/store/issue/epic/base.store";
+import type { IEpicBaseStore } from "@/store/work-items/epic/base.store";
 
 export const useEpics = (): IEpicBaseStore => {
   const context = useContext(StoreContext);

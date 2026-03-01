@@ -19,10 +19,10 @@ import emptyCycle from "@/app/assets/empty-state/cycle.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
-import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
 import { CycleDetailsSidebar } from "@/components/cycles/analytics-sidebar";
 import { CycleLayoutRoot } from "@/components/issues/issue-layouts/roots/cycle-layout-root";
 // hooks
+import { useActiveCycleDetails } from "@/components/cycles/active-cycles/v1/use-active-cycle-details";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -40,11 +40,12 @@ function CycleDetailPage({ params }: Route.ComponentProps) {
   // hooks
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", false);
 
-  useCyclesDetails({
+  useActiveCycleDetails({
     workspaceSlug,
     projectId,
     cycleId,
   });
+
   // derived values
   const isSidebarCollapsed = storedValue ? (storedValue === true ? true : false) : false;
   const cycle = getCycleById(cycleId);

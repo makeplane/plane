@@ -16,10 +16,10 @@ import { useSearchParams } from "next/navigation";
 // plane web imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
-import { TemplatesUpgrade } from "@/plane-web/components/templates/settings";
-import { CreateUpdateProjectTemplate } from "@/plane-web/components/templates/settings/project";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { IssueModalProvider } from "@/components/issues/issue-modal/context/provider";
+import { TemplatesUpgrade } from "@/components/templates/settings";
+import { CreateUpdateProjectTemplate } from "@/components/templates/settings/project";
 import type { Route } from "./+types/page";
 
 function CreateProjectTemplatePage({ params }: Route.ComponentProps) {

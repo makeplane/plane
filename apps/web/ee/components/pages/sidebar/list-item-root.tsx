@@ -25,7 +25,6 @@ import { Loader } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane imports
 import { PlusIcon, PageIcon } from "@plane/propel/icons";
-import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { DropIndicator } from "@plane/ui";

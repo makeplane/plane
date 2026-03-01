@@ -26,18 +26,21 @@ import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?u
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
+import { WorkItemDetailRoot } from "@/components/browse/workItem-detail";
+import { IntakeDetailViewRoot } from "@/components/intake/detail-root";
+import { useWorkItemCommentOperations } from "@/components/issues/issue-detail/issue-activity/helper";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useWorkItemDetailRevalidation } from "@/lib/socket/hooks/work-item-detail";
+// layouts
+import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
-import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
-import { WorkItemDetailRoot } from "@/plane-web/components/browse/workItem-detail";
+// types
 import type { Route } from "./+types/page";
-import { useWorkItemCommentOperations } from "@/components/issues/issue-detail/issue-activity/helper";
 
 export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: Route.ComponentProps) {
   // router
@@ -65,7 +68,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
   );
 
   // derived values
-  const [projectIdentifier] = workItem.split("-");
+  const [projectIdentifier] = workItem?.toString()?.split("-");
   const projectDetails = getProjectByIdentifier(projectIdentifier);
   const workItemId = data?.id;
   const projectId = data?.project_id ?? projectDetails?.id ?? undefined;
@@ -114,7 +117,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
 
   useWorkItemDetailRevalidation({
     workItemId,
-    entityType: workItemDetail?.is_epic ? "epic" : "issue",
+    entityType: workItemDetail?.is_epic ? "epic" : "workitem",
     mutateFn: {
       detail: mutateWorkItemDetail,
       comments: mutateWorkItemComments,
@@ -138,12 +141,6 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
     handleToggleIssueDetailSidebar();
     return () => window.removeEventListener("resize", handleToggleIssueDetailSidebar);
   }, [issueDetailSidebarCollapsed, toggleIssueDetailSidebar]);
-
-  useEffect(() => {
-    if (data?.is_intake) {
-      router.push(`/${workspaceSlug}/projects/${data.project_id}/intake/?currentTab=open&inboxIssueId=${data?.id}`);
-    }
-  }, [workspaceSlug, data, router]);
 
   if (error && !isLoading) {
     return (
@@ -183,12 +180,20 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
       <PageHead title={pageTitle} />
       {workspaceSlug && projectId && workItemId && (
         <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
-          <WorkItemDetailRoot
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={workItemId}
-            issue={workItemDetail}
-          />
+          {data?.is_intake ? (
+            <IntakeDetailViewRoot
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              inboxIssueId={workItemId || undefined}
+            />
+          ) : (
+            <WorkItemDetailRoot
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              workItemId={workItemId}
+              workItem={workItemDetail}
+            />
+          )}
         </ProjectAuthWrapper>
       )}
     </>

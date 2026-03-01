@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import type { INavigationPaneExtensionProps } from "@/components/pages/navigation-pane/types";
-import type { TCommentsNavigationExtensionData } from "@/plane-web/types/pages/pane-extensions";
+import type { TCommentsNavigationExtensionData } from "@/types/pages/pane-extensions";
 // local components
 import { usePageStore } from "@/plane-web/hooks/store";
 import { PageCommentsSidebarPanel } from "./comments-sidebar-panel";

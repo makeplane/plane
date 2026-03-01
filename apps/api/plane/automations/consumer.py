@@ -143,7 +143,7 @@ class AutomationConsumer:
 
     def _should_process(self, event_type: str) -> bool:
         """Check if event should be processed for automations."""
-        automation_event_types = getattr(settings, "AUTOMATION_EVENT_TYPES", ["issue."])
+        automation_event_types = getattr(settings, "AUTOMATION_EVENT_TYPES", ["workitem.", "issue."])
 
         for prefix in automation_event_types:
             if not prefix.endswith("."):

@@ -11,14 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
+import { CollapsibleTrigger } from "@plane/propel/collapsible";
+import { ChevronRightIcon, PlusIcon } from "@plane/propel/icons";
+import { LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { LoaderCircle } from "lucide-react";
-import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
-import { Disclosure } from "@headlessui/react";
-// constants
-import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
+import React from "react";
 // utils
 import { cn } from "@plane/utils";
 // types
@@ -35,7 +33,8 @@ export const SectionHeader = React.memo(function SectionHeader({
   handleCreatePage,
   buttonRef,
   onButtonClick,
-}: SectionHeaderProps) {
+  isOpen,
+}: SectionHeaderProps & { isOpen?: boolean }) {
   const { workspaceSlug } = useParams();
 
   return (
@@ -55,7 +54,6 @@ export const SectionHeader = React.memo(function SectionHeader({
         {sectionType !== "archived" && sectionType !== "shared" && (
           <button
             className="grid place-items-center hover:bg-layer-transparent-hover p-0.5 rounded"
-            data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.SIDEBAR}
             onClick={() => {
               handleCreatePage(sectionType);
             }}
@@ -67,9 +65,8 @@ export const SectionHeader = React.memo(function SectionHeader({
             )}
           </button>
         )}
-        <Disclosure.Button
+        <CollapsibleTrigger
           ref={buttonRef}
-          as="button"
           type="button"
           className="grid place-items-center hover:bg-layer-transparent-hover p-0.5 rounded"
           onClick={(e) => {
@@ -77,14 +74,12 @@ export const SectionHeader = React.memo(function SectionHeader({
             if (onButtonClick) onButtonClick();
           }}
         >
-          {({ open }) => (
-            <ChevronRightIcon
-              className={cn("size-3.5 transform transition-transform duration-300 ease-in-out", {
-                "rotate-90": open,
-              })}
-            />
-          )}
-        </Disclosure.Button>
+          <ChevronRightIcon
+            className={cn("size-3.5 transform transition-transform duration-300 ease-in-out", {
+              "rotate-90": isOpen,
+            })}
+          />
+        </CollapsibleTrigger>
       </div>
     </div>
   );

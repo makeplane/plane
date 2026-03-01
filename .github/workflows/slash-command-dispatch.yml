@@ -1,0 +1,24 @@
+name: Slash Command Dispatch
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  slashCommandDispatch:
+    runs-on: ubuntu-latest
+    # Only run if comment is on a PR and contains the slash command
+    if: |
+      github.event.issue.pull_request != null &&
+      (startsWith(github.event.comment.body, '/deploy'))
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Slash Command Dispatch
+        uses: peter-evans/slash-command-dispatch@v5
+        with:
+          token: ${{ secrets.PAT }}
+          permission: write
+          issue-type: pull-request
+          commands: |
+            deploy

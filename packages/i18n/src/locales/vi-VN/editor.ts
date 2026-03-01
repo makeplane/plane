@@ -11,4 +11,48 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export default {} as const;
+export default {
+  attachmentComponent: {
+    uploader: {
+      drag_and_drop: "Kéo và thả để tải lên tệp bên ngoài",
+    },
+    errors: {
+      file_too_large: {
+        title: "Tệp quá lớn.",
+        description: "Kích thước tối đa mỗi tệp là {maxFileSize} MB",
+      },
+      unsupported_file_type: {
+        title: "Loại tệp không được hỗ trợ.",
+        description: "Xem các định dạng được hỗ trợ",
+      },
+      default: {
+        title: "Tải lên thất bại.",
+        description: "Đã xảy ra lỗi. Vui lòng thử lại.",
+      },
+    },
+    upgrade: {
+      description: "Nâng cấp gói của bạn để xem tệp đính kèm này.",
+    },
+    aria: {
+      click_to_upload: "Nhấp để tải lên tệp đính kèm",
+    },
+  },
+  externalEmbedComponent: {
+    block_menu: {
+      convert_to_embed: "Chuyển thành nội dung nhúng",
+      convert_to_link: "Chuyển thành liên kết",
+      convert_to_richcard: "Chuyển thành thẻ phong phú",
+    },
+    placeholder: {
+      insert_embed: "Chèn liên kết nhúng ưa thích của bạn vào đây, như video YouTube, thiết kế Figma, v.v.",
+      link: "Nhập hoặc dán một liên kết",
+    },
+    input_modal: {
+      embed: "Nhúng",
+      works_with_links: "Hoạt động với YouTube, Figma, Google Docs và nhiều hơn nữa",
+    },
+    error: {
+      not_valid_link: "Vui lòng nhập một URL hợp lệ.",
+    },
+  },
+} as const;

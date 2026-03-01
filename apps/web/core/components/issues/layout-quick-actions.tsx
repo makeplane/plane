@@ -16,7 +16,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
-import { useLayoutMenuItems } from "@/components/common/quick-actions-helper";
+import { useLayoutMenuItems } from "@/components/common/quick-actions/helper";
 import { Ellipsis, MoreHorizontal } from "lucide-react";
 import { IconButton } from "@plane/propel/icon-button";
 

@@ -18,7 +18,7 @@ import { PageHead } from "@/components/core/page-title";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
-import { TeamspaceUpgrade } from "@/plane-web/components/teamspaces/upgrade";
+import { TeamspaceUpgrade } from "@/components/teamspaces/upgrade";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 

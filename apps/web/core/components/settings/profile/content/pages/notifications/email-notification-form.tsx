@@ -17,8 +17,8 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Switch } from "@plane/propel/switch";
 import type { IUserEmailNotificationSettings } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 // components
 import { SettingsControlItem } from "@/components/settings/control-item";
 // services
@@ -75,13 +75,12 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
             control={control}
             name="property_change"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
+              <Switch
                 value={value}
                 onChange={(newValue) => {
                   onChange(newValue);
                   handleSettingChange("property_change", newValue);
                 }}
-                size="sm"
               />
             )}
           />
@@ -95,13 +94,12 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
             control={control}
             name="state_change"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
+              <Switch
                 value={value}
                 onChange={(newValue) => {
                   onChange(newValue);
                   handleSettingChange("state_change", newValue);
                 }}
-                size="sm"
               />
             )}
           />
@@ -116,13 +114,12 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
               control={control}
               name="issue_completed"
               render={({ field: { value, onChange } }) => (
-                <ToggleSwitch
+                <Switch
                   value={value}
                   onChange={(newValue) => {
                     onChange(newValue);
                     handleSettingChange("issue_completed", newValue);
                   }}
-                  size="sm"
                 />
               )}
             />
@@ -137,13 +134,12 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
             control={control}
             name="comment"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
+              <Switch
                 value={value}
                 onChange={(newValue) => {
                   onChange(newValue);
                   handleSettingChange("comment", newValue);
                 }}
-                size="sm"
               />
             )}
           />
@@ -157,13 +153,12 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
             control={control}
             name="mention"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
+              <Switch
                 value={value}
                 onChange={(newValue) => {
                   onChange(newValue);
                   handleSettingChange("mention", newValue);
                 }}
-                size="sm"
               />
             )}
           />

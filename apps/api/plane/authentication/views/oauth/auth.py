@@ -40,7 +40,7 @@ from plane.authentication.rate_limit import (
     token_ratelimit_key,
 )
 
-TOKEN_RATE_LIMIT = "5/m"
+TOKEN_RATE_LIMIT = "300/m"
 APP_INSTALLATION_ID_CACHE_TTL = 60  # 1 minute
 
 
@@ -170,6 +170,17 @@ class CustomAuthorizationView(AuthorizationView):
 
 
 class CustomOAuth2Validator(OAuth2Validator):
+    def validate_scopes(self, client_id, scopes, client, request, *args, **kwargs):
+        """
+        Validate the scopes take care of refresh token scopes
+        """
+        application = client
+        if scopes and application:
+            resource_permissions = application.resource_permissions
+            if not set(scopes).issubset(set(resource_permissions)):
+                return False
+        return super().validate_scopes(client_id, scopes, client, request, *args, **kwargs)
+
     def validate_response_type(self, client_id, response_type, client, request, *args, **kwargs):
         """
         Override to allow authorization code flow for all applications regardless of their authorization_grant_type.

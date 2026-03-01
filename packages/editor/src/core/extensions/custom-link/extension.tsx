@@ -132,7 +132,7 @@ export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
       linkOnPaste: true,
       autolink: true,
       inclusive: false,
-      protocols: ["http", "https"],
+      protocols: [],
       HTMLAttributes: {
         target: "_blank",
         rel: "noopener noreferrer nofollow",

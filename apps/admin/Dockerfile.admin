@@ -35,7 +35,7 @@ ENV VITE_API_BASE_PATH=$VITE_API_BASE_PATH
 
 ARG VITE_ADMIN_BASE_URL=""
 ENV VITE_ADMIN_BASE_URL=$VITE_ADMIN_BASE_URL
-ARG VITE_ADMIN_BASE_PATH="/god-mode"
+ARG VITE_ADMIN_BASE_PATH="/god-mode/"
 ENV VITE_ADMIN_BASE_PATH=$VITE_ADMIN_BASE_PATH
 
 ARG VITE_SPACE_BASE_URL=""
@@ -79,6 +79,10 @@ FROM nginx:1.29-alpine AS production
 
 COPY apps/admin/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=installer /app/apps/admin/build/client /usr/share/nginx/html/god-mode
+
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
 
 EXPOSE 3000
 

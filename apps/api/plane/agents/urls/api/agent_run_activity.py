@@ -22,5 +22,5 @@ urlpatterns = [
         "workspaces/<str:slug>/runs/<uuid:run_id>/activities/<uuid:pk>/",
         AgentRunActivityAPIViewSet.as_view({"get": "retrieve"}),
         name="agent-run-activity-detail",
-    )
+    ),
 ]

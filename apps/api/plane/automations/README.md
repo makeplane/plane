@@ -422,7 +422,6 @@ RABBITMQ_VHOST = "/"
 # Automation Settings
 AUTOMATION_QUEUE_NAME = "automation_events"
 AUTOMATION_EXCHANGE_NAME = "plane_event_stream"
-AUTOMATION_EVENT_TYPES = ["issue."]  # Event prefixes to process
 
 # Celery Task Settings (for async processing)
 CELERY_BROKER_URL = "redis://localhost:6379/0"

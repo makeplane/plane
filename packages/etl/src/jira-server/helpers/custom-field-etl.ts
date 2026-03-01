@@ -16,6 +16,61 @@ import { EIssuePropertyRelationType, EIssuePropertyType } from "@plane/sdk";
 import { getTextPropertySettings } from "@/core";
 import type { JiraCustomFieldKeys } from "../types/custom-fields";
 
+/**
+ * Mapping of Jira system field types to Plane property types
+ * Based on schema.type for non-custom fields
+ */
+export const SUPPORTED_CUSTOM_FIELD_TYPES: Record<string, Partial<ExIssueProperty>> = {
+  // Text fields
+  string: {
+    property_type: EIssuePropertyType.TEXT,
+    relation_type: undefined,
+    is_multi: false,
+    settings: getTextPropertySettings("single-line"),
+  },
+
+  // Numeric fields
+  number: {
+    property_type: EIssuePropertyType.DECIMAL,
+    relation_type: undefined,
+    is_multi: false,
+  },
+
+  // Date/Time fields
+  date: {
+    property_type: EIssuePropertyType.DATETIME,
+    relation_type: undefined,
+    is_multi: false,
+  },
+  datetime: {
+    property_type: EIssuePropertyType.DATETIME,
+    relation_type: undefined,
+    is_multi: false,
+  },
+
+  // User fields
+  user: {
+    property_type: EIssuePropertyType.RELATION,
+    relation_type: EIssuePropertyRelationType.USER,
+    is_multi: false,
+  },
+
+  // Array of strings (for multi-value text fields like labels)
+  "array-string": {
+    property_type: EIssuePropertyType.TEXT,
+    relation_type: undefined,
+    is_multi: true,
+    settings: getTextPropertySettings("single-line"),
+  },
+
+  // Array of users (for multi-user fields like approvers, participants)
+  "array-user": {
+    property_type: EIssuePropertyType.RELATION,
+    relation_type: EIssuePropertyRelationType.USER,
+    is_multi: true,
+  },
+};
+
 export const SUPPORTED_CUSTOM_FIELD_ATTRIBUTES: Record<JiraCustomFieldKeys, Partial<ExIssueProperty>> = {
   "com.atlassian.jira.plugin.system.customfieldtypes:textfield": {
     property_type: EIssuePropertyType.TEXT,

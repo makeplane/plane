@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
@@ -112,7 +111,8 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
         }
       }
     },
-    issueId
+    issueId,
+    ["main-sidebar", "app-rail"]
   );
 
   const handleKeyDown = () => {

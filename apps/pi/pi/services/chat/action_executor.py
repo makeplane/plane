@@ -77,7 +77,9 @@ class BuildModeToolExecutor:
         # 1. Load artifacts
         message_id = request.message_id
         chat_id = request.chat_id
-        planned_actions, original_query, conversation_context = await load_artifacts(request.artifact_data, self.db)
+        planned_actions, original_query, conversation_context = await load_artifacts(
+            request.artifact_data, self.db, message_id=message_id, chat_id=chat_id
+        )
 
         # 2. Get context
         workspace_id = request.workspace_id
@@ -182,6 +184,7 @@ class BuildModeToolExecutor:
             "result": message,
             "entity_info": entity_info,
             "artifact_id": planned_action.get("artifact_id"),
+            "version_id": planned_action.get("version_id"),  # Include version_id for execution status update
             "sequence": 1,
             "artifact_type": entity_type,
             "executed_at": datetime.utcnow().isoformat(),

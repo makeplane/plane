@@ -124,7 +124,7 @@ export const PageNavigationPaneAssetsTabPanel = observer(function PageNavigation
   if (assetsList.length === 0) return <PageNavigationPaneAssetsTabEmptyState />;
 
   return (
-    <div className="mt-5 space-y-4">
+    <div className="mt-5 space-y-4 px-4">
       {assetsList?.map((asset) => (
         <AssetItem key={asset.id} asset={asset} page={page} />
       ))}

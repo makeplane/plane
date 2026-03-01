@@ -12,8 +12,7 @@
  */
 
 import { AxiosError } from "axios";
-import { RANDOM_EMOJI_CODES } from "@plane/constants";
-import { E_FEATURE_FLAGS } from "@plane/etl/core";
+import { E_FEATURE_FLAGS, RANDOM_EMOJI_CODES } from "@plane/constants";
 import { logger } from "@plane/logger";
 import type { ExProject, Client as PlaneClient } from "@plane/sdk";
 import type { TImportJob } from "@plane/types";
@@ -43,11 +42,11 @@ export const createProjects = async (
         },
       };
 
-      const createdProject: ExProject = await protect(
+      const createdProject = (await protect(
         planeClient.project.create.bind(planeClient.project),
         workspaceSlug,
         project
-      );
+      )) as ExProject;
 
       return createdProject;
     } catch (error) {

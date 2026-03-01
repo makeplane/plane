@@ -200,7 +200,7 @@ class WorkspaceAssetMutation:
                 user_id=str(user.id),
                 feature_key=FeatureFlagsTypesEnum.FILE_SIZE_LIMIT_PRO.value,
             )
-            if settings.IS_MULTI_TENANT and is_feature_flagged:
+            if not settings.IS_SELF_MANAGED and is_feature_flagged:
                 size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
 
         # Get the workspace

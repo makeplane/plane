@@ -34,7 +34,8 @@ export const ArchivedIssuesHeader = observer(function ArchivedIssuesHeader() {
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
   const projectId = routerProjectId ? routerProjectId.toString() : undefined;
   // store hooks
-  const { currentProjectDetails } = useProject();
+  const { getPartialProjectById } = useProject();
+  const currentProjectDetails = getPartialProjectById(projectId);
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.ARCHIVED);

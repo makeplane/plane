@@ -15,7 +15,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { setPromiseToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
+import { Loader } from "@plane/ui";
 // assets
 import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 // components
@@ -78,7 +79,7 @@ const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthent
           description="Allow members to login or sign up to plane with their GitLab accounts."
           icon={<img src={GitlabLogo} height={24} width={24} alt="GitLab Logo" />}
           config={
-            <ToggleSwitch
+            <Switch
               value={Boolean(parseInt(enableGitlabConfig))}
               onChange={() => {
                 if (Boolean(parseInt(enableGitlabConfig)) === true) {
@@ -87,7 +88,6 @@ const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthent
                   updateConfig("IS_GITLAB_ENABLED", "1");
                 }
               }}
-              size="sm"
               disabled={isSubmitting || !formattedConfig}
             />
           }

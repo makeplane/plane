@@ -318,6 +318,14 @@ class IdentityProvider(BaseModel):
     # When True, removes RequestedAuthnContext from SAML AuthnRequest
     # This fixes Azure AD error AADSTS75011 when users authenticate with MFA/certificates
     disable_requested_authn_context = models.BooleanField(default=True)
+    # Configurable NameID format for SAML metadata
+    name_id_format = models.CharField(
+        max_length=255,
+        default="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+    )
+    # Configurable attribute mapping: maps Plane fields to IdP attribute names
+    # e.g. {"email": "Email", "first_name": "FirstName", "last_name": "LastName"}
+    attribute_mapping = models.JSONField(default=dict, blank=True)
 
     # provider type
     provider = models.CharField(choices=PROVIDER_CHOICES, max_length=255)

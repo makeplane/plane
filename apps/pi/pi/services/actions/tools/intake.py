@@ -45,12 +45,42 @@ async def _intake_create_post_processor(metadata, result, kwargs, context, metho
 
     # Create workitem entity for placeholder resolution
     result["workitem_entity"] = {
-        "entity_type": "workitem",
+        "entity_type": "intake_issue",
         "entity_name": intake_name,
         "entity_id": str(work_item_id),
         "entity_identifier": data.get("identifier"),
     }
 
+    return result
+
+
+async def _intake_list_post_processor(metadata, result, kwargs, context, method_executor, category, method_key):
+    """
+    Post-process intake list response to make IDs explicit.
+    Replaces the raw nested structure with a flattened view that clearly distinguishes
+    'intake_id' (the wrapper) from 'issue_id' (the actual work item).
+    """
+    if not result.get("success"):
+        return result
+
+    data = result.get("data", {})
+    if isinstance(data, dict) and "results" in data:
+        raw_results = data.get("results", [])
+        formatted_results = []
+        for item in raw_results:
+            issue = item.get("issue_detail", {})
+            formatted_item = {
+                "intake_id": item.get("id"),
+                "issue_id": issue.get("id"),  # Explicitly labeled for LLM
+                "title": issue.get("name"),
+                "identifier": issue.get("identifier"),
+                "priority": issue.get("priority"),
+                "state": issue.get("state"),
+                "status": item.get("status"),  # Intake status (Pending/Snoozed/etc)
+            }
+            formatted_results.append(formatted_item)
+        data["results"] = formatted_results
+        result["data"] = data
     return result
 
 
@@ -61,7 +91,7 @@ async def _intake_create_post_processor(metadata, result, kwargs, context, metho
 INTAKE_TOOL_DEFINITIONS = {
     "create": ToolMetadata(
         name="intake_create",
-        description="Submit work item to intake queue for triage. Creates a new intake item that can be reviewed and converted to a work item.",
+        description="Submit work item to intake queue for triage. Creates a new intake item that can be reviewed and converted to a work item. Note: Assignees, dates, and comments are not supported via this specific tool/API (even if supported in the UI).",  # noqa: E501
         sdk_method="create_intake",
         parameters=[
             ToolParameter(name="name", type="str", required=True, description="Work item title (required)"),
@@ -69,9 +99,6 @@ INTAKE_TOOL_DEFINITIONS = {
             ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
             ToolParameter(name="description_html", type="Optional[str]", required=False, description="Description in HTML format"),
             ToolParameter(name="priority", type="Optional[str]", required=False, description="Priority level (high, medium, low, urgent, none)"),
-            ToolParameter(name="assignee", type="Optional[str]", required=False, description="Assignee user ID"),
-            ToolParameter(name="reporter", type="Optional[str]", required=False, description="Reporter user ID"),
-            ToolParameter(name="labels", type="Optional[list]", required=False, description="List of label IDs"),
         ],
         returns_entity_type="intake",
         post_handler=_intake_create_post_processor,
@@ -86,31 +113,57 @@ INTAKE_TOOL_DEFINITIONS = {
             ToolParameter(name="per_page", type="Optional[int]", required=False, description="Number of results per page (default: 20)"),
             ToolParameter(name="cursor", type="Optional[str]", required=False, description="Pagination cursor"),
         ],
+        returns_entity_type="intake",
+        post_handler=_intake_list_post_processor,
     ),
     "retrieve": ToolMetadata(
         name="intake_retrieve",
         description="Get a single intake work item by ID.",
         sdk_method="retrieve_intake",
         parameters=[
-            ToolParameter(name="intake_id", type="str", required=True, description="Intake item ID to retrieve"),
+            ToolParameter(
+                name="intake_issue_id",
+                type="str",
+                required=True,
+                description="The issue ID from the intake response (the 'issue' field, not the intake's own 'id' field)",
+            ),
             ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID", auto_fill_from_context=True),
             ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
         ],
     ),
     "update": ToolMetadata(
         name="intake_update",
-        description="Update intake work item details before triage.",
+        description="Update intake work item details before triage. Note: Assignees, dates, and comments are not supported via this specific tool/API.",  # noqa: E501
         sdk_method="update_intake",
         parameters=[
-            ToolParameter(name="intake_id", type="str", required=True, description="Intake item ID to update"),
+            ToolParameter(
+                name="intake_issue_id",
+                type="str",
+                required=True,
+                description="The issue ID from the intake response (the 'issue' field, not the intake's own 'id' field)",
+            ),
             ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID", auto_fill_from_context=True),
             ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
+            # Issue fields (nested in WorkItemForIntakeRequest)
             ToolParameter(name="name", type="Optional[str]", required=False, description="Work item title"),
             ToolParameter(name="description_html", type="Optional[str]", required=False, description="Description in HTML format"),
             ToolParameter(name="priority", type="Optional[str]", required=False, description="Priority level (high, medium, low, urgent, none)"),
-            ToolParameter(name="assignee", type="Optional[str]", required=False, description="Assignee user ID"),
-            ToolParameter(name="reporter", type="Optional[str]", required=False, description="Reporter user ID"),
-            ToolParameter(name="labels", type="Optional[list]", required=False, description="List of label IDs"),
+            # Intake-specific fields
+            ToolParameter(
+                name="status",
+                type="Optional[int]",
+                required=False,
+                description="Intake status: 0=Pending, 1=Snoozed, 2=Accepted, 3=Declined, 4=Duplicate",
+            ),
+            ToolParameter(
+                name="snoozed_till", type="Optional[str]", required=False, description="ISO datetime string to snooze until (use with status=snoozed)"
+            ),
+            ToolParameter(
+                name="duplicate_to",
+                type="Optional[str]",
+                required=False,
+                description="Work item ID to mark as duplicate of (use with status=duplicate)",
+            ),
         ],
         returns_entity_type="intake",
     ),
@@ -119,7 +172,12 @@ INTAKE_TOOL_DEFINITIONS = {
         description="Remove an intake work item from the triage queue.",
         sdk_method="delete_intake",
         parameters=[
-            ToolParameter(name="intake_id", type="str", required=True, description="Intake item ID to delete"),
+            ToolParameter(
+                name="intake_issue_id",
+                type="str",
+                required=True,
+                description="The issue ID from the intake response (the 'issue' field, not the intake's own 'id' field)",
+            ),
             ToolParameter(name="project_id", type="Optional[str]", required=False, description="Project ID", auto_fill_from_context=True),
             ToolParameter(name="workspace_slug", type="Optional[str]", required=False, description="Workspace slug", auto_fill_from_context=True),
         ],

@@ -24,16 +24,19 @@ type IconRootProps = {
   defaultColor: string;
   searchDisabled?: boolean;
   iconType: "material" | "lucide";
+  searchQuery?: string;
+  onSearchQueryChange?: (query: string) => void;
 };
 
 export function IconRoot(props: IconRootProps) {
-  const { defaultColor, onChange, searchDisabled = false, iconType } = props;
+  const { defaultColor, onChange, searchDisabled = false, iconType, searchQuery, onSearchQueryChange } = props;
   // states
   const [activeColor, setActiveColor] = useState(defaultColor);
   const [showHexInput, setShowHexInput] = useState(false);
   const [hexValue, setHexValue] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const [query, setQuery] = useState("");
+  // use shared search query from parent
+  const query = searchQuery ?? "";
 
   useEffect(() => {
     if (DEFAULT_COLORS.includes(defaultColor.toLowerCase() ?? "")) setShowHexInput(false);
@@ -61,7 +64,7 @@ export function IconRoot(props: IconRootProps) {
               <input
                 placeholder="Search"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => onSearchQueryChange?.(e.target.value)}
                 className="block rounded-md bg-transparent placeholder-(--text-color-placeholder) focus:outline-none px-3 py-2 border-[0.5px] border-subtle text-16 border-none p-0 h-full w-full"
               />
             </div>

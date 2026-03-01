@@ -30,7 +30,6 @@ from plane.app.permissions import ProjectEntityPermission, allow_permission, ROL
 from plane.db.models import IssueActivity, IssueComment, CommentReaction, IntakeIssue
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.agents.models import AgentRun
 
 
 class IssueActivityEndpoint(BaseAPIView):

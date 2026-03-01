@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { PriorityEnum } from "@makeplane/plane-node-sdk";
 import { Store } from "@/worker/base";
 import type { GetOptionsForEntityParams } from "../form-utils";
 import { FormUtils, OptionsEntity } from "../form-utils";
@@ -37,21 +36,23 @@ describe("FormUtils.getOptionsForEntity", () => {
 
     // Mock the Plane API client
     mockPlaneAPIClient = {
-      labelsApi: {
-        listLabels: jest.fn(),
+      labels: {
+        list: jest.fn(),
       },
-      statesApi: {
-        listStates: jest.fn(),
+      states: {
+        list: jest.fn(),
       },
-      workItemTypesApi: {
-        listIssueTypes: jest.fn(),
+      workItemTypes: {
+        list: jest.fn(),
       },
-      membersApi: {
-        getProjectMembers: jest.fn(),
+      projects: {
+        getMembers: jest.fn(),
       },
-      workItemPropertiesApi: {
-        retrieveIssueProperty: jest.fn(),
-        listIssuePropertyOptions: jest.fn(),
+      workItemProperties: {
+        retrieve: jest.fn(),
+        options: {
+          list: jest.fn(),
+        },
       },
     };
 
@@ -82,7 +83,7 @@ describe("FormUtils.getOptionsForEntity", () => {
 
       expect(result).toEqual(cachedOptions);
       expect(mockStore.get).toHaveBeenCalledWith("silo:form_options_test-workspace_test-project_labels");
-      expect(mockPlaneAPIClient.labelsApi.listLabels).not.toHaveBeenCalled();
+      expect(mockPlaneAPIClient.labels.list).not.toHaveBeenCalled();
     });
 
     it("should cache options when not available in cache", async () => {
@@ -95,7 +96,7 @@ describe("FormUtils.getOptionsForEntity", () => {
         ],
       };
 
-      mockPlaneAPIClient.labelsApi.listLabels.mockResolvedValue(labels);
+      mockPlaneAPIClient.labels.list.mockResolvedValue(labels);
 
       const params: GetOptionsForEntityParams = {
         slug: "test-workspace",
@@ -130,7 +131,7 @@ describe("FormUtils.getOptionsForEntity", () => {
         ],
       };
 
-      mockPlaneAPIClient.labelsApi.listLabels.mockResolvedValue(labels);
+      mockPlaneAPIClient.labels.list.mockResolvedValue(labels);
 
       const params: GetOptionsForEntityParams = {
         slug: "test-workspace",
@@ -145,10 +146,7 @@ describe("FormUtils.getOptionsForEntity", () => {
         { value: "2", label: "Feature" },
         { value: "3", label: "Enhancement" },
       ]);
-      expect(mockPlaneAPIClient.labelsApi.listLabels).toHaveBeenCalledWith({
-        projectId: "test-project",
-        slug: "test-workspace",
-      });
+      expect(mockPlaneAPIClient.labels.list).toHaveBeenCalledWith("test-workspace", "test-project");
     });
 
     it("should handle labels with null/undefined values", async () => {
@@ -162,7 +160,7 @@ describe("FormUtils.getOptionsForEntity", () => {
         ],
       };
 
-      mockPlaneAPIClient.labelsApi.listLabels.mockResolvedValue(labels);
+      mockPlaneAPIClient.labels.list.mockResolvedValue(labels);
 
       const params: GetOptionsForEntityParams = {
         slug: "test-workspace",
@@ -192,7 +190,7 @@ describe("FormUtils.getOptionsForEntity", () => {
         ],
       };
 
-      mockPlaneAPIClient.statesApi.listStates.mockResolvedValue(states);
+      mockPlaneAPIClient.states.list.mockResolvedValue(states);
 
       const params: GetOptionsForEntityParams = {
         slug: "test-workspace",
@@ -207,10 +205,7 @@ describe("FormUtils.getOptionsForEntity", () => {
         { value: "2", label: "In Progress" },
         { value: "3", label: "Done" },
       ]);
-      expect(mockPlaneAPIClient.statesApi.listStates).toHaveBeenCalledWith({
-        projectId: "test-project",
-        slug: "test-workspace",
-      });
+      expect(mockPlaneAPIClient.states.list).toHaveBeenCalledWith("test-workspace", "test-project");
     });
   });
 
@@ -226,14 +221,14 @@ describe("FormUtils.getOptionsForEntity", () => {
 
       const result = await formUtils.getOptionsForEntity(params);
 
-      const expectedPriorities = Object.values(PriorityEnum).map((priority) => ({
+      const expectedPriorities = ["urgent", "high", "medium", "low", "none"].map((priority) => ({
         value: priority,
         label: priority.charAt(0).toUpperCase() + priority.slice(1),
       }));
 
       expect(result).toEqual(expectedPriorities);
       // Priority options don't make API calls
-      expect(mockPlaneAPIClient.labelsApi.listLabels).not.toHaveBeenCalled();
+      expect(mockPlaneAPIClient.labels.list).not.toHaveBeenCalled();
     });
   });
 
@@ -247,7 +242,7 @@ describe("FormUtils.getOptionsForEntity", () => {
         { id: "3", name: "Task" },
       ];
 
-      mockPlaneAPIClient.workItemTypesApi.listIssueTypes.mockResolvedValue(workItemTypes);
+      mockPlaneAPIClient.workItemTypes.list.mockResolvedValue(workItemTypes);
 
       const params: GetOptionsForEntityParams = {
         slug: "test-workspace",
@@ -262,10 +257,7 @@ describe("FormUtils.getOptionsForEntity", () => {
         { value: "2", label: "Story" },
         { value: "3", label: "Task" },
       ]);
-      expect(mockPlaneAPIClient.workItemTypesApi.listIssueTypes).toHaveBeenCalledWith({
-        projectId: "test-project",
-        slug: "test-workspace",
-      });
+      expect(mockPlaneAPIClient.workItemTypes.list).toHaveBeenCalledWith("test-workspace", "test-project");
     });
   });
 
@@ -274,12 +266,12 @@ describe("FormUtils.getOptionsForEntity", () => {
       mockStore.get.mockResolvedValue(null);
 
       const assignees = [
-        { id: "1", displayName: "John Doe" },
-        { id: "2", displayName: "Jane Smith" },
-        { id: "3", displayName: "Bob Johnson" },
+        { id: "1", display_name: "John Doe" },
+        { id: "2", display_name: "Jane Smith" },
+        { id: "3", display_name: "Bob Johnson" },
       ];
 
-      mockPlaneAPIClient.membersApi.getProjectMembers.mockResolvedValue(assignees);
+      mockPlaneAPIClient.projects.getMembers.mockResolvedValue(assignees);
 
       const params: GetOptionsForEntityParams = {
         slug: "test-workspace",
@@ -294,10 +286,7 @@ describe("FormUtils.getOptionsForEntity", () => {
         { value: "2", label: "Jane Smith" },
         { value: "3", label: "Bob Johnson" },
       ]);
-      expect(mockPlaneAPIClient.membersApi.getProjectMembers).toHaveBeenCalledWith({
-        projectId: "test-project",
-        slug: "test-workspace",
-      });
+      expect(mockPlaneAPIClient.projects.getMembers).toHaveBeenCalledWith("test-workspace", "test-project");
     });
   });
 
@@ -306,16 +295,16 @@ describe("FormUtils.getOptionsForEntity", () => {
       mockStore.get.mockResolvedValue(null);
 
       const workItemProperty = {
-        propertyType: "RELATION",
+        property_type: "RELATION",
       };
 
       const assignees = [
-        { id: "1", displayName: "John Doe" },
-        { id: "2", displayName: "Jane Smith" },
+        { id: "1", display_name: "John Doe" },
+        { id: "2", display_name: "Jane Smith" },
       ];
 
-      mockPlaneAPIClient.workItemPropertiesApi.retrieveIssueProperty.mockResolvedValue(workItemProperty);
-      mockPlaneAPIClient.membersApi.getProjectMembers.mockResolvedValue(assignees);
+      mockPlaneAPIClient.workItemProperties.retrieve.mockResolvedValue(workItemProperty);
+      mockPlaneAPIClient.projects.getMembers.mockResolvedValue(assignees);
 
       const params: GetOptionsForEntityParams = {
         slug: "test-workspace",
@@ -329,19 +318,19 @@ describe("FormUtils.getOptionsForEntity", () => {
         { value: "1", label: "John Doe" },
         { value: "2", label: "Jane Smith" },
       ]);
-      expect(mockPlaneAPIClient.workItemPropertiesApi.retrieveIssueProperty).toHaveBeenCalledWith({
-        projectId: "test-project",
-        propertyId: "property-123",
-        slug: "test-workspace",
-        typeId: "issue-type-1",
-      });
+      expect(mockPlaneAPIClient.workItemProperties.retrieve).toHaveBeenCalledWith(
+        "test-workspace",
+        "test-project",
+        "issue-type-1",
+        "property-123"
+      );
     });
 
     it("should handle OPTION property type correctly", async () => {
       mockStore.get.mockResolvedValue(null);
 
       const workItemProperty = {
-        propertyType: "OPTION",
+        property_type: "OPTION",
       };
 
       const propertyOptions = [
@@ -349,8 +338,8 @@ describe("FormUtils.getOptionsForEntity", () => {
         { id: "2", name: "Option 2" },
       ];
 
-      mockPlaneAPIClient.workItemPropertiesApi.retrieveIssueProperty.mockResolvedValue(workItemProperty);
-      mockPlaneAPIClient.workItemPropertiesApi.listIssuePropertyOptions.mockResolvedValue(propertyOptions);
+      mockPlaneAPIClient.workItemProperties.retrieve.mockResolvedValue(workItemProperty);
+      mockPlaneAPIClient.workItemProperties.options.list.mockResolvedValue(propertyOptions);
 
       const params: GetOptionsForEntityParams = {
         slug: "test-workspace",
@@ -364,21 +353,21 @@ describe("FormUtils.getOptionsForEntity", () => {
         { value: "1", label: "Option 1" },
         { value: "2", label: "Option 2" },
       ]);
-      expect(mockPlaneAPIClient.workItemPropertiesApi.listIssuePropertyOptions).toHaveBeenCalledWith({
-        projectId: "test-project",
-        propertyId: "property-123",
-        slug: "test-workspace",
-      });
+      expect(mockPlaneAPIClient.workItemProperties.options.list).toHaveBeenCalledWith(
+        "test-workspace",
+        "test-project",
+        "property-123"
+      );
     });
 
     it("should return empty array for unsupported property types", async () => {
       mockStore.get.mockResolvedValue(null);
 
       const workItemProperty = {
-        propertyType: "TEXT",
+        property_type: "TEXT",
       };
 
-      mockPlaneAPIClient.workItemPropertiesApi.retrieveIssueProperty.mockResolvedValue(workItemProperty);
+      mockPlaneAPIClient.workItemProperties.retrieve.mockResolvedValue(workItemProperty);
 
       const params: GetOptionsForEntityParams = {
         slug: "test-workspace",
@@ -490,7 +479,7 @@ describe("FormUtils.getOptionsForEntity", () => {
   describe("Error handling", () => {
     it("should handle API errors gracefully", async () => {
       mockStore.get.mockResolvedValue(null);
-      mockPlaneAPIClient.labelsApi.listLabels.mockRejectedValue(new Error("API Error"));
+      mockPlaneAPIClient.labels.list.mockRejectedValue(new Error("API Error"));
 
       const params: GetOptionsForEntityParams = {
         slug: "test-workspace",

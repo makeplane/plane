@@ -24,7 +24,7 @@ import { usePageFallback } from "@/hooks/use-page-fallback";
 // plane web import
 import type { PageUpdateHandler, TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { PageModals } from "@/plane-web/components/pages";
-import { NestedPagesDownloadBanner } from "@/plane-web/components/wiki/nested-pages-download-banner";
+import { NestedPagesDownloadBanner } from "@/components/wiki/nested-pages-download-banner";
 import { useExtendedEditorProps, usePagesPaneExtensions } from "@/plane-web/hooks/pages";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
@@ -76,6 +76,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const [editorReady, setEditorReady] = useState(false);
   const [collaborationState, setCollaborationState] = useState<CollaborationState | null>(null);
   const [showContentTooLargeBanner, setShowContentTooLargeBanner] = useState(false);
+  const [isGeneratingPageSummary, setIsGeneratingPageSummary] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
@@ -157,9 +158,9 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const searchParams = useSearchParams();
   const version = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
   const handleRestoreVersion = useCallback(
-    async (descriptionHTML: string) => {
+    async (descriptionJSON: object) => {
       if (version && isNestedPagesEnabled) {
-        page.setVersionToBeRestored(version, descriptionHTML);
+        page.setVersionToBeRestored(version, descriptionJSON);
         page.setRestorationStatus(true);
         updateToast("restoring-version", { type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
         if (page.id) {
@@ -167,7 +168,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
         }
       } else {
         editorRef.current?.clearEditor();
-        editorRef.current?.setEditorValue(descriptionHTML);
+        editorRef.current?.setEditorValue(descriptionJSON);
       }
     },
     [version, page, handlers, editorRef, isNestedPagesEnabled]
@@ -187,7 +188,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
       <div className="size-full flex flex-col overflow-hidden">
         <PageVersionsOverlay
           editorComponent={PagesVersionEditor}
-          fetchVersionDetails={handlers.fetchVersionDetails}
+          fetchAllVersions={handlers.fetchAllVersions}
           handleRestore={handleRestoreVersion}
           pageId={page.id ?? ""}
           restoreEnabled={isContentEditable}
@@ -197,9 +198,12 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
         {showContentTooLargeBanner && <ContentLimitBanner className="px-page-x" />}
         <div className="shrink-0 relative size-full flex flex-col overflow-hidden">
           <PageEditorToolbarRoot
+            isGeneratingPageSummary={isGeneratingPageSummary}
             handleOpenNavigationPane={handleOpenNavigationPane}
             isNavigationPaneOpen={isNavigationPaneOpen}
             page={page}
+            storeType={storeType}
+            setIsGeneratingPageSummary={setIsGeneratingPageSummary}
           />
           <PageEditorBody
             config={config}
@@ -218,10 +222,13 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
             extendedEditorProps={extendedEditorProps}
             isFetchingFallbackBinary={isFetchingFallbackBinary}
             onCollaborationStateChange={setCollaborationState}
+            isGeneratingPageSummary={isGeneratingPageSummary}
+            setIsGeneratingPageSummary={setIsGeneratingPageSummary}
           />
         </div>
       </div>
       <PageNavigationPaneRoot
+        config={config}
         storeType={storeType}
         handleClose={handleCloseNavigationPane}
         isNavigationPaneOpen={isNavigationPaneOpen}

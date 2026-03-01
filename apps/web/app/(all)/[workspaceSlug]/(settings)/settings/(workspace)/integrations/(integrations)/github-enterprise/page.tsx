@@ -27,9 +27,9 @@ import { E_INTEGRATION_KEYS } from "@plane/types";
 import GithubDarkLogo from "@/app/assets/services/github-dark.svg?url";
 import GithubLightLogo from "@/app/assets/services/github-light.svg?url";
 // plane web imports
-import { UserAuthentication, IntegrationRoot } from "@/plane-web/components/integrations/github";
+import { UserAuthentication, IntegrationRoot } from "@/components/integrations/github";
 import { useFlag, useGithubIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+import { SiloAppService } from "@/services/integrations/silo.service";
 
 const siloAppService = new SiloAppService();
 

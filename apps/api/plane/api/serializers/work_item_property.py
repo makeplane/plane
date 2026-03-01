@@ -50,7 +50,7 @@ class IssuePropertyAPISerializer(BaseSerializer):
         child=IssuePropertyOptionAPISerializer(),
         required=False,
         write_only=True,
-        help_text="List of options to create when property_type is OPTION. Each option should have 'name', optionally 'description', 'is_default', 'external_id', and 'external_source'.",
+        help_text="List of options to create when property_type is OPTION. Each option should have 'name', optionally 'description', 'is_default', 'external_id', and 'external_source'.",  # noqa: E501
     )
 
     class Meta:
@@ -158,7 +158,7 @@ class IssuePropertyAPISerializer(BaseSerializer):
                     if existing_option:
                         raise serializers.ValidationError(
                             {
-                                "options": f"Option with external_id '{external_id}' and external_source '{external_source}' already exists"
+                                "options": f"Option with external_id '{external_id}' and external_source '{external_source}' already exists"  # noqa: E501
                             }
                         )
 

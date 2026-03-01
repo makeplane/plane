@@ -31,9 +31,10 @@ export const buildTempFilterExpressionFromConditions = <
 >(
   params: TBuildFilterExpressionParams<P, V, E>
 ): E | undefined => {
-  const { conditions, adapter } = params;
+  const { conditions, adapter, initialExpression } = params;
   let tempExpression: E | undefined = undefined;
   const tempFilterInstance = new FilterInstance<P, E>({
+    initialExpression,
     adapter,
     onExpressionChange: (expression) => {
       tempExpression = expression;

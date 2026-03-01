@@ -9,11 +9,20 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Python imports
+import hashlib
+import hmac
+import os
+
+# Django imports
+from django.conf import settings
+
 # Third party imports
 from rest_framework import serializers
 
 # Module import
 from plane.db.models import Account, Profile, User, Workspace, WorkspaceMemberInvite
+from plane.license.utils.instance_value import get_configuration_value
 from plane.utils.url import contains_url
 
 from .base import BaseSerializer
@@ -68,6 +77,8 @@ class UserSerializer(BaseSerializer):
 
 
 class UserMeSerializer(BaseSerializer):
+    email_hash = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -90,8 +101,22 @@ class UserMeSerializer(BaseSerializer):
             "is_email_verified",
             "last_login_medium",
             "last_login_time",
+            "email_hash",
         ]
         read_only_fields = fields
+
+    def get_email_hash(self, obj):
+        """Generate HMAC-SHA256 hash of user email for identity verification."""
+        (is_chat_support_enabled,) = get_configuration_value(
+            [{"key": "IS_CHAT_SUPPORT_ENABLED", "default": os.environ.get("IS_CHAT_SUPPORT_ENABLED", "0")}]
+        )
+        if is_chat_support_enabled != "1":
+            return None
+        secret_key = settings.CHAT_SUPPORT_IDENTITY_VERIFICATION_SECRET
+        if not secret_key:
+            return None
+        secret_bytes = bytes.fromhex(secret_key)
+        return hmac.new(secret_bytes, obj.email.encode(), hashlib.sha256).hexdigest()
 
 
 class UserMeSettingsSerializer(BaseSerializer):

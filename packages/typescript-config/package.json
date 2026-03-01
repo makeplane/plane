@@ -1,12 +1,13 @@
 {
   "name": "@plane/typescript-config",
-  "version": "1.2.0",
+  "version": "2.3.0",
   "license": "AGPL-3.0",
   "private": true,
   "files": [
     "base.json",
-    "nextjs.json",
+    "express.json",
+    "node-library.json",
     "react-library.json",
-    "node-library.json"
+    "react-router.json"
   ]
 }

@@ -12,25 +12,25 @@
  */
 
 import { useEffect, useState, useRef } from "react";
-import { Rocket } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon, NewTabIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Switch } from "@plane/propel/switch";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // services
 import { ProjectService } from "@/services/project";
 // components
@@ -205,7 +205,7 @@ export function ExistingIssuesListModal(props: Props) {
                   isWorkspaceLevel ? "text-primary" : "text-secondary"
                 }`}
               >
-                <ToggleSwitch value={isWorkspaceLevel} onChange={() => setIsWorkspaceLevel((prevData) => !prevData)} />
+                <Switch value={isWorkspaceLevel} onChange={() => setIsWorkspaceLevel((prevData) => !prevData)} />
                 <button
                   type="button"
                   onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
@@ -298,7 +298,7 @@ export function ExistingIssuesListModal(props: Props) {
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <Rocket className="h-4 w-4" />
+                          <NewTabIcon className="h-4 w-4" />
                         </a>
                       </Combobox.Option>
                     );

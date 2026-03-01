@@ -73,7 +73,6 @@ from plane.bgtasks.webhook_task import model_activity
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
-from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
 
 class ModuleViewSet(BaseViewSet):
@@ -306,7 +305,6 @@ class ModuleViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "module")
 
             module = (
                 self.get_queryset()
@@ -679,7 +677,6 @@ class ModuleViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "module")
 
             module = module_queryset.values(
                 # Required fields

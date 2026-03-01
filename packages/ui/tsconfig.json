@@ -1,11 +1,22 @@
 {
   "extends": "@plane/typescript-config/react-library.json",
-  "include": ["src"],
   "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noImplicitReturns": false,
+    "noUncheckedIndexedAccess": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "exactOptionalPropertyTypes": false,
-    "noImplicitReturns": false
+    "outDir": "dist",
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
-  "exclude": ["dist", "node_modules"]
+  "include": ["src"],
+  "exclude": ["dist", "node_modules", "*.config.ts"],
+  "references": [
+    { "path": "../types" },
+    { "path": "../constants" },
+    { "path": "../hooks" },
+    { "path": "../utils" },
+    { "path": "../propel" }
+  ]
 }

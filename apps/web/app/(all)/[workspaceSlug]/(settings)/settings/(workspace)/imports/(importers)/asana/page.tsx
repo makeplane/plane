@@ -15,10 +15,10 @@ import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane web components
-import { AuthenticationRoot, StepsRoot } from "@/plane-web/components/importers/asana";
+import { AuthenticationRoot, StepsRoot } from "@/components/importers/asana";
 //  plane web hooks
-import { AsanaDashboardRoot } from "@/plane-web/components/importers/asana/dashboard/root";
-import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
+import { AsanaDashboardRoot } from "@/components/importers/asana/dashboard/root";
+import { DashboardLoaderRoot } from "@/components/importers/common/dashboard";
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 
 function AsanaImporter() {

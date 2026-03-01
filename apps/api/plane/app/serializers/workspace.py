@@ -131,6 +131,13 @@ class WorkspaceMemberMeSerializer(BaseSerializer):
         fields = "__all__"
 
 
+class WorkspaceMemberUserOnboardingSerializer(BaseSerializer):
+    class Meta:
+        model = WorkspaceMember
+        fields = ["workspace", "member", "getting_started_checklist", "tips", "explored_features"]
+        read_only_fields = ["workspace", "member"]
+
+
 class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
     member = UserAdminLiteSerializer(read_only=True)
 

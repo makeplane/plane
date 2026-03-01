@@ -18,18 +18,19 @@ import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { ProjectMemberList } from "@/components/project/member-list";
-import { ProjectSettingsMemberDefaults } from "@/components/project/project-settings-member-defaults";
+import { ProjectMemberList } from "@/components/projects/settings/members/list";
+import { ProjectSettingsMemberDefaults } from "@/components/projects/settings/members/defaults";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+import { ProjectTeamspaceList } from "@/components/projects/settings/teamspaces/teamspace-list";
+// helpers
+import { getProjectSettingsPageLabelI18nKey } from "@/helpers/settings/project";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces/teamspace-list";
-import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
-// local imports
+// types
 import type { Route } from "./+types/page";
+// local imports
 import { MembersProjectSettingsHeader } from "./header";
 
 function MembersSettingsPage({ params }: Route.ComponentProps) {

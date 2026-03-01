@@ -30,6 +30,8 @@ from openai import PermissionDeniedError
 from openai import RateLimitError
 from openai import UnprocessableEntityError
 
+from pi.services.llm.llms import get_fallback_model_name
+
 log = logging.getLogger(__name__)
 
 T = TypeVar("T")
@@ -95,12 +97,12 @@ def llm_error_handler(
                 except LengthFinishReasonError as e:  # type: ignore[misc]
                     # Completion hit its length limit while using structured output
                     if attempt < max_retries and enable_retry:
-                        # Prefer switching to GPT-4o which tends to serialize JSON more compactly
+                        # Switch to best available fallback model (compact JSON serialization)
+                        fallback_model = get_fallback_model_name()
                         log.warning(
-                            f"{log_context} Length finish encountered, switching model to GPT-4o and retrying {func.__name__} (attempt {attempt + 1})"
+                            f"{log_context} Length finish encountered, switching model to {fallback_model} and retrying {func.__name__} (attempt {attempt + 1})"  # noqa: E501
                         )
                         # Only set model override if the function supports an LLM model kwarg
-                        fallback_model = "gpt-4o"
                         for model_kw in ("llm_model", "model", "switch_llm"):
                             if model_kw in func_param_names:
                                 kwargs[model_kw] = fallback_model
@@ -119,11 +121,12 @@ def llm_error_handler(
                 except asyncio.TimeoutError as e:
                     # Function exceeded timeout - retry with fallback model
                     if attempt < max_retries and enable_retry:
+                        # Switch to best available fallback model (typically faster)
+                        fallback_model = get_fallback_model_name()
                         log.warning(
-                            f"{log_context} Timeout ({current_timeout}s) exceeded, switching model to GPT-4o and retrying {func.__name__} (attempt {attempt + 1})"  # noqa: E501
+                            f"{log_context} Timeout ({current_timeout}s) exceeded, switching model to {fallback_model} and retrying {func.__name__} (attempt {attempt + 1})"  # noqa: E501
                         )
-                        # Switch to fallback model (GPT-4o is typically faster)
-                        fallback_model = "gpt-4o"
+                        # Switch to fallback model
                         for model_kw in ("llm_model", "model", "switch_llm"):
                             if model_kw in func_param_names:
                                 kwargs[model_kw] = fallback_model

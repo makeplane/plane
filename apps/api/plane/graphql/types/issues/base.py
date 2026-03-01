@@ -99,7 +99,7 @@ class IssuesType:
     point: Optional[int]
     estimate_point: Optional[strawberry.ID]
     name: str
-    description: Optional[JSON]
+    description_json: Optional[JSON]
     description_html: Optional[str]
     description_stripped: Optional[str]
     description_binary: Optional[str]
@@ -121,6 +121,10 @@ class IssuesType:
     modules: Optional[list[strawberry.ID]]
     type: Optional[strawberry.ID]
     project_identifier: Optional[str]
+
+    @strawberry.field
+    def description(self) -> Optional[JSON]:
+        return self.description_json
 
     @strawberry.field
     def state(self) -> int:

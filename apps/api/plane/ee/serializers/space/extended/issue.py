@@ -13,14 +13,7 @@
 from django.db import IntegrityError
 
 # Module imports
-from plane.db.models import (
-    Issue,
-    IssueAssignee,
-    IssueLabel,
-    IssueType,
-    State,
-    StateGroup,
-)
+from plane.db.models import Issue, IssueAssignee, IssueLabel, IssueType, State
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.ee.models import IntakeResponsibility, IntakeResponsibilityTypeChoices
@@ -50,15 +43,7 @@ class ExtendedIssueCreateSerializer(IssueCreateSerializer):
 
         triage_state = State.triage_objects.filter(project_id=project_id, workspace_id=workspace_id).first()
         if not triage_state:
-            triage_state = State.objects.create(
-                name="Triage",
-                group=StateGroup.TRIAGE.value,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                color="#4E5355",
-                sequence=65000,
-                default=False,
-            )
+            triage_state = State.create_triage_state(workspace_id=workspace_id, project_id=project_id)
 
         # Create Issue
         issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type, state=triage_state)

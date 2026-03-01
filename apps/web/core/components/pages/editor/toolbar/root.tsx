@@ -12,6 +12,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { PanelRight } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -23,19 +24,36 @@ import { PageToolbar } from "@/components/pages/editor/toolbar";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { PageCollaboratorsList } from "@/plane-web/components/pages/header/collaborators-list";
+import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
+import { PageAiSummaryAction } from "../ai/summary-action";
+import { EPageStoreType } from "@/plane-web/hooks/store";
 
 type Props = {
   handleOpenNavigationPane: () => void;
   isNavigationPaneOpen: boolean;
   page: TPageInstance;
+  storeType: EPageStoreType;
+  isGeneratingPageSummary: boolean;
+  setIsGeneratingPageSummary: (isGenerating: boolean) => void;
 };
 
 export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(props: Props) {
-  const { handleOpenNavigationPane, isNavigationPaneOpen, page } = props;
+  const {
+    handleOpenNavigationPane,
+    isNavigationPaneOpen,
+    page,
+    storeType,
+    setIsGeneratingPageSummary,
+    isGeneratingPageSummary,
+  } = props;
   // translation
   const { t } = useTranslation();
+  // navigation
+  const { workspaceSlug } = useParams();
+  // page flag
+  const { isPageAiSummaryEnabled } = usePageFlag({ workspaceSlug: workspaceSlug?.toString() ?? "" });
   // derived values
   const {
     isContentEditable,
@@ -66,6 +84,15 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
             <div className="flex-1">{editorRef && <PageToolbar editorRef={editorRef} />}</div>
             <div className="flex items-center gap-2">
               <PageCollaboratorsList page={page} />
+              {isPageAiSummaryEnabled && (
+                <PageAiSummaryAction
+                  workspaceSlug={workspaceSlug}
+                  isGenerating={isGeneratingPageSummary}
+                  pageId={page.id}
+                  handleLoading={setIsGeneratingPageSummary}
+                  storeType={storeType}
+                />
+              )}
               {!isNavigationPaneOpen && (
                 <button
                   type="button"

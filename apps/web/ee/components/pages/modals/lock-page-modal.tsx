@@ -13,8 +13,7 @@
 
 import { useState } from "react";
 // plane imports
-import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 import { getPageName } from "@plane/utils";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
@@ -53,7 +52,7 @@ export function LockPageModal({
               ? "This will allow others to edit this page."
               : "This will prevent others from editing this page."}
           </div>
-          <ToggleSwitch
+          <Switch
             className="mt-4"
             value={actionType}
             onChange={() => {
@@ -64,7 +63,6 @@ export function LockPageModal({
       }
       successMessage={`Page ${page.is_locked ? "unlocked" : "locked"} successfully.`}
       errorMessage={`Page could not be ${page.is_locked ? "unlocked" : "locked"}. Please try again.`}
-      eventName={page.is_locked ? PROJECT_PAGE_TRACKER_EVENTS.unlock : PROJECT_PAGE_TRACKER_EVENTS.lock}
     />
   );
 }

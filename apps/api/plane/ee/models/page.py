@@ -13,10 +13,10 @@ from django.conf import settings
 from django.db import models
 
 from plane.db.models import Page
-from plane.db.models.workspace import WorkspaceBaseModel
+from plane.db.models import ProjectOptionalBaseModel
 
 
-class PageUser(WorkspaceBaseModel):
+class PageUser(ProjectOptionalBaseModel):
     """
     This model is used to store the users who have access to the private page.
     Defines the possible access levels a user can have for a private page:
@@ -56,7 +56,7 @@ class PageUser(WorkspaceBaseModel):
         return f"{self.user.email} - {self.page.id}"
 
 
-class PageComment(WorkspaceBaseModel):
+class PageComment(ProjectOptionalBaseModel):
     page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="page_comments")
     parent = models.ForeignKey(
         "self",
@@ -80,7 +80,7 @@ class PageComment(WorkspaceBaseModel):
         return f"{self.page.name} - Comment by {self.created_by.email}"
 
 
-class PageCommentReaction(WorkspaceBaseModel):
+class PageCommentReaction(ProjectOptionalBaseModel):
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

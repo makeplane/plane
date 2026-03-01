@@ -43,7 +43,7 @@ class FeatureFlagService:
         Check if a feature flag is enabled for the given context.
 
         Args:
-            flag: Feature flag key (e.g., PI_CHAT, PI_BUILD)
+            flag: Feature flag key (e.g., AI_CHAT, PI_BUILD)
             context: Feature flag context with user and workspace info
 
         Returns:
@@ -61,7 +61,9 @@ class FeatureFlagService:
             if context.workspace_slug is None:
                 logger.warning(f"workspace_slug is None for feature flag check: {flag}")
                 return False
-            return await is_feature_enabled(flag, context.workspace_slug, context.user_id)
+            result = await is_feature_enabled(flag, context.workspace_slug, context.user_id)
+            logger.info(f"Feature flag {flag} for workspace {context.workspace_slug} : {result}")
+            return result
         except Exception as e:
             logger.error(f"Error checking feature flag {flag}: {e}")
             return False
@@ -84,31 +86,11 @@ class FeatureFlagService:
 
     async def is_chat_enabled(self, context: FeatureFlagContext) -> bool:
         """Check if chat feature is enabled."""
-        return await self.is_enabled(self.flags.PI_CHAT, context)
+        return await self.is_enabled(self.flags.AI_CHAT, context)
 
     async def is_dedupe_enabled(self, context: FeatureFlagContext) -> bool:
         """Check if dedupe feature is enabled."""
-        return await self.is_enabled(self.flags.PI_DEDUPE, context)
-
-    async def is_action_execution_enabled(self, context: FeatureFlagContext) -> bool:
-        """
-        Check if action execution feature is enabled.
-
-        This feature flag controls whether users can execute actions (like creating work-items,
-        updating states, etc.) through the chat interface. When disabled, users will see
-        a message indicating the feature is not available.
-
-        Args:
-            context: Feature flag context with user and workspace information
-
-        Returns:
-            bool: True if action execution is enabled, False otherwise
-        """
-        return await self.is_enabled(self.flags.PI_ACTION_EXECUTION, context)
-
-    async def is_sonnet_4_enabled(self, context: FeatureFlagContext) -> bool:
-        """Check if sonnet 4 feature is enabled."""
-        return await self.is_enabled(self.flags.PI_SONNET_4, context)
+        return await self.is_enabled(self.flags.AI_DEDUPE, context)
 
     # async def is_build_enabled(self, context: FeatureFlagContext) -> bool:
     #     """Check if build/actions feature is enabled."""
@@ -117,10 +99,12 @@ class FeatureFlagService:
     def get_available_flags(self) -> list[str]:
         """Get list of all available feature flags."""
         return [
-            self.flags.PI_CHAT,
-            self.flags.PI_DEDUPE,
-            self.flags.PI_ACTION_EXECUTION,
-            self.flags.PI_SONNET_4,
+            self.flags.AI_CHAT,
+            self.flags.AI_DEDUPE,
+            self.flags.AI_CONVERSE,
+            self.flags.AI_FILE_UPLOADS,
+            self.flags.AI_PAGES_BLOCKS,
+            self.flags.AI_PAGES_SUMMARY,
         ]
 
 

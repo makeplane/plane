@@ -15,7 +15,12 @@ import { mergeAttributes, Node } from "@tiptap/core";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 //types
 import { EDrawioAttributeNames } from "./types";
-import type { TDrawioBlockAttributes, TDrawioExtension, InsertDrawioCommandProps } from "./types";
+import type {
+  TDrawioBlockAttributes,
+  TDrawioExtension,
+  InsertDrawioCommandProps,
+  DrawioExtensionStorage,
+} from "./types";
 // utils
 import { DEFAULT_DRAWIO_ATTRIBUTES } from "./utils/attribute";
 
@@ -27,6 +32,10 @@ declare module "@tiptap/core" {
        */
       insertDrawioDiagram: (props: InsertDrawioCommandProps) => ReturnType;
     };
+  }
+
+  interface Storage {
+    [ADDITIONAL_EXTENSIONS.DRAWIO]: DrawioExtensionStorage;
   }
 }
 

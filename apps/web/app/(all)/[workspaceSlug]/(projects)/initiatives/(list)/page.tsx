@@ -16,7 +16,7 @@ import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
-import { InitiativesPageRoot } from "@/plane-web/components/initiatives/layout/page";
+import { InitiativesPageRoot } from "@/components/initiatives/layout/page";
 
 function InitiativesPage() {
   // store hooks

@@ -85,4 +85,87 @@
       opacity: 1;
     }
   }
+
+  /* tour carousel animations */
+  --animate-tour-carousel-slide-in-right: tourCarouselSlideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  @keyframes tourCarouselSlideInRight {
+    0% {
+      opacity: 0;
+      transform: translateX(40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  --animate-tour-carousel-slide-in-left: tourCarouselSlideInLeft 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  @keyframes tourCarouselSlideInLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  --animate-tour-carousel-slide-out-right: tourCarouselSlideOutRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  @keyframes tourCarouselSlideOutRight {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(40px);
+    }
+  }
+
+  --animate-tour-carousel-slide-out-left: tourCarouselSlideOutLeft 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  @keyframes tourCarouselSlideOutLeft {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+  }
+
+  --animate-tour-carousel-fade-in: tourCarouselFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  @keyframes tourCarouselFadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  --animate-tour-popover-enter: tourPopoverEnter 0.2s cubic-bezier(0.21, 1.02, 0.48, 1) forwards;
+  @keyframes tourPopoverEnter {
+    0% {
+      opacity: 0;
+      transform: translateY(8px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  --animate-tour-popover-exit: tourPopoverExit 0.15s ease-in forwards;
+  @keyframes tourPopoverExit {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(8px) scale(0.95);
+    }
+  }
 }

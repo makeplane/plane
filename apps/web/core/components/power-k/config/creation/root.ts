@@ -14,8 +14,8 @@
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // plane web imports
-import type { TPowerKCreationCommandKeysExtended } from "@/plane-web/components/command-palette/power-k/commands/creation";
-import { usePowerKCreationCommandsRecordExtended } from "@/plane-web/components/command-palette/power-k/commands/creation";
+import type { TPowerKCreationCommandKeysExtended } from "@/components/command-palette/power-k/commands/creation";
+import { usePowerKCreationCommandsRecordExtended } from "@/components/command-palette/power-k/commands/creation";
 // local imports
 import { usePowerKCreationCommandsRecord } from "./command";
 import type { TPowerKCreationCommandKeys } from "./command";

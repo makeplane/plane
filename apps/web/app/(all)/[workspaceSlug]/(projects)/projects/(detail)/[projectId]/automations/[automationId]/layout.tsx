@@ -17,8 +17,8 @@ import { Outlet } from "react-router";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 // plane web imports
-import { AutomationsDetailsWrapper } from "@/plane-web/components/automations/details/wrapper";
-import { AutomationsListWrapper } from "@/plane-web/components/automations/list/wrapper";
+import { AutomationsDetailsWrapper } from "@/components/automations/details/wrapper";
+import { AutomationsListWrapper } from "@/components/automations/list/wrapper";
 // local imports
 import type { Route } from "./+types/layout";
 import { ProjectAutomationDetailsHeader } from "./header";

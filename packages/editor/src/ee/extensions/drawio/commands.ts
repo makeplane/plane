@@ -17,11 +17,13 @@ import { v4 as uuidv4 } from "uuid";
 import type { TDrawioBlockAttributes } from "./types";
 import { EDrawioAttributeNames } from "./types";
 import { DEFAULT_DRAWIO_ATTRIBUTES } from "./utils/attribute";
+// constants
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 export const drawioCommands = (nodeType: NodeType): Partial<RawCommands> => ({
   insertDrawioDiagram:
     (props) =>
-    ({ commands }) => {
+    ({ commands, editor }) => {
       const uniqueID = uuidv4();
 
       const attributes: TDrawioBlockAttributes = {
@@ -29,6 +31,12 @@ export const drawioCommands = (nodeType: NodeType): Partial<RawCommands> => ({
         [EDrawioAttributeNames.ID]: uniqueID,
         [EDrawioAttributeNames.MODE]: props.mode,
       };
+
+      // Set flag to auto-open the modal when component mounts
+      const drawioStorage = editor.storage[ADDITIONAL_EXTENSIONS.DRAWIO];
+      if (drawioStorage) {
+        drawioStorage.openDialog = true;
+      }
 
       if (props.pos) {
         commands.insertContentAt(props.pos, {

@@ -62,6 +62,25 @@ async def infer_selected_entity(args: Dict[str, Any], context: Dict[str, Any], e
                 "entity_id": str(project_id),
             }
 
+        # Intake URL: /{workspace}/projects/{project}/intake/
+        # For intake actions (especially delete), link to the intake list page
+        if workspace_slug and project_id and hint == "intake":
+            return {
+                "entity_url": f"{base}/{workspace_slug}/projects/{project_id}/intake/",
+                "entity_name": "Intake",
+                "entity_type": "intake",
+                "entity_id": str(project_id),  # No specific entity after delete
+            }
+        # Customer URL: /{workspace}/customers/{customer_id}/
+        customer_id = args.get("customer_id")
+        if workspace_slug and customer_id and hint == "customer":
+            return {
+                "entity_url": f"{base}/{workspace_slug}/customers/{customer_id}/",
+                "entity_name": None,
+                "entity_type": "customer",
+                "entity_id": str(customer_id),
+            }
+
         # Work-item inference (needs identifier resolution for best UX)
         issue_id = args.get("issue_id")
         if workspace_slug and issue_id:

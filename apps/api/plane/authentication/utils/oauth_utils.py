@@ -9,6 +9,7 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+
 def is_pkce_required(client_id: str) -> bool:
     from plane.authentication.models import Application
 

@@ -1,7 +1,9 @@
 @import "./variables.css";
 @import "./editor.css";
 @import "./table.css";
-@import "./github-dark.css";
+@import "./shiki.css";
 @import "./drag-drop.css";
 @import "./title-editor.css";
 @import "./equation.css";
+@import "./version-diff.css";
+@import "./multi-column.css";

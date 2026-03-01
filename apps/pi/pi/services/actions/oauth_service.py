@@ -30,6 +30,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import settings
+from pi.app.api.v1.helpers.plane_sql_queries import get_oauth_credentials_sync
 from pi.app.models.oauth import PlaneOAuthState
 from pi.app.models.oauth import PlaneOAuthToken
 
@@ -40,10 +41,24 @@ class PlaneOAuthService:
     """Service for managing Plane OAuth authentication"""
 
     def __init__(self):
-        self.client_id = settings.plane_api.OAUTH_CLIENT_ID
-        self.client_secret = settings.plane_api.OAUTH_CLIENT_SECRET
+        # Prioritize config/environment variables over database
+        if settings.plane_api.PLANE_OAUTH_CLIENT_ID and settings.plane_api.PLANE_OAUTH_CLIENT_SECRET:
+            self.client_id = settings.plane_api.PLANE_OAUTH_CLIENT_ID
+            self.client_secret = settings.plane_api.PLANE_OAUTH_CLIENT_SECRET
+        else:
+            # Fall back to database credentials
+            client_id, client_secret = get_oauth_credentials_sync()
+            if not client_id or not client_secret:
+                raise ValueError(
+                    "OAuth credentials not found. Please set PLANE_OAUTH_CLIENT_ID and PLANE_OAUTH_CLIENT_SECRET "
+                    "environment variables or configure them in the database."
+                )
+            self.client_id = client_id
+            self.client_secret = client_secret
+
         self.redirect_uri = settings.plane_api.OAUTH_REDIRECT_URI
         self.base_url = settings.plane_api.HOST  # Use HOST which points to the Plane API
+        self.internal_base_url = settings.plane_api.INTERNAL_HOST
 
     def generate_authorization_url(self, user_id: UUID, workspace_id: Optional[UUID] = None, workspace_slug: Optional[str] = None) -> tuple[str, str]:
         """
@@ -148,7 +163,7 @@ class PlaneOAuthService:
         if app_installation_id:
             payload["app_installation_id"] = app_installation_id
 
-        token_url = f"{self.base_url}/auth/o/token/"
+        token_url = f"{self.internal_base_url}/auth/o/token/"
 
         async with httpx.AsyncClient() as client:
             response = await client.post(
@@ -276,7 +291,7 @@ class PlaneOAuthService:
             "client_secret": self.client_secret,
         }
 
-        token_url = f"{self.base_url}/auth/o/token/"
+        token_url = f"{self.internal_base_url}/auth/o/token/"
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 token_url,

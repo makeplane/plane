@@ -11,21 +11,23 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+// components
+import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// Plane-web
-import { WorkItemAdditionalWidgetCollapsibles } from "@/plane-web/components/issues/issue-detail-widgets/collapsibles";
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+import { useTimeLineRelationOptions } from "@/components/relations";
+import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 // local imports
 import { AttachmentsCollapsible } from "./attachments";
 import { LinksCollapsible } from "./links";
 import { RelationsCollapsible } from "./relations";
 import { SubIssuesCollapsible } from "./sub-issues";
+import { CustomerRequestsCollapsible } from "./customer-requests";
+import { PagesCollapsible } from "./pages";
 
 type Props = {
   workspaceSlug: string;
@@ -45,6 +47,7 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
     attachment: { getAttachmentsCountByIssueId, getAttachmentsUploadStatusByIssueId },
     relation: { getRelationCountByIssueId },
   } = useIssueDetail(issueServiceType);
+  const { isCustomersFeatureEnabled } = useCustomers();
   // derived values
   const issue = getIssueById(issueId);
   const subIssues = subIssuesByIssueId(issueId);
@@ -54,6 +57,8 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
   const shouldRenderSubIssues = !!subIssues && subIssues.length > 0 && !hideWidgets?.includes("sub-work-items");
   const shouldRenderRelations = issueRelationsCount > 0 && !hideWidgets?.includes("relations");
   const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0 && !hideWidgets?.includes("links");
+  const shouldRenderCustomerRequest = Boolean(issue?.customer_request_ids?.length) && !issue?.is_epic;
+  const shouldRenderPages = !hideWidgets?.includes("pages");
   const attachmentUploads = getAttachmentsUploadStatusByIssueId(issueId);
   const attachmentsCount = getAttachmentsCountByIssueId(issueId);
   const shouldRenderAttachments =
@@ -97,14 +102,20 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
           issueServiceType={issueServiceType}
         />
       )}
-      <WorkItemAdditionalWidgetCollapsibles
-        disabled={disabled}
-        hideWidgets={hideWidgets ?? []}
-        issueServiceType={issueServiceType}
-        projectId={projectId}
-        workItemId={issueId}
-        workspaceSlug={workspaceSlug}
-      />
+      {shouldRenderCustomerRequest && isCustomersFeatureEnabled && (
+        <CustomerRequestsCollapsible workItemId={issueId} workspaceSlug={workspaceSlug} disabled={disabled} />
+      )}
+      {shouldRenderPages && (
+        <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={E_FEATURE_FLAGS.LINK_PAGES} fallback={<></>}>
+          <PagesCollapsible
+            workItemId={issueId}
+            workspaceSlug={workspaceSlug}
+            disabled={disabled}
+            projectId={issue?.project_id}
+            issueServiceType={issueServiceType}
+          />
+        </WithFeatureFlagHOC>
+      )}
     </div>
   );
 });

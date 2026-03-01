@@ -11,13 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
-import { useGroupByOptions } from "@/plane-web/components/issues/issue-layouts/utils";
+import { useGroupByOptions } from "@/helpers/work-item-layout";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions | undefined;

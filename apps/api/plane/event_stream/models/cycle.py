@@ -30,7 +30,7 @@ class CycleIssueProxy(CycleIssue):
                         )
                         VALUES (
                             gen_random_uuid(),
-                            'issue.cycle.added',
+                            'workitem.cycle.added',
                             'cycle_issue',
                             NEW.issue_id,
                             jsonb_build_object('data', row_to_json(NEW), 'previous_attributes', '{}'),
@@ -49,7 +49,7 @@ class CycleIssueProxy(CycleIssue):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             # Handle both soft deletes (deleted_at updated to not null) and regular updates
@@ -68,7 +68,7 @@ class CycleIssueProxy(CycleIssue):
                             )
                             VALUES (
                                 gen_random_uuid(),
-                                'issue.cycle.removed',
+                                'workitem.cycle.removed',
                                 'cycle_issue',
                                 OLD.issue_id,
                                 jsonb_build_object('data', '{}', 'previous_attributes', row_to_json(OLD)),
@@ -87,7 +87,7 @@ class CycleIssueProxy(CycleIssue):
                                 )
                                 VALUES (
                                     gen_random_uuid(),
-                                    'issue.cycle.moved',
+                                    'workitem.cycle.moved',
                                     'cycle_issue',
                                     NEW.issue_id,
                                     jsonb_build_object('data', row_to_json(NEW), 'previous_attributes', row_to_json(OLD)),
@@ -107,7 +107,7 @@ class CycleIssueProxy(CycleIssue):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]

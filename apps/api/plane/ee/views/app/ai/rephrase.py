@@ -46,7 +46,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             3. Do not include any explanations, comments, or additional text in your response.
             4. Do not add any prefixes or suffixes (such as "Question:" or "Answer:" or "Content:") to your response.
             5. If there are cases where input doesn't seem to be absolutely coherent or meaningful where you can't perform the intended task just provide the input back without any additional text and explanations.
-            """
+            """  # noqa: E501
         if task == Task.PARAPHRASE.value:
             return (
                 True,
@@ -58,7 +58,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
         4. Keep the same tense, unless it's grammatically incorrect in context.
         5. Do not add, remove, or alter any information beyond grammatical and spelling corrections.
         6. If the original text uses incorrect pronouns (e.g., "women" instead of "woman"), correct them while maintaining the original subject.
-        """
+        """  # noqa: E501
                 + format_instructions,
             )
 
@@ -108,7 +108,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
         6. Do not introduce any new information not present in the original text.
         7. Ensure the summary provides a quick, easily digestible overview of the text's content.
         8. If the input text is very short (less than 100 words), aim for a summary of 1-2 sentences.
-        """
+        """  # noqa: E501
                 + format_instructions,
             )
 
@@ -138,7 +138,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             4. Maintain consistency in style throughout the entire text.
             5. Do not add or remove significant information from the original text.
             6. Adjust the structure and length as needed to match the tone.
-            """
+            """  # noqa: E501
             tone_specific_instructions = {
                 (10, 0): """
                 Extremely Casual
@@ -281,7 +281,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
         10. Provide DIRECT answers without introductory phrases or explanations of your role.
         11. Do not include any prefixes (such as "Answer:" or "Response:") in your response.
         Your goal is to deliver the most relevant, accurate, and helpful response possible, considering both the provided content and your broader understanding.
-        """,
+        """,  # noqa: E501
             )
 
         else:
@@ -322,7 +322,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             if casual_score + formal_score != 10 or casual_score < 0 or formal_score < 0:
                 return Response(
                     {
-                        "error": "Invalid scores. casual_score and formal_score must sum to 10 and both must be non-negative."
+                        "error": "Invalid scores. casual_score and formal_score must sum to 10 and both must be non-negative.",  # noqa: E501
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )

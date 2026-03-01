@@ -30,6 +30,7 @@ import type { CoreEditorRefApi, EditorRefApi, IEditorProps, TEditorCommands } fr
 import { getParagraphCount } from "./common";
 import { insertContentAtSavedSelection } from "./insert-content-at-cursor-position";
 import { scrollSummary, scrollToNodeViaDOMCoordinates } from "./scroll-to-node";
+import { parseEditorHTMLtoGlobalHTML } from "../utils/editor-html-parser";
 
 type TArgs = Pick<IEditorProps, "getEditorMetaData"> & {
   editor: Editor | null;
@@ -54,26 +55,21 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       const { empty } = editor.state.selection;
 
       if (empty) {
-        // Get the text content and position info
         const { $from } = editor.state.selection;
         const textContent = $from.parent.textContent;
         const posInNode = $from.parentOffset;
 
-        // Find word boundaries
         let start = posInNode;
         let end = posInNode;
 
-        // Move start position backwards until we hit a word boundary
         while (start > 0 && /\w/.test(textContent[start - 1])) {
           start--;
         }
 
-        // Move end position forwards until we hit a word boundary
         while (end < textContent.length && /\w/.test(textContent[end])) {
           end++;
         }
 
-        // If we found a word, select it using editor commands
         if (start !== end) {
           const from = $from.start() + start;
           const to = $from.start() + end;
@@ -102,7 +98,6 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       if (!editor) return "";
       const editorHTML = editor.getHTML();
       const metaData = getEditorMetaData(editorHTML);
-      // convert to markdown
       const markdown = convertHTMLToMarkdown({
         description_html: editorHTML,
         metaData,
@@ -153,9 +148,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     executeMenuItemCommand: (props) => {
       const { itemKey } = props;
       const editorItems = getEditorMenuItems(editor);
-
       const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
-
       const item = getEditorMenuItem(itemKey);
       if (item) {
         item.command(props);
@@ -197,10 +190,8 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       const { from, to, empty } = editor.state.selection;
       if (empty) return;
       if (insertOnNextLine) {
-        // move cursor to the end of the selection and insert a new line
         editor.chain().focus().setTextSelection(to).insertContent("<br />").insertContent(contentHTML).run();
       } else {
-        // replace selected text with the content provided
         editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
       }
     },
@@ -208,11 +199,9 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     isMenuItemActive: (props) => {
       const { itemKey } = props;
       const editorItems = getEditorMenuItems(editor);
-
       const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
       const item = getEditorMenuItem(itemKey);
       if (!item) return false;
-
       return item.isActive(props);
     },
     listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
@@ -226,11 +215,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         });
       };
 
-      // Subscribe to update event emitted from character count extension
       editor?.on("update", handleDocumentInfoChange);
-      // Return a function to unsubscribe to the continuous transactions of
-      // the editor on unmounting the component that has subscribed to this
-      // method
       return () => {
         editor?.off("update", handleDocumentInfoChange);
       };
@@ -244,22 +229,13 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         }
       };
 
-      // Subscribe to update event emitted from headers extension
       editor?.on("update", handleHeadingChange);
-      // Return a function to unsubscribe to the continuous transactions of
-      // the editor on unmounting the component that has subscribed to this
-      // method
       return () => {
         editor?.off("update", handleHeadingChange);
       };
     },
     onStateChange: (callback) => {
-      // Subscribe to editor state changes
       editor?.on("transaction", callback);
-
-      // Return a function to unsubscribe to the continuous transactions of
-      // the editor on unmounting the component that has subscribed to this
-      // method
       return () => {
         editor?.off("transaction", callback);
       };
@@ -300,27 +276,20 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     undo: () => editor?.commands.undo(),
     editorHasSynced: () => (provider ? provider.isSynced : false),
     findAndDeleteNode: ({ attribute, value }: { attribute: string; value: string | string[] }, nodeName: string) => {
-      // We use a single transaction for all deletions
       editor
         ?.chain()
         .command(({ tr }) => {
-          // Set the metadata directly on the transaction
           tr.setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true);
           tr.setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true);
           tr.setMeta(CORE_EDITOR_META.ADD_TO_HISTORY, false);
 
           let modified = false;
-
-          // Find and delete nodes based on whether value is an array or single string
           if (Array.isArray(value)) {
-            // For array of values, find all matching nodes in one pass
             const allNodesToDelete = value.flatMap((val) =>
               findChildren(tr.doc, (node) => node.type.name === nodeName && node.attrs[attribute] === val)
             );
 
-            // If we found nodes to delete
             if (allNodesToDelete.length > 0) {
-              // Delete nodes in reverse order to maintain position integrity
               allNodesToDelete
                 .sort((a, b) => b.pos - a.pos)
                 .forEach((targetNode) => {
@@ -329,23 +298,19 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
               modified = true;
             }
           } else {
-            // Original single value logic
             const nodes = findChildren(
               tr.doc,
               (node) => node.type.name === nodeName && node.attrs[attribute] === value
             );
 
-            // If we found a node to delete
             if (nodes.length > 0) {
-              // Get the first matching node
               const targetNode = nodes[0];
-              // Delete the node directly using the transaction
               tr.delete(targetNode.pos, targetNode.pos + targetNode.node.nodeSize);
               modified = true;
             }
           }
 
-          return modified; // Return true if we made changes, false otherwise
+          return modified;
         })
         .run();
     },
@@ -353,15 +318,10 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       if (!editor) return;
       try {
         const { doc } = editor.state;
-
-        // Get the last child node of the document
         const lastNode = doc.content.lastChild;
-
         if (!lastNode) return false;
 
-        // Position *before* the end of the last node
         const endPosition = doc.content.size - 1;
-
         editor
           .chain()
           .insertContentAt(endPosition, textContent)

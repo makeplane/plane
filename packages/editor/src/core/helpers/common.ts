@@ -118,7 +118,7 @@ export const getParagraphCount = (editorState: EditorState | undefined) => {
   if (!editorState) return 0;
   let paragraphCount = 0;
   editorState.doc.descendants((node) => {
-    if (node.type.name === CORE_EXTENSIONS.PARAGRAPH && node.content.size > 0) paragraphCount++;
+    if (node.type.name === (CORE_EXTENSIONS.PARAGRAPH as string) && node.content.size > 0) paragraphCount++;
   });
   return paragraphCount;
 };

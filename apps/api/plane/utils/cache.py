@@ -114,7 +114,7 @@ def cache_function_result(timeout=300, key_prefix="cached_func"):
             except TypeError:
                 raise ValueError("Arguments must be serializable to JSON")
 
-            key_hash = hashlib.md5(key_data.encode()).hexdigest()
+            key_hash = hashlib.md5(key_data.encode(), usedforsecurity=False).hexdigest()
             cache_key = f"{key_prefix}:{func.__name__}:{key_hash}"
             # Check cache
             cached_value = cache.get(cache_key)

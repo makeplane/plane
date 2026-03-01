@@ -23,9 +23,9 @@ import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePowerK } from "@/hooks/store/use-power-k";
-import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
+import { isPiAllowed } from "@/helpers/pi-chat";
 import { useTheme, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import { usePathname } from "next/navigation";
 
 export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
@@ -111,13 +111,23 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       modifierShortcut: "cmd+a",
       action: () => (activeSidecar === "pi-chat" ? closeSidecar() : openPiChatSidecar()),
       isEnabled: (ctx) =>
+        !!ctx.params.workspaceSlug &&
         isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) &&
-        Boolean(ctx.params.projectId?.toString() || ctx.params.workItem?.toString()) &&
-        isPiAllowed(pathname, ctx.params.workspaceSlug?.toString() ?? ""),
+        isPiAllowed(
+          pathname,
+          ctx.params.workspaceSlug.toString(),
+          ctx.params.projectId?.toString(),
+          ctx.params.workItem?.toString()
+        ),
       isVisible: (ctx) =>
+        !!ctx.params.workspaceSlug &&
         isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) &&
-        Boolean(ctx.params.projectId?.toString() || ctx.params.workItem?.toString()) &&
-        isPiAllowed(pathname, ctx.params.workspaceSlug?.toString() ?? ""),
+        isPiAllowed(
+          pathname,
+          ctx.params.workspaceSlug.toString(),
+          ctx.params.projectId?.toString(),
+          ctx.params.workItem?.toString()
+        ),
       closeOnSelect: true,
     },
   ];

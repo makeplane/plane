@@ -16,7 +16,7 @@ import type { TInstanceConfig } from "@plane/types";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 // components
-import { AuthRoot } from "@/plane-web/components/mobile";
+import { AuthRoot } from "@/components/mobile";
 import type { Route } from "./+types/page";
 
 export const meta: Route.MetaFunction = () => [

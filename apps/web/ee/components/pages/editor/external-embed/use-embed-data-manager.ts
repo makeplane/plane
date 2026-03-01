@@ -18,7 +18,7 @@ import useSWR from "swr";
 import type { ExternalEmbedNodeViewProps, TExternalEmbedBlockAttributes } from "@plane/editor";
 import { EExternalEmbedAttributeNames } from "@plane/editor";
 import { useUser } from "@/hooks/store/user";
-import { liveService } from "@/plane-web/services/live.service";
+import { liveService } from "@/services/live.service";
 import type { EmbedData } from "./embed-handler";
 
 export const useEmbedDataManager = (externalEmbedNodeView: ExternalEmbedNodeViewProps) => {

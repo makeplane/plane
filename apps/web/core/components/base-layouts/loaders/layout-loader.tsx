@@ -12,7 +12,7 @@
  */
 
 import type { TBaseLayoutType } from "@plane/types";
-import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
+import { TimelineLayoutLoader } from "@/components/ui/loader/layouts/timeline-layout-loader";
 import { KanbanLayoutLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 
@@ -32,7 +32,7 @@ export function GenericLayoutLoader({ layout, customLoaders }: GenericLayoutLoad
     case "kanban":
       return <KanbanLayoutLoader />;
     case "gantt":
-      return <GanttLayoutLoader />;
+      return <TimelineLayoutLoader />;
     default:
       console.warn(`Unknown layout: ${layout}`);
       return null;

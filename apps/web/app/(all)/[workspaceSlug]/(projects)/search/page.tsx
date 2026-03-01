@@ -14,9 +14,9 @@
 import { observer } from "mobx-react";
 // plane web components
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { AppSearchRoot } from "@/plane-web/components/workspace/search";
+import { isSidebarToggleVisible } from "@/components/desktop";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { AppSearchRoot } from "@/components/workspace/search";
 import type { Route } from "./+types/page";
 
 function AppSearchPage({ params }: Route.ComponentProps) {

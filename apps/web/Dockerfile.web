@@ -14,7 +14,7 @@ RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
 
-ARG TURBO_VERSION=2.7.4
+ARG TURBO_VERSION=2.8.7
 RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
 COPY . .
 
@@ -49,7 +49,7 @@ ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 ARG VITE_ADMIN_BASE_URL=""
 ENV VITE_ADMIN_BASE_URL=$VITE_ADMIN_BASE_URL
 
-ARG VITE_ADMIN_BASE_PATH="/god-mode"
+ARG VITE_ADMIN_BASE_PATH="/god-mode/"
 ENV VITE_ADMIN_BASE_PATH=$VITE_ADMIN_BASE_PATH
 
 ARG VITE_LIVE_BASE_URL=""
@@ -67,6 +67,9 @@ ENV VITE_SPACE_BASE_PATH=$VITE_SPACE_BASE_PATH
 ARG VITE_WEB_BASE_URL=""
 ENV VITE_WEB_BASE_URL=$VITE_WEB_BASE_URL
 
+ARG VITE_APP_VERSION=""
+ENV VITE_APP_VERSION=$VITE_APP_VERSION
+
 ARG VITE_SILO_BASE_URL=""
 ENV VITE_SILO_BASE_URL=$VITE_SILO_BASE_URL
 
@@ -79,16 +82,16 @@ ENV VITE_PI_BASE_URL=$VITE_PI_BASE_URL
 ARG VITE_PI_BASE_PATH="/pi"
 ENV VITE_PI_BASE_PATH=$VITE_PI_BASE_PATH
 
-ARG VITE_RELAY_BASE_URL=""
-ENV VITE_RELAY_BASE_URL=$VITE_RELAY_BASE_URL
+ARG VITE_FLUX_BASE_URL=""
+ENV VITE_FLUX_BASE_URL=$VITE_FLUX_BASE_URL
 
-ARG VITE_RELAY_BASE_PATH="/relay"
-ENV VITE_RELAY_BASE_PATH=$VITE_RELAY_BASE_PATH
+ARG VITE_FLUX_BASE_PATH="/flux"
+ENV VITE_FLUX_BASE_PATH=$VITE_FLUX_BASE_PATH
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
 
-RUN NODE_OPTIONS="--max-old-space-size=4096" pnpm turbo run build --filter=web
+RUN NODE_OPTIONS="--max-old-space-size=6144" pnpm turbo run build --filter=web
 
 # *****************************************************************************
 # STAGE 3: Serve with nginx
@@ -97,6 +100,10 @@ FROM nginx:1.29-alpine AS production
 
 COPY apps/web/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=installer /app/apps/web/build/client /usr/share/nginx/html
+
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
 
 EXPOSE 3000
 

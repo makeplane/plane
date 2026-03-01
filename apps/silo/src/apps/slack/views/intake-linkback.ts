@@ -31,7 +31,7 @@ export const createSlackIntakeLinkback = (
 ) => {
   const { issue_detail } = issue;
   const planeToSlackUserMap = invertStringMap(userMap);
-  const blocks: any[] = [];
+  const blocks: unknown[] = [];
 
   // Get status info
   const statusInfo = INTAKE_STATUSES.find((s) => s.id === issue.status) || INTAKE_STATUSES[0];
@@ -115,15 +115,17 @@ export const createSlackIntakeLinkback = (
   });
 
   // Context with creation and update info using mrkdwn
-  blocks.push({
-    type: "context",
-    elements: [
-      {
-        type: "mrkdwn",
-        text: mutationContext,
-      },
-    ],
-  });
+  if (mutationContext?.length) {
+    blocks.push({
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: mutationContext,
+        },
+      ],
+    });
+  }
 
   // View in Plane button
   if (issue.project) {

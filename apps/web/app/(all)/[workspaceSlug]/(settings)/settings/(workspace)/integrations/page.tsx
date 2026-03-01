@@ -29,9 +29,9 @@ import { APPLICATIONS_LIST } from "@/constants/fetch-keys";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { AppListRoot } from "@/plane-web/components/marketplace";
+import { AppListRoot } from "@/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";
-import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+import { SiloAppService } from "@/services/integrations/silo.service";
 
 const siloAppService = new SiloAppService();
 
@@ -81,7 +81,7 @@ function WorkspaceIntegrationsPage() {
         <SettingsHeading
           title={t("workspace_settings.settings.integrations.title")}
           description={t("workspace_settings.settings.integrations.page_description")}
-          appendToRight={
+          control={
             <Link href={`/${workspaceSlug}/settings/integrations/create`} className={getButtonStyling("primary", "lg")}>
               Build your own
             </Link>

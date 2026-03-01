@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web imports
-import type { IEpicAnalyticStore } from "@/plane-web/store/issue/epic/analytic.store";
+import type { IEpicAnalyticStore } from "@/store/work-items/epic/analytic.store";
 
 export const useEpicAnalytics = (): IEpicAnalyticStore => {
   const context = useContext(StoreContext);

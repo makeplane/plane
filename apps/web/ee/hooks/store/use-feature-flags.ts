@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
+import type { IFeatureFlagsStore } from "@/store/feature-flags/feature-flags.store";
 
 export const useFeatureFlags = (): IFeatureFlagsStore => {
   const context = useContext(StoreContext);

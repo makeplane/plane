@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
@@ -24,14 +24,12 @@ import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import {
-  WorkspaceProjectStatesUpgrade,
-  WorkspaceProjectStatesRoot,
-} from "@/plane-web/components/workspace-project-states";
+// components
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { WorkspaceProjectStatesUpgrade, WorkspaceProjectStatesRoot } from "@/components/workspace-project-states";
+// plane web hooks
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import type { Route } from "./+types/page";
 import { ProjectStatessWorkspaceSettingsHeader } from "./header";
@@ -75,10 +73,8 @@ function WorklogsPage({ params }: Route.ComponentProps) {
         <SettingsHeading
           title={t("workspace_settings.settings.project_states.title")}
           description={t("workspace_settings.settings.project_states.description")}
-          appendToRight={
-            isFeatureEnabled && (
-              <ToggleSwitch value={isProjectGroupingEnabled} onChange={toggleProjectGroupingFeature} size="sm" />
-            )
+          control={
+            isFeatureEnabled && <Switch value={isProjectGroupingEnabled} onChange={toggleProjectGroupingFeature} />
           }
         />
         <div className="mt-6">

@@ -11,23 +11,23 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useLocation, Link, useNavigate } from "react-router";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TabNavigationList, TabNavigationItem } from "@plane/propel/tab-navigation";
+import { setPromiseToast } from "@plane/propel/toast";
 import type { EUserProjectRoles } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { useNavigationItems } from "@/plane-web/components/navigations";
+import { useNavigationItems } from "@/components/navigation";
+import { LeaveProjectModal } from "@/components/projects/modals/leave-project-modal";
+import { PublishProjectModal } from "@/components/projects/modals/publish-modal";
 // local imports
-import { LeaveProjectModal } from "../project/leave-project-modal";
-import { PublishProjectModal } from "../project/publish-project/modal";
 import { ProjectActionsMenu } from "./project-actions-menu";
 import { ProjectHeader } from "./project-header";
 import { TabNavigationOverflowMenu } from "./tab-navigation-overflow-menu";
@@ -62,9 +62,11 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
   const pathname = location.pathname;
   const navigate = useNavigate();
   const { t } = useTranslation();
+  // states
+  const [isFavoriteMenuOpen, setIsFavoriteMenuOpen] = useState(false);
 
   // Store hooks
-  const { getPartialProjectById } = useProject();
+  const { getProjectById, addProjectToFavorites, removeProjectFromFavorites } = useProject();
   const { allowPermissions } = useUserPermissions();
   const {
     issue: { getIssueIdByIdentifier, getIssueById },
@@ -81,7 +83,11 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
     ? getIssueIdByIdentifier(workItemIdentifierFromRoute?.toString())
     : undefined;
   const workItem = workItemId ? getIssueById(workItemId) : undefined;
-  const project = getPartialProjectById(projectId);
+  const project = getProjectById(projectId);
+
+  const toggleFavoriteMenu = useCallback((value: boolean) => {
+    setIsFavoriteMenuOpen(value);
+  }, []);
 
   // Navigation items hook
   const navigationItems = useNavigationItems({
@@ -168,6 +174,44 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
     project?.id
   );
 
+  const handleAddToFavorites = () => {
+    if (!workspaceSlug) return;
+
+    const addToFavoritePromise = addProjectToFavorites(workspaceSlug.toString(), project.id);
+    setPromiseToast(addToFavoritePromise, {
+      loading: "Adding project to favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Project added to favorites.",
+        actionItems: () => {
+          if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
+          return <></>;
+        },
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't add the project to favorites. Please try again.",
+      },
+    });
+  };
+
+  const handleRemoveFromFavorites = () => {
+    if (!workspaceSlug) return;
+
+    const removeFromFavoritePromise = removeProjectFromFavorites(workspaceSlug.toString(), project.id);
+    setPromiseToast(removeFromFavoritePromise, {
+      loading: "Removing project from favorites...",
+      success: {
+        title: "Success!",
+        message: () => "Project removed from favorites.",
+      },
+      error: {
+        title: "Error!",
+        message: () => "Couldn't remove the project from favorites. Please try again.",
+      },
+    });
+  };
+
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} projectId={projectId} onClose={() => handlePublishModal(false)} />
@@ -186,9 +230,12 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
               workspaceSlug={workspaceSlug}
               project={project}
               isAdmin={isAdmin}
+              isFavorite={project?.is_favorite || false}
               isAuthorized={isAuthorized}
               onCopyText={handleCopyText}
               onLeaveProject={handleLeaveProject}
+              handleAddToFavorites={handleAddToFavorites}
+              handleRemoveFromFavorites={handleRemoveFromFavorites}
               onPublishModal={() => handlePublishModal(true)}
             />
           </div>

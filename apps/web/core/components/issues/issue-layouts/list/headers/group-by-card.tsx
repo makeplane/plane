@@ -25,14 +25,14 @@ import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 // constants
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
+import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 // Plane-web
-import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
+import { WorkFlowGroupTree } from "@/components/workflow";
 
 interface IHeaderGroupByCard {
   groupID: string;

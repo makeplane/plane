@@ -348,6 +348,17 @@ def persist_tool_selection_steps(func: Callable) -> Callable:
     return wrapper
 
 
+@persist_tool_selection_steps
+async def persist_precomputed_ai_message(*, ai_message: Any, **_kwargs: Any) -> Any:
+    """
+    Persist tool selection + optional reasoning steps for a message that was already produced elsewhere.
+
+    Useful when the AIMessage is obtained via streaming (`astream`/`astream_events`) but we still want to
+    reuse the existing persistence logic in `persist_tool_selection_steps`.
+    """
+    return ai_message
+
+
 def persist_tool_execution_step(func: Callable) -> Callable:
     """
     Decorator to persist a tool execution step (success or error).
@@ -475,6 +486,149 @@ def persist_tool_execution_step(func: Callable) -> Callable:
 # ------------------------------
 # Pre-decorated helper functions
 # ------------------------------
+
+
+async def _collect_ai_message_from_astream(llm_with_tools: Any, messages: Any) -> Any:
+    """
+    Consume `llm_with_tools.astream(messages)` and return a final AIMessage-like object.
+
+    Why: tool calls arrive incrementally in streaming (chunks). We must accumulate chunks
+    into a complete message so callers can reliably read `.tool_calls` and `.content`.
+    """
+    accumulated: Any = None
+    async for chunk in llm_with_tools.astream(messages):
+        if accumulated is None:
+            accumulated = chunk
+            continue
+        try:
+            accumulated = accumulated + chunk
+        except Exception:
+            # Best-effort fallback: keep the latest chunk.
+            accumulated = chunk
+
+    if accumulated is None:
+        return None
+
+    # LangChain message chunks typically expose `to_message()` to convert to AIMessage.
+    if hasattr(accumulated, "to_message") and callable(accumulated.to_message):
+        try:
+            return accumulated.to_message()
+        except Exception:
+            return accumulated
+
+    return accumulated
+
+
+async def orchestrate_llm_step_with_streaming(llm_with_tools, messages, **kwargs):
+    """Invoke LLM with tools and persist selection/reasoning using decorator."""
+    query_id = kwargs.get("query_id")
+    chat_id = kwargs.get("chat_id")
+    db = kwargs.get("db")
+    current_step = kwargs.get("current_step", 1)
+    include_context = bool(kwargs.get("include_context", False))
+    enhanced_conversation_history = kwargs.get("enhanced_conversation_history")
+    enhanced_query_for_processing = kwargs.get("enhanced_query_for_processing")
+    tools = kwargs.get("tools") or []
+
+    # Re-sync current_step with DB to avoid collisions with independently persisted steps
+    try:
+        if query_id and chat_id and db:
+            async with get_streaming_db_session() as _db:
+                from sqlalchemy import func  # type: ignore
+                from sqlalchemy import select  # type: ignore
+
+                from pi.app.models import MessageFlowStep  # lazy import to avoid cycles
+
+                stmt: Any = select(func.max(MessageFlowStep.step_order)).where(  # type: ignore[arg-type]
+                    MessageFlowStep.message_id == query_id
+                )
+                result = await _db.execute(stmt)
+                max_step = result.scalar_one_or_none()
+                next_step = (max_step or 0) + 1
+                if current_step < next_step:
+                    current_step = next_step
+    except Exception:
+        # best-effort; proceed with provided current_step on error
+        pass
+
+    # Execute LLM call
+    ai_message = await _collect_ai_message_from_astream(llm_with_tools, messages)
+    steps: List[Dict[str, Any]] = []
+
+    try:
+        # Optionally store orchestration context
+        if (
+            include_context
+            and enhanced_conversation_history
+            and isinstance(enhanced_conversation_history, str)
+            and enhanced_conversation_history.strip()
+        ):
+            steps.append({
+                "step_order": current_step,
+                "step_type": FlowStepType.TOOL.value,
+                "tool_name": "tool_orchestration_context",
+                "content": "Context used for tool orchestration",
+                "execution_data": {"enhanced_conversation_history": enhanced_conversation_history},
+                "is_planned": False,
+                "is_executed": False,
+            })
+            current_step += 1
+            log.info("orchestrate_llm_step: Added tool_orchestration_context step")
+
+        # Persist tool selection
+        tool_calls = getattr(ai_message, "tool_calls", None)
+        if tool_calls:
+            selected_tool_calls = [{"name": tc.get("name"), "args": tc.get("args", {}), "id": tc.get("id", "")} for tc in tool_calls]
+            steps.append({
+                "step_order": current_step,
+                "step_type": FlowStepType.TOOL.value,
+                "tool_name": "tool_selection",
+                "content": standardize_flow_step_content({"selected_tools": selected_tool_calls}, FlowStepType.TOOL),
+                "execution_data": {
+                    "selected_tools": selected_tool_calls,
+                    "available_tools": [getattr(t, "name", "") for t in tools],
+                    "query": enhanced_query_for_processing,
+                },
+                "is_planned": False,
+                "is_executed": False,
+            })
+            current_step += 1
+            log.info(f"orchestrate_llm_step: Added tool_selection step with {len(tool_calls)} tools")
+
+        # Persist LLM reasoning content if present
+        reasoning_text = str(getattr(ai_message, "content", "") or "").strip()
+        if reasoning_text:
+            steps.append({
+                "step_order": current_step,
+                "step_type": FlowStepType.TOOL.value,
+                "tool_name": "llm_reasoning",
+                "content": reasoning_text,
+                "execution_data": {"reasoning": reasoning_text},
+                "is_planned": False,
+                "is_executed": False,
+            })
+            current_step += 1
+            log.info(f"orchestrate_llm_step: Added llm_reasoning step (content length: {len(reasoning_text)})")
+
+        log.info(f"orchestrate_llm_step: Total steps to persist: {len(steps)}, query_id={query_id}, chat_id={chat_id}, db={db is not None}")
+        if steps and query_id and chat_id and db:
+            log.info(f"orchestrate_llm_step: Persisting {len(steps)} steps...")
+            async with get_streaming_db_session() as _db:
+                result = await upsert_message_flow_steps(
+                    message_id=query_id,
+                    chat_id=chat_id,
+                    flow_steps=steps,
+                    db=_db,
+                )
+                log.info(f"orchestrate_llm_step: Persistence result: {result.get("message") if isinstance(result, dict) else result}")
+        else:
+            log.warning(
+                f"orchestrate_llm_step: Skipping persistence - steps={len(steps)}, has_query_id={query_id is not None}, has_chat_id={chat_id is not None}, has_db={db is not None}"  # noqa: E501
+            )
+    except Exception as e:
+        log.warning(f"Failed to persist tool selection/llm steps: {e}", exc_info=True)
+
+    return ai_message, current_step
 
 
 async def orchestrate_llm_step(llm_with_tools, messages, **kwargs):

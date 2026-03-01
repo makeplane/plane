@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version3/models";
+import type { IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version3/models/index.js";
 import type {
   ExCycle,
   ExIssueComment,

@@ -63,7 +63,7 @@ export const PagesAppSidebarQuickActions = observer(function PagesAppSidebarQuic
         label={
           <>
             <FilePlus2 className="size-4" />
-            {isCreatingPage ? t("common.creating") : `New page`}
+            <span className="text-body-sm-medium">{isCreatingPage ? t("common.creating") : "New page"}</span>
           </>
         }
         onClick={handleCreatePage}

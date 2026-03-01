@@ -15,7 +15,7 @@ import type React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 
 type Props = {
   isWorkspaceLevel: boolean;
@@ -33,11 +33,10 @@ export const PowerKModalFooter = observer(function PowerKModalFooter(props: Prop
       <div />
       <div className="flex items-center gap-2">
         <span className="text-11 text-tertiary">{t("power_k.footer.workspace_level")}</span>
-        <ToggleSwitch
+        <Switch
           value={isWorkspaceLevel}
           onChange={() => onWorkspaceLevelChange(!isWorkspaceLevel)}
           disabled={!projectId}
-          size="sm"
         />
       </div>
     </div>

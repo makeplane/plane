@@ -17,6 +17,7 @@ from typing import Dict
 from pi import logger
 from pi.config import Settings
 from pi.core.vectordb import VectorStore
+from pi.services.retrievers.pg_store import get_ml_model_id_sync
 
 # ---------------------------------------------------------------------------
 # Settings
@@ -27,7 +28,7 @@ BULK_SIZE = settings.BULK_SIZE  #  docs per _bulk request (2 × lines)
 SCROLL_TIMEOUT = settings.SCROLL_TIMEOUT  #  how long the scroll context lives
 EMBED_DIM = settings.EMBEDDING_DIMENSION
 FEED_SLICES = max(1, settings.FEED_SLICES) if isinstance(settings.FEED_SLICES, int) and settings.FEED_SLICES > 0 else 1
-ML_MODEL_ID = settings.ML_MODEL_ID
+ML_MODEL_ID = get_ml_model_id_sync()
 WORKSPACE_ID = settings.DEV_WORKSPACE_ID
 
 INDICES = {

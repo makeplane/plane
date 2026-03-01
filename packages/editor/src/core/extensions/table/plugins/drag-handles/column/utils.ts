@@ -18,7 +18,7 @@ import { TableMap } from "@tiptap/pm/tables";
 import { getSelectedRect, isCellSelection } from "@/extensions/table/table/utilities/helpers";
 import type { TableNodeLocation } from "@/extensions/table/table/utilities/helpers";
 // local imports
-import { cloneTableCell, constructDragPreviewTable, updateCellContentVisibility } from "../utils";
+import { cloneTableCell, constructDragPreviewTable, getSelectedCellPositions, hideCellContent } from "../utils";
 
 type TableColumn = {
   left: number;
@@ -158,7 +158,9 @@ export const constructColumnDragPreview = (
     }
   });
 
-  updateCellContentVisibility(editor, true);
+  // Hide the selected cells using decorations (local only, not persisted)
+  const cellPositions = getSelectedCellPositions(selection, table);
+  hideCellContent(editor, cellPositions);
 
   return tableElement;
 };

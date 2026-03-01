@@ -98,6 +98,7 @@ from .mutations.stickies import WorkspaceStickiesMutation
 from .mutations.user import ProfileMutation, UserDeleteMutation, UserMutation
 from .mutations.workspace import (
     PublicWorkspaceInviteMutation,
+    PublicWorkspaceInviteV2Mutation,
     WorkspaceInviteMutation,
     WorkspaceMutation,
 )
@@ -203,6 +204,7 @@ from .queries.workitem import (
 )
 from .queries.workspace import (
     PublicWorkspaceInviteQuery,
+    PublicWorkspaceInviteV2Query,
     WorkspaceFeatureQuery,
     WorkspaceInviteQuery,
     WorkspaceIssuesInformationQuery,
@@ -252,6 +254,7 @@ class Query(
     WorkspaceMembersQuery,
     WorkspaceInviteQuery,
     PublicWorkspaceInviteQuery,
+    PublicWorkspaceInviteV2Query,
     WorkspaceFeatureQuery,
     # project
     ProjectQuery,
@@ -365,6 +368,7 @@ class Mutation(
     WorkspaceMutation,
     WorkspaceInviteMutation,
     PublicWorkspaceInviteMutation,
+    PublicWorkspaceInviteV2Mutation,
     # project
     ProjectMutation,
     ProjectInviteMutation,

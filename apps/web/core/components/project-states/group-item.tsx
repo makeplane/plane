@@ -15,7 +15,7 @@ import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 
 // plane imports
-import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PlusIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
@@ -89,7 +89,6 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
         </div>
         <button
           type="button"
-          data-ph-element={STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
           className={cn(
             "flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-accent-primary/80 hover:text-accent-primary",
             (!isEditable || createState) && "cursor-not-allowed text-placeholder hover:text-placeholder"

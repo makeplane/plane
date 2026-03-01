@@ -14,7 +14,7 @@
 // components
 import { PageHead } from "@/components/core/page-title";
 // plane web components
-import { TeamspaceProjectWorkLayoutRoot } from "@/plane-web/components/issues/issue-layouts/roots/teamspace-project-root";
+import { TeamspaceProjectWorkLayoutRoot } from "@/components/issues/issue-layouts/roots/teamspace-project-root";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/page";

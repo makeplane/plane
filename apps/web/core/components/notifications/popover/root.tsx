@@ -76,12 +76,12 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
 
   return (
     <Popover open={shouldPopoverBeOpen} onOpenChange={handlePopoverChange}>
-      <Popover.Button>
+      <Popover.Trigger>
         <AppSidebarItem
           variant={"button"}
           item={{
             icon: (
-              <div className="relative">
+              <div className="relative" data-tour="navigation-step-2">
                 <InboxIcon className="size-5" />
                 {totalNotifications > 0 && (
                   <span className="absolute top-0 right-0 size-2 rounded-full bg-danger-primary" />
@@ -92,8 +92,8 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
             onClick: handleSidebarClick,
           }}
         />
-      </Popover.Button>
-      <Popover.Panel
+      </Popover.Trigger>
+      <Popover.Content
         side="bottom"
         align="start"
         positionerClassName={"z-30"}
@@ -109,7 +109,7 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
             }
           }}
         />
-      </Popover.Panel>
+      </Popover.Content>
     </Popover>
   );
 }

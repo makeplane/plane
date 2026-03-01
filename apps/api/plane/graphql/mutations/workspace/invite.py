@@ -25,8 +25,11 @@ from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
 # Module imports
+from plane.bgtasks.event_tracking_task import track_event
 from plane.db.models import User, WorkspaceMember, WorkspaceMemberInvite
 from plane.graphql.permissions.workspace import IsAuthenticated
+from plane.payment.bgtasks.member_sync_task import member_sync_task
+from plane.utils.analytics_events import USER_JOINED_WORKSPACE
 
 
 @sync_to_async
@@ -103,6 +106,7 @@ def get_or_create_workspace_members(
         workspace_member, _ = WorkspaceMember.objects.get_or_create(
             workspace_id=invitation.workspace.id, member_id=user_id
         )
+        workspace_member.is_active = True
         workspace_member.role = invitation.role
         workspace_member.save()
         workspace_members.append(workspace_member)
@@ -122,6 +126,35 @@ def delete_workspace_invitations(
 ) -> None:
     for invitation in workspace_invitations:
         invitation.delete()
+
+
+@sync_to_async
+def workspace_track_event(user_id: str, workspace_invitations: list[WorkspaceMemberInvite]) -> None:
+    for invitation in workspace_invitations:
+        invitation_workspace_slug = invitation.workspace.slug
+        invitation_workspace_id = invitation.workspace.id
+        invitation_role = invitation.role
+        current_time = timezone.now()
+
+        track_event.delay(
+            user_id=user_id,
+            event_name=USER_JOINED_WORKSPACE,
+            workspace_slug=invitation_workspace_slug,
+            event_properties={
+                "user_id": user_id,
+                "workspace_id": invitation_workspace_id,
+                "workspace_slug": invitation_workspace_slug,
+                "role": invitation_role,
+                "joined_at": str(current_time),
+            },
+        )
+
+
+@sync_to_async
+def sync_workspace_members(workspace_invitations: list[WorkspaceMemberInvite]) -> None:
+    workspace_slugs = set([invitation.workspace.slug for invitation in workspace_invitations])
+    for slug in workspace_slugs:
+        member_sync_task.delay(slug=slug)
 
 
 @strawberry.type
@@ -151,10 +184,16 @@ class WorkspaceInviteMutation:
         # Get a random workspace id
         random_workspace_id = await get_random_workspace_id(workspace_invitations=workspace_invitations)
 
-        # # Update the user last workspace
+        # Update the user last workspace
         await update_user_last_workspace(user_id=user_id, workspace_id=random_workspace_id)
 
-        # # Delete the workspace invitations
+        # Delete the workspace invitations
         await delete_workspace_invitations(workspace_invitations=workspace_invitations)
+
+        # track event
+        await workspace_track_event(user_id=user_id, workspace_invitations=workspace_invitations)
+
+        # sync workspace members
+        await sync_workspace_members(workspace_invitations=workspace_invitations)
 
         return True

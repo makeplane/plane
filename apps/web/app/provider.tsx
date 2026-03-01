@@ -38,12 +38,12 @@ const InstanceWrapper = lazy(function InstanceWrapper() {
   return import("@/lib/wrappers/instance-wrapper");
 });
 
-const ChatSupportModal = lazy(function ChatSupportModal() {
-  return import("@/components/global/chat-support-modal");
+const ChatSupport = lazy(function ChatSupport() {
+  return import("@/components/common/chat-support");
 });
 
 const PostHogProvider = lazy(function PostHogProvider() {
-  return import("@/components/global/posthog-provider");
+  return import("@/components/common/posthog-provider");
 });
 
 export interface IAppProvider {
@@ -64,7 +64,7 @@ export function AppProvider(props: IAppProvider) {
           <StoreWrapper>
             <InstanceWrapper>
               <Suspense>
-                <ChatSupportModal />
+                <ChatSupport />
                 <PostHogProvider />
                 <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
               </Suspense>

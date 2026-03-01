@@ -32,6 +32,9 @@ import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// components
+import { FeatureTour } from "@/components/tour";
+// types
 import type { Route } from "./+types/page";
 
 function ProjectModulesPage({ params }: Route.ComponentProps) {
@@ -93,6 +96,7 @@ function ProjectModulesPage({ params }: Route.ComponentProps) {
     <>
       <PageHead title={pageTitle} />
       <div className="h-full w-full flex flex-col">
+        <FeatureTour tourType="modules" />
         {(calculateTotalFilters(currentProjectFilters) !== 0 || currentProjectDisplayFilters?.favorites) && (
           <ModuleAppliedFiltersList
             appliedFilters={currentProjectFilters}

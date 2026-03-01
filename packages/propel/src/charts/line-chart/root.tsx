@@ -137,10 +137,11 @@ export const LineChart = React.memo(function LineChart<K extends string, T exten
               yAxis.label && {
                 value: yAxis.label,
                 angle: -90,
-                position: "bottom",
+                position: yAxis.position ?? "bottom",
                 offset: -24,
                 dx: yAxis.dx ?? -16,
                 className: AXIS_LABEL_CLASSNAME,
+                style: yAxis.style,
               }
             }
             tick={(props) => {

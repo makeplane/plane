@@ -1,6 +1,6 @@
 {
   "name": "space",
-  "version": "1.2.0",
+  "version": "2.3.0",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -12,9 +12,9 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf .react-router && rm -rf node_modules && rm -rf dist && rm -rf build",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=932",
     "check:types": "react-router typegen && tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt . --check",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=932",
-    "fix:format": "prettier . --cache --write"
+    "fix:format": "oxfmt . --write"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
@@ -22,7 +22,7 @@
     "@bprogress/core": "catalog:",
     "@fontsource-variable/inter": "5.2.8",
     "@fontsource/ibm-plex-mono": "5.2.7",
-    "@fontsource/material-symbols-rounded": "5.2.30",
+    "@fontsource/material-symbols-rounded": "5.2.34",
     "@headlessui/react": "^1.7.19",
     "@plane/constants": "workspace:*",
     "@plane/editor": "workspace:*",
@@ -36,10 +36,11 @@
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@sentry/react-router": "catalog:",
+    "@vercel/react-router": "catalog:",
     "axios": "catalog:",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
-    "isbot": "^5.1.31",
+    "isbot": "^5.1.35",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "mobx": "catalog:",
@@ -50,7 +51,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-dropzone": "^14.2.3",
-    "react-hook-form": "7.51.5",
+    "react-hook-form": "7.71.1",
     "react-popper": "^2.3.0",
     "react-router": "catalog:",
     "swr": "catalog:",
@@ -66,9 +67,8 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vercel/react-router": "^1.2.3",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^6.1.1"
   }
 }

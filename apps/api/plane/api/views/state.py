@@ -41,6 +41,13 @@ from plane.utils.openapi import (
     STATE_CANNOT_DELETE_RESPONSE,
     EXTERNAL_ID_EXISTS_RESPONSE,
 )
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_STATES_READ_SCOPE,
+    PROJECTS_STATES_WRITE_SCOPE,
+)
 
 
 class StateListCreateAPIEndpoint(BaseAPIView):
@@ -48,7 +55,11 @@ class StateListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = StateSerializer
     model = State
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_STATES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_STATES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -126,6 +137,11 @@ class StateListCreateAPIEndpoint(BaseAPIView):
                 project_id=project_id,
                 name=request.data.get("name"),
             ).first()
+            if state is None:
+                return Response(
+                    {"error": "State with the same name already exists in the project"},
+                    status=status.HTTP_409_CONFLICT,
+                )
             return Response(
                 {
                     "error": "State with the same name already exists in the project",
@@ -186,7 +202,12 @@ class StateDetailAPIEndpoint(BaseAPIView):
 
     serializer_class = StateSerializer
     model = State
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_STATES_READ_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_STATES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_STATES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):

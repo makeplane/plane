@@ -19,6 +19,7 @@ import {
   E_MUTATION_CONTEXT_FORMAT_TYPE,
   E_MUTATION_CONTEXT_ITEM_TYPE,
 } from "../helpers/blocks";
+import { capitalize } from "@/helpers/generic-helpers";
 import { ACTIONS } from "../helpers/constants";
 import { getUserMarkdown } from "../helpers/user";
 
@@ -30,7 +31,7 @@ export const createSlackLinkback = (
   hideActions: boolean = false,
   isUnfurled: boolean = false
 ) => {
-  const blocks: any[] = [];
+  const blocks: unknown[] = [];
 
   const planeToSlackUserMap = invertStringMap(userMap);
   const quote = !isUnfurled ? "> " : "";
@@ -51,7 +52,7 @@ export const createSlackLinkback = (
   }
 
   if (issue.priority && issue.priority !== "none") {
-    sectionContent += `\n${quote}*Priority*: ${issue.priority}`;
+    sectionContent += `\n${quote}*Priority*: ${capitalize(issue.priority)}`;
   }
 
   if (issue.assignees.length > 0) {
@@ -99,17 +100,19 @@ export const createSlackLinkback = (
   });
 
   // Context with creation and update info using mrkdwn
-  blocks.push({
-    type: "context",
-    elements: [
-      {
-        type: "mrkdwn",
-        text: mutationContext,
-      },
-    ],
-  });
+  if (mutationContext?.length) {
+    blocks.push({
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: mutationContext,
+        },
+      ],
+    });
+  }
 
-  const actions: any[] = [
+  const actions: unknown[] = [
     {
       type: "button",
       text: {

@@ -228,7 +228,7 @@ class UnsplashEndpoint(BaseAPIView):
                 }
             ]
         )
-        
+
         # Check unsplash access key
         if not UNSPLASH_ACCESS_KEY:
             return Response({"error": "Unsplash access is not configured"}, status=status.HTTP_400_BAD_REQUEST)

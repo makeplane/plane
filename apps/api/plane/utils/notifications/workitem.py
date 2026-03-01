@@ -112,6 +112,8 @@ class WorkItemNotificationHandler(BaseNotificationHandler):
         """Return 'epic' if issue is an epic, otherwise 'issue'"""
         if self.entity and self.entity.type and self.entity.type.is_epic:
             return "epic"
+        elif self.entity.issue_intake.exists():
+            return "intake"
         return "issue"
 
     # ==================== Member & Subscriber Management ====================

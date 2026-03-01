@@ -24,10 +24,10 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { CreateRecurringWorkItemsButton } from "@/plane-web/components/recurring-work-items/settings/create-button";
-import { RecurringWorkItemsSettingsRoot } from "@/plane-web/components/recurring-work-items/settings/root";
-import { RecurringWorkItemsUpgrade } from "@/plane-web/components/recurring-work-items/settings/upgrade";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { CreateRecurringWorkItemsButton } from "@/components/recurring-work-items/settings/create-button";
+import { RecurringWorkItemsSettingsRoot } from "@/components/recurring-work-items/settings/root";
+import { RecurringWorkItemsUpgrade } from "@/components/recurring-work-items/settings/upgrade";
 import { useRecurringWorkItems } from "@/plane-web/hooks/store/recurring-work-items/use-recurring-work-items";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // local imports
@@ -58,9 +58,12 @@ function RecurringWorkItemsProjectSettingsPage({ params }: Route.ComponentProps)
       <SettingsHeading
         title={t("recurring_work_items.settings.heading")}
         description={t("recurring_work_items.settings.description")}
-        showButton={isRecurringWorkItemsEnabled && isRecurringWorkItemsAvailableForProject && hasAdminPermission}
-        customButton={
-          <CreateRecurringWorkItemsButton workspaceSlug={workspaceSlug} projectId={projectId} buttonSize="base" />
+        control={
+          isRecurringWorkItemsEnabled &&
+          isRecurringWorkItemsAvailableForProject &&
+          hasAdminPermission && (
+            <CreateRecurringWorkItemsButton workspaceSlug={workspaceSlug} projectId={projectId} buttonSize="base" />
+          )
         }
       />
       <WithFeatureFlagHOC

@@ -17,9 +17,9 @@ import { useSearchParams } from "next/navigation";
 import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 // plane web imports
 import { useTranslation } from "@plane/i18n";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { TemplatesUpgrade } from "@/plane-web/components/templates/settings";
-import { CreateUpdatePageTemplate } from "@/plane-web/components/templates/settings/page";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { TemplatesUpgrade } from "@/components/templates/settings";
+import { CreateUpdatePageTemplate } from "@/components/templates/settings/page";
 import type { Route } from "./+types/page";
 function CreateProjectLevelPageTemplatePage({ params }: Route.ComponentProps) {
   // router

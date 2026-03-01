@@ -14,9 +14,31 @@ from typing import Optional
 from django.views import View
 from rest_framework.permissions import BasePermission
 from rest_framework.request import Request
-from oauth2_provider.contrib.rest_framework import OAuth2Authentication
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenMatchesOASRequirements
 
 from plane.authentication.models.oauth import WorkspaceAppInstallation
+
+
+class TokenHasScopeIfOAuth(BasePermission):
+    """
+    If OAuth token: checks scopes via TokenMatchesOASRequirements.
+    If not OAuth (API key, session): allows access.
+    """
+
+    def has_permission(self, request: Request, view: View) -> bool:
+        is_authenticated = bool(request.user and request.user.is_authenticated)
+        if not is_authenticated:
+            return False
+
+        # Check if OAuth2 authenticated
+        oauth2authenticated = isinstance(request.successful_authenticator, OAuth2Authentication)
+
+        # If not OAuth2, allow (other permission classes handle auth)
+        if not oauth2authenticated:
+            return True
+
+        # If OAuth2, delegate to TokenMatchesOASRequirements
+        return TokenMatchesOASRequirements().has_permission(request, view)
 
 
 class OauthApplicationWorkspacePermission(BasePermission):

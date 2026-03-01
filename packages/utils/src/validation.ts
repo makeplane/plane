@@ -26,35 +26,35 @@
 
 /**
  * Person Name Pattern (for first_name, last_name)
- * Allows: Letters (a-zA-Z), spaces, hyphens, apostrophes
- * Use case: Accommodates names like "O'Brien", "Jean-Paul", "Mary Ann"
- * Blocks: All special characters including injection-risk chars
+ * Allows: Unicode letters (\p{L}), spaces, hyphens, apostrophes
+ * Use case: Accommodates international names like "José", "李明", "محمد", "Müller"
+ * Blocks: Injection-risk characters and special symbols
  */
-export const PERSON_NAME_REGEX = /^[a-zA-Z\s'-]+$/;
+export const PERSON_NAME_REGEX = /^[\p{L}\s'-]+$/u;
 
 /**
  * Display Name Pattern (for display_name, usernames)
- * Allows: Alphanumeric, underscore, period, hyphen
- * Use case: Standard across GitHub, Slack, Twitter, etc.
- * Blocks: Spaces and all special characters including injection-risk chars
+ * Allows: Unicode letters (\p{L}), numbers (\p{N}), underscore, period, hyphen
+ * Use case: International usernames like "josé_123", "李明.dev", "müller-2024"
+ * Blocks: Spaces and injection-risk characters
  */
-export const DISPLAY_NAME_REGEX = /^[a-zA-Z0-9_.-]+$/;
+export const DISPLAY_NAME_REGEX = /^[\p{L}\p{N}_.-]+$/u;
 
 /**
  * Company/Organization Name Pattern (for company_name, workspace names)
- * Allows: Alphanumeric, spaces, underscores, hyphens
- * Use case: Business names that may include spaces and basic punctuation
+ * Allows: Unicode letters (\p{L}), numbers (\p{N}), spaces, underscores, hyphens
+ * Use case: International business names like "Société Générale", "株式会社", "Müller GmbH"
  * Blocks: Special punctuation and injection-risk chars
  */
-export const COMPANY_NAME_REGEX = /^[a-zA-Z0-9\s_-]+$/;
+export const COMPANY_NAME_REGEX = /^[\p{L}\p{N}\s_-]+$/u;
 
 /**
  * URL Slug Pattern (for workspace slugs, URL-safe identifiers)
- * Allows: Alphanumeric, underscores, hyphens only
- * Use case: URL-safe identifiers without spaces
- * Blocks: Spaces and all special characters
+ * Allows: Unicode letters (\p{L}), numbers (\p{N}), underscores, hyphens
+ * Use case: International URL-safe identifiers like "josé-workspace", "李明-project"
+ * Blocks: Spaces and special characters (URL encoding will handle Unicode in actual URLs)
  */
-export const SLUG_REGEX = /^[a-zA-Z0-9_-]+$/;
+export const SLUG_REGEX = /^[\p{L}\p{N}_-]+$/u;
 
 // =============================================================================
 // VALIDATION FUNCTIONS
@@ -77,6 +77,10 @@ export const validatePersonName = (name: string): boolean | string => {
 
   if (name.length > 50) {
     return "Name must be 50 characters or less";
+  }
+
+  if (hasInjectionRiskChars(name)) {
+    return "Names cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
   }
 
   if (!PERSON_NAME_REGEX.test(name)) {
@@ -105,6 +109,10 @@ export const validateDisplayName = (displayName: string): boolean | string => {
     return "Display name must be 50 characters or less";
   }
 
+  if (hasInjectionRiskChars(displayName)) {
+    return "Display name cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
+  }
+
   if (!DISPLAY_NAME_REGEX.test(displayName)) {
     return "Display name can only contain letters, numbers, periods, hyphens, and underscores";
   }
@@ -129,6 +137,10 @@ export const validateCompanyName = (companyName: string, required: boolean = fal
 
   if (companyName.length > 80) {
     return "Company name must be 80 characters or less";
+  }
+
+  if (hasInjectionRiskChars(companyName)) {
+    return "Company name cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
   }
 
   if (!COMPANY_NAME_REGEX.test(companyName)) {
@@ -157,6 +169,10 @@ export const validateWorkspaceName = (workspaceName: string, required: boolean =
     return "Workspace name must be 80 characters or less";
   }
 
+  if (hasInjectionRiskChars(workspaceName)) {
+    return "Workspace name cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
+  }
+
   if (!COMPANY_NAME_REGEX.test(workspaceName)) {
     return "Workspace name can only contain letters, numbers, spaces, hyphens, and underscores";
   }
@@ -180,6 +196,10 @@ export const validateSlug = (slug: string): boolean | string => {
 
   if (slug.length > 48) {
     return "Slug must be 48 characters or less";
+  }
+
+  if (hasInjectionRiskChars(slug)) {
+    return "Slug cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
   }
 
   if (!SLUG_REGEX.test(slug)) {

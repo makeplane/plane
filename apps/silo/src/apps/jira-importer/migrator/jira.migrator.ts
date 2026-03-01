@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Issue as IJiraIssue } from "jira.js/out/version3/models";
+import type { Issue as IJiraIssue } from "jira.js/out/version3/models/index.js";
 import type { PlaneEntities } from "@plane/etl/core";
 import type { JiraConfig, JiraEntity, TJiraIssueWithChildren } from "@plane/etl/jira";
 import {
@@ -78,7 +78,12 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
       pullIssueTypes(client, projectId),
     ]);
     const issueFields = await pullIssueFields(client, issueTypes, projectId);
-    const issues = await pullIssues(client, projectKey);
+    const issues = await pullIssues(
+      client,
+      projectKey,
+      undefined,
+      job.config.useCustomJql ? job.config.jql : undefined
+    );
     const comments = await pullComments(issues, client);
     /* -------------- Pull Jira Data --------------- */
 

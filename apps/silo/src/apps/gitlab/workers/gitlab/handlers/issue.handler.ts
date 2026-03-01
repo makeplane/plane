@@ -88,7 +88,7 @@ export const syncIssueWithPlane = async (store: Store, data: GitlabIssueEvent) =
 
     let glService: GitLabService;
     if (data.isEnterprise) {
-      const appConfig = (workspaceConnection as TGitlabWorkspaceConnection).connection_data?.appConfig;
+      const appConfig = workspaceConnection.connection_data?.appConfig;
       glService = await getGitlabClientService(
         workspaceConnection.workspace_id,
         glIntegrationKey,
@@ -122,7 +122,7 @@ export const syncIssueWithPlane = async (store: Store, data: GitlabIssueEvent) =
     } catch (error) {}
 
     // get the issue state mapping from the entity connection to set the issue state
-    const issueStateMap = (entityConnection as TGitlabEntityConnection).config.states?.issueEventMapping;
+    const issueStateMap = entityConnection.config.states?.issueEventMapping;
     const gitlabBaseUrl = workspaceConnection.connection_data?.appConfig?.baseUrl;
     const gitlabUploadsPrefix = getGitlabUploadsPrefix(data.project.id.toString(), gitlabBaseUrl);
     const planeIssue = await transformGitlabIssue(

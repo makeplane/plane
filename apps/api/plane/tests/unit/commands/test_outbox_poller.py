@@ -157,7 +157,7 @@ class TestOutboxPoller:
     async def test_process_event_lambda_handler_error(self, outbox_poller, workspace, project):
         """Test event processing when lambda handler raises an exception"""
         # Lambda function that raises an exception
-        lambda_handler = lambda x: (_ for _ in ()).throw(Exception("Lambda error"))
+        lambda_handler = lambda _: (_ for _ in ()).throw(Exception("Lambda error"))  # noqa: E731
         outbox_poller.add_handler(lambda_handler)
 
         row = (
@@ -288,7 +288,7 @@ class TestDatabaseConnectionPool:
             for i, row in enumerate(rows):
                 assert (
                     len(row) == 11
-                )  # id, event_id, event_type, entity_type, entity_id, payload, processed_at, created_at, claimed_at, workspace_id, project_id
+                )  # id, event_id, event_type, entity_type, entity_id, payload, processed_at, created_at, claimed_at, workspace_id, project_id  # noqa: E501
                 assert row[0] is not None  # id
                 assert row[1] is not None  # event_id
                 assert row[2] == f"issue.updated.{i}"  # event_type

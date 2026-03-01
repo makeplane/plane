@@ -20,9 +20,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from celery import shared_task
 
 # Module imports
-from plane.db.models import DeployBoard, Intake, APIToken, IntakeIssue, Issue, State, StateGroup, IssueAssignee
+from plane.db.models import Intake, APIToken, IntakeIssue, Issue, State, IssueAssignee
 from plane.db.models.asset import FileAsset
-from plane.ee.models import IntakeSetting, IntakeResponsibility
+from plane.ee.models import IntakeSetting, IntakeResponsibility, IntakeEmail
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -31,10 +31,10 @@ from plane.utils.exception_logger import log_exception
 from plane.ee.utils.intake_email_anchor import get_anchors
 
 
-def create_intake_issue(deploy_board, message, intake):
+def create_intake_issue(intake_email_obj, message, intake):
     # Api token
     api_token = APIToken.objects.filter(
-        workspace_id=deploy_board.workspace_id,
+        workspace_id=intake_email_obj.workspace_id,
         user__is_bot=True,
         user__bot_type="INTAKE_BOT",
     ).first()
@@ -49,21 +49,15 @@ def create_intake_issue(deploy_board, message, intake):
     }
 
     triage_state = State.triage_objects.filter(
-        project_id=deploy_board.project_id, workspace_id=deploy_board.workspace_id
+        project_id=intake_email_obj.project_id, workspace_id=intake_email_obj.workspace_id
     ).first()
     if not triage_state:
-        triage_state = State.objects.create(
-            name="Triage",
-            group=StateGroup.TRIAGE.value,
-            project_id=deploy_board.project_id,
-            workspace_id=deploy_board.workspace_id,
-            color="#4E5355",
-            sequence=65000,
-            default=False,
+        triage_state = State.create_triage_state(
+            workspace_id=intake_email_obj.workspace_id, project_id=intake_email_obj.project_id
         )
 
     issue = Issue.objects.create(
-        project_id=deploy_board.project_id,
+        project_id=intake_email_obj.project_id,
         name=issue_data["name"],
         description_html=issue_data["description_html"],
         created_by_id=api_token.user.id,
@@ -71,17 +65,20 @@ def create_intake_issue(deploy_board, message, intake):
     )
 
     # Check if the intake responsibility feature flag is enabled
-    if check_workspace_feature_flag(feature_key=FeatureFlag.INTAKE_RESPONSIBILITY, slug=deploy_board.workspace.slug):
+    if check_workspace_feature_flag(
+        feature_key=FeatureFlag.INTAKE_RESPONSIBILITY,
+        slug=intake_email_obj.workspace.slug,
+    ):
         # Get the intake responsibilities
         intake_responsibilities = IntakeResponsibility.objects.filter(intake=intake).values_list("user_id", flat=True)
-        # Add the intake responsibles as issue assignees
+        # Add the intake responsible as issue assignees
         IssueAssignee.objects.bulk_create(
             [
                 IssueAssignee(
                     issue=issue,
                     assignee_id=user_id,
-                    project_id=deploy_board.project_id,
-                    workspace_id=deploy_board.workspace_id,
+                    project_id=intake_email_obj.project_id,
+                    workspace_id=intake_email_obj.workspace_id,
                     created_by_id=api_token.user.id,
                     updated_by_id=api_token.user.id,
                 )
@@ -94,7 +91,7 @@ def create_intake_issue(deploy_board, message, intake):
     # create an Intake issue
     intake_issue = IntakeIssue.objects.create(
         intake_id=intake.id,
-        project_id=deploy_board.project_id,
+        project_id=intake_email_obj.project_id,
         issue_id=issue.id,
         source="EMAIL",
         source_email=message.get("from"),
@@ -107,7 +104,7 @@ def create_intake_issue(deploy_board, message, intake):
         requested_data=json.dumps(issue_data, cls=DjangoJSONEncoder),
         actor_id=str(api_token.user_id),
         issue_id=str(issue.id),
-        project_id=str(deploy_board.project_id),
+        project_id=str(intake_email_obj.project_id),
         current_instance=None,
         epoch=int(timezone.now().timestamp()),
         notification=True,
@@ -123,7 +120,7 @@ def update_assets(issue_id, attachment_ids):
     # Update the issue_id and is_uploaded status for the file assets
     FileAsset.objects.filter(pk__in=attachment_ids).update(issue_id=issue_id, is_uploaded=True)
 
-    # Spawn meta bgtask
+    # Spawn meta background task
     [get_asset_object_metadata.delay(asset_id=str(asset_id)) for asset_id in attachment_ids]
     return
 
@@ -144,15 +141,14 @@ def intake_email(message):
         if not check_workspace_feature_flag(feature_key=FeatureFlag.INTAKE_EMAIL, slug=workspace_slug):
             return
 
-        # Get the deploy boards
-        deploy_board = DeployBoard.objects.get(
+        # Get the IntakeEmail record
+        intake_email_obj = IntakeEmail.objects.get(
             workspace__slug=workspace_slug,
             anchor=publish_anchor,
-            entity_name=DeployBoard.DeployBoardType.INTAKE_EMAIL,
         )
 
         intake = Intake.objects.filter(
-            workspace_id=deploy_board.workspace_id, project_id=deploy_board.project_id
+            workspace_id=intake_email_obj.workspace_id, project_id=intake_email_obj.project_id
         ).first()
 
         if not intake:
@@ -160,22 +156,22 @@ def intake_email(message):
 
         # get the intake settings
         intake_setting = IntakeSetting.objects.get(
-            project_id=deploy_board.project_id,
-            workspace_id=deploy_board.workspace_id,
-            intake_id=deploy_board.entity_identifier,
+            project_id=intake_email_obj.project_id,
+            workspace_id=intake_email_obj.workspace_id,
+            intake_id=intake_email_obj.intake_id,
         )
 
         if not intake_setting.is_email_enabled:
             return
 
         # Create intake issue
-        issue_id = create_intake_issue(deploy_board, message, intake)
+        issue_id = create_intake_issue(intake_email_obj, message, intake)
 
         # update the assets
         update_assets(issue_id, message.get("attachments"))
 
         return
-    except (DeployBoard.DoesNotExist, IntakeSetting.DoesNotExist):
+    except (IntakeEmail.DoesNotExist, IntakeSetting.DoesNotExist):
         return
     except Exception as e:
         log_exception(e)

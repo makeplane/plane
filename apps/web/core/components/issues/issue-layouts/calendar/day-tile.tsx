@@ -19,22 +19,29 @@ import { observer } from "mobx-react";
 // plane imports
 import { MONTHS_LIST } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate } from "@plane/types";
+import type { TGroupedIssues, TIssue, TPaginationData, ICalendarDate } from "@plane/types";
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
+// helpers
+import { highlightOnDrop } from "@/helpers/common";
 // components
-import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 // store
-import type { ICycleIssuesFilter } from "@/store/issue/cycle";
-import type { IModuleIssuesFilter } from "@/store/issue/module";
-import type { IProjectIssuesFilter } from "@/store/issue/project";
-import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { ICycleIssuesFilter } from "@/store/work-items/cycle";
+import type { IModuleIssuesFilter } from "@/store/work-items/module";
+import type { IProjectIssuesFilter } from "@/store/work-items/project";
+import type { IProjectViewIssuesFilter } from "@/store/work-items/project-views";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarIssueBlocks } from "./issue-blocks";
+import type { IWorkspaceIssuesFilter } from "@/store/work-items/workspace";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IWorkspaceIssuesFilter;
   date: ICalendarDate;
-  issues: TIssueMap | undefined;
+  getWorkItemById: (workItemId: string) => TIssue | undefined;
   groupedIssueIds: TGroupedIssues;
   loadMoreIssues: (dateString: string) => void;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
@@ -61,7 +68,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
   const {
     issuesFilterStore,
     date,
-    issues,
+    getWorkItemById,
     groupedIssueIds,
     loadMoreIssues,
     getPaginationData,
@@ -108,7 +115,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
           const destinationData = self?.data as { date: string } | undefined;
           if (!sourceData || !destinationData) return;
 
-          const issueDetails = issues?.[sourceData?.id];
+          const issueDetails = getWorkItemById(sourceData?.id);
           if (issueDetails?.start_date) {
             const issueStartDate = new Date(issueDetails.start_date);
             const targetDate = new Date(destinationData?.date);
@@ -129,7 +136,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
             sourceData?.date,
             destinationData?.date
           );
-          highlightIssueOnDrop(source?.element?.id, false);
+          highlightOnDrop(source?.element?.id, false);
         },
       })
     );

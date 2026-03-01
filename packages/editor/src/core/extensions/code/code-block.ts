@@ -15,6 +15,8 @@ import { mergeAttributes, Node, textblockTypeInputRule } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// utils
+import { resolveLanguage } from "./utils/shiki";
 
 export type CodeBlockOptions = {
   /**
@@ -33,9 +35,19 @@ export type CodeBlockOptions = {
    */
   exitOnArrowDown: boolean;
   /**
+   * The default language for code blocks.
+   * Defaults to `null`.
+   */
+  defaultLanguage: string | null | undefined;
+  /**
    * Custom HTML attributes that should be added to the rendered HTML tag.
    */
   HTMLAttributes: Record<string, unknown>;
+  /**
+   * Enable Mermaid diagram preview for code blocks with language='mermaid'.
+   * Defaults to `false`.
+   */
+  enableMermaidPreview: boolean;
 };
 
 declare module "@tiptap/core" {
@@ -64,7 +76,9 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
       languageClassPrefix: "language-",
       exitOnTripleEnter: true,
       exitOnArrowDown: true,
+      defaultLanguage: null,
       HTMLAttributes: {},
+      enableMermaidPreview: false,
     };
   },
   content: "text*",
@@ -96,6 +110,14 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
           return language;
         },
         rendered: false,
+      },
+      isCodeHidden: {
+        default: false,
+        parseHTML: (element) => element.getAttribute("data-code-hidden") === "true",
+        renderHTML: (attributes) => {
+          if (!attributes.isCodeHidden) return {};
+          return { "data-code-hidden": "true" };
+        },
       },
     };
   },
@@ -246,14 +268,14 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
         find: backtickInputRegex,
         type: this.type,
         getAttributes: (match) => ({
-          language: match[1],
+          language: match[1] ? resolveLanguage(match[1]) : null,
         }),
       }),
       textblockTypeInputRule({
         find: tildeInputRegex,
         type: this.type,
         getAttributes: (match) => ({
-          language: match[1],
+          language: match[1] ? resolveLanguage(match[1]) : null,
         }),
       }),
     ];
@@ -308,8 +330,9 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
               event.preventDefault();
               const text = event.clipboardData.getData("text/plain");
               const vscode = event.clipboardData.getData("vscode-editor-data");
-              const vscodeData = vscode ? JSON.parse(vscode) : undefined;
-              const language = vscodeData?.mode;
+              type VSCodeData = { mode?: string };
+              const vscodeData: VSCodeData | undefined = vscode ? (JSON.parse(vscode) as VSCodeData) : undefined;
+              const language: string | undefined = vscodeData?.mode;
 
               if (vscodeData && language) {
                 const { tr } = view.state;
@@ -336,7 +359,7 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
 
                 // Create a new code block node with the pasted content
                 const textNode = view.state.schema.text(text.replace(/\r\n?/g, "\n"));
-                const codeBlock = this.type.create({ language }, textNode);
+                const codeBlock = this.type.create({ language: resolveLanguage(language) }, textNode);
                 if (insertPos <= tr.doc.content.size) {
                   tr.insert(insertPos, codeBlock);
                   view.dispatch(tr);

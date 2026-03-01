@@ -118,7 +118,7 @@ class IssueDuplicateEndpoint(BaseAPIView):
         # Duplicate issue attachment assets
         copy_s3_objects_of_issue_attachment.delay(
             original_issue_id=original_issue.id,
-            entity_identifier=duplicated_issue.id,
+            duplicated_issue_id=duplicated_issue.id,
             project_id=original_issue.project_id,
             user_id=request.user.id,
             copy_to_entity_project=True,

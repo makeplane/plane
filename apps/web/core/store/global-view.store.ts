@@ -17,7 +17,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import type { IWorkspaceView } from "@plane/types";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // store
 import type { CoreRootStore } from "./root.store";
 
@@ -43,7 +43,7 @@ export interface IGlobalViewStore {
   deleteGlobalView: (workspaceSlug: string, viewId: string) => Promise<any>;
 }
 
-export class GlobalViewStore implements IGlobalViewStore {
+export abstract class GlobalViewStore implements IGlobalViewStore {
   // observables
   globalViewMap: Record<string, IWorkspaceView> = {};
   // root store

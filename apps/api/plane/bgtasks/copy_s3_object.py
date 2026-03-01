@@ -212,7 +212,7 @@ def copy_s3_objects_of_description_and_assets(
                 external_data = sync_with_external_service(entity_name, updated_html)
 
                 if external_data:
-                    entity.description = external_data.get("description")
+                    entity.description_json = external_data.get("description_json")
                     entity.description_binary = base64.b64decode(external_data.get("description_binary"))
                     entity.save()
 
@@ -227,25 +227,28 @@ def copy_s3_objects_of_issue_attachment(
     project_id: str,
     user_id: str,
     original_issue_id: str,
-    entity_identifier: str,
+    duplicated_issue_id: str,
     copy_to_entity_project: bool = False,
 ) -> None:
     """
     This task is used to duplicate the issue attachment assets of an issue
     """
+
+    # Getting original issue asset ids
     original_asset_ids = []
     issue = Issue.objects.get(pk=original_issue_id)
     issue_attachment_assets = list(issue.assets.filter(entity_type="ISSUE_ATTACHMENT").values_list("id", flat=True))
-
     issue_attachment_asset_ids = [str(asset) for asset in issue_attachment_assets]
-
     original_asset_ids.extend(issue_attachment_asset_ids)
+
+    duplicated_issue = Issue.objects.get(pk=duplicated_issue_id)
+
     copy_assets(
-        entity=issue,
+        entity=duplicated_issue,
         asset_ids=original_asset_ids,
         project_id=project_id,
+        entity_identifier=duplicated_issue_id,
         user_id=user_id,
         copy_to_entity_project=copy_to_entity_project,
-        entity_identifier=entity_identifier,
     )
     return

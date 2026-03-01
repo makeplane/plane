@@ -103,7 +103,7 @@ export interface ICycleStore {
   restoreCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
 }
 
-export class CycleStore implements ICycleStore {
+export abstract class CycleStore implements ICycleStore {
   // observables
   loader: boolean = false;
   progressLoader: boolean = false;

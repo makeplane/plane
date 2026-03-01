@@ -13,7 +13,7 @@
 
 import type { Extension, Node as ProseMirrorNode } from "@tiptap/core";
 import type { NodeViewProps } from "@tiptap/react";
-import type { TAIBlockHandlers, TAIBlockType, TAIBlockRevisionType, TAIBlockDetails } from "@plane/types";
+import type { TAIBlockHandlers, TAIBlockType, TAIBlockDetails } from "@plane/types";
 
 export enum EAIBlockAttributeNames {
   ID = "data-id",
@@ -25,15 +25,15 @@ export type TAIBlockAttributes = {
 
 // Data props that will be passed to the UI component
 export type TAIBlockWidgetProps = {
-  blockTypes: TAIBlockType[];
-  revisionTypes: TAIBlockRevisionType[];
-  blocks: TAIBlockDetails[];
+  blockTypes?: TAIBlockType[];
+  blocks?: TAIBlockDetails[];
 };
 
 // Forward declaration of extension props (to avoid circular dependency)
 export type CustomAIBlockExtensionProps = {
   aiBlockHandlers?: TAIBlockHandlers;
-  widgetCallback?: React.ComponentType<TAIBlockNodeViewProps>;
+  aiBlockWidgetCallback?: React.ComponentType<TAIBlockNodeViewProps>;
+  isFlagged?: boolean;
 };
 
 // Node view props passed to the widget callback

@@ -13,7 +13,7 @@
 
 // plane imports
 import type { IUserLite, TFilterProperty } from "@plane/types";
-import { EQUALITY_OPERATOR } from "@plane/types";
+import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 // local imports
 import { getIsNullOperatorConfigEntry } from "../entries";
 import type { TCreateFilterConfig } from "../shared";
@@ -40,7 +40,7 @@ export const getMemberPickerPropertyFilterConfig =
       label: params.propertyDisplayName,
       icon: params.filterIcon,
       supportedOperatorConfigsMap: new Map([
-        createOperatorConfigEntry(EQUALITY_OPERATOR.EXACT, params, (updatedParams) =>
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
         getIsNullOperatorConfigEntry(params),

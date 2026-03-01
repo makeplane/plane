@@ -21,7 +21,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalWidth, ModalCore } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // plane web types
-import type { TPagePublishSettings } from "@/plane-web/types";
+import type { TPagePublishSettings } from "@/types";
 import { getIconButtonStyling } from "@plane/propel/icon-button";
 
 type Props = {

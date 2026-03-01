@@ -11,105 +11,66 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState, useEffect, useCallback, createContext, useContext } from "react";
-import { Collapsible as BaseCollapsible } from "@base-ui-components/react/collapsible";
-import clsx from "clsx";
+import * as React from "react";
+import { Collapsible as BaseCollapsible } from "@base-ui/react/collapsible";
+import { clsx } from "clsx";
 
-// Types
-type CollapsibleContextType = {
-  isOpen: boolean;
-  onToggle: () => void;
-};
+/* -------------------------------------------------------------------------- */
+/*                                   Root                                     */
+/* -------------------------------------------------------------------------- */
 
-type RootProps = {
-  children: React.ReactNode;
-  className?: string;
-  isOpen?: boolean;
-  onToggle?: () => void;
-  defaultOpen?: boolean;
-};
+export type CollapsibleRootProps = BaseCollapsible.Root.Props;
 
-type TriggerProps = {
-  children: React.ReactNode;
-  className?: string;
-  buttonRef?: React.RefObject<HTMLButtonElement>;
-};
+export const Collapsible = React.forwardRef<HTMLDivElement, CollapsibleRootProps>(function Collapsible(
+  { className, ...props },
+  ref
+) {
+  return <BaseCollapsible.Root ref={ref} className={clsx(className)} {...props} />;
+});
 
-type ContentProps = {
-  children: React.ReactNode;
-  className?: string;
-};
+/* -------------------------------------------------------------------------- */
+/*                                  Trigger                                   */
+/* -------------------------------------------------------------------------- */
 
-// Context
-const CollapsibleContext = createContext<CollapsibleContextType | undefined>(undefined);
+export type CollapsibleTriggerProps = BaseCollapsible.Trigger.Props;
 
-// Hook
-const useCollapsible = () => {
-  const context = useContext(CollapsibleContext);
-  if (!context) {
-    throw new Error("Collapsible compound components cannot be rendered outside the Collapsible component");
+export const CollapsibleTrigger = React.forwardRef<HTMLButtonElement, CollapsibleTriggerProps>(
+  function CollapsibleTrigger({ className, ...props }, ref) {
+    return (
+      <BaseCollapsible.Trigger
+        ref={ref}
+        className={clsx(
+          "flex items-center gap-2 rounded-sm text-sm font-medium",
+          "hover:bg-gray-200 focus-visible:outline-2",
+          "data-[panel-open]:font-semibold",
+          className
+        )}
+        {...props}
+      />
+    );
   }
-  return context;
-};
+);
 
-// Components
-function Root({ children, className, isOpen: controlledIsOpen, onToggle, defaultOpen }: RootProps) {
-  const [localIsOpen, setLocalIsOpen] = useState<boolean>(controlledIsOpen || defaultOpen || false);
+/* -------------------------------------------------------------------------- */
+/*                                   Panel                                    */
+/* -------------------------------------------------------------------------- */
 
-  useEffect(() => {
-    if (controlledIsOpen !== undefined) {
-      setLocalIsOpen(controlledIsOpen);
-    }
-  }, [controlledIsOpen]);
+export type CollapsibleContentProps = BaseCollapsible.Panel.Props;
 
-  const handleToggle = useCallback(() => {
-    if (controlledIsOpen !== undefined) {
-      onToggle?.();
-    } else {
-      setLocalIsOpen((prev) => !prev);
-    }
-  }, [controlledIsOpen, onToggle]);
-
-  return (
-    <CollapsibleContext.Provider value={{ isOpen: localIsOpen, onToggle: handleToggle }}>
-      <BaseCollapsible.Root
-        className={clsx(className)}
-        defaultOpen={defaultOpen}
-        open={localIsOpen}
-        onOpenChange={handleToggle}
-      >
-        {children}
-      </BaseCollapsible.Root>
-    </CollapsibleContext.Provider>
-  );
-}
-
-function Trigger({ children, className, buttonRef }: TriggerProps) {
-  const { isOpen } = useCollapsible();
-
-  return (
-    <BaseCollapsible.Trigger data-panel-open={isOpen} ref={buttonRef} className={className}>
-      {children}
-    </BaseCollapsible.Trigger>
-  );
-}
-
-function Content({ children, className }: ContentProps) {
+export const CollapsibleContent = React.forwardRef<HTMLDivElement, CollapsibleContentProps>(function CollapsibleContent(
+  { className, ...props },
+  ref
+) {
   return (
     <BaseCollapsible.Panel
+      ref={ref}
       className={clsx(
-        "flex h-[var(--collapsible-panel-height)] flex-col overflow-hidden text-13 transition-all ease-out data-[ending-style]:h-0 data-[starting-style]:h-0",
+        "flex h-[var(--collapsible-panel-height)] flex-col overflow-hidden",
+        "transition-all ease-out",
+        "data-[starting-style]:h-0 data-[ending-style]:h-0",
         className
       )}
-    >
-      {children}
-    </BaseCollapsible.Panel>
+      {...props}
+    />
   );
-}
-
-// Compound Component
-export const Collapsible = {
-  CollapsibleRoot: Root,
-  CollapsibleTrigger: Trigger,
-  CollapsibleContent: Content,
-};
+});

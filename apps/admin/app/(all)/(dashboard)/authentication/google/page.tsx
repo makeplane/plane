@@ -15,7 +15,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { setPromiseToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
+import { Loader } from "@plane/ui";
 // assets
 import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 // components
@@ -79,7 +80,7 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
             accounts."
           icon={<img src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
           config={
-            <ToggleSwitch
+            <Switch
               value={Boolean(parseInt(enableGoogleConfig))}
               onChange={() => {
                 if (Boolean(parseInt(enableGoogleConfig)) === true) {
@@ -88,7 +89,6 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
                   updateConfig("IS_GOOGLE_ENABLED", "1");
                 }
               }}
-              size="sm"
               disabled={isSubmitting || !formattedConfig}
             />
           }

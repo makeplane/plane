@@ -21,8 +21,8 @@ import { cn } from "@plane/utils";
 import { usePowerK } from "@/hooks/store/use-power-k";
 import useDebounce from "@/hooks/use-debounce";
 // plane web imports
-import { PowerKModalNoSearchResultsCommand } from "@/plane-web/components/command-palette/power-k/search/no-results-command";
-import { WorkspaceService } from "@/plane-web/services";
+import { PowerKModalNoSearchResultsCommand } from "@/components/command-palette/power-k/search/no-results-command";
+import { WorkspaceService } from "@/services/workspace.service";
 // local imports
 import type { TPowerKContext, TPowerKPageType } from "../../core/types";
 import { PowerKModalSearchResults } from "./search-results";

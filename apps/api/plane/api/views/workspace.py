@@ -17,15 +17,21 @@ from plane.api.serializers import WorkspaceFeatureSerializer
 from plane.ee.models import WorkspaceFeature
 from plane.db.models import Workspace
 from plane.app.permissions import WorkSpaceAdminPermission
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 
 # OpenAPI imports
 from plane.utils.openapi.decorators import workspace_docs
 from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 from plane.utils.openapi import WORKSPACE_FEATURE_EXAMPLE
+from plane.utils.oauth import READ_SCOPE, WRITE_SCOPE, WORKSPACES_FEATURES_READ_SCOPE, WORKSPACES_FEATURES_WRITE_SCOPE
 
 
 class WorkspaceFeatureAPIEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [WORKSPACES_FEATURES_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [WORKSPACES_FEATURES_WRITE_SCOPE]],
+    }
     serializer_class = WorkspaceFeatureSerializer
 
     def get_queryset(self, slug):

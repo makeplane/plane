@@ -18,21 +18,19 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import ExporterHistory, Workspace
+from plane.db.models import ExporterHistory, Workspace, Project
 from plane.ee.models import IssueWorkLog
 from plane.ee.views.base import BaseAPIView
 from plane.utils.issue_filters import issue_filters
 from plane.ee.serializers import IssueWorkLogSerializer, ExporterHistorySerializer
-from plane.app.permissions import WorkspaceEntityPermission
+from plane.app.permissions import WorkSpaceAdminPermission
 from plane.ee.bgtasks.worklogs_export_task import worklogs_export_task
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkspaceWorkLogsEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkSpaceAdminPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @method_decorator(gzip_page)
@@ -60,16 +58,21 @@ class WorkspaceWorkLogsEndpoint(BaseAPIView):
 
 
 class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkSpaceAdminPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def post(self, request, slug):
         provider = request.data.get("provider", False)
         filters = request.data.get("filters", {False})
+        projects = request.query_params.get("project", None)
         filterParams = issue_filters(request.query_params, "GET")
         workspace = Workspace.objects.filter(slug=slug).first()
+
+        project_list = (
+            projects.split(",")
+            if projects
+            else list(Project.objects.filter(workspace__slug=slug).values_list("id", flat=True).distinct())
+        )
 
         if provider in ["csv", "xlsx"]:
             exporter = ExporterHistory.objects.create(
@@ -78,6 +81,7 @@ class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
                 provider=provider,
                 filters=filters,
                 type="issue_worklogs",
+                project=project_list,
             )
             worklogs_export_task.delay(
                 provider=exporter.provider,

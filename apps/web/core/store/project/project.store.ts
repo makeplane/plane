@@ -19,7 +19,7 @@ import type { TFetchStatus, TLoader, TProjectAnalyticsCount, TProjectAnalyticsCo
 // helpers
 import { orderProjects, shouldFilterProject } from "@plane/utils";
 // services
-import type { TProject, TPartialProject } from "@/plane-web/types/projects";
+import type { TProject, TPartialProject } from "@/types/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
 // store
@@ -543,6 +543,8 @@ export class ProjectStore implements IProjectStore {
     try {
       const response = await this.projectService.createProject(workspaceSlug, data);
       this.processProjectAfterCreation(workspaceSlug, response);
+      // Auto-complete getting started checklist
+      void this.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(workspaceSlug, "project_created");
       return response;
     } catch (error) {
       console.log("Failed to create project from project store");

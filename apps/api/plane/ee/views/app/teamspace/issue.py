@@ -82,7 +82,6 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
         )
 
     def get(self, request, slug, team_space_id):
-
         query_params = request.query_params.copy()
         sub_issue = query_params.get("sub_issue", None)
         query_params.pop("sub_issue", None)

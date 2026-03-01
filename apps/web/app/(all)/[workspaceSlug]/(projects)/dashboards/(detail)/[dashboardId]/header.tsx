@@ -27,8 +27,8 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
-import { DashboardQuickActions } from "@/plane-web/components/dashboards/quick-actions";
-import { DashboardWidgetChartTypesDropdown } from "@/plane-web/components/dashboards/widgets/dropdown";
+import { DashboardQuickActions } from "@/components/dashboards/quick-actions";
+import { DashboardWidgetChartTypesDropdown } from "@/components/dashboards/widgets/dropdown";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 

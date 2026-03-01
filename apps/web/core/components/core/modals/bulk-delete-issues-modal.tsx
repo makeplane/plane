@@ -13,7 +13,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
@@ -23,7 +22,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { ISearchIssueResponse, IUser } from "@plane/types";
+import type { ISearchIssueResponse } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // assets
@@ -48,15 +47,14 @@ type FormInput = {
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  user: IUser | undefined;
+  projectId: string;
+  workspaceSlug: string;
 };
 
 const projectService = new ProjectService();
 
 export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(props: Props) {
-  const { isOpen, onClose } = props;
-  // router params
-  const { workspaceSlug, projectId } = useParams();
+  const { isOpen, onClose, projectId, workspaceSlug } = props;
   // states
   const [query, setQuery] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
@@ -74,8 +72,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
   const issuesResolvedPath = resolvedTheme === "light" ? lightIssuesAsset : darkIssuesAsset;
 
   useEffect(() => {
-    if (!isOpen || !workspaceSlug || !projectId) return;
-
+    if (!isOpen) return;
     setIsSearching(true);
     projectService
       .projectIssuesSearch(workspaceSlug.toString(), projectId.toString(), {
@@ -83,7 +80,10 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
         workspace_search: false,
       })
       .then((res: ISearchIssueResponse[]) => setIssues(res))
-      .finally(() => setIsSearching(false));
+      .finally(() => setIsSearching(false))
+      .catch(() => {
+        console.error("Error searching work items");
+      });
   }, [debouncedSearchTerm, isOpen, projectId, workspaceSlug]);
 
   const {
@@ -105,8 +105,6 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
   };
 
   const handleDelete: SubmitHandler<FormInput> = async (data) => {
-    if (!workspaceSlug || !projectId) return;
-
     if (!data.delete_issue_ids || data.delete_issue_ids.length === 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -126,6 +124,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
           message: "Work items deleted successfully!",
         });
         handleClose();
+        return true;
       })
       .catch(() =>
         setToast({
@@ -208,8 +207,13 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
             <Button variant="secondary" size="lg" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="error-fill" size="lg" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
-              {isSubmitting ? "Deleting..." : "Delete selected work items"}
+            <Button
+              variant="error-fill"
+              size="lg"
+              onClick={() => void handleSubmit(handleDelete)()}
+              loading={isSubmitting}
+            >
+              {isSubmitting ? "Deleting" : "Delete selected work items"}
             </Button>
           </div>
         )}

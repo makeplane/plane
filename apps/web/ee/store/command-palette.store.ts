@@ -24,12 +24,12 @@ import type {
 import {
   DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA,
   DEFAULT_CREATE_UPDATE_TEAM_VIEW_MODAL_DATA,
-} from "@/plane-web/constants/teamspace";
+} from "@/constants/teamspace";
 // store
 import type { IBaseCommandPaletteStore } from "@/store/base-command-palette.store";
 import { BaseCommandPaletteStore } from "@/store/base-command-palette.store";
 // local imports
-import { DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA } from "../constants/initiative";
+import { DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA } from "@/constants/initiative";
 
 export interface ICommandPaletteStore extends IBaseCommandPaletteStore {
   // observables

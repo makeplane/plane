@@ -17,10 +17,10 @@ from django.utils import timezone
 # Module imports
 from plane.utils.html_processor import strip_tags
 
-from .workspace import WorkspaceBaseModel
+from .project import ProjectOptionalBaseModel
 
 
-class DraftIssue(WorkspaceBaseModel):
+class DraftIssue(ProjectOptionalBaseModel):
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
         ("high", "High"),
@@ -50,7 +50,7 @@ class DraftIssue(WorkspaceBaseModel):
         blank=True,
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name", blank=True, null=True)
-    description = models.JSONField(blank=True, default=dict)
+    description_json = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
@@ -140,10 +140,10 @@ class DraftIssue(WorkspaceBaseModel):
 
     def __str__(self):
         """Return name of the draft issue"""
-        return f"{self.name} <{self.project.name}>"
+        return f"{self.name}"
 
 
-class DraftIssueAssignee(WorkspaceBaseModel):
+class DraftIssueAssignee(ProjectOptionalBaseModel):
     draft_issue = models.ForeignKey(DraftIssue, on_delete=models.CASCADE, related_name="draft_issue_assignee")
     assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -169,7 +169,7 @@ class DraftIssueAssignee(WorkspaceBaseModel):
         return f"{self.draft_issue.name} {self.assignee.email}"
 
 
-class DraftIssueLabel(WorkspaceBaseModel):
+class DraftIssueLabel(ProjectOptionalBaseModel):
     draft_issue = models.ForeignKey("db.DraftIssue", on_delete=models.CASCADE, related_name="draft_label_issue")
     label = models.ForeignKey("db.Label", on_delete=models.CASCADE, related_name="draft_label_issue")
 
@@ -183,7 +183,7 @@ class DraftIssueLabel(WorkspaceBaseModel):
         return f"{self.draft_issue.name} {self.label.name}"
 
 
-class DraftIssueModule(WorkspaceBaseModel):
+class DraftIssueModule(ProjectOptionalBaseModel):
     module = models.ForeignKey("db.Module", on_delete=models.CASCADE, related_name="draft_issue_module")
     draft_issue = models.ForeignKey("db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_module")
 
@@ -205,7 +205,7 @@ class DraftIssueModule(WorkspaceBaseModel):
         return f"{self.module.name} {self.draft_issue.name}"
 
 
-class DraftIssueCycle(WorkspaceBaseModel):
+class DraftIssueCycle(ProjectOptionalBaseModel):
     """
     Draft Issue Cycles
     """

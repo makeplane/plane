@@ -82,7 +82,7 @@ class MessageAttachment(BaseModel, table=True):
 
         if env_prefix:
             # Add env as top-level folder
-            return f"{env_prefix}/{base_path}"
+            return f"plane_ai/{env_prefix}/{base_path}"
         else:
             # Prod case — no prefix
-            return base_path
+            return f"plane_ai/{base_path}"

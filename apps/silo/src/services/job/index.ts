@@ -11,5 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+export * from "./import-execution-log.service";
 export * from "./import-job-report.service";
 export * from "./import-job.service";

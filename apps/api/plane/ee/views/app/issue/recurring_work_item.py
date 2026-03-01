@@ -57,7 +57,7 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
         # create a new recurring work item
         serializer = RecurringWorkItemSerializer(data=request.data, context={"project_id": project_id})
         if serializer.is_valid():
-            instance = serializer.save(workitem_blueprint_id=work_item_template.id, project_id=project_id)
+            _instance = serializer.save(workitem_blueprint_id=work_item_template.id, project_id=project_id)
             # create a new recurring work item activity
             recurring_work_item_activity.delay(
                 type="recurring_workitem.activity.created",

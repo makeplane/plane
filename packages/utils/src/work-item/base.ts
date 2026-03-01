@@ -124,7 +124,6 @@ export const handleIssueQueryParamsByLayout = (
   if (!layout) return null;
 
   const currentViewLayoutOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE[viewType].layoutOptions[layout];
-
   // add display filters query params
   Object.keys(currentViewLayoutOptions.display_filters).forEach((option) => {
     queryParams.push(option as TIssueParams);

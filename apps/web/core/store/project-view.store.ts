@@ -20,7 +20,7 @@ import type { IProjectView, TViewFilters } from "@plane/types";
 // helpers
 import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } from "@plane/utils";
 // services
-import { ViewService } from "@/plane-web/services";
+import { ViewService } from "@/services/project/view.service";
 // store
 import type { CoreRootStore } from "./root.store";
 
@@ -216,6 +216,9 @@ export class ProjectViewStore implements IProjectViewStore {
     runInAction(() => {
       set(this.viewMap, [response.id], response);
     });
+
+    // Auto-complete getting started checklist
+    void this.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(workspaceSlug, "view_created");
 
     return response;
   }

@@ -1,0 +1,67 @@
+FROM registry.access.redhat.com/ubi10/python-312-minimal
+
+# -------------------------
+# Base environment
+# -------------------------
+USER root
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    INSTANCE_CHANGELOG_URL=https://sites.plane.so/pages/f366114e9aba4cbfbe4265b8f2b74f65/
+
+WORKDIR /code
+
+# -------------------------
+# Runtime OS dependencies
+# -------------------------
+    RUN microdnf install -y \
+    postgresql-libs \
+    postgresql-devel \
+    libxslt \
+    xmlsec1 \
+    xmlsec1-openssl \
+    ca-certificates \
+    openldap-devel \
+    libffi-devel \
+    python3.12-devel \
+    gcc \
+    make \
+    hostname \
+    iproute \
+    procps-ng \
+    gawk \
+    openssl \
+    && microdnf clean all \
+    && rm -rf /var/cache/microdnf
+
+# -------------------------
+# Python deps
+# -------------------------
+COPY requirements.txt .
+COPY requirements ./requirements
+
+RUN pip install -r requirements.txt --compile --no-cache-dir
+
+# -------------------------
+# App files
+# -------------------------
+COPY manage.py manage.py
+COPY plane plane/
+COPY templates templates/
+COPY package.json package.json
+COPY ./bin ./bin/
+
+RUN mkdir -p /code/plane/logs && \
+    chown -R 1001:0 /code/plane && \
+    chmod +x ./bin/*
+
+# -------------------------
+# Drop privileges
+# -------------------------
+USER 1001
+
+# Expose container port and run entry point script
+EXPOSE 8000
+
+CMD ["./bin/docker-entrypoint-api.sh"]

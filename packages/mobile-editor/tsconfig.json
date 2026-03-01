@@ -1,12 +1,26 @@
 {
-  "extends": "@plane/typescript-config/base.json",
+  "extends": "@plane/typescript-config/react-library.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "useDefineForClassFields": true,
-    "strict": true,
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "verbatimModuleSyntax": false
   },
-  "include": ["src", "types"]
+  "include": ["src", "types"],
+  "exclude": ["dist", "node_modules", "*.config.ts"],
+  "references": [
+    { "path": "../types" },
+    { "path": "../constants" },
+    { "path": "../utils" },
+    { "path": "../propel" },
+    { "path": "../ui" },
+    { "path": "../editor" }
+  ]
 }

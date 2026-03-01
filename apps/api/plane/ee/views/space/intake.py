@@ -45,7 +45,7 @@ from plane.space.rate_limit import SpaceRateThrottle, AnchorBasedRateThrottle
 ## Enterprise imports
 from plane.ee.serializers import IssueCreateSerializer
 from plane.ee.views.base import BaseAPIView
-from plane.ee.models import IntakeSetting, IntakeResponsibility, IntakeResponsibilityTypeChoices
+from plane.ee.models import IntakeSetting, IntakeResponsibility, IntakeResponsibilityTypeChoices, IntakeEmail
 from plane.ee.bgtasks.intake_email_task import intake_email
 from plane.ee.utils.intake_email_anchor import get_anchors
 
@@ -239,14 +239,13 @@ class IntakeEmailAttachmentEndpoint(BaseAPIView):
         if not check_workspace_feature_flag(feature_key=FeatureFlag.INTAKE_EMAIL, slug=workspace_slug):
             return Response({"error": "Payment required"}, status=status.HTTP_402_PAYMENT_REQUIRED)
 
-        # Get the deploy boards
-        deploy_board = DeployBoard.objects.get(
+        # Get the IntakeEmail record
+        intake_email_obj = IntakeEmail.objects.get(
             workspace__slug=workspace_slug,
             anchor=publish_anchor,
-            entity_name=DeployBoard.DeployBoardType.INTAKE_EMAIL,
         )
         api_token = APIToken.objects.filter(
-            workspace_id=deploy_board.workspace_id,
+            workspace_id=intake_email_obj.workspace_id,
             user__is_bot=True,
             user__bot_type=BotTypeEnum.INTAKE_BOT,
         ).first()
@@ -280,7 +279,7 @@ class IntakeEmailAttachmentEndpoint(BaseAPIView):
             workspace=workspace,
             created_by=api_token.user,
             entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-            project_id=deploy_board.project_id,
+            project_id=intake_email_obj.project_id,
         )
 
         # Get the presigned URL

@@ -52,7 +52,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
   } = props;
   const { t } = useTranslation();
   // states
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(value || "");
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // ref to track if there are unsaved changes
   const hasUnsavedChanges = useRef(false);

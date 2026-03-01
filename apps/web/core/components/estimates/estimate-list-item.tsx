@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EEstimateSystem } from "@plane/constants";
@@ -22,7 +21,7 @@ import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-it
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useEstimate } from "@/hooks/store/estimates/use-estimate";
 // plane web imports
-import { EstimateListItemButtons } from "@/plane-web/components/estimates";
+import { EstimateListItemButtons } from "./estimate-list-item-buttons";
 
 type TEstimateListItem = {
   estimateId: string;

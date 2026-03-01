@@ -13,10 +13,10 @@
 
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
-import { LogOut, MoreHorizontal, Settings, Share2, ArchiveIcon } from "lucide-react";
+import { LogOut, MoreHorizontal, Settings, Share2, ArchiveIcon, Star } from "lucide-react";
 // plane imports
-import { MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 import { LinkIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 
@@ -30,6 +30,10 @@ type Props = {
   onCopyText: () => void;
   onLeaveProject: () => void;
   onPublishModal: () => void;
+  isFavorite?: boolean;
+  handleAddToFavorites: () => void;
+  handleRemoveFromFavorites: () => void;
+  className?: string;
 };
 
 export function ProjectActionsMenu({
@@ -40,6 +44,10 @@ export function ProjectActionsMenu({
   onCopyText,
   onLeaveProject,
   onPublishModal,
+  isFavorite,
+  handleAddToFavorites,
+  handleRemoveFromFavorites,
+  className,
 }: Props) {
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -61,7 +69,7 @@ export function ProjectActionsMenu({
           <MoreHorizontal className="size-4" />
         </span>
       }
-      className="flex-shrink-0"
+      className={cn("flex-shrink-0", className)}
       customButtonClassName="grid place-items-center"
       placement="bottom-start"
       ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
@@ -69,6 +77,18 @@ export function ProjectActionsMenu({
       closeOnSelect
       onMenuClose={() => setIsMenuActive(false)}
     >
+      {isAuthorized && (
+        <CustomMenu.MenuItem onClick={isFavorite ? handleRemoveFromFavorites : handleAddToFavorites}>
+          <span className="flex items-center justify-start gap-2">
+            <Star
+              className={cn("h-3.5 w-3.5 ", {
+                "fill-yellow-500 stroke-yellow-500": isFavorite,
+              })}
+            />
+            <span>{isFavorite ? t("remove_from_favorites") : t("add_to_favorites")}</span>
+          </span>
+        </CustomMenu.MenuItem>
+      )}
       {/* Publish project settings */}
       {isAdmin && (
         <CustomMenu.MenuItem onClick={onPublishModal}>
@@ -89,7 +109,7 @@ export function ProjectActionsMenu({
       {isAuthorized && (
         <CustomMenu.MenuItem
           onClick={() => {
-            navigate(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
+            navigate(`/${workspaceSlug}/projects/${project?.id}/archives/issues/`);
           }}
         >
           <div className="flex items-center justify-start gap-2 cursor-pointer">
@@ -110,10 +130,7 @@ export function ProjectActionsMenu({
       </CustomMenu.MenuItem>
       {/* Leave project */}
       {!isAuthorized && (
-        <CustomMenu.MenuItem
-          onClick={onLeaveProject}
-          data-ph-element={MEMBER_TRACKER_ELEMENTS.SIDEBAR_PROJECT_QUICK_ACTIONS}
-        >
+        <CustomMenu.MenuItem onClick={onLeaveProject}>
           <div className="flex items-center justify-start gap-2">
             <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
             <span>{t("leave_project")}</span>

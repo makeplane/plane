@@ -47,6 +47,7 @@ class LlmModelPricing(BaseModel, table=True):
     text_input_price: Optional[float] = Field(nullable=True, default=None, description="In USD per 1M tokens")
     text_output_price: Optional[float] = Field(nullable=True, default=None, description="In USD per 1M tokens")
     cached_text_input_price: Optional[float] = Field(nullable=True, default=None, description="In USD per 1M tokens")
+    web_search_call_price: Optional[float] = Field(nullable=True, default=None, description="In USD per web search call")
 
 
 class LlmModelUsageTracking(UUIDModel, TimeAuditModel, table=True):

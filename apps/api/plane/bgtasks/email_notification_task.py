@@ -86,6 +86,7 @@ def stack_email_notification():
             entity_name == EntityName.ISSUE.value
             or entity_name == EntityName.EPIC.value
             or entity_name == EntityName.EPIC_UPDATE.value
+            or entity_name == EntityName.INTAKE.value
         ):
             # Create emails for all the issues
             for issue_id, notification_data in payload.items():
@@ -114,11 +115,9 @@ def stack_email_notification():
 def create_payload(notification_data, entity_name):
     # return format {"actor_id":  { "key": { "old_value": [], "new_value": [] } }}
     data = {}
+
     for actor_id, changes in notification_data.items():
         for change in changes:
-            if entity_name == "epic":
-                entity_name = "issue"
-
             entity_activity = change.get(f"{entity_name}_activity", None)
 
             epic_update = change.get("epic_update", None)
@@ -248,7 +247,8 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
         if not base_api:
             return
 
-        data = create_payload(notification_data=notification_data, entity_name=entity_name)
+        # setting entity_name as issue since all project-level notifications has issue_activity in it's data attribute
+        data = create_payload(notification_data=notification_data, entity_name="issue")
 
         # Get email configurations
 
@@ -307,6 +307,10 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                 summary = f"Updates were made to the {entity_name} by"
                 template_name = "emails/notifications/issue-updates.html"
                 formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
+            elif entity_name == EntityName.INTAKE.value:
+                summary = f"{actor.display_name} has made updates to this work item"
+                template_name = "emails/notifications/intake-updates.html"
+                formatted_time = activity_time
 
             if changes:
                 template_data.append(

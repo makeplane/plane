@@ -21,7 +21,7 @@ import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useCommentMenuItems } from "@/components/common/quick-actions-helper";
+import { useCommentMenuItems } from "@/components/common/quick-actions/helper";
 import { useUser } from "@/hooks/store/user";
 
 type TCommentCard = {

@@ -60,9 +60,7 @@ class Command(BaseCommand):
 
             if ProjectMember.objects.filter(project=project, member=user).exists():
                 # Update the project member
-                ProjectMember.objects.filter(project=project, member=user).update(
-                    is_active=True, role=role
-                )
+                ProjectMember.objects.filter(project=project, member=user).update(is_active=True, role=role)
             else:
                 # Create the project member
                 ProjectMember.objects.create(project=project, member=user, role=role)

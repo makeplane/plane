@@ -18,7 +18,7 @@ import { observer } from "mobx-react";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // Plane-web imports
-import type { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@/types";
 // local imports
 import { RelationIssueListItem } from "./issue-list-item";
 

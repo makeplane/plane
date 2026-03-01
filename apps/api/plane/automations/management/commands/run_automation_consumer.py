@@ -64,7 +64,7 @@ class Command(BaseCommand):
             "plane.event_stream.automations",
         )
         exchange_name = getattr(settings, "AUTOMATION_EXCHANGE_NAME", "plane.event_stream")
-        event_types = getattr(settings, "AUTOMATION_EVENT_TYPES", ["issue."])
+        event_types = getattr(settings, "AUTOMATION_EVENT_TYPES", ["workitem.", "issue."])
         event_types_display = ", ".join(event_types)
 
         # Display startup information

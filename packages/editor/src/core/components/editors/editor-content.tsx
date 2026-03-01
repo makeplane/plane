@@ -13,7 +13,8 @@
 
 import { EditorContent } from "@tiptap/react";
 import type { Editor } from "@tiptap/react";
-import { memo, useCallback, type ReactNode } from "react";
+import { memo, useCallback } from "react";
+import type { ReactNode } from "react";
 
 type Props = {
   className?: string;

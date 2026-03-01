@@ -33,10 +33,11 @@ def push_updated_to_slack(workspace, workspace_member_invite):
     # Send message on slack as well
     client = WebClient(token=settings.SLACK_BOT_TOKEN)
     try:
-        _ = client.chat_postMessage(
-            channel="#trackers",
-            text=f"{workspace_member_invite.email} has been invited to {workspace.name} as a {workspace_member_invite.role}",
-        )
+        email = workspace_member_invite.email
+        role = workspace_member_invite.role
+        workspace_name = workspace.name
+        text = f"{email} has been invited to {workspace_name} as a {role}"
+        _ = client.chat_postMessage(channel="#trackers", text=text)
     except SlackApiError as e:
         print(f"Got an error: {e.response['error']}")
 

@@ -27,8 +27,8 @@ import { cn, validateWorkspaceName, validateSlug } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
 // plane-web imports
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
-import { WorkspaceService } from "@/plane-web/services";
+import { getIsWorkspaceCreationDisabled } from "@/helpers/workspace";
+import { WorkspaceService } from "@/services/workspace.service";
 // local components
 import { CommonOnboardingHeader } from "../common";
 

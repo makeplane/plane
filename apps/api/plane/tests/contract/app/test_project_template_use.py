@@ -229,7 +229,7 @@ class TestProjectTemplateUseEndpoint:
 
         # Assert
         assert response.status_code == status.HTTP_201_CREATED
-        response_data = response.json()
+        _ = response.json()
 
         # Verify project was created
         assert Project.objects.count() == 1

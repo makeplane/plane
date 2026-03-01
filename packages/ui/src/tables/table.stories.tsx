@@ -11,14 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Table } from "./table";
 
-const meta: Meta<typeof Table> = {
+const meta = {
   title: "Table",
-  component: Table,
-};
+  component: Table<TTableData>,
+} satisfies Meta<typeof Table<TTableData>>;
 
 export default meta;
 
@@ -29,7 +28,7 @@ type TTableData = {
   age: number;
 };
 
-type Story = StoryObj<typeof Table<TTableData>>;
+type Story = StoryObj<typeof meta>;
 
 // data
 const tableData: TTableData[] = [

@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane package imports
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { Tabs } from "@plane/propel/tabs";
@@ -28,7 +28,7 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAnalyticsTabs } from "@/plane-web/components/analytics/use-analytics-tabs";
+import { useAnalyticsTabs } from "@/components/analytics/use-analytics-tabs";
 import type { Route } from "./+types/page";
 
 function AnalyticsPage({ params }: Route.ComponentProps) {

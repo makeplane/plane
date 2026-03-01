@@ -1,13 +1,16 @@
 {
-  "extends": "@plane/typescript-config/base.json",
+  "extends": "@plane/typescript-config/react-library.json",
   "compilerOptions": {
-    "lib": ["es2023", "dom"],
     "exactOptionalPropertyTypes": false,
-    "jsx": "preserve",
+    "noUncheckedIndexedAccess": false,
+    "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
   "include": ["src"],
-  "exclude": ["dist", "build", "node_modules"]
+  "exclude": ["dist", "node_modules", "*.config.ts"],
+  "references": [{ "path": "../types" }]
 }

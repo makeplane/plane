@@ -15,7 +15,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { DocumentEditorWithRef } from "@plane/editor";
+import { CustomAIBlockUI, DocumentEditorWithRef } from "@plane/editor";
 import type { EditorRefApi } from "@plane/editor";
 import { ERowVariant, Row } from "@plane/ui";
 // components
@@ -46,7 +46,7 @@ export const PageDetailsMainContent = observer(function PageDetailsMainContent(p
   const publishSettings = usePublish(anchor);
   const { fetchPageDetails } = usePagesList();
   const pageDetails = usePage(anchor);
-  const { fetchEmbedsAndMentions, hasLoadedEmbedsAndMentions, id, description } = pageDetails ?? {};
+  const { fetchEmbedsAndMentions, hasLoadedEmbedsAndMentions, id, description_json } = pageDetails ?? {};
 
   useSWR(anchor ? `PAGE_DETAILS_${anchor}` : null, anchor ? () => fetchPageDetails(anchor) : null, {
     revalidateIfStale: false,
@@ -64,7 +64,7 @@ export const PageDetailsMainContent = observer(function PageDetailsMainContent(p
   });
 
   const { document } = useEditorFlagging(anchor);
-  if (!publishSettings || !pageDetails || !id || !description || !hasLoadedEmbedsAndMentions) return null;
+  if (!publishSettings || !pageDetails || !id || !description_json || !hasLoadedEmbedsAndMentions) return null;
 
   return (
     <Row
@@ -81,12 +81,12 @@ export const PageDetailsMainContent = observer(function PageDetailsMainContent(p
             id={id}
             disabledExtensions={document.disabled}
             flaggedExtensions={document.flagged}
-            value={description}
+            value={description_json}
             containerClassName="p-0 pb-64 border-none"
             fileHandler={getEditorFileHandlers({
               anchor,
               workspaceId: publishSettings.workspace ?? "",
-              uploadFile: async () => "",
+              uploadFile: () => Promise.resolve(""),
             })}
             mentionHandler={{
               renderComponent: (props) => (
@@ -106,6 +106,7 @@ export const PageDetailsMainContent = observer(function PageDetailsMainContent(p
                   workspaceSlug: "",
                 },
               },
+              aiBlockWidgetCallback: (props) => <CustomAIBlockUI {...props} />,
               isSmoothCursorEnabled: false,
               commentConfig: {
                 canComment: false,

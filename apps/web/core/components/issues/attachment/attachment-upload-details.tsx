@@ -22,7 +22,7 @@ import { getFileIcon } from "@/components/icons";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import type { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
+import type { TAttachmentUploadStatus } from "@/store/work-items/details/attachment.store";
 
 type Props = {
   uploadStatus: TAttachmentUploadStatus;

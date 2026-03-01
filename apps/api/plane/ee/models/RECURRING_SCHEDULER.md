@@ -75,13 +75,13 @@ The new approach solves all these problems:
 
 | Aspect            | Old (PeriodicTask)            | New (Batch Scheduler)     |
 | ----------------- | ----------------------------- | ------------------------- |
-| Precision         | Exact cron timing             | Within 6-hour window      |
+| Precision         | Exact cron timing             | Within 15-minute window   |
 | Complexity        | Django-celery-beat handles it | Custom scheduler logic    |
 | Visibility        | PeriodicTask admin            | `next_scheduled_at` field |
 | Memory            | O(N) in Beat                  | O(1) in Beat              |
 | Calendar accuracy | Drift with months/years       | Accurate                  |
 
-The 6-hour window precision is acceptable for recurring work items (daily/weekly/monthly tasks) where exact-to-the-second timing is not critical.
+The 15-minute window precision is acceptable for recurring work items (daily/weekly/monthly tasks) where exact-to-the-second timing is not critical.
 
 ## Architecture
 
@@ -89,16 +89,16 @@ The 6-hour window precision is acceptable for recurring work items (daily/weekly
 ┌─────────────────────────────────────────────────────────────┐
 │                    BATCH SCHEDULER                          │
 │                                                             │
-│  Celery Beat (every 6 hours)                               │
+│  Celery Beat (every 15 minutes)                              │
 │       ↓                                                     │
 │  schedule_batch() task                                      │
 │       ↓                                                     │
 │  Query: enabled=True, periodic_task__isnull=True,          │
-│         next_scheduled_at <= now + 6 hours                  │
+│         next_scheduled_at <= now + 15 minutes               │
 │       ↓                                                     │
 │  Schedule each task with unique task_id                     │
 │       ↓                                                     │
-│  create_work_item_from_template() executes at ETA           │
+│  create_work_item_from_template() executes immediately      │
 │       ↓                                                     │
 │  advance_to_next_schedule() updates next_scheduled_at       │
 └─────────────────────────────────────────────────────────────┘
@@ -136,10 +136,10 @@ This eliminates the need for views to manually call the scheduler.
 
 ### Scheduler Tasks (`recurring_work_item_scheduler.py`)
 
-| Task                             | Trigger                | Purpose                                              |
-| -------------------------------- | ---------------------- | ---------------------------------------------------- |
-| `schedule_batch()`               | Celery Beat (every 6h) | Find and schedule all tasks due in next 6 hours      |
-| `schedule_on_create_or_enable()` | On create/update       | Immediate scheduling for newly created/enabled tasks |
+| Task                             | Trigger                 | Purpose                                              |
+| -------------------------------- | ----------------------- | ---------------------------------------------------- |
+| `schedule_batch()`               | Celery Beat (every 15m) | Find and schedule all tasks due in next 15 minutes   |
+| `schedule_on_create_or_enable()` | On create/update        | Immediate scheduling for newly created/enabled tasks |
 
 ### Worker Task (`recurring_work_item_task.py`)
 
@@ -416,7 +416,7 @@ Calculate next_scheduled_at (no PeriodicTask created)
     ↓
 Model triggers schedule_on_create_or_enable.delay()
     ↓
-If due within 6 hours → schedule immediately
+If due within 15 minutes → schedule immediately
 ```
 
 ### Task Update (Schedule Fields Changed)
@@ -450,7 +450,7 @@ next_scheduled_at = next day at 00:05 (in project timezone)
 last_run_at = now
 ```
 
-### Batch Scheduler (Every 6 Hours)
+### Batch Scheduler (Every 15 Minutes)
 
 ```
 schedule_batch() runs
@@ -458,12 +458,12 @@ schedule_batch() runs
 Query tasks where:
   - enabled = True
   - periodic_task IS NULL
-  - next_scheduled_at <= now + 6 hours
+  - next_scheduled_at <= now + 15 minutes
   - end_at IS NULL OR end_at > now
     ↓
 For each task:
   - Generate unique task_id
-  - Schedule with ETA (or immediate if past due)
+  - Dispatch immediately (no ETA)
 ```
 
 ## Configuration
@@ -473,14 +473,14 @@ For each task:
 ```python
 "recurring-batch-scheduler": {
     "task": "plane.ee.bgtasks.recurring_work_item_scheduler.schedule_batch",
-    "schedule": crontab(hour="*/6", minute=0),  # 0, 6, 12, 18 UTC
+    "schedule": crontab(minute="*/15"),  # Every 15 minutes
 },
 ```
 
 ### Batch Window
 
 ```python
-BATCH_WINDOW_HOURS = 6  # Look ahead 6 hours, run every 6 hours
+BATCH_WINDOW_MINUTES = 15  # Look ahead 15 minutes, run every 15 minutes
 ```
 
 ## Database Index

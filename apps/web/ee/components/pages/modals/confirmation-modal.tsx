@@ -28,11 +28,10 @@ type TConfirmationModalProps = {
   contentText: string | React.ReactNode;
   successMessage: string;
   errorMessage: string;
-  eventName: string;
 };
 
 export const ConfirmationModal = observer(function ConfirmationModal(props: TConfirmationModalProps) {
-  const { page, isOpen, onClose, action, title, contentText, successMessage, errorMessage, eventName } = props;
+  const { page, isOpen, onClose, action, title, contentText, successMessage, errorMessage } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
 

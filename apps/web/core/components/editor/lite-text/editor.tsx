@@ -31,7 +31,7 @@ import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web service
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 import { LiteToolbar } from "./lite-toolbar";
 const workspaceService = new WorkspaceService();
 

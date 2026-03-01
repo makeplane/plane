@@ -12,4 +12,4 @@
 from .workspace_credential import WorkspaceCredentialAPISerializer
 from .workspace_connection import WorkspaceConnectionAPISerializer
 from .workspace_entity_connection import WorkspaceEntityConnectionAPISerializer
-from .job import ImportReportAPISerializer, ImportJobAPISerializer
+from .job import ImportReportAPISerializer, ImportJobAPISerializer, ImportExecutionLogSerializer

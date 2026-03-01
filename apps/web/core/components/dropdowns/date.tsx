@@ -199,7 +199,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
               {...attributes.popper}
             >
               <Calendar
-                className="rounded-md border border-subtle p-3"
+                className="rounded-md"
                 captionLayout="dropdown"
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}

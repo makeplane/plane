@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import { CornerDownRight, PencilLine, RefreshCcw, Sparkles } from "lucide-react";
 // plane imports
@@ -22,7 +22,7 @@ import { cn } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // plane web constants
-import { AI_EDITOR_TASKS } from "@/plane-web/constants/ai";
+import { AI_EDITOR_TASKS } from "@/constants/ai";
 // services
 import type { TTaskPayload } from "@/services/ai.service";
 import { AIService } from "@/services/ai.service";

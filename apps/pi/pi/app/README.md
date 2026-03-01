@@ -2,7 +2,7 @@
 
 # Plane AI API Server
 
-Plane AI API Server serving AI to Plane's World (Previously, Pi ~ Plane Intelligence)
+Plane AI API Server serving AI to Plane's World
 
 ```
 python main.py

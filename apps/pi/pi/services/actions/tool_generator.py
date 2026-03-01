@@ -266,10 +266,18 @@ def generate_tool_from_metadata(
                     message = generate_success_message(metadata.name, entity_name)
                 else:
                     message = result.get("message")
+
+                # Merge top-level keys into data for context (e.g. customer_id)
+                data = result.get("data", {})
+                if isinstance(data, dict):
+                    # Copy top-level keys that aren't in data (excluding standard wrapper keys)
+                    exclude_keys = {"success", "message", "data", "error", "workitem_entity"}
+                    for key, value in result.items():
+                        if key not in exclude_keys and key not in data:
+                            data[key] = value
+
                 # Format with entity URL
-                formatted_result = await PlaneToolBase.format_success_payload_with_url(
-                    message, result.get("data"), metadata.returns_entity_type, context
-                )
+                formatted_result = await PlaneToolBase.format_success_payload_with_url(message, data, metadata.returns_entity_type, context)
                 # Preserve workitem_entity if present (e.g., from intake post-processor)
                 if "workitem_entity" in result:
                     formatted_result["workitem_entity"] = result["workitem_entity"]

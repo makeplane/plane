@@ -32,7 +32,8 @@ export const CustomAIBlockExtension = (props?: CustomAIBlockExtensionProps) =>
       return {
         ...this.parent?.(),
         aiBlockHandlers: props?.aiBlockHandlers,
-        widgetCallback: props?.widgetCallback,
+        aiBlockWidgetCallback: props?.aiBlockWidgetCallback,
+        isFlagged: props?.isFlagged,
       };
     },
 

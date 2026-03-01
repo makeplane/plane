@@ -25,16 +25,16 @@ export const usePlatformOS = () => {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
       let platform = "";
 
-      if (!isMobile) {
-        if (userAgent.indexOf("Win") !== -1) {
-          platform = "Windows";
-        } else if (userAgent.indexOf("Mac") !== -1) {
-          platform = "MacOS";
-        } else if (userAgent.indexOf("Linux") !== -1) {
-          platform = "Linux";
-        } else {
-          platform = "Unknown";
-        }
+      if (isMobile && userAgent.indexOf("Android") !== -1) {
+        platform = "Android";
+      } else if (userAgent.indexOf("Win") !== -1) {
+        platform = "Windows";
+      } else if (userAgent.indexOf("Mac") !== -1) {
+        platform = "MacOS";
+      } else if (userAgent.indexOf("Linux") !== -1) {
+        platform = "Linux";
+      } else {
+        platform = "Unknown";
       }
 
       setPlatformData({ isMobile, platform });

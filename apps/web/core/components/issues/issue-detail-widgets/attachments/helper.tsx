@@ -18,7 +18,7 @@ import { EIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
-import type { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
+import type { TAttachmentUploadStatus } from "@/store/work-items/details/attachment.store";
 
 export type TAttachmentOperations = {
   create: (file: File) => Promise<void>;

@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // Plane imports
 import type { IWebhook } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
 
@@ -43,7 +43,7 @@ export function WebhooksListItem(props: IWebhookListItem) {
       >
         <h5 className="text-body-sm-medium truncate">{webhook.url}</h5>
         <div className="shrink-0">
-          <ToggleSwitch value={webhook.is_active} onChange={handleToggle} />
+          <Switch value={webhook.is_active} onChange={handleToggle} />
         </div>
       </Link>
     </div>

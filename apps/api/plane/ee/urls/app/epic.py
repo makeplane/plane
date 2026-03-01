@@ -32,6 +32,7 @@ from plane.ee.views.app.epic import (
     EpicDetailIdentifierEndpoint,
     EpicDescriptionVersionEndpoint,
     EpicSubscriberViewSet,
+    EpicMetaListEndpoint,
 )
 from plane.ee.views.app.epic_property import (
     WorkspaceEpicTypeEndpoint,
@@ -198,6 +199,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/meta/",
         EpicMetaEndpoint.as_view(),
         name="epic-meta",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epics/meta/",
+        EpicMetaListEndpoint.as_view(),
+        name="epic-meta-list",
     ),
     path(
         "workspaces/<str:slug>/epics/<str:project_identifier>-<str:epic_identifier>/",

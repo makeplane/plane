@@ -15,11 +15,11 @@ import { unset, set } from "lodash-es";
 import { makeObservable, observable, runInAction, action } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane web services
-import { PublishPageService } from "@/plane-web/services/page";
+import { PublishPageService } from "@/services/page/publish-page.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type { TPagePublishSettings } from "@/plane-web/types";
+import type { TPagePublishSettings } from "@/types";
 
 export interface IPublishPageStore {
   // observables

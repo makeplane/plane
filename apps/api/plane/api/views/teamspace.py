@@ -32,11 +32,30 @@ from plane.utils.openapi import (
     PER_PAGE_PARAMETER,
 )
 
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    TEAMSPACES_READ_SCOPE,
+    TEAMSPACES_WRITE_SCOPE,
+    TEAMSPACES_PROJECTS_READ_SCOPE,
+    TEAMSPACES_PROJECTS_WRITE_SCOPE,
+    TEAMSPACES_MEMBERS_READ_SCOPE,
+    TEAMSPACES_MEMBERS_WRITE_SCOPE,
+)
+
 
 class TeamspaceViewSet(BaseViewSet):
     serializer_class = TeamspaceSerializer
     model = Teamspace
-    permission_classes = [WorkSpaceAdminPermission, TeamspaceFeatureFlagPermission]
+    permission_classes = [WorkSpaceAdminPermission, TeamspaceFeatureFlagPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [TEAMSPACES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return Teamspace.objects.filter(workspace__slug=self.kwargs.get("slug"))
@@ -138,6 +157,22 @@ class TeamspaceViewSet(BaseViewSet):
         teamspace.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class TeamspaceProjectViewSet(BaseViewSet):
+    serializer_class = TeamspaceSerializer
+    model = Teamspace
+    permission_classes = [WorkSpaceAdminPermission, TeamspaceFeatureFlagPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [TEAMSPACES_READ_SCOPE], [TEAMSPACES_PROJECTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE], [TEAMSPACES_PROJECTS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE], [TEAMSPACES_PROJECTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE], [TEAMSPACES_PROJECTS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE], [TEAMSPACES_PROJECTS_WRITE_SCOPE]],
+    }
+
+    def get_queryset(self):
+        return Teamspace.objects.filter(workspace__slug=self.kwargs.get("slug"))
+
     @teamspace_entity_docs(
         operation_id="list_teamspace_projects",
         summary="List teamspace projects",
@@ -203,7 +238,7 @@ class TeamspaceViewSet(BaseViewSet):
         new_project_ids = set(project_ids) - set(existing_project_ids)
 
         for project_id in new_project_ids:
-            project = Project.objects.get(id=project_id)
+            project = Project.objects.get(id=project_id, workspace__slug=slug)
             TeamspaceProject.objects.create(team_space=teamspace, project=project, workspace_id=teamspace.workspace_id)
 
         # send new projects in response
@@ -239,9 +274,25 @@ class TeamspaceViewSet(BaseViewSet):
         teamspace = self.get_queryset().get(id=teamspace_id)
         project_ids = request.data.get("project_ids", [])
         for project_id in project_ids:
-            project = Project.objects.get(id=project_id)
+            project = Project.objects.get(id=project_id, workspace__slug=slug)
             TeamspaceProject.objects.filter(team_space=teamspace, project=project).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TeamspaceMemberViewSet(BaseViewSet):
+    serializer_class = TeamspaceSerializer
+    model = Teamspace
+    permission_classes = [WorkSpaceAdminPermission, TeamspaceFeatureFlagPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [TEAMSPACES_READ_SCOPE, TEAMSPACES_MEMBERS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE, TEAMSPACES_MEMBERS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE, TEAMSPACES_MEMBERS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE, TEAMSPACES_MEMBERS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE, TEAMSPACES_MEMBERS_WRITE_SCOPE]],
+    }
+
+    def get_queryset(self):
+        return Teamspace.objects.filter(workspace__slug=self.kwargs.get("slug"))
 
     @teamspace_entity_docs(
         operation_id="list_teamspace_members",

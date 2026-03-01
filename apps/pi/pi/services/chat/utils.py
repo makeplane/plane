@@ -24,13 +24,11 @@ from langchain_core.messages import AIMessage
 from langchain_core.messages import BaseMessage
 from langchain_core.messages import HumanMessage
 from pydantic import UUID4
-from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi import settings
 from pi.app.api.v1.helpers.plane_sql_queries import get_user_timezone_context_for_prompt
-from pi.app.models import LlmModel
 from pi.services.retrievers.pg_store.attachment import get_attachments_with_base64_data
 
 log = logger.getChild(__name__)
@@ -58,49 +56,6 @@ def mask_uuids_in_text(text: str) -> str:
         return f"xxxx-{uuid_str[-4:]}"
 
     return re.sub(uuid_pattern, replace_uuid, text)
-
-
-async def is_model_enabled_for_workspace(chat_id: str, model_name: str, db: AsyncSession) -> bool:
-    """
-    Check if a model supports workspace context functionality.
-
-    Args:
-        model_name: The model key/name to check (e.g., "gpt-4o", "gpt-4.1", "claude-sonnet-4")
-        db: Database session for querying active models
-
-    Returns:
-        bool: True if the model supports workspace context, False otherwise
-    """
-    try:
-        # Model name mapping for user-friendly names to actual LiteLLM model names
-        model_name_mapping = {
-            "claude-sonnet-4": settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
-        }
-
-        # Map user-friendly model names to actual model names for TESTED_FOR_WORKSPACE check
-        actual_model_name = model_name_mapping.get(model_name, model_name)
-
-        # First check if the model is in the tested workspace models list from config
-        if actual_model_name in TESTED_FOR_WORKSPACE:
-            return True
-
-        # As a fallback, check if the model exists and is active in the database
-        stmt = select(LlmModel).where(LlmModel.model_key == model_name, LlmModel.is_active)
-        result = await db.execute(stmt)
-        model = result.scalar_one_or_none()
-        if model is not None:
-            log.warning(
-                f"ChatID: {chat_id} - Input model_name: {model_name} not in TESTED_FOR_WORKSPACE: {TESTED_FOR_WORKSPACE}, but still using it as it is active in the database"  # noqa: E501
-            )  # noqa: E501
-
-        # If model exists and is active, consider it workspace-enabled
-        # This allows for future models to be workspace-enabled by default
-        return model is not None
-
-    except Exception as e:
-        log.error(f"Error checking workspace support for model {model_name}: {e}")
-        # If there's an error, default to False for safety
-        return False
 
 
 # Standard Agent Response Format - All agents should return this format
@@ -226,72 +181,76 @@ def reasoning_header_factory(stage: str, tool_name: str, tool_query: str) -> str
     """Factory function to create a reasoning header for a given stage"""
     stage_dict = {
         "build_beginning": [
-            "🧠 Assembling the action sequence...\n\n",
-            "🤔 Planning next steps...\n\n",
-            "🧠 Brainstorming the best approach...\n\n",
-            "🛤️ Mapping out the action path...\n\n",
-            "🚧 Constructing your request workflow...\n\n",
-            "🔍 Evaluating available options...\n\n",
-            "⏳ Orchestrating the next steps...\n\n",
+            "\n\nAssembling the action sequence...\n\n",
+            "\n\nPlanning next steps...\n\n",
+            "\n\nBrainstorming the best approach...\n\n",
+            "\n\nMapping out the action path...\n\n",
+            "\n\nConstructing your request workflow...\n\n",
+            "\n\nEvaluating available options...\n\n",
+            "\n\nOrchestrating the next steps...\n\n",
         ],
         "selected_action_categories": [
-            "🧭 Identified planning focus\n\n",
-            "🔍 Evaluated relevant areas\n\n",
+            "\n\nIdentified planning focus\n\n",
+            "\n\nEvaluated relevant areas\n\n",
         ],
         "actions_clarification_followup": [
-            "🧠 Continuing with your request...\n\n",
+            "\n\nContinuing with your request...\n\n",
         ],
         "planner_tool_selection_calling": [
-            "🧠 Zeroing in on the best tool...\n\n",
-            "🔍 Narrowing down the next moves...\n\n",
-            "🧭 Steps to take next...\n\n",
+            "\n\nZeroing in on the best step...\n\n",
+            "\n\nNarrowing down the next moves...\n\n",
+            "\n\nSteps to take next...\n\n",
         ],
         "planner_tool_selection": [
-            "💭 Contemplating...\n\n",
+            "\n\nContemplating...\n\n",
         ],
         "planner_tool_selection_final": [
-            f"🤖 {tool_name} ({tool_query})\n\n" if tool_query else f"🤖 {tool_name}\n\n",
+            f"\n\n{tool_name} ({tool_query})\n\n" if tool_query else f"\n\n{tool_name}\n\n",
         ],
         "retrieval_tool_execution": [
-            f"🔧 Executing: {tool_name}: {tool_query}\n\n",
-            f"Calling {tool_name} for {tool_query}\n\n",
+            f"\n\nExecuting: {tool_name}: {tool_query}\n\n",
+            f"\n\nCalling {tool_name} for {tool_query}\n\n",
         ],
         "retrieval_tool_execution_message": [
-            f"✅Tool {tool_name} returned its output...\n\n",
-            f"I received {tool_name}'s result..\n\n",
+            f"\n\nTool {tool_name} returned its output...\n\n",
+            f"\n\nI received {tool_name}'s result..\n\n",
         ],
         "tool_complete": [
-            f"✅ {tool_name} execution completed\n\n",
-            f"{tool_name} is executed successfully\n\n",
+            f"\n\n{tool_name} execution completed\n\n",
+            f"\n\n{tool_name} is executed successfully\n\n",
         ],
         "tool_error": [
-            f"⚠️ Error executing {tool_name}\n\n",
+            f"\n\nError executing {tool_name}\n\n",
         ],
         "tool_unavailable": [
-            "⚠️ A required capability was unavailable.\n\n",
+            "\n\nA required capability was unavailable.\n\n",
         ],
         "ask_mode_clarification_followup": [
-            "🤖 Processing your clarification...\n\n",
+            "\n\nProcessing your clarification...\n\n",
         ],
         "ask_mode_beginning": [
-            "🤖 Retrieving information...\n\n",
-            "🤖 Processing your request...\n\n",
-            "🧠 Planning next steps...\n\n",
-            "🤔 Planning next steps...\n\n",
-            "🧠 Brainstorming the best approach...\n\n",
+            "\n\nRetrieving information...\n\n",
+            "\n\nProcessing your request...\n\n",
+            "\n\nPlanning next steps...\n\n",
+            "\n\nPlanning next steps...\n\n",
+            "\n\nBrainstorming the best approach...\n\n",
         ],
         "ask_mode_analyzing_results": [
-            "🤖 Analyzing results...\n\n",
-            "🧠 Reviewing tool outputs...\n\n",
+            "\n\nAnalyzing results...\n\n",
+            "\n\nReviewing tool outputs...\n\n",
+        ],
+        "build_mode_analyzing_results": [
+            "\n\nAnalyzing results...\n\n",
+            "\n\nReviewing tool outputs...\n\n",
         ],
         "ask_preset_reasoning": [
-            "🧭 Using optimized path...\n\n",
-            "💡 Applying optimized insights...\n\n",
-            "🧠 Following optimized guidance...\n\n",
+            "\n\nUsing optimized path...\n\n",
+            "\n\nApplying optimized insights...\n\n",
+            "\n\nFollowing optimized guidance...\n\n",
         ],
-        "final_response": ["📝 Generating final response...\n\n"],
+        "final_response": ["\n\nGenerating final response...\n\n"],
     }
-    stage_list = stage_dict.get(stage, "🧠 {stage}\n\n")
+    stage_list = stage_dict.get(stage, "{stage}\n\n")
     return random.choice(stage_list)
 
 

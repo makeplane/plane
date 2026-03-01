@@ -16,7 +16,7 @@ import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -123,14 +123,12 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
                 },
                 disabled: !canPerformEmptyStateActions,
                 variant: "primary",
-                "data-ph-element": WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE,
               },
               {
                 label: t("project_empty_state.cycle_work_items.cta_secondary"),
                 onClick: () => setCycleIssuesListModal(true),
                 disabled: !canPerformEmptyStateActions,
                 variant: "secondary",
-                "data-ph-element": WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE,
               },
             ]}
           />

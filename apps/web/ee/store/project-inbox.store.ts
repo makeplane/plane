@@ -17,7 +17,7 @@ import type { TInboxForm } from "@plane/types";
 import type { IProjectInboxStore as CeIProjectInboxStore } from "@/store/inbox/project-inbox.store";
 import { ProjectInboxStore as CeProjectInboxStore } from "@/store/inbox/project-inbox.store";
 import type { CoreRootStore } from "@/store/root.store";
-import { InboxIssueService } from "../services/inbox-issue.service";
+import { InboxIssueService } from "../../core/services/inbox-issue.service";
 
 export interface IProjectInboxStore extends CeIProjectInboxStore {
   intakeForms: Record<string, TInboxForm>;

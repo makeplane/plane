@@ -15,13 +15,7 @@ import type { IProjectMemberNavigationPreferences } from "./project";
 import type { TIssue } from "./issues/issue";
 import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
 import type { CompleteOrEmpty } from "./utils";
-import type {
-  IExtendedIssueDisplayProperties,
-  TExtendedIssueGroupByOptions,
-  TExtendedIssueOrderByOptions,
-  TExtendedWorkItemFilterProperty,
-} from "./view-props-extended";
-import { WORK_ITEM_FILTER_PROPERTY_KEYS_EXTENDED } from "./view-props-extended";
+import type { TCustomPropertyFilterKey } from "./work-item-types/work-item-properties";
 
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
@@ -37,7 +31,8 @@ export type TIssueGroupByOptions =
   | "module"
   | "target_date"
   | "team_project"
-  | TExtendedIssueGroupByOptions
+  | "milestone"
+  | "epic"
   | null;
 
 export type TIssueOrderByOptions =
@@ -70,7 +65,10 @@ export type TIssueOrderByOptions =
   | "-attachment_count"
   | "sub_issues_count"
   | "-sub_issues_count"
-  | TExtendedIssueOrderByOptions;
+  | "customer_request_count"
+  | "-customer_request_count"
+  | "customer_count"
+  | "-customer_count";
 
 export type TIssueGroupingFilters = "active" | "backlog";
 
@@ -103,7 +101,8 @@ export type TIssueParams =
   | "layout"
   | "expand"
   | "filters"
-  | "milestone";
+  | "milestone"
+  | "epic";
 
 export type TCalendarLayouts = "month" | "week";
 
@@ -126,9 +125,12 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "project_id",
   "created_at",
   "updated_at",
-  ...WORK_ITEM_FILTER_PROPERTY_KEYS_EXTENDED,
+  "team_project_id",
+  "type_id",
+  "name",
+  "milestone_id",
 ] as const;
-export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number] | TExtendedWorkItemFilterProperty;
+export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number] | TCustomPropertyFilterKey;
 
 export type TWorkItemFilterConditionKey = `${TWorkItemFilterProperty}__${TSupportedOperators}`;
 
@@ -184,7 +186,7 @@ export interface IIssueDisplayFilterOptions {
   show_empty_groups?: boolean;
   sub_issue?: boolean;
 }
-export interface IIssueDisplayProperties extends IExtendedIssueDisplayProperties {
+export interface IIssueDisplayProperties {
   assignee?: boolean;
   start_date?: boolean;
   due_date?: boolean;
@@ -201,6 +203,8 @@ export interface IIssueDisplayProperties extends IExtendedIssueDisplayProperties
   modules?: boolean;
   cycle?: boolean;
   issue_type?: boolean;
+  customer_request_count?: boolean;
+  customer_count?: boolean;
 }
 
 export type TIssueKanbanFilters = {

@@ -377,8 +377,18 @@ class GroupedOffsetPaginator(OffsetPaginator):
         processed_results = self.__get_field_dict()
         for result in results:
             group_value = str(result.get(self.group_by_field_name))
+
             if group_value in processed_results:
                 processed_results[str(group_value)]["results"].append(result)
+
+            elif (
+                self.group_by_field_name == "parent_id"
+                and "None" in processed_results
+                and group_value not in processed_results
+            ):
+                # Work items (issues with non-epic parent) go in the None group
+                processed_results["None"]["results"].append(result)
+
         return processed_results
 
     def process_results(self, results):
@@ -611,6 +621,7 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                     result[self.FIELD_MAPPER.get(self.sub_group_by_field_name)] = (
                         [] if "None" in sub_group_ids else sub_group_ids
                     )
+
                 # If a result belongs to multiple groups, add it to each group
                 processed_results[str(group_value)]["results"][str(sub_group_value)]["results"].append(result)
 
@@ -622,7 +633,15 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         for result in results:
             group_value = str(result.get(self.group_by_field_name))
             sub_group_value = str(result.get(self.sub_group_by_field_name))
-            processed_results[group_value]["results"][sub_group_value]["results"].append(result)
+
+            if group_value not in processed_results and "None" in processed_results:
+                # Work items (issues with non-epic parent) go in the None group
+                group_value = "None"
+                if sub_group_value not in processed_results["None"]["results"]:
+                    processed_results["None"]["results"][sub_group_value] = {"results": [], "total_results": 0}
+
+            if group_value in processed_results and sub_group_value in processed_results[group_value]["results"]:
+                processed_results[group_value]["results"][sub_group_value]["results"].append(result)
 
         return processed_results
 

@@ -11,6 +11,8 @@
 
 # Python imports
 import asyncio
+import os
+import uuid
 
 import typer
 
@@ -24,6 +26,7 @@ from pi.core.db.plane_pi.lifecycle import get_async_session
 
 llm_id_map = {
     "gpt-4o": "46812713-ca2d-4411-ac21-838b553501f0",
+    "gpt-4o-search-preview": "9f7d3f1e-3b1d-4a5c-9a8f-1a6f0d8d2c3b",
     "gpt-4o-mini": "059fdc71-75b5-4897-93d5-b61e0ed11b7e",
     "gpt-4.1": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
     "gpt-4.1-nano": "fa8e33df-7130-4d3d-b4d8-ca627d3208af",
@@ -31,11 +34,12 @@ llm_id_map = {
     "gpt-5-fast": "d7e8f9a0-b1c2-3456-7890-abcdef123456",
     "gpt-5.1": "e8f9a0b1-c2d3-4567-8901-abcdef123456",
     "gpt-5.2": "f9a0b1c2-d3e4-5678-9012-bcdef2345678",
-    "claude-sonnet-4": "b3c4d5e6-f7a8-9012-3456-7890abcdef12",
     "claude-sonnet-4-0": "60cf738d-3f6b-4fe4-b088-8c902528657f",
     "gpt-5-mini": "5e5d7fa1-0a75-4318-87c6-7595c7b7133d",
     "gpt-5-nano": "0394e887-8140-4505-b4f9-5e9c59b40396",
     "claude-sonnet-4-5": "6a14a494-dc87-42cc-9d7c-1f82faa3d018",
+    "claude-sonnet-4-6": "d8e3f2a1-4b5c-6d7e-8f9a-0b1c2d3e4f5a",
+    "claude-haiku-4-5": "b7c25e8f-9d41-4a3b-8e6f-2c7d4a5b6e3f",
 }
 
 # Data for sync.
@@ -46,6 +50,14 @@ LLMS_DATA = [
         "description": "OpenAI's GPT-4o model.",
         "provider": "OpenAI",
         "model_key": "gpt-4o",
+        "max_tokens": 128000,
+    },
+    {
+        "id": llm_id_map["gpt-4o-search-preview"],
+        "name": "GPT-4o Search Preview",
+        "description": "OpenAI's GPT-4o search preview model for web search.",
+        "provider": "OpenAI",
+        "model_key": "gpt-4o-search-preview",
         "max_tokens": 128000,
     },
     {
@@ -105,14 +117,6 @@ LLMS_DATA = [
         "max_tokens": 400000,
     },
     {
-        "id": llm_id_map["claude-sonnet-4"],
-        "name": "Claude Sonnet 4",
-        "description": "Anthropic's Claude Sonnet 4 model.",
-        "provider": "Anthropic",
-        "model_key": "claude-sonnet-4",
-        "max_tokens": 200000,
-    },
-    {
         "id": llm_id_map["claude-sonnet-4-0"],
         "name": "Claude Sonnet 4.0",
         "description": "Anthropic's Claude Sonnet 4.0 model.",
@@ -144,7 +148,39 @@ LLMS_DATA = [
         "model_key": "claude-sonnet-4-5",
         "max_tokens": 200000,
     },
+    {
+        "id": llm_id_map["claude-sonnet-4-6"],
+        "name": "Claude Sonnet 4.6",
+        "description": "Anthropic's Claude Sonnet 4.6 model - combination of speed and intelligence.",
+        "provider": "Anthropic",
+        "model_key": "claude-sonnet-4-6",
+        "max_tokens": 200000,
+    },
+    {
+        "id": llm_id_map["claude-haiku-4-5"],
+        "name": "Claude Haiku 4.5",
+        "description": "Anthropic's Claude Haiku 4.5 model - fast and cost-efficient.",
+        "provider": "Anthropic",
+        "model_key": "claude-haiku-4-5",
+        "max_tokens": 200000,
+    },
 ]
+
+# Dynamically add custom model if configured
+
+if os.getenv("CUSTOM_LLM_ENABLED", "false").lower() == "true" and os.getenv("CUSTOM_LLM_MODEL_KEY"):
+    _custom_key = os.getenv("CUSTOM_LLM_MODEL_KEY")
+    if _custom_key and _custom_key not in llm_id_map:
+        # Deterministic UUID from model key for idempotent sync
+        llm_id_map[_custom_key] = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"plane-custom-llm-{_custom_key}"))
+        LLMS_DATA.append({
+            "id": llm_id_map[_custom_key],
+            "name": os.getenv("CUSTOM_LLM_NAME", "Self-Hosted LLM"),
+            "description": os.getenv("CUSTOM_LLM_DESCRIPTION", "Custom self-hosted OpenAI-compatible model"),
+            "provider": "OpenAI-Compatible",
+            "model_key": _custom_key,
+            "max_tokens": int(os.getenv("CUSTOM_LLM_MAX_TOKENS", "128000")),
+        })
 
 tracked_fields = ["name", "description", "provider", "model_key", "max_tokens"]
 
@@ -180,6 +216,7 @@ async def sync_llms():
 
             await session.commit()
             typer.echo("LLMs synced successfully.")
+            typer.echo("-" * 60)
         except Exception as e:
             await session.rollback()
             typer.echo(f"An error occurred during sync: {e}")

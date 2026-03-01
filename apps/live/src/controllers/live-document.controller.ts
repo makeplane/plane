@@ -14,20 +14,18 @@
 import type { Request, Response } from "express";
 import * as Y from "yjs";
 import { z } from "zod";
+// plane imports
 import { Controller, Get, Middleware } from "@plane/decorators";
-
-// Server agent
 import { getAllDocumentFormatsFromDocumentEditorBinaryData } from "@plane/editor/lib";
-
-// Helpers
 import { logger } from "@plane/logger";
+import type { TDocumentPayload } from "@plane/types";
+// Helpers
 import { serverAgentManager } from "@/agents/server-agent";
+// lib
 import { requireSecretKey } from "@/lib/auth-middleware";
 import { AppError } from "@/lib/errors";
-// Import authentication middleware
+// types
 import type { HocusPocusServerContext } from "@/types";
-
-// Types
 
 // Schema for request validation
 const getLiveDocumentValuesSchema = z.object({
@@ -52,17 +50,9 @@ export class LiveDocumentController {
       try {
         const { connection } = await serverAgentManager.getConnection(documentId, context);
 
-        // Define the document type
-        type DocumentData = {
-          description_binary: string;
-          description: object;
-          description_html: string;
-          name?: string;
-        };
-
         // Create a promise to wrap the setTimeout
-        const loadDocumentWithDelay = new Promise<DocumentData | null>((resolve) => {
-          let documentData: DocumentData;
+        const loadDocumentWithDelay = new Promise<TDocumentPayload | null>((resolve) => {
+          let documentData: TDocumentPayload;
 
           connection.transact((doc) => {
             const type = doc.getXmlFragment("default");
@@ -79,7 +69,7 @@ export class LiveDocumentController {
 
             documentData = {
               description_binary: contentBinaryEncoded,
-              description: contentJSON,
+              description_json: contentJSON,
               description_html: contentHTML,
             };
 

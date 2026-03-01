@@ -11,24 +11,24 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState } from "react";
-import { observer } from "mobx-react";
-import { Controller, useForm } from "react-hook-form";
 import { CircleUserRound } from "lucide-react";
+import { observer } from "mobx-react";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
-import { EFileAssetType } from "@plane/types";
 import type { IUser, TUserProfile } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 import { Input } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
+import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { ChangeEmailModal } from "@/components/core/modals/change-email-modal";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
-import { CoverImage } from "@/components/common/cover-image";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // helpers
 import { handleCoverImageChange } from "@/helpers/cover-image.helper";
@@ -36,7 +36,7 @@ import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // utils
-import { validatePersonName, validateDisplayName } from "@plane/utils";
+import { validateDisplayName, validatePersonName } from "@plane/utils";
 
 type TUserProfileForm = {
   avatar_url: string;
@@ -64,6 +64,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
   const [isChangeEmailModalOpen, setIsChangeEmailModalOpen] = useState(false);
+  const [isDeactivateSectionOpen, setIsDeactivateSectionOpen] = useState(false);
   // language support
   const { t } = useTranslation();
   // form info

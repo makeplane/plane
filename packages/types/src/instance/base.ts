@@ -78,9 +78,9 @@ export interface IInstanceConfig extends IInstanceConfigExtended {
   space_base_url: string | undefined;
   admin_base_url: string | undefined;
   is_self_managed: boolean;
-  // intercom
-  is_intercom_enabled: boolean;
-  intercom_app_id: string | undefined;
+  // chat support
+  is_chat_support_enabled: boolean;
+  chat_support_app_id: string | undefined;
   instance_changelog_url?: string;
   // enterprise
   is_oidc_enabled: boolean;
@@ -113,14 +113,14 @@ export interface IInstanceAdmin {
   user_detail: IUserLite;
 }
 
-export type TInstanceIntercomConfigurationKeys = "IS_INTERCOM_ENABLED" | "INTERCOM_APP_ID";
+export type TInstanceChatSupportConfigurationKeys = "IS_CHAT_SUPPORT_ENABLED" | "CHAT_SUPPORT_APP_ID";
 
 export type TInstanceConfigurationKeys =
   | TInstanceAIConfigurationKeys
   | TInstanceEmailConfigurationKeys
   | TInstanceImageConfigurationKeys
   | TInstanceAuthenticationKeys
-  | TInstanceIntercomConfigurationKeys
+  | TInstanceChatSupportConfigurationKeys
   | TInstanceWorkspaceConfigurationKeys
   | TInstanceEnterpriseAuthenticationKeys; // enterprise
 

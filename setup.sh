@@ -19,7 +19,7 @@ echo -e "${BOLD}${BLUE}━━━━━━━━━━━━━━━━━━━
 echo -e "${BOLD}Setting up your development environment...${NC}\n"
 
 # Function to handle file copying with error checking
-copy_env_file() {
+copy_file() {
     local source=$1
     local destination=$2
 
@@ -44,7 +44,7 @@ export LC_CTYPE=C
 echo -e "${YELLOW}Setting up environment files...${NC}"
 
 # Copy all environment example files
-services=("" "web" "api" "space" "admin" "live" "silo" "email" "relay")
+services=("" "web" "api" "space" "admin" "live" "silo" "email" "flux")
 success=true
 
 for service in "${services[@]}"; do
@@ -56,7 +56,7 @@ for service in "${services[@]}"; do
         prefix="./apps/$service/"
     fi
 
-    copy_env_file "${prefix}.env.example" "${prefix}.env" || success=false
+    copy_file "${prefix}.env.example" "${prefix}.env" || success=false
     
     # Special handling for silo service
 done
@@ -95,6 +95,7 @@ if [ "$service" == "silo" ] && [ -f "./silo/.env" ]; then
     echo -e "- ASANA_CLIENT_ID and ASANA_CLIENT_SECRET"
     echo -e "- SLACK_CLIENT_ID and SLACK_CLIENT_SECRET"
 fi
+
 
 # Special handling for email service
 # if [ "$service" == "email" ] && [ -f "./email/.env" ]; then

@@ -14,7 +14,6 @@
 import { useState } from "react";
 import { XCircle } from "lucide-react";
 // plane imports
-import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IApiToken } from "@plane/types";
 import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@plane/utils";
@@ -25,10 +24,11 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   token: IApiToken;
+  workspaceSlug?: string;
 };
 
 export function ApiTokenListItem(props: Props) {
-  const { token } = props;
+  const { token, workspaceSlug } = props;
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   // hooks
@@ -36,13 +36,17 @@ export function ApiTokenListItem(props: Props) {
 
   return (
     <>
-      <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
+      <DeleteApiTokenModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        tokenId={token.id}
+        workspaceSlug={workspaceSlug}
+      />
       <div className="group relative flex flex-col justify-center border-b border-subtle py-3">
         <Tooltip tooltipContent="Delete token" isMobile={isMobile}>
           <button
             onClick={() => setDeleteModalOpen(true)}
             className="absolute right-4 hidden place-items-center group-hover:grid"
-            data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.LIST_ITEM_DELETE_ICON}
           >
             <XCircle className="h-4 w-4 text-danger-primary" />
           </button>

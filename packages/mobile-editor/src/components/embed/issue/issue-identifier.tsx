@@ -25,29 +25,34 @@ type Props = {
   workspaceSlug?: string;
 };
 
-export function IssueIdentifier(props: Props) {
+export const IssueIdentifier: React.FC<Props> = (props) => {
   const { projectId, workspaceSlug, issueIdentifier } = props;
   const [projectIdentifier, setProjectIdentifier] = useState<string | undefined>(undefined);
 
   // Get the project identifier from the native code.
   useEffect(() => {
-    if (!projectIdentifier) {
-      callNative(
+    if (projectIdentifier) return;
+
+    const fetchProjectIdentifier = async () => {
+      const identifier = await callNative<string>(
         CallbackHandlerStrings.getProjectIdentifier,
         JSON.stringify({
           projectId,
           workspaceSlug,
         })
-      ).then((identifier: string) => setProjectIdentifier(identifier));
-    }
+      );
+      setProjectIdentifier(identifier);
+    };
+
+    void fetchProjectIdentifier();
   }, [projectId, projectIdentifier, workspaceSlug]);
 
   if (!projectIdentifier)
     return (
-      <Loader className="flex flex-shrink-0 w-20 h-5">
+      <Loader className="flex flex-shrink-0 w-20 h-4 my-1">
         <Loader.Item height="100%" width="100%" />
       </Loader>
     );
 
   return <span className={"text-13 font-medium text-tertiary"}>{`${projectIdentifier}-${issueIdentifier}`}</span>;
-}
+};

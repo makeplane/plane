@@ -260,6 +260,34 @@ LABEL_NAME_EXISTS_RESPONSE = OpenApiResponse(
     ],
 )
 
+# Project Label-specific Responses
+PROJECT_LABEL_NOT_FOUND_RESPONSE = OpenApiResponse(
+    description="Project label not found",
+    examples=[
+        OpenApiExample(
+            name="Project Label Not Found",
+            value={
+                "error": "Project label not found",
+                "code": "NOT_FOUND",
+            },
+        )
+    ],
+)
+
+PROJECT_LABEL_NAME_EXISTS_RESPONSE = OpenApiResponse(
+    description="Project label with the same name already exists in the workspace",
+    examples=[
+        OpenApiExample(
+            name="Project Label Name Exists",
+            value={
+                "error": "Project label with the same name already exists in the workspace",
+                "code": "PROJECT_LABEL_ALREADY_EXISTS",
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+            },
+        )
+    ],
+)
+
 # Module-specific Responses
 MODULE_NOT_FOUND_RESPONSE = OpenApiResponse(
     description="Module not found",
@@ -334,6 +362,37 @@ LINK_NOT_FOUND_RESPONSE = OpenApiResponse(
         OpenApiExample(
             name="Link Not Found",
             value={"error": "Link not found"},
+        )
+    ],
+)
+
+# Page-specific Responses
+PAGE_NOT_FOUND_RESPONSE = OpenApiResponse(
+    description="Page not found",
+    examples=[
+        OpenApiExample(
+            name="Page Not Found",
+            value={"error": "Page not found"},
+        )
+    ],
+)
+
+WORK_ITEM_PAGE_NOT_FOUND_RESPONSE = OpenApiResponse(
+    description="Work item page link not found",
+    examples=[
+        OpenApiExample(
+            name="Work Item Page Link Not Found",
+            value={"error": "Work item page link not found"},
+        )
+    ],
+)
+
+PAGE_ALREADY_LINKED_RESPONSE = OpenApiResponse(
+    description="Page is already linked to this work item",
+    examples=[
+        OpenApiExample(
+            name="Page Already Linked",
+            value={"error": "Page is already linked to this work item"},
         )
     ],
 )

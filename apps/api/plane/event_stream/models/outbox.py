@@ -54,8 +54,9 @@ class Outbox(models.Model):
 
     # The workspace ID that the event belongs to
     workspace_id = models.UUIDField()
-    # The project ID that the event belongs to
-    project_id = models.UUIDField()
+    # The project ID that the event belongs to (nullable for workspace-level entities
+    # or entities that can exist at both workspace and project levels, like labels)
+    project_id = models.UUIDField(null=True, blank=True)
 
     # The user ID that the event belongs to
     initiator_id = models.UUIDField(help_text="The user ID who triggered the event", null=True, blank=True)
@@ -103,7 +104,7 @@ class OutboxEvent:
     payload: Dict[str, Any]
     created_at: datetime
     workspace_id: Union[UUID, str]
-    project_id: Union[UUID, str]
+    project_id: Optional[Union[UUID, str]]
     initiator_id: Union[UUID, str]
     initiator_type: str
 
@@ -207,7 +208,7 @@ class OutboxEvent:
             "entity_id": str(self.entity_id),
             "payload": self.payload,
             "workspace_id": str(self.workspace_id),
-            "project_id": str(self.project_id),
+            "project_id": str(self.project_id) if self.project_id else None,
             "initiator_id": str(self.initiator_id),
             "initiator_type": self.initiator_type,
         }
@@ -246,7 +247,7 @@ class OutboxEvent:
             "entity_id": str(self.entity_id),
             "created_at": (self.created_at.isoformat() if isinstance(self.created_at, datetime) else self.created_at),
             "workspace_id": str(self.workspace_id),
-            "project_id": str(self.project_id),
+            "project_id": str(self.project_id) if self.project_id else None,
             "initiator_id": str(self.initiator_id),
             "initiator_type": self.initiator_type,
         }

@@ -28,6 +28,7 @@ from plane.app.permissions import ROLE
 from plane.bgtasks.copy_s3_object import sync_with_external_service
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 
 
 # openapi imports
@@ -42,11 +43,21 @@ from plane.utils.openapi.parameters import (
 from plane.utils.openapi.responses import UNAUTHORIZED_RESPONSE, NOT_FOUND_RESPONSE
 from plane.utils.openapi.examples import SAMPLE_PAGE
 
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_PAGES_READ_SCOPE,
+    PROJECTS_PAGES_WRITE_SCOPE,
+)
+
 
 class ProjectPageDetailAPIEndpoint(BaseAPIView):
     model = Page
     serializer_class = PageDetailAPISerializer
-    permission_classes = [ProjectPagePermission]
+    permission_classes = [ProjectPagePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_PAGES_READ_SCOPE]],
+    }
 
     def get_queryset(self):
         return Page.objects.filter(
@@ -76,7 +87,7 @@ class ProjectPageDetailAPIEndpoint(BaseAPIView):
         the requesting user then dont show the page
         """
 
-        project = Project.objects.get(id=project_id)
+        project = Project.objects.get(id=project_id, workspace__slug=slug)
         page = self.get_queryset().get(id=pk)
 
         if (
@@ -136,7 +147,10 @@ class PublishedPageDetailAPIEndpoint(BaseAPIView):
 class ProjectPageAPIEndpoint(BaseAPIView):
     model = Page
     serializer_class = PageCreateAPISerializer
-    permission_classes = [ProjectPagePermission]
+    permission_classes = [ProjectPagePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "POST": [[WRITE_SCOPE], [PROJECTS_PAGES_WRITE_SCOPE]],
+    }
 
     @page_docs(
         operation_id="create_project_page",
@@ -163,7 +177,7 @@ class ProjectPageAPIEndpoint(BaseAPIView):
                 "description_binary": (
                     base64.b64decode(external_data.get("description_binary")) if external_data else None
                 ),
-                "description": (external_data.get("description", {}) if external_data else {}),
+                "description_json": (external_data.get("description_json", {}) if external_data else {}),
             },
         )
 

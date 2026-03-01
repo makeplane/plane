@@ -14,11 +14,12 @@
 import { Extension } from "@tiptap/core";
 import type { Editor } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
-import Suggestion from "@tiptap/suggestion";
+import SuggestionPlugin from "@tiptap/suggestion";
 import type { SuggestionOptions } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
+import { customFindSuggestionMatch } from "@/helpers/find-suggestion-match";
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
 import type { CommandListInstance } from "@/helpers/tippy";
 import { DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
@@ -26,11 +27,12 @@ import { DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 import type { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
 // components
 import { getSlashCommandFilteredSections } from "./command-items-list";
+import type { TSlashCommandSection } from "./command-items-list";
 import type { SlashCommandsMenuProps } from "./command-menu";
 import { SlashCommandsMenu } from "./command-menu";
 
 export type SlashCommandOptions = {
-  suggestion: Omit<SuggestionOptions, "editor">;
+  suggestion: Omit<SuggestionOptions<TSlashCommandSection, ISlashCommandItem>, "editor">;
 };
 
 export type TSlashCommandAdditionalOption = ISlashCommandItem & {
@@ -44,6 +46,8 @@ const Command = Extension.create<SlashCommandOptions>({
     return {
       suggestion: {
         char: "/",
+        allowSpaces: true,
+        findSuggestionMatch: customFindSuggestionMatch,
         command: ({ editor, range, props }) => {
           props.command({ editor, range });
         },
@@ -52,7 +56,7 @@ const Command = Extension.create<SlashCommandOptions>({
           const parentNode = selection.$from.node(selection.$from.depth);
           const blockType = parentNode.type.name;
 
-          if (blockType === CORE_EXTENSIONS.CODE_BLOCK) {
+          if (blockType === String(CORE_EXTENSIONS.CODE_BLOCK)) {
             return false;
           }
 
@@ -63,16 +67,43 @@ const Command = Extension.create<SlashCommandOptions>({
   },
   addProseMirrorPlugins() {
     return [
-      Suggestion({
+      SuggestionPlugin<TSlashCommandSection, ISlashCommandItem>({
         editor: this.editor,
         render: () => {
           let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
           let cleanup: () => void = () => {};
+          let removeDomKeyDownListener: () => void = () => {};
           let editorRef: Editor | null = null;
+          let keyDownHandler: ((event: KeyboardEvent) => boolean) | null = null;
+          let hasSuggestionResults = false;
+
+          const handleKeyboardEvent = (event: KeyboardEvent): boolean => {
+            if (event.key === "Escape") {
+              event.preventDefault();
+              event.stopPropagation();
+              handleClose(this.editor);
+              return true;
+            }
+
+            if ([...DROPDOWN_NAVIGATION_KEYS, "Tab"].includes(event.key) && !hasSuggestionResults) {
+              return false;
+            }
+
+            const handled = component?.ref?.onKeyDown({ event }) ?? keyDownHandler?.(event) ?? false;
+            if (handled && [...DROPDOWN_NAVIGATION_KEYS, "Tab"].includes(event.key)) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+
+            return handled;
+          };
 
           const handleClose = (editor?: Editor) => {
             component?.destroy();
             component = null;
+            keyDownHandler = null;
+            hasSuggestionResults = false;
+            removeDomKeyDownListener();
             (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
             cleanup();
           };
@@ -80,22 +111,40 @@ const Command = Extension.create<SlashCommandOptions>({
           return {
             onStart: (props) => {
               editorRef = props.editor;
+              hasSuggestionResults = props.items.some((section) => section.items?.length > 0);
               // React renderer component, which wraps the actual dropdown component
               component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
                 props: {
                   ...props,
                   onClose: () => handleClose(props.editor),
+                  registerOnKeyDownHandler: (handler) => {
+                    keyDownHandler = handler;
+                  },
                 } satisfies SlashCommandsMenuProps,
                 editor: props.editor,
                 className: "fixed z-[100]",
               });
-              if (!props.clientRect) return;
+
+              const editorDOM = props.editor.view.dom;
+              const handleEditorDomKeyDown = (event: KeyboardEvent) => {
+                const handled = handleKeyboardEvent(event);
+                if (handled) {
+                  event.stopImmediatePropagation();
+                }
+              };
+              editorDOM.addEventListener("keydown", handleEditorDomKeyDown, true);
+              removeDomKeyDownListener = () => {
+                editorDOM.removeEventListener("keydown", handleEditorDomKeyDown, true);
+              };
+
+              if (!props.clientRect || !component.element) return;
               props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
               const element = component.element as HTMLElement;
               cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
             },
 
             onUpdate: (props) => {
+              hasSuggestionResults = props.items.some((section) => section.items?.length > 0);
               if (!component || !component.element) return;
               component.updateProps(props);
               if (!props.clientRect) return;
@@ -105,21 +154,11 @@ const Command = Extension.create<SlashCommandOptions>({
             },
 
             onKeyDown: ({ event }) => {
-              if ([...DROPDOWN_NAVIGATION_KEYS, "Escape"].includes(event.key)) {
-                event.preventDefault();
-                event.stopPropagation();
-              }
-
-              if (event.key === "Escape") {
-                handleClose(this.editor);
-                return true;
-              }
-
-              return component?.ref?.onKeyDown({ event }) ?? false;
+              return handleKeyboardEvent(event);
             },
 
             onExit: ({ editor }) => {
-              component?.element.remove();
+              component?.element?.remove();
               handleClose(editor);
             },
           };

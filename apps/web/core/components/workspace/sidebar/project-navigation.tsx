@@ -18,26 +18,15 @@ import { useParams, usePathname } from "next/navigation";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
-import type { EUserProjectRoles } from "@plane/types";
-// plane ui
 // components
+import { useActiveTab } from "@/components/navigation";
+import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-
-export type TNavigationItem = {
-  name: string;
-  href: string;
-  icon: React.ElementType;
-  access: EUserPermissions[] | EUserProjectRoles[];
-  shouldRender: boolean;
-  sortOrder: number;
-  i18n_key: string;
-  key: string;
-};
 
 type TProjectItemsProps = {
   workspaceSlug: string;
@@ -161,22 +150,13 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
     return sortedNavigationItems;
   }, [workspaceSlug, projectId, baseNavigation, additionalNavigationItems]);
 
-  const isActive = useCallback(
-    (item: TNavigationItem) => {
-      // work item condition
-      const workItemCondition = workItemId && workItem && !workItem?.is_epic && workItem?.project_id === projectId;
-      // epic condition
-      const epicCondition = workItemId && workItem && workItem?.is_epic && workItem?.project_id === projectId;
-      // is active
-      const isWorkItemActive = item.key === "work_items" && workItemCondition;
-      const isEpicActive = item.key === "epics" && epicCondition;
-      // pathname condition
-      const isPathnameActive = pathname.includes(item.href);
-      // return
-      return isWorkItemActive || isEpicActive || isPathnameActive;
-    },
-    [pathname, workItem, workItemId, projectId]
-  );
+  const { isActive } = useActiveTab({
+    navigationItems: navigationItemsMemo,
+    pathname,
+    workItemId,
+    workItem,
+    projectId,
+  });
 
   if (!project) return null;
 

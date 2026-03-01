@@ -1,0 +1,33 @@
+from django.db import migrations
+
+def create_plane_ai_app(apps, schema_editor):
+    # Getting the models from apps to avoid circular imports
+    Application = apps.get_model("authentication", "Application")
+    ApplicationSecret = apps.get_model("silo", "ApplicationSecret")
+    User = apps.get_model("db", "User")
+    InstanceAdmin = apps.get_model("license", "InstanceAdmin")
+
+    # Importing the function and constants directly here to avoid circular imports
+    from plane.silo.services.generate_application import generate_application
+    from plane.silo.utils.constants import APPLICATIONS
+
+    # Getting the first instance admin
+    instance_admin = InstanceAdmin.objects.first()
+    if instance_admin:
+        generate_application(
+            user_id=instance_admin.user.id,
+            app_key=APPLICATIONS["plane_ai"]["key"],
+            application_model=Application,
+            application_secret_model=ApplicationSecret,
+            user_model=User
+        )
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('silo', '0009_publish_marketplace_apps'),
+    ]
+
+    operations = [
+        migrations.RunPython(create_plane_ai_app, reverse_code=migrations.RunPython.noop),
+    ]

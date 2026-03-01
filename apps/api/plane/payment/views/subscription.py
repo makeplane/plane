@@ -172,7 +172,7 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
                 # Return an error response
                 return Response(
                     {
-                        "error": "The number of seats cannot be less than the number of active paid users in the workspace including the invites"
+                        "error": "The number of seats cannot be less than the number of active paid users in the workspace including the invites",  # noqa: E501
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )

@@ -917,7 +917,7 @@ def extract_entity_from_api_response(result: Any, entity_type: str) -> Optional[
         entity_data = {
             "id": data.get("id"),
             "name": data.get("name"),
-            "project": data.get("project"),
+            "project": data.get("project") or data.get("project_id"),
             "workspace": data.get("workspace"),
         }
 
@@ -939,7 +939,16 @@ def extract_entity_from_api_response(result: Any, entity_type: str) -> Optional[
             if issue_detail and isinstance(issue_detail, dict):
                 entity_data["name"] = issue_detail.get("name")
             # Also store the underlying work item ID for reference
+            # Also store the underlying work item ID for reference
             entity_data["issue"] = data.get("issue")
+        elif entity_type == "customer_request":
+            # Extract customer_id (it was injected by tool_generator from sdk adapter result)
+            entity_data["customer"] = data.get("customer")
+            entity_data["customer_id"] = data.get("customer_id")
+        elif entity_type == "teamspace":
+            # For teamspace operations where SDK doesn't return full object,
+            # id may have been injected (e.g., for add_projects)
+            pass  # id is already extracted in common fields
 
         # Validate required fields
         if not entity_data["id"]:
@@ -1128,23 +1137,63 @@ async def construct_action_entity_url(
             return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
 
         elif entity_type == "teamspace":
-            # For teamspaces: /workspace_slug/teamspaces/
-            url = f"{api_base_url}/{workspace_slug}/teamspaces/"
+            # For teamspaces: try specific ID first, fallback to list
+            if entity_id:
+                url = f"{api_base_url}/{workspace_slug}/teamspaces/{entity_id}/"
+            else:
+                url = f"{api_base_url}/{workspace_slug}/teamspaces/"
             return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
 
-        elif entity_type == "customer":
-            # For customers: /workspace_slug/customers/
-            url = f"{api_base_url}/{workspace_slug}/customers/"
-            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
-
-        elif entity_type == "intake":
-            # For intake: /workspace_slug/projects/project_id/intake/?currentTab=open&inboxIssueId=entity_id
+        elif entity_type == "property":
+            # For properties: /workspace_slug/settings/projects/project_id/work-item-types/
             project_id = entity_data.get("project")
             if project_id:
-                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/intake/?currentTab=open&inboxIssueId={entity_id}"
+                url = f"{api_base_url}/{workspace_slug}/settings/projects/{project_id}/work-item-types/"
                 return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
             else:
                 return None
+
+        elif entity_type == "customer":
+            # For customers: /workspace_slug/customers/{customer_id}/
+            url = f"{api_base_url}/{workspace_slug}/customers/{entity_id}/"
+            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+
+        elif entity_type == "intake":
+            # For intake: /workspace_slug/projects/project_id/intake/?currentTab=open&inboxIssueId=inbox_issue_id
+            project_id = entity_data.get("project")
+
+            # The 'inboxIssueId' param expects the Issue ID, not the Intake ID.
+            # Try to resolve the correct issue ID from the entity data.
+            inbox_issue_id = entity_data.get("issue")
+            if not inbox_issue_id and isinstance(entity_data.get("issue_detail"), dict):
+                inbox_issue_id = entity_data.get("issue_detail", {}).get("id")
+
+            # Fallback to entity_id if no specific issue ID found
+            if not inbox_issue_id:
+                inbox_issue_id = entity_id
+
+            if project_id:
+                url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/intake/?currentTab=open&inboxIssueId={inbox_issue_id}"
+                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+            else:
+                return None
+
+        elif entity_type == "customer_property":
+            # For customer properties: /workspace_slug/settings/properties/
+            # Note: Assuming customer properties are in workspace settings
+            url = f"{api_base_url}/{workspace_slug}/settings/customers/"
+            return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+
+        elif entity_type == "customer_request":
+            # For customer requests: /workspace_slug/customers/{customer_id}/
+            customer_id = entity_data.get("customer") or entity_data.get("customer_id")
+            if customer_id:
+                url = f"{api_base_url}/{workspace_slug}/customers/{customer_id}/"
+                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+            else:
+                # Fallback to customers list if customer_id not found
+                url = f"{api_base_url}/{workspace_slug}/customers/"
+                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
 
         else:
             # Unknown entity type
@@ -1496,10 +1545,12 @@ def build_cache_search_body(query_text: str, threshold: float):
     """
     Build the body for the neural search query to the cache index.
     """
+    from pi.services.retrievers.pg_store import get_ml_model_id_sync
+
     return {
         "min_score": threshold,
         "_source": ["retrieved_tables", "query"],
-        "query": {"neural": {"query_vector": {"query_text": query_text, "model_id": settings.vector_db.ML_MODEL_ID, "k": 10}}},
+        "query": {"neural": {"query_vector": {"query_text": query_text, "model_id": get_ml_model_id_sync(), "k": 10}}},
     }
 
 

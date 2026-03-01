@@ -38,10 +38,9 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
-// plane web components
-import { CycleAdditionalActions } from "@/plane-web/components/cycles";
 // local imports
 import { CycleQuickActions } from "../quick-actions";
+import { StartCycleButton } from "../start-cycle/button";
 import { TransferIssuesModal } from "../transfer-issues-modal";
 
 type Props = {
@@ -195,7 +194,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
           <span className="text-11 text-tertiary">{cycleDetails.total_issues}</span>
         </div>
       )}
-      <CycleAdditionalActions cycleId={cycleId} projectId={projectId} />
+      <StartCycleButton cycleId={cycleId} projectId={projectId} />
       {showTransferIssues && (
         <div
           className="px-2 h-6  text-accent-secondary flex items-center gap-1 cursor-pointer"

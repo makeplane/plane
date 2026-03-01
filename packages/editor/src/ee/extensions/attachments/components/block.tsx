@@ -23,8 +23,8 @@ import { CustomAttachmentVideoPreview } from "./video-preview";
 
 type Props = CustomAttachmentNodeViewProps & {
   isTouchDevice: boolean;
-  resolvedDownloadSource: string;
-  resolvedSource: string;
+  resolvedDownloadSource: string | null;
+  resolvedSource: string | null;
 };
 
 export function CustomAttachmentBlock(props: Props) {
@@ -76,12 +76,12 @@ export function CustomAttachmentBlock(props: Props) {
       contentEditable={false}
     >
       <a
-        href={isTouchDevice ? undefined : resolvedSource}
+        href={!isTouchDevice && resolvedSource ? resolvedSource : undefined}
         className="flex items-start gap-2 flex-1 min-w-0"
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => {
-          if (isTouchDevice) onClick?.(resolvedSource);
+          if (isTouchDevice && resolvedSource) onClick?.(resolvedSource);
         }}
       >
         <div className="flex-shrink-0 mt-1 size-8 grid place-items-center">
@@ -95,11 +95,14 @@ export function CustomAttachmentBlock(props: Props) {
         </div>
       </a>
       <a
-        href={resolvedDownloadSource}
+        href={!isTouchDevice && resolvedDownloadSource ? resolvedDownloadSource : undefined}
         download={node.attrs[EAttachmentBlockAttributeNames.FILE_NAME]}
         className="flex-shrink-0 mt-1 p-1.5 rounded hover:bg-layer-2-hover text-tertiary hover:text-secondary transition-colors"
         title="Download"
         onMouseDown={(e) => e.stopPropagation()}
+        onClick={() => {
+          if (isTouchDevice && resolvedDownloadSource) onClick?.(resolvedDownloadSource);
+        }}
       >
         <Download className="size-4" />
       </a>

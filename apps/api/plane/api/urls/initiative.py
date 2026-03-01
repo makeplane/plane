@@ -9,7 +9,7 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from plane.api.views import InitiativeViewSet, InitiativeLabelViewSet
+from plane.api.views import InitiativeViewSet, InitiativeLabelViewSet, InitiativeEpicsViewSet, InitiativeProjectsViewSet
 from django.urls import path
 
 
@@ -32,12 +32,12 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/projects/",
-        InitiativeViewSet.as_view({"get": "get_projects", "post": "add_projects", "delete": "remove_projects"}),
+        InitiativeProjectsViewSet.as_view({"get": "get_projects", "post": "add_projects", "delete": "remove_projects"}),
         name="initiative-projects-manage",
     ),
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/epics/",
-        InitiativeViewSet.as_view({"get": "get_epics", "post": "add_epics", "delete": "remove_epics"}),
+        InitiativeEpicsViewSet.as_view({"get": "get_epics", "post": "add_epics", "delete": "remove_epics"}),
         name="initiative-epics-manage",
     ),
     # initiative labels endpoints

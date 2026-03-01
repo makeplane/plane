@@ -19,8 +19,11 @@ import { ArchiveX } from "lucide-react";
 import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { StateGroupIcon, StatePropertyIcon } from "@plane/propel/icons";
+import { Switch } from "@plane/propel/switch";
 import type { IProject } from "@plane/types";
-import { CustomSelect, CustomSearchSelect, ToggleSwitch, Loader } from "@plane/ui";
+// ui
+import { CustomSelect, CustomSearchSelect, Loader } from "@plane/ui";
+// component
 import { SelectMonthModal } from "@/components/automation";
 import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
@@ -101,7 +104,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
             title={t("project_settings.automations.auto-close.title")}
             description={t("project_settings.automations.auto-close.description")}
             control={
-              <ToggleSwitch
+              <Switch
                 value={autoCloseStatus}
                 onChange={() => {
                   if (currentProjectDetails?.close_in === 0) {
@@ -110,7 +113,6 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                     void handleChange({ close_in: 0, default_state: null });
                   }
                 }}
-                size="sm"
                 disabled={!isAdmin}
               />
             }

@@ -15,6 +15,8 @@ import { NodeSelection } from "@tiptap/pm/state";
 import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 // plane imports
 import { cn } from "@plane/utils";
+// version diff support
+import { useYChangeDecorations } from "@/components/editors/version-diff/extensions/use-ychange-decorations";
 // local imports
 import type { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";
 import { ensurePixelString, getImageBlockId, isImageDuplicating } from "../utils";
@@ -36,6 +38,7 @@ type CustomImageBlockProps = CustomImageNodeViewProps & {
 export function CustomImageBlock(props: CustomImageBlockProps) {
   // props
   const {
+    decorations,
     editor,
     editorContainer,
     extension,
@@ -49,6 +52,9 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
     downloadSrc: resolvedDownloadSrc,
     updateAttributes,
   } = props;
+
+  // Version diff support - extract ychange decoration info for img element
+  const ychangeInfo = useYChangeDecorations(decorations);
   const {
     width: nodeWidth,
     height: nodeHeight,
@@ -56,6 +62,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
     src: imgNodeSrc,
     alignment: nodeAlignment,
     status,
+    alt,
   } = node.attrs;
   // states
   const [size, setSize] = useState<TCustomImageSize>({
@@ -64,7 +71,9 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
     aspectRatio: nodeAspectRatio || null,
   });
   const [isResizing, setIsResizing] = useState(false);
-  const [initialResizeComplete, setInitialResizeComplete] = useState(false);
+  const [initialResizeComplete, setInitialResizeComplete] = useState(
+    nodeWidth !== "35%" && nodeWidth !== null && nodeWidth !== undefined
+  );
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
   const containerRect = useRef<DOMRect | null>(null);
@@ -188,7 +197,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
       window.addEventListener("mousemove", handleResize);
       window.addEventListener("mouseup", handleResizeEnd);
       window.addEventListener("mouseleave", handleResizeEnd);
-      window.addEventListener("touchmove", handleResize);
+      window.addEventListener("touchmove", handleResize, { passive: true });
       window.addEventListener("touchend", handleResizeEnd);
 
       return () => {
@@ -239,19 +248,25 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
     >
       <div
         ref={containerRef}
-        className="group/image-component relative inline-block max-w-full"
+        className={cn("group/image-component relative inline-block max-w-full", ychangeInfo.className)}
         onMouseDown={handleImageMouseDown}
         style={{
           width: size.width,
           ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
+          ...ychangeInfo.style,
         }}
+        {...ychangeInfo.dataAttrs}
       >
         {showImageLoader && (
-          <div className="animate-pulse bg-layer-1 rounded-md" style={{ width: size.width, height: size.height }} />
+          <div
+            className="animate-pulse bg-layer-1 rounded-md max-w-full max-h-full"
+            style={{ width: size.width, height: size.height }}
+          />
         )}
         <img
           ref={imageRef}
           src={displayedImageSrc}
+          alt={alt ?? undefined}
           onLoad={handleImageLoad}
           onError={async (e) => {
             // for old image extension this command doesn't exist or if the image failed to load for the first time
@@ -300,6 +315,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
             ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
           }}
         />
+
         {showUploadStatus && node.attrs.id && <ImageUploadStatus editor={editor} nodeId={node.attrs.id} />}
         {showImageToolbar && (
           <ImageToolbarRoot
@@ -314,6 +330,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
             isTouchDevice={isTouchDevice}
             width={size.width}
             src={resolvedImageSrc}
+            alt={alt ?? undefined}
           />
         )}
         {selected && displayedImageSrc === resolvedImageSrc && (

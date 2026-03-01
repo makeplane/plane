@@ -14,7 +14,7 @@ from plane.app.serializers.base import BaseSerializer
 
 
 class AgentRunSerializer(BaseSerializer):
-  # not much verification required as this will be triggered from web
+    # not much verification required as this will be triggered from web
     class Meta:
         model = AgentRun
         fields = "__all__"

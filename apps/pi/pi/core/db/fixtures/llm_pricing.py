@@ -31,6 +31,15 @@ PRICING_DATA = [
         "text_input_price": 2.50,
         "text_output_price": 10.00,
         "cached_text_input_price": 1.25,
+        "web_search_call_price": None,
+    },
+    {
+        "id": "1c8f3b5e-6f4a-4b8e-9d2b-7c1e8f9a0d1b",
+        "llm_model_id": llm_id_map["gpt-4o-search-preview"],
+        "text_input_price": 2.50,
+        "text_output_price": 10.00,
+        "cached_text_input_price": None,
+        "web_search_call_price": 0.025,
     },
     {
         "id": "b6f5e0de-4c21-4f32-82d6-5a99c0d1aee4",
@@ -38,6 +47,7 @@ PRICING_DATA = [
         "text_input_price": 0.15,
         "text_output_price": 0.60,
         "cached_text_input_price": 0.075,
+        "web_search_call_price": None,
     },
     {
         "id": "e9a95f3d-f54e-4a83-8f0b-18f084e4120d",
@@ -45,6 +55,7 @@ PRICING_DATA = [
         "text_input_price": 2.00,
         "text_output_price": 8.00,
         "cached_text_input_price": 0.50,
+        "web_search_call_price": None,
     },
     {
         "id": "4c880df9-0b57-4dec-b511-6fd40ea85308",
@@ -52,6 +63,7 @@ PRICING_DATA = [
         "text_input_price": 0.10,
         "text_output_price": 0.40,
         "cached_text_input_price": 0.025,
+        "web_search_call_price": None,
     },
     {
         "id": "f1e2d3c4-b5a6-9780-1234-567890abcdef",
@@ -59,6 +71,7 @@ PRICING_DATA = [
         "text_input_price": 1.25,
         "text_output_price": 10.00,
         "cached_text_input_price": 0.125,
+        "web_search_call_price": None,
     },
     {
         "id": "a2b3c4d5-e6f7-8901-2345-6789abcdef01",
@@ -66,6 +79,7 @@ PRICING_DATA = [
         "text_input_price": 1.25,
         "text_output_price": 10.00,
         "cached_text_input_price": 0.125,
+        "web_search_call_price": None,
     },
     {
         "id": "4d83f706-b085-417b-ad65-ffd66cc34d34",
@@ -73,6 +87,7 @@ PRICING_DATA = [
         "text_input_price": 1.25,
         "text_output_price": 10.00,
         "cached_text_input_price": 0.125,
+        "web_search_call_price": None,
     },
     {
         "id": "39bdcf93-feec-4fb6-813d-b8168abcf127",
@@ -80,13 +95,7 @@ PRICING_DATA = [
         "text_input_price": 1.75,
         "text_output_price": 14.00,
         "cached_text_input_price": 0.175,
-    },
-    {
-        "id": "7d9e1f2a-3b4c-5d6e-7f8a-9b0c1d2e3f4a",
-        "llm_model_id": llm_id_map["claude-sonnet-4"],
-        "text_input_price": 3.00,
-        "text_output_price": 15.00,
-        "cached_text_input_price": 1.50,
+        "web_search_call_price": None,
     },
     {
         "id": "0344a9f5-92f6-40f8-8cb0-288cf13b0a96",
@@ -94,6 +103,7 @@ PRICING_DATA = [
         "text_input_price": 3.00,
         "text_output_price": 15.00,
         "cached_text_input_price": 1.50,
+        "web_search_call_price": 0.01,
     },
     {
         "id": "23b1da39-603e-4963-bbe9-945576a33645",
@@ -101,6 +111,7 @@ PRICING_DATA = [
         "text_input_price": 0.25,
         "text_output_price": 2,
         "cached_text_input_price": 0.025,
+        "web_search_call_price": None,
     },
     {
         "id": "07b6902b-2dae-4baf-b701-86cea826364d",
@@ -108,6 +119,7 @@ PRICING_DATA = [
         "text_input_price": 0.05,
         "text_output_price": 0.4,
         "cached_text_input_price": 0.005,
+        "web_search_call_price": None,
     },
     {
         "id": "b3b17125-1ef2-4bb1-8dda-d57c4575ef90",
@@ -115,10 +127,19 @@ PRICING_DATA = [
         "text_input_price": 3.00,
         "text_output_price": 15.00,
         "cached_text_input_price": 1.50,
+        "web_search_call_price": 0.01,
+    },
+    {
+        "id": "a4c8e2f1-7b3d-4e9a-8f5c-6d1a2b3c4d5e",
+        "llm_model_id": llm_id_map["claude-sonnet-4-6"],
+        "text_input_price": 3.00,
+        "text_output_price": 15.00,
+        "cached_text_input_price": 1.50,
+        "web_search_call_price": 0.01,
     },
 ]
 
-tracked_fields = ["text_input_price", "text_output_price", "cached_text_input_price"]
+tracked_fields = ["text_input_price", "text_output_price", "cached_text_input_price", "web_search_call_price"]
 
 
 async def sync_llm_pricing():
@@ -150,9 +171,9 @@ async def sync_llm_pricing():
                             updated = True
 
                     if updated:
-                        typer.echo(f"Updated pricing for {model_id}")
+                        typer.echo(f"Updated pricing for {llm_model.name}")
                     else:
-                        typer.echo(f"Pricing unchanged for {model_id}")
+                        typer.echo(f"Pricing unchanged for {llm_model.name}")
                 else:
                     new_pricing = LlmModelPricing(
                         id=pricing["id"],
@@ -160,12 +181,14 @@ async def sync_llm_pricing():
                         text_input_price=pricing["text_input_price"],
                         text_output_price=pricing["text_output_price"],
                         cached_text_input_price=pricing["cached_text_input_price"],
+                        web_search_call_price=pricing["web_search_call_price"],
                     )
                     session.add(new_pricing)
-                    typer.echo(f"Created pricing for {model_id}")
+                    typer.echo(f"Created pricing for {llm_model.name}")
 
             await session.commit()
             typer.echo("LLM pricing synced successfully.")
+            typer.echo("-" * 60)
 
         except Exception as e:
             await session.rollback()

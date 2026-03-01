@@ -11,16 +11,16 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Avatar } from "./avatar";
 
-const meta: Meta<typeof Avatar> = {
+const meta = {
   title: "Avatar",
   component: Avatar,
-};
+} satisfies Meta<typeof Avatar>;
 
 export default meta;
-type Story = StoryObj<typeof Avatar>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: { name: "John Doe" },

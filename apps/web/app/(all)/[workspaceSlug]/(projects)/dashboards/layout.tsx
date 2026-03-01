@@ -15,8 +15,8 @@ import { Outlet } from "react-router";
 import useSWR from "swr";
 // plane web components
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
-import { DashboardsFeatureFlagFallback } from "@/plane-web/components/dashboards/feature-flag-fallback";
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { DashboardsFeatureFlagFallback } from "@/components/dashboards/feature-flag-fallback";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/layout";

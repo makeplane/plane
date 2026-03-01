@@ -38,14 +38,6 @@ export const decodeEmailFromUrl = (encodedEmail: string | null | undefined): str
  */
 export const encodeEmailForUrl = (email: string): string => btoa(email);
 
-export enum EPageTypes {
-  PUBLIC = "PUBLIC",
-  NON_AUTHENTICATED = "NON_AUTHENTICATED",
-  SET_PASSWORD = "SET_PASSWORD",
-  ONBOARDING = "ONBOARDING",
-  AUTHENTICATED = "AUTHENTICATED",
-}
-
 export enum EAuthModes {
   SIGN_IN = "SIGN_IN",
   SIGN_UP = "SIGN_UP",

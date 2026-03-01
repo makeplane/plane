@@ -23,6 +23,7 @@ import type {
   TSearchResponse,
   TAIBlockGenerateInputPartial,
   TFeedback,
+  TDocumentPayload,
 } from "@plane/types";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -35,7 +36,7 @@ import { AIBlockWidget } from "@/plane-web/components/pages/editor/ai/ai-block-w
 // plane web hooks
 import { useEditorEmbeds } from "@/plane-web/hooks/use-editor-embed";
 // store
-import { AIService } from "@/plane-web/services/ai.service";
+import { PIService } from "@/services/pi.service";
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import type { EPageStoreType } from "../store";
@@ -48,10 +49,10 @@ export type TExtendedEditorExtensionsConfig = Pick<
   | "logoSpinner"
   | "selectionConversion"
   | "aiBlockHandlers"
-  | "widgetCallback"
+  | "aiBlockWidgetCallback"
 >;
 
-const aiService = new AIService();
+const piService = new PIService();
 
 export type TExtendedEditorExtensionsHookParams = {
   workspaceSlug: string;
@@ -133,13 +134,13 @@ export const useExtendedEditorProps = (
       project_id: projectId,
     };
     const generateBlockContent = async (data: TAIBlockGenerateInputPartial) =>
-      await aiService.generateBlockContent({
+      await piService.generateBlockContent({
         ...data,
         ...payload,
       });
     const revisionBlockContent = async (data: { block_id: string; revision_type: string }) =>
-      await aiService.revisionBlockContent(data);
-    const postFeedback = async (data: TFeedback) => await aiService.postFeedback({ ...data, ...payload });
+      await piService.revisionBlockContent(data);
+    const postFeedback = async (data: TFeedback) => await piService.postFeedback({ ...data, ...payload });
     const saveDocument = async () => {
       const editorRef = page.editor.editorRef;
       if (!editorRef) return;
@@ -147,10 +148,10 @@ export const useExtendedEditorProps = (
       const document = editorRef.getDocument();
       if (!document) return;
 
-      const payload = {
+      const payload: TDocumentPayload = {
         description_binary: document.binary ? convertBinaryDataToBase64String(document.binary) : "",
         description_html: document.html,
-        description: document.json ?? {},
+        description_json: document.json ?? {},
       };
 
       await page.updateDescription(payload);
@@ -171,7 +172,7 @@ export const useExtendedEditorProps = (
       logoSpinner: LogoSpinner,
       selectionConversion: selectionConversionProps,
       aiBlockHandlers: aiBlockHandlersProps,
-      widgetCallback: AIBlockWidget,
+      aiBlockWidgetCallback: AIBlockWidget,
     }),
     [embedProps, extensionHandlers, is_smooth_cursor_enabled, selectionConversionProps, aiBlockHandlersProps, page.id]
   );

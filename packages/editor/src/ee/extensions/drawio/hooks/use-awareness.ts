@@ -14,7 +14,7 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/core";
 import type { CollaborationCursorOptions } from "@tiptap/extension-collaboration-cursor";
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 // plane imports
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 // plane editor imports
@@ -29,9 +29,7 @@ type TDrawioEditing = {
 
 type TDrawioUpdate = {
   diagramId: string;
-  timestamp: number;
-  imageData?: string;
-  imageSrc?: string;
+  savedAt: number;
 };
 
 export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => {
@@ -40,16 +38,9 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
       clientId: number;
       user: TUserDetails;
       drawioEditing?: TDrawioEditing;
+      drawioUpdate?: TDrawioUpdate;
     }>
   >([]);
-
-  const [lastUpdate, setLastUpdate] = useState<TDrawioUpdate | null>(null);
-  const lastUpdateTimestampRef = useRef<number>(0);
-
-  // Image states moved from block component
-  const [liveImageData, setLiveImageData] = useState<string | undefined>(undefined);
-  const [imageKey, setImageKey] = useState(0);
-  const [failedToLoadDiagram, setFailedToLoadDiagram] = useState(false);
 
   const awarenessProvider = useMemo(() => {
     if (!editor) return null;
@@ -63,39 +54,26 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
   const setEditingState = useCallback(
     (isEditing: boolean) => {
       awarenessProvider?.setLocalStateField(EAwarenessKeys.DRAWIO_EDITING, {
-        diagramId: diagramId,
+        diagramId,
         isEditing,
       });
     },
     [awarenessProvider, diagramId]
   );
 
-  const broadcastDiagramUpdate = useCallback(
-    (imageData?: string, imageSrc?: string) => {
-      if (awarenessProvider && diagramId) {
-        const updateInfo: TDrawioUpdate = {
-          diagramId,
-          timestamp: Date.now(),
-          imageData, // Direct SVG data for instant updates
-          imageSrc, // S3 URL for persistence
-        };
-
-        awarenessProvider.setLocalStateField(EAwarenessKeys.DRAWIO_UPDATE, updateInfo);
-
-        // Clear the update state after a longer moment to ensure other users receive it
-        setTimeout(() => {
-          awarenessProvider.setLocalStateField(EAwarenessKeys.DRAWIO_UPDATE, null);
-        }, 1000);
-      }
-    },
-    [awarenessProvider, diagramId]
-  );
+  // Broadcast save signal so other connected users refresh their viewer
+  const broadcastSave = useCallback(() => {
+    if (!diagramId) return;
+    awarenessProvider?.setLocalStateField(EAwarenessKeys.DRAWIO_UPDATE, {
+      diagramId,
+      savedAt: Date.now(),
+    } satisfies TDrawioUpdate);
+  }, [awarenessProvider, diagramId]);
 
   useEffect(() => {
     if (!awarenessProvider) return;
 
     const updateAwarenessUsers = () => {
-      // Capture fresh awareness states on each update
       const awarenessStates = Array.from(awarenessProvider.states?.entries?.() ?? []) as [
         number,
         Record<string, unknown>,
@@ -105,25 +83,9 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
         clientId,
         user: (state.user as TUserDetails) || { color: "", id: "", name: "" },
         drawioEditing: state.drawioEditing as TDrawioEditing | undefined,
+        drawioUpdate: state.drawioUpdate as TDrawioUpdate | undefined,
       }));
       setAwarenessUsers(states);
-
-      // Check for diagram updates from other users
-      const diagramUpdates = awarenessStates
-        .map(([clientId, state]) => ({
-          clientId,
-          update: state.drawioUpdate as TDrawioUpdate | undefined,
-        }))
-        .filter(({ update, clientId }) => update?.diagramId === diagramId && clientId !== awarenessProvider.clientID)
-        .sort((a, b) => (b.update?.timestamp || 0) - (a.update?.timestamp || 0));
-
-      if (diagramUpdates.length > 0) {
-        const latestUpdate = diagramUpdates[0].update;
-        if (latestUpdate && latestUpdate.timestamp > lastUpdateTimestampRef.current) {
-          lastUpdateTimestampRef.current = latestUpdate.timestamp;
-          setLastUpdate(latestUpdate);
-        }
-      }
     };
 
     awarenessProvider.on("update", updateAwarenessUsers);
@@ -133,22 +95,6 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
     };
   }, [editor, diagramId, awarenessProvider]);
 
-  // Listen for diagram updates and update image states
-  useEffect(() => {
-    if (lastUpdate && lastUpdate.diagramId === diagramId) {
-      if (lastUpdate.imageData) {
-        // Use the direct image data for instant updates
-        setLiveImageData(lastUpdate.imageData);
-      }
-
-      // Force refresh the image key
-      setImageKey((prev) => prev + 1);
-
-      // Reset any error states
-      setFailedToLoadDiagram(false);
-    }
-  }, [lastUpdate, diagramId]);
-
   const userEditingThisDiagram = useMemo(() => {
     const userEditingState = awarenessUsers.find(
       (userState) => userState.drawioEditing?.isEditing && userState.drawioEditing?.diagramId === diagramId
@@ -156,43 +102,37 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
     return userEditingState?.user || null;
   }, [awarenessUsers, diagramId]);
 
-  // Handlers for managing image states
-  const clearLiveImageData = useCallback(() => {
-    setLiveImageData(undefined);
-  }, []);
+  // Latest save timestamp from a remote user for this diagram
+  const lastRemoteSave = useMemo(() => {
+    const localClientId = awarenessProvider?.clientID;
+    let latest: number | null = null;
 
-  const updateImageKey = useCallback(() => {
-    setImageKey((prev) => prev + 1);
-  }, []);
+    for (const state of awarenessUsers) {
+      if (
+        state.clientId !== localClientId &&
+        state.drawioUpdate?.diagramId === diagramId &&
+        state.drawioUpdate.savedAt
+      ) {
+        if (latest === null || state.drawioUpdate.savedAt > latest) {
+          latest = state.drawioUpdate.savedAt;
+        }
+      }
+    }
 
-  const setDiagramError = useCallback((hasError: boolean) => {
-    setFailedToLoadDiagram(hasError);
-  }, []);
+    return latest;
+  }, [awarenessUsers, diagramId, awarenessProvider?.clientID]);
 
   const handleBlockedClick = useCallback(() => {
     if (userEditingThisDiagram) {
-      console.log(`${userEditingThisDiagram.name} is currently editing this diagram. Please wait for them to finish.`);
+      console.log(`${userEditingThisDiagram.name} is currently editing this diagram.`);
     }
   }, [userEditingThisDiagram]);
-
-  const updateLiveImageData = useCallback((imageData: string | undefined) => {
-    setLiveImageData(imageData);
-  }, []);
 
   return {
     userEditingThisDiagram,
     setEditingState,
-    broadcastDiagramUpdate,
-    lastUpdate,
-    // Image states
-    liveImageData,
-    imageKey,
-    failedToLoadDiagram,
-    // Image handlers
-    clearLiveImageData,
-    updateImageKey,
-    updateLiveImageData,
-    setDiagramError,
     handleBlockedClick,
+    broadcastSave,
+    lastRemoteSave,
   };
 };

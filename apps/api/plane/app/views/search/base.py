@@ -370,7 +370,7 @@ class SearchEndpoint(BaseAPIView):
         query_types = [qt.strip() for qt in query_types]
         count = int(request.query_params.get("count", 5))
         project_id = request.query_params.get("project_id", None)
-        issue_id = request.query_params.get("issue_id", None)
+        # issue_id = request.query_params.get("issue_id", None) # TODO: review this and remove if it is unnecessary
         team_id = request.query_params.get("team_id", None)
 
         response_data = {}

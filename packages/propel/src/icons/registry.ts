@@ -33,7 +33,14 @@ import {
   UpgradeIcon,
 } from "./actions";
 // Arrow icons
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, ReplyIcon } from "./arrows";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  ExternalLinkIcon,
+  ReplyIcon,
+} from "./arrows";
 // Default icon
 import { DefaultIcon } from "./default-icon";
 // Layout icons
@@ -89,6 +96,16 @@ import {
   ProjectIcon,
   YourWorkIcon,
 } from "./workspace";
+import {
+  AsanaIcon,
+  ClickupIcon,
+  GitlabIcon,
+  JiraIcon,
+  LinearIcon,
+  MondayIcon,
+  RaycastIcon,
+  SentryIcon,
+} from "./other-products";
 
 export const ICON_REGISTRY = {
   // Sub-brand icons
@@ -181,6 +198,17 @@ export const ICON_REGISTRY = {
   // Misc icons
   "misc.info": InfoIcon,
   "arrow.reply": ReplyIcon,
+  "arrow.external-link": ExternalLinkIcon,
+
+  // Other products icons
+  "other-products.jira": JiraIcon,
+  "other-products.clickup": ClickupIcon,
+  "other-products.asana": AsanaIcon,
+  "other-products.linear": LinearIcon,
+  "other-products.monday": MondayIcon,
+  "other-products.sentry": SentryIcon,
+  "other-products.raycast": RaycastIcon,
+  "other-products.gitlab": GitlabIcon,
 
   // Default fallback
   default: DefaultIcon,

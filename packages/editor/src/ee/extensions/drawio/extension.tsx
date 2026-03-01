@@ -27,21 +27,24 @@ type DrawioProps = {
   isFlagged: boolean;
   logoSpinner?: React.ComponentType;
 };
+
 export function DrawioExtension(props: DrawioProps) {
   return DrawioExtensionConfig.extend({
     addOptions() {
       const { fileHandler } = props;
-      const { getAssetSrc, restore, getFileContent, upload, reupload } = fileHandler;
+      const { restore, getFileContent, upload, reupload, getAssetSrc } = fileHandler;
+      const duplicate = "duplicate" in fileHandler ? fileHandler.duplicate : undefined;
 
       return {
         ...this.parent?.(),
         onClick: props?.onClick,
         isFlagged: props.isFlagged,
         getDiagramSrc: getAssetSrc,
-        getFileContent: getFileContent,
+        getFileContent,
         restoreDiagram: restore,
         uploadDiagram: upload,
         reuploadDiagram: reupload,
+        duplicateDiagram: duplicate,
         logoSpinner: props.logoSpinner,
       };
     },

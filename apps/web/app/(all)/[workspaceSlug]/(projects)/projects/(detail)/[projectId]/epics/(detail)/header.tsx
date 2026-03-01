@@ -32,8 +32,8 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
+import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
+import { ProjectEpicQuickActions } from "@/components/epics/quick-actions/epic-quick-action";
 
 export const ProjectEpicDetailsHeader = observer(function ProjectEpicDetailsHeader() {
   // router
@@ -78,7 +78,10 @@ export const ProjectEpicDetailsHeader = observer(function ProjectEpicDetailsHead
       <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <ProjectBreadcrumbWithPreference
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

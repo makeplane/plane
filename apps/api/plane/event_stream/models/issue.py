@@ -39,17 +39,17 @@ class IssueProxy(Issue):
                     -- Determine event type based on issue type
                     SELECT 
                         CASE 
-                            WHEN NEW.type_id IS NULL THEN 'issue.created'
+                            WHEN NEW.type_id IS NULL THEN 'workitem.created'
                             WHEN it.is_epic = true THEN 'epic.created'
-                            ELSE 'issue.created'
+                            ELSE 'workitem.created'
                         END
                     INTO event_type_name
                     FROM issue_types it
                     WHERE it.id = NEW.type_id;
                     
-                    -- If no issue type found, default to 'issue.created'
+                    -- If no issue type found, default to 'workitem.created'
                     IF event_type_name IS NULL THEN
-                        event_type_name := 'issue.created';
+                        event_type_name := 'workitem.created';
                     END IF;
                     
                     -- Fetch assignee IDs
@@ -98,7 +98,7 @@ class IssueProxy(Issue):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -128,17 +128,17 @@ class IssueProxy(Issue):
                         -- Determine delete event type based on issue type
                         SELECT 
                             CASE 
-                                WHEN OLD.type_id IS NULL THEN 'issue.deleted'
+                                WHEN OLD.type_id IS NULL THEN 'workitem.deleted'
                                 WHEN it.is_epic = true THEN 'epic.deleted'
-                                ELSE 'issue.deleted'
+                                ELSE 'workitem.deleted'
                             END
                         INTO event_type_name
                         FROM issue_types it
                         WHERE it.id = OLD.type_id;
                         
-                        -- If no issue type found, default to 'issue.deleted'
+                        -- If no issue type found, default to 'workitem.deleted'
                         IF event_type_name IS NULL THEN
-                            event_type_name := 'issue.deleted';
+                            event_type_name := 'workitem.deleted';
                         END IF;
                         
                         -- Create filtered OLD data excluding description fields
@@ -201,33 +201,33 @@ class IssueProxy(Issue):
                                 -- State has changed, use state-specific event types
                                 SELECT 
                                     CASE 
-                                        WHEN NEW.type_id IS NULL THEN 'issue.state.updated'
+                                        WHEN NEW.type_id IS NULL THEN 'workitem.state.updated'
                                         WHEN it.is_epic = true THEN 'epic.state.updated'
-                                        ELSE 'issue.state.updated'
+                                        ELSE 'workitem.state.updated'
                                     END
                                 INTO event_type_name
                                 FROM issue_types it
                                 WHERE it.id = NEW.type_id;
                                 
-                                -- If no issue type found, default to 'issue.state.updated'
+                                -- If no issue type found, default to 'workitem.state.updated'
                                 IF event_type_name IS NULL THEN
-                                    event_type_name := 'issue.state.updated';
+                                    event_type_name := 'workitem.state.updated';
                                 END IF;
                             ELSE
                                 -- Regular update, use generic event types
                                 SELECT 
                                     CASE 
-                                        WHEN NEW.type_id IS NULL THEN 'issue.updated'
+                                        WHEN NEW.type_id IS NULL THEN 'workitem.updated'
                                         WHEN it.is_epic = true THEN 'epic.updated'
-                                        ELSE 'issue.updated'
+                                        ELSE 'workitem.updated'
                                     END
                                 INTO event_type_name
                                 FROM issue_types it
                                 WHERE it.id = NEW.type_id;
                                 
-                                -- If no issue type found, default to 'issue.updated'
+                                -- If no issue type found, default to 'workitem.updated'
                                 IF event_type_name IS NULL THEN
-                                    event_type_name := 'issue.updated';
+                                    event_type_name := 'workitem.updated';
                                 END IF;
                             END IF;
                             
@@ -295,9 +295,9 @@ class IssueProxy(Issue):
                             
                             -- Determine conversion event name
                             IF old_is_epic = false AND new_is_epic = true THEN
-                                conversion_event_name := 'issue.converted.to_epic';
+                                conversion_event_name := 'workitem.converted.to_epic';
                             ELSIF old_is_epic = true AND new_is_epic = false THEN
-                                conversion_event_name := 'epic.converted.to_issue';
+                                conversion_event_name := 'epic.converted.to_workitem';
                             END IF;
                             
                             -- Insert conversion event if applicable
@@ -340,7 +340,7 @@ class IssueProxy(Issue):
                     
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -366,18 +366,18 @@ class IssueAssigneeProxy(IssueAssignee):
                     -- Determine event type based on issue type
                     SELECT 
                         CASE 
-                            WHEN i.type_id IS NULL THEN 'issue.assignee.added'
+                            WHEN i.type_id IS NULL THEN 'workitem.assignee.added'
                             WHEN it.is_epic = true THEN 'epic.assignee.added'
-                            ELSE 'issue.assignee.added'
+                            ELSE 'workitem.assignee.added'
                         END
                     INTO event_type_name
                     FROM issues i
                     LEFT JOIN issue_types it ON it.id = i.type_id
                     WHERE i.id = NEW.issue_id;
                     
-                    -- If no issue found, default to 'issue.assignee.added'
+                    -- If no issue found, default to 'workitem.assignee.added'
                     IF event_type_name IS NULL THEN
-                        event_type_name := 'issue.assignee.added';
+                        event_type_name := 'workitem.assignee.added';
                     END IF;
                     
                     -- Get the complete issue data (excluding description fields)
@@ -433,7 +433,7 @@ class IssueAssigneeProxy(IssueAssignee):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -454,18 +454,18 @@ class IssueAssigneeProxy(IssueAssignee):
                         -- Determine event type based on issue type
                         SELECT 
                             CASE 
-                                WHEN i.type_id IS NULL THEN 'issue.assignee.removed'
+                                WHEN i.type_id IS NULL THEN 'workitem.assignee.removed'
                                 WHEN it.is_epic = true THEN 'epic.assignee.removed'
-                                ELSE 'issue.assignee.removed'
+                                ELSE 'workitem.assignee.removed'
                             END
                         INTO event_type_name
                         FROM issues i
                         LEFT JOIN issue_types it ON it.id = i.type_id
                         WHERE i.id = OLD.issue_id;
                         
-                        -- If no issue found, default to 'issue.assignee.removed'
+                        -- If no issue found, default to 'workitem.assignee.removed'
                         IF event_type_name IS NULL THEN
-                            event_type_name := 'issue.assignee.removed';
+                            event_type_name := 'workitem.assignee.removed';
                         END IF;
                         
                         -- Get the complete issue data (excluding description fields)
@@ -522,7 +522,7 @@ class IssueAssigneeProxy(IssueAssignee):
                     END IF;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -548,18 +548,18 @@ class IssueLabelProxy(IssueLabel):
                     -- Determine event type based on issue type
                     SELECT 
                         CASE 
-                            WHEN i.type_id IS NULL THEN 'issue.label.added'
+                            WHEN i.type_id IS NULL THEN 'workitem.label.added'
                             WHEN it.is_epic = true THEN 'epic.label.added'
-                            ELSE 'issue.label.added'
+                            ELSE 'workitem.label.added'
                         END
                     INTO event_type_name
                     FROM issues i
                     LEFT JOIN issue_types it ON it.id = i.type_id
                     WHERE i.id = NEW.issue_id;
                     
-                    -- If no issue found, default to 'issue.label.added'
+                    -- If no issue found, default to 'workitem.label.added'
                     IF event_type_name IS NULL THEN
-                        event_type_name := 'issue.label.added';
+                        event_type_name := 'workitem.label.added';
                     END IF;
                     
                     -- Get the complete issue data (excluding description fields)
@@ -615,7 +615,7 @@ class IssueLabelProxy(IssueLabel):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -636,18 +636,18 @@ class IssueLabelProxy(IssueLabel):
                         -- Determine event type based on issue type
                         SELECT 
                             CASE 
-                                WHEN i.type_id IS NULL THEN 'issue.label.removed'
+                                WHEN i.type_id IS NULL THEN 'workitem.label.removed'
                                 WHEN it.is_epic = true THEN 'epic.label.removed'
-                                ELSE 'issue.label.removed'
+                                ELSE 'workitem.label.removed'
                             END
                         INTO event_type_name
                         FROM issues i
                         LEFT JOIN issue_types it ON it.id = i.type_id
                         WHERE i.id = OLD.issue_id;
                         
-                        -- If no issue found, default to 'issue.label.removed'
+                        -- If no issue found, default to 'workitem.label.removed'
                         IF event_type_name IS NULL THEN
-                            event_type_name := 'issue.label.removed';
+                            event_type_name := 'workitem.label.removed';
                         END IF;
                         
                         -- Get the complete issue data (excluding description fields)
@@ -704,7 +704,7 @@ class IssueLabelProxy(IssueLabel):
                     END IF;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -729,18 +729,18 @@ class IssueCommentProxy(IssueComment):
                     -- Determine event type based on issue type
                     SELECT 
                         CASE 
-                            WHEN i.type_id IS NULL THEN 'issue.comment.created'
+                            WHEN i.type_id IS NULL THEN 'workitem.comment.created'
                             WHEN it.is_epic = true THEN 'epic.comment.created'
-                            ELSE 'issue.comment.created'
+                            ELSE 'workitem.comment.created'
                         END
                     INTO event_type_name
                     FROM issues i
                     LEFT JOIN issue_types it ON it.id = i.type_id
                     WHERE i.id = NEW.issue_id;
                     
-                    -- If no issue found, default to 'issue.comment.created'
+                    -- If no issue found, default to 'workitem.comment.created'
                     IF event_type_name IS NULL THEN
-                        event_type_name := 'issue.comment.created';
+                        event_type_name := 'workitem.comment.created';
                     END IF;
                     
                     -- Get the complete issue data (excluding description fields)
@@ -790,7 +790,7 @@ class IssueCommentProxy(IssueComment):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -815,18 +815,18 @@ class IssueCommentProxy(IssueComment):
                         -- Determine delete event type based on issue type
                         SELECT 
                             CASE 
-                                WHEN i.type_id IS NULL THEN 'issue.comment.deleted'
+                                WHEN i.type_id IS NULL THEN 'workitem.comment.deleted'
                                 WHEN it.is_epic = true THEN 'epic.comment.deleted'
-                                ELSE 'issue.comment.deleted'
+                                ELSE 'workitem.comment.deleted'
                             END
                         INTO event_type_name
                         FROM issues i
                         LEFT JOIN issue_types it ON it.id = i.type_id
                         WHERE i.id = OLD.issue_id;
                         
-                        -- If no issue found, default to 'issue.comment.deleted'
+                        -- If no issue found, default to 'workitem.comment.deleted'
                         IF event_type_name IS NULL THEN
-                            event_type_name := 'issue.comment.deleted';
+                            event_type_name := 'workitem.comment.deleted';
                         END IF;
                         
                         -- Get the complete issue data (excluding description fields)
@@ -878,18 +878,18 @@ class IssueCommentProxy(IssueComment):
                         -- Determine update event type based on issue type
                         SELECT 
                             CASE 
-                                WHEN i.type_id IS NULL THEN 'issue.comment.updated'
+                                WHEN i.type_id IS NULL THEN 'workitem.comment.updated'
                                 WHEN it.is_epic = true THEN 'epic.comment.updated'
-                                ELSE 'issue.comment.updated'
+                                ELSE 'workitem.comment.updated'
                             END
                         INTO event_type_name
                         FROM issues i
                         LEFT JOIN issue_types it ON it.id = i.type_id
                         WHERE i.id = NEW.issue_id;
                         
-                        -- If no issue found, default to 'issue.comment.updated'
+                        -- If no issue found, default to 'workitem.comment.updated'
                         IF event_type_name IS NULL THEN
-                            event_type_name := 'issue.comment.updated';
+                            event_type_name := 'workitem.comment.updated';
                         END IF;
                         
                         -- Loop through all columns to detect changes
@@ -969,7 +969,7 @@ class IssueCommentProxy(IssueComment):
                     
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -990,18 +990,18 @@ class IssueLinkProxy(IssueLink):
                     -- Determine event type based on issue type
                     SELECT 
                         CASE 
-                            WHEN i.type_id IS NULL THEN 'issue.link.added'
+                            WHEN i.type_id IS NULL THEN 'workitem.link.added'
                             WHEN it.is_epic = true THEN 'epic.link.added'
-                            ELSE 'issue.link.added'
+                            ELSE 'workitem.link.added'
                         END
                     INTO event_type_name
                     FROM issues i
                     LEFT JOIN issue_types it ON it.id = i.type_id
                     WHERE i.id = NEW.issue_id;
                     
-                    -- If no issue found, default to 'issue.link.added'
+                    -- If no issue found, default to 'workitem.link.added'
                     IF event_type_name IS NULL THEN
-                        event_type_name := 'issue.link.added';
+                        event_type_name := 'workitem.link.added';
                     END IF;
                     
                     BEGIN
@@ -1026,7 +1026,7 @@ class IssueLinkProxy(IssueLink):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -1044,18 +1044,18 @@ class IssueLinkProxy(IssueLink):
                     -- Determine event type based on issue type
                     SELECT 
                         CASE 
-                            WHEN i.type_id IS NULL THEN 'issue.link.updated'
+                            WHEN i.type_id IS NULL THEN 'workitem.link.updated'
                             WHEN it.is_epic = true THEN 'epic.link.updated'
-                            ELSE 'issue.link.updated'
+                            ELSE 'workitem.link.updated'
                         END
                     INTO event_type_name
                     FROM issues i
                     LEFT JOIN issue_types it ON it.id = i.type_id
                     WHERE i.id = NEW.issue_id;
                     
-                    -- If no issue found, default to 'issue.link.updated'
+                    -- If no issue found, default to 'workitem.link.updated'
                     IF event_type_name IS NULL THEN
-                        event_type_name := 'issue.link.updated';
+                        event_type_name := 'workitem.link.updated';
                     END IF;
                     
                     -- Check if this is a soft delete (deleted_at changed from null to not null)
@@ -1064,18 +1064,18 @@ class IssueLinkProxy(IssueLink):
                         -- Determine delete event type based on issue type
                         SELECT 
                             CASE 
-                                WHEN i.type_id IS NULL THEN 'issue.link.removed'
+                                WHEN i.type_id IS NULL THEN 'workitem.link.removed'
                                 WHEN it.is_epic = true THEN 'epic.link.removed'
-                                ELSE 'issue.link.removed'
+                                ELSE 'workitem.link.removed'
                             END
                         INTO event_type_name
                         FROM issues i
                         LEFT JOIN issue_types it ON it.id = i.type_id
                         WHERE i.id = OLD.issue_id;
                         
-                        -- If no issue found, default to 'issue.link.removed'
+                        -- If no issue found, default to 'workitem.link.removed'
                         IF event_type_name IS NULL THEN
-                            event_type_name := 'issue.link.removed';
+                            event_type_name := 'workitem.link.removed';
                         END IF;
                         
                         BEGIN
@@ -1152,7 +1152,7 @@ class IssueLinkProxy(IssueLink):
                     
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -1175,18 +1175,18 @@ class IssueAttachmentProxy(FileAsset):
                         -- Determine event type based on issue type
                         SELECT 
                             CASE 
-                                WHEN i.type_id IS NULL THEN 'issue.attachment.added'
+                                WHEN i.type_id IS NULL THEN 'workitem.attachment.added'
                                 WHEN it.is_epic = true THEN 'epic.attachment.added'
-                                ELSE 'issue.attachment.added'
+                                ELSE 'workitem.attachment.added'
                             END
                         INTO event_type_name
                         FROM issues i
                         LEFT JOIN issue_types it ON it.id = i.type_id
                         WHERE i.id = NEW.issue_id;
                         
-                        -- If no issue found, default to 'issue.attachment.added'
+                        -- If no issue found, default to 'workitem.attachment.added'
                         IF event_type_name IS NULL THEN
-                            event_type_name := 'issue.attachment.added';
+                            event_type_name := 'workitem.attachment.added';
                         END IF;
                         
                         BEGIN
@@ -1212,7 +1212,7 @@ class IssueAttachmentProxy(FileAsset):
                     END IF;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -1232,18 +1232,18 @@ class IssueAttachmentProxy(FileAsset):
                         -- Determine event type based on issue type
                         SELECT 
                             CASE 
-                                WHEN i.type_id IS NULL THEN 'issue.attachment.updated'
+                                WHEN i.type_id IS NULL THEN 'workitem.attachment.updated'
                                 WHEN it.is_epic = true THEN 'epic.attachment.updated'
-                                ELSE 'issue.attachment.updated'
+                                ELSE 'workitem.attachment.updated'
                             END
                         INTO event_type_name
                         FROM issues i
                         LEFT JOIN issue_types it ON it.id = i.type_id
                         WHERE i.id = NEW.issue_id;
                         
-                        -- If no issue found, default to 'issue.attachment.updated'
+                        -- If no issue found, default to 'workitem.attachment.updated'
                         IF event_type_name IS NULL THEN
-                            event_type_name := 'issue.attachment.updated';
+                            event_type_name := 'workitem.attachment.updated';
                         END IF;
                         
                         -- Check if this is a soft delete (deleted_at changed from null to not null)
@@ -1252,18 +1252,18 @@ class IssueAttachmentProxy(FileAsset):
                             -- Determine delete event type based on issue type
                             SELECT 
                                 CASE 
-                                    WHEN i.type_id IS NULL THEN 'issue.attachment.removed'
+                                    WHEN i.type_id IS NULL THEN 'workitem.attachment.removed'
                                     WHEN it.is_epic = true THEN 'epic.attachment.removed'
-                                    ELSE 'issue.attachment.removed'
+                                    ELSE 'workitem.attachment.removed'
                                 END
                             INTO event_type_name
                             FROM issues i
                             LEFT JOIN issue_types it ON it.id = i.type_id
                             WHERE i.id = OLD.issue_id;
                             
-                            -- If no issue found, default to 'issue.attachment.removed'
+                            -- If no issue found, default to 'workitem.attachment.removed'
                             IF event_type_name IS NULL THEN
-                                event_type_name := 'issue.attachment.removed';
+                                event_type_name := 'workitem.attachment.removed';
                             END IF;
                             
                             BEGIN
@@ -1341,7 +1341,7 @@ class IssueAttachmentProxy(FileAsset):
                     
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]
@@ -1362,18 +1362,18 @@ class IssueRelationProxy(IssueRelation):
                     -- Determine event type based on issue type
                     SELECT 
                         CASE 
-                            WHEN i.type_id IS NULL THEN 'issue.relation.added'
+                            WHEN i.type_id IS NULL THEN 'workitem.relation.added'
                             WHEN it.is_epic = true THEN 'epic.relation.added'
-                            ELSE 'issue.relation.added'
+                            ELSE 'workitem.relation.added'
                         END
                     INTO event_type_name
                     FROM issues i
                     LEFT JOIN issue_types it ON it.id = i.type_id
                     WHERE i.id = NEW.issue_id;
                     
-                    -- If no issue found, default to 'issue.relation.added'
+                    -- If no issue found, default to 'workitem.relation.added'
                     IF event_type_name IS NULL THEN
-                        event_type_name := 'issue.relation.added';
+                        event_type_name := 'workitem.relation.added';
                     END IF;
                     
                     BEGIN
@@ -1398,7 +1398,7 @@ class IssueRelationProxy(IssueRelation):
                     END;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
             pgtrigger.Trigger(
@@ -1416,18 +1416,18 @@ class IssueRelationProxy(IssueRelation):
                     -- Determine event type based on issue type
                     SELECT 
                         CASE 
-                            WHEN i.type_id IS NULL THEN 'issue.relation.updated'
+                            WHEN i.type_id IS NULL THEN 'workitem.relation.updated'
                             WHEN it.is_epic = true THEN 'epic.relation.updated'
-                            ELSE 'issue.relation.updated'
+                            ELSE 'workitem.relation.updated'
                         END
                     INTO event_type_name
                     FROM issues i
                     LEFT JOIN issue_types it ON it.id = i.type_id
                     WHERE i.id = NEW.issue_id;
                     
-                    -- If no issue found, default to 'issue.relation.updated'
+                    -- If no issue found, default to 'workitem.relation.updated'
                     IF event_type_name IS NULL THEN
-                        event_type_name := 'issue.relation.updated';
+                        event_type_name := 'workitem.relation.updated';
                     END IF;
                     
                     -- Check if this is a soft delete (deleted_at changed from null to not null)
@@ -1436,18 +1436,18 @@ class IssueRelationProxy(IssueRelation):
                         -- Determine delete event type based on issue type
                         SELECT 
                             CASE 
-                                WHEN i.type_id IS NULL THEN 'issue.relation.removed'
+                                WHEN i.type_id IS NULL THEN 'workitem.relation.removed'
                                 WHEN it.is_epic = true THEN 'epic.relation.removed'
-                                ELSE 'issue.relation.removed'
+                                ELSE 'workitem.relation.removed'
                             END
                         INTO event_type_name
                         FROM issues i
                         LEFT JOIN issue_types it ON it.id = i.type_id
                         WHERE i.id = OLD.issue_id;
                         
-                        -- If no issue found, default to 'issue.relation.removed'
+                        -- If no issue found, default to 'workitem.relation.removed'
                         IF event_type_name IS NULL THEN
-                            event_type_name := 'issue.relation.removed';
+                            event_type_name := 'workitem.relation.removed';
                         END IF;
                         
                         BEGIN
@@ -1523,7 +1523,7 @@ class IssueRelationProxy(IssueRelation):
                     END IF;
                     RETURN NEW;
                 END;
-                """,
+                """,  # noqa: E501
                 condition=None,
             ),
         ]

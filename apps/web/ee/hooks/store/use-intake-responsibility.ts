@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import type { IIntakeResponsibilityStore } from "@/plane-web/store/intake-responsibility.store";
+import type { IIntakeResponsibilityStore } from "@/store/intake-responsibility.store";
 
 export const useIntakeResponsibility = (): IIntakeResponsibilityStore => {
   const context = useContext(StoreContext);

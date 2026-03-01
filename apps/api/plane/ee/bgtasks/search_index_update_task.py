@@ -9,8 +9,56 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+import requests
+from requests.exceptions import RequestException
 from django.conf import settings
 from celery import shared_task
+
+
+def trigger_vectorization():
+    """Trigger vectorization for all workspaces via AI internal API."""
+    try:
+        pi_internal_secret = settings.PI_INTERNAL_SECRET
+        pi_url = settings.PI_URL
+
+        if not pi_internal_secret or not pi_url:
+            print("ERROR: AI configuration missing")
+            return False
+
+        vectorize_url = f"{pi_url.rstrip('/')}/api/v1/internal/vectorize/all/"
+
+        print("Triggering vectorization for all workspaces...")
+
+        response = requests.post(
+            vectorize_url,
+            json={},
+            headers={
+                "Content-Type": "application/json",
+                "X-Internal-Api-Secret": pi_internal_secret,
+            },
+            timeout=30,
+        )
+
+        response.raise_for_status()
+        result = response.json()
+
+        accepted = result.get("accepted", [])
+        skipped = result.get("skipped", [])
+
+        if accepted:
+            print(f"Queued {len(accepted)} workspace(s)")
+
+        if skipped:
+            print(f"Skipped {len(skipped)} workspace(s)")
+
+        return True
+
+    except RequestException as e:
+        print(f"ERROR: Vectorization request failed: {e}")
+        return False
+    except Exception as e:
+        print(f"ERROR: Unexpected error: {e}")
+        return False
 
 
 @shared_task
@@ -60,10 +108,21 @@ def run_search_index_command(*args, **kwargs):
 
     from django.core.management import call_command
 
+    # Extract vectorization flag from kwargs
+    vectorize = kwargs.pop("vectorize", False)
+
     print("Running opensearch command with args:", args)
+    print(f"Vectorize after completion: {vectorize}")
 
     # Remove '--background' if present (shouldn't be needed but just in case)
     args = [arg for arg in args if arg != "--background"]
 
     call_command("opensearch", *args, **kwargs)
     print("OpenSearch command completed")
+
+    # Trigger vectorization if requested
+    if vectorize:
+        print("\n" + "=" * 80)
+        print("TRIGGERING VECTORIZATION FOR ALL WORKSPACES")
+        print("=" * 80)
+        trigger_vectorization()

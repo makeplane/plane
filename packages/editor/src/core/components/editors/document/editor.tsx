@@ -12,12 +12,14 @@
  */
 
 import type { Extensions } from "@tiptap/core";
+import type { Editor } from "@tiptap/react";
 import type { MutableRefObject } from "react";
-import { forwardRef, useMemo } from "react";
+import { forwardRef, useEffect, useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
 import { PageRenderer } from "@/components/editors";
+
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
@@ -39,6 +41,7 @@ function DocumentEditor(props: IDocumentEditorProps) {
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editable,
     editorClassName = "",
+    extensions: externalExtensions,
     extendedEditorProps,
     fileHandler,
     flaggedExtensions,
@@ -47,14 +50,17 @@ function DocumentEditor(props: IDocumentEditorProps) {
     handleEditorReady,
     id,
     isTouchDevice,
+    loader,
     mentionHandler,
     onChange,
+    onEditorInstanceCreated,
     user,
     value,
   } = props;
+
   const extensions: Extensions = useMemo(() => {
-    const additionalExtensions: Extensions = [];
-    additionalExtensions.push(
+    return [
+      ...(externalExtensions ?? []),
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
         dragDropEnabled: true,
@@ -71,10 +77,9 @@ function DocumentEditor(props: IDocumentEditorProps) {
           name: "",
           color: "",
         },
-      })
-    );
-    return additionalExtensions;
-  }, [disabledExtensions, editable, extendedEditorProps, fileHandler, flaggedExtensions, user]);
+      }),
+    ];
+  }, [externalExtensions, disabledExtensions, editable, extendedEditorProps, fileHandler, flaggedExtensions, user]);
 
   const editor = useEditor({
     disabledExtensions,
@@ -94,11 +99,18 @@ function DocumentEditor(props: IDocumentEditorProps) {
     onChange,
   });
 
+  // Notify parent when editor instance is created
+  useEffect(() => {
+    if (editor && onEditorInstanceCreated) {
+      onEditorInstanceCreated(editor);
+    }
+  }, [editor, onEditorInstanceCreated]);
+
   const editorContainerClassName = getEditorClassNames({
     containerClassName,
   });
 
-  if (!editor) return null;
+  if (!editor) return loader ?? null;
 
   return (
     <PageRenderer

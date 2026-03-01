@@ -221,16 +221,13 @@ class TestEnforceSessionLimit:
         mock_settings.MAX_CONCURRENT_SESSIONS = 3
 
         # Create 4 web sessions
-        sessions = [create_web_session(test_user, expire_offset_hours=i + 1) for i in range(4)]
+        _ = [create_web_session(test_user, expire_offset_hours=i + 1) for i in range(4)]
 
         # Enforce limit with custom setting of 3
         enforce_session_limit(test_user)
 
         # Should delete 2 oldest sessions (4 - 3 + 1 = 2)
-        assert Session.objects.filter(
-            user_id=str(test_user.id),
-            device_info__session_type="web"
-        ).count() == 2
+        assert Session.objects.filter(user_id=str(test_user.id), device_info__session_type="web").count() == 2
 
     @pytest.mark.django_db
     def test_sessions_without_session_type_ignored(self, test_user):
@@ -252,10 +249,7 @@ class TestEnforceSessionLimit:
         enforce_session_limit(test_user)
 
         # Legacy sessions should be untouched
-        assert Session.objects.filter(
-            user_id=str(test_user.id),
-            device_info__session_type__isnull=True
-        ).count() == 5
+        assert Session.objects.filter(user_id=str(test_user.id), device_info__session_type__isnull=True).count() == 5
 
         # All web sessions should still exist (3 < 5 limit)
         for session in web_sessions:

@@ -24,13 +24,9 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import {
-  CreateTemplatesButton,
-  TemplatesUpgrade,
-  ProjectTemplatesSettingsRoot,
-} from "@/plane-web/components/templates/settings";
+// plane web components
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { CreateTemplatesButton, TemplatesUpgrade, ProjectTemplatesSettingsRoot } from "@/components/templates/settings";
 import { useFlag, usePageTemplates, useWorkItemTemplates } from "@/plane-web/hooks/store";
 // local imports
 import type { Route } from "./+types/page";
@@ -76,15 +72,18 @@ function TemplatesProjectSettingsPage({ params }: Route.ComponentProps) {
       <SettingsHeading
         title={t("project_settings.templates.heading")}
         description={t("project_settings.templates.description")}
-        showButton={isAnyTemplatesEnabled && isAnyTemplatesAvailableForProject && hasAdminPermission}
-        customButton={
-          <CreateTemplatesButton
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            currentLevel={ETemplateLevel.PROJECT}
-            buttonSize="base"
-            variant="settings"
-          />
+        control={
+          isAnyTemplatesEnabled &&
+          isAnyTemplatesAvailableForProject &&
+          hasAdminPermission && (
+            <CreateTemplatesButton
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              currentLevel={ETemplateLevel.PROJECT}
+              buttonSize="base"
+              variant="settings"
+            />
+          )
         }
       />
       <WithFeatureFlagHOC

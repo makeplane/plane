@@ -29,6 +29,7 @@ from strawberry.types import Info
 from plane.db.models import IntakeIssue, Issue, IssueAssignee, IssueLabel
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.helpers import (
+    create_triage_state_async,
     default_work_item_type,
     get_intake_async,
     get_intake_work_item_async,
@@ -82,6 +83,7 @@ class IntakeWorkItemMutation:
 
         # check if the intake is enabled for the project
         intake_in_app_enabled = await is_project_settings_enabled_by_settings_key_async(
+            workspace_id=workspace_id,
             workspace_slug=workspace_slug,
             project_id=project_id,
             settings_key=IntakeSettingsType.IN_APP,
@@ -102,8 +104,12 @@ class IntakeWorkItemMutation:
         # check if the workflow is enabled for the project and the state is not passed
         if work_item_state_id is None:
             triage_states = await get_project_triage_states_async(workspace_slug=workspace_slug, project_id=project_id)
-            triage_state = triage_states[0]
-            work_item_state_id = str(triage_state.id)
+            if not triage_states or len(triage_states) <= 0:
+                triage_state = await create_triage_state_async(workspace_id=workspace_id, project_id=project_id)
+                work_item_state_id = str(triage_state.id)
+            else:
+                triage_state = triage_states[0]
+                work_item_state_id = str(triage_state.id)
         else:
             triage_state = await get_triage_state_async(
                 workspace_slug=workspace_slug, project_id=project_id, state_id=work_item_state_id

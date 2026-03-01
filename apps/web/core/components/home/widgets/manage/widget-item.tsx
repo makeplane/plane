@@ -30,7 +30,8 @@ import { createRoot } from "react-dom/client";
 import { useTranslation } from "@plane/i18n";
 import type { InstructionType, TWidgetEntityData } from "@plane/types";
 // plane ui
-import { DropIndicator, ToggleSwitch } from "@plane/ui";
+import { DropIndicator } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks
@@ -144,7 +145,7 @@ export const WidgetItem = observer(function WidgetItem(props: Props) {
           <WidgetItemDragHandle sort_order={widget.sort_order} isDragging={isDragging} />
           <div>{t(widgetTitle, { count: 1 })}</div>
         </div>
-        <ToggleSwitch
+        <Switch
           value={widget.is_enabled}
           onChange={() => handleToggle(workspaceSlug.toString(), widget.key, !widget.is_enabled)}
         />

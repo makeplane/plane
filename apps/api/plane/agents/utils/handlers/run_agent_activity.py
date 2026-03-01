@@ -24,7 +24,7 @@ def create_comment_from_activity(activity: AgentRunActivity):
         issue=activity.agent_run.issue,
         project=activity.agent_run.project,
         workspace=activity.agent_run.workspace,
-        parent= activity.agent_run.comment if activity.agent_run.comment else None,
+        parent=activity.agent_run.comment if activity.agent_run.comment else None,
     )
 
 
@@ -42,7 +42,7 @@ def handle_agent_run_activity(activity: AgentRunActivity):
     if activity.ephemeral:
         return
 
-    # create a new comment  
+    # create a new comment
     # if run has a comment attached, use it as the parent
     comment = create_comment_from_activity(activity)
 

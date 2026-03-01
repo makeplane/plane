@@ -68,7 +68,7 @@ class IssueFlatSerializer(BaseSerializer):
         fields = [
             "id",
             "name",
-            "description",
+            "description_json",
             "description_html",
             "priority",
             "start_date",

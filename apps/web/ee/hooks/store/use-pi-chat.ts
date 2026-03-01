@@ -14,7 +14,7 @@
 import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
-import type { IPiChatStore } from "@/plane-web/store/pi-chat/pi-chat";
+import type { IPiChatStore } from "@/store/pi-chat/pi-chat";
 // plane web stores
 
 export const usePiChat = (): IPiChatStore => {

@@ -16,6 +16,8 @@ import type { Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
 import { TableMap, updateColumnsOnResize } from "@tiptap/pm/tables";
 import type { Decoration, NodeView } from "@tiptap/pm/view";
 import { h } from "jsx-dom-cjs";
+// version diff support
+import { applyYChangeDecorationsToDom } from "@/components/editors/version-diff/extensions/ychange-nodeview-utils";
 
 export class TableView implements NodeView {
   node: ProseMirrorNode;
@@ -71,6 +73,9 @@ export class TableView implements NodeView {
     );
 
     this.render();
+
+    // Apply ychange decorations to the table element (not wrapper) for version diff highlighting
+    applyYChangeDecorationsToDom(decorations, this.root, this.table);
   }
 
   update(node: ProseMirrorNode, decorations: readonly Decoration[]) {
@@ -83,6 +88,9 @@ export class TableView implements NodeView {
     this.map = TableMap.get(this.node);
 
     this.render();
+
+    // Apply ychange decorations to the table element (not wrapper) for version diff highlighting
+    applyYChangeDecorationsToDom(decorations, this.root, this.table);
 
     return true;
   }

@@ -180,7 +180,8 @@ function CreateTypeFormModal({ formSettings, anchor }: TProps) {
                   ref: descriptionEditorRef,
                   dragDropEnabled: false,
                   placeholder: () => "",
-                  containerClassName: "px-0 text-14",
+                  containerClassName:
+                    "px-3 text-14 bg-layer-2 placeholder-tertiary focus:outline-none border-[0.5px] focus:border-blue-400 border-subtle-1",
                   uploadFile: async (blockId: string, file: File) => {
                     const { asset_id } = await uploadIssueAsset(file, anchor);
                     return asset_id;

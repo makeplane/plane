@@ -23,10 +23,9 @@ import { cn, renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "
 import { useWorkspaceNotifications } from "@/hooks/store/notifications/use-workspace-notifications";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web imports
-import { IssueCreatorDisplay } from "@/plane-web/components/issues/issue-details/issue-creator";
 // local imports
-import { IssueUser } from "../";
+import { IssueCreatorDisplay } from "./issue-creator";
+import { IssueUser } from "./issue-user";
 
 type TIssueActivityBlockComponent = {
   icon?: ReactNode;

@@ -20,6 +20,7 @@ import { ImageFullScreenModal } from "./modal";
 
 type Props = {
   image: {
+    alt: string | undefined;
     aspectRatio: number;
     downloadSrc: string;
     height: string;
@@ -35,7 +36,7 @@ export function ImageFullScreenActionRoot(props: Props) {
   // states
   const [isFullScreenEnabled, setIsFullScreenEnabled] = useState(false);
   // derived values
-  const { downloadSrc, src, width, aspectRatio } = image;
+  const { alt, downloadSrc, src, width, aspectRatio } = image;
 
   useEffect(() => {
     toggleToolbarViewStatus(isFullScreenEnabled);
@@ -44,6 +45,7 @@ export function ImageFullScreenActionRoot(props: Props) {
   return (
     <>
       <ImageFullScreenModal
+        alt={alt}
         aspectRatio={aspectRatio}
         downloadSrc={downloadSrc}
         isFullScreenEnabled={isFullScreenEnabled}

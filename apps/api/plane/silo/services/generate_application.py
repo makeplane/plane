@@ -23,6 +23,7 @@ from plane.silo.utils.constants import APPLICATIONS
 from plane.db.models import User
 from plane.authentication.models import Application
 from plane.silo.models.application_secret import ApplicationSecret
+from plane.settings.redis import redis_instance
 from plane.utils.encryption import encrypt
 
 logger = getLogger("plane.silo.services.generate_application")
@@ -56,6 +57,8 @@ def generate_application(
 
     webhook_url = app_data.get("webhook_url", None)
     setup_url = app_data.get("setup_url", None)
+    skip_authorization = app_data.get("skip_authorization", True)
+    resource_permissions = app_data.get("resource_permissions", ["read", "write"])
 
     with transaction.atomic():
         client_secret = generate_client_secret()
@@ -67,13 +70,15 @@ def generate_application(
             "short_description": app_data["short_description"],
             "company_name": user.display_name,
             "redirect_uris": app_data["redirect_uris"],
-            "skip_authorization": app_data.get("skip_authorization", True),
+            "skip_authorization": skip_authorization,
             "client_type": "confidential",
             "authorization_grant_type": "authorization-code",
             "user_id": user_id,
             "client_secret": client_secret,
             "webhook_url": webhook_url,
             "setup_url": setup_url,
+            "is_internal": True,
+            "resource_permissions": resource_permissions,
         }
 
         # check if application already exists
@@ -84,9 +89,19 @@ def generate_application(
             application.redirect_uris = app_data["redirect_uris"]
             application.webhook_url = webhook_url
             application.setup_url = setup_url
+            application.skip_authorization = skip_authorization
+            application.is_internal = True
+            application.resource_permissions = resource_permissions
             application.save()
         else:
             application = application_model.objects.create(**application_data)
+
+        # Invalidate cached app details (set via raw redis, not Django cache)
+        try:
+            ri = redis_instance()
+            ri.delete(f"plane_app_details_{app_key}")
+        except Exception:
+            logger.exception(f"Failed to invalidate cache for {app_key}")
 
         encrypted_data = encrypt(client_secret)
         client_secret = f"{encrypted_data['iv']}:{encrypted_data['ciphertext']}:{encrypted_data['tag']}"

@@ -16,11 +16,13 @@ import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { enrichRichFiltersWithEntityContext } from "@plane/shared-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProjectView, TWorkItemFilterExpression } from "@plane/types";
-import { EUserProjectRoles, EViewAccess } from "@plane/types";
+import { EIssuesStoreType, EUserProjectRoles, EViewAccess } from "@plane/types";
+// helpers
+import { removeNillKeys } from "@/helpers/common";
 // components
-import { removeNillKeys } from "@/components/issues/issue-layouts/utils";
 import { CreateUpdateProjectViewModal } from "@/components/views/modal";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -32,7 +34,8 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { getAdditionalProjectLevelFiltersHOCProps } from "@/plane-web/helpers/work-item-filters/project-level";
+import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
+import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 // local imports
 import { WorkItemFiltersHOC } from "./base";
 import type { TEnableSaveViewProps, TEnableUpdateViewProps, TSharedWorkItemFiltersHOCProps } from "./shared";
@@ -46,8 +49,16 @@ type TProjectLevelWorkItemFiltersHOCProps = TSharedWorkItemFiltersHOCProps & {
 export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWorkItemFiltersHOC(
   props: TProjectLevelWorkItemFiltersHOCProps
 ) {
-  const { children, enableSaveView, enableUpdateView, entityId, initialWorkItemFilters, projectId, workspaceSlug } =
-    props;
+  const {
+    children,
+    enableSaveView,
+    enableUpdateView,
+    entityId,
+    entityType,
+    initialWorkItemFilters,
+    projectId,
+    workspaceSlug,
+  } = props;
   // states
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [createViewPayload, setCreateViewPayload] = useState<Partial<IProjectView> | null>(null);
@@ -63,7 +74,20 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   } = useMember();
   const { getProjectModuleIds } = useModule();
   const { getProjectStateIds } = useProjectState();
+  const { getProjectEpicDetails, getProjectIssueTypes, isWorkItemTypeEnabledForProject, isEpicEnabledForProject } =
+    useIssueTypes();
+  const { getProjectMilestoneIds, isMilestonesEnabled } = useMilestones();
   // derived values
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
+  const isEpicEnabled = isEpicEnabledForProject(workspaceSlug, projectId);
+  const projectWorkItemTypes = Object.values(getProjectIssueTypes(projectId, false));
+  const projectWorkItemTypeIds = useMemo(
+    () => projectWorkItemTypes.map((workItemType) => workItemType.id).filter((id) => id !== undefined),
+    [projectWorkItemTypes]
+  );
+  const projectEpicDetails = getProjectEpicDetails(projectId);
+  const projectMilestoneIds = getProjectMilestoneIds(projectId);
+  const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
   const hasProjectMemberLevelPermissions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT,
@@ -113,6 +137,21 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
       ),
     [initialWorkItemFilters, viewDetails]
   );
+  const customPropertyIds: string[] | undefined = useMemo(() => {
+    // Get custom property IDs based on entity type and feature flags
+    if (props.entityType === EIssuesStoreType.EPIC && isEpicEnabled) {
+      // Get epic custom property IDs
+      return projectEpicDetails?.properties
+        ?.map((property) => property.id)
+        .filter((propertyId) => propertyId !== undefined);
+    } else if (isWorkItemTypeEnabled) {
+      // Get work item type custom property IDs across all project work item types
+      return projectWorkItemTypes
+        .flatMap((workItemType) => workItemType.properties.map((property) => property.id))
+        .filter((propertyId) => propertyId !== undefined);
+    }
+    return undefined;
+  }, [props.entityType, isEpicEnabled, isWorkItemTypeEnabled, projectWorkItemTypes, projectEpicDetails]);
 
   const getDefaultViewDetailPayload: () => Partial<IProjectView> = useCallback(
     () => ({
@@ -135,13 +174,23 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
 
   const handleViewSave = useCallback(
     (expression: TWorkItemFilterExpression) => {
+      const filterPayload = getViewFilterPayload(expression);
+      const enrichedFilterPayload: Partial<IProjectView> = {
+        ...filterPayload,
+        rich_filters: enrichRichFiltersWithEntityContext({
+          richFilters: filterPayload.rich_filters,
+          entityType: entityType,
+          entityId: entityId,
+        }),
+      };
+
       setCreateViewPayload({
         ...getDefaultViewDetailPayload(),
-        ...getViewFilterPayload(expression),
+        ...enrichedFilterPayload,
       });
       setIsCreateViewModalOpen(true);
     },
-    [getDefaultViewDetailPayload, getViewFilterPayload]
+    [getDefaultViewDetailPayload, getViewFilterPayload, entityType, entityId]
   );
 
   const handleViewUpdate = useCallback(
@@ -165,6 +214,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
             title: "Success!",
             message: "Your view has been updated successfully.",
           });
+          return;
         })
         .catch(() => {
           setToast({
@@ -210,16 +260,14 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
       />
       <WorkItemFiltersHOC
         {...props}
-        {...getAdditionalProjectLevelFiltersHOCProps({
-          entityType: props.entityType,
-          workspaceSlug,
-          projectId,
-        })}
         cycleIds={getProjectCycleIds(projectId) ?? undefined}
         labelIds={getProjectLabelIds(projectId)}
         memberIds={getProjectMemberIds(projectId, false) ?? undefined}
         moduleIds={getProjectModuleIds(projectId) ?? undefined}
         stateIds={getProjectStateIds(projectId)}
+        workItemTypeIds={isWorkItemTypeEnabled ? projectWorkItemTypeIds : undefined}
+        milestoneIds={isMilestonesFeatureEnabled ? projectMilestoneIds : undefined}
+        customPropertyIds={customPropertyIds}
         saveViewOptions={saveViewOptions}
         updateViewOptions={updateViewOptions}
       >

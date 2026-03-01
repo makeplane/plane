@@ -22,7 +22,7 @@ import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
-import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
+import { EpicPeekOverview } from "@/components/epics/peek-overview";
 
 /**
  * This function returns if the current active notification is related to work item or an epic.

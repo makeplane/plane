@@ -62,7 +62,9 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
       component = null;
       (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
       const emojiStorage = editor?.storage.emoji as ExtendedEmojiStorage;
-      emojiStorage.forceOpen = false;
+      if (emojiStorage) {
+        emojiStorage.forceOpen = false;
+      }
       cleanup();
     };
 
@@ -80,7 +82,7 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
           editor: props.editor,
           className: "fixed z-[100]",
         });
-        if (!props.clientRect) return;
+        if (!props.clientRect || !component.element) return;
         props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
         const element = component.element as HTMLElement;
         cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
@@ -110,7 +112,7 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
       },
 
       onExit: ({ editor }) => {
-        component?.element.remove();
+        component?.element?.remove();
         handleClose(editor);
       },
     };

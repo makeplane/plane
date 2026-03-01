@@ -37,7 +37,7 @@ from rest_framework.generics import GenericAPIView
 # Module imports
 from plane.db.models.api import APIToken
 from plane.api.middleware.api_authentication import APIKeyAuthentication
-from plane.api.rate_limit import ApiKeyRateThrottle, ServiceTokenRateThrottle
+from plane.api.rate_limit import ApiKeyRateThrottle, ServiceTokenRateThrottle, WorkspaceTokenRateThrottle
 from plane.authentication.rate_limit import OAuthTokenRateThrottle
 from plane.authentication.permissions.oauth import OauthApplicationWorkspacePermission
 from plane.utils.exception_logger import log_exception
@@ -83,10 +83,18 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
         api_key = self.request.headers.get("X-Api-Key")
 
         if api_key:
-            service_token = APIToken.objects.filter(token=api_key, is_service=True).first()
+            api_token = APIToken.objects.filter(token=api_key)
+
+            service_token = api_token.filter(is_service=True).first()
+
+            workspace_token = api_token.filter(workspace_id__isnull=False).first()
 
             if service_token:
                 throttle_classes.append(ServiceTokenRateThrottle())
+                return throttle_classes
+
+            if workspace_token:
+                throttle_classes.append(WorkspaceTokenRateThrottle())
                 return throttle_classes
 
         throttle_classes.append(ApiKeyRateThrottle())

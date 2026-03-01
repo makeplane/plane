@@ -39,4 +39,5 @@ export type TBuildFilterExpressionParams<
 > = {
   conditions: TFilterConditionForBuild<P, V>[];
   adapter: IFilterAdapter<P, E>;
+  initialExpression?: E;
 };

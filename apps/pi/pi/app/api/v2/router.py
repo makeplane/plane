@@ -18,6 +18,7 @@ from pi.app.api.v2.endpoints import chats
 from pi.app.api.v2.endpoints import conversations
 from pi.app.api.v2.endpoints import dupes
 from pi.app.api.v2.endpoints import feedback
+from pi.app.api.v2.endpoints import flags
 from pi.app.api.v2.endpoints import health
 from pi.app.api.v2.endpoints import models
 from pi.app.api.v2.endpoints import oauth
@@ -26,6 +27,7 @@ from pi.app.api.v2.endpoints import responses
 from pi.app.api.v2.endpoints import templates
 from pi.app.api.v2.endpoints import titles
 from pi.app.api.v2.endpoints import transcriptions
+from pi.app.api.v2.endpoints.internal import vectorize
 from pi.app.api.v2.endpoints.mobile import mobile_router
 
 # Router for endpoints
@@ -47,4 +49,6 @@ plane_v2_router.include_router(dupes.router, prefix="/dupes", tags=["dupes"])
 plane_v2_router.include_router(oauth.router, prefix="/oauth", tags=["oauth"])
 plane_v2_router.include_router(pages.router, prefix="/pages", tags=["pages"])
 plane_v2_router.include_router(health.router, tags=["health"])
+plane_v2_router.include_router(flags.router, tags=["flags"])
+plane_v2_router.include_router(vectorize.router, prefix="/internal", tags=["internal"])
 plane_v2_router.include_router(mobile_router, prefix="/mobile", tags=["mobile"])

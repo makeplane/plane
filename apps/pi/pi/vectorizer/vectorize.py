@@ -31,7 +31,10 @@ from aiolimiter import AsyncLimiter  # New import for Cohere RPM limiting
 
 from pi import logger
 from pi.config import Settings
+from pi.core.embedding_config import active_model_supports_batch
+from pi.core.embedding_config import get_embedding_param_from_active_model
 from pi.core.vectordb import VectorStore
+from pi.services.retrievers.pg_store import get_ml_model_id_sync
 
 from .docs import process_repo_contents
 from .utils import _print_start_banner
@@ -45,7 +48,7 @@ BATCH_IN: int = settings.BATCH_SIZE  # texts to embed per /predict call
 BULK_SIZE: int = BATCH_IN  # (Deprecated): docs per bulk-API request
 SCROLL_TIMEOUT: str = settings.SCROLL_TIMEOUT  # keep_alive for PIT id's
 FEED_SLICES: int = settings.FEED_SLICES  # how many parallel scroll slices
-ML_MODEL_ID: str = settings.ML_MODEL_ID  # OpenSearch-ML model id
+ML_MODEL_ID: str | None = get_ml_model_id_sync()  # OpenSearch-ML model id
 MAX_RETRIES: int = 3  # attempts per failed batch
 BULK_CONCURRENCY: int = FEED_SLICES  # simultaneous bulk requests allowed
 WORKSPACE_ID: str | None = None  # Deprecated: use explicit workspace_id param instead
@@ -99,20 +102,43 @@ async def _batched_predict(
     if not ML_MODEL_ID:
         raise ValueError(f"Slice {slice_id}: ML_MODEL_ID is not configured")
 
-    # Apply rate limiting for Cohere API
+    # Get the parameter name for the active embedding model
+    param_name = get_embedding_param_from_active_model()
+    is_batch = active_model_supports_batch()
+
+    # Apply rate limiting
     async with EMBED_SEM:  # Limit concurrent embedding calls
         await COHERE_LIMITER.acquire()  # Respect RPM limits
 
         log.debug("Slice %s: Acquired rate limit tokens for batch of %d texts", slice_id, len(texts))
 
-        # First, try the normal approach without sanitization
-        body = {"parameters": {"texts": list(texts)}}
+        # ── Non-batch models (Bedrock Titan): one request per text ──
+        if not is_batch:
+            vectors = []
+            for idx, text in enumerate(texts):
+                single_body: Dict[str, Any] = {"parameters": {param_name: text}}  # single string
+                try:
+                    resp = await vdb.async_os.transport.perform_request(
+                        "POST",
+                        f"/_plugins/_ml/models/{ML_MODEL_ID}/_predict",
+                        body=single_body,
+                    )
+                    output = resp["inference_results"][0]["output"][0]
+                    vectors.append([float(x) for x in output["data"]])
+                except Exception as e:
+                    log.error("Slice %s: Failed to embed text %d/%d: %s", slice_id, idx, len(texts), e)
+                    raise
+            log.debug("Slice %s: Successfully generated %d vectors (individual)", slice_id, len(vectors))
+            return vectors
+
+        # ── Batch models (OpenAI / Cohere): single request for all texts ──
+        batch_body: Dict[str, Any] = {"parameters": {param_name: list(texts)}}
 
         try:
             resp = await vdb.async_os.transport.perform_request(
                 "POST",
                 f"/_plugins/_ml/models/{ML_MODEL_ID}/_predict",
-                body=body,
+                body=batch_body,
             )
 
             # Validate response structure
@@ -191,8 +217,8 @@ async def _batched_predict(
                 if not any_sanitized:
                     log.warning("Slice %s: No obvious problematic content found during sanitization. Error may be from other causes.", slice_id)
 
-                # Retry with sanitized content
-                sanitized_body = {"parameters": {"texts": sanitized_texts}}
+                # Retry with sanitized content, using the same parameter name
+                sanitized_body = {"parameters": {param_name: sanitized_texts}}
 
                 try:
                     resp = await vdb.async_os.transport.perform_request(

@@ -17,6 +17,10 @@ import { createJiraClient } from "@/apps/jira-importer/helpers/migration-helpers
 import { getJobCredentials } from "@/helpers/job";
 import type { TJobContext, TIssueTypesData } from "../../../../types";
 import { JiraIssuePropertiesStep } from "../../shared/entities";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import { extractErrorMetadata } from "@/helpers/errors";
+import { logger } from "@plane/logger";
 
 export class JiraCloudIssuePropertiesStep extends JiraIssuePropertiesStep {
   protected async pull(
@@ -25,18 +29,48 @@ export class JiraCloudIssuePropertiesStep extends JiraIssuePropertiesStep {
     issueTypesData: TIssueTypesData
   ): Promise<JiraIssueField[]> {
     const { job } = jobCtx;
-    const credentials = await getJobCredentials(job);
-    const client = createJiraClient(job, credentials);
-    const issueTypes = issueTypesData
-      .map((type) => {
-        const id = type.external_id.split("_").pop();
-        if (typeof id !== "string" || id.length === 0) {
-          return null;
-        }
-        return { id, name: type.name };
-      })
-      .filter((item): item is { id: string; name: string } => item !== null);
 
-    return pullIssueFields(client, issueTypes, projectId);
+    try {
+      const credentials = await getJobCredentials(job);
+      const client = createJiraClient(job, credentials);
+      const issueTypes = issueTypesData
+        .map((type) => {
+          const id = type.external_id.split("_").pop();
+          if (typeof id !== "string" || id.length === 0) {
+            return null;
+          }
+          return { id, name: type.name };
+        })
+        .filter((item): item is { id: string; name: string } => item !== null);
+
+      const result = await pullIssueFields(client, issueTypes, projectId);
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
+        phase: "PULL_CUSTOM_FIELDS",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          pulled: result.length,
+          total: result.length,
+        },
+        additional_data: {
+          issueTypesCount: issueTypes.length,
+        },
+      });
+
+      return result;
+    } catch (error) {
+      logger.error(`[${job.id}][${this.name}] Unable to pull custom fields from Jira Cloud`, error);
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
+        phase: "PULL_CUSTOM_FIELDS",
+        level: EExecutionLogLevel.ERROR,
+        is_fatal: true,
+        error: extractErrorMetadata(error),
+      });
+
+      throw error;
+    }
   }
 }

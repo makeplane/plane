@@ -16,7 +16,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { TIssueServiceType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
@@ -40,25 +40,30 @@ export const LinksCollapsible = observer(function LinksCollapsible(props: Props)
 
   return (
     <Collapsible
-      isOpen={isCollapsibleOpen}
-      onToggle={() => toggleOpenWidget("links")}
-      title={
+      open={isCollapsibleOpen}
+      onOpenChange={(open) => {
+        if (open !== isCollapsibleOpen) {
+          toggleOpenWidget("links");
+        }
+      }}
+    >
+      <CollapsibleTrigger className={"w-full"}>
         <IssueLinksCollapsibleTitle
           isOpen={isCollapsibleOpen}
           issueId={issueId}
           disabled={disabled}
           issueServiceType={issueServiceType}
         />
-      }
-      buttonClassName="w-full"
-    >
-      <IssueLinksCollapsibleContent
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issueId}
-        disabled={disabled}
-        issueServiceType={issueServiceType}
-      />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <IssueLinksCollapsibleContent
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
+      </CollapsibleContent>
     </Collapsible>
   );
 });

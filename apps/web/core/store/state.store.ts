@@ -20,7 +20,7 @@ import type { IIntakeState, IState } from "@plane/types";
 // helpers
 import { sortStates } from "@plane/utils";
 // plane web
-import { ProjectStateService } from "@/plane-web/services/project/project-state.service";
+import { ProjectStateService } from "@/services/project/project-state.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IStateStore {

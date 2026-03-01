@@ -19,10 +19,12 @@ type EmojiRootProps = {
   onChange: (value: string) => void;
   searchPlaceholder?: string;
   searchDisabled?: boolean;
+  searchQuery?: string;
+  onSearchQueryChange?: (query: string) => void;
 };
 
 export function EmojiRoot(props: EmojiRootProps) {
-  const { onChange, searchPlaceholder = "Search", searchDisabled = false } = props;
+  const { onChange, searchPlaceholder = "Search", searchDisabled = false, searchQuery, onSearchQueryChange } = props;
   const searchWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const focusInput = () => {
@@ -49,6 +51,8 @@ export function EmojiRoot(props: EmojiRootProps) {
           <EmojiPicker.Search
             placeholder={searchPlaceholder}
             disabled={searchDisabled}
+            value={searchQuery ?? ""}
+            onChange={(e) => onSearchQueryChange?.(e.target.value)}
             className="block rounded-md bg-transparent placeholder-(--text-color-placeholder) focus:outline-none px-3 py-2 border-[0.5px] border-subtle text-16 p-0 h-full w-full flex-grow-0 focus:border-accent-strong"
           />
         </div>

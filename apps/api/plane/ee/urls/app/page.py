@@ -43,6 +43,7 @@ from plane.ee.views import (
     WorkspacePageLiveServerEndpoint,
     PageEmbedEndpoint,
     PageMentionEndpoint,
+    PageFetchMetadataEndpoint,
 )
 
 
@@ -122,6 +123,11 @@ urlpatterns = [
         "pages/<uuid:page_id>/description/",
         PagesLiveServerDescriptionViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
         name="page-secret-description",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/fetch-metadata/",
+        PageFetchMetadataEndpoint.as_view(),
+        name="page-fetch-metadata",
     ),
     path(
         "workspaces/<str:slug>/pages/<uuid:page_id>/sub-pages/",

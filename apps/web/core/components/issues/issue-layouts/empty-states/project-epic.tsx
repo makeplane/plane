@@ -22,7 +22,7 @@ import { EUserProjectRoles } from "@plane/types";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
+import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export const ProjectEpicsEmptyState = observer(function ProjectEpicsEmptyState() {

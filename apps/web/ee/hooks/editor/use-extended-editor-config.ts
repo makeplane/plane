@@ -18,7 +18,7 @@ import { getEditorAssetSrc, getAssetIdFromUrl } from "@plane/utils";
 // ce imports
 import type { TExtendedEditorConfig } from "@/ce/hooks/editor/use-extended-editor-config";
 // services
-import { liveService } from "@/plane-web/services/live.service";
+import { liveService } from "@/services/live.service";
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 

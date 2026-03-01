@@ -110,4 +110,6 @@ from .sso import (
     SAMLAuthCloudMetadataEndpoint,
     SAMLAuthCloudCallbackEndpoint,
     SAMLAuthCloudLogoutEndpoint,
+    GroupSyncConfigEndpoint,
+    GroupMappingEndpoint,
 )

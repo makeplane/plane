@@ -10,12 +10,11 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 import pytest
-from unittest.mock import patch, MagicMock
-from datetime import datetime, time
+from unittest.mock import patch
+from datetime import datetime
 from uuid import uuid4
 
 import pytz
-from django.utils import timezone
 
 from plane.db.models import Workspace, Project, WorkspaceMember
 from plane.ee.models import RecurringWorkitemTask, WorkitemTemplate, Template, ProjectTemplate

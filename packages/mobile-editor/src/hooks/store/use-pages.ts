@@ -13,9 +13,9 @@
 
 import { useContext } from "react";
 // mobx store
-import { StoreContext } from "@/lib/store-context";
+import { StoreContext } from "@/lib/store";
 // types
-import { IPageStore } from "@/store/page.store";
+import type { IPageStore } from "@/store/page.store";
 
 export const usePages = (): IPageStore => {
   const context = useContext(StoreContext);

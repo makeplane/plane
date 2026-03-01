@@ -87,7 +87,7 @@ class EpicAnalyticsType:
 class EpicType:
     id: strawberry.ID
     name: str
-    description: Optional[JSON]
+    description_json: Optional[JSON]
     description_html: Optional[str]
     description_stripped: Optional[str]
     description_binary: Optional[str]
@@ -96,6 +96,10 @@ class EpicType:
     priority: str
     start_date: Optional[date]
     target_date: Optional[date]
+
+    @strawberry.field
+    def description(self) -> Optional[JSON]:
+        return self.description_json
 
     @strawberry.field
     def state(self) -> Optional[strawberry.ID]:

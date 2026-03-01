@@ -44,6 +44,8 @@ from plane.utils.openapi.responses import (
     create_paginated_response,
 )
 from plane.utils.openapi.examples import SAMPLE_EPIC
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import READ_SCOPE, PROJECTS_EPICS_READ_SCOPE
 
 
 class EpicListCreateAPIEndpoint(BaseAPIView):
@@ -52,7 +54,10 @@ class EpicListCreateAPIEndpoint(BaseAPIView):
     """
 
     model = Issue
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_EPICS_READ_SCOPE]],
+    }
     serializer_class = EpicSerializer
 
     def get_queryset(self):
@@ -96,7 +101,10 @@ class EpicDetailAPIEndpoint(BaseAPIView):
     """
 
     model = Issue
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_EPICS_READ_SCOPE]],
+    }
     serializer_class = EpicSerializer
 
     def get_queryset(self):

@@ -76,3 +76,8 @@ export const TOOLBAR_ITEMS: {
   userAction: USER_ACTION_ITEMS,
   complex: COMPLEX_ITEMS,
 };
+
+export const EDITOR_PROPS = {
+  scrollMargin: 80,
+  scrollThreshold: 80,
+};

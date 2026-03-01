@@ -18,6 +18,9 @@ export enum E_DEFAULT_PROPERTY_TYPES {
   FIX_VERSION = "fix-version",
   AFFECTED_VERSION = "affected-version",
   REPORTER = "reporter",
+  ORIGINAL_ESTIMATE = "original_estimate",
+  RESOLUTION_STATE = "resolution_state",
+  RESOLUTION = "resolution",
 }
 
 export const getDefaultPropertyExternalId = (
@@ -73,6 +76,40 @@ export const getSupportedDefaultProperties = (
     display_name: "Reporter",
     property_type: "RELATION",
     relation_type: "USER",
+    is_active: true,
+  },
+  {
+    type_id: issueTypeExternalId,
+    external_id: getDefaultPropertyExternalId(
+      resourceId,
+      projectId,
+      issueTypeId,
+      E_DEFAULT_PROPERTY_TYPES.ORIGINAL_ESTIMATE
+    ),
+    external_source: source,
+    display_name: "Original Estimate",
+    property_type: "DECIMAL",
+    is_active: true,
+  },
+  {
+    type_id: issueTypeExternalId,
+    external_id: getDefaultPropertyExternalId(
+      resourceId,
+      projectId,
+      issueTypeId,
+      E_DEFAULT_PROPERTY_TYPES.RESOLUTION_STATE
+    ),
+    external_source: source,
+    display_name: "Resolution State",
+    property_type: "TEXT",
+    is_active: true,
+  },
+  {
+    type_id: issueTypeExternalId,
+    external_id: getDefaultPropertyExternalId(resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.RESOLUTION),
+    external_source: source,
+    display_name: "Resolution",
+    property_type: "DATETIME",
     is_active: true,
   },
 ];

@@ -340,6 +340,90 @@ class TestApiTokenEndpoint:
         other_token.refresh_from_db()
         assert other_token.label == "Other Token"
 
+    # Mass assignment protection tests
+    @pytest.mark.django_db
+    def test_patch_cannot_modify_allowed_rate_limit(self, session_client, create_user, create_api_token_for_user):
+        """Test that allowed_rate_limit cannot be modified via PATCH (SECUR-104)"""
+        # Arrange
+        session_client.force_authenticate(user=create_user)
+        url = reverse("api-tokens", kwargs={"pk": create_api_token_for_user.pk})
+        original_rate_limit = create_api_token_for_user.allowed_rate_limit
+        update_data = {"label": "Updated", "allowed_rate_limit": "10000/min"}
+
+        # Act
+        response = session_client.patch(url, update_data, format="json")
+
+        # Assert
+        assert response.status_code == status.HTTP_200_OK
+        create_api_token_for_user.refresh_from_db()
+        assert create_api_token_for_user.allowed_rate_limit == original_rate_limit
+
+    @pytest.mark.django_db
+    def test_patch_cannot_modify_is_service(self, session_client, create_user, create_api_token_for_user):
+        """Test that is_service cannot be modified via PATCH"""
+        # Arrange
+        session_client.force_authenticate(user=create_user)
+        url = reverse("api-tokens", kwargs={"pk": create_api_token_for_user.pk})
+        update_data = {"is_service": True}
+
+        # Act
+        response = session_client.patch(url, update_data, format="json")
+
+        # Assert
+        assert response.status_code == status.HTTP_200_OK
+        create_api_token_for_user.refresh_from_db()
+        assert create_api_token_for_user.is_service is False
+
+    @pytest.mark.django_db
+    def test_patch_cannot_modify_token(self, session_client, create_user, create_api_token_for_user):
+        """Test that token value cannot be modified via PATCH"""
+        # Arrange
+        session_client.force_authenticate(user=create_user)
+        url = reverse("api-tokens", kwargs={"pk": create_api_token_for_user.pk})
+        original_token = create_api_token_for_user.token
+        update_data = {"token": "plane_api_malicious_token_value"}
+
+        # Act
+        response = session_client.patch(url, update_data, format="json")
+
+        # Assert
+        assert response.status_code == status.HTTP_200_OK
+        create_api_token_for_user.refresh_from_db()
+        assert create_api_token_for_user.token == original_token
+
+    @pytest.mark.django_db
+    def test_patch_cannot_modify_user_type(self, session_client, create_user, create_api_token_for_user):
+        """Test that user_type cannot be modified via PATCH"""
+        # Arrange
+        session_client.force_authenticate(user=create_user)
+        url = reverse("api-tokens", kwargs={"pk": create_api_token_for_user.pk})
+        update_data = {"user_type": 1}
+
+        # Act
+        response = session_client.patch(url, update_data, format="json")
+
+        # Assert
+        assert response.status_code == status.HTTP_200_OK
+        create_api_token_for_user.refresh_from_db()
+        assert create_api_token_for_user.user_type == 0
+
+    @pytest.mark.django_db
+    def test_patch_cannot_modify_service_token(self, session_client, create_user):
+        """Test that service tokens cannot be modified through user token endpoint"""
+        # Arrange
+        service_token = APIToken.objects.create(label="Service Token", user=create_user, user_type=0, is_service=True)
+        session_client.force_authenticate(user=create_user)
+        url = reverse("api-tokens", kwargs={"pk": service_token.pk})
+        update_data = {"label": "Hacked Service Token"}
+
+        # Act
+        response = session_client.patch(url, update_data, format="json")
+
+        # Assert
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        service_token.refresh_from_db()
+        assert service_token.label == "Service Token"
+
     # Authentication tests
     @pytest.mark.django_db
     def test_all_endpoints_require_authentication(self, api_client):

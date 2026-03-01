@@ -13,10 +13,6 @@
 from typing import Any
 
 # Third-party imports
-from oauth2_provider.contrib.rest_framework import (
-    OAuth2Authentication,
-    TokenHasReadWriteScope,
-)
 from oauth2_provider.models import Application
 from rest_framework import status
 from rest_framework.request import Request
@@ -29,8 +25,7 @@ from plane.authentication.serializers import WorkspaceAppInstallationSerializer
 
 
 class OAuthApplicationInstalledWorkspacesEndpoint(BaseAPIView):
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasReadWriteScope]
+    required_scopes = []
 
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         application: Application = request.auth.application

@@ -25,6 +25,7 @@ import type { TWorkspaceCredential } from "@plane/types";
 
 export type IssuePayload = {
   jobId: string;
+  reportId?: string;
   meta: any;
   planeLabels: ExIssueLabel[];
   issueProcessIndex: number;

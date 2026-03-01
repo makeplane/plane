@@ -28,10 +28,14 @@ from plane.ee.views.space.intake import (
 handler404 = "plane.app.views.error_404.custom_404_view"
 
 urlpatterns = [
+    # urls used by the web app
     path("api/", include("plane.app.urls")),
     path("api/public/", include("plane.space.urls")),
     path("api/instances/", include("plane.license.urls")),
+    # external api urls
     path("api/v1/", include("plane.api.urls")),
+    # internal urls with hmac or secret key authentication
+    path("api/internal/", include("plane.internal.urls")),
     path("auth/", include("plane.authentication.urls")),
     path("api/payments/", include("plane.payment.urls")),
     path("api/silo/", include("plane.silo.urls")),

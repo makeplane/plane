@@ -208,5 +208,5 @@ class UserAssetMutation:
         # get the entity and save the asset id for the request field
         await delete_asset_entity(asset=asset, entity_type=asset.entity_type)
 
-        asset.save(update_fields=["is_deleted", "deleted_at"])
+        await sync_to_async(asset.save)(update_fields=["is_deleted", "deleted_at"])
         return True

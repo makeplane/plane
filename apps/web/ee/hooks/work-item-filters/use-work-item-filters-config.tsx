@@ -44,7 +44,7 @@ import { useWorkItemFiltersConfig as useCoreWorkItemFiltersConfig } from "@/ce/h
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
-import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
+import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
 import { useCustomPropertyFiltersConfig } from "@/plane-web/hooks/rich-filters/use-custom-property-filters-config";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types";

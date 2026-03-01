@@ -12,7 +12,7 @@
  */
 
 // plane web components
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { WikiPagesListLayoutRoot } from "@/plane-web/components/pages";
 // local components
 import type { Route } from "./+types/layout";

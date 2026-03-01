@@ -15,7 +15,6 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // plane imports
-import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // assets
@@ -42,12 +41,7 @@ function ProjectSettingsPage() {
         <Link href="https://plane.so/" target="_blank" className={cn(getButtonStyling("secondary", "base"))}>
           Learn more about projects
         </Link>
-        <Button
-          onClick={() => toggleCreateProjectModal(true)}
-          data-ph-element={PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON}
-        >
-          Start your first project
-        </Button>
+        <Button onClick={() => toggleCreateProjectModal(true)}>Start your first project</Button>
       </div>
     </div>
   );

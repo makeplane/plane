@@ -32,7 +32,7 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // plane web helpers
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
+import { getIsWorkspaceCreationDisabled } from "@/helpers/workspace";
 // components
 import { WorkspaceLogo } from "../logo";
 import SidebarDropdownItem from "./dropdown-item";

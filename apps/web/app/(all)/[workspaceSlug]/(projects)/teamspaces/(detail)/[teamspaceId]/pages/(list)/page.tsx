@@ -16,7 +16,7 @@ import { useSearchParams } from "next/navigation";
 import type { TPageNavigationTabs } from "@plane/types";
 // components
 // plane web imports
-import { TeamspacePagesListView } from "@/plane-web/components/teamspaces/pages/pages-list-view";
+import { TeamspacePagesListView } from "@/components/teamspaces/pages/pages-list-view";
 import type { Route } from "./+types/page";
 
 const getPageType = (pageType: string | null): TPageNavigationTabs => {

@@ -19,7 +19,7 @@ import useSWR from "swr";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 // components
-import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/kanban/roots/profile-issues-root";
+import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/board/roots/profile-issues-root";
 import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/roots/profile-issues-root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";

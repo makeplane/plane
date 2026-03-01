@@ -16,23 +16,25 @@ import { mutate } from "swr";
 // types
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { APITokenService } from "@plane/services";
+import { APITokenService, WorkspaceAPITokenService } from "@plane/services";
 import type { IApiToken } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // fetch-keys
-import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { API_TOKENS_LIST, WORKSPACE_API_TOKENS_LIST } from "@/constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   tokenId: string;
+  workspaceSlug?: string;
 };
 
 const apiTokenService = new APITokenService();
+const workspaceApiTokenService = new WorkspaceAPITokenService();
 
 export function DeleteApiTokenModal(props: Props) {
-  const { isOpen, onClose, tokenId } = props;
+  const { isOpen, onClose, tokenId, workspaceSlug } = props;
   // states
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   // router params
@@ -46,8 +48,11 @@ export function DeleteApiTokenModal(props: Props) {
   const handleDeletion = async () => {
     setDeleteLoading(true);
 
-    await apiTokenService
-      .destroy(tokenId)
+    const apiCall = workspaceSlug
+      ? workspaceApiTokenService.destroy(workspaceSlug, tokenId)
+      : apiTokenService.destroy(tokenId);
+
+    await apiCall
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -56,7 +61,7 @@ export function DeleteApiTokenModal(props: Props) {
         });
 
         mutate<IApiToken[]>(
-          API_TOKENS_LIST,
+          workspaceSlug ? WORKSPACE_API_TOKENS_LIST(workspaceSlug) : API_TOKENS_LIST,
           (prevData) => (prevData ?? []).filter((token) => token.id !== tokenId),
           false
         );

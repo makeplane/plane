@@ -18,11 +18,26 @@ from plane.agents.serializers.api import AgentRunActivityAPISerializer
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.agents.models import AgentRun
 
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    AGENT_RUN_ACTIVITIES_READ_SCOPE,
+    AGENT_RUN_ACTIVITIES_WRITE_SCOPE,
+)
+
 
 class AgentRunActivityAPIViewSet(BaseViewSet):
     serializer_class = AgentRunActivityAPISerializer
     model = AgentRunActivity
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [AGENT_RUN_ACTIVITIES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [AGENT_RUN_ACTIVITIES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [AGENT_RUN_ACTIVITIES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [AGENT_RUN_ACTIVITIES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [AGENT_RUN_ACTIVITIES_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return self.filter_queryset(super().get_queryset().filter(agent_run__id=self.kwargs.get("run_id")))

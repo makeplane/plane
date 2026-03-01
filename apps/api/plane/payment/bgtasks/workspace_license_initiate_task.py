@@ -27,7 +27,7 @@ from plane.db.models import Workspace, WorkspaceMember
 def workspace_license_initiate_task(workspace_id):
     """Create a free license for the workspace."""
 
-    if settings.IS_MULTI_TENANT:
+    if not settings.IS_SELF_MANAGED:
         # Get all active workspace members
         workspace_members = (
             WorkspaceMember.objects.filter(workspace_id=workspace_id, is_active=True, member__is_bot=False)

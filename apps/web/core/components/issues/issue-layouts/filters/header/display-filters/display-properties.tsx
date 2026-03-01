@@ -20,10 +20,10 @@ import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IIssueDisplayProperties } from "@plane/types";
-// plane web helpers
-import { shouldRenderDisplayProperty } from "@/plane-web/helpers/issue-filter.helper";
 // components
 import { FilterHeader } from "../helpers/filter-header";
+// lib
+import { store } from "@/lib/store-context";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -51,6 +51,11 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
   // derived values
   const projectId = routerProjectId ? routerProjectId?.toString() : undefined;
+  // plane web store
+  const isWorkItemTypeEnabled = projectId
+    ? store.issueTypes.isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString())
+    : store.featureFlags.getFeatureFlag(workspaceSlug?.toString(), "ISSUE_TYPES", false);
+  const isCustomersFeatureEnabled = store.customersStore.isCustomersFeatureEnabled;
 
   // Filter out "cycle" and "module" keys if cycleViewDisabled or moduleViewDisabled is true
   // Also filter out display properties that should not be rendered
@@ -61,8 +66,14 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
         return !cycleViewDisabled;
       case "modules":
         return !moduleViewDisabled;
+      case "issue_type":
+        return isWorkItemTypeEnabled;
+      case "customer_count":
+        return isCustomersFeatureEnabled;
+      case "customer_request_count":
+        return isCustomersFeatureEnabled;
       default:
-        return shouldRenderDisplayProperty({ workspaceSlug: workspaceSlug?.toString(), projectId, key: property.key });
+        return true;
     }
   }).map((property) => {
     if (isEpic && property.key === "sub_issue_count") {

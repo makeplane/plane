@@ -12,9 +12,9 @@
 # Python imports
 import json
 
-
 # Third Party imports
 from celery import shared_task
+
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
@@ -49,6 +49,7 @@ from plane.utils.exception_logger import log_exception
 from plane.utils.issue_relation_mapper import get_inverse_relation
 from plane.utils.uuid import is_valid_uuid
 from plane.bgtasks.notification_task import process_workitem_notifications
+from plane.bgtasks.project_subscriber_task import add_project_subscribers_to_single_work_item_task
 
 
 def extract_ids(data: dict | None, primary_key: str, fallback_key: str) -> set[str]:
@@ -655,6 +656,10 @@ def create_epic_activity(
     issue_activity.created_at = epic.created_at
     issue_activity.actor_id = epic.created_by_id
     issue_activity.save(update_fields=["created_at", "actor_id"])
+
+    issue_activity._skip_bulk_create = True
+    issue_activities.append(issue_activity)
+
     requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data.get("assignee_ids") is not None:
         track_assignees(
@@ -1061,6 +1066,10 @@ def update_milestone_issue_activity(
     if issue:
         issue.updated_at = timezone.now()
         issue.save(update_fields=["updated_at"])
+
+    old_milestone_title = old_milestone.title if old_milestone else ""
+    new_milestone_title = milestone.title if milestone else ""
+    comment = f"updated milestone from {old_milestone_title} to {new_milestone_title}"
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -1071,7 +1080,7 @@ def update_milestone_issue_activity(
             field="milestones",
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"updated milestone from {old_milestone.title if old_milestone else ''} to {milestone.title if milestone else ''}",
+            comment=comment,
             old_identifier=old_milestone.id if old_milestone else None,
             new_identifier=milestone.id if milestone else None,
             epoch=epoch,
@@ -1713,6 +1722,10 @@ def create_issue_activity(
     issue_activity.created_at = issue.created_at
     issue_activity.actor_id = issue.created_by_id
     issue_activity.save(update_fields=["created_at", "actor_id"])
+
+    issue_activity._skip_bulk_create = True
+    issue_activities.append(issue_activity)
+
     requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data.get("assignee_ids") is not None:
         track_assignees(
@@ -1725,6 +1738,10 @@ def create_issue_activity(
             issue_activities,
             epoch,
         )
+
+    add_project_subscribers_to_single_work_item_task.delay(
+        workspace_id=workspace_id, project_id=project_id, work_item_id=issue_id
+    )
 
 
 def create_customer_activity(
@@ -2022,7 +2039,22 @@ def issue_activity(
             )
 
         # Save all the values to database
-        issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
+        issue_activities_created = IssueActivity.objects.bulk_create(
+            [
+                issue_activity
+                for issue_activity in issue_activities
+                if not getattr(issue_activity, "_skip_bulk_create", False)
+            ]
+        )
+
+        issue_activities_created.extend(
+            [
+                issue_activity
+                for issue_activity in issue_activities
+                if getattr(issue_activity, "_skip_bulk_create", False)
+            ]
+        )
+
         # Post the updates to segway for integrations and webhooks
         if len(issue_activities_created):
             for activity in issue_activities_created:
@@ -2062,6 +2094,7 @@ def issue_activity(
             )
 
         return
+
     except Exception as e:
         log_exception(e)
         return

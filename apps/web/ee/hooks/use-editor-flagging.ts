@@ -24,7 +24,8 @@ import { store } from "@/lib/store-context";
 import { EPageStoreType, useFlag, usePageStore } from "@/plane-web/hooks/store";
 // hooks
 import { useFeatureFlags } from "../hooks/store/use-feature-flags";
-import { EWorkspaceFeatures } from "../types/workspace-feature";
+import { EWorkspaceFeatures } from "../../core/types/workspace-feature";
+import { useAiFlag } from "./store/use-ai-flag";
 
 /**
  * @description extensions disabled in various editors
@@ -40,7 +41,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const isEditorAIOpsEnabled =
     useFlag(workspaceSlug, "EDITOR_AI_OPS") &&
     store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
-  const isEditorAiBlocksEnabled = useFlag(workspaceSlug, "EDITOR_AI_BLOCKS");
+  const isEditorAiBlocksEnabled = useAiFlag(workspaceSlug, "AI_PAGES_BLOCKS");
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
   const { isNestedPagesEnabled, isCommentsEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
@@ -49,9 +50,12 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const isEditorMathematicsEnabled = useFlag(workspaceSlug, "EDITOR_MATHEMATICS");
   const isExternalEmbedEnabled = useFlag(workspaceSlug, "EDITOR_EXTERNAL_EMBEDS");
   const isEditorSelectionConversionEnabled = useFlag(workspaceSlug, "EDITOR_SELECTION_CONVERSION");
+  const isEditorMultiColumnEnabled = useFlag(workspaceSlug, "EDITOR_MULTI_COLUMN");
+
   // check integrations
   const integrations = getIntegrations(workspaceSlug);
   const hasDrawioIntegration = integrations.includes(E_INTEGRATION_KEYS.DRAWIO);
+  const hasMermaidIntegration = integrations.includes(E_INTEGRATION_KEYS.MERMAID);
 
   // disabled and flagged in the document editor
   const document = useMemo(
@@ -129,8 +133,19 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
     document.flagged.add("drawio");
   }
 
+  // check for mermaid integration
+  if (!hasMermaidIntegration) {
+    document.flagged.add("mermaid-diagrams");
+    richText.flagged.add("mermaid-diagrams");
+  }
+
   if (pageId && isEditorSelectionConversionEnabled) {
     document.disabled.delete("selection-conversion");
+  }
+  if (!isEditorMultiColumnEnabled) {
+    document.flagged.add("multi-column");
+    richText.flagged.add("multi-column");
+    liteText.flagged.add("multi-column");
   }
 
   return {

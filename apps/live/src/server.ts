@@ -67,8 +67,17 @@ export class Server {
   private setupMiddleware() {
     // Security middleware
     this.app.use(helmet());
-    // Middleware for response compression
-    this.app.use(compression({ level: env.COMPRESSION_LEVEL, threshold: env.COMPRESSION_THRESHOLD }));
+    // Middleware for response compression (skip SSE streams)
+    this.app.use(
+      compression({
+        level: env.COMPRESSION_LEVEL,
+        threshold: env.COMPRESSION_THRESHOLD,
+        filter: (req, res) => {
+          if (req.headers.accept === "text/event-stream") return false;
+          return compression.filter(req, res);
+        },
+      })
+    );
     // Logging middleware
     this.app.use(loggerMiddleware);
     // Body parsing middleware

@@ -6,6 +6,8 @@ export default defineConfig({
   dts: true,
   clean: true,
   sourcemap: true,
-  exports: true,
-  noExternal: [/^jira\.js/, /^bluebird$/],
+  exports: { legacy: true },
+  noExternal: [/^bluebird$/],
+  inlineOnly: false,
+  platform: "node",
 });

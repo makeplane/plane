@@ -17,7 +17,8 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
 import { setPromiseToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
+import { Loader } from "@plane/ui";
 import { resolveGeneralTheme } from "@plane/utils";
 // assets
 import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
@@ -94,12 +95,11 @@ const InstanceGithubAuthenticationPage = observer(function InstanceGithubAuthent
             />
           }
           config={
-            <ToggleSwitch
+            <Switch
               value={isGithubEnabled}
               onChange={() => {
                 updateConfig("IS_GITHUB_ENABLED", isGithubEnabled ? "0" : "1");
               }}
-              size="sm"
               disabled={isSubmitting || !formattedConfig}
             />
           }

@@ -57,6 +57,7 @@ export const DrawioIframe = forwardRef(function DrawioIframe(
     <iframe
       ref={iframeRef}
       src={src}
+      title="Drawio diagram editor"
       className={cn(
         "w-full h-full border-none rounded-xl transition-opacity duration-300",
         isVisible ? "opacity-100" : "opacity-0"

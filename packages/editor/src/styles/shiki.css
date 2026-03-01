@@ -1,0 +1,93 @@
+/**
+ * Shiki syntax highlighting styles for code blocks
+ * Supports light/dark dual themes via CSS variables
+ * 
+ * prosemirror-highlight outputs spans with --shiki-light and --shiki-dark
+ * CSS variables. We use these to switch colors based on theme.
+ */
+
+/* Base code block styles */
+.code-block pre {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.code-block pre code {
+  display: block;
+  min-width: 100%;
+  width: max-content;
+}
+
+/* 
+ * Shiki dual-theme support
+ * Target all spans inside code blocks that have shiki CSS variables
+ */
+
+/* Light mode (default) */
+html:not([data-theme*="dark"]) .code-block pre code span[style*="--shiki"],
+html[data-theme="light"] .code-block pre code span[style*="--shiki"],
+:root:not([data-theme*="dark"]) .code-block pre code span[style*="--shiki"] {
+  color: var(--shiki-light) !important;
+  font-style: var(--shiki-light-font-style) !important;
+  font-weight: var(--shiki-light-font-weight) !important;
+  text-decoration: var(--shiki-light-text-decoration) !important;
+}
+
+/* Dark mode */
+html[data-theme*="dark"] .code-block pre code span[style*="--shiki"],
+[data-theme*="dark"] .code-block pre code span[style*="--shiki"] {
+  color: var(--shiki-dark) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+/* Media query fallback for system preference */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .code-block pre code span[style*="--shiki"] {
+    color: var(--shiki-dark) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+}
+
+/* Pre background is controlled by Tailwind classes in code-block-node-view.tsx */
+
+/* Code block container styles */
+.code-block {
+  position: relative;
+}
+
+/* Hide the default code element styling from TipTap */
+.code-block pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Ensure proper whitespace handling */
+.code-block pre code {
+  white-space: pre;
+  word-wrap: normal;
+  overflow-wrap: normal;
+}
+
+/* Selection styling within code blocks */
+.code-block pre code::selection,
+.code-block pre code *::selection {
+  background-color: color-mix(in srgb, var(--bg-accent-primary) 50%, transparent);
+}
+
+/* Caret visibility in code blocks */
+.code-block pre code {
+  caret-color: var(--text-color-primary);
+}
+
+/* Ensure caret is visible with explicit styling */
+.code-block pre {
+  caret-color: var(--text-color-primary);
+}

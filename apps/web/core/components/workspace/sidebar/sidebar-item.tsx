@@ -27,7 +27,8 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // plane web imports
-import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
+import { getSidebarNavigationItemIcon } from "@/components/workspace/sidebar/helper";
+import { isSidebarFeatureEnabled } from "@/helpers/sidebar";
 
 type Props = {
   item: IWorkspaceSidebarNavigationItem;
@@ -35,11 +36,7 @@ type Props = {
   additionalStaticItems?: string[];
 };
 
-export const SidebarItemBase = observer(function SidebarItemBase({
-  item,
-  additionalRender,
-  additionalStaticItems,
-}: Props) {
+export const SidebarItem = observer(function SidebarItem({ item, additionalRender, additionalStaticItems }: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
@@ -74,6 +71,7 @@ export const SidebarItemBase = observer(function SidebarItemBase({
     item.key === "your_work" && data?.id ? joinUrlPath(slug, item.href, data?.id) : joinUrlPath(slug, item.href);
   const icon = getSidebarNavigationItemIcon(item.key);
 
+  if (!isSidebarFeatureEnabled(item.key, slug)) return null;
   return (
     <Link href={itemHref} onClick={handleLinkClick}>
       <SidebarNavItem isActive={item.highlight(pathname, itemHref)}>

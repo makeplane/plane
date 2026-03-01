@@ -15,36 +15,51 @@ import { observer } from "mobx-react";
 // utils
 import { cn } from "@plane/utils";
 // store
-import { useMembers } from "@/hooks/store/use-members";
+import { useMentions } from "@/hooks/store";
 
 type Props = {
   id: string;
   currentUserId: string;
 };
 
-export const EditorUserMention = observer(function EditorUserMention(props: Props) {
+export const EditorUserMention: React.FC<Props> = observer((props) => {
   const { id, currentUserId } = props;
-
   // store
-  const { getMemberById, isMembersFetched } = useMembers();
+  const { getMemberById, getIsMembersFetched } = useMentions();
   // derived values
   const userDetails = getMemberById(id);
+  const isMembersFetched = getIsMembersFetched();
 
-  if (!isMembersFetched) return null;
+  // Show loading state only if we don't have userDetails and haven't fetched yet
+  if (!userDetails && !isMembersFetched) return null;
 
   if (!userDetails) {
     return (
-      <div className="not-prose inline px-1 py-0.5 rounded-sm bg-layer-1 text-tertiary no-underline">
+      <div className="not-prose inline px-1 py-0.5 rounded bg-custom-background-80 text-custom-text-300 no-underline">
         @deactivated user
       </div>
     );
   }
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
-      className={cn("not-prose inline px-1 py-0.5 rounded-sm bg-accent-primary/20 text-accent-primary no-underline", {
-        "bg-yellow-500/20 text-yellow-500": id === currentUserId,
-      })}
+      className={cn(
+        "not-prose inline px-1 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 no-underline",
+        {
+          "bg-yellow-500/20 text-yellow-500": id === currentUserId,
+        }
+      )}
+      onTouchStart={(e) => {
+        e.nativeEvent.stopImmediatePropagation();
+        e.stopPropagation();
+        e.preventDefault();
+      }}
+      onMouseDown={(e) => {
+        e.nativeEvent.stopImmediatePropagation();
+        e.stopPropagation();
+        e.preventDefault();
+      }}
     >
       @{userDetails?.displayName}
     </div>

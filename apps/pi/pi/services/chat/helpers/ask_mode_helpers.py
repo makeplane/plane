@@ -542,6 +542,7 @@ def log_ask_mode_request_details(data: Any, context: Dict[str, Any]) -> None:
     log.info(f"ChatID: {chat_id} - Workspace in context: {context.get("workspace_in_context", data.workspace_in_context)}")
     log.info(f"ChatID: {chat_id} - Workspace slug: {context.get("workspace_slug", data.workspace_slug)}")
     log.info(f"ChatID: {chat_id} - Workspace ID: {context.get("workspace_id", str(data.workspace_id) if data.workspace_id else None)}")
+    log.info(f"ChatID: {chat_id} - Web search enabled: {context.get("websearch_enabled", getattr(data, "is_websearch_enabled", False))}")
     log.info(f"ChatID: {chat_id} - Is New Chat: {data.is_new}")
     log.info(f"ChatID: {chat_id} - Source: {data.source}")
     log.info(f"ChatID: {chat_id} - Is Project Chat: {data.is_project_chat}")
@@ -557,6 +558,7 @@ async def construct_enhanced_prompt_and_context(
     user_id: str | None,
     user_meta: dict | None,
     workspace_in_context: bool = True,
+    web_search_context: str | None = None,
 ) -> Tuple[str, str]:
     """
     Build enhanced custom prompt and context block for LLM orchestration.
@@ -578,6 +580,12 @@ async def construct_enhanced_prompt_and_context(
             address_user_by_name = False
     except Exception:
         pass
+
+    if web_search_context and isinstance(web_search_context, str) and web_search_context.strip():
+        custom_prompt += f"\n\n**WEB SEARCH RESULTS (EXTERNAL SOURCES):**\n{web_search_context}\n"
+        custom_prompt += """
+**CITATION INSTRUCTIONS:** Embed clickable source links inline: fact [[Source Title](URL)]. No separate Sources section.
+"""
 
     # Provide PROJECT/USER/TIME context to the tool planner
     context_block = ""
@@ -694,6 +702,7 @@ async def create_fast_path_stream(
     enhanced_query_for_processing: str,
     enhanced_conversation_history: str | None,
     reasoning_container: Dict[str, str] | None = None,
+    web_search_context: str | None = None,
 ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """
     Create a fast-path stream for queries without workspace context.
@@ -743,11 +752,27 @@ async def create_fast_path_stream(
     context_block = "\n".join(context_parts) if context_parts else ""
 
     # Build system prompt
+    web_search_block = ""
+    citation_instructions = ""
+    if web_search_context and isinstance(web_search_context, str) and web_search_context.strip():
+        web_search_block = f"\n\n**WEB SEARCH RESULTS (EXTERNAL SOURCES):**\n{web_search_context}"
+        citation_instructions = """
+
+**CITATION INSTRUCTIONS (IMPORTANT):**
+When using information from the web search results above, embed clickable source links directly in your answer:
+- Format: fact or claim [[Source Title](URL)]
+- Example: "Plane has 44K stars [[GitHub](https://github.com/makeplane)]"
+- Use short, descriptive titles for links (e.g., "GitHub", "Official Blog", "Reuters")
+- Only cite sources you actually used
+- Do NOT include a separate Sources section at the end - all citations should be inline"""
+
     system_prompt = f"""You are Plane AI, an AI assistant for Plane - a work management platform.
 
 **Current Mode:** No workspace context available.
 
 {context_block}
+{web_search_block}
+{citation_instructions}
 
 **Your role:**
 - Answer general knowledge questions not related to Plane

@@ -26,3 +26,4 @@ from .project import (
 )
 from .base import allow_permission, ROLE
 from .page import ProjectPagePermission
+from .teamspace import check_teamspace_membership

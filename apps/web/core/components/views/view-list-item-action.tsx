@@ -30,7 +30,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { PublishViewModal } from "@/plane-web/components/views/publish";
+import { PublishViewModal } from "@/components/views/publish";
 // local imports
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 import { DeleteProjectViewModal } from "./delete-view-modal";

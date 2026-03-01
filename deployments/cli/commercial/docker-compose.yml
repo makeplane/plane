@@ -40,8 +40,9 @@ x-pg-env: &pg-env
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-plane}
   POSTGRES_DB: ${POSTGRES_DB:-plane}
   PGDATA: ${PGDATA:-/var/lib/postgresql/data}
+  PLANE_PI_DATABASE_URL: ${PLANE_PI_DATABASE_URL:-postgresql://plane:plane@plane-db/plane_pi}
   DATABASE_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
-  DB_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
+  FOLLOWER_POSTGRES_URI: ${FOLLOWER_POSTGRES_URI:-postgresql://plane:plane@plane-db/plane}
 
 x-rabbitmq-env: &rabbitmq-env
   RABBITMQ_HOST: ${RABBITMQ_HOST:-plane-mq}
@@ -64,13 +65,14 @@ x-docstore-env: &docstore-env
   MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-secret-key}
   BUCKET_NAME: ${BUCKET_NAME:-uploads}
 
-  AWS_REGION: ${AWS_REGION}
+  AWS_REGION: ${AWS_REGION:-us-east-1}
   AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-access-key}
   AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-secret-key}
   AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
   AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
 
 x-silo-env: &silo-env
+  IS_SELF_MANAGED: ${IS_SELF_MANAGED:-1}
   PORT: 3000
   # Silo App Envs
   BATCH_SIZE: ${BATCH_SIZE:-60}
@@ -111,14 +113,18 @@ x-opensearch-env: &opensearch-env
   OPENSEARCH_USERNAME: ${OPENSEARCH_USERNAME}
   OPENSEARCH_PASSWORD: ${OPENSEARCH_PASSWORD}
   OPENSEARCH_INDEX_PREFIX: ${OPENSEARCH_INDEX_PREFIX}
+  OPENSEARCH_ML_MODEL_ID: ${EMBEDDING_MODEL_ID:-}
 
 x-app-env: &app-env
+  IS_SELF_MANAGED: ${IS_SELF_MANAGED:-1}
   WEB_URL: ${WEB_URL:-http://localhost}
   DEBUG: ${DEBUG:-0}
   CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
   API_BASE_URL: ${API_BASE_URL:-http://api:8000}
   LIVE_BASE_URL: ${LIVE_BASE_URL:-http://live:3000}
   LIVE_BASE_PATH: ${LIVE_BASE_PATH:-/live}
+  PI_BASE_URL: ${WEB_URL:-http://localhost}/pi
+  PI_BASE_PATH: ${PI_BASE_PATH:-/pi}
   # Gunicorn Workers
   GUNICORN_WORKERS: ${GUNICORN_WORKERS:-2}
   # Application secret
@@ -136,6 +142,8 @@ x-app-env: &app-env
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
   # Live Server Secret Key
   LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-htbqvBJAgpm9bzvf3r4urJer0ENReatceh}
+  #Pi Internal Secret
+  PI_INTERNAL_SECRET: ${PI_INTERNAL_SECRET:-tyfvfqvBJAgpm9bzvf3r4urJer0Ehfdubk}
   # Intake Email Domain
   INTAKE_EMAIL_DOMAIN: ${INTAKE_EMAIL_DOMAIN:-example.com}
 
@@ -163,7 +171,43 @@ x-automation-consumer-env: &automation-consumer-env
   AUTOMATION_EVENT_STREAM_QUEUE_NAME: ${AUTOMATION_EVENT_STREAM_QUEUE_NAME:-plane.event_stream.automations}
   AUTOMATION_EVENT_STREAM_PREFETCH: ${AUTOMATION_EVENT_STREAM_PREFETCH:-10}
   AUTOMATION_EXCHANGE_NAME: ${AUTOMATION_EXCHANGE_NAME:-plane.event_stream}
-  AUTOMATION_EVENT_TYPES: ${AUTOMATION_EVENT_TYPES:-issue.}
+
+x-pi-env: &pi-env
+  # PI-only (rest from *app-env, *pg-env, *rabbitmq-env, *docstore-env, *opensearch-env)
+  FASTAPI_APP_HOST: ${FASTAPI_APP_HOST:-0.0.0.0}
+  FASTAPI_APP_WORKERS: ${FASTAPI_APP_WORKERS:-1}
+  PLANE_FRONTEND_URL: ${WEB_URL:-http://localhost}
+  PLANE_API_HOST: ${PLANE_API_HOST:-${WEB_URL:-http://localhost}}
+  PI_INTERNAL_SECRET: ${PI_INTERNAL_SECRET:-tyfvfqvBJAgpm9bzvf3r4urJer0Ehfdubk}
+  PI_BASE_PATH: ${PI_BASE_PATH:-/pi}
+
+  PLANE_OAUTH_REDIRECT_URI: ${WEB_URL:-http://localhost}/pi/api/v1/oauth/callback/
+  PLANE_OAUTH_STATE_EXPIRY_SECONDS: ${PLANE_OAUTH_STATE_EXPIRY_SECONDS:-82800}
+  OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+  CLAUDE_BASE_URL: ${CLAUDE_BASE_URL:-}
+  COHERE_BASE_URL: ${COHERE_BASE_URL:-}
+  GROQ_BASE_URL: ${GROQ_BASE_URL:-}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  CLAUDE_API_KEY: ${CLAUDE_API_KEY:-}
+  GROQ_API_KEY: ${GROQ_API_KEY:-}
+  COHERE_API_KEY: ${COHERE_API_KEY:-}
+  CUSTOM_LLM_ENABLED: ${CUSTOM_LLM_ENABLED:-false}
+  CUSTOM_LLM_MODEL_KEY: ${CUSTOM_LLM_MODEL_KEY:-gpt-oss-120b}
+  CUSTOM_LLM_BASE_URL: ${CUSTOM_LLM_BASE_URL:-}
+  CUSTOM_LLM_API_KEY: ${CUSTOM_LLM_API_KEY:-}
+  CUSTOM_LLM_NAME: ${CUSTOM_LLM_NAME:-GPT-OSS-120B}
+  CUSTOM_LLM_DESCRIPTION: ${CUSTOM_LLM_DESCRIPTION:-A self-hosted OpenAI-compatible model}
+  CUSTOM_LLM_MAX_TOKENS: ${CUSTOM_LLM_MAX_TOKENS:-128000}
+  EMBEDDING_MODEL: ${EMBEDDING_MODEL:-}
+  BR_AWS_ACCESS_KEY_ID: ${BR_AWS_ACCESS_KEY_ID:-}
+  BR_AWS_SECRET_ACCESS_KEY: ${BR_AWS_SECRET_ACCESS_KEY:-}
+  BR_AWS_SESSION_TOKEN: ${BR_AWS_SESSION_TOKEN:-}
+  CELERY_VECTOR_SYNC_ENABLED: ${CELERY_VECTOR_SYNC_ENABLED:-0}
+  CELERY_VECTOR_SYNC_INTERVAL: ${CELERY_VECTOR_SYNC_INTERVAL:-3}
+  CELERY_WORKSPACE_PLAN_SYNC_ENABLED: ${CELERY_WORKSPACE_PLAN_SYNC_ENABLED:-0}
+  CELERY_WORKSPACE_PLAN_SYNC_INTERVAL: ${CELERY_WORKSPACE_PLAN_SYNC_INTERVAL:-86400}
+  CELERY_DOCS_SYNC_ENABLED: ${CELERY_DOCS_SYNC_ENABLED:-0}
+  CELERY_DOCS_SYNC_INTERVAL: ${CELERY_DOCS_SYNC_INTERVAL:-86400}
 
 services:
   admin:
@@ -283,6 +327,25 @@ services:
     volumes:
       - ${INSTALL_DIR:-./plane}/data/db:/var/lib/postgresql/data
 
+  pi-db-init:
+    image: postgres:15.7-alpine
+    restart: "no"
+    environment:
+      <<: [*pg-env]
+    command: >
+      /bin/sh -c '
+      echo "Waiting for plane-db to be ready...";
+      until pg_isready -h plane-db -U ${POSTGRES_USER}; do sleep 2; done;
+      export PGPASSWORD=${POSTGRES_PASSWORD};
+      psql -h plane-db -U ${POSTGRES_USER} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'plane_pi'" | grep -q 1 || psql -h plane-db -U ${POSTGRES_USER} -d postgres -c "CREATE DATABASE plane_pi";
+      echo "Database plane_pi is ready";
+      exit 0;
+      '
+    deploy:
+      replicas: ${PI_MIGRATOR_REPLICAS:-0}
+    depends_on:
+      - plane-db
+
   plane-redis:
     image: valkey/valkey:7.2.11-alpine
     environment:
@@ -324,7 +387,7 @@ services:
   silo:
     image: artifacts.plane.so/makeplane/silo-commercial:${APP_RELEASE_VERSION}
     environment:
-      <<: [*silo-env, *pg-env, *rabbitmq-env, *redis-env]
+      <<: [*silo-env, *pg-env, *rabbitmq-env, *redis-env, *docstore-env]
     restart: unless-stopped
     deploy:
       replicas: ${SILO_REPLICAS:-1}
@@ -346,13 +409,14 @@ services:
       start_period: 30s
     restart: unless-stopped
     deploy:
-      replicas: ${EMAIL_REPLICAS:-1}
+      replicas: ${EMAIL_REPLICAS:-0}
 
   automation-consumer:
     image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION}
     command: ./bin/docker-entrypoint-automation-consumer.sh
     environment:
-      <<: [*automation-consumer-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env]
+      <<:
+        [*automation-consumer-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env]
     restart: unless-stopped
     deploy:
       replicas: ${AUTOMATION_CONSUMER_REPLICAS:-1}
@@ -368,6 +432,55 @@ services:
     restart: unless-stopped
     deploy:
       replicas: ${OUTBOX_POLLER_REPLICAS:-1}
+    depends_on:
+      - plane-db
+      - plane-mq
+
+  pi-api:
+    image: artifacts.plane.so/makeplane/plane-pi-commercial:${APP_RELEASE_VERSION}
+    environment:
+      <<: [*plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env, *pi-env]
+    restart: unless-stopped
+    deploy:
+      replicas: ${PI_API_REPLICAS:-0}
+    depends_on:
+      - plane-db
+      - plane-mq
+      - monitor
+
+  pi-beat:
+    image: artifacts.plane.so/makeplane/plane-pi-commercial:${APP_RELEASE_VERSION}
+    command: ./bin/entrypoint-celery-beat.sh
+    environment:
+      <<: [*plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env, *pi-env]
+    restart: unless-stopped
+    deploy:
+      replicas: ${PI_BEAT_REPLICAS:-0}
+    depends_on:
+      - plane-db
+      - plane-mq
+      - pi-api
+
+  pi-worker:
+    image: artifacts.plane.so/makeplane/plane-pi-commercial:${APP_RELEASE_VERSION}
+    command: ./bin/entrypoint-celery-worker.sh
+    environment:  
+      <<: [*plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env, *pi-env]
+    restart: unless-stopped
+    deploy:
+      replicas: ${PI_WORKER_REPLICAS:-0}
+    depends_on:
+      - plane-db
+      - plane-mq
+
+  pi-migrator:
+    image: artifacts.plane.so/makeplane/plane-pi-commercial:${APP_RELEASE_VERSION}
+    command: ./bin/entrypoint-migrator.sh
+    environment:
+      <<: [*plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env, *pi-env]
+    restart: "no"
+    deploy:
+      replicas: ${PI_MIGRATOR_REPLICAS:-0}
     depends_on:
       - plane-db
       - plane-mq
@@ -408,4 +521,3 @@ services:
       - space
       - admin
       - live
-      - email

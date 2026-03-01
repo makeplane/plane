@@ -42,12 +42,15 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
-
 from plane.utils.order_queryset import order_issue_queryset
 from plane.db.models import IssueRelation
+from plane.utils.filters import IssueFilterSet
+from plane.utils.filters import ComplexFilterBackend
 
 
 class InitiativeEpicViewSet(BaseViewSet):
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
     serializer_class = InitiativeEpicSerializer
     model = InitiativeEpic
 
@@ -215,6 +218,8 @@ class InitiativeEpicViewSet(BaseViewSet):
             )
             .accessible_to(request.user.id, slug)
         )
+
+        epics = self.filter_queryset(epics)
 
         epics = epics.values(
             "id",

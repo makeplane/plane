@@ -42,13 +42,15 @@ const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
  */
 export const applyUpdates = (document: Uint8Array, updates?: Uint8Array): Uint8Array => {
   const yDoc = new Y.Doc();
-  Y.applyUpdate(yDoc, document);
-  if (updates) {
-    Y.applyUpdate(yDoc, updates);
+  try {
+    Y.applyUpdate(yDoc, document);
+    if (updates) {
+      Y.applyUpdate(yDoc, updates);
+    }
+    return Y.encodeStateAsUpdate(yDoc);
+  } finally {
+    yDoc.destroy();
   }
-
-  const encodedDoc = Y.encodeStateAsUpdate(yDoc);
-  return encodedDoc;
 };
 
 /**
@@ -228,7 +230,7 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
     const { contentBinaryEncoded, contentHTML, contentJSON } =
       getAllDocumentFormatsFromRichTextEditorBinaryData(contentBinary);
     allFormats = {
-      description: contentJSON,
+      description_json: contentJSON,
       description_html: contentHTML,
       description_binary: contentBinaryEncoded,
     };
@@ -241,7 +243,7 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
       false
     );
     allFormats = {
-      description: contentJSON,
+      description_json: contentJSON,
       description_html: contentHTML,
       description_binary: contentBinaryEncoded,
     };

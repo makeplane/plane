@@ -9,13 +9,25 @@ on:
       - "opened"
       - "synchronize"
       - "ready_for_review"
-      - "review_requested"
       - "reopened"
+    paths-ignore:
+      - ".github/**"
+      - "**/*.md"
+      - "docs/**"
+      - ".gitignore"
+      - ".editorconfig"
+      - "LICENSE"
+      - "**/Dockerfile*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   license-check:
     name: Licence Check
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6

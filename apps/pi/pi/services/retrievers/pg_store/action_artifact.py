@@ -711,3 +711,44 @@ async def get_latest_artifact_data_for_display(db: AsyncSession, artifact) -> tu
         log.error(f"Error getting latest artifact data for {artifact.id}: {e}")
         # Fallback to original artifact data
         return artifact.data, False, artifact.is_executed, artifact.success
+
+
+async def batch_get_latest_artifact_versions(db: AsyncSession, artifact_ids: List[UUID4]) -> Dict[UUID4, ActionArtifactVersion]:
+    """
+    Batch fetch the latest executed versions for multiple artifacts.
+
+    Args:
+        db: Database session
+        artifact_ids: List of artifact IDs to fetch versions for
+
+    Returns:
+        Dictionary mapping artifact_id to latest executed version (if exists)
+    """
+    try:
+        if not artifact_ids:
+            return {}
+
+        # Fetch all executed versions for the artifacts
+        stmt = (
+            select(ActionArtifactVersion)
+            .where(ActionArtifactVersion.artifact_id.in_(artifact_ids))  # type: ignore[arg-type,union-attr,attr-defined]
+            .where(ActionArtifactVersion.is_executed)  # type: ignore[arg-type]
+            .where(ActionArtifactVersion.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+            .order_by(ActionArtifactVersion.artifact_id, desc(ActionArtifactVersion.version_number))  # type: ignore[arg-type]
+        )
+
+        result = await db.execute(stmt)
+        all_versions = result.scalars().all()
+
+        # Group by artifact_id and take the first (highest version_number due to ordering)
+        version_map: Dict[UUID4, ActionArtifactVersion] = {}
+        for version in all_versions:
+            if version.artifact_id not in version_map:
+                version_map[version.artifact_id] = version
+
+        log.debug(f"Batch loaded {len(version_map)} latest executed versions for {len(artifact_ids)} artifacts")
+        return version_map
+
+    except Exception as e:
+        log.error(f"Error batch loading latest artifact versions: {e}")
+        return {}

@@ -16,7 +16,7 @@ import { Controller } from "react-hook-form";
 // constants
 import type { IWebhook } from "@plane/types";
 // ui
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 
 interface IWebHookToggle {
   control: Control<IWebhook, any>;
@@ -30,12 +30,11 @@ export function WebhookToggle({ control }: IWebHookToggle) {
         control={control}
         name="is_active"
         render={({ field: { onChange, value } }) => (
-          <ToggleSwitch
+          <Switch
             value={value}
             onChange={(val: boolean) => {
               onChange(val);
             }}
-            size="sm"
           />
         )}
       />

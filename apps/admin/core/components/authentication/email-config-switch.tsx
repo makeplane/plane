@@ -11,11 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 // hooks
 import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 import { useInstance } from "@/hooks/store";
 // ui
 // types
@@ -33,13 +32,12 @@ export const EmailCodesConfiguration = observer(function EmailCodesConfiguration
   const enableMagicLogin = formattedConfig?.ENABLE_MAGIC_LINK_LOGIN ?? "";
 
   return (
-    <ToggleSwitch
+    <Switch
       value={Boolean(parseInt(enableMagicLogin))}
       onChange={() => {
         const newEnableMagicLogin = Boolean(parseInt(enableMagicLogin)) === true ? "0" : "1";
         updateConfig("ENABLE_MAGIC_LINK_LOGIN", newEnableMagicLogin);
       }}
-      size="sm"
       disabled={disabled}
     />
   );

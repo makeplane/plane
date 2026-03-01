@@ -18,7 +18,7 @@ import type { ISearchIssueResponse } from "@plane/types";
 import { Checkbox } from "@plane/ui";
 // hooks
 // plane web hooks
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 
 interface Props {
   issue: ISearchIssueResponse;

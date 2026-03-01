@@ -1,0 +1,358 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:v="urn:schemas-microsoft-com:vml"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Updates on Intake</title>
+    <style type="text/css" emogrify="no">
+      html {
+        font-family: system-ui;
+      }
+
+      p,
+      h1,
+      h2,
+      h3,
+      h4,
+      ol,
+      ul {
+        margin: 0;
+      }
+
+      h-full {
+        height: 100%;
+      }
+
+      a:hover {
+        color: #3358d4 !important;
+      }
+    </style>
+    <style>
+      *[class="gmail-fix"] {
+        display: none !important;
+      }
+    </style>
+    <style type="text/css" emogrify="no">
+      @media (max-width: 600px) {
+        .gmx-killpill {
+          content: " \03D1";
+        }
+      }
+    </style>
+  </head>
+
+  <body bgcolor="#ffffff" text="#3b3f44" link="#006399" yahoo="fix" style="background-color: #f7f9ff; margin: 20px">
+    <div style="width: 600px; table-layout: fixed; height: 100%; margin-left: auto; margin-right: auto; padding: 20px">
+      <!-- Body -->
+      <div style="color: #1f2d5c; padding: 30px; border-radius: 8px; background-color: #ffffff; max-width: 100%">
+        <div>
+          <table style="width: 600px" cellspacing="0">
+            <tr>
+              <td>
+                <div style="margin-bottom: 40px">
+                  <img src="https://media.docs.plane.so/logo/new-logo-white.png" width="150" border="0" />
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div>
+          <table style="width: 100%">
+            <tr>
+              <td>
+                <p style="font-size: 1rem; color: #1f2d5c; font-weight: 500">
+                  {{ issue.issue_identifier }}: {{issue.name}}
+                </p>
+              </td>
+            </tr>
+          </table>
+          <hr style="background-color: #f0f0f3; height: 1px; border: 0; margin-top: 15px; margin-bottom: 15px" />
+          {% if actors_involved == 1 %}
+          <p style="font-size: 1rem; color: #1f2d5c; line-height: 28px">{{ summary }}</p>
+          {% else %}
+          <p style="font-size: 1rem; color: #1f2d5c; line-height: 28px">
+            <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
+              {% if data|length > 0 %} {{ data.0.actor_detail.first_name }} {{ data.0.actor_detail.last_name }} {%else%} {{ comments.0.actor_detail.first_name }} {{ comments.0.actor_detail.last_name }} {% endif %}
+            </span>
+            and others have updated this work item.
+          </p>
+          {% endif %} {% for update in data %} {% if update.changes.name %}
+          <p style="font-size: 1rem; line-height: 28px; color: #1f2d5c">
+            The intake title has been updated to {{issue.name}}
+          </p>
+          {% endif %} {% endfor %}
+
+          <!-- Outer update Box start -->
+          {% if data and data.0.changes.intake.new_value.0|lower == 'accepted' %}
+          <div style="background-color: #fafafa; border-radius: 8px; padding: 24px; margin-top: 15px; max-width: 100%">
+            <!-- Block Heading -->
+            <p style="font-size: 1rem; font-weight: 600; color: #111827; margin-bottom: 20px">Updates</p>
+
+            {% for update in data %} {% if update.changes.intake %}
+
+            <div style="background-color: #e7f7ed; border-radius: 12px; margin-bottom: 16px">
+              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%">
+                <tr>
+                  <td style="padding: 8px 16px">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="vertical-align: middle">
+                          <span
+                            style="
+                              font-size: 0.5rem;
+                              background-color: #25743b;
+                              border-radius: 50%;
+                              color: #ffffff;
+                              width: 16px;
+                              height: 16px;
+                              display: inline-block;
+                              text-align: center;
+                              line-height: 16px;
+                            "
+                            >✓</span
+                          >
+                        </td>
+                        <td style="vertical-align: middle; padding-left: 6px">
+                          <span style="font-size: 0.85rem; font-weight: 400; color: #25743b; margin: 0"
+                            >{{ update.changes.intake.new_value.0 }}</span
+                          >
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              <table
+                width="100%"
+                cellpadding="0"
+                cellspacing="0"
+                style="background: #ffffff; border: 1px solid rgba(0, 0, 0, 0.04); border-radius: 10px"
+              >
+                <tr>
+                  <td style="padding: 20px">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="font-size: 13px; color: #6b7280; font-family: monospace; padding-bottom: 4px">
+                          {{ issue.issue_identifier }}
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td
+                    style="
+                      font-size: 18px;
+                      color: #111827;
+                      line-height: 1.4;
+                      padding-bottom: 4px;
+                      padding: 20px 20px 10px 20px;
+                    "
+                  >
+                    {{ issue.name }}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="font-size: 13px; color: #6b7280; padding: 0 20px 20px 20px">
+                    {{ update.changes.intake.new_value.0 }} on {{ update.activity_time }}
+                  </td>
+                </tr>
+              </table>
+            </div>
+            {% else %}
+            <div
+              style="
+                background-color: #ffffff;
+                max-width: 100%;
+                padding: 20px;
+                border-radius: 10px;
+                border: 1px solid #ededed;
+                margin-bottom: 16px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+              "
+            >
+              <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 4px; font-family: monospace">
+                {{ issue.issue_identifier }}
+              </p>
+              <p style="font-size: 1.1rem; font-weight: 600; color: #111827; margin-bottom: 12px; line-height: 1.4">
+                {{ issue.name }}
+              </p>
+              <p style="font-size: 0.85rem; color: #6b7280">{{ update.activity_time }}</p>
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+          {% endif %}
+          <!-- Outer update Box end -->
+          {% if comments.0 %}
+          <!-- Comments outer update Box -->
+          <div
+            style="
+              max-width: 100%;
+              background-color: #f7f9ff;
+              border-radius: 8px;
+              border-style: solid;
+              border-width: 1px;
+              border-color: #c1d0ff;
+              padding: 20px;
+              margin-top: 15px;
+            "
+          >
+            <!-- Block Heading -->
+            <p style="font-size: 0.8rem; font-weight: 600; color: #121a26; padding-bottom: 20px">Comments</p>
+            <!-- Comments -->
+            {% for comment in comments %}
+            <table cellspacing="0">
+              <tr style="border-radius: 8px">
+                <td valign="top">
+                  {% if comment.actor_detail.avatar_url %}
+                  <img src="{{ comment.actor_detail.avatar_url }}" width="25" height="25" border="0" /> {% else %}
+                  <table cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td
+                        style="
+                          width: 25px;
+                          height: 25px;
+                          background-color: #4f3422;
+                          border-radius: 50%;
+                          text-align: center;
+                        "
+                      >
+                        <span
+                          style="
+                            color: white;
+                            font-weight: 500;
+                            font-size: 13px;
+                            line-height: 25px;
+                            display: inline-block;
+                          "
+                        >
+                          {{ comment.actor_detail.first_name.0 }}
+                        </span>
+                      </td>
+                    </tr>
+                  </table>
+                  {% endif %}
+                </td>
+                <td style="padding-bottom: 15px">
+                  <table>
+                    <tr>
+                      <td>
+                        <p style="font-weight: 500; font-size: 0.8rem; color: #1c2024; margin-left: 8px">
+                          {{ comment.actor_detail.first_name }} {{ comment.actor_detail.last_name }}
+                        </p>
+                      </td>
+                    </tr>
+                    {% for actor_comment in comment.actor_comments.new_value %}
+                    <tr>
+                      <td>
+                        <div
+                          style="
+                            padding: 6px 10px;
+                            margin-left: 10px;
+                            background-color: white;
+                            font-size: 0.8rem;
+                            color: #525252;
+                            margin-top: 5px;
+                            border-radius: 4px;
+                            overflow-x: scroll;
+                            max-width: 430px;
+                          "
+                        >
+                          <p>{{ actor_comment|safe }}</p>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                </td>
+              </tr>
+            </table>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <a href="{{ issue_url }}" style="text-decoration: none">
+          <div
+            style="
+              max-width: min-content;
+              white-space: nowrap;
+              background-color: #005c8f;
+              padding: 10px 15px;
+              border: 1px solid #005c8f;
+              border-radius: 4px;
+              margin-top: 15px;
+              cursor: pointer;
+              font-size: 0.8rem;
+              color: white;
+            "
+          >
+            View work item
+          </div>
+        </a>
+        <div style="background-color: #f8fafc; padding: 20px; margin-top: 30px; border-radius: 0 0 8px 8px">
+          <p style="font-size: 0.85rem; color: #4b5563; line-height: 1.6; margin: 0; margin-bottom: 30px">
+            This email was sent to
+            <a href="mailto:{{receiver.email}}" style="color: #005c8f; font-weight: 500; text-decoration: none"
+              >{{ receiver.email }}</a
+            >. If you'd rather not receive this kind of email, you can
+            <a href="{{ issue_url }}" style="color: #005c8f; text-decoration: none">unsubscribe to the issue</a> or
+            <a href="{{ user_preference }}" style="color: #005c8f; text-decoration: none"
+              >manage your email preferences</a
+            >.
+          </p>
+          <table style="width: 100%; border-collapse: collapse">
+            <tr>
+              <td align="right">
+                <a
+                  href="https://twitter.com/planepowers"
+                  target="_blank"
+                  style="margin-left: 12px; text-decoration: none"
+                >
+                  <img
+                    src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/twitter_32px.png"
+                    width="24"
+                    height="24"
+                    border="0"
+                    style="display: inline-block; vertical-align: middle; filter: grayscale(100%); opacity: 0.5"
+                  />
+                </a>
+                <a
+                  href="https://facebook.com/planepowers"
+                  target="_blank"
+                  style="margin-left: 12px; text-decoration: none"
+                >
+                  <img
+                    src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/facebook_32px.png"
+                    width="24"
+                    height="24"
+                    border="0"
+                    style="display: inline-block; vertical-align: middle; filter: grayscale(100%); opacity: 0.5"
+                  />
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/planepowers/"
+                  target="_blank"
+                  style="margin-left: 12px; text-decoration: none"
+                >
+                  <img
+                    src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/linkedin_32px.png"
+                    width="24"
+                    height="24"
+                    border="0"
+                    style="display: inline-block; vertical-align: middle; filter: grayscale(100%); opacity: 0.5"
+                  />
+                </a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

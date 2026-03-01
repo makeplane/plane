@@ -11,13 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Loader } from "@plane/ui";
+// hooks
+import { useActiveCycleDetails } from "@/components/cycles/active-cycles/v1/use-active-cycle-details";
 // local imports
-import useCyclesDetails from "../active-cycle/use-cycles-details";
-import { CycleAnalyticsProgress } from "./issue-progress";
+import { CycleAnalyticsProgress } from "./progress/root";
 import { CycleSidebarDetails } from "./sidebar-details";
 import { CycleSidebarHeader } from "./sidebar-header";
 
@@ -33,7 +33,7 @@ export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: 
   const { handleClose, isArchived, projectId, workspaceSlug, cycleId } = props;
 
   // store hooks
-  const { cycle: cycleDetails } = useCyclesDetails({
+  const { cycle: cycleDetails } = useActiveCycleDetails({
     workspaceSlug,
     projectId,
     cycleId,
@@ -66,8 +66,7 @@ export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: 
         />
         <CycleSidebarDetails projectId={projectId} cycleDetails={cycleDetails} />
       </div>
-
-      {workspaceSlug && projectId && cycleDetails?.id && (
+      {cycleDetails?.id && (
         <CycleAnalyticsProgress workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleDetails?.id} />
       )}
     </div>

@@ -11,15 +11,20 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useTheme } from "next-themes";
 // assets
 import maintenanceModeDarkModeImage from "@/app/assets/instance/maintenance-mode-dark.svg?url";
 import maintenanceModeLightModeImage from "@/app/assets/instance/maintenance-mode-light.svg?url";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
-// components
-import { MaintenanceMessage } from "@/plane-web/components/instance";
+
+const linkMap = [
+  {
+    key: "mail_to",
+    label: "Contact Support",
+    value: "mailto:support@plane.so",
+  },
+];
 
 export function MaintenanceView() {
   // hooks
@@ -39,7 +44,29 @@ export function MaintenanceView() {
           />
         </div>
         <div className="w-full relative flex flex-col gap-4 mt-4">
-          <MaintenanceMessage />
+          <div className="flex flex-col gap-2.5">
+            <h1 className="text-18 font-semibold text-primary text-left">
+              &#x1F6A7; Looks like Plane didn&apos;t start up correctly!
+            </h1>
+            <span className="text-14 font-medium text-secondary text-left">
+              Some services might have failed to start. Please check your container logs to identify and resolve the
+              issue. If you&apos;re stuck, reach out to our support team for more help.
+            </span>
+          </div>
+          <div className="flex items-center justify-start gap-6 mt-1">
+            {linkMap.map((link) => (
+              <div key={link.key}>
+                <a
+                  href={link.value}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accent-primary hover:underline text-13"
+                >
+                  {link.label}
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </DefaultLayout>

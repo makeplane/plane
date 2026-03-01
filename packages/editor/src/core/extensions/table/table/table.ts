@@ -35,6 +35,7 @@ import {
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
+import { TableDragStatePlugin } from "../plugins/drag-state";
 import { TableColumnDragHandlePlugin } from "../plugins/drag-handles/column/plugin";
 import { TableRowDragHandlePlugin } from "../plugins/drag-handles/row/plugin";
 import { TableInsertPlugin } from "../plugins/insert-handlers/plugin";
@@ -303,6 +304,7 @@ export const Table = Node.create<TableOptions>({
       tableEditing({
         allowTableNodeSelection: this.options.allowTableNodeSelection,
       }),
+      TableDragStatePlugin,
       TableInsertPlugin(this.editor),
       TableColumnDragHandlePlugin(this.editor),
       TableRowDragHandlePlugin(this.editor),

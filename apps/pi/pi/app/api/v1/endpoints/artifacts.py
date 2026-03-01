@@ -27,7 +27,7 @@ from pi.app.api.dependencies import get_current_user
 from pi.app.schemas.artifact import ArtifactUpdateRequest
 from pi.app.schemas.artifact import ArtifactUpdateResponse
 from pi.core.db.plane_pi.lifecycle import get_async_session
-from pi.services.actions.artifacts.utils import prepare_artifact_response_data
+from pi.services.actions.artifacts.utils import batch_prepare_artifact_response_data
 from pi.services.actions.prompt_followup import handle_artifact_prompt_followup
 from pi.services.retrievers.pg_store.action_artifact import get_action_artifacts_by_chat_id
 from pi.services.retrievers.pg_store.action_artifact import get_action_artifacts_by_ids
@@ -59,14 +59,8 @@ async def get_action_artifacts(artifact_ids: List[UUID4], current_user=Depends(g
         chat_uuids = [UUID(chat_id) for chat_id in artifacts_by_chat.keys()]
         latest_message_ids = await get_latest_message_ids_for_chats(db, chat_uuids)
 
-        # Return enhanced artifact data
-        artifacts_data = []
-        for artifact in artifacts:
-            chat_id = str(artifact.chat_id)
-            # All artifacts from the latest query/message in each chat are editable
-            is_latest_query = artifact.message_id == latest_message_ids.get(chat_id)
-            artifact_dict = await prepare_artifact_response_data(db, artifact, is_latest_query)
-            artifacts_data.append(artifact_dict)
+        # Use batch preparation
+        artifacts_data = await batch_prepare_artifact_response_data(db, artifacts, latest_message_ids)
 
         return JSONResponse(status_code=200, content={"success": True, "artifacts": artifacts_data})
 
@@ -92,13 +86,11 @@ async def get_chat_artifacts(chat_id: UUID4, current_user=Depends(get_current_us
 
         latest_message_id = await get_latest_message_id_for_chat(db, chat_id)
 
-        # Return enhanced artifact data
-        artifacts_data = []
-        for artifact in artifacts:
-            # All artifacts from the latest query/message are editable
-            is_latest_query = artifact.message_id == latest_message_id
-            artifact_dict = await prepare_artifact_response_data(db, artifact, is_latest_query)
-            artifacts_data.append(artifact_dict)
+        # Create latest_message_ids dict for batch processing
+        latest_message_ids = {str(chat_id): latest_message_id}
+
+        # Use batch preparation
+        artifacts_data = await batch_prepare_artifact_response_data(db, artifacts, latest_message_ids)
 
         return JSONResponse(status_code=200, content={"success": True, "artifacts": artifacts_data})
 

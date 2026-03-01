@@ -22,14 +22,20 @@ import { getDate } from "@plane/utils";
 // hooks
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 // store
-import type { ICycleIssuesFilter } from "@/store/issue/cycle";
-import type { IModuleIssuesFilter } from "@/store/issue/module";
-import type { IProjectIssuesFilter } from "@/store/issue/project";
-import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { ICycleIssuesFilter } from "@/store/work-items/cycle";
+import type { IModuleIssuesFilter } from "@/store/work-items/module";
+import type { IProjectIssuesFilter } from "@/store/work-items/project";
+import type { IProjectViewIssuesFilter } from "@/store/work-items/project-views";
+import type { IWorkspaceIssuesFilter } from "@/store/work-items/workspace";
 // helpers
 
 interface Props {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IWorkspaceIssuesFilter;
 }
 export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(props: Props) {
   const { issuesFilterStore } = props;

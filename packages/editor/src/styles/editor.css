@@ -125,7 +125,7 @@ ul[data-type="taskList"] li > div {
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"] {
-  @apply border! border-strong!;
+  border-color: var(--text-color-icon-tertiary) !important;
   outline: none;
   border-radius: 2px;
   transform: scale(1.05);
@@ -171,7 +171,8 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   width: 0.8rem;
   height: 0.8rem;
   position: relative;
-  @apply border-md border-subtle-1;
+  @apply border-md;
+  border-color: var(--text-color-icon-secondary) !important;
   margin-right: 0.2rem;
   margin-top: 0.15rem;
 
@@ -560,7 +561,7 @@ span[data-name][data-type="emoji"] img {
 }
 
 /* touch device styles */
-.touch-select-none {
+@utility touch-select-none {
   user-select: none;
   -webkit-user-select: none;
 }

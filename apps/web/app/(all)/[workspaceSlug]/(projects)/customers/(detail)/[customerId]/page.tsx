@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { CustomerDetailRoot } from "@/plane-web/components/customers";
+import { CustomerDetailRoot } from "@/components/customers";
 
 function CustomerDetailPage() {
   return <CustomerDetailRoot />;

@@ -13,6 +13,7 @@
 
 import type { IStorageService } from "@/apps/jira-server-importer/v2/types";
 import { Store } from "@/worker/base";
+import { logger } from "@plane/logger";
 
 /**
  * Storage service for managing entity mappings in Redis
@@ -124,7 +125,7 @@ class RedisStorageService implements IStorageService {
    * @param data - Array of data to merge in
    * @param deduplicateBy - Key field to use as Hash key (e.g., 'external_id')
    */
-  async storeData<T>(jobId: string, stepName: string, data: T[], deduplicateBy: keyof T): Promise<void> {
+  async storeData<T>(jobId: string, stepName: string, data: T[], deduplicateBy: string[]): Promise<void> {
     if (data.length === 0) return;
 
     const hashKey = this.getDataKey(jobId, stepName);
@@ -132,7 +133,34 @@ class RedisStorageService implements IStorageService {
     // Build map for this batch
     const itemMap = new Map<string, string>();
     for (const item of data) {
-      const key = String(item[deduplicateBy]);
+      const keyParts: string[] = [];
+      let hasInvalidKeyPart = false;
+      for (const field of deduplicateBy) {
+        let value: unknown;
+        if (field.toString().includes(".")) {
+          value = field
+            .toString()
+            .split(".")
+            .reduce((obj: any, chunk: string) => obj?.[chunk], item as any);
+        } else {
+          value = (item as any)[field as keyof T];
+        }
+        if (value === undefined || value === null || value === "") {
+          hasInvalidKeyPart = true;
+          break;
+        }
+        keyParts.push(String(value));
+      }
+
+      if (hasInvalidKeyPart || keyParts.length === 0) {
+        logger.warn(`Skipping item with invalid deduplication key: ${JSON.stringify(item)}`, {
+          jobId,
+          stepName,
+          deduplicateBy,
+        });
+        continue;
+      }
+      const key = keyParts.join(":");
       itemMap.set(key, JSON.stringify(item));
     }
 
@@ -165,8 +193,6 @@ class RedisStorageService implements IStorageService {
 
     return items as T;
   }
-
-  // ... existing getMappingKey method ...
 
   /**
    * Generate Redis key for shared data

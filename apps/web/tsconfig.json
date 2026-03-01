@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": false,
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "@/*": ["./core/*"],
@@ -15,6 +16,7 @@
     },
     "strictNullChecks": true,
     "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
     "noUnusedParameters": false,
     "noUnusedLocals": false,
     "noImplicitReturns": false,

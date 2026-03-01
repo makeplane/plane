@@ -85,7 +85,7 @@ def share_page_notification(page_id, user_id, newly_shared_user_ids, slug):
                     or newly_shared_user.email
                 ),
                 "page_access": get_page_access(page_access),
-                "email_preference_url": f"{base_host(request=None, is_app=True)}/{slug}/settings/account/notifications/",
+                "email_preference_url": f"{base_host(request=None, is_app=True)}/{slug}/settings/account/notifications/",  # noqa: E501
             }
 
             # Create email subject and content
