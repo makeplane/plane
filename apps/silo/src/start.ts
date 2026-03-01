@@ -13,7 +13,7 @@
 
 import { logger } from "@plane/logger";
 import DB from "@/db/client";
-import { env } from "@/env";
+import { env, resolveSecrets } from "@/env";
 import { importTaskManger, integrationTaskManager, celeryProducer } from "@/worker";
 import Server from "./server";
 import { initializeS3Client, Store } from "./worker/base";
@@ -27,6 +27,9 @@ enum ServiceType {
 
 (async () => {
   try {
+    // Resolve AMQP/Redis URLs from AWS Secrets Manager (no-ops if not configured)
+    await resolveSecrets();
+
     const store = Store.getInstance();
     await store.connect();
     // connect to db

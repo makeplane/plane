@@ -25,9 +25,10 @@
     "fix:format": "prettier . --cache --write"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.802.0",
-    "@aws-sdk/s3-request-presigner": "^3.810.0",
-    "@dotenvx/dotenvx": "^1.47.6",
+    "@aws-sdk/client-s3": "^3.989.0",
+    "@aws-sdk/client-secrets-manager": "^3.989.0",
+    "@aws-sdk/s3-request-presigner": "^3.989.0",
+    "@dotenvx/dotenvx": "^1.52.0",
     "@flatfile/api": "^1.12.0",
     "@flatfile/listener": "^1.1.1",
     "@flatfile/plugin-record-hook": "^1.11.2",
