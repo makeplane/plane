@@ -167,6 +167,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             showTooltip
             customTooltipHeading="Date Range"
             renderPlaceholder={false}
+            renderInPortal
           />
         </div>
       </WithDisplayPropertiesHOC>
