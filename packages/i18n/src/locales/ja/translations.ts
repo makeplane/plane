@@ -407,7 +407,7 @@ export default {
   docs: "ドキュメント",
   full_changelog: "完全な変更履歴",
   support: "サポート",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Powered by Plane Pages",
   please_select_at_least_one_invitation: "少なくとも1つの招待を選択してください。",
   please_select_at_least_one_invitation_description:

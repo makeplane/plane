@@ -405,7 +405,7 @@ export default {
   docs: "Dokumentację",
   full_changelog: "Pełny dziennik zmian",
   support: "Wsparcie",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Oparte na Plane Pages",
   please_select_at_least_one_invitation: "Wybierz co najmniej jedno zaproszenie.",
   please_select_at_least_one_invitation_description:

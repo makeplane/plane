@@ -24,13 +24,8 @@ function ErrorPage() {
               support@plane.so
             </a>{" "}
             or on our{" "}
-            <a
-              href="https://discord.com/invite/A92xrEGCge"
-              target="_blank"
-              className="text-accent-primary"
-              rel="noopener noreferrer"
-            >
-              Discord
+            <a href="https://forum.plane.so" target="_blank" className="text-accent-primary" rel="noopener noreferrer">
+              Forum
             </a>
             .
           </p>

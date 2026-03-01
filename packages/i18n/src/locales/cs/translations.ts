@@ -407,7 +407,7 @@ export default {
   docs: "Dokumentace",
   full_changelog: "Úplný změnový protokol",
   support: "Podpora",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Poháněno Plane Pages",
   please_select_at_least_one_invitation: "Vyberte alespoň jednu pozvánku.",
   please_select_at_least_one_invitation_description:

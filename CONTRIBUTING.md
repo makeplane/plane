@@ -244,4 +244,4 @@ Happy translating! 🌍✨
 
 ## Need help? Questions and suggestions
 
-Questions, suggestions, and thoughts are most welcome. We can also be reached in our [Discord Server](https://discord.com/invite/A92xrEGCge).
+Questions, suggestions, and thoughts are most welcome. We can also be reached in our [Forum](https://forum.plane.so).
