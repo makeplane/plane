@@ -90,4 +90,37 @@ We keep all important docs in `./docs` folder and keep updating them, structure 
 └── project-roadmap.md
 ```
 
+## [CRITICAL] Git Safety Rules
+
+This is a **private fork** of `makeplane/plane`. These rules are **NON-NEGOTIABLE**.
+
+### Repository Info
+
+- **Origin**: `https://github.com/shbvn/plane.git` (our repo — push/pull here)
+- **Default branch**: `preview` (production) — NOT `main`
+- **Staging branch**: `develop`
+- **Branch naming**: `{username}/{type}/{description}` (e.g., `duonglx/feat/dashboard-v2`)
+
+### Branch Flow
+
+```
+preview (production) ← develop (staging) ← {username}/{type}/{desc} (feature)
+```
+
+- Feature branches: create from `develop`, PR to `develop`
+- Release: PR from `develop` to `preview`
+- Hotfix: branch from `preview`, PR to `preview`, then sync back to `develop`
+
+### NEVER Do These (Upstream Protection)
+
+- ❌ `git pull upstream` / `git merge upstream/*` / `git rebase upstream/*`
+- ❌ `git fetch upstream && git reset --hard upstream/*`
+- ❌ Any operation bringing `makeplane/plane` changes into our branches
+- ❌ Force push to `preview` or `develop`
+- ❌ Push directly to `preview` or `develop` (PR required, 1 review minimum)
+
+### Git Skill
+
+For commits, PRs, merges: use `/git` skill which has detailed workflow references.
+
 **IMPORTANT:** _MUST READ_ and _MUST COMPLY_ all _INSTRUCTIONS_ in project `./CLAUDE.md`, especially _WORKFLOWS_ section is _CRITICALLY IMPORTANT_, this rule is _MANDATORY. NON-NEGOTIABLE. NO EXCEPTIONS. MUST REMEMBER AT ALL TIMES!!!_
