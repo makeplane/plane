@@ -8,6 +8,9 @@ from .common import *  # noqa
 
 DEBUG = True
 
+# Required by plane.utils.host.base_host() — prevents ImproperlyConfigured in tests
+WEB_URL = "http://localhost:3000"
+
 # Send it in a dummy outbox
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 

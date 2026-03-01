@@ -99,15 +99,17 @@ class TestDashboardCRUD:
         assert resp.status_code == status.HTTP_200_OK
         assert resp.data["description"] == "New desc"
 
+    @patch("plane.db.mixins.soft_delete_related_objects.delay")
     @patch("plane.app.views.dashboard.model_activity.delay")
-    def test_delete_dashboard(self, mock_activity, session_client, workspace, dashboard):
+    def test_delete_dashboard(self, mock_activity, mock_soft_delete, session_client, workspace, dashboard):
         url = reverse("workspace-dashboard", kwargs={"slug": workspace.slug, "pk": dashboard.id})
         resp = session_client.delete(url)
         assert resp.status_code == status.HTTP_204_NO_CONTENT
         assert not Dashboard.objects.filter(pk=dashboard.id, deleted_at__isnull=True).exists()
 
+    @patch("plane.db.mixins.soft_delete_related_objects.delay")
     @patch("plane.app.views.dashboard.model_activity.delay")
-    def test_delete_dashboard_with_widgets(self, mock_activity, session_client, workspace, dashboard, widget):
+    def test_delete_dashboard_with_widgets(self, mock_activity, mock_soft_delete, session_client, workspace, dashboard, widget):
         url = reverse("workspace-dashboard", kwargs={"slug": workspace.slug, "pk": dashboard.id})
         resp = session_client.delete(url)
         assert resp.status_code == status.HTTP_204_NO_CONTENT
@@ -195,8 +197,9 @@ class TestWidgetCRUD:
         assert resp.status_code == status.HTTP_200_OK
         assert resp.data["name"] == "Updated Name"
 
+    @patch("plane.db.mixins.soft_delete_related_objects.delay")
     @patch("plane.app.views.dashboard.model_activity.delay")
-    def test_delete_widget(self, mock_activity, session_client, workspace, dashboard, widget):
+    def test_delete_widget(self, mock_activity, mock_soft_delete, session_client, workspace, dashboard, widget):
         url = reverse("workspace-dashboard-widget", kwargs={
             "slug": workspace.slug, "dashboard_id": dashboard.id, "pk": widget.id,
         })
