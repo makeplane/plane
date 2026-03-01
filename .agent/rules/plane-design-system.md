@@ -1,0 +1,1 @@
+../../.claude/rules/plane-design-system.md

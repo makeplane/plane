@@ -55,22 +55,53 @@ apps/web/
 │   └── types/    # CE type overrides
 ```
 
-**Path alias**: `@/plane-web/*` → `./ce/*` (defined in tsconfig.json)
+**Path aliases** (tsconfig.json):
+
+```
+@/*           → apps/web/core/*     (upstream shared, DO NOT modify for CE features)
+@/plane-web/* → apps/web/ce/*       (CE override layer, add CE features here)
+@/app/*       → apps/web/app/*      (routes and pages)
+```
+
+### Registering a CE store:
 
 ```typescript
-// Core imports (shared)
+// ce/store/root.store.ts — CE root store EXTENDS core
 import { CoreRootStore } from "@/store/root.store";
+import { MyFeatureStore, type IMyFeatureStore } from "./my-feature.store";
 
-// CE-specific imports (override layer)
-import { RootStore } from "@/plane-web/store/root.store"; // → ce/store/root.store.ts
-
-// CE root store EXTENDS core:
 export class RootStore extends CoreRootStore {
-  // Add CE-specific stores here
+  myFeature: IMyFeatureStore;
+
+  constructor() {
+    super();
+    this.myFeature = new MyFeatureStore(this);
+  }
 }
 ```
 
-**Rule**: New features for CE go in `ce/` directory, NOT in `core/`. Core is shared upstream.
+### CE hook accessing CE-only store:
+
+```typescript
+// ce/hooks/store/use-my-feature.ts
+import { useContext } from "react";
+import { StoreContext } from "@/lib/store-context";
+import type { IMyFeatureStore } from "@/plane-web/store/my-feature.store";
+
+export const useMyFeature = (): IMyFeatureStore => {
+  const context = useContext(StoreContext);
+  if (context === undefined) throw new Error("useMyFeature must be used within StoreProvider");
+  // Cast needed because StoreContext is typed as CoreRootStore
+  return (context as any).myFeature;
+};
+```
+
+**Rules**:
+
+- New features for CE go in `ce/` directory, NOT in `core/`. Core is shared upstream.
+- Services: `ce/services/` for CE-specific, `core/services/` for shared
+- Components: `ce/components/` for CE-specific features
+- Never modify `core/store/root.store.ts` — extend via `ce/store/root.store.ts`
 
 ## Component Libraries
 
@@ -91,7 +122,12 @@ import { Avatar } from "@plane/propel/avatar";
 import { Badge } from "@plane/propel/badge";
 ```
 
-Available: `accordion`, `animated-counter`, `avatar`, `badge`, `banner`, `button`, `calendar`, `card`, `charts`, `collapsible`, `combobox`, `command`, `context-menu`, `dialog`, `emoji-icon-picker`, `emoji-reaction`, `empty-state`, `icon-button`, `icons`, `input`, `menu`, `pill`, `popover`, `portal`, `scrollarea`, `separator`, `skeleton`, `spinners`, `switch`, `tab-navigation`, `table`, `tabs`, `toast`, `toolbar`, `tooltip`
+Available (from `package.json` exports): `accordion`, `animated-counter`, `avatar`, `badge`, `banner`, `button`, `calendar`, `card`, `charts/*` (area-chart, bar-chart, line-chart, pie-chart, radar-chart, scatter-chart, tree-map), `collapsible`, `combobox`, `command`, `context-menu`, `dialog`, `emoji-icon-picker`, `emoji-reaction`, `empty-state`, `icon-button`, `icons`, `input`, `menu`, `pill`, `popover`, `portal`, `scrollarea`, `skeleton`, `switch`, `tab-navigation`, `table`, `tabs`, `toast`, `toolbar`, `tooltip`, `utils`
+
+**Button variants**: `primary`, `secondary`, `tertiary`, `ghost`, `link`, `error-fill`, `error-outline`
+**Button sizes**: `sm`, `base`, `lg`, `xl`
+
+**Propel is built on**: `@base-ui-components/react` + `class-variance-authority` (CVA) + `recharts` (charts)
 
 ### @plane/ui (Legacy — use ONLY when propel has no equivalent)
 
@@ -107,7 +143,7 @@ import { ContentWrapper } from "@plane/ui";
 
 ### Overlapping Components (exist in both — ALWAYS use propel)
 
-`avatar`, `badge`, `button`, `card`, `collapsible`, `spinners`, `tabs`, `tooltip`, `utils`
+`avatar`, `badge`, `button`, `card`, `collapsible`, `tabs`, `tooltip`, `utils`
 
 ```typescript
 // ❌ WRONG — these exist in propel
@@ -397,22 +433,177 @@ export class MyModelService extends APIService {
 
 **URL pattern**: Frontend `/api/workspaces/${slug}/...` → Backend `workspaces/<str:slug>/...` (Django prepends `/api/`)
 
+## Dialog (Compound Component Pattern)
+
+Propel Dialog is built on `@base-ui-components/react` using compound pattern:
+
+```typescript
+import { Dialog, EDialogWidth } from "@plane/propel/dialog";
+
+<Dialog open={isOpen} onClose={handleClose} modal>
+  <Dialog.Panel width={EDialogWidth.LG}>
+    <Dialog.Title>Create Feature</Dialog.Title>
+    <div className="p-5 space-y-4">{/* form content */}</div>
+    <div className="flex justify-end gap-2 p-4 border-t border-color-subtle">
+      <Button variant="secondary" onClick={handleClose}>
+        Cancel
+      </Button>
+      <Button variant="primary" onClick={handleSubmit}>
+        Create
+      </Button>
+    </div>
+  </Dialog.Panel>
+</Dialog>;
+```
+
+Widths: `SM`, `MD`, `LG`, `XL`, `XXL`, `XXXL` via `EDialogWidth` enum.
+
+## Toast Pattern
+
+```typescript
+import { TOAST_TYPE, setToast, setPromiseToast } from "@plane/propel/toast";
+
+// Simple toast
+setToast({ type: TOAST_TYPE.SUCCESS, title: "Saved!", message: "Optional detail." });
+setToast({ type: TOAST_TYPE.ERROR, title: "Failed to save" });
+
+// Promise-driven (auto loading → success/error)
+setPromiseToast(myPromise, {
+  loading: "Saving...",
+  success: { title: "Saved!" },
+  error: { title: "Failed!" },
+});
+```
+
+Types: `SUCCESS`, `ERROR`, `INFO`, `WARNING`, `LOADING`
+
+## Form Pattern (react-hook-form + Controller)
+
+```typescript
+import { useForm, Controller } from "react-hook-form";
+import { Button } from "@plane/propel/button";
+import { Input } from "@plane/propel/input";
+
+const {
+  control,
+  handleSubmit,
+  formState: { errors },
+  reset,
+  watch,
+} = useForm<FormData>({
+  defaultValues: { name: "" },
+});
+
+// Submit pattern — void to suppress floating-promise warning
+<form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
+  <Controller
+    name="name"
+    control={control}
+    rules={{ required: "Name is required" }}
+    render={({ field }) => <Input {...field} error={errors.name?.message} />}
+  />
+  <Button type="submit" variant="primary" loading={isSubmitting}>
+    Save
+  </Button>
+</form>;
+```
+
+## Optimistic Update Pattern
+
+```typescript
+// In store action — save original, apply optimistic, rollback on error
+updateItem = async (id: string, data: Partial<IMyModel>) => {
+  const original = { ...this.dataMap[id] };
+  // Optimistic update
+  runInAction(() => {
+    Object.assign(this.dataMap[id], data);
+  });
+  try {
+    await this.service.update(id, data);
+  } catch (error) {
+    // Rollback
+    runInAction(() => {
+      this.dataMap[id] = original;
+    });
+    throw error;
+  }
+};
+```
+
+## Dynamic Observable Keys
+
+Use `set()` from MobX for reactive key assignment on observable records:
+
+```typescript
+import { set } from "mobx";
+// CORRECT — reactive
+set(this.dataMap, itemId, response);
+// WRONG — not reactive for new keys
+this.dataMap[itemId] = response;
+```
+
 ## Routing (React Router v7)
 
-File-based routes defined in `app/routes/core.ts`:
+- **`app/routes/core.ts`** — core routes (upstream shared, avoid modifying)
+- **`app/routes/extended.ts`** — CE-specific routes (add CE features here)
 
 ```typescript
 import { index, layout, route } from "@react-router/dev/routes";
 
 export const coreRoutes = [
-  // Workspace-scoped
   layout("./(all)/[workspaceSlug]/layout.tsx", [
-    // Project-scoped
     layout("./(all)/[workspaceSlug]/(projects)/layout.tsx", [
       route(":workspaceSlug/projects/:projectId/issues", "./(all)/[workspaceSlug]/(projects)/issues/page.tsx"),
     ]),
   ]),
 ];
+```
+
+### Layout hierarchy (outer → inner):
+
+```
+./(all)/layout.tsx                               ← auth gate
+  ./(all)/[workspaceSlug]/layout.tsx             ← loads workspace data
+    ./(all)/[workspaceSlug]/(projects)/layout.tsx ← sidebar + nav
+      ./(all)/[workspaceSlug]/(projects)/my-feature/layout.tsx ← feature layout
+        page.tsx                                  ← actual content
+```
+
+### Page component pattern:
+
+```typescript
+import type { Route } from "./+types/page";
+
+function MyFeaturePage({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
+  const { t } = useTranslation();
+  return (
+    <>
+      <PageHead title={t("my_feature.label")} />
+      <div className="h-full w-full">{/* content */}</div>
+    </>
+  );
+}
+export default observer(MyFeaturePage);
+```
+
+### Layout component pattern:
+
+```typescript
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@plane/ui";
+import { Outlet } from "react-router";
+
+export default function MyFeatureLayout() {
+  return (
+    <>
+      <AppHeader header={<MyFeatureHeader />} />
+      <ContentWrapper>
+        <Outlet />
+      </ContentWrapper>
+    </>
+  );
+}
 ```
 
 ## i18n (Internationalization)
@@ -428,20 +619,26 @@ export const MyComponent = observer(() => {
 });
 ```
 
-### Translation files: `packages/i18n/src/locales/{lang}/translations.json`
+### Translation files: `packages/i18n/src/locales/{lang}/translations.ts` (TypeScript modules, NOT JSON)
 
-### Format: Nested JSON + ICU MessageFormat for pluralization:
+### Format: Nested TypeScript object + ICU MessageFormat for pluralization:
 
-```json
-{
-  "issue": {
-    "label": "Work item",
-    "count": "{count, plural, one {Work item} other {Work items}}"
-  }
-}
+```typescript
+// packages/i18n/src/locales/en/translations.ts
+export default {
+  issue: {
+    label: "Work item",
+    count: "{count, plural, one {Work item} other {Work items}}",
+  },
+  my_feature: {
+    label: "My Feature",
+    create: "Create {name}",
+    delete_confirm: "Are you sure you want to delete <strong>{name}</strong>?",
+  },
+};
 ```
 
-When adding new strings: add key to all 3 language files — en, ko, vi (use English as placeholder).
+When adding new strings: add key to all 3 language `.ts` files — en, ko, vi (use English as placeholder).
 
 ## Icons
 
@@ -496,15 +693,27 @@ pnpm format          # Auto-format
 
 When exceeding: split into sub-components, extract hooks, create utils.
 
-## Adding a New Frontend Feature — Checklist
+## Adding a New CE Feature — End-to-End Checklist
 
-1. **Types**: Add TypeScript interfaces in `packages/types/src/`
-2. **Service**: Create API service in `apps/web/core/services/` extending `APIService`
-3. **Store**: Create MobX store in `apps/web/ce/store/` (CE layer), register in `ce/store/root.store.ts`
-4. **Hook**: Create store hook in `apps/web/ce/hooks/store/` or `core/hooks/store/`
-5. **Components**: Build in `apps/web/ce/components/` using propel components + semantic tokens
-6. **Routes**: Add route in `app/routes/core.ts` or `app/routes/extended.ts`
-7. **Translations**: Add keys to all 3 language files (en, ko, vi) in `packages/i18n/src/locales/`
+| Step | What                   | Where                                                            | Pattern                                              |
+| ---- | ---------------------- | ---------------------------------------------------------------- | ---------------------------------------------------- |
+| 1    | TypeScript interfaces  | `packages/types/src/`                                            | `export interface IMyModel { ... }`                  |
+| 2    | API service class      | `apps/web/ce/services/my-feature.service.ts`                     | Extends `APIService`, `.then(r=>r?.data).catch(...)` |
+| 3    | MobX store + interface | `apps/web/ce/store/my-feature/my-feature.store.ts`               | `makeObservable` explicit, `runInAction`, `set()`    |
+| 4    | Register in CE root    | `apps/web/ce/store/root.store.ts`                                | Add property + instantiate in constructor            |
+| 5    | Store hook             | `apps/web/ce/hooks/store/use-my-feature.ts`                      | `useContext(StoreContext)` + cast                    |
+| 6    | Components             | `apps/web/ce/components/my-feature/`                             | `observer()`, propel components, semantic tokens     |
+| 7    | Layout + Page          | `apps/web/app/(all)/[workspaceSlug]/.../layout.tsx` + `page.tsx` | `AppHeader` + `ContentWrapper` + `Outlet`            |
+| 8    | Route config           | `apps/web/app/routes/extended.ts`                                | `layout()` + `route()` for CE routes                 |
+| 9    | Translations           | `packages/i18n/src/locales/{en,ko,vi}/translations.ts`           | Add keys to ALL 3 language files                     |
+
+**IMPORTANT**:
+
+- CE features ALWAYS in `ce/` directory, NEVER in `core/`
+- Use `observer()` on ALL components that read from MobX stores
+- Use `setToast()` for success/error feedback after mutations
+- Use `useTranslation()` for ALL user-facing strings
+- Use semantic color tokens, NEVER hardcoded colors
 
 ## Common Mistakes to Avoid
 
@@ -524,3 +733,12 @@ When exceeding: split into sub-components, extract hooks, create utils.
 - ❌ Missing error handling in service methods (`.catch((err) => { throw err?.response?.data; })`)
 - ❌ Direct store access without `useContext` hook wrapper
 - ❌ Forgetting `runInAction` when updating observables in async actions
+- ❌ Using `makeAutoObservable` — always use `makeObservable` with explicit field declarations
+- ❌ Direct key assignment on observable records (`this.map[id] = x`) — use `set()` from MobX
+- ❌ Missing `void` before `handleSubmit(handler)(e)` in form onSubmit (causes floating-promise warning)
+- ❌ Using `next-themes` or `class` for dark mode — Plane uses `data-theme` attribute
+- ❌ Creating JSON translation files — translation files are TypeScript `.ts` modules
+- ❌ Modifying `core/store/root.store.ts` for CE features — extend via `ce/store/root.store.ts`
+- ❌ Adding routes to `core.ts` for CE features — use `extended.ts`
+- ❌ Forgetting `PageHead` component for page title in route pages
+- ❌ Not using `setToast()` for success/error feedback after API mutations

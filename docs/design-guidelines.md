@@ -1,6 +1,6 @@
 # Design Guidelines & UI System
 
-**Last Updated**: 2026-02-13
+**Last Updated**: 2026-03-01
 **Scope**: UI components, theming, design patterns, accessibility
 
 ## UI Component Libraries
@@ -11,37 +11,30 @@
 **Location**: `/packages/propel/` (386 files)
 
 **When to Use**:
+
 - New features & components
 - Modern, polished UI needed
 - Interactive elements (buttons, inputs, modals)
 - Charts & data visualization
 
-**Key Components**:
+**Key Components** (always use subpath imports, NO barrel imports):
+
 ```typescript
-import {
-  Button,
-  Input,
-  Select,
-  Checkbox,
-  Radio,
-  Toggle,
-  Modal,
-  Popover,
-  Tooltip,
-} from "@plane/propel";
+import { Button } from "@plane/propel/button";
+import { Input } from "@plane/propel/input";
+import { Dialog } from "@plane/propel/dialog";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Popover } from "@plane/propel/popover";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 
 // Usage example
-<Button
-  variant="primary"
-  size="lg"
-  onClick={handleClick}
-  loading={isLoading}
->
+<Button variant="primary" size="lg" onClick={handleClick} loading={isLoading}>
   Create Issue
-</Button>
+</Button>;
 ```
 
 **Component Variants**:
+
 - **Button**: primary, secondary, outline, ghost
 - **Input**: text, password, email, number, textarea
 - **Select**: single, multi-select, searchable
@@ -54,54 +47,36 @@ import {
 **Location**: `/packages/ui/` (126 files)
 
 **When to Use**:
+
 - Existing code that uses @plane/ui
 - Low-priority bug fixes only
 - Do NOT use in new features
 
 **Migration Path**:
+
 ```typescript
 // Old (UI library - deprecated)
 import { Button } from "@plane/ui";
 
-// New (Propel library - recommended)
-import { Button } from "@plane/propel";
+// New (Propel library - recommended, subpath imports)
+import { Button } from "@plane/propel/button";
 ```
 
 ## Theming System
 
-### Theme Provider
+### Theme System
 
-**Setup** (apps/web):
-```typescript
-import { ThemeProvider } from "next-themes";
-import { useTheme } from "next-themes";
+Plane uses `data-theme` attribute (NOT CSS `class`). Semantic color tokens auto-adapt to themes.
 
-export const App = () => (
-  <ThemeProvider attribute="class" defaultTheme="light">
-    <AppContent />
-  </ThemeProvider>
-);
+**Built-in Themes** (4 themes via `data-theme`):
 
-// In components
-export const ThemeToggle = () => {
-  const { theme, setTheme } = useTheme();
-
-  return (
-    <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-      {theme === "dark" ? "🌙" : "☀️"}
-    </button>
-  );
-};
-```
-
-### Themes Available
-
-**Built-in Themes**:
-1. **Light** - Default light mode
-2. **Dark** - Dark mode
-3. **Contrast** - High contrast (accessibility)
+1. **light** - Default light mode
+2. **dark** - Dark mode
+3. **light-contrast** - High contrast light
+4. **dark-contrast** - High contrast dark
 
 **Color Scheme**:
+
 - Primary (action color)
 - Secondary (supporting color)
 - Destructive (danger/delete actions)
@@ -111,59 +86,72 @@ export const ThemeToggle = () => {
 
 ### Custom Theme Colors
 
-**Store Management** (MobX):
+**Store Management** (MobX — always use explicit `makeObservable`):
+
 ```typescript
 // core/store/theme.store.ts
-class ThemeStore {
-  theme: "light" | "dark" | "contrast" = "light";
-  customColors: IThemeColors = DEFAULT_COLORS;
+import { makeObservable, observable, action } from "mobx";
 
-  setTheme(theme: string) {
+class ThemeStore {
+  theme: "light" | "dark" | "light-contrast" | "dark-contrast" = "light";
+
+  constructor() {
+    makeObservable(this, {
+      theme: observable,
+      setTheme: action,
+    });
+  }
+
+  setTheme = (theme: string) => {
     this.theme = theme;
     localStorage.setItem("theme", theme);
-  }
-
-  setCustomColor(colorName: string, value: string) {
-    this.customColors[colorName] = value;
-    applyCustomColors(this.customColors);
-  }
+  };
 }
 ```
 
-### CSS Variables (Tailwind v4)
+### Semantic Color System (Tailwind v4)
 
 **Location**: `packages/tailwind-config/`
 
-**Available Variables**:
-```css
-:root {
-  /* Primary colors */
-  --color-primary-0: #ffffff;
-  --color-primary-50: #f0f4ff;
-  --color-primary-100: #e0e9ff;
-  --color-primary-500: #3b82f6;  /* main */
-  --color-primary-900: #001a4d;
+**NEVER hardcode colors.** Use semantic CSS variables via Tailwind:
 
-  /* Semantic colors */
-  --color-success-500: #10b981;
-  --color-error-500: #ef4444;
-  --color-warning-500: #f59e0b;
+```tsx
+// Backgrounds
+bg - canvas; // Page canvas background
+bg - surface - 1; // Primary surface (cards, panels)
+bg - surface - 2; // Secondary surface
+bg - layer - 1; // Layer 1 (rows, list items)
+bg - layer - 1 - hover; // Layer 1 hover state
+bg - accent - primary; // Primary accent (buttons, active states)
+bg - success - primary; // Success states
+bg - warning - primary; // Warning states
+bg - danger - primary; // Danger/error states
 
-  /* Spacing (8px base unit) */
-  --spacing-0: 0px;
-  --spacing-1: 8px;
-  --spacing-2: 16px;
-  --spacing-4: 32px;
-}
+// Text
+text - color - primary; // Primary text
+text - color - secondary; // Secondary/muted text
+text - color - tertiary; // Tertiary/hint text
+text - color - disabled; // Disabled text
+text - color - on - color; // Text on colored backgrounds
+
+// Borders
+border - color - subtle; // Default subtle border
+border - color - strong; // Prominent border
 ```
 
 **Usage in Components**:
+
 ```tsx
+// CORRECT — semantic tokens (auto-adapt to dark mode)
 export const Card = ({ children }: { children: React.ReactNode }) => (
-  <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-    {children}
+  <div className="bg-surface-1 border border-color-subtle rounded-lg p-4">
+    <h3 className="text-color-primary text-base font-medium">Title</h3>
+    <p className="text-color-secondary text-sm">Description</p>
   </div>
 );
+
+// WRONG — hardcoded colors
+<div className="bg-white border border-gray-200">
 ```
 
 ## Tailwind CSS Patterns
@@ -171,6 +159,7 @@ export const Card = ({ children }: { children: React.ReactNode }) => (
 ### Class Organization
 
 **Order of Tailwind classes** (for consistency):
+
 ```typescript
 // 1. Layout (flex, grid, display)
 // 2. Sizing (w, h)
@@ -181,7 +170,7 @@ export const Card = ({ children }: { children: React.ReactNode }) => (
 // 7. Transforms & animations
 // 8. Responsive variants
 
-<div className="flex gap-4 p-4 border rounded-lg bg-white shadow-md hover:shadow-lg">
+<div className="flex gap-4 p-4 border border-color-subtle rounded-lg bg-surface-1 shadow-md hover:shadow-lg">
   Content
 </div>
 ```
@@ -198,11 +187,17 @@ export const ResponsiveGrid = () => (
 
 ### Dark Mode
 
+Semantic tokens auto-adapt to themes via `data-theme`. **Do NOT use manual `dark:` variants.**
+
 ```typescript
+// CORRECT — semantic tokens handle dark mode automatically
 export const Card = () => (
-  <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
-    Content adapts to theme
-  </div>
+  <div className="bg-surface-1 text-color-primary border-color-subtle">Content adapts to theme automatically</div>
+);
+
+// WRONG — manual dark mode variants
+export const Card = () => (
+  <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Do NOT do this</div>
 );
 ```
 
@@ -211,8 +206,9 @@ export const Card = () => (
 ### Button Component
 
 **Simple Usage**:
+
 ```typescript
-import { Button } from "@plane/propel";
+import { Button } from "@plane/propel/button";
 
 // Basic button
 <Button>Click me</Button>
@@ -238,7 +234,7 @@ import { Button } from "@plane/propel";
 ### Modal/Dialog Component
 
 ```typescript
-import { Modal } from "@plane/propel";
+import { Dialog } from "@plane/propel/dialog";
 import { useState } from "react";
 
 export const CreateIssueModal = () => {
@@ -248,11 +244,7 @@ export const CreateIssueModal = () => {
     <>
       <Button onClick={() => setOpen(true)}>Create Issue</Button>
 
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        title="Create New Issue"
-      >
+      <Modal open={open} onClose={() => setOpen(false)} title="Create New Issue">
         <div className="space-y-4">
           <Input placeholder="Issue title" />
           <Input placeholder="Description" as="textarea" />
@@ -275,7 +267,8 @@ export const CreateIssueModal = () => {
 
 ```typescript
 import { useForm } from "react-hook-form";
-import { Input, Button, Select } from "@plane/propel";
+import { Button } from "@plane/propel/button";
+import { Input } from "@plane/propel/input";
 
 interface IssueFormData {
   title: string;
@@ -284,7 +277,11 @@ interface IssueFormData {
 }
 
 export const IssueForm = ({ onSubmit }: { onSubmit: (data: IssueFormData) => void }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<IssueFormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IssueFormData>();
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -323,11 +320,12 @@ export const IssueForm = ({ onSubmit }: { onSubmit: (data: IssueFormData) => voi
 ### Using Translations
 
 **Component Example**:
+
 ```typescript
-import { useTranslations } from "@plane/i18n";
+import { useTranslation } from "@plane/i18n";
 
 export const IssueHeader = () => {
-  const { t } = useTranslations();
+  const { t } = useTranslation();
 
   return (
     <h1>{t("issues.title")}</h1>
@@ -336,30 +334,32 @@ export const IssueHeader = () => {
 };
 ```
 
-**Translation File Structure**:
-```json
-{
-  "issues": {
-    "title": "Issues",
-    "description": "Track and manage your project issues",
-    "create": "Create Issue",
-    "delete": "Delete Issue",
-    "status": {
-      "todo": "To Do",
-      "in_progress": "In Progress",
-      "done": "Done"
-    }
-  }
-}
+**Translation File Structure** (TypeScript modules, NOT JSON):
+
+```typescript
+// packages/i18n/src/locales/en/translations.ts
+export default {
+  issues: {
+    title: "Issues",
+    description: "Track and manage your project issues",
+    create: "Create Issue",
+    delete: "Delete Issue",
+    status: {
+      todo: "To Do",
+      in_progress: "In Progress",
+      done: "Done",
+    },
+  },
+};
 ```
 
 ### Language Switching
 
 ```typescript
-import { useTranslations } from "@plane/i18n";
+import { useTranslation } from "@plane/i18n";
 
 export const LanguageSwitcher = () => {
-  const { language, setLanguage } = useTranslations();
+  const { language, setLanguage } = useTranslation();
 
   return (
     <select value={language} onChange={(e) => setLanguage(e.target.value)}>
@@ -378,6 +378,7 @@ export const LanguageSwitcher = () => {
 ### WCAG 2.1 AA Compliance
 
 **Required Standards**:
+
 - Color contrast ratio: 4.5:1 (normal text)
 - Keyboard navigation: All interactive elements
 - Screen reader support: Proper ARIA labels
@@ -386,9 +387,10 @@ export const LanguageSwitcher = () => {
 ### Semantic HTML
 
 **Good**:
+
 ```html
 <!-- Semantic, accessible -->
-<button onClick={handleClick}>Delete</button>
+<button onClick="{handleClick}">Delete</button>
 <nav aria-label="Main navigation">
   <ul>
     <li><a href="/home">Home</a></li>
@@ -397,9 +399,10 @@ export const LanguageSwitcher = () => {
 ```
 
 **Avoid**:
+
 ```html
 <!-- Non-semantic, not accessible -->
-<div onClick={handleClick}>Delete</div>
+<div onClick="{handleClick}">Delete</div>
 <div>
   <span><span>Home</span></span>
 </div>
@@ -435,6 +438,7 @@ export const LanguageSwitcher = () => {
 ### Keyboard Navigation
 
 **All interactive elements must**:
+
 - Be keyboard accessible (Tab, Enter, Space, Arrow keys)
 - Show visible focus indicator
 - Support logical tab order
@@ -462,44 +466,42 @@ export const CustomButton = ({ children, onClick }: Props) => {
 ### Icon Library
 
 **Primary**: Lucide React
+
 ```typescript
-import {
-  Plus,
-  Trash,
-  Edit,
-  Settings,
-  ChevronDown,
-  AlertCircle,
-  CheckCircle,
-} from "lucide-react";
+import { Plus, Trash, Edit, Settings, ChevronDown, AlertCircle, CheckCircle } from "lucide-react";
 
 export const IssueActions = () => (
   <div className="flex gap-2">
-    <button><Edit size={20} /></button>
-    <button><Trash size={20} /></button>
+    <button>
+      <Edit size={20} />
+    </button>
+    <button>
+      <Trash size={20} />
+    </button>
   </div>
 );
 ```
 
 **Secondary**: Material Symbols Rounded
+
 ```typescript
 // For specific design system needs
 import "@fontsource/material-symbols-rounded";
 
-export const CustomIcon = () => (
-  <span className="material-symbols-rounded">settings</span>
-);
+export const CustomIcon = () => <span className="material-symbols-rounded">settings</span>;
 ```
 
 ### Asset Optimization
 
 **Images**:
+
 - Use WebP format for modern browsers
 - Provide fallback JPG/PNG
 - Lazy load below-the-fold images
 - Optimize dimensions (don't load 4K images for thumbnails)
 
 **Example**:
+
 ```typescript
 export const IssueImage = ({ src, alt }: { src: string; alt: string }) => (
   <picture>
@@ -514,6 +516,7 @@ export const IssueImage = ({ src, alt }: { src: string; alt: string }) => (
 ### Typography
 
 **Font Stack**:
+
 ```css
 /* Primary font */
 --font-family-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -523,6 +526,7 @@ export const IssueImage = ({ src, alt }: { src: string; alt: string }) => (
 ```
 
 **Font Sizes** (Tailwind):
+
 - `text-xs`: 12px
 - `text-sm`: 14px
 - `text-base`: 16px (default)
@@ -532,6 +536,7 @@ export const IssueImage = ({ src, alt }: { src: string; alt: string }) => (
 - `text-3xl`: 30px
 
 **Font Weights**:
+
 - Regular: 400
 - Medium: 500
 - Semibold: 600

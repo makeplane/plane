@@ -10,10 +10,15 @@ You are working on **Plane.so** — an open-source project management tool (self
 
 **READ BEFORE ANY WORK:**
 
+- `.agent/rules/plane-design-system.md` — **PRIMARY** frontend architecture & design system rules
+- `.agent/rules/plane-backend-architecture.md` — **PRIMARY** backend architecture rules
+- `.agent/rules/development-rules.md` — Development workflow rules
 - `./docs/code-standards.md` — Coding standards
-- `./docs/design-guidelines.md` — UI design system
+- `./docs/design-guidelines.md` — UI design guidelines
 - `./docs/system-architecture.md` — System architecture
 - `./docs/codebase-summary.md` — Codebase overview
+
+**MANDATORY**: The `.agent/rules/` files contain the AUTHORITATIVE rules. When in conflict with `./docs/`, the rules files take precedence.
 
 ## Architecture Overview
 
@@ -58,10 +63,40 @@ Semantic tokens auto-handle dark mode. NEVER use `dark:` variants with hardcoded
 
 ### MobX Store Pattern
 
+- Always `makeObservable` with explicit field declarations (NEVER `makeAutoObservable`)
 - Always wrap components with `observer` when reading stores
 - Use `runInAction` for async observable updates
+- Use `set()` from MobX for dynamic record key assignment
 - Store → Hook wrapper → Component
 - CE stores extend `CoreRootStore` in `ce/store/root.store.ts`
+
+### Dialog (Compound Component)
+
+```typescript
+import { Dialog, EDialogWidth } from "@plane/propel/dialog";
+<Dialog open={isOpen} onClose={handleClose} modal>
+  <Dialog.Panel width={EDialogWidth.LG}>
+    <Dialog.Title>Title</Dialog.Title>
+    {/* content */}
+  </Dialog.Panel>
+</Dialog>;
+```
+
+### Toast Feedback (after ALL mutations)
+
+```typescript
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+setToast({ type: TOAST_TYPE.SUCCESS, title: "Saved!" });
+setToast({ type: TOAST_TYPE.ERROR, title: "Failed" });
+```
+
+### Forms (react-hook-form + Controller)
+
+```typescript
+<form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
+  <Controller name="field" control={control} render={({ field }) => <Input {...field} />} />
+</form>
+```
 
 ### Import Order
 
@@ -130,12 +165,13 @@ Semantic tokens auto-handle dark mode. NEVER use `dark:` variants with hardcoded
 ### Frontend
 
 1. Types → `packages/types/src/`
-2. Service → `apps/web/core/services/` extending `APIService`
-3. Store → `apps/web/ce/store/` (CE layer)
+2. Service → `apps/web/ce/services/` extending `APIService`
+3. Store → `apps/web/ce/store/` + register in `ce/store/root.store.ts`
 4. Hook → `apps/web/ce/hooks/store/`
 5. Components → `apps/web/ce/components/` (propel + semantic tokens)
-6. Routes → `app/routes/`
-7. Translations → `packages/i18n/src/locales/`
+6. Layout + Page → `apps/web/app/(all)/[workspaceSlug]/.../layout.tsx` + `page.tsx`
+7. Routes → `app/routes/extended.ts` (for CE features, NOT `core.ts`)
+8. Translations → `packages/i18n/src/locales/{en,ko,vi}/translations.ts` (TypeScript modules, NOT JSON)
 
 ## Common Mistakes to Avoid
 
@@ -149,6 +185,14 @@ Semantic tokens auto-handle dark mode. NEVER use `dark:` variants with hardcoded
 - ❌ Forgetting `select_related`/`prefetch_related` (N+1 queries)
 - ❌ Manual `dark:` variants when semantic tokens handle it
 - ❌ Not registering new models/views/serializers in `__init__.py`
+- ❌ Using `makeAutoObservable` — always use `makeObservable` with explicit fields
+- ❌ Direct key assignment on observable records — use `set()` from MobX
+- ❌ Missing `void` before `handleSubmit(handler)(e)` in form onSubmit
+- ❌ Creating JSON translation files — files are TypeScript `.ts` modules
+- ❌ Modifying `core/store/root.store.ts` for CE features — extend in `ce/`
+- ❌ Adding CE routes to `core.ts` — use `extended.ts`
+- ❌ Missing `setToast()` feedback after API mutations
+- ❌ Missing `PageHead` component for page title in route pages
 
 ## Workflows
 

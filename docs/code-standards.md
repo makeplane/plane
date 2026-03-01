@@ -1,12 +1,13 @@
 # Code Standards & Conventions
 
-**Last Updated**: 2026-02-13
+**Last Updated**: 2026-03-01
 **Scope**: TypeScript, Python, configuration files across monorepo
 **Enforced By**: ESLint, Prettier, pre-commit hooks
 
 ## TypeScript Standards
 
 ### General Principles
+
 - **Strict Mode**: Enable `strict: true` in `tsconfig.json`
 - **No `any`**: Use explicit types; suppress with `// @ts-ignore` only as last resort
 - **Type Exports**: Always `export type` for interfaces/types to enable tree-shaking
@@ -15,6 +16,7 @@
 ### Type Definitions
 
 **Pattern - Use interfaces for object shapes**:
+
 ```typescript
 // Good
 interface WorkspaceSettings {
@@ -30,12 +32,14 @@ type WorkspaceSettings = {
 ```
 
 **Pattern - Export types from @plane/types**:
+
 ```typescript
 // apps/web uses types from @plane/types
 import type { IWorkspace, IProject, IIssue } from "@plane/types";
 ```
 
 **Pattern - Avoid `any` in service layer**:
+
 ```typescript
 // Good
 const response = await api.get<IWorkspace>(`/workspaces/${id}/`);
@@ -46,18 +50,19 @@ const response = await api.get(`/workspaces/${id}/`);
 
 ### File Naming
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| React Components | PascalCase | `WorkspaceSettings.tsx` |
-| Custom Hooks | kebab-case + prefix | `use-workspace-store.ts` |
-| Utils/Services | kebab-case | `api-service.ts` |
-| Constants | UPPER_SNAKE_CASE | `WORKSPACE_ROLES.ts` |
-| Types/Interfaces | PascalCase + interface file | `workspace-types.ts` |
-| Store files | kebab-case.store.ts | `workspace.store.ts` |
+| Type             | Convention                  | Example                  |
+| ---------------- | --------------------------- | ------------------------ |
+| React Components | PascalCase                  | `WorkspaceSettings.tsx`  |
+| Custom Hooks     | kebab-case + prefix         | `use-workspace-store.ts` |
+| Utils/Services   | kebab-case                  | `api-service.ts`         |
+| Constants        | UPPER_SNAKE_CASE            | `WORKSPACE_ROLES.ts`     |
+| Types/Interfaces | PascalCase + interface file | `workspace-types.ts`     |
+| Store files      | kebab-case.store.ts         | `workspace.store.ts`     |
 
 ### Component Patterns
 
 **Pattern - Functional components with explicit props type**:
+
 ```typescript
 interface WorkspaceSelectorProps {
   value: string;
@@ -65,16 +70,13 @@ interface WorkspaceSelectorProps {
   disabled?: boolean;
 }
 
-export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
-  value,
-  onSelect,
-  disabled = false,
-}) => {
+export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({ value, onSelect, disabled = false }) => {
   // Implementation
 };
 ```
 
 **Pattern - Custom hooks return typed objects**:
+
 ```typescript
 interface UseWorkspaceReturn {
   workspace: IWorkspace | null;
@@ -88,6 +90,7 @@ export const useWorkspace = (id: string): UseWorkspaceReturn => {
 ```
 
 **Pattern - Avoid prop spreading; be explicit**:
+
 ```typescript
 // Good
 <Button variant="primary" size="lg" onClick={handleClick} />
@@ -99,26 +102,28 @@ export const useWorkspace = (id: string): UseWorkspaceReturn => {
 ### Imports
 
 **Order imports in this sequence**:
+
 ```typescript
 // 1. React & external libraries
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 
-// 2. Type imports (separate)
+// 2. Type imports (separate with `import type`)
 import type { IWorkspace } from "@plane/types";
 
-// 3. Internal absolute imports
-import { WorkspaceStore } from "@/core/store/workspace.store";
-import { useWorkspace } from "@/core/hooks/use-workspace";
+// 3. @plane/* packages (subpath imports for propel)
+import { Button } from "@plane/propel/button";
+import { cn } from "@plane/utils";
 
-// 4. Local relative imports
+// 4. Internal absolute imports (@/)
+import { useWorkspace } from "@/hooks/store/use-workspace";
+
+// 5. Local relative imports
 import { WorkspaceHeader } from "./workspace-header";
-
-// 5. Styles (last)
-import styles from "./workspace.module.css";
 ```
 
 **Use type imports to reduce bundle**:
+
 ```typescript
 // Good
 import type { IssueResponse } from "@plane/types";
@@ -130,6 +135,7 @@ import { IssueResponse } from "@plane/types";
 ### Error Handling
 
 **Pattern - Always handle errors in async operations**:
+
 ```typescript
 try {
   const data = await api.post("/issues/", payload);
@@ -144,9 +150,13 @@ try {
 ```
 
 **Pattern - Use custom error types**:
+
 ```typescript
 class ValidationError extends Error {
-  constructor(message: string, public field: string) {
+  constructor(
+    message: string,
+    public field: string
+  ) {
     super(message);
     this.name = "ValidationError";
   }
@@ -156,56 +166,68 @@ class ValidationError extends Error {
 ## React Patterns
 
 ### Hooks Rules
+
 - Call hooks at top level (not in conditions)
 - Use ESLint plugin `eslint-plugin-react-hooks` to enforce
 - Custom hooks should start with `use` prefix
 
 ### State Management (MobX)
 
-**Pattern - Store structure**:
+**Pattern - Store structure** (always use explicit `makeObservable`, NOT `makeAutoObservable`):
+
 ```typescript
 // core/store/workspace.store.ts
-import { makeAutoObservable } from "mobx";
+import { makeObservable, observable, action, computed, runInAction } from "mobx";
+import type { CoreRootStore } from "@/store/root.store";
 
 export class WorkspaceStore {
-  workspaces: IWorkspace[] = [];
-  isLoading = false;
-  error: Error | null = null;
+  workspaceMap: Record<string, IWorkspace> = {};
+  loader = false;
 
-  constructor() {
-    makeAutoObservable(this);
+  constructor(private rootStore: CoreRootStore) {
+    makeObservable(this, {
+      workspaceMap: observable,
+      loader: observable,
+      currentWorkspaces: computed,
+      fetchWorkspaces: action,
+    });
   }
 
-  setWorkspaces(workspaces: IWorkspace[]) {
-    this.workspaces = workspaces;
+  get currentWorkspaces() {
+    return Object.values(this.workspaceMap);
   }
 
-  async fetchWorkspaces() {
-    this.isLoading = true;
+  fetchWorkspaces = async () => {
+    this.loader = true;
     try {
       const data = await workspaceService.getAll();
-      this.setWorkspaces(data);
-    } catch (error) {
-      this.error = error as Error;
+      runInAction(() => {
+        data.forEach((ws) => {
+          this.workspaceMap[ws.id] = ws;
+        });
+      });
     } finally {
-      this.isLoading = false;
+      runInAction(() => {
+        this.loader = false;
+      });
     }
-  }
+  };
 }
 ```
 
-**Pattern - Using stores in components**:
+**Pattern - Using stores in components** (always wrap with `observer`):
+
 ```typescript
 import { observer } from "mobx-react";
-import { useStore } from "@/core/hooks/use-store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 export const WorkspaceList = observer(() => {
-  const { workspace: workspaceStore } = useStore();
+  const { currentWorkspaces, loader, fetchWorkspaces } = useWorkspace();
 
   return (
     <div>
-      {workspaceStore.isLoading && <LoadingSpinner />}
-      {workspaceStore.workspaces.map(ws => (
+      {loader && <LoadingSpinner />}
+      {currentWorkspaces.map((ws) => (
         <WorkspaceItem key={ws.id} workspace={ws} />
       ))}
     </div>
@@ -216,20 +238,19 @@ export const WorkspaceList = observer(() => {
 ### Performance Optimization
 
 **Pattern - Memoize expensive computations**:
+
 ```typescript
 import { useMemo } from "react";
 
 export const IssueList = ({ issues }: { issues: IIssue[] }) => {
-  const groupedIssues = useMemo(
-    () => groupBy(issues, issue => issue.status),
-    [issues]
-  );
+  const groupedIssues = useMemo(() => groupBy(issues, (issue) => issue.status), [issues]);
 
   return <div>{/* render grouped issues */}</div>;
 };
 ```
 
 **Pattern - Use observer for MobX components**:
+
 ```typescript
 // Automatically re-renders when observed values change
 export const IssueDetail = observer(() => {
@@ -243,6 +264,7 @@ export const IssueDetail = observer(() => {
 ### File Structure
 
 **Pattern - Django apps follow this structure**:
+
 ```
 plane/app/
 ├── models/              # Database models
@@ -257,6 +279,7 @@ plane/app/
 ### Models
 
 **Pattern - Model organization**:
+
 ```python
 # plane/db/models/workspace.py
 from django.db import models
@@ -285,6 +308,7 @@ class Workspace(models.Model):
 ### Serializers
 
 **Pattern - DRF serializer with validation**:
+
 ```python
 from rest_framework import serializers
 from plane.db.models import Workspace
@@ -306,6 +330,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
 ### ViewSets
 
 **Pattern - DRF ViewSet with permissions**:
+
 ```python
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
@@ -333,6 +358,7 @@ class WorkspaceViewSet(ModelViewSet):
 ### Celery Tasks
 
 **Pattern - Task organization**:
+
 ```python
 # plane/bgtasks/issue_task.py
 from celery import shared_task
@@ -355,14 +381,14 @@ def update_issue_activity(issue_id: str, activity_type: str):
 
 ### Key Rules Enforced
 
-| Rule | Level | Purpose |
-|------|-------|---------|
-| `@typescript-eslint/no-explicit-any` | warn | Prevent `any` types |
-| `@typescript-eslint/no-floating-promises` | warn | Catch unhandled promises |
-| `react-hooks/rules-of-hooks` | error | Enforce hooks rules |
-| `react/display-name` | warn | Identify components |
-| `import/prefer-type-imports` | warn | Use type imports |
-| `@typescript-eslint/no-unused-vars` | warn | Remove unused imports |
+| Rule                                      | Level | Purpose                  |
+| ----------------------------------------- | ----- | ------------------------ |
+| `@typescript-eslint/no-explicit-any`      | warn  | Prevent `any` types      |
+| `@typescript-eslint/no-floating-promises` | warn  | Catch unhandled promises |
+| `react-hooks/rules-of-hooks`              | error | Enforce hooks rules      |
+| `react/display-name`                      | warn  | Identify components      |
+| `import/prefer-type-imports`              | warn  | Use type imports         |
+| `@typescript-eslint/no-unused-vars`       | warn  | Remove unused imports    |
 
 ### Running ESLint
 
@@ -380,6 +406,7 @@ pnpm fix:lint
 ### Suppressing Warnings
 
 Only suppress with documentation of why:
+
 ```typescript
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const data: any = JSON.parse(response);
@@ -390,6 +417,7 @@ const data: any = JSON.parse(response);
 **Location**: `.prettierrc.json` (root-level)
 
 **Key Settings**:
+
 - Print width: 100 characters
 - Tab width: 2 spaces
 - Semicolons: required
@@ -409,6 +437,7 @@ pnpm check:format
 ## File Size Guidelines
 
 **Target Limits**:
+
 - **TypeScript files**: <200 lines
 - **React components**: <150 lines
 - **Custom hooks**: <100 lines
@@ -416,6 +445,7 @@ pnpm check:format
 - **Django views**: <150 lines per view class
 
 **When to Split**:
+
 - Component has multiple sub-components → extract to separate files
 - Service has 3+ distinct domains → split into domain services
 - Hook logic >100 lines → extract helper functions to utils
@@ -430,8 +460,8 @@ const isWorkspaceActive = true;
 const getIssuesByStatus = (issues: IIssue[]) => {};
 
 // Avoid: single letters (except loops), unclear abbreviations
-const iwa = true;  // unclear
-const gis = (issues: IIssue[]) => {};  // unclear
+const iwa = true; // unclear
+const gis = (issues: IIssue[]) => {}; // unclear
 ```
 
 ### Constants
@@ -464,6 +494,7 @@ class Workspace(models.Model):
 ### Frontend (Vitest)
 
 **Pattern - Component test**:
+
 ```typescript
 import { render, screen } from "@testing-library/react";
 import { WorkspaceSelector } from "./workspace-selector";
@@ -500,6 +531,7 @@ class WorkspaceTestCase(TestCase):
 ### Commit Message Format
 
 Follow conventional commits:
+
 ```
 type(scope): subject
 
@@ -511,6 +543,7 @@ footer (optional)
 **Types**: feat, fix, docs, style, refactor, test, chore, ci
 
 **Examples**:
+
 ```
 feat(workspace): add workspace archive functionality
 fix(issue): resolve duplicate comment notification bug
@@ -521,11 +554,13 @@ chore(deps): upgrade React to v18.3
 ### Pre-commit Hooks
 
 **Enabled via Husky**:
+
 1. Prettier auto-formats staged files
 2. ESLint checks with `--max-warnings=0`
 3. Type checking (if enabled)
 
 **Bypass** (use sparingly):
+
 ```bash
 git commit --no-verify
 ```
@@ -535,6 +570,7 @@ git commit --no-verify
 ### Inline Comments
 
 **Use when WHY is non-obvious**:
+
 ```typescript
 // Good: explains business logic
 // We need to delay the sync to prevent race conditions
@@ -542,12 +578,13 @@ git commit --no-verify
 await delay(500);
 
 // Avoid: restates obvious code
-const workspace = getWorkspace(id);  // Get workspace by id
+const workspace = getWorkspace(id); // Get workspace by id
 ```
 
 ### Function/Method Documentation
 
 **Pattern - JSDoc for public APIs**:
+
 ```typescript
 /**
  * Fetches issues for a workspace with optional filtering
@@ -556,10 +593,7 @@ const workspace = getWorkspace(id);  // Get workspace by id
  * @returns Promise resolving to array of issues
  * @throws {Error} If workspace not found or API fails
  */
-export const getWorkspaceIssues = (
-  workspaceId: string,
-  filters?: IssueFilters
-): Promise<IIssue[]> => {
+export const getWorkspaceIssues = (workspaceId: string, filters?: IssueFilters): Promise<IIssue[]> => {
   // Implementation
 };
 ```
@@ -569,6 +603,7 @@ export const getWorkspaceIssues = (
 ### Input Validation
 
 **Pattern - Validate all user input**:
+
 ```typescript
 import { z } from "zod";
 
@@ -584,6 +619,7 @@ const payload = IssueSchema.parse(request.body);
 ### Secrets Management
 
 **Never commit secrets**:
+
 ```bash
 # Good: Use environment variables
 DB_PASSWORD=${DATABASE_PASSWORD}
@@ -601,6 +637,7 @@ DB_PASSWORD="super-secret-123"
 **Measure**: `pnpm build` output
 
 **Optimization**:
+
 - Code splitting via React.lazy()
 - Tree-shaking via ES modules
 - Avoid large dependencies without justification
@@ -608,6 +645,7 @@ DB_PASSWORD="super-secret-123"
 ### Database Query Optimization
 
 **Pattern - Use select_related for foreign keys**:
+
 ```python
 # Good: Fetches in single query
 issues = Issue.objects.select_related("assignee").all()

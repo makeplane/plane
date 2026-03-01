@@ -1,0 +1,1 @@
+../../.claude/rules/plane-backend-architecture.md
