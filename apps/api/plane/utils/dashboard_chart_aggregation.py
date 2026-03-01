@@ -3,7 +3,7 @@ Utility for aggregating Issue data for dashboard widget charts.
 Extracts complex aggregation logic from the DashboardWidgetChartEndpoint view.
 """
 
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, IntegerField, Q, Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 
@@ -14,8 +14,9 @@ from plane.db.models import Issue
 METRICS_MAP = {
     "count": {"count": Count("id")},
     "WORK_ITEM_COUNT": {"count": Count("id")},
-    "estimate_points": {"count": Coalesce(Sum("estimate_point"), 0)},
-    "ESTIMATE_POINTS": {"count": Coalesce(Sum("estimate_point"), 0)},
+    # Sum Issue.point (IntegerField 0-12), NOT estimate_point FK (UUID)
+    "estimate_points": {"count": Coalesce(Sum("point"), 0, output_field=IntegerField())},
+    "ESTIMATE_POINTS": {"count": Coalesce(Sum("point"), 0, output_field=IntegerField())},
     "PENDING_WORK_ITEMS": {"count": Count("id", filter=Q(state__group__in=["unstarted", "backlog"]))},
     "COMPLETED_WORK_ITEMS": {"count": Count("id", filter=Q(state__group="completed"))},
     "IN_PROGRESS_WORK_ITEMS": {"count": Count("id", filter=Q(state__group="started"))},
