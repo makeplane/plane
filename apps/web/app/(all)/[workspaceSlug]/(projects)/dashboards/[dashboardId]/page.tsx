@@ -7,6 +7,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -19,6 +20,7 @@ import { WidgetConfigModal } from "@/plane-web/components/dashboards/widget-conf
 import type { Route } from "./+types/page";
 
 const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Route.ComponentProps) {
+  const { t } = useTranslation();
   const { workspaceSlug, dashboardId } = params;
   const router = useAppRouter();
   const store = useCustomDashboard();
@@ -51,18 +53,18 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
     async (widgetId: string) => {
       try {
         await store.deleteWidget(workspaceSlug, dashboardId, widgetId);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget deleted" });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_deleted") });
       } catch {
-        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to delete widget" });
+        setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.delete_widget_failed") });
       }
     },
-    [store, workspaceSlug, dashboardId]
+    [store, workspaceSlug, dashboardId, t]
   );
 
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex h-full flex-col">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-color-subtle px-4 py-3">
           <div className="flex items-center gap-3">
@@ -70,19 +72,19 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
               onClick={() => router.push(`/${workspaceSlug}/dashboards`)}
               className="text-color-secondary hover:text-color-primary text-sm"
             >
-              Dashboards
+              {t("analytics_dashboard.breadcrumb_dashboards")}
             </button>
             <span className="text-color-tertiary">/</span>
             <h1 className="text-base font-medium text-color-primary">{pageTitle}</h1>
           </div>
           <Button variant="primary" size="sm" onClick={() => setIsConfigOpen(true)}>
             <Plus className="h-4 w-4 mr-1" />
-            Add Widget
+            {t("analytics_dashboard.add_widget")}
           </Button>
         </div>
 
         {/* Grid */}
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 p-4">
           {store.isLoading ? (
             <div className="grid grid-cols-2 gap-4">
               {Array.from({ length: 4 }).map((_, i) => (
@@ -94,8 +96,8 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
             </div>
           ) : widgets.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
-              <p className="text-sm text-color-tertiary">No widgets yet. Add your first widget to get started.</p>
-              <Button onClick={() => setIsConfigOpen(true)}>Add Widget</Button>
+              <p className="text-sm text-color-tertiary">{t("analytics_dashboard.empty_widgets")}</p>
+              <Button onClick={() => setIsConfigOpen(true)}>{t("analytics_dashboard.add_widget")}</Button>
             </div>
           ) : (
             <div className="grid grid-cols-12 gap-4 auto-rows-[200px]">
@@ -138,7 +140,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
             setIsConfigOpen(false);
             setEditingWidgetId(null);
           } catch {
-            setToast({ type: TOAST_TYPE.ERROR, title: "Failed to save widget" });
+            setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.update_widget_failed") });
           }
         }}
         widget={editingWidgetId ? widgets.find((w) => w.id === editingWidgetId) : null}

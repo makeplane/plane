@@ -9,6 +9,7 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { GripVertical } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import type { IDashboardWidget } from "@plane/types";
 import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
 import { WidgetAdapter } from "./widget-adapter";
@@ -29,6 +30,7 @@ export const CustomDashboardWidgetCard = observer(function CustomDashboardWidget
   onDelete,
   onConfigure,
 }: CustomDashboardWidgetCardProps) {
+  const { t } = useTranslation();
   const dashboardStore = useCustomDashboard();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -67,7 +69,9 @@ export const CustomDashboardWidgetCard = observer(function CustomDashboardWidget
 
       <div className="h-[calc(100%-3rem)]">
         {isLoading ? (
-          <div className="flex items-center justify-center h-full text-color-tertiary text-xs">Loading...</div>
+          <div className="flex items-center justify-center h-full text-color-tertiary text-xs">
+            {t("analytics_dashboard.loading")}
+          </div>
         ) : (
           <WidgetAdapter widget={widget} workspaceSlug={workspaceSlug} dashboardId={widget.dashboard} />
         )}

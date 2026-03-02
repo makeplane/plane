@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { AlertModalCore } from "@plane/ui";
 
 type Props = {
@@ -22,6 +23,7 @@ export const DashboardDeleteModal = observer(function DashboardDeleteModal({
   onConfirm,
   dashboardName,
 }: Props) {
+  const { t } = useTranslation();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleClose = () => {
@@ -45,12 +47,12 @@ export const DashboardDeleteModal = observer(function DashboardDeleteModal({
       handleClose={handleClose}
       handleSubmit={() => void handleSubmit()}
       isSubmitting={isDeleting}
-      title="Delete Dashboard"
+      title={t("analytics_dashboard.delete_title")}
       content={
         <>
-          Are you sure you want to delete{" "}
-          <span className="font-medium text-color-primary">&quot;{dashboardName}&quot;</span>? This action cannot be
-          undone and all widgets will be permanently removed.
+          {t("analytics_dashboard.delete_confirm_prefix")}{" "}
+          <span className="font-medium text-color-primary">&quot;{dashboardName}&quot;</span>
+          {t("analytics_dashboard.delete_confirm_suffix")}
         </>
       }
     />

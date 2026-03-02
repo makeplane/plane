@@ -74,14 +74,14 @@ function DateRangeRow({
           type="date"
           value={value?.after ?? ""}
           onChange={(e) => onChange({ ...value, after: e.target.value || undefined })}
-          className="w-full rounded-md border border-color-subtle bg-surface-1 px-2.5 py-1.5 text-xs text-color-secondary outline-none focus:border-color-accent-strong"
+          className="w-full rounded-md border border-color-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-color-secondary outline-none focus:border-color-accent-strong"
         />
         <span className="text-xs text-color-tertiary">to</span>
         <input
           type="date"
           value={value?.before ?? ""}
           onChange={(e) => onChange({ ...value, before: e.target.value || undefined })}
-          className="w-full rounded-md border border-color-subtle bg-surface-1 px-2.5 py-1.5 text-xs text-color-secondary outline-none focus:border-color-accent-strong"
+          className="w-full rounded-md border border-color-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-color-secondary outline-none focus:border-color-accent-strong"
         />
       </div>
     </div>

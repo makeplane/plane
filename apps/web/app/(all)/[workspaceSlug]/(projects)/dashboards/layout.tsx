@@ -1,5 +1,10 @@
 import { Outlet } from "react-router";
+import { ContentWrapper } from "@/components/core/content-wrapper";
 
 export default function WorkspaceDashboardsLayout() {
-    return <Outlet />;
+  return (
+    <ContentWrapper>
+      <Outlet />
+    </ContentWrapper>
+  );
 }

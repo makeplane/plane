@@ -6,6 +6,8 @@
 
 import { observer } from "mobx-react";
 import { MoreHorizontal, Pencil, Trash2, LayoutDashboard, Lock, Globe } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
+import { Menu } from "@plane/propel/menu";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { IDashboard } from "@plane/types";
 
@@ -17,6 +19,7 @@ type Props = {
 };
 
 export const DashboardCard = observer(function DashboardCard({ dashboard, workspaceSlug, onEdit, onDelete }: Props) {
+  const { t } = useTranslation();
   const router = useAppRouter();
 
   const handleCardClick = () => {
@@ -49,12 +52,12 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
               {isPublic ? (
                 <>
                   <Globe className="h-3 w-3" />
-                  Public
+                  {t("analytics_dashboard.access_public")}
                 </>
               ) : (
                 <>
                   <Lock className="h-3 w-3" />
-                  Private
+                  {t("analytics_dashboard.access_private")}
                 </>
               )}
             </span>
@@ -62,35 +65,32 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
         </div>
 
         {/* Actions menu */}
-        <div className="relative flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100">
-          <button
-            className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-1"
-            onClick={(e) => e.stopPropagation()}
+        <div
+          role="none"
+          className="flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <Menu
+            customButton={
+              <div className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-1">
+                <MoreHorizontal className="h-4 w-4 text-color-secondary" />
+              </div>
+            }
           >
-            <MoreHorizontal className="h-4 w-4 text-color-secondary" />
-          </button>
-          <div className="absolute right-0 top-full z-10 mt-1 hidden w-36 rounded-md border border-color-subtle bg-surface-1 py-1 shadow-sm group-hover:block">
-            <button
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-color-secondary hover:bg-layer-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(dashboard);
-              }}
-            >
-              <Pencil className="h-3.5 w-3.5" />
-              Edit
-            </button>
-            <button
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-color-danger-primary hover:bg-layer-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(dashboard);
-              }}
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-              Delete
-            </button>
-          </div>
+            <Menu.MenuItem onClick={() => onEdit(dashboard)}>
+              <div className="flex items-center gap-2 text-sm text-color-secondary">
+                <Pencil className="h-3.5 w-3.5" />
+                {t("analytics_dashboard.context_edit")}
+              </div>
+            </Menu.MenuItem>
+            <Menu.MenuItem onClick={() => onDelete(dashboard)}>
+              <div className="flex items-center gap-2 text-sm text-color-danger-primary">
+                <Trash2 className="h-3.5 w-3.5" />
+                {t("analytics_dashboard.context_delete")}
+              </div>
+            </Menu.MenuItem>
+          </Menu>
         </div>
       </div>
 
@@ -102,7 +102,7 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
       {/* Footer: widget count */}
       {Array.isArray(dashboard.widgets) && (
         <div className="mt-auto text-xs text-color-tertiary">
-          {dashboard.widgets.length} {dashboard.widgets.length === 1 ? "widget" : "widgets"}
+          {t("analytics_dashboard.widget_count", { count: dashboard.widgets.length })}
         </div>
       )}
     </div>
