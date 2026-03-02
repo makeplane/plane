@@ -711,6 +711,15 @@ maintenant pour améliorer votre expérience !`,
     manage_widgets: "Gérer les widgets",
     title: "Accueil",
     star_us_on_github: "Donnez-nous une étoile sur GitHub",
+    business_trial_banner: {
+      title: "Votre essai de 14 jours du plan Business est actif !",
+      description:
+        "Explorez toutes les fonctionnalités Business. Quand vous êtes prêt, choisissez de vous abonner. Vous ne serez pas facturé automatiquement.",
+      trial_ends_today: "L'essai se termine aujourd'hui",
+      trial_ends_in_days: "L'essai se termine dans {days, plural, one {# jour} other {# jours}}",
+      start_subscription: "Démarrer l'abonnement",
+      explore_business_features: "Explorer les fonctionnalités Business",
+    },
   },
   link: {
     modal: {

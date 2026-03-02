@@ -40,6 +40,7 @@ import {
   SelfHostedFreePlanCard,
   EnterprisePlanCard,
 } from "@/components/workspace/license";
+import { BusinessTrialBanner } from "@/components/get-started/widgets";
 import { PlansComparison } from "@/components/workspace/settings/billing/comparison";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { PaymentService } from "@/services/payment.service";
@@ -231,7 +232,8 @@ export const BillingRoot = observer(function BillingRoot() {
           title={t("workspace_settings.settings.billing_and_plans.heading")}
           description={t("workspace_settings.settings.billing_and_plans.description")}
         />
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col gap-3">
+          <BusinessTrialBanner variant="compact" />
           {subscriptionDetail ? (
             <>
               {subscriptionDetail.product === EProductSubscriptionEnum.FREE &&

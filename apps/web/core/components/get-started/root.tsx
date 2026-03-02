@@ -16,7 +16,14 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { ComparePlaneView, GetStartedSection, IntegrationsView, TeamSection, GetStartedGreetingsView } from "./widgets";
+import {
+  ComparePlaneView,
+  GetStartedSection,
+  IntegrationsView,
+  TeamSection,
+  GetStartedGreetingsView,
+  BusinessTrialBanner,
+} from "./widgets";
 
 export const GetStartedRoot = observer(function GetStartedRoot() {
   const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
@@ -34,6 +41,7 @@ export const GetStartedRoot = observer(function GetStartedRoot() {
       <main className="flex flex-col gap-10 max-w-[800px] mx-auto w-full">
         <GetStartedGreetingsView user={currentUser} />
         <div className="flex flex-col gap-12">
+          <BusinessTrialBanner />
           <GetStartedSection />
           {isWorkspaceAdmin && <TeamSection workspaceSlug={workspaceSlug} />}
           <IntegrationsView />

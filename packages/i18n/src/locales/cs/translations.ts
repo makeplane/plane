@@ -697,6 +697,15 @@ pro lepší zážitek!`,
     manage_widgets: "Spravovat widgety",
     title: "Domů",
     star_us_on_github: "Ohodnoťte nás na GitHubu",
+    business_trial_banner: {
+      title: "Vaše 14denní zkušební verze plánu Business je aktivní!",
+      description:
+        "Prozkoumejte všechny funkce Business. Až budete připraveni, zvolte předplatné. Nebudete automaticky účtováni.",
+      trial_ends_today: "Zkušební verze končí dnes",
+      trial_ends_in_days: "Zkušební verze končí za {days, plural, one {# den} few {# dny} other {# dní}}",
+      start_subscription: "Zahájit předplatné",
+      explore_business_features: "Prozkoumat funkce Business",
+    },
   },
   link: {
     modal: {

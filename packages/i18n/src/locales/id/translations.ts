@@ -702,6 +702,15 @@ export default {
     manage_widgets: "Kelola widget",
     title: "Beranda",
     star_us_on_github: "Bintang kami di GitHub",
+    business_trial_banner: {
+      title: "Uji coba 14 hari paket Business Anda telah aktif!",
+      description:
+        "Jelajahi semua fitur Business. Saat Anda siap, pilih untuk berlangganan. Anda tidak akan ditagih secara otomatis.",
+      trial_ends_today: "Uji coba berakhir hari ini",
+      trial_ends_in_days: "Uji coba berakhir dalam {days} hari",
+      start_subscription: "Mulai berlangganan",
+      explore_business_features: "Jelajahi fitur Business",
+    },
   },
   link: {
     modal: {

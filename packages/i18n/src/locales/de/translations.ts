@@ -712,6 +712,15 @@ export default {
     manage_widgets: "Widgets verwalten",
     title: "Startseite",
     star_us_on_github: "Geben Sie uns einen Stern auf GitHub",
+    business_trial_banner: {
+      title: "Ihre 14-tägige Business-Testversion ist aktiv!",
+      description:
+        "Entdecken Sie alle Business-Funktionen. Wenn Sie bereit sind, können Sie ein Abonnement abschließen. Es erfolgt keine automatische Abrechnung.",
+      trial_ends_today: "Testversion endet heute",
+      trial_ends_in_days: "Testversion endet in {days, plural, one {# Tag} other {# Tagen}}",
+      start_subscription: "Abonnement starten",
+      explore_business_features: "Business-Funktionen entdecken",
+    },
   },
   link: {
     modal: {

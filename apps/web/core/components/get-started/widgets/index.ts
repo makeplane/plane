@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+export * from "./business-trial-banner";
 export * from "./checklist";
 export * from "./compare";
 export * from "./integrations";

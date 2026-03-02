@@ -685,6 +685,14 @@ export default {
     manage_widgets: "管理小工具",
     title: "首頁",
     star_us_on_github: "在 GitHub 上給我們星星",
+    business_trial_banner: {
+      title: "您的14天Business方案試用已啟動！",
+      description: "探索所有Business功能。準備好後，選擇訂閱。不會自動收費。",
+      trial_ends_today: "試用今天結束",
+      trial_ends_in_days: "試用將在{days}天後結束",
+      start_subscription: "開始訂閱",
+      explore_business_features: "探索Business功能",
+    },
   },
   link: {
     modal: {

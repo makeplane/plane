@@ -705,6 +705,15 @@ export default {
     manage_widgets: "Gestisci widget",
     title: "Home",
     star_us_on_github: "Metti una stella su GitHub",
+    business_trial_banner: {
+      title: "Il tuo periodo di prova di 14 giorni del piano Business è attivo!",
+      description:
+        "Esplora tutte le funzionalità Business. Quando sei pronto, scegli di abbonarti. Non ti verrà addebitato automaticamente.",
+      trial_ends_today: "La prova scade oggi",
+      trial_ends_in_days: "La prova scade tra {days, plural, one {# giorno} other {# giorni}}",
+      start_subscription: "Avvia abbonamento",
+      explore_business_features: "Esplora funzionalità Business",
+    },
   },
   link: {
     modal: {

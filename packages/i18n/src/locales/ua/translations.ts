@@ -701,6 +701,15 @@ export default {
     manage_widgets: "Керувати віджетами",
     title: "Головна",
     star_us_on_github: "Оцініть нас на GitHub",
+    business_trial_banner: {
+      title: "Ваш 14-денний пробний період плану Business активний!",
+      description:
+        "Ознайомтеся з усіма функціями Business. Коли будете готові, оберіть підписку. Автоматичне списання не здійснюється.",
+      trial_ends_today: "Пробний період закінчується сьогодні",
+      trial_ends_in_days: "Пробний період закінчується через {days, plural, one {# день} few {# дні} other {# днів}}",
+      start_subscription: "Оформити підписку",
+      explore_business_features: "Ознайомитися з функціями Business",
+    },
   },
   link: {
     modal: {

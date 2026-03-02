@@ -691,6 +691,14 @@ export default {
     manage_widgets: "위젯 관리",
     title: "홈",
     star_us_on_github: "GitHub에서 별표",
+    business_trial_banner: {
+      title: "14일 Business 플랜 체험판이 활성화되었습니다!",
+      description: "모든 Business 기능을 살펴보세요. 준비가 되면 구독을 선택하세요. 자동으로 청구되지 않습니다.",
+      trial_ends_today: "체험판이 오늘 종료됩니다",
+      trial_ends_in_days: "체험판 종료까지 {days}일 남음",
+      start_subscription: "구독 시작",
+      explore_business_features: "Business 기능 살펴보기",
+    },
   },
   link: {
     modal: {

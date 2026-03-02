@@ -698,6 +698,15 @@ export default {
     manage_widgets: "ウィジェットを管理",
     title: "ホーム",
     star_us_on_github: "GitHubでスターをつける",
+    business_trial_banner: {
+      title: "14日間のBusinessプラントライアルが開始されました！",
+      description:
+        "すべてのBusiness機能をお試しください。準備ができたら、サブスクリプションをお選びください。自動的に請求されることはありません。",
+      trial_ends_today: "トライアルは本日終了",
+      trial_ends_in_days: "トライアル終了まであと{days}日",
+      start_subscription: "サブスクリプションを開始",
+      explore_business_features: "Business機能を探索",
+    },
   },
   link: {
     modal: {

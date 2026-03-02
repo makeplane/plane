@@ -706,6 +706,15 @@ export default {
     manage_widgets: "Quản lý tiện ích",
     title: "Trang chủ",
     star_us_on_github: "Gắn sao cho chúng tôi trên GitHub",
+    business_trial_banner: {
+      title: "Bản dùng thử 14 ngày gói Business của bạn đã được kích hoạt!",
+      description:
+        "Khám phá tất cả các tính năng Business. Khi bạn sẵn sàng, hãy chọn đăng ký. Bạn sẽ không bị tính phí tự động.",
+      trial_ends_today: "Bản dùng thử kết thúc hôm nay",
+      trial_ends_in_days: "Bản dùng thử kết thúc sau {days} ngày",
+      start_subscription: "Bắt đầu đăng ký",
+      explore_business_features: "Khám phá tính năng Business",
+    },
   },
   link: {
     modal: {

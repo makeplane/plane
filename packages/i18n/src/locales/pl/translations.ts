@@ -699,6 +699,15 @@ dla lepszego doświadczenia!`,
     manage_widgets: "Zarządzaj widżetami",
     title: "Strona główna",
     star_us_on_github: "Oceń nas na GitHubie",
+    business_trial_banner: {
+      title: "Twój 14-dniowy okres próbny planu Business jest aktywny!",
+      description:
+        "Poznaj wszystkie funkcje Business. Gdy będziesz gotowy, wybierz subskrypcję. Nie zostaniesz automatycznie obciążony.",
+      trial_ends_today: "Okres próbny kończy się dzisiaj",
+      trial_ends_in_days: "Okres próbny kończy się za {days, plural, one {# dzień} few {# dni} other {# dni}}",
+      start_subscription: "Rozpocznij subskrypcję",
+      explore_business_features: "Poznaj funkcje Business",
+    },
   },
   link: {
     modal: {

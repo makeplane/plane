@@ -699,6 +699,15 @@ export default {
     manage_widgets: "Widget'ları yönet",
     title: "Ana Sayfa",
     star_us_on_github: "Bizi GitHub'da yıldızlayın",
+    business_trial_banner: {
+      title: "14 günlük Business planı denemeniz aktif!",
+      description:
+        "Tüm Business özelliklerini keşfedin. Hazır olduğunuzda abone olmayı seçin. Otomatik olarak faturalandırılmayacaksınız.",
+      trial_ends_today: "Deneme bugün sona eriyor",
+      trial_ends_in_days: "Deneme {days} gün içinde sona eriyor",
+      start_subscription: "Aboneliği başlat",
+      explore_business_features: "Business özelliklerini keşfet",
+    },
   },
   link: {
     modal: {

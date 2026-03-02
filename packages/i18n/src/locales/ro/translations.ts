@@ -704,6 +704,15 @@ export default {
     manage_widgets: "Gestionează mini-aplicațiile",
     title: "Acasă",
     star_us_on_github: "Dă-ne o stea pe GitHub",
+    business_trial_banner: {
+      title: "Perioada de probă de 14 zile pentru planul Business este activă!",
+      description:
+        "Explorați toate funcțiile Business. Când sunteți pregătit, alegeți să vă abonați. Nu veți fi facturat automat.",
+      trial_ends_today: "Perioada de probă se încheie astăzi",
+      trial_ends_in_days: "Perioada de probă se încheie în {days, plural, one {# zi} other {# zile}}",
+      start_subscription: "Începe abonamentul",
+      explore_business_features: "Explorează funcțiile Business",
+    },
   },
   link: {
     modal: {

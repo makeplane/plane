@@ -490,6 +490,15 @@ now to enhance your experience!`,
     manage_widgets: "Manage widgets",
     title: "Home",
     star_us_on_github: "Star us on GitHub",
+    business_trial_banner: {
+      title: "Your 14-day Business plan trial is live!",
+      description:
+        "Explore all Business features. When you're ready, choose to subscribe. You'll not be billed automatically.",
+      trial_ends_today: "Trial ends today",
+      trial_ends_in_days: "Trial ends in {days, plural, one {# day} other {# days}}",
+      start_subscription: "Start subscription",
+      explore_business_features: "Explore Business features",
+    },
   },
   link: {
     modal: {
