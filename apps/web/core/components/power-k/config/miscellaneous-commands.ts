@@ -41,12 +41,12 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
   const copyCurrentPageUrlToClipboard = useCallback(() => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
-      .then(() => {
+      .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("power_k.miscellaneous_actions.copy_current_page_url_toast_success"),
-        });
-      })
+        })
+      )
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -97,7 +97,7 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       i18n_title: "power_k.miscellaneous_actions.focus_top_nav_search",
       icon: SearchIcon,
       action: focusTopNavSearch,
-      modifierShortcut: "cmd+f",
+      shortcut: "/",
       isEnabled: () => true,
       isVisible: () => true,
       closeOnSelect: true,
