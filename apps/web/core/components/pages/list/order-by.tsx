@@ -37,7 +37,7 @@ export function PageOrderByDropdown(props: Props) {
     <CustomMenu
       customButton={
         <div className={getButtonStyling("secondary", "lg")}>
-          {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
+          {!isDescending ? <ArrowUpWideNarrow className="size-3" /> : <ArrowDownWideNarrow className="size-3" />}
           {orderByDetails?.label}
         </div>
       }

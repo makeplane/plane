@@ -116,7 +116,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
             <div>
               <label htmlFor="title" className="mb-2 text-secondary">
                 Display title
-                <span className="text-10 block">Optional</span>
+                <span className="block text-10">Optional</span>
               </label>
               <Controller
                 control={control}
@@ -137,7 +137,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
           <Button variant="secondary" size="lg" onClick={onClose}>
             Cancel
           </Button>

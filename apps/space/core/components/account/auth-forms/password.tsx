@@ -125,7 +125,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
-        <div className={`relative flex items-center rounded-md bg-surface-1 border border-subtle`}>
+        <div className={`relative flex items-center rounded-md border border-subtle bg-surface-1`}>
           <Input
             id="email"
             name="email"
@@ -133,7 +133,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             value={passwordFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-placeholder border-0`}
+            className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder`}
             disabled
           />
           {passwordFormData.email.length > 0 && (
@@ -146,7 +146,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       </div>
 
       <div className="space-y-1">
-        <label className="text-13 text-tertiary font-medium" htmlFor="password">
+        <label className="text-13 font-medium text-tertiary" htmlFor="password">
           {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
         </label>
         <div className="relative flex items-center rounded-md bg-surface-1">
@@ -156,7 +156,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
             placeholder="Enter password"
-            className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
+            className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
             autoComplete="off"
@@ -179,7 +179,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
 
       {mode === EAuthModes.SIGN_UP && (
         <div className="space-y-1">
-          <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
+          <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
             Confirm password
           </label>
           <div className="relative flex items-center rounded-md bg-surface-1">
@@ -189,7 +189,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder="Confirm password"
-              className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
+              className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
               autoComplete="off"

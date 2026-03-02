@@ -142,7 +142,7 @@ const LabelItem = observer(function LabelItem({
     >
       <div
         className={cn(
-          "flex overflow-hidden justify-center hover:bg-layer-1 max-w-full h-full flex-shrink-0 items-center rounded-sm px-2.5 text-caption-sm-regular",
+          "flex h-full max-w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-sm px-2.5 text-caption-sm-regular hover:bg-layer-1",
           !disabled && "cursor-pointer",
           fullWidth && "w-full",
           noLabelBorder ? "rounded-none" : "border-[0.5px] border-strong"

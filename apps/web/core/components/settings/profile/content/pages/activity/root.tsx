@@ -60,7 +60,7 @@ export const ActivityProfileSettings = observer(function ActivityProfileSettings
 
   if (isEmpty) {
     return (
-      <div className="size-full flex flex-col gap-y-7">
+      <div className="flex size-full flex-col gap-y-7">
         <ProfileSettingsHeading
           title={t("account_settings.activity.heading")}
           description={t("account_settings.activity.description")}
@@ -69,7 +69,7 @@ export const ActivityProfileSettings = observer(function ActivityProfileSettings
           title={""}
           description={""}
           assetPath={resolvedPath}
-          className="w-full p-0! justify-center mx-auto min-h-fit"
+          className="mx-auto min-h-fit w-full justify-center p-0!"
           size="base"
         />
       </div>
@@ -84,7 +84,7 @@ export const ActivityProfileSettings = observer(function ActivityProfileSettings
       />
       <div className="mt-7 w-full">{activityPages}</div>
       {isLoadMoreVisible && (
-        <div className="flex w-full items-center justify-center mt-4">
+        <div className="mt-4 flex w-full items-center justify-center">
           <Button variant="ghost" onClick={handleLoadMore} appendIcon={<ChevronDown />}>
             {t("load_more")}
           </Button>

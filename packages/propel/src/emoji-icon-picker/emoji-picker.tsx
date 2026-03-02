@@ -106,7 +106,7 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
       </Popover.Button>
       <Popover.Panel
         positionerClassName="z-50"
-        className={cn("w-80 bg-surface-1 rounded-md border-[0.5px] border-strong overflow-hidden", dropdownClassName)}
+        className={cn("w-80 overflow-hidden rounded-md border-[0.5px] border-strong bg-surface-1", dropdownClassName)}
         side={finalSide}
         align={finalAlign}
         sideOffset={8}
@@ -132,9 +132,9 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
                 key={tab.key}
                 value={tab.key}
                 className={({ selected }) =>
-                  cn("py-1 text-13 rounded-sm border border-subtle bg-layer-1", {
+                  cn("rounded-sm border border-subtle bg-layer-1 py-1 text-13", {
                     "bg-surface-1 text-primary": selected,
-                    "text-placeholder hover:text-tertiary hover:bg-layer-1/60": !selected,
+                    "text-placeholder hover:bg-layer-1/60 hover:text-tertiary": !selected,
                   })
                 }
               >

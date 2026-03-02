@@ -56,7 +56,7 @@ export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(pro
           <Tooltip key={layout.key} tooltipContent={t(layout.titleTranslationKey)}>
             <button
               type="button"
-              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm transition-all bg-layer-transparent hover:bg-layer-transparent-hover ${
+              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover ${
                 activeLayout == layout.key ? "bg-layer-transparent-active hover:bg-layer-transparent-selected" : ""
               }`}
               onClick={() => handleCurrentBoardView(layout.key)}

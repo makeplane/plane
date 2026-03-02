@@ -1,9 +1,9 @@
 {
   "name": "admin",
-  "description": "Admin UI for Plane",
   "version": "1.2.0",
-  "license": "AGPL-3.0",
   "private": true,
+  "description": "Admin UI for Plane",
+  "license": "AGPL-3.0",
   "type": "module",
   "scripts": {
     "dev": "react-router dev --port 3001",
@@ -13,9 +13,9 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist && rm -rf build",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=485",
     "check:types": "react-router typegen && tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt --check .",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=485",
-    "fix:format": "prettier . --cache --write"
+    "fix:format": "oxfmt ."
   },
   "dependencies": {
     "@bprogress/core": "catalog:",

@@ -82,8 +82,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div id="context-menu-portal" />
         <div id="editor-portal" />
         <AppProvider>
-          <div className={cn("h-screen w-full overflow-hidden relative flex flex-col", "app-container")}>
-            <main className="w-full h-full overflow-hidden relative">{children}</main>
+          <div className={cn("relative flex h-screen w-full flex-col overflow-hidden", "app-container")}>
+            <main className="relative h-full w-full overflow-hidden">{children}</main>
           </div>
         </AppProvider>
       </body>

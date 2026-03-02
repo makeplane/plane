@@ -23,11 +23,11 @@ export const IssuesNavbarRoot = observer(function IssuesNavbarRoot(props: Props)
   const { project_details } = publishSettings;
 
   return (
-    <div className="relative flex justify-between w-full gap-4 px-5">
+    <div className="relative flex w-full justify-between gap-4 px-5">
       {/* project detail */}
       <div className="flex shrink-0 items-center gap-2">
         {project_details ? (
-          <span className="size-7 shrink-0 grid place-items-center">
+          <span className="grid size-7 shrink-0 place-items-center">
             <ProjectLogo logo={project_details.logo_props} className="text-16" />
           </span>
         ) : (

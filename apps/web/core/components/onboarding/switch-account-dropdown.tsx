@@ -39,13 +39,13 @@ export const SwitchAccountDropdown = observer(function SwitchAccountDropdown(pro
     <>
       <SwitchAccountModal isOpen={showSwitchAccountModal} onClose={() => setShowSwitchAccountModal(false)} />
       <Menu as="div" className="relative">
-        <Menu.Button className="flex items-center gap-x-2.5 px-2 py-1.5 rounded-lg bg-layer-1 z-10">
-          <div className="size-6 rounded-full bg-success-primary flex items-center justify-center text-on-color font-semibold text-13 capitalize">
+        <Menu.Button className="z-10 flex items-center gap-x-2.5 rounded-lg bg-layer-1 px-2 py-1.5">
+          <div className="flex size-6 items-center justify-center rounded-full bg-success-primary text-13 font-semibold text-on-color capitalize">
             {user?.avatar_url ? (
               <img
                 src={getFileURL(user?.avatar_url)}
                 alt={user?.display_name}
-                className="w-full h-full rounded-full object-cover"
+                className="h-full w-full rounded-full object-cover"
               />
             ) : (
               <>{fullName?.[0] ?? "R"}</>
@@ -61,12 +61,12 @@ export const SwitchAccountDropdown = observer(function SwitchAccountDropdown(pro
           leaveFrom="transform scale-100 opacity-100"
           leaveTo="transform scale-95 opacity-0"
         >
-          <Menu.Items className="absolute z-10 right-0 rounded-md border-[0.5px] border-strong mt-2 bg-surface-1 px-2 py-2.5 text-13 min-w-[12rem] shadow-raised-200">
+          <Menu.Items className="absolute right-0 z-10 mt-2 min-w-[12rem] rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-13 shadow-raised-200">
             <Menu.Item
               as="button"
               type="button"
               className={({ active }) =>
-                cn("text-danger-primary px-1 py-1.5 whitespace-nowrap text-left rounded-sm w-full", {
+                cn("w-full rounded-sm px-1 py-1.5 text-left whitespace-nowrap text-danger-primary", {
                   "bg-layer-1": active,
                 })
               }

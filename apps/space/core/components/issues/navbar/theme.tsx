@@ -28,9 +28,9 @@ export const NavbarTheme = observer(function NavbarTheme() {
     <button
       type="button"
       onClick={handleTheme}
-      className="relative grid size-7 place-items-center rounded-sm bg-layer-transparent hover:bg-layer-transparent-hover text-primary"
+      className="relative grid size-7 place-items-center rounded-sm bg-layer-transparent text-primary hover:bg-layer-transparent-hover"
     >
-      {appTheme === "light" ? <Moon className="shrink-0 size-3.5" /> : <Sun className="shrink-0 size-3.5" />}
+      {appTheme === "light" ? <Moon className="size-3.5 shrink-0" /> : <Sun className="size-3.5 shrink-0" />}
     </button>
   );
 });

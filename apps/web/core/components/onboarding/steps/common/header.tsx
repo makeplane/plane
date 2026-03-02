@@ -13,7 +13,7 @@ type Props = {
 
 export function CommonOnboardingHeader({ title, description }: Props) {
   return (
-    <div className="text-left space-y-2">
+    <div className="space-y-2 text-left">
       <h1 className="text-h4-semibold text-primary">{title}</h1>
       <p className="text-body-md-regular text-tertiary">{description}</p>
     </div>

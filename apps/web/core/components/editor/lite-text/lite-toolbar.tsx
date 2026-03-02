@@ -23,7 +23,7 @@ export function LiteToolbar({ onSubmit, isSubmitting, isEmpty, executeCommand }:
       <button
         onClick={() => executeCommand(IMAGE_ITEM)}
         type="button"
-        className="p-1 text-tertiary hover:text-secondary transition-colors"
+        className="p-1 text-tertiary transition-colors hover:text-secondary"
       >
         <Paperclip className="size-3" />
       </button>
@@ -31,7 +31,7 @@ export function LiteToolbar({ onSubmit, isSubmitting, isEmpty, executeCommand }:
         type="button"
         onClick={(e) => onSubmit(e)}
         disabled={isEmpty || isSubmitting}
-        className="p-1 bg-accent-primary hover:bg-accent-primary/80 disabled:bg-layer-1 disabled:text-secondary text-primary rounded-sm transition-colors"
+        className="rounded-sm bg-accent-primary p-1 text-primary transition-colors hover:bg-accent-primary/80 disabled:bg-layer-1 disabled:text-secondary"
       >
         <ArrowUp className="size-3" />
       </button>

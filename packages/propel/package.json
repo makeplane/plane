@@ -4,18 +4,6 @@
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
-  "scripts": {
-    "dev": "tsdown --watch",
-    "build": "tsdown",
-    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1306",
-    "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
-    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1306",
-    "fix:format": "prettier . --cache --write",
-    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
-  },
   "exports": {
     "./accordion": "./dist/accordion/index.js",
     "./animated-counter": "./dist/animated-counter/index.js",
@@ -60,6 +48,18 @@
     "./package.json": "./package.json",
     "./styles/react-day-picker.css": "./dist/styles/react-day-picker.css",
     "./styles/react-day-picker": "./dist/styles/react-day-picker.css"
+  },
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1306",
+    "check:types": "tsc --noEmit",
+    "check:format": "oxfmt --check .",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1306",
+    "fix:format": "oxfmt .",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@base-ui-components/react": "1.0.0-beta.3",

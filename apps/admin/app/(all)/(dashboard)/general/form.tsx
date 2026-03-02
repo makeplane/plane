@@ -112,18 +112,18 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
       </div>
 
       <div className="space-y-6">
-        <div className="text-16 font-medium text-primary pb-1.5 border-b border-subtle">Chat + telemetry</div>
+        <div className="border-b border-subtle pb-1.5 text-16 font-medium text-primary">Chat + telemetry</div>
         <IntercomConfig isTelemetryEnabled={watch("is_telemetry_enabled") ?? false} />
         <div className="flex items-center gap-14">
-          <div className="grow flex items-center gap-4">
+          <div className="flex grow items-center gap-4">
             <div className="shrink-0">
-              <div className="flex items-center justify-center size-11 bg-layer-1 rounded-lg">
+              <div className="flex size-11 items-center justify-center rounded-lg bg-layer-1">
                 <Telescope className="size-5 text-tertiary" />
               </div>
             </div>
             <div className="grow">
-              <div className="text-13 font-medium text-primary leading-5">Let Plane collect anonymous usage data</div>
-              <div className="text-11 font-regular text-tertiary leading-5">
+              <div className="text-13 leading-5 font-medium text-primary">Let Plane collect anonymous usage data</div>
+              <div className="text-11 leading-5 font-regular text-tertiary">
                 No PII is collected.This anonymized data is used to understand how you use Plane and build new features
                 in line with{" "}
                 <a

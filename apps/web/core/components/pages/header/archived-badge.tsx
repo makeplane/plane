@@ -19,8 +19,8 @@ export const PageArchivedBadge = observer(function PageArchivedBadge({ page }: P
   if (!page.archived_at) return null;
 
   return (
-    <div className="flex-shrink-0 h-6 flex items-center gap-1 px-2 rounded-sm text-accent-primary bg-accent-primary/20">
-      <ArchiveIcon className="flex-shrink-0 size-3.5" />
+    <div className="flex h-6 flex-shrink-0 items-center gap-1 rounded-sm bg-accent-primary/20 px-2 text-accent-primary">
+      <ArchiveIcon className="size-3.5 flex-shrink-0" />
       <span className="text-11 font-medium">Archived at {renderFormattedDate(page.archived_at)}</span>
     </div>
   );

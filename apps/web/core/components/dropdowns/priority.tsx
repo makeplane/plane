@@ -89,7 +89,7 @@ function BorderButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm px-2 py-0.5",
+          "flex h-full items-center gap-1.5 rounded-sm border-[0.5px] px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -105,7 +105,7 @@ function BorderButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "p-0.5 rounded-sm border border-priority-urgent": priority === "urgent" && !hideText && highlightUrgent,
+                "rounded-sm border border-priority-urgent p-0.5": priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
               <PriorityIcon
@@ -180,7 +180,7 @@ function BackgroundButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded-sm px-2 py-0.5",
+          "flex h-full items-center gap-1.5 rounded-sm px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -196,7 +196,7 @@ function BackgroundButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "p-0.5 rounded-sm border border-priority-urgent": priority === "urgent" && !hideText && highlightUrgent,
+                "rounded-sm border border-priority-urgent p-0.5": priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
               <PriorityIcon
@@ -264,7 +264,7 @@ function TransparentButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded-sm hover:bg-layer-transparent-hover px-2",
+          "flex h-full w-full items-center gap-1.5 rounded-sm px-2 hover:bg-layer-transparent-hover",
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -280,7 +280,7 @@ function TransparentButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "p-0.5 rounded-sm border border-priority-urgent": priority === "urgent" && !hideText && highlightUrgent,
+                "rounded-sm border border-priority-urgent p-0.5": priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
               <PriorityIcon
@@ -491,7 +491,7 @@ export function PriorityDropdown(props: Props) {
                     value={option.value}
                     className={({ active, selected }) =>
                       cn(
-                        `w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none ${
+                        `flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none ${
                           active ? "bg-layer-transparent-hover" : ""
                         } ${selected ? "text-primary" : "text-secondary"}`
                       )
@@ -506,7 +506,7 @@ export function PriorityDropdown(props: Props) {
                   </Combobox.Option>
                 ))
               ) : (
-                <p className="text-placeholder italic py-1 px-1.5">{t("no_matching_results")}</p>
+                <p className="px-1.5 py-1 text-placeholder italic">{t("no_matching_results")}</p>
               )}
             </div>
           </div>

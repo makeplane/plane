@@ -214,7 +214,7 @@ export function GptAssistantPopover(props: Props) {
       >
         <Popover.Panel
           as="div"
-          className={`fixed z-10 flex w-full min-w-[50rem] max-w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-subtle bg-surface-1 p-4 shadow ${className}`}
+          className={`shadow fixed z-10 flex w-full max-w-full min-w-[50rem] flex-col space-y-4 overflow-hidden rounded-[10px] border border-subtle bg-surface-1 p-4 ${className}`}
           ref={setPopperElement as Ref<HTMLDivElement>}
           style={styles.popper}
           {...attributes.popper}
@@ -275,7 +275,7 @@ export function GptAssistantPopover(props: Props) {
               />
             )}
           />
-          <div className="flex gap-2 justify-between">
+          <div className="flex justify-between gap-2">
             {responseActionButton ? (
               <>{responseActionButton}</>
             ) : (

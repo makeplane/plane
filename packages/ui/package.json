@@ -1,11 +1,11 @@
 {
   "name": "@plane/ui",
-  "description": "UI components shared across multiple apps internally",
-  "private": true,
   "version": "1.2.0",
-  "sideEffects": false,
+  "private": true,
+  "description": "UI components shared across multiple apps internally",
   "license": "AGPL-3.0",
   "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -24,14 +24,10 @@
     "postcss": "postcss styles/globals.css -o styles/output.css --watch",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=643",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt --check .",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=643",
-    "fix:format": "prettier . --cache --write",
+    "fix:format": "oxfmt .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
-  },
-  "peerDependencies": {
-    "react": "catalog:",
-    "react-dom": "catalog:"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
@@ -80,5 +76,9 @@
     "storybook": "9.1.17",
     "tsdown": "catalog:",
     "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
   }
 }
