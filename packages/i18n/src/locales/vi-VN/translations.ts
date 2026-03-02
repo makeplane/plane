@@ -23,6 +23,7 @@ export default {
     favorites: "Yêu thích",
     pro: "Phiên bản Pro",
     upgrade: "Nâng cấp",
+    stickies: "Ghi chú",
   },
   auth: {
     common: {
