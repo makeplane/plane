@@ -237,22 +237,30 @@ html.todesktop .desktop-header .desktop-header-actions {
     margin: revert;
     font-size: revert;
     font-weight: revert;
-    color: revert;
     text-decoration: revert;
     text-indent: revert;
-    border-collapse: revert;
   }
-  li,
-  ui {
+  li {
     display: list-item;
     list-style-type: disc;
     margin-left: 0.9rem;
+    margin-bottom: 0.5rem;
   }
   table,
   tr,
   td,
   th {
-    border-width: revert;
+    border: none;
+    margin-bottom: 0.5rem;
+  }
+  thead {
+    @apply bg-surface-2 border-t border-b border-subtle;
+  }
+  thead th {
+    @apply text-body-xs-medium text-tertiary;
+  }
+  tr {
+    @apply text-body-xs-regular text-secondary;
   }
   pre {
     @apply bg-layer-1;
@@ -261,6 +269,15 @@ html.todesktop .desktop-header .desktop-header-actions {
     border-radius: 10px;
     padding: 20px;
     font-family: inherit;
+  }
+  strong,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold;
   }
 }
 

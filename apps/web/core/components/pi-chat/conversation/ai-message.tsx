@@ -57,17 +57,17 @@ export const AiMessage = observer(function AiMessage(props: TProps) {
             className="pi-chat-root [&>*:first-child]:mt-0 animate-fade-in text-body-sm-regular text-primary"
             components={{
               a: ({ children, href }) => (
-                <a href={href || ""} target="_blank" rel="noopener noreferrer">
+                <a href={href || ""} target="_blank" rel="noopener noreferrer" className="text-accent-secondary">
                   {children}
                 </a>
               ),
               table: ({ children }) => (
-                <div className="overflow-x-auto w-full my-4 border-subtle-1">
-                  <table className="min-w-full border-collapse">{children}</table>
+                <div className="my-3 w-full overflow-x-auto">
+                  <table className="w-full border-collapse">{children}</table>
                 </div>
               ),
-              th: ({ children }) => <th className="px-2 py-3 border-subtle-1"> {children}</th>,
-              td: ({ children }) => <td className="px-2 py-3 border-subtle-1">{children}</td>,
+              th: ({ children }) => <th className="min-w-32 border-0 px-3 py-2 text-left">{children}</th>,
+              td: ({ children }) => <td className="border-0 px-3 pt-3 text-left">{children}</td>,
               pre: JsonRenderPreBlock,
             }}
           >
