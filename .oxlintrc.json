@@ -30,7 +30,7 @@
     "build/**",
     "coverage/**",
     "dist/**",
-    "public/**",
+    "**/public/**",
     "storybook-static/**"
   ],
   "rules": {

@@ -10,8 +10,6 @@
 import { APIService } from "../api.service";
 
 export class ModuleOperationService extends APIService {
-  
-
   /**
    * Add issues to a module
    * @param {string} workspaceSlug - The slug of the workspace

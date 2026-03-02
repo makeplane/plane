@@ -18,7 +18,6 @@ export class ModuleLinkService extends APIService {
    * Creates an instance of ModuleLinkService.
    * @param {string} baseURL - The base URL for the API endpoints
    */
-  
 
   /**
    * Creates a new module link.
