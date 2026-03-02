@@ -25,10 +25,10 @@
   "scripts": {
     "build": "tsc && tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1435",
+    "check:lint": "oxlint --max-warnings=416 .",
     "check:types": "tsc --noEmit",
     "check:format": "oxfmt --check .",
-    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1435",
+    "fix:lint": "oxlint --fix .",
     "fix:format": "oxfmt .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
