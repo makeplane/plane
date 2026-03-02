@@ -404,7 +404,7 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
             storage: S3Storage = S3Storage(request=self.request)
             new_asset_key: str = f"{workspace.id}/{uuid.uuid4().hex}"
             # Get the original asset
-            original_asset: FileAsset = FileAsset.objects.get(pk=asset_id)
+            original_asset: FileAsset = FileAsset.objects.get(pk=asset_id, workspace=workspace)
             # copy the asset file
             storage.copy_object(original_asset.asset, new_asset_key)
 
