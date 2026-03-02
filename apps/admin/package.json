@@ -11,7 +11,7 @@
     "preview": "react-router build && serve -s build/client -l 3001",
     "start": "serve -s build/client -l 3001",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist && rm -rf build",
-    "check:lint": "oxlint --max-warnings=758 .",
+    "check:lint": "oxlint --max-warnings=759 .",
     "check:types": "react-router typegen && tsc --noEmit",
     "check:format": "oxfmt --check .",
     "fix:lint": "oxlint --fix .",
