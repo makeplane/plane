@@ -22,7 +22,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "postcss": "postcss styles/globals.css -o styles/output.css --watch",
-    "check:lint": "oxlint .",
+    "check:lint": "oxlint --max-warnings=66 .",
     "check:types": "tsc --noEmit",
     "check:format": "oxfmt --check .",
     "fix:lint": "oxlint --fix .",

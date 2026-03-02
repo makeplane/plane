@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "oxlint .",
+    "check:lint": "oxlint --max-warnings=0 .",
     "check:types": "tsc --noEmit",
     "check:format": "oxfmt --check .",
     "fix:lint": "oxlint --fix .",
