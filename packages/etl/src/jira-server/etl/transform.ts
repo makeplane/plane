@@ -170,8 +170,10 @@ export const transformComment = (ctx: TTransformationContext, comment: JiraComme
     external_source: source,
     created_at: comment.created,
     created_by: comment.author?.emailAddress || comment.author?.displayName,
-    // @ts-expect-error - Ignoring ts error for possible undefined
-    comment_html: comment.renderedBody ? comment.renderedBody : (comment.body ?? "<p></p>"),
+    comment_html: comment.renderedBody
+      ? comment.renderedBody
+      : // @ts-expect-error - Ignoring ts error for possible undefined
+        (comment.body ?? "<p></p>"),
     actor: comment.author?.emailAddress || comment.author?.displayName,
     issue: `${projectId}_${resourceId}_${comment.issue_id}`,
   };
@@ -231,7 +233,7 @@ export const transformIssueType = (
   issueType: JiraIssueTypeDetails
 ): Partial<ExIssueType> => {
   const { resourceId, projectId, source } = ctx;
-  const isEpic = issueType.name?.toLowerCase().includes("epic");
+  const isEpic = issueType.name?.toLowerCase() === "epic";
 
   return {
     name: issueType.name,

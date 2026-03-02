@@ -97,12 +97,14 @@ export class JiraIssuesStep implements IStep {
       await this.initializeReportBatchCount(paginationCtx, issuesResult.total, job);
 
       if (this.shouldReturnEmpty(issuesResult, paginationCtx)) {
-        logger.info(`[${job.id}] [${this.name}] No issues found`, { jobId: job.id });
+        logger.info(`[${job.id}] [${this.name}] No issues found`, {
+          jobId: job.id,
+        });
         return createEmptyContext();
       }
 
       // Process issues: extract comments, property values, associations, and relations using orchestrator
-      const dataExtractor = new JiraIssueDataExtractor();
+      const dataExtractor = this.getDataExtractor();
       const extractedData = await dataExtractor.extractAll({
         job,
         sourceClient: jobContext.sourceClient,
@@ -155,6 +157,10 @@ export class JiraIssuesStep implements IStep {
       });
       throw error;
     }
+  }
+
+  protected getDataExtractor(): JiraIssueDataExtractor {
+    return new JiraIssueDataExtractor();
   }
 
   /**
