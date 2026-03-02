@@ -454,6 +454,8 @@ export default {
     },
   },
   intake: "Entrada",
+  renew: "Renovar",
+  preview: "Vista previa",
   time_tracking: "Seguimiento de tiempo",
   work_management: "Gestión del trabajo",
   projects_and_issues: "Proyectos y elementos de trabajo",
@@ -610,6 +612,9 @@ export default {
       name: "Nombre",
     },
   },
+  upgrade_request: "Pide a tu administrador del espacio de trabajo que actualice.",
+  copied_to_clipboard: "Copiado al portapapeles",
+  copied_to_clipboard_description: "La URL se ha copiado correctamente al portapapeles",
   toast: {
     success: "¡Éxito!",
     error: "¡Error!",
@@ -2615,17 +2620,54 @@ Crea un nuevo proyecto en su lugar`,
         toggle_description: "Los miembros del proyecto podrán crear y editar páginas.",
       },
       intake: {
-        heading: "Responsabilidad de ingreso",
+        intake_responsibility: "Responsabilidad de ingreso",
+        intake_sources: "Fuentes de ingreso",
         title: "Recepción",
         short_title: "Recepción",
         description:
           "Permite que los no miembros compartan errores, comentarios y sugerencias; sin interrumpir tu flujo de trabajo.",
         toggle_title: "Habilitar recepción",
         toggle_description: "Permitir a los miembros del proyecto crear solicitudes de recepción en la aplicación.",
+        toggle_tooltip_on: "Pide a tu administrador del proyecto que active esto.",
+        toggle_tooltip_off: "Pide a tu administrador del proyecto que desactive esto.",
         notify_assignee: {
           title: "Notificar asignados",
           description:
             "Para una nueva solicitud de ingreso, los asignados predeterminados serán alertados mediante notificaciones",
+        },
+        in_app: {
+          title: "En la aplicación",
+          description:
+            "Recibe nuevos elementos de trabajo de miembros e invitados en tu espacio de trabajo sin interrumpir los existentes.",
+        },
+        email: {
+          title: "Correo electrónico",
+          description:
+            "Recopila nuevos elementos de trabajo de cualquiera que envíe un correo a una dirección de Plane.",
+          fieldName: "ID de correo electrónico",
+        },
+        form: {
+          title: "Formularios",
+          description:
+            "Permite que personas fuera de tu espacio de trabajo creen posibles nuevos elementos de trabajo mediante un formulario dedicado y seguro.",
+          fieldName: "URL del formulario predeterminado",
+          create_forms: "Crear formularios usando tipos de elementos de trabajo",
+          manage_forms: "Gestionar formularios",
+          manage_forms_tooltip: "Pide a tu administrador del espacio de trabajo que gestione esto.",
+          create_form: "Crear formulario",
+          edit_form: "Editar detalles del formulario",
+          form_title: "Título del formulario",
+          form_title_required: "El título del formulario es obligatorio",
+          work_item_type: "Tipo de elemento de trabajo",
+          remove_property: "Eliminar propiedad",
+          select_properties: "Seleccionar propiedades",
+          search_placeholder: "Buscar propiedades",
+          toasts: {
+            success_create: "Formulario de ingreso creado correctamente",
+            success_update: "Formulario de ingreso actualizado correctamente",
+            error_create: "Error al crear el formulario de ingreso",
+            error_update: "Error al actualizar el formulario de ingreso",
+          },
         },
         toasts: {
           set: {
@@ -2655,6 +2697,11 @@ Crea un nuevo proyecto en su lugar`,
           "Los hitos proporcionan una capa para alinear los elementos de trabajo hacia fechas de finalización compartidas.",
         toggle_title: "Habilitar hitos",
         toggle_description: "Organiza elementos de trabajo por plazos de hitos.",
+      },
+      toasts: {
+        loading: "Actualizando función del proyecto...",
+        success: "Función del proyecto actualizada correctamente.",
+        error: "Algo salió mal al actualizar la función del proyecto. Por favor, inténtalo de nuevo.",
       },
     },
   },
@@ -5838,6 +5885,61 @@ si estás seguro de que tu búsqueda es correcta.`,
       no_results: {
         work_item: "No se encontraron plantillas.",
         project: "No se encontraron plantillas.",
+      },
+    },
+  },
+  intake_forms: {
+    create: {
+      title: "Crear un elemento de trabajo",
+      "sub-title": "Haz saber al equipo en qué te gustaría que trabajen.",
+      name: "Nombre",
+      email: "Correo electrónico",
+      about: "¿De qué trata este elemento de trabajo?",
+      description: "Describe qué debería ocurrir",
+      description_placeholder:
+        "Añade todos los detalles que quieras para ayudar al equipo a identificar tu situación y necesidades.",
+      loading: "Creando",
+      create_work_item: "Crear elemento de trabajo",
+      errors: {
+        name: "El nombre es obligatorio",
+        name_max_length: "El nombre debe tener menos de 255 caracteres",
+        email: "El correo electrónico es obligatorio",
+        email_invalid: "Dirección de correo no válida",
+        title: "El título es obligatorio",
+        title_max_length: "El título debe tener menos de 255 caracteres",
+      },
+    },
+    success: {
+      title: "¡Genial! Tu elemento de trabajo ya está en la cola del equipo.",
+      description: "El equipo puede aprobar o descartar este elemento de trabajo desde su cola de entrada.",
+      primary_button: {
+        text: "Añadir otro elemento de trabajo",
+      },
+      secondary_button: {
+        text: "Saber más sobre Entrada",
+      },
+    },
+    how_it_works: {
+      title: "¿Cómo funciona?",
+      heading: "Este es un formulario de Entrada.",
+      description:
+        "Entrada es una función de Plane que permite a los administradores y gestores de proyecto recibir elementos de trabajo externos en sus proyectos.",
+      steps: {
+        step_1: "Este breve formulario te permite crear un nuevo elemento de trabajo en un proyecto de Plane.",
+        step_2: "Al enviar este formulario, se crea un nuevo elemento de trabajo en la Entrada de ese proyecto.",
+        step_3: "Alguien de ese proyecto o equipo lo revisará.",
+        step_4: "Si lo aprueban, el elemento pasará a la cola de trabajo del proyecto. Si no, se rechazará.",
+        step_5:
+          "Para consultar el estado de ese elemento, contacta con el gestor del proyecto, el administrador o quien te envió el enlace a esta página.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Seleccionar tipo de elemento de trabajo",
+        search_placeholder: "Buscar un tipo de elemento de trabajo",
+      },
+      actions: {
+        select_properties: "Seleccionar propiedades",
       },
     },
   },

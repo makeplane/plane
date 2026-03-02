@@ -12,6 +12,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { IntakePublishForm } from "@plane/propel/domain/intake-form";
 import { CloseIcon } from "@plane/propel/icons";
 import type { EIssuePropertyType, TIssueProperty } from "@plane/types";
@@ -33,6 +34,7 @@ export const IntakeFormPreviewModal = observer(function IntakeFormPreviewModal(p
   const { isOpen, onClose, projectId, typeId, formTitle, selectedFields } = props;
 
   // hooks
+  const { t } = useTranslation();
   const workItemType = useIssueType(typeId);
   const { getProjectById } = useProject();
 
@@ -64,7 +66,7 @@ export const IntakeFormPreviewModal = observer(function IntakeFormPreviewModal(p
       className="p-5"
     >
       <div className="flex items-center justify-between text-placeholder sticky">
-        <span className="text-13 font-medium">Preview</span>
+        <span className="text-13 font-medium">{t("preview")}</span>
         <CloseIcon className="size-4 cursor-pointer" onClick={onClose} />
       </div>
       <div className="">

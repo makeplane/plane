@@ -15,6 +15,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Switch } from "@plane/propel/switch";
 import { EProductSubscriptionEnum, EUserProjectRoles } from "@plane/types";
@@ -42,6 +43,7 @@ type Props = {
 };
 const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(props: Props) {
   const { projectId, showDefault = true, featureList, isTooltip = false, className = "" } = props;
+  const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   const { allowPermissions } = useUserPermissions();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
@@ -55,6 +57,8 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
     workspaceSlug.toString(),
     projectId
   );
+
+  const intakeT = (path: string) => t(`project_settings.features.intake.${path}`);
 
   return (
     <>
@@ -84,7 +88,7 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
                                 "opacity-50": !isAdmin && featureKey !== "in_app",
                               })}
                             >
-                              {feature.title}
+                              {intakeT(`${featureKey}.title`)}
                             </div>
                             {featureKey !== "in_app" && (
                               <div className="rounded-sm px-2 py-[1px] text-11 font-medium capitalize items-center text-plans-brand-primary bg-plans-brand-subtle">
@@ -97,13 +101,13 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
                               "opacity-50": !isAdmin && featureKey !== "in_app",
                             })}
                           >
-                            {feature.description}
+                            {intakeT(`${featureKey}.description`)}
                           </p>
                         </div>
                         <div className={cn(!isTooltip && "flex items-center")}>
                           {featureKey !== "in_app" ? (
                             <Tooltip
-                              tooltipContent={`Ask your Workspace Admin to upgrade.`}
+                              tooltipContent={t("upgrade_request")}
                               position="top"
                               className=""
                               disabled={isAdmin}

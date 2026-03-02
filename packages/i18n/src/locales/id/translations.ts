@@ -447,6 +447,8 @@ export default {
     },
   },
   intake: "Penerimaan",
+  renew: "Perpanjang",
+  preview: "Pratinjau",
   time_tracking: "Pelacakan waktu",
   work_management: "Manajemen kerja",
   projects_and_issues: "Proyek dan item kerja",
@@ -599,6 +601,9 @@ export default {
       name: "Nama",
     },
   },
+  upgrade_request: "Minta Admin Ruang Kerja untuk meningkatkan.",
+  copied_to_clipboard: "Disalin ke clipboard",
+  copied_to_clipboard_description: "URL berhasil disalin ke clipboard Anda",
   toast: {
     success: "Sukses!",
     error: "Kesalahan!",
@@ -2592,16 +2597,52 @@ Buat proyek baru sebagai gantinya`,
         toggle_description: "Anggota proyek akan dapat membuat dan mengedit halaman.",
       },
       intake: {
-        heading: "Tanggung jawab penerimaan",
+        intake_responsibility: "Tanggung jawab penerimaan",
+        intake_sources: "Sumber penerimaan",
         title: "Penerimaan",
         short_title: "Penerimaan",
         description: "Biarkan non-anggota berbagi bug, umpan balik, dan saran; tanpa mengganggu alur kerja Anda.",
         toggle_title: "Aktifkan penerimaan",
         toggle_description: "Izinkan anggota proyek membuat permintaan penerimaan dalam aplikasi.",
+        toggle_tooltip_on: "Minta Admin Proyek untuk mengaktifkan ini.",
+        toggle_tooltip_off: "Minta Admin Proyek untuk menonaktifkan ini.",
         notify_assignee: {
           title: "Beritahu yang ditugaskan",
           description:
             "Untuk permintaan penerimaan baru, yang ditugaskan secara default akan diberi peringatan melalui notifikasi",
+        },
+        in_app: {
+          title: "Dalam aplikasi",
+          description:
+            "Dapatkan item kerja baru dari Anggota dan Tamu di ruang kerja Anda tanpa mengganggu item kerja yang ada.",
+        },
+        email: {
+          title: "Email",
+          description: "Kumpulkan item kerja baru dari siapa saja yang mengirim email ke alamat email Plane.",
+          fieldName: "ID Email",
+        },
+        form: {
+          title: "Formulir",
+          description:
+            "Izinkan orang di luar ruang kerja Anda membuat item kerja baru potensial melalui formulir khusus dan aman.",
+          fieldName: "URL formulir default",
+          create_forms: "Buat Formulir menggunakan jenis item kerja",
+          manage_forms: "Kelola formulir",
+          manage_forms_tooltip: "Minta Admin Ruang Kerja untuk mengelola ini.",
+          create_form: "Buat formulir",
+          edit_form: "Edit detail formulir",
+          form_title: "Judul formulir",
+          form_title_required: "Judul formulir wajib diisi",
+          work_item_type: "Jenis item kerja",
+          remove_property: "Hapus properti",
+          select_properties: "Pilih properti",
+          search_placeholder: "Cari properti",
+          toasts: {
+            success_create: "Formulir penerimaan berhasil dibuat",
+            success_update: "Formulir penerimaan berhasil diperbarui",
+            error_create: "Gagal membuat formulir penerimaan",
+            error_update: "Gagal memperbarui formulir penerimaan",
+          },
         },
         toasts: {
           set: {
@@ -2630,6 +2671,11 @@ Buat proyek baru sebagai gantinya`,
         description: "Tonggak menyediakan lapisan untuk menyelaraskan item kerja menuju tanggal penyelesaian bersama.",
         toggle_title: "Aktifkan tonggak",
         toggle_description: "Organisir item kerja berdasarkan tenggat tonggak.",
+      },
+      toasts: {
+        loading: "Memperbarui fitur proyek...",
+        success: "Fitur proyek berhasil diperbarui.",
+        error: "Terjadi kesalahan saat memperbarui fitur proyek. Silakan coba lagi.",
       },
     },
   },
@@ -5767,6 +5813,62 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
       no_results: {
         work_item: "Tidak ada template ditemukan.",
         project: "Tidak ada template ditemukan.",
+      },
+    },
+  },
+  intake_forms: {
+    create: {
+      title: "Buat item kerja",
+      "sub-title": "Beritahu tim tentang apa yang ingin Anda kerjakan.",
+      name: "Nama",
+      email: "Email",
+      about: "Tentang apa item kerja ini?",
+      description: "Jelaskan apa yang seharusnya terjadi",
+      description_placeholder:
+        "Tambahkan detail sebanyak yang Anda suka untuk membantu tim mengidentifikasi situasi dan kebutuhan Anda.",
+      loading: "Membuat",
+      create_work_item: "Buat item kerja",
+      errors: {
+        name: "Nama wajib diisi",
+        name_max_length: "Nama harus kurang dari 255 karakter",
+        email: "Email wajib diisi",
+        email_invalid: "Alamat email tidak valid",
+        title: "Judul wajib diisi",
+        title_max_length: "Judul harus kurang dari 255 karakter",
+      },
+    },
+    success: {
+      title: "Item kerja Anda sekarang ada di antrean tim.",
+      description: "Tim sekarang dapat menyetujui atau membuang item kerja ini dari antrean penerimaan mereka.",
+      primary_button: {
+        text: "Tambah item kerja lain",
+      },
+      secondary_button: {
+        text: "Pelajari lebih lanjut tentang Penerimaan",
+      },
+    },
+    how_it_works: {
+      title: "Bagaimana cara kerjanya?",
+      heading: "Ini adalah formulir Penerimaan.",
+      description:
+        "Penerimaan adalah fitur Plane yang memungkinkan admin dan manajer proyek menerima item kerja dari luar ke proyek mereka.",
+      steps: {
+        step_1: "Formulir singkat ini memungkinkan Anda membuat item kerja baru di proyek Plane.",
+        step_2: "Saat Anda mengirim formulir ini, item kerja baru dibuat di Penerimaan proyek tersebut.",
+        step_3: "Seseorang dari proyek atau tim akan meninjau ini.",
+        step_4:
+          "Jika mereka menyetujui, item kerja ini akan dipindahkan ke antrean kerja proyek. Jika tidak, akan ditolak.",
+        step_5:
+          "Untuk memeriksa status item kerja tersebut, hubungi manajer proyek, admin, atau siapa pun yang mengirimi Anda tautan ke halaman ini.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Pilih jenis item kerja",
+        search_placeholder: "Cari jenis item kerja",
+      },
+      actions: {
+        select_properties: "Pilih properti",
       },
     },
   },

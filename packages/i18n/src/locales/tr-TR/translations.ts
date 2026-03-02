@@ -444,6 +444,8 @@ export default {
     },
   },
   intake: "Talep",
+  renew: "Yenile",
+  preview: "Önizleme",
   time_tracking: "Zaman Takibi",
   work_management: "İş Yönetimi",
   projects_and_issues: "Projeler ve İş Öğeleri",
@@ -596,6 +598,9 @@ export default {
       name: "Ad",
     },
   },
+  upgrade_request: "Yükseltme için Çalışma Alanı Yöneticinize başvurun.",
+  copied_to_clipboard: "Panoya kopyalandı",
+  copied_to_clipboard_description: "URL panonuza başarıyla kopyalandı",
   toast: {
     success: "Başarılı!",
     error: "Hata!",
@@ -2581,16 +2586,52 @@ Bunun yerine yeni bir proje oluşturun`,
         toggle_description: "Proje üyeleri sayfalar oluşturabilir ve düzenleyebilir.",
       },
       intake: {
-        heading: "Alım sorumluluğu",
+        intake_responsibility: "Alım sorumluluğu",
+        intake_sources: "Alım kaynakları",
         title: "Alım",
         short_title: "Alım",
         description:
           "Üye olmayanların hataları, geri bildirimleri ve önerileri paylaşmasına izin verin; iş akışınızı aksatmadan.",
         toggle_title: "Alımı etkinleştir",
         toggle_description: "Proje üyelerinin uygulama içinde alım talepleri oluşturmasına izin verin.",
+        toggle_tooltip_on: "Proje Yöneticinizden bunu açmasını isteyin.",
+        toggle_tooltip_off: "Proje Yöneticinizden bunu kapatmasını isteyin.",
         notify_assignee: {
           title: "Atanan kişileri bildir",
           description: "Yeni bir alım talebi için varsayılan atanan kişiler bildirimler aracılığıyla uyarılacaktır",
+        },
+        in_app: {
+          title: "Uygulama içi",
+          description:
+            "Mevcut iş öğelerinizi bozmadan çalışma alanınızdaki Üyeler ve Konuklardan yeni iş öğeleri alın.",
+        },
+        email: {
+          title: "E-posta",
+          description: "Plane e-posta adresine e-posta gönderen herkesten yeni iş öğeleri toplayın.",
+          fieldName: "E-posta ID",
+        },
+        form: {
+          title: "Formlar",
+          description:
+            "Çalışma alanınızın dışındaki kişilerin özel ve güvenli bir form aracılığıyla sizin için potansiyel yeni iş öğeleri oluşturmasına izin verin.",
+          fieldName: "Varsayılan form URL'si",
+          create_forms: "İş öğesi türlerini kullanarak form oluşturun",
+          manage_forms: "Formları yönet",
+          manage_forms_tooltip: "Çalışma Alanı Yöneticinizden bunu yönetmesini isteyin.",
+          create_form: "Form oluştur",
+          edit_form: "Form ayrıntılarını düzenle",
+          form_title: "Form başlığı",
+          form_title_required: "Form başlığı zorunludur",
+          work_item_type: "İş öğesi türü",
+          remove_property: "Özelliği kaldır",
+          select_properties: "Özellikleri seç",
+          search_placeholder: "Özelliklerde ara",
+          toasts: {
+            success_create: "Alım formu başarıyla oluşturuldu",
+            success_update: "Alım formu başarıyla güncellendi",
+            error_create: "Alım formu oluşturulamadı",
+            error_update: "Alım formu güncellenemedi",
+          },
         },
         toasts: {
           set: {
@@ -5801,6 +5842,60 @@ modüller arşivlenebilir.`,
       no_results: {
         work_item: "Şablon bulunamadı.",
         project: "Şablon bulunamadı.",
+      },
+    },
+  },
+  intake_forms: {
+    create: {
+      title: "Bir iş öğesi oluştur",
+      "sub-title": "Ekibe ne üzerinde çalışmalarını istediğinizi bildirin.",
+      name: "Ad",
+      email: "E-posta",
+      about: "Bu iş öğesi ne hakkında?",
+      description: "Ne olması gerektiğini açıklayın",
+      description_placeholder: "Ekip durumunuzu ve ihtiyaçlarınızı anlasın diye istediğiniz kadar ayrıntı ekleyin.",
+      loading: "Oluşturuluyor",
+      create_work_item: "İş öğesi oluştur",
+      errors: {
+        name: "Ad zorunludur",
+        name_max_length: "Ad 255 karakterden az olmalıdır",
+        email: "E-posta zorunludur",
+        email_invalid: "Geçersiz e-posta adresi",
+        title: "Başlık zorunludur",
+        title_max_length: "Başlık 255 karakterden az olmalıdır",
+      },
+    },
+    success: {
+      title: "İş öğeniz artık ekibin kuyruğunda.",
+      description: "Ekip bu iş öğesini alım kuyruğundan onaylayabilir veya atabilir.",
+      primary_button: {
+        text: "Başka bir iş öğesi ekle",
+      },
+      secondary_button: {
+        text: "Alım hakkında daha fazla bilgi",
+      },
+    },
+    how_it_works: {
+      title: "Nasıl çalışır?",
+      heading: "Bu bir alım formudur.",
+      description:
+        "Alım, proje yöneticilerinin ve yöneticilerinin dışarıdan iş öğelerini projelerine almasını sağlayan bir Plane özelliğidir.",
+      steps: {
+        step_1: "Bu kısa form, bir Plane projesinde yeni bir iş öğesi oluşturmanızı sağlar.",
+        step_2: "Bu formu gönderdiğinizde, o projenin alımında yeni bir iş öğesi oluşturulur.",
+        step_3: "O proje veya ekipten biri inceleyecektir.",
+        step_4: "Onaylarlarsa bu iş öğesi projenin iş kuyruğuna taşınır. Aksi takdirde reddedilir.",
+        step_5:
+          "Bu iş öğesinin durumunu öğrenmek için proje yöneticisi, yönetici veya size bu sayfanın bağlantısını gönderen kişiyle iletişime geçin.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "İş öğesi türü seç",
+        search_placeholder: "İş öğesi türü ara",
+      },
+      actions: {
+        select_properties: "Özellikleri seç",
       },
     },
   },

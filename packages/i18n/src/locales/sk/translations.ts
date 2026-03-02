@@ -443,6 +443,8 @@ export default {
     },
   },
   intake: "Príjem",
+  renew: "Obnoviť",
+  preview: "Náhľad",
   time_tracking: "Sledovanie času",
   work_management: "Správa práce",
   projects_and_issues: "Projekty a pracovné položky",
@@ -595,6 +597,9 @@ export default {
       name: "Názov",
     },
   },
+  upgrade_request: "Požadujte od správcu pracovného priestoru upgrade.",
+  copied_to_clipboard: "Skopírované do schránky",
+  copied_to_clipboard_description: "URL bola úspešne skopírovaná do schránky",
   toast: {
     success: "Úspech!",
     error: "Chyba!",
@@ -5750,6 +5755,60 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
       upload_complete_message: "Nahrávanie dokončené!",
       upload_complete_description: 'Kliknite na "Spustiť import" pre začatie spracovania vašich Confluence dát.',
       upload_progress_message: "Prosím nezatvárajte toto okno.",
+    },
+  },
+  intake_forms: {
+    create: {
+      title: "Vytvoriť pracovnú položku",
+      "sub-title": "Dajte tímu vedieť, na čom by ste chceli, aby pracoval.",
+      name: "Meno",
+      email: "E-mail",
+      about: "O čom je táto pracovná položka?",
+      description: "Opíšte, čo by sa malo stať",
+      description_placeholder: "Pridajte toľko detailov, koľko chcete, aby tím identifikoval vašu situáciu a potreby.",
+      loading: "Vytváram",
+      create_work_item: "Vytvoriť pracovnú položku",
+      errors: {
+        name: "Meno je povinné",
+        name_max_length: "Meno musí mať menej ako 255 znakov",
+        email: "E-mail je povinný",
+        email_invalid: "Neplatná e-mailová adresa",
+        title: "Názov je povinný",
+        title_max_length: "Názov musí mať menej ako 255 znakov",
+      },
+    },
+    success: {
+      title: "Vaša pracovná položka je teraz v poradníku tímu.",
+      description: "Tím môže teraz schváliť alebo zahodiť túto pracovnú položku z fronty príjmov.",
+      primary_button: {
+        text: "Pridať ďalšiu pracovnú položku",
+      },
+      secondary_button: {
+        text: "Zistiť viac o príjme",
+      },
+    },
+    how_it_works: {
+      title: "Ako to funguje?",
+      heading: "Toto je formulár príjmu.",
+      description:
+        "Príjem je funkcia Plane, ktorá umožňuje správcom a manažérom projektov získavať pracovné položky zvonku do svojich projektov.",
+      steps: {
+        step_1: "Tento krátky formulár vám umožňuje vytvoriť novú pracovnú položku v projekte Plane.",
+        step_2: "Keď odošlete tento formulár, vytvorí sa nová pracovná položka v príjme tohto projektu.",
+        step_3: "Niekto z tohto projektu alebo tímu to skontroluje.",
+        step_4: "Ak to schvália, táto pracovná položka sa presunie do fronty práce projektu. Inak bude odmietnutá.",
+        step_5:
+          "Ak chcete zistiť stav tejto pracovnej položky, kontaktujte manažéra projektu, správcu alebo toho, kto vám poslal odkaz na túto stránku.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Vybrať typ pracovnej položky",
+        search_placeholder: "Hľadať typ pracovnej položky",
+      },
+      actions: {
+        select_properties: "Vybrať vlastnosti",
+      },
     },
   },
   recurring_work_items: {

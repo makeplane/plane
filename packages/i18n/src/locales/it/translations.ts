@@ -447,6 +447,8 @@ export default {
     },
   },
   intake: "Accoglienza",
+  renew: "Rinnova",
+  preview: "Anteprima",
   time_tracking: "Tracciamento del tempo",
   work_management: "Gestione del lavoro",
   projects_and_issues: "Progetti ed elementi di lavoro",
@@ -602,6 +604,9 @@ export default {
       name: "Nome",
     },
   },
+  upgrade_request: "Chiedi all'admin dello spazio di lavoro di effettuare l'upgrade.",
+  copied_to_clipboard: "Copiato negli appunti",
+  copied_to_clipboard_description: "L'URL è stato copiato con successo negli appunti",
   toast: {
     success: "Successo!",
     error: "Errore!",
@@ -2596,17 +2601,53 @@ Crea un nuovo progetto invece`,
         toggle_description: "I membri del progetto potranno creare e modificare pagine.",
       },
       intake: {
-        heading: "Responsabilità di accettazione",
+        intake_responsibility: "Responsabilità di accettazione",
+        intake_sources: "Fonti di accettazione",
         title: "Ricezione",
         short_title: "Ricezione",
         description:
           "Consenti ai non membri di condividere bug, feedback e suggerimenti; senza interrompere il tuo flusso di lavoro.",
         toggle_title: "Abilita ricezione",
         toggle_description: "Consenti ai membri del progetto di creare richieste di ricezione nell'app.",
+        toggle_tooltip_on: "Chiedi all'admin del progetto di attivarlo.",
+        toggle_tooltip_off: "Chiedi all'admin del progetto di disattivarlo.",
         notify_assignee: {
           title: "Notifica assegnatari",
           description:
             "Per una nuova richiesta di accettazione, gli assegnatari predefiniti saranno avvisati tramite notifiche",
+        },
+        in_app: {
+          title: "In-app",
+          description:
+            "Ricevi nuovi elementi di lavoro da membri e ospiti nel tuo spazio di lavoro senza disturbare quelli esistenti.",
+        },
+        email: {
+          title: "Email",
+          description: "Raccogli nuovi elementi di lavoro da chiunque invii un'email a un indirizzo email Plane.",
+          fieldName: "ID email",
+        },
+        form: {
+          title: "Moduli",
+          description:
+            "Consenti a persone esterne al tuo spazio di lavoro di creare potenziali nuovi elementi di lavoro tramite un modulo dedicato e sicuro.",
+          fieldName: "URL modulo predefinito",
+          create_forms: "Crea moduli utilizzando i tipi di elementi di lavoro",
+          manage_forms: "Gestisci moduli",
+          manage_forms_tooltip: "Chiedi all'admin dello spazio di lavoro di gestirlo.",
+          create_form: "Crea modulo",
+          edit_form: "Modifica dettagli modulo",
+          form_title: "Titolo modulo",
+          form_title_required: "Il titolo del modulo è obbligatorio",
+          work_item_type: "Tipo di elemento di lavoro",
+          remove_property: "Rimuovi proprietà",
+          select_properties: "Seleziona proprietà",
+          search_placeholder: "Cerca proprietà",
+          toasts: {
+            success_create: "Modulo di accettazione creato con successo",
+            success_update: "Modulo di accettazione aggiornato con successo",
+            error_create: "Impossibile creare il modulo di accettazione",
+            error_update: "Impossibile aggiornare il modulo di accettazione",
+          },
         },
         toasts: {
           set: {
@@ -2636,6 +2677,11 @@ Crea un nuovo progetto invece`,
           "I traguardi forniscono un livello per allineare gli elementi di lavoro verso date di completamento condivise.",
         toggle_title: "Abilita traguardi",
         toggle_description: "Organizza gli elementi di lavoro per scadenze dei traguardi.",
+      },
+      toasts: {
+        loading: "Aggiornamento funzionalità progetto...",
+        success: "Funzionalità progetto aggiornata con successo.",
+        error: "Qualcosa è andato storto durante l'aggiornamento della funzionalità progetto. Riprova.",
       },
     },
   },
@@ -5802,6 +5848,63 @@ Crea un nuovo progetto invece`,
       no_results: {
         work_item: "Nessun modello trovato.",
         project: "Nessun modello trovato.",
+      },
+    },
+  },
+  intake_forms: {
+    create: {
+      title: "Crea un elemento di lavoro",
+      "sub-title": "Fai sapere al team su cosa vorresti che lavorassero.",
+      name: "Nome",
+      email: "Email",
+      about: "Di cosa si tratta questo elemento di lavoro?",
+      description: "Descrivi cosa dovrebbe succedere",
+      description_placeholder:
+        "Aggiungi tutti i dettagli che desideri per aiutare il team a identificare la tua situazione e le tue esigenze.",
+      loading: "Creazione",
+      create_work_item: "Crea elemento di lavoro",
+      errors: {
+        name: "Il nome è obbligatorio",
+        name_max_length: "Il nome deve essere inferiore a 255 caratteri",
+        email: "L'email è obbligatoria",
+        email_invalid: "Indirizzo email non valido",
+        title: "Il titolo è obbligatorio",
+        title_max_length: "Il titolo deve essere inferiore a 255 caratteri",
+      },
+    },
+    success: {
+      title: "Il tuo elemento di lavoro è ora nella coda del team.",
+      description: "Il team può ora approvare o scartare questo elemento di lavoro dalla coda di accettazione.",
+      primary_button: {
+        text: "Aggiungi un altro elemento di lavoro",
+      },
+      secondary_button: {
+        text: "Scopri di più sull'accettazione",
+      },
+    },
+    how_it_works: {
+      title: "Come funziona?",
+      heading: "Questo è un modulo di accettazione.",
+      description:
+        "L'accettazione è una funzionalità di Plane che consente agli amministratori e ai responsabili di progetto di ricevere elementi di lavoro dall'esterno nei loro progetti.",
+      steps: {
+        step_1: "Questo breve modulo ti consente di creare un nuovo elemento di lavoro in un progetto Plane.",
+        step_2:
+          "Quando invii questo modulo, viene creato un nuovo elemento di lavoro nell'accettazione di quel progetto.",
+        step_3: "Qualcuno di quel progetto o team lo esaminerà.",
+        step_4:
+          "Se lo approvano, questo elemento verrà spostato nella coda di lavoro del progetto. Altrimenti, verrà rifiutato.",
+        step_5:
+          "Per verificare lo stato di quell'elemento, contatta il responsabile del progetto, l'admin o chi ti ha inviato il link a questa pagina.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Seleziona tipo di elemento di lavoro",
+        search_placeholder: "Cerca un tipo di elemento di lavoro",
+      },
+      actions: {
+        select_properties: "Seleziona proprietà",
       },
     },
   },

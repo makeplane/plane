@@ -15,6 +15,7 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { filterIntakeEligibleProperties } from "@plane/propel/domain/intake-form";
 import { CloseIcon, EyeOpenIcon } from "@plane/propel/icons";
@@ -54,8 +55,11 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   // hooks
+  const { t } = useTranslation();
   const workItemType = useIssueType(typeId);
   const { createTypeForm, updateTypeForm } = useIntakeTypeForms();
+
+  const intakeFormT = (path: string) => t(`project_settings.features.intake.form.${path}`);
 
   const defaultValues: Partial<TIntakeTypeForm> = useMemo(() => {
     const filteredProperties = filterIntakeEligibleProperties(workItemType?.activeProperties ?? []);
@@ -92,7 +96,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
   const QUICK_ACTIONS: TContextMenuItem[] = [
     {
       key: "remove",
-      title: "Remove",
+      title: t("remove"),
       icon: CloseIcon,
       action: handleRemove,
       className: "text-danger-primary",
@@ -133,7 +137,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: data?.id ? "Intake form updated successfully" : "Intake form created successfully",
+          message: data?.id ? intakeFormT("toasts.success_update") : intakeFormT("toasts.success_create"),
         });
         onClose();
       })
@@ -141,7 +145,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: data?.id ? "Failed to update intake form" : "Failed to create intake form",
+          message: data?.id ? intakeFormT("toasts.error_update") : intakeFormT("toasts.error_create"),
         });
       })
       .finally(() => {
@@ -160,7 +164,9 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
         <div className="p-3">
           {/* Form Header */}
           <div className="flex justify-between">
-            <span className="text-secondary text-14 font-medium">{data?.id ? "Edit form details" : "Create form"}</span>
+            <span className="text-secondary text-14 font-medium">
+              {data?.id ? intakeFormT("edit_form") : intakeFormT("create_form")}
+            </span>
             <div className="flex gap-2 items-center">
               <Button
                 variant="ghost"
@@ -168,7 +174,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
                 onClick={() => setIsPreviewModalOpen(true)}
               >
                 <EyeOpenIcon className="size-4" />
-                <span className=" text-11 font-medium">Preview</span>
+                <span className=" text-11 font-medium">{t("preview")}</span>
               </Button>
               {/* Quick actions */}
               <Menu ellipsis>
@@ -187,24 +193,29 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
           </div>
           <div className="flex justify-between mt-3">
             <div className="spacey-1 w-[65%]">
-              <label className="text-tertiary text-13 font-medium">Form title</label>
+              <label className="text-tertiary text-13 font-medium">{intakeFormT("form_title")}</label>
               <Controller
                 control={control}
                 name="name"
                 rules={{
                   required: {
                     value: true,
-                    message: "Form title is required",
+                    message: intakeFormT("form_title_required"),
                   },
                 }}
                 render={({ field }) => (
-                  <Input {...field} placeholder="Form title" className="w-full" hasError={Boolean(errors.name)} />
+                  <Input
+                    {...field}
+                    placeholder={intakeFormT("form_title")}
+                    className="w-full"
+                    hasError={Boolean(errors.name)}
+                  />
                 )}
               />
               {errors.name && <p className="text-danger-primary text-11">{errors.name.message}</p>}
             </div>
             <div className="spacey-1 w-[30%]">
-              <label className="text-tertiary text-13 font-medium">Work item type</label>
+              <label className="text-tertiary text-13 font-medium">{intakeFormT("work_item_type")}</label>
               <div className="p-2  border border-subtle-1 rounded-md flex items-center gap-2">
                 <IssueTypeIdentifier issueTypeId={typeId} size={"xs"} />
                 <span className="text-secondary text-11">{workItemType?.name}</span>
@@ -213,7 +224,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
           </div>
           {/* Properties  List */}
           <div className="mt-2 space-y-2">
-            <span className="text-placeholder text-11 uppercase font-medium">Properties</span>
+            <span className="text-placeholder text-11 uppercase font-medium">{t("properties")}</span>
             <div className="flex flex-col gap-2">
               {selectedFields.map((field) => (
                 <TypeFormPropertiesListItem
@@ -236,10 +247,10 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
         {/* Form footer */}
         <div className="border-t border-subtle flex justify-end gap-2 p-3">
           <Button variant="secondary" onClick={handleDiscard}>
-            Discard
+            {t("discard")}
           </Button>
           <Button onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={isSubmitting}>
-            {data?.id ? "Update" : "Save"}
+            {data?.id ? t("update") : t("save")}
           </Button>
         </div>
       </div>

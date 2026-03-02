@@ -14,6 +14,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
@@ -34,14 +35,17 @@ export const IntakeFeatureChildren = observer(function IntakeFeatureChildren({
   currentProjectDetails,
   workspaceSlug,
 }: Props) {
+  const { t } = useTranslation();
   const isEmailEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL);
   const isFormEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM);
+
+  const intakeT = (path: string) => t(`project_settings.features.intake.${path}`);
 
   return (
     <>
       <IntakeResponsibility projectId={currentProjectDetails?.id} featureList={INTAKE_RESPONSIBILITY_LIST} />
       <div className="mt-12">
-        <SettingsHeading title="Intake sources" variant="h6" />
+        <SettingsHeading title={intakeT("intake_sources")} variant="h6" />
         <div className="mt-4 px-4 rounded-lg border transition-all border-subtle bg-layer-2">
           {isEmailEnabled || isFormEnabled ? (
             <IntakeSubFeatures projectId={currentProjectDetails?.id} featureList={INTAKE_FEATURES_LIST} />

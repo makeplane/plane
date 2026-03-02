@@ -442,6 +442,8 @@ export default {
     },
   },
   intake: "Zgłoszenia",
+  renew: "Odnów",
+  preview: "Podgląd",
   time_tracking: "Śledzenie czasu",
   work_management: "Zarządzanie pracą",
   projects_and_issues: "Projekty i elementy pracy",
@@ -595,6 +597,9 @@ export default {
       name: "Nazwa",
     },
   },
+  upgrade_request: "Poproś administratora obszaru roboczego o uaktualnienie.",
+  copied_to_clipboard: "Skopiowano do schowka",
+  copied_to_clipboard_description: "URL został pomyślnie skopiowany do schowka",
   toast: {
     success: "Sukces!",
     error: "Błąd!",
@@ -2584,16 +2589,52 @@ Utwórz nowy.`,
         toggle_description: "Członkowie projektu będą mogli tworzyć i edytować strony.",
       },
       intake: {
-        heading: "Odpowiedzialność za przyjęcie",
+        intake_responsibility: "Odpowiedzialność za przyjęcie",
+        intake_sources: "Źródła przyjęć",
         title: "Odbiór",
         short_title: "Odbiór",
         description:
           "Pozwól osobom niebędącym członkami dzielić się błędami, opiniami i sugestiami; bez zakłócania przepływu pracy.",
         toggle_title: "Włącz odbiór",
         toggle_description: "Pozwól członkom projektu tworzyć żądania odbioru w aplikacji.",
+        toggle_tooltip_on: "Poproś administratora projektu o włączenie.",
+        toggle_tooltip_off: "Poproś administratora projektu o wyłączenie.",
         notify_assignee: {
           title: "Powiadom przypisanych",
           description: "Dla nowego żądania przyjęcia domyślni przypisani zostaną powiadomieni poprzez powiadomienia",
+        },
+        in_app: {
+          title: "W aplikacji",
+          description:
+            "Otrzymuj nowe elementy pracy od członków i gości w obszarze roboczym bez zakłócania istniejących.",
+        },
+        email: {
+          title: "E-mail",
+          description: "Zbieraj nowe elementy pracy od każdego, kto wyśle e-mail na adres Plane.",
+          fieldName: "ID e-mail",
+        },
+        form: {
+          title: "Formularze",
+          description:
+            "Pozwól osobom spoza obszaru roboczego tworzyć potencjalne nowe elementy pracy przez dedykowany i bezpieczny formularz.",
+          fieldName: "Domyślny URL formularza",
+          create_forms: "Twórz formularze przy użyciu typów elementów pracy",
+          manage_forms: "Zarządzaj formularzami",
+          manage_forms_tooltip: "Poproś administratora obszaru roboczego o zarządzanie.",
+          create_form: "Utwórz formularz",
+          edit_form: "Edytuj szczegóły formularza",
+          form_title: "Tytuł formularza",
+          form_title_required: "Tytuł formularza jest wymagany",
+          work_item_type: "Typ elementu pracy",
+          remove_property: "Usuń właściwość",
+          select_properties: "Wybierz właściwości",
+          search_placeholder: "Szukaj właściwości",
+          toasts: {
+            success_create: "Formularz przyjęcia utworzony pomyślnie",
+            success_update: "Formularz przyjęcia zaktualizowany pomyślnie",
+            error_create: "Nie udało się utworzyć formularza przyjęcia",
+            error_update: "Nie udało się zaktualizować formularza przyjęcia",
+          },
         },
         toasts: {
           set: {
@@ -2623,6 +2664,11 @@ Utwórz nowy.`,
           "Kamienie milowe zapewniają warstwę do wyrównania elementów pracy w kierunku wspólnych dat zakończenia.",
         toggle_title: "Włącz kamienie milowe",
         toggle_description: "Organizuj elementy pracy według terminów kamieni milowych.",
+      },
+      toasts: {
+        loading: "Aktualizowanie funkcji projektu...",
+        success: "Funkcja projektu zaktualizowana pomyślnie.",
+        error: "Coś poszło nie tak podczas aktualizacji funkcji projektu. Spróbuj ponownie.",
       },
     },
   },
@@ -5745,6 +5791,62 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
       no_results: {
         work_item: "Nie znaleziono szablonów.",
         project: "Nie znaleziono szablonów.",
+      },
+    },
+  },
+  intake_forms: {
+    create: {
+      title: "Utwórz element pracy",
+      "sub-title": "Daj zespołowi znać, nad czym chciałbyś, aby pracował.",
+      name: "Nazwa",
+      email: "E-mail",
+      about: "Czego dotyczy ten element pracy?",
+      description: "Opisz, co powinno się wydarzyć",
+      description_placeholder:
+        "Dodaj tyle szczegółów, ile chcesz, aby zespół mógł zidentyfikować Twoją sytuację i potrzeby.",
+      loading: "Tworzenie",
+      create_work_item: "Utwórz element pracy",
+      errors: {
+        name: "Nazwa jest wymagana",
+        name_max_length: "Nazwa nie może przekraczać 255 znaków",
+        email: "E-mail jest wymagany",
+        email_invalid: "Nieprawidłowy adres e-mail",
+        title: "Tytuł jest wymagany",
+        title_max_length: "Tytuł nie może przekraczać 255 znaków",
+      },
+    },
+    success: {
+      title: "Twój element pracy jest teraz w kolejce zespołu.",
+      description: "Zespół może teraz zatwierdzić lub odrzucić ten element pracy z kolejki zgłoszeń.",
+      primary_button: {
+        text: "Dodaj kolejny element pracy",
+      },
+      secondary_button: {
+        text: "Dowiedz się więcej o zgłoszeniach",
+      },
+    },
+    how_it_works: {
+      title: "Jak to działa?",
+      heading: "To jest formularz zgłoszeń.",
+      description:
+        "Zgłoszenia to funkcja Plane, która pozwala administratorom i kierownikom projektów przyjmować elementy pracy z zewnątrz do swoich projektów.",
+      steps: {
+        step_1: "Ten krótki formularz pozwala utworzyć nowy element pracy w projekcie Plane.",
+        step_2: "Po wysłaniu formularza w zgłoszeniach tego projektu zostanie utworzony nowy element pracy.",
+        step_3: "Ktoś z tego projektu lub zespołu to sprawdzi.",
+        step_4:
+          "Jeśli zatwierdzą, element zostanie przeniesiony do kolejki pracy projektu. W przeciwnym razie zostanie odrzucony.",
+        step_5:
+          "Aby sprawdzić status elementu, skontaktuj się z kierownikiem projektu, administratorem lub osobą, która przesłała Ci link do tej strony.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Wybierz typ elementu pracy",
+        search_placeholder: "Szukaj typu elementu pracy",
+      },
+      actions: {
+        select_properties: "Wybierz właściwości",
       },
     },
   },

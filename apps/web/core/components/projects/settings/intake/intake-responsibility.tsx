@@ -79,7 +79,7 @@ const IntakeResponsibility = observer(function IntakeResponsibility(props: Props
 
   return (
     <>
-      <SettingsHeading title={intakeT("heading")} variant="h6" />
+      <SettingsHeading title={intakeT("intake_responsibility")} variant="h6" />
       <div className="mt-4 px-4 rounded-lg border transition-all border-subtle bg-layer-2">
         {Object.entries(featureList).map(([featureKey, feature]) => (
           <div key={featureKey} className="gap-y-3 gap-x-8 py-3">

@@ -433,6 +433,8 @@ export default {
     },
   },
   intake: "收集",
+  renew: "更新",
+  preview: "预览",
   time_tracking: "时间跟踪",
   work_management: "工作管理",
   projects_and_issues: "项目和工作项",
@@ -582,6 +584,9 @@ export default {
       name: "名称",
     },
   },
+  upgrade_request: "请联系工作区管理员升级。",
+  copied_to_clipboard: "已复制到剪贴板",
+  copied_to_clipboard_description: "URL 已成功复制到您的剪贴板",
   toast: {
     success: "成功！",
     error: "错误！",
@@ -2518,15 +2523,49 @@ export default {
         toggle_description: "项目成员将能够创建和编辑页面。",
       },
       intake: {
-        heading: "接收责任",
+        intake_responsibility: "接收责任",
+        intake_sources: "接收来源",
         title: "接收",
         short_title: "接收",
         description: "让非成员分享错误、反馈和建议；而不会中断您的工作流程。",
         toggle_title: "启用接收",
         toggle_description: "允许项目成员在应用中创建接收请求。",
+        toggle_tooltip_on: "请项目管理员代为开启。",
+        toggle_tooltip_off: "请项目管理员代为关闭。",
         notify_assignee: {
           title: "通知负责人",
           description: "对于新的接收请求，默认负责人将通过通知收到提醒",
+        },
+        in_app: {
+          title: "应用内",
+          description: "从工作区成员和访客获取新的工作项，不影响现有工作项。",
+        },
+        email: {
+          title: "电子邮件",
+          description: "从任何向 Plane 邮箱地址发送邮件的人收集新的工作项。",
+          fieldName: "电子邮件 ID",
+        },
+        form: {
+          title: "表单",
+          description: "让工作区外的人通过专用安全表单为您创建潜在的新工作项。",
+          fieldName: "默认表单 URL",
+          create_forms: "使用工作项类型创建表单",
+          manage_forms: "管理表单",
+          manage_forms_tooltip: "请工作区管理员代为管理。",
+          create_form: "创建表单",
+          edit_form: "编辑表单详情",
+          form_title: "表单标题",
+          form_title_required: "表单标题为必填",
+          work_item_type: "工作项类型",
+          remove_property: "移除属性",
+          select_properties: "选择属性",
+          search_placeholder: "搜索属性",
+          toasts: {
+            success_create: "接收表单已成功创建",
+            success_update: "接收表单已成功更新",
+            error_create: "无法创建接收表单",
+            error_update: "无法更新接收表单",
+          },
         },
         toasts: {
           set: {
@@ -5602,6 +5641,58 @@ export default {
       no_results: {
         work_item: "未找到模板。",
         project: "未找到模板。",
+      },
+    },
+  },
+  intake_forms: {
+    create: {
+      title: "创建工作项",
+      "sub-title": "让团队知道您希望他们处理什么。",
+      name: "名称",
+      email: "邮箱",
+      about: "此工作项是关于什么的？",
+      description: "描述应该发生什么",
+      description_placeholder: "添加尽可能多的细节，帮助团队了解您的情况和需求。",
+      loading: "创建中",
+      create_work_item: "创建工作项",
+      errors: {
+        name: "名称为必填",
+        name_max_length: "名称不得超过 255 个字符",
+        email: "邮箱为必填",
+        email_invalid: "邮箱地址无效",
+        title: "标题为必填",
+        title_max_length: "标题不得超过 255 个字符",
+      },
+    },
+    success: {
+      title: "您的工作项已加入团队队列。",
+      description: "团队现在可以从接收队列中批准或丢弃此工作项。",
+      primary_button: {
+        text: "添加另一个工作项",
+      },
+      secondary_button: {
+        text: "了解更多关于接收",
+      },
+    },
+    how_it_works: {
+      title: "如何运作？",
+      heading: "这是接收表单。",
+      description: "接收是 Plane 的功能，让项目管理员和经理能将外部工作项纳入项目。",
+      steps: {
+        step_1: "此简短表单可让您在 Plane 项目中创建新的工作项。",
+        step_2: "提交此表单后，会在该项目的接收中创建新的工作项。",
+        step_3: "该项目或团队的成员会进行审核。",
+        step_4: "若批准，此工作项将移至项目的工作队列；否则将被拒绝。",
+        step_5: "若要查询该工作项的状态，请联系项目经理、管理员或提供此页面链接的人。",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "选择工作项类型",
+        search_placeholder: "搜索工作项类型",
+      },
+      actions: {
+        select_properties: "选择属性",
       },
     },
   },

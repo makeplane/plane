@@ -442,6 +442,8 @@ export default {
     },
   },
   intake: "Intake",
+  renew: "更新",
+  preview: "プレビュー",
   time_tracking: "時間トラッキング",
   work_management: "作業管理",
   projects_and_issues: "プロジェクトと作業項目",
@@ -594,6 +596,9 @@ export default {
       name: "名前",
     },
   },
+  upgrade_request: "ワークスペース管理者にアップグレードを依頼してください。",
+  copied_to_clipboard: "クリップボードにコピーしました",
+  copied_to_clipboard_description: "URLがクリップボードに正常にコピーされました",
   toast: {
     success: "成功！",
     error: "エラー！",
@@ -2578,15 +2583,51 @@ export default {
         toggle_description: "プロジェクトメンバーはページを作成および編集できるようになります。",
       },
       intake: {
-        heading: "受付責任",
+        intake_responsibility: "受付責任",
+        intake_sources: "受付ソース",
         title: "受付",
         short_title: "受付",
         description: "ワークフローを中断することなく、非メンバーがバグ、フィードバック、提案を共有できるようにします。",
         toggle_title: "受付を有効にする",
         toggle_description: "プロジェクトメンバーがアプリ内で受付リクエストを作成できるようにします。",
+        toggle_tooltip_on: "プロジェクト管理者に有効化を依頼してください。",
+        toggle_tooltip_off: "プロジェクト管理者に無効化を依頼してください。",
         notify_assignee: {
           title: "担当者に通知",
           description: "新しい受付リクエストの場合、デフォルトの担当者が通知を通じてアラートを受け取ります",
+        },
+        in_app: {
+          title: "アプリ内",
+          description:
+            "既存の作業項目を妨げることなく、ワークスペースのメンバーとゲストから新しい作業項目を受け取ります。",
+        },
+        email: {
+          title: "メール",
+          description: "Planeのメールアドレスにメールを送信した誰からでも新しい作業項目を収集します。",
+          fieldName: "メールID",
+        },
+        form: {
+          title: "フォーム",
+          description:
+            "専用の安全なフォームを通じて、ワークスペース外の方が潜在的な新しい作業項目を作成できるようにします。",
+          fieldName: "デフォルトフォームURL",
+          create_forms: "作業項目タイプを使用してフォームを作成",
+          manage_forms: "フォームを管理",
+          manage_forms_tooltip: "ワークスペース管理者に管理を依頼してください。",
+          create_form: "フォームを作成",
+          edit_form: "フォームの詳細を編集",
+          form_title: "フォームタイトル",
+          form_title_required: "フォームタイトルは必須です",
+          work_item_type: "作業項目タイプ",
+          remove_property: "プロパティを削除",
+          select_properties: "プロパティを選択",
+          search_placeholder: "プロパティを検索",
+          toasts: {
+            success_create: "受付フォームが正常に作成されました",
+            success_update: "受付フォームが正常に更新されました",
+            error_create: "受付フォームの作成に失敗しました",
+            error_update: "受付フォームの更新に失敗しました",
+          },
         },
         toasts: {
           set: {
@@ -2615,6 +2656,11 @@ export default {
         description: "マイルストーンは、作業項目を共有の完了日に向けて調整するレイヤーを提供します。",
         toggle_title: "マイルストーンを有効にする",
         toggle_description: "マイルストーンの期限ごとに作業項目を整理します。",
+      },
+      toasts: {
+        loading: "プロジェクト機能を更新中...",
+        success: "プロジェクト機能が正常に更新されました。",
+        error: "プロジェクト機能の更新中に問題が発生しました。もう一度お試しください。",
       },
     },
   },
@@ -5747,6 +5793,60 @@ export default {
       no_results: {
         work_item: "テンプレートが見つかりません。",
         project: "テンプレートが見つかりません。",
+      },
+    },
+  },
+  intake_forms: {
+    create: {
+      title: "作業項目を作成",
+      "sub-title": "チームに何を作業してほしいか伝えましょう。",
+      name: "名前",
+      email: "メール",
+      about: "この作業項目は何についてですか？",
+      description: "何が起きるべきか説明してください",
+      description_placeholder: "チームが状況とニーズを把握できるよう、必要なだけ詳細を追加してください。",
+      loading: "作成中",
+      create_work_item: "作業項目を作成",
+      errors: {
+        name: "名前は必須です",
+        name_max_length: "名前は255文字以内にしてください",
+        email: "メールは必須です",
+        email_invalid: "無効なメールアドレスです",
+        title: "タイトルは必須です",
+        title_max_length: "タイトルは255文字以内にしてください",
+      },
+    },
+    success: {
+      title: "作業項目がチームのキューに追加されました。",
+      description: "チームはこの作業項目をインテークキューで承認または破棄できます。",
+      primary_button: {
+        text: "別の作業項目を追加",
+      },
+      secondary_button: {
+        text: "インテークの詳細",
+      },
+    },
+    how_it_works: {
+      title: "仕組み",
+      heading: "これはインテークフォームです。",
+      description:
+        "インテークは、プロジェクトの管理者やマネージャーが外部から作業項目をプロジェクトに取り込めるPlaneの機能です。",
+      steps: {
+        step_1: "この短いフォームでPlaneプロジェクトに新しい作業項目を作成できます。",
+        step_2: "このフォームを送信すると、そのプロジェクトのインテークに新しい作業項目が作成されます。",
+        step_3: "そのプロジェクトまたはチームの誰かが確認します。",
+        step_4: "承認されれば、この作業項目はプロジェクトの作業キューに移動します。そうでなければ却下されます。",
+        step_5:
+          "その作業項目のステータスを確認するには、プロジェクトマネージャー、管理者、またはこのページのリンクを送った方に連絡してください。",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "作業項目タイプを選択",
+        search_placeholder: "作業項目タイプを検索",
+      },
+      actions: {
+        select_properties: "プロパティを選択",
       },
     },
   },

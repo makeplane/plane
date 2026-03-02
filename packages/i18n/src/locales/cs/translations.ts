@@ -443,6 +443,8 @@ export default {
     },
   },
   intake: "Příjem",
+  renew: "Obnovit",
+  preview: "Náhled",
   time_tracking: "Sledování času",
   work_management: "Správa práce",
   projects_and_issues: "Projekty a pracovní položky",
@@ -593,6 +595,9 @@ export default {
       name: "Název",
     },
   },
+  upgrade_request: "Požádejte správce pracovního prostoru o upgrade.",
+  copied_to_clipboard: "Zkopírováno do schránky",
+  copied_to_clipboard_description: "URL byla úspěšně zkopírována do schránky",
   toast: {
     success: "Úspěch!",
     error: "Chyba!",
@@ -2486,15 +2491,51 @@ Vytvořte nový.`,
         toggle_description: "Členové projektu budou moci vytvářet a upravovat stránky.",
       },
       intake: {
-        heading: "Odpovědnost za příjem",
+        intake_responsibility: "Odpovědnost za příjem",
+        intake_sources: "Zdroje příjmu",
         title: "Příjem",
         short_title: "Příjem",
         description: "Umožněte nečlenům sdílet chyby, zpětnou vazbu a návrhy; bez narušení vašeho pracovního postupu.",
         toggle_title: "Povolit příjem",
         toggle_description: "Povolit členům projektu vytvářet žádosti o příjem v aplikaci.",
+        toggle_tooltip_on: "Požádejte správce projektu, aby to zapnul.",
+        toggle_tooltip_off: "Požádejte správce projektu, aby to vypnul.",
         notify_assignee: {
           title: "Upozornit přiřazené",
           description: "Pro novou žádost o příjem budou výchozí přiřazení upozorněni prostřednictvím oznámení",
+        },
+        in_app: {
+          title: "V aplikaci",
+          description:
+            "Získejte nové pracovní položky od členů a hostů ve vašem pracovním prostoru bez narušení stávajících.",
+        },
+        email: {
+          title: "E-mail",
+          description: "Sbírejte nové pracovní položky od kohokoli, kdo pošle e-mail na adresu Plane.",
+          fieldName: "ID e-mailu",
+        },
+        form: {
+          title: "Formuláře",
+          description:
+            "Umožněte lidem mimo váš pracovní prostor vytvářet potenciální nové pracovní položky prostřednictvím vyhrazeného a zabezpečeného formuláře.",
+          fieldName: "Výchozí URL formuláře",
+          create_forms: "Vytvářejte formuláře pomocí typů pracovních položek",
+          manage_forms: "Spravovat formuláře",
+          manage_forms_tooltip: "Požádejte správce pracovního prostoru o správu.",
+          create_form: "Vytvořit formulář",
+          edit_form: "Upravit podrobnosti formuláře",
+          form_title: "Název formuláře",
+          form_title_required: "Název formuláře je povinný",
+          work_item_type: "Typ pracovní položky",
+          remove_property: "Odebrat vlastnost",
+          select_properties: "Vybrat vlastnosti",
+          search_placeholder: "Hledat vlastnosti",
+          toasts: {
+            success_create: "Formulář příjmu byl úspěšně vytvořen",
+            success_update: "Formulář příjmu byl úspěšně aktualizován",
+            error_create: "Nepodařilo se vytvořit formulář příjmu",
+            error_update: "Nepodařilo se aktualizovat formulář příjmu",
+          },
         },
         toasts: {
           set: {
@@ -2523,6 +2564,11 @@ Vytvořte nový.`,
         description: "Milníky poskytují vrstvu pro sladění pracovních položek směrem ke sdíleným termínům dokončení.",
         toggle_title: "Povolit milníky",
         toggle_description: "Organizujte pracovní položky podle termínů milníků.",
+      },
+      toasts: {
+        loading: "Aktualizace funkce projektu...",
+        success: "Funkce projektu byla úspěšně aktualizována.",
+        error: "Při aktualizaci funkce projektu se něco pokazilo. Zkuste to prosím znovu.",
       },
     },
     epics: {
@@ -5728,6 +5774,60 @@ Vytvořte nový.`,
       no_results: {
         work_item: "Nebyly nalezeny žádné šablony.",
         project: "Nebyly nalezeny žádné šablony.",
+      },
+    },
+  },
+  intake_forms: {
+    create: {
+      title: "Vytvořit pracovní položku",
+      "sub-title": "Dejte týmu vědět, na čem chcete, aby pracoval.",
+      name: "Jméno",
+      email: "E-mail",
+      about: "O čem je tato pracovní položka?",
+      description: "Popište, co by se mělo stát",
+      description_placeholder: "Přidejte tolik detailů, kolik chcete, aby tým identifikoval vaši situaci a potřeby.",
+      loading: "Vytváření",
+      create_work_item: "Vytvořit pracovní položku",
+      errors: {
+        name: "Jméno je povinné",
+        name_max_length: "Jméno musí mít méně než 255 znaků",
+        email: "E-mail je povinný",
+        email_invalid: "Neplatná e-mailová adresa",
+        title: "Název je povinný",
+        title_max_length: "Název musí mít méně než 255 znaků",
+      },
+    },
+    success: {
+      title: "Skvělé! Vaše pracovní položka je nyní ve frontě týmu.",
+      description: "Tým nyní může tuto pracovní položku schválit nebo odmítnout z fronty příjmu.",
+      primary_button: {
+        text: "Přidat další pracovní položku",
+      },
+      secondary_button: {
+        text: "Zjistit více o příjmu",
+      },
+    },
+    how_it_works: {
+      title: "Jak to funguje?",
+      heading: "Toto je formulář příjmu.",
+      description:
+        "Příjem je funkce Plane, která umožňuje správcům a manažerům projektu získávat pracovní položky zvenčí do svých projektů.",
+      steps: {
+        step_1: "Tento krátký formulář umožňuje vytvořit novou pracovní položku v projektu Plane.",
+        step_2: "Po odeslání formuláře se v příjmu tohoto projektu vytvoří nová pracovní položka.",
+        step_3: "Někdo z projektu nebo týmu to zkontroluje.",
+        step_4: "Pokud to schválí, pracovní položka přejde do fronty práce projektu. Jinak bude odmítnuta.",
+        step_5:
+          "Pro zjištění stavu pracovní položky kontaktujte manažera projektu, správce nebo toho, kdo vám poslal odkaz na tuto stránku.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Vybrat typ pracovní položky",
+        search_placeholder: "Hledat typ pracovní položky",
+      },
+      actions: {
+        select_properties: "Vybrat vlastnosti",
       },
     },
   },
