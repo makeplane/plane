@@ -6459,4 +6459,5 @@ si estás seguro de que tu búsqueda es correcta.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "El nombre del proyecto no puede contener caracteres especiales.",
 } as const;

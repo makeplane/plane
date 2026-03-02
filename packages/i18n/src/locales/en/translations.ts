@@ -186,6 +186,7 @@ export default {
   project_created_successfully: "Project created successfully",
   project_created_successfully_description: "Project created successfully. You can now start adding work items to it.",
   project_name_already_taken: "The project name is already taken.",
+  project_name_cannot_contain_special_characters: "The project name cannot contain special characters.",
   project_identifier_already_taken: "The project identifier is already taken.",
   project_cover_image_alt: "Project cover image",
   name_is_required: "Name is required",
@@ -7000,4 +7001,4 @@ the way you want to from the sources you specify.`,
       },
     },
   },
-} as const;
+};

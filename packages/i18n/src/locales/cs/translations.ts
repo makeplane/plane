@@ -6347,4 +6347,5 @@ Vytvořte nový.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Název projektu nesmí obsahovat speciální znaky.",
 } as const;

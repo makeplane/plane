@@ -6427,4 +6427,5 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Der Projektname darf keine Sonderzeichen enthalten.",
 } as const;

@@ -6302,4 +6302,5 @@ export default {
       },
     },
   },
+  project_name_cannot_contain_special_characters: "프로젝트 이름에는 특수 문자를 사용할 수 없습니다.",
 } as const;

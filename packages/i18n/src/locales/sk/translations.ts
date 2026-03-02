@@ -6320,4 +6320,5 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Názov projektu nesmie obsahovať špeciálne znaky.",
 } as const;

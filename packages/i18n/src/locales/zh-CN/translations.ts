@@ -6188,4 +6188,5 @@ export default {
       },
     },
   },
+  project_name_cannot_contain_special_characters: "项目名称不能包含特殊字符。",
 } as const;

@@ -236,44 +236,40 @@ const CreateProjectFormBase = observer(function CreateProjectFormBase(props: TCr
         }
       })
       .catch((err) => {
-        try {
-          // Handle the new error format where codes are nested in arrays under field names
-          const errorData = err?.data ?? {};
-
-          const nameError = errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST");
-          const identifierError = errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
-
-          if (nameError || identifierError) {
-            if (nameError) {
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: t("toast.error"),
-                message: t("project_name_already_taken"),
-              });
-            }
-
-            if (identifierError) {
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: t("toast.error"),
-                message: t("project_identifier_already_taken"),
-              });
-            }
-          } else {
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: t("toast.error"),
-              message: t("something_went_wrong"),
-            });
-          }
-        } catch (error) {
-          // Fallback error handling if the error processing fails
-          console.error("Error processing API error:", error);
+        const showErrorToast = (messageKey: string) => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: t("something_went_wrong"),
+            message: t(messageKey),
           });
+        };
+
+        try {
+          const errors = err?.data ?? {};
+          const nameErrors = errors.name ?? [];
+          const identifierErrors = errors.identifier ?? [];
+
+          const errorChecks = [
+            [
+              nameErrors,
+              "PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS",
+              "project_name_cannot_contain_special_characters",
+            ],
+            [nameErrors, "PROJECT_NAME_ALREADY_EXIST", "project_name_already_taken"],
+            [identifierErrors, "PROJECT_IDENTIFIER_ALREADY_EXIST", "project_identifier_already_taken"],
+          ];
+
+          for (const [errorArray, errorCode, messageKey] of errorChecks) {
+            if (errorArray.includes(errorCode)) {
+              showErrorToast(messageKey);
+              return;
+            }
+          }
+
+          showErrorToast("something_went_wrong");
+        } catch (error) {
+          console.error("Error processing API error:", error);
+          showErrorToast("something_went_wrong");
         }
       });
   };

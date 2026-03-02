@@ -6431,4 +6431,5 @@ așa cum dorești din sursele pe care le specifici.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Numele proiectului nu poate conține caractere speciale.",
 } as const;

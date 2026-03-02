@@ -6430,4 +6430,5 @@ da maneira que você quiser a partir das fontes que você especificar.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "O nome do projeto não pode conter caracteres especiais.",
 } as const;

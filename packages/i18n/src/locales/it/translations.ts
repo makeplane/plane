@@ -6424,4 +6424,5 @@ Crea un nuovo progetto invece`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Il nome del progetto non può contenere caratteri speciali.",
 } as const;

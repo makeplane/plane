@@ -6360,4 +6360,5 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Nazwa projektu nie może zawierać znaków specjalnych.",
 } as const;

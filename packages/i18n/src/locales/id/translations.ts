@@ -6383,4 +6383,5 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Nama proyek tidak boleh mengandung karakter khusus.",
 } as const;

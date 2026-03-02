@@ -6426,4 +6426,5 @@ export default {
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Название проекта не может содержать специальные символы.",
 } as const;

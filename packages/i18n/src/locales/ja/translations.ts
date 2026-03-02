@@ -6349,4 +6349,5 @@ export default {
       },
     },
   },
+  project_name_cannot_contain_special_characters: "プロジェクト名に特殊文字を含めることはできません。",
 } as const;

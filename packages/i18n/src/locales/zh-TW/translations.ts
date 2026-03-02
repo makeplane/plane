@@ -6212,4 +6212,5 @@ export default {
       },
     },
   },
+  project_name_cannot_contain_special_characters: "專案名稱不能包含特殊字元。",
 } as const;

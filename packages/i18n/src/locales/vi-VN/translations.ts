@@ -6355,4 +6355,5 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Tên dự án không được chứa ký tự đặc biệt.",
 } as const;

@@ -6414,4 +6414,5 @@ modüller arşivlenebilir.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Proje adı özel karakterler içeremez.",
 } as const;
