@@ -4548,6 +4548,7 @@ export default {
     created: "Создано",
     initiated: "Инициировано",
     pulling: "Извлечение",
+    timed_out: "Время истекло",
     pulled: "Извлечено",
     transforming: "Преобразование",
     transformed: "Преобразовано",

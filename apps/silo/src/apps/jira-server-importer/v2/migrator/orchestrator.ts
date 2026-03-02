@@ -31,6 +31,7 @@ import { getAPIClientInternal } from "@/services/client";
 import type { TaskHandler, TaskHeaders } from "@/types";
 import type { MQ, Store } from "@/worker/base";
 import { redisStorageService } from "../services/storage.service";
+import { ImportTimeoutError } from "../helpers/errors";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 
@@ -102,7 +103,7 @@ export class JiraImportOrchestrator implements TaskHandler {
       });
 
       // Mark job as failed
-      await this.failJob(headers.jobId, error);
+      await this.failJob(headers.jobId, error as Error);
       return true;
     }
   }
@@ -202,6 +203,10 @@ export class JiraImportOrchestrator implements TaskHandler {
     state.currentStepIndex++;
     state.stepContext = undefined;
     await this.saveState(state);
+
+    if (step.stepRequired) {
+      return await this.failJob(state.jobId, error as Error);
+    }
 
     if (state.currentStepIndex >= this.steps.length) {
       // All steps processed (some may have failed)
@@ -510,7 +515,6 @@ export class JiraImportOrchestrator implements TaskHandler {
 
     const { stateSnapshot, timestamp, stateKey } = await this.captureJobStateSnapshot(jobId);
 
-    // Append to existing error_metadata
     const updatedErrorMetadata = {
       error: error instanceof Error ? error.message : typeof error === "object" ? JSON.stringify(error) : String(error),
       stateSnapshots: {
@@ -518,8 +522,14 @@ export class JiraImportOrchestrator implements TaskHandler {
       },
     };
 
+    let status = E_JOB_STATUS.ERROR;
+
+    if (error instanceof ImportTimeoutError) {
+      status = E_JOB_STATUS.TIMED_OUT;
+    }
+
     await client.importJob.updateImportJob(jobId, {
-      status: "ERROR",
+      status,
       error_metadata: updatedErrorMetadata,
     });
 

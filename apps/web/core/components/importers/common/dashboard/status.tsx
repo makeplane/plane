@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import type { TJobStatus } from "@plane/etl/core";
 import { E_JOB_STATUS } from "@plane/etl/core";
@@ -34,6 +33,7 @@ const STATUS_CLASSNAMES: { [key in TJobStatus]: string } = {
   [E_JOB_STATUS.TRANSFORMED]: "text-orange-500 border border-orange-500 bg-orange-500/10",
   [E_JOB_STATUS.PUSHING]: "text-success-primary border border-success-strong bg-success-subtle",
   [E_JOB_STATUS.FINISHED]: "text-success-primary border border-success-strong bg-success-subtle",
+  [E_JOB_STATUS.TIMED_OUT]: "text-danger-primary border border-danger-strong bg-danger-subtle",
   [E_JOB_STATUS.ERROR]: "text-danger-primary border border-danger-strong bg-danger-subtle",
   [E_JOB_STATUS.CANCELLED]: "text-danger-primary border border-danger-strong bg-danger-subtle",
 };

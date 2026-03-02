@@ -155,6 +155,7 @@ class ImportJob(BaseModel):
         QUEUED = "QUEUED", "Queued"
         INITIATED = "INITIATED", "Initiated"
         PULLING = "PULLING", "Pulling"
+        TIMED_OUT = "TIMED_OUT", "Timed Out"
         PULLED = "PULLED", "Pulled"
         TRANSFORMING = "TRANSFORMING", "Transforming"
         PUSHING = "PUSHING", "Pushing"

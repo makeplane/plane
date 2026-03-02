@@ -133,6 +133,7 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
       E_JOB_STATUS.CREATED,
       E_JOB_STATUS.FINISHED,
       E_JOB_STATUS.ERROR,
+      E_JOB_STATUS.TIMED_OUT,
       E_JOB_STATUS.CANCELLED,
       E_JOB_STATUS.QUEUED,
     ].includes(job?.status as E_JOB_STATUS);
@@ -141,7 +142,9 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
   const isCancelDisabled = (job: any) => {
     if (!job || !job?.status) return true;
 
-    return [E_JOB_STATUS.FINISHED, E_JOB_STATUS.ERROR, E_JOB_STATUS.CANCELLED].includes(job?.status as E_JOB_STATUS);
+    return [E_JOB_STATUS.FINISHED, E_JOB_STATUS.ERROR, E_JOB_STATUS.TIMED_OUT, E_JOB_STATUS.CANCELLED].includes(
+      job?.status as E_JOB_STATUS
+    );
   };
 
   const handleSummaryRedirect = (workspaceSlug: string, assetId: string) => {

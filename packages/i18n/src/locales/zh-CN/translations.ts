@@ -4385,6 +4385,7 @@ export default {
     created: "已创建",
     initiated: "已启动",
     pulling: "拉取中",
+    timed_out: "超时",
     pulled: "已拉取",
     transforming: "转换中",
     transformed: "已转换",

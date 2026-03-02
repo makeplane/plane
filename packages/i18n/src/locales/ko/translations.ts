@@ -4469,6 +4469,7 @@ export default {
     created: "생성됨",
     initiated: "시작됨",
     pulling: "풀링 중",
+    timed_out: "시간 초과",
     pulled: "풀링 완료",
     transforming: "변환 중",
     transformed: "변환 완료",

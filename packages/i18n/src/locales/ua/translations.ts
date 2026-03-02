@@ -4488,6 +4488,7 @@ export default {
     created: "Створено",
     initiated: "Ініційовано",
     pulling: "Отримання",
+    timed_out: "Час вийшов",
     pulled: "Отримано",
     transforming: "Трансформація",
     transformed: "Трансформовано",

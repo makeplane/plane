@@ -4506,6 +4506,7 @@ export default {
     created: "作成済み",
     initiated: "開始済み",
     pulling: "取得中",
+    timed_out: "タイムアウト",
     pulled: "取得済み",
     transforming: "変換中",
     transformed: "変換済み",
