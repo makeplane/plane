@@ -29,6 +29,7 @@ import {
   setCellAttr,
   splitCell,
   tableEditing,
+  TableMap,
   toggleHeader,
   toggleHeaderCell,
 } from "@tiptap/pm/tables";
@@ -44,6 +45,7 @@ import { createTable } from "./utilities/create-table";
 import { deleteColumnOrTable } from "./utilities/delete-column";
 import { handleDeleteKeyOnTable } from "./utilities/delete-key-shortcut";
 import { deleteRowOrTable } from "./utilities/delete-row";
+import { findTable } from "./utilities/helpers";
 import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-action";
 import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
 import { DEFAULT_COLUMN_WIDTH } from ".";
@@ -75,11 +77,14 @@ declare module "@tiptap/core" {
       toggleHeaderCell: () => ReturnType;
       clearSelectedCells: () => ReturnType;
       mergeOrSplit: () => ReturnType;
-      setCellAttribute: (name: string, value: any) => ReturnType;
+      setCellAttribute: (name: string, value: unknown) => ReturnType;
       goToNextCell: () => ReturnType;
       goToPreviousCell: () => ReturnType;
       fixTables: () => ReturnType;
       setCellSelection: (position: { anchorCell: number; headCell?: number }) => ReturnType;
+      setTableToFullWidth: () => ReturnType;
+      equalizeColumns: () => ReturnType;
+      fitColumnsToText: () => ReturnType;
     };
   }
 
@@ -249,6 +254,204 @@ export const Table = Node.create<TableOptions>({
           }
           return true;
         },
+      setTableToFullWidth:
+        () =>
+        ({ state, dispatch, editor }) => {
+          const table = findTable(state.selection);
+          if (!table) return false;
+
+          // Get content width from CSS variable or calculate from editor container
+          const editorContainer = editor.view.dom.closest(".editor-container");
+          if (!editorContainer) return false;
+
+          const contentWidthVar = getComputedStyle(editorContainer).getPropertyValue("--editor-content-width").trim();
+
+          let contentWidth: number;
+
+          // Check if CSS variable exists and is a pixel value (not percentage or empty)
+          if (contentWidthVar) {
+            contentWidth = parseInt(contentWidthVar);
+          } else {
+            // Fallback: use the actual container width minus padding
+            const containerWidth = editorContainer.clientWidth;
+            const computedStyle = getComputedStyle(editorContainer);
+            const paddingLeft = parseInt(computedStyle.paddingLeft) || 0;
+            const paddingRight = parseInt(computedStyle.paddingRight) || 0;
+            contentWidth = containerWidth - paddingLeft - paddingRight;
+          }
+
+          if (isNaN(contentWidth) || contentWidth <= 0) return false;
+
+          // Calculate equal width for each column
+          const map = TableMap.get(table.node);
+          const equalWidth = Math.floor(contentWidth / map.width);
+
+          if (dispatch) {
+            const tr = state.tr;
+            const visited = new Set<number>();
+
+            for (let row = 0; row < map.height; row++) {
+              for (let col = 0; col < map.width; col++) {
+                const cellIndex = row * map.width + col;
+                const cellPos = map.map[cellIndex];
+
+                // Skip if cell already updated (for merged cells)
+                if (visited.has(cellPos)) continue;
+
+                const cell = table.node.nodeAt(cellPos);
+                if (cell) {
+                  // Handle colspan for merged cells
+                  const colspan = (cell.attrs.colspan as number | undefined) ?? 1;
+                  const pos = table.start + cellPos;
+                  tr.setNodeMarkup(pos, null, {
+                    ...cell.attrs,
+                    colwidth: Array(colspan).fill(equalWidth),
+                  });
+
+                  visited.add(cellPos);
+                }
+              }
+            }
+
+            dispatch(tr);
+          }
+          return true;
+        },
+      equalizeColumns:
+        () =>
+        ({ state, dispatch }) => {
+          const table = findTable(state.selection);
+          if (!table) return false;
+
+          const map = TableMap.get(table.node);
+          if (!map || map.width === 0) return false;
+
+          // Calculate total width from first row cells
+          let totalWidth = 0;
+          for (let col = 0; col < map.width; col++) {
+            const cellPos = map.map[col];
+            const cell = table.node.nodeAt(cellPos);
+            if (cell) {
+              const colwidth = cell.attrs.colwidth as number[] | null;
+              totalWidth += colwidth ? colwidth[0] : DEFAULT_COLUMN_WIDTH;
+            }
+          }
+
+          const equalWidth = Math.max(100, Math.floor(totalWidth / map.width));
+
+          if (dispatch) {
+            const tr = state.tr;
+            const visited = new Set<number>();
+            for (let row = 0; row < map.height; row++) {
+              for (let col = 0; col < map.width; col++) {
+                const cellPos = map.map[row * map.width + col];
+                if (visited.has(cellPos)) continue;
+                visited.add(cellPos);
+                const cell = table.node.nodeAt(cellPos);
+                if (cell) {
+                  const pos = table.start + cellPos;
+                  tr.setNodeMarkup(pos, undefined, {
+                    ...cell.attrs,
+                    colwidth: [equalWidth],
+                  });
+                }
+              }
+            }
+            dispatch(tr);
+          }
+          return true;
+        },
+      fitColumnsToText:
+        () =>
+        ({ state, dispatch, editor }) => {
+          const table = findTable(state.selection);
+          if (!table) return false;
+
+          const map = TableMap.get(table.node);
+          if (!map || map.width === 0) return false;
+
+          // Measure the natural (unwrapped) content width for each column
+          const columnWidths: number[] = Array.from<number>({ length: map.width }).fill(0);
+
+          // Create an off-screen measurement container inside the table's wrapper
+          // so that scoped CSS rules (e.g. .table-wrapper table td) still apply to cloned cells
+          const tableDOM = editor.view.nodeDOM(table.pos);
+          const tableWrapper =
+            tableDOM instanceof HTMLElement ? (tableDOM.closest(".table-wrapper") ?? tableDOM.parentElement) : null;
+          const measureContainer = document.createElement("div");
+          measureContainer.style.cssText =
+            "position:absolute;top:-9999px;left:-9999px;visibility:hidden;white-space:nowrap;width:auto;pointer-events:none;";
+          (tableWrapper ?? document.body).appendChild(measureContainer);
+
+          for (let col = 0; col < map.width; col++) {
+            for (let row = 0; row < map.height; row++) {
+              const cellPos = map.map[row * map.width + col];
+              try {
+                const domAtPos = editor.view.domAtPos(table.start + cellPos + 1);
+                const cellElement = domAtPos.node;
+                if (cellElement instanceof HTMLElement) {
+                  // Build a minimal table structure so the cloned cell gets proper table-cell rendering
+                  const wrapTable = document.createElement("table");
+                  wrapTable.style.cssText = "width:auto;border-collapse:collapse;table-layout:auto;";
+                  const wrapTbody = document.createElement("tbody");
+                  const wrapTr = document.createElement("tr");
+                  const clone = cellElement.cloneNode(true) as HTMLElement;
+                  // Force nowrap on the cell and all descendants
+                  clone.style.whiteSpace = "nowrap";
+                  clone.style.width = "auto";
+                  clone.querySelectorAll("*").forEach((el) => {
+                    if (el instanceof HTMLElement) {
+                      el.style.whiteSpace = "nowrap";
+                      el.style.width = "auto";
+                      el.style.minWidth = "0";
+                      el.style.maxWidth = "none";
+                    }
+                  });
+                  wrapTr.appendChild(clone);
+                  wrapTbody.appendChild(wrapTr);
+                  wrapTable.appendChild(wrapTbody);
+                  measureContainer.appendChild(wrapTable);
+                  const measuredWidth = Math.ceil(clone.getBoundingClientRect().width);
+                  columnWidths[col] = Math.max(columnWidths[col], measuredWidth);
+                  measureContainer.removeChild(wrapTable);
+                }
+              } catch {
+                // If DOM measurement fails, keep current width
+                const cell = table.node.nodeAt(cellPos);
+                if (cell) {
+                  const currentWidth = (cell.attrs.colwidth as number[] | null)?.[0] ?? DEFAULT_COLUMN_WIDTH;
+                  columnWidths[col] = Math.max(columnWidths[col], currentWidth);
+                }
+              }
+            }
+            // Enforce minimum width
+            columnWidths[col] = Math.max(100, columnWidths[col]);
+          }
+
+          measureContainer.remove();
+
+          if (dispatch) {
+            const tr = state.tr;
+            const visited = new Set<number>();
+            for (let row = 0; row < map.height; row++) {
+              for (let col = 0; col < map.width; col++) {
+                const cellPos = map.map[row * map.width + col];
+                if (visited.has(cellPos)) continue;
+                visited.add(cellPos);
+                const cell = table.node.nodeAt(cellPos);
+                if (cell) {
+                  const pos = table.start + cellPos;
+                  tr.setNodeMarkup(pos, undefined, {
+                    ...cell.attrs,
+                    colwidth: [columnWidths[col]],
+                  });
+                }
+              }
+            }
+            dispatch(tr);
+          }
+          return true;
+        },
     };
   },
 
@@ -327,11 +530,12 @@ export const Table = Node.create<TableOptions>({
   extendNodeSchema(extension) {
     const context = {
       name: extension.name,
-      options: extension.options,
-      storage: extension.storage,
+      options: extension.options as Record<string, unknown>,
+      storage: extension.storage as Record<string, unknown>,
     };
 
     return {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       tableRole: callOrReturn(getExtensionField(extension, "tableRole", context)),
     };
   },

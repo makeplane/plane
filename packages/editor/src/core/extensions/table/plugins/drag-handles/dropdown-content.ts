@@ -23,6 +23,7 @@ export type DropdownOption = {
   label: string;
   icon: string;
   showRightIcon: boolean;
+  dividerBefore?: boolean;
 };
 
 /**
@@ -128,6 +129,13 @@ export function createDropdownContent(options: DropdownOption[]): DocumentFragme
     } else {
       btn.appendChild(iconElement);
       btn.appendChild(labelDiv);
+    }
+
+    // Add divider before option if requested
+    if (option.dividerBefore) {
+      const hr = document.createElement("hr");
+      hr.className = "my-2 border-subtle";
+      fragment.appendChild(hr);
     }
 
     fragment.appendChild(btn);

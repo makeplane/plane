@@ -38,6 +38,10 @@ export const DRAG_HANDLE_ICONS = {
   chevronRight: '<path d="m9 18 6-6-6-6"/>',
   ban: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
 
+  // Column sizing icons
+  equalizeColumns: '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/>',
+  fitToText: '<path d="m15 15 6 6"/><path d="m9 9-6-6"/><path d="M21 15h-6v6"/><path d="M3 9h6V3"/>',
+
   // Ellipsis (drag handle button)
   ellipsis: '<circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>',
 } as const;
