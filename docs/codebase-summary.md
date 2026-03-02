@@ -1,7 +1,7 @@
 # Plane.so Codebase Summary
 
-**Last Updated**: 2026-02-18
-**Version**: 1.2.2
+**Last Updated**: 2026-03-02
+**Version**: 1.2.3
 **Structure**: pnpm + Turborepo monorepo
 
 ## Repository Overview
@@ -53,18 +53,25 @@ plane.so/
 ### 2. Admin App (`apps/admin/`)
 
 **Purpose**: Instance administrator dashboard
-**Size**: ~109 files | ~50KB min bundle
+**Size**: ~140 files | ~60KB min bundle
 
 | Component            | Details                                    |
 | -------------------- | ------------------------------------------ |
 | **Framework**        | React 18 + React Router v7 (SSR: disabled) |
 | **Build Tool**       | Vite + TypeScript                          |
-| **State Management** | MobX (5 stores - minimal)                  |
+| **State Management** | MobX (6 stores)                            |
 | **Styling**          | Tailwind CSS v4                            |
 
-**Features**: Instance config, OAuth setup, email settings, AI config, image settings
+**Features**: Instance config, OAuth setup, email settings, AI config, image settings, user management
 
-**Key Stores**: `instance`, `root`, `theme`, `user`, `workspace`
+**Key Stores**: `instance`, `root`, `theme`, `user`, `workspace`, `instance-user`
+
+**User Management Feature**:
+
+- Route: `/users` - List, create, detail pages
+- Store: `instance-user.store.ts` - User CRUD state management
+- Service: `instance-user.service.ts` - API integration
+- Components: User list, create form, detail page, workspace assignment, password reset dialogs
 
 ### 3. Space App (`apps/space/`)
 
@@ -127,8 +134,9 @@ plane.so/
 - `plane/db/models/` - 33 model files (user, workspace, project, issue, cycle, module, page, analytics_dashboard, etc.)
 - `plane/db/migrations/` - 120+ database migrations
 - `plane/app/` - Legacy API v0 endpoints
-- `plane/api/` - New API v1 endpoints (includes analytics_dashboard module)
-- `plane/authentication/` - OAuth + magic link auth
+- `plane/api/` - New API v1 endpoints (includes analytics_dashboard, user modules)
+- `plane/authentication/` - OAuth + magic link auth + Swing SSO auth provider
+- `plane/license/` - Instance admin features (user CRUD, workspace assignment)
 - `plane/bgtasks/` - 36+ Celery background tasks
 
 **Analytics Dashboard Backend** (`plane/api/analytics_dashboard.*`):
@@ -148,12 +156,20 @@ plane.so/
 - Utilities: `dashboard_chart_aggregation.py` handles data computation for charts (counts, metrics, grouping)
 - Favorites: Same UserFavorite pattern as AnalyticsDashboard
 
+**Admin User Management Backend** (`plane/license/api/user.*`):
+
+- Views: `InstanceUserViewSet` - List (paginated), create, retrieve, update, reset password, add to workspace
+- Serializers: User creation, detail, list with workspace info
+- Permissions: Instance admin only
+- Features: User CRUD, password reset, workspace assignment
+
 **API Versions**:
 
 - `/api/` and `/api/v0/` - Legacy endpoints (under `plane.app`)
 - `/api/v1/` - New endpoints (under `plane.api`) + analytics dashboard endpoints
 - `/api/public/` - Public/shared space APIs
 - `/auth/` - Authentication endpoints
+- `/god-mode/` - Admin API endpoints
 
 ### 6. Proxy App (`apps/proxy/`)
 
@@ -486,6 +502,24 @@ apps/api/
 
 ---
 
+### Swing SSO Authentication
+
+**Backend** (`plane/authentication/provider/credentials/`):
+
+- `swing_sso.py` - Swing SSO provider (magic link, staff ID login, mutual exclusive with LDAP)
+- `swing_sso_token.py` - Swing SSO token flow (XML redirect from Swing portal)
+- Config keys: IS_SWING_SSO_ENABLED, SWING_SSO_URL, SWING_SSO_CLIENT_ID, SWING_SSO_CLIENT_SECRET, SWING_SSO_COMPANY_CODE
+- Views: Auth endpoints for login, callback, token validation
+- Admin UI: God-mode config page with toggle, form, test auth modal
+
+**Frontend** (`apps/web/`):
+
+- Staff ID login with Swing SSO branch
+- Login form variant for Swing SSO flow
+- Token SSO redirect flow handling
+
+---
+
 **Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/codebase-summary.md`
-**Lines**: ~520
-**Status**: Updated with Time Tracking feature
+**Lines**: ~530
+**Status**: Updated with Swing SSO and Admin User Management features

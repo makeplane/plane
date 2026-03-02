@@ -1,8 +1,8 @@
 # System Architecture
 
-**Last Updated**: 2026-02-18
-**Version**: 1.2.2
-**Scope**: Production deployment architecture, data flows, real-time collaboration
+**Last Updated**: 2026-03-02
+**Version**: 1.2.3
+**Scope**: Production deployment architecture, data flows, real-time collaboration, SSO integration
 
 ## High-Level System Overview
 
@@ -356,9 +356,50 @@ Request
   │  └─ API token for external apps
   ├─ OAuth (Google/GitHub/GitLab/Gitea)
   │  └─ OAuth adapter → session
-  └─ Magic Link
-     └─ Email token → session
+  ├─ Magic Link
+  │  └─ Email token → session
+  └─ Swing SSO (Enterprise)
+     ├─ Staff ID + Swing SSO login → session
+     └─ Token flow from Swing portal → session
 ```
+
+### Swing SSO Integration Flow
+
+```
+Option 1: Staff ID + Password via Swing SSO
+  User enters Staff ID + password
+    ↓
+  Frontend → /auth/swing-sso/login
+    ↓
+  Backend validates via Swing SSO endpoint
+    ↓
+  Swing SSO returns user profile
+    ↓
+  Backend creates/updates user in DB
+    ↓
+  Session created → redirect to workspace
+
+Option 2: Token-based from Swing Portal
+  Swing portal generates signed XML token
+    ↓
+  User redirected to /auth/swing-sso/token
+    ↓
+  Backend validates XML signature
+    ↓
+  Backend parses user info from token
+    ↓
+  Backend creates/updates user in DB
+    ↓
+  Session created → redirect to workspace
+```
+
+**Config Keys** (environment):
+
+- `IS_SWING_SSO_ENABLED` - Toggle SSO on/off (mutual exclusive with LDAP)
+- `SWING_SSO_URL` - Swing SSO API endpoint
+- `SWING_SSO_CLIENT_ID` - OAuth client ID
+- `SWING_SSO_CLIENT_SECRET` - OAuth client secret
+- `SWING_SSO_COMPANY_CODE` - Company identifier for multi-tenant Swing
 
 ### Authorization (RBAC)
 
@@ -579,6 +620,71 @@ services:
 - Connection pool enabled
 - Max connections: 50
 
+## Admin User Management System
+
+### Architecture
+
+```
+Admin Frontend (apps/admin)
+  ├─ /users - List users with search/pagination
+  ├─ /users/create - Create new instance user
+  ├─ /users/:id - User detail with workspace assignments
+  └─ Components
+      ├─ User list table
+      ├─ Create form
+      ├─ Reset password dialog
+      └─ Add to workspace dialog
+
+     │
+     ▼
+
+Admin API (plane/license/api)
+  ├─ Views: InstanceUserViewSet
+  │   ├─ GET /users/ - List (paginated, sorted)
+  │   ├─ POST /users/ - Create new user
+  │   ├─ GET /users/{id}/ - Retrieve user
+  │   ├─ PATCH /users/{id}/ - Update user
+  │   ├─ POST /users/{id}/reset-password/ - Password reset
+  │   └─ POST /users/{id}/add-workspace/ - Workspace assignment
+  │
+  └─ Serializers
+      ├─ User list response (with workspace summaries)
+      ├─ User detail (full workspace assignments)
+      └─ Create request validation
+
+     │
+     ▼
+
+Database (PostgreSQL)
+  ├─ User table (login, email, profile)
+  ├─ WorkspaceMember table (user → workspace role)
+  └─ Workspace table (organization data)
+```
+
+### Admin User Workflows
+
+**Create User**:
+
+1. Admin fills form (email, first name, last name)
+2. System auto-generates random password
+3. User created in DB
+4. Email sent with login link + temp password
+5. User can reset password on first login
+
+**Reset Password**:
+
+1. Admin selects user → Reset Password
+2. System generates temp password
+3. Email sent with login link + password
+4. User logs in and changes password
+
+**Add to Workspace**:
+
+1. Admin selects user → Add to Workspace dialog
+2. Choose workspace + role (Admin/Member)
+3. User added as WorkspaceMember
+4. User can now access workspace
+
 ## Real-Time Collaboration System
 
 ### CRDT (Conflict-free Replicated Data Type)
@@ -723,5 +829,5 @@ Volumes:
 ---
 
 **Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/system-architecture.md`
-**Lines**: ~510
-**Status**: Updated with Time Tracking API & data model
+**Lines**: ~590
+**Status**: Updated with Swing SSO auth flow and Admin User Management system
