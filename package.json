@@ -24,7 +24,7 @@
     "lint-staged": "16.2.7",
     "oxfmt": "0.35.0",
     "oxlint": "1.51.0",
-    "turbo": "2.6.3"
+    "turbo": "2.8.12"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [
@@ -58,7 +58,9 @@
       "webpack": "5.104.1",
       "lodash-es": "catalog:",
       "@isaacs/brace-expansion": "5.0.1",
-      "lodash": "4.17.23"
+      "lodash": "4.17.23",
+      "markdown-it": "14.1.1",
+      "rollup": "4.59.0"
     },
     "onlyBuiltDependencies": [
       "turbo"
