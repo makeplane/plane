@@ -23,6 +23,7 @@ export const CORE_FILTER_FIELD_TYPE = {
   DATE_RANGE: "date_range",
   SINGLE_SELECT: "single_select",
   MULTI_SELECT: "multi_select",
+  ASYNC_MULTI_SELECT: "async_multi_select",
 } as const;
 
 // -------- DATE FILTER CONFIGURATIONS --------
@@ -80,6 +81,36 @@ export type TMultiSelectFilterFieldConfig<V extends TFilterValue> = TBaseFilterF
   singleValueOperator: TSupportedOperators;
 };
 
+// -------- ASYNC MULTI SELECT --------
+
+/**
+ * Params for fetching async multi-select options.
+ */
+export type TAsyncMultiSelectParams = { search: string; cursor: string; per_page: string };
+
+/**
+ * Result of fetching async multi-select options.
+ */
+export type TAsyncMultiSelectOptions<V extends TFilterValue = string> = {
+  results: IFilterOption<V>[];
+  next_cursor: string;
+};
+
+/**
+ * Async multi-select filter configuration
+ * - defaultValue: Initial selected values array (ids)
+ * - fetchOptions: Fetches options with params
+ * - fetchSelected: Fetches options with selected ids
+ * - singleValueOperator: Operator to show when single value is selected
+ */
+export type TAsyncMultiSelectFilterFieldConfig<V extends TFilterValue = string> = TBaseFilterFieldConfig & {
+  type: typeof CORE_FILTER_FIELD_TYPE.ASYNC_MULTI_SELECT;
+  defaultValue?: V[];
+  fetchOptions: (params: TAsyncMultiSelectParams) => Promise<TAsyncMultiSelectOptions<V>>;
+  fetchSelected: (ids: string[]) => Promise<IFilterOption<V>[]>;
+  singleValueOperator: TSupportedOperators;
+};
+
 // -------- UNION TYPES --------
 
 /**
@@ -89,4 +120,5 @@ export type TCoreFilterFieldConfigs<V extends TFilterValue = TFilterValue> =
   | TDateFilterFieldConfig<V>
   | TDateRangeFilterFieldConfig<V>
   | TSingleSelectFilterFieldConfig<V>
-  | TMultiSelectFilterFieldConfig<V>;
+  | TMultiSelectFilterFieldConfig<V>
+  | TAsyncMultiSelectFilterFieldConfig<V>;

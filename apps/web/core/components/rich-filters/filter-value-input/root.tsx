@@ -23,6 +23,7 @@ import type {
   TFilterProperty,
   TFilterValue,
   TMultiSelectFilterFieldConfig,
+  TAsyncMultiSelectFilterFieldConfig,
   TNumberFilterFieldConfig,
   TNumberRangeFilterFieldConfig,
   TSingleSelectFilterFieldConfig,
@@ -33,6 +34,7 @@ import { FILTER_FIELD_TYPE } from "@plane/types";
 import { BooleanFilterValueInput } from "./boolean/root";
 import { DateRangeFilterValueInput } from "./date/range";
 import { MultiSelectFilterValueInput } from "./select/multi";
+import { AsyncMultiSelectFilterValueInput } from "./select/async-multi";
 import { NumberFilterValueInput } from "./number/single";
 import { NumberRangeFilterValueInput } from "./number/range";
 import { SingleDateFilterValueInput } from "./date/single";
@@ -62,6 +64,18 @@ export const FilterValueInput = observer(function FilterValueInput<P extends TFi
     return (
       <MultiSelectFilterValueInput<P>
         config={filterFieldConfig as TMultiSelectFilterFieldConfig<string>}
+        condition={condition as TFilterConditionNode<P, string>}
+        isDisabled={isDisabled}
+        onChange={(value) => onChange(value as SingleOrArray<V>)}
+      />
+    );
+  }
+
+  // Async multi select input
+  if (filterFieldConfig?.type === FILTER_FIELD_TYPE.ASYNC_MULTI_SELECT) {
+    return (
+      <AsyncMultiSelectFilterValueInput<P>
+        config={filterFieldConfig as TAsyncMultiSelectFilterFieldConfig<string>}
         condition={condition as TFilterConditionNode<P, string>}
         isDisabled={isDisabled}
         onChange={(value) => onChange(value as SingleOrArray<V>)}

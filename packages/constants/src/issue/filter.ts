@@ -268,6 +268,9 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "type_id",
       "name",
       "milestone_id",
+      "id",
+      "epic_id",
+      "parent_id",
     ],
     layoutOptions: {
       list: {

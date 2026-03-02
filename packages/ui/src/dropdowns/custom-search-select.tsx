@@ -14,7 +14,7 @@
 import { Combobox } from "@headlessui/react";
 
 import { InfoIcon, CheckIcon, SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -49,21 +49,40 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
     tabIndex,
     noResultsMessage = "No matches found",
     defaultOpen = false,
+    searchQuery: controlledSearchQuery,
+    onSearchQueryChange,
+    fetchMoreOptions,
   } = props;
-  const [query, setQuery] = useState("");
+  const [internalSearchQuery, setInternalSearchQuery] = useState("");
+
+  const searchQuery = controlledSearchQuery !== undefined ? controlledSearchQuery : internalSearchQuery;
+
+  const setSearchQuery = useCallback(
+    (query: string) => {
+      if (onSearchQueryChange) {
+        onSearchQueryChange(query);
+      } else {
+        setInternalSearchQuery(query);
+      }
+    },
+    [onSearchQueryChange]
+  );
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(defaultOpen);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
   });
 
   const filteredOptions =
-    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+    controlledSearchQuery !== undefined || searchQuery === ""
+      ? options
+      : options?.filter((option) => option.query.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const comboboxProps: any = {
     value,
@@ -91,6 +110,15 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
     if (isOpen) closeDropdown();
     else openDropdown();
   };
+
+  const handleScroll = useCallback(() => {
+    const el = scrollContainerRef.current;
+    if (!el || !fetchMoreOptions) return;
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    if (scrollTop + clientHeight >= scrollHeight - 20) {
+      void fetchMoreOptions();
+    }
+  }, [fetchMoreOptions]);
 
   return (
     <Combobox
@@ -164,8 +192,8 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                       <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
                       <Combobox.Input
                         className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search"
                         displayValue={(assigned: any) => assigned?.name}
                       />
@@ -179,6 +207,8 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                         "max-h-36": maxHeight === "rg",
                         "max-h-28": maxHeight === "sm",
                       })}
+                      ref={scrollContainerRef}
+                      onScroll={handleScroll}
                     >
                       {filteredOptions ? (
                         filteredOptions.length > 0 ? (

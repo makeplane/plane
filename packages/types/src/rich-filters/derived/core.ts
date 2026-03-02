@@ -17,6 +17,7 @@ import type {
   TDateRangeFilterFieldConfig,
   TSingleSelectFilterFieldConfig,
   TMultiSelectFilterFieldConfig,
+  TAsyncMultiSelectFilterFieldConfig,
 } from "../field-types";
 import type { TCoreOperatorSpecificConfigs } from "../operator-configs";
 import type { TFilterOperatorHelper } from "./shared";
@@ -80,11 +81,23 @@ export type TCoreSupportedMultiSelectFilterOperators<V extends TFilterValue = TF
 }[keyof TCoreOperatorSpecificConfigs];
 
 /**
+ * Union type representing all core operators that support async multi select filter types.
+ */
+export type TCoreSupportedAsyncMultiSelectFilterOperators<V extends TFilterValue = TFilterValue> = {
+  [K in keyof TCoreOperatorSpecificConfigs]: TFilterOperatorHelper<
+    TCoreOperatorSpecificConfigs,
+    K,
+    TAsyncMultiSelectFilterFieldConfig<V>
+  >;
+}[keyof TCoreOperatorSpecificConfigs];
+
+/**
  * Union type representing all core operators that support any select filter types.
  */
 export type TCoreSupportedSelectFilterOperators<V extends TFilterValue = TFilterValue> =
   | TCoreSupportedSingleSelectFilterOperators<V>
-  | TCoreSupportedMultiSelectFilterOperators<V>;
+  | TCoreSupportedMultiSelectFilterOperators<V>
+  | TCoreSupportedAsyncMultiSelectFilterOperators<V>;
 
 export type TCoreAllAvailableSelectFilterOperatorsForDisplay<V extends TFilterValue = TFilterValue> =
   TCoreSupportedSelectFilterOperators<V>;

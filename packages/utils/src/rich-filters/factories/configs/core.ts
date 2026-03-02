@@ -12,7 +12,14 @@
  */
 
 // plane imports
-import type { TFilterValue, TSupportedOperators, TBaseFilterFieldConfig } from "@plane/types";
+import type {
+  TFilterValue,
+  TSupportedOperators,
+  TBaseFilterFieldConfig,
+  TAsyncMultiSelectParams,
+  TAsyncMultiSelectOptions,
+  IFilterOption,
+} from "@plane/types";
 import { FILTER_FIELD_TYPE } from "@plane/types";
 // local imports
 import type { IFilterIconConfig } from "./shared";
@@ -101,6 +108,31 @@ export const getMultiSelectConfig = <
         value: transforms.getValue(item),
         icon: iconConfig?.getOptionIcon?.(transforms.getIconData?.(item) as TIconData),
       })),
+  });
+
+// ------------ Async multi-select ------------
+
+/**
+ * Async multi-select config
+ */
+export type TAsyncMultiSelectConfigParams<TValue extends TFilterValue = string> = TBaseFilterFieldConfig & {
+  defaultValue?: TValue[];
+  singleValueOperator: TSupportedOperators;
+  fetchOptions: (params: TAsyncMultiSelectParams) => Promise<TAsyncMultiSelectOptions<TValue>>;
+  fetchSelected: (ids: string[]) => Promise<IFilterOption<TValue>[]>;
+};
+
+/**
+ * Helper to get the async multi select config
+ * @param config - Async multi-select configuration
+ * @returns The async multi select config
+ */
+export const getAsyncMultiSelectConfig = <TValue extends TFilterValue = string>(
+  config: TAsyncMultiSelectConfigParams<TValue>
+) =>
+  createFilterFieldConfig<typeof FILTER_FIELD_TYPE.ASYNC_MULTI_SELECT, TValue>({
+    type: FILTER_FIELD_TYPE.ASYNC_MULTI_SELECT,
+    ...config,
   });
 
 // ------------ Date filters ------------

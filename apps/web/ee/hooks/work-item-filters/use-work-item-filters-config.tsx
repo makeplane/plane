@@ -15,7 +15,14 @@ import { useCallback, useMemo } from "react";
 import { AlignLeft } from "lucide-react";
 // plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { LayersIcon, MilestoneIcon, ProjectIcon } from "@plane/propel/icons";
+import {
+  LayersIcon,
+  MilestoneIcon,
+  ProjectIcon,
+  WorkItemsIcon,
+  EpicIcon,
+  ParentPropertyIcon,
+} from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type {
   EIssuePropertyType,
@@ -23,17 +30,24 @@ import type {
   IIssueType,
   IMilestoneInstance,
   IProject,
+  TEpicMeta,
+  TAsyncMultiSelectParams,
   TWorkItemFilterProperty,
 } from "@plane/types";
-import { EWorkItemTypeEntity, EXTENDED_EQUALITY_OPERATOR } from "@plane/types";
+import { EIssueServiceType, EWorkItemTypeEntity, EXTENDED_EQUALITY_OPERATOR } from "@plane/types";
 import {
   getMilestoneFilterConfig,
+  getWorkItemFilterConfig,
+  getEpicFilterConfig,
   getMilestoneIconProps,
   getTeamspaceProjectFilterConfig,
   getTextPropertyFilterConfig,
   getWorkItemTypeFilterConfig,
   isLoaderReady,
+  getParentFilterConfig,
 } from "@plane/utils";
+// services
+import { IssueService } from "@/services/issue";
 // ce imports
 import type {
   TUseWorkItemFiltersConfigProps as TCoreUseWorkItemFiltersConfigProps,
@@ -43,8 +57,10 @@ import type {
 import { useWorkItemFiltersConfig as useCoreWorkItemFiltersConfig } from "@/ce/hooks/work-item-filters/use-work-item-filters-config";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useEpicMeta } from "@/hooks/store/use-epic-meta";
 // plane web imports
 import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
+import { getWorkItemsFilterOptions } from "@/components/rich-filters/filter-value-input/select/shared";
 import { useCustomPropertyFiltersConfig } from "@/plane-web/hooks/rich-filters/use-custom-property-filters-config";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types";
@@ -55,12 +71,14 @@ export type TWorkItemFiltersEntityProps = TCoreWorkItemFiltersEntityProps & {
   teamspaceProjectIds?: string[];
   customPropertyIds?: string[];
   milestoneIds?: string[];
+  epicIds?: string[];
 };
 
 export type TUseWorkItemFiltersConfigProps = TCoreUseWorkItemFiltersConfigProps & TWorkItemFiltersEntityProps;
 
 export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
-  const { workItemTypeIds, teamspaceProjectIds, workspaceSlug, projectId, customPropertyIds, milestoneIds } = props;
+  const { workItemTypeIds, teamspaceProjectIds, workspaceSlug, projectId, customPropertyIds, milestoneIds, epicIds } =
+    props;
   // store hooks
   const {
     getIssuePropertyById,
@@ -72,6 +90,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   } = useIssueTypes();
   const { getMilestoneById } = useMilestones();
   const { getProjectById } = useProject();
+  const { getEpicMetaById } = useEpicMeta();
   // derived values
   const workItemFiltersConfig = useCoreWorkItemFiltersConfig(props);
   const { isFilterEnabled, members, areAllConfigsInitialized: areAllCoreConfigsInitialized } = workItemFiltersConfig;
@@ -110,8 +129,18 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
           .filter((milestone) => milestone) as IMilestoneInstance[])
       : undefined;
 
+  // epics list
+  const epics = useMemo(
+    () =>
+      projectId && epicIds
+        ? (epicIds.map((epicId) => getEpicMetaById(projectId, epicId)).filter((epic) => epic) as TEpicMeta[])
+        : undefined,
+    [projectId, epicIds, getEpicMetaById]
+  );
+
   const isWorkItemTypesEnabled = isFilterEnabled("type_id") && workItemTypes !== undefined;
   const isMilestonesEnabled = isFilterEnabled("milestone_id") && milestones !== undefined;
+  const isEpicsEnabled = isFilterEnabled("epic_id") && epics !== undefined;
   const isWorkItemTypeFeatureEnabled = projectId ? isWorkItemTypeEnabledForProject(workspaceSlug, projectId) : false;
   const isEpicFeatureEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;
   const workItemTypePropertiesLoader = projectId
@@ -253,6 +282,62 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [isMilestonesEnabled, operatorConfigs, milestones]
   );
 
+  // work item filter config
+  const issueService = useMemo(() => new IssueService(EIssueServiceType.ISSUES), []);
+  const workItemFilterConfig = useMemo(
+    () =>
+      getWorkItemFilterConfig<TWorkItemFilterProperty>("id")({
+        isEnabled: !!projectId && isFilterEnabled("id"),
+        filterIcon: WorkItemsIcon,
+        fetchOptions: async (params: TAsyncMultiSelectParams) => {
+          const res = await issueService.getWorkItemsMeta(workspaceSlug, projectId!, params);
+          const results = getWorkItemsFilterOptions(res.results);
+          return { results, next_cursor: res.next_page_results ? res.next_cursor : "" };
+        },
+        fetchSelected: async (ids: string[]) => {
+          const params = { issues: ids.join(","), cursor: `${ids.length}:0:0`, per_page: ids.length };
+          const res = await issueService.getWorkItemsMeta(workspaceSlug, projectId!, params);
+          return getWorkItemsFilterOptions(res.results);
+        },
+        ...operatorConfigs,
+      }),
+    [workspaceSlug, projectId, isFilterEnabled, operatorConfigs, issueService]
+  );
+
+  // epic filter config
+  const epicFilterConfig = useMemo(
+    () =>
+      getEpicFilterConfig<TWorkItemFilterProperty>("epic_id")({
+        isEnabled: isEpicFeatureEnabled && isEpicsEnabled,
+        filterIcon: EpicIcon,
+        getOptionIcon: () => <EpicIcon className="h-3 w-3 flex-shrink-0" />,
+        epics: epics ?? [],
+        ...operatorConfigs,
+      }),
+    [isEpicFeatureEnabled, isEpicsEnabled, epics, operatorConfigs]
+  );
+
+  // parent filter config
+  const parentFilterConfig = useMemo(
+    () =>
+      getParentFilterConfig<TWorkItemFilterProperty>("parent_id")({
+        isEnabled: !!projectId && isFilterEnabled("parent_id"),
+        filterIcon: ParentPropertyIcon,
+        fetchOptions: async (params: TAsyncMultiSelectParams) => {
+          const res = await issueService.getWorkItemsMeta(workspaceSlug, projectId!, params);
+          const results = getWorkItemsFilterOptions(res.results);
+          return { results, next_cursor: res.next_page_results ? res.next_cursor : "" };
+        },
+        fetchSelected: async (ids: string[]) => {
+          const params = { issues: ids.join(","), cursor: `${ids.length}:0:0`, per_page: ids.length };
+          const res = await issueService.getWorkItemsMeta(workspaceSlug, projectId!, params);
+          return getWorkItemsFilterOptions(res.results);
+        },
+        ...operatorConfigs,
+      }),
+    [workspaceSlug, projectId, isFilterEnabled, operatorConfigs, issueService]
+  );
+
   return {
     ...workItemFiltersConfig,
     areAllConfigsInitialized,
@@ -261,6 +346,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       workItemTypeFilterConfig,
       teamspaceProjectFilterConfig,
       milestoneFilterConfig,
+      workItemFilterConfig,
+      epicFilterConfig,
+      parentFilterConfig,
       ...workItemFiltersConfig.configs,
       ...customPropertyConfigs.configs,
     ],
@@ -268,6 +356,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       team_project_id: teamspaceProjectFilterConfig,
       type_id: workItemTypeFilterConfig,
       milestone_id: milestoneFilterConfig,
+      id: workItemFilterConfig,
+      epic_id: epicFilterConfig,
+      parent_id: parentFilterConfig,
       ...workItemFiltersConfig.configMap,
       name: workItemNameFilterConfig,
       ...customPropertyConfigs.configMap,

@@ -22,3 +22,6 @@ export * from "./teamspace";
 export * from "./user";
 export * from "./work-item-type";
 export * from "./milestone";
+export * from "./work-item";
+export * from "./epic";
+export * from "./parent";

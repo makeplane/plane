@@ -12,10 +12,11 @@
  */
 
 // plane imports
-import type { TSupportedFilterFieldConfigs, IFilterOption, TFilterValue } from "@plane/types";
+import type { TSupportedFilterFieldConfigs, IFilterOption, TFilterValue, TWorkItemMeta } from "@plane/types";
 import { cn } from "@plane/utils";
 // local imports
 import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../../shared";
+import { WorkItemsIcon } from "@plane/propel/icons";
 
 type TLoadOptionsProps<V extends TFilterValue> = {
   config: TSupportedFilterFieldConfigs<V>;
@@ -65,3 +66,11 @@ export const getCommonCustomSearchSelectProps = (isDisabled?: boolean) => ({
   optionsClassName: "w-56",
   maxHeight: "md" as const,
 });
+
+export const getWorkItemsFilterOptions = (items: TWorkItemMeta[]): IFilterOption<string>[] =>
+  items.map((workItem) => ({
+    id: workItem.id,
+    label: workItem.project_identifier + "-" + workItem.sequence_id + " " + workItem.name,
+    value: workItem.id,
+    icon: <WorkItemsIcon className="size-3" />,
+  }));
