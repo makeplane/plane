@@ -89,7 +89,9 @@ export class InstanceUserStore implements IInstanceUserStore {
       console.error("Error fetching users", error);
       throw error;
     } finally {
-      this.loader = "loaded";
+      runInAction(() => {
+        this.loader = "loaded";
+      });
     }
   };
 
@@ -110,7 +112,9 @@ export class InstanceUserStore implements IInstanceUserStore {
       console.error("Error fetching next users", error);
       throw error;
     } finally {
-      this.loader = "loaded";
+      runInAction(() => {
+        this.loader = "loaded";
+      });
     }
   };
 
@@ -131,7 +135,9 @@ export class InstanceUserStore implements IInstanceUserStore {
       console.error("Error creating user", error);
       throw error;
     } finally {
-      this.loader = "loaded";
+      runInAction(() => {
+        this.loader = "loaded";
+      });
     }
   };
 

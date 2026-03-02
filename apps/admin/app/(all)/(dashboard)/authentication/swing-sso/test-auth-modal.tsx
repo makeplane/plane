@@ -64,89 +64,93 @@ export function SwingSSOTestAuthModal({ isOpen, onClose }: Props) {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()} modal>
-      <Dialog.Panel width={EDialogWidth.LG}>
-        <Dialog.Title>Test Swing SSO Authentication</Dialog.Title>
-        <div className="p-5 space-y-4">
-          {!result ? (
-            <>
-              <div className="space-y-1">
-                <label htmlFor="test-employee-no" className="text-sm font-medium text-color-primary">
-                  Employee No (8 digits)
-                </label>
-                <Input
-                  id="test-employee-no"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="12345678"
-                  maxLength={8}
-                />
-              </div>
-              <div className="space-y-1">
-                <label htmlFor="test-password" className="text-sm font-medium text-color-primary">
-                  Password
-                </label>
-                <Input
-                  id="test-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter password"
-                />
-              </div>
-            </>
-          ) : (
-            <div className="space-y-3">
-              <div
-                className={`inline-flex items-center gap-2 rounded-md px-2.5 py-1 text-sm font-medium ${
-                  result.success
-                    ? "bg-success-subtle text-color-success-primary"
-                    : "bg-danger-subtle text-color-danger-primary"
-                }`}
-              >
-                {result.success ? "Authentication Successful" : "Authentication Failed"}
-              </div>
-              <div className="rounded-md border border-color-subtle bg-surface-1 p-3 space-y-2 text-sm">
-                {result.success ? (
-                  <>
-                    <Row label="Result Code" value={result.result_code} />
-                    <Row label="Auth Result" value={result.auth_result} />
-                    <Row label="Employee No" value={result.employee_no} />
-                    <Row label="Response Time" value={`${result.response_time_ms}ms`} />
-                    <Row label="Plane User Found" value={result.plane_user_found ? "Yes" : "No"} />
-                    <Row label="Plane Email" value={result.plane_user_email} />
-                  </>
-                ) : (
-                  <>
-                    <Row label="Error" value={result.error_message} />
-                    {result.error_code && <Row label="Error Code" value={String(result.error_code)} />}
-                    {result.response_time_ms !== undefined && (
+    <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && handleClose()} modal>
+      <Dialog.Panel width={EDialogWidth.MD}>
+        <div className="p-6">
+          <Dialog.Title>Test Swing SSO Authentication</Dialog.Title>
+          <div className="mt-4 space-y-4">
+            {!result ? (
+              <>
+                <div className="space-y-1">
+                  <label htmlFor="test-employee-no" className="block text-13 font-medium text-color-primary">
+                    Employee No (8 digits)
+                  </label>
+                  <Input
+                    id="test-employee-no"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="12345678"
+                    maxLength={8}
+                    className="w-full"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label htmlFor="test-password" className="block text-13 font-medium text-color-primary">
+                    Password
+                  </label>
+                  <Input
+                    id="test-password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter password"
+                    className="w-full"
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="space-y-3">
+                <div
+                  className={`inline-flex items-center gap-2 rounded-md px-2.5 py-1 text-13 font-medium ${
+                    result.success
+                      ? "bg-success-subtle text-color-success-primary"
+                      : "bg-danger-subtle text-color-danger-primary"
+                  }`}
+                >
+                  {result.success ? "Authentication Successful" : "Authentication Failed"}
+                </div>
+                <div className="rounded-md border border-color-subtle bg-layer-1 p-3 space-y-2 text-13">
+                  {result.success ? (
+                    <>
+                      <Row label="Result Code" value={result.result_code} />
+                      <Row label="Auth Result" value={result.auth_result} />
+                      <Row label="Employee No" value={result.employee_no} />
                       <Row label="Response Time" value={`${result.response_time_ms}ms`} />
-                    )}
-                  </>
-                )}
+                      <Row label="Plane User Found" value={result.plane_user_found ? "Yes" : "No"} />
+                      <Row label="Plane Email" value={result.plane_user_email} />
+                    </>
+                  ) : (
+                    <>
+                      <Row label="Error" value={result.error_message} />
+                      {result.error_code && <Row label="Error Code" value={String(result.error_code)} />}
+                      {result.response_time_ms !== undefined && (
+                        <Row label="Response Time" value={`${result.response_time_ms}ms`} />
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-        <div className="flex justify-end gap-2 p-4 border-t border-color-subtle">
-          <Button variant="secondary" onClick={handleClose}>
-            {result ? "Close" : "Cancel"}
-          </Button>
-          {!result ? (
-            <Button
-              variant="primary"
-              onClick={() => void handleTest()}
-              loading={isLoading}
-              disabled={!username || !password || username.length !== 8}
-            >
-              Test
+            )}
+          </div>
+          <div className="mt-6 flex justify-end gap-2">
+            <Button variant="secondary" onClick={handleClose}>
+              {result ? "Close" : "Cancel"}
             </Button>
-          ) : !result.success ? (
-            <Button variant="primary" onClick={() => setResult(null)}>
-              Try Again
-            </Button>
-          ) : null}
+            {!result ? (
+              <Button
+                variant="primary"
+                onClick={() => void handleTest()}
+                loading={isLoading}
+                disabled={!username || !password}
+              >
+                Test
+              </Button>
+            ) : !result.success ? (
+              <Button variant="primary" onClick={() => setResult(null)}>
+                Try Again
+              </Button>
+            ) : null}
+          </div>
         </div>
       </Dialog.Panel>
     </Dialog>

@@ -67,59 +67,61 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()} modal>
       <Dialog.Panel width={EDialogWidth.MD}>
-        <Dialog.Title>Add to Workspace</Dialog.Title>
-        <div className="p-5 space-y-4">
-          <div className="space-y-1">
-            <label htmlFor="workspace-select" className="text-sm font-medium">
-              Workspace
-            </label>
-            <select
-              id="workspace-select"
-              value={selectedWorkspaceId}
-              onChange={(e) => setSelectedWorkspaceId(e.target.value)}
-              className="w-full rounded-md border border-color-subtle bg-surface-1 px-3 py-2 text-sm"
-            >
-              <option value="">Select a workspace</option>
-              {availableWorkspaces.map((ws) => (
-                <option key={ws.id} value={ws.id}>
-                  {ws.name} ({ws.slug})
-                </option>
-              ))}
-            </select>
-            {availableWorkspaces.length === 0 && (
-              <p className="text-11 text-tertiary">User is already a member of all workspaces.</p>
-            )}
+        <div className="p-6">
+          <Dialog.Title>Add to Workspace</Dialog.Title>
+          <div className="mt-4 space-y-4">
+            <div className="space-y-1">
+              <label htmlFor="workspace-select" className="block text-13 font-medium text-color-primary">
+                Workspace
+              </label>
+              <select
+                id="workspace-select"
+                value={selectedWorkspaceId}
+                onChange={(e) => setSelectedWorkspaceId(e.target.value)}
+                className="w-full rounded-md border border-color-subtle bg-layer-2 px-3 py-2 text-13"
+              >
+                <option value="">Select a workspace</option>
+                {availableWorkspaces.map((ws) => (
+                  <option key={ws.id} value={ws.id}>
+                    {ws.name} ({ws.slug})
+                  </option>
+                ))}
+              </select>
+              {availableWorkspaces.length === 0 && (
+                <p className="text-11 text-color-tertiary">User is already a member of all workspaces.</p>
+              )}
+            </div>
+            <div className="space-y-1">
+              <label htmlFor="role-select" className="block text-13 font-medium text-color-primary">
+                Role
+              </label>
+              <select
+                id="role-select"
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(Number(e.target.value))}
+                className="w-full rounded-md border border-color-subtle bg-layer-2 px-3 py-2 text-13"
+              >
+                {ROLES.map((role) => (
+                  <option key={role.value} value={role.value}>
+                    {role.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <div className="space-y-1">
-            <label htmlFor="role-select" className="text-sm font-medium">
-              Role
-            </label>
-            <select
-              id="role-select"
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(Number(e.target.value))}
-              className="w-full rounded-md border border-color-subtle bg-surface-1 px-3 py-2 text-sm"
+          <div className="mt-6 flex justify-end gap-2">
+            <Button variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => void handleSubmit()}
+              loading={isSubmitting}
+              disabled={!selectedWorkspaceId}
             >
-              {ROLES.map((role) => (
-                <option key={role.value} value={role.value}>
-                  {role.label}
-                </option>
-              ))}
-            </select>
+              Add
+            </Button>
           </div>
-        </div>
-        <div className="flex justify-end gap-2 p-4 border-t border-color-subtle">
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => void handleSubmit()}
-            loading={isSubmitting}
-            disabled={!selectedWorkspaceId}
-          >
-            Add
-          </Button>
         </div>
       </Dialog.Panel>
     </Dialog>
