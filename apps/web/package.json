@@ -39,7 +39,6 @@
     "@popperjs/core": "^2.11.8",
     "@react-pdf/renderer": "^3.4.5",
     "@react-router/node": "catalog:",
-    "@sentry/react-router": "catalog:",
     "@tanstack/react-table": "^8.21.3",
     "axios": "catalog:",
     "clsx": "^2.0.0",

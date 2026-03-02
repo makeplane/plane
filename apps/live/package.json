@@ -42,8 +42,6 @@
     "@plane/types": "workspace:*",
     "@react-pdf/renderer": "^4.3.0",
     "@react-pdf/types": "^2.9.2",
-    "@sentry/node": "catalog:",
-    "@sentry/profiling-node": "catalog:",
     "@tiptap/core": "catalog:",
     "@tiptap/html": "catalog:",
     "axios": "catalog:",

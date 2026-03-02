@@ -1,5 +1,5 @@
 {
-  "$schema": "https://turborepo.com/schema.json",
+  "$schema": "https://v2-8-12.turborepo.dev/schema.json",
   "globalDependencies": [".npmrc", ".oxfmtrc.json", ".oxlintrc.json"],
   "globalEnv": [
     "APP_VERSION",
