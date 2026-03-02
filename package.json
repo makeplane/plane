@@ -1,10 +1,10 @@
 {
   "name": "plane",
-  "description": "Open-source project management that unlocks customer value",
-  "repository": "https://github.com/makeplane/plane.git",
   "version": "1.2.0",
-  "license": "AGPL-3.0",
   "private": true,
+  "description": "Open-source project management that unlocks customer value",
+  "license": "AGPL-3.0",
+  "repository": "https://github.com/makeplane/plane.git",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --concurrency=18",
@@ -34,6 +34,10 @@
       "pnpm exec oxlint --fix --deny-warnings"
     ]
   },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "packageManager": "pnpm@10.30.2+sha512.36cdc707e7b7940a988c9c1ecf88d084f8514b5c3f085f53a2e244c2921d3b2545bc20dd4ebe1fc245feec463bb298aecea7a63ed1f7680b877dc6379d8d0cb4",
   "pnpm": {
     "overrides": {
       "express": "catalog:",
@@ -60,7 +64,10 @@
       "@isaacs/brace-expansion": "5.0.1",
       "lodash": "4.17.23",
       "markdown-it": "14.1.1",
-      "rollup": "4.59.0"
+      "rollup": "4.59.0",
+      "minimatch@3": "3.1.4",
+      "minimatch@10": "10.2.3",
+      "serialize-javascript": "7.0.3"
     },
     "onlyBuiltDependencies": [
       "turbo"
@@ -68,9 +75,5 @@
     "ignoredBuiltDependencies": [
       "sharp"
     ]
-  },
-  "packageManager": "pnpm@10.30.2+sha512.36cdc707e7b7940a988c9c1ecf88d084f8514b5c3f085f53a2e244c2921d3b2545bc20dd4ebe1fc245feec463bb298aecea7a63ed1f7680b877dc6379d8d0cb4",
-  "engines": {
-    "node": ">=22.18.0"
   }
 }
