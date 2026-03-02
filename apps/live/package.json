@@ -19,10 +19,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=160",
+    "check:lint": "oxlint .",
     "check:types": "tsc --noEmit",
     "check:format": "oxfmt --check .",
-    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=160",
+    "fix:lint": "oxlint --fix .",
     "fix:format": "oxfmt .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },

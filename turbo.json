@@ -1,6 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
-  "globalDependencies": [".npmrc", ".oxfmtrc.json", "eslint.config.mjs"],
+  "globalDependencies": [".npmrc", ".oxfmtrc.json", ".oxlintrc.json"],
   "globalEnv": [
     "APP_VERSION",
     "DEV",
@@ -53,9 +53,8 @@
       "outputs": []
     },
     "check:lint": {
-      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
-      "outputs": ["node_modules/.cache/eslint/**"]
+      "outputs": []
     },
     "check:types": {
       "dependsOn": ["^build"],
@@ -79,9 +78,8 @@
       "outputs": []
     },
     "fix:lint": {
-      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
-      "outputs": ["node_modules/.cache/eslint/**"]
+      "outputs": []
     },
     "start": {
       "cache": false,

@@ -10,9 +10,7 @@
 import { APIService } from "../api.service";
 
 export class ModuleOperationService extends APIService {
-  constructor(baseURL: string) {
-    super(baseURL);
-  }
+  
 
   /**
    * Add issues to a module

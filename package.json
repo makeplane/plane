@@ -20,34 +20,18 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@eslint/js": "9.39.1",
-    "oxfmt": "0.35.0",
-    "@vitest/eslint-plugin": "1.5.1",
-    "eslint": "9.39.1",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-import-resolver-node": "0.3.9",
-    "eslint-import-resolver-typescript": "4.4.4",
-    "eslint-plugin-import": "2.32.0",
-    "eslint-plugin-jsx-a11y": "6.10.2",
-    "eslint-plugin-n": "17.23.1",
-    "eslint-plugin-promise": "7.2.1",
-    "eslint-plugin-react": "7.37.5",
-    "eslint-plugin-react-hooks": "7.0.1",
-    "eslint-plugin-react-refresh": "0.4.24",
-    "eslint-plugin-storybook": "10.1.4",
-    "eslint-plugin-turbo": "2.6.3",
-    "globals": "16.5.0",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
-    "turbo": "2.6.3",
-    "typescript-eslint": "8.48.1"
+    "oxfmt": "0.35.0",
+    "oxlint": "1.51.0",
+    "turbo": "2.6.3"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [
       "pnpm exec oxfmt --no-error-on-unmatched-pattern"
     ],
     "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts}": [
-      "pnpm exec eslint --fix --max-warnings=0 --no-warn-ignored"
+      "pnpm exec oxlint --fix --deny-warnings"
     ]
   },
   "pnpm": {
