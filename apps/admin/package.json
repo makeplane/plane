@@ -31,7 +31,6 @@
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
     "@react-router/node": "catalog:",
-    "@sentry/react-router": "catalog:",
     "@tanstack/react-virtual": "^3.13.12",
     "@tanstack/virtual-core": "^3.13.12",
     "axios": "catalog:",

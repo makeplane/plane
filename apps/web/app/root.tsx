@@ -5,7 +5,6 @@
  */
 
 import type { ReactNode } from "react";
-import * as Sentry from "@sentry/react-router";
 import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
@@ -147,9 +146,5 @@ export function HydrateFallback() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  if (error) {
-    Sentry.captureException(error);
-  }
-
   return <CustomErrorComponent error={error} />;
 }

@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 // assets
 import appleTouchIcon from "@/app/assets/favicon/apple-touch-icon.png?url";
@@ -97,9 +96,5 @@ export function HydrateFallback() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  if (error) {
-    Sentry.captureException(error);
-  }
-
   return <ErrorPage />;
 }
