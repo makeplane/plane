@@ -1424,6 +1424,9 @@ importers:
 
   packages/editor:
     dependencies:
+      '@chevrotain/regexp-to-ast':
+        specifier: ^11.1.1
+        version: 11.1.2
       '@floating-ui/dom':
         specifier: ^1.7.1
         version: 1.7.5
