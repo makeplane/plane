@@ -33,6 +33,9 @@ description: Plan a new feature with research, design, and implementation steps
 5. **Create Implementation Plan**
    - Write `implementation_plan.md` with all changes grouped by component
    - Include verification plan (tests + manual checks)
+   - **MANDATORY:** Each phase file MUST include:
+     - **Embedded Rules** — extract ONLY relevant rules from `.agent/rules/` for that phase (frontend phase = design system rules, backend phase = architecture rules)
+     - **Post-Phase Checklist** — concrete verification steps that must pass before marking phase complete
    - Request user review via `notify_user`
 
 6. **Review Checklist Before Proceeding**
@@ -40,7 +43,15 @@ description: Plan a new feature with research, design, and implementation steps
    - [ ] Permissions use `@allow_permission`
    - [ ] URLs follow `workspaces/<slug>/` pattern
    - [ ] Frontend uses propel components + semantic tokens
-   - [ ] No hardcoded colors
+   - [ ] No hardcoded colors — correct token naming (`text-color-*`, `border-color-*`)
+   - [ ] Input backgrounds use `bg-layer-2` (NOT `bg-surface-1`)
    - [ ] CE code in `ce/` directory
    - [ ] All `__init__.py` files updated
-   - [ ] Translations added to all locales
+   - [ ] Translations added to all locales (`t()` for ALL visible text)
+   - [ ] Layout uses `AppHeader` + `ContentWrapper` + `Outlet`
+   - [ ] Menus use `CustomMenu`/`Menu` (no custom dropdowns)
+
+7. **Phase Workflow (Attention Dilution Prevention)**
+   - Implement each phase in a fresh context (new chat between phases)
+   - Read phase file first (contains embedded rules + steps + checklist)
+   - Run post-phase checklist before moving to next phase
