@@ -1,7 +1,7 @@
 # Project Roadmap & Status
 
-**Last Updated**: 2026-03-01 (Dashboard V2 implementation, testing, code review, and fixes completed)
-**Current Version**: 1.2.1
+**Last Updated**: 2026-03-02 (Swing SSO & Admin User Management features completed)
+**Current Version**: 1.2.3
 **Next Release Target**: Q2 2026
 
 ## Project Status Summary
@@ -62,12 +62,25 @@
   - ✅ Frontend build: passing (no TS/lint errors)
   - ✅ Ready for merge to preview branch
 - ✅ Department & Staff Management (hierarchical departments, employee profiles, bulk import/export, auto-sync to projects)
+- ✅ Swing SSO Authentication (Mar 2026)
+  - ✅ Provider implementation (credentials + token flows)
+  - ✅ 5 config keys (IS_SWING_SSO_ENABLED, SWING_SSO_URL, CLIENT_ID, CLIENT_SECRET, COMPANY_CODE)
+  - ✅ Backend auth views & endpoints
+  - ✅ Admin UI god-mode config page with test modal
+  - ✅ Frontend Staff ID login branch
+  - ✅ Token-based SSO from Swing portal
+- ✅ Admin User Management (Mar 2026)
+  - ✅ Backend APIs: User CRUD, password reset, workspace assignment
+  - ✅ Admin UI: /users list (search, pagination), /users/create form, /users/:id detail page
+  - ✅ Dialogs: Workspace assignment, password reset
+  - ✅ Integration: MobX store, API service, frontend components
+  - ✅ Documentation: Updated codebase-summary, system-architecture
 
 ## Planned Roadmap (2026)
 
-### Phase 1: Q1 2026 (Current - Mar 2026)
+### Phase 1: Q1 2026 (Current - Mar 2026) ✅ COMPLETE
 
-**Focus**: Developer Experience & Documentation + Pro Features + Org Structure
+**Focus**: Developer Experience & Documentation + Pro Features + Org Structure + Enterprise Auth
 
 **Tasks**:
 
@@ -80,8 +93,10 @@
 - ✅ Custom Dashboard Feature (i18n + comprehensive testing + fixes)
 - ✅ Dashboard V2 implementation & testing (8 phases, 52 contract tests, code review fixes)
 - ✅ Department & Staff Management (models, APIs, workspace settings UI, bulk import/export)
-- 🔄 ESLint enforcement migration
-- 🔄 TypeScript strict mode rollout
+- ✅ Swing SSO Authentication (5 config keys, provider, admin UI, frontend integration)
+- ✅ Admin User Management (backend APIs, admin UI, CRUD workflows)
+- 🔄 ESLint enforcement migration (deferred to Q2)
+- 🔄 TypeScript strict mode rollout (deferred to Q2)
 
 **Success Metrics**:
 
