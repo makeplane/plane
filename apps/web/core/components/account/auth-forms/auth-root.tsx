@@ -54,9 +54,10 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
   const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
   const isLDAPEnabled = config?.is_ldap_enabled || false;
+  const isSwingSSOEnabled = config?.is_swing_sso_enabled || false;
   const isSMTPConfigured = config?.is_smtp_configured || false;
   const isEmailBasedAuthEnabled = config?.is_email_password_enabled || config?.is_magic_login_enabled;
-  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled && !isLDAPEnabled;
+  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled && !isLDAPEnabled && !isSwingSSOEnabled;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -134,6 +135,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
         <StaffIdLoginForm
           nextPath={nextPath || undefined}
           isLDAPEnabled={isLDAPEnabled}
+          isSwingSSOEnabled={isSwingSSOEnabled}
           isSMTPConfigured={isSMTPConfigured}
         />
       ) : (

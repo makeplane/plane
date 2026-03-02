@@ -26,3 +26,9 @@ from .workspace import (
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
 )
+
+from .user import (
+    InstanceUserEndpoint,
+    InstanceUserResetPasswordEndpoint,
+    InstanceUserWorkspaceEndpoint,
+)

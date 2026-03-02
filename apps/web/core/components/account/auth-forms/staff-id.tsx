@@ -10,34 +10,33 @@ import Link from "next/link";
 // icons
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // plane imports
-import { API_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { Input, Spinner } from "@plane/ui";
 // components
 import { ForgotPasswordPopover } from "@/components/account/auth-forms/forgot-password-popover";
+// helpers
+import {
+  STAFF_EMAIL_PREFIX,
+  STAFF_EMAIL_DOMAIN,
+  isStaffId,
+  isEmail,
+  resolveFormAction,
+  validateStaffIdentifier,
+} from "./staff-id-helpers";
 // services
 import { AuthService } from "@/services/auth.service";
 
 type Props = {
   nextPath: string | undefined;
   isLDAPEnabled: boolean;
+  isSwingSSOEnabled: boolean;
   isSMTPConfigured: boolean;
 };
-
-// Staff ID email transform constants
-const STAFF_EMAIL_PREFIX = "sh";
-const STAFF_EMAIL_DOMAIN = "@swing.shinhan.com";
-const STAFF_ID_PATTERN = /^\d{8}$/;
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Detect input type: 8-digit staff ID, email, or LDAP username
-const isStaffId = (value: string): boolean => STAFF_ID_PATTERN.test(value);
-const isEmail = (value: string): boolean => EMAIL_PATTERN.test(value);
 
 const authService = new AuthService();
 
 export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props) {
-  const { nextPath, isLDAPEnabled, isSMTPConfigured } = props;
+  const { nextPath, isLDAPEnabled, isSwingSSOEnabled, isSMTPConfigured } = props;
   // refs
   const formRef = useRef<HTMLFormElement>(null);
   // states
@@ -57,20 +56,10 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
     }
   }, [csrfPromise]);
 
-  // Validate identifier based on LDAP config
   const validateIdentifier = (value: string): boolean => {
-    const isAllNumeric = /^\d+$/.test(value);
-    if (isAllNumeric && value.length !== 8) {
-      setIdentifierError("Staff ID must be exactly 8 digits");
-      return false;
-    }
-    // When LDAP off: only 8-digit staff ID or email are valid
-    if (!isLDAPEnabled && !isStaffId(value) && !isEmail(value)) {
-      setIdentifierError("Enter 8-digit staff ID or email address");
-      return false;
-    }
-    setIdentifierError(undefined);
-    return true;
+    const error = validateStaffIdentifier(value, isLDAPEnabled, isSwingSSOEnabled);
+    setIdentifierError(error);
+    return !error;
   };
 
   const handleIdentifierChange = (value: string) => {
@@ -95,22 +84,10 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
       await handleCSRFToken();
       if (!formRef.current) return;
 
-      if (isEmail(identifier)) {
-        // Email mode: POST email directly to /auth/sign-in/
-        const emailInput = formRef.current.querySelector<HTMLInputElement>("input[name=email]");
-        if (emailInput) emailInput.value = identifier;
-        formRef.current.action = `${API_BASE_URL}/auth/sign-in/`;
-      } else if (isStaffId(identifier) && !isLDAPEnabled) {
-        // Staff ID + LDAP off: transform to email, POST to /auth/sign-in/
-        const emailInput = formRef.current.querySelector<HTMLInputElement>("input[name=email]");
-        if (emailInput) emailInput.value = `${STAFF_EMAIL_PREFIX}${identifier}${STAFF_EMAIL_DOMAIN}`;
-        formRef.current.action = `${API_BASE_URL}/auth/sign-in/`;
-      } else {
-        // LDAP mode: 8-digit staff ID or username → POST to /auth/ldap/sign-in/
-        const usernameInput = formRef.current.querySelector<HTMLInputElement>("input[name=username]");
-        if (usernameInput) usernameInput.value = identifier;
-        formRef.current.action = `${API_BASE_URL}/auth/ldap/sign-in/`;
-      }
+      const { action, inputName, value } = resolveFormAction(identifier, isSwingSSOEnabled, isLDAPEnabled);
+      const input = formRef.current.querySelector<HTMLInputElement>(`input[name=${inputName}]`);
+      if (input) input.value = value;
+      formRef.current.action = action;
 
       setIsSubmitting(true);
       formRef.current.submit();

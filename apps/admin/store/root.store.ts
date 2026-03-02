@@ -10,6 +10,8 @@ import type { IInstanceStore } from "./instance.store";
 import { InstanceStore } from "./instance.store";
 import type { IThemeStore } from "./theme.store";
 import { ThemeStore } from "./theme.store";
+import type { IInstanceUserStore } from "./instance-user.store";
+import { InstanceUserStore } from "./instance-user.store";
 import type { IUserStore } from "./user.store";
 import { UserStore } from "./user.store";
 import type { IWorkspaceStore } from "./workspace.store";
@@ -21,26 +23,30 @@ export class RootStore {
   theme: IThemeStore;
   instance: IInstanceStore;
   user: IUserStore;
+  instanceUser: IInstanceUserStore;
   workspace: IWorkspaceStore;
 
   constructor() {
     this.theme = new ThemeStore(this);
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
+    this.instanceUser = new InstanceUserStore(this);
     this.workspace = new WorkspaceStore(this);
   }
 
-  hydrate(initialData: any) {
-    this.theme.hydrate(initialData.theme);
-    this.instance.hydrate(initialData.instance);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- pre-existing hydrate pattern
+  hydrate(initialData: Record<string, any>) {
+    this.theme.hydrate(initialData.theme as string);
+    this.instance.hydrate(initialData.instance as Parameters<typeof this.instance.hydrate>[0]);
     this.user.hydrate(initialData.user);
-    this.workspace.hydrate(initialData.workspace);
+    this.workspace.hydrate(initialData.workspace as Record<string, never>);
   }
 
   resetOnSignOut() {
     localStorage.setItem("theme", "system");
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
+    this.instanceUser = new InstanceUserStore(this);
     this.theme = new ThemeStore(this);
     this.workspace = new WorkspaceStore(this);
   }
