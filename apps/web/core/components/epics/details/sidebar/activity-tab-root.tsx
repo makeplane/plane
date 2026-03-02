@@ -13,13 +13,7 @@
 
 import { observer } from "mobx-react";
 // plane package imports
-import {
-  E_SORT_ORDER,
-  EActivityFilterType,
-  filterActivityOnSelectedFilters,
-  BASE_ACTIVITY_FILTER_TYPES,
-} from "@plane/constants";
-import type { TActivityFilters } from "@plane/constants";
+import { E_SORT_ORDER, EActivityFilterType, BASE_ACTIVITY_FILTER_TYPES } from "@plane/constants";
 // hooks
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
@@ -57,10 +51,7 @@ export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot
   // derived values
   const activityComments = getActivityAndCommentsByIssueId(epicId, sortOrder ?? E_SORT_ORDER.ASC);
 
-  const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], [
-    ...BASE_ACTIVITY_FILTER_TYPES,
-    EActivityFilterType.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY,
-  ] as TActivityFilters[]);
+  if (!activityComments) return <></>;
 
   return (
     <SidebarContentWrapper
@@ -68,16 +59,16 @@ export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot
       actionElement={<ActivitySortRoot sortOrder={sortOrder ?? E_SORT_ORDER.ASC} toggleSort={toggleSortOrder} />}
     >
       <div className="min-h-[200px]">
-        {filteredActivityComments.length > 0 &&
-          filteredActivityComments.map((activityComment, index) => {
+        {activityComments.length > 0 &&
+          activityComments.map((activityComment, index) => {
             const currActivityComment = activityComment;
 
-            if (currActivityComment.activity_type === "ACTIVITY") {
+            if (BASE_ACTIVITY_FILTER_TYPES.includes(currActivityComment.activity_type as EActivityFilterType)) {
               return (
                 <EpicActivityItem
                   key={currActivityComment.id}
                   id={currActivityComment.id}
-                  ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
+                  ends={index === 0 ? "top" : index === activityComments.length - 1 ? "bottom" : undefined}
                 />
               );
             }
@@ -87,7 +78,7 @@ export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot
                 <EpicAdditionalPropertiesActivity
                   key={currActivityComment.id}
                   activityId={currActivityComment.id}
-                  ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
+                  ends={index === 0 ? "top" : index === activityComments.length - 1 ? "bottom" : undefined}
                 />
               );
             }
