@@ -11,6 +11,7 @@ Create detailed technical implementation plans through research, codebase analys
 ## When to Use
 
 Use this skill when:
+
 - Planning new feature implementations
 - Architecting system designs
 - Evaluating technical approaches
@@ -24,20 +25,25 @@ Always honoring **YAGNI**, **KISS**, and **DRY** principles.
 **Be honest, be brutal, straight to the point, and be concise.**
 
 ### 1. Research & Analysis
+
 Load: `references/research-phase.md`
 **Skip if:** Provided with researcher reports
 
 ### 2. Codebase Understanding
+
 Load: `references/codebase-understanding.md`
 **Skip if:** Provided with scout reports
 
 ### 3. Solution Design
+
 Load: `references/solution-design.md`
 
 ### 4. Plan Creation & Organization
+
 Load: `references/plan-organization.md`
 
 ### 5. Task Breakdown & Output Standards
+
 Load: `references/output-standards.md`
 
 ## Workflow Process
@@ -61,17 +67,20 @@ Load: `references/output-standards.md`
 ## Task Integration (Optional)
 
 When session has `CLAUDE_CODE_TASK_LIST_ID` set (active plan):
+
 - Use TaskCreate to create tasks for each phase with clear subjects
 - Set dependencies: Phase N+1 `blockedBy` Phase N
 - Subagents coordinate via shared task list automatically
 - Use TaskUpdate to mark progress (in_progress → completed)
 
 ### Important
+
 DO NOT create plans or reports in USER directory.
 ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
 
 **Plan Directory Structure**
 IN CURRENT WORKING PROJECT DIRECTORY:
+
 ```
 plans/
 └── {date}-plan-name/
@@ -96,6 +105,7 @@ Prevents version proliferation by tracking current working plan via session stat
 ### Active vs Suggested Plans
 
 Check the `## Plan Context` section injected by hooks:
+
 - **"Plan: {path}"** = Active plan, explicitly set via `set-active-plan.cjs` - use for reports
 - **"Suggested: {path}"** = Branch-matched, hint only - do NOT auto-use
 - **"Plan: none"** = No active plan
@@ -110,15 +120,33 @@ Check the `## Plan Context` section injected by hooks:
 ### Report Output Location
 
 All agents writing reports MUST:
+
 1. Check `## Naming` section injected by hooks for the computed naming pattern
 2. Active plans use plan-specific reports path
 3. Suggested plans use default reports path (not plan folder)
 
 ### Important
+
 DO NOT create plans or reports in USER directory.
 ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
 
 **Important:** Suggested plans do NOT get plan-specific reports - this prevents pollution of old plan folders.
+
+## Attention Dilution Prevention (MANDATORY)
+
+Phase files MUST include **Embedded Rules** and **Post-Phase Checklist** sections.
+See `references/plan-organization.md` for template and examples.
+
+**Why:** Research (Chroma 2025) confirms AI performance degrades in long contexts.
+Embedding rules at point-of-use increases attention 2-3x vs separate rule files.
+
+**Key principles:**
+
+1. **Embed rules in phase files** — don't rely on AI remembering separate rule files
+2. **Extract only relevant rules** — frontend phase doesn't need backend rules
+3. **Include checklist** — concrete verification steps prevent missed rules
+4. **Recommend `/clear` between phases** — fresh context = better code quality
+5. **Front-load critical rules** — put most important rules at TOP of embedded section
 
 ## Quality Standards
 
@@ -128,5 +156,7 @@ ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
 - Address security and performance concerns
 - Make plans detailed enough for junior developers
 - Validate against existing codebase patterns
+- **MUST include embedded rules in every phase file**
+- **MUST include post-phase checklist in every phase file**
 
-**Remember:** Plan quality determines implementation success. Be comprehensive and consider all solution aspects.
+**Remember:** Plan quality determines implementation success. Embedded rules prevent the #1 cause of implementation errors: attention dilution.

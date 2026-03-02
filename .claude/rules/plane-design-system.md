@@ -1,3 +1,13 @@
+---
+paths:
+  - apps/web/**
+  - apps/admin/**
+  - apps/space/**
+  - packages/propel/**
+  - packages/ui/**
+  - packages/i18n/**
+---
+
 # Plane Frontend Design System & Architecture Rules
 
 **MANDATORY**: Read `./docs/design-guidelines.md`, `./docs/code-standards.md`, and this rule before implementing ANY frontend changes.
@@ -433,30 +443,136 @@ export class MyModelService extends APIService {
 
 **URL pattern**: Frontend `/api/workspaces/${slug}/...` → Backend `workspaces/<str:slug>/...` (Django prepends `/api/`)
 
-## Dialog (Compound Component Pattern)
+## Dialog / Modal Patterns
 
-Propel Dialog is built on `@base-ui-components/react` using compound pattern:
+The codebase has **3 dialog systems**. Choose based on which app you're working in:
+
+| System                       | Used In              | Import                                                   | Props                               |
+| ---------------------------- | -------------------- | -------------------------------------------------------- | ----------------------------------- |
+| `@plane/propel/dialog`       | `apps/admin/`        | `import { Dialog } from "@plane/propel/dialog"`          | `open`, `onOpenChange`              |
+| `@headlessui/react` Dialog   | `apps/web/core/`     | `import { Dialog, Transition } from "@headlessui/react"` | `show` (Transition.Root), `onClose` |
+| `ModalCore` from `@plane/ui` | `apps/web/` (legacy) | `import { ModalCore } from "@plane/ui"`                  | `isOpen`, `handleClose`             |
+
+**Rule**: Match the system already used in the app. Admin = Propel. Web core = Headlessui. Don't mix.
+
+### Pattern A: Propel Dialog (`apps/admin/` ONLY)
+
+Built on `@base-ui-components/react`. **Dialog.Panel and Dialog.Title have NO padding.**
 
 ```typescript
 import { Dialog, EDialogWidth } from "@plane/propel/dialog";
+import { Button } from "@plane/propel/button";
 
-<Dialog open={isOpen} onClose={handleClose} modal>
-  <Dialog.Panel width={EDialogWidth.LG}>
-    <Dialog.Title>Create Feature</Dialog.Title>
-    <div className="p-5 space-y-4">{/* form content */}</div>
-    <div className="flex justify-end gap-2 p-4 border-t border-color-subtle">
-      <Button variant="secondary" onClick={handleClose}>
-        Cancel
-      </Button>
-      <Button variant="primary" onClick={handleSubmit}>
-        Create
-      </Button>
+<Dialog open={isOpen} onOpenChange={(open: boolean) => !open && handleClose()} modal>
+  <Dialog.Panel width={EDialogWidth.MD}>
+    <div className="p-6">
+      <Dialog.Title>Create Feature</Dialog.Title>
+      <div className="mt-4 space-y-4">{/* form content — use text-13, bg-layer-2 for inputs */}</div>
+      <div className="mt-6 flex justify-end gap-2">
+        <Button variant="secondary" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={() => void handleSubmit()}>
+          Create
+        </Button>
+      </div>
     </div>
   </Dialog.Panel>
 </Dialog>;
 ```
 
-Widths: `SM`, `MD`, `LG`, `XL`, `XXL`, `XXXL` via `EDialogWidth` enum.
+Key rules:
+
+- Single `<div className="p-6">` wraps ALL content (title + body + buttons)
+- Use `mt-4` between title→body, `mt-6` between body→buttons
+- `onOpenChange` (NOT `onClose`) — receives boolean
+- Widths: `SM`..`VIIXL` via `EDialogWidth` enum
+
+### Pattern B: Headlessui Dialog (`apps/web/core/` — existing pattern)
+
+```typescript
+import React from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { Button } from "@plane/propel/button";
+
+<Transition.Root show={isOpen} as={React.Fragment}>
+  <Dialog as="div" className="relative z-20" onClose={handleClose}>
+    <Transition.Child
+      as={React.Fragment}
+      enter="ease-out duration-300"
+      enterFrom="opacity-0"
+      enterTo="opacity-100"
+      leave="ease-in duration-200"
+      leaveFrom="opacity-100"
+      leaveTo="opacity-0"
+    >
+      <div className="fixed inset-0 bg-backdrop transition-opacity" />
+    </Transition.Child>
+    <div className="fixed inset-0 z-20 overflow-y-auto">
+      <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <Transition.Child
+          as={React.Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          enterTo="opacity-100 translate-y-0 sm:scale-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+          leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        >
+          <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all sm:my-8 sm:w-[40rem]">
+            <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
+                Title Here
+              </Dialog.Title>
+              <div className="mt-2">
+                <p className="text-13 text-secondary">Content here</p>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 p-4 sm:px-6">
+              <Button variant="secondary" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={() => void handleSubmit()}>
+                Confirm
+              </Button>
+            </div>
+          </Dialog.Panel>
+        </Transition.Child>
+      </div>
+    </div>
+  </Dialog>
+</Transition.Root>;
+```
+
+Key rules:
+
+- `onClose` (void function) — headlessui API
+- `Transition.Root` + `Transition.Child` for animations
+- Content padding: `px-4 pb-4 pt-5 sm:p-6 sm:pb-4`
+- Footer padding: `p-4 sm:px-6`
+- Dialog.Title uses `as="h3"` prop
+
+### Common Dialog Mistakes:
+
+```typescript
+// ❌ WRONG — Propel Dialog.Title outside padding wrapper
+<Dialog.Panel>
+  <Dialog.Title>Title</Dialog.Title>
+  <div className="p-5">content</div>
+</Dialog.Panel>
+
+// ❌ WRONG — using onClose on Propel Dialog (headlessui prop, not propel)
+<Dialog open={isOpen} onClose={handleClose} modal>
+
+// ❌ WRONG — using Propel Dialog in web app (web uses headlessui)
+// ❌ WRONG — using headlessui Dialog in admin app (admin uses propel)
+
+// ❌ WRONG — split padding sections in Propel Dialog
+<Dialog.Panel>
+  <div className="p-5">content</div>
+  <div className="p-4 border-t">buttons</div>
+</Dialog.Panel>
+```
 
 ## Toast Pattern
 
@@ -476,6 +592,27 @@ setPromiseToast(myPromise, {
 ```
 
 Types: `SUCCESS`, `ERROR`, `INFO`, `WARNING`, `LOADING`
+
+## Propel Input (standalone usage without react-hook-form)
+
+```typescript
+import { Input } from "@plane/propel/input";
+
+// Input props: mode ("primary"|"transparent"|"true-transparent"), inputSize ("xs"|"sm"|"md"), hasError
+// Input has NO width — always add className="w-full" for full-width
+<div className="space-y-1">
+  <label htmlFor="my-input" className="block text-13 font-medium text-color-primary">
+    Label
+  </label>
+  <Input
+    id="my-input"
+    value={value}
+    onChange={(e) => setValue(e.target.value)}
+    placeholder="Placeholder"
+    className="w-full"
+  />
+</div>;
+```
 
 ## Form Pattern (react-hook-form + Controller)
 
@@ -587,9 +724,12 @@ function MyFeaturePage({ params }: Route.ComponentProps) {
 export default observer(MyFeaturePage);
 ```
 
-### Layout component pattern:
+### Layout component pattern — MANDATORY for all feature pages:
+
+Every feature MUST have a `layout.tsx` that uses `AppHeader` + `ContentWrapper`. **Never build inline headers in page components.**
 
 ```typescript
+// layout.tsx — REQUIRED for every feature section
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@plane/ui";
 import { Outlet } from "react-router";
@@ -604,11 +744,118 @@ export default function MyFeatureLayout() {
     </>
   );
 }
+
+// ❌ WRONG — inline header in page.tsx (skips AppHeader + ContentWrapper)
+function MyPage() {
+  return (
+    <div>
+      <div className="flex justify-between border-b px-4 py-3">
+        {" "}
+        {/* custom header */}
+        <h1>Title</h1>
+        <Button>Action</Button>
+      </div>
+      <div className="p-4">{/* content */}</div>
+    </div>
+  );
+}
 ```
 
-## i18n (Internationalization)
+For breadcrumb navigation, use `@plane/ui` `Breadcrumbs`:
 
-### Always use translations for user-facing strings:
+```typescript
+import { Breadcrumbs } from "@plane/ui";
+
+<Breadcrumbs>
+  <Breadcrumbs.BreadcrumbItem
+    type="text"
+    link={<BreadcrumbLink label={t("dashboards")} href={`/${slug}/dashboards`} />}
+  />
+  <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={pageTitle} />} />
+</Breadcrumbs>;
+```
+
+## Semantic Token Naming — CRITICAL
+
+Plane's Tailwind tokens use a `color-` infix for text, border, and some backgrounds. **Getting this wrong breaks theming.**
+
+```tsx
+// ✅ CORRECT — full token names
+text-color-primary        text-color-secondary      text-color-tertiary
+text-color-placeholder    text-color-disabled        text-color-accent-primary
+text-color-on-color       text-color-success-primary text-color-danger-primary
+border-color-subtle       border-color-strong        border-color-accent-strong
+
+// ❌ WRONG — missing `color-` infix (may not resolve in all themes)
+text-tertiary             text-secondary             text-primary
+text-accent-primary       border-subtle              border-strong
+```
+
+**Background tokens** do NOT have the `color-` infix:
+
+```tsx
+// ✅ CORRECT — bg tokens have no `color-` infix
+bg-surface-1    bg-layer-1    bg-layer-2    bg-accent-subtle    bg-canvas
+```
+
+### Input/Form Element Backgrounds
+
+Inside modals, forms, and config panels, use `bg-layer-2` for input-like elements:
+
+```tsx
+// ✅ CORRECT — inputs, selects, textareas, date pickers inside modals/forms
+<input className="bg-layer-2 border-[0.5px] border-subtle-1 ..." />
+<select className="bg-layer-2 ..." />
+<div className="bg-layer-2 ...">  {/* list/picker container */}
+
+// ❌ WRONG — bg-surface-1 for inputs (too similar to modal background)
+<input className="bg-surface-1 ..." />
+```
+
+## Menu / Dropdown / Context Menu
+
+**NEVER build custom hover-based dropdown menus.** Use existing components:
+
+| Component     | Import                       | Use When                                            |
+| ------------- | ---------------------------- | --------------------------------------------------- |
+| `CustomMenu`  | `@plane/ui`                  | Simple action menus (edit, delete, etc.) in web app |
+| `Menu`        | `@plane/propel/menu`         | Action menus in admin app                           |
+| `ContextMenu` | `@plane/propel/context-menu` | Right-click context menus                           |
+
+```tsx
+// ✅ CORRECT — uses existing component
+import { CustomMenu } from "@plane/ui";
+
+<CustomMenu ellipsis placement="bottom-end">
+  <CustomMenu.MenuItem onClick={() => onEdit(item)}>
+    <span className="flex items-center gap-2">
+      <Pencil className="h-3.5 w-3.5" /> {t("common.edit")}
+    </span>
+  </CustomMenu.MenuItem>
+  <CustomMenu.MenuItem onClick={() => onDelete(item)}>
+    <span className="flex items-center gap-2 text-color-danger-primary">
+      <Trash2 className="h-3.5 w-3.5" /> {t("common.delete")}
+    </span>
+  </CustomMenu.MenuItem>
+</CustomMenu>
+
+// ❌ WRONG — custom hover dropdown (no keyboard access, no focus trap)
+<div className="hidden group-hover:block absolute ...">
+  <button>Edit</button>
+  <button>Delete</button>
+</div>
+```
+
+## i18n (Internationalization) — MANDATORY
+
+**NEVER hardcode user-facing strings.** Every visible text must use `t()` from `@plane/i18n`.
+
+This includes:
+
+- Button labels, titles, descriptions, placeholders
+- Toast messages (title AND message)
+- Empty states, error messages, loading text
+- Accessibility labels (aria-label)
 
 ```typescript
 import { useTranslation } from "@plane/i18n";
@@ -617,6 +864,16 @@ export const MyComponent = observer(() => {
   const { t } = useTranslation();
   return <Button>{t("common.save")}</Button>;
 });
+
+// ✅ CORRECT — all strings use t()
+setToast({ type: TOAST_TYPE.SUCCESS, title: t("dashboard.created"), message: t("dashboard.created_message") });
+<p>{t("dashboard.empty_state")}</p>
+<Button>{t("common.cancel")}</Button>
+
+// ❌ WRONG — hardcoded English
+setToast({ type: TOAST_TYPE.SUCCESS, title: "Success!", message: "Dashboard created successfully." });
+<p>No dashboards created yet.</p>
+<Button>Cancel</Button>
 ```
 
 ### Translation files: `packages/i18n/src/locales/{lang}/translations.ts` (TypeScript modules, NOT JSON)
@@ -742,3 +999,13 @@ When exceeding: split into sub-components, extract hooks, create utils.
 - ❌ Adding routes to `core.ts` for CE features — use `extended.ts`
 - ❌ Forgetting `PageHead` component for page title in route pages
 - ❌ Not using `setToast()` for success/error feedback after API mutations
+- ❌ Dialog.Title outside padding wrapper — MUST be inside `<div className="p-6">`
+- ❌ Split padding in Dialog (`p-5` for content, `p-4` for footer) — use single `p-6` wrapper with `mt-4`/`mt-6` spacing
+- ❌ Using `onClose` on Dialog — correct prop is `onOpenChange={(open: boolean) => !open && handleClose()}`
+- ❌ Using `text-sm` instead of `text-13` in Propel dialogs — use Plane's text scale (`text-11`, `text-13`, `text-16`)
+- ❌ Using `bg-surface-1` for input backgrounds in dialogs — use `bg-layer-2` (matches Propel Input default)
+- ❌ Missing `color-` infix in tokens — `text-tertiary` is WRONG, use `text-color-tertiary`; `border-subtle` is WRONG, use `border-color-subtle`
+- ❌ Building custom hover dropdowns — use `CustomMenu` from `@plane/ui` (web) or `Menu` from `@plane/propel/menu` (admin)
+- ❌ Hardcoding ANY user-facing string in English — ALWAYS use `t()` from `@plane/i18n`, including toasts, empty states, button labels
+- ❌ Skipping `AppHeader` + `ContentWrapper` in feature layouts — ALWAYS use the standard layout pattern (see Layout component pattern section)
+- ❌ Using `bg-surface-1` for input/select/date-picker backgrounds in forms — use `bg-layer-2` everywhere (not just dialogs)

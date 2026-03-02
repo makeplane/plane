@@ -5,6 +5,7 @@
 ### Plan Location
 
 **Important:**
+
 - DO NOT create plans or reports in USER directory.
 - ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
 
@@ -15,6 +16,7 @@ Use `Plan dir:` from `## Naming` section injected by hooks. This is the full com
 ### File Organization
 
 IN CURRENT WORKING PROJECT DIRECTORY:
+
 ```
 {plan-dir}/                                    # From `Plan dir:` in ## Naming
 ├── research/
@@ -37,22 +39,26 @@ IN CURRENT WORKING PROJECT DIRECTORY:
 ### Active Plan State Tracking
 
 Check the `## Plan Context` section injected by hooks:
+
 - **"Plan: {path}"** = Active plan - use for reports
 - **"Suggested: {path}"** = Branch-matched, hint only - do NOT auto-use
 - **"Plan: none"** = No active plan
 
 **Pre-Creation Check:**
+
 1. If "Plan:" shows a path → ask "Continue with existing plan? [Y/n]"
 2. If "Suggested:" shows a path → inform user (hint only, do NOT auto-use)
 3. If "Plan: none" → create new plan using naming from `## Naming` section
 
 **After Creating Plan:**
+
 ```bash
 # Update session state so subagents get the new plan context:
 node .claude/scripts/set-active-plan.cjs {plan-dir}
 ```
 
 **Report Output Rules:**
+
 1. Use `Report:` and `Plan dir:` from `## Naming` section
 2. Active plans use plan-specific reports path
 3. Suggested plans use default reports path to prevent old plan pollution
@@ -60,6 +66,7 @@ node .claude/scripts/set-active-plan.cjs {plan-dir}
 ## File Structure
 
 **Important:**
+
 - DO NOT create plans or reports in USER directory.
 - ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
 
@@ -68,6 +75,7 @@ node .claude/scripts/set-active-plan.cjs {plan-dir}
 **IMPORTANT:** All plan.md files MUST include YAML frontmatter. See `output-standards.md` for schema.
 
 **Example plan.md structure:**
+
 ```markdown
 ---
 title: "Feature Implementation Plan"
@@ -89,11 +97,11 @@ Brief description of what this plan accomplishes.
 
 ## Phases
 
-| # | Phase | Status | Effort | Link |
-|---|-------|--------|--------|------|
-| 1 | Setup | Pending | 2h | [phase-01](./phase-01-setup.md) |
-| 2 | Implementation | Pending | 4h | [phase-02](./phase-02-impl.md) |
-| 3 | Testing | Pending | 2h | [phase-03](./phase-03-test.md) |
+| #   | Phase          | Status  | Effort | Link                            |
+| --- | -------------- | ------- | ------ | ------------------------------- |
+| 1   | Setup          | Pending | 2h     | [phase-01](./phase-01-setup.md) |
+| 2   | Implementation | Pending | 4h     | [phase-02](./phase-02-impl.md)  |
+| 3   | Testing        | Pending | 2h     | [phase-03](./phase-03-test.md)  |
 
 ## Dependencies
 
@@ -101,60 +109,128 @@ Brief description of what this plan accomplishes.
 ```
 
 **Guidelines:**
+
 - Keep generic and under 80 lines
 - List each phase with status/progress
 - Link to detailed phase files
 - Key dependencies
 
 ### Phase Files (phase-XX-name.md)
+
 Fully respect the `./docs/development-rules.md` file.
 Each phase file should contain:
 
 **Context Links**
+
 - Links to related reports, files, documentation
 
 **Overview**
+
 - Priority
 - Current status
 - Brief description
 
 **Key Insights**
+
 - Important findings from research
 - Critical considerations
 
 **Requirements**
+
 - Functional requirements
 - Non-functional requirements
 
 **Architecture**
+
 - System design
 - Component interactions
 - Data flow
 
 **Related Code Files**
+
 - List of files to modify
 - List of files to create
 - List of files to delete
 
+**Embedded Rules (MANDATORY — prevents attention dilution)**
+
+- Extract ONLY rules relevant to THIS phase from `.claude/rules/`
+- Embed inline so AI sees rules at point-of-use, not in separate files
+- Frontend phases: embed color tokens, i18n, component, layout rules
+- Backend phases: embed ViewSet, permission, activity tracking, manager rules
+- Keep concise — only rules that prevent actual mistakes in this phase
+
+Example for frontend phase:
+
+```markdown
+## Embedded Rules
+
+1. **i18n**: ALL visible text must use `t()` — buttons, toasts, empty states, errors
+2. **Color tokens**: Use `text-color-*` (NOT `text-tertiary`), `border-color-*` (NOT `border-subtle`)
+3. **Input backgrounds**: `bg-layer-2` for all inputs/selects/date-pickers (NOT `bg-surface-1`)
+4. **Layout**: Feature pages MUST use `AppHeader` + `ContentWrapper` + `Outlet` in layout.tsx
+5. **Menus**: Use `CustomMenu` from `@plane/ui` — NEVER build custom hover dropdowns
+6. **Components**: `observer()` on all store-reading components, `void` before `handleSubmit()`
+```
+
 **Implementation Steps**
+
 - Detailed, numbered steps
-- Specific instructions
+- Reference embedded rules inline (e.g., "apply Rule 1: use t() for button label")
+
+**Post-Phase Checklist (MANDATORY — verify before marking complete)**
+
+- Phase-specific quality checks from embedded rules
+- Must pass ALL checks before moving to next phase
+- Example:
+
+```markdown
+## Post-Phase Checklist
+
+- [ ] All strings use `t()` from `@plane/i18n` (zero hardcoded English)
+- [ ] Color tokens use full `text-color-*` / `border-color-*` prefix
+- [ ] Input backgrounds use `bg-layer-2`
+- [ ] `observer()` on all MobX store-reading components
+- [ ] File sizes under 200 lines (components under 150)
+- [ ] Build passes: `pnpm --filter web build`
+```
 
 **Todo List**
+
 - Checkbox list for tracking
 
 **Success Criteria**
+
 - Definition of done
 - Validation methods
 
 **Risk Assessment**
+
 - Potential issues
 - Mitigation strategies
 
 **Security Considerations**
+
 - Auth/authorization
 - Data protection
 
 **Next Steps**
+
 - Dependencies
 - Follow-up tasks
+
+### Phase Workflow (Attention Dilution Prevention)
+
+**IMPORTANT:** Implement each phase in a **fresh context** to prevent attention dilution:
+
+```
+1. /clear (reset context)
+2. Read phase-XX file (contains embedded rules + steps + checklist)
+3. Implement all steps
+4. Run post-phase checklist — fix any failures
+5. Build/lint check
+6. Mark phase complete in plan.md
+7. /clear → start next phase
+```
+
+**Research backing:** Chroma 2025 confirms AI quality degrades as context grows past ~100K tokens. Fresh context per phase = focused attention = fewer design/code mistakes.
