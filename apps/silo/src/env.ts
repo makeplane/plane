@@ -198,7 +198,7 @@ async function resolveAmqpUrl(): Promise<string> {
 
   // If AMQP_URL is a bare host:port, use it as the endpoint
   if (isBareHostPort(env.AMQP_URL)) {
-    const vhost = secretString(secret, env.RABBITMQ_VHOST_KEY, "%2F");
+    const vhost = encodeURIComponent(secretString(secret, env.RABBITMQ_VHOST_KEY, "/"));
     return `amqps://${user}:${password}@${env.AMQP_URL}/${vhost}`;
   }
 
