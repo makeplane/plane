@@ -17,7 +17,7 @@ import { ISSUE_PRIORITIES } from "@plane/constants";
 import { DueDatePropertyIcon, PriorityIcon, StartDatePropertyIcon, StateGroupIcon } from "@plane/propel/icons";
 import { EAutomationChangePropertyType, EAutomationChangeType } from "@plane/types";
 import type { ICustomSearchSelectOption } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";

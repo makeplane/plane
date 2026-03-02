@@ -16,7 +16,7 @@ import { Search } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Table, TableBody, TableCell, TableHeader, TableRow, TableHead } from "@plane/propel/table";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { getFileURL, renderFormattedDate, formatDuration, cn } from "@plane/utils";
 // store hooks
 import { useMember } from "@/hooks/store/use-member";

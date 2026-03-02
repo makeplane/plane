@@ -13,7 +13,8 @@
 
 import React, { memo } from "react";
 import { Search } from "lucide-react";
-import { CustomSearchSelect, Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { CustomSearchSelect } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 
 type TMemberOption = {

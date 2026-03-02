@@ -22,7 +22,8 @@ import { useTranslation } from "@plane/i18n";
 import { MembersPropertyIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { ICycle } from "@plane/types";
 // plane ui
-import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
+import { Avatar, AvatarGroup } from "@plane/propel/avatar";
+import { TextArea } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks

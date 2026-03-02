@@ -19,8 +19,8 @@ import { useTranslation } from "@plane/i18n";
 import { MembersPropertyIcon, PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IWorkspace } from "@plane/types";
+import { Avatar } from "@plane/propel/avatar";
 import { EUserProjectRoles } from "@plane/types";
-import { Avatar } from "@plane/ui";
 import { cn, getDate, getFileURL, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

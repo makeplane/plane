@@ -19,7 +19,8 @@ import { LogOut, Settings, Settings2 } from "lucide-react";
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Avatar, CustomMenu } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { CustomMenu } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";

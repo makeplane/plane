@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { getFileURL } from "@plane/utils";
 // helpers
 import { useMember } from "@/hooks/store/use-member";

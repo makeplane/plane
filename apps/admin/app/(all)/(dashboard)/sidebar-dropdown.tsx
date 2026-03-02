@@ -19,7 +19,7 @@ import { Menu, Transition } from "@headlessui/react";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
 import { AuthService } from "@plane/services";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { getFileURL, cn } from "@plane/utils";
 // hooks
 import { useTheme, useUser } from "@/hooks/store";

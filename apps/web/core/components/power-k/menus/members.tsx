@@ -14,7 +14,7 @@
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 // plane imports
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

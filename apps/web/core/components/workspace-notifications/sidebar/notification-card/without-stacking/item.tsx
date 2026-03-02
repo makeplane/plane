@@ -15,7 +15,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
 // plane imports
-import { Avatar, Row } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Row } from "@plane/ui";
 import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
 // components
 import { NotificationContent } from "@/components/workspace-notifications/sidebar/notification-card/common/content";

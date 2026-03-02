@@ -22,7 +22,7 @@ import type {
   IIssueDisplayProperties,
   TGroupedIssues,
 } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 // stores
 import type { ICycleStore } from "@/store/cycle.store";
 import type { IIssueLabelStore } from "@/store/label.store";

@@ -13,7 +13,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { getFileURL, cn } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 

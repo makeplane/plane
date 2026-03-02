@@ -44,7 +44,8 @@ import type {
   TIssuePriorities,
   TIssueType,
 } from "@plane/types";
-import { Avatar, Loader } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Loader } from "@plane/ui";
 import {
   cn,
   getAssigneeFilterConfig,

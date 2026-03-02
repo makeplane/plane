@@ -24,7 +24,7 @@ import {
   StateGroupIcon,
 } from "@plane/propel/icons";
 import type { IGroupByColumn, TCycleGroups, GroupByColumnTypes, TGetColumns } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { getFileURL, getMilestoneIconProps } from "@plane/utils";
 // store
 import { store } from "@/lib/store-context";

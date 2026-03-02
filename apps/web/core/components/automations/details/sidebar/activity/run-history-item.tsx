@@ -20,7 +20,7 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/prop
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import {
   calculateTimeAgo,
   cn,

@@ -12,8 +12,9 @@
  */
 
 import { observer } from "mobx-react";
+import { Avatar } from "@plane/propel/avatar";
 // plane ui
-import { Avatar, CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks

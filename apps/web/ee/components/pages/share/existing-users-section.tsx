@@ -15,7 +15,8 @@ import { ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
 import type { EPageSharedUserAccess, IWorkspaceMember } from "@plane/types";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
-import { Avatar, Loader } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Loader } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import type { TPageShareFormUser } from "../../../hooks/pages/use-page-share-form";
 import { UserListItem } from "./user-list-item";

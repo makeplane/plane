@@ -18,7 +18,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 // types
 import type { ICycle, TCycleGroups } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup } from "@plane/ui";
+import { Avatar, AvatarGroup } from "@plane/propel/avatar";
 // helpers
 import { findHowManyDaysLeft, getFileURL, renderFormattedDate, truncateText } from "@plane/utils";
 // hooks

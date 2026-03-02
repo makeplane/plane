@@ -17,7 +17,7 @@ import type { TMentionSection, TMentionSuggestion } from "@plane/editor";
 // plane types
 import type { TSearchEntities, TSearchEntityRequestPayload, TSearchResponse, TUserSearchResponse } from "@plane/types";
 // plane ui
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 // helpers
 import { getFileURL } from "@plane/utils";
 // plane web hooks

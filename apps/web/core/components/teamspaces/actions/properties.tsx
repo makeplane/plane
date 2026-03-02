@@ -14,8 +14,8 @@
 import { observer } from "mobx-react";
 // plane imports
 import { LeadIcon } from "@plane/propel/icons";
+import { Avatar, AvatarGroup } from "@plane/propel/avatar";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Avatar, AvatarGroup } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks

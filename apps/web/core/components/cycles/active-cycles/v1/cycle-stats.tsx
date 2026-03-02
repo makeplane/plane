@@ -25,7 +25,8 @@ import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { ICycle } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // ui
-import { Loader, Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Loader } from "@plane/ui";
 import { renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // assets
 import darkAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-dark.webp?url";

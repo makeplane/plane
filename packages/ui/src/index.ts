@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./avatar";
 export * from "./badge";
 export * from "./breadcrumbs";
 export * from "./button";

@@ -18,7 +18,8 @@ import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
 import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
-import { Avatar, Tag } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Tag } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks

@@ -28,7 +28,8 @@ import { LiteTextEditor } from "@/components/editor/lite-text";
 import { CommentReactions } from "../../comment-reaction";
 import { CommentCardEditForm } from "../edit-form";
 import { EmojiReactionButton, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
-import { Avatar, Tooltip } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Tooltip } from "@plane/ui";
 import { useMember } from "@/hooks/store/use-member";
 
 export type TCommentCardDisplayProps = {

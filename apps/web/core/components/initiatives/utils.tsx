@@ -23,7 +23,7 @@ import type {
   TInitiativeLabel,
   TInitiativeStates,
 } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 // helpers
 import { getFileURL } from "@plane/utils";
 

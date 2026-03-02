@@ -14,7 +14,7 @@
 import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
 // ui
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { useMember } from "@/hooks/store/use-member";
 // types
 

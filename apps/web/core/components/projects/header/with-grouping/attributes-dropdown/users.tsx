@@ -14,7 +14,7 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane ui
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 // components
 import { getFileURL } from "@plane/utils";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";

@@ -18,8 +18,8 @@ import { useParams } from "next/navigation";
 // plane imports
 import type { ERelationType } from "@plane/constants";
 import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { Avatar, AvatarGroup } from "@plane/propel/avatar";
 import type { TTeamspaceDependencyWorkItem } from "@plane/types";
-import { Avatar, AvatarGroup } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list/list-item";

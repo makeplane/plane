@@ -14,9 +14,10 @@
 import { observer } from "mobx-react";
 import { Earth, Minus } from "lucide-react";
 // plane imports
+import { Avatar } from "@plane/propel/avatar";
 import { LockIcon, InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Avatar, FavoriteStar } from "@plane/ui";
+import { FavoriteStar } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

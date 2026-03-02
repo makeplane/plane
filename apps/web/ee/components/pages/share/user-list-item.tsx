@@ -12,7 +12,7 @@
  */
 
 import { useTheme } from "next-themes";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { cn, getFileURL } from "@plane/utils";
 import { AccessMenu } from "./access-menu";
 

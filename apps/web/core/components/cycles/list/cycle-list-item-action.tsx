@@ -25,7 +25,8 @@ import { TransferIcon, WorkItemsIcon, MembersPropertyIcon } from "@plane/propel/
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICycle, TCycleGroups } from "@plane/types";
-import { Avatar, AvatarGroup, FavoriteStar } from "@plane/ui";
+import { Avatar, AvatarGroup } from "@plane/propel/avatar";
+import { FavoriteStar } from "@plane/ui";
 import { getDate, getFileURL, generateQueryParams } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

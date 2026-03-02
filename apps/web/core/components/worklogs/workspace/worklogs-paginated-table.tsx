@@ -12,7 +12,8 @@
  */
 
 import type { FC } from "react";
-import { Avatar, Table } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Table } from "@plane/ui";
 // helpers
 import { convertMinutesToHoursMinutesString, getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
