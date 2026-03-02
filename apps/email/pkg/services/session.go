@@ -57,13 +57,9 @@ func (s *Session) Data(r io.Reader) error {
 	}
 	data := buf.Bytes()
 
-	// Basic spam check
+	// Check blacklisted domain first (before parsing)
 	if parser.IsBacklistedDomain(string(s.From)) {
 		logger.Log.Errorf("Detected spam domain from %s", s.From)
-		return errors.New("message rejected")
-	}
-	if parser.IsSpam(string(data)) {
-		logger.Log.Errorf("Detected spam from %s", s.From)
 		return errors.New("message rejected")
 	}
 
@@ -107,9 +103,10 @@ func (s *Session) Data(r io.Reader) error {
 			contentType, _, _ := h.ContentType()
 			b, _ := io.ReadAll(p.Body)
 
-			if contentType == "text/plain" {
+			switch contentType {
+			case "text/plain":
 				plainBody = string(b)
-			} else if contentType == "text/html" {
+			case "text/html":
 				htmlBody = string(b)
 			}
 		case *mail.AttachmentHeader:
@@ -145,6 +142,12 @@ func (s *Session) Data(r io.Reader) error {
 	body := plainBody
 	if htmlBody != "" {
 		body = htmlBody // Or consider storing both separately
+	}
+
+	// Perform spam check on plain text body content only (not attachment bytes)
+	if parser.IsSpam(plainBody) {
+		logger.Log.Errorf("Detected spam content from %s", s.From)
+		return errors.New("message rejected")
 	}
 
 	// Store the email
