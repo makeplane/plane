@@ -21,6 +21,7 @@ import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useWorkspaceProjectLabels } from "@/hooks/store/use-workspace-project-labels";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { groupDetails } from "../board/utils";
 import { ProjectBlocksList } from "./blocks-list";
@@ -66,6 +67,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   const {
     workspace: { getWorkspaceMemberDetails },
   } = useMember();
+  const { getLabelById } = useWorkspaceProjectLabels();
 
   const [isExpanded, setIsExpanded] = useState(true);
   const groupRef = useRef<HTMLDivElement | null>(null);
@@ -78,14 +80,15 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   const selectedGroupKey = filters?.display_filters?.group_by;
 
   const shouldExpand = isExpanded || !groupBy;
-  const details = groupDetails(
+  const details = groupDetails({
     getProjectStateById,
     getProjectStatedByStateGroupKey,
     getWorkspaceMemberDetails,
-    group,
+    groupByKey: group,
     currentWorkspace,
-    selectedGroupKey
-  );
+    selectedGroupKey,
+    getLabelById,
+  });
 
   return groupedProjectIds.length > 0 ? (
     <div ref={groupRef} className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`)}>

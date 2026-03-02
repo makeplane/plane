@@ -542,6 +542,8 @@ export default {
   you: "Sie",
   labels: "Labels",
   create_new_label: "Neues Label erstellen",
+  label_name: "Label-Name",
+  failed_to_create_label: "Label konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
   start_date: "Startdatum",
   end_date: "Enddatum",
   due_date: "Fälligkeitsdatum",
@@ -1981,6 +1983,14 @@ Erstellen Sie ein neues.`,
       },
       project_states: {
         title: "Projektstatus",
+      },
+      projects: {
+        title: "Projekte",
+        description: "Projektstatus verwalten, Projektlabels aktivieren und weitere Konfiguration.",
+        tabs: {
+          states: "Projektstatus",
+          labels: "Projektlabels",
+        },
       },
       teamspaces: {
         title: "Teamspaces",

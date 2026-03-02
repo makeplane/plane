@@ -536,6 +536,8 @@ export default {
   you: "Tu",
   labels: "Etichete",
   create_new_label: "Creează etichetă nouă",
+  label_name: "Nume etichetă",
+  failed_to_create_label: "Nu s-a putut crea eticheta. Vă rugăm să încercați din nou.",
   start_date: "Data de început",
   end_date: "Data de sfârșit",
   due_date: "Data limită",
@@ -1975,6 +1977,14 @@ Creează un proiect nou.`,
       },
       project_states: {
         title: "Stări de proiect",
+      },
+      projects: {
+        title: "Proiecte",
+        description: "Gestionează stările proiectelor, activează etichetele proiectelor și alte configurări.",
+        tabs: {
+          states: "Stări de proiect",
+          labels: "Etichete de proiect",
+        },
       },
       teamspaces: {
         title: "Spații de echipă",

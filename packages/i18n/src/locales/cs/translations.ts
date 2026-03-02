@@ -529,6 +529,8 @@ export default {
   you: "Vy",
   labels: "Štítky",
   create_new_label: "Vytvořit nový štítek",
+  label_name: "Název štítku",
+  failed_to_create_label: "Vytvoření štítku se nezdařilo. Zkuste to prosím znovu.",
   start_date: "Datum začátku",
   end_date: "Datum ukončení",
   due_date: "Termín",
@@ -1957,6 +1959,14 @@ Vytvořte nový.`,
       },
       project_states: {
         title: "Stavy projektů",
+      },
+      projects: {
+        title: "Projekty",
+        description: "Správa stavů projektů, povolení štítků projektů a další konfigurace.",
+        tabs: {
+          states: "Stavy projektů",
+          labels: "Štítky projektů",
+        },
       },
       teamspaces: {
         title: "Teamspaces",

@@ -47,6 +47,7 @@ import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store/use-workspace-features";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store/workspace-project-states/use-workspace-project-states";
+import { useWorkspaceProjectLabels } from "@/hooks/store/use-workspace-project-labels";
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
@@ -88,6 +89,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { fetchWorkspaceFeatures, isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { fetchProjectFeatures } = useProjectAdvanced();
   const { fetchProjectStates } = useWorkspaceProjectStates();
+  const { fetchWorkspaceProjectLabels } = useWorkspaceProjectLabels();
   const { isTeamspacesFeatureEnabled, fetchTeamspaces } = useTeamspaces();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, fetchWorkspaceSubscribedPlan } =
     useWorkspaceSubscription();
@@ -221,6 +223,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   useSWR(
     currentWorkspace && isProjectStateEnabled ? `WORKSPACE_PROJECT_STATES_${workspaceSlug}` : null,
     () => (currentWorkspace && isProjectStateEnabled ? fetchProjectStates(workspaceSlug) : null),
+    { revalidateOnFocus: false }
+  );
+  // fetch workspace project labels
+  useSWR(
+    currentWorkspace && isProjectStateEnabled ? `WORKSPACE_PROJECT_LABELS_${workspaceSlug}` : null,
+    () => (currentWorkspace && isProjectStateEnabled ? fetchWorkspaceProjectLabels(workspaceSlug) : null),
     { revalidateOnFocus: false }
   );
   // fetching all issue types and epics for the workspace

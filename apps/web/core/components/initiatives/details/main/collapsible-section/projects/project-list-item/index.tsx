@@ -101,6 +101,8 @@ export const ProjectItem = observer(function ProjectItem(props: Props) {
               state: isProjectGroupingEnabled,
               priority: isProjectGroupingEnabled,
               lead: true,
+              members: true,
+              labels: true,
               date: isProjectGroupingEnabled,
             }}
           />

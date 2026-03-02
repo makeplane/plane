@@ -531,6 +531,8 @@ export default {
   you: "Ви",
   labels: "Мітки",
   create_new_label: "Створити нову мітку",
+  label_name: "Назва мітки",
+  failed_to_create_label: "Не вдалося створити мітку. Будь ласка, спробуйте ще раз.",
   start_date: "Дата початку",
   end_date: "Дата завершення",
   due_date: "Крайній термін",
@@ -1963,6 +1965,14 @@ export default {
       },
       project_states: {
         title: "Проджект стейти",
+      },
+      projects: {
+        title: "Проєкти",
+        description: "Керування станами проєктів, увімкнення міток проєктів та інші налаштування.",
+        tabs: {
+          states: "Проджект стейти",
+          labels: "Мітки проєктів",
+        },
       },
       teamspaces: {
         title: "Тімспейси",

@@ -532,6 +532,8 @@ export default {
   you: "Вы",
   labels: "Метки",
   create_new_label: "Создать новую метку",
+  label_name: "Название метки",
+  failed_to_create_label: "Не удалось создать метку. Пожалуйста, попробуйте снова.",
   start_date: "Дата начала",
   end_date: "Дата окончания",
   due_date: "Срок выполнения",
@@ -1964,6 +1966,14 @@ export default {
       },
       project_states: {
         title: "Состояния проектов",
+      },
+      projects: {
+        title: "Проекты",
+        description: "Управление состояниями проектов, включение меток проектов и другие настройки.",
+        tabs: {
+          states: "Состояния проектов",
+          labels: "Метки проектов",
+        },
       },
       teamspaces: {
         title: "Командные пространства",

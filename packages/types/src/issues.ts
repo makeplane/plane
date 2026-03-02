@@ -67,14 +67,21 @@ export interface ISubIssueResponse {
   sub_issues: TIssue[];
 }
 
-export interface IIssueLabel {
+export interface IBaseLabel {
   id: string;
   name: string;
   color: string;
-  project_id: string;
   workspace_id: string;
   parent: string | null;
   sort_order: number;
+}
+
+export interface IBaseLabelTree extends IBaseLabel {
+  children: IBaseLabel[] | undefined;
+}
+
+export interface IIssueLabel extends IBaseLabel {
+  project_id: string;
 }
 
 export interface IIssueLabelTree extends IIssueLabel {

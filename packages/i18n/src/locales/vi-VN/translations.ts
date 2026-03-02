@@ -536,6 +536,8 @@ export default {
   you: "Bạn",
   labels: "Nhãn",
   create_new_label: "Tạo nhãn mới",
+  label_name: "Tên nhãn",
+  failed_to_create_label: "Không thể tạo nhãn. Vui lòng thử lại.",
   start_date: "Ngày bắt đầu",
   end_date: "Ngày kết thúc",
   due_date: "Ngày hết hạn",
@@ -1968,6 +1970,14 @@ Tạo dự án mới`,
       },
       project_states: {
         title: "Trạng thái dự án",
+      },
+      projects: {
+        title: "Dự án",
+        description: "Quản lý trạng thái dự án, bật nhãn dự án và các cấu hình khác.",
+        tabs: {
+          states: "Trạng thái dự án",
+          labels: "Nhãn dự án",
+        },
       },
       teamspaces: {
         title: "Không gian nhóm",

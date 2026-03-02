@@ -540,6 +540,8 @@ export default {
   you: "Vous",
   labels: "Étiquettes",
   create_new_label: "Créer une nouvelle étiquette",
+  label_name: "Nom de l'étiquette",
+  failed_to_create_label: "Échec de la création de l'étiquette. Veuillez réessayer.",
   start_date: "Date de début",
   end_date: "Date de fin",
   due_date: "Date d’échéance",
@@ -1988,6 +1990,14 @@ Créez plutôt un nouveau projet`,
       },
       project_states: {
         title: "États du projet",
+      },
+      projects: {
+        title: "Projets",
+        description: "Gérer les états des projets, activer les étiquettes de projets et autres configurations.",
+        tabs: {
+          states: "États du projet",
+          labels: "Étiquettes du projet",
+        },
       },
       teamspaces: {
         title: "Espaces d'équipe",

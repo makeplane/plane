@@ -21,6 +21,7 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useWorkspaceProjectLabels } from "@/hooks/store/use-workspace-project-labels";
 // plane web imports
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import type { TProject } from "@/types/projects";
@@ -53,8 +54,10 @@ export const ProjectBoardGroupItem = observer(function ProjectBoardGroupItem(pro
   } = useMember();
   const { filters } = useProjectFilter();
   const { updateProject } = useProject();
+  const { getLabelById } = useWorkspaceProjectLabels();
 
   const selectedGroupKey = filters?.display_filters?.group_by;
+  const isDropDisabled = selectedGroupKey === "labels";
 
   const handleOnDrop = (sourceId: string, payload: Partial<TProject>) => {
     if (!currentWorkspace?.slug)
@@ -87,15 +90,18 @@ export const ProjectBoardGroupItem = observer(function ProjectBoardGroupItem(pro
           console.log("payload", payload);
           if (!payload.source) return;
           const sourceId = payload.source.data.id;
-          const details = groupDetails(
+          const details = groupDetails({
             getProjectStateById,
             getProjectStatedByStateGroupKey,
             getWorkspaceMemberDetails,
             groupByKey,
             currentWorkspace,
-            selectedGroupKey
-          );
-          handleOnDrop(sourceId as string, details?.prePopulatedPayload);
+            selectedGroupKey,
+            getLabelById,
+          });
+          if (!isDropDisabled) {
+            handleOnDrop(sourceId as string, details?.prePopulatedPayload);
+          }
         },
       }),
       autoScrollForElements({
@@ -108,8 +114,8 @@ export const ProjectBoardGroupItem = observer(function ProjectBoardGroupItem(pro
       <GroupDragOverlay
         dragColumnOrientation={"justify-center"}
         canOverlayBeVisible
-        isDropDisabled={false}
-        dropErrorMessage={dropErrorMessage}
+        isDropDisabled={isDropDisabled}
+        dropErrorMessage={isDropDisabled ? "Cannot move projects when grouped by labels" : dropErrorMessage}
         // orderBy={orderBy}
         isDraggingOverColumn={isDraggingOverColumn}
       />

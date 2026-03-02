@@ -11,7 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./workspace-project-states.store";
-export * from "./workspace-project-labels.store";
-export * from "./project-state";
-export * from "./filters";
+export * from "./root";

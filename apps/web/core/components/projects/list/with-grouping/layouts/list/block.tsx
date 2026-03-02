@@ -138,7 +138,7 @@ export const ProjectBlock = observer(function ProjectBlock(props: ProjectBlockPr
             currentWorkspace={currentWorkspace}
             cta={filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={projectDetails} />}
             containerClass="px-0 py-0 md:pb-4 lg:py-2"
-            displayProperties={{ state: true, priority: true, lead: true, members: true, date: true }}
+            displayProperties={{ state: true, priority: true, lead: true, members: true, labels: true, date: true }}
           />
           <div
             className={cn("hidden", {

@@ -544,6 +544,8 @@ export default {
   you: "Tú",
   labels: "Etiquetas",
   create_new_label: "Crear nueva etiqueta",
+  label_name: "Nombre de etiqueta",
+  failed_to_create_label: "No se pudo crear la etiqueta. Por favor, inténtelo de nuevo.",
   start_date: "Fecha de inicio",
   end_date: "Fecha de fin",
   due_date: "Fecha de vencimiento",
@@ -1985,6 +1987,14 @@ Crea un nuevo proyecto en su lugar`,
       },
       project_states: {
         title: "Estados del proyecto",
+      },
+      projects: {
+        title: "Proyectos",
+        description: "Administrar estados de proyectos, habilitar etiquetas de proyectos y otras configuraciones.",
+        tabs: {
+          states: "Estados del proyecto",
+          labels: "Etiquetas del proyecto",
+        },
       },
       teamspaces: {
         title: "Espacios de equipo",

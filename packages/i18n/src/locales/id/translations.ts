@@ -535,6 +535,8 @@ export default {
   you: "Anda",
   labels: "Label",
   create_new_label: "Buat label baru",
+  label_name: "Nama label",
+  failed_to_create_label: "Gagal membuat label. Silakan coba lagi.",
   start_date: "Tanggal mulai",
   end_date: "Tanggal akhir",
   due_date: "Tanggal jatuh tempo",
@@ -1968,6 +1970,14 @@ Buat proyek baru sebagai gantinya`,
       },
       project_states: {
         title: "Status proyek",
+      },
+      projects: {
+        title: "Proyek",
+        description: "Kelola status proyek, aktifkan label proyek, dan konfigurasi lainnya.",
+        tabs: {
+          states: "Status proyek",
+          labels: "Label proyek",
+        },
       },
       teamspaces: {
         title: "Ruang tim",

@@ -28,7 +28,7 @@ from plane.db.models import (
     ProjectPublicMember,
     IssueSequence,
 )
-from plane.ee.models import ProjectLabel, ProjectSubscriber
+from plane.ee.models import ProjectLabel, ProjectSubscriber, ProjectLabelAssociation
 from plane.utils.content_validator import (
     validate_html_content,
 )
@@ -39,6 +39,7 @@ class ProjectSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
     initiative_ids = serializers.ListField(child=serializers.UUIDField(), required=False, write_only=True)
+    label_ids = serializers.ListField(child=serializers.UUIDField(), required=False, write_only=True)
 
     class Meta:
         model = Project
@@ -98,10 +99,25 @@ class ProjectSerializer(BaseSerializer):
 
     def create(self, validated_data):
         workspace_id = self.context["workspace_id"]
-
+        label_ids = validated_data.pop("label_ids", None)
         project = Project.objects.create(**validated_data, workspace_id=workspace_id)
 
         ProjectIdentifier.objects.create(name=project.identifier, project=project, workspace_id=workspace_id)
+
+        if label_ids is not None:
+            ProjectLabelAssociation.objects.bulk_create(
+                [
+                    ProjectLabelAssociation(
+                        project_id=project.id,
+                        label_id=label_id,
+                        workspace_id=workspace_id,
+                        created_by_id=self.context["user_id"],
+                        updated_by_id=self.context["user_id"],
+                    )
+                    for label_id in label_ids
+                ],
+                batch_size=10,
+            )
 
         return project
 
@@ -109,6 +125,7 @@ class ProjectSerializer(BaseSerializer):
         initiative_ids = validated_data.pop("initiative_ids", None)
         identifier = validated_data.get("identifier", "").strip().upper()
         workspace_id = self.context["workspace_id"]
+        label_ids = validated_data.pop("label_ids", None)
 
         if initiative_ids is not None:
             InitiativeProject.objects.filter(project_id=instance.id).delete()
@@ -122,6 +139,32 @@ class ProjectSerializer(BaseSerializer):
                         created_by_id=self.context["user_id"],
                     )
                     for initiative_id in initiative_ids
+                ],
+                batch_size=10,
+            )
+
+        if label_ids is not None:
+            ProjectLabelAssociation.objects.filter(project_id=instance.id, workspace_id=workspace_id).exclude(
+                label_id__in=label_ids
+            ).delete()
+
+            existing_label_ids = ProjectLabelAssociation.objects.filter(
+                project_id=instance.id, label_id__in=label_ids, workspace_id=workspace_id
+            ).values_list("label_id", flat=True)
+
+            new_labels = set(label_ids) - set(existing_label_ids)
+
+            # for label_id in new_labels:
+            ProjectLabelAssociation.objects.bulk_create(
+                [
+                    ProjectLabelAssociation(
+                        project_id=instance.id,
+                        label_id=label_id,
+                        workspace_id=workspace_id,
+                        created_by_id=self.context["user_id"],
+                        updated_by_id=self.context["user_id"],
+                    )
+                    for label_id in new_labels
                 ],
                 batch_size=10,
             )
@@ -181,6 +224,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
     start_date = serializers.DateTimeField(read_only=True)
     target_date = serializers.DateTimeField(read_only=True)
     initiative_ids = serializers.SerializerMethodField(read_only=True)
+    label_ids = serializers.SerializerMethodField(read_only=True)
     # EE: project_grouping ends
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
     next_work_item_sequence = serializers.SerializerMethodField()
@@ -212,6 +256,10 @@ class ProjectListSerializer(DynamicBaseSerializer):
         if obj.initiatives.all():
             return [initiative.initiative_id for initiative in obj.initiatives.all()]
         return []
+
+    def get_label_ids(self, obj):
+        if obj.project_label_associations.all():
+            return [label.label_id for label in obj.project_label_associations.all()]
 
     def get_next_work_item_sequence(self, obj):
         """Get the next sequence ID that will be assigned to a new issue"""
@@ -307,6 +355,8 @@ class ProjectPublicMemberSerializer(BaseSerializer):
 
 
 class ProjectLabelSerializer(BaseSerializer):
+    workspace_id = serializers.PrimaryKeyRelatedField(source="workspace", read_only=True)
+
     class Meta:
         model = ProjectLabel
         fields = [
@@ -315,7 +365,7 @@ class ProjectLabelSerializer(BaseSerializer):
             "description",
             "color",
             "sort_order",
-            "workspace",
+            "workspace_id",
             "created_at",
             "updated_at",
             "created_by",

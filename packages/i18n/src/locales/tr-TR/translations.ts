@@ -530,6 +530,8 @@ export default {
   you: "Siz",
   labels: "Etiketler",
   create_new_label: "Yeni etiket oluştur",
+  label_name: "Etiket adı",
+  failed_to_create_label: "Etiket oluşturulamadı. Lütfen tekrar deneyin.",
   start_date: "Başlangıç tarihi",
   end_date: "Bitiş tarihi",
   due_date: "Son tarih",
@@ -1974,6 +1976,15 @@ Bunun yerine yeni bir proje oluşturun`,
       },
       project_states: {
         title: "Proje durumları",
+      },
+      projects: {
+        title: "Projeler",
+        description:
+          "Proje durumlarını yönetin, proje etiketlerini etkinleştirin ve diğer yapılandırmaları düzenleyin.",
+        tabs: {
+          states: "Proje durumları",
+          labels: "Proje etiketleri",
+        },
       },
       teamspaces: {
         title: "Timspeys",

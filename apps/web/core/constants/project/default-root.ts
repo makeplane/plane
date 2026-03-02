@@ -120,6 +120,7 @@ export const PROJECT_GROUP_BY_OPTIONS: {
   { key: "state_groups", title: "State Groups" },
   { key: "priority", title: "Priority" },
   { key: "created_by", title: "Created By" },
+  { key: "labels", title: "Labels" },
 ];
 
 export const PROJECT_SORT_BY_OPTIONS: {

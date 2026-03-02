@@ -528,6 +528,8 @@ export default {
   you: "あなた",
   labels: "ラベル",
   create_new_label: "新規ラベルを作成",
+  label_name: "ラベル名",
+  failed_to_create_label: "ラベルの作成に失敗しました。もう一度お試しください。",
   start_date: "開始日",
   end_date: "終了日",
   due_date: "期限",
@@ -1957,6 +1959,14 @@ export default {
       },
       project_states: {
         title: "プロジェクトの状態",
+      },
+      projects: {
+        title: "プロジェクト",
+        description: "プロジェクトの状態管理、プロジェクトラベルの有効化、その他の設定を行います。",
+        tabs: {
+          states: "プロジェクトの状態",
+          labels: "プロジェクトラベル",
+        },
       },
       teamspaces: {
         title: "チームスペース",

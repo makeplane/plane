@@ -48,7 +48,7 @@ export type TProjectAttributes = {
 };
 export type TProjectAccess = EProjectAccess;
 // display filter
-export type TProjectGroupBy = "states" | "state_groups" | "priority" | "created_by";
+export type TProjectGroupBy = "states" | "state_groups" | "priority" | "created_by" | "labels";
 export type TProjectSortBy =
   | "manual"
   | "name"

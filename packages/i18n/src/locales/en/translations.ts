@@ -318,6 +318,8 @@ export default {
   you: "You",
   labels: "Labels",
   create_new_label: "Create new label",
+  label_name: "Label name",
+  failed_to_create_label: "Failed to create label. Please try again.",
   start_date: "Start date",
   end_date: "End date",
   due_date: "Due date",
@@ -1888,6 +1890,14 @@ Create a new project instead`,
         heading: "See progress overview for all projects.",
         description:
           "Project States is a Plane-only feature for tracking progress of all your projects by any project property.",
+      },
+      projects: {
+        title: "Projects",
+        description: "Manage project states, and enable project labels, and other configuration.",
+        tabs: {
+          states: "Project states",
+          labels: "Project labels",
+        },
       },
       teamspaces: {
         title: "Teamspaces",

@@ -529,6 +529,8 @@ export default {
   you: "Ty",
   labels: "Etykiety",
   create_new_label: "Utwórz nową etykietę",
+  label_name: "Nazwa etykiety",
+  failed_to_create_label: "Nie udało się utworzyć etykiety. Spróbuj ponownie.",
   start_date: "Data rozpoczęcia",
   end_date: "Data zakończenia",
   due_date: "Termin",
@@ -1961,6 +1963,14 @@ Utwórz nowy.`,
       },
       project_states: {
         title: "Stany projektu",
+      },
+      projects: {
+        title: "Projekty",
+        description: "Zarządzaj stanami projektów, włączaj etykiety projektów i inne konfiguracje.",
+        tabs: {
+          states: "Stany projektu",
+          labels: "Etykiety projektu",
+        },
       },
       teamspaces: {
         title: "Przestrzenie zespołu",

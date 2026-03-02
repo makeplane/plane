@@ -515,6 +515,8 @@ export default {
   you: "您",
   labels: "標籤",
   create_new_label: "建立新標籤",
+  label_name: "標籤名稱",
+  failed_to_create_label: "建立標籤失敗，請重試。",
   start_date: "開始日期",
   end_date: "結束日期",
   due_date: "截止日期",
@@ -1933,6 +1935,14 @@ export default {
       },
       project_states: {
         title: "專案狀態",
+      },
+      projects: {
+        title: "專案",
+        description: "管理專案狀態、啟用專案標籤及其他設定。",
+        tabs: {
+          states: "專案狀態",
+          labels: "專案標籤",
+        },
       },
       teamspaces: {
         title: "團隊空間",

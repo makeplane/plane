@@ -522,6 +522,8 @@ export default {
   you: "나",
   labels: "레이블",
   create_new_label: "새 레이블 생성",
+  label_name: "레이블 이름",
+  failed_to_create_label: "레이블 생성에 실패했습니다. 다시 시도해 주세요.",
   start_date: "시작 날짜",
   end_date: "종료 날짜",
   due_date: "마감일",
@@ -1943,6 +1945,14 @@ export default {
       },
       project_states: {
         title: "프로젝트 스테이트",
+      },
+      projects: {
+        title: "프로젝트",
+        description: "프로젝트 상태 관리, 프로젝트 레이블 활성화 및 기타 구성을 관리합니다.",
+        tabs: {
+          states: "프로젝트 스테이트",
+          labels: "프로젝트 레이블",
+        },
       },
       teamspaces: {
         title: "팀스페이스",

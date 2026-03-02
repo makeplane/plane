@@ -516,6 +516,8 @@ export default {
   you: "您",
   labels: "标签",
   create_new_label: "创建新标签",
+  label_name: "标签名称",
+  failed_to_create_label: "创建标签失败，请重试。",
   start_date: "开始日期",
   end_date: "结束日期",
   due_date: "截止日期",
@@ -1931,6 +1933,14 @@ export default {
       },
       project_states: {
         title: "项目状态",
+      },
+      projects: {
+        title: "项目",
+        description: "管理项目状态、启用项目标签及其他配置。",
+        tabs: {
+          states: "项目状态",
+          labels: "项目标签",
+        },
       },
       teamspaces: {
         title: "团队空间",
