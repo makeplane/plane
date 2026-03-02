@@ -1,9 +1,16 @@
 {
   "name": "@plane/editor",
   "version": "1.2.0",
-  "description": "Core Editor that powers Plane",
-  "license": "AGPL-3.0",
   "private": true,
+  "description": "Core Editor that powers Plane",
+  "keywords": [
+    "editor",
+    "markdown",
+    "nextjs",
+    "react",
+    "rich-text"
+  ],
+  "license": "AGPL-3.0",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -20,14 +27,10 @@
     "dev": "tsdown --watch",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1435",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
+    "check:format": "oxfmt --check .",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1435",
-    "fix:format": "prettier . --cache --write",
+    "fix:format": "oxfmt .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
-  },
-  "peerDependencies": {
-    "react": "catalog:",
-    "react-dom": "catalog:"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.1",
@@ -62,13 +65,13 @@
     "@tiptap/react": "^2.22.3",
     "@tiptap/starter-kit": "^2.22.3",
     "@tiptap/suggestion": "^2.22.3",
-    "lodash-es": "catalog:",
     "buffer": "^6.0.3",
     "emoji-regex": "^10.3.0",
     "highlight.js": "^11.8.0",
     "is-emoji-supported": "^0.0.5",
     "jsx-dom-cjs": "^8.0.3",
     "linkifyjs": "^4.3.2",
+    "lodash-es": "catalog:",
     "lowlight": "^3.0.0",
     "lucide-react": "catalog:",
     "prosemirror-codemark": "^0.4.2",
@@ -83,19 +86,16 @@
   "devDependencies": {
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/lodash-es": "catalog:",
     "postcss": "^8.4.38",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
-  "keywords": [
-    "editor",
-    "rich-text",
-    "markdown",
-    "nextjs",
-    "react"
-  ]
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  }
 }

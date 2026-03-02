@@ -28,7 +28,7 @@ export function PageNavigationPaneTabPanelsRoot(props: Props) {
   return (
     <>
       {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
-        <Tabs.Content key={tab.key} value={tab.key} className="py-2 flex-1 overflow-hidden">
+        <Tabs.Content key={tab.key} value={tab.key} className="flex-1 overflow-hidden py-2">
           {tab.key === "outline" && <PageNavigationPaneOutlineTabPanel page={page} />}
           {tab.key === "info" && <PageNavigationPaneInfoTabPanel page={page} versionHistory={versionHistory} />}
           {tab.key === "assets" && <PageNavigationPaneAssetsTabPanel page={page} />}

@@ -75,7 +75,7 @@ export const meta: Route.MetaFunction = () => [
 
 export default function Root() {
   return (
-    <div className="bg-canvas min-h-screen">
+    <div className="min-h-screen bg-canvas">
       <Outlet />
     </div>
   );

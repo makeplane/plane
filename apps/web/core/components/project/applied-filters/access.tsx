@@ -25,7 +25,7 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
       {values.map((status) => {
         const accessDetails = NETWORK_CHOICES.find((s) => `${s.key}` === status);
         return (
-          <div key={status} className="flex items-center gap-1 rounded-sm px-1.5 py-1 text-11 bg-layer-1">
+          <div key={status} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
             {accessDetails && t(accessDetails?.i18n_label)}
             {editable && (
               <button

@@ -73,7 +73,7 @@ export const FilterState = observer(function FilterState(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-11 italic text-placeholder">No matches found</p>
+              <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

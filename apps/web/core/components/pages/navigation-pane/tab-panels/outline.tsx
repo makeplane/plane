@@ -29,7 +29,7 @@ export function PageNavigationPaneOutlineTabPanel(props: Props) {
       orientation="vertical"
       size="sm"
       scrollType="hover"
-      className="size-full overflow-y-auto hide-scrollbar"
+      className="hide-scrollbar size-full overflow-y-auto"
       viewportClassName="px-4"
     >
       <PageContentBrowser

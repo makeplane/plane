@@ -19,10 +19,10 @@ type EditorClassNameArgs = {
 
 export const getEditorClassNames = ({ noBorder, borderOnFocus, containerClassName }: EditorClassNameArgs) =>
   cn(
-    "w-full max-w-full sm:rounded-lg focus:outline-none focus:border-0",
+    "w-full max-w-full focus:border-0 focus:outline-none sm:rounded-lg",
     {
       "border border-subtle-1": !noBorder,
-      "focus:border border-strong": borderOnFocus,
+      "border-strong focus:border": borderOnFocus,
     },
     containerClassName
   );

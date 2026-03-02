@@ -84,10 +84,10 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
   return (
     <>
-      <div className="flex items-center h-full w-full flex-col divide-y-2 divide-subtle-1 overflow-hidden">
+      <div className="flex h-full w-full flex-col items-center divide-y-2 divide-subtle-1 overflow-hidden">
         <div className="h-full w-full overflow-y-auto px-6">
           <h5 className="mt-5 text-body-xs-medium">{t("common.properties")}</h5>
-          <div className={`mb-2 mt-4 space-y-2.5 truncate ${!isEditable ? "opacity-60" : ""}`}>
+          <div className={`mt-4 mb-2 space-y-2.5 truncate ${!isEditable ? "opacity-60" : ""}`}>
             <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
               <StateDropdown
                 value={issue?.state_id}
@@ -127,7 +127,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
                 disabled={!isEditable}
                 buttonVariant="transparent-with-text"
-                className="w-full h-7.5 grow rounded-sm"
+                className="h-7.5 w-full grow rounded-sm"
                 buttonContainerClassName="size-full text-left"
                 buttonClassName="size-full px-2 py-0.5 whitespace-nowrap [&_svg]:size-3.5"
               />
@@ -135,7 +135,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
             {createdByDetails && (
               <SidebarPropertyListItem icon={UserCirclePropertyIcon} label={t("common.created_by")}>
-                <div className="px-2 flex gap-2">
+                <div className="flex gap-2 px-2">
                   <ButtonAvatars showTooltip userIds={createdByDetails.id} />
                   <span className="grow truncate text-body-xs-regular leading-5">{createdByDetails?.display_name}</span>
                 </div>
@@ -163,7 +163,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             </SidebarPropertyListItem>
 
             <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
-              <div className="flex items-center gap-2 w-full">
+              <div className="flex w-full items-center gap-2">
                 <DateDropdown
                   placeholder={t("issue.add.due_date")}
                   value={issue.target_date}
@@ -229,7 +229,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 appendElement={<TransferHopInfo workItem={issue} />}
               >
                 <IssueCycleSelect
-                  className="w-full grow h-7.5"
+                  className="h-7.5 w-full grow"
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
                   issueId={issueId}
@@ -241,7 +241,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
             <SidebarPropertyListItem icon={ParentPropertyIcon} label={t("common.parent")}>
               <IssueParentSelectRoot
-                className="w-full h-7.5 grow"
+                className="h-7.5 w-full grow"
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 issueId={issueId}

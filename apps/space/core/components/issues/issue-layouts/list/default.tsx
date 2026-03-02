@@ -65,12 +65,12 @@ export const List = observer(function List(props: IList) {
   if (!groupList) return null;
 
   return (
-    <div className="relative size-full flex flex-col">
+    <div className="relative flex size-full flex-col">
       {groupList && (
         <>
           <div
             ref={containerRef}
-            className="size-full vertical-scrollbar scrollbar-lg relative overflow-auto vertical-scrollbar-margin-top-md"
+            className="vertical-scrollbar vertical-scrollbar-margin-top-md relative scrollbar-lg size-full overflow-auto"
           >
             {groupList.map((group) => (
               <ListGroup

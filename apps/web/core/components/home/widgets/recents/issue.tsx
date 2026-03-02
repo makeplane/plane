@@ -71,7 +71,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       itemLink={workItemLink}
       title={issueDetails?.name}
       prependTitleElement={
-        <div className="flex-shrink-0 flex items-center gap-2">
+        <div className="flex flex-shrink-0 items-center gap-2">
           {issueDetails.type ? (
             <IssueIdentifier
               size="lg"
@@ -82,11 +82,11 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               variant="tertiary"
             />
           ) : (
-            <div className="flex gap-2 items-center justify-center">
-              <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-2 size-8">
+            <div className="flex items-center justify-center gap-2">
+              <div className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-layer-2">
                 <WorkItemsIcon className="size-4 text-tertiary" />
               </div>
-              <div className="font-medium text-placeholder text-13 whitespace-nowrap">
+              <div className="text-13 font-medium whitespace-nowrap text-placeholder">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
               </div>
             </div>
@@ -94,7 +94,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 font-medium text-11 text-placeholder">
+        <div className="flex-shrink-0 text-11 font-medium text-placeholder">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }
@@ -105,7 +105,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               <StateGroupIcon
                 stateGroup={state?.group ?? "backlog"}
                 color={state?.color}
-                className="h-4 w-4 my-auto"
+                className="my-auto h-4 w-4"
                 percentage={state?.order}
               />
             </div>
@@ -136,7 +136,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="my-auto !px-2 border-none py-3"
+      className="my-auto border-none !px-2 py-3"
       itemClassName="my-auto"
       onItemClick={handlePeekOverview}
       preventDefaultProgress

@@ -113,10 +113,10 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
       >
         {issue && (
           <div
-            className="group relative flex min-h-11 h-full w-full items-center pr-2 py-1 transition-all hover:bg-surface-2"
+            className="group relative flex h-full min-h-11 w-full items-center py-1 pr-2 transition-all hover:bg-surface-2"
             style={{ paddingLeft: `${spacingLeft}px` }}
           >
-            <div className="flex size-5 items-center justify-center flex-shrink-0">
+            <div className="flex size-5 flex-shrink-0 items-center justify-center">
               {/* disable the chevron when current issue is also the root issue*/}
               {subIssueCount > 0 && !isCurrentIssueRoot && (
                 <>
@@ -150,7 +150,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
               )}
             </div>
 
-            <div className="flex w-full truncate cursor-pointer items-center gap-3">
+            <div className="flex w-full cursor-pointer items-center gap-3 truncate">
               <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
                 <div className="flex-shrink-0">
                   {projectDetail && (
@@ -166,7 +166,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                 </div>
               </WithDisplayPropertiesHOC>
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="flex-1 w-0 truncate text-13 text-primary">{issue.name}</span>
+                <span className="w-0 flex-1 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
 

@@ -104,15 +104,15 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
 
   if (!cycleDetails) return <></>;
   return (
-    <div className="border-t border-subtle space-y-4 py-5">
+    <div className="space-y-4 border-t border-subtle py-5">
       <Disclosure defaultOpen>
         {({ open }) => (
           <div className="flex flex-col">
             {/* progress bar header */}
             {isCycleDateValid ? (
-              <div className="relative w-full flex justify-between items-center gap-2">
-                <Disclosure.Button className="relative flex items-center gap-2 w-full">
-                  <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
+              <div className="relative flex w-full items-center justify-between gap-2">
+                <Disclosure.Button className="relative flex w-full items-center gap-2">
+                  <div className="text-13 font-medium text-secondary">{t("project_cycles.active_cycle.progress")}</div>
                 </Disclosure.Button>
                 <Disclosure.Button className="ml-auto">
                   {open ? (
@@ -123,8 +123,8 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
                 </Disclosure.Button>
               </div>
             ) : (
-              <div className="relative w-full flex justify-between items-center gap-2">
-                <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
+              <div className="relative flex w-full items-center justify-between gap-2">
+                <div className="text-13 font-medium text-secondary">{t("project_cycles.active_cycle.progress")}</div>
               </div>
             )}
             <Transition show={open}>
@@ -162,7 +162,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
                     )}
                   </>
                 ) : (
-                  <div className="my-2 py-2 text-13 text-tertiary  bg-surface-2 rounded-md px-2 w-full">
+                  <div className="my-2 w-full rounded-md bg-surface-2 px-2 py-2 text-13 text-tertiary">
                     {t("no_data_yet")}
                   </div>
                 )}

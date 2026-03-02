@@ -197,8 +197,8 @@ export function InstanceGithubConfigForm(props: Props) {
         handleClose={() => setIsDiscardChangesModalOpen(false)}
       />
       <div className="flex flex-col gap-8">
-        <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
-          <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
+        <div className="grid w-full grid-cols-2 gap-x-12 gap-y-8">
+          <div className="col-span-2 flex flex-col gap-y-4 pt-1 md:col-span-1">
             <div className="pt-2.5 text-18 font-medium">GitHub-provided details for Plane</div>
             {GITHUB_FORM_FIELDS.map((field) => (
               <ControllerInput
@@ -231,24 +231,24 @@ export function InstanceGithubConfigForm(props: Props) {
               </div>
             </div>
           </div>
-          <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
+          <div className="col-span-2 flex flex-col gap-y-6 md:col-span-1">
             <div className="pt-2 text-18 font-medium">Plane-provided details for GitHub</div>
 
             <div className="flex flex-col gap-y-4">
               {/* common service details */}
-              <div className="flex flex-col gap-y-4 px-6 py-4 bg-layer-1 rounded-lg">
+              <div className="flex flex-col gap-y-4 rounded-lg bg-layer-1 px-6 py-4">
                 {GITHUB_COMMON_SERVICE_DETAILS.map((field) => (
                   <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                 ))}
               </div>
 
               {/* web service details */}
-              <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
-                  <Monitor className="w-3 h-3" />
+              <div className="flex flex-col overflow-hidden rounded-lg">
+                <div className="flex items-center gap-x-3 bg-layer-3 px-6 py-3 text-11 font-medium text-secondary uppercase">
+                  <Monitor className="h-3 w-3" />
                   Web
                 </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
+                <div className="flex flex-col gap-y-4 bg-layer-1 px-6 py-4">
                   {GITHUB_SERVICE_DETAILS.map((field) => (
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}

@@ -56,14 +56,14 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
         </div>
       </WithDisplayPropertiesHOC>
 
-      <div className="w-full line-clamp-1 text-13 text-primary mb-1.5">
+      <div className="mb-1.5 line-clamp-1 w-full text-13 text-primary">
         <Tooltip tooltipContent={issue.name}>
           <span>{issue.name}</span>
         </Tooltip>
       </div>
 
       <IssueProperties
-        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-tertiary pt-1.5"
+        className="flex flex-wrap items-center gap-2 pt-1.5 whitespace-nowrap text-tertiary"
         issue={issue}
         displayProperties={displayProperties}
       />
@@ -93,7 +93,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
     <div className={cn("group/kanban-block relative p-1.5")}>
       <div
         className={cn(
-          "relative block w-full border border-subtle border-strong bg-layer-2 text-13 transition-all rounded-lg bg-layer-2 hover:bg-layer-2-hover",
+          "relative block w-full rounded-lg border border-strong border-subtle bg-layer-2 text-13 transition-all hover:bg-layer-2-hover",
           {
             "border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id),
           }

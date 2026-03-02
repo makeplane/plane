@@ -56,7 +56,7 @@ export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps)
   return Icon ? (
     <Icon className="h-3 w-3 flex-shrink-0" />
   ) : (
-    <MembersPropertyIcon className="h-3 w-3 mx-[4px] flex-shrink-0" />
+    <MembersPropertyIcon className="mx-[4px] h-3 w-3 flex-shrink-0" />
   );
 });
 
@@ -66,7 +66,7 @@ export const IssueBlockMembers = observer(function IssueBlockMembers({ memberIds
   const members = getMembersByIds(memberIds);
 
   return (
-    <div className="relative h-full flex flex-wrap items-center gap-1">
+    <div className="relative flex h-full flex-wrap items-center gap-1">
       <div
         className={cn("flex flex-shrink-0 cursor-default items-center rounded-md text-11", {
           "border-[0.5px] border-strong px-2.5 py-1": shouldShowBorder && !members?.length,

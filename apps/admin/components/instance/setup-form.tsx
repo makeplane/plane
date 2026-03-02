@@ -139,8 +139,8 @@ export function InstanceSetupForm() {
   return (
     <>
       <AuthHeader />
-      <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
-        <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
+      <div className="mt-10 flex w-full flex-grow flex-col items-center justify-center py-6">
+        <div className="relative flex w-full max-w-[22.5rem] flex-col gap-6">
           <FormHeader
             heading="Setup your Plane Instance"
             subHeading="Post setup you will be able to manage this Plane instance."
@@ -160,9 +160,9 @@ export function InstanceSetupForm() {
             <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
             <input type="hidden" name="is_telemetry_enabled" value={formData.is_telemetry_enabled ? "True" : "False"} />
 
-            <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex flex-col items-center gap-4 sm:flex-row">
               <div className="w-full space-y-1">
-                <label className="text-13 text-tertiary font-medium" htmlFor="first_name">
+                <label className="text-13 font-medium text-tertiary" htmlFor="first_name">
                   First name <span className="text-danger-primary">*</span>
                 </label>
                 <Input
@@ -185,7 +185,7 @@ export function InstanceSetupForm() {
                 />
               </div>
               <div className="w-full space-y-1">
-                <label className="text-13 text-tertiary font-medium" htmlFor="last_name">
+                <label className="text-13 font-medium text-tertiary" htmlFor="last_name">
                   Last name <span className="text-danger-primary">*</span>
                 </label>
                 <Input
@@ -209,7 +209,7 @@ export function InstanceSetupForm() {
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-13 text-tertiary font-medium" htmlFor="email">
+              <label className="text-13 font-medium text-tertiary" htmlFor="email">
                 Email <span className="text-danger-primary">*</span>
               </label>
               <Input
@@ -230,7 +230,7 @@ export function InstanceSetupForm() {
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-13 text-tertiary font-medium" htmlFor="company_name">
+              <label className="text-13 font-medium text-tertiary" htmlFor="company_name">
                 Company name <span className="text-danger-primary">*</span>
               </label>
               <Input
@@ -252,7 +252,7 @@ export function InstanceSetupForm() {
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-13 text-tertiary font-medium" htmlFor="password">
+              <label className="text-13 font-medium text-tertiary" htmlFor="password">
                 Set a password <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
@@ -274,7 +274,7 @@ export function InstanceSetupForm() {
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
+                    className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("password")}
                   >
                     <EyeOff className="h-4 w-4" />
@@ -283,7 +283,7 @@ export function InstanceSetupForm() {
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
+                    className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("password")}
                   >
                     <Eye className="h-4 w-4" />
@@ -297,7 +297,7 @@ export function InstanceSetupForm() {
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
+              <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
                 Confirm password <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
@@ -318,7 +318,7 @@ export function InstanceSetupForm() {
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
+                    className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("retypePassword")}
                   >
                     <EyeOff className="h-4 w-4" />
@@ -327,7 +327,7 @@ export function InstanceSetupForm() {
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
+                    className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("retypePassword")}
                   >
                     <Eye className="h-4 w-4" />
@@ -344,21 +344,21 @@ export function InstanceSetupForm() {
             <div className="relative flex gap-2">
               <div>
                 <Checkbox
-                  className="w-4 h-4"
+                  className="h-4 w-4"
                   iconClassName="w-3 h-3"
                   id="is_telemetry_enabled"
                   onChange={() => handleFormChange("is_telemetry_enabled", !formData.is_telemetry_enabled)}
                   checked={formData.is_telemetry_enabled}
                 />
               </div>
-              <label className="text-13 text-tertiary font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
+              <label className="cursor-pointer text-13 font-medium text-tertiary" htmlFor="is_telemetry_enabled">
                 Allow Plane to anonymously collect usage events.{" "}
                 <a
                   tabIndex={-1}
                   href="https://developers.plane.so/self-hosting/telemetry"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-13 font-medium text-blue-500 hover:text-blue-600 flex-shrink-0"
+                  className="text-blue-500 hover:text-blue-600 flex-shrink-0 text-13 font-medium"
                 >
                   See More
                 </a>

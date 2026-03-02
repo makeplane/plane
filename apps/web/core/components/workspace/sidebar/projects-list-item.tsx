@@ -160,8 +160,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded-sm flex items-center bg-surface-1 text-13 p-1 pr-2">
-                  <div className="size-4 grid place-items-center flex-shrink-0">
+                <div className="flex items-center rounded-sm bg-surface-1 p-1 pr-2 text-13">
+                  <div className="grid size-4 flex-shrink-0 place-items-center">
                     {project && <Logo logo={project?.logo_props} />}
                   </div>
                   <p className="truncate text-secondary">{project?.name}</p>
@@ -291,7 +291,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
           <div
             className={cn(
-              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
+              "group/project-item relative flex w-full items-center rounded-md px-2 py-1.5 text-primary hover:bg-layer-transparent-hover",
               {
                 "bg-surface-2": isMenuActive,
                 "bg-layer-transparent-active": shouldHighlightProject,
@@ -311,7 +311,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 <button
                   type="button"
                   className={cn(
-                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-placeholder cursor-grab",
+                    "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
                     {
                       "cursor-not-allowed opacity-60": project.sort_order === null,
                       "cursor-grabbing": isDragging,
@@ -325,26 +325,26 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               </Tooltip>
             )}
             <>
-              <ControlLink href={defaultTabUrl} className="flex-grow flex truncate" onClick={handleItemClick}>
+              <ControlLink href={defaultTabUrl} className="flex flex-grow truncate" onClick={handleItemClick}>
                 {isAccordionMode ? (
                   <Disclosure.Button
                     as="button"
                     type="button"
-                    className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {})}
+                    className={cn("flex w-full flex-grow items-center gap-1.5 text-left select-none", {})}
                     aria-label={
                       isProjectListOpen
                         ? t("aria_labels.projects_sidebar.close_project_menu")
                         : t("aria_labels.projects_sidebar.open_project_menu")
                     }
                   >
-                    <div className="size-4 grid place-items-center flex-shrink-0">
+                    <div className="grid size-4 flex-shrink-0 place-items-center">
                       <Logo logo={project.logo_props} size={16} />
                     </div>
                     <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
                   </Disclosure.Button>
                 ) : (
-                  <div className="flex-grow flex items-center gap-1.5 text-left select-none w-full">
-                    <div className="size-4 grid place-items-center flex-shrink-0">
+                  <div className="flex w-full flex-grow items-center gap-1.5 text-left select-none">
+                    <div className="grid size-4 flex-shrink-0 place-items-center">
                       <Logo logo={project.logo_props} size={16} />
                     </div>
                     <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
@@ -364,9 +364,9 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                     />
                   }
                   className={cn(
-                    "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
+                    "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
                     {
-                      "opacity-100 pointer-events-auto": isMenuActive,
+                      "pointer-events-auto opacity-100": isMenuActive,
                     }
                   )}
                   customButtonClassName="grid place-items-center"
@@ -415,7 +415,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                         router.push(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
                       }}
                     >
-                      <div className="flex items-center justify-start gap-2 cursor-pointer">
+                      <div className="flex cursor-pointer items-center justify-start gap-2">
                         <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
                         <span>{t("archives")}</span>
                       </div>
@@ -426,7 +426,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                       router.push(`/${workspaceSlug}/settings/projects/${project?.id}`);
                     }}
                   >
-                    <div className="flex items-center justify-start gap-2 cursor-pointer">
+                    <div className="flex cursor-pointer items-center justify-start gap-2">
                       <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
                       <span>{t("settings")}</span>
                     </div>
@@ -450,7 +450,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                     size="sm"
                     icon={ChevronRightIcon}
                     onClick={() => setIsProjectListOpen(!isProjectListOpen)}
-                    className={cn("hidden group-hover/project-item:inline-flex text-placeholder", {
+                    className={cn("hidden text-placeholder group-hover/project-item:inline-flex", {
                       "inline-flex": isMenuActive,
                     })}
                     iconClassName={cn("transition-transform", {
@@ -477,8 +477,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               leaveTo="transform scale-95 opacity-0"
             >
               {isProjectListOpen && (
-                <Disclosure.Panel as="div" className="relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5">
-                  <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-layer-3" />
+                <Disclosure.Panel as="div" className="relative mt-1 mb-1.5 flex flex-col gap-0.5 pl-6">
+                  <div className="absolute top-0 bottom-1 left-[15px] w-[1px] bg-layer-3" />
                   <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
                 </Disclosure.Panel>
               )}

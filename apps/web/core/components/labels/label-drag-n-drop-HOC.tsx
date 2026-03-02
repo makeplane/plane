@@ -33,7 +33,7 @@ export function LabelDragPreview(props: LabelDragPreviewProps) {
   const { label, isGroup } = props;
 
   return (
-    <div className="py-3 pl-2 pr-4 border-[1px] border-subtle bg-surface-1">
+    <div className="border-[1px] border-subtle bg-surface-1 py-3 pr-4 pl-2">
       <LabelName name={label.name} color={label.color} isGroup={isGroup} />
     </div>
   );

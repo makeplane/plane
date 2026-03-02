@@ -93,7 +93,7 @@ export const UserAvatar = observer(function UserAvatar() {
             >
               <Popover.Panel>
                 <div
-                  className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-200 p-1"
+                  className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 p-1 shadow-raised-200"
                   ref={setPopperElement}
                   style={styles.popper}
                   {...attributes.popper}
@@ -104,7 +104,7 @@ export const UserAvatar = observer(function UserAvatar() {
                       <input type="hidden" name="next_path" value={`${pathName}?${queryParam}`} />
                       <button
                         type="submit"
-                        className="flex items-center gap-2 rounded-sm p-2 whitespace-nowrap hover:bg-layer-transparent-hover text-13 min-w-36 cursor-pointer"
+                        className="flex min-w-36 cursor-pointer items-center gap-2 rounded-sm p-2 text-13 whitespace-nowrap hover:bg-layer-transparent-hover"
                       >
                         <LogOut size={12} className="shrink-0 text-danger-primary" />
                         <div>Sign out</div>

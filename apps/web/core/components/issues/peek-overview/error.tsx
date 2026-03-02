@@ -24,16 +24,16 @@ export function IssuePeekOverviewError(props: TIssuePeekOverviewError) {
   const { isMobile } = usePlatformOS();
 
   return (
-    <div className="w-full h-full overflow-hidden relative flex flex-col">
-      <div className="flex-shrink-0 flex justify-start">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
+      <div className="flex flex-shrink-0 justify-start">
         <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
-          <button onClick={removeRoutePeekId} className="w-5 h-5 m-5">
+          <button onClick={removeRoutePeekId} className="m-5 h-5 w-5">
             <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
           </button>
         </Tooltip>
       </div>
 
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <EmptyState
           image={emptyIssue ?? undefined}
           title="Work item does not exist"

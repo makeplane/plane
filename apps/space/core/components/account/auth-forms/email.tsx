@@ -52,12 +52,12 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
   return (
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
       <div className="space-y-1">
-        <label className="text-13 text-tertiary font-medium" htmlFor="email">
+        <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
         <div
           className={cn(
-            `relative flex items-center rounded-md bg-surface-1 border`,
+            `relative flex items-center rounded-md border bg-surface-1`,
             !isFocused && Boolean(emailError?.email) ? `border-danger-strong` : `border-subtle`
           )}
           onFocus={() => {
@@ -74,7 +74,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-placeholder autofill:bg-danger-subtle border-0 focus:bg-none active:bg-transparent`}
+            className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder autofill:bg-danger-subtle focus:bg-none active:bg-transparent`}
             autoComplete="off"
             autoFocus
             ref={inputRef}
@@ -89,12 +89,12 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
               }}
               tabIndex={-1}
             >
-              <XCircle className="h-10 w-11 px-3 stroke-placeholder hover:cursor-pointer text-11" />
+              <XCircle className="h-10 w-11 stroke-placeholder px-3 text-11 hover:cursor-pointer" />
             </button>
           )}
         </div>
         {emailError?.email && !isFocused && (
-          <p className="flex items-center gap-1 text-11 text-danger-primary px-0.5">
+          <p className="flex items-center gap-1 px-0.5 text-11 text-danger-primary">
             <CircleAlert height={12} width={12} />
             {emailError.email}
           </p>

@@ -114,7 +114,7 @@ export function LabelCreate(props: ILabelCreate) {
                     </Popover.Button>
                     <Popover.Panel className="fixed z-10">
                       <div
-                        className="p-2 max-w-xs sm:px-0"
+                        className="max-w-xs p-2 sm:px-0"
                         ref={setPopperElement}
                         style={styles.popper}
                         {...attributes.popper}
@@ -143,7 +143,7 @@ export function LabelCreate(props: ILabelCreate) {
                 ref={ref}
                 hasError={Boolean(errors.name)}
                 placeholder="Title"
-                className="w-full text-11 px-1.5 py-1"
+                className="w-full px-1.5 py-1 text-11"
                 disabled={isSubmitting}
               />
             )}

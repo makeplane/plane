@@ -114,7 +114,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
 
   if (loader === "loaded" && workspaceStickyIds.length === 0) {
     return (
-      <div className="size-full grid place-items-center">
+      <div className="grid size-full place-items-center">
         {isStickiesPage ? (
           <>
             {searchQuery ? (
