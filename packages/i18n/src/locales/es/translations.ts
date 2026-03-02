@@ -4140,6 +4140,15 @@ si estás seguro de que tu búsqueda es correcta.`,
       },
       tooltip: "Clic para {action}",
     },
+    change_confirmation: {
+      title: "¿Cambiar tipo de elemento de trabajo?",
+      description:
+        "Cambiar el tipo de elemento de trabajo puede resultar en la pérdida de valores de propiedades personalizadas que son específicas del tipo actual. Esta acción no se puede deshacer.",
+      button: {
+        loading: "Cambiando",
+        default: "Cambiar tipo",
+      },
+    },
     empty_state: {
       enable: {
         title: "Habilitar tipos de elementos de trabajo",

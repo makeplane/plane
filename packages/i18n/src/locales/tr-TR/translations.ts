@@ -4090,6 +4090,15 @@ modüller arşivlenebilir.`,
       },
       tooltip: "{action} için tıklayın",
     },
+    change_confirmation: {
+      title: "İş öğesi tipini değiştir?",
+      description:
+        "İş öğesi tipini değiştirmek, mevcut tipe özgü özel özellik değerlerinin kaybına neden olabilir. Bu işlem geri alınamaz.",
+      button: {
+        loading: "Değiştiriliyor",
+        default: "Tipi değiştir",
+      },
+    },
     empty_state: {
       enable: {
         title: "İş Öğesi Tiplerini Etkinleştir",

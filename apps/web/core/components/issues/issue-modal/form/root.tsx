@@ -411,6 +411,7 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
                       disabled={!!data?.sourceIssueId || isTypeSelectDisabled}
                       handleFormChange={handleFormChange}
                       renderChevron
+                      workItemId={data?.id}
                     />
                   )}
                   {projectId && !data?.id && !data?.sourceIssueId && (

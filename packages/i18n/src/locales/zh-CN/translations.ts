@@ -3991,6 +3991,14 @@ export default {
       },
       tooltip: "点击 {action}",
     },
+    change_confirmation: {
+      title: "更改工作项类型？",
+      description: "更改工作项类型可能会导致丢失特定于当前类型的自定义属性值。此操作无法撤销。",
+      button: {
+        loading: "更改中",
+        default: "更改类型",
+      },
+    },
     empty_state: {
       enable: {
         title: "启用工作项类型",

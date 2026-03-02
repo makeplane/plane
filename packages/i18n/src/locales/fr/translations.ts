@@ -4141,6 +4141,15 @@ si vous êtes sûr que votre recherche est correcte.`,
       },
       tooltip: "Cliquer pour {action}",
     },
+    change_confirmation: {
+      title: "Changer le type d'élément de travail ?",
+      description:
+        "Le changement du type d'élément de travail peut entraîner la perte de valeurs de propriétés personnalisées spécifiques au type actuel. Cette action ne peut pas être annulée.",
+      button: {
+        loading: "Changement en cours",
+        default: "Changer le type",
+      },
+    },
     empty_state: {
       enable: {
         title: "Activer les types d'éléments de travail",

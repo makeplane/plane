@@ -4055,6 +4055,15 @@ export default {
       },
       tooltip: "클릭하여 {action}",
     },
+    change_confirmation: {
+      title: "워크 아이템 타입을 변경하시겠습니까?",
+      description:
+        "워크 아이템 타입을 변경하면 현재 타입에 특정한 사용자 정의 속성 값이 손실될 수 있습니다. 이 작업은 취소할 수 없습니다.",
+      button: {
+        loading: "변경 중",
+        default: "타입 변경",
+      },
+    },
     empty_state: {
       enable: {
         title: "워크 아이템 타입 활성화",

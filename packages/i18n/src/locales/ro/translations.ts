@@ -4119,6 +4119,15 @@ văzute aici`,
       },
       tooltip: "Click pentru a {action}",
     },
+    change_confirmation: {
+      title: "Schimbați tipul de element de lucru?",
+      description:
+        "Schimbarea tipului de element de lucru poate duce la pierderea valorilor proprietăților personalizate care sunt specifice tipului curent. Această acțiune nu poate fi anulată.",
+      button: {
+        loading: "Se schimbă",
+        default: "Schimbă tipul",
+      },
+    },
     empty_state: {
       enable: {
         title: "Activează Tipurile de Elemente de Lucru",

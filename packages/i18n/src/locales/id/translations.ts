@@ -4103,6 +4103,15 @@ jika Anda yakin pencarian Anda benar. `,
       },
       tooltip: "Klik untuk {action}",
     },
+    change_confirmation: {
+      title: "Ubah tipe item kerja?",
+      description:
+        "Mengubah tipe item kerja dapat mengakibatkan hilangnya nilai properti kustom yang spesifik untuk tipe saat ini. Tindakan ini tidak dapat dibatalkan.",
+      button: {
+        loading: "Mengubah",
+        default: "Ubah tipe",
+      },
+    },
     empty_state: {
       enable: {
         title: "Aktifkan Tipe Item Kerja",

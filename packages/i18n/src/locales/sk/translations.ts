@@ -4079,6 +4079,15 @@ Vytvorte nový.`,
       },
       tooltip: "Kliknite pre {action}",
     },
+    change_confirmation: {
+      title: "Zmeniť typ pracovnej položky?",
+      description:
+        "Zmena typu pracovnej položky môže viesť k strate hodnôt vlastných vlastností, ktoré sú špecifické pre aktuálny typ. Túto akciu nie je možné vrátiť späť.",
+      button: {
+        loading: "Mení sa",
+        default: "Zmeniť typ",
+      },
+    },
     empty_state: {
       enable: {
         title: "Povoliť Typy pracovných položiek",

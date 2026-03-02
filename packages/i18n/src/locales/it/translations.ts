@@ -4113,6 +4113,15 @@ Crea un nuovo progetto invece`,
       },
       tooltip: "Clicca per {action}",
     },
+    change_confirmation: {
+      title: "Cambiare il tipo di elemento di lavoro?",
+      description:
+        "La modifica del tipo di elemento di lavoro può comportare la perdita di valori di proprietà personalizzate specifiche del tipo corrente. Questa azione non può essere annullata.",
+      button: {
+        loading: "Modifica in corso",
+        default: "Cambia tipo",
+      },
+    },
     empty_state: {
       enable: {
         title: "Abilita Tipi di Elementi di Lavoro",

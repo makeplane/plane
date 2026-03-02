@@ -4089,6 +4089,15 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
       },
       tooltip: "Nhấp để {action}",
     },
+    change_confirmation: {
+      title: "Thay đổi loại mục công việc?",
+      description:
+        "Thay đổi loại mục công việc có thể dẫn đến mất các giá trị thuộc tính tùy chỉnh cụ thể cho loại hiện tại. Hành động này không thể hoàn tác.",
+      button: {
+        loading: "Đang thay đổi",
+        default: "Thay đổi loại",
+      },
+    },
     empty_state: {
       enable: {
         title: "Kích hoạt Loại mục công việc",

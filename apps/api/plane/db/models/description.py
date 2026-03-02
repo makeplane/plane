@@ -10,7 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 from django.db import models
-from django.utils.html import strip_tags
+from plane.utils.html_processor import strip_tags
 from .project import ProjectOptionalBaseModel
 
 

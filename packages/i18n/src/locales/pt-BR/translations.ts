@@ -4125,6 +4125,15 @@ se você tem certeza de que sua pesquisa está correta.`,
       },
       tooltip: "Clique para {action}",
     },
+    change_confirmation: {
+      title: "Alterar tipo de item de trabalho?",
+      description:
+        "Alterar o tipo de item de trabalho pode resultar na perda de valores de propriedades personalizadas que são específicas do tipo atual. Esta ação não pode ser desfeita.",
+      button: {
+        loading: "Alterando",
+        default: "Alterar tipo",
+      },
+    },
     empty_state: {
       enable: {
         title: "Ativar Tipos de Item de Trabalho",

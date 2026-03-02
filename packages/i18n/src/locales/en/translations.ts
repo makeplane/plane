@@ -4429,6 +4429,15 @@ if you are sure your search is right. `,
       },
       tooltip: "Click to {action}",
     },
+    change_confirmation: {
+      title: "Change work item type?",
+      description:
+        "Changing the work item type may result in loss of custom property values that are specific to the current type. This action cannot be undone.",
+      button: {
+        loading: "Changing",
+        default: "Change type",
+      },
+    },
     empty_state: {
       enable: {
         title: "Enable Work item Types",

@@ -77,7 +77,12 @@ class BulkOperationHooks:
             else:
                 # For regular updates, use the current queryset
                 objs = self
-            post_bulk_update.send(sender=self.__class__, model=self.model, objs=objs)
+            post_bulk_update.send(
+                sender=self.model,
+                model=self.model,
+                objs=objs,
+                updated_fields=set(kwargs.keys()),
+            )
         return rows
 
     @transaction.atomic
@@ -96,7 +101,7 @@ class BulkOperationHooks:
 
         objs = super().bulk_create(*args, **kwargs)
 
-        post_bulk_create.send(sender=self.__class__, model=self.model, objs=objs)
+        post_bulk_create.send(sender=self.model, model=self.model, objs=objs)
 
         return objs
 

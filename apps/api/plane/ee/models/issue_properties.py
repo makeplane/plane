@@ -208,6 +208,48 @@ class IssuePropertyValue(ProjectOptionalBaseModel):
     def __str__(self):
         return f"{self.property.display_name}"
 
+    @classmethod
+    def cleanup_orphaned_for_issues(cls, issue_ids, new_type_id):
+        """
+        Delete property values that are not valid for the new issue type.
+
+        This is called when issue type changes (via save() or bulk update).
+        Properties shared between old and new types are preserved.
+
+        Args:
+            issue_ids: List of issue IDs to clean up
+            new_type_id: The new type ID (None if type is being unset)
+        """
+        if not issue_ids:
+            return
+
+        if not new_type_id:
+            # Changed to null type - all property values are orphaned
+            cls.objects.filter(issue_id__in=issue_ids).delete()
+            return
+
+        # Get valid property IDs for the new type
+        valid_property_ids = set(
+            IssueTypeProperty.objects.filter(
+                issue_type_id=new_type_id, deleted_at__isnull=True
+            ).values_list("property_id", flat=True)
+        )
+
+        # Delete values for properties not valid on new type (preserves shared properties)
+        cls.objects.filter(issue_id__in=issue_ids).exclude(
+            property_id__in=valid_property_ids
+        ).delete()
+
+    @classmethod
+    def archive_and_cleanup_orphaned_for_issues(cls, issue_ids, new_type_id, old_type_id=None):
+        """Archive orphaned property values to issue descriptions, then delete them."""
+        if not issue_ids:
+            return
+        from plane.ee.utils.issue_property_archiver import archive_orphaned_property_values_to_description
+
+        archive_orphaned_property_values_to_description(issue_ids, new_type_id, old_type_id)
+        cls.cleanup_orphaned_for_issues(issue_ids, new_type_id)
+
 
 class IssuePropertyActivity(ProjectOptionalBaseModel):
     old_value = models.TextField(blank=True)

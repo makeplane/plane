@@ -4013,6 +4013,14 @@ export default {
       },
       tooltip: "點擊以{action}",
     },
+    change_confirmation: {
+      title: "更改工作項目類型？",
+      description: "更改工作項目類型可能會導致丟失特定於當前類型的自定義屬性值。此操作無法撤銷。",
+      button: {
+        loading: "更改中",
+        default: "更改類型",
+      },
+    },
     empty_state: {
       enable: {
         title: "啟用工作項目類型",

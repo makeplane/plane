@@ -4086,6 +4086,15 @@ export default {
       },
       tooltip: "クリックして{action}",
     },
+    change_confirmation: {
+      title: "作業項目タイプを変更しますか？",
+      description:
+        "作業項目タイプを変更すると、現在のタイプに固有のカスタムプロパティ値が失われる可能性があります。この操作は元に戻せません。",
+      button: {
+        loading: "変更中",
+        default: "タイプを変更",
+      },
+    },
     empty_state: {
       enable: {
         title: "作業項目タイプを有効化",

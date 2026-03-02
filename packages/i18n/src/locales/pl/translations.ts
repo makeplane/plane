@@ -4073,6 +4073,15 @@ Utwórz nowy.`,
       },
       tooltip: "Kliknij, aby {action}",
     },
+    change_confirmation: {
+      title: "Zmień typ elementu pracy?",
+      description:
+        "Zmiana typu elementu pracy może spowodować utratę wartości właściwości niestandardowych specyficznych dla bieżącego typu. Ta akcja nie może zostać cofnięta.",
+      button: {
+        loading: "Zmienianie",
+        default: "Zmień typ",
+      },
+    },
     empty_state: {
       enable: {
         title: "Włącz Typy Elementów Pracy",

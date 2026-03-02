@@ -12,26 +12,29 @@
 # Python import
 from uuid import uuid4
 
+from django import apps
+
 # Django imports
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models, transaction, connection
-from django.utils import timezone
+from django.db import connection, models, transaction
 from django.db.models import Q
-from django import apps
+from django.utils import timezone
+
+from plane.db.mixins import ChangeTrackerMixin
+from plane.db.models.project import ProjectManager
+from plane.db.signals import post_bulk_update
+from plane.utils.exception_logger import log_exception
 
 # Third party imports
-
 # Module imports
 from plane.utils.html_processor import strip_tags
-from plane.db.models.project import ProjectManager
-from plane.utils.exception_logger import log_exception
-from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
+
 from .description import Description
-from plane.db.mixins import ChangeTrackerMixin
+from .project import ProjectBaseModel
 from .state import StateGroup
 
 # ee imports
@@ -128,7 +131,9 @@ class IssueAndEpicsManager(ProjectManager):
         )
 
 
-class Issue(ProjectBaseModel):
+class Issue(ChangeTrackerMixin, ProjectBaseModel):
+    TRACKED_FIELDS = ["type_id", "state_id"]
+
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
         ("high", "High"),
@@ -214,70 +219,125 @@ class Issue(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
-        if self.state is None:
-            try:
-                from plane.db.models import State
-
-                default_state = State.objects.filter(
-                    ~models.Q(is_triage=True), project=self.project, default=True
-                ).first()
-                if default_state is None:
-                    random_state = State.objects.filter(~models.Q(is_triage=True), project=self.project).first()
-                    self.state = random_state
-                else:
-                    self.state = default_state
-            except ImportError:
-                pass
-        else:
-            try:
-                from plane.db.models import State
-
-                if self.state.group == "completed":
-                    self.completed_at = timezone.now()
-                else:
-                    self.completed_at = None
-            except ImportError:
-                pass
+        self._ensure_default_state()
+        kwargs = self._sync_completed_at(kwargs)
 
         if self._state.adding:
             with transaction.atomic():
-                # Create a lock for this specific project using a transaction-level advisory lock
-                # This ensures only one transaction per project can execute this code at a time
-                # The lock is automatically released when the transaction ends
-                lock_key = convert_uuid_to_integer(self.project.id)
-
-                with connection.cursor() as cursor:
-                    # Get an exclusive transaction-level lock using the project ID as the lock key
-                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
-
-                # Get the last sequence for the project
-                last_sequence = IssueSequence.objects.filter(project=self.project).aggregate(
-                    largest=models.Max("sequence")
-                )["largest"]
-                self.sequence_id = last_sequence + 1 if last_sequence else 1
-                # Strip the html tags using html parser
-                self.description_stripped = (
-                    None
-                    if (self.description_html == "" or self.description_html is None)
-                    else strip_tags(self.description_html)
-                )
-                largest_sort_order = Issue.objects.filter(project=self.project, state=self.state).aggregate(
-                    largest=models.Max("sort_order")
-                )["largest"]
-                if largest_sort_order is not None:
-                    self.sort_order = largest_sort_order + 10000
-
+                self._assign_sequence_and_sort_order()
+                self._set_description_stripped()
                 super(Issue, self).save(*args, **kwargs)
-
-                IssueSequence.objects.create(issue=self, sequence=self.sequence_id, project=self.project)
+                IssueSequence.objects.create(
+                    issue=self, sequence=self.sequence_id, project=self.project
+                )
         else:
-            # Strip the html tags using html parser
-            self.description_stripped = (
-                None
-                if (self.description_html == "" or self.description_html is None)
-                else strip_tags(self.description_html)
+            old_type_id = (
+                self.old_values.get("type_id")
+                if self.has_changed("type_id")
+                else None
             )
-            super(Issue, self).save(*args, **kwargs)
+            if old_type_id:
+                kwargs = self._archive_type_change_properties(old_type_id, kwargs)
+            self._set_description_stripped()
+            with transaction.atomic():
+                super(Issue, self).save(*args, **kwargs)
+                self._cleanup_orphaned_property_values(old_type_id)
+
+    def _ensure_default_state(self):
+        """Assign a default state when none is set."""
+        if self.state is not None:
+            return
+        try:
+            from plane.db.models import State
+
+            default_state = State.objects.filter(
+                ~models.Q(is_triage=True), project=self.project, default=True
+            ).first()
+            self.state = default_state or State.objects.filter(
+                ~models.Q(is_triage=True), project=self.project
+            ).first()
+        except ImportError:
+            pass
+
+    def _sync_completed_at(self, kwargs):
+        """Update completed_at when state changes. Returns kwargs."""
+        if not self.state:
+            return kwargs
+        if not self._state.adding and not self.has_changed("state_id"):
+            return kwargs
+
+        if self.state.group == "completed":
+            self.completed_at = timezone.now()
+        else:
+            self.completed_at = None
+
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = list(set(update_fields) | {"completed_at"})
+        return kwargs
+
+    def _set_description_stripped(self):
+        """Recompute description_stripped from description_html."""
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+
+    def _assign_sequence_and_sort_order(self):
+        """Acquire advisory lock and assign sequence_id + sort_order for new issues."""
+        lock_key = convert_uuid_to_integer(self.project.id)
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+
+        last_sequence = IssueSequence.objects.filter(project=self.project).aggregate(
+            largest=models.Max("sequence")
+        )["largest"]
+        self.sequence_id = last_sequence + 1 if last_sequence else 1
+
+        largest_sort_order = Issue.objects.filter(project=self.project, state=self.state).aggregate(
+            largest=models.Max("sort_order")
+        )["largest"]
+        if largest_sort_order is not None:
+            self.sort_order = largest_sort_order + 10000
+
+    def _archive_type_change_properties(self, old_type_id, kwargs):
+        """Append archived property HTML to description before save.
+
+        Returns kwargs (possibly with extended update_fields).
+        """
+        from plane.ee.utils.issue_property_archiver import compute_archive_html_for_issue
+
+        archive_html = compute_archive_html_for_issue(self.id, self.type_id, old_type_id)
+        if not archive_html:
+            return kwargs
+
+        current_html = self.description_html or ""
+        if current_html.strip() in ("", "<p></p>"):
+            self.description_html = archive_html
+        else:
+            self.description_html = current_html + archive_html
+
+        # Extend update_fields if caller provided them
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = list(
+                set(update_fields) | {"description_html", "description_stripped"}
+            )
+        return kwargs
+
+    def _cleanup_orphaned_property_values(self, old_type_id):
+        """Delete orphaned property values when issue type changes.
+
+        Archiving is handled before save() by compute_archive_html_for_issue.
+        This method only performs the deletion step.
+        """
+        if not old_type_id:
+            return
+
+        from plane.ee.models import IssuePropertyValue
+
+        IssuePropertyValue.cleanup_orphaned_for_issues([self.id], self.type_id)
 
     def __str__(self):
         """Return name of the issue"""
@@ -904,3 +964,30 @@ class IssueDescriptionVersion(ProjectBaseModel):
         except Exception as e:
             log_exception(e)
             return False
+
+
+# Signal handler for cleaning up orphaned property values on bulk update
+def _handle_issue_type_change_on_bulk_update(sender, model, objs, updated_fields=None, **kwargs):
+    """Clean up orphaned property values when issue type changes via bulk update."""
+    if updated_fields and "type_id" not in updated_fields:
+        return
+
+    from plane.ee.models import IssuePropertyValue
+
+    # Run read + cleanup in a single atomic block to reduce race windows.
+    # Note: this does not prevent concurrent updates from other transactions,
+    # but it ensures this handler sees a consistent view on this connection.
+    with transaction.atomic():
+        # Convert queryset to list to avoid multiple DB queries
+        objs_list = list(objs)
+        if not objs_list:
+            return
+
+        # All issues have the SAME new type (bulk update sets one value)
+        new_type_id = objs_list[0].type_id
+        issue_ids = [obj.id for obj in objs_list]
+
+        IssuePropertyValue.archive_and_cleanup_orphaned_for_issues(issue_ids, new_type_id)
+
+
+post_bulk_update.connect(_handle_issue_type_change_on_bulk_update, sender=Issue)

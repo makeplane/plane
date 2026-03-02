@@ -4105,6 +4105,15 @@ Erstellen Sie ein neues.`,
       },
       tooltip: "Klicken zum {action}",
     },
+    change_confirmation: {
+      title: "Arbeitsaufgabentyp ändern?",
+      description:
+        "Das Ändern des Arbeitsaufgabentyps kann zum Verlust von benutzerdefinierten Eigenschaftswerten führen, die spezifisch für den aktuellen Typ sind. Diese Aktion kann nicht rückgängig gemacht werden.",
+      button: {
+        loading: "Wird geändert",
+        default: "Typ ändern",
+      },
+    },
     empty_state: {
       enable: {
         title: "Arbeitsaufgabentypen aktivieren",
