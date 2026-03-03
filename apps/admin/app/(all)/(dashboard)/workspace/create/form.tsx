@@ -152,9 +152,15 @@ export function WorkspaceCreateForm() {
               )}
             />
           </div>
-          {slugError && <p className="text-13 text-danger-primary">{t("workspace_creation.errors.validation.url_already_taken_alt")}</p>}
+          {slugError && (
+            <p className="text-13 text-danger-primary">
+              {t("workspace_creation.errors.validation.url_already_taken_alt")}
+            </p>
+          )}
           {invalidSlug && (
-            <p className="text-13 text-danger-primary">{t("workspace_creation.errors.validation.url_alphanumeric_alt")}</p>
+            <p className="text-13 text-danger-primary">
+              {t("workspace_creation.errors.validation.url_alphanumeric_alt")}
+            </p>
           )}
           {errors.slug && <span className="text-11 text-danger-primary">{errors.slug.message}</span>}
         </div>
@@ -171,7 +177,9 @@ export function WorkspaceCreateForm() {
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-placeholder">{t("workspace_creation.form.organization_size.placeholder")}</span>
+                      <span className="text-placeholder">
+                        {t("workspace_creation.form.organization_size.placeholder")}
+                      </span>
                     )
                   }
                   buttonClassName="!border-[0.5px] !border-subtle !shadow-none"

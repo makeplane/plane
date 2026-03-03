@@ -168,7 +168,9 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                           {value} {watch("period").toLowerCase()}
                         </span>
                       ) : (
-                        <span className="text-body-xs-medium text-placeholder">{t("notification.snooze.select_time")}</span>
+                        <span className="text-body-xs-medium text-placeholder">
+                          {t("notification.snooze.select_time")}
+                        </span>
                       )}
                     </div>
                   }

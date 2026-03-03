@@ -276,7 +276,9 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                         <CircleCheck className={cn("size-4 text-placeholder", isSelected && "text-secondary")} />
 
                         <span className="font-medium">
-                          {t(`workspace_creation.form.organization_sizes.${size === "Just myself" ? "just_myself" : size}`)}
+                          {t(
+                            `workspace_creation.form.organization_sizes.${size === "Just myself" ? "just_myself" : size}`
+                          )}
                         </span>
                       </button>
                     );

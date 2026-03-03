@@ -121,8 +121,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
         <div className="text-secondary">
           <p className="break-words text-13 ">
             {t("project_modals.leave.enter_project_name")}
-            <span className="font-medium text-primary"> {project?.name}</span>
-            :
+            <span className="font-medium text-primary"> {project?.name}</span>:
           </p>
           <Controller
             control={control}

@@ -17,6 +17,10 @@ const usePeekOverviewOutsideClickDetector = (
     (event: MouseEvent) => {
       if (!(event.target instanceof HTMLElement)) return;
       if (ref.current && !ref.current.contains(event.target)) {
+        // Ignore clicks happening inside any modal dialog mounted above the peek.
+        if (event.target.closest('[role="dialog"], [aria-modal="true"]')) {
+          return;
+        }
         // check for the closest element with attribute name data-prevent-outside-click
         const preventOutsideClickElement = event.target.closest("[data-prevent-outside-click]");
         // if the closest element with attribute name data-prevent-outside-click is found

@@ -216,20 +216,20 @@ export function ExportPageModal(props: Props) {
                 control={control}
                 name="export_format"
                 render={({ field: { onChange, value } }) => (
-                      <CustomSelect
-                        label={EXPORT_FORMATS.find((format) => format.key === value)?.label}
-                        buttonClassName="border-none"
-                        value={value}
-                        onChange={(val: TExportFormats) => onChange(val)}
-                        className="flex-shrink-0"
-                        placement="bottom-end"
-                      >
-                        {EXPORT_FORMATS.map((format) => (
-                          <CustomSelect.Option key={format.key} value={format.key}>
-                            {format.label}
-                          </CustomSelect.Option>
-                        ))}
-                      </CustomSelect>
+                  <CustomSelect
+                    label={EXPORT_FORMATS.find((format) => format.key === value)?.label}
+                    buttonClassName="border-none"
+                    value={value}
+                    onChange={(val: TExportFormats) => onChange(val)}
+                    className="flex-shrink-0"
+                    placement="bottom-end"
+                  >
+                    {EXPORT_FORMATS.map((format) => (
+                      <CustomSelect.Option key={format.key} value={format.key}>
+                        {format.label}
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
                 )}
               />
             </div>
@@ -239,13 +239,11 @@ export function ExportPageModal(props: Props) {
                 control={control}
                 name="content_variety"
                 render={({ field: { onChange, value } }) => (
-                      <CustomSelect
-                        label={t(
-                          CONTENT_VARIETY.find((variety) => variety.key === value)?.labelKey ?? ""
-                        )}
-                        buttonClassName="border-none"
-                        value={value}
-                        onChange={(val: TContentVariety) => onChange(val)}
+                  <CustomSelect
+                    label={t(CONTENT_VARIETY.find((variety) => variety.key === value)?.labelKey ?? "")}
+                    buttonClassName="border-none"
+                    value={value}
+                    onChange={(val: TContentVariety) => onChange(val)}
                     className="flex-shrink-0"
                     placement="bottom-end"
                   >
@@ -265,20 +263,20 @@ export function ExportPageModal(props: Props) {
                   control={control}
                   name="page_format"
                   render={({ field: { onChange, value } }) => (
-                      <CustomSelect
-                        label={PAGE_FORMATS.find((format) => format.key === value)?.label}
-                        buttonClassName="border-none"
-                        value={value}
-                        onChange={(val: TPageFormats) => onChange(val)}
-                        className="flex-shrink-0"
-                        placement="bottom-end"
-                      >
-                        {PAGE_FORMATS.map((format) => (
-                          <CustomSelect.Option key={format.key.toString()} value={format.key}>
-                            {format.label}
-                          </CustomSelect.Option>
-                        ))}
-                      </CustomSelect>
+                    <CustomSelect
+                      label={PAGE_FORMATS.find((format) => format.key === value)?.label}
+                      buttonClassName="border-none"
+                      value={value}
+                      onChange={(val: TPageFormats) => onChange(val)}
+                      className="flex-shrink-0"
+                      placement="bottom-end"
+                    >
+                      {PAGE_FORMATS.map((format) => (
+                        <CustomSelect.Option key={format.key.toString()} value={format.key}>
+                          {format.label}
+                        </CustomSelect.Option>
+                      ))}
+                    </CustomSelect>
                   )}
                 />
               </div>

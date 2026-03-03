@@ -96,8 +96,7 @@ export function PowerKModalSearchMenu(props: Props) {
               {'"'}
               {searchTerm}
               {'"'}
-            </span>
-            {" "}
+            </span>{" "}
             {isWorkspaceLevel ? t("common.in_workspace") : t("common.in_project")}:
           </h5>
         </div>

@@ -25,7 +25,9 @@ export function WebhooksEmptyState(props: Props) {
     >
       <div className="flex w-full flex-col items-center text-center">
         <img src={EmptyWebhook} className="w-52 sm:w-60 object-cover" alt="empty" />
-        <h6 className="mb-3 mt-6 text-18 font-semibold sm:mt-8">{t("workspace_settings.empty_state.webhooks.title")}</h6>
+        <h6 className="mb-3 mt-6 text-18 font-semibold sm:mt-8">
+          {t("workspace_settings.empty_state.webhooks.title")}
+        </h6>
         <p className="mb-7 text-tertiary sm:mb-8">{t("workspace_settings.empty_state.webhooks.description")}</p>
         <Button className="flex items-center gap-1.5" onClick={onClick}>
           {t("workspace_settings.webhooks.add_webhook")}

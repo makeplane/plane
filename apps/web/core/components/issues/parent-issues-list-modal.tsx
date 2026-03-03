@@ -122,8 +122,7 @@ export function ParentIssuesListModal({
                 {'"'}
                 {searchTerm}
                 {'"'}
-              </span>
-              {" "}
+              </span>{" "}
               {t("common.in_project")}:
             </h5>
           )}
