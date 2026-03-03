@@ -14,6 +14,7 @@ import { cn } from "@plane/utils";
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useEffect } from "react";
 
 type Props = {
   layouts: EIssueLayoutTypes[];
@@ -25,9 +26,36 @@ export function LayoutSelection(props: Props) {
   const { layouts, onChange, selectedLayout } = props;
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
+
+  // Read layout from URL once on mount and apply if valid
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlLayout = params.get("layout") as EIssueLayoutTypes | null;
+      if (urlLayout && urlLayout !== selectedLayout && layouts.includes(urlLayout)) {
+        onChange(urlLayout);
+      }
+    } catch (e: unknown) {
+      const err = e instanceof Error ? e : new Error(String(e));
+      console.warn("Failed to read layout from URL", err);
+    }
+  }, [layouts, onChange, selectedLayout]);
   const handleOnChange = (layoutKey: EIssueLayoutTypes) => {
     if (selectedLayout !== layoutKey) {
       onChange(layoutKey);
+      if (typeof window !== "undefined") {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          params.set("layout", layoutKey);
+          const newQuery = params.toString();
+          const newUrl = newQuery ? `${window.location.pathname}?${newQuery}` : window.location.pathname;
+          window.history.replaceState({}, "", newUrl);
+        } catch (e: unknown) {
+          const err = e instanceof Error ? e : new Error(String(e));
+          console.warn("Layout URL parsing failed (reported)", err);
+        }
+      }
     }
   };
 
