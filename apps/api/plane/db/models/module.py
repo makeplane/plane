@@ -16,7 +16,7 @@ from django.db.models import Q
 
 # Module imports
 from .project import ProjectBaseModel
-from plane.db.mixins import ChangeTrackerMixin
+from plane.db.mixins import ChangeTrackerMixin, FiltersMixin
 
 
 def get_default_filters():
@@ -208,7 +208,7 @@ class ModuleLink(ChangeTrackerMixin, ProjectBaseModel):
         return f"{self.module.name} {self.url}"
 
 
-class ModuleUserProperties(ProjectBaseModel):
+class ModuleUserProperties(ProjectBaseModel, FiltersMixin):
     module = models.ForeignKey("db.Module", on_delete=models.CASCADE, related_name="module_user_properties")
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

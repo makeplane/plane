@@ -15,6 +15,7 @@ from django.conf import settings
 
 # Module imports
 from plane.db.models import ProjectBaseModel, Issue, BaseModel, Page
+from plane.db.mixins import FiltersMixin
 
 
 def get_default_properties():
@@ -314,7 +315,7 @@ class UpdateReaction(ProjectBaseModel):
         return f"{self.actor.email} <{self.reaction}> <{self.entity_type}>"
 
 
-class EpicUserProperties(ProjectBaseModel):
+class EpicUserProperties(ProjectBaseModel, FiltersMixin):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

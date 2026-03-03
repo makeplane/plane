@@ -25,7 +25,7 @@ from django.db.models import Q
 from .base import BaseModel
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.utils.color import get_random_color
-from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
+from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager, FiltersMixin
 
 
 class WorkspaceRole(models.IntegerChoices):
@@ -394,7 +394,7 @@ class WorkspaceTheme(BaseModel):
         ordering = ("-created_at",)
 
 
-class WorkspaceUserProperties(BaseModel):
+class WorkspaceUserProperties(BaseModel, FiltersMixin):
     class NavigationControlPreference(models.TextChoices):
         ACCORDION = "ACCORDION", "Accordion"
         TABBED = "TABBED", "Tabbed"

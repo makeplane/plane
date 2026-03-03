@@ -29,6 +29,7 @@ class WorkspaceFeature(BaseModel):
     is_customer_enabled = models.BooleanField(default=False)
     is_wiki_enabled = models.BooleanField(default=True)
     is_pi_enabled = models.BooleanField(default=True)
+    is_release_enabled = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Workspace Feature"

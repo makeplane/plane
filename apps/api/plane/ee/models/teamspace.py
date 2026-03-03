@@ -15,6 +15,7 @@ from django.conf import settings
 
 # Module imports
 from plane.db.models import BaseModel
+from plane.db.mixins import FiltersMixin
 
 
 def get_default_filters():
@@ -296,7 +297,7 @@ class TeamspaceCommentReaction(BaseModel):
         return f"{self.team_space.name} {self.actor.email}"
 
 
-class TeamspaceUserProperty(BaseModel):
+class TeamspaceUserProperty(BaseModel, FiltersMixin):
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,

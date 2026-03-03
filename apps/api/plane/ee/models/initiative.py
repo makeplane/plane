@@ -15,7 +15,7 @@ from django.conf import settings
 
 # Module imports
 from plane.db.models import BaseModel
-from plane.db.mixins import ChangeTrackerMixin
+from plane.db.mixins import ChangeTrackerMixin, FiltersMixin
 from plane.utils.html_processor import strip_tags
 
 
@@ -335,7 +335,7 @@ class InitiativeActivity(BaseModel):
         return str(self.initiative)
 
 
-class InitiativeUserProperty(BaseModel):
+class InitiativeUserProperty(BaseModel, FiltersMixin):
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
