@@ -137,6 +137,20 @@ class SwingSSOSignInEndpoint(View):
                 params=params,
             )
             return HttpResponseRedirect(url)
+        except Exception:
+            # Catch unexpected errors — redirect with generic auth failure
+            cache.set(rate_key, attempts + 1, RATE_WINDOW)
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["SWING_SSO_AUTHENTICATION_FAILED"],
+                error_message="SWING_SSO_AUTHENTICATION_FAILED",
+            )
+            params = exc.get_error_dict()
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
+            )
+            return HttpResponseRedirect(url)
 
 
 class SwingSSOTestEndpoint(BaseAPIView):
