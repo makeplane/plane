@@ -14,11 +14,11 @@
 import { findParentNode } from "@tiptap/core";
 import type { Editor } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import { NodeSelection } from "@tiptap/pm/state";
 import type { EditorState, Selection, Transaction } from "@tiptap/pm/state";
 import { CellSelection, TableMap } from "@tiptap/pm/tables";
 import type { Rect } from "@tiptap/pm/tables";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
 
 /**
  * @description Check if the selection is a cell selection
@@ -66,8 +66,12 @@ export type TableNodeLocation = {
  * @param {Selection} selection - The selection.
  * @returns {TableNodeLocation | undefined} The table node location.
  */
-export const findTable = (selection: Selection): TableNodeLocation | undefined =>
-  findParentNode((node) => node.type.spec.tableRole === "table")(selection);
+export const findTable = (selection: Selection): TableNodeLocation | undefined => {
+  if (selection instanceof NodeSelection && selection.node.type.spec.tableRole === "table") {
+    return { pos: selection.from, start: selection.from + 1, node: selection.node };
+  }
+  return findParentNode((node) => node.type.spec.tableRole === "table")(selection);
+};
 
 /**
  * @description Check if the selection has table related changes.
