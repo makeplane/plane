@@ -34,16 +34,20 @@
     "storybook-static/**"
   ],
   "rules": {
+    "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "unicorn/filename-case": "off",
     "unicorn/no-null": "off",
     "unicorn/prevent-abbreviations": "off",
-    "no-unused-vars": ["warn", {
-      "argsIgnorePattern": "^_",
-      "varsIgnorePattern": "^_",
-      "caughtErrorsIgnorePattern": "^_",
-      "destructuredArrayIgnorePattern": "^_",
-      "ignoreRestSiblings": true
-    }]
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ]
   }
 }
