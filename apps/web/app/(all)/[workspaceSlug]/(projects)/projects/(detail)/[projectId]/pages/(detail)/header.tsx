@@ -53,7 +53,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
         value: _page.id,
         query: _page.name,
         content: (
-          <div className="flex gap-2 items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={PageIcon} />
             <PageAccessIcon {..._page} />
           </div>

@@ -60,7 +60,7 @@ export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssu
   // loader
   if (loader === "init-loading")
     return (
-      <div className="relative flex w-full h-full flex-col">
+      <div className="relative flex h-full w-full flex-col">
         <InboxLayoutLoader />
       </div>
     );
@@ -68,7 +68,7 @@ export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssu
   // error
   if (error && error?.status === "init-error")
     return (
-      <div className="relative w-full h-full flex flex-col gap-3 justify-center items-center">
+      <div className="relative flex h-full w-full flex-col items-center justify-center gap-3">
         <IntakeIcon className="size-[60px]" strokeWidth={1.5} />
         <div className="text-secondary">{error?.message}</div>
       </div>
@@ -77,17 +77,17 @@ export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssu
   return (
     <>
       {!inboxIssueId && (
-        <div className="flex lg:hidden items-center px-4 w-full h-12 border-b border-subtle">
+        <div className="flex h-12 w-full items-center border-b border-subtle px-4 lg:hidden">
           <PanelLeft
             onClick={() => setIsMobileSidebar(!isMobileSidebar)}
-            className={cn("w-4 h-4 ", isMobileSidebar ? "text-accent-primary" : " text-secondary")}
+            className={cn("h-4 w-4", isMobileSidebar ? "text-accent-primary" : "text-secondary")}
           />
         </div>
       )}
-      <div className="w-full h-full flex overflow-hidden bg-surface-1">
+      <div className="flex h-full w-full overflow-hidden bg-surface-1">
         <div
           className={cn(
-            "absolute z-10 top-[50px] lg:!top-0 lg:!relative bg-surface-1 flex-shrink-0 w-full lg:w-2/6 bottom-0 transition-all",
+            "absolute top-[50px] bottom-0 z-10 w-full flex-shrink-0 bg-surface-1 transition-all lg:!relative lg:!top-0 lg:w-2/6",
             isMobileSidebar ? "translate-x-0" : "-translate-x-full lg:!translate-x-0"
           )}
         >

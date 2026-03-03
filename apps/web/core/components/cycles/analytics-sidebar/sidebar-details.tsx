@@ -67,16 +67,16 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
         ? `0 ${t("common.work_item")}`
         : `${cycleDetails?.completed_estimate_points}/${cycleDetails?.total_estimate_points}`;
   return (
-    <div className="flex flex-col gap-5 w-full">
+    <div className="flex w-full flex-col gap-5">
       {cycleDetails?.description && (
         <TextArea
-          className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-13 leading-5 text-secondary"
+          className="ring-none !m-0 max-h-max w-full resize-none !border-0 bg-transparent !p-0 text-13 leading-5 text-secondary outline-none"
           value={cycleDetails.description}
           disabled
         />
       )}
 
-      <div className="flex flex-col gap-5 pb-6 pt-2.5">
+      <div className="flex flex-col gap-5 pt-2.5 pb-6">
         <div className="flex items-center justify-start gap-1">
           <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
             <SquareUser className="h-4 w-4" />

@@ -40,7 +40,7 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
     <Button variant="tertiary" size="sm" key={labelId} onClick={handleLabel} disabled={disabled}>
       <LabelFilledIcon className="size-3" color={label.color ?? "#000000"} />
       <span className="text-body-xs-regular">{label.name}</span>
-      {!disabled && <CloseIcon className="transition-all h-2.5 w-2.5 group-hover:text-danger-primary" />}
+      {!disabled && <CloseIcon className="h-2.5 w-2.5 transition-all group-hover:text-danger-primary" />}
     </Button>
   );
 });

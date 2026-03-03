@@ -25,7 +25,7 @@ export function Table<T>(props: TTableData<T>) {
   } = props;
 
   return (
-    <table className={cn("table-auto w-full overflow-hidden whitespace-nowrap", tableClassName)}>
+    <table className={cn("w-full table-auto overflow-hidden whitespace-nowrap", tableClassName)}>
       <thead className={cn("divide-y divide-subtle", tHeadClassName)}>
         <tr className={cn("divide-x divide-subtle text-13 text-primary", tHeadTrClassName)}>
           {columns.map((column) => (

@@ -38,7 +38,7 @@ export function IssueBlockPriority({
     <Tooltip tooltipHeading="Priority" tooltipContent={t(priority_detail?.titleTranslationKey || "")}>
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm text-11 px-2 py-0.5",
+          "flex h-full items-center gap-1.5 rounded-sm border-[0.5px] px-2 py-0.5 text-11",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden

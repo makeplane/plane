@@ -16,7 +16,7 @@ export const SettingsContentLayout = observer(function SettingsContentLayout({
   const ref = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="w-full h-full min-h-full overflow-y-scroll " ref={ref}>
+    <div className="h-full min-h-full w-full overflow-y-scroll" ref={ref}>
       {children}
     </div>
   );

@@ -28,7 +28,7 @@ export const CalendarWeekHeader = observer(function CalendarWeekHeader(props: Pr
 
   return (
     <div
-      className={`relative sticky top-0 z-[1] grid md:divide-x-[0.5px] divide-subtle-1 text-13 font-medium ${
+      className={`relative sticky top-0 z-[1] grid divide-subtle-1 text-13 font-medium md:divide-x-[0.5px] ${
         showWeekends ? "grid-cols-7" : "grid-cols-5"
       }`}
     >
@@ -40,7 +40,7 @@ export const CalendarWeekHeader = observer(function CalendarWeekHeader(props: Pr
           return null;
 
         return (
-          <div key={day.shortTitle} className="flex h-11 items-center justify-center md:justify-end bg-layer-1 px-4">
+          <div key={day.shortTitle} className="flex h-11 items-center justify-center bg-layer-1 px-4 md:justify-end">
             {day.shortTitle}
           </div>
         );

@@ -10,10 +10,6 @@ import type { IModule, ILinkDetails, ModuleLink, TIssuesResponse } from "@plane/
 import { APIService } from "../api.service";
 
 export class ModuleService extends APIService {
-  constructor(baseURL: string) {
-    super(baseURL);
-  }
-
   async workspaceModulesList(workspaceSlug: string): Promise<IModule[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/modules/`)
       .then((response) => response?.data)

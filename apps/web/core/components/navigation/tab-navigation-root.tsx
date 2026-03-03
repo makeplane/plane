@@ -171,8 +171,8 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
       />
 
       {/* container for the tab navigation */}
-      <div className="flex items-center gap-3 overflow-hidden size-full">
-        <div className="flex items-center gap-2 shrink-0">
+      <div className="flex size-full items-center gap-3 overflow-hidden">
+        <div className="flex shrink-0 items-center gap-2">
           <ProjectHeader workspaceSlug={workspaceSlug} projectId={projectId} />
           <div className="shrink-0">
             <ProjectActionsMenu
@@ -187,9 +187,9 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
           </div>
         </div>
 
-        <div className="shrink-0 h-5 w-1 border-l border-subtle" />
+        <div className="h-5 w-1 shrink-0 border-l border-subtle" />
 
-        <div ref={containerRef} className="flex items-center h-full flex-1 min-w-0 overflow-hidden">
+        <div ref={containerRef} className="flex h-full min-w-0 flex-1 items-center overflow-hidden">
           <TabNavigationList className="h-full">
             {/* Render visible tab items */}
             {visibleItems.map((item) => {
@@ -224,7 +224,7 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
           </TabNavigationList>
 
           {hasOverflow && (
-            <div className="absolute opacity-0 pointer-events-none -z-10">
+            <div className="pointer-events-none absolute -z-10 opacity-0">
               {visibleNavigationItems.map((item) => {
                 const itemIsActive = isActive(item);
                 const originalIndex = allNavigationItems.indexOf(item);

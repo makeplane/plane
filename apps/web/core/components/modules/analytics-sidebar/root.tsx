@@ -183,7 +183,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         updateLink={handleUpdateLink}
       />
       <>
-        <div className={`sticky z-10 top-0 flex items-center justify-between bg-surface-1 pb-5 pt-5`}>
+        <div className={`sticky top-0 z-10 flex items-center justify-between bg-surface-1 pt-5 pb-5`}>
           <div>
             <button
               className="flex h-5 w-5 items-center justify-center rounded-full bg-layer-3"
@@ -232,18 +232,18 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               )}
             />
           </div>
-          <h4 className="w-full break-words text-18 font-semibold text-primary">{moduleDetails.name}</h4>
+          <h4 className="w-full text-18 font-semibold break-words text-primary">{moduleDetails.name}</h4>
         </div>
 
         {moduleDetails.description && (
           <TextArea
-            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-13 leading-5 text-secondary"
+            className="ring-none !m-0 max-h-max w-full resize-none !border-0 bg-transparent !p-0 text-13 leading-5 text-secondary outline-none"
             value={moduleDetails.description}
             disabled
           />
         )}
 
-        <div className="flex flex-col gap-5 pb-6 pt-2.5">
+        <div className="flex flex-col gap-5 pt-2.5 pb-6">
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <StartDatePropertyIcon className="h-4 w-4" />
@@ -376,7 +376,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
             {/* Accessing link outside the disclosure as mobx is not  considering the children inside Disclosure as part of the component hence not observing their state change*/}
             <Disclosure defaultOpen={!!moduleDetails?.link_module?.length}>
               {({ open }) => (
-                <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
+                <div className={`relative flex h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                   <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
                     <div className="flex items-center justify-start gap-2 text-13">
                       <span className="font-medium text-secondary">{t("common.links")}</span>

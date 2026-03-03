@@ -55,7 +55,7 @@ function AccordionItem({ value, disabled, className = "", children }: AccordionI
 
 function AccordionTrigger({
   className = "",
-  icon = <PlusIcon aria-hidden="true" className="transition-all ease-out  group-data-[panel-open]:rotate-45" />,
+  icon = <PlusIcon aria-hidden="true" className="transition-all ease-out group-data-[panel-open]:rotate-45" />,
   iconClassName = "",
   children,
   asChild = false,

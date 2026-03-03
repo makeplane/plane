@@ -255,7 +255,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
             icon={PanelRight}
             onClick={toggleSidebar}
             className={cn({
-              "text-accent-primary bg-accent-subtle": !isSidebarCollapsed,
+              "bg-accent-subtle text-accent-primary": !isSidebarCollapsed,
             })}
           />
           {moduleId && (

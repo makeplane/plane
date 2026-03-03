@@ -92,14 +92,14 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Listbox.Options className="absolute left-0 z-10 mt-1 min-w-[12rem] origin-top-left overflow-y-auto whitespace-nowrap rounded-md border border-strong bg-surface-2 text-11 shadow-lg focus:outline-none">
+              <Listbox.Options className="shadow-lg absolute left-0 z-10 mt-1 min-w-[12rem] origin-top-left overflow-y-auto rounded-md border border-strong bg-surface-2 text-11 whitespace-nowrap focus:outline-none">
                 <div className="space-y-1 p-2">
                   {PEEK_MODES.map((mode) => (
                     <Listbox.Option
                       key={mode.key}
                       value={mode.key}
                       className={({ active, selected }) =>
-                        `cursor-pointer select-none truncate rounded-sm px-1 py-1.5 ${
+                        `cursor-pointer truncate rounded-sm px-1 py-1.5 select-none ${
                           active ? "bg-layer-transparent-hover" : ""
                         } ${selected ? "text-primary" : "text-secondary"}`
                       }
@@ -119,7 +119,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
           <button
             type="button"
             onClick={handleCopyLink}
-            className="shrink-0 focus:outline-none text-tertiary hover:text-secondary"
+            className="shrink-0 text-tertiary hover:text-secondary focus:outline-none"
             tabIndex={1}
           >
             <LinkIcon className="h-4 w-4 -rotate-45" />

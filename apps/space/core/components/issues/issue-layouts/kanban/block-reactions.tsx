@@ -26,12 +26,12 @@ export const BlockReactions = observer(function BlockReactions(props: Props) {
   if (!canVote && !canReact) return <></>;
 
   return (
-    <div className="flex flex-wrap border-t-[1px] outline-transparent w-full border-t-subtle-1 bg-surface-2 rounded-b-lg">
-      <div className="py-2 px-3 flex flex-wrap items-center gap-2">
+    <div className="flex w-full flex-wrap rounded-b-lg border-t-[1px] border-t-subtle-1 bg-surface-2 outline-transparent">
+      <div className="flex flex-wrap items-center gap-2 px-3 py-2">
         {canVote && (
           <div
             className={cn(`flex items-center gap-2 pr-1`, {
-              "after:h-6 after:ml-1 after:w-[1px] after:bg-layer-3": canReact,
+              "after:ml-1 after:h-6 after:w-[1px] after:bg-layer-3": canReact,
             })}
           >
             <IssueVotes anchor={anchor.toString()} issueIdFromProps={issueId} size="sm" />

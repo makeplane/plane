@@ -33,12 +33,12 @@ function ProjectAttributes(props: Props) {
           const currentNetwork = NETWORK_CHOICES.find((n) => n.key === value);
 
           return (
-            <div className="flex-shrink-0 h-7" tabIndex={getIndex("network")}>
+            <div className="h-7 flex-shrink-0" tabIndex={getIndex("network")}>
               <CustomSelect
                 value={value}
                 onChange={onChange}
                 label={
-                  <div className="flex items-center gap-1 h-full">
+                  <div className="flex h-full items-center gap-1">
                     {currentNetwork ? (
                       <>
                         <ProjectNetworkIcon iconKey={currentNetwork.iconKey} />
@@ -77,7 +77,7 @@ function ProjectAttributes(props: Props) {
         render={({ field: { value, onChange } }) => {
           if (value === undefined || value === null || typeof value === "string")
             return (
-              <div className="flex-shrink-0 h-7" tabIndex={getIndex("lead")}>
+              <div className="h-7 flex-shrink-0" tabIndex={getIndex("lead")}>
                 <MemberDropdown
                   value={value ?? null}
                   onChange={(lead) => onChange(lead === value ? null : lead)}

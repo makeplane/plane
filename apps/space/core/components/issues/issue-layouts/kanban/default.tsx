@@ -86,7 +86,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
   };
 
   return (
-    <div className="relative size-full flex gap-2 px-2">
+    <div className="relative flex size-full gap-2 px-2">
       {groupList?.map((subList) => {
         const groupByVisibilityToggle = visibilityGroupBy(subList);
 

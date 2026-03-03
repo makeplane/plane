@@ -23,6 +23,7 @@ export default {
     favorites: "Favoris",
     pro: "Pro",
     upgrade: "Mettre à niveau",
+    stickies: "Post-it",
   },
   auth: {
     common: {

@@ -23,6 +23,7 @@ export default {
     favorites: "Oblíbené",
     pro: "Pro",
     upgrade: "Upgrade",
+    stickies: "Poznámky",
   },
   auth: {
     common: {

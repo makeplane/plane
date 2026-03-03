@@ -91,7 +91,7 @@ If you would like to _implement_ it, an issue with your proposal must be submitt
 To ensure consistency throughout the source code, please keep these rules in mind as you are working:
 
 - All features or bug fixes must be tested by one or more specs (unit-tests).
-- We lint with [ESLint 9](https://eslint.org/docs/latest/) using the shared `eslint.config.mjs` (type-aware via `typescript-eslint`) and format with [Prettier](https://prettier.io/) using `prettier.config.cjs`.
+- We lint with [OxLint](https://oxc.rs/docs/guide/usage/linter) using the shared `.oxlintrc.json` and format with [oxfmt](https://oxc.rs/docs/guide/usage/formatter) using `.oxfmtrc.json`.
 
 ## Ways to contribute
 

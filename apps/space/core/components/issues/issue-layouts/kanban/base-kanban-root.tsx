@@ -55,7 +55,7 @@ export const IssueKanbanLayoutRoot = observer(function IssueKanbanLayoutRoot(pro
   return (
     <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>
       <div
-        className="horizontal-scrollbar scrollbar-lg relative flex size-full overflow-x-auto overflow-y-hidden"
+        className="horizontal-scrollbar relative flex scrollbar-lg size-full overflow-x-auto overflow-y-hidden"
         ref={scrollableContainerRef}
       >
         <div className="relative h-full w-max min-w-full">

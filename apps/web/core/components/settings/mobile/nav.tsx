@@ -31,14 +31,14 @@ export const SettingsMobileNav = observer(function SettingsMobileNav(props: Prop
   });
 
   return (
-    <div className="md:hidden border-b border-subtle py-3 flex items-center gap-4 px-page-x">
-      <div ref={sidebarRef} className="relative w-fit z-50">
+    <div className="flex items-center gap-4 border-b border-subtle px-page-x py-3 md:hidden">
+      <div ref={sidebarRef} className="relative z-50 w-fit">
         {!sidebarCollapsed && (
-          <div className="absolute left-0 top-10.5 z-50">
-            <HamburgerContent className="max-h-100 pb-3 border border-subtle rounded-lg" />
+          <div className="absolute top-10.5 left-0 z-50">
+            <HamburgerContent className="max-h-100 rounded-lg border border-subtle pb-3" />
           </div>
         )}
-        <IconButton variant="secondary" className="z-50 group shrink-0" icon={Menu} onClick={() => toggleSidebar()} />
+        <IconButton variant="secondary" className="group z-50 shrink-0" icon={Menu} onClick={() => toggleSidebar()} />
       </div>
       {/* path */}
       <div className="flex items-center gap-2">

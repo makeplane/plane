@@ -70,7 +70,7 @@ export function FiltersDropdown(props: Props) {
                         <span>{title}</span>
                       </div>
                       {isFiltersApplied && (
-                        <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-accent-primary rounded-full" />
+                        <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
                       )}
                     </>
                   </Button>
@@ -101,12 +101,12 @@ export function FiltersDropdown(props: Props) {
             {/** translate-y-0 is a hack to create new stacking context. Required for safari  */}
             <Popover.Panel className="fixed z-10 translate-y-0">
               <div
-                className="overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-100 my-1"
+                className="my-1 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-100"
                 ref={setPopperElement}
                 style={styles.popper}
                 {...attributes.popper}
               >
-                <div className="flex max-h-[30rem] lg:max-h-[37.5rem] w-[18.75rem] flex-col overflow-hidden">
+                <div className="flex max-h-[30rem] w-[18.75rem] flex-col overflow-hidden lg:max-h-[37.5rem]">
                   {children}
                 </div>
               </div>

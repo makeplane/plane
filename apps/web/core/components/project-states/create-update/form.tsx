@@ -21,7 +21,7 @@ type TStateForm = {
 function PopoverButton({ color }: { color?: string }) {
   return (
     <div
-      className="group inline-flex items-center text-14 font-medium focus:outline-none h-5 w-5 rounded-sm transition-all"
+      className="group inline-flex h-5 w-5 items-center rounded-sm text-14 font-medium transition-all focus:outline-none"
       style={{
         backgroundColor: color ?? "black",
       }}
@@ -63,9 +63,9 @@ export function StateForm(props: TStateForm) {
   };
 
   return (
-    <div className="relative flex space-x-2 bg-surface-1 p-3 rounded-sm">
+    <div className="relative flex space-x-2 rounded-sm bg-surface-1 p-3">
       {/* color */}
-      <div className="flex-shrink-0 h-full mt-2">
+      <div className="mt-2 h-full flex-shrink-0">
         <Popover button={<PopoverButton color={formData?.color} />} panelClassName="mt-4 -ml-3">
           <TwitterPicker color={formData?.color} onChange={(value) => handleFormData("color", value.hex)} />
         </Popover>
@@ -94,10 +94,10 @@ export function StateForm(props: TStateForm) {
           value={formData?.description}
           onChange={(e) => handleFormData("description", e.target.value)}
           hasError={(errors && Boolean(errors.description)) || false}
-          className="w-full text-13 min-h-14 resize-none"
+          className="min-h-14 w-full resize-none text-13"
         />
 
-        <div className="flex space-x-2 items-center">
+        <div className="flex items-center space-x-2">
           <Button onClick={formSubmit} variant="primary" size="lg" disabled={buttonDisabled}>
             {buttonTitle}
           </Button>

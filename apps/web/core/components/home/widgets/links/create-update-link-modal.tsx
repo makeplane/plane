@@ -77,9 +77,9 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
           </h3>
           <div className="mt-2 space-y-3">
             <div>
-              <label htmlFor="url" className="mb-2 text-secondary text-14 font-medium">
+              <label htmlFor="url" className="mb-2 text-14 font-medium text-secondary">
                 {t("link.modal.url.text")}
-                <span className="text-10 block">{t("required")}</span>
+                <span className="block text-10">{t("required")}</span>
               </label>
               <Controller
                 control={control}
@@ -103,9 +103,9 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
               {errors.url && <span className="text-11 text-danger-primary">{t("link.modal.url.required")}</span>}
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-secondary text-14 font-medium">
+              <label htmlFor="title" className="mb-2 text-14 font-medium text-secondary">
                 {t("link.modal.title.text")}
-                <span className="text-10 block">{t("optional")}</span>
+                <span className="block text-10">{t("optional")}</span>
               </label>
               <Controller
                 control={control}
@@ -126,7 +126,7 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
           <Button variant="secondary" size="lg" onClick={onClose}>
             {t("Cancel")}
           </Button>
