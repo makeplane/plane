@@ -97,7 +97,7 @@ export const ViewFiltersSelection = observer(function ViewFiltersSelection(props
         {/* access / view type */}
         <FilterByAccess
           appliedFilters={filters.filters?.view_type}
-          handleUpdate={(val: string | string[]) => handleFilters("view_type", val)}
+          handleUpdate={(val: EViewAccess) => handleFilters("view_type", val)}
           searchQuery={filtersSearchQuery}
           accessFilters={[
             { key: EViewAccess.PRIVATE, value: t("common.access.private") },

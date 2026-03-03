@@ -26,6 +26,7 @@ from plane.license.models import InstanceConfiguration
 from plane.license.api.serializers import InstanceConfigurationSerializer
 from plane.license.utils.encryption import encrypt_data
 from plane.utils.cache import cache_response, invalidate_cache
+from plane.utils.instance_config_variables import instance_config_variables
 from plane.license.utils.instance_value import get_email_configuration
 
 
@@ -41,7 +42,34 @@ class InstanceConfigurationEndpoint(BaseAPIView):
     @invalidate_cache(path="/api/instances/configurations/", user=False)
     @invalidate_cache(path="/api/instances/", user=False)
     def patch(self, request):
-        configurations = InstanceConfiguration.objects.filter(key__in=request.data.keys())
+        config_keys = list(request.data.keys())
+        configurations = InstanceConfiguration.objects.filter(key__in=config_keys)
+
+        existing_keys = set(configurations.values_list("key", flat=True))
+        missing_keys = [key for key in config_keys if key not in existing_keys]
+
+        if missing_keys:
+            config_meta = {item.get("key"): item for item in instance_config_variables}
+            new_configurations = []
+            for key in missing_keys:
+                meta = config_meta.get(key)
+                if not meta:
+                    continue
+                value = request.data.get(key)
+                is_encrypted = meta.get("is_encrypted", False)
+                if is_encrypted:
+                    value = encrypt_data(value)
+                new_configurations.append(
+                    InstanceConfiguration(
+                        key=key,
+                        value=value,
+                        category=meta.get("category"),
+                        is_encrypted=is_encrypted,
+                    )
+                )
+            if new_configurations:
+                InstanceConfiguration.objects.bulk_create(new_configurations, batch_size=100)
+                configurations = InstanceConfiguration.objects.filter(key__in=config_keys)
 
         bulk_configurations = []
         for configuration in configurations:

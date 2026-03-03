@@ -7,6 +7,7 @@
 import React from "react";
 import { Transition } from "@headlessui/react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import type { SingleOrArray, IFilterOption, TFilterValue } from "@plane/types";
 import { cn, toFilterArray } from "@plane/utils";
 import { EMPTY_FILTER_PLACEHOLDER_TEXT } from "../../shared";
@@ -20,6 +21,7 @@ type TSelectedOptionsDisplayProps<V extends TFilterValue> = {
 };
 
 export function SelectedOptionsDisplay<V extends TFilterValue>(props: TSelectedOptionsDisplayProps<V>) {
+  const { t } = useTranslation();
   const { selectedValue, options, displayCount = 2, emptyValue = EMPTY_FILTER_PLACEHOLDER_TEXT, fallbackText } = props;
   // derived values
   const selectedArray = toFilterArray(selectedValue);
@@ -35,7 +37,11 @@ export function SelectedOptionsDisplay<V extends TFilterValue>(props: TSelectedO
 
   // When no options are found but we have a fallback text
   if (options.length === 0) {
-    return <span className="text-placeholder">{fallbackText ?? `${selectedArray.length} option(s) selected`}</span>;
+    return (
+      <span className="text-placeholder">
+        {fallbackText ?? t("filter_options_selected", { count: selectedArray.length })}
+      </span>
+    );
   }
 
   return (
@@ -58,7 +64,7 @@ export function SelectedOptionsDisplay<V extends TFilterValue>(props: TSelectedO
           enterTo="opacity-100"
           className="text-tertiary whitespace-nowrap ml-1"
         >
-          +{remainingCount} more
+          +{remainingCount} {t("more")}
         </Transition>
       )}
     </div>

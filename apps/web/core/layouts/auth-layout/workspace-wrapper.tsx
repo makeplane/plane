@@ -165,7 +165,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
                 className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
                 onClick={handleSignOut}
               >
-                <Tooltip tooltipContent={t("workspace_wrapper.sign_out_tooltip")} position="top" className="ml-2" isMobile={isMobile}>
+                <Tooltip
+                  tooltipContent={t("workspace_wrapper.sign_out_tooltip")}
+                  position="top"
+                  className="ml-2"
+                  isMobile={isMobile}
+                >
                   <LogOut size={14} />
                 </Tooltip>
               </div>

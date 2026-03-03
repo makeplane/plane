@@ -124,7 +124,7 @@ const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
                       )}
                     </div>
                   )}
-                  <span className="break-words text-secondary">{row.original.display_name ?? t(`Unassigned`)}</span>
+                  <span className="break-words text-secondary">{row.original.display_name ?? t("unassigned")}</span>
                 </div>
               </div>
             ),

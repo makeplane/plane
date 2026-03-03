@@ -340,9 +340,7 @@ export function InviteMembers(props: Props) {
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6 md:w-4/5 mx-auto">
           <div className="text-center space-y-1 py-4 mx-auto w-4/5">
             <h3 className="text-24 font-bold text-primary">{t("onboarding.invite_members.title")}</h3>
-            <p className="font-medium text-placeholder">
-              {t("onboarding.invite_members.description")}
-            </p>
+            <p className="font-medium text-placeholder">{t("onboarding.invite_members.description")}</p>
           </div>
           <form
             className="w-full mx-auto mt-2 space-y-4"
@@ -353,8 +351,12 @@ export function InviteMembers(props: Props) {
           >
             <div className="w-full text-13 py-4">
               <div className="group relative grid grid-cols-10 gap-4 mx-8 py-2">
-                <div className="col-span-6 px-1 text-13 text-secondary font-medium">{t("onboarding.invite_members.email")}</div>
-                <div className="col-span-4 px-1 text-13 text-secondary font-medium">{t("onboarding.invite_members.role")}</div>
+                <div className="col-span-6 px-1 text-13 text-secondary font-medium">
+                  {t("onboarding.invite_members.email")}
+                </div>
+                <div className="col-span-4 px-1 text-13 text-secondary font-medium">
+                  {t("onboarding.invite_members.role")}
+                </div>
               </div>
               <div className="mb-3 space-y-3 sm:space-y-4">
                 {fields.map((field, index) => (

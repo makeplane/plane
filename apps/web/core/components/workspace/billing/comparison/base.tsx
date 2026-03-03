@@ -62,7 +62,9 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
               className="grid gap-3 py-1 text-caption-md text-secondary even:bg-surface-2 rounded-xs"
               style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
             >
-              <div className="col-span-1 p-3 text-body-sm-medium">{t("workspace_settings.billing_and_plans.highlights")}</div>
+              <div className="col-span-1 p-3 text-body-sm-medium">
+                {t("workspace_settings.billing_and_plans.highlights")}
+              </div>
               {Object.entries(planHighlights).map(
                 ([planKey, highlights]) =>
                   shouldRenderPlanDetail(planKey as TPlanePlans) && (
@@ -134,7 +136,9 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
             }}
             appendIcon={isCompareAllFeaturesSectionOpen ? <ArrowUp /> : <ArrowDown />}
           >
-            {isCompareAllFeaturesSectionOpen ? t("workspace_settings.billing_and_plans.collapse_comparison") : t("workspace_settings.billing_and_plans.compare_all_features")}
+            {isCompareAllFeaturesSectionOpen
+              ? t("workspace_settings.billing_and_plans.collapse_comparison")
+              : t("workspace_settings.billing_and_plans.compare_all_features")}
           </Button>
         </div>
       </div>

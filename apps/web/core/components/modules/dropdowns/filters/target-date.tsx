@@ -69,11 +69,16 @@ export const FilterTargetDate = observer(function FilterTargetDate(props: Props)
                   key={option.value}
                   isChecked={appliedFilters?.includes(option.value) ? true : false}
                   onClick={() => handleUpdate(option.value)}
-                  title={t(option.i18n_name)}
+                  title={option.name}
                   multiple
                 />
               ))}
-              <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title={t("common.custom")} multiple />
+              <FilterOption
+                isChecked={isCustomDateSelected()}
+                onClick={handleCustomDate}
+                title={t("common.custom")}
+                multiple
+              />
             </>
           ) : (
             <p className="text-11 italic text-placeholder">{t("common.no_matches_found")}</p>

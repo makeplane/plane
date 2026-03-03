@@ -36,12 +36,13 @@ export default {
   display_name: "Display name",
   role: "Role",
   timezone: "Timezone",
+  select_timezone: "Select a timezone",
+  count: "Count",
   avatar: "Avatar",
   cover_image: "Cover image",
   password: "Password",
   change_cover: "Change cover",
   language: "Language",
-  saving: "Saving",
   save_changes: "Save changes",
   deactivate_account: "Deactivate account",
   deactivate_account_description:
@@ -52,7 +53,6 @@ export default {
   activity: "Activity",
   preferences: "Preferences",
   language_and_time: "Language & Time",
-  notifications: "Notifications",
   workspaces: "Workspaces",
   create_workspace: "Create workspace",
   invitations: "Invitations",
@@ -254,6 +254,7 @@ export default {
   we_see_that_someone_has_invited_you_to_join_a_workspace_description:
     "We see that someone has invited you to join a workspace",
   join_a_workspace_description: "Join a workspace",
+  ai_data_sharing_consent: "By using this feature, you consent to sharing the message with a 3rd party service.",
   accept_and_join: "Accept & Join",
   go_home: "Go Home",
   no_pending_invites: "No pending invites",
@@ -276,6 +277,11 @@ export default {
   issue_could_not_be_updated: "Work item could not be updated",
   create_a_draft: "Create a draft",
   save_to_drafts: "Save to Drafts",
+  save_draft_question: "Save this draft?",
+  save_draft_description: "You can save this work item to Drafts so you can come back to it later.",
+  saving: "Saving",
+  im_feeling_lucky: "I'm feeling lucky",
+  generating_response: "Generating response",
   save: "Save",
   update: "Update",
   updating: "Updating",
@@ -306,6 +312,15 @@ export default {
   start_date: "Start date",
   end_date: "End date",
   due_date: "Due date",
+  updated_date: "Updated date",
+  last_updated_date: "Last updated date",
+  work_items_closed: "Work items closed",
+  work_items_in_cycle:
+    "{count, plural, one {There is # work item in this cycle} other {There are # work items in this cycle}}",
+  work_items_in_module:
+    "{count, plural, one {There is # work item in this module} other {There are # work items in this module}}",
+  work_items_in_archives:
+    "{count, plural, one {There is # work item in project's archived} other {There are # work items in project's archived}}",
   estimate: "Estimate",
   change_parent_issue: "Change parent work item",
   remove_parent_issue: "Remove parent work item",
@@ -317,6 +332,8 @@ export default {
   Cancel: "Cancel",
   edit: "Edit",
   edit_view: "Edit view",
+  save_view: "Save view",
+  update_view: "Update view",
   archive: "Archive",
   restore: "Restore",
   open_in_new_tab: "Open in new tab",
@@ -329,6 +346,20 @@ export default {
   morning: "morning",
   afternoon: "afternoon",
   evening: "evening",
+  good_morning: "Good morning",
+  good_afternoon: "Good afternoon",
+  good_evening: "Good evening",
+  more: "more",
+  remove_filter: "Remove filter",
+  invalid_filter: "Invalid filter",
+  invalid_filter_tooltip:
+    "This filter condition is no longer valid. The property may have been deleted or your access to it may have changed.",
+  filter_options_selected: "{count} option(s) selected",
+  filter_operator: {
+    is: "is",
+    is_any_of: "is any of",
+    between: "between",
+  },
   show_all: "Show all",
   show_less: "Show less",
   no_data_yet: "No Data yet",
@@ -353,6 +384,20 @@ export default {
   current: "Current",
   no_matching_members: "No matching members",
   no_work_items_found: "No work items found",
+  latest_feature_block: {
+    message: "Pages got a facelift! Write anything and use Galileo to help you start.",
+    image_alt: "Plane work items",
+  },
+  webhooks: {
+    work_item_comments: "Work item comments",
+    event: {
+      projects: "Project created, updated, or deleted",
+      cycles: "Cycle created, updated, or deleted",
+      work_items: "Work item created, updated, deleted, added to a cycle or module",
+      modules: "Module created, updated, or deleted",
+      work_item_comments: "Comment posted, updated, or deleted",
+    },
+  },
   leaving: "Leaving",
   removing: "Removing",
   leave: "Leave",
@@ -377,6 +422,11 @@ export default {
       created_at: "Created at",
       updated_at: "Updated at",
       name: "Name",
+    },
+    empty_state: {
+      title: "View work items will appear here",
+      description:
+        "Work items help you track individual pieces of work. With work items, keep track of what's going on, who is working on it, and what's done.",
     },
   },
   toast: {
@@ -423,7 +473,8 @@ export default {
     delete: {
       confirm_phrase: "delete my project",
       description_prefix: "Are you sure you want to delete project",
-      description_suffix: "All of the data related to the project will be permanently removed. This action cannot be undone.",
+      description_suffix:
+        "All of the data related to the project will be permanently removed. This action cannot be undone.",
       enter_project_name: "Enter the project name",
       confirm_instruction_prefix: "To confirm, type",
       confirm_instruction_suffix: "below:",
@@ -599,6 +650,7 @@ export default {
     created_by: "Created by",
     none: "None",
     link: "Link",
+    links: "Links",
     estimates: "Estimates",
     estimate: "Estimate",
     created_at: "Created at",
@@ -641,6 +693,11 @@ export default {
     general: "General",
     features: "Features",
     automation: "Automation",
+    automation_sector: "Sector",
+    automation_area: "Area",
+    automation_area_create_type: "Type to create a new area",
+    select_sector: "Select sector",
+    select_area: "Select area",
     project_name: "Project name",
     project_id: "Project ID",
     project_timezone: "Project Timezone",
@@ -674,10 +731,11 @@ export default {
       manual: "Manual",
       last_created: "Last created",
       last_updated: "Last updated",
-          start_date: "Start date",
-          due_date: "Due date",
-          add_due_date: "Add due date",
-          asc: "Ascending",      desc: "Descending",
+      start_date: "Start date",
+      due_date: "Due date",
+      add_due_date: "Add due date",
+      asc: "Ascending",
+      desc: "Descending",
       updated_on: "Updated on",
     },
     sort: {
@@ -696,7 +754,6 @@ export default {
     is_copied_to_clipboard: "Work item is copied to clipboard",
     no_links_added_yet: "No links added yet",
     add_link: "Add link",
-    links: "Links",
     go_to_workspace: "Go to workspace",
     progress: "Progress",
     optional: "Optional",
@@ -772,9 +829,14 @@ export default {
     offline_description: "You can continue making changes. They will be synced when you are back online.",
     search_shortcuts: "Search for shortcuts",
     search_projects: "Search for projects",
+    search_results_for: "Search results for",
+    in_project: "in project",
+    in_workspace: "in workspace",
+    toggle_workspace_level_search: "Toggle workspace level search",
     status: "Status",
     danger_zone: "Danger zone",
-    customize_navigation_description: "Selected items will always stay visible in your sidebar. You can still find the others anytime from the More menu. These changes are personal to you and won't affect anyone else on your workspace.",
+    customize_navigation_description:
+      "Selected items will always stay visible in your sidebar. You can still find the others anytime from the More menu. These changes are personal to you and won't affect anyone else on your workspace.",
     accordion_navigation_description: "Feature tabs will appear as nested items under project and acts as accordion.",
     horizontal_navigation_description: "Feature tabs will appear as horizontal tabs inside a project.",
     min_value_1_error: "Minimum value is 1",
@@ -1073,7 +1135,9 @@ export default {
     },
     sibling: {
       label: "Sibling work items",
+      empty: "No sibling work items",
     },
+    deleted_message: "This work item has been deleted",
     archive: {
       description: "Only completed or canceled\nwork items can be archived",
       label: "Archive Work item",
@@ -1189,11 +1253,13 @@ export default {
     modals: {
       delete: {
         title: "Delete State",
-        content: "Are you sure you want to delete state- {name}? All of the data related to the state will be permanently removed. This action cannot be undone.",
+        content:
+          "Are you sure you want to delete state- {name}? All of the data related to the state will be permanently removed. This action cannot be undone.",
       },
     },
     errors: {
-      move_issues: "This state contains some work items within it, please move them to some other state to delete this state.",
+      move_issues:
+        "This state contains some work items within it, please move them to some other state to delete this state.",
       generic: "State could not be deleted. Please try again.",
     },
   },
@@ -1973,11 +2039,6 @@ export default {
         error: "Project could not be updated. Please try again.",
       },
     },
-    features: {
-      updating: "Updating project feature...",
-      updated: "Project feature updated successfully.",
-      error: "Something went wrong while updating project feature. Please try again.",
-    },
     members: {
       label: "Members",
       project_lead: "Project lead",
@@ -2143,6 +2204,9 @@ export default {
       },
     },
     features: {
+      updating: "Updating project feature...",
+      updated: "Project feature updated successfully.",
+      error: "Something went wrong while updating project feature. Please try again.",
       cycles: {
         title: "Cycles",
         short_title: "Cycles",
@@ -3135,6 +3199,7 @@ export default {
   sidebar: {
     stickies: "Stickies",
     your_work: "Your work",
+    new_work_item: "New work item",
   },
   pages_modals: {
     export: {
@@ -3152,6 +3217,7 @@ export default {
     },
   },
   notifications: {
+    connector_to: "to",
     actions: {
       duplicate: {
         created: "marked that this work item is a duplicate of",
@@ -3392,7 +3458,8 @@ export default {
     description: "No workspace found with the URL. It may not exist or you lack authorization to view it.",
     not_authorized: {
       title: "Not Authorized!",
-      description: "You're not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+      description:
+        "You're not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
     },
     go_home: "Go Home",
     visit_profile: "Visit Profile",
@@ -3406,9 +3473,11 @@ export default {
     welcome_description: "Get started by setting up your instance and workspace",
     get_started: "Get started",
     instance_failure_title: "Unable to fetch instance details.",
-    instance_failure_description: "We were unable to fetch the details of the instance. Fret not, it might just be a connectivity issue.",
+    instance_failure_description:
+      "We were unable to fetch the details of the instance. Fret not, it might just be a connectivity issue.",
     chat_with_us_title: "Chat with us",
-    chat_with_us_description: "Let your users chat with us via Intercom or another service. Toggling Telemetry off turns this off automatically.",
+    chat_with_us_description:
+      "Let your users chat with us via Intercom or another service. Toggling Telemetry off turns this off automatically.",
     settings_update_success: "Settings updated successfully",
     instance_details: "Instance details",
     instance_name_label: "Name of instance",
@@ -3417,7 +3486,8 @@ export default {
     instance_id: "Instance ID",
     chat_telemetry_title: "Chat + telemetry",
     telemetry_title: "Let Plane collect anonymous usage data",
-    telemetry_description: "No PII is collected.This anonymized data is used to understand how you use Plane and build new features in line with",
+    telemetry_description:
+      "No PII is collected.This anonymized data is used to understand how you use Plane and build new features in line with",
     telemetry_policy_link: "our Telemetry Policy.",
     saving_configuration: "Saving configuration",
     configuration_save_success: "Configuration saved successfully",
@@ -3425,9 +3495,11 @@ export default {
     workspaces_on_instance_title: "Workspaces on this instance",
     workspaces_on_instance_description: "See all workspaces and control who can create them.",
     prevent_workspace_creation_title: "Prevent anyone else from creating a workspace.",
-    prevent_workspace_creation_description: "Toggling this on will let only you create workspaces. You will have to invite users to new workspaces.",
+    prevent_workspace_creation_description:
+      "Toggling this on will let only you create workspaces. You will have to invite users to new workspaces.",
     all_workspaces_title: "All workspaces on this instance",
-    workspace_management_notice: "You can't yet delete workspaces and you can only go to the workspace if you are an Admin or a Member.",
+    workspace_management_notice:
+      "You can't yet delete workspaces and you can only go to the workspace if you are an Admin or a Member.",
     workspace_management_meta_title: "Workspace Management - God Mode",
     ai_settings_update_success: "AI Settings updated successfully",
     openai_title: "OpenAI",
@@ -3439,7 +3511,8 @@ export default {
     ai_vendor_description: "If you have a preferred AI models vendor, please get in ",
     touch_with_us_link: "touch with us.",
     auth_disable_error_title: "Cannot disable authentication",
-    auth_disable_error_description: "At least one authentication method must remain enabled. Please enable another method before disabling this one.",
+    auth_disable_error_description:
+      "At least one authentication method must remain enabled. Please enable another method before disabling this one.",
     auth_page_title: "Manage authentication modes for your instance",
     auth_page_description: "Configure authentication modes for your team and restrict sign-ups to be invite only.",
     allow_signup_title: "Allow anyone to sign up even without an invite",
@@ -3451,7 +3524,8 @@ export default {
     email_disable_error_title: "Error disabling email",
     email_disable_error_message: "Failed to disable email feature. Please try again.",
     email_page_title: "Secure emails from your own instance",
-    email_page_description: "Plane can send useful emails to you and your users from your own instance without talking to the Internet.",
+    email_page_description:
+      "Plane can send useful emails to you and your users from your own instance without talking to the Internet.",
     email_page_notice: "Set it up below and please test your settings before you save them.",
     email_page_warning: "Misconfigs can lead to email bounces and errors.",
     email_meta_title: "Email Settings - God Mode",
@@ -3459,18 +3533,22 @@ export default {
     email_host_label: "Host",
     email_port_label: "Port",
     email_sender_label: "Sender's email address",
-    email_sender_description: "This is the email address your users will see when getting emails from this instance. You will need to verify this address.",
+    email_sender_description:
+      "This is the email address your users will see when getting emails from this instance. You will need to verify this address.",
     email_username_label: "Username",
     email_settings_update_success: "Email Settings updated successfully",
     email_security_title: "Email security",
     authentication_title: "Authentication",
-    authentication_description: "This is optional, but we recommend setting up a username and a password for your SMTP server.",
+    authentication_description:
+      "This is optional, but we recommend setting up a username and a password for your SMTP server.",
     send_test_email: "Send test email",
     email_test_failed: "Failed to send email",
     email_test_success_title: "Email sent",
     email_test_receiver_placeholder: "Receiver email",
-    email_test_success_description: "We have sent the test email to {email}. Please check your spam folder if you cannot find it.",
-    email_test_success_notice: "If you still cannot find it, recheck your SMTP configuration and trigger a new test email.",
+    email_test_success_description:
+      "We have sent the test email to {email}. Please check your spam folder if you cannot find it.",
+    email_test_success_notice:
+      "If you still cannot find it, recheck your SMTP configuration and trigger a new test email.",
     email_test_sending: "Sending email",
     google_client_id_label: "Client ID",
     google_client_id_description: "Your client ID lives in your Google API Console.",
@@ -3511,7 +3589,8 @@ export default {
     gitlab_redirect_uri_field: "Redirect URI",
     gitlab_oauth_app_link: "GitLab OAuth application",
     gitea_host_label: "Gitea Host",
-    gitea_host_description: "Use the URL of your Gitea instance. For the official Gitea instance, use \"https://gitea.com\".",
+    gitea_host_description:
+      'Use the URL of your Gitea instance. For the official Gitea instance, use "https://gitea.com".',
     gitea_oauth_apps_link: "Gitea OAuth application settings.",
     gitea_sync_label: "Gitea",
     gitea_auth_configured_message: "Your Gitea authentication is configured. You should test it now.",

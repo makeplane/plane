@@ -114,7 +114,9 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
       </div>
 
       <div className="space-y-6">
-        <div className="text-16 font-medium text-primary pb-1.5 border-b border-subtle">{t("admin.chat_telemetry_title")}</div>
+        <div className="text-16 font-medium text-primary pb-1.5 border-b border-subtle">
+          {t("admin.chat_telemetry_title")}
+        </div>
         <IntercomConfig isTelemetryEnabled={watch("is_telemetry_enabled") ?? false} />
         <div className="flex items-center gap-14">
           <div className="grow flex items-center gap-4">

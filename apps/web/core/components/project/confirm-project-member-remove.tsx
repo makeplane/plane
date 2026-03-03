@@ -70,13 +70,11 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
             </h3>
             <div className="mt-2">
               <p className="text-13 text-secondary">
-                {isCurrentUser ? (
-                  t("project_modals.member_remove.leave_description", {
-                    project: currentProjectDetails?.name ?? "",
-                  })
-                ) : (
-                  t("project_modals.member_remove.remove_description", { name: data?.display_name ?? "" })
-                )}
+                {isCurrentUser
+                  ? t("project_modals.member_remove.leave_description", {
+                      project: currentProjectDetails?.name ?? "",
+                    })
+                  : t("project_modals.member_remove.remove_description", { name: data?.display_name ?? "" })}
               </p>
             </div>
           </div>
@@ -87,7 +85,13 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
           {t("cancel")}
         </Button>
         <Button variant="error-fill" size="lg" tabIndex={1} onClick={handleDeletion} loading={isDeleteLoading}>
-          {isCurrentUser ? (isDeleteLoading ? t("leaving") : t("leave")) : isDeleteLoading ? t("removing") : t("remove")}
+          {isCurrentUser
+            ? isDeleteLoading
+              ? t("leaving")
+              : t("leave")
+            : isDeleteLoading
+              ? t("removing")
+              : t("remove")}
         </Button>
       </div>
     </ModalCore>

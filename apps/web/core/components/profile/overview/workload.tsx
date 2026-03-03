@@ -34,9 +34,9 @@ export function ProfileWorkload({ stateDistribution }: Props) {
                   }}
                 />
                 <div className="space-y-1 flex-col">
-                <span className="text-13 text-placeholder">
-                  {t(STATE_GROUPS[group.state_group].i18n_label ?? "")}
-                </span>
+                  <span className="text-13 text-placeholder">
+                    {t(STATE_GROUPS[group.state_group].i18n_label ?? "")}
+                  </span>
                   <p className="text-18 font-semibold">{group.state_count}</p>
                 </div>
               </Card>

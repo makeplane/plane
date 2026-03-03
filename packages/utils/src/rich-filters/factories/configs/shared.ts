@@ -33,6 +33,7 @@ export const createFilterConfig = <P extends TFilterProperty>(config: TFilterCon
  */
 export type TCreateFilterConfigParams = Omit<TBaseFilterFieldConfig, "isOperatorEnabled"> & {
   isEnabled: boolean;
+  label?: string;
   allowedOperators: Set<TSupportedOperators>;
   rightContent?: React.ReactNode; // content to display on the right side of the filter option in the dropdown
   tooltipContent?: React.ReactNode; // content to display when hovering over the applied filter item in the filter list

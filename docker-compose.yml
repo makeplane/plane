@@ -36,6 +36,7 @@ services:
 
   api:
     container_name: api
+    mem_limit: 1024m
     build:
       context: ./apps/api
       dockerfile: Dockerfile.api
@@ -51,6 +52,7 @@ services:
 
   worker:
     container_name: bgworker
+    mem_limit: 1024m
     build:
       context: ./apps/api
       dockerfile: Dockerfile.api
@@ -109,6 +111,7 @@ services:
 
   plane-db:
     container_name: plane-db
+    mem_limit: 512m
     image: postgres:15.7-alpine
     restart: always
     command: postgres -c 'max_connections=1000'
@@ -161,8 +164,8 @@ services:
       dockerfile: Dockerfile.ce
     restart: always
     ports:
-      - ${LISTEN_HTTP_PORT}:80
-      - ${LISTEN_HTTPS_PORT}:443
+      - "80:80"
+      - "127.0.0.1:8443:443"
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}

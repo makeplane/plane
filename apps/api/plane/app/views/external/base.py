@@ -41,7 +41,7 @@ class LLMProvider:
 
 class OpenAIProvider(LLMProvider):
     name = "OpenAI"
-    models = ["gpt-3.5-turbo", "gpt-4o-mini", "gpt-4o", "o1-mini", "o1-preview"]
+    models = ["gpt-3.5-turbo", "gpt-4o-mini", "gpt-4o", "o1-mini", "o1-preview", "qwen2.5:14b"]
     default_model = "gpt-4o-mini"
 
 
@@ -128,7 +128,15 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
         if provider.lower() == "gemini":
             model = f"gemini/{model}"
 
-        client = OpenAI(api_key=api_key)
+        # Use custom base_url if provided in environment for OpenAI
+        base_url = None
+        if provider.lower() == "openai":
+            base_url = os.environ.get("OPENAI_BASE_URL") or os.environ.get("OPENAI_API_BASE")
+            # For Ollama/self-hosted setups, if api_key is missing, use a placeholder
+            if not api_key and base_url and "api.openai.com" not in base_url:
+                api_key = "sk-ollama"
+
+        client = OpenAI(api_key=api_key, base_url=base_url)
         chat_completion = client.chat.completions.create(
             model=model, messages=[{"role": "user", "content": final_text}]
         )

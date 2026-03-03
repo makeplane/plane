@@ -427,7 +427,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       rules={{
                         required: watch("password") ? true : false,
                         validate: (value) =>
-                          watch("password") ? (value === watch("password") ? true : t("auth.common.password.errors.match")) : true,
+                          watch("password")
+                            ? value === watch("password")
+                              ? true
+                              : t("auth.common.password.errors.match")
+                            : true,
                       }}
                       render={({ field: { value, onChange, ref } }) => (
                         <div className="relative flex items-center rounded-md">

@@ -36,12 +36,13 @@ export default {
   display_name: "Nombre para mostrar",
   role: "Rol",
   timezone: "Zona horaria",
+  select_timezone: "Selecciona una zona horaria",
+  count: "Cantidad",
   avatar: "Avatar",
   cover_image: "Imagen de portada",
   password: "Contraseña",
   change_cover: "Cambiar portada",
   language: "Idioma",
-  saving: "Guardando",
   save_changes: "Guardar cambios",
   deactivate_account: "Desactivar cuenta",
   deactivate_account_description:
@@ -51,7 +52,6 @@ export default {
   security: "Seguridad",
   activity: "Actividad",
   appearance: "Apariencia",
-  notifications: "Notificaciones",
   connections: "Conexiones",
   workspaces: "Espacios de trabajo",
   create_workspace: "Crear espacio de trabajo",
@@ -261,6 +261,7 @@ export default {
   we_see_that_someone_has_invited_you_to_join_a_workspace_description:
     "Vemos que alguien te ha invitado a unirte a un espacio de trabajo",
   join_a_workspace_description: "Únete a un espacio de trabajo",
+  ai_data_sharing_consent: "Al usar esta función, aceptas compartir el mensaje con un servicio de terceros.",
   accept_and_join: "Aceptar y unirse",
   go_home: "Ir a inicio",
   no_pending_invites: "No hay invitaciones pendientes",
@@ -284,6 +285,11 @@ export default {
   issue_could_not_be_updated: "El elemento de trabajo no pudo ser actualizado",
   create_a_draft: "Crear un borrador",
   save_to_drafts: "Guardar en borradores",
+  save_draft_question: "¿Guardar este borrador?",
+  save_draft_description: "Puedes guardar este elemento de trabajo en Borradores para volver más tarde.",
+  saving: "Guardando",
+  im_feeling_lucky: "Me siento con suerte",
+  generating_response: "Generando respuesta",
   save: "Guardar",
   update: "Actualizar",
   updating: "Actualizando",
@@ -314,6 +320,15 @@ export default {
   start_date: "Fecha de inicio",
   end_date: "Fecha de fin",
   due_date: "Fecha de vencimiento",
+  updated_date: "Fecha de actualización",
+  last_updated_date: "Fecha de última actualización",
+  work_items_closed: "elementos de trabajo cerrados",
+  work_items_in_cycle:
+    "{count, plural, one {Hay # elemento de trabajo en este ciclo} other {Hay # elementos de trabajo en este ciclo}}",
+  work_items_in_module:
+    "{count, plural, one {Hay # elemento de trabajo en este módulo} other {Hay # elementos de trabajo en este módulo}}",
+  work_items_in_archives:
+    "{count, plural, one {Hay # elemento de trabajo en los archivados del proyecto} other {Hay # elementos de trabajo en los archivados del proyecto}}",
   estimate: "Estimación",
   change_parent_issue: "Cambiar elemento de trabajo padre",
   remove_parent_issue: "Eliminar elemento de trabajo padre",
@@ -325,6 +340,8 @@ export default {
   Cancel: "Cancelar",
   edit: "Editar",
   edit_view: "Editar vista",
+  save_view: "Guardar vista",
+  update_view: "Actualizar vista",
   archive: "Archivar",
   restore: "Restaurar",
   open_in_new_tab: "Abrir en nueva pestaña",
@@ -337,6 +354,20 @@ export default {
   morning: "días",
   afternoon: "tardes",
   evening: "noches",
+  good_morning: "Buenos días",
+  good_afternoon: "Buenas tardes",
+  good_evening: "Buenas noches",
+  more: "más",
+  remove_filter: "Quitar filtro",
+  invalid_filter: "Filtro inválido",
+  invalid_filter_tooltip:
+    "Esta condición de filtro ya no es válida. La propiedad puede haber sido eliminada o tu acceso a ella pudo haber cambiado.",
+  filter_options_selected: "{count} opción(es) seleccionada(s)",
+  filter_operator: {
+    is: "es",
+    is_any_of: "es cualquiera de",
+    between: "entre",
+  },
   show_all: "Mostrar todo",
   show_less: "Mostrar menos",
   no_data_yet: "Aún no hay datos",
@@ -361,6 +392,20 @@ export default {
   current: "Actual",
   no_matching_members: "No hay miembros coincidentes",
   no_work_items_found: "No se encontraron elementos de trabajo",
+  latest_feature_block: {
+    message: "¡Pages se renovó! Escribe lo que necesites y usa Galileo para empezar.",
+    image_alt: "Elementos de trabajo de Plane",
+  },
+  webhooks: {
+    work_item_comments: "Comentarios de elementos de trabajo",
+    event: {
+      projects: "Proyecto creado, actualizado o eliminado",
+      cycles: "Ciclo creado, actualizado o eliminado",
+      work_items: "Elemento de trabajo creado, actualizado, eliminado, agregado a un ciclo o módulo",
+      modules: "Módulo creado, actualizado o eliminado",
+      work_item_comments: "Comentario publicado, actualizado o eliminado",
+    },
+  },
   leaving: "Abandonando",
   removing: "Eliminando",
   leave: "Abandonar",
@@ -382,6 +427,11 @@ export default {
       created_at: "Creado el",
       updated_at: "Actualizado el",
       name: "Nombre",
+    },
+    empty_state: {
+      title: "Los elementos de trabajo de la vista aparecerán aquí",
+      description:
+        "Los elementos de trabajo te ayudan a rastrear partes individuales del trabajo. Con ellos, puedes seguir qué está pasando, quién está trabajando en ello y qué está hecho.",
     },
   },
   toast: {
@@ -602,6 +652,7 @@ export default {
     created_by: "Creado por",
     none: "Ninguno",
     link: "Enlace",
+    links: "Enlaces",
     estimates: "Estimaciones",
     estimate: "Estimación",
     created_at: "Creado en",
@@ -644,6 +695,11 @@ export default {
     general: "General",
     features: "Características",
     automation: "Automatización",
+    automation_sector: "Sector",
+    automation_area: "Área",
+    automation_area_create_type: "Escribe para crear una nueva área",
+    select_sector: "Seleccionar sector",
+    select_area: "Seleccionar área",
     project_name: "Nombre del proyecto",
     project_id: "ID del proyecto",
     project_timezone: "Zona horaria del proyecto",
@@ -677,10 +733,11 @@ export default {
       manual: "Manual",
       last_created: "Último creado",
       last_updated: "Última actualización",
-          start_date: "Fecha de inicio",
-          due_date: "Fecha de vencimiento",
-          add_due_date: "Agregar fecha de vencimiento",
-          asc: "Ascendente",      desc: "Descendente",
+      start_date: "Fecha de inicio",
+      due_date: "Fecha de vencimiento",
+      add_due_date: "Agregar fecha de vencimiento",
+      asc: "Ascendente",
+      desc: "Descendente",
       updated_on: "Actualizado el",
     },
     sort: {
@@ -697,9 +754,8 @@ export default {
     link_copied_to_clipboard: "Enlace copiado al portapapeles",
     copied_to_clipboard: "Enlace del elemento de trabajo copiado al portapapeles",
     is_copied_to_clipboard: "El elemento de trabajo está copiado al portapapeles",
-    no_links_added_yet: "Aún no se han agregado enlaces",
-    add_link: "Agregar enlace",
-    links: "Enlaces",
+    no_links_added_yet: "Aún no se han añadido enlaces",
+    add_link: "Añadir enlace",
     go_to_workspace: "Ir al espacio de trabajo",
     progress: "Progreso",
     optional: "Opcional",
@@ -775,11 +831,18 @@ export default {
     offline_description: "Puedes continuar haciendo cambios. Se sincronizarán cuando vuelvas a estar en línea.",
     search_shortcuts: "Buscar atajos",
     search_projects: "Buscar proyectos",
+    search_results_for: "Resultados de búsqueda para",
+    in_project: "en el proyecto",
+    in_workspace: "en el espacio de trabajo",
+    toggle_workspace_level_search: "Alternar búsqueda a nivel de espacio de trabajo",
     status: "Estado",
     danger_zone: "Zona de peligro",
-    customize_navigation_description: "Los elementos seleccionados siempre permanecerán visibles en tu barra lateral. Aún puedes encontrar los demás en cualquier momento desde el menú Más. Estos cambios son personales y no afectarán a nadie más en tu espacio de trabajo.",
-    accordion_navigation_description: "Las pestañas de funciones aparecerán como elementos anidados debajo del proyecto y actuarán como acordeón.",
-    horizontal_navigation_description: "Las pestañas de funciones aparecerán como pestañas horizontales dentro de un proyecto.",
+    customize_navigation_description:
+      "Los elementos seleccionados siempre permanecerán visibles en tu barra lateral. Aún puedes encontrar los demás en cualquier momento desde el menú Más. Estos cambios son personales y no afectarán a nadie más en tu espacio de trabajo.",
+    accordion_navigation_description:
+      "Las pestañas de funciones aparecerán como elementos anidados debajo del proyecto y actuarán como acordeón.",
+    horizontal_navigation_description:
+      "Las pestañas de funciones aparecerán como pestañas horizontales dentro de un proyecto.",
     min_value_1_error: "El valor mínimo es 1",
     skip: "Omitir",
     learn_more: "Saber más",
@@ -1080,7 +1143,9 @@ export default {
     },
     sibling: {
       label: "Elementos de trabajo hermanos",
+      empty: "No hay elementos de trabajo hermanos",
     },
+    deleted_message: "Este elemento de trabajo ha sido eliminado",
     archive: {
       description: "Solo los elementos de trabajo completados\no cancelados pueden ser archivados",
       label: "Archivar elemento de trabajo",
@@ -1196,11 +1261,13 @@ export default {
     modals: {
       delete: {
         title: "Eliminar estado",
-        content: "¿Estás seguro de que quieres eliminar el estado {name}? Todos los datos relacionados con el estado serán eliminados permanentemente. Esta acción no se puede deshacer.",
+        content:
+          "¿Estás seguro de que quieres eliminar el estado {name}? Todos los datos relacionados con el estado serán eliminados permanentemente. Esta acción no se puede deshacer.",
       },
     },
     errors: {
-      move_issues: "Este estado contiene algunos elementos de trabajo. Por favor, muévelos a otro estado para poder eliminar este.",
+      move_issues:
+        "Este estado contiene algunos elementos de trabajo. Por favor, muévelos a otro estado para poder eliminar este.",
       generic: "No se ha podido eliminar el estado. Por favor, inténtalo de nuevo.",
     },
   },
@@ -1248,7 +1315,8 @@ export default {
       processing_editor: "El editor todavía está procesando los cambios. Por favor, espere antes de continuar.",
       generic: "Se ha producido un error. Por favor, inténtelo de nuevo.",
     },
-    duplicates_found: "¡Se {count, plural, one{ha encontrado # incidencia duplicada} other{han encontrado # incidencias duplicadas}}!",
+    duplicates_found:
+      "¡Se {count, plural, one{ha encontrado # incidencia duplicada} other{han encontrado # incidencias duplicadas}}!",
     actions: {
       accept: "Aceptar",
       decline: "Rechazar",
@@ -1666,8 +1734,7 @@ export default {
     },
     api_tokens: {
       heading: "Tokens de acceso personal",
-      description:
-        "Genera tokens de API seguros para integrar tus datos con sistemas y aplicaciones externos.",
+      description: "Genera tokens de API seguros para integrar tus datos con sistemas y aplicaciones externos.",
     },
     activity: {
       heading: "Actividad",
@@ -1751,8 +1818,7 @@ export default {
       },
       billing_and_plans: {
         heading: "Facturación y planes",
-        description:
-          "Elige tu plan, administra suscripciones y actualiza fácilmente conforme crezcan tus necesidades.",
+        description: "Elige tu plan, administra suscripciones y actualiza fácilmente conforme crezcan tus necesidades.",
         title: "Facturación y Planes",
         current_plan: "Plan actual",
         free_plan: "Actualmente estás usando el plan gratuito",
@@ -2001,11 +2067,6 @@ export default {
         error: "No se pudo actualizar el proyecto. Por favor intenta de nuevo.",
       },
     },
-    features: {
-      updating: "Actualizando función del proyecto...",
-      updated: "Función del proyecto actualizada correctamente.",
-      error: "Algo ha ido mal al actualizar la función del proyecto. Por favor, inténtalo de nuevo.",
-    },
     members: {
       label: "Miembros",
       project_lead: "Líder del proyecto",
@@ -2043,8 +2104,7 @@ export default {
     },
     labels: {
       heading: "Etiquetas",
-      description:
-        "Crea etiquetas personalizadas para categorizar y organizar tus elementos de trabajo.",
+      description: "Crea etiquetas personalizadas para categorizar y organizar tus elementos de trabajo.",
       label_title: "Título de la etiqueta",
       label_title_is_required: "El título de la etiqueta es requerido",
       label_max_char: "El nombre de la etiqueta no debe exceder 255 caracteres",
@@ -2177,6 +2237,9 @@ export default {
       },
     },
     features: {
+      updating: "Actualizando función del proyecto...",
+      updated: "Función del proyecto actualizada correctamente.",
+      error: "Algo ha ido mal al actualizar la función del proyecto. Por favor, inténtalo de nuevo.",
       cycles: {
         title: "Ciclos",
         short_title: "Ciclos",
@@ -2989,7 +3052,8 @@ export default {
   personal: "Personal",
   pin: "Fijar",
   preferences: "Preferencias",
-  settings_description: "Gestiona las preferencias de tu cuenta, espacio de trabajo y proyectos en un solo lugar. Cambia entre pestañas para configurar fácilmente.",
+  settings_description:
+    "Gestiona las preferencias de tu cuenta, espacio de trabajo y proyectos en un solo lugar. Cambia entre pestañas para configurar fácilmente.",
   settings_moved_to_preferences: "Los ajustes de zona horaria e idioma se han movido a preferencias.",
   show_limited_projects_on_sidebar: "Mostrar proyectos limitados en la barra lateral",
   timezone_setting: "Ajuste de zona horaria actual.",
@@ -3004,6 +3068,7 @@ export default {
   sidebar: {
     stickies: "Notas adhesivas",
     your_work: "Tu trabajo",
+    new_work_item: "Nuevo elemento de trabajo",
   },
   pages_modals: {
     export: {
@@ -3203,6 +3268,7 @@ export default {
     },
   },
   notifications: {
+    connector_to: "a",
     actions: {
       duplicate: {
         created: "marcó que este elemento de trabajo es un duplicado de",
@@ -3392,7 +3458,8 @@ export default {
         },
         modules: {
           title: "Divide en módulos",
-          description: "Los módulos dividen tu gran iniciativa en proyectos o características para ayudarte a organizarte mejor.",
+          description:
+            "Los módulos dividen tu gran iniciativa en proyectos o características para ayudarte a organizarte mejor.",
         },
         views: {
           title: "Vistas",
@@ -3441,10 +3508,12 @@ export default {
   },
   workspace_wrapper: {
     title: "Espacio de trabajo no encontrado",
-    description: "No se encontró ningún espacio de trabajo con la URL. Es posible que no exista o que no tengas autorización para verlo.",
+    description:
+      "No se encontró ningún espacio de trabajo con la URL. Es posible que no exista o que no tengas autorización para verlo.",
     not_authorized: {
       title: "¡No autorizado!",
-      description: "No eres miembro de este espacio de trabajo. Comunícate con el administrador del espacio de trabajo para obtener una invitación o verifica tus invitaciones pendientes.",
+      description:
+        "No eres miembro de este espacio de trabajo. Comunícate con el administrador del espacio de trabajo para obtener una invitación o verifica tus invitaciones pendientes.",
     },
     go_home: "Ir al inicio",
     visit_profile: "Visitar perfil",
@@ -3458,9 +3527,11 @@ export default {
     welcome_description: "Comienza configurando tu instancia y espacio de trabajo",
     get_started: "Comenzar",
     instance_failure_title: "No se pudieron obtener los detalles de la instancia.",
-    instance_failure_description: "No pudimos obtener los detalles de la instancia. No te preocupes, puede ser solo un problema de conectividad.",
+    instance_failure_description:
+      "No pudimos obtener los detalles de la instancia. No te preocupes, puede ser solo un problema de conectividad.",
     chat_with_us_title: "Chatea con nosotros",
-    chat_with_us_description: "Permite que tus usuarios chateen con nosotros a través de Intercom u otro servicio. Desactivar la telemetría desactiva esto automáticamente.",
+    chat_with_us_description:
+      "Permite que tus usuarios chateen con nosotros a través de Intercom u otro servicio. Desactivar la telemetría desactiva esto automáticamente.",
     settings_update_success: "Configuración actualizada con éxito",
     instance_details: "Detalles de la instancia",
     instance_name_label: "Nombre de la instancia",
@@ -3469,7 +3540,8 @@ export default {
     instance_id: "ID de la instancia",
     chat_telemetry_title: "Chat + telemetría",
     telemetry_title: "Permitir que Plane recopile datos de uso anónimos",
-    telemetry_description: "No se recopila PII. Estos datos anonimizados se utilizan para comprender cómo usas Plane y crear nuevas funciones de acuerdo con",
+    telemetry_description:
+      "No se recopila PII. Estos datos anonimizados se utilizan para comprender cómo usas Plane y crear nuevas funciones de acuerdo con",
     telemetry_policy_link: "nuestra Política de Telemetría.",
     saving_configuration: "Guardando configuración",
     configuration_save_success: "Configuración guardada con éxito",
@@ -3477,9 +3549,11 @@ export default {
     workspaces_on_instance_title: "Espacios de trabajo en esta instancia",
     workspaces_on_instance_description: "Mira todos los espacios de trabajo y controla quién puede crearlos.",
     prevent_workspace_creation_title: "Evitar que cualquier otra persona cree un espacio de trabajo.",
-    prevent_workspace_creation_description: "Activar esto permitirá que solo tú crees espacios de trabajo. Tendrás que invitar a los usuarios a los nuevos espacios de trabajo.",
+    prevent_workspace_creation_description:
+      "Activar esto permitirá que solo tú crees espacios de trabajo. Tendrás que invitar a los usuarios a los nuevos espacios de trabajo.",
     all_workspaces_title: "Todos los espacios de trabajo en esta instancia",
-    workspace_management_notice: "Aún no puedes eliminar espacios de trabajo y solo puedes ir al espacio de trabajo si eres Administrador o Miembro.",
+    workspace_management_notice:
+      "Aún no puedes eliminar espacios de trabajo y solo puedes ir al espacio de trabajo si eres Administrador o Miembro.",
     workspace_management_meta_title: "Gestión de espacios de trabajo - Modo Dios",
     ai_settings_update_success: "Configuración de IA actualizada con éxito",
     openai_title: "OpenAI",
@@ -3491,9 +3565,11 @@ export default {
     ai_vendor_description: "Si tienes un proveedor de modelos de IA preferido, ponte en ",
     touch_with_us_link: "contacto con nosotros.",
     auth_disable_error_title: "No se puede desactivar la autenticación",
-    auth_disable_error_description: "Al menos un método de autenticación debe permanecer activado. Por favor, activa otro método antes de desactivar este.",
+    auth_disable_error_description:
+      "Al menos un método de autenticación debe permanecer activado. Por favor, activa otro método antes de desactivar este.",
     auth_page_title: "Gestionar modos de autenticación para tu instancia",
-    auth_page_description: "Configura los modos de autenticación para tu equipo y restringe los registros para que sean solo por invitación.",
+    auth_page_description:
+      "Configura los modos de autenticación para tu equipo y restringe los registros para que sean solo por invitación.",
     allow_signup_title: "Permitir que cualquier persona se registre incluso sin una invitación",
     allow_signup_description: "Desactivar esto solo permitirá que los usuarios se registren cuando sean invitados.",
     available_auth_modes: "Modos de autenticación disponibles",
@@ -3503,7 +3579,8 @@ export default {
     email_disable_error_title: "Error al desactivar el correo electrónico",
     email_disable_error_message: "Error al desactivar la función de correo electrónico. Por favor, inténtalo de nuevo.",
     email_page_title: "Correos electrónicos seguros desde tu propia instancia",
-    email_page_description: "Plane puede enviar correos electrónicos útiles para ti y tus usuarios desde tu propia instancia sin conectarse a Internet.",
+    email_page_description:
+      "Plane puede enviar correos electrónicos útiles para ti y tus usuarios desde tu propia instancia sin conectarse a Internet.",
     email_page_notice: "Configúralo a continuación y, por favor, prueba tu configuración antes de guardarla.",
     email_page_warning: "Las malas configuraciones pueden provocar rebotes de correo electrónico y errores.",
     email_meta_title: "Configuración de correo electrónico - Modo Dios",
@@ -3511,18 +3588,22 @@ export default {
     email_host_label: "Host",
     email_port_label: "Puerto",
     email_sender_label: "Dirección de correo electrónico del remitente",
-    email_sender_description: "Esta es la dirección de correo electrónico que verán tus usuarios al recibir correos electrónicos de esta instancia. Tendrás que verificar esta dirección.",
+    email_sender_description:
+      "Esta es la dirección de correo electrónico que verán tus usuarios al recibir correos electrónicos de esta instancia. Tendrás que verificar esta dirección.",
     email_username_label: "Nombre de usuario",
     email_settings_update_success: "Configuración de correo electrónico actualizada con éxito",
     email_security_title: "Seguridad del correo electrónico",
     authentication_title: "Autenticación",
-    authentication_description: "Esto es opcional, pero recomendamos configurar un nombre de usuario y una contraseña para tu servidor SMTP.",
+    authentication_description:
+      "Esto es opcional, pero recomendamos configurar un nombre de usuario y una contraseña para tu servidor SMTP.",
     send_test_email: "Enviar correo de prueba",
     email_test_failed: "Error al enviar el correo electrónico",
     email_test_success_title: "Correo enviado",
     email_test_receiver_placeholder: "Correo electrónico del receptor",
-    email_test_success_description: "Hemos enviado el correo de prueba a {email}. Por favor, comprueba tu carpeta de correo no deseado si no lo encuentras.",
-    email_test_success_notice: "Si aún no lo encuentras, vuelve a comprobar tu configuración SMTP y activa un nuevo correo de prueba.",
+    email_test_success_description:
+      "Hemos enviado el correo de prueba a {email}. Por favor, comprueba tu carpeta de correo no deseado si no lo encuentras.",
+    email_test_success_notice:
+      "Si aún no lo encuentras, vuelve a comprobar tu configuración SMTP y activa un nuevo correo de prueba.",
     email_test_sending: "Enviando correo...",
     google_client_id_label: "ID de cliente",
     google_client_id_description: "Tu ID de cliente se encuentra en tu Google API Console.",
@@ -3563,7 +3644,8 @@ export default {
     gitlab_redirect_uri_field: "URI de redireccionamiento",
     gitlab_oauth_app_link: "Aplicación GitLab OAuth",
     gitea_host_label: "Host de Gitea",
-    gitea_host_description: "Usa la URL de tu instancia de Gitea. Para la instancia oficial de Gitea, usa \"https://gitea.com\".",
+    gitea_host_description:
+      'Usa la URL de tu instancia de Gitea. Para la instancia oficial de Gitea, usa "https://gitea.com".',
     gitea_oauth_apps_link: "Configuración de la aplicación Gitea OAuth.",
     gitea_sync_label: "Gitea",
     gitea_auth_configured_message: "Tu autenticación de Gitea está configurada. Deberías probarla ahora.",

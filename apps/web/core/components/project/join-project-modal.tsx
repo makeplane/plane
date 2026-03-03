@@ -55,7 +55,8 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
       <div className="space-y-5 px-5 py-8 sm:p-6">
         <h3 className="text-16 font-medium leading-6 text-primary">{t("workspace_projects.join_project.title")}</h3>
         <p>
-          {t("workspace_projects.join_project.description")} <span className="break-words font-semibold">{project?.name}</span>
+          {t("workspace_projects.join_project.description")}{" "}
+          <span className="break-words font-semibold">{project?.name}</span>
           {t("workspace_projects.join_project.description_suffix")}
         </p>
         <div className="space-y-3" />
@@ -65,7 +66,9 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
           {t("common.cancel")}
         </Button>
         <Button variant="primary" size="lg" tabIndex={1} type="submit" onClick={handleJoin} loading={isJoiningLoading}>
-          {isJoiningLoading ? t("workspace_projects.join_project.joining") : t("workspace_projects.join_project.button")}
+          {isJoiningLoading
+            ? t("workspace_projects.join_project.joining")
+            : t("workspace_projects.join_project.button")}
         </Button>
       </div>
     </ModalCore>

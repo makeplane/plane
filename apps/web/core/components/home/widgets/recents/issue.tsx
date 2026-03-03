@@ -113,7 +113,10 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               />
             </div>
           </Tooltip>
-          <Tooltip tooltipHeading={t("common.priority")} tooltipContent={issueDetails?.priority ?? t("common.priority")}>
+          <Tooltip
+            tooltipHeading={t("common.priority")}
+            tooltipContent={issueDetails?.priority ?? t("common.priority")}
+          >
             <div>
               <PriorityIcon priority={issueDetails?.priority} withContainer size={12} />
             </div>

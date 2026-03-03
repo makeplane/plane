@@ -6,6 +6,7 @@
 
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
+import { useEffect, useState } from "react";
 // helpers
 import { cn } from "../utils";
 import type { TAvatarSize } from "./helper";
@@ -68,6 +69,12 @@ export function Avatar(props: Props) {
     className = "",
   } = props;
 
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(false);
+  }, [src]);
+
   // get size details based on the size prop
   const sizeInfo = getSizeInfo(size);
 
@@ -87,8 +94,13 @@ export function Avatar(props: Props) {
         }
         tabIndex={-1}
       >
-        {src ? (
-          <img src={src} className={cn("h-full w-full", getBorderRadius(shape), className)} alt={name} />
+        {src && !hasError ? (
+          <img
+            src={src}
+            className={cn("h-full w-full", getBorderRadius(shape), className)}
+            alt={name}
+            onError={() => setHasError(true)}
+          />
         ) : (
           <div
             className={cn(

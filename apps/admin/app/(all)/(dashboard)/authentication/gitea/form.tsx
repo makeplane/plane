@@ -61,9 +61,7 @@ export function InstanceGiteaConfigForm(props: Props) {
       key: "GITEA_HOST",
       type: "text",
       label: t("admin.gitea_host_label"),
-      description: (
-        <>{t("admin.gitea_host_description")}</>
-      ),
+      description: <>{t("admin.gitea_host_description")}</>,
       placeholder: "https://gitea.com",
       error: Boolean(errors.GITEA_HOST),
       required: true,

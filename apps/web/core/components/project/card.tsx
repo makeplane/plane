@@ -378,5 +378,4 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       </Link>
     </>
   );
-
 });

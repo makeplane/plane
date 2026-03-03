@@ -24,6 +24,24 @@ authentication_config_variables = [
         "category": "AUTHENTICATION",
         "is_encrypted": False,
     },
+    {
+        "key": "IS_GOOGLE_ENABLED",
+        "value": os.environ.get("IS_GOOGLE_ENABLED", "0"),
+        "category": "AUTHENTICATION",
+        "is_encrypted": False,
+    },
+    {
+        "key": "IS_GITHUB_ENABLED",
+        "value": os.environ.get("IS_GITHUB_ENABLED", "0"),
+        "category": "AUTHENTICATION",
+        "is_encrypted": False,
+    },
+    {
+        "key": "IS_GITLAB_ENABLED",
+        "value": os.environ.get("IS_GITLAB_ENABLED", "0"),
+        "category": "AUTHENTICATION",
+        "is_encrypted": False,
+    },
 ]
 
 workspace_management_config_variables = [
