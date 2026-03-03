@@ -31,7 +31,7 @@ export const APITokensProfileSettings = observer(function APITokensProfileSettin
   const { t } = useTranslation();
 
   if (!tokens) {
-    return <APITokenSettingsLoader />;
+    return <APITokenSettingsLoader title={t("workspace_settings.settings.api_tokens.title")} />;
   }
 
   return (

@@ -20,6 +20,7 @@ import { WORKSPACE_API_TOKENS_LIST } from "@/constants/fetch-keys";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import type { Route } from "./+types/page";
+import { Button } from "@plane/propel/button";
 
 const workspaceApiTokenService = new WorkspaceAPITokenService();
 
@@ -64,12 +65,10 @@ function ApiTokensPage({ params }: Route.ComponentProps) {
           <SettingsHeading
             title={t("workspace_settings.settings.api_tokens.heading")}
             description={t("workspace_settings.settings.api_tokens.description")}
-            button={{
-              label: t("workspace_settings.settings.api_tokens.add_token"),
-              onClick: () => {
-                setIsCreateTokenModalOpen(true);
-              },
-            }}
+            control={
+          <Button variant="primary" size="lg" onClick={() => setIsCreateTokenModalOpen(true)}>
+              {t("workspace_settings.settings.api_tokens.add_token")}
+            </Button>}
           />
           {tokens.length > 0 ? (
             <div className="flex h-full w-full flex-col">
