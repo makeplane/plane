@@ -69,7 +69,7 @@ function ProjectViewsPage({ params }: Route.ComponentProps) {
   // No access to
   if (currentProjectDetails?.issue_views_view === false)
     return (
-      <div className="flex items-center justify-center h-full w-full">
+      <div className="flex h-full w-full items-center justify-center">
         <DetailedEmptyState
           title={t("disabled_project.empty_state.view.title")}
           description={t("disabled_project.empty_state.view.description")}

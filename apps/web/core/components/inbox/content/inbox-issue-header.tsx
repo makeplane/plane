@@ -276,7 +276,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
         />
       </>
 
-      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 bg-surface-1 z-15 border-b border-subtle">
+      <Row className="relative z-15 hidden h-full w-full items-center justify-between gap-2 border-b border-subtle bg-surface-1 lg:flex">
         <div className="flex items-center gap-4">
           {isNotificationEmbed && (
             <button onClick={embedRemoveCurrentNotification}>
@@ -284,12 +284,12 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             </button>
           )}
           {issue?.project_id && issue.sequence_id && (
-            <h3 className="text-14 font-medium text-tertiary flex-shrink-0">
+            <h3 className="flex-shrink-0 text-14 font-medium text-tertiary">
               {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
             </h3>
           )}
           <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />
-          <div className="flex items-center justify-end w-full">
+          <div className="flex w-full items-center justify-end">
             <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
           </div>
         </div>
@@ -319,8 +319,8 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
               <div className="shrink-0">
                 <Button
                   variant="secondary"
-                  prependIcon={<CircleCheck className="w-3 h-3" />}
-                  className="text-on-color border border-success-strong bg-success-primary focus:bg-success-primary focus:text-success-primary hover:bg-success-primary"
+                  prependIcon={<CircleCheck className="h-3 w-3" />}
+                  className="border border-success-strong bg-success-primary text-on-color hover:bg-success-primary focus:bg-success-primary focus:text-success-primary"
                   onClick={() =>
                     handleActionWithPermission(
                       isProjectAdmin,
@@ -338,8 +338,8 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
               <div className="shrink-0">
                 <Button
                   variant="secondary"
-                  prependIcon={<CircleX className="w-3 h-3" />}
-                  className="text-on-color border border-danger-strong bg-danger-primary focus:bg-danger-primary focus:text-danger-primary hover:bg-danger-primary-hover"
+                  prependIcon={<CircleX className="h-3 w-3" />}
+                  className="border border-danger-strong bg-danger-primary text-on-color hover:bg-danger-primary-hover focus:bg-danger-primary focus:text-danger-primary"
                   onClick={() =>
                     handleActionWithPermission(
                       isProjectAdmin,

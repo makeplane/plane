@@ -144,7 +144,7 @@ export function EditorAIMenu(props: Props) {
   return (
     <div
       className={cn(
-        "w-[210px] flex flex-col rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200 transition-all",
+        "flex w-[210px] flex-col rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200 transition-all",
         {
           "w-[700px]": activeTask,
         }
@@ -155,7 +155,7 @@ export function EditorAIMenu(props: Props) {
           "divide-x divide-subtle-1": activeTask,
         })}
       >
-        <div className="flex-shrink-0 w-[210px] overflow-y-auto px-2 py-2.5 transition-all">
+        <div className="w-[210px] flex-shrink-0 overflow-y-auto px-2 py-2.5 transition-all">
           {MENU_ITEMS.map((item) => {
             const isActiveTask = activeTask === item.key;
 
@@ -164,7 +164,7 @@ export function EditorAIMenu(props: Props) {
                 key={item.key}
                 type="button"
                 className={cn(
-                  "w-full flex items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 text-11 text-secondary hover:bg-layer-1 transition-colors",
+                  "flex w-full items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 text-11 text-secondary transition-colors hover:bg-layer-1",
                   {
                     "bg-layer-1": isActiveTask,
                   }
@@ -175,13 +175,13 @@ export function EditorAIMenu(props: Props) {
                   handleClick(item.key);
                 }}
               >
-                <span className="flex-shrink-0 flex items-center gap-2 truncate">
-                  <item.icon className="flex-shrink-0 size-3" />
+                <span className="flex flex-shrink-0 items-center gap-2 truncate">
+                  <item.icon className="size-3 flex-shrink-0" />
                   {item.label}
                 </span>
                 <ChevronRightIcon
-                  className={cn("flex-shrink-0 size-3 opacity-0 pointer-events-none transition-opacity", {
-                    "opacity-100 pointer-events-auto": isActiveTask,
+                  className={cn("pointer-events-none size-3 flex-shrink-0 opacity-0 transition-opacity", {
+                    "pointer-events-auto opacity-100": isActiveTask,
                   })}
                 />
               </button>
@@ -190,8 +190,8 @@ export function EditorAIMenu(props: Props) {
         </div>
         <div
           ref={responseContainerRef}
-          className={cn("flex-shrink-0 w-0 overflow-hidden transition-all", {
-            "w-[490px] overflow-auto vertical-scrollbar scrollbar-sm": activeTask,
+          className={cn("w-0 flex-shrink-0 overflow-hidden transition-all", {
+            "vertical-scrollbar scrollbar-sm w-[490px] overflow-auto": activeTask,
           })}
         >
           {activeTask === AI_EDITOR_TASKS.ASK_ANYTHING ? (
@@ -209,7 +209,7 @@ export function EditorAIMenu(props: Props) {
                   "items-start": response,
                 })}
               >
-                <span className="flex-shrink-0 size-7 grid place-items-center text-secondary rounded-full border border-subtle">
+                <span className="grid size-7 flex-shrink-0 place-items-center rounded-full border border-subtle text-secondary">
                   <Sparkles className="size-3" />
                 </span>
                 {response ? (
@@ -229,7 +229,7 @@ export function EditorAIMenu(props: Props) {
                     <div className="mt-3 flex items-center gap-4">
                       <button
                         type="button"
-                        className="p-1 text-tertiary text-13 font-medium rounded-sm hover:bg-layer-1 outline-none"
+                        className="rounded-sm p-1 text-13 font-medium text-tertiary outline-none hover:bg-layer-1"
                         onClick={() => handleInsertText(false)}
                       >
                         Replace selection
@@ -237,16 +237,16 @@ export function EditorAIMenu(props: Props) {
                       <Tooltip tooltipContent="Add to next line">
                         <button
                           type="button"
-                          className="flex-shrink-0 size-6 grid place-items-center rounded-sm hover:bg-layer-1 outline-none"
+                          className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
                           onClick={() => handleInsertText(true)}
                         >
-                          <CornerDownRight className="text-tertiary size-4" />
+                          <CornerDownRight className="size-4 text-tertiary" />
                         </button>
                       </Tooltip>
                       <Tooltip tooltipContent="Re-generate response">
                         <button
                           type="button"
-                          className="flex-shrink-0 size-6 grid place-items-center rounded-sm hover:bg-layer-1 outline-none"
+                          className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
@@ -255,7 +255,7 @@ export function EditorAIMenu(props: Props) {
                           disabled={isRegenerating}
                         >
                           <RefreshCcw
-                            className={cn("text-tertiary size-4", {
+                            className={cn("size-4 text-tertiary", {
                               "animate-spin": isRegenerating,
                             })}
                           />
@@ -269,13 +269,13 @@ export function EditorAIMenu(props: Props) {
                   </p>
                 )}
               </div>
-              <div className="sticky bottom-0 w-full bg-surface-1 pl-[54.8px] py-2 flex items-center gap-2">
+              <div className="sticky bottom-0 flex w-full items-center gap-2 bg-surface-1 py-2 pl-[54.8px]">
                 {TONES_LIST.map((tone) => (
                   <button
                     key={tone.key}
                     type="button"
                     className={cn(
-                      "p-1 text-11 text-secondary font-medium bg-layer-1 rounded-sm transition-colors outline-none",
+                      "rounded-sm bg-layer-1 p-1 text-11 font-medium text-secondary transition-colors outline-none",
                       {
                         "bg-accent-primary/20 text-accent-primary": tone.key === "default",
                       }
@@ -295,8 +295,8 @@ export function EditorAIMenu(props: Props) {
         </div>
       </div>
       {activeTask && (
-        <div className="bg-surface-2 rounded-b-md py-2 px-4 text-tertiary flex items-center gap-2 border-t border-subtle">
-          <span className="flex-shrink-0 size-4 grid place-items-center">
+        <div className="flex items-center gap-2 rounded-b-md border-t border-subtle bg-surface-2 px-4 py-2 text-tertiary">
+          <span className="grid size-4 flex-shrink-0 place-items-center">
             <TriangleAlert className="size-3" />
           </span>
           <p className="flex-shrink-0 text-11 font-medium">

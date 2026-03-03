@@ -36,7 +36,7 @@ export function FilterOption(props: Props) {
         <div className="flex-grow truncate text-caption-sm-regular text-secondary">{title}</div>
       </div>
       {activePulse && (
-        <div className="flex-shrink-0 text-caption-sm-regular w-2 h-2 rounded-full bg-accent-primary animate-pulse ml-auto" />
+        <div className="ml-auto h-2 w-2 flex-shrink-0 animate-pulse rounded-full bg-accent-primary text-caption-sm-regular" />
       )}
     </button>
   );

@@ -81,7 +81,7 @@ export function IssueCommentToolbar(props: Props) {
                       type="button"
                       onClick={() => executeCommand(item)}
                       className={cn(
-                        "grid place-items-center aspect-square rounded-xs p-0.5 text-placeholder hover:bg-layer-transparent-hover",
+                        "grid aspect-square place-items-center rounded-xs p-0.5 text-placeholder hover:bg-layer-transparent-hover",
                         {
                           "bg-layer-transparent-hover text-primary": isItemActive,
                         }

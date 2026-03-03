@@ -1,10 +1,13 @@
 {
   "name": "@plane/logger",
   "version": "1.2.0",
-  "license": "AGPL-3.0",
-  "description": "Logger shared across multiple apps internally",
   "private": true,
+  "description": "Logger shared across multiple apps internally",
+  "license": "AGPL-3.0",
   "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": "./dist/index.mjs",
     "./package.json": "./package.json"
@@ -12,11 +15,11 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=0",
+    "check:lint": "oxlint --max-warnings=0 .",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
-    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=0",
-    "fix:format": "prettier . --cache --write",
+    "check:format": "oxfmt --check .",
+    "fix:lint": "oxlint --fix .",
+    "fix:format": "oxfmt .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
@@ -29,8 +32,5 @@
     "@types/node": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts"
+  }
 }

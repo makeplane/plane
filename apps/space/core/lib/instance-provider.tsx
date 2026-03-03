@@ -41,7 +41,7 @@ export const InstanceProvider = observer(function InstanceProvider({ children }:
 
   if (!instance && !error)
     return (
-      <div className="flex items-center justify-center h-screen w-full">
+      <div className="flex h-screen w-full items-center justify-center">
         <LogoSpinner />
       </div>
     );
@@ -49,8 +49,8 @@ export const InstanceProvider = observer(function InstanceProvider({ children }:
   if (error) {
     return (
       <div className="relative">
-        <div className="h-screen w-full overflow-hidden overflow-y-auto flex flex-col">
-          <div className="container h-[110px] flex-shrink-0 mx-auto px-5 lg:px-0 flex items-center justify-between gap-5 z-50">
+        <div className="flex h-screen w-full flex-col overflow-hidden overflow-y-auto">
+          <div className="z-50 container mx-auto flex h-[110px] flex-shrink-0 items-center justify-between gap-5 px-5 lg:px-0">
             <div className="flex items-center gap-x-2 py-10">
               <Link href={`${SPACE_BASE_PATH}/`}>
                 <PlaneLockup className="h-7 w-auto text-primary" />
@@ -58,10 +58,10 @@ export const InstanceProvider = observer(function InstanceProvider({ children }:
             </div>
           </div>
           <div className="absolute inset-0 z-0">
-            <img src={patternBackground} className="w-screen h-full object-cover" alt="Plane background pattern" />
+            <img src={patternBackground} className="h-full w-screen object-cover" alt="Plane background pattern" />
           </div>
           <div className="relative z-10 flex-grow">
-            <div className="relative h-full w-full overflow-y-auto px-6 py-10 mx-auto flex justify-center items-center">
+            <div className="relative mx-auto flex h-full w-full items-center justify-center overflow-y-auto px-6 py-10">
               <InstanceFailureView />
             </div>
           </div>

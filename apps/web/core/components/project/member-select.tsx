@@ -63,7 +63,7 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
     <CustomSearchSelect
       value={value}
       label={
-        <div className="flex items-center gap-2 h-3.5">
+        <div className="flex h-3.5 items-center gap-2">
           {selectedOption && (
             <Avatar name={selectedOption.member?.display_name} src={getFileURL(selectedOption.member?.avatar_url)} />
           )}

@@ -39,7 +39,7 @@ export function InboxIssueCreateModalRoot(props: TInboxIssueCreateModalRoot) {
       isOpen={modalState}
       position={EModalPosition.TOP}
       width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
-      className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"
+      className="rounded-lg !bg-transparent shadow-none transition-[width] ease-linear"
     >
       <InboxIssueCreateRoot
         workspaceSlug={workspaceSlug}

@@ -47,15 +47,15 @@ const ListLoaderItemRow = forwardRef(function ListLoaderItemRow(
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
-    <div ref={ref} className="flex items-center justify-between h-11 p-3 border-b border-subtle">
+    <div ref={ref} className="flex h-11 items-center justify-between border-b border-subtle p-3">
       <div className="flex items-center gap-3">
-        <span className="h-5 w-10 bg-layer-1 rounded-sm animate-pulse" />
-        <span className={`h-5 w-52 bg-layer-1 rounded-sm animate-pulse`} />
+        <span className="h-5 w-10 animate-pulse rounded-sm bg-layer-1" />
+        <span className={`h-5 w-52 animate-pulse rounded-sm bg-layer-1`} />
       </div>
       <div className="flex items-center gap-2">
         {[...Array(6)].map((_, index) => (
           <Fragment key={index}>
-            <span key={index} className="h-5 w-5 bg-layer-1 rounded-sm animate-pulse" />
+            <span key={index} className="h-5 w-5 animate-pulse rounded-sm bg-layer-1" />
           </Fragment>
         ))}
       </div>
@@ -100,7 +100,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   ) : (
     <div
       className={
-        "h-11 relative flex items-center gap-3 bg-surface-1 border border-transparent border-t-subtle-1 pl-6 p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline cursor-pointer"
+        "relative flex h-11 cursor-pointer items-center gap-3 border border-transparent border-t-subtle-1 bg-surface-1 p-3 pl-6 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline"
       }
       onClick={() => loadMoreIssues(group.id)}
       role="button"

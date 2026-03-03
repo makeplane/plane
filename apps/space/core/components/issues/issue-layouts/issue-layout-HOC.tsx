@@ -27,14 +27,14 @@ export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
 
   if (getIssueLoader() === "init-loader" || issueCount === undefined) {
     return (
-      <div className="relative size-full grid place-items-center">
+      <div className="relative grid size-full place-items-center">
         <LogoSpinner />
       </div>
     );
   }
 
   if (getGroupIssueCount(undefined, undefined, false) === 0) {
-    return <div className="size-full grid place-items-center text-secondary">No work items found</div>;
+    return <div className="grid size-full place-items-center text-secondary">No work items found</div>;
   }
 
   return <>{props.children}</>;

@@ -117,7 +117,7 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
           }
           className="flex items-center gap-2"
         >
-          <Settings className="shrink-0 size-3.5" />
+          <Settings className="size-3.5 shrink-0" />
           {t("settings")}
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
@@ -129,12 +129,12 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
           }
           className="flex items-center gap-2"
         >
-          <Settings2 className="shrink-0 size-3.5" />
+          <Settings2 className="size-3.5 shrink-0" />
           {t("preferences")}
         </CustomMenu.MenuItem>
       </div>
       <CustomMenu.MenuItem onClick={handleSignOut} className="flex items-center gap-2">
-        <LogOut className="shrink-0 size-3.5" />
+        <LogOut className="size-3.5 shrink-0" />
         {t("sign_out")}
       </CustomMenu.MenuItem>
       {isUserInstanceAdmin && (

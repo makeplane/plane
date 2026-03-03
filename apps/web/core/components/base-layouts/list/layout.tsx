@@ -44,7 +44,7 @@ export const BaseListLayout = observer(function BaseListLayout<T extends IBaseLa
 
   return (
     <div ref={containerRef} className={cn("relative size-full overflow-auto bg-surface-1", className)}>
-      <div className="relative size-full flex flex-col">
+      <div className="relative flex size-full flex-col">
         {groups.map((group) => {
           const itemIds = groupedItemIds[group.id] || [];
           const isCollapsed = collapsedGroups.includes(group.id);

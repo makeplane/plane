@@ -55,7 +55,7 @@ export function LinearProgressIndicator({
         "h-[14px]": size === "xl",
       })}
     >
-      <div className={cn("flex h-full w-full gap-[1.5px] p-[2px] bg-surface-2 rounded-xs", className)}>{bars}</div>
+      <div className={cn("flex h-full w-full gap-[1.5px] rounded-xs bg-surface-2 p-[2px]", className)}>{bars}</div>
     </div>
   );
 }

@@ -143,7 +143,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             className={cn(
               "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1",
               {
-                "hover:bg-layer-1 cursor-pointer": issue.sub_issues_count,
+                "cursor-pointer hover:bg-layer-1": issue.sub_issues_count,
               }
             )}
           >

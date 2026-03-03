@@ -89,7 +89,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
         <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
-        <div className={`relative flex items-center rounded-md bg-surface-1 border border-subtle`}>
+        <div className={`relative flex items-center rounded-md border border-subtle bg-surface-1`}>
           <Input
             id="email"
             name="email"
@@ -97,7 +97,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-placeholder border-0`}
+            className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder`}
             autoComplete="off"
             disabled
           />
@@ -119,11 +119,11 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
           placeholder="123456"
-          className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
+          className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
           autoComplete="off"
           autoFocus
         />
-        <div className="flex w-full items-center justify-between px-1 text-11 pt-1">
+        <div className="flex w-full items-center justify-between px-1 pt-1 text-11">
           <p className="flex items-center gap-1 font-medium text-success-primary">
             <CircleCheck height={12} width={12} />
             Paste the code sent to your email

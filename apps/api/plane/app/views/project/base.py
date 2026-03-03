@@ -33,6 +33,7 @@ from plane.db.models import (
     ProjectIdentifier,
     ProjectMember,
     ProjectNetwork,
+    ProjectUserProperty,
     State,
     DEFAULT_STATES,
     Workspace,

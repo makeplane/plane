@@ -101,12 +101,12 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
             )}
             disabled={item.disabled}
           >
-            {item.icon && <item.icon className={cn("shrink-0 size-3", item.iconClassName)} />}
+            {item.icon && <item.icon className={cn("size-3 shrink-0", item.iconClassName)} />}
             <div>
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-tertiary whitespace-pre-line", {
+                  className={cn("whitespace-pre-line text-tertiary", {
                     "text-placeholder": item.disabled,
                   })}
                 >

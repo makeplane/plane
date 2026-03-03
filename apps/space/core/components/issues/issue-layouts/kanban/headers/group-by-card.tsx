@@ -21,13 +21,13 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
 
   return (
     <>
-      <div className="relative flex shrink-0 gap-2 p-1.5 w-full flex-row items-center">
+      <div className="relative flex w-full shrink-0 flex-row items-center gap-2 p-1.5">
         <div className="flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-xs">
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
-        <div className="relative flex items-center gap-1 w-full flex-row overflow-hidden">
-          <div className="line-clamp-1 inline-block overflow-hidden truncate font-medium text-primary">{title}</div>
-          <div className="shrink-0 text-13 font-medium text-tertiary pl-2">{count || 0}</div>
+        <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
+          <div className="line-clamp-1 inline-block truncate overflow-hidden font-medium text-primary">{title}</div>
+          <div className="shrink-0 pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
         </div>
       </div>
     </>

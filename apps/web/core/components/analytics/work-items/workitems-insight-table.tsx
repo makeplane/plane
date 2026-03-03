@@ -116,11 +116,11 @@ const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
                       shape="circle"
                     />
                   ) : (
-                    <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-layer-1  capitalize overflow-hidden">
+                    <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-layer-1 capitalize">
                       {row.original.display_name ? (
                         row.original.display_name?.[0]
                       ) : (
-                        <UserRound className="text-secondary " size={12} />
+                        <UserRound className="text-secondary" size={12} />
                       )}
                     </div>
                   )}

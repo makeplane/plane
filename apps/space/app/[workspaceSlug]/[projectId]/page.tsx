@@ -50,7 +50,7 @@ export const clientLoader = async ({ params, request }: Route.ClientLoaderArgs) 
 
 export default function IssuesPage() {
   return (
-    <div className="flex h-screen min-h-[500px] w-full justify-center items-center">
+    <div className="flex h-screen min-h-[500px] w-full items-center justify-center">
       <LogoSpinner />
     </div>
   );

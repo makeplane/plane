@@ -87,7 +87,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
   const issueList =
     filteredIssues.length > 0 ? (
       <li className="p-2">
-        {query === "" && <h2 className="mb-2 mt-4 px-3 text-11 font-semibold text-primary">Select work item</h2>}
+        {query === "" && <h2 className="mt-4 mb-2 px-3 text-11 font-semibold text-primary">Select work item</h2>}
         <ul className="text-13 text-primary">
           {filteredIssues.map((issue) => {
             const stateColor = issue.state__color || "";
@@ -98,7 +98,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
                 as="div"
                 value={issue.id}
                 className={({ active, selected }) =>
-                  `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-secondary ${
+                  `flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-secondary select-none ${
                     active || selected ? "bg-layer-1 text-primary" : ""
                   } `
                 }
@@ -135,12 +135,12 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
       <Combobox value={value} onChange={handleSubmit}>
         <div className="relative m-1">
           <SearchIcon
-            className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
+            className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
             aria-hidden="true"
           />
           <input
             type="text"
-            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-13"
+            className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-primary outline-none focus:ring-0 sm:text-13"
             placeholder="Search..."
             onChange={(e) => setQuery(e.target.value)}
           />

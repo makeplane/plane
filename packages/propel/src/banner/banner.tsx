@@ -112,7 +112,7 @@ export const Banner = React.forwardRef(function Banner(
       {...props}
     >
       {/* Left side: Icon and Title */}
-      <div className="flex items-center gap-3 flex-1 min-w-0">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         {renderIcon()}
         {title && <div className={cn(titleStyling)}>{title}</div>}
         {children}

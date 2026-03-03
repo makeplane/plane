@@ -133,8 +133,8 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <div className="py-4 space-y-0 px-4">
-        <h3 className="text-16 font-medium leading-6 text-primary">{changeEmailT("title")}</h3>
+      <div className="space-y-0 px-4 py-4">
+        <h3 className="text-16 leading-6 font-medium text-primary">{changeEmailT("title")}</h3>
         <p className="my-4 text-13 text-secondary">{changeEmailT("description")}</p>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-4" noValidate>

@@ -44,7 +44,7 @@ export const BaseKanbanLayout = observer(function BaseKanbanLayout<T extends IBa
   );
 
   return (
-    <div ref={containerRef} className={cn("relative w-full flex gap-2 p-3 h-full overflow-x-auto", className)}>
+    <div ref={containerRef} className={cn("relative flex h-full w-full gap-2 overflow-x-auto p-3", className)}>
       {groups.map((group) => {
         const itemIds = groupedItemIds[group.id] || [];
         const isCollapsed = collapsedGroups.includes(group.id);

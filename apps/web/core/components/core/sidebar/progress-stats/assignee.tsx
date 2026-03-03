@@ -62,7 +62,7 @@ export const AssigneeStatComponent = observer(function AssigneeStatComponent(pro
                 title={
                   <div className="flex items-center gap-2">
                     <div className="h-4 w-4 rounded-full border-2 border-subtle bg-layer-1">
-                      <img src={userImage} className="rounded-full w-full h-full object-cover" alt="User" />
+                      <img src={userImage} className="h-full w-full rounded-full object-cover" alt="User" />
                     </div>
                     <span>{t("no_assignee")}</span>
                   </div>
