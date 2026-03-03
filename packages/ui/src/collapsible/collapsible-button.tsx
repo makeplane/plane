@@ -33,17 +33,17 @@ export function CollapsibleButton(props: Props) {
     ChevronIcon = DropdownIcon,
   } = props;
   return (
-    <div className={cn("flex items-center justify-between gap-3 h-12 px-2.5 py-3 border-b border-subtle", className)}>
+    <div className={cn("flex h-12 items-center justify-between gap-3 border-b border-subtle px-2.5 py-3", className)}>
       <div className="flex items-center gap-3.5">
         <div className="flex items-center gap-3">
           {!hideChevron && (
             <ChevronIcon
-              className={cn("size-2 text-tertiary hover:text-secondary duration-300", {
+              className={cn("size-2 text-tertiary duration-300 hover:text-secondary", {
                 "-rotate-90": !isOpen,
               })}
             />
           )}
-          <span className={cn("text-14 text-primary font-medium", titleClassName)}>{title}</span>
+          <span className={cn("text-14 font-medium text-primary", titleClassName)}>{title}</span>
         </div>
         {indicatorElement && indicatorElement}
       </div>

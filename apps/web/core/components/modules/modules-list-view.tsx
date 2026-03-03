@@ -82,7 +82,7 @@ export const ModulesListView = observer(function ModulesListView() {
 
   return (
     <ContentWrapper variant={ERowVariant.HUGGING}>
-      <div className="size-full flex justify-between">
+      <div className="flex size-full justify-between">
         {displayFilters?.layout === "list" && (
           <ListLayout>
             {filteredModuleIds.map((moduleId) => (
@@ -92,11 +92,11 @@ export const ModulesListView = observer(function ModulesListView() {
         )}
         {displayFilters?.layout === "board" && (
           <Row
-            className={`size-full py-page-y grid grid-cols-1 gap-6 overflow-y-auto ${
+            className={`grid size-full grid-cols-1 gap-6 overflow-y-auto py-page-y ${
               peekModule
-                ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
-                : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
-            } auto-rows-max transition-all vertical-scrollbar scrollbar-lg`}
+                ? "3xl:grid-cols-3 lg:grid-cols-1 xl:grid-cols-2"
+                : "3xl:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3"
+            } vertical-scrollbar scrollbar-lg auto-rows-max transition-all`}
           >
             {filteredModuleIds.map((moduleId) => (
               <ModuleCardItem key={moduleId} moduleId={moduleId} />

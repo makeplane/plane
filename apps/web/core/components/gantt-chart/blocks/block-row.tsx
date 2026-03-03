@@ -81,7 +81,7 @@ export const BlockRow = observer(function BlockRow(props: Props) {
 
   return (
     <div
-      className="relative min-w-full w-max"
+      className="relative w-max min-w-full"
       onMouseEnter={() => updateActiveBlockId(blockId)}
       onMouseLeave={() => updateActiveBlockId(null)}
       style={{

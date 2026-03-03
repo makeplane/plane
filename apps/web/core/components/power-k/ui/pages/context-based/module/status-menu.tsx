@@ -29,7 +29,7 @@ export const PowerKModuleStatusMenu = observer(function PowerKModuleStatusMenu(p
       {MODULE_STATUS.map((status) => (
         <PowerKModalCommandItem
           key={status.value}
-          iconNode={<ModuleStatusIcon status={status.value} className="shrink-0 size-3.5" />}
+          iconNode={<ModuleStatusIcon status={status.value} className="size-3.5 shrink-0" />}
           label={t(status.i18n_label)}
           isSelected={status.value === value}
           onSelect={() => handleSelect(status.value)}

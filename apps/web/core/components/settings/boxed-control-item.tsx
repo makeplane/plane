@@ -20,7 +20,7 @@ export function SettingsBoxedControlItem(props: Props) {
   return (
     <div
       className={cn(
-        "w-full bg-layer-2 rounded-lg border border-subtle px-4 py-3 flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4 md:gap-8",
+        "flex w-full flex-col items-start gap-4 rounded-lg border border-subtle bg-layer-2 px-4 py-3 md:flex-row md:items-center md:justify-between md:gap-8",
         className
       )}
     >

@@ -49,7 +49,7 @@ export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: 
 
   return (
     <div className="relative pb-2">
-      <div className="flex flex-col gap-5 w-full">
+      <div className="flex w-full flex-col gap-5">
         <CycleSidebarHeader
           workspaceSlug={workspaceSlug}
           projectId={projectId}

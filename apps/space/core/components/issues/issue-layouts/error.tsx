@@ -9,14 +9,14 @@ import SomethingWentWrongImage from "@/app/assets/something-went-wrong.svg?url";
 
 export function SomethingWentWrongError() {
   return (
-    <div className="bg-surface-1 grid min-h-screen w-full place-items-center p-6">
+    <div className="grid min-h-screen w-full place-items-center bg-surface-1 p-6">
       <div className="text-center">
         <div className="mx-auto grid h-52 w-52 place-items-center rounded-full">
           <div className="grid h-32 w-32 place-items-center">
             <img
               src={SomethingWentWrongImage}
               alt="Oops! Something went wrong"
-              className="w-full h-full object-contain"
+              className="h-full w-full object-contain"
             />
           </div>
         </div>

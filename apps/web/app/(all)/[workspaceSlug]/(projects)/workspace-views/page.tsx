@@ -29,8 +29,8 @@ function WorkspaceViewsPage() {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="flex flex-col h-full w-full overflow-hidden">
-        <div className="flex h-11 w-full items-center gap-2.5  px-5 py-3 overflow-hidden border-b border-subtle">
+      <div className="flex h-full w-full flex-col overflow-hidden">
+        <div className="flex h-11 w-full items-center gap-2.5 overflow-hidden border-b border-subtle px-5 py-3">
           <SearchIcon className="text-secondary" width={14} height={14} strokeWidth={2} />
           <Input
             className="w-full bg-transparent !p-0 text-11 leading-5 text-secondary placeholder:text-placeholder focus:outline-none"
@@ -40,7 +40,7 @@ function WorkspaceViewsPage() {
             mode="true-transparent"
           />
         </div>
-        <div className="flex flex-col h-full w-full vertical-scrollbar scrollbar-lg">
+        <div className="vertical-scrollbar flex scrollbar-lg h-full w-full flex-col">
           {DEFAULT_GLOBAL_VIEWS_LIST.filter((v) => t(v.i18n_label).toLowerCase().includes(query.toLowerCase())).map(
             (option) => (
               <GlobalDefaultViewListItem key={option.key} view={option} />

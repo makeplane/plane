@@ -61,7 +61,7 @@ export function WebhookIndividualEventOptions({ control }: Props) {
                   {option.label}
                 </label>
               </div>
-              <p className="ml-6 mt-0.5 text-11 text-tertiary">{option.description}</p>
+              <p className="mt-0.5 ml-6 text-11 text-tertiary">{option.description}</p>
             </div>
           )}
         />

@@ -23,6 +23,7 @@ export default {
     favorites: "즐겨찾기",
     pro: "프로",
     upgrade: "업그레이드",
+    stickies: "스티키",
   },
   auth: {
     common: {

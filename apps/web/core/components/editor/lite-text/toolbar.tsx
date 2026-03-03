@@ -103,7 +103,7 @@ export function IssueCommentToolbar(props: Props) {
   const isSubmitButtonDisabled = isCommentEmpty || !isEditorReadyToDiscard;
 
   return (
-    <div className="flex h-9 w-full items-stretch gap-1.5 bg-surface-2 overflow-x-scroll">
+    <div className="flex h-9 w-full items-stretch gap-1.5 overflow-x-scroll bg-surface-2">
       {showAccessSpecifier && (
         <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded-sm border-[0.5px] border-subtle p-1">
           {COMMENT_ACCESS_SPECIFIERS.map((access) => {
@@ -114,7 +114,7 @@ export function IssueCommentToolbar(props: Props) {
                 <button
                   type="button"
                   onClick={() => handleAccessChange?.(access.key)}
-                  className={cn("grid place-items-center aspect-square rounded-xs p-1 hover:bg-layer-1", {
+                  className={cn("grid aspect-square place-items-center rounded-xs p-1 hover:bg-layer-1", {
                     "bg-layer-1": isAccessActive,
                   })}
                 >
@@ -156,7 +156,7 @@ export function IssueCommentToolbar(props: Props) {
                       type="button"
                       onClick={() => executeCommand(item)}
                       className={cn(
-                        "grid place-items-center aspect-square rounded-xs p-0.5 text-placeholder hover:bg-layer-1",
+                        "grid aspect-square place-items-center rounded-xs p-0.5 text-placeholder hover:bg-layer-1",
                         {
                           "bg-layer-1 text-primary": isItemActive,
                         }

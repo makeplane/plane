@@ -75,7 +75,7 @@ export function RowOptionsDropdown(props: Props) {
     <>
       <button
         type="button"
-        className="flex items-center justify-between gap-2 w-full rounded-sm px-1 py-1.5 text-11 text-left truncate text-secondary hover:bg-layer-1"
+        className="flex w-full items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 text-left text-11 text-secondary hover:bg-layer-1"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -84,7 +84,7 @@ export function RowOptionsDropdown(props: Props) {
         }}
       >
         <div className="flex-grow truncate">Header row</div>
-        <ToggleRight className="shrink-0 size-3" />
+        <ToggleRight className="size-3 shrink-0" />
       </button>
       <hr className="my-2 border-subtle" />
       <TableDragHandleDropdownColorSelector editor={editor} onSelect={onClose} />
@@ -92,7 +92,7 @@ export function RowOptionsDropdown(props: Props) {
         <button
           key={item.key}
           type="button"
-          className="flex items-center gap-2 w-full rounded-sm px-1 py-1.5 text-11 text-left truncate text-secondary hover:bg-layer-1"
+          className="flex w-full items-center gap-2 truncate rounded-sm px-1 py-1.5 text-left text-11 text-secondary hover:bg-layer-1"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -100,7 +100,7 @@ export function RowOptionsDropdown(props: Props) {
             onClose();
           }}
         >
-          <item.icon className="shrink-0 size-3" />
+          <item.icon className="size-3 shrink-0" />
           <div className="flex-grow truncate">{item.label}</div>
         </button>
       ))}

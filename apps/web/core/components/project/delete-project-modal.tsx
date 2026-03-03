@@ -88,12 +88,12 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
         </div>
         <span>
           <p className="text-13 leading-7 text-secondary">
-            Are you sure you want to delete project <span className="break-words font-semibold">{project?.name}</span>?
+            Are you sure you want to delete project <span className="font-semibold break-words">{project?.name}</span>?
             All of the data related to the project will be permanently removed. This action cannot be undone
           </p>
         </span>
         <div className="text-secondary">
-          <p className="break-words text-13 ">
+          <p className="text-13 break-words">
             Enter the project name <span className="font-medium text-primary">{project?.name}</span> to continue:
           </p>
           <Controller

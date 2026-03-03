@@ -261,7 +261,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     <KanbanIssueBlockLoader />
   ) : (
     <div
-      className="w-full sticky bottom-0 p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline cursor-pointer"
+      className="sticky bottom-0 w-full cursor-pointer p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline"
       onClick={loadMoreIssuesInThisGroup}
     >
       {t("common.load_more")} &darr;
@@ -280,8 +280,8 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     <div
       id={`${groupId}__${sub_group_id}`}
       className={cn(
-        "relative h-full transition-all min-h-[120px]",
-        { "bg-layer-1 rounded-sm": isDraggingOverColumn },
+        "relative h-full min-h-[120px] transition-all",
+        { "rounded-sm bg-layer-1": isDraggingOverColumn },
         { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlayBeVisible }
       )}
       ref={columnRef}
@@ -326,7 +326,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
       {enableQuickIssueCreate &&
         !disableIssueCreation &&
         !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id) && (
-          <div className="w-full bg-surface-2 py-0.5 sticky bottom-0">
+          <div className="sticky bottom-0 w-full bg-surface-2 py-0.5">
             <QuickAddIssueRoot
               layout={EIssueLayoutTypes.KANBAN}
               QuickAddButton={KanbanQuickAddIssueButton}

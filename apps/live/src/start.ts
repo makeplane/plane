@@ -4,9 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { setupSentry } from "./instrument";
-setupSentry();
-
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
 import { Server } from "./server";

@@ -2752,8 +2752,4 @@ export default {
   enter_number_of_projects: "Enter number of projects",
   pin: "Pin",
   unpin: "Unpin",
-  sidebar: {
-    stickies: "Stickies",
-    your_work: "Your work",
-  },
 } as const;

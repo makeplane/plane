@@ -49,9 +49,9 @@ export const PageVersionsOverlay = observer(function PageVersionsOverlay(props: 
   return (
     <div
       className={cn(
-        "absolute inset-0 z-[16] h-full bg-surface-1 flex overflow-hidden opacity-0 pointer-events-none transition-opacity",
+        "pointer-events-none absolute inset-0 z-[16] flex h-full overflow-hidden bg-surface-1 opacity-0 transition-opacity",
         {
-          "opacity-100 pointer-events-auto": isOpen,
+          "pointer-events-auto opacity-100": isOpen,
         }
       )}
       style={{

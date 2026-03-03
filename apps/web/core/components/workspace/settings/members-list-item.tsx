@@ -91,7 +91,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
   if (isEmpty(columns)) return <MembersLayoutLoader />;
 
   return (
-    <div className="border-t border-subtle grid">
+    <div className="grid border-t border-subtle">
       {removeMemberModal && (
         <ConfirmWorkspaceMemberRemove
           isOpen={removeMemberModal.member.id.length > 0}

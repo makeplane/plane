@@ -80,7 +80,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
           />
         ) : (
           <div
-            className={`grid size-7 place-items-center rounded-full border-2 border-strong-1 bg-gray-500 text-on-color`}
+            className={`bg-gray-500 grid size-7 place-items-center rounded-full border-2 border-strong-1 text-on-color`}
           >
             {comment.actor_detail.is_bot
               ? comment?.actor_detail?.first_name?.charAt(0)
@@ -88,7 +88,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
           </div>
         )}
 
-        <span className="absolute -bottom-0.5 -right-1 rounded-tl-sm bg-layer-1 px-0.5 py-px">
+        <span className="absolute -right-1 -bottom-0.5 rounded-tl-sm bg-layer-1 px-0.5 py-px">
           <MessageSquare className="size-3 text-secondary" aria-hidden="true" strokeWidth={2} />
         </span>
       </div>
@@ -138,13 +138,13 @@ export const CommentCard = observer(function CommentCard(props: Props) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group rounded-sm border border-success-strong bg-success-primary p-2 shadow-md duration-300 hover:bg-success-primary"
+                className="group shadow-md rounded-sm border border-success-strong bg-success-primary p-2 duration-300 hover:bg-success-primary"
               >
                 <CheckIcon className="h-3 w-3 text-on-color" strokeWidth={2} />
               </button>
               <button
                 type="button"
-                className="group rounded-sm border border-danger-strong bg-danger-primary p-2 shadow-md duration-300 hover:bg-danger-primary-hover"
+                className="group shadow-md rounded-sm border border-danger-strong bg-danger-primary p-2 duration-300 hover:bg-danger-primary-hover"
                 onClick={() => setIsEditing(false)}
               >
                 <CloseIcon className="h-3 w-3 text-on-color" strokeWidth={2} />
@@ -186,7 +186,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-strong bg-surface-1 p-1 text-11 shadow-lg focus:outline-none">
+            <Menu.Items className="shadow-lg absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll rounded-md border border-strong bg-surface-1 p-1 text-11 whitespace-nowrap focus:outline-none">
               <Menu.Item>
                 {({ active }) => (
                   <div className="py-1">
@@ -195,7 +195,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                       onClick={() => {
                         setIsEditing(true);
                       }}
-                      className={`w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary hover:bg-layer-transparent-hover ${
+                      className={`w-full truncate rounded-sm px-1 py-1.5 text-left text-secondary select-none hover:bg-layer-transparent-hover ${
                         active ? "bg-layer-transparent-hover" : ""
                       }`}
                     >
@@ -210,7 +210,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                     <button
                       type="button"
                       onClick={handleDelete}
-                      className={`w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary hover:bg-layer-transparent-hover ${
+                      className={`w-full truncate rounded-sm px-1 py-1.5 text-left text-secondary select-none hover:bg-layer-transparent-hover ${
                         active ? "bg-layer-transparent-hover" : ""
                       }`}
                     >

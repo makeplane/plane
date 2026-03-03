@@ -21,7 +21,7 @@ export const HeaderSubGroupByCard = observer(function HeaderSubGroupByCard(props
   const { icon, title, count, isExpanded, toggleExpanded } = props;
   return (
     <div
-      className={`relative flex w-full flex-shrink-0 flex-row items-center gap-2 rounded-xs p-1.5 cursor-pointer`}
+      className={`relative flex w-full flex-shrink-0 cursor-pointer flex-row items-center gap-2 rounded-xs p-1.5`}
       onClick={() => toggleExpanded()}
     >
       <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1">

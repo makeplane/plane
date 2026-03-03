@@ -58,8 +58,8 @@ export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActi
             </>
           ) : (
             <div className="mt-4 flex items-center justify-between gap-2 rounded-sm border border-strong bg-layer-2 px-2 py-2.5">
-              <p className="flex items-center gap-2 overflow-hidden break-words text-13 text-secondary">
-                <Lock className="shrink-0 size-3" />
+              <p className="flex items-center gap-2 overflow-hidden text-13 break-words text-secondary">
+                <Lock className="size-3 shrink-0" />
                 Sign in to add your comment
               </p>
               <Link href={`/?next_path=${pathname}`}>

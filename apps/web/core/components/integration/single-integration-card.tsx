@@ -112,7 +112,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
         <div className="h-10 w-10 flex-shrink-0">
           <img
             src={integrationDetails[integration.provider].logo}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             alt={`${integration.title} Logo`}
           />
         </div>
