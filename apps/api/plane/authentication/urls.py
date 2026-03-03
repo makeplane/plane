@@ -12,7 +12,6 @@ from .views import (
     ChangePasswordEndpoint,
     LDAPSignInEndpoint,
     SwingSSOSignInEndpoint,
-    SwingSSOTestEndpoint,
     SwingSSOTokenCallbackEndpoint,
     # App
     EmailCheckEndpoint,
@@ -123,7 +122,6 @@ urlpatterns = [
     path("ldap/sign-in/", LDAPSignInEndpoint.as_view(), name="ldap-sign-in"),
     ## Swing SSO
     path("swing-sso/sign-in/", SwingSSOSignInEndpoint.as_view(), name="swing-sso-sign-in"),
-    path("swing-sso/test/", SwingSSOTestEndpoint.as_view(), name="swing-sso-test"),
     path("swing-sso/callback/", SwingSSOTokenCallbackEndpoint.as_view(), name="swing-sso-callback"),
     # Email Check
     path("email-check/", EmailCheckEndpoint.as_view(), name="email-check"),

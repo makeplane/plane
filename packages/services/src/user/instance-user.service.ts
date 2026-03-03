@@ -40,6 +40,13 @@ export interface IInstanceUserPaginatedResponse {
   prev_page_results: boolean;
 }
 
+export interface IInstanceUserBulkImportResponse {
+  created: IInstanceUser[];
+  skipped: { row_number: number; email: string; reason: string }[];
+  total_created: number;
+  total_skipped: number;
+}
+
 export class InstanceUserService extends APIService {
   constructor(BASE_URL?: string) {
     super(BASE_URL || API_BASE_URL);
@@ -88,6 +95,16 @@ export class InstanceUserService extends APIService {
   async resetPassword(userId: string): Promise<{ password: string }> {
     return this.post(`/api/instances/users/${userId}/reset-password/`, {})
       .then((res) => res?.data as { password: string })
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async bulkImport(file: File): Promise<IInstanceUserBulkImportResponse> {
+    const formData = new FormData();
+    formData.append("file", file);
+    return this.post("/api/instances/users/bulk-import/", formData)
+      .then((res) => res?.data as IInstanceUserBulkImportResponse)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });

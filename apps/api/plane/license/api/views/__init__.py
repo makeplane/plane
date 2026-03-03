@@ -32,3 +32,4 @@ from .user import (
     InstanceUserResetPasswordEndpoint,
     InstanceUserWorkspaceEndpoint,
 )
+from .user_bulk_import import InstanceUserBulkImportEndpoint

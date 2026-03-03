@@ -23,6 +23,7 @@ export default [
     route("authentication/swing-sso", "./(all)/(dashboard)/authentication/swing-sso/page.tsx"),
     route("users", "./(all)/(dashboard)/users/page.tsx"),
     route("users/create", "./(all)/(dashboard)/users/create/page.tsx"),
+    route("users/bulk-import", "./(all)/(dashboard)/users/bulk-import/page.tsx"),
     route("users/:userId", "./(all)/(dashboard)/users/detail/page.tsx"),
     route("ai", "./(all)/(dashboard)/ai/page.tsx"),
     route("image", "./(all)/(dashboard)/image/page.tsx"),

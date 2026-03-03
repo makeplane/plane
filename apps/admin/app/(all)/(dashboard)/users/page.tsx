@@ -62,6 +62,9 @@ const UserManagementPage = observer(function UserManagementPage(_props: Route.Co
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Link href="/users/bulk-import" className={getButtonStyling("secondary", "base")}>
+              Bulk import
+            </Link>
             <Link href="/users/create" className={getButtonStyling("primary", "base")}>
               Create user
             </Link>

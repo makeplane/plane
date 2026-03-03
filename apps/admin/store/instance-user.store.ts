@@ -7,7 +7,7 @@
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import type { IInstanceUser, IInstanceUserPaginatedResponse } from "@plane/services";
+import type { IInstanceUser, IInstanceUserPaginatedResponse, IInstanceUserBulkImportResponse } from "@plane/services";
 import { InstanceUserService } from "@plane/services";
 import type { TLoader } from "@plane/types";
 // root store
@@ -37,6 +37,7 @@ export interface IInstanceUserStore {
   ) => Promise<IInstanceUser>;
   addUserToWorkspace: (userId: string, workspaceId: string, role: number) => Promise<void>;
   resetUserPassword: (userId: string) => Promise<{ password: string }>;
+  bulkImportUsers: (file: File) => Promise<IInstanceUserBulkImportResponse>;
 }
 
 export class InstanceUserStore implements IInstanceUserStore {
@@ -60,6 +61,7 @@ export class InstanceUserStore implements IInstanceUserStore {
       updateUser: action,
       addUserToWorkspace: action,
       resetUserPassword: action,
+      bulkImportUsers: action,
     });
     this.service = new InstanceUserService();
   }
@@ -177,5 +179,28 @@ export class InstanceUserStore implements IInstanceUserStore {
 
   resetUserPassword = async (userId: string): Promise<{ password: string }> => {
     return await this.service.resetPassword(userId);
+  };
+
+  bulkImportUsers = async (file: File): Promise<IInstanceUserBulkImportResponse> => {
+    try {
+      this.loader = "mutation";
+      const result = await this.service.bulkImport(file);
+      // Refresh user list to include newly created users
+      if (result.total_created > 0) {
+        try {
+          await this.fetchUsers();
+        } catch {
+          // list refresh failure is non-fatal — import already succeeded
+        }
+      }
+      return result;
+    } catch (error) {
+      console.error("Error bulk importing users", error);
+      throw error;
+    } finally {
+      runInAction(() => {
+        this.loader = "loaded";
+      });
+    }
   };
 }

@@ -4,6 +4,7 @@
 
 from django.urls import path
 
+from plane.authentication.views import SwingSSOTestEndpoint
 from plane.license.api.views import (
     EmailCredentialCheckEndpoint,
     InstanceAdminEndpoint,
@@ -19,6 +20,7 @@ from plane.license.api.views import (
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
     InstanceUserEndpoint,
+    InstanceUserBulkImportEndpoint,
     InstanceUserResetPasswordEndpoint,
     InstanceUserWorkspaceEndpoint,
 )
@@ -74,8 +76,15 @@ urlpatterns = [
         name="instance-workspace-availability",
     ),
     path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
+    # Swing SSO test (admin-only, needs instances path for admin session cookie)
+    path("swing-sso/test/", SwingSSOTestEndpoint.as_view(), name="swing-sso-test"),
     # User management
     path("users/", InstanceUserEndpoint.as_view(), name="instance-users"),
+    path(
+        "users/bulk-import/",
+        InstanceUserBulkImportEndpoint.as_view(),
+        name="instance-user-bulk-import",
+    ),
     path("users/<uuid:pk>/", InstanceUserEndpoint.as_view(), name="instance-user-detail"),
     path(
         "users/<uuid:pk>/reset-password/",

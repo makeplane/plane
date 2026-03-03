@@ -41,7 +41,7 @@ export function SwingSSOTestAuthModal({ isOpen, onClose }: Props) {
     setResult(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/swing-sso/test/`, {
+      const response = await fetch(`${API_BASE_URL}/api/instances/swing-sso/test/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
