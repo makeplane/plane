@@ -11,6 +11,7 @@
 
 # Third party imports
 from rest_framework import serializers
+from crum import get_current_user
 
 # Python imports
 import re
@@ -104,6 +105,8 @@ class ProjectSerializer(BaseSerializer):
 
         ProjectIdentifier.objects.create(name=project.identifier, project=project, workspace_id=workspace_id)
 
+        current_user = get_current_user()
+
         if label_ids is not None:
             ProjectLabelAssociation.objects.bulk_create(
                 [
@@ -111,8 +114,8 @@ class ProjectSerializer(BaseSerializer):
                         project_id=project.id,
                         label_id=label_id,
                         workspace_id=workspace_id,
-                        created_by_id=self.context["user_id"],
-                        updated_by_id=self.context["user_id"],
+                        created_by_id=current_user.pk if current_user else None,
+                        updated_by_id=current_user.pk if current_user else None,
                     )
                     for label_id in label_ids
                 ],
@@ -153,6 +156,7 @@ class ProjectSerializer(BaseSerializer):
             ).values_list("label_id", flat=True)
 
             new_labels = set(label_ids) - set(existing_label_ids)
+            current_user = get_current_user()
 
             # for label_id in new_labels:
             ProjectLabelAssociation.objects.bulk_create(
@@ -161,8 +165,8 @@ class ProjectSerializer(BaseSerializer):
                         project_id=instance.id,
                         label_id=label_id,
                         workspace_id=workspace_id,
-                        created_by_id=self.context["user_id"],
-                        updated_by_id=self.context["user_id"],
+                        created_by_id=current_user.pk if current_user else None,
+                        updated_by_id=current_user.pk if current_user else None,
                     )
                     for label_id in new_labels
                 ],
