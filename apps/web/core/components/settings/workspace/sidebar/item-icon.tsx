@@ -16,5 +16,5 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   export: ArrowUpToLine,
   "billing-and-plans": CreditCard,
   webhooks: Webhook,
-  "access-tokens": KeyRound
+  "access-tokens": KeyRound,
 };

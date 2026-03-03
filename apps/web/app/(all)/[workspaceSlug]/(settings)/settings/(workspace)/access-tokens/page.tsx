@@ -66,9 +66,10 @@ function ApiTokensPage({ params }: Route.ComponentProps) {
             title={t("workspace_settings.settings.api_tokens.heading")}
             description={t("workspace_settings.settings.api_tokens.description")}
             control={
-          <Button variant="primary" size="lg" onClick={() => setIsCreateTokenModalOpen(true)}>
-              {t("workspace_settings.settings.api_tokens.add_token")}
-            </Button>}
+              <Button variant="primary" size="lg" onClick={() => setIsCreateTokenModalOpen(true)}>
+                {t("workspace_settings.settings.api_tokens.add_token")}
+              </Button>
+            }
           />
           {tokens.length > 0 ? (
             <div className="flex h-full w-full flex-col">
