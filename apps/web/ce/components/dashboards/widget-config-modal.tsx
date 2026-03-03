@@ -123,7 +123,7 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <div className="flex flex-col">
         <div className="flex items-center justify-between border-b border-color-subtle px-5 py-4">
-          <h3 className="text-lg font-semibold text-color-primary">
+          <h3 className="text-16 font-semibold text-color-primary">
             {widget ? t("analytics_dashboard.configure_widget") : t("analytics_dashboard.add_widget")}
           </h3>
           <button

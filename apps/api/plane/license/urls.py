@@ -18,6 +18,9 @@ from plane.license.api.views import (
     InstanceAdminUserSessionEndpoint,
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
+    InstanceUserEndpoint,
+    InstanceUserResetPasswordEndpoint,
+    InstanceUserWorkspaceEndpoint,
 )
 
 urlpatterns = [
@@ -71,4 +74,17 @@ urlpatterns = [
         name="instance-workspace-availability",
     ),
     path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
+    # User management
+    path("users/", InstanceUserEndpoint.as_view(), name="instance-users"),
+    path("users/<uuid:pk>/", InstanceUserEndpoint.as_view(), name="instance-user-detail"),
+    path(
+        "users/<uuid:pk>/reset-password/",
+        InstanceUserResetPasswordEndpoint.as_view(),
+        name="instance-user-reset-password",
+    ),
+    path(
+        "users/<uuid:pk>/workspaces/",
+        InstanceUserWorkspaceEndpoint.as_view(),
+        name="instance-user-workspaces",
+    ),
 ]

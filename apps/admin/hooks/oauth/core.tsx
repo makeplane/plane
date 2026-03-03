@@ -24,6 +24,7 @@ import { GithubConfiguration } from "@/components/authentication/github-config";
 import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
 import { GoogleConfiguration } from "@/components/authentication/google-config";
 import { LDAPConfiguration } from "@/components/authentication/ldap-config";
+import { SwingSSOConfiguration } from "@/components/authentication/swing-sso-config";
 import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
 
 // Authentication methods
@@ -97,5 +98,13 @@ export const getCoreAuthenticationModesMap: (
     icon: <Shield className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <LDAPConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_LDAP_ENABLED",
+  },
+  "swing-sso": {
+    key: "swing-sso",
+    name: "Swing SSO",
+    description: "Authenticate members via Shinhan Swing SSO service.",
+    icon: <Shield className="h-6 w-6 p-0.5 text-tertiary" />,
+    config: <SwingSSOConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "IS_SWING_SSO_ENABLED",
   },
 });

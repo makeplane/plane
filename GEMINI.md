@@ -12,6 +12,7 @@ You are working on **Plane.so** — an open-source project management tool (self
 
 - `.agent/rules/plane-design-system.md` — **PRIMARY** frontend architecture & design system rules
 - `.agent/rules/plane-backend-architecture.md` — **PRIMARY** backend architecture rules
+- `.agent/rules/frontend-implementation-checklist.md` — **MANDATORY** post-implementation checklist
 - `.agent/rules/development-rules.md` — Development workflow rules
 - `./docs/code-standards.md` — Coding standards
 - `./docs/design-guidelines.md` — UI design guidelines
@@ -59,7 +60,46 @@ You are working on **Plane.so** — an open-source project management tool (self
 ❌ bg-white, text-gray-900, border-gray-200
 ```
 
+**Token Naming Convention — CRITICAL:**
+
+- Text: `text-color-*` (WITH `color-` infix) → `text-color-primary`, `text-color-tertiary`
+- Border: `border-color-*` (WITH `color-` infix) → `border-color-subtle`, `border-color-strong`
+- Background: `bg-*` (WITHOUT `color-`) → `bg-surface-1`, `bg-layer-2`
+- **Common mistake:** `text-tertiary` is WRONG → must be `text-color-tertiary`
+
+**Input/Form Backgrounds:** ALL inputs, selects, textareas, date pickers use `bg-layer-2` (NOT `bg-surface-1`).
+
 Semantic tokens auto-handle dark mode. NEVER use `dark:` variants with hardcoded colors.
+
+### Menu / Dropdown — MANDATORY
+
+- `apps/web/`: `CustomMenu` from `@plane/ui`
+- `apps/admin/`: `Menu` from `@plane/propel/menu`
+- **NEVER** build custom hover-based dropdown menus
+
+### Layout Pattern — MANDATORY
+
+Feature sections MUST use `layout.tsx` with `AppHeader` + `ContentWrapper` + `Outlet`:
+
+```typescript
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@plane/ui";
+import { Outlet } from "react-router";
+export default function MyFeatureLayout() {
+  return (
+    <>
+      <AppHeader header={<MyFeatureHeader />} />
+      <ContentWrapper>
+        <Outlet />
+      </ContentWrapper>
+    </>
+  );
+}
+```
+
+- NO inline headers in `page.tsx` files
+- Breadcrumbs from `@plane/ui` `Breadcrumbs` component
+- `PageHead` for page title
 
 ### MobX Store Pattern
 
@@ -70,17 +110,32 @@ Semantic tokens auto-handle dark mode. NEVER use `dark:` variants with hardcoded
 - Store → Hook wrapper → Component
 - CE stores extend `CoreRootStore` in `ce/store/root.store.ts`
 
-### Dialog (Compound Component)
+### Dialog Systems — 3 Systems, Choose by App
+
+| System                       | Used In              | Import                                         |
+| ---------------------------- | -------------------- | ---------------------------------------------- |
+| `@plane/propel/dialog`       | `apps/admin/`        | `Dialog` with `open`, `onOpenChange`           |
+| `@headlessui/react`          | `apps/web/core/`     | `Dialog` + `Transition` with `show`, `onClose` |
+| `ModalCore` from `@plane/ui` | `apps/web/` (legacy) | `isOpen`, `handleClose`                        |
+
+**Propel Dialog (admin app):**
 
 ```typescript
 import { Dialog, EDialogWidth } from "@plane/propel/dialog";
-<Dialog open={isOpen} onClose={handleClose} modal>
+<Dialog open={isOpen} onOpenChange={(open: boolean) => !open && handleClose()} modal>
   <Dialog.Panel width={EDialogWidth.LG}>
-    <Dialog.Title>Title</Dialog.Title>
-    {/* content */}
+    <div className="p-6">
+      <Dialog.Title>Title</Dialog.Title>
+      <div className="mt-4">{/* content */}</div>
+      <div className="mt-6 flex justify-end gap-2">{/* buttons */}</div>
+    </div>
   </Dialog.Panel>
 </Dialog>;
 ```
+
+- `onOpenChange` (NOT `onClose`) — Propel API
+- Single `p-6` wrapper for ALL content (title + body + buttons)
+- `mt-4` title→body, `mt-6` body→buttons
 
 ### Toast Feedback (after ALL mutations)
 
@@ -193,10 +248,62 @@ setToast({ type: TOAST_TYPE.ERROR, title: "Failed" });
 - ❌ Adding CE routes to `core.ts` — use `extended.ts`
 - ❌ Missing `setToast()` feedback after API mutations
 - ❌ Missing `PageHead` component for page title in route pages
+- ❌ Wrong token: `text-tertiary` → must be `text-color-tertiary`
+- ❌ Wrong token: `border-subtle` → must be `border-color-subtle`
+- ❌ `bg-surface-1` for inputs → must be `bg-layer-2`
+- ❌ Custom hover dropdown → use `CustomMenu` (@plane/ui) or `Menu` (@plane/propel/menu)
+- ❌ Inline headers in page.tsx → use layout.tsx with `AppHeader` + `ContentWrapper`
+- ❌ Using `onClose` on Propel Dialog → use `onOpenChange`
+- ❌ Dialog.Title outside padding wrapper → must be inside `<div className="p-6">`
 
-## Workflows
+## Post-Implementation Checklist — MANDATORY
 
-Custom workflows are defined in `.agent/workflows/`. Use `/workflow-name` to trigger.
+After implementing ANY frontend feature, review ALL files against `.agent/rules/frontend-implementation-checklist.md`:
+
+1. **i18n**: ALL visible text uses `t()` — buttons, toasts, empty states, errors
+2. **Color tokens**: `text-color-*` (NOT `text-tertiary`), `border-color-*` (NOT `border-subtle`)
+3. **Input backgrounds**: `bg-layer-2` for ALL inputs/selects/date-pickers (NOT `bg-surface-1`)
+4. **Components**: Propel/UI library components, NEVER custom dropdown/button
+5. **Layout**: `AppHeader` + `ContentWrapper` + `Outlet` in layout.tsx
+6. **File quality**: `observer()` on MobX components, `import type`, files <200 lines
+
+## Attention Dilution Prevention
+
+When creating implementation plans with multiple phases:
+
+1. **Embed relevant rules in each phase file** — extract from `.agent/rules/` only rules applicable to that phase
+2. **Include post-phase checklist** — concrete verification steps before marking phase complete
+3. **Fresh context between phases** — `/clear` or start new chat between phases to prevent quality degradation
+4. **Front-load critical rules** — put most important rules at TOP of embedded section
+
+**Why:** AI performance degrades as context grows past ~100K tokens. Embedding rules at point-of-use increases attention 2-3x vs separate rule files.
+
+## Skills & Workflows
+
+### Skills (`.agent/skills/`)
+
+| Skill        | Command         | Description                                        |
+| ------------ | --------------- | -------------------------------------------------- |
+| `/research`  | Research topics | Codebase + web research → report                   |
+| `/planning`  | Create plan     | Research → phases with embedded rules + checklists |
+| `/implement` | Execute phase   | Read phase file → implement → verify checklist     |
+| `/cook`      | End-to-end      | research → plan → implement → test → review        |
+| `/test`      | Run tests       | Execute tests → analyze → report                   |
+| `/review`    | Code review     | Check against rules → score → report               |
+
+**Pipeline (sequential):**
+
+```
+/research → /planning → /implement (per phase) → /test → /review
+```
+
+Or use `/cook` for the full pipeline in one command.
+
+**State tracking:** Each skill writes output to `plans/` → next skill reads from there.
+
+### Workflows (`.agent/workflows/`)
+
+Legacy workflows also available: `/plan-feature`, `/implement-feature`, `/code-review`.
 
 ## Development Guidelines
 

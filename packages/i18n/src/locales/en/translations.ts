@@ -3260,5 +3260,21 @@ export default {
     text_align: "Text Align",
     text_color: "Text Color",
     text_color_default: "Default",
+    // List page
+    empty_title: "No dashboards created yet.",
+    create_first: "Create your first dashboard to get started.",
+    create_dashboard: "Create Dashboard",
+    success: "Success!",
+    breadcrumb_dashboards: "Dashboards",
+    new_dashboard: "New Dashboard",
+    delete_title: "Delete Dashboard",
+    // Widget card
+    access_public: "Public",
+    access_private: "Private",
+    widget_count: "{count, plural, one {# widget} other {# widgets}}",
+    // Widget adapter
+    no_data_filters: "No data available for these filters.",
+    chart_type_unsupported: 'Chart type "{type}" is not supported yet.',
+    loading: "Loading...",
   },
 } as const;

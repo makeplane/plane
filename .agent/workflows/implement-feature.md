@@ -36,10 +36,31 @@ description: Implement a planned feature following Plane architecture
    - Add routes in `app/routes/`
    - Add translations to ALL language files
 
-4. **Verification**
+4. **Post-Phase Checklist (run after EACH phase)**
+   - If phase file has embedded rules + checklist, verify ALL checklist items
+   - Frontend phases:
+     - [ ] ALL strings use `t()` from `@plane/i18n` (zero hardcoded English)
+     - [ ] Color tokens use full `text-color-*` / `border-color-*` prefix
+     - [ ] Input backgrounds use `bg-layer-2` (NOT `bg-surface-1`)
+     - [ ] `observer()` on all MobX store-reading components
+     - [ ] Menus use `CustomMenu`/`Menu` (no custom dropdowns)
+     - [ ] Layout uses `AppHeader` + `ContentWrapper` + `Outlet`
+     - [ ] File sizes under 200 lines (components under 150)
+   - Backend phases:
+     - [ ] `BaseViewSet`/`BaseAPIView` inherited
+     - [ ] `workspace__slug=slug` filtering
+     - [ ] Activity tracking after mutations
+     - [ ] `select_related`/`prefetch_related` used
+
+5. **Verification**
    - Run linting: `pnpm check:lint`
    - Run type check: `pnpm check:types`
    - Test dark mode works (semantic tokens)
    - Test permissions (admin vs member vs guest)
    - Verify no N+1 queries (check `select_related`/`prefetch_related`)
    - Create `walkthrough.md` documenting what was built and tested
+
+6. **Phase Workflow (Attention Dilution Prevention)**
+   - Start new chat/context between phases to prevent quality degradation
+   - Read phase file first (contains embedded rules + steps + checklist)
+   - Implement all steps → run post-phase checklist → mark complete → new context

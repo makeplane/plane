@@ -174,7 +174,7 @@ export const DashboardFormModal = observer(function DashboardFormModal({
               name="project_ids"
               control={control}
               render={() => (
-                <div className="max-h-40 overflow-y-auto rounded-md border border-color-subtle bg-surface-1">
+                <div className="max-h-40 overflow-y-auto rounded-md border border-color-subtle bg-layer-2">
                   {projects.length === 0 ? (
                     <p className="p-3 text-sm text-color-tertiary">{t("analytics_dashboard.no_projects")}</p>
                   ) : (
@@ -195,9 +195,7 @@ export const DashboardFormModal = observer(function DashboardFormModal({
                           <span
                             className={cn(
                               "flex h-4 w-4 shrink-0 items-center justify-center rounded border",
-                              isSelected
-                                ? "border-accent-primary bg-accent-primary"
-                                : "border-color-strong bg-surface-1"
+                              isSelected ? "border-accent-primary bg-accent-primary" : "border-color-strong bg-layer-2"
                             )}
                           >
                             {isSelected && <Check className="h-3 w-3 text-color-on-color" />}

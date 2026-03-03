@@ -1,3 +1,10 @@
+---
+paths:
+  - apps/api/**
+  - packages/types/**
+  - packages/services/**
+---
+
 # Plane Backend Architecture & Development Rules
 
 **MANDATORY**: Read this rule, `./docs/code-standards.md`, and `./docs/system-architecture.md` before implementing ANY backend changes.

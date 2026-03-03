@@ -189,6 +189,39 @@ ldap_config_variables = [
     },
 ]
 
+swing_sso_config_variables = [
+    {
+        "key": "IS_SWING_SSO_ENABLED",
+        "value": os.environ.get("IS_SWING_SSO_ENABLED", "0"),
+        "category": "SWING_SSO",
+        "is_encrypted": False,
+    },
+    {
+        "key": "SWING_SSO_URL",
+        "value": os.environ.get("SWING_SSO_URL", ""),
+        "category": "SWING_SSO",
+        "is_encrypted": False,
+    },
+    {
+        "key": "SWING_SSO_CLIENT_ID",
+        "value": os.environ.get("SWING_SSO_CLIENT_ID", ""),
+        "category": "SWING_SSO",
+        "is_encrypted": False,
+    },
+    {
+        "key": "SWING_SSO_CLIENT_SECRET",
+        "value": os.environ.get("SWING_SSO_CLIENT_SECRET", ""),
+        "category": "SWING_SSO",
+        "is_encrypted": True,
+    },
+    {
+        "key": "SWING_SSO_COMPANY_CODE",
+        "value": os.environ.get("SWING_SSO_COMPANY_CODE", "sh"),
+        "category": "SWING_SSO",
+        "is_encrypted": False,
+    },
+]
+
 smtp_config_variables = [
     {
         "key": "ENABLE_SMTP",
@@ -300,6 +333,7 @@ core_config_variables = [
     *gitlab_config_variables,
     *gitea_config_variables,
     *ldap_config_variables,
+    *swing_sso_config_variables,
     *smtp_config_variables,
     *llm_config_variables,
     *unsplash_config_variables,

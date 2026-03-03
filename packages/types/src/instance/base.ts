@@ -54,6 +54,7 @@ export interface IInstanceConfig {
   is_magic_login_enabled: boolean;
   is_email_password_enabled: boolean;
   is_ldap_enabled: boolean;
+  is_swing_sso_enabled: boolean;
   github_app_name: string | undefined;
   slack_client_id: string | undefined;
   posthog_api_key: string | undefined;

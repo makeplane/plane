@@ -17,8 +17,8 @@ import type { Route } from "./+types/page";
 import type { IDashboard } from "@plane/types";
 import { DashboardCard } from "./components/dashboard-card";
 import { DashboardDeleteModal } from "./components/dashboard-delete-modal";
-import { DashboardFormModal  } from "@/plane-web/components/dashboards/dashboard-form-modal";
-import type {DashboardFormPayload} from "@/plane-web/components/dashboards/dashboard-form-modal";
+import { DashboardFormModal } from "@/plane-web/components/dashboards/dashboard-form-modal";
+import type { DashboardFormPayload } from "@/plane-web/components/dashboards/dashboard-form-modal";
 import { DashboardListHeader } from "./components/dashboard-list-header";
 
 const DashboardListPage = observer(function DashboardListPage({ params }: Route.ComponentProps) {
@@ -43,15 +43,15 @@ const DashboardListPage = observer(function DashboardListPage({ params }: Route.
         await store.createDashboard(workspaceSlug, data);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Dashboard created successfully.",
+          title: t("analytics_dashboard.success"),
+          message: t("analytics_dashboard.created_success"),
         });
       } catch (error) {
-        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to create dashboard" });
+        setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.create_failed") });
         throw error;
       }
     },
-    [workspaceSlug, store]
+    [workspaceSlug, store, t]
   );
 
   const handleUpdate = useCallback(
@@ -61,16 +61,16 @@ const DashboardListPage = observer(function DashboardListPage({ params }: Route.
         await store.updateDashboard(workspaceSlug, editDashboard.id, data);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Dashboard updated successfully.",
+          title: t("analytics_dashboard.success"),
+          message: t("analytics_dashboard.updated_success"),
         });
         setEditDashboard(null);
       } catch (error) {
-        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to update dashboard" });
+        setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.update_failed") });
         throw error;
       }
     },
-    [workspaceSlug, editDashboard, store]
+    [workspaceSlug, editDashboard, store, t]
   );
 
   const handleDelete = useCallback(async () => {
@@ -79,15 +79,15 @@ const DashboardListPage = observer(function DashboardListPage({ params }: Route.
       await store.deleteDashboard(workspaceSlug, deleteDashboard.id);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Dashboard deleted successfully.",
+        title: t("analytics_dashboard.success"),
+        message: t("analytics_dashboard.deleted_success"),
       });
       setDeleteDashboard(null);
     } catch (error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to delete dashboard" });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.delete_failed") });
       throw error;
     }
-  }, [workspaceSlug, deleteDashboard, store]);
+  }, [workspaceSlug, deleteDashboard, store, t]);
 
   const pageTitle = t("dashboards");
   const { dashboards, isLoading } = store;
@@ -95,10 +95,10 @@ const DashboardListPage = observer(function DashboardListPage({ params }: Route.
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex h-full flex-col">
         <DashboardListHeader onCreateClick={() => setIsCreateOpen(true)} />
 
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1">
           {isLoading ? (
             <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -113,12 +113,12 @@ const DashboardListPage = observer(function DashboardListPage({ params }: Route.
             <div className="flex h-full flex-col items-center justify-center gap-4">
               <LayoutDashboard className="h-12 w-12 text-color-tertiary" />
               <p className="text-center text-sm text-color-secondary">
-                No dashboards created yet.
+                {t("analytics_dashboard.empty_title")}
                 <br />
-                Create your first dashboard to get started.
+                {t("analytics_dashboard.create_first")}
               </p>
               <Button variant="primary" onClick={() => setIsCreateOpen(true)}>
-                Create Dashboard
+                {t("analytics_dashboard.create_dashboard")}
               </Button>
             </div>
           ) : (

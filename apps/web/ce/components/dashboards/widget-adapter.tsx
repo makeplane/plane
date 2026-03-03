@@ -10,6 +10,7 @@
 
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { IDashboardWidget } from "@plane/types";
 import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
@@ -25,6 +26,7 @@ interface WidgetAdapterProps {
 }
 
 export const WidgetAdapter = observer(({ widget, workspaceSlug }: WidgetAdapterProps) => {
+  const { t } = useTranslation();
   const router = useAppRouter();
   const dashboardStore = useCustomDashboard();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- data is MobX observable and stable
@@ -51,7 +53,7 @@ export const WidgetAdapter = observer(({ widget, workspaceSlug }: WidgetAdapterP
   if (!data || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-color-tertiary text-xs">
-        No data available for these filters.
+        {t("analytics_dashboard.no_data_filters")}
       </div>
     );
   }
@@ -116,7 +118,7 @@ export const WidgetAdapter = observer(({ widget, workspaceSlug }: WidgetAdapterP
     default:
       return (
         <div className="flex items-center justify-center h-full text-color-tertiary text-xs text-center p-4">
-          Chart type &quot;{widget.chart_type}&quot; is not supported yet.
+          {t("analytics_dashboard.chart_type_unsupported", { type: widget.chart_type })}
         </div>
       );
   }
