@@ -32,4 +32,3 @@ COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
 RUN chown -R plane:plane /app
 
 CMD [ "/usr/local/bin/docker-entrypoint.sh" ]
-

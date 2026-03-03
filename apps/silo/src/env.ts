@@ -29,7 +29,9 @@ const envSchema = z.object({
   DD_SERVICE: z.string().default("silo"),
   DD_VERSION: z.string().default("1.0.0"),
   // App Env Variables
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  NODE_ENV: z
+    .enum(["development", "test", "production"])
+    .default("development"),
   BATCH_SIZE: z.string().default("50"),
   PORT: z.string().default("3000"),
   DEDUP_INTERVAL: z.string().optional().default("3"),
@@ -175,7 +177,10 @@ let refreshTimer: ReturnType<typeof setInterval> | undefined;
  * Fetch a secret from AWS Secrets Manager (lazy-imports the SDK so non-AWS
  * environments never pay for it).
  */
-async function fetchSecret(secretArn: string, region: string): Promise<Record<string, unknown>> {
+async function fetchSecret(
+  secretArn: string,
+  region: string,
+): Promise<Record<string, unknown>> {
   const { getSecret } = await import("@/lib/aws-secrets");
   return getSecret(secretArn, region, true);
 }
@@ -184,7 +189,11 @@ function isBareHostPort(url: string): boolean {
   return !/^(amqps?|rediss?):\/\//i.test(url);
 }
 
-function secretString(secret: Record<string, unknown>, key: string, fallback = ""): string {
+function secretString(
+  secret: Record<string, unknown>,
+  key: string,
+  fallback = "",
+): string {
   const val = secret[key];
   return typeof val === "string" ? val : fallback;
 }
@@ -194,18 +203,24 @@ async function resolveAmqpUrl(): Promise<string> {
 
   const secret = await fetchSecret(env.AMAZONMQ_SECRET_ARN, env.AWS_REGION);
   const user = encodeURIComponent(secretString(secret, env.RABBITMQ_USER_KEY));
-  const password = encodeURIComponent(secretString(secret, env.RABBITMQ_PASSWORD_KEY));
+  const password = encodeURIComponent(
+    secretString(secret, env.RABBITMQ_PASSWORD_KEY),
+  );
 
   // If AMQP_URL is a bare host:port, use it as the endpoint
   if (isBareHostPort(env.AMQP_URL)) {
-    const vhost = secretString(secret, env.RABBITMQ_VHOST_KEY, "%2F");
+    const vhost = encodeURIComponent(
+      secretString(secret, env.RABBITMQ_VHOST_KEY, "/"),
+    );
     return `amqps://${user}:${password}@${env.AMQP_URL}/${vhost}`;
   }
 
   // No usable AMQP_URL — build entirely from the secret
   const host = secretString(secret, env.RABBITMQ_HOST_KEY);
   const port = Number(secret[env.RABBITMQ_PORT_KEY] ?? 5671);
-  const vhost = encodeURIComponent(secretString(secret, env.RABBITMQ_VHOST_KEY, "/"));
+  const vhost = encodeURIComponent(
+    secretString(secret, env.RABBITMQ_VHOST_KEY, "/"),
+  );
   return `amqps://${user}:${password}@${host}:${port}/${vhost}`;
 }
 
@@ -213,7 +228,9 @@ async function resolveRedisUrl(): Promise<string> {
   if (!env.ELASTICACHE_SECRET_ARN) return env.REDIS_URL;
 
   const secret = await fetchSecret(env.ELASTICACHE_SECRET_ARN, env.AWS_REGION);
-  const token = encodeURIComponent(secretString(secret, env.REDIS_AUTH_TOKEN_KEY));
+  const token = encodeURIComponent(
+    secretString(secret, env.REDIS_AUTH_TOKEN_KEY),
+  );
 
   // If REDIS_URL is a bare host:port, use it as the endpoint
   if (isBareHostPort(env.REDIS_URL)) {
@@ -227,7 +244,10 @@ async function resolveRedisUrl(): Promise<string> {
 }
 
 async function refreshSecrets(): Promise<void> {
-  const [amqpUrl, redisUrl] = await Promise.all([resolveAmqpUrl(), resolveRedisUrl()]);
+  const [amqpUrl, redisUrl] = await Promise.all([
+    resolveAmqpUrl(),
+    resolveRedisUrl(),
+  ]);
   (env as Record<string, unknown>).AMQP_URL = amqpUrl;
   (env as Record<string, unknown>).REDIS_URL = redisUrl;
 }
@@ -242,8 +262,13 @@ async function refreshSecrets(): Promise<void> {
 export async function resolveSecrets(): Promise<void> {
   // True when either IRSA (AWS_ROLE_ARN) or EKS Pod Identity
   // (AWS_CONTAINER_CREDENTIALS_FULL_URI) is present.
-  const hasAwsCredentials = Boolean((env.AWS_ROLE_ARN ?? "").trim() || env.AWS_CONTAINER_CREDENTIALS_FULL_URI);
-  if (!hasAwsCredentials || (!env.ELASTICACHE_SECRET_ARN && !env.AMAZONMQ_SECRET_ARN)) {
+  const hasAwsCredentials = Boolean(
+    (env.AWS_ROLE_ARN ?? "").trim() || env.AWS_CONTAINER_CREDENTIALS_FULL_URI,
+  );
+  if (
+    !hasAwsCredentials ||
+    (!env.ELASTICACHE_SECRET_ARN && !env.AMAZONMQ_SECRET_ARN)
+  ) {
     return; // nothing to resolve
   }
 
@@ -255,7 +280,9 @@ export async function resolveSecrets(): Promise<void> {
   if (ttlMs > 0 && !refreshTimer) {
     refreshTimer = setInterval(() => {
       refreshSecrets().catch((err: unknown) => {
-        logger.error("AWS Secrets Manager: failed to refresh secrets", { error: err });
+        logger.error("AWS Secrets Manager: failed to refresh secrets", {
+          error: err,
+        });
       });
     }, ttlMs);
     // Allow the process to exit even if the timer is still running

@@ -20,6 +20,9 @@
     "check:types": "turbo run check:types",
     "prepare": "husky"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-darwin-arm64": "4.59.0"
+  },
   "devDependencies": {
     "@eslint/js": "9.39.1",
     "@vitest/eslint-plugin": "1.6.7",
