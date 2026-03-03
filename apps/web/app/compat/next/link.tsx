@@ -23,8 +23,14 @@ type NextLinkProps = React.ComponentProps<"a"> & {
   shallow?: boolean; // next.js prop, ignored
 };
 
+/**
+ * @deprecated Legacy Next.js compatibility shim. Use Link from react-router directly instead.
+ */
 function Link({ href, replace, prefetch: _prefetch, scroll: _scroll, shallow: _shallow, ...rest }: NextLinkProps) {
   return <RRLink to={ensureTrailingSlash(href)} replace={replace} {...rest} />;
 }
 
+/**
+ * @deprecated Legacy Next.js compatibility shim. Use Link from react-router directly instead.
+ */
 export default Link;

@@ -150,6 +150,8 @@ export const meta: Route.MetaFunction = () => [
 ];
 
 const syncRouterParamsMiddleware: Route.ClientMiddlewareFunction = async ({ params }, next) => {
+  // LEGACY COMPATIBILITY ONLY: This syncs route params to the deprecated router store.
+  // Do not use router store for new route-context reads - use React Router params/loaders directly.
   store.router.setQuery({ ...params });
   await next();
 };

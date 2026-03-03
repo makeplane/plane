@@ -16,6 +16,9 @@ import { useContext } from "react";
 import { StoreContext } from "@/lib/store-context";
 import type { IRouterStore } from "@/store/router.store";
 
+/**
+ * @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead.
+ */
 export const useRouterParams = (): IRouterStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useRouterParams must be used within StoreProvider");

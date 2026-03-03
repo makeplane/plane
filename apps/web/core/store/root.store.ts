@@ -230,6 +230,7 @@ export class CoreRootStore {
   label: ILabelStore;
   analytics: IAnalyticsStore;
   projectPages: IProjectPageStore;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   router: IRouterStore;
   commandPalette: ICommandPaletteStore;
   theme: IThemeStore;

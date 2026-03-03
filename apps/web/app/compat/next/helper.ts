@@ -12,6 +12,7 @@
  */
 
 /**
+ * @deprecated Legacy Next.js compatibility helper. Use React Router's built-in URL handling instead.
  * Ensures that a URL has a trailing slash while preserving query parameters and fragments
  * @param url - The URL to process
  * @returns The URL with a trailing slash added to the pathname (if not already present)
