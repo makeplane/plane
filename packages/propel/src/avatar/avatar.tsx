@@ -113,6 +113,14 @@ export function Avatar(props: Props) {
       className={cn("grid place-items-center overflow-hidden", getBorderRadius(shape), {
         [sizeInfo.avatarSize]: !isAValidNumber(size),
       })}
+      style={
+        isAValidNumber(size)
+          ? {
+              width: `${size}px`,
+              height: `${size}px`,
+            }
+          : {}
+      }
       tabIndex={-1}
     >
       <AvatarPrimitive.Root className={cn("h-full w-full", getBorderRadius(shape), className)}>
