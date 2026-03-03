@@ -41,7 +41,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v3
         continue-on-error: true
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.ACCESS_TOKEN }}
           issue-number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
           body: |
             ## Deploy PR Guidelines
@@ -53,7 +53,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v3
         continue-on-error: true
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.ACCESS_TOKEN }}
           issue-number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
           body: |
             Deploying Your PR: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}>.
@@ -732,7 +732,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v3
         continue-on-error: true
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.ACCESS_TOKEN }}
           issue-number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
           body: |
             Plane deployment will be available at https://feat-${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}-${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type) == 'enterprise' && 'ee' || 'cloud' }}.feat.plane.town in few minutes.

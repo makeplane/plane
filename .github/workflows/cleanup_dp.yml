@@ -42,7 +42,7 @@ jobs:
       # ---------------- CLEANUP ----------------
       - name: Cleanup merged or closed PR deployments
         env:
-          GH_TOKEN: ${{ secrets.PAT }}
+          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
           set -e
           # Match release names ee-<PR>-ent or ee-<PR>-cloud (e.g. ee-5657-ent, ee-5657-cloud)
