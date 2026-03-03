@@ -27,14 +27,19 @@ from typing import Any, Dict, Optional, Union
 import uuid
 
 # Django imports
-from django.conf import settings
 
 
 # Third party imports
 import pika
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.connection import Connection
-from pika.exceptions import AMQPConnectionError, AMQPChannelError, ConnectionClosed, StreamLostError
+from pika.exceptions import (
+    AMQPChannelError,
+    AMQPConnectionError,
+    ConnectionClosed,
+    ProbableAuthenticationError,
+    StreamLostError,
+)
 
 # Local imports
 from plane.event_stream.models.outbox import OutboxEvent
@@ -94,31 +99,11 @@ class EventStreamPublisher:
         self._setup_connection_params()
 
     def _setup_connection_params(self) -> None:
-        """Setup RabbitMQ connection parameters from Django settings."""
-        # Use AMQP_URL if available, otherwise construct from individual settings
-        if hasattr(settings, "AMQP_URL") and settings.AMQP_URL:
-            self._connection_params = pika.URLParameters(settings.AMQP_URL)
-            logger.debug(f"[{self.instance_id}] Using AMQP_URL for connection")
-        else:
-            # Fallback to individual settings
-            host = getattr(settings, "RABBITMQ_HOST", "localhost")
-            port = int(getattr(settings, "RABBITMQ_PORT", 5672))
-            user = getattr(settings, "RABBITMQ_USER", "guest")
-            password = getattr(settings, "RABBITMQ_PASSWORD", "guest")
-            vhost = getattr(settings, "RABBITMQ_VHOST", "/")
+        """Setup RabbitMQ connection parameters from Django settings or AWS Secrets Manager."""
+        from plane.utils.amqp import get_amqp_connection_params
 
-            credentials = pika.PlainCredentials(user, password)
-            self._connection_params = pika.ConnectionParameters(
-                host=host,
-                port=port,
-                virtual_host=vhost,
-                credentials=credentials,
-                heartbeat=int(os.environ.get("RABBITMQ_HEARTBEAT", 600)),  # 10 minutes heartbeat
-                blocked_connection_timeout=int(os.environ.get("RABBITMQ_BLOCKED_CONNECTION_TIMEOUT", 300)),  # 5 minutes
-                connection_attempts=int(os.environ.get("RABBITMQ_CONNECTION_ATTEMPTS", 3)),
-                retry_delay=self.retry_delay,
-            )
-            logger.debug(f"[{self.instance_id}] Using individual settings for connection: {host}:{port}")
+        self._connection_params = get_amqp_connection_params(retry_delay=self.retry_delay)
+        logger.debug(f"[{self.instance_id}] Connection params configured")
 
     def _connect(self) -> None:
         """
@@ -146,6 +131,29 @@ class EventStreamPublisher:
 
                 logger.info(f"[{self.instance_id}] Successfully connected to RabbitMQ. Exchange: {self.exchange_name}")
 
+            except ProbableAuthenticationError as e:
+                if os.environ.get("AMAZONMQ_SECRET_ARN") and (
+                    os.environ.get("AWS_ROLE_ARN")
+                    or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI")
+                ):
+                    logger.warning(
+                        f"[{self.instance_id}] Auth failure — refreshing secret and retrying"
+                    )
+                    from plane.utils.amqp import get_amqp_connection_params
+
+                    self._connection_params = get_amqp_connection_params(
+                        retry_delay=self.retry_delay, force_refresh=True
+                    )
+                    self._connection = pika.BlockingConnection(self._connection_params)
+                    self._channel = self._connection.channel()
+                    self._setup_exchange()
+                    logger.info(
+                        f"[{self.instance_id}] Successfully connected after secret refresh"
+                    )
+                else:
+                    logger.error(f"[{self.instance_id}] Failed to connect to RabbitMQ: {e}")
+                    self._disconnect_unsafe()
+                    raise
             except AMQPConnectionError as e:
                 logger.error(f"[{self.instance_id}] Failed to connect to RabbitMQ: {e}")
                 self._disconnect_unsafe()
