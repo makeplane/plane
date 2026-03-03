@@ -55,3 +55,18 @@ class Label(WorkspaceBaseModel):
 
     def __str__(self):
         return str(self.name)
+
+
+# Default labels seeded on project creation (matches DEFAULT_STATES pattern).
+# Note: bulk_create bypasses Label.save(), so sort_order values are used as-is.
+# Manually created labels auto-compute sort_order from max(existing) + 10000.
+DEFAULT_LABELS = [
+    {"name": "Bank-wide Project", "color": "#0E8A16", "sort_order": 65535},
+    {"name": "Daily",             "color": "#0075CA", "sort_order": 75535},
+    {"name": "Weekly",            "color": "#E4E669", "sort_order": 85535},
+    {"name": "Monthly",           "color": "#D93F0B", "sort_order": 95535},
+    {"name": "Quarterly",         "color": "#0693E3", "sort_order": 105535},
+    {"name": "Half-year",         "color": "#FBCA04", "sort_order": 115535},
+    {"name": "Yearly",            "color": "#B60205", "sort_order": 125535},
+    {"name": "Ad-hoc",            "color": "#D876E3", "sort_order": 135535},
+]

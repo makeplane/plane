@@ -11,7 +11,7 @@ from django.db.models import Max
 from plane.db.models import (
     User, Workspace, WorkspaceMember, Project, ProjectMember,
     State, Issue, IssueSequence, IssueActivity, IssueAssignee,
-    Department, StaffProfile,
+    Department, StaffProfile, Label, DEFAULT_LABELS,
 )
 from plane.bgtasks.seed_department_staff_data import (
     DEPARTMENTS, STAFF_DATA, LINKED_PROJECTS, CROSS_PROJECTS,
@@ -43,6 +43,7 @@ class Command(BaseCommand):
                 users = self._seed_staff(ws, admin, depts)
                 self._seed_memberships(ws, depts, projects, users)
                 self._seed_cross_team(ws, projects, users)
+                self._seed_labels(ws, admin, projects)
                 self._seed_issues(ws, admin, projects)
             self._summary(ws)
         except Exception as e:
@@ -195,6 +196,28 @@ class Command(BaseCommand):
                 user = users.get(sid)
                 if user:
                     ProjectMember.objects.get_or_create(project=proj, member=user, defaults={"role": 15, "workspace": ws})
+
+    def _seed_labels(self, ws, admin, projects):
+        """Seed default labels for all projects."""
+        self.stdout.write("Seeding labels...")
+        count = 0
+        for proj in projects.values():
+            created = Label.objects.bulk_create(
+                [
+                    Label(
+                        name=lbl["name"],
+                        color=lbl["color"],
+                        sort_order=lbl["sort_order"],
+                        project=proj,
+                        workspace=ws,
+                        created_by=admin,
+                    )
+                    for lbl in DEFAULT_LABELS
+                ],
+                ignore_conflicts=True,
+            )
+            count += len(created)
+        self.stdout.write(self.style.SUCCESS(f"  {count} labels."))
 
     def _seed_issues(self, ws, admin, projects):
         self.stdout.write("Seeding issues...")
