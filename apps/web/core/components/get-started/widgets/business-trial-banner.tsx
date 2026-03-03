@@ -31,12 +31,17 @@ export const BusinessTrialBanner: FC<Props> = observer(({ variant = "default" })
   const router = useRouter();
   const { t } = useTranslation();
   const { allowPermissions } = useUserPermissions();
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
+  const {
+    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
+    togglePaidPlanModal,
+    getIsInTrialPeriod,
+  } = useWorkspaceSubscription();
+  const isOnTrialPeriod = getIsInTrialPeriod(false);
 
   const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
-  // Check if subscription detail is available and if explicit trial banner flag is true
-  if (!subscriptionDetail || !subscriptionDetail.show_trial_banner) {
+  // Check if subscription detail is available and workspace is in an active trial period
+  if (!subscriptionDetail || !isOnTrialPeriod) {
     return null;
   }
 
@@ -60,7 +65,9 @@ export const BusinessTrialBanner: FC<Props> = observer(({ variant = "default" })
     <Pill size={EPillSize.SM} radius={ERadius.SQUARE} className="text-label-yellow-text bg-label-yellow-bg border-none">
       {remaining_trial_days === 0
         ? t("home.business_trial_banner.trial_ends_today")
-        : t("home.business_trial_banner.trial_ends_in_days", { days: remaining_trial_days })}
+        : t("home.business_trial_banner.trial_ends_in_days", {
+            days: remaining_trial_days,
+          })}
     </Pill>
   );
 
