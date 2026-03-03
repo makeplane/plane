@@ -3918,6 +3918,9 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
           member_picker: {
             label: "Chọn thành viên",
           },
+          formula: {
+            label: "Công thức",
+          },
         },
         attributes: {
           label: "Thuộc tính",
@@ -4043,6 +4046,31 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
             options: {
               required: "Bạn phải thêm ít nhất một tùy chọn.",
             },
+            formula: {
+              required: "Biểu thức công thức là bắt buộc.",
+              invalid: "Công thức không hợp lệ: {error}",
+              circular_reference:
+                "Phát hiện tham chiếu vòng. Công thức không thể tham chiếu chính nó trực tiếp hoặc gián tiếp.",
+              invalid_reference: "Công thức tham chiếu đến thuộc tính không tồn tại.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Trường công thức",
+          tooltip: "Nhập công thức sử dụng cú pháp '{'Tên trường'}'. Hỗ trợ các toán tử +, -, *, / và &.",
+          placeholder: "Viết công thức",
+          test_button: "Kiểm tra",
+          validating: "Đang xác thực",
+          validation_success: "Công thức hợp lệ! Trả về {resultType}",
+          validation_success_with_refs: "Công thức hợp lệ! Trả về {resultType} ({count} trường được tham chiếu)",
+          error: {
+            empty: "Vui lòng nhập công thức",
+            missing_context: "Thiếu ngữ cảnh không gian làm việc, dự án hoặc loại mục công việc",
+            validation_failed: "Xác thực thất bại",
+          },
+          picker: {
+            no_match: "Không có thuộc tính phù hợp",
+            no_available: "Không có thuộc tính khả dụng",
           },
         },
         enable_disable: {

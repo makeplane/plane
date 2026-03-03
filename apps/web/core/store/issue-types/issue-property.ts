@@ -50,6 +50,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
   is_required: boolean | undefined = undefined;
   default_value: string[] | undefined = undefined;
   settings: TIssuePropertySettingsMap[T] | undefined = undefined;
+  formula: string | undefined = undefined;
   is_active: boolean | undefined = undefined;
   issue_type: string | undefined = undefined;
   is_multi: boolean | undefined = undefined;
@@ -78,6 +79,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
       is_required: observable.ref,
       default_value: observable,
       settings: observable.ref,
+      formula: observable.ref,
       is_active: observable.ref,
       issue_type: observable.ref,
       is_multi: observable.ref,
@@ -111,6 +113,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
     this.is_required = propertyData.is_required;
     this.default_value = propertyData.default_value;
     this.settings = propertyData.settings;
+    this.formula = propertyData.formula;
     this.is_active = propertyData.is_active;
     this.issue_type = propertyData.issue_type;
     this.is_multi = propertyData.is_multi;
@@ -141,6 +144,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
       is_required: this.is_required,
       default_value: this.default_value,
       settings: this.settings,
+      formula: this.formula,
       is_active: this.is_active,
       issue_type: this.issue_type,
       is_multi: this.is_multi,

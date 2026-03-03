@@ -22,7 +22,8 @@ import { DropdownAttributes } from "../attributes/dropdown";
 import { MemberPickerAttributes } from "../attributes/member-picker";
 import { NumberAttributes } from "../attributes/number";
 import { TextAttributes } from "../attributes/text";
-import type { TIssuePropertyFormError } from "../property-list-item";
+import { FormulaAttributes } from "../attributes/formula";
+import type { TIssuePropertyFormError, TPropertyValidator } from "../property-list-item";
 
 type TSelectedPropertyAttributesProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
@@ -32,15 +33,29 @@ type TSelectedPropertyAttributesProps = {
     value: TIssueProperty<EIssuePropertyType>[K],
     shouldSync?: boolean
   ) => void;
+  onPropertyConfigValidityChange?: (isValid: boolean) => void;
+  propertyValidator?: TPropertyValidator;
   disabled?: boolean;
   error?: TIssuePropertyFormError;
   isUpdateAllowed: boolean;
+  allProperties?: TIssueProperty<EIssuePropertyType>[];
+  allowedPropertyTypes?: TIssuePropertyTypeKeys[];
 };
 
 export const SelectedAttributeProperties = observer(function SelectedAttributeProperties(
   props: TSelectedPropertyAttributesProps
 ) {
-  const { propertyDetail, currentOperationMode, onPropertyDetailChange, error, isUpdateAllowed } = props;
+  const {
+    propertyDetail,
+    currentOperationMode,
+    onPropertyDetailChange,
+    onPropertyConfigValidityChange,
+    propertyValidator,
+    error,
+    isUpdateAllowed,
+    allProperties,
+    allowedPropertyTypes,
+  } = props;
 
   const ISSUE_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, React.ReactNode>> = {
     TEXT: (
@@ -92,6 +107,19 @@ export const SelectedAttributeProperties = observer(function SelectedAttributePr
         isUpdateAllowed={isUpdateAllowed}
       />
     ),
+    ...((!allowedPropertyTypes || allowedPropertyTypes.includes("FORMULA")) && {
+      FORMULA: (
+        <FormulaAttributes
+          formulaPropertyDetail={propertyDetail as Partial<TIssueProperty<EIssuePropertyType.FORMULA>>}
+          currentOperationMode={currentOperationMode}
+          onFormulaDetailChange={onPropertyDetailChange}
+          onPropertyConfigValidityChange={onPropertyConfigValidityChange}
+          onValidateFormula={propertyValidator?.FORMULA}
+          isUpdateAllowed={isUpdateAllowed}
+          allProperties={allProperties}
+        />
+      ),
+    }),
   };
 
   const propertyTypeKey = getIssuePropertyTypeKey(propertyDetail?.property_type, propertyDetail?.relation_type);

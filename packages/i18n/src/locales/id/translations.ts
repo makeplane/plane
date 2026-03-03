@@ -3937,6 +3937,9 @@ jika Anda yakin pencarian Anda benar. `,
           member_picker: {
             label: "Pemilih anggota",
           },
+          formula: {
+            label: "Rumus",
+          },
         },
         attributes: {
           label: "Atribut",
@@ -4062,6 +4065,31 @@ jika Anda yakin pencarian Anda benar. `,
             options: {
               required: "Anda harus menambahkan setidaknya satu opsi.",
             },
+            formula: {
+              required: "Ekspresi rumus diperlukan.",
+              invalid: "Rumus tidak valid: {error}",
+              circular_reference:
+                "Referensi melingkar terdeteksi. Rumus tidak dapat mereferensikan dirinya sendiri secara langsung maupun tidak langsung.",
+              invalid_reference: "Rumus mereferensikan properti yang tidak ada.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Kolom rumus",
+          tooltip: "Masukkan rumus menggunakan sintaks '{'Nama Kolom'}'. Mendukung operator +, -, *, / dan &.",
+          placeholder: "Tulis rumus",
+          test_button: "Tes",
+          validating: "Memvalidasi",
+          validation_success: "Rumus valid! Mengembalikan {resultType}",
+          validation_success_with_refs: "Rumus valid! Mengembalikan {resultType} ({count} kolom direferensikan)",
+          error: {
+            empty: "Silakan masukkan rumus",
+            missing_context: "Konteks ruang kerja, proyek, atau tipe item kerja tidak ditemukan",
+            validation_failed: "Validasi gagal",
+          },
+          picker: {
+            no_match: "Tidak ada properti yang cocok",
+            no_available: "Tidak ada properti yang tersedia",
           },
         },
         enable_disable: {

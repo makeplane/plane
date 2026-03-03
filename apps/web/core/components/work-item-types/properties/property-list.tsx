@@ -14,14 +14,14 @@
 import { observer } from "mobx-react";
 import { useCallback } from "react";
 // plane imports
-import type { EIssuePropertyType, IIssueProperty } from "@plane/types";
+import type { EIssuePropertyType, IIssueProperty, TIssuePropertyTypeKeys } from "@plane/types";
 import { calculateSortOrder } from "@plane/utils";
 // plane web imports
 import { WorkItemPropertyOptionsProvider } from "@/lib/context/work-item-property-option";
 // local imports
 import { IssuePropertyCreateListItem } from "./property-create-list-item";
 import { IssuePropertyListItem } from "./property-list-item";
-import type { TCustomPropertyOperations } from "./property-list-item";
+import type { TCustomPropertyOperations, TPropertyValidator } from "./property-list-item";
 import type { TIssuePropertyCreateList } from "./root";
 import { Sortable } from "@plane/ui";
 
@@ -32,6 +32,8 @@ type TIssuePropertyList = {
   containerRef: React.RefObject<HTMLDivElement>;
   lastElementRef: React.RefObject<HTMLDivElement>;
   isUpdateAllowed: boolean;
+  propertyValidator?: TPropertyValidator;
+  allowedPropertyTypes?: TIssuePropertyTypeKeys[];
 };
 
 export const IssuePropertyList = observer(function IssuePropertyList(props: TIssuePropertyList) {
@@ -42,6 +44,8 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
     containerRef,
     lastElementRef,
     isUpdateAllowed,
+    propertyValidator,
+    allowedPropertyTypes,
   } = props;
 
   const handlePropertiesReorder = useCallback(
@@ -63,7 +67,9 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
       const updatedSortOrder = calculateSortOrder(sortedData, movedProperty.id);
 
       if (updatedSortOrder) {
-        await customPropertyOperations.updateProperty(movedProperty.id, { sort_order: updatedSortOrder });
+        await customPropertyOperations.updateProperty(movedProperty.id, {
+          sort_order: updatedSortOrder,
+        });
       }
     },
     [customPropertyOperations]
@@ -85,6 +91,9 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
                   customPropertyId={property.id}
                   customPropertyOperations={customPropertyOperations}
                   isUpdateAllowed={isUpdateAllowed}
+                  allProperties={properties}
+                  propertyValidator={propertyValidator}
+                  allowedPropertyTypes={allowedPropertyTypes}
                 />
               </WorkItemPropertyOptionsProvider>
             )}
@@ -108,6 +117,9 @@ export const IssuePropertyList = observer(function IssuePropertyList(props: TIss
               issuePropertyCreateListData={issueProperty}
               customPropertyOperations={customPropertyOperations}
               isUpdateAllowed
+              allProperties={properties}
+              propertyValidator={propertyValidator}
+              allowedPropertyTypes={allowedPropertyTypes}
             />
           </WorkItemPropertyOptionsProvider>
         ))}

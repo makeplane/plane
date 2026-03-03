@@ -50,6 +50,7 @@ export const ProjectEpicWorkItemType = observer(function ProjectEpicWorkItemType
       >
         <EpicPropertiesRoot
           epicId={projectEpic.id}
+          projectId=""
           propertiesLoader={"loaded"}
           containerClassName="border-none"
           getWorkItemTypeById={() => projectEpic}

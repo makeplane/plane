@@ -14,11 +14,11 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { InfoIcon } from "@plane/propel/icons";
-import { TriangleAlert } from "lucide-react";
+import { Sigma, TriangleAlert } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
+import { EIssuePropertyType } from "@plane/types";
 import type {
-  EIssuePropertyType,
   EIssuePropertyValueError,
   IIssueProperty,
   TDateAttributeDisplayOptions,
@@ -26,11 +26,15 @@ import type {
   TIssuePropertyTypeKeys,
   TPropertyValueVariant,
   TTextAttributeDisplayOptions,
+  TTextAttributeConfigurations,
+  TDateAttributeConfigurations,
 } from "@plane/types";
 import { Loader, LUCIDE_ICONS_LIST } from "@plane/ui";
 import { getIssuePropertyTypeKey, cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// local imports
+import { useIsPropertyTypeEnabled } from "../helpers/use-enabled-property-types";
 // local imports
 import { IssuePropertyLogo } from "../properties/common/issue-property-logo";
 import { BooleanInput } from "./components/boolean-input";
@@ -40,6 +44,7 @@ import { NumberValueInput } from "./components/number-input";
 import { OptionValueSelect } from "./components/option-select";
 import { TextValueInput } from "./components/text-input";
 import { UrlValueInput } from "./components/url-input";
+import { FormulaDisplay } from "./components/formula-display";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 
 type TPropertyValueSelectProps = {
@@ -68,13 +73,12 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
   } = props;
   // store hooks
   const { peekIssue } = useIssueDetail();
-  // derived values
-  const isPeekOverview = peekIssue ? true : false;
+  const isPropertyTypeEnabled = useIsPropertyTypeEnabled();
 
   function IssuePropertyDetail() {
     return (
       <>
-        <div className="flex-shrink-0 grid place-items-center">
+        <div className="shrink-0 grid place-items-center">
           {propertyDetail?.logo_props?.in_use && (
             <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} colorClassName="text-tertiary" />
           )}
@@ -94,7 +98,7 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
                 position="right"
                 disabled={!propertyDetail?.description}
               >
-                <span className="flex-shrink-0">
+                <span className="shrink-0">
                   <InfoIcon className=" w-3 h-3 mx-0.5 text-tertiary cursor-pointer" />
                 </span>
               </Tooltip>
@@ -113,7 +117,10 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
           value={propertyValue}
           error={propertyValueError}
           variant={variant}
-          display_format={propertyDetail?.settings?.display_format as TTextAttributeDisplayOptions}
+          display_format={
+            (propertyDetail?.settings as TTextAttributeConfigurations | undefined)
+              ?.display_format as TTextAttributeDisplayOptions
+          }
           readOnlyData={propertyDetail?.default_value?.[0]}
           className="min-h-8"
           isDisabled={isDisabled}
@@ -165,7 +172,10 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
           value={propertyValue}
           error={propertyValueError}
           variant={variant}
-          displayFormat={propertyDetail?.settings?.display_format as TDateAttributeDisplayOptions}
+          displayFormat={
+            (propertyDetail?.settings as TDateAttributeConfigurations | undefined)
+              ?.display_format as TDateAttributeDisplayOptions
+          }
           buttonClassName="h-8"
           isDisabled={isDisabled}
           onDateValueChange={onPropertyValueChange}
@@ -200,6 +210,9 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
         />
       </>
     ),
+    ...(isPropertyTypeEnabled("FORMULA") && {
+      FORMULA: <FormulaDisplay value={propertyValue} />,
+    }),
   };
 
   const propertyTypeKey = getIssuePropertyTypeKey(propertyDetail?.property_type, propertyDetail?.relation_type);
@@ -217,8 +230,8 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
   return (
     <>
       {variant === "create" && (
-        <div className={cn("w-full flex flex-shrink-0 items-start justify-center py-1")}>
-          <div className={cn("w-2/5 h-8 flex flex-shrink-0 gap-1.5 items-center")}>
+        <div className={cn("w-full flex shrink-0 items-start justify-center py-1")}>
+          <div className={cn("w-2/5 h-8 flex shrink-0 gap-1.5 items-center")}>
             <IssuePropertyDetail />
           </div>
           <div className="w-3/5 h-full min-h-8 flex flex-col gap-0.5 pl-3">{CurrentPropertyAttribute}</div>
@@ -229,7 +242,7 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
           <SidebarPropertyListItem
             icon={
               LUCIDE_ICONS_LIST.find((item) => item.name === propertyDetail?.logo_props?.icon?.name)?.element ??
-              TriangleAlert
+              (propertyDetail?.property_type === EIssuePropertyType.FORMULA ? Sigma : TriangleAlert)
             }
             label={propertyDetail?.display_name ?? ""}
           >

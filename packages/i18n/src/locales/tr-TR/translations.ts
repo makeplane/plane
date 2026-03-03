@@ -3921,6 +3921,9 @@ modüller arşivlenebilir.`,
           member_picker: {
             label: "Üye seçici",
           },
+          formula: {
+            label: "Formül",
+          },
         },
         attributes: {
           label: "Özellikler",
@@ -4046,6 +4049,31 @@ modüller arşivlenebilir.`,
             options: {
               required: "En az bir seçenek eklemelisiniz.",
             },
+            formula: {
+              required: "Formül ifadesi gereklidir.",
+              invalid: "Geçersiz formül: {error}",
+              circular_reference:
+                "Döngüsel referans algılandı. Bir formül doğrudan veya dolaylı olarak kendisine referans veremez.",
+              invalid_reference: "Formül var olmayan bir özelliğe referans veriyor.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Formül alanı",
+          tooltip: "'{'Alan Adı'}' sözdizimini kullanarak bir formül girin. +, -, *, / ve & operatörlerini destekler.",
+          placeholder: "Formülü yazın",
+          test_button: "Test",
+          validating: "Doğrulanıyor",
+          validation_success: "Formül geçerli! {resultType} döndürür",
+          validation_success_with_refs: "Formül geçerli! {resultType} döndürür ({count} alan referans verildi)",
+          error: {
+            empty: "Lütfen bir formül girin",
+            missing_context: "Çalışma alanı, proje veya iş öğesi türü bağlamı eksik",
+            validation_failed: "Doğrulama başarısız",
+          },
+          picker: {
+            no_match: "Eşleşen özellik yok",
+            no_available: "Kullanılabilir özellik yok",
           },
         },
         enable_disable: {

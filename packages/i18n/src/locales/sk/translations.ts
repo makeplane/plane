@@ -3872,6 +3872,9 @@ Vytvorte nový.`,
           member_picker: {
             label: "Výber člena",
           },
+          formula: {
+            label: "Vzorec",
+          },
         },
         attributes: {
           label: "Atribúty",
@@ -3997,6 +4000,31 @@ Vytvorte nový.`,
             options: {
               required: "Musíte pridať aspoň jednu možnosť.",
             },
+            formula: {
+              required: "Výraz vzorca je povinný.",
+              invalid: "Neplatný vzorec: {error}",
+              circular_reference:
+                "Zistená cyklická referencia. Vzorec nemôže odkazovať sám na seba priamo ani nepriamo.",
+              invalid_reference: "Vzorec odkazuje na neexistujúcu vlastnosť.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Pole vzorca",
+          tooltip: "Zadajte vzorec pomocou syntaxe '{'Názov poľa'}'. Podporuje operátory +, -, *, / a &.",
+          placeholder: "Napíšte vzorec",
+          test_button: "Test",
+          validating: "Overovanie",
+          validation_success: "Vzorec je platný! Vracia {resultType}",
+          validation_success_with_refs: "Vzorec je platný! Vracia {resultType} ({count} odkazovaných polí)",
+          error: {
+            empty: "Zadajte prosím vzorec",
+            missing_context: "Chýba kontext pracovného priestoru, projektu alebo typu pracovnej položky",
+            validation_failed: "Overenie zlyhalo",
+          },
+          picker: {
+            no_match: "Žiadne zodpovedajúce vlastnosti",
+            no_available: "Žiadne dostupné vlastnosti",
           },
         },
         enable_disable: {

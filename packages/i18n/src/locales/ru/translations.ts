@@ -3952,6 +3952,9 @@ export default {
           member_picker: {
             label: "Выбор участника",
           },
+          formula: {
+            label: "Формула",
+          },
         },
         attributes: {
           label: "Атрибуты",
@@ -4077,6 +4080,31 @@ export default {
             options: {
               required: "Вы должны добавить хотя бы одну опцию.",
             },
+            formula: {
+              required: "Выражение формулы обязательно.",
+              invalid: "Недопустимая формула: {error}",
+              circular_reference:
+                "Обнаружена циклическая ссылка. Формула не может ссылаться на саму себя прямо или косвенно.",
+              invalid_reference: "Формула ссылается на несуществующее свойство.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Поле формулы",
+          tooltip: "Введите формулу, используя синтаксис '{'Имя поля'}'. Поддерживает операторы +, -, *, / и &.",
+          placeholder: "Напишите формулу",
+          test_button: "Тест",
+          validating: "Проверка",
+          validation_success: "Формула действительна! Возвращает {resultType}",
+          validation_success_with_refs: "Формула действительна! Возвращает {resultType} ({count} полей указано)",
+          error: {
+            empty: "Пожалуйста, введите формулу",
+            missing_context: "Отсутствует контекст рабочего пространства, проекта или типа рабочего элемента",
+            validation_failed: "Проверка не удалась",
+          },
+          picker: {
+            no_match: "Нет совпадающих свойств",
+            no_available: "Нет доступных свойств",
           },
         },
         enable_disable: {

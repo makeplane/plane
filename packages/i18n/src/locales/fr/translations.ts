@@ -3976,6 +3976,9 @@ si vous êtes sûr que votre recherche est correcte.`,
           member_picker: {
             label: "Sélecteur de membre",
           },
+          formula: {
+            label: "Formule",
+          },
         },
         attributes: {
           label: "Attributs",
@@ -4101,6 +4104,32 @@ si vous êtes sûr que votre recherche est correcte.`,
             options: {
               required: "Vous devez ajouter au moins une option.",
             },
+            formula: {
+              required: "L'expression de formule est requise.",
+              invalid: "Formule invalide : {error}",
+              circular_reference:
+                "Référence circulaire détectée. Une formule ne peut pas se référencer elle-même directement ou indirectement.",
+              invalid_reference: "La formule fait référence à une propriété inexistante.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Champ de formule",
+          tooltip:
+            "Entrez une formule en utilisant la syntaxe '{'Nom du champ'}'. Prend en charge les opérateurs +, -, *, / et &.",
+          placeholder: "Écrire la formule",
+          test_button: "Tester",
+          validating: "Validation en cours",
+          validation_success: "La formule est valide ! Retourne {resultType}",
+          validation_success_with_refs: "La formule est valide ! Retourne {resultType} ({count} champ(s) référencé(s))",
+          error: {
+            empty: "Veuillez entrer une formule",
+            missing_context: "Contexte d'espace de travail, de projet ou de type d'élément de travail manquant",
+            validation_failed: "La validation a échoué",
+          },
+          picker: {
+            no_match: "Aucune propriété correspondante",
+            no_available: "Aucune propriété disponible",
           },
         },
         enable_disable: {

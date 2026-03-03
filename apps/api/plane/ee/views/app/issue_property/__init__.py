@@ -9,13 +9,14 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+from .activity import IssuePropertyActivityEndpoint
 from .base import IssuePropertyEndpoint
+from .draft import DraftIssuePropertyValueEndpoint
+from .formula import IssuePropertyFormulaValidateEndpoint
 from .option import IssuePropertyOptionEndpoint
 from .type import (
-    WorkspaceIssueTypeEndpoint,
-    IssueTypeEndpoint,
     DefaultIssueTypeEndpoint,
+    IssueTypeEndpoint,
+    WorkspaceIssueTypeEndpoint,
 )
 from .value import IssuePropertyValueEndpoint
-from .activity import IssuePropertyActivityEndpoint
-from .draft import DraftIssuePropertyValueEndpoint

@@ -59,6 +59,7 @@ export * from "./work-item-types";
 export * from "./workflow";
 export * from "./workspace";
 export * from "./form";
+export * from "./formula";
 export * from "./sso";
 export * from "./oauth";
 export * from "./upgrade";

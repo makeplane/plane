@@ -11,20 +11,30 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useMemo } from "react";
 import { observer } from "mobx-react";
+import { ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // plane imports
-import type { TLoader, IIssueType } from "@plane/types";
+import type { TLoader, IIssueType, TIssuePropertyTypeKeys } from "@plane/types";
+import { EIssuePropertyType } from "@plane/types";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { cn } from "@plane/utils";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// services
+import { issuePropertyService } from "@/services/issue-types";
 // local imports
 import { IssueTypeLogo } from "./common/issue-type-logo";
+import { useIsPropertyTypeEnabled } from "./helpers/use-enabled-property-types";
 import { IssuePropertiesRoot } from "./properties/root";
+import type { TPropertyValidator } from "./properties/property-list-item";
 import { IssueTypeQuickActions } from "./quick-actions";
 
 type TIssueTypeListItem = {
   issueTypeId: string;
+  projectId?: string;
   isOpen: boolean;
   isCollapseDisabled: boolean;
   propertiesLoader: TLoader;
@@ -40,6 +50,7 @@ type TIssueTypeListItem = {
 export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIssueTypeListItem) {
   const {
     issueTypeId,
+    projectId,
     isOpen,
     isCollapseDisabled,
     propertiesLoader,
@@ -53,10 +64,33 @@ export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIss
   } = props;
   // plane hooks
   const { t } = useTranslation();
+  const { currentWorkspace } = useWorkspace();
+  const isPropertyTypeEnabled = useIsPropertyTypeEnabled({ projectId });
   // store hooks
   const issueType = getWorkItemTypeById(issueTypeId);
   // derived values
   const issueTypeDetail = issueType?.asJSON;
+  // compute allowed property types from feature flags
+  const allowedPropertyTypes = useMemo(
+    () =>
+      (Object.keys(ISSUE_PROPERTY_TYPE_DETAILS) as TIssuePropertyTypeKeys[]).filter((key) =>
+        isPropertyTypeEnabled(key)
+      ),
+    [isPropertyTypeEnabled]
+  );
+  // construct property validator — formula validation closes over workspace/project/issueType context
+  const propertyValidator: TPropertyValidator = useMemo(
+    () => ({
+      [EIssuePropertyType.FORMULA]: async (formulaWithIds: string) =>
+        issuePropertyService.validateFormula({
+          workspaceSlug: currentWorkspace?.slug ?? "",
+          projectId: projectId ?? "",
+          issueTypeId,
+          formula: formulaWithIds,
+        }),
+    }),
+    [currentWorkspace?.slug, projectId, issueTypeId]
+  );
   if (!issueTypeDetail) return null;
 
   return (
@@ -136,6 +170,8 @@ export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIss
             <div className="p-2">
               <IssuePropertiesRoot
                 issueTypeId={issueTypeId}
+                propertyValidator={propertyValidator}
+                allowedPropertyTypes={allowedPropertyTypes}
                 propertiesLoader={propertiesLoader}
                 getWorkItemTypeById={getWorkItemTypeById}
               />

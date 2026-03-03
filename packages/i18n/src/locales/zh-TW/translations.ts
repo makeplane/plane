@@ -3841,6 +3841,9 @@ export default {
           member_picker: {
             label: "成員選擇器",
           },
+          formula: {
+            label: "公式",
+          },
         },
         attributes: {
           label: "屬性",
@@ -3966,6 +3969,30 @@ export default {
             options: {
               required: "您必須添加至少一個選項。",
             },
+            formula: {
+              required: "公式表達式為必填。",
+              invalid: "無效的公式：{error}",
+              circular_reference: "偵測到循環參照。公式不能直接或間接參照自身。",
+              invalid_reference: "公式參照了不存在的屬性。",
+            },
+          },
+        },
+        formula: {
+          field_label: "公式欄位",
+          tooltip: "使用 '{'欄位名稱'}' 語法輸入公式。支援 +、-、*、/ 和 & 運算子。",
+          placeholder: "編寫公式",
+          test_button: "測試",
+          validating: "驗證中",
+          validation_success: "公式有效！回傳 {resultType}",
+          validation_success_with_refs: "公式有效！回傳 {resultType}（參照了 {count} 個欄位）",
+          error: {
+            empty: "請輸入公式",
+            missing_context: "缺少工作空間、專案或工作項目類型上下文",
+            validation_failed: "驗證失敗",
+          },
+          picker: {
+            no_match: "沒有相符的屬性",
+            no_available: "沒有可用的屬性",
           },
         },
         enable_disable: {

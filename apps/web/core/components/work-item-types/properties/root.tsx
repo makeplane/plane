@@ -25,18 +25,20 @@ import type {
   TCreationListModes,
   TIssueProperty,
   TIssuePropertyPayload,
+  TIssuePropertyTypeKeys,
   TLoader,
 } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-// hooks
-import { useWorkspace } from "@/hooks/store/use-workspace";
 // local imports
 import { IssueTypePropertiesEmptyState } from "./empty-state";
 import { IssuePropertyList } from "./property-list";
+import type { TPropertyValidator } from "./property-list-item";
 
 type TIssuePropertiesRoot = {
   issueTypeId: string;
+  propertyValidator?: TPropertyValidator;
+  allowedPropertyTypes?: TIssuePropertyTypeKeys[];
   propertiesLoader: TLoader;
   getWorkItemTypeById: (workItemTypeId: string) => IIssueType | undefined;
 };
@@ -56,12 +58,11 @@ const defaultIssueProperty: Partial<TIssueProperty<EIssuePropertyType>> = {
 };
 
 export const IssuePropertiesRoot = observer(function IssuePropertiesRoot(props: TIssuePropertiesRoot) {
-  const { issueTypeId, propertiesLoader, getWorkItemTypeById } = props;
+  const { issueTypeId, propertyValidator, allowedPropertyTypes, propertiesLoader, getWorkItemTypeById } = props;
   // states
   const [issuePropertyCreateList, setIssuePropertyCreateList] = useState<TIssuePropertyCreateList[]>([]);
   // plane hooks
   const { t } = useTranslation();
-  const { currentWorkspace } = useWorkspace();
   // store hooks
   const issueType = getWorkItemTypeById(issueTypeId);
   // derived values
@@ -169,6 +170,8 @@ export const IssuePropertiesRoot = observer(function IssuePropertiesRoot(props: 
             containerRef={containerRef}
             lastElementRef={lastElementRef}
             isUpdateAllowed={!issueType?.id}
+            propertyValidator={propertyValidator}
+            allowedPropertyTypes={allowedPropertyTypes}
           />
         </>
       ) : (

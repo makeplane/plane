@@ -3887,6 +3887,9 @@ export default {
           member_picker: {
             label: "멤버 피커",
           },
+          formula: {
+            label: "수식",
+          },
         },
         attributes: {
           label: "어트리뷰트",
@@ -4012,6 +4015,30 @@ export default {
             options: {
               required: "최소한 하나의 옵션을 추가해야 합니다.",
             },
+            formula: {
+              required: "수식 표현식이 필요합니다.",
+              invalid: "잘못된 수식: {error}",
+              circular_reference: "순환 참조가 감지되었습니다. 수식은 직접 또는 간접적으로 자신을 참조할 수 없습니다.",
+              invalid_reference: "수식이 존재하지 않는 속성을 참조합니다.",
+            },
+          },
+        },
+        formula: {
+          field_label: "수식 필드",
+          tooltip: "'{'필드 이름'}' 구문을 사용하여 수식을 입력하세요. +, -, *, /, & 연산자를 지원합니다.",
+          placeholder: "수식 작성",
+          test_button: "테스트",
+          validating: "검증 중",
+          validation_success: "수식이 유효합니다! {resultType}을(를) 반환합니다",
+          validation_success_with_refs: "수식이 유효합니다! {resultType}을(를) 반환합니다 ({count}개 필드 참조)",
+          error: {
+            empty: "수식을 입력해 주세요",
+            missing_context: "워크스페이스, 프로젝트 또는 작업 항목 유형 컨텍스트가 없습니다",
+            validation_failed: "검증 실패",
+          },
+          picker: {
+            no_match: "일치하는 속성 없음",
+            no_available: "사용 가능한 속성 없음",
           },
         },
         enable_disable: {

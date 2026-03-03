@@ -23,6 +23,7 @@ export enum EIssuePropertyType {
   DATETIME = "DATETIME",
   RELATION = "RELATION",
   URL = "URL",
+  FORMULA = "FORMULA",
 }
 
 export enum EIssuePropertyRelationType {
@@ -48,6 +49,7 @@ export type TBaseIssueProperty = {
   created_by: string | undefined;
   updated_at: Date | undefined;
   updated_by: string | undefined;
+  formula?: string;
 };
 
 // Issue property type
@@ -76,6 +78,23 @@ export interface IIssueProperty<T extends EIssuePropertyType> extends TIssueProp
 // Issue property payload
 export type TIssuePropertyPayload = Partial<TIssueProperty<EIssuePropertyType>> & {
   options?: Partial<TIssuePropertyOption>[];
+  formula?: string;
+};
+
+// Formula validate API response
+export type TFormulaValidateResponse = {
+  validated_formula: {
+    valid: boolean;
+    result_type: string | null;
+    error: string | null;
+    referenced_fields: string[];
+  } | null;
+  executed_formula: {
+    success: boolean;
+    result_type: string | null;
+    value: string | null;
+    error: string | null;
+  } | null;
 };
 
 // Issue property response

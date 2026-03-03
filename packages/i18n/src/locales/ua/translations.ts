@@ -3902,6 +3902,9 @@ export default {
           member_picker: {
             label: "Вибір мембера",
           },
+          formula: {
+            label: "Формула",
+          },
         },
         attributes: {
           label: "Атрибути",
@@ -4027,6 +4030,31 @@ export default {
             options: {
               required: "Ви повинні додати хоча б одну опцію.",
             },
+            formula: {
+              required: "Вираз формули є обов'язковим.",
+              invalid: "Недійсна формула: {error}",
+              circular_reference:
+                "Виявлено циклічне посилання. Формула не може посилатися на саму себе прямо або опосередковано.",
+              invalid_reference: "Формула посилається на неіснуючу властивість.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Поле формули",
+          tooltip: "Введіть формулу, використовуючи синтаксис '{'Назва поля'}'. Підтримує оператори +, -, *, / та &.",
+          placeholder: "Напишіть формулу",
+          test_button: "Тест",
+          validating: "Перевірка",
+          validation_success: "Формула дійсна! Повертає {resultType}",
+          validation_success_with_refs: "Формула дійсна! Повертає {resultType} ({count} поле(ів) зазначено)",
+          error: {
+            empty: "Будь ласка, введіть формулу",
+            missing_context: "Відсутній контекст робочого простору, проєкту або типу робочого елемента",
+            validation_failed: "Перевірка не вдалася",
+          },
+          picker: {
+            no_match: "Немає відповідних властивостей",
+            no_available: "Немає доступних властивостей",
           },
         },
         enable_disable: {

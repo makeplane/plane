@@ -13,15 +13,20 @@
 
 import { forwardRef } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import type { EIssuePropertyType, TIssueProperty, TIssuePropertyTypeKeys } from "@plane/types";
 // local imports
 import { IssuePropertyListItem } from "./property-list-item";
-import type { TCustomPropertyOperations } from "./property-list-item";
+import type { TCustomPropertyOperations, TPropertyValidator } from "./property-list-item";
 import type { TIssuePropertyCreateList } from "./root";
 
 export type TIssuePropertyCreateListItem = {
   issuePropertyCreateListData?: TIssuePropertyCreateList;
   customPropertyOperations: TCustomPropertyOperations;
   isUpdateAllowed: boolean;
+  allProperties?: TIssueProperty<EIssuePropertyType>[];
+  propertyValidator?: TPropertyValidator;
+  allowedPropertyTypes?: TIssuePropertyTypeKeys[];
 };
 
 export const IssuePropertyCreateListItem = observer(
@@ -29,7 +34,14 @@ export const IssuePropertyCreateListItem = observer(
     props: TIssuePropertyCreateListItem,
     ref: React.Ref<HTMLDivElement>
   ) {
-    const { issuePropertyCreateListData, customPropertyOperations, isUpdateAllowed } = props;
+    const {
+      issuePropertyCreateListData,
+      customPropertyOperations,
+      isUpdateAllowed,
+      allProperties,
+      propertyValidator,
+      allowedPropertyTypes,
+    } = props;
 
     return (
       <div ref={ref}>
@@ -38,6 +50,9 @@ export const IssuePropertyCreateListItem = observer(
           operationMode="create"
           customPropertyOperations={customPropertyOperations}
           isUpdateAllowed={isUpdateAllowed}
+          allProperties={allProperties}
+          propertyValidator={propertyValidator}
+          allowedPropertyTypes={allowedPropertyTypes}
         />
       </div>
     );

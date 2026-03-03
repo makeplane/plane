@@ -257,6 +257,7 @@ export const getWorkItemCustomPropertyActivityMessage = (
     RELATION_USER: getWorkItemMemberPropertyActivityMessage,
     RELATION_ISSUE: getWorkItemRelationIssuePropertyActivityMessage,
     URL: getWorkItemUrlPropertyActivityMessage,
+    FORMULA: () => null,
   };
 
   const getWorkItemCustomPropertyActivityMessageHelper =

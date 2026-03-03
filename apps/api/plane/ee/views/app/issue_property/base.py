@@ -10,7 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Django imports
-from django.db import IntegrityError, models
+from django.db import IntegrityError, models, transaction
 
 # Third party imports
 from rest_framework import status
@@ -18,12 +18,12 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.db.models import Issue
-from plane.ee.views.base import BaseAPIView
-from plane.ee.models import IssueProperty, IssuePropertyOption
+from plane.ee.models import IssueProperty, IssuePropertyOption, PropertyTypeEnum
 from plane.ee.permissions import ProjectEntityPermission
-from plane.ee.serializers import IssuePropertySerializer, IssuePropertyOptionSerializer
-from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.ee.serializers import IssuePropertyOptionSerializer, IssuePropertySerializer
+from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 
 
 class IssuePropertyEndpoint(BaseAPIView):
@@ -149,34 +149,42 @@ class IssuePropertyEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, issue_type_id=None, pk=None):
-        # Get a single issue property
-        if pk:
-            issue_property = IssueProperty.objects.get(
-                workspace__slug=slug,
-                project_id=project_id,
-                issue_type__is_epic=False,
-                pk=pk,
-            )
-            serializer = IssuePropertySerializer(issue_property)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            # Get a single issue property
+            if pk:
+                issue_property = (
+                    IssueProperty.objects.filter(
+                        workspace__slug=slug, project_id=project_id, issue_type__is_epic=False, pk=pk
+                    )
+                    .select_related("formula_config")
+                    .get()
+                )
+                serializer = IssuePropertySerializer(issue_property)
+                return Response(serializer.data, status=status.HTTP_200_OK)
 
-        if issue_type_id:
-            # Get all issue properties for a specific issue type
-            issue_properties = IssueProperty.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                issue_type_id=issue_type_id,
-                issue_type__is_epic=False,
-            )
-            serializer = IssuePropertySerializer(issue_properties, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            if issue_type_id:
+                # Get all issue properties for a specific issue type
+                issue_properties = IssueProperty.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    issue_type_id=issue_type_id,
+                    issue_type__is_epic=False,
+                ).select_related("formula_config")
 
-        # Get all issue properties
-        issue_types = IssueProperty.objects.filter(
-            workspace__slug=slug, project_id=project_id, issue_type__is_epic=False
-        )
-        serializer = IssuePropertySerializer(issue_types, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+                serializer = IssuePropertySerializer(issue_properties, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+            # Get all issue properties
+            issue_types = IssueProperty.objects.filter(
+                workspace__slug=slug, project_id=project_id, issue_type__is_epic=False
+            ).select_related("formula_config")
+            serializer = IssuePropertySerializer(issue_types, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id, issue_type_id):
@@ -212,24 +220,55 @@ class IssuePropertyEndpoint(BaseAPIView):
             if request.data.get("is_required") is True:
                 request.data["default_value"] = []
 
-            # Create a new issue properties
-            serializer = IssuePropertySerializer(data=request.data)
-            # Validate the data
-            serializer.is_valid(raise_exception=True)
-            # Save the data
-            serializer.save(project_id=project_id, issue_type_id=issue_type_id)
+            # ========== FORMULA PROPERTY ==========
+            # extracting the formula and example output
+            formula = request.data.pop("formula", None)
+            example_output = request.data.pop("example_output", None)
 
-            issue_property = IssueProperty.objects.get(
-                project_id=project_id,
-                issue_type_id=issue_type_id,
-                issue_type__is_epic=False,
-                pk=serializer.data["id"],
+            if request.data.get("property_type") == PropertyTypeEnum.FORMULA:
+                # checking if the user has the feature flag enabled
+                if not check_workspace_feature_flag(feature_key=FeatureFlag.WORKITEM_TYPE_FORMULA_FIELD, slug=slug):
+                    return Response(
+                        {"error": "Upgrade your plan to enable formula properties"}, status=status.HTTP_403_FORBIDDEN
+                    )
+
+                # validating the formula is not empty
+                if not formula:
+                    return Response(
+                        {"error": "Formula is required for formula properties"}, status=status.HTTP_400_BAD_REQUEST
+                    )
+            # ========== FORMULA PROPERTY ==========
+
+            with transaction.atomic():
+                serializer = IssuePropertySerializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save(project_id=project_id, issue_type_id=issue_type_id)
+
+                issue_property = IssueProperty.objects.get(
+                    project_id=project_id,
+                    issue_type_id=issue_type_id,
+                    issue_type__is_epic=False,
+                    pk=serializer.data["id"],
+                )
+
+                # ========== FORMULA PROPERTY ==========
+                # creating the formula property
+                issue_property.handle_formula_property(formula, example_output)
+                # ========== FORMULA PROPERTY ==========
+
+                if issue_property.property_type == "OPTION":
+                    self.create_or_update_options(issue_property, options, slug, project_id)
+
+            issue_property = (
+                IssueProperty.objects.filter(
+                    project_id=project_id,
+                    issue_type_id=issue_type_id,
+                    issue_type__is_epic=False,
+                    pk=serializer.data["id"],
+                )
+                .select_related("formula_config")
+                .get()
             )
-
-            # Check if the property type is option and create the options
-            if issue_property.property_type == "OPTION":
-                self.create_or_update_options(issue_property, options, slug, project_id)
-
             serializer = IssuePropertySerializer(issue_property)
             # generate the response with the new data and options
             response = {
@@ -263,6 +302,21 @@ class IssuePropertyEndpoint(BaseAPIView):
                 {"error": "Some fields cannot be updated as issues exist with this property"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # ========== FORMULA PROPERTY ==========
+        # extracting the formula and example output
+        formula = request.data.pop("formula", None)
+        example_output = request.data.pop("example_output", None)
+
+        # validating the formula is not empty
+        if request.data.get("property_type") == PropertyTypeEnum.FORMULA:
+            # checking if the user has the feature flag enabled
+            if not check_workspace_feature_flag(feature_key=FeatureFlag.WORKITEM_TYPE_FORMULA_FIELD, slug=slug):
+                return Response(
+                    {"error": "Upgrade your plan to enable formula properties"}, status=status.HTTP_403_FORBIDDEN
+                )
+        # ========== FORMULA PROPERTY ==========
+
         # if property type is being changed, reset the defaults
         if request.data.get("property_type") and request.data.get("property_type") != issue_property.property_type:
             defaults = {
@@ -276,6 +330,13 @@ class IssuePropertyEndpoint(BaseAPIView):
             for field, default_value in defaults.items():
                 request.data.setdefault(field, default_value)
 
+            # ========== FORMULA PROPERTY ==========
+            # deleting the formula config if changing away from FORMULA type
+            if issue_property.property_type == PropertyTypeEnum.FORMULA and issue_property.formula_config:
+                issue_property.formula_config.delete()
+                issue_property.formula_config = None
+            # ========== FORMULA PROPERTY ==========
+
         # Check defaults
         if not request.data.get("is_multi", issue_property.is_multi) and len(request.data.get("default_value", [])) > 1:
             return Response(
@@ -287,15 +348,25 @@ class IssuePropertyEndpoint(BaseAPIView):
         if request.data.get("is_required", issue_property.is_required) is True:
             request.data["default_value"] = []
 
-        serializer = IssuePropertySerializer(issue_property, data=request.data, partial=True)
-        # Validate the data
-        serializer.is_valid(raise_exception=True)
-        # Save the data
-        serializer.save()
+        with transaction.atomic():
+            serializer = IssuePropertySerializer(issue_property, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-        if issue_property.property_type == "OPTION":
-            self.create_or_update_options(issue_property, options, slug, project_id)
+            issue_property.refresh_from_db()
 
+            if issue_property.property_type == "OPTION":
+                self.create_or_update_options(issue_property, options, slug, project_id)
+
+            # ========== FORMULA PROPERTY ==========
+            # updating the formula property
+            if formula:
+                issue_property.handle_formula_property(formula, example_output)
+            # ========== FORMULA PROPERTY ==========
+
+        # Re-fetch with formula_config for response
+        issue_property = IssueProperty.objects.filter(pk=issue_property.id).select_related("formula_config").get()
+        serializer = IssuePropertySerializer(issue_property)
         response = {
             **serializer.data,
             "options": self.get_options_response(issue_property, slug, project_id),
@@ -312,5 +383,12 @@ class IssuePropertyEndpoint(BaseAPIView):
             issue_type__is_epic=False,
             pk=pk,
         )
+
+        # ========== FORMULA PROPERTY ==========
+        # deleting the formula config when we delete the issue property
+        if issue_property.formula_config:
+            issue_property.formula_config.delete()
+        # ========== FORMULA PROPERTY ==========
+
         issue_property.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

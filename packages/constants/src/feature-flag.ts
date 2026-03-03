@@ -150,6 +150,8 @@ export enum E_FEATURE_FLAGS {
   RICH_FILTERS = "RICH_FILTERS",
   // intake type form
   WORKITEM_TYPE_INTAKE_FORM = "WORKITEM_TYPE_INTAKE_FORM",
+  // formula field for work item types
+  WORKITEM_TYPE_FORMULA_FIELD = "WORKITEM_TYPE_FORMULA_FIELD",
   // workspace members activity
   WORKSPACE_MEMBER_ACTIVITY = "WORKSPACE_MEMBER_ACTIVITY",
   // project members activity
@@ -179,6 +181,7 @@ export const FEATURE_TO_BASE_PLAN_MAP = {
   [E_FEATURE_FLAGS.PROJECT_UPDATES]: EProductSubscriptionEnum.PRO,
   [E_FEATURE_FLAGS.RECURRING_WORKITEMS]: EProductSubscriptionEnum.BUSINESS,
   [E_FEATURE_FLAGS.PROJECT_AUTOMATIONS]: EProductSubscriptionEnum.BUSINESS,
+  [E_FEATURE_FLAGS.WORKITEM_TYPE_FORMULA_FIELD]: EProductSubscriptionEnum.BUSINESS,
   [E_FEATURE_FLAGS.IDP_GROUP_SYNC]: EProductSubscriptionEnum.ENTERPRISE,
 };
 

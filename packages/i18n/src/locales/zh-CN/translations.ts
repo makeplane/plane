@@ -3819,6 +3819,9 @@ export default {
           member_picker: {
             label: "成员选择器",
           },
+          formula: {
+            label: "公式",
+          },
         },
         attributes: {
           label: "属性",
@@ -3944,6 +3947,30 @@ export default {
             options: {
               required: "您必须添加至少一个选项。",
             },
+            formula: {
+              required: "公式表达式是必需的。",
+              invalid: "无效的公式：{error}",
+              circular_reference: "检测到循环引用。公式不能直接或间接引用自身。",
+              invalid_reference: "公式引用了不存在的属性。",
+            },
+          },
+        },
+        formula: {
+          field_label: "公式字段",
+          tooltip: "使用 '{'字段名称'}' 语法输入公式。支持 +、-、*、/ 和 & 运算符。",
+          placeholder: "编写公式",
+          test_button: "测试",
+          validating: "验证中",
+          validation_success: "公式有效！返回 {resultType}",
+          validation_success_with_refs: "公式有效！返回 {resultType}（引用了 {count} 个字段）",
+          error: {
+            empty: "请输入公式",
+            missing_context: "缺少工作空间、项目或工作项类型上下文",
+            validation_failed: "验证失败",
+          },
+          picker: {
+            no_match: "没有匹配的属性",
+            no_available: "没有可用的属性",
           },
         },
         enable_disable: {

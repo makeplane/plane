@@ -167,6 +167,7 @@ import {
   ToggleLeft,
   Search,
   User,
+  Sigma,
 } from "lucide-react";
 
 export const LUCIDE_ICONS_LIST = [
@@ -322,6 +323,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "MinusCircle", element: MinusCircle },
   { name: "MinusSquare", element: MinusSquare },
   { name: "Search", element: Search },
+  { name: "Formula", element: Sigma },
   { name: "ToggleLeft", element: ToggleLeft },
   { name: "User", element: User },
   { name: "UsersRound", element: UsersRound },

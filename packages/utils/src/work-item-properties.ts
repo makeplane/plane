@@ -27,6 +27,8 @@ import type {
   TIssuePropertyTypeKeys,
   TIssuePropertyValues,
   TTextAttributeDisplayOptions,
+  TTextAttributeConfigurations,
+  TDateAttributeConfigurations,
 } from "@plane/types";
 // local imports
 import { renderFormattedDate } from "./datetime";
@@ -119,12 +121,16 @@ export const getIssuePropertyAttributeDisplayNameKey = (
   switch (propertyTypeKey) {
     case "TEXT":
       return getTextAttributeDisplayNameKey(
-        issuePropertyDetail?.settings?.display_format as TTextAttributeDisplayOptions
+        (issuePropertyDetail?.settings as TTextAttributeConfigurations | undefined)
+          ?.display_format as TTextAttributeDisplayOptions
       );
     case "DECIMAL":
       return getNumberAttributeDisplayName(issuePropertyDetail?.default_value?.[0]);
     case "DATETIME":
-      return getDateAttributeDisplayName(issuePropertyDetail?.settings?.display_format as TDateAttributeDisplayOptions);
+      return getDateAttributeDisplayName(
+        (issuePropertyDetail?.settings as TDateAttributeConfigurations | undefined)
+          ?.display_format as TDateAttributeDisplayOptions
+      );
     case "OPTION":
       return getMultiSelectAttributeDisplayName(issuePropertyDetail?.is_multi, "OPTION");
     case "BOOLEAN":

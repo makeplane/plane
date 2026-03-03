@@ -42,7 +42,7 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       default_value: [],
       settings: {
         display_format: "single-line",
-      } as TIssuePropertySettingsMap[EIssuePropertyType.TEXT],
+      } satisfies TIssuePropertySettingsMap[EIssuePropertyType.TEXT],
     },
   },
   DECIMAL: {
@@ -159,6 +159,27 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       settings: undefined,
     },
   },
+  FORMULA: {
+    i18n_displayName: "work_item_types.settings.properties.property_type.formula.label",
+    iconKey: "Formula",
+    dataToUpdate: {
+      logo_props: {
+        in_use: "icon",
+        icon: {
+          name: "Formula",
+          color: "#6d7b8a",
+        },
+      },
+      property_type: EIssuePropertyType.FORMULA,
+      relation_type: null,
+      is_multi: false,
+      is_required: false,
+      default_value: [],
+      settings: {
+        referenced_properties: [],
+      } satisfies TIssuePropertySettingsMap[EIssuePropertyType.FORMULA],
+    },
+  },
 };
 
 export const DROPDOWN_ATTRIBUTES: Partial<{
@@ -245,3 +266,15 @@ export const ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS: Partial<TIssuePropertySetti
 };
 
 export const RESTRICTED_WORK_ITEM_PROPERTY_DISPLAY_NAMES = ["state", "due date", "cycle", "modules"];
+
+export const ALLOWED_FORMULA_PROPERTY_TYPES = [
+  EIssuePropertyType.TEXT,
+  EIssuePropertyType.DECIMAL,
+  EIssuePropertyType.DATETIME,
+  EIssuePropertyType.BOOLEAN,
+  EIssuePropertyType.URL,
+];
+
+export const isAllowedFormulaPropertyType = (
+  propertyType: EIssuePropertyType | undefined
+): propertyType is EIssuePropertyType => Boolean(propertyType && ALLOWED_FORMULA_PROPERTY_TYPES.includes(propertyType));

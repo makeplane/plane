@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { TriangleAlert } from "lucide-react";
 // plane imports
 import { LUCIDE_ICONS_LIST } from "@plane/propel/emoji-icon-picker";

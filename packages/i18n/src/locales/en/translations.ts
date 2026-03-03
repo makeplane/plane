@@ -4264,6 +4264,9 @@ if you are sure your search is right. `,
           member_picker: {
             label: "Member picker",
           },
+          formula: {
+            label: "Formula",
+          },
         },
         attributes: {
           label: "Attributes",
@@ -4389,6 +4392,31 @@ if you are sure your search is right. `,
             options: {
               required: "You must add at least one option.",
             },
+            formula: {
+              required: "Formula expression is required.",
+              invalid: "Invalid formula: {error}",
+              circular_reference:
+                "Circular reference detected. A formula cannot reference itself directly or indirectly.",
+              invalid_reference: "Formula references non-existent property.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Formula field",
+          tooltip: "Enter a formula using '{'Field Name'}' syntax. Supports +, -, *, /, & operators.",
+          placeholder: "Write the formula",
+          test_button: "Test",
+          validating: "Validating",
+          validation_success: "Formula is valid! Returns {resultType}",
+          validation_success_with_refs: "Formula is valid! Returns {resultType} ({count} field(s) referenced)",
+          error: {
+            empty: "Please enter a formula",
+            missing_context: "Missing workspace, project, or work item type context",
+            validation_failed: "Validation failed",
+          },
+          picker: {
+            no_match: "No matching properties",
+            no_available: "No available properties",
           },
         },
         enable_disable: {

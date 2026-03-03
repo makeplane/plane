@@ -9,16 +9,19 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Python imports
+from typing import Optional
+
 # Django imports
-from django.db import models
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
+from django.db import models
 from django.db.models import Q
 from django.template.defaultfilters import slugify
-from django.contrib.postgres.fields import ArrayField
 
 # Module imports
-from plane.db.models import ProjectOptionalBaseModel
 from plane.db.mixins import ChangeTrackerMixin
+from plane.db.models import ProjectOptionalBaseModel
 
 
 class PropertyTypeEnum(models.TextChoices):
@@ -112,6 +115,32 @@ class IssueProperty(ChangeTrackerMixin, ProjectOptionalBaseModel):
             if changed_fields:
                 fields_to_update = {field: getattr(self, field) for field in changed_fields}
                 IssueTypeProperty.objects.filter(issue_type=issue_type, property=self).update(**fields_to_update)
+
+    def handle_formula_property(self, formula: str, example_output: Optional[str] = None) -> None:
+        """
+        Create or update the linked FormulaProperty for this issue property.
+        """
+
+        if self.property_type != PropertyTypeEnum.FORMULA:
+            return
+
+        # if the formula config already exists, update it
+        if self.formula_config:
+            self.formula_config.formula = formula
+            self.formula_config.example_output = (
+                example_output if example_output else self.formula_config.example_output
+            )
+            self.formula_config.save(update_fields=["formula", "example_output"])
+        # if the formula config does not exist, create it
+        else:
+            formula_config = FormulaProperty.objects.create(
+                workspace_id=self.workspace_id,
+                project_id=self.project_id,
+                formula=formula,
+                example_output=example_output,
+            )
+            self.formula_config = formula_config
+            self.save(update_fields=["formula_config"])
 
     def __str__(self):
         return self.display_name

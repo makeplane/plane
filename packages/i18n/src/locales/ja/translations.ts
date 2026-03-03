@@ -3920,6 +3920,9 @@ export default {
           member_picker: {
             label: "メンバー選択",
           },
+          formula: {
+            label: "数式",
+          },
         },
         attributes: {
           label: "属性",
@@ -4045,6 +4048,32 @@ export default {
             options: {
               required: "少なくとも1つのオプションを追加する必要があります。",
             },
+            formula: {
+              required: "数式の式が必要です。",
+              invalid: "無効な数式: {error}",
+              circular_reference:
+                "循環参照が検出されました。数式は直接的にも間接的にも自身を参照することはできません。",
+              invalid_reference: "数式が存在しないプロパティを参照しています。",
+            },
+          },
+        },
+        formula: {
+          field_label: "数式フィールド",
+          tooltip:
+            "'{'フィールド名'}'の構文を使用して数式を入力してください。+、-、*、/、&の演算子をサポートしています。",
+          placeholder: "数式を入力",
+          test_button: "テスト",
+          validating: "検証中",
+          validation_success: "数式は有効です！{resultType}を返します",
+          validation_success_with_refs: "数式は有効です！{resultType}を返します（{count}フィールド参照）",
+          error: {
+            empty: "数式を入力してください",
+            missing_context: "ワークスペース、プロジェクト、またはワークアイテムタイプのコンテキストがありません",
+            validation_failed: "検証に失敗しました",
+          },
+          picker: {
+            no_match: "一致するプロパティがありません",
+            no_available: "利用可能なプロパティがありません",
           },
         },
         enable_disable: {

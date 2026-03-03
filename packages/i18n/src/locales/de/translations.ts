@@ -3939,6 +3939,9 @@ Erstellen Sie ein neues.`,
           member_picker: {
             label: "Mitgliederauswahl",
           },
+          formula: {
+            label: "Formel",
+          },
         },
         attributes: {
           label: "Attribute",
@@ -4064,6 +4067,31 @@ Erstellen Sie ein neues.`,
             options: {
               required: "Sie müssen mindestens eine Option hinzufügen.",
             },
+            formula: {
+              required: "Formelausdruck ist erforderlich.",
+              invalid: "Ungültige Formel: {error}",
+              circular_reference:
+                "Zirkuläre Referenz erkannt. Eine Formel kann nicht direkt oder indirekt auf sich selbst verweisen.",
+              invalid_reference: "Formel verweist auf eine nicht existierende Eigenschaft.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Formelfeld",
+          tooltip: "Geben Sie eine Formel mit der Syntax '{'Feldname'}' ein. Unterstützt +, -, *, / und & Operatoren.",
+          placeholder: "Formel eingeben",
+          test_button: "Test",
+          validating: "Wird überprüft",
+          validation_success: "Formel ist gültig! Gibt {resultType} zurück",
+          validation_success_with_refs: "Formel ist gültig! Gibt {resultType} zurück ({count} Feld(er) referenziert)",
+          error: {
+            empty: "Bitte geben Sie eine Formel ein",
+            missing_context: "Fehlender Workspace-, Projekt- oder Arbeitsaufgabentyp-Kontext",
+            validation_failed: "Validierung fehlgeschlagen",
+          },
+          picker: {
+            no_match: "Keine passenden Eigenschaften",
+            no_available: "Keine verfügbaren Eigenschaften",
           },
         },
         enable_disable: {

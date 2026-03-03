@@ -11,20 +11,29 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
+import { ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
-import type { TLoader, IIssueType } from "@plane/types";
+import type { TLoader, IIssueType, TIssuePropertyTypeKeys } from "@plane/types";
+import { EIssuePropertyType } from "@plane/types";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // helpers
 import { cn } from "@plane/utils";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// services
+import { issuePropertyService } from "@/services/issue-types";
 // plane web components
+import { useIsPropertyTypeEnabled } from "@/components/work-item-types/helpers/use-enabled-property-types";
 import { IssuePropertiesRoot } from "@/components/work-item-types/properties/root";
+import type { TPropertyValidator } from "@/components/work-item-types/properties/property-list-item";
 
 type EpicPropertiesProps = {
   epicId: string;
+  projectId: string;
   propertiesLoader: TLoader;
   containerClassName?: string;
   getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
@@ -33,13 +42,36 @@ type EpicPropertiesProps = {
 
 export const EpicPropertiesRoot = observer(function EpicPropertiesRoot(props: EpicPropertiesProps) {
   // props
-  const { epicId, propertiesLoader, containerClassName, getWorkItemTypeById, getClassName } = props;
+  const { epicId, projectId, propertiesLoader, containerClassName, getWorkItemTypeById, getClassName } = props;
   // hooks
   const { t } = useTranslation();
+  const { currentWorkspace } = useWorkspace();
+  const isPropertyTypeEnabled = useIsPropertyTypeEnabled({ projectId });
   // states
   const [isOpen, setIsOpen] = useState(true);
   // derived values
   const epicDetail = getWorkItemTypeById(epicId);
+  // compute allowed property types from feature flags
+  const allowedPropertyTypes = useMemo(
+    () =>
+      (Object.keys(ISSUE_PROPERTY_TYPE_DETAILS) as TIssuePropertyTypeKeys[]).filter((key) =>
+        isPropertyTypeEnabled(key)
+      ),
+    [isPropertyTypeEnabled]
+  );
+  // construct property validator — formula validation closes over workspace/project/epic context
+  const propertyValidator: TPropertyValidator = useMemo(
+    () => ({
+      [EIssuePropertyType.FORMULA]: async (formulaWithIds: string) =>
+        issuePropertyService.validateFormula({
+          workspaceSlug: currentWorkspace?.slug ?? "",
+          projectId: projectId ?? "",
+          issueTypeId: epicId,
+          formula: formulaWithIds,
+        }),
+    }),
+    [currentWorkspace?.slug, projectId, epicId]
+  );
 
   if (!epicDetail) return null;
 
@@ -88,6 +120,8 @@ export const EpicPropertiesRoot = observer(function EpicPropertiesRoot(props: Ep
             <div className="p-2">
               <IssuePropertiesRoot
                 issueTypeId={epicId}
+                propertyValidator={propertyValidator}
+                allowedPropertyTypes={allowedPropertyTypes}
                 propertiesLoader={propertiesLoader}
                 getWorkItemTypeById={getWorkItemTypeById}
               />

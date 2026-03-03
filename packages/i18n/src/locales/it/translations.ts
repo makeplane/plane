@@ -3947,6 +3947,9 @@ Crea un nuovo progetto invece`,
           member_picker: {
             label: "Seleziona membro",
           },
+          formula: {
+            label: "Formula",
+          },
         },
         attributes: {
           label: "Attributi",
@@ -4072,6 +4075,32 @@ Crea un nuovo progetto invece`,
             options: {
               required: "Devi aggiungere almeno una opzione.",
             },
+            formula: {
+              required: "L'espressione della formula è obbligatoria.",
+              invalid: "Formula non valida: {error}",
+              circular_reference:
+                "Riferimento circolare rilevato. Una formula non può fare riferimento a se stessa direttamente o indirettamente.",
+              invalid_reference: "La formula fa riferimento a una proprietà inesistente.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Campo formula",
+          tooltip: "Inserisci una formula usando la sintassi '{'Nome campo'}'. Supporta gli operatori +, -, *, / e &.",
+          placeholder: "Scrivi la formula",
+          test_button: "Test",
+          validating: "Validazione in corso",
+          validation_success: "La formula è valida! Restituisce {resultType}",
+          validation_success_with_refs:
+            "La formula è valida! Restituisce {resultType} ({count} campo/i referenziato/i)",
+          error: {
+            empty: "Inserisci una formula",
+            missing_context: "Contesto dello spazio di lavoro, del progetto o del tipo di elemento di lavoro mancante",
+            validation_failed: "Validazione fallita",
+          },
+          picker: {
+            no_match: "Nessuna proprietà corrispondente",
+            no_available: "Nessuna proprietà disponibile",
           },
         },
         enable_disable: {

@@ -26,7 +26,10 @@ import type {
   TIssuePropertyOption,
   TIssuePropertyOptionCreateUpdateData,
   TIssuePropertyPayload,
+  TIssuePropertyTypeKeys,
   TOperationMode,
+  TTextAttributeConfigurations,
+  TFormulaValidateResponse,
 } from "@plane/types";
 import { EIssuePropertyType } from "@plane/types";
 import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
@@ -53,12 +56,19 @@ export type TCustomPropertyOperations = {
   removePropertyListItem: (value: TIssuePropertyCreateList) => void;
 };
 
+export type TPropertyValidator = {
+  [EIssuePropertyType.FORMULA]?: (formulaWithIds: string) => Promise<TFormulaValidateResponse>;
+};
+
 type TIssuePropertyListItem = {
   customPropertyId?: string;
   issuePropertyCreateListData?: TIssuePropertyCreateList;
   operationMode?: TOperationMode;
   customPropertyOperations: TCustomPropertyOperations;
   isUpdateAllowed: boolean;
+  allProperties?: TIssueProperty<EIssuePropertyType>[];
+  propertyValidator?: TPropertyValidator;
+  allowedPropertyTypes?: TIssuePropertyTypeKeys[];
 };
 
 export type TIssuePropertyFormError = {
@@ -73,8 +83,16 @@ const defaultIssuePropertyError: TIssuePropertyFormError = {
 };
 
 export const IssuePropertyListItem = observer(function IssuePropertyListItem(props: TIssuePropertyListItem) {
-  const { customPropertyId, issuePropertyCreateListData, operationMode, customPropertyOperations, isUpdateAllowed } =
-    props;
+  const {
+    customPropertyId,
+    issuePropertyCreateListData,
+    operationMode,
+    customPropertyOperations,
+    isUpdateAllowed,
+    allProperties,
+    propertyValidator,
+    allowedPropertyTypes,
+  } = props;
   const {
     getPropertyDetail,
     getSortedActivePropertyOptions,
@@ -105,12 +123,14 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
   const [issuePropertyData, setIssuePropertyData] =
     useState<Partial<TIssueProperty<EIssuePropertyType>>>(issuePropertyDetail);
   const [issuePropertyError, setIssuePropertyError] = useState<TIssuePropertyFormError>(defaultIssuePropertyError);
+  const [isPropertyConfigValid, setIsPropertyConfigValid] = useState<boolean>(false);
   // derived values
   // check if mandatory field is disabled for the property
   const isMandatoryFieldDisabled =
     issuePropertyData?.property_type === EIssuePropertyType.BOOLEAN ||
+    issuePropertyData?.property_type === EIssuePropertyType.FORMULA ||
     (issuePropertyData?.property_type === EIssuePropertyType.TEXT &&
-      issuePropertyData?.settings?.display_format === "readonly");
+      (issuePropertyData?.settings as TTextAttributeConfigurations | undefined)?.display_format === "readonly");
 
   // get property default values
   const getDefaultValues = () => {
@@ -143,6 +163,14 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
       error.options = t("work_item_types.settings.properties.create_update.errors.options.required");
       hasError = true;
     }
+    // Validate formula - must be validated via Test button (only during creation)
+    if (
+      issuePropertyData.property_type === EIssuePropertyType.FORMULA &&
+      issuePropertyOperationMode === "create" &&
+      !isPropertyConfigValid
+    ) {
+      hasError = true;
+    }
     setIssuePropertyError(error);
     return hasError;
   };
@@ -167,6 +195,17 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     return [...existingOptions, ...sanitizedNewOptions];
   }
 
+  // Extract formula payload from property data (shared between create/update)
+  const extractFormulaPayload = (
+    data: Partial<TIssueProperty<EIssuePropertyType>>
+  ): { formulaPayload: string | undefined; propertyPayload: typeof data } => {
+    if (data.property_type !== EIssuePropertyType.FORMULA) {
+      return { formulaPayload: undefined, propertyPayload: data };
+    }
+    const { formula: formulaPayload, ...propertyPayload } = data;
+    return { formulaPayload, propertyPayload };
+  };
+
   // handlers
   const handleCreateProperty = async () => {
     if (!issuePropertyData) return;
@@ -182,10 +221,14 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
         .filter((item) => !!item.name);
     }
 
+    const { formulaPayload, propertyPayload } = extractFormulaPayload(issuePropertyData);
+
     setIsSubmitting(true);
     await createProperty({
-      ...issuePropertyData,
+      ...propertyPayload,
+      formula: formulaPayload,
       options: optionsPayload,
+      issue_type: issuePropertyData.property_type,
     })
       .then(async (response) => {
         setToast({
@@ -242,9 +285,18 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     }
 
     if (!customPropertyId || (isEmpty(payload) && isEmpty(optionsPayload))) return;
+
+    const { formulaPayload, propertyPayload } = extractFormulaPayload({
+      ...payload,
+      property_type: issuePropertyData.property_type,
+    });
+    // Remove property_type from update payload — it was only added as a discriminator for extractFormulaPayload
+    const { property_type: _, ...updatePayload } = propertyPayload;
+
     setIsSubmitting(true);
     await updateProperty(customPropertyId, {
-      ...payload,
+      ...updatePayload,
+      formula: formulaPayload,
       options: optionsPayload,
     })
       .then(() => {
@@ -338,7 +390,9 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     ) {
       setIssuePropertyError((prev) => ({
         ...prev,
-        display_name: t("common.errors.restricted_entity", { entity: t("common.name") }),
+        display_name: t("common.errors.restricted_entity", {
+          entity: t("common.name"),
+        }),
       }));
     }
     // update property data
@@ -356,6 +410,10 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     setIssuePropertyData((prev) => ({ ...prev, ...value }));
     // reset error
     setIssuePropertyError(defaultIssuePropertyError);
+    // reset formula validation if property type changes
+    if (value.property_type) {
+      setIsPropertyConfigValid(false);
+    }
   };
 
   const handleMandatoryFieldChange = (value: boolean) => {
@@ -408,6 +466,10 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     });
   };
 
+  const handlePropertyConfigValidityChange = (isValid: boolean) => {
+    setIsPropertyConfigValid(isValid);
+  };
+
   if (!issuePropertyOperationMode) {
     const i18nAttributeDisplayNameKey = getIssuePropertyAttributeDisplayNameKey(issuePropertyData);
     return (
@@ -420,7 +482,7 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
         <div className="flex items-center gap-1 text-body-xs-medium">
           {/* Drag handle */}
           <Tooltip tooltipContent="Drag to rearrange">
-            <GripVertical className="size-5 text-placeholder cursor-grab" />
+            <GripVertical className="size-5 text-placeholder cursor-grab shrink-0" />
           </Tooltip>
           {issuePropertyData?.logo_props && (
             <div className="shrink-0 size-5 grid place-items-center">
@@ -493,13 +555,18 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
               handlePropertyObjectChange={handlePropertyObjectChange}
               error={issuePropertyError.property_type}
               isUpdateAllowed={isUpdateAllowed}
+              allowedPropertyTypes={allowedPropertyTypes}
             />
             <PropertyAttributes
               propertyDetail={issuePropertyData}
               currentOperationMode={issuePropertyOperationMode}
               onPropertyDetailChange={handlePropertyDataChange}
+              onPropertyConfigValidityChange={handlePropertyConfigValidityChange}
+              propertyValidator={propertyValidator}
               error={issuePropertyError}
               isUpdateAllowed={isUpdateAllowed}
+              allProperties={allProperties}
+              allowedPropertyTypes={allowedPropertyTypes}
             />
           </div>
         </div>
@@ -518,7 +585,17 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
           <Button variant="secondary" onClick={handleDiscard} disabled={isSubmitting} className="py-1">
             {issuePropertyOperationMode === "create" ? t("common.cancel") : t("common.discard")}
           </Button>
-          <Button variant="primary" onClick={handleCreateUpdate} disabled={isSubmitting} className="py-1">
+          <Button
+            variant="primary"
+            onClick={handleCreateUpdate}
+            disabled={
+              isSubmitting ||
+              (issuePropertyData.property_type === EIssuePropertyType.FORMULA &&
+                issuePropertyOperationMode === "create" &&
+                !isPropertyConfigValid) /* property types requiring config validation */
+            }
+            className="py-1"
+          >
             {isSubmitting
               ? t("common.confirming")
               : issuePropertyOperationMode === "create"

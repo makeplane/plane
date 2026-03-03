@@ -19,6 +19,7 @@ import type {
   TCreateIssuePropertyPayload,
   TDeleteIssuePropertyPayload,
   TFetchIssuePropertiesPayload,
+  TFormulaValidateResponse,
   TIssueProperty,
   TIssuePropertyResponse,
   TUpdateIssuePropertyPayload,
@@ -68,6 +69,27 @@ class IssuePropertiesService extends APIService implements IIssuePropertiesServi
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/${customPropertyId}/`,
       data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async validateFormula({
+    workspaceSlug,
+    projectId,
+    issueTypeId,
+    formula,
+  }: {
+    workspaceSlug: string;
+    projectId: string;
+    issueTypeId: string;
+    formula: string;
+  }): Promise<TFormulaValidateResponse> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/formula-validate/`,
+      { formula }
     )
       .then((response) => response?.data)
       .catch((error) => {

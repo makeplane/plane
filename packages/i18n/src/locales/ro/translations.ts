@@ -3953,6 +3953,9 @@ văzute aici`,
           member_picker: {
             label: "Selector de membri",
           },
+          formula: {
+            label: "Formulă",
+          },
         },
         attributes: {
           label: "Atribute",
@@ -4078,6 +4081,32 @@ văzute aici`,
             options: {
               required: "Trebuie să adaugi cel puțin o opțiune.",
             },
+            formula: {
+              required: "Expresia formulei este obligatorie.",
+              invalid: "Formulă invalidă: {error}",
+              circular_reference:
+                "Referință circulară detectată. O formulă nu poate face referire la ea însăși direct sau indirect.",
+              invalid_reference: "Formula face referire la o proprietate inexistentă.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Câmp formulă",
+          tooltip: "Introduceți o formulă folosind sintaxa '{'Nume câmp'}'. Suportă operatorii +, -, *, / și &.",
+          placeholder: "Scrieți formula",
+          test_button: "Test",
+          validating: "Se validează",
+          validation_success: "Formula este validă! Returnează {resultType}",
+          validation_success_with_refs:
+            "Formula este validă! Returnează {resultType} ({count} câmp(uri) referențiat(e))",
+          error: {
+            empty: "Vă rugăm introduceți o formulă",
+            missing_context: "Lipsește contextul spațiului de lucru, proiectului sau tipului de element de lucru",
+            validation_failed: "Validarea a eșuat",
+          },
+          picker: {
+            no_match: "Nicio proprietate corespunzătoare",
+            no_available: "Nicio proprietate disponibilă",
           },
         },
         enable_disable: {

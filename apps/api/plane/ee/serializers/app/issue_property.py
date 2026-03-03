@@ -13,10 +13,12 @@
 from rest_framework import serializers
 
 # Module imports
-from plane.ee.serializers import BaseSerializer
-from plane.db.models import IssueType
-from plane.ee.models import IssueProperty, IssuePropertyOption, IssuePropertyActivity
 from plane.app.serializers import UserLiteSerializer
+from plane.db.models import IssueType
+from plane.ee.models import IssueProperty, IssuePropertyActivity, IssuePropertyOption
+from plane.ee.serializers import BaseSerializer
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.utils.constants import (
     RESTRICTED_ISSUE_PROPERTY_DISPLAY_NAMES,
 )
@@ -32,10 +34,31 @@ class IssueTypeSerializer(BaseSerializer):
 
 
 class IssuePropertySerializer(BaseSerializer):
+    formula = serializers.SerializerMethodField()
+    example_output = serializers.SerializerMethodField()
+
     class Meta:
         model = IssueProperty
         fields = "__all__"
-        read_only_fields = ["name", "issue_type", "workspace", "deleted_at"]
+        read_only_fields = ["name", "issue_type", "workspace", "deleted_at", "formula_config"]
+
+    # getting the formula for the issue property
+    def get_formula(self, obj):
+        workspace_slug = obj.workspace.slug
+        feature_flag = FeatureFlag.WORKITEM_TYPE_FORMULA_FIELD
+        if not check_workspace_feature_flag(feature_key=feature_flag, slug=workspace_slug):
+            return ""
+
+        return obj.formula_config.formula if obj.formula_config and obj.formula_config.formula else ""
+
+    # getting the example output for the issue property
+    def get_example_output(self, obj):
+        workspace_slug = obj.workspace.slug
+        feature_flag = FeatureFlag.WORKITEM_TYPE_FORMULA_FIELD
+        if not check_workspace_feature_flag(feature_key=feature_flag, slug=workspace_slug):
+            return ""
+
+        return obj.formula_config.example_output if obj.formula_config and obj.formula_config.example_output else ""
 
     def validate_display_name(self, value):
         if value in RESTRICTED_ISSUE_PROPERTY_DISPLAY_NAMES:

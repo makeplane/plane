@@ -3959,6 +3959,9 @@ se você tem certeza de que sua pesquisa está correta.`,
           member_picker: {
             label: "Seletor de membro",
           },
+          formula: {
+            label: "Fórmula",
+          },
         },
         attributes: {
           label: "Atributos",
@@ -4084,6 +4087,31 @@ se você tem certeza de que sua pesquisa está correta.`,
             options: {
               required: "Você deve adicionar pelo menos uma opção.",
             },
+            formula: {
+              required: "A expressão da fórmula é obrigatória.",
+              invalid: "Fórmula inválida: {error}",
+              circular_reference:
+                "Referência circular detectada. Uma fórmula não pode referenciar a si mesma direta ou indiretamente.",
+              invalid_reference: "A fórmula referencia uma propriedade inexistente.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Campo de fórmula",
+          tooltip: "Insira uma fórmula usando a sintaxe '{'Nome do campo'}'. Suporta os operadores +, -, *, / e &.",
+          placeholder: "Escrever a fórmula",
+          test_button: "Testar",
+          validating: "Validando",
+          validation_success: "A fórmula é válida! Retorna {resultType}",
+          validation_success_with_refs: "A fórmula é válida! Retorna {resultType} ({count} campo(s) referenciado(s))",
+          error: {
+            empty: "Por favor, insira uma fórmula",
+            missing_context: "Contexto de espaço de trabalho, projeto ou tipo de item de trabalho ausente",
+            validation_failed: "Falha na validação",
+          },
+          picker: {
+            no_match: "Nenhuma propriedade correspondente",
+            no_available: "Nenhuma propriedade disponível",
           },
         },
         enable_disable: {

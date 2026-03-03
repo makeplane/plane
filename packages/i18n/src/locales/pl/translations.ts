@@ -3907,6 +3907,9 @@ Utwórz nowy.`,
           member_picker: {
             label: "Wybór członka",
           },
+          formula: {
+            label: "Formuła",
+          },
         },
         attributes: {
           label: "Atrybuty",
@@ -4032,6 +4035,31 @@ Utwórz nowy.`,
             options: {
               required: "Musisz dodać co najmniej jedną opcję.",
             },
+            formula: {
+              required: "Wyrażenie formuły jest wymagane.",
+              invalid: "Nieprawidłowa formuła: {error}",
+              circular_reference:
+                "Wykryto odwołanie cykliczne. Formuła nie może odwoływać się do siebie bezpośrednio ani pośrednio.",
+              invalid_reference: "Formuła odwołuje się do nieistniejącej właściwości.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Pole formuły",
+          tooltip: "Wprowadź formułę używając składni '{'Nazwa pola'}'. Obsługuje operatory +, -, *, / i &.",
+          placeholder: "Napisz formułę",
+          test_button: "Test",
+          validating: "Weryfikowanie",
+          validation_success: "Formuła jest prawidłowa! Zwraca {resultType}",
+          validation_success_with_refs: "Formuła jest prawidłowa! Zwraca {resultType} ({count} pól odwołanych)",
+          error: {
+            empty: "Wprowadź formułę",
+            missing_context: "Brak kontekstu przestrzeni roboczej, projektu lub typu elementu roboczego",
+            validation_failed: "Weryfikacja nie powiodła się",
+          },
+          picker: {
+            no_match: "Brak pasujących właściwości",
+            no_available: "Brak dostępnych właściwości",
           },
         },
         enable_disable: {
