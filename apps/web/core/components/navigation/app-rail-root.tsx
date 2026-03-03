@@ -27,8 +27,6 @@ import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
 import { useUserPermissions } from "@/hooks/store/user";
 // lib
 import { useAppRailVisibility } from "@/lib/app-rail/context";
-// plane web imports
-import { DesktopSidebarWorkspaceMenu } from "@/components/desktop";
 // local imports
 import { AppSidebarItemsRoot } from "./items-root";
 
@@ -69,7 +67,6 @@ export const AppRailRoot = observer(() => {
                 "gap-3": !showLabel,
               })}
             >
-              <DesktopSidebarWorkspaceMenu />
               <AppSidebarItemsRoot showLabel={showLabel} />
               <div className="border-t border-strong mx-2" />
               {isAllowedToNavigateToSettings && (

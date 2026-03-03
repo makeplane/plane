@@ -19,6 +19,7 @@ import { API_BASE_URL } from "@plane/constants";
 import type { TOAuthConfigs, TOAuthOption } from "@plane/types";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
+import { isDesktop } from "@/hooks/use-desktop";
 
 export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
   // router
@@ -37,7 +38,7 @@ export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs =
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/oidc/${next_path ? `?next_path=${next_path}` : ``}`);
       },
-      enabled: config?.is_oidc_enabled,
+      enabled: config?.is_oidc_enabled && !isDesktop(),
     },
     {
       id: "saml",
@@ -46,7 +47,7 @@ export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs =
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/saml/${next_path ? `?next_path=${next_path}` : ``}`);
       },
-      enabled: config?.is_saml_enabled,
+      enabled: config?.is_saml_enabled && !isDesktop(),
     },
     {
       id: "ldap",
@@ -55,7 +56,7 @@ export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs =
       onClick: () => {
         void navigate("/ldap");
       },
-      enabled: config?.is_ldap_enabled,
+      enabled: config?.is_ldap_enabled && !isDesktop(),
     },
     {
       id: "sso",
@@ -64,7 +65,7 @@ export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs =
       onClick: () => {
         void navigate("/sso");
       },
-      enabled: config?.is_self_managed === false,
+      enabled: config?.is_self_managed === false && !isDesktop(),
     },
   ];
   const isOAuthEnabled = oAuthOptions.some((option) => option.enabled);

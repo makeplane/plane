@@ -11,15 +11,16 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
-// components
-import { WorkspaceMenuRoot } from "@/components/workspace/sidebar/workspace-menu-root";
-
-export function DesktopSidebarWorkspaceMenu() {
-  if (!isDesktopApp()) return null;
-  return (
-    <div className="pb-1.5">
-      <WorkspaceMenuRoot variant="sidebar" />
-    </div>
-  );
-}
+// IPC channel names as constants
+export const IPC_CHANNELS = {
+  OPEN_EXTERNAL: "open-external",
+  INSTANCE_SET: "instance:set",
+  INSTANCE_GET: "instance:get",
+  TAB_CREATE: "tab:create",
+  TAB_CLOSE: "tab:close",
+  TAB_SWITCH: "tab:switch",
+  NAV_BACK: "nav:back",
+  NAV_FORWARD: "nav:forward",
+  PKCE_START: "pkce:start-flow",
+  PKCE_GET_VERIFIER: "pkce:get-verifier",
+} as const;

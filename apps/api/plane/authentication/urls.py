@@ -97,6 +97,17 @@ from .views import (
     MobileSAMLCallbackEndpoint,
     MobileSAMLLogoutEndpoint,
     MobileSAMLMetadataEndpoint,
+    # Desktop
+    DesktopGoogleOauthInitiateEndpoint,
+    DesktopGoogleCallbackEndpoint,
+    DesktopGitHubOauthInitiateEndpoint,
+    DesktopGitHubCallbackEndpoint,
+    DesktopGitLabOauthInitiateEndpoint,
+    DesktopGitLabCallbackEndpoint,
+    DesktopGiteaOauthInitiateEndpoint,
+    DesktopGiteaCallbackEndpoint,
+    DesktopTokenExchangeEndpoint,
+    DesktopSignOutEndpoint,
 )
 
 urlpatterns = [
@@ -361,5 +372,56 @@ urlpatterns = [
         "mobile/saml/logout/",
         MobileSAMLLogoutEndpoint.as_view(),
         name="mobile-saml-logout",
+    ),
+    # Desktop OAuth
+    path(
+        "desktop/google/",
+        DesktopGoogleOauthInitiateEndpoint.as_view(),
+        name="desktop-google-initiate",
+    ),
+    path(
+        "desktop/google/callback/",
+        DesktopGoogleCallbackEndpoint.as_view(),
+        name="desktop-google-callback",
+    ),
+    path(
+        "desktop/github/",
+        DesktopGitHubOauthInitiateEndpoint.as_view(),
+        name="desktop-github-initiate",
+    ),
+    path(
+        "desktop/github/callback/",
+        DesktopGitHubCallbackEndpoint.as_view(),
+        name="desktop-github-callback",
+    ),
+    path(
+        "desktop/gitlab/",
+        DesktopGitLabOauthInitiateEndpoint.as_view(),
+        name="desktop-gitlab-initiate",
+    ),
+    path(
+        "desktop/gitlab/callback/",
+        DesktopGitLabCallbackEndpoint.as_view(),
+        name="desktop-gitlab-callback",
+    ),
+    path(
+        "desktop/gitea/",
+        DesktopGiteaOauthInitiateEndpoint.as_view(),
+        name="desktop-gitea-initiate",
+    ),
+    path(
+        "desktop/gitea/callback/",
+        DesktopGiteaCallbackEndpoint.as_view(),
+        name="desktop-gitea-callback",
+    ),
+    path(
+        "desktop/token-exchange/",
+        DesktopTokenExchangeEndpoint.as_view(),
+        name="desktop-token-exchange",
+    ),
+    path(
+        "desktop/sign-out/",
+        DesktopSignOutEndpoint.as_view(),
+        name="desktop-sign-out",
     ),
 ]

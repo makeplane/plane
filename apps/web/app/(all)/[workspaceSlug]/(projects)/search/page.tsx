@@ -14,25 +14,22 @@
 import { observer } from "mobx-react";
 // plane web components
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { isSidebarToggleVisible } from "@/components/desktop";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { AppSearchRoot } from "@/components/workspace/search";
 import type { Route } from "./+types/page";
 
-function AppSearchPage({ params }: Route.ComponentProps) {
+const AppSearchPage = observer(function AppSearchPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
 
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag="ADVANCED_SEARCH" fallback={<></>}>
-      {isSidebarToggleVisible() && (
-        <div className="block bg-surface-1 p-4 md:hidden">
-          <SidebarHamburgerToggle />
-        </div>
-      )}
+      <div className="block bg-surface-1 p-4 md:hidden">
+        <SidebarHamburgerToggle />
+      </div>
       <AppSearchRoot />
     </WithFeatureFlagHOC>
   );
-}
+});
 
-export default observer(AppSearchPage);
+export default AppSearchPage;

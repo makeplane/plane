@@ -11,9 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
+export function assert<T>(value: T | null | undefined, message: string): asserts value is T {
+  if (value !== null && value !== undefined) {
+    return;
+  }
 
-export const isSidebarToggleVisible = () => {
-  if (isDesktopApp()) return false;
-  return true;
-};
+  throw new Error(`Assertion failed: ${message}`);
+}

@@ -100,6 +100,19 @@ from .app.mobile.saml import (
 
 from .oauth import CustomAuthorizationView
 
+# Desktop authentication exports
+from .app.desktop import (
+    DesktopGoogleOauthInitiateEndpoint,
+    DesktopGoogleCallbackEndpoint,
+    DesktopGitHubOauthInitiateEndpoint,
+    DesktopGitHubCallbackEndpoint,
+    DesktopGitLabOauthInitiateEndpoint,
+    DesktopGitLabCallbackEndpoint,
+    DesktopGiteaOauthInitiateEndpoint,
+    DesktopGiteaCallbackEndpoint,
+    DesktopTokenExchangeEndpoint,
+    DesktopSignOutEndpoint,
+)
 
 from .sso import (
     SSOAuthInitiateEndpoint,

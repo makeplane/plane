@@ -11,10 +11,22 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./context";
-export * from "./root";
-export * from "./sidebar-toggle";
-export * from "./navigation";
-export * from "./use-desktop-app";
-export * from "./helper";
-export * from "./sidebar-workspace-menu";
+import { Store } from "./store";
+
+export interface NavigationState {
+  canGoBack: boolean;
+  canGoForward: boolean;
+}
+
+export class NavigationStore extends Store<NavigationState> {
+  constructor() {
+    super({
+      canGoBack: false,
+      canGoForward: false,
+    });
+  }
+
+  update(canGoBack: boolean, canGoForward: boolean): void {
+    this.state = { canGoBack, canGoForward };
+  }
+}

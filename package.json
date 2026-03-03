@@ -7,7 +7,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --concurrency=23",
+    "build:desktop": "turbo run build --filter=desktop && todesktop build",
+    "dev": "turbo run dev --concurrency=18",
     "start": "turbo run start",
     "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "fix": "turbo run fix",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.39.1",
+    "@todesktop/cli": "^1.20.2",
     "@vitest/eslint-plugin": "1.6.7",
     "eslint": "9.39.1",
     "eslint-config-prettier": "10.1.8",
@@ -99,8 +101,19 @@
       "rollup": "4.59.0"
     },
     "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@sentry-internal/node-cpu-profiler",
       "@sentry/cli",
-      "turbo"
+      "@swc/core",
+      "core-js",
+      "dtrace-provider",
+      "electron",
+      "esbuild",
+      "msgpackr-extract",
+      "protobufjs",
+      "tldjs",
+      "turbo",
+      "unrs-resolver"
     ],
     "ignoredBuiltDependencies": [
       "@parcel/watcher",

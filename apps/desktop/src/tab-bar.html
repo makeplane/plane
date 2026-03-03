@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tab Bar</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        /* Light mode colors - extracted from packages/tailwind-config/variables.css */
+        /* Alpha colors */
+        --alpha-black-100: oklch(0.1482 0.0034 196.79 / 5%);
+        --alpha-black-200: oklch(0.1482 0.0034 196.79 / 10%);
+        --alpha-black-300: oklch(0.1482 0.0034 196.79 / 15%);
+        --alpha-white-100: oklch(1 0 0 / 5%);
+        --alpha-white-200: oklch(1 0 0 / 10%);
+        --alpha-white-300: oklch(1 0 0 / 15%);
+        /* Neutral colors */
+        --neutral-white: oklch(1 0 0);
+        --neutral-100: oklch(0.9848 0.0003 230.66);
+        --neutral-200: oklch(0.9696 0.0007 230.67);
+        --neutral-300: oklch(0.9543 0.001 230.67);
+        --neutral-400: oklch(0.9389 0.0014 230.68);
+        --neutral-500: oklch(0.9235 0.001733 230.6853);
+        --neutral-600: oklch(0.8925 0.0024 230.7);
+        --neutral-1000: oklch(0.5288 0.0083 230.88);
+        --neutral-1100: oklch(0.4377 0.0066 230.87);
+        --neutral-1200: oklch(0.2378 0.0029 230.83);
+        /* Brand colors */
+        --brand-default: oklch(0.4799 0.1158 242.91);
+        --brand-900: oklch(0.4347 0.104093 242.4823);
+        --brand-1000: oklch(0.3399 0.0783 240.32);
+        /* Semantic tokens */
+        --bg-canvas: var(--neutral-300);
+        --bg-layer-2: var(--neutral-white);
+        --bg-layer-2-hover: var(--neutral-100);
+        --bg-layer-2-active: var(--neutral-200);
+        --bg-layer-2-selected: var(--neutral-200);
+        --bg-layer-transparent-hover: var(--alpha-black-100);
+        --bg-layer-transparent-active: var(--alpha-black-200);
+        --bg-layer-transparent-selected: var(--alpha-black-300);
+        --bg-accent-primary: var(--brand-default);
+        --txt-primary: var(--neutral-1200);
+        --txt-secondary: var(--neutral-1100);
+        --txt-tertiary: var(--neutral-1000);
+        --border-subtle: var(--neutral-400);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          /* Dark mode colors - extracted from packages/tailwind-config/variables.css */
+          /* Neutral colors */
+          --neutral-black: oklch(0.1689 0.0021 230.81);
+          --neutral-100: oklch(0.1932 0.002 230.81);
+          --neutral-200: oklch(0.2158 0.0025 230.82);
+          --neutral-300: oklch(0.2378 0.0029 230.83);
+          --neutral-400: oklch(0.2593 0.0033 230.84);
+          --neutral-500: oklch(0.3011 0.0041 230.85);
+          --neutral-600: oklch(0.3415 0.0049 230.86);
+          --neutral-1000: oklch(0.7655 0.0054 230.76);
+          --neutral-1100: oklch(0.8455 0.0035 230.72);
+          --neutral-1200: oklch(0.9235 0.001733 230.6853);
+          /* Brand colors */
+          --brand-default: oklch(0.6311 0.126281 238.01);
+          --brand-500: oklch(0.4511 0.087024 237.37);
+          --brand-400: oklch(0.4088 0.077702 237.13);
+          /* Semantic tokens */
+          --bg-canvas: var(--neutral-black);
+          --bg-layer-2: var(--neutral-300);
+          --bg-layer-2-hover: var(--neutral-400);
+          --bg-layer-2-active: var(--neutral-500);
+          --bg-layer-2-selected: var(--neutral-500);
+          --bg-layer-transparent-hover: var(--alpha-white-100);
+          --bg-layer-transparent-active: var(--alpha-white-200);
+          --bg-layer-transparent-selected: var(--alpha-white-300);
+          --bg-accent-primary: var(--brand-default);
+          --txt-primary: var(--neutral-1200);
+          --txt-secondary: var(--neutral-1100);
+          --txt-tertiary: var(--neutral-1000);
+          --border-subtle: var(--neutral-400);
+        }
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+        background: var(--bg-canvas);
+        overflow: hidden;
+        user-select: none;
+      }
+
+      .tab-bar {
+        display: flex;
+        align-items: center;
+        height: 44px;
+        width: 100%;
+        padding: 8px 12px;
+        background: var(--bg-canvas);
+        -webkit-app-region: drag;
+      }
+
+      /* macOS traffic light spacer */
+      .traffic-light-spacer {
+        width: 52px;
+        flex-shrink: 0;
+        margin-right: 24px;
+      }
+
+      /* Navigation buttons */
+      .nav-buttons {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        flex-shrink: 0;
+        margin-right: 14px;
+        -webkit-app-region: no-drag;
+      }
+
+      .nav-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+
+      .nav-button:hover:not(:disabled) {
+        background: var(--bg-layer-transparent-hover);
+      }
+
+      .nav-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.4;
+      }
+
+      .nav-button svg {
+        width: 16px;
+        height: 16px;
+        color: var(--txt-secondary);
+      }
+
+      /* Tabs wrapper - contains everything, takes remaining space */
+      .tabs-wrapper {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      /* Tabs scroll container - holds tabs + new tab button, shrinks when needed */
+      .tabs-scroll-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        max-width: 100%;
+      }
+
+      /* Inner tabs container - holds all tabs */
+      .tabs-container {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        min-width: 0;
+      }
+
+      /* New tab button container */
+      .new-tab-container {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        background: var(--bg-canvas);
+        z-index: 5;
+      }
+
+      /* Tab divider */
+      .tab-divider {
+        height: 18px;
+        width: 1px;
+        flex-shrink: 0;
+        background: var(--border-subtle);
+        margin: 0 -1px;
+        transition: background 0.15s;
+      }
+
+      .tab-divider-hidden {
+        background: transparent;
+      }
+
+      /* Tab */
+      .tab {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 28px;
+        width: 180px;
+        min-width: 36px;
+        flex-shrink: 1;
+        padding: 4px 8px;
+        border-radius: 8px;
+        cursor: pointer;
+        background: transparent;
+        transition: background 0.15s;
+        overflow: hidden;
+        -webkit-app-region: no-drag;
+        container-type: inline-size;
+        container-name: tab;
+      }
+
+      .tab:hover {
+        background: var(--bg-layer-transparent-hover);
+      }
+
+      .tab.active {
+        background: var(--bg-layer-transparent-selected);
+      }
+
+      .tab-icon {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .tab-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .tab-icon svg {
+        width: 100%;
+        height: 100%;
+        color: var(--txt-primary);
+      }
+
+      /* Loading spinner */
+      .tab-spinner {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: spin 1s linear infinite;
+      }
+
+      .tab-spinner svg {
+        width: 16px;
+        height: 16px;
+        color: var(--txt-tertiary);
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .tab-title {
+        flex: 1;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.4;
+        letter-spacing: 0.13px;
+        color: var(--txt-secondary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+      }
+
+      .tab-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        cursor: pointer;
+        opacity: 0;
+        transition:
+          opacity 0.15s,
+          background 0.15s;
+        flex-shrink: 0;
+        margin-left: auto;
+      }
+
+      .tab:hover .tab-close {
+        opacity: 1;
+      }
+
+      .tab-close:hover {
+        background: var(--bg-layer-2-hover);
+      }
+
+      .tab-close svg {
+        width: 14px;
+        height: 14px;
+        color: var(--txt-secondary);
+      }
+
+      /* Container queries for progressive content hiding */
+      /* Close button overlay for very narrow tabs (<60px) */
+      @container tab (max-width: 59px) {
+        .tab-close {
+          position: absolute;
+          right: 4px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: var(--bg-layer-2);
+          z-index: 10;
+          border-radius: 4px;
+          width: 16px;
+          height: 16px;
+        }
+
+        .tab-close svg {
+          width: 12px;
+          height: 12px;
+        }
+      }
+
+      /* Icon button (new tab, dropdown) */
+      .icon-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.15s;
+        -webkit-app-region: no-drag;
+      }
+
+      .icon-button:hover {
+        background: var(--bg-layer-transparent-hover);
+      }
+
+      .icon-button svg {
+        width: 16px;
+        height: 16px;
+        color: var(--txt-secondary);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="tab-bar.iife.js"></script>
+  </body>
+</html>

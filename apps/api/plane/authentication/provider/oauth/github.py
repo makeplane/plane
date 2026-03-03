@@ -18,8 +18,6 @@ from urllib.parse import urlencode
 import pytz
 import requests
 
-# Django imports
-
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value

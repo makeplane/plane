@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { isDesktopApp as isDesktopAppFn } from "@todesktop/client-core/platform/todesktop";
 import { observer } from "mobx-react";
 import { useNavigate } from "react-router";
 import { useParams, usePathname } from "next/navigation";
@@ -38,7 +37,6 @@ import { useAppRailVisibility } from "@/lib/app-rail/context";
 import { isPiAllowed } from "@/helpers/pi-chat";
 import { useFlag, useWorkspaceFeatures, useTheme } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
-import { DesktopHeaderProvider } from "@/components/desktop/root";
 import { WorkspaceAppSwitcher } from "@/components/workspace/app-switcher";
 import { TopNavSearch } from "./top-nav-search";
 import { NotificationsPopoverRoot } from "@/components/notifications/popover/root";
@@ -64,8 +62,6 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
   const navigate = useNavigate();
 
   const pathname = usePathname();
-  // derived
-  const isDesktopApp = useMemo(() => isDesktopAppFn(), []);
 
   useSWR(
     workspaceSlug ? "WORKSPACE_UNREAD_NOTIFICATION_COUNT" : null,
@@ -114,8 +110,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
         {shouldShowAppSwitcher && <WorkspaceAppSwitcher />}
         {/* Workspace Menu */}
         <div className="shrink-0">
-          {!isDesktopApp && <WorkspaceMenuRoot variant="top-navigation" />}
-          {isDesktopApp && <DesktopHeaderProvider />}
+          <WorkspaceMenuRoot variant="top-navigation" />
         </div>
       </div>
       {/* Power K Search */}

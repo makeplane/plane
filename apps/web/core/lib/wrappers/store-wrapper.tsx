@@ -22,6 +22,7 @@ import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserProfile } from "@/hooks/store/user";
+import { isDesktop } from "@/hooks/use-desktop";
 
 type TStoreWrapper = {
   children: ReactNode;
@@ -60,6 +61,12 @@ function StoreWrapper(props: TStoreWrapper) {
    * This prevents a feedback loop where server updates trigger UI updates in a cycle.
    */
   useEffect(() => {
+    // THEME: fallback to system theme for desktop app
+    if (isDesktop()) {
+      setTheme("system");
+      return;
+    }
+
     const userId = userProfile?.id;
 
     // Reset initialization flag when user changes (logout/login)
@@ -89,6 +96,9 @@ function StoreWrapper(props: TStoreWrapper) {
    * the theme changes. It runs independently of the initial sync effect.
    */
   useEffect(() => {
+    // THEME: fallback to system theme for desktop app
+    if (isDesktop()) return;
+
     if (!userProfile?.theme?.theme) return;
 
     const currentTheme = userProfile?.theme?.theme;

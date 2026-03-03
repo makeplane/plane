@@ -11,13 +11,16 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useContext } from "react";
-// context
-import type { TDesktopAppContext } from "./context";
-import { DesktopAppContext } from "./context";
+import type ElectronStore from "electron-store";
+import type { StoreSchema } from "./types";
 
-export const useDesktopApp = (): TDesktopAppContext => {
-  const context = useContext(DesktopAppContext);
-  if (context === undefined) throw new Error("useDesktopApp must be used within DesktopAppProvider");
-  return context;
+export const STORE_SCHEMA_VERSION = 1;
+
+export type StoreMigration = {
+  from: number;
+  to: number;
+  migrate: (store: ElectronStore<StoreSchema>) => void;
 };
+
+// Future migrations can be added here.
+export const STORE_MIGRATIONS: StoreMigration[] = [];

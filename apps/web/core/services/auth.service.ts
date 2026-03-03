@@ -24,68 +24,77 @@ export class AuthService extends APIService {
   }
 
   async requestCSRFToken(): Promise<ICsrfTokenData> {
-    return this.get("/auth/get-csrf-token/")
-      .then((response) => response.data)
-      .catch((error) => {
-        throw error;
-      });
+    const response = await this.get("/auth/get-csrf-token/");
+    return response.data as ICsrfTokenData;
   }
 
-  emailCheck = async (data: IEmailCheckData): Promise<IEmailCheckResponse> =>
-    this.post("/auth/email-check/", data, { headers: {} })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
+  emailCheck = async (data: IEmailCheckData): Promise<IEmailCheckResponse> => {
+    const response = await this.post("/auth/email-check/", data, { headers: {} });
+    return response?.data as IEmailCheckResponse;
+  };
 
-  async sendResetPasswordLink(data: { email: string }): Promise<any> {
-    return this.post(`/auth/forgot-password/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
+  async sendResetPasswordLink(data: { email: string }): Promise<void> {
+    await this.post(`/auth/forgot-password/`, data);
   }
 
-  async setPassword(token: string, data: { password: string }): Promise<any> {
-    return this.post(`/auth/set-password/`, data, {
+  async setPassword(token: string, data: { password: string }): Promise<void> {
+    await this.post(`/auth/set-password/`, data, {
       headers: {
         "X-CSRFTOKEN": token,
       },
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
+    });
   }
 
-  async generateUniqueCode(data: { email: string }): Promise<any> {
-    return this.post("/auth/magic-generate/", data, { headers: {} })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
+  async generateUniqueCode(data: { email: string }): Promise<void> {
+    await this.post("/auth/magic-generate/", data, { headers: {} });
   }
 
-  async signOut(baseUrl: string): Promise<any> {
-    await this.requestCSRFToken().then((data) => {
-      const csrfToken = data?.csrf_token;
+  async signOut(baseUrl: string): Promise<void> {
+    // Check if running in desktop app
+    const isDesktop = typeof window !== "undefined" && !!window.planeDesktop;
+
+    if (isDesktop) {
+      // For desktop app, use the desktop sign-out endpoint which returns JSON
+      // This avoids redirect issues in Electron
+      const csrfData = await this.requestCSRFToken();
+      const csrfToken = csrfData?.csrf_token;
 
       if (!csrfToken) throw Error("CSRF token not found");
 
-      const form = document.createElement("form");
-      const element1 = document.createElement("input");
+      await this.post(
+        "/auth/desktop/sign-out/",
+        {},
+        {
+          headers: {
+            "X-CSRFTOKEN": csrfToken,
+          },
+        }
+      );
 
-      form.method = "POST";
-      form.action = `${baseUrl}/auth/sign-out/`;
+      // Reload the page to show the login screen
+      window.location.reload();
+      return;
+    }
 
-      element1.value = csrfToken;
-      element1.name = "csrfmiddlewaretoken";
-      element1.type = "hidden";
-      form.appendChild(element1);
+    // For web, use the form-based approach with redirect
+    const data = await this.requestCSRFToken();
+    const csrfToken = data?.csrf_token;
 
-      document.body.appendChild(form);
+    if (!csrfToken) throw Error("CSRF token not found");
 
-      form.submit();
-    });
+    const form = document.createElement("form");
+    const element1 = document.createElement("input");
+
+    form.method = "POST";
+    form.action = `${baseUrl}/auth/sign-out/`;
+
+    element1.value = csrfToken;
+    element1.name = "csrfmiddlewaretoken";
+    element1.type = "hidden";
+    form.appendChild(element1);
+
+    document.body.appendChild(form);
+
+    form.submit();
   }
 }

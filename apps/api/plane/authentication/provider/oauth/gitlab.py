@@ -29,7 +29,7 @@ class GitLabOAuthProvider(OauthAdapter):
     provider = "gitlab"
     scope = "read_user"
 
-    def __init__(self, request, code=None, state=None, callback=None):
+    def __init__(self, request, code=None, state=None, callback=None, redirect_uri=None):
         GITLAB_CLIENT_ID, GITLAB_CLIENT_SECRET, GITLAB_HOST = get_configuration_value(
             [
                 {
@@ -60,7 +60,7 @@ class GitLabOAuthProvider(OauthAdapter):
         client_id = GITLAB_CLIENT_ID
         client_secret = GITLAB_CLIENT_SECRET
 
-        redirect_uri = f"""{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/gitlab/callback/"""
+        redirect_uri = redirect_uri if redirect_uri else f"""{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/gitlab/callback/"""
         url_params = {
             "client_id": client_id,
             "redirect_uri": redirect_uri,

@@ -22,6 +22,7 @@ import type { EStartOfTheWeek, TUserProfile } from "@plane/types";
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store/user";
+import { isDesktop } from "@/hooks/use-desktop";
 
 /**
  * Preferences commands - Preferences related commands
@@ -121,8 +122,9 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
         const theme = data as string;
         void handleUpdateTheme(theme);
       },
-      isEnabled: () => true,
-      isVisible: () => true,
+      // THEME: temporarily disable the theme switcher on desktop since it's not supported yet
+      isEnabled: () => !isDesktop(),
+      isVisible: () => !isDesktop(),
       closeOnSelect: true,
     },
     {
