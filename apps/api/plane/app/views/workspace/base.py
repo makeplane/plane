@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import csv
 import io
@@ -39,13 +43,13 @@ from plane.db.models import (
     Profile,
 )
 from plane.app.permissions import ROLE, allow_permission
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control
-from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.workspace_seed_task import workspace_seed
+from plane.bgtasks.event_tracking_task import track_event
 from plane.utils.url import contains_url
+from plane.utils.analytics_events import WORKSPACE_CREATED, WORKSPACE_DELETED
+from plane.utils.csv_utils import sanitize_csv_row
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -60,9 +64,7 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def get_queryset(self):
         member_count = (
-            WorkspaceMember.objects.filter(
-                workspace=OuterRef("id"), member__is_bot=False, is_active=True
-            )
+            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member__is_bot=False, is_active=True)
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
@@ -129,14 +131,26 @@ class WorkSpaceViewSet(BaseViewSet):
                 )
 
                 # Get total members and role
-                total_members = WorkspaceMember.objects.filter(
-                    workspace_id=serializer.data["id"]
-                ).count()
+                total_members = WorkspaceMember.objects.filter(workspace_id=serializer.data["id"]).count()
                 data = serializer.data
                 data["total_members"] = total_members
                 data["role"] = 20
 
                 workspace_seed.delay(serializer.data["id"])
+
+                track_event.delay(
+                    user_id=request.user.id,
+                    event_name=WORKSPACE_CREATED,
+                    slug=data["slug"],
+                    event_properties={
+                        "user_id": request.user.id,
+                        "workspace_id": data["id"],
+                        "workspace_slug": data["slug"],
+                        "role": "owner",
+                        "workspace_name": data["name"],
+                        "created_at": data["created_at"],
+                    },
+                )
 
                 return Response(data, status=status.HTTP_201_CREATED)
             return Response(
@@ -171,6 +185,19 @@ class WorkSpaceViewSet(BaseViewSet):
         # Get the workspace
         workspace = self.get_object()
         self.remove_last_workspace_ids_from_user_settings(workspace.id)
+        track_event.delay(
+            user_id=request.user.id,
+            event_name=WORKSPACE_DELETED,
+            slug=workspace.slug,
+            event_properties={
+                "user_id": request.user.id,
+                "workspace_id": workspace.id,
+                "workspace_slug": workspace.slug,
+                "role": "owner",
+                "workspace_name": workspace.name,
+                "deleted_at": str(timezone.now().isoformat()),
+            },
+        )
         return super().destroy(request, *args, **kwargs)
 
 
@@ -182,31 +209,25 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     def get(self, request):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         member_count = (
-            WorkspaceMember.objects.filter(
-                workspace=OuterRef("id"), member__is_bot=False, is_active=True
-            )
+            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member__is_bot=False, is_active=True)
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
 
-        role = WorkspaceMember.objects.filter(
-            workspace=OuterRef("id"), member=request.user, is_active=True
-        ).values("role")
+        role = WorkspaceMember.objects.filter(workspace=OuterRef("id"), member=request.user, is_active=True).values(
+            "role"
+        )
 
         workspace = (
             Workspace.objects.prefetch_related(
                 Prefetch(
                     "workspace_member",
-                    queryset=WorkspaceMember.objects.filter(
-                        member=request.user, is_active=True
-                    ),
+                    queryset=WorkspaceMember.objects.filter(member=request.user, is_active=True),
                 )
             )
             .annotate(role=role, total_members=member_count)
-            .filter(
-                workspace_member__member=request.user, workspace_member__is_active=True
-            )
+            .filter(workspace_member__member=request.user, workspace_member__is_active=True)
             .distinct()
         )
 
@@ -229,10 +250,7 @@ class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        workspace = (
-            Workspace.objects.filter(slug=slug).exists()
-            or slug in RESTRICTED_WORKSPACE_SLUGS
-        )
+        workspace = Workspace.objects.filter(slug=slug).exists() or slug in RESTRICTED_WORKSPACE_SLUGS
         return Response({"status": not workspace}, status=status.HTTP_200_OK)
 
 
@@ -271,9 +289,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             .order_by("week_in_month")
         )
 
-        assigned_issues = Issue.issue_objects.filter(
-            workspace__slug=slug, assignees__in=[request.user]
-        ).count()
+        assigned_issues = Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user]).count()
 
         pending_issues_count = Issue.issue_objects.filter(
             ~Q(state__group__in=["completed", "cancelled"]),
@@ -286,18 +302,14 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
         ).count()
 
         issues_due_week = (
-            Issue.issue_objects.filter(
-                workspace__slug=slug, assignees__in=[request.user]
-            )
+            Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
             .annotate(target_week=ExtractWeek("target_date"))
             .filter(target_week=timezone.now().date().isocalendar()[1])
             .count()
         )
 
         state_distribution = (
-            Issue.issue_objects.filter(
-                workspace__slug=slug, assignees__in=[request.user]
-            )
+            Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
             .annotate(state_group=F("state__group"))
             .values("state_group")
             .annotate(state_count=Count("state_group"))
@@ -360,15 +372,13 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
         """Generate CSV buffer from rows."""
         csv_buffer = io.StringIO()
         writer = csv.writer(csv_buffer, delimiter=",", quoting=csv.QUOTE_ALL)
-        [writer.writerow(row) for row in rows]
+        [writer.writerow(sanitize_csv_row(row)) for row in rows]
         csv_buffer.seek(0)
         return csv_buffer
 
     def post(self, request, slug, user_id):
         if not request.data.get("date"):
-            return Response(
-                {"error": "Date is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Date is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         user_activities = IssueActivity.objects.filter(
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
@@ -406,7 +416,5 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
         ]
         csv_buffer = self.generate_csv_from_rows([header] + rows)
         response = HttpResponse(csv_buffer.getvalue(), content_type="text/csv")
-        response["Content-Disposition"] = (
-            'attachment; filename="workspace-user-activity.csv"'
-        )
+        response["Content-Disposition"] = 'attachment; filename="workspace-user-activity.csv"'
         return response

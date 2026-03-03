@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // TODO: check all the type errors and fix them
 
 import { findChildren } from "@tiptap/core";
-import { Node as ProsemirrorNode } from "@tiptap/pm/model";
+import type { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import highlight from "highlight.js/lib/core";
@@ -114,7 +120,7 @@ export function LowlightPlugin({
           ([oldNodeName, newNodeName].includes(name) ||
             // OR transaction adds/removes named node,
             newNodes.length !== oldNodes.length ||
-            // OR transaction has changes that completely encapsulte a node
+            // OR transaction has changes that completely encapsulate a node
             // (for example, a transaction that affects the entire document).
             // Such transactions can happen during collab syncing via y-prosemirror, for example.
             transaction.steps.some(

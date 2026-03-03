@@ -1,6 +1,12 @@
-import { X } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useTranslation } from "@plane/i18n";
-import { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
+import { CloseIcon } from "@plane/propel/icons";
+import type { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
 import { Header, EHeaderVariant, Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
@@ -21,7 +27,7 @@ type Props = {
 const MEMBERS_FILTERS = ["lead", "members"];
 const DATE_FILTERS = ["start_date", "target_date"];
 
-export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
+export function ModuleAppliedFiltersList(props: Props) {
   const {
     appliedFilters,
     isFavoriteFilterApplied,
@@ -40,7 +46,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
 
   return (
     <Header variant={EHeaderVariant.TERNARY}>
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex flex-wrap gap-2">
         {Object.entries(appliedFilters).map(([key, value]) => {
           const filterKey = key as keyof TModuleFilters;
 
@@ -50,7 +56,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
           return (
             <Tag key={filterKey}>
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+                <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
                 {filterKey === "status" && (
                   <AppliedStatusFilters
                     editable={isEditingAllowed}
@@ -75,10 +81,10 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
                 {isEditingAllowed && (
                   <button
                     type="button"
-                    className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                    className="grid place-items-center text-tertiary hover:text-secondary"
                     onClick={() => handleRemoveFilter(filterKey, null)}
                   >
-                    <X size={12} strokeWidth={2} />
+                    <CloseIcon height={12} width={12} strokeWidth={2} />
                   </button>
                 )}
               </div>
@@ -88,16 +94,16 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
         {!isArchived && isFavoriteFilterApplied && (
           <div
             key="module_display_filters"
-            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
+            className="flex flex-wrap items-center gap-2 rounded-md border border-subtle px-2 py-1 capitalize"
           >
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs text-custom-text-300">Modules</span>
-              <div className="flex items-center gap-1 rounded p-1 text-xs bg-custom-background-80">
+              <span className="text-11 text-tertiary">Modules</span>
+              <div className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
                 Favorite
                 {isEditingAllowed && (
                   <button
                     type="button"
-                    className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                    className="grid place-items-center text-tertiary hover:text-secondary"
                     onClick={() =>
                       handleDisplayFiltersUpdate &&
                       handleDisplayFiltersUpdate({
@@ -105,7 +111,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
                       })
                     }
                   >
-                    <X size={10} strokeWidth={2} />
+                    <CloseIcon height={10} width={10} strokeWidth={2} />
                   </button>
                 )}
               </div>
@@ -116,11 +122,11 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
           <button type="button" onClick={handleClearAllFilters}>
             <Tag>
               {t("common.clear_all")}
-              <X size={12} strokeWidth={2} />
+              <CloseIcon height={12} width={12} strokeWidth={2} />
             </Tag>
           </button>
         )}
       </div>
     </Header>
   );
-};
+}

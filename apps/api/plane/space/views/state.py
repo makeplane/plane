@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.db.models import Q
 
@@ -17,9 +21,7 @@ class ProjectStatesEndpoint(BaseAPIView):
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
         if not deploy_board:
-            return Response(
-                {"error": "Invalid anchor"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Invalid anchor"}, status=status.HTTP_404_NOT_FOUND)
 
         states = State.objects.filter(
             ~Q(name="Triage"),

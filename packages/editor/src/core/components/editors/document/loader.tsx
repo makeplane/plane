@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -6,7 +12,7 @@ type Props = {
   className?: string;
 };
 
-export const DocumentContentLoader = (props: Props) => {
+export function DocumentContentLoader(props: Props) {
   const { className } = props;
 
   return (
@@ -48,4 +54,4 @@ export const DocumentContentLoader = (props: Props) => {
       </Loader>
     </div>
   );
-};
+}

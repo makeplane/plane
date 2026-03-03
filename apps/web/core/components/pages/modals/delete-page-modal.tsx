@@ -1,17 +1,21 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
-import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
+import { getPageName } from "@plane/utils";
 // constants
-// hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 
@@ -22,13 +26,13 @@ type TConfirmPageDeletionProps = {
   storeType: EPageStoreType;
 };
 
-export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
+export const DeletePageModal = observer(function DeletePageModal(props: TConfirmPageDeletionProps) {
   const { isOpen, onClose, page, storeType } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
   const { removePage } = usePageStore(storeType);
-  if (!page || !page.id) return null;
+
   // derived values
   const { id: pageId, name } = page;
 
@@ -41,15 +45,10 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   const { pageId: routePageId } = useParams();
 
   const handleDelete = async () => {
+    if (!pageId) return;
     setIsDeleting(true);
-    await removePage(pageId)
+    await removePage({ pageId })
       .then(() => {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
-          payload: {
-            id: pageId,
-          },
-        });
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -62,12 +61,6 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
         }
       })
       .catch(() => {
-        captureError({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
-          payload: {
-            id: pageId,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -77,6 +70,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
 
     setIsDeleting(false);
   };
+
+  if (!page || !page.id) return null;
 
   return (
     <AlertModalCore
@@ -88,7 +83,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
       content={
         <>
           Are you sure you want to delete page-{" "}
-          <span className="break-words font-medium text-custom-text-100 break-all">{name}</span> ? The Page will be
+          <span className="font-medium break-words break-all text-primary">{getPageName(name)}</span> ? The Page will be
           deleted permanently. This action cannot be undone.
         </>
       }

@@ -1,14 +1,18 @@
-"use client";
-import React, { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import React from "react";
 import { observer } from "mobx-react";
-import { LayersIcon, Plus } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, TIssueServiceType } from "@plane/types";
+import { PlusIcon, WorkItemsIcon } from "@plane/propel/icons";
+import type { TIssue, TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type Props = {
@@ -18,7 +22,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const SubIssuesActionButton: FC<Props> = observer((props) => {
+export const SubIssuesActionButton = observer(function SubIssuesActionButton(props: Props) {
   const { issueId, customButton, disabled = false, issueServiceType } = props;
   // translation
   const { t } = useTranslation();
@@ -53,13 +57,11 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
   };
 
   const handleCreateNew = () => {
-    captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.sub_issue.create });
     handleIssueCrudState("create", issueId, null);
     toggleCreateIssueModal(true);
   };
 
   const handleAddExisting = () => {
-    captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.sub_issue.add_existing });
     handleIssueCrudState("existing", issueId, null);
     toggleSubIssuesModal(issue.id);
   };
@@ -68,27 +70,25 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
   const optionItems = [
     {
       i18n_label: "common.create_new",
-      icon: <Plus className="h-3 w-3" />,
+      icon: <PlusIcon className="h-3 w-3" />,
       onClick: handleCreateNew,
     },
     {
       i18n_label: "common.add_existing",
-      icon: <LayersIcon className="h-3 w-3" />,
+      icon: <WorkItemsIcon className="h-3 w-3" />,
       onClick: handleAddExisting,
     },
   ];
 
   // button element
-  const customButtonElement = customButton ? <>{customButton}</> : <Plus className="h-4 w-4" />;
+  const customButtonElement = customButton ? <>{customButton}</> : <PlusIcon className="h-4 w-4" />;
 
   return (
     <CustomMenu customButton={customButtonElement} placement="bottom-start" disabled={disabled} closeOnSelect>
       {optionItems.map((item, index) => (
         <CustomMenu.MenuItem
           key={index}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             item.onClick();
           }}
         >

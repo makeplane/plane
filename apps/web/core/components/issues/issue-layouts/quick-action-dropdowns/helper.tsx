@@ -1,10 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
-import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle, ArchiveRestoreIcon } from "lucide-react";
+import { XCircle, ArchiveRestoreIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ArchiveIcon } from "@plane/propel/icons";
-import { EIssuesStoreType, TIssue } from "@plane/types";
-import { TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { LinkIcon, CopyIcon, NewTabIcon, EditIcon, ArchiveIcon, TrashIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { EIssuesStoreType, TIssue } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // types
 import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
@@ -154,7 +161,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const createEditMenuItem = (customEditAction?: () => void): TContextMenuItem => ({
     key: "edit",
     title: t("common.actions.edit"),
-    icon: Pencil,
+    icon: EditIcon,
     action:
       customEditAction ||
       (() => {
@@ -168,7 +175,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     const baseItem = {
       key: "make-a-copy",
       title: t("common.actions.make_a_copy"),
-      icon: Copy,
+      icon: CopyIcon,
       action: () => {
         setCreateUpdateIssueModal(true);
       },
@@ -187,14 +194,14 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const createOpenInNewTabMenuItem = (): TContextMenuItem => ({
     key: "open-in-new-tab",
     title: t("common.actions.open_in_new_tab"),
-    icon: ExternalLink,
+    icon: NewTabIcon,
     action: actionHandlers.handleOpenInNewTab,
   });
 
   const createCopyLinkMenuItem = (): TContextMenuItem => ({
     key: "copy-link",
     title: t("common.actions.copy_link"),
-    icon: Link,
+    icon: LinkIcon,
     action: actionHandlers.handleCopyIssueLink,
   });
 
@@ -237,7 +244,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const createDeleteMenuItem = (): TContextMenuItem => ({
     key: "delete",
     title: t("common.actions.delete"),
-    icon: Trash2,
+    icon: TrashIcon,
     action: () => {
       setDeleteIssueModal(true);
     },

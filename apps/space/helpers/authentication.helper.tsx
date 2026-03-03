@@ -1,7 +1,12 @@
-import { ReactNode } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import Link from "next/link";
 // helpers
-import { SUPPORT_EMAIL } from "./common.helper";
+import { SUPPORT_EMAIL } from "@plane/constants";
 
 export enum EPageTypes {
   INIT = "INIT",
@@ -66,7 +71,7 @@ export enum EAuthenticationErrorCodes {
   INCORRECT_OLD_PASSWORD = "5135",
   MISSING_PASSWORD = "5138",
   INVALID_NEW_PASSWORD = "5140",
-  // set passowrd
+  // set password
   PASSWORD_ALREADY_SET = "5145",
   // Admin
   ADMIN_ALREADY_EXIST = "5150",
@@ -83,11 +88,11 @@ export type TAuthErrorInfo = {
   type: EErrorAlertType;
   code: EAuthenticationErrorCodes;
   title: string;
-  message: ReactNode;
+  message: React.ReactNode;
 };
 
 const errorCodeMessages: {
-  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string) => React.ReactNode };
 } = {
   // global
   [EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED]: {
@@ -124,7 +129,7 @@ const errorCodeMessages: {
       <div>
         Your account is already registered.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Sign In
@@ -157,7 +162,7 @@ const errorCodeMessages: {
   // sign in
   [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
     title: `User account deactivated`,
-    message: () => `User account deactivated. Please contact ${!!SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
+    message: () => `User account deactivated. Please contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
   },
 
   [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
@@ -166,7 +171,7 @@ const errorCodeMessages: {
       <div>
         No account found.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Create one
@@ -312,7 +317,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user already exists.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -324,7 +329,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user does not exist.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -333,10 +338,7 @@ const errorCodeMessages: {
   },
 };
 
-export const authErrorHandler = (
-  errorCode: EAuthenticationErrorCodes,
-  email?: string | undefined
-): TAuthErrorInfo | undefined => {
+export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: string): TAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED,
     EAuthenticationErrorCodes.INVALID_EMAIL,

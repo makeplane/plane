@@ -1,9 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, LucideIcon } from "lucide-react";
-// plane imports
+import type { LucideIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { IUserLite } from "@plane/types";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
+import type { IUserLite } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -14,7 +21,7 @@ import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import { ButtonAvatars } from "./avatar";
 import { MemberOptions } from "./member-options";
-import { MemberDropdownProps } from "./types";
+import type { MemberDropdownProps } from "./types";
 
 type TMemberDropdownBaseProps = {
   getUserDetails: (userId: string) => IUserLite | undefined;
@@ -26,7 +33,7 @@ type TMemberDropdownBaseProps = {
   renderByDefault?: boolean;
 } & MemberDropdownProps;
 
-export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((props) => {
+export const MemberDropdownBase = observer(function MemberDropdownBase(props: TMemberDropdownBaseProps) {
   const { t } = useTranslation();
   const {
     button,
@@ -121,7 +128,7 @@ export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((
           className={cn(
             "clickable block h-full max-w-full outline-none",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
@@ -131,7 +138,7 @@ export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((
           tabIndex={tabIndex}
         >
           <DropdownButton
-            className={cn("text-xs", buttonClassName)}
+            className={cn("text-11", buttonClassName)}
             isActive={isOpen}
             tooltipHeading={placeholder}
             tooltipContent={
@@ -143,12 +150,12 @@ export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((
           >
             {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} icon={icon} />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate leading-5">
+              <span className="flex-grow truncate text-left text-body-xs-medium leading-5">
                 {getDisplayName(value, showUserDetails, placeholder)}
               </span>
             )}
             {dropdownArrow && (
-              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
             )}
           </DropdownButton>
         </button>
@@ -176,6 +183,7 @@ export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((
           optionsClassName={optionsClassName}
           placement={placement}
           referenceElement={referenceElement}
+          value={value}
         />
       )}
     </ComboDropDown>

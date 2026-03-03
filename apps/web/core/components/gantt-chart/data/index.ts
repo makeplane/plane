@@ -1,5 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // types
-import { EStartOfTheWeek, WeekMonthDataType, ChartDataType, TGanttViews } from "@plane/types";
+import type { WeekMonthDataType, ChartDataType, TGanttViews } from "@plane/types";
+import { EStartOfTheWeek } from "@plane/types";
 
 // constants
 export const generateWeeks = (startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUNDAY): WeekMonthDataType[] => [
@@ -58,7 +65,7 @@ export const timePreview = (date: Date) => {
 export const datePreview = (date: Date, includeTime: boolean = false) => {
   const day = date.getDate();
   let month: number | WeekMonthDataType = date.getMonth();
-  month = months[month as number] as WeekMonthDataType;
+  month = months[month];
   const year = date.getFullYear();
 
   return `${charCapitalize(month?.shortTitle)} ${day}, ${year}${includeTime ? `, ${timePreview(date)}` : ``}`;

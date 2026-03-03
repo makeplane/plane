@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """
 Database router for read replica selection.
 This router determines which database to use for read/write operations
@@ -53,9 +57,7 @@ class ReadReplicaRouter:
         logger.debug(f"Routing write for {model._meta.label} to primary database")
         return "default"
 
-    def allow_migrate(
-        self, db: str, app_label: str, model_name: str = None, **hints
-    ) -> bool:
+    def allow_migrate(self, db: str, app_label: str, model_name: str = None, **hints) -> bool:
         """
         Ensure migrations only run on the primary database.
         Args:

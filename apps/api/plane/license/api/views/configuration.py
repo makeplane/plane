@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from smtplib import (
     SMTPAuthenticationError,
@@ -37,9 +41,7 @@ class InstanceConfigurationEndpoint(BaseAPIView):
     @invalidate_cache(path="/api/instances/configurations/", user=False)
     @invalidate_cache(path="/api/instances/", user=False)
     def patch(self, request):
-        configurations = InstanceConfiguration.objects.filter(
-            key__in=request.data.keys()
-        )
+        configurations = InstanceConfiguration.objects.filter(key__in=request.data.keys())
 
         bulk_configurations = []
         for configuration in configurations:
@@ -50,9 +52,7 @@ class InstanceConfigurationEndpoint(BaseAPIView):
                 configuration.value = value
             bulk_configurations.append(configuration)
 
-        InstanceConfiguration.objects.bulk_update(
-            bulk_configurations, ["value"], batch_size=100
-        )
+        InstanceConfiguration.objects.bulk_update(bulk_configurations, ["value"], batch_size=100)
 
         serializer = InstanceConfigurationSerializer(configurations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -75,9 +75,7 @@ class DisableEmailFeatureEndpoint(BaseAPIView):
                         "EMAIL_FROM",
                     ]
                 )
-            ).update(
-                value=Case(When(key="ENABLE_SMTP", then=Value("0")), default=Value(""))
-            )
+            ).update(value=Case(When(key="ENABLE_SMTP", then=Value("0")), default=Value("")))
             return Response(status=status.HTTP_200_OK)
         except Exception:
             return Response(
@@ -127,13 +125,9 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
                 connection=connection,
             )
             msg.send(fail_silently=False)
-            return Response(
-                {"message": "Email successfully sent."}, status=status.HTTP_200_OK
-            )
+            return Response({"message": "Email successfully sent."}, status=status.HTTP_200_OK)
         except BadHeaderError:
-            return Response(
-                {"error": "Invalid email header."}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Invalid email header."}, status=status.HTTP_400_BAD_REQUEST)
         except SMTPAuthenticationError:
             return Response(
                 {"error": "Invalid credentials provided"},
@@ -166,9 +160,7 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
             )
         except ConnectionError:
             return Response(
-                {
-                    "error": "Network connection error. Please check your internet connection."
-                },
+                {"error": "Network connection error. Please check your internet connection."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception:

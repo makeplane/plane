@@ -1,20 +1,27 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { USER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
+import { getButtonStyling } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
-import { getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 
-export const ProductUpdatesFooter = () => {
+export function ProductUpdatesFooter() {
   const { t } = useTranslation();
   return (
-    <div className="flex items-center justify-between flex-shrink-0 gap-4 m-6 mb-4">
+    <div className="m-6 mb-4 flex flex-shrink-0 items-center justify-between gap-4">
       <div className="flex items-center gap-2">
         <a
           href="https://go.plane.so/p-docs"
           target="_blank"
-          className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
+          rel="noreferrer"
         >
           {t("docs")}
         </a>
@@ -25,7 +32,8 @@ export const ProductUpdatesFooter = () => {
           data-ph-element={USER_TRACKER_ELEMENTS.CHANGELOG_REDIRECTED}
           href="https://go.plane.so/p-changelog"
           target="_blank"
-          className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
+          rel="noreferrer"
         >
           {t("full_changelog")}
         </a>
@@ -35,7 +43,8 @@ export const ProductUpdatesFooter = () => {
         <a
           href="mailto:support@plane.so"
           target="_blank"
-          className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
+          rel="noreferrer"
         >
           {t("support")}
         </a>
@@ -45,7 +54,8 @@ export const ProductUpdatesFooter = () => {
         <a
           href="https://go.plane.so/p-discord"
           target="_blank"
-          className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
+          rel="noreferrer"
         >
           Discord
         </a>
@@ -54,13 +64,14 @@ export const ProductUpdatesFooter = () => {
         href="https://plane.so/pages"
         target="_blank"
         className={cn(
-          getButtonStyling("accent-primary", "sm"),
-          "flex gap-1.5 items-center text-center font-medium hover:underline underline-offset-2 outline-none"
+          getButtonStyling("secondary", "base"),
+          "flex items-center gap-1.5 text-center font-medium underline-offset-2 outline-none hover:underline"
         )}
+        rel="noreferrer"
       >
-        <PlaneLogo className="h-4 w-auto text-custom-text-100" />
+        <PlaneLogo className="h-4 w-auto text-primary" />
         {t("powered_by_plane_pages")}
       </a>
     </div>
   );
-};
+}

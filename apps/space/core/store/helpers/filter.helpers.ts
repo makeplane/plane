@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { EIssueGroupByToServerOptions, EServerGroupByToFilterOptions } from "@plane/constants";
-import { IssuePaginationOptions, TIssueParams } from "@plane/types";
+import type { IssuePaginationOptions, TIssueParams } from "@plane/types";
 
 /**
  * This Method is used to construct the url params along with paginated values

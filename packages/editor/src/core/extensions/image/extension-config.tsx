@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Image as BaseImageExtension } from "@tiptap/extension-image";
 // local imports
-import { CustomImageExtensionOptions } from "../custom-image/types";
-import { ImageExtensionStorage } from "./extension";
+import type { CustomImageExtensionOptions } from "../custom-image/types";
+import type { ImageExtensionStorage } from "./extension";
 
 export const ImageExtensionConfig = BaseImageExtension.extend<
   Pick<CustomImageExtensionOptions, "getImageSource">,

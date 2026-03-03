@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 from celery import shared_task
 
@@ -15,9 +19,7 @@ def get_asset_object_metadata(asset_id):
         # Create an instance of the S3 storage
         storage = S3Storage()
         # Get the storage
-        asset.storage_metadata = storage.get_object_metadata(
-            object_name=asset.asset.name
-        )
+        asset.storage_metadata = storage.get_object_metadata(object_name=asset.asset.name)
         # Save the asset
         asset.save(update_fields=["storage_metadata"])
         return

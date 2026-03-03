@@ -8,15 +8,8 @@
 <p align="center"><b>Modern project management for all teams</b></p>
 
 <p align="center">
-<a href="https://discord.com/invite/A92xrEGCge">
-<img alt="Discord online members" src="https://img.shields.io/discord/1031547764020084846?color=5865F2&label=Discord&style=for-the-badge" />
-</a>
-<img alt="Commit activity per month" src="https://img.shields.io/github/commit-activity/m/makeplane/plane?style=for-the-badge" />
-</p>
-
-<p align="center">
     <a href="https://plane.so/"><b>Website</b></a> •
-    <a href="https://github.com/makeplane/plane/releases"><b>Releases</b></a> •
+    <a href="https://forum.plane.so"><b>Forum</b></a> •
     <a href="https://twitter.com/planepowers"><b>Twitter</b></a> •
     <a href="https://docs.plane.so/"><b>Documentation</b></a>
 </p>
@@ -54,7 +47,7 @@ Getting started with Plane is simple. Choose the setup that works best for you:
 
 ## 🌟 Features
 
-- **Issues**
+- **Work Items**
   Efficiently create and manage tasks with a robust rich text editor that supports file uploads. Enhance organization and tracking by adding sub-properties and referencing related issues.
 
 - **Cycles**
@@ -72,15 +65,13 @@ Getting started with Plane is simple. Choose the setup that works best for you:
 - **Analytics**
   Access real-time insights across all your Plane data. Visualize trends, remove blockers, and keep your projects moving forward.
 
-- **Drive** (_coming soon_): The drive helps you share documents, images, videos, or any other files that make sense to you or your team and align on the problem/solution.
-
 ## 🛠️ Local development
 
 See [CONTRIBUTING](./CONTRIBUTING.md)
 
 ## ⚙️ Built with
 
-[![Next JS](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![React Router](https://img.shields.io/badge/-React%20Router-CA4245?logo=react-router&style=for-the-badge&logoColor=white)](https://reactrouter.com/)
 [![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)](https://www.djangoproject.com/)
 [![Node JS](https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white)](https://nodejs.org/en)
 

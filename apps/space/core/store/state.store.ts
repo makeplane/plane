@@ -1,8 +1,14 @@
-import clone from "lodash/clone";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { clone } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { SitesStateService } from "@plane/services";
-import { IState } from "@plane/types";
+import type { IState } from "@plane/types";
 // helpers
 import { sortStates } from "@/helpers/state.helper";
 // store

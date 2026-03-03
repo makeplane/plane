@@ -1,13 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
-import { X } from "lucide-react";
-// plane imports
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { ETabIndices } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 // types
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // helpers
 import { getTabIndex } from "@plane/utils";
 // hooks
@@ -22,7 +27,7 @@ type TIssueParentTagProps = {
   setSelectedParentIssue: (issue: ISearchIssueResponse | null) => void;
 };
 
-export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) => {
+export const IssueParentTag = observer(function IssueParentTag(props: TIssueParentTagProps) {
   const { control, selectedParentIssue, handleFormChange, setSelectedParentIssue } = props;
   // store hooks
   const { isMobile } = usePlatformOS();
@@ -34,7 +39,7 @@ export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) =
       control={control}
       name="parent_id"
       render={({ field: { onChange } }) => (
-        <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-90 p-2 text-xs">
+        <div className="flex w-min items-center gap-2 rounded-sm bg-surface-2 p-2 text-caption-sm-regular whitespace-nowrap">
           <div className="flex items-center gap-2">
             <span
               className="block h-1.5 w-1.5 rounded-full"
@@ -42,14 +47,14 @@ export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) =
                 backgroundColor: selectedParentIssue.state__color,
               }}
             />
-            <span className="flex-shrink-0 text-custom-text-200">
+            <span className="flex-shrink-0 text-secondary">
               {selectedParentIssue?.project_id && (
                 <IssueIdentifier
                   projectId={selectedParentIssue.project_id}
                   issueTypeId={selectedParentIssue.type_id}
                   projectIdentifier={selectedParentIssue?.project__identifier}
                   issueSequenceId={selectedParentIssue.sequence_id}
-                  textContainerClassName="text-xs"
+                  size="xs"
                 />
               )}
             </span>
@@ -64,7 +69,7 @@ export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) =
               }}
               tabIndex={getIndex("remove_parent")}
             >
-              <X className="h-3 w-3 cursor-pointer" />
+              <CloseIcon className="h-3 w-3 cursor-pointer" />
             </button>
           </div>
         </div>

@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 // plane imports
@@ -17,11 +21,11 @@ type Props = {
   issueDetails: IIssue | undefined;
 };
 
-export const FullScreenPeekView: React.FC<Props> = observer((props) => {
+export const FullScreenPeekView = observer(function FullScreenPeekView(props: Props) {
   const { anchor, handleClose, issueDetails } = props;
 
   return (
-    <div className="grid h-full w-full grid-cols-10 divide-x divide-custom-border-200 overflow-hidden">
+    <div className="grid h-full w-full grid-cols-10 divide-x divide-subtle-1 overflow-hidden">
       <div className="col-span-7 flex h-full w-full flex-col overflow-hidden">
         <div className="w-full p-5">
           <PeekOverviewHeader handleClose={handleClose} issueDetails={issueDetails} />
@@ -33,7 +37,7 @@ export const FullScreenPeekView: React.FC<Props> = observer((props) => {
               <PeekOverviewIssueDetails anchor={anchor} issueDetails={issueDetails} />
             </div>
             {/* divider */}
-            <div className="my-5 h-[1] w-full border-t border-custom-border-200" />
+            <div className="my-5 h-[1] w-full border-t border-subtle" />
             {/* issue activity/comments */}
             <div className="w-full pb-5">
               <PeekOverviewIssueActivity anchor={anchor} issueDetails={issueDetails} />

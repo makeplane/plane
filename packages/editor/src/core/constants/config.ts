@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // types
-import { TDisplayConfig } from "@/types";
+import type { TDisplayConfig } from "@/types";
 
 export const DEFAULT_DISPLAY_CONFIG: TDisplayConfig = {
   fontSize: "large-font",
@@ -26,6 +32,7 @@ export const ACCEPTED_ATTACHMENT_MIME_TYPES = [
   "application/vnd.ms-powerpoint",
   "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   "text/plain",
+  "text/markdown",
   "application/rtf",
   "audio/mpeg",
   "audio/wav",

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.conf import settings
 from django.db import models
@@ -59,15 +63,12 @@ class IssueView(WorkspaceBaseModel):
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
     rich_filters = models.JSONField(default=dict)
-    access = models.PositiveSmallIntegerField(
-        default=1, choices=((0, "Private"), (1, "Public"))
-    )
+    access = models.PositiveSmallIntegerField(default=1, choices=((0, "Private"), (1, "Public")))
     sort_order = models.FloatField(default=65535)
     logo_props = models.JSONField(default=dict)
-    owned_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="views"
-    )
+    owned_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="views")
     is_locked = models.BooleanField(default=False)
+    archived_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = "Issue View"
@@ -81,13 +82,13 @@ class IssueView(WorkspaceBaseModel):
 
         if self._state.adding:
             if self.project:
-                largest_sort_order = IssueView.objects.filter(
-                    project=self.project
-                ).aggregate(largest=models.Max("sort_order"))["largest"]
+                largest_sort_order = IssueView.objects.filter(project=self.project).aggregate(
+                    largest=models.Max("sort_order")
+                )["largest"]
             else:
-                largest_sort_order = IssueView.objects.filter(
-                    workspace=self.workspace, project__isnull=True
-                ).aggregate(largest=models.Max("sort_order"))["largest"]
+                largest_sort_order = IssueView.objects.filter(workspace=self.workspace, project__isnull=True).aggregate(
+                    largest=models.Max("sort_order")
+                )["largest"]
             if largest_sort_order is not None:
                 self.sort_order = largest_sort_order + 10000
 

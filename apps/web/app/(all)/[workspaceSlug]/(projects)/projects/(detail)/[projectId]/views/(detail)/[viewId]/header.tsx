@@ -1,51 +1,50 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Layers, Lock } from "lucide-react";
-// plane constants
+
+// plane imports
 import {
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissions,
   EUserPermissionsLevel,
-  EProjectFeatureKey,
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
-// types
+import { Button } from "@plane/propel/button";
+import { LockIcon, ViewsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import {
-  EIssuesStoreType,
-  EViewAccess,
-  ICustomSearchSelectOption,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  EIssueLayoutTypes,
-} from "@plane/types";
-// ui
-import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
+import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
-// constants
 import { ViewQuickActions } from "@/components/views/quick-actions";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectViewIssuesHeader: React.FC = observer(() => {
+export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader() {
   // refs
   const parentRef = useRef(null);
   // router
-  const { workspaceSlug, projectId, viewId } = useParams();
   const router = useAppRouter();
+  const { workspaceSlug, projectId, viewId: routerViewId } = useParams();
+  const viewId = routerViewId ? routerViewId.toString() : undefined;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -116,7 +115,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
       return {
         value: _view.id,
         query: _view.name,
-        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={Layers} />,
+        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={ViewsIcon} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -125,12 +124,16 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug?.toString() ?? ""}
-            projectId={projectId?.toString() ?? ""}
-            featureKey={EProjectFeatureKey.VIEWS}
+          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbLink
+                label="Views"
+                href={`/${workspaceSlug}/projects/${projectId}/views/`}
+                icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
+              />
+            }
           />
-
           <Breadcrumbs.Item
             component={
               <BreadcrumbNavigationSearchDropdown
@@ -142,7 +145,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 title={viewDetails?.name}
                 icon={
                   <Breadcrumbs.Icon>
-                    <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={Layers} size={16} />
+                    <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={ViewsIcon} size={16} />
                   </Breadcrumbs.Icon>
                 }
                 isLast
@@ -152,9 +155,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         </Breadcrumbs>
 
         {viewDetails?.access === EViewAccess.PRIVATE ? (
-          <div className="cursor-default text-custom-text-300">
+          <div className="cursor-default text-tertiary">
             <Tooltip tooltipContent={"Private"}>
-              <Lock className="h-4 w-4" />
+              <LockIcon className="h-4 w-4" />
             </Tooltip>
           </div>
         ) : (
@@ -162,8 +165,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         )}
       </Header.LeftItem>
       <Header.RightItem className="items-center">
-        {!viewDetails?.is_locked ? (
-          <>
+        <>
+          {!viewDetails.is_locked && (
             <LayoutSelection
               layouts={[
                 EIssueLayoutTypes.LIST,
@@ -175,6 +178,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               onChange={(layout) => handleLayoutChange(layout)}
               selectedLayout={activeLayout}
             />
+          )}
+          {viewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.PROJECT_VIEW} entityId={viewId} />}
+          {!viewDetails.is_locked && (
             <FiltersDropdown title="Display" placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
@@ -188,27 +194,24 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
-          </>
-        ) : (
-          <></>
-        )}
-        {canUserCreateIssue ? (
+          )}
+        </>
+        {canUserCreateIssue && (
           <Button
+            variant="primary"
+            size="lg"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.PROJECT_VIEW}
-            size="sm"
           >
             Add work item
           </Button>
-        ) : (
-          <></>
         )}
         <div className="hidden md:block">
           <ViewQuickActions
             parentRef={parentRef}
-            customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+            customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
             projectId={projectId.toString()}
             view={viewDetails}
             workspaceSlug={workspaceSlug.toString()}

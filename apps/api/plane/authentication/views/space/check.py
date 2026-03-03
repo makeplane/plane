@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import os
 
@@ -81,9 +85,7 @@ class EmailCheckSpaceEndpoint(APIView):
                     "existing": True,
                     "status": (
                         "MAGIC_CODE"
-                        if existing_user.is_password_autoset
-                        and smtp_configured
-                        and is_magic_login_enabled
+                        if existing_user.is_password_autoset and smtp_configured and is_magic_login_enabled
                         else "CREDENTIAL"
                     ),
                 },
@@ -93,11 +95,7 @@ class EmailCheckSpaceEndpoint(APIView):
         return Response(
             {
                 "existing": False,
-                "status": (
-                    "MAGIC_CODE"
-                    if smtp_configured and is_magic_login_enabled
-                    else "CREDENTIAL"
-                ),
+                "status": ("MAGIC_CODE" if smtp_configured and is_magic_login_enabled else "CREDENTIAL"),
             },
             status=status.HTTP_200_OK,
         )

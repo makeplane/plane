@@ -1,12 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { getTabIndex } from "@plane/utils";
 // components
 import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
@@ -20,7 +25,7 @@ type TIssueProjectSelectProps = {
   handleFormChange: () => void;
 };
 
-export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((props) => {
+export const IssueProjectSelect = observer(function IssueProjectSelect(props: TIssueProjectSelectProps) {
   const { control, disabled = false, handleFormChange } = props;
   // store hooks
   const { isMobile } = usePlatformOS();

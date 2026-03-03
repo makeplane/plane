@@ -1,7 +1,12 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
-import { Layers, Link, Paperclip } from "lucide-react";
+import { Paperclip } from "lucide-react";
+import { LinkIcon, ViewsIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
@@ -11,7 +16,7 @@ import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 //// hooks
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 import { IssueBlockCycle } from "./cycle";
 import { IssueBlockDate } from "./due-date";
 import { IssueBlockLabels } from "./labels";
@@ -26,7 +31,7 @@ export interface IIssueProperties {
   className: string;
 }
 
-export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
+export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
   const { issue, displayProperties, className } = props;
 
   if (!displayProperties || !issue.project_id) return null;
@@ -136,14 +141,14 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         <Tooltip tooltipHeading="Sub-work items" tooltipContent={`${issue.sub_issues_count}`}>
           <div
             className={cn(
-              "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",
+              "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1",
               {
-                "hover:bg-custom-background-80 cursor-pointer": issue.sub_issues_count,
+                "cursor-pointer hover:bg-layer-1": issue.sub_issues_count,
               }
             )}
           >
-            <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.sub_issues_count}</div>
+            <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <div className="text-11">{issue.sub_issues_count}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>
@@ -155,9 +160,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
-          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
+          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.attachment_count}</div>
+            <div className="text-11">{issue.attachment_count}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>
@@ -169,9 +174,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
-          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
-            <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.link_count}</div>
+          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
+            <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <div className="text-11">{issue.link_count}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>

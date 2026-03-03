@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.core.cache import cache
 from django.core.management import BaseCommand
@@ -14,9 +18,7 @@ class Command(BaseCommand):
         try:
             if options["key"]:
                 cache.delete(options["key"])
-                self.stdout.write(
-                    self.style.SUCCESS(f"Cache Cleared for key: {options['key']}")
-                )
+                self.stdout.write(self.style.SUCCESS(f"Cache Cleared for key: {options['key']}"))
                 return
 
             cache.clear()

@@ -1,4 +1,10 @@
-import tlds from "tlds";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import tlds from "./tlds";
 
 const PROTOCOL_REGEX = /^[a-zA-Z]+:\/\//;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -95,6 +101,24 @@ export function extractHostname(url: string): string {
   hostname = hostname.split("/")[0].split("?")[0].split("#")[0].split(":")[0];
 
   return hostname;
+}
+
+/**
+ * Returns a readable representation of a URL by stripping the protocol
+ * and any trailing slash. For valid URLs, only the host is returned.
+ * Invalid URLs are sanitized by removing the protocol and trailing slash.
+ *
+ * @param url - The URL string to format
+ * @returns The formatted domain for display
+ */
+export function formatURLForDisplay(url: string): string {
+  if (!url) return "";
+
+  try {
+    return new URL(url).host;
+  } catch (_error) {
+    return extractHostname(url);
+  }
 }
 
 /**

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python import
 from uuid import uuid4
 
@@ -17,6 +21,9 @@ from plane.db.mixins import SoftDeletionManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
+from .description import Description
+from plane.db.mixins import ChangeTrackerMixin
+from .state import StateGroup
 
 
 def get_default_properties():
@@ -87,14 +94,7 @@ class IssueManager(SoftDeletionManager):
         return (
             super()
             .get_queryset()
-            .filter(
-                models.Q(issue_intake__status=1)
-                | models.Q(issue_intake__status=-1)
-                | models.Q(issue_intake__status=2)
-                | models.Q(issue_intake__isnull=True)
-            )
-            .filter(deleted_at__isnull=True)
-            .filter(state__is_triage=False)
+            .exclude(state__group=StateGroup.TRIAGE.value)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
@@ -123,9 +123,7 @@ class Issue(ProjectBaseModel):
         blank=True,
         related_name="state_issue",
     )
-    point = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(12)], null=True, blank=True
-    )
+    point = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(12)], null=True, blank=True)
     estimate_point = models.ForeignKey(
         "db.EstimatePoint",
         on_delete=models.SET_NULL,
@@ -134,7 +132,7 @@ class Issue(ProjectBaseModel):
         blank=True,
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, default=dict)
+    description_json = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
@@ -154,9 +152,7 @@ class Issue(ProjectBaseModel):
         through_fields=("issue", "assignee"),
     )
     sequence_id = models.IntegerField(default=1, verbose_name="Issue Sequence ID")
-    labels = models.ManyToManyField(
-        "db.Label", blank=True, related_name="labels", through="IssueLabel"
-    )
+    labels = models.ManyToManyField("db.Label", blank=True, related_name="labels", through="IssueLabel")
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
     archived_at = models.DateField(null=True)
@@ -188,9 +184,7 @@ class Issue(ProjectBaseModel):
                     ~models.Q(is_triage=True), project=self.project, default=True
                 ).first()
                 if default_state is None:
-                    random_state = State.objects.filter(
-                        ~models.Q(is_triage=True), project=self.project
-                    ).first()
+                    random_state = State.objects.filter(~models.Q(is_triage=True), project=self.project).first()
                     self.state = random_state
                 else:
                     self.state = default_state
@@ -209,43 +203,35 @@ class Issue(ProjectBaseModel):
 
         if self._state.adding:
             with transaction.atomic():
-                # Create a lock for this specific project using an advisory lock
+                # Create a lock for this specific project using a transaction-level advisory lock
                 # This ensures only one transaction per project can execute this code at a time
+                # The lock is automatically released when the transaction ends
                 lock_key = convert_uuid_to_integer(self.project.id)
 
                 with connection.cursor() as cursor:
-                    # Get an exclusive lock using the project ID as the lock key
-                    cursor.execute("SELECT pg_advisory_lock(%s)", [lock_key])
+                    # Get an exclusive transaction-level lock using the project ID as the lock key
+                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
 
-                try:
-                    # Get the last sequence for the project
-                    last_sequence = IssueSequence.objects.filter(
-                        project=self.project
-                    ).aggregate(largest=models.Max("sequence"))["largest"]
-                    self.sequence_id = last_sequence + 1 if last_sequence else 1
-                    # Strip the html tags using html parser
-                    self.description_stripped = (
-                        None
-                        if (
-                            self.description_html == "" or self.description_html is None
-                        )
-                        else strip_tags(self.description_html)
-                    )
-                    largest_sort_order = Issue.objects.filter(
-                        project=self.project, state=self.state
-                    ).aggregate(largest=models.Max("sort_order"))["largest"]
-                    if largest_sort_order is not None:
-                        self.sort_order = largest_sort_order + 10000
+                # Get the last sequence for the project
+                last_sequence = IssueSequence.objects.filter(project=self.project).aggregate(
+                    largest=models.Max("sequence")
+                )["largest"]
+                self.sequence_id = last_sequence + 1 if last_sequence else 1
+                # Strip the html tags using html parser
+                self.description_stripped = (
+                    None
+                    if (self.description_html == "" or self.description_html is None)
+                    else strip_tags(self.description_html)
+                )
+                largest_sort_order = Issue.objects.filter(project=self.project, state=self.state).aggregate(
+                    largest=models.Max("sort_order")
+                )["largest"]
+                if largest_sort_order is not None:
+                    self.sort_order = largest_sort_order + 10000
 
-                    super(Issue, self).save(*args, **kwargs)
+                super(Issue, self).save(*args, **kwargs)
 
-                    IssueSequence.objects.create(
-                        issue=self, sequence=self.sequence_id, project=self.project
-                    )
-                finally:
-                    # Release the lock
-                    with connection.cursor() as cursor:
-                        cursor.execute("SELECT pg_advisory_unlock(%s)", [lock_key])
+                IssueSequence.objects.create(issue=self, sequence=self.sequence_id, project=self.project)
         else:
             # Strip the html tags using html parser
             self.description_stripped = (
@@ -261,12 +247,8 @@ class Issue(ProjectBaseModel):
 
 
 class IssueBlocker(ProjectBaseModel):
-    block = models.ForeignKey(
-        Issue, related_name="blocker_issues", on_delete=models.CASCADE
-    )
-    blocked_by = models.ForeignKey(
-        Issue, related_name="blocked_issues", on_delete=models.CASCADE
-    )
+    block = models.ForeignKey(Issue, related_name="blocker_issues", on_delete=models.CASCADE)
+    blocked_by = models.ForeignKey(Issue, related_name="blocked_issues", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Issue Blocker"
@@ -287,13 +269,24 @@ class IssueRelationChoices(models.TextChoices):
     IMPLEMENTED_BY = "implemented_by", "Implemented By"
 
 
+# Bidirectional relation pairs: (forward, reverse)
+# Defined after class to avoid enum metaclass conflicts
+IssueRelationChoices._RELATION_PAIRS = (
+    ("blocked_by", "blocking"),
+    ("relates_to", "relates_to"),  # symmetric
+    ("duplicate", "duplicate"),  # symmetric
+    ("start_before", "start_after"),
+    ("finish_before", "finish_after"),
+    ("implemented_by", "implements"),
+)
+
+# Generate reverse mapping from pairs
+IssueRelationChoices._REVERSE_MAPPING = {forward: reverse for forward, reverse in IssueRelationChoices._RELATION_PAIRS}
+
+
 class IssueRelation(ProjectBaseModel):
-    issue = models.ForeignKey(
-        Issue, related_name="issue_relation", on_delete=models.CASCADE
-    )
-    related_issue = models.ForeignKey(
-        Issue, related_name="issue_related", on_delete=models.CASCADE
-    )
+    issue = models.ForeignKey(Issue, related_name="issue_relation", on_delete=models.CASCADE)
+    related_issue = models.ForeignKey(Issue, related_name="issue_related", on_delete=models.CASCADE)
     relation_type = models.CharField(
         max_length=20,
         verbose_name="Issue Relation Type",
@@ -319,12 +312,8 @@ class IssueRelation(ProjectBaseModel):
 
 
 class IssueMention(ProjectBaseModel):
-    issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="issue_mention"
-    )
-    mention = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="issue_mention"
-    )
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_mention")
+    mention = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="issue_mention")
 
     class Meta:
         unique_together = ["issue", "mention", "deleted_at"]
@@ -345,9 +334,7 @@ class IssueMention(ProjectBaseModel):
 
 
 class IssueAssignee(ProjectBaseModel):
-    issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="issue_assignee"
-    )
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_assignee")
     assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -375,9 +362,7 @@ class IssueAssignee(ProjectBaseModel):
 class IssueLink(ProjectBaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField()
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="issue_link"
-    )
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_link")
     metadata = models.JSONField(default=dict)
 
     class Meta:
@@ -403,9 +388,7 @@ def file_size(value):
 class IssueAttachment(ProjectBaseModel):
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, validators=[file_size])
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
-    )
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_attachment")
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
@@ -420,13 +403,9 @@ class IssueAttachment(ProjectBaseModel):
 
 
 class IssueActivity(ProjectBaseModel):
-    issue = models.ForeignKey(
-        Issue, on_delete=models.SET_NULL, null=True, related_name="issue_activity"
-    )
+    issue = models.ForeignKey(Issue, on_delete=models.DO_NOTHING, null=True, related_name="issue_activity")
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
-    field = models.CharField(
-        max_length=255, verbose_name="Field Name", blank=True, null=True
-    )
+    field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
     old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
     new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
 
@@ -434,7 +413,7 @@ class IssueActivity(ProjectBaseModel):
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue_comment = models.ForeignKey(
         "db.IssueComment",
-        on_delete=models.SET_NULL,
+        on_delete=models.DO_NOTHING,
         related_name="issue_comment",
         null=True,
     )
@@ -459,14 +438,15 @@ class IssueActivity(ProjectBaseModel):
         return str(self.issue)
 
 
-class IssueComment(ProjectBaseModel):
+class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
-    attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
-    issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="issue_comments"
+    description = models.OneToOneField(
+        "db.Description", on_delete=models.CASCADE, related_name="issue_comment_description", null=True
     )
+    attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_comments")
     # System can also create comment
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -482,12 +462,62 @@ class IssueComment(ProjectBaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
     edited_at = models.DateTimeField(null=True, blank=True)
+    parent = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="parent_issue_comment"
+    )
+
+    TRACKED_FIELDS = ["comment_stripped", "comment_json", "comment_html"]
 
     def save(self, *args, **kwargs):
-        self.comment_stripped = (
-            strip_tags(self.comment_html) if self.comment_html != "" else ""
-        )
-        return super(IssueComment, self).save(*args, **kwargs)
+        """
+        Custom save method for IssueComment that manages the associated Description model.
+
+        This method handles creation and updates of both the comment and its description in a
+        single atomic transaction to ensure data consistency.
+        """
+
+        self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
+        is_creating = self._state.adding
+
+        # Prepare description defaults
+        description_defaults = {
+            "workspace_id": self.workspace_id,
+            "project_id": self.project_id,
+            "created_by_id": self.created_by_id,
+            "updated_by_id": self.updated_by_id,
+            "description_stripped": self.comment_stripped,
+            "description_json": self.comment_json,
+            "description_html": self.comment_html,
+        }
+
+        with transaction.atomic():
+            super(IssueComment, self).save(*args, **kwargs)
+
+            if is_creating or not self.description_id:
+                # Create new description for new comment
+                description = Description.objects.create(**description_defaults)
+                self.description_id = description.id
+                super(IssueComment, self).save(update_fields=["description_id"])
+            else:
+                field_mapping = {
+                    "comment_html": "description_html",
+                    "comment_stripped": "description_stripped",
+                    "comment_json": "description_json",
+                }
+
+                # Use _changes_on_save which is captured by ChangeTrackerMixin.save()
+                # before the tracked fields are reset
+                changed_fields = {
+                    desc_field: getattr(self, comment_field)
+                    for comment_field, desc_field in field_mapping.items()
+                    if comment_field in self._changes_on_save
+                }
+
+                # Update description only if comment fields changed
+                if changed_fields and self.description_id:
+                    Description.objects.filter(pk=self.description_id).update(
+                        **changed_fields, updated_by_id=self.updated_by_id, updated_at=self.updated_at
+                    )
 
     class Meta:
         verbose_name = "Issue Comment"
@@ -500,43 +530,9 @@ class IssueComment(ProjectBaseModel):
         return str(self.issue)
 
 
-class IssueUserProperty(ProjectBaseModel):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="issue_property_user",
-    )
-    filters = models.JSONField(default=get_default_filters)
-    display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(default=get_default_display_properties)
-    rich_filters = models.JSONField(default=dict)
-
-    class Meta:
-        verbose_name = "Issue User Property"
-        verbose_name_plural = "Issue User Properties"
-        db_table = "issue_user_properties"
-        ordering = ("-created_at",)
-        unique_together = ["user", "project", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "project"],
-                condition=Q(deleted_at__isnull=True),
-                name="issue_user_property_unique_user_project_when_deleted_at_null",
-            )
-        ]
-
-    def __str__(self):
-        """Return properties status of the issue"""
-        return str(self.user)
-
-
 class IssueLabel(ProjectBaseModel):
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="label_issue"
-    )
-    label = models.ForeignKey(
-        "db.Label", on_delete=models.CASCADE, related_name="label_issue"
-    )
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="label_issue")
+    label = models.ForeignKey("db.Label", on_delete=models.CASCADE, related_name="label_issue")
 
     class Meta:
         verbose_name = "Issue Label"
@@ -566,9 +562,7 @@ class IssueSequence(ProjectBaseModel):
 
 
 class IssueSubscriber(ProjectBaseModel):
-    issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="issue_subscribers"
-    )
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_subscribers")
     subscriber = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -599,9 +593,7 @@ class IssueReaction(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="issue_reactions",
     )
-    issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="issue_reactions"
-    )
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_reactions")
     reaction = models.TextField()
 
     class Meta:
@@ -628,9 +620,7 @@ class CommentReaction(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="comment_reactions",
     )
-    comment = models.ForeignKey(
-        IssueComment, on_delete=models.CASCADE, related_name="comment_reactions"
-    )
+    comment = models.ForeignKey(IssueComment, on_delete=models.CASCADE, related_name="comment_reactions")
     reaction = models.TextField()
 
     class Meta:
@@ -653,9 +643,7 @@ class CommentReaction(ProjectBaseModel):
 
 class IssueVote(ProjectBaseModel):
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="votes")
-    actor = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="votes"
-    )
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="votes")
     vote = models.IntegerField(choices=((-1, "DOWNVOTE"), (1, "UPVOTE")), default=1)
 
     class Meta:
@@ -713,9 +701,7 @@ class IssueVersion(ProjectBaseModel):
     meta = models.JSONField(default=dict)  # issue meta
     last_saved_at = models.DateTimeField(default=timezone.now)
 
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="versions"
-    )
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="versions")
     activity = models.ForeignKey(
         "db.IssueActivity",
         on_delete=models.SET_NULL,
@@ -760,17 +746,9 @@ class IssueVersion(ProjectBaseModel):
                 priority=issue.priority,
                 start_date=issue.start_date,
                 target_date=issue.target_date,
-                assignees=list(
-                    IssueAssignee.objects.filter(issue=issue).values_list(
-                        "assignee_id", flat=True
-                    )
-                ),
+                assignees=list(IssueAssignee.objects.filter(issue=issue).values_list("assignee_id", flat=True)),
                 sequence_id=issue.sequence_id,
-                labels=list(
-                    IssueLabel.objects.filter(issue=issue).values_list(
-                        "label_id", flat=True
-                    )
-                ),
+                labels=list(IssueLabel.objects.filter(issue=issue).values_list("label_id", flat=True)),
                 sort_order=issue.sort_order,
                 completed_at=issue.completed_at,
                 archived_at=issue.archived_at,
@@ -779,9 +757,7 @@ class IssueVersion(ProjectBaseModel):
                 external_id=issue.external_id,
                 type=issue.type_id,
                 cycle=cycle_issue.cycle_id if cycle_issue else None,
-                modules=list(
-                    Module.objects.filter(issue=issue).values_list("id", flat=True)
-                ),
+                modules=list(Module.objects.filter(issue=issue).values_list("id", flat=True)),
                 properties={},
                 meta={},
                 last_saved_at=timezone.now(),
@@ -794,9 +770,7 @@ class IssueVersion(ProjectBaseModel):
 
 
 class IssueDescriptionVersion(ProjectBaseModel):
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="description_versions"
-    )
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="description_versions")
     description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
@@ -830,7 +804,7 @@ class IssueDescriptionVersion(ProjectBaseModel):
                 description_binary=issue.description_binary,
                 description_html=issue.description_html,
                 description_stripped=issue.description_stripped,
-                description_json=issue.description,
+                description_json=issue.description_json,
             )
             return True
         except Exception as e:

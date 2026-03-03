@@ -1,4 +1,11 @@
-import { RefObject, useEffect } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { RefObject } from "react";
+import { useEffect } from "react";
 
 export type UseIntersectionObserverProps = {
   containerRef: RefObject<HTMLDivElement | null> | undefined;
@@ -31,7 +38,6 @@ export const useIntersectionObserver = (
       observer.observe(elementRef);
       return () => {
         if (elementRef) {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
           observer.unobserve(elementRef);
         }
       };

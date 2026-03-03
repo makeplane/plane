@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from datetime import datetime
 
@@ -21,12 +25,12 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.bgtasks.event_tracking_task import workspace_invite_event
+from plane.bgtasks.event_tracking_task import track_event
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
-from plane.utils.ip_address import get_client_ip
+from plane.utils.analytics_events import USER_JOINED_WORKSPACE, USER_INVITED_TO_WORKSPACE
 from .. import BaseViewSet
 
 
@@ -50,23 +54,13 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         emails = request.data.get("emails", [])
         # Check if email is provided
         if not emails:
-            return Response(
-                {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # check for role level of the requesting user
-        requesting_user = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user, is_active=True
-        )
+        requesting_user = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
 
         # Check if any invited user has an higher role
-        if len(
-            [
-                email
-                for email in emails
-                if int(email.get("role", 5)) > requesting_user.role
-            ]
-        ):
+        if len([email for email in emails if int(email.get("role", 5)) > requesting_user.role]):
             return Response(
                 {"error": "You cannot invite a user with higher role"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -86,9 +80,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             return Response(
                 {
                     "error": "Some users are already member of workspace",
-                    "workspace_users": WorkSpaceMemberSerializer(
-                        workspace_members, many=True
-                    ).data,
+                    "workspace_users": WorkSpaceMemberSerializer(workspace_members, many=True).data,
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -113,7 +105,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             except ValidationError:
                 return Response(
                     {
-                        "error": f"Invalid email - {email} provided a valid email address is required to send the invite"
+                        "error": f"Invalid email - {email} provided a valid email address is required to send the invite"  # noqa: E501
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -133,15 +125,24 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 current_site,
                 request.user.email,
             )
+            track_event.delay(
+                user_id=request.user.id,
+                event_name=USER_INVITED_TO_WORKSPACE,
+                slug=slug,
+                event_properties={
+                    "user_id": request.user.id,
+                    "workspace_id": workspace.id,
+                    "workspace_slug": workspace.slug,
+                    "invitee_role": invitation.role,
+                    "invited_at": str(timezone.now()),
+                    "invitee_email": invitation.email,
+                },
+            )
 
-        return Response(
-            {"message": "Emails sent successfully"}, status=status.HTTP_200_OK
-        )
+        return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, pk):
-        workspace_member_invite = WorkspaceMemberInvite.objects.get(
-            pk=pk, workspace__slug=slug
-        )
+        workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
         workspace_member_invite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -160,14 +161,12 @@ class WorkspaceJoinEndpoint(BaseAPIView):
     )
     @invalidate_cache(path="/api/users/me/settings/", multiple=True)
     def post(self, request, slug, pk):
-        workspace_invite = WorkspaceMemberInvite.objects.get(
-            pk=pk, workspace__slug=slug
-        )
+        workspace_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
 
-        email = request.data.get("email", "")
+        token = request.data.get("token", "")
 
-        # Check the email
-        if email == "" or workspace_invite.email != email:
+        # Validate the token to verify the user received the invitation email
+        if not token or workspace_invite.token != token:
             return Response(
                 {"error": "You do not have permission to join the workspace"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -181,7 +180,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
             if workspace_invite.accepted:
                 # Check if the user created account after invitation
-                user = User.objects.filter(email=email).first()
+                user = User.objects.filter(email=workspace_invite.email).first()
 
                 # If the user is present then create the workspace member
                 if user is not None:
@@ -204,19 +203,21 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     # Set the user last_workspace_id to the accepted workspace
                     user.last_workspace_id = workspace_invite.workspace.id
                     user.save()
+                    track_event.delay(
+                        user_id=user.id,
+                        event_name=USER_JOINED_WORKSPACE,
+                        slug=slug,
+                        event_properties={
+                            "user_id": user.id,
+                            "workspace_id": workspace_invite.workspace.id,
+                            "workspace_slug": workspace_invite.workspace.slug,
+                            "role": workspace_invite.role,
+                            "joined_at": str(timezone.now()),
+                        },
+                    )
 
                     # Delete the invitation
                     workspace_invite.delete()
-
-                # Send event
-                workspace_invite_event.delay(
-                    user=user.id if user is not None else None,
-                    email=email,
-                    user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=get_client_ip(request=request),
-                    event_name="MEMBER_ACCEPTED",
-                    accepted_from="EMAIL",
-                )
 
                 return Response(
                     {"message": "Workspace Invitation Accepted"},
@@ -235,9 +236,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug, pk):
-        workspace_invitation = WorkspaceMemberInvite.objects.get(
-            workspace__slug=slug, pk=pk
-        )
+        workspace_invitation = WorkspaceMemberInvite.objects.get(workspace__slug=slug, pk=pk)
         serializer = WorkSpaceMemberInviteSerializer(workspace_invitation)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -248,10 +247,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
 
     def get_queryset(self):
         return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(email=self.request.user.email)
-            .select_related("workspace")
+            super().get_queryset().filter(email=self.request.user.email).select_related("workspace")
         )
 
     @invalidate_cache(path="/api/workspaces/", user=False)
@@ -271,9 +267,23 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
                 multiple=True,
             )
             # Update the WorkspaceMember for this specific invitation
-            WorkspaceMember.objects.filter(
-                workspace_id=invitation.workspace_id, member=request.user
-            ).update(is_active=True, role=invitation.role)
+            WorkspaceMember.objects.filter(workspace_id=invitation.workspace_id, member=request.user).update(
+                is_active=True, role=invitation.role
+            )
+
+            # Track event
+            track_event.delay(
+                user_id=request.user.id,
+                event_name=USER_JOINED_WORKSPACE,
+                slug=invitation.workspace.slug,
+                event_properties={
+                    "user_id": request.user.id,
+                    "workspace_id": invitation.workspace.id,
+                    "workspace_slug": invitation.workspace.slug,
+                    "role": invitation.role,
+                    "joined_at": str(timezone.now()),
+                },
+            )
 
         # Bulk create the user for all the workspaces
         WorkspaceMember.objects.bulk_create(

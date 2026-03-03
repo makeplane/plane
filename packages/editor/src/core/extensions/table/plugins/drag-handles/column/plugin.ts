@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { TableMap } from "@tiptap/pm/tables";
@@ -10,13 +16,16 @@ import {
   haveTableRelatedChanges,
 } from "@/extensions/table/table/utilities/helpers";
 // local imports
-import { ColumnDragHandle, ColumnDragHandleProps } from "./drag-handle";
+import type { ColumnDragHandleProps } from "./drag-handle";
+import { ColumnDragHandle } from "./drag-handle";
 
 type TableColumnDragHandlePluginState = {
   decorations?: DecorationSet;
   // track table structure to detect changes
   tableWidth?: number;
   tableNodePos?: number;
+  // track renderers for cleanup
+  renderers?: ReactRenderer[];
 };
 
 const TABLE_COLUMN_DRAG_HANDLE_PLUGIN_KEY = new PluginKey("tableColumnHandlerDecorationPlugin");
@@ -57,11 +66,22 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
             decorations: mapped,
             tableWidth: tableMap.width,
             tableNodePos: table.pos,
+            renderers: prev.renderers,
           };
         }
 
+        // Clean up old renderers before creating new ones
+        prev.renderers?.forEach((renderer) => {
+          try {
+            renderer.destroy();
+          } catch (error) {
+            console.error("Error destroying renderer:", error);
+          }
+        });
+
         // recreate all decorations
         const decorations: Decoration[] = [];
+        const renderers: ReactRenderer[] = [];
 
         for (let col = 0; col < tableMap.width; col++) {
           const pos = getTableCellWidgetDecorationPos(table, tableMap, col);
@@ -74,6 +94,7 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
             editor,
           });
 
+          renderers.push(dragHandleComponent);
           decorations.push(Decoration.widget(pos, () => dragHandleComponent.element));
         }
 
@@ -81,12 +102,27 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
           decorations: DecorationSet.create(newState.doc, decorations),
           tableWidth: tableMap.width,
           tableNodePos: table.pos,
+          renderers,
         };
       },
     },
     props: {
       decorations(state) {
-        return TABLE_COLUMN_DRAG_HANDLE_PLUGIN_KEY.getState(state).decorations;
+        return (TABLE_COLUMN_DRAG_HANDLE_PLUGIN_KEY.getState(state) as TableColumnDragHandlePluginState | undefined)
+          ?.decorations;
       },
+    },
+    destroy() {
+      // Clean up all renderers when plugin is destroyed
+      const state =
+        editor.state &&
+        (TABLE_COLUMN_DRAG_HANDLE_PLUGIN_KEY.getState(editor.state) as TableColumnDragHandlePluginState | undefined);
+      state?.renderers?.forEach((renderer: ReactRenderer) => {
+        try {
+          renderer.destroy();
+        } catch (error) {
+          console.error("Error destroying renderer:", error);
+        }
+      });
     },
   });

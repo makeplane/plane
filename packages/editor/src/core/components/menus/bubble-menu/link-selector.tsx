@@ -1,6 +1,14 @@
-import { Editor } from "@tiptap/core";
-import { Check, Link, Trash2 } from "lucide-react";
-import { Dispatch, FC, SetStateAction, useCallback, useRef, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor } from "@tiptap/core";
+
+import type { FC } from "react";
+import { useCallback, useRef, useState } from "react";
+import { LinkIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -8,17 +16,20 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 import { setLinkEditor, unsetLinkEditor } from "@/helpers/editor-commands";
+import { FloatingMenuRoot } from "../floating-menu/root";
+import { useFloatingMenu } from "../floating-menu/use-floating-menu";
 
 type Props = {
   editor: Editor;
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const BubbleMenuLinkSelector: FC<Props> = (props) => {
-  const { editor, isOpen, setIsOpen } = props;
+export function BubbleMenuLinkSelector(props: Props) {
+  const { editor } = props;
   // states
   const [error, setError] = useState(false);
+  // floating ui
+  const { options, getReferenceProps, getFloatingProps } = useFloatingMenu({});
+  const { context } = options;
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -30,88 +41,89 @@ export const BubbleMenuLinkSelector: FC<Props> = (props) => {
     const { isValid, url: validatedUrl } = isValidHttpUrl(url);
     if (isValid) {
       setLinkEditor(editor, validatedUrl);
-      setIsOpen(false);
+      context.onOpenChange(false);
       setError(false);
     } else {
       setError(true);
     }
-  }, [editor, inputRef, setIsOpen]);
+  }, [editor, inputRef, context]);
 
   return (
-    <div className="relative h-full">
-      <button
-        type="button"
-        className={cn(
-          "h-full flex items-center gap-1 px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors",
+    <FloatingMenuRoot
+      classNames={{
+        buttonContainer: "h-full",
+        button: cn(
+          "flex h-full items-center gap-1 rounded-sm px-3 text-13 font-medium whitespace-nowrap text-tertiary transition-colors hover:bg-layer-1 active:bg-layer-1",
           {
-            "bg-custom-background-80": isOpen,
-            "text-custom-text-100": editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK),
+            "bg-layer-1": context.open,
+            "text-primary": editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK),
           }
-        )}
-        onClick={(e) => {
-          setIsOpen(!isOpen);
-          e.stopPropagation();
-        }}
-      >
-        Link
-        <Link className="flex-shrink-0 size-3" />
-      </button>
-      {isOpen && (
-        <div className="fixed top-full z-[99999] mt-1 w-60 animate-in fade-in slide-in-from-top-1 rounded bg-custom-background-100 shadow-custom-shadow-rg">
-          <div
-            className={cn("flex rounded border border-custom-border-300 transition-colors", {
-              "border-red-500": error,
-            })}
-          >
-            <input
-              ref={inputRef}
-              type="url"
-              placeholder="Enter or paste a link"
-              onClick={(e) => e.stopPropagation()}
-              className="flex-1 border-r border-custom-border-300 bg-custom-background-100 py-2 px-1.5 text-xs outline-none placeholder:text-custom-text-400 rounded"
-              defaultValue={editor.getAttributes("link").href || ""}
-              onKeyDown={(e) => {
-                setError(false);
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleLinkSubmit();
-                }
+        ),
+      }}
+      getFloatingProps={getFloatingProps}
+      getReferenceProps={getReferenceProps}
+      menuButton={
+        <>
+          Link
+          <LinkIcon className="size-3 shrink-0" />
+        </>
+      }
+      options={options}
+    >
+      <div className="mt-1 w-60 rounded-md bg-surface-1 shadow-raised-200">
+        <div
+          className={cn("flex rounded-sm border-[0.5px] border-strong transition-colors", {
+            "border-danger-strong": error,
+          })}
+        >
+          <input
+            ref={inputRef}
+            type="url"
+            placeholder="Enter or paste a link"
+            onClick={(e) => e.stopPropagation()}
+            className="flex-1 rounded-sm border-r-[0.5px] border-strong bg-surface-1 px-1.5 py-2 text-11 outline-none placeholder:text-placeholder"
+            defaultValue={editor.getAttributes("link").href || ""}
+            onKeyDown={(e) => {
+              setError(false);
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleLinkSubmit();
+              }
+            }}
+            onFocus={() => setError(false)}
+            autoFocus
+          />
+          {editor.getAttributes("link").href ? (
+            <button
+              type="button"
+              className="grid place-items-center rounded-xs p-1 text-danger-primary transition-all hover:bg-danger-subtle-hover"
+              onClick={(e) => {
+                unsetLinkEditor(editor);
+                e.stopPropagation();
+                context.onOpenChange(false);
               }}
-              onFocus={() => setError(false)}
-              autoFocus
-            />
-            {editor.getAttributes("link").href ? (
-              <button
-                type="button"
-                className="grid place-items-center rounded-sm p-1 text-red-500 hover:bg-red-500/20 transition-all"
-                onClick={(e) => {
-                  unsetLinkEditor(editor);
-                  setIsOpen(false);
-                  e.stopPropagation();
-                }}
-              >
-                <Trash2 className="size-4" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="h-full aspect-square grid place-items-center p-1 rounded-sm text-custom-text-300 hover:bg-custom-background-80 transition-all"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLinkSubmit();
-                }}
-              >
-                <Check className="size-4" />
-              </button>
-            )}
-          </div>
-          {error && (
-            <p className="text-xs text-red-500 my-1 px-2 pointer-events-none animate-in fade-in slide-in-from-top-0">
-              Please enter a valid URL
-            </p>
+            >
+              <TrashIcon className="size-4" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="grid aspect-square h-full place-items-center rounded-xs p-1 text-tertiary transition-all hover:bg-layer-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleLinkSubmit();
+              }}
+            >
+              <CheckIcon className="size-4" />
+            </button>
           )}
         </div>
-      )}
-    </div>
+        {error && (
+          <p className="animate-in fade-in slide-in-from-top-0 pointer-events-none my-1 px-2 text-11 text-danger-primary">
+            Please enter a valid URL
+          </p>
+        )}
+      </div>
+    </FloatingMenuRoot>
   );
-};
+}

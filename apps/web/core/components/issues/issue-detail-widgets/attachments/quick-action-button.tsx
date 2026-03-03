@@ -1,12 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { FC, useCallback, useState } from "react";
+import type { FC } from "react";
+import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { FileRejection, useDropzone } from "react-dropzone";
-import { Plus } from "lucide-react";
+import type { FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
-import { TIssueServiceType } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
@@ -23,7 +29,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
+export const IssueAttachmentActionButton = observer(function IssueAttachmentActionButton(props: Props) {
   const { workspaceSlug, projectId, issueId, customButton, disabled = false, issueServiceType } = props;
   // state
   const [isLoading, setIsLoading] = useState(false);
@@ -98,7 +104,7 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
     >
       <button {...getRootProps()} type="button" disabled={disabled}>
         <input {...getInputProps()} />
-        {customButton ? customButton : <Plus className="h-4 w-4" />}
+        {customButton ? customButton : <PlusIcon className="h-4 w-4" />}
       </button>
     </div>
   );

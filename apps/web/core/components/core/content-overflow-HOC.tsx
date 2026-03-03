@@ -1,4 +1,11 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
@@ -13,11 +20,11 @@ interface IContentOverflowWrapper {
   customButton?: ReactNode;
 }
 
-export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) => {
+export const ContentOverflowWrapper = observer(function ContentOverflowWrapper(props: IContentOverflowWrapper) {
   const {
     children,
     maxHeight = 625,
-    buttonClassName = "text-sm font-medium text-custom-primary-100",
+    buttonClassName = "text-13 font-medium text-accent-primary",
     containerClassName,
     fallback = null,
     customButton,
@@ -76,19 +83,20 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
       resizeObserver.disconnect();
       mutationObserver.disconnect();
     };
-  }, [contentRef?.current]);
+  }, []);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     const handleTransitionEnd = () => {
       setIsTransitioning(false);
     };
 
-    containerRef.current.addEventListener("transitionend", handleTransitionEnd);
+    container.addEventListener("transitionend", handleTransitionEnd);
 
     return () => {
-      containerRef.current?.removeEventListener("transitionend", handleTransitionEnd);
+      container.removeEventListener("transitionend", handleTransitionEnd);
     };
   }, []);
 
@@ -126,7 +134,7 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
         <div
           className={cn(
             "bottom-0 left-0 w-full transition-all duration-300 ease-in-out",
-            `bg-gradient-to-t from-custom-background-100 to-transparent flex flex-col items-center justify-end`,
+            `flex flex-col items-center justify-end bg-gradient-to-t from-surface-1 to-transparent`,
             "text-center",
             {
               "absolute h-[100px] opacity-100": !showAll,
@@ -140,7 +148,7 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
           {customButton || (
             <button
               className={cn(
-                "gap-1 w-full text-custom-primary-100 text-sm font-medium transition-opacity duration-300",
+                "w-full gap-1 text-13 font-medium text-accent-primary transition-opacity duration-300",
                 buttonClassName
               )}
               onClick={handleToggle}

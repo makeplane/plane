@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { getWeekOfMonth, isValid } from "date-fns";
 import { CHART_X_AXIS_DATE_PROPERTIES, ChartXAxisDateGrouping, TO_CAPITALIZE_PROPERTIES } from "@plane/constants";
-import { ChartXAxisProperty, TChart, TChartDatum } from "@plane/types";
+import type { ChartXAxisProperty, TChart, TChartDatum } from "@plane/types";
 import {
   capitalizeFirstLetter,
   hexToHsl,

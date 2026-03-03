@@ -1,22 +1,25 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TWorkItemFilterCondition } from "@plane/shared-state";
-import { TCycleDistribution, TCycleEstimateDistribution, TCyclePlotType } from "@plane/types";
+import type { TWorkItemFilterCondition } from "@plane/shared-state";
+import type { TCycleDistribution, TCycleEstimateDistribution, TCyclePlotType } from "@plane/types";
 import { cn, toFilterArray } from "@plane/utils";
 // components
-import { AssigneeStatComponent, TAssigneeData } from "@/components/core/sidebar/progress-stats/assignee";
-import { LabelStatComponent, TLabelData } from "@/components/core/sidebar/progress-stats/label";
-import {
-  createFilterUpdateHandler,
-  PROGRESS_STATS,
-  TSelectedFilterProgressStats,
-} from "@/components/core/sidebar/progress-stats/shared";
-import { StateGroupStatComponent, TStateGroupData } from "@/components/core/sidebar/progress-stats/state_group";
+import type { TAssigneeData } from "@/components/core/sidebar/progress-stats/assignee";
+import { AssigneeStatComponent } from "@/components/core/sidebar/progress-stats/assignee";
+import type { TLabelData } from "@/components/core/sidebar/progress-stats/label";
+import { LabelStatComponent } from "@/components/core/sidebar/progress-stats/label";
+import type { TSelectedFilterProgressStats } from "@/components/core/sidebar/progress-stats/shared";
+import { createFilterUpdateHandler, PROGRESS_STATS } from "@/components/core/sidebar/progress-stats/shared";
+import type { TStateGroupData } from "@/components/core/sidebar/progress-stats/state_group";
+import { StateGroupStatComponent } from "@/components/core/sidebar/progress-stats/state_group";
 // helpers
 // hooks
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -35,7 +38,7 @@ type TCycleProgressStats = {
   totalIssuesCount: number;
 };
 
-export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
+export const CycleProgressStats = observer(function CycleProgressStats(props: TCycleProgressStats) {
   const {
     cycleId,
     distribution,
@@ -124,18 +127,18 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
           className={cn(
             `flex w-full items-center justify-between gap-2 rounded-md p-1`,
             roundedTab ? `rounded-3xl` : `rounded-md`,
-            noBackground ? `` : `bg-custom-background-90`,
-            size === "xs" ? `text-xs` : `text-sm`
+            noBackground ? `` : `bg-layer-2`,
+            size === "xs" ? `text-11` : `text-13`
           )}
         >
           {PROGRESS_STATS.map((stat) => (
             <Tab
               className={cn(
-                `p-1 w-full text-custom-text-100 outline-none focus:outline-none cursor-pointer transition-all`,
-                roundedTab ? `rounded-3xl border border-custom-border-200` : `rounded`,
+                `w-full cursor-pointer p-1 text-primary transition-all outline-none focus:outline-none`,
+                roundedTab ? `rounded-3xl border border-subtle` : `rounded-sm`,
                 stat.key === currentTab
-                  ? "bg-custom-background-100 text-custom-text-300"
-                  : "text-custom-text-400 hover:text-custom-text-300"
+                  ? "bg-layer-transparent-active text-secondary"
+                  : "text-placeholder hover:text-secondary"
               )}
               key={stat.key}
               onClick={() => setCycleTab(stat.key)}
@@ -144,7 +147,7 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
             </Tab>
           ))}
         </Tab.List>
-        <Tab.Panels className="py-3 text-custom-text-200">
+        <Tab.Panels className="py-3 text-secondary">
           <Tab.Panel key={"stat-states"}>
             <StateGroupStatComponent
               distribution={distributionStateData}

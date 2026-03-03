@@ -1,6 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
-import { EEstimateSystem, TCycleEstimateType } from "@plane/types";
+import type { TCycleEstimateType } from "@plane/types";
+import { EEstimateSystem } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -15,7 +22,7 @@ type TProps = {
   cycleId: string;
 };
 
-export const EstimateTypeDropdown = observer((props: TProps) => {
+export const EstimateTypeDropdown = observer(function EstimateTypeDropdown(props: TProps) {
   const { value, onChange, projectId, cycleId, showDefault = false } = props;
   const { getIsPointsDataAvailable } = useCycle();
   const { areEstimateEnabledByProjectId, currentProjectEstimateType } = useProjectEstimates();
@@ -28,7 +35,7 @@ export const EstimateTypeDropdown = observer((props: TProps) => {
         label={<span>{cycleEstimateOptions.find((v) => v.value === value)?.label ?? "None"}</span>}
         onChange={onChange}
         maxHeight="lg"
-        buttonClassName="bg-custom-background-90 border-none rounded text-sm font-medium "
+        buttonClassName="bg-surface-2 border-none rounded-sm text-13 font-medium "
       >
         {cycleEstimateOptions.map((item) => (
           <CustomSelect.Option key={item.value} value={item.value}>

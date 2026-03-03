@@ -1,6 +1,11 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { MutableRefObject, forwardRef, useCallback, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { forwardRef, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 //types
 import type {
@@ -30,17 +35,22 @@ interface IKanbanGroup {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
 // Loader components
-const KanbanIssueBlockLoader = forwardRef<HTMLSpanElement>((props, ref) => (
-  <span ref={ref} className="block h-28 m-1.5 animate-pulse bg-custom-background-80 rounded" />
-));
+const KanbanIssueBlockLoader = forwardRef(function KanbanIssueBlockLoader(
+  props: Record<string, unknown>,
+  ref: React.ForwardedRef<HTMLSpanElement>
+) {
+  return (
+    <span ref={ref} className="m-1.5 block h-28 animate-pulse rounded-sm bg-[var(--illustration-fill-quaternary)]" />
+  );
+});
 KanbanIssueBlockLoader.displayName = "KanbanIssueBlockLoader";
 
-export const KanbanGroup = observer((props: IKanbanGroup) => {
+export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   const {
     groupId,
     subGroupId,
@@ -86,8 +96,9 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     <KanbanIssueBlockLoader />
   ) : (
     <div
-      className="w-full p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
+      className="w-full cursor-pointer p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline"
       onClick={loadMoreIssuesInThisGroup}
+      role="button"
     >
       {" "}
       Load More &darr;
@@ -99,7 +110,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   return (
     <div
       id={`${groupId}__${subGroupId}`}
-      className={cn("relative h-full transition-all min-h-[120px]", { "vertical-scrollbar scrollbar-md": !subGroupBy })}
+      className={cn("relative h-full min-h-[120px] transition-all", { "vertical-scrollbar scrollbar-md": !subGroupBy })}
       ref={columnRef}
     >
       <KanbanIssueBlocksList
@@ -110,7 +121,17 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         scrollableContainerRef={scrollableContainerRef}
       />
 
-      {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
+      {shouldLoadMore &&
+        (isSubGroup ? (
+          <>{loadMore}</>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <KanbanIssueBlockLoader key={index} />
+            ))}
+            <KanbanIssueBlockLoader ref={setIntersectionElement} />
+          </div>
+        ))}
     </div>
   );
 });

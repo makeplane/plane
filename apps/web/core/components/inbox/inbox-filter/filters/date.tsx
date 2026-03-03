@@ -1,9 +1,15 @@
-import { FC, useState } from "react";
-import concat from "lodash/concat";
-import uniq from "lodash/uniq";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
+import { useState } from "react";
+import { concat, uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
-import { TInboxIssueFilterDateKeys } from "@plane/types";
+import type { TInboxIssueFilterDateKeys } from "@plane/types";
 // components
 import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -22,7 +28,7 @@ const isDate = (date: string) => {
   return datePattern.test(date);
 };
 
-export const FilterDate: FC<Props> = observer((props) => {
+export const FilterDate = observer(function FilterDate(props: Props) {
   const { filterKey, label, searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
@@ -88,7 +94,7 @@ export const FilterDate: FC<Props> = observer((props) => {
               />
             </>
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <p className="text-11 text-placeholder italic">No matches found</p>
           )}
         </div>
       )}

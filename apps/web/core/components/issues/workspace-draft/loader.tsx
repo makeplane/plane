@@ -1,7 +1,11 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC } from "react";
-import range from "lodash/range";
+import type { FC } from "react";
+import { range } from "lodash-es";
 // components
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 
@@ -9,7 +13,7 @@ type TWorkspaceDraftIssuesLoader = {
   items?: number;
 };
 
-export const WorkspaceDraftIssuesLoader: FC<TWorkspaceDraftIssuesLoader> = (props) => {
+export function WorkspaceDraftIssuesLoader(props: TWorkspaceDraftIssuesLoader) {
   const { items = 14 } = props;
   return (
     <div className="relative h-full w-full">
@@ -18,4 +22,4 @@ export const WorkspaceDraftIssuesLoader: FC<TWorkspaceDraftIssuesLoader> = (prop
       ))}
     </div>
   );
-};
+}

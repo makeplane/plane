@@ -1,10 +1,16 @@
-import set from "lodash/set";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // services
-import { TIssueLink, TIssueLinkMap, TIssueLinkIdMap, TIssueServiceType } from "@plane/types";
+import type { TIssueLink, TIssueLinkMap, TIssueLinkIdMap, TIssueServiceType } from "@plane/types";
 import { IssueService } from "@/services/issue";
 // types
-import { IIssueDetail } from "./root.store";
+import type { IIssueDetail } from "./root.store";
 
 export interface IIssueLinkStoreActions {
   addLinks: (issueId: string, links: TIssueLink[]) => void;

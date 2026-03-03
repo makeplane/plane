@@ -1,0 +1,88 @@
+@theme {
+  /* slide up */
+  --animate-slide-up: slide-up 0.3s ease-out forwards;
+  @keyframes slide-up {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* slide in from bottom */
+  --animate-slide-in-from-bottom: slideInFromBottom 0.25s ease-out forwards;
+  @keyframes slideInFromBottom {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* slide in from top */
+  --animate-slide-in-from-top: slideInFromTop 0.25s ease-out forwards;
+  @keyframes slideInFromTop {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* slide out */
+  --animate-slide-out: slideOut 0.25s ease-out forwards;
+  @keyframes slideOut {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
+
+  /* slide out down */
+  --animate-slide-out-down: slideOutDown 0.25s ease-out forwards;
+  @keyframes slideOutDown {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+
+  /* fade out */
+  --animate-fade-out: fadeOut 0.25s ease-out forwards;
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* fade in */
+  --animate-fade-in: fadeIn 0.25s ease-out forwards;
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}

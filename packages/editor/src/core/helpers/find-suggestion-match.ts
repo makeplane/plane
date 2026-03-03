@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { escapeForRegEx } from "@tiptap/core";
-import { Trigger, SuggestionMatch } from "@tiptap/suggestion";
+import type { Trigger, SuggestionMatch } from "@tiptap/suggestion";
 
 export function customFindSuggestionMatch(config: Trigger): SuggestionMatch | null {
   const { char, allowSpaces: allowSpacesOption, allowToIncludeChar, allowedPrefixes, startOfLine, $position } = config;

@@ -1,31 +1,36 @@
 {
   "name": "@plane/services",
-  "version": "1.0.0",
-  "license": "AGPL-3.0",
+  "version": "1.2.0",
   "private": true,
+  "license": "AGPL-3.0",
+  "type": "module",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index-BliaS-AT.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --max-warnings 62",
+    "check:lint": "oxlint --max-warnings=6 .",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "check:format": "oxfmt --check .",
+    "fix:lint": "oxlint --fix .",
+    "fix:format": "oxfmt .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
-    "axios": "catalog:"
+    "axios": "catalog:",
+    "file-type": "^21.0.0"
   },
   "devDependencies": {
-    "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "tsdown": "catalog:",
     "typescript": "catalog:"

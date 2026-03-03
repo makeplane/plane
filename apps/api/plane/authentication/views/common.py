@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.shortcuts import render
 
@@ -53,9 +57,7 @@ class ChangePasswordEndpoint(APIView):
                     error_message="MISSING_PASSWORD",
                     payload={"error": "Old password is missing"},
                 )
-                return Response(
-                    exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
         # Get the new password
         new_password = request.data.get("new_password", False)
@@ -81,8 +83,8 @@ class ChangePasswordEndpoint(APIView):
         results = zxcvbn(new_password)
         if results["score"] < 3:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["INVALID_NEW_PASSWORD"],
-                error_message="INVALID_NEW_PASSWORD",
+                error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                error_message="PASSWORD_TOO_WEAK",
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
@@ -91,9 +93,7 @@ class ChangePasswordEndpoint(APIView):
         user.is_password_autoset = False
         user.save()
         user_login(user=user, request=request, is_app=True)
-        return Response(
-            {"message": "Password updated successfully"}, status=status.HTTP_200_OK
-        )
+        return Response({"message": "Password updated successfully"}, status=status.HTTP_200_OK)
 
 
 class SetUserPasswordEndpoint(APIView):
@@ -107,9 +107,7 @@ class SetUserPasswordEndpoint(APIView):
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_ALREADY_SET"],
                 error_message="PASSWORD_ALREADY_SET",
-                payload={
-                    "error": "Your password is already set please change your password from profile"
-                },
+                payload={"error": "Your password is already set please change your password from profile"},
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 

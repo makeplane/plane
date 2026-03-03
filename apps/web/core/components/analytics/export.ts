@@ -1,4 +1,10 @@
-import { ColumnDef, Row } from "@tanstack/react-table";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { ColumnDef, Row } from "@tanstack/react-table";
 import { download, generateCsv, mkConfig } from "export-to-csv";
 
 export const csvConfig = (workspaceSlug: string) =>

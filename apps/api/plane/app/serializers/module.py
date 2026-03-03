@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third Party imports
 from rest_framework import serializers
 
@@ -65,9 +69,7 @@ class ModuleWriteSerializer(BaseSerializer):
         if module_name:
             # Lookup for the module name in the module table for that project
             if Module.objects.filter(name=module_name, project=project).exists():
-                raise serializers.ValidationError(
-                    {"error": "Module with this name already exists"}
-                )
+                raise serializers.ValidationError({"error": "Module with this name already exists"})
 
         module = Module.objects.create(**validated_data, project=project)
         if members is not None:
@@ -94,14 +96,8 @@ class ModuleWriteSerializer(BaseSerializer):
         module_name = validated_data.get("name")
         if module_name:
             # Lookup for the module name in the module table for that project
-            if (
-                Module.objects.filter(name=module_name, project=instance.project)
-                .exclude(id=instance.id)
-                .exists()
-            ):
-                raise serializers.ValidationError(
-                    {"error": "Module with this name already exists"}
-                )
+            if Module.objects.filter(name=module_name, project=instance.project).exclude(id=instance.id).exists():
+                raise serializers.ValidationError({"error": "Module with this name already exists"})
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()
@@ -191,32 +187,24 @@ class ModuleLinkSerializer(BaseSerializer):
 
     def create(self, validated_data):
         validated_data["url"] = self.validate_url(validated_data.get("url"))
-        if ModuleLink.objects.filter(
-            url=validated_data.get("url"), module_id=validated_data.get("module_id")
-        ).exists():
+        if ModuleLink.objects.filter(url=validated_data.get("url"), module_id=validated_data.get("module_id")).exists():
             raise serializers.ValidationError({"error": "URL already exists."})
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
         validated_data["url"] = self.validate_url(validated_data.get("url"))
         if (
-            ModuleLink.objects.filter(
-                url=validated_data.get("url"), module_id=instance.module_id
-            )
+            ModuleLink.objects.filter(url=validated_data.get("url"), module_id=instance.module_id)
             .exclude(pk=instance.id)
             .exists()
         ):
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
 
         return super().update(instance, validated_data)
 
 
 class ModuleSerializer(DynamicBaseSerializer):
-    member_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False, allow_null=True
-    )
+    member_ids = serializers.ListField(child=serializers.UUIDField(), required=False, allow_null=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
     cancelled_issues = serializers.IntegerField(read_only=True)

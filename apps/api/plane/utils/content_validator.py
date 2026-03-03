@@ -1,10 +1,16 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import base64
 import nh3
 from plane.utils.exception_logger import log_exception
 from bs4 import BeautifulSoup
 from collections import defaultdict
+import logging
 
+logger = logging.getLogger("plane.api")
 
 # Maximum allowed size for binary data (10MB)
 MAX_SIZE = 10 * 1024 * 1024
@@ -54,9 +60,7 @@ def validate_binary_data(data):
     # Check for suspicious text patterns (HTML/JS)
     try:
         decoded_text = binary_data.decode("utf-8", errors="ignore")[:200]
-        if any(
-            pattern in decoded_text.lower() for pattern in SUSPICIOUS_BINARY_PATTERNS
-        ):
+        if any(pattern in decoded_text.lower() for pattern in SUSPICIOUS_BINARY_PATTERNS):
             return False, "Binary data contains suspicious content patterns"
     except Exception:
         pass  # Binary data might not be decodable as text, which is fine
@@ -86,6 +90,7 @@ ATTRIBUTES = {
         "style",
         "start",
         "type",
+        "xmlns",
         # common editor data-* attributes seen in stored HTML
         # (wildcards like data-* are NOT supported by nh3; we add known keys
         # here and dynamically include all data-* seen in the input below)
@@ -96,6 +101,7 @@ ATTRIBUTES = {
         "data-background-color",
         "data-text-color",
         "data-name",
+        "data-id",
         # callout attributes
         "data-icon-name",
         "data-icon-color",
@@ -115,6 +121,7 @@ ATTRIBUTES = {
         "aspectratio",
         "src",
         "alignment",
+        "status",
     },
     "img": {
         "width",
@@ -132,8 +139,6 @@ ATTRIBUTES = {
         "rowspan",
         "colwidth",
         "background",
-        "hideContent",
-        "hidecontent",
         "style",
     },
     "td": {
@@ -143,8 +148,6 @@ ATTRIBUTES = {
         "background",
         "textColor",
         "textcolor",
-        "hideContent",
-        "hidecontent",
         "style",
     },
     "tr": {"background", "textColor", "textcolor", "style"},
@@ -233,10 +236,7 @@ def validate_html_content(html_content: str):
                 summary = json.dumps(diff)
             except Exception:
                 summary = str(diff)
-            log_exception(
-                f"HTML sanitization removals: {summary}",
-                warning=True,
-            )
+            logger.warning(f"HTML sanitization removals: {summary}")
         return True, None, clean_html
     except Exception as e:
         log_exception(e)

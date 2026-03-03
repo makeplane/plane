@@ -1,13 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { FC, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { DropTargetRecord, DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-import {
-  draggable,
-  dropTargetForElements,
-  ElementDragPayload,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import type {
+  DropTargetRecord,
+  DragLocationHistory,
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -15,7 +19,7 @@ import { observer } from "mobx-react";
 import { createRoot } from "react-dom/client";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { IFavorite, InstructionType } from "@plane/types";
+import type { IFavorite, InstructionType } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 // hooks
 import { useFavoriteItemDetails } from "@/hooks/use-favorite-item-details";
@@ -32,7 +36,7 @@ type Props = {
   handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
-export const FavoriteRoot: FC<Props> = observer((props) => {
+export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
   // props
   const { isLastChild, parentId, workspaceSlug, favorite, handleRemoveFromFavorites, handleDrop } = props;
   // store hooks
@@ -71,7 +75,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded bg-custom-background-100 text-sm p-1 pr-2">
+                <div className="rounded-sm bg-surface-1 p-1 pr-2 text-13">
                   <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} />
                 </div>
               );
@@ -122,7 +126,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
 
   return (
     <>
-      <DropIndicator isVisible={instruction === "reorder-above"} />
+      {isDragging && <DropIndicator isVisible={instruction === "reorder-above"} />}
       <FavoriteItemWrapper elementRef={elementRef} isMenuActive={isMenuActive}>
         <FavoriteItemDragHandle isDragging={isDragging} sort_order={favorite.sort_order} />
         <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} />

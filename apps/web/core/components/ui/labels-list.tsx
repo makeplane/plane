@@ -1,9 +1,12 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC } from "react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
@@ -14,7 +17,7 @@ type IssueLabelsListProps = {
   showLength?: boolean;
 };
 
-export const IssueLabelsList: FC<IssueLabelsListProps> = (props) => {
+export function IssueLabelsList(props: IssueLabelsListProps) {
   const { labels } = props;
   const { isMobile } = usePlatformOS();
   return (
@@ -27,8 +30,8 @@ export const IssueLabelsList: FC<IssueLabelsListProps> = (props) => {
             tooltipContent={labels.map((l) => l?.name).join(", ")}
             isMobile={isMobile}
           >
-            <div className="h-full flex items-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200">
-              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+            <div className="flex h-full items-center gap-1 rounded-sm border-[0.5px] border-strong px-2 py-1 text-11 text-secondary">
+              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
               <span>{labels.length}</span>
               <span> Labels</span>
             </div>
@@ -37,4 +40,4 @@ export const IssueLabelsList: FC<IssueLabelsListProps> = (props) => {
       )}
     </>
   );
-};
+}

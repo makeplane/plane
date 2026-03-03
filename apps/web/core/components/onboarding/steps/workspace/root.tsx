@@ -1,9 +1,14 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ECreateOrJoinWorkspaceViews, EOnboardingSteps, IWorkspaceMemberInvitation } from "@plane/types";
+import type { IWorkspaceMemberInvitation } from "@plane/types";
+import { ECreateOrJoinWorkspaceViews, EOnboardingSteps } from "@plane/types";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // local components
@@ -14,7 +19,7 @@ type Props = {
   handleStepChange: (step: EOnboardingSteps, skipInvites?: boolean) => void;
 };
 
-export const WorkspaceSetupStep: React.FC<Props> = observer(({ invitations, handleStepChange }) => {
+export const WorkspaceSetupStep = observer(function WorkspaceSetupStep({ invitations, handleStepChange }: Props) {
   // states
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);
   // store hooks

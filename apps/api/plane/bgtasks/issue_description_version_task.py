@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from celery import shared_task
 from django.db import transaction
 from django.utils import timezone
@@ -15,14 +19,11 @@ def should_update_existing_version(
         return
 
     time_difference = (timezone.now() - version.last_saved_at).total_seconds()
-    return (
-        str(version.owned_by_id) == str(user_id)
-        and time_difference <= max_time_difference
-    )
+    return str(version.owned_by_id) == str(user_id) and time_difference <= max_time_difference
 
 
 def update_existing_version(version: IssueDescriptionVersion, issue) -> None:
-    version.description_json = issue.description
+    version.description_json = issue.description_json
     version.description_html = issue.description_html
     version.description_binary = issue.description_binary
     version.description_stripped = issue.description_stripped
@@ -40,9 +41,7 @@ def update_existing_version(version: IssueDescriptionVersion, issue) -> None:
 
 
 @shared_task
-def issue_description_version_task(
-    updated_issue, issue_id, user_id, is_creating=False
-) -> Optional[bool]:
+def issue_description_version_task(updated_issue, issue_id, user_id, is_creating=False) -> Optional[bool]:
     try:
         # Parse updated issue data
         current_issue: Dict = json.loads(updated_issue) if updated_issue else {}
@@ -51,18 +50,13 @@ def issue_description_version_task(
         issue = Issue.objects.get(id=issue_id)
 
         # Check if description has changed
-        if (
-            current_issue.get("description_html") == issue.description_html
-            and not is_creating
-        ):
+        if current_issue.get("description_html") == issue.description_html and not is_creating:
             return
 
         with transaction.atomic():
             # Get latest version
             latest_version = (
-                IssueDescriptionVersion.objects.filter(issue_id=issue_id)
-                .order_by("-last_saved_at")
-                .first()
+                IssueDescriptionVersion.objects.filter(issue_id=issue_id).order_by("-last_saved_at").first()
             )
 
             # Determine whether to update existing or create new version

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import getpass
 
@@ -59,4 +63,4 @@ class Command(BaseCommand):
         user.is_password_autoset = False
         user.save()
 
-        self.stdout.write(self.style.SUCCESS("User password updated succesfully"))
+        self.stdout.write(self.style.SUCCESS("User password updated successfully"))

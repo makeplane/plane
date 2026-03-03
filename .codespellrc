@@ -1,0 +1,7 @@
+[codespell]
+# Ref: https://github.com/codespell-project/codespell#using-a-config-file
+skip = .git*,*.svg,i18n,*-lock.yaml,*.css,.codespellrc,migrations,*.js,*.map,*.mjs
+check-hidden = true
+# ignore all CamelCase and camelCase
+ignore-regex = \b[A-Za-z][a-z]+[A-Z][a-zA-Z]+\b
+ignore-words-list = tread

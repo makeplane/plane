@@ -1,6 +1,13 @@
-import { Editor, getNodeType, getNodeAtPosition, isAtEndOfNode, isAtStartOfNode, isNodeActive } from "@tiptap/core";
-import { Node, NodeType } from "@tiptap/pm/model";
-import { EditorState } from "@tiptap/pm/state";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor } from "@tiptap/core";
+import { getNodeType, getNodeAtPosition, isAtEndOfNode, isAtStartOfNode, isNodeActive } from "@tiptap/core";
+import type { Node, NodeType } from "@tiptap/pm/model";
+import type { EditorState } from "@tiptap/pm/state";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 

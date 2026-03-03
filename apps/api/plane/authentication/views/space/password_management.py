@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import os
 from urllib.parse import urlencode
@@ -92,9 +96,7 @@ class ForgotPasswordSpaceEndpoint(APIView):
             uidb64, token = generate_password_token(user=user)
             current_site = base_host(request=request, is_space=True)
             # send the forgot password email
-            forgot_password.delay(
-                user.first_name, user.email, uidb64, token, current_site
-            )
+            forgot_password.delay(user.first_name, user.email, uidb64, token, current_site)
             return Response(
                 {"message": "Check your email to reset your password"},
                 status=status.HTTP_200_OK,
@@ -130,17 +132,17 @@ class ResetPasswordSpaceEndpoint(View):
                     error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
                     error_message="INVALID_PASSWORD",
                 )
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"
+                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
                 return HttpResponseRedirect(url)
 
             # Check the password complexity
             results = zxcvbn(password)
             if results["score"] < 3:
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-                    error_message="INVALID_PASSWORD",
+                    error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                    error_message="PASSWORD_TOO_WEAK",
                 )
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"
+                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
                 return HttpResponseRedirect(url)
 
             # set_password also hashes the password that the user will get
@@ -154,5 +156,5 @@ class ResetPasswordSpaceEndpoint(View):
                 error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_PASSWORD_TOKEN"],
                 error_message="EXPIRED_PASSWORD_TOKEN",
             )
-            url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"
+            url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
             return HttpResponseRedirect(url)

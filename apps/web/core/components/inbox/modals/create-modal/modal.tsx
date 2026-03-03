@@ -1,6 +1,11 @@
-"use-client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 // plane imports
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
@@ -15,7 +20,7 @@ type TInboxIssueCreateModalRoot = {
   handleModalClose: () => void;
 };
 
-export const InboxIssueCreateModalRoot: FC<TInboxIssueCreateModalRoot> = (props) => {
+export function InboxIssueCreateModalRoot(props: TInboxIssueCreateModalRoot) {
   const { workspaceSlug, projectId, modalState, handleModalClose } = props;
   // states
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
@@ -34,7 +39,7 @@ export const InboxIssueCreateModalRoot: FC<TInboxIssueCreateModalRoot> = (props)
       isOpen={modalState}
       position={EModalPosition.TOP}
       width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
-      className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"
+      className="rounded-lg !bg-transparent shadow-none transition-[width] ease-linear"
     >
       <InboxIssueCreateRoot
         workspaceSlug={workspaceSlug}
@@ -45,4 +50,4 @@ export const InboxIssueCreateModalRoot: FC<TInboxIssueCreateModalRoot> = (props)
       />
     </ModalCore>
   );
-};
+}

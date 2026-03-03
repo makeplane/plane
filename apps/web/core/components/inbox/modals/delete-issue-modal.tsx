@@ -1,11 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // types
 import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 // ui
-import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // constants
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -17,7 +24,12 @@ type Props = {
   onSubmit: () => Promise<void>;
 };
 
-export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, onSubmit, data }) => {
+export const DeleteInboxIssueModal = observer(function DeleteInboxIssueModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  data,
+}: Props) {
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
@@ -37,8 +49,8 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `${t("success")!}`,
-          message: `${t("inbox_issue.modals.delete.success")!}`,
+          title: `${t("success")}`,
+          message: `${t("inbox_issue.modals.delete.success")}`,
         });
       })
       .catch((errors) => {
@@ -66,7 +78,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
       content={
         <>
           Are you sure you want to delete work item{" "}
-          <span className="break-words font-medium text-custom-text-100">
+          <span className="font-medium break-words text-primary">
             {projectDetails?.identifier}-{data?.sequence_id}
           </span>
           {""}? The work item will only be deleted from the intake and this action cannot be undone.

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from rest_framework import serializers
 
 from plane.db.models import UserFavorite, Cycle, Module, Issue, IssueView, Page, Project
@@ -17,9 +21,7 @@ class PageFavoriteLiteSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "logo_props", "project_id"]
 
     def get_project_id(self, obj):
-        project = (
-            obj.projects.first()
-        )  # This gets the first project related to the Page
+        project = obj.projects.first()  # This gets the first project related to the Page
         return project.id if project else None
 
 

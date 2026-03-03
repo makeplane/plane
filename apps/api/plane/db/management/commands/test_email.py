@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.management import BaseCommand, CommandError
 from django.template.loader import render_to_string
@@ -60,6 +64,4 @@ class Command(BaseCommand):
             msg.send()
             self.stdout.write(self.style.SUCCESS("Email successfully sent"))
         except Exception as e:
-            self.stdout.write(
-                self.style.ERROR(f"Error: Email could not be delivered due to {e}")
-            )
+            self.stdout.write(self.style.ERROR(f"Error: Email could not be delivered due to {e}"))

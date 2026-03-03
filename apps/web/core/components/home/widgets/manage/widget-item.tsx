@@ -1,13 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { DropTargetRecord, DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-import {
-  draggable,
-  dropTargetForElements,
-  ElementDragPayload,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import type {
+  DropTargetRecord,
+  DragLocationHistory,
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -16,7 +21,7 @@ import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import { InstructionType, TWidgetEntityData } from "@plane/types";
+import type { InstructionType, TWidgetEntityData } from "@plane/types";
 // plane ui
 import { DropIndicator, ToggleSwitch } from "@plane/ui";
 // plane utils
@@ -34,7 +39,7 @@ type Props = {
   handleToggle: (workspaceSlug: string, widgetKey: string, is_enabled: boolean) => void;
 };
 
-export const WidgetItem: FC<Props> = observer((props) => {
+export const WidgetItem = observer(function WidgetItem(props: Props) {
   // props
   const { widgetId, isLastChild, handleDrop, handleToggle } = props;
   const { workspaceSlug } = useParams();
@@ -47,7 +52,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
   const { widgetsMap } = useHome();
   const { t } = useTranslation();
   // derived values
-  const widget = widgetsMap[widgetId] as TWidgetEntityData;
+  const widget = widgetsMap[widgetId];
   const widgetTitle = HOME_WIDGETS_LIST[widget.key]?.title;
 
   // drag and drop
@@ -72,7 +77,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
               const root = createRoot(container);
-              root.render(<div className="rounded bg-custom-background-100 text-sm p-1 pr-2">{widget.key}</div>);
+              root.render(<div className="rounded-sm bg-surface-1 p-1 pr-2 text-13">{widget.key}</div>);
               return () => root.unmount();
             },
             nativeSetDragImage,
@@ -122,9 +127,9 @@ export const WidgetItem: FC<Props> = observer((props) => {
       <div
         ref={elementRef}
         className={cn(
-          "px-2 relative flex items-center py-2 font-medium text-sm group/widget-item rounded hover:bg-custom-background-80 justify-between",
+          "group/widget-item relative flex items-center justify-between rounded-sm px-2 py-2 text-13 font-medium hover:bg-layer-1",
           {
-            "cursor-grabbing bg-custom-background-80": isDragging,
+            "cursor-grabbing bg-layer-1": isDragging,
           }
         )}
       >

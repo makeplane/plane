@@ -1,12 +1,12 @@
-import cloneDeep from "lodash/cloneDeep";
-import groupBy from "lodash/groupBy";
-import indexOf from "lodash/indexOf";
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { uniq, orderBy, isEmpty, indexOf, groupBy, cloneDeep, set } from "lodash-es";
 import { ALL_ISSUES, EIssueFilterType, FILTER_TO_ISSUE_MAP, ISSUE_PRIORITIES } from "@plane/constants";
-import {
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
@@ -255,12 +255,12 @@ export const getFilteredWorkItems = (workItems: TIssue[], filters: IIssueFilterO
     activeFilters.every(([filterKey, filterValues]) => {
       // Handle date filters separately
       if (filterKey === "start_date" || filterKey === "target_date") {
-        return checkIssueDateFilter(workItem, filterKey as "start_date" | "target_date", filterValues as string[]);
+        return checkIssueDateFilter(workItem, filterKey, filterValues as string[]);
       }
       // Handle regular filters
       const issueKey = FILTER_TO_ISSUE_MAP[filterKey as keyof IIssueFilterOptions];
       if (!issueKey) return true; // Skip if no mapping exists
-      const issueValue = workItem[issueKey as keyof TIssue];
+      const issueValue = workItem[issueKey];
       // Handle array-based properties vs single value properties
       if (Array.isArray(issueValue)) {
         return filterValues!.some((filterValue: any) => issueValue.includes(filterValue));
@@ -344,7 +344,7 @@ export const getGroupedWorkItemIds = (
   // Convert to Record type
   const groupedWorkItemsRecord: Record<string, string[]> = {};
   Object.entries(groupedWorkItems).forEach(([key, items]) => {
-    groupedWorkItemsRecord[key] = getOrderedWorkItems(items as TIssue[], orderByKey);
+    groupedWorkItemsRecord[key] = getOrderedWorkItems(items, orderByKey);
   });
 
   return groupedWorkItemsRecord;

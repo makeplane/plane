@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -169,9 +173,7 @@ def issue_on_results(
                 default=None,
                 output_field=JSONField(),
             ),
-            filter=Q(
-                issue_reactions__isnull=False, issue_reactions__deleted_at__isnull=True
-            ),
+            filter=Q(issue_reactions__isnull=False, issue_reactions__deleted_at__isnull=True),
             distinct=True,
         ),
     ).values(*required_fields, "vote_items", "reaction_items")
@@ -187,17 +189,13 @@ def issue_group_values(
     queryset: Optional[QuerySet] = None,
 ) -> List[Union[str, Any]]:
     if field == "state_id":
-        queryset = State.objects.filter(
-            is_triage=False, workspace__slug=slug
-        ).values_list("id", flat=True)
+        queryset = State.objects.filter(is_triage=False, workspace__slug=slug).values_list("id", flat=True)
         if project_id:
             return list(queryset.filter(project_id=project_id))
         else:
             return list(queryset)
     if field == "labels__id":
-        queryset = Label.objects.filter(workspace__slug=slug).values_list(
-            "id", flat=True
-        )
+        queryset = Label.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         if project_id:
             return list(queryset.filter(project_id=project_id)) + ["None"]
         else:
@@ -209,30 +207,22 @@ def issue_group_values(
             ).values_list("member_id", flat=True)
         else:
             return list(
-                WorkspaceMember.objects.filter(
-                    workspace__slug=slug, is_active=True
-                ).values_list("member_id", flat=True)
+                WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True).values_list("member_id", flat=True)
             )
     if field == "issue_module__module_id":
-        queryset = Module.objects.filter(workspace__slug=slug).values_list(
-            "id", flat=True
-        )
+        queryset = Module.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         if project_id:
             return list(queryset.filter(project_id=project_id)) + ["None"]
         else:
             return list(queryset) + ["None"]
     if field == "cycle_id":
-        queryset = Cycle.objects.filter(workspace__slug=slug).values_list(
-            "id", flat=True
-        )
+        queryset = Cycle.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         if project_id:
             return list(queryset.filter(project_id=project_id)) + ["None"]
         else:
             return list(queryset) + ["None"]
     if field == "project_id":
-        queryset = Project.objects.filter(workspace__slug=slug).values_list(
-            "id", flat=True
-        )
+        queryset = Project.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         return list(queryset)
     if field == "priority":
         return ["low", "medium", "high", "urgent", "none"]

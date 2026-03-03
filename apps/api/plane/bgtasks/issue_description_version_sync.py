@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from typing import Optional
 import logging
@@ -59,7 +63,7 @@ def sync_issue_description_version(batch_size=5000, offset=0, countdown=300):
                     "description_binary",
                     "description_html",
                     "description_stripped",
-                    "description",
+                    "description_json",
                 )[offset:end_offset]
             )
 
@@ -70,9 +74,7 @@ def sync_issue_description_version(batch_size=5000, offset=0, countdown=300):
             for issue in issues_batch:
                 # Validate required fields
                 if not issue.workspace_id or not issue.project_id:
-                    logging.warning(
-                        f"Skipping {issue.id} - missing workspace_id or project_id"
-                    )
+                    logging.warning(f"Skipping {issue.id} - missing workspace_id or project_id")
                     continue
 
                 # Determine owned_by_id
@@ -94,7 +96,7 @@ def sync_issue_description_version(batch_size=5000, offset=0, countdown=300):
                         description_binary=issue.description_binary,
                         description_html=issue.description_html,
                         description_stripped=issue.description_stripped,
-                        description_json=issue.description,
+                        description_json=issue.description_json,
                     )
                 )
 
@@ -120,6 +122,4 @@ def sync_issue_description_version(batch_size=5000, offset=0, countdown=300):
 
 @shared_task
 def schedule_issue_description_version(batch_size=5000, countdown=300):
-    sync_issue_description_version.delay(
-        batch_size=int(batch_size), countdown=countdown
-    )
+    sync_issue_description_version.delay(batch_size=int(batch_size), countdown=countdown)

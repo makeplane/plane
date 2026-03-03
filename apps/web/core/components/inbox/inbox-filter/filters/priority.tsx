@@ -1,11 +1,16 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
-import { TIssuePriorities } from "@plane/types";
+import type { TIssuePriorities } from "@plane/types";
 // plane constants
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -16,7 +21,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterPriority: FC<Props> = observer((props) => {
+export const FilterPriority = observer(function FilterPriority(props: Props) {
   const { searchQuery } = props;
   // hooks
   const { t } = useTranslation();
@@ -51,7 +56,7 @@ export const FilterPriority: FC<Props> = observer((props) => {
               />
             ))
           ) : (
-            <p className="text-xs italic text-custom-text-400">{t("common.search.no_matches_found")}</p>
+            <p className="text-11 text-placeholder italic">{t("common.search.no_matches_found")}</p>
           )}
         </div>
       )}

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 from rest_framework import serializers
 import base64
@@ -10,7 +14,6 @@ from plane.utils.content_validator import (
 )
 from plane.db.models import (
     Page,
-    PageLog,
     PageLabel,
     Label,
     ProjectPage,
@@ -59,7 +62,7 @@ class PageSerializer(BaseSerializer):
         labels = validated_data.pop("labels", None)
         project_id = self.context["project_id"]
         owned_by_id = self.context["owned_by_id"]
-        description = self.context["description"]
+        description_json = self.context["description_json"]
         description_binary = self.context["description_binary"]
         description_html = self.context["description_html"]
 
@@ -69,7 +72,7 @@ class PageSerializer(BaseSerializer):
         # Create the page
         page = Page.objects.create(
             **validated_data,
-            description=description,
+            description_json=description_json,
             description_binary=description_binary,
             description_html=description_html,
             owned_by_id=owned_by_id,
@@ -172,7 +175,7 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
 
     description_binary = serializers.CharField(required=False, allow_blank=True)
     description_html = serializers.CharField(required=False, allow_blank=True)
-    description = serializers.JSONField(required=False, allow_null=True)
+    description_json = serializers.JSONField(required=False, allow_null=True)
 
     def validate_description_binary(self, value):
         """Validate the base64-encoded binary data"""
@@ -186,9 +189,7 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
             # Validate the binary data
             is_valid, error_message = validate_binary_data(binary_data)
             if not is_valid:
-                raise serializers.ValidationError(
-                    f"Invalid binary data: {error_message}"
-                )
+                raise serializers.ValidationError(f"Invalid binary data: {error_message}")
 
             return binary_data
         except Exception as e:
@@ -209,7 +210,6 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
         # Return sanitized HTML if available, otherwise return original
         return sanitized_html if sanitized_html is not None else value
 
-
     def update(self, instance, validated_data):
         """Update the page instance with validated data"""
         if "description_binary" in validated_data:
@@ -218,8 +218,8 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
         if "description_html" in validated_data:
             instance.description_html = validated_data.get("description_html")
 
-        if "description" in validated_data:
-            instance.description = validated_data.get("description")
+        if "description_json" in validated_data:
+            instance.description_json = validated_data.get("description_json")
 
         instance.save()
         return instance

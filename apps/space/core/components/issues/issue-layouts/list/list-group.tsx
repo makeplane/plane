@@ -1,10 +1,21 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { Fragment, MutableRefObject, forwardRef, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { Fragment, forwardRef, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // plane types
-import { IGroupByColumn, TIssueGroupByOptions, IIssueDisplayProperties, TPaginationData, TLoader } from "@plane/types";
+import type {
+  IGroupByColumn,
+  TIssueGroupByOptions,
+  IIssueDisplayProperties,
+  TPaginationData,
+  TLoader,
+} from "@plane/types";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks
@@ -27,28 +38,33 @@ interface Props {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
 }
 
 // List loader component
-const ListLoaderItemRow = forwardRef<HTMLDivElement>((props, ref) => (
-  <div ref={ref} className="flex items-center justify-between h-11 p-3 border-b border-custom-border-200">
-    <div className="flex items-center gap-3">
-      <span className="h-5 w-10 bg-custom-background-80 rounded animate-pulse" />
-      <span className={`h-5 w-52 bg-custom-background-80 rounded animate-pulse`} />
+const ListLoaderItemRow = forwardRef(function ListLoaderItemRow(
+  props: Record<string, unknown>,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
+  return (
+    <div ref={ref} className="flex h-11 items-center justify-between border-b border-subtle p-3">
+      <div className="flex items-center gap-3">
+        <span className="h-5 w-10 animate-pulse rounded-sm bg-layer-1" />
+        <span className={`h-5 w-52 animate-pulse rounded-sm bg-layer-1`} />
+      </div>
+      <div className="flex items-center gap-2">
+        {[...Array(6)].map((_, index) => (
+          <Fragment key={index}>
+            <span key={index} className="h-5 w-5 animate-pulse rounded-sm bg-layer-1" />
+          </Fragment>
+        ))}
+      </div>
     </div>
-    <div className="flex items-center gap-2">
-      {[...Array(6)].map((_, index) => (
-        <Fragment key={index}>
-          <span key={index} className="h-5 w-5 bg-custom-background-80 rounded animate-pulse" />
-        </Fragment>
-      ))}
-    </div>
-  </div>
-));
+  );
+});
 ListLoaderItemRow.displayName = "ListLoaderItemRow";
 
-export const ListGroup = observer((props: Props) => {
+export const ListGroup = observer(function ListGroup(props: Props) {
   const {
     groupIssueIds = [],
     group,
@@ -84,9 +100,10 @@ export const ListGroup = observer((props: Props) => {
   ) : (
     <div
       className={
-        "h-11 relative flex items-center gap-3 bg-custom-background-100 border border-transparent border-t-custom-border-200 pl-6 p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
+        "relative flex h-11 cursor-pointer items-center gap-3 border border-transparent border-t-subtle-1 bg-surface-1 p-3 pl-6 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline"
       }
       onClick={() => loadMoreIssues(group.id)}
+      role="button"
     >
       {t("common.load_more")} &darr;
     </div>
@@ -104,8 +121,8 @@ export const ListGroup = observer((props: Props) => {
   const shouldExpand = (!!groupIssueCount && isExpanded) || !groupBy;
 
   return validateEmptyIssueGroups(groupIssueCount) ? (
-    <div ref={groupRef} className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`)}>
-      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pl-2 pr-3 py-1">
+    <div ref={groupRef} className={cn(`relative flex shrink-0 flex-col border-[1px] border-transparent`)}>
+      <div className="sticky top-0 z-2 w-full shrink-0 border-b border-subtle">
         <HeaderGroupByCard
           groupID={group.id}
           icon={group.icon}

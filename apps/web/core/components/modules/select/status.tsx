@@ -1,12 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React from "react";
 
 // react hook form
-import { Controller, FieldError, Control } from "react-hook-form";
+import type { FieldError, Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { DoubleCircleIcon, ModuleStatusIcon } from "@plane/propel/icons";
+import { StatePropertyIcon, ModuleStatusIcon } from "@plane/propel/icons";
 import type { IModule } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/ui";
@@ -19,7 +24,7 @@ type Props = {
   tabIndex?: number;
 };
 
-export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }) => {
+export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
   const { t } = useTranslation();
   return (
     <Controller
@@ -32,14 +37,16 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }
           <CustomSelect
             value={value}
             label={
-              <div className={`flex items-center justify-center gap-2 text-xs py-0.5 ${error ? "text-red-500" : ""}`}>
+              <div
+                className={`flex items-center justify-center gap-2 py-0.5 text-11 ${error ? "text-danger-primary" : ""}`}
+              >
                 {value ? (
                   <ModuleStatusIcon status={value} />
                 ) : (
-                  <DoubleCircleIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-custom-text-200"}`} />
+                  <StatePropertyIcon className={`h-3 w-3 ${error ? "text-danger-primary" : "text-secondary"}`} />
                 )}
                 {(selectedValue && t(selectedValue?.i18n_label)) ?? (
-                  <span className={`${error ? "text-red-500" : "text-custom-text-200"}`}>Status</span>
+                  <span className={`${error ? "text-danger-primary" : "text-secondary"}`}>Status</span>
                 )}
               </div>
             }
@@ -60,4 +67,4 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }
       }}
     />
   );
-};
+}

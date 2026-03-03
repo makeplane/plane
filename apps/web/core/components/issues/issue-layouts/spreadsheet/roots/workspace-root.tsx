@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane constants
 import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { IIssueDisplayFilterOptions, EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+import type { IIssueDisplayFilterOptions } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
@@ -13,7 +20,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // store
 import { IssueLayoutHOC } from "../../issue-layout-HOC";
-import { TRenderQuickActions } from "../../list/list-view-types";
+import type { TRenderQuickActions } from "../../list/list-view-types";
 import { SpreadsheetView } from "../spreadsheet-view";
 
 type Props = {
@@ -30,7 +37,7 @@ type Props = {
   issuesLoading: boolean;
 };
 
-export const WorkspaceSpreadsheetRoot: React.FC<Props> = observer((props: Props) => {
+export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRoot(props: Props) {
   const { isLoading = false, workspaceSlug, globalViewId, fetchNextPages, issuesLoading } = props;
 
   // Custom hooks

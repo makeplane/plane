@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """
 Database routing middleware for read replica selection.
 This middleware determines whether database queries should be routed to
@@ -154,9 +158,7 @@ class ReadReplicaRoutingMiddleware:
         # The try/finally in __call__ should handle most cases, but this
         # provides extra protection specifically for view exceptions
         clear_read_replica_context()
-        logger.debug(
-            f"Cleaned up read replica context due to exception: {type(exception).__name__}"
-        )
+        logger.debug(f"Cleaned up read replica context due to exception: {type(exception).__name__}")
 
         # Return None to let the exception continue propagating
         return None

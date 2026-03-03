@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import {
+import type {
   TIssue,
   TLoader,
   ViewFlags,
@@ -10,10 +16,11 @@ import {
 } from "@plane/types";
 // helpers
 import { getDistributionPathsPostUpdate } from "@plane/utils";
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import type { IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore } from "../helpers/base-issues.store";
 //
-import { IIssueRootStore } from "../root.store";
-import { IModuleIssuesFilter } from "./filter.store";
+import type { IIssueRootStore } from "../root.store";
+import type { IModuleIssuesFilter } from "./filter.store";
 
 export interface IModuleIssues extends IBaseIssuesStore {
   viewFlags: ViewFlags;
@@ -84,7 +91,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
    * @param projectId
    * @param id is the module Id
    */
-  fetchParentStats = (workspaceSlug: string, projectId?: string | undefined, id?: string | undefined) => {
+  fetchParentStats = (workspaceSlug: string, projectId?: string, id?: string) => {
     const moduleId = id ?? this.moduleId;
     projectId &&
       moduleId &&
@@ -97,7 +104,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
    * @param nextIssueState
    * @param id
    */
-  updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
+  updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string) => {
     try {
       // get distribution updates
       const distributionUpdates = getDistributionPathsPostUpdate(
@@ -136,8 +143,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
-        this.clear(!isExistingPaginationOptions, false); // clear while fetching from server.
-        if (!this.groupBy) this.clear(!isExistingPaginationOptions, true); // clear while using local to have the no load effect.
+        this.clear(!isExistingPaginationOptions); // clear while fetching from server.
       });
 
       // get params from pagination options

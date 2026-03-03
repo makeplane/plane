@@ -1,7 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { RootStore } from "@/plane-web/store/root.store";
-import { type IIssuesTimeLineStore, IssuesTimeLineStore } from "@/store/timeline/issues-timeline.store";
-import { type IModulesTimeLineStore, ModulesTimeLineStore } from "@/store/timeline/modules-timeline.store";
-import { BaseTimeLineStore, type IBaseTimelineStore } from "./base-timeline.store";
+import { IssuesTimeLineStore } from "@/store/timeline/issues-timeline.store";
+import type { IIssuesTimeLineStore } from "@/store/timeline/issues-timeline.store";
+import { ModulesTimeLineStore } from "@/store/timeline/modules-timeline.store";
+import type { IModulesTimeLineStore } from "@/store/timeline/modules-timeline.store";
+import { BaseTimeLineStore } from "./base-timeline.store";
+import type { IBaseTimelineStore } from "./base-timeline.store";
 
 export interface ITimelineStore {
   issuesTimeLineStore: IIssuesTimeLineStore;

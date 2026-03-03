@@ -1,21 +1,26 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
-import { EFileAssetType, TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
+import { getButtonStyling } from "@plane/propel/button";
+import type { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 // plane ui
-import { getButtonStyling } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
-import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages/editor/page-root";
+import type { TPageRootConfig, TPageRootHandlers } from "@/components/pages/editor/page-root";
+import { PageRoot } from "@/components/pages/editor/page-root";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
@@ -24,36 +29,37 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 // plane web services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // services
 import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
+import type { Route } from "./+types/page";
 const workspaceService = new WorkspaceService();
 const projectPageService = new ProjectPageService();
 const projectPageVersionService = new ProjectPageVersionService();
 
 const storeType = EPageStoreType.PROJECT;
 
-const PageDetailsPage = observer(() => {
+function PageDetailsPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, pageId } = useParams();
+  const { workspaceSlug, projectId, pageId } = params;
   // store hooks
   const { createPage, fetchPageDetails } = usePageStore(storeType);
   const page = usePage({
-    pageId: pageId?.toString() ?? "",
+    pageId,
     storeType,
   });
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
-  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
+  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug)?.id ?? "") : "";
   const { canCurrentUserAccessPage, id, name, updateDescription } = page ?? {};
   // entity search handler
   const fetchEntityCallback = useCallback(
     async (payload: TSearchEntityRequestPayload) =>
-      await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+      await workspaceService.searchEntity(workspaceSlug, {
         ...payload,
-        project_id: projectId?.toString() ?? "",
+        project_id: projectId,
       }),
     [projectId, workspaceSlug]
   );
@@ -61,10 +67,8 @@ const PageDetailsPage = observer(() => {
   const { getEditorFileHandlers } = useEditorConfig();
   // fetch page details
   const { error: pageDetailsError } = useSWR(
-    workspaceSlug && projectId && pageId ? `PAGE_DETAILS_${pageId}` : null,
-    workspaceSlug && projectId && pageId
-      ? () => fetchPageDetails(workspaceSlug?.toString(), projectId?.toString(), pageId.toString())
-      : null,
+    `PAGE_DETAILS_${pageId}`,
+    () => fetchPageDetails(workspaceSlug, projectId, pageId),
     {
       revalidateIfStale: true,
       revalidateOnFocus: true,
@@ -75,33 +79,17 @@ const PageDetailsPage = observer(() => {
   const pageRootHandlers: TPageRootHandlers = useMemo(
     () => ({
       create: createPage,
-      fetchAllVersions: async (pageId) => {
-        if (!workspaceSlug || !projectId) return;
-        return await projectPageVersionService.fetchAllVersions(workspaceSlug.toString(), projectId.toString(), pageId);
-      },
+      fetchAllVersions: async (pageId) =>
+        await projectPageVersionService.fetchAllVersions(workspaceSlug, projectId, pageId),
       fetchDescriptionBinary: async () => {
-        if (!workspaceSlug || !projectId || !id) return;
-        return await projectPageService.fetchDescriptionBinary(workspaceSlug.toString(), projectId.toString(), id);
+        if (!id) return;
+        return await projectPageService.fetchDescriptionBinary(workspaceSlug, projectId, id);
       },
       fetchEntity: fetchEntityCallback,
-      fetchVersionDetails: async (pageId, versionId) => {
-        if (!workspaceSlug || !projectId) return;
-        return await projectPageVersionService.fetchVersionById(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          pageId,
-          versionId
-        );
-      },
-      restoreVersion: async (pageId, versionId) => {
-        if (!workspaceSlug || !projectId) return;
-        await projectPageVersionService.restoreVersion(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          pageId,
-          versionId
-        );
-      },
+      fetchVersionDetails: async (pageId, versionId) =>
+        await projectPageVersionService.fetchVersionById(workspaceSlug, projectId, pageId, versionId),
+      restoreVersion: async (pageId, versionId) =>
+        await projectPageVersionService.restoreVersion(workspaceSlug, projectId, pageId, versionId),
       getRedirectionLink: (pageId) => {
         if (pageId) {
           return `/${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
@@ -117,7 +105,7 @@ const PageDetailsPage = observer(() => {
   const pageRootConfig: TPageRootConfig = useMemo(
     () => ({
       fileHandler: getEditorFileHandlers({
-        projectId: projectId?.toString() ?? "",
+        projectId,
         uploadFile: async (blockId, file) => {
           const { asset_id } = await uploadEditorAsset({
             blockId,
@@ -126,23 +114,33 @@ const PageDetailsPage = observer(() => {
               entity_type: EFileAssetType.PAGE_DESCRIPTION,
             },
             file,
-            projectId: projectId?.toString() ?? "",
-            workspaceSlug: workspaceSlug?.toString() ?? "",
+            projectId,
+            workspaceSlug,
+          });
+          return asset_id;
+        },
+        duplicateFile: async (assetId: string) => {
+          const { asset_id } = await duplicateEditorAsset({
+            assetId,
+            entityId: id,
+            entityType: EFileAssetType.PAGE_DESCRIPTION,
+            projectId,
+            workspaceSlug,
           });
           return asset_id;
         },
         workspaceId,
-        workspaceSlug: workspaceSlug?.toString() ?? "",
+        workspaceSlug,
       }),
     }),
-    [getEditorFileHandlers, id, uploadEditorAsset, projectId, workspaceId, workspaceSlug]
+    [getEditorFileHandlers, projectId, workspaceId, workspaceSlug, uploadEditorAsset, id, duplicateEditorAsset]
   );
 
   const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(
     () => ({
       documentType: "project_page",
-      projectId: projectId?.toString() ?? "",
-      workspaceSlug: workspaceSlug?.toString() ?? "",
+      projectId,
+      workspaceSlug,
     }),
     [projectId, workspaceSlug]
   );
@@ -155,48 +153,48 @@ const PageDetailsPage = observer(() => {
 
   if ((!page || !id) && !pageDetailsError)
     return (
-      <div className="size-full grid place-items-center">
+      <div className="grid size-full place-items-center">
         <LogoSpinner />
       </div>
     );
 
   if (pageDetailsError || !canCurrentUserAccessPage)
     return (
-      <div className="h-full w-full flex flex-col items-center justify-center">
-        <h3 className="text-lg font-semibold text-center">Page not found</h3>
-        <p className="text-sm text-custom-text-200 text-center mt-3">
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <h3 className="text-center text-16 font-semibold">Page not found</h3>
+        <p className="mt-3 text-center text-13 text-secondary">
           The page you are trying to access doesn{"'"}t exist or you don{"'"}t have permission to view it.
         </p>
         <Link
           href={`/${workspaceSlug}/projects/${projectId}/pages`}
-          className={cn(getButtonStyling("neutral-primary", "md"), "mt-5")}
+          className={cn(getButtonStyling("secondary", "base"), "mt-5")}
         >
           View other Pages
         </Link>
       </div>
     );
 
-  if (!page || !workspaceSlug || !projectId) return null;
+  if (!page) return null;
 
   return (
     <>
       <PageHead title={name} />
       <div className="flex h-full flex-col justify-between">
-        <div className="relative h-full w-full flex-shrink-0 flex flex-col overflow-hidden">
+        <div className="relative flex h-full w-full flex-shrink-0 flex-col overflow-hidden">
           <PageRoot
             config={pageRootConfig}
             handlers={pageRootHandlers}
             storeType={storeType}
             page={page}
             webhookConnectionParams={webhookConnectionParams}
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId?.toString()}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
           />
           <IssuePeekOverview />
         </div>
       </div>
     </>
   );
-});
+}
 
-export default PageDetailsPage;
+export default observer(PageDetailsPage);

@@ -21,22 +21,20 @@ if (!self.define) {
 
   const singleRequire = (uri, parentUri) => {
     uri = new URL(uri + ".js", parentUri).href;
-    return registry[uri] || (
-      
-        new Promise(resolve => {
-          if ("document" in self) {
-            const script = document.createElement("script");
-            script.src = uri;
-            script.onload = resolve;
-            document.head.appendChild(script);
-          } else {
-            nextDefineUri = uri;
-            importScripts(uri);
-            resolve();
-          }
-        })
-      
-      .then(() => {
+    return (
+      registry[uri] ||
+      new Promise((resolve) => {
+        if ("document" in self) {
+          const script = document.createElement("script");
+          script.src = uri;
+          script.onload = resolve;
+          document.head.appendChild(script);
+        } else {
+          nextDefineUri = uri;
+          importScripts(uri);
+          resolve();
+        }
+      }).then(() => {
         let promise = registry[uri];
         if (!promise) {
           throw new Error(`Module ${uri} didn’t register its module`);
@@ -53,49 +51,52 @@ if (!self.define) {
       return;
     }
     let exports = {};
-    const require = depUri => singleRequire(depUri, uri);
+    const require = (depUri) => singleRequire(depUri, uri);
     const specialDeps = {
       module: { uri },
       exports,
-      require
+      require,
     };
-    registry[uri] = Promise.all(depsNames.map(
-      depName => specialDeps[depName] || require(depName)
-    )).then(deps => {
+    registry[uri] = Promise.all(depsNames.map((depName) => specialDeps[depName] || require(depName))).then((deps) => {
       factory(...deps);
       return exports;
     });
   };
 }
-define(['./workbox-9f2f79cf'], (function (workbox) { 'use strict';
+define(["./workbox-9f2f79cf"], function (workbox) {
+  "use strict";
 
   importScripts();
   self.skipWaiting();
   workbox.clientsClaim();
-  workbox.registerRoute("/", new workbox.NetworkFirst({
-    "cacheName": "start-url",
-    plugins: [{
-      cacheWillUpdate: async ({
-        request,
-        response,
-        event,
-        state
-      }) => {
-        if (response && response.type === 'opaqueredirect') {
-          return new Response(response.body, {
-            status: 200,
-            statusText: 'OK',
-            headers: response.headers
-          });
-        }
-        return response;
-      }
-    }]
-  }), 'GET');
-  workbox.registerRoute(/.*/i, new workbox.NetworkOnly({
-    "cacheName": "dev",
-    plugins: []
-  }), 'GET');
-
-}));
+  workbox.registerRoute(
+    "/",
+    new workbox.NetworkFirst({
+      cacheName: "start-url",
+      plugins: [
+        {
+          cacheWillUpdate: async ({ request, response, event, state }) => {
+            if (response && response.type === "opaqueredirect") {
+              return new Response(response.body, {
+                status: 200,
+                statusText: "OK",
+                headers: response.headers,
+              });
+            }
+            return response;
+          },
+        },
+      ],
+    }),
+    "GET"
+  );
+  workbox.registerRoute(
+    /.*/i,
+    new workbox.NetworkOnly({
+      cacheName: "dev",
+      plugins: [],
+    }),
+    "GET"
+  );
+});
 //# sourceMappingURL=sw.js.map

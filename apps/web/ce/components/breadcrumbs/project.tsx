@@ -1,17 +1,20 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
-import { Briefcase } from "lucide-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { ProjectIcon } from "@plane/propel/icons";
 // plane imports
-import { ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs } from "@plane/ui";
-// components
-import { Logo } from "@/components/common/logo";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 
 type TProjectBreadcrumbProps = {
   workspaceSlug: string;
@@ -19,7 +22,7 @@ type TProjectBreadcrumbProps = {
   handleOnClick?: () => void;
 };
 
-export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
+export const ProjectBreadcrumb = observer(function ProjectBreadcrumb(props: TProjectBreadcrumbProps) {
   const { workspaceSlug, projectId, handleOnClick } = props;
   // router
   const router = useAppRouter();
@@ -39,7 +42,12 @@ export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
         value: projectId,
         query: project?.name,
         content: (
-          <SwitcherLabel name={project?.name} logo_props={project?.logo_props} LabelIcon={Briefcase} type="material" />
+          <SwitcherLabel
+            name={project?.name}
+            logo_props={project?.logo_props}
+            LabelIcon={ProjectIcon}
+            type="material"
+          />
         ),
       };
     })
@@ -47,7 +55,7 @@ export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
 
   // helpers
   const renderIcon = (projectDetails: TProject) => (
-    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+    <span className="grid size-4 flex-shrink-0 place-items-center">
       <Logo logo={projectDetails.logo_props} size={14} />
     </span>
   );

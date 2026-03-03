@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import uuid
 
@@ -32,9 +36,7 @@ class GoogleOauthInitiateSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -47,9 +49,7 @@ class GoogleOauthInitiateSpaceEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -68,9 +68,7 @@ class GoogleCallbackSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
         if not code:
@@ -80,9 +78,7 @@ class GoogleCallbackSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
         try:
@@ -101,8 +97,6 @@ class GoogleCallbackSpaceEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)

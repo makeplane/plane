@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -5,7 +11,7 @@ import { observer } from "mobx-react";
 // plane constants
 import { ALL_ISSUES } from "@plane/constants";
 // types
-import {
+import type {
   GroupByColumnTypes,
   TGroupedIssues,
   TIssue,
@@ -25,9 +31,10 @@ import { IssueBulkOperationsRoot } from "@/plane-web/components/issues/bulk-oper
 // plane web hooks
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // utils
-import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation, isSubGrouped } from "../utils";
+import type { GroupDropLocation } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel, isSubGrouped } from "../utils";
 import { ListGroup } from "./list-group";
-import { TRenderQuickActions } from "./list-view-types";
+import type { TRenderQuickActions } from "./list-view-types";
 
 export interface IList {
   groupedIssueIds: TGroupedIssues;
@@ -51,7 +58,7 @@ export interface IList {
   isEpic?: boolean;
 }
 
-export const List: React.FC<IList> = observer((props) => {
+export const List = observer(function List(props: IList) {
   const {
     groupedIssueIds,
     issuesMap,
@@ -122,7 +129,7 @@ export const List: React.FC<IList> = observer((props) => {
     entities = orderedGroups;
   }
   return (
-    <div className="relative size-full flex flex-col">
+    <div className="relative flex size-full flex-col">
       {groups && (
         <MultipleSelectGroup
           containerRef={containerRef}
@@ -133,7 +140,7 @@ export const List: React.FC<IList> = observer((props) => {
             <>
               <div
                 ref={containerRef}
-                className="size-full vertical-scrollbar scrollbar-lg relative overflow-auto vertical-scrollbar-margin-top-md"
+                className="vertical-scrollbar relative scrollbar-lg size-full overflow-auto bg-surface-1"
               >
                 {groups.map((group: IGroupByColumn) => (
                   <ListGroup

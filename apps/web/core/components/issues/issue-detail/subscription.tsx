@@ -1,15 +1,22 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, useState } from "react";
-import isNil from "lodash/isNil";
+import type { FC } from "react";
+import { useState } from "react";
+import { isNil } from "lodash-es";
 import { observer } from "mobx-react";
 import { Bell, BellOff } from "lucide-react";
 // plane-i18n
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // UI
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssueServiceType } from "@plane/types";
-import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -21,7 +28,7 @@ export type TIssueSubscription = {
   serviceType?: EIssueServiceType;
 };
 
-export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
+export const IssueSubscription = observer(function IssueSubscription(props: TIssueSubscription) {
   const { workspaceSlug, projectId, issueId, serviceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // hooks
@@ -76,12 +83,12 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
   return (
     <div>
       <Button
-        size="sm"
         prependIcon={isSubscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
-        variant="outline-primary"
-        className="hover:!bg-custom-primary-100/20"
+        variant="secondary"
+        className="hover:!bg-accent-primary/20"
         onClick={handleSubscription}
         disabled={!isEditable || loading}
+        size="lg"
       >
         {loading ? (
           <span>

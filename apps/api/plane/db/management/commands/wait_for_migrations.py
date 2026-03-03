@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # wait_for_migrations.py
 import time
 from django.core.management.base import BaseCommand
@@ -13,9 +17,7 @@ class Command(BaseCommand):
             self.stdout.write("Waiting for database migrations to complete...")
             time.sleep(10)  # wait for 10 seconds before checking again
 
-        self.stdout.write(
-            self.style.SUCCESS("No migrations Pending. Starting processes ...")
-        )
+        self.stdout.write(self.style.SUCCESS("No migrations Pending. Starting processes ..."))
 
     def _pending_migrations(self):
         connection = connections[DEFAULT_DB_ALIAS]

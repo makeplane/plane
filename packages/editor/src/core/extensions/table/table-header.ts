@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { mergeAttributes, Node } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -39,9 +45,6 @@ export const TableHeader = Node.create<TableHeaderOptions>({
       background: {
         default: "none",
       },
-      hideContent: {
-        default: false,
-      },
     };
   },
 
@@ -57,7 +60,6 @@ export const TableHeader = Node.create<TableHeaderOptions>({
     return [
       "th",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        class: node.attrs.hideContent ? "content-hidden" : "",
         style: `background-color: ${node.attrs.background};`,
       }),
       0,

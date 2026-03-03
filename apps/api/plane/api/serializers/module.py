@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 from rest_framework import serializers
 
@@ -10,6 +14,7 @@ from plane.db.models import (
     ModuleMember,
     ModuleIssue,
     ProjectMember,
+    Project,
 )
 
 
@@ -17,8 +22,9 @@ class ModuleCreateSerializer(BaseSerializer):
     """
     Serializer for creating modules with member validation and date checking.
 
-    Handles module creation including member assignment validation, date range verification,
-    and duplicate name prevention for feature-based project organization setup.
+    Handles module creation including member assignment validation, date range
+    verification, and duplicate name prevention for feature-based
+    project organization setup.
     """
 
     members = serializers.ListField(
@@ -52,6 +58,14 @@ class ModuleCreateSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
+        project_id = self.context.get("project_id")
+        if not project_id:
+            raise serializers.ValidationError("Project ID is required")
+        project = Project.objects.get(id=project_id)
+        if not project:
+            raise serializers.ValidationError("Project not found")
+        if not project.module_view:
+            raise serializers.ValidationError("Modules are not enabled for this project")
         if (
             data.get("start_date", None) is not None
             and data.get("target_date", None) is not None
@@ -75,9 +89,15 @@ class ModuleCreateSerializer(BaseSerializer):
         module_name = validated_data.get("name")
         if module_name:
             # Lookup for the module name in the module table for that project
-            if Module.objects.filter(name=module_name, project_id=project_id).exists():
+            module = Module.objects.filter(name=module_name, project_id=project_id).first()
+            if module:
                 raise serializers.ValidationError(
-                    {"error": "Module with this name already exists"}
+                    {
+                        "id": str(module.id),
+                        "code": "MODULE_NAME_ALREADY_EXISTS",
+                        "error": "Module with this name already exists",
+                        "message": "Module with this name already exists",
+                    }
                 )
 
         module = Module.objects.create(**validated_data, project_id=project_id)
@@ -105,8 +125,9 @@ class ModuleUpdateSerializer(ModuleCreateSerializer):
     """
     Serializer for updating modules with enhanced validation and member management.
 
-    Extends module creation with update-specific validations including member reassignment,
-    name conflict checking, and relationship management for module modifications.
+    Extends module creation with update-specific validations including
+    member reassignment, name conflict checking,
+    and relationship management for module modifications.
     """
 
     class Meta(ModuleCreateSerializer.Meta):
@@ -121,14 +142,8 @@ class ModuleUpdateSerializer(ModuleCreateSerializer):
         module_name = validated_data.get("name")
         if module_name:
             # Lookup for the module name in the module table for that project
-            if (
-                Module.objects.filter(name=module_name, project=instance.project)
-                .exclude(id=instance.id)
-                .exists()
-            ):
-                raise serializers.ValidationError(
-                    {"error": "Module with this name already exists"}
-                )
+            if Module.objects.filter(name=module_name, project=instance.project).exclude(id=instance.id).exists():
+                raise serializers.ValidationError({"error": "Module with this name already exists"})
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()
@@ -155,8 +170,8 @@ class ModuleSerializer(BaseSerializer):
     """
     Comprehensive module serializer with work item metrics and member management.
 
-    Provides complete module data including work item counts by status, member relationships,
-    and progress tracking for feature-based project organization.
+    Provides complete module data including work item counts by status, member
+    relationships, and progress tracking for feature-based project organization.
     """
 
     members = serializers.ListField(
@@ -238,12 +253,8 @@ class ModuleLinkSerializer(BaseSerializer):
 
     # Validation if url already exists
     def create(self, validated_data):
-        if ModuleLink.objects.filter(
-            url=validated_data.get("url"), module_id=validated_data.get("module_id")
-        ).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+        if ModuleLink.objects.filter(url=validated_data.get("url"), module_id=validated_data.get("module_id")).exists():
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
         return ModuleLink.objects.create(**validated_data)
 
 

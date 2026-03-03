@@ -1,4 +1,10 @@
-import { ENotificationFilterType } from "./enums";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { ENotificationFilterType } from "./enums";
 import type { IUserLite } from "./users";
 
 // filters

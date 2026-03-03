@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { StateGroupIcon } from "@plane/propel/icons";
-import { TStateGroups } from "@plane/types";
+import type { TStateGroups } from "@plane/types";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 
@@ -19,7 +25,7 @@ type TStateGroupStatComponent = {
   isEditable?: boolean;
 };
 
-export const StateGroupStatComponent = observer((props: TStateGroupStatComponent) => {
+export const StateGroupStatComponent = observer(function StateGroupStatComponent(props: TStateGroupStatComponent) {
   const { distribution, isEditable, totalIssuesCount, selectedStateGroups, handleStateGroupFiltersUpdate } = props;
 
   return (
@@ -30,7 +36,7 @@ export const StateGroupStatComponent = observer((props: TStateGroupStatComponent
           title={
             <div className="flex items-center gap-2">
               <StateGroupIcon stateGroup={group.state as TStateGroups} />
-              <span className="text-xs capitalize">{group.state}</span>
+              <span className="text-11 capitalize">{group.state}</span>
             </div>
           }
           completed={group.completed}

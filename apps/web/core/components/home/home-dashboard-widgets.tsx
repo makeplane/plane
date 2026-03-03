@@ -1,15 +1,24 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";
+import type { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";
+// assets
+import darkWidgetsAsset from "@/app/assets/empty-state/dashboard/widgets-dark.webp?url";
+import lightWidgetsAsset from "@/app/assets/empty-state/dashboard/widgets-light.webp?url";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { HomePageHeader } from "@/plane-web/components/home/header";
 // local imports
 import { StickiesWidget } from "../stickies/widget";
@@ -51,11 +60,13 @@ export const HOME_WIDGETS_LIST: {
   },
 };
 
-export const DashboardWidgets = observer(() => {
+export const DashboardWidgets = observer(function DashboardWidgets() {
   // router
   const { workspaceSlug } = useParams();
   // navigation
   const pathname = usePathname();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { toggleWidgetSettings, widgetsMap, showWidgetSettings, orderedWidgets, isAnyWidgetEnabled, loading } =
     useHome();
@@ -63,7 +74,7 @@ export const DashboardWidgets = observer(() => {
   // plane hooks
   const { t } = useTranslation();
   // derived values
-  const noWidgetsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboard/widgets" });
+  const noWidgetsResolvedPath = resolvedTheme === "light" ? lightWidgetsAsset : darkWidgetsAsset;
 
   // derived values
   const isWikiApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
@@ -71,7 +82,7 @@ export const DashboardWidgets = observer(() => {
   if (loading || loader !== "loaded") return <HomeLoader />;
 
   return (
-    <div className="h-full w-full relative flex flex-col gap-7">
+    <div className="relative flex h-full w-full flex-col gap-7">
       <HomePageHeader />
       <ManageWidgetsModal
         workspaceSlug={workspaceSlug.toString()}
@@ -81,7 +92,7 @@ export const DashboardWidgets = observer(() => {
       {!isWikiApp && <NoProjectsEmptyState />}
 
       {isAnyWidgetEnabled ? (
-        <div className="flex flex-col divide-y-[1px] divide-custom-border-100">
+        <div className="flex flex-col">
           {orderedWidgets.map((key) => {
             const WidgetComponent = HOME_WIDGETS_LIST[key]?.component;
             const isEnabled = widgetsMap[key]?.is_enabled;
@@ -94,7 +105,7 @@ export const DashboardWidgets = observer(() => {
           })}
         </div>
       ) : (
-        <div className="h-full w-full grid place-items-center">
+        <div className="grid h-full w-full place-items-center">
           <SimpleEmptyState
             title={t("home.empty.widgets.title")}
             description={t("home.empty.widgets.description")}

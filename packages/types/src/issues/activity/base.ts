@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export * from "./issue_activity";
 export * from "./issue_comment";
 export * from "./issue_comment_reaction";
 
-import { TIssuePriorities } from "../../issues";
+import type { TIssuePriorities } from "../../issues";
 
 // root types
 export type TIssueActivityWorkspaceDetail = {
@@ -54,6 +60,21 @@ export type TIssueActivityComment =
   | {
       id: string;
       activity_type: "ACTIVITY";
+      created_at?: string;
+    }
+  | {
+      id: string;
+      activity_type: "STATE";
+      created_at?: string;
+    }
+  | {
+      id: string;
+      activity_type: "ASSIGNEE";
+      created_at?: string;
+    }
+  | {
+      id: string;
+      activity_type: "DEFAULT";
       created_at?: string;
     }
   | {

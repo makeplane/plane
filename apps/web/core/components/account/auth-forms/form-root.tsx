@@ -1,12 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { EAuthModes, EAuthSteps } from "@plane/constants";
-import { IEmailCheckData } from "@plane/types";
+import type { IEmailCheckData } from "@plane/types";
 // helpers
-import { authErrorHandler, TAuthErrorInfo } from "@/helpers/authentication.helper";
+import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
+import { authErrorHandler } from "@/helpers/authentication.helper";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -30,7 +35,7 @@ type TAuthFormRoot = {
 
 const authService = new AuthService();
 
-export const AuthFormRoot = observer((props: TAuthFormRoot) => {
+export const AuthFormRoot = observer(function AuthFormRoot(props: TAuthFormRoot) {
   const { authStep, authMode, email, setEmail, setAuthMode, setAuthStep, setErrorInfo, currentAuthMode } = props;
   // router
   const router = useAppRouter();
@@ -92,7 +97,7 @@ export const AuthFormRoot = observer((props: TAuthFormRoot) => {
       .generateUniqueCode(payload)
       .then(() => ({ code: "" }))
       .catch((error) => {
-        const errorhandler = authErrorHandler(error?.error_code.toString());
+        const errorhandler = authErrorHandler(error?.error_code?.toString());
         if (errorhandler?.type) setErrorInfo(errorhandler);
         throw error;
       });

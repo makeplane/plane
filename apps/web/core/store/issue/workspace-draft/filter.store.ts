@@ -1,11 +1,16 @@
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-// base class
 import { computedFn } from "mobx-utils";
-import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
-import {
-  EIssuesStoreType,
+// Plane Imports
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TIssueKanbanFilters,
@@ -15,14 +20,15 @@ import {
   TWorkItemFilterExpression,
   TSupportedFilterForUpdate,
 } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
-import { IssueFiltersService } from "@/services/issue_filter.service";
-import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
-// helpers
-// types
-import { IIssueRootStore } from "../root.store";
-// constants
 // services
+import { IssueFiltersService } from "@/services/issue_filter.service";
+// helpers
+import type { IBaseIssueFilterStore } from "../helpers/issue-filter-helper.store";
+import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+// types
+import type { IIssueRootStore } from "../root.store";
 
 export interface IWorkspaceDraftIssuesFilter extends IBaseIssueFilterStore {
   // observables
@@ -189,7 +195,7 @@ export class WorkspaceDraftIssuesFilter extends IssueFilterHelperStore implement
       if (isEmpty(this.filters) || isEmpty(this.filters[workspaceSlug])) return;
 
       const _filters = {
-        richFilters: this.filters[workspaceSlug].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[workspaceSlug].richFilters,
         displayFilters: this.filters[workspaceSlug].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[workspaceSlug].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[workspaceSlug].kanbanFilters as TIssueKanbanFilters,

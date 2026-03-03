@@ -1,16 +1,24 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { TCoreSupportedOperators } from "./core";
 import {
   CORE_LOGICAL_OPERATOR,
   CORE_EQUALITY_OPERATOR,
   CORE_COLLECTION_OPERATOR,
   CORE_COMPARISON_OPERATOR,
-  TCoreSupportedOperators,
+  CORE_MULTI_VALUE_OPERATORS,
 } from "./core";
+import type { TExtendedSupportedOperators } from "./extended";
 import {
   EXTENDED_LOGICAL_OPERATOR,
   EXTENDED_EQUALITY_OPERATOR,
   EXTENDED_COLLECTION_OPERATOR,
   EXTENDED_COMPARISON_OPERATOR,
-  TExtendedSupportedOperators,
+  EXTENDED_MULTI_VALUE_OPERATORS,
 } from "./extended";
 
 // -------- COMPOSED OPERATORS --------
@@ -34,6 +42,11 @@ export const COMPARISON_OPERATOR = {
   ...CORE_COMPARISON_OPERATOR,
   ...EXTENDED_COMPARISON_OPERATOR,
 } as const;
+
+export const MULTI_VALUE_OPERATORS: ReadonlyArray<TSupportedOperators> = [
+  ...CORE_MULTI_VALUE_OPERATORS,
+  ...EXTENDED_MULTI_VALUE_OPERATORS,
+] as const;
 
 // -------- COMPOSED TYPES --------
 

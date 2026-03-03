@@ -1,4 +1,10 @@
-import { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -12,7 +18,7 @@ import { InboxIssueAppliedFiltersPriority } from "./priority";
 import { InboxIssueAppliedFiltersState } from "./state";
 import { InboxIssueAppliedFiltersStatus } from "./status";
 
-export const InboxIssueAppliedFilters: FC = observer(() => {
+export const InboxIssueAppliedFilters = observer(function InboxIssueAppliedFilters() {
   const { getAppliedFiltersCount } = useProjectInbox();
 
   if (getAppliedFiltersCount === 0) return <></>;

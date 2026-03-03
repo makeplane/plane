@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from django.urls import path
 
 from plane.app.views import (
@@ -7,7 +11,6 @@ from plane.app.views import (
     IssueLinkViewSet,
     IssueAttachmentEndpoint,
     CommentReactionViewSet,
-    ExportIssuesEndpoint,
     IssueActivityEndpoint,
     IssueArchiveViewSet,
     IssueCommentViewSet,
@@ -15,7 +18,7 @@ from plane.app.views import (
     IssueReactionViewSet,
     IssueRelationViewSet,
     IssueSubscriberViewSet,
-    IssueUserDisplayPropertyEndpoint,
+    ProjectUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
     BulkArchiveIssuesEndpoint,
@@ -141,12 +144,6 @@ urlpatterns = [
         IssueAttachmentV2Endpoint.as_view(),
         name="project-issue-attachments",
     ),
-    ## Export Issues
-    path(
-        "workspaces/<str:slug>/export-issues/",
-        ExportIssuesEndpoint.as_view(),
-        name="export-issues",
-    ),
     ## End Issues
     ## Issue Activity
     path(
@@ -187,9 +184,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/subscribe/",
-        IssueSubscriberViewSet.as_view(
-            {"get": "subscription_status", "post": "subscribe", "delete": "unsubscribe"}
-        ),
+        IssueSubscriberViewSet.as_view({"get": "subscription_status", "post": "subscribe", "delete": "unsubscribe"}),
         name="project-issue-subscribers",
     ),
     ## End Issue Subscribers
@@ -217,13 +212,13 @@ urlpatterns = [
         name="project-issue-comment-reactions",
     ),
     ## End Comment Reactions
-    ## IssueUserProperty
+    ## ProjectUserProperty
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-properties/",
-        IssueUserDisplayPropertyEndpoint.as_view(),
+        ProjectUserDisplayPropertyEndpoint.as_view(),
         name="project-issue-display-properties",
     ),
-    ## IssueUserProperty End
+    ## ProjectUserProperty End
     ## Issue Archives
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/",
@@ -232,9 +227,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/archive/",
-        IssueArchiveViewSet.as_view(
-            {"get": "retrieve", "post": "archive", "delete": "unarchive"}
-        ),
+        IssueArchiveViewSet.as_view({"get": "retrieve", "post": "archive", "delete": "unarchive"}),
         name="project-issue-archive-unarchive",
     ),
     ## End Issue Archives

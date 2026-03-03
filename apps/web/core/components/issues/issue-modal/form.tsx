@@ -1,6 +1,11 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { FC, useState, useRef, useEffect } from "react";
+import type { FC } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
@@ -9,9 +14,12 @@ import { ETabIndices, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, TIssue, TWorkspaceDraftIssue } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // hooks
-import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 import {
   convertWorkItemDataToSearchResponse,
   getUpdateFormDataForReset,
@@ -65,10 +73,11 @@ export interface IssueFormProps {
   handleDuplicateIssueModal: (isOpen: boolean) => void;
   handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
-  storeType: EIssuesStoreType;
+  showActionButtons?: boolean;
+  dataResetProperties?: any[];
 }
 
-export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
+export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormProps) {
   const { t } = useTranslation();
   const {
     data,
@@ -91,7 +100,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     handleDuplicateIssueModal,
     handleDraftAndClose,
     isProjectSelectionDisabled = false,
-    storeType,
+    showActionButtons = true,
+    dataResetProperties = [],
   } = props;
 
   // states
@@ -175,6 +185,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
+
+  // Reset form when data prop changes
+  useEffect(() => {
+    if (data) {
+      reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId, ...data });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [...dataResetProperties]);
 
   // Update the issue type id when the project id changes
   useEffect(() => {
@@ -305,6 +323,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     {
       name: watch("name"),
       description_html: getTextContent(watch("description_html")),
+      issueId: data?.id,
     }
   );
 
@@ -360,14 +379,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   return (
     <FormProvider {...methods}>
       <div className="flex gap-2 bg-transparent">
-        <div className="rounded-lg w-full">
+        <div className="w-full rounded-lg">
           <form
             ref={formRef}
             onSubmit={handleSubmit((data) => handleFormSubmit(data))}
-            className="flex flex-col w-full"
+            className="flex w-full flex-col"
           >
-            <div className="p-5 rounded-t-lg bg-custom-background-100">
-              <h3 className="text-xl font-medium text-custom-text-200 pb-2">{modalTitle}</h3>
+            <div className="rounded-t-lg bg-surface-1 p-5">
+              <h3 className="pb-2 text-h4-medium text-secondary">{modalTitle}</h3>
               <div className="flex items-center justify-between pt-2 pb-4">
                 <div className="flex items-center gap-x-1">
                   <IssueProjectSelect
@@ -375,7 +394,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     disabled={!!data?.id || !!data?.sourceIssueId || isProjectSelectionDisabled}
                     handleFormChange={handleFormChange}
                   />
-                  {projectId && storeType !== EIssuesStoreType.EPIC && (
+                  {projectId && (
                     <IssueTypeSelect
                       control={control}
                       projectId={projectId}
@@ -435,9 +454,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             </div>
             <div
               className={cn(
-                "pb-4 space-y-3 bg-custom-background-100",
+                "space-y-3 bg-surface-1 pb-4",
                 activeAdditionalPropertiesLength > 4 &&
-                  "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+                  "vertical-scrollbar scrollbar-sm max-h-[45vh] overflow-hidden overflow-y-auto"
               )}
             >
               <div className="px-5">
@@ -471,11 +490,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             </div>
             <div
               className={cn(
-                "px-4 py-3 border-t-[0.5px] border-custom-border-200 rounded-b-lg bg-custom-background-100",
-                activeAdditionalPropertiesLength > 0 && "shadow-custom-shadow-xs"
+                "rounded-b-lg border-t-[0.5px] border-subtle bg-surface-1 px-4 py-3",
+                activeAdditionalPropertiesLength > 0 && "shadow-raised-100"
               )}
             >
-              <div className="pb-3 border-b-[0.5px] border-custom-border-200">
+              <div className="pb-3">
                 <IssueDefaultProperties
                   control={control}
                   id={data?.id}
@@ -490,74 +509,79 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   setSelectedParentIssue={setSelectedParentIssue}
                 />
               </div>
-              <div className="flex items-center justify-end gap-4 py-3" tabIndex={getIndex("create_more")}>
-                {!data?.id && (
-                  <div
-                    className="inline-flex items-center gap-1.5 cursor-pointer"
-                    onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
-                    }}
-                    role="button"
-                  >
-                    <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
-                    <span className="text-xs">{t("create_more")}</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <div tabIndex={getIndex("discard_button")}>
-                    <Button
-                      variant="neutral-primary"
-                      size="sm"
-                      onClick={() => {
-                        if (editorRef.current?.isEditorReadyToDiscard()) {
-                          onClose();
-                        } else {
-                          setToast({
-                            type: TOAST_TYPE.ERROR,
-                            title: "Error!",
-                            message: "Editor is still processing changes. Please wait before proceeding.",
-                          });
-                        }
+              {showActionButtons && (
+                <div
+                  className="flex items-center justify-end gap-4 border-t-[0.5px] border-subtle pt-6 pb-3"
+                  tabIndex={getIndex("create_more")}
+                >
+                  {!data?.id && (
+                    <div
+                      className="inline-flex cursor-pointer items-center gap-1.5"
+                      onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
                       }}
+                      role="button"
                     >
-                      {t("discard")}
-                    </Button>
-                  </div>
-                  <div tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}>
-                    <Button
-                      variant={moveToIssue ? "neutral-primary" : "primary"}
-                      type="submit"
-                      size="sm"
-                      ref={submitBtnRef}
-                      loading={isSubmitting}
-                      disabled={isDisabled}
-                    >
-                      {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
-                    </Button>
-                  </div>
-
-                  {moveToIssue && (
-                    <Button
-                      variant="primary"
-                      type="button"
-                      size="sm"
-                      loading={isMoving}
-                      onClick={handleMoveToProjects}
-                      disabled={isMoving}
-                    >
-                      {t("add_to_project")}
-                    </Button>
+                      <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
+                      <span className="text-caption-sm-regular">{t("create_more")}</span>
+                    </div>
                   )}
+                  <div className="flex items-center gap-2">
+                    <div tabIndex={getIndex("discard_button")}>
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        onClick={() => {
+                          if (editorRef.current?.isEditorReadyToDiscard()) {
+                            onClose();
+                          } else {
+                            setToast({
+                              type: TOAST_TYPE.ERROR,
+                              title: "Error!",
+                              message: "Editor is still processing changes. Please wait before proceeding.",
+                            });
+                          }
+                        }}
+                      >
+                        {t("discard")}
+                      </Button>
+                    </div>
+                    <div tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}>
+                      <Button
+                        variant={moveToIssue ? "secondary" : "primary"}
+                        size="lg"
+                        type="submit"
+                        ref={submitBtnRef}
+                        loading={isSubmitting}
+                        disabled={isDisabled}
+                      >
+                        {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
+                      </Button>
+                    </div>
+
+                    {moveToIssue && (
+                      <Button
+                        variant="primary"
+                        type="button"
+                        loading={isMoving}
+                        onClick={handleMoveToProjects}
+                        disabled={isMoving}
+                        size="lg"
+                      >
+                        {t("add_to_project")}
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </form>
         </div>
         {shouldRenderDuplicateModal && (
           <div
             ref={modalContainerRef}
-            className="relative flex flex-col gap-2.5 px-3 py-4 rounded-lg shadow-xl bg-pi-50"
+            className="shadow-xl bg-pi-50 relative flex flex-col gap-2.5 rounded-lg px-3 py-4"
             style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
           >
             <DuplicateModalRoot

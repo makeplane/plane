@@ -1,13 +1,15 @@
-import clone from "lodash/clone";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import unset from "lodash/unset";
-import update from "lodash/update";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { clone, update, unset, orderBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EDraftIssuePaginationType } from "@plane/constants";
-import {
+import type {
   TWorkspaceDraftIssue,
   TWorkspaceDraftPaginationInfo,
   TWorkspaceDraftIssueLoader,
@@ -20,15 +22,11 @@ import {
   TIssue,
   TBulkOperationsPayload,
 } from "@plane/types";
-// constants
-// helpers
 import { getCurrentDateTimeInISO, convertToISODateString } from "@plane/utils";
-// local-db
-import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 // services
 import workspaceDraftService from "@/services/issue/workspace_draft.service";
 // types
-import { IIssueRootStore } from "../root.store";
+import type { IIssueRootStore } from "../root.store";
 
 export type TDraftIssuePaginationType = EDraftIssuePaginationType;
 
@@ -355,9 +353,6 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
             total_count: this.paginationInfo.total_count - 1,
           });
         }
-
-        // sync issue to local db
-        addIssueToPersistanceLayer({ ...payload, ...response });
 
         // Update draft issue count in workspaceUserInfo
         this.updateWorkspaceUserDraftIssueCount(workspaceSlug, -1);

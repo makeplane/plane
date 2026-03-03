@@ -1,22 +1,25 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 // plane constants
-import { TSupportedFilterTypeForUpdate } from "@plane/constants";
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 // types
-import {
-  EIssuesStoreType,
+import type {
   TGroupedIssues,
   TIssue,
   TIssueMap,
   TPaginationData,
   ICalendarWeek,
-  EIssueLayoutTypes,
   TSupportedFilterForUpdate,
 } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Spinner } from "@plane/ui";
 import { renderFormattedPayloadDate, cn } from "@plane/utils";
@@ -27,27 +30,22 @@ import { MONTHS_LIST } from "@/constants/calendar";
 import { useIssues } from "@/hooks/store/use-issues";
 import useSize from "@/hooks/use-window-size";
 // store
-import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import { ICycleIssuesFilter } from "@/store/issue/cycle";
-import { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
-import { IModuleIssuesFilter } from "@/store/issue/module";
-import { IProjectIssuesFilter } from "@/store/issue/project";
-import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { ICycleIssuesFilter } from "@/store/issue/cycle";
+import type { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
+import type { IModuleIssuesFilter } from "@/store/issue/module";
+import type { IProjectIssuesFilter } from "@/store/issue/project";
+import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // local imports
 import { IssueLayoutHOC } from "../issue-layout-HOC";
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarHeader } from "./header";
 import { CalendarIssueBlocks } from "./issue-blocks";
 import { CalendarWeekDays } from "./week-days";
 import { CalendarWeekHeader } from "./week-header";
 
 type Props = {
-  issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   layout: "month" | "week" | undefined;
@@ -75,7 +73,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const CalendarChart: React.FC<Props> = observer((props) => {
+export const CalendarChart = observer(function CalendarChart(props: Props) {
   const {
     issuesFilterStore,
     issues,
@@ -147,7 +145,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
 
         <IssueLayoutHOC layout={EIssueLayoutTypes.CALENDAR}>
           <div
-            className={cn("flex md:h-full w-full flex-col overflow-y-auto", {
+            className={cn("flex w-full flex-col overflow-y-auto md:h-full", {
               "vertical-scrollbar scrollbar-lg": windowWidth > 768,
             })}
             ref={scrollableContainerRef}
@@ -155,7 +153,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
             <div className="h-full w-full">
               {layout === "month" && (
-                <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
+                <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-subtle-1">
                   {allWeeksOfActiveMonth &&
                     Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
                       <CalendarWeekDays
@@ -208,7 +206,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
 
             {/* mobile view */}
             <div className="md:hidden">
-              <p className="p-4 text-xl font-semibold">
+              <p className="p-4 text-18 font-semibold">
                 {`${selectedDate.getDate()} ${
                   MONTHS_LIST[selectedDate.getMonth() + 1].title
                 }, ${selectedDate.getFullYear()}`}
@@ -236,7 +234,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
 
         {/* mobile view */}
         <div className="md:hidden">
-          <p className="p-4 text-xl font-semibold">
+          <p className="p-4 text-18 font-semibold">
             {`${selectedDate.getDate()} ${
               MONTHS_LIST[selectedDate.getMonth() + 1].title
             }, ${selectedDate.getFullYear()}`}

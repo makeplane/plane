@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { EIssueLayoutTypes } from "@plane/types";
 import { WorkspaceSpreadsheetRoot } from "@/components/issues/issue-layouts/spreadsheet/roots/workspace-root";
 import { WorkspaceAdditionalLayouts } from "@/plane-web/components/views/helper";
@@ -17,7 +23,7 @@ export type TWorkspaceLayoutProps = {
   issuesLoading: boolean;
 };
 
-export const WorkspaceActiveLayout = (props: TWorkspaceLayoutProps) => {
+export function WorkspaceActiveLayout(props: TWorkspaceLayoutProps) {
   const {
     activeLayout = EIssueLayoutTypes.SPREADSHEET,
     isDefaultView,
@@ -48,4 +54,4 @@ export const WorkspaceActiveLayout = (props: TWorkspaceLayoutProps) => {
     default:
       return <WorkspaceAdditionalLayouts {...props} />;
   }
-};
+}

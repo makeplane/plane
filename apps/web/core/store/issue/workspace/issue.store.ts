@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import {
+import type {
   IssuePaginationOptions,
   TBulkOperationsPayload,
   TIssue,
@@ -9,11 +15,12 @@ import {
   ViewFlags,
 } from "@plane/types";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // types
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
-import { IIssueRootStore } from "../root.store";
-import { IWorkspaceIssuesFilter } from "./filter.store";
+import type { IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore } from "../helpers/base-issues.store";
+import type { IIssueRootStore } from "../root.store";
+import type { IWorkspaceIssuesFilter } from "./filter.store";
 
 export interface IWorkspaceIssues extends IBaseIssuesStore {
   // observable

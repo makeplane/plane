@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from django.urls import path
 
 from plane.app.views import (
@@ -11,9 +15,9 @@ from plane.app.views import (
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
     UserProjectInvitationsViewset,
-    ProjectPublicCoverImagesEndpoint,
     UserProjectRolesEndpoint,
     ProjectArchiveUnarchiveEndpoint,
+    ProjectMemberPreferenceEndpoint,
 )
 
 
@@ -77,9 +81,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/<uuid:pk>/",
-        ProjectMemberViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        ProjectMemberViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-member",
     ),
     path(
@@ -108,25 +110,23 @@ urlpatterns = [
         name="project-favorite",
     ),
     path(
-        "project-covers/",
-        ProjectPublicCoverImagesEndpoint.as_view(),
-        name="project-covers",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/",
         DeployBoardViewSet.as_view({"get": "list", "post": "create"}),
         name="project-deploy-board",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/<uuid:pk>/",
-        DeployBoardViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        DeployBoardViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-deploy-board",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archive/",
         ProjectArchiveUnarchiveEndpoint.as_view(),
         name="project-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/preferences/member/<uuid:member_id>/",
+        ProjectMemberPreferenceEndpoint.as_view(),
+        name="project-member-preference",
     ),
 ]

@@ -1,9 +1,15 @@
-import { ReactNode } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // local imports
-import { TDropdownProps } from "../types";
+import type { TDropdownProps } from "../types";
 import { ProjectDropdownBase } from "./base";
 
 type Props = TDropdownProps & {
@@ -27,7 +33,7 @@ type Props = TDropdownProps & {
       }
   );
 
-export const ProjectDropdown: React.FC<Props> = observer((props) => {
+export const ProjectDropdown = observer(function ProjectDropdown(props: Props) {
   // store hooks
   const { joinedProjectIds, getProjectById } = useProject();
 

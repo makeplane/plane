@@ -1,14 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
-import { LayoutPanelTop } from "lucide-react";
-// plane imports
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ParentPropertyIcon } from "@plane/propel/icons";
 // types
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
@@ -45,7 +49,7 @@ type TIssueDefaultPropertiesProps = {
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
 };
 
-export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = observer((props) => {
+export const IssueDefaultProperties = observer(function IssueDefaultProperties(props: TIssueDefaultPropertiesProps) {
   const {
     control,
     id,
@@ -267,7 +271,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             customButton={
               <button
                 type="button"
-                className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 text-xs hover:bg-custom-background-80"
+                className="flex h-full cursor-pointer items-center justify-between gap-1 rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-caption-sm-regular hover:bg-layer-1"
               >
                 {selectedParentIssue?.project_id && (
                   <IssueIdentifier
@@ -275,7 +279,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                     issueTypeId={selectedParentIssue.type_id}
                     projectIdentifier={selectedParentIssue?.project__identifier}
                     issueSequenceId={selectedParentIssue.sequence_id}
-                    textContainerClassName="text-xs"
+                    size="xs"
                   />
                 )}
               </button>
@@ -309,10 +313,10 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         ) : (
           <button
             type="button"
-            className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 text-xs hover:bg-custom-background-80"
+            className="flex h-full cursor-pointer items-center justify-between gap-1 rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-caption-sm-regular hover:bg-layer-1"
             onClick={() => setParentIssueListModalOpen(true)}
           >
-            <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+            <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
             <span className="whitespace-nowrap">{t("add_parent")}</span>
           </button>
         )}

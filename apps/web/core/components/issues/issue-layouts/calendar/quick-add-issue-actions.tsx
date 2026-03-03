@@ -1,14 +1,21 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { PlusIcon } from "lucide-react";
-// plane imports
+
 import { useTranslation } from "@plane/i18n";
-import { ISearchIssueResponse, TIssue, EIssueLayoutTypes } from "@plane/types";
-import { CustomMenu, setPromiseToast } from "@plane/ui";
+// plane imports
+import { PlusIcon } from "@plane/propel/icons";
+import { setPromiseToast } from "@plane/propel/toast";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
@@ -24,7 +31,9 @@ type TCalendarQuickAddIssueActions = {
   isEpic?: boolean;
 };
 
-export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = observer((props) => {
+export const CalendarQuickAddIssueActions = observer(function CalendarQuickAddIssueActions(
+  props: TCalendarQuickAddIssueActions
+) {
   const { prePopulatedData, quickAddCallback, addIssuesToView, onOpen, isEpic = false } = props;
   const { t } = useTranslation();
   // router
@@ -102,7 +111,7 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
         customQuickAddButton={
           <div
             className={cn(
-              "md:opacity-0 rounded md:border-[0.5px] border-custom-border-200 md:group-hover:opacity-100",
+              "overflow-hidden rounded-sm bg-layer-transparent hover:bg-layer-transparent-hover md:opacity-0 md:group-hover:opacity-100",
               {
                 block: isMenuOpen,
               }
@@ -115,9 +124,9 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
               className="w-full"
               customButtonClassName="w-full"
               customButton={
-                <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-text-350 hover:text-custom-text-300">
-                  <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
-                  <span className="text-sm font-medium flex-shrink-0">
+                <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-tertiary hover:text-tertiary">
+                  <PlusIcon className="h-3.5 w-3.5 flex-shrink-0 stroke-2" />
+                  <span className="flex-shrink-0 text-13 font-medium">
                     {isEpic ? t("epic.add.label") : t("issue.add.label")}
                   </span>
                 </div>

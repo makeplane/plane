@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor, Range } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -5,6 +11,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-with-text";
 import type { InsertImageComponentProps } from "@/extensions/custom-image/types";
 // helpers
+import type { ExtendedEmojiStorage } from "@/extensions/emoji/emoji";
 import { findTableAncestor } from "@/helpers/common";
 
 export const setText = (editor: Editor, range?: Range) => {
@@ -183,4 +190,11 @@ export const insertHorizontalRule = (editor: Editor, range?: Range) => {
 export const insertCallout = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).insertCallout().run();
   else editor.chain().focus().insertCallout().run();
+};
+
+export const openEmojiPicker = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).run();
+  const emojiStorage = editor.storage.emoji as ExtendedEmojiStorage;
+  emojiStorage.forceOpen = true;
+  editor.chain().focus().insertContent(":").run();
 };

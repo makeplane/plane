@@ -1,16 +1,25 @@
-import { FC, useCallback, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { FileRejection, useDropzone } from "react-dropzone";
+import type { FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { EIssueServiceType, TIssueServiceType } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // hooks
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // types
-import { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
+import type { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
 // components
 import { IssueAttachmentsListItem } from "./attachment-list-item";
 import { IssueAttachmentsUploadItem } from "./attachment-list-upload-item";
@@ -26,7 +35,7 @@ type TIssueAttachmentItemList = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((props) => {
+export const IssueAttachmentItemList = observer(function IssueAttachmentItemList(props: TIssueAttachmentItemList) {
   const {
     workspaceSlug,
     projectId,
@@ -124,11 +133,11 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
           >
             <input {...getInputProps()} />
             {isDragActive && (
-              <div className="absolute flex items-center justify-center left-0 top-0 h-full w-full bg-custom-background-90/75 z-30 ">
-                <div className="flex items-center justify-center p-1 rounded-md bg-custom-background-100">
-                  <div className="flex flex-col justify-center items-center px-5 py-6 rounded-md border border-dashed border-custom-border-300">
+              <div className="absolute top-0 left-0 z-30 flex h-full w-full items-center justify-center bg-surface-2/75">
+                <div className="flex items-center justify-center rounded-md bg-surface-1 p-1">
+                  <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-strong px-5 py-6">
                     <UploadCloud className="size-7" />
-                    <span className="text-sm text-custom-text-300">{t("attachment.drag_and_drop")}</span>
+                    <span className="text-13 text-tertiary">{t("attachment.drag_and_drop")}</span>
                   </div>
                 </div>
               </div>

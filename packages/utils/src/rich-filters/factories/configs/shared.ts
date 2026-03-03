@@ -1,4 +1,10 @@
-import {
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type {
   FILTER_FIELD_TYPE,
   TBaseFilterFieldConfig,
   TDateFilterFieldConfig,
@@ -11,6 +17,7 @@ import {
   TSingleSelectFilterFieldConfig,
   TSupportedFilterFieldConfigs,
   TSupportedOperators,
+  TOperatorSpecificConfigs,
 } from "@plane/types";
 
 /**
@@ -18,9 +25,7 @@ import {
  * @param config - The filter config to create
  * @returns The created filter config
  */
-export const createFilterConfig = <P extends TFilterProperty, V extends TFilterValue>(
-  config: TFilterConfig<P, V>
-): TFilterConfig<P, V> => config;
+export const createFilterConfig = <P extends TFilterProperty>(config: TFilterConfig<P>): TFilterConfig<P> => config;
 
 /**
  * Base parameters for filter type config factory functions.
@@ -29,14 +34,21 @@ export const createFilterConfig = <P extends TFilterProperty, V extends TFilterV
 export type TCreateFilterConfigParams = Omit<TBaseFilterFieldConfig, "isOperatorEnabled"> & {
   isEnabled: boolean;
   allowedOperators: Set<TSupportedOperators>;
+  rightContent?: React.ReactNode; // content to display on the right side of the filter option in the dropdown
+  tooltipContent?: React.ReactNode; // content to display when hovering over the applied filter item in the filter list
 };
+
+/**
+ * Type for filter icon type
+ */
+export type TFilterIconType = string | number | boolean | object | undefined;
 
 /**
  * Icon configuration for filters and their options.
  * - filterIcon: Optional icon for the filter
  * - getOptionIcon: Function to get icon for specific option values
  */
-export interface IFilterIconConfig<T extends string | number | boolean | object | undefined = undefined> {
+export interface IFilterIconConfig<T extends TFilterIconType = undefined> {
   filterIcon?: React.FC<React.SVGAttributes<SVGElement>>;
   getOptionIcon?: (value: T) => React.ReactNode;
 }
@@ -49,16 +61,20 @@ export type TCreateDateFilterParams = TCreateFilterConfigParams & IFilterIconCon
 /**
  * Helper to create an operator entry for the supported operators map.
  * This ensures consistency between the operator key and the operator passed to the config function.
+ * Returns a type compatible with TOperatorSpecificConfigs so Map constructor accepts union types.
  * @param operator - The operator to use as both key and parameter
  * @param createParams - The base filter configuration parameters
  * @param configFn - Function that creates the operator config using base configuration
- * @returns A tuple of operator and its config
+ * @returns A tuple of operator and its config, typed to be compatible with operator configs map
  */
-export const createOperatorConfigEntry = <T, P extends TCreateFilterConfigParams>(
+export const createOperatorConfigEntry = <
+  T extends TOperatorSpecificConfigs[keyof TOperatorSpecificConfigs],
+  P extends TCreateFilterConfigParams,
+>(
   operator: TSupportedOperators,
   createParams: P,
   configFn: (updatedParams: P) => T
-): [TSupportedOperators, T] => [
+): [TSupportedOperators, TOperatorSpecificConfigs[keyof TOperatorSpecificConfigs]] => [
   operator,
   configFn({ isOperatorEnabled: createParams.allowedOperators.has(operator), ...createParams }),
 ];

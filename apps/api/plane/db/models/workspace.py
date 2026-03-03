@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import pytz
 from typing import Optional, Any
@@ -129,9 +133,7 @@ class Workspace(BaseModel):
         on_delete=models.CASCADE,
         related_name="owner_workspace",
     )
-    slug = models.SlugField(
-        max_length=48, db_index=True, unique=True, validators=[slug_validator]
-    )
+    slug = models.SlugField(max_length=48, db_index=True, unique=True, validators=[slug_validator])
     organization_size = models.CharField(max_length=20, blank=True, null=True)
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
     background_color = models.CharField(max_length=255, default=get_random_color)
@@ -151,9 +153,7 @@ class Workspace(BaseModel):
             return self.logo
         return None
 
-    def delete(
-        self, using: Optional[str] = None, soft: bool = True, *args: Any, **kwargs: Any
-    ):
+    def delete(self, using: Optional[str] = None, soft: bool = True, *args: Any, **kwargs: Any):
         """
         Override the delete method to append epoch timestamp to the slug when soft deleting.
 
@@ -183,12 +183,8 @@ class Workspace(BaseModel):
 
 
 class WorkspaceBaseModel(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", models.CASCADE, related_name="workspace_%(class)s"
-    )
-    project = models.ForeignKey(
-        "db.Project", models.CASCADE, related_name="project_%(class)s", null=True
-    )
+    workspace = models.ForeignKey("db.Workspace", models.CASCADE, related_name="workspace_%(class)s")
+    project = models.ForeignKey("db.Project", models.CASCADE, related_name="project_%(class)s", null=True)
 
     class Meta:
         abstract = True
@@ -200,9 +196,7 @@ class WorkspaceBaseModel(BaseModel):
 
 
 class WorkspaceMember(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_member"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_member")
     member = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -214,6 +208,9 @@ class WorkspaceMember(BaseModel):
     default_props = models.JSONField(default=get_default_props)
     issue_props = models.JSONField(default=get_issue_props)
     is_active = models.BooleanField(default=True)
+    getting_started_checklist = models.JSONField(default=dict)
+    tips = models.JSONField(default=dict)
+    explored_features = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["workspace", "member", "deleted_at"]
@@ -235,9 +232,7 @@ class WorkspaceMember(BaseModel):
 
 
 class WorkspaceMemberInvite(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_member_invite"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_member_invite")
     email = models.CharField(max_length=255)
     accepted = models.BooleanField(default=False)
     token = models.CharField(max_length=255)
@@ -266,9 +261,7 @@ class WorkspaceMemberInvite(BaseModel):
 class Team(BaseModel):
     name = models.CharField(max_length=255, verbose_name="Team Name")
     description = models.TextField(verbose_name="Team Description", blank=True)
-    workspace = models.ForeignKey(
-        Workspace, on_delete=models.CASCADE, related_name="workspace_team"
-    )
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name="workspace_team")
     logo_props = models.JSONField(default=dict)
 
     def __str__(self):
@@ -291,13 +284,9 @@ class Team(BaseModel):
 
 
 class WorkspaceTheme(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="themes"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="themes")
     name = models.CharField(max_length=300)
-    actor = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="themes"
-    )
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="themes")
     colors = models.JSONField(default=dict)
 
     def __str__(self):
@@ -319,6 +308,10 @@ class WorkspaceTheme(BaseModel):
 
 
 class WorkspaceUserProperties(BaseModel):
+    class NavigationControlPreference(models.TextChoices):
+        ACCORDION = "ACCORDION", "Accordion"
+        TABBED = "TABBED", "Tabbed"
+
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
@@ -333,6 +326,12 @@ class WorkspaceUserProperties(BaseModel):
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
     rich_filters = models.JSONField(default=dict)
+    navigation_project_limit = models.IntegerField(default=10)
+    navigation_control_preference = models.CharField(
+        max_length=25,
+        choices=NavigationControlPreference.choices,
+        default=NavigationControlPreference.ACCORDION,
+    )
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]
@@ -425,6 +424,7 @@ class WorkspaceUserPreference(BaseModel):
         DRAFTS = "drafts", "Drafts"
         YOUR_WORK = "your_work", "Your Work"
         ARCHIVES = "archives", "Archives"
+        STICKIES = "stickies", "Stickies"
 
     workspace = models.ForeignKey(
         "db.Workspace",

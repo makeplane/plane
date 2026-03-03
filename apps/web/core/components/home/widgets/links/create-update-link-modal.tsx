@@ -1,14 +1,20 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
 // plane ui
 import { useTranslation } from "@plane/i18n";
-import { TLink, TLinkEditableFields } from "@plane/types";
-import { Button, Input, ModalCore } from "@plane/ui";
-import { TLinkOperations } from "./use-links";
+import { Button } from "@plane/propel/button";
+import type { TLinkEditableFields } from "@plane/types";
+import { Input, ModalCore } from "@plane/ui";
+import type { TLinkOperations } from "./use-links";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "remove">;
 
@@ -28,7 +34,7 @@ const defaultValues: TLinkCreateFormFieldOptions = {
   url: "",
 };
 
-export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) => {
+export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(props: TLinkCreateEditModal) {
   // props
   const { isModalOpen, handleOnClose, linkOperations, preloadedData } = props;
   // react hook form
@@ -66,14 +72,14 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
     <ModalCore isOpen={isModalOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {preloadedData?.id ? t("update") : t("add")} {t("home.quick_links.title")}
           </h3>
           <div className="mt-2 space-y-3">
             <div>
-              <label htmlFor="url" className="mb-2 text-custom-text-200 text-base font-medium">
+              <label htmlFor="url" className="mb-2 text-14 font-medium text-secondary">
                 {t("link.modal.url.text")}
-                <span className="text-[10px] block">{t("required")}</span>
+                <span className="block text-10">{t("required")}</span>
               </label>
               <Controller
                 control={control}
@@ -94,12 +100,12 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
                   />
                 )}
               />
-              {errors.url && <span className="text-xs text-red-500">{t("link.modal.url.required")}</span>}
+              {errors.url && <span className="text-11 text-danger-primary">{t("link.modal.url.required")}</span>}
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-custom-text-200 text-base font-medium">
+              <label htmlFor="title" className="mb-2 text-14 font-medium text-secondary">
                 {t("link.modal.title.text")}
-                <span className="text-[10px] block">{t("optional")}</span>
+                <span className="block text-10">{t("optional")}</span>
               </label>
               <Controller
                 control={control}
@@ -120,11 +126,11 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={onClose}>
+        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
+          <Button variant="secondary" size="lg" onClick={onClose}>
             {t("Cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
             {preloadedData?.id ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}{" "}
             {t("home.quick_links.title")}
           </Button>

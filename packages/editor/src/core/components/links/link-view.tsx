@@ -1,5 +1,12 @@
-import { Editor } from "@tiptap/react";
-import { CSSProperties, useEffect, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor } from "@tiptap/react";
+import type { CSSProperties } from "react";
+import { useEffect, useState } from "react";
 // components
 import { LinkEditView, LinkPreview } from "@/components/links";
 
@@ -15,7 +22,7 @@ export type LinkViewProps = {
   closeLinkView: () => void;
 };
 
-export const LinkView = (props: LinkViewProps & { style: CSSProperties }) => {
+export function LinkView(props: LinkViewProps & { style: CSSProperties }) {
   const [currentView, setCurrentView] = useState<LinkViews>(props.view ?? "LinkPreview");
   const [prevFrom, setPrevFrom] = useState(props.from);
 
@@ -36,4 +43,4 @@ export const LinkView = (props: LinkViewProps & { style: CSSProperties }) => {
       {currentView === "LinkEditView" && <LinkEditView viewProps={props} switchView={switchView} />}
     </>
   );
-};
+}

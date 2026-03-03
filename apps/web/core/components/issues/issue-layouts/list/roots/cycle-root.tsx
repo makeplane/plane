@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -12,7 +18,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
 
-export const CycleListLayout: React.FC = observer(() => {
+export const CycleListLayout = observer(function CycleListLayout() {
   const { workspaceSlug, projectId, cycleId } = useParams();
   // store
   const { issues } = useIssues(EIssuesStoreType.CYCLE);

@@ -1,10 +1,15 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import type { FC } from "react";
+import { useMemo, useState } from "react";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // plane types
-import { TInboxIssueFilterMemberKeys } from "@plane/types";
+import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
 import { Avatar, Loader } from "@plane/ui";
 // components
@@ -23,7 +28,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterMember: FC<Props> = observer((props: Props) => {
+export const FilterMember = observer(function FilterMember(props: Props) {
   const { filterKey, label = "Members", memberIds, searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
@@ -95,7 +100,7 @@ export const FilterMember: FC<Props> = observer((props: Props) => {
                 {sortedOptions.length > 5 && (
                   <button
                     type="button"
-                    className="ml-8 text-xs font-medium text-custom-primary-100"
+                    className="ml-8 text-11 font-medium text-accent-primary"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === sortedOptions.length ? "View less" : "View all"}
@@ -103,7 +108,7 @@ export const FilterMember: FC<Props> = observer((props: Props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

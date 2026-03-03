@@ -1,6 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { computed, makeObservable } from "mobx";
 // types / constants
-import { BaseCommandPaletteStore, IBaseCommandPaletteStore } from "@/store/base-command-palette.store";
+import type { IBaseCommandPaletteStore } from "@/store/base-command-palette.store";
+import { BaseCommandPaletteStore } from "@/store/base-command-palette.store";
 
 export interface ICommandPaletteStore extends IBaseCommandPaletteStore {
   // computed

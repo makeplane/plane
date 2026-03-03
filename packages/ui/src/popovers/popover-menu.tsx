@@ -1,12 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { Fragment } from "react";
 // components
 import { cn } from "../utils";
 import { Popover } from "./popover";
 // helpers
 // types
-import { TPopoverMenu } from "./types";
+import type { TPopoverMenu } from "./types";
 
-export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
+export function PopoverMenu<T>(props: TPopoverMenu<T>) {
   const {
     popperPosition = "bottom-end",
     popperPadding = 0,
@@ -29,7 +35,7 @@ export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
       button={button}
       disabled={disabled}
       panelClassName={cn(
-        "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2 text-xs shadow-custom-shadow-rg focus:outline-none",
+        "my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2 text-11 shadow-raised-200 focus:outline-none",
         panelClassName
       )}
       popoverClassName={popoverClassName}
@@ -42,4 +48,4 @@ export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
       </Fragment>
     </Popover>
   );
-};
+}

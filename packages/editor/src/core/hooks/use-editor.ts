@@ -1,16 +1,26 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEditorState, useEditor as useTiptapEditor } from "@tiptap/react";
 import { useImperativeHandle, useEffect } from "react";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import type { MarkdownStorage } from "tiptap-markdown";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
 import { getEditorRefHelpers } from "@/helpers/editor-ref";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // props
 import { CoreEditorProps } from "@/props";
 // types
 import type { TEditorHookProps } from "@/types";
+
+declare module "@tiptap/core" {
+  interface Storage {
+    markdown: MarkdownStorage;
+  }
+}
 
 export const useEditor = (props: TEditorHookProps) => {
   const {
@@ -25,6 +35,7 @@ export const useEditor = (props: TEditorHookProps) => {
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    getEditorMetaData,
     handleEditorReady,
     id = "",
     initialValue,
@@ -35,8 +46,9 @@ export const useEditor = (props: TEditorHookProps) => {
     onEditorFocus,
     onTransaction,
     placeholder,
-    provider,
+    showPlaceholderOnEmpty,
     tabIndex,
+    provider,
     value,
   } = props;
 
@@ -61,10 +73,13 @@ export const useEditor = (props: TEditorHookProps) => {
           extendedEditorProps,
           fileHandler,
           flaggedExtensions,
+          getEditorMetaData,
           isTouchDevice,
           mentionHandler,
           placeholder,
+          showPlaceholderOnEmpty,
           tabIndex,
+          provider,
         }),
         ...extensions,
       ],
@@ -73,7 +88,11 @@ export const useEditor = (props: TEditorHookProps) => {
       onTransaction: () => {
         onTransaction?.();
       },
-      onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
+      onUpdate: ({ editor, transaction }) => {
+        // Check if this update is only due to migration update
+        const isMigrationUpdate = transaction?.getMeta("uniqueIdOnlyChange") === true;
+        onChange?.(editor.getJSON(), editor.getHTML(), { isMigrationUpdate });
+      },
       onDestroy: () => handleEditorReady?.(false),
       onFocus: onEditorFocus,
     },
@@ -86,10 +105,12 @@ export const useEditor = (props: TEditorHookProps) => {
     // supported and value is undefined when the data from swr is not populated
     if (value == null) return;
     if (editor) {
-      const isUploadInProgress = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress;
+      const { uploadInProgress: isUploadInProgress } = editor.storage.utility;
       if (!editor.isDestroyed && !isUploadInProgress) {
         try {
-          editor.commands.setContent(value, false, { preserveWhitespace: true });
+          editor.commands.setContent(value, false, {
+            preserveWhitespace: true,
+          });
           if (editor.state.selection) {
             const docLength = editor.state.doc.content.size;
             const relativePosition = Math.min(editor.state.selection.from, docLength - 1);
@@ -113,7 +134,7 @@ export const useEditor = (props: TEditorHookProps) => {
   const assetsList = useEditorState({
     editor,
     selector: ({ editor }) => ({
-      assets: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.assetsList : [],
+      assets: editor?.storage.utility?.assetsList ?? [],
     }),
   });
   // trigger callback when assets list changes
@@ -123,7 +144,16 @@ export const useEditor = (props: TEditorHookProps) => {
     onAssetChange(assets);
   }, [assetsList?.assets, onAssetChange]);
 
-  useImperativeHandle(forwardedRef, () => getEditorRefHelpers({ editor, provider }), [editor, provider]);
+  useImperativeHandle(
+    forwardedRef,
+    () =>
+      getEditorRefHelpers({
+        editor,
+        getEditorMetaData,
+        provider,
+      }),
+    [editor, getEditorMetaData, provider]
+  );
 
   if (!editor) {
     return null;

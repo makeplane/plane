@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { MAX_FILE_SIZE } from "@plane/constants";
-import { TFileHandler } from "@plane/editor";
+import type { TFileHandler } from "@plane/editor";
 import { SitesFileService } from "@plane/services";
 import { getFileURL } from "@plane/utils";
 // services
@@ -58,6 +64,10 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
         await sitesFileService.restoreNewAsset(anchor, src);
       }
     },
+    duplicate: async (assetId: string) =>
+      // Duplication is not supported for sites/space app
+      // Return the same assetId as a fallback
+      assetId,
     validation: {
       maxFileSize: MAX_FILE_SIZE,
     },

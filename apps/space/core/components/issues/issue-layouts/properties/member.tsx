@@ -1,8 +1,13 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 // icons
-import { LucideIcon, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { MembersPropertyIcon } from "@plane/propel/icons";
 // plane ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 // plane utils
@@ -10,7 +15,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 //
-import { TPublicMember } from "@/types/member";
+import type { TPublicMember } from "@/types/member";
 
 type Props = {
   memberIds: string[];
@@ -23,7 +28,7 @@ type AvatarProps = {
   icon?: LucideIcon;
 };
 
-export const ButtonAvatars: React.FC<AvatarProps> = observer((props: AvatarProps) => {
+export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps) {
   const { showTooltip, members, icon: Icon } = props;
 
   if (Array.isArray(members)) {
@@ -48,22 +53,26 @@ export const ButtonAvatars: React.FC<AvatarProps> = observer((props: AvatarProps
     }
   }
 
-  return Icon ? <Icon className="h-3 w-3 flex-shrink-0" /> : <Users className="h-3 w-3 mx-[4px] flex-shrink-0" />;
+  return Icon ? (
+    <Icon className="h-3 w-3 flex-shrink-0" />
+  ) : (
+    <MembersPropertyIcon className="mx-[4px] h-3 w-3 flex-shrink-0" />
+  );
 });
 
-export const IssueBlockMembers = observer(({ memberIds, shouldShowBorder = true }: Props) => {
+export const IssueBlockMembers = observer(function IssueBlockMembers({ memberIds, shouldShowBorder = true }: Props) {
   const { getMembersByIds } = useMember();
 
   const members = getMembersByIds(memberIds);
 
   return (
-    <div className="relative h-full flex flex-wrap items-center gap-1">
+    <div className="relative flex h-full flex-wrap items-center gap-1">
       <div
-        className={cn("flex flex-shrink-0 cursor-default items-center rounded-md text-xs", {
-          "border-[0.5px] border-custom-border-300 px-2.5 py-1": shouldShowBorder && !members?.length,
+        className={cn("flex flex-shrink-0 cursor-default items-center rounded-md text-11", {
+          "border-[0.5px] border-strong px-2.5 py-1": shouldShowBorder && !members?.length,
         })}
       >
-        <div className="flex items-center gap-1.5 text-custom-text-200">
+        <div className="flex items-center gap-1.5 text-secondary">
           <ButtonAvatars members={members} showTooltip={false} />
           {!shouldShowBorder && members.length <= 1 && (
             <span>{members?.[0]?.member__display_name ?? "No Assignees"}</span>

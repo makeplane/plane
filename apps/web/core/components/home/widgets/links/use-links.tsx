@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import { useTranslation } from "@plane/i18n";
-import { TProjectLink } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TProjectLink } from "@plane/types";
 import { useHome } from "@/hooks/store/use-home";
 
 export type TLinkOperations = {

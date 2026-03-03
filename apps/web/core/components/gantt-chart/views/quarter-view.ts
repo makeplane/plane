@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 //
 import type { ChartDataType } from "@plane/types";
 import { quarters } from "../data";
 import { getNumberOfDaysBetweenTwoDates } from "./helpers";
-import { getMonthsBetweenTwoDates, IMonthBlock } from "./month-view";
+import type { IMonthBlock } from "./month-view";
+import { getMonthsBetweenTwoDates } from "./month-view";
 
 export interface IQuarterMonthBlock {
   children: IMonthBlock[];

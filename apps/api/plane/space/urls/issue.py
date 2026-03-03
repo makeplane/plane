@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from django.urls import path
 
 
@@ -22,9 +26,7 @@ urlpatterns = [
     ),
     path(
         "anchor/<str:anchor>/issues/<uuid:issue_id>/comments/<uuid:pk>/",
-        IssueCommentPublicViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        IssueCommentPublicViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="issue-comments-project-board",
     ),
     path(
@@ -49,9 +51,7 @@ urlpatterns = [
     ),
     path(
         "anchor/<str:anchor>/issues/<uuid:issue_id>/votes/",
-        IssueVotePublicViewSet.as_view(
-            {"get": "list", "post": "create", "delete": "destroy"}
-        ),
+        IssueVotePublicViewSet.as_view({"get": "list", "post": "create", "delete": "destroy"}),
         name="issue-vote-project-board",
     ),
 ]

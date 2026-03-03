@@ -1,6 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { EInboxIssueSource, TInboxIssue, TIssue, TInboxIssueWithPagination } from "@plane/types";
+import type { TInboxIssue, TIssue, TInboxIssueWithPagination } from "@plane/types";
+import { EInboxIssueSource } from "@plane/types";
 // helpers
 // services
 import { APIService } from "@/services/api.service";

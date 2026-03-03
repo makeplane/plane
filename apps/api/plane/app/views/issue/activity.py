@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from itertools import chain
 
@@ -63,9 +67,7 @@ class IssueActivityEndpoint(BaseAPIView):
             issue_activities = issue_activities.prefetch_related(
                 Prefetch(
                     "issue__issue_intake",
-                    queryset=IntakeIssue.objects.only(
-                        "source_email", "source", "extra"
-                    ),
+                    queryset=IntakeIssue.objects.only("source_email", "source", "extra"),
                     to_attr="source_data",
                 )
             )

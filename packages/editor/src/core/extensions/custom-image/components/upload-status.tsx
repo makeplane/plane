@@ -1,17 +1,19 @@
-import { Editor } from "@tiptap/core";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 type Props = {
   editor: Editor;
   nodeId: string;
 };
 
-export const ImageUploadStatus: React.FC<Props> = (props) => {
+export function ImageUploadStatus(props: Props) {
   const { editor, nodeId } = props;
   // Displayed status that will animate smoothly
   const [displayStatus, setDisplayStatus] = useState(0);
@@ -20,7 +22,7 @@ export const ImageUploadStatus: React.FC<Props> = (props) => {
   // subscribe to image upload status
   const uploadStatus: number | undefined = useEditorState({
     editor,
-    selector: ({ editor }) => getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.assetsUploadStatus?.[nodeId],
+    selector: ({ editor }) => editor.storage.utility?.assetsUploadStatus?.[nodeId],
   });
 
   useEffect(() => {
@@ -57,8 +59,8 @@ export const ImageUploadStatus: React.FC<Props> = (props) => {
   if (uploadStatus === undefined) return null;
 
   return (
-    <div className="absolute top-1 right-1 z-20 bg-black/60 rounded text-xs font-medium w-10 text-center">
+    <div className="absolute top-1 right-1 z-20 w-10 rounded-sm bg-black/60 text-center text-11 font-medium">
       {displayStatus}%
     </div>
   );
-};
+}

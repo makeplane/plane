@@ -1,6 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import { addColumn, removeColumn, addRow, removeRow, TableMap, type TableRect } from "@tiptap/pm/tables";
+import { addColumn, removeColumn, addRow, removeRow, TableMap } from "@tiptap/pm/tables";
+import type { TableRect } from "@tiptap/pm/tables";
 // local imports
 import { isCellEmpty } from "../../table/utilities/helpers";
 

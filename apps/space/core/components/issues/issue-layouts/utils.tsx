@@ -1,11 +1,14 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import isNil from "lodash/isNil";
-import { ContrastIcon } from "lucide-react";
+import { isNil } from "lodash-es";
 // types
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
-import { CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
-import {
+import { CycleGroupIcon, CycleIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import type {
   GroupByColumnTypes,
   IGroupByColumn,
   TCycleGroups,
@@ -17,11 +20,11 @@ import { Avatar } from "@plane/ui";
 // components
 // constants
 // stores
-import { ICycleStore } from "@/store/cycle.store";
-import { IIssueLabelStore } from "@/store/label.store";
-import { IIssueMemberStore } from "@/store/members.store";
-import { IIssueModuleStore } from "@/store/module.store";
-import { IStateStore } from "@/store/state.store";
+import type { ICycleStore } from "@/store/cycle.store";
+import type { IIssueLabelStore } from "@/store/label.store";
+import type { IIssueMemberStore } from "@/store/members.store";
+import type { IIssueModuleStore } from "@/store/module.store";
+import type { IStateStore } from "@/store/state.store";
 
 export const HIGHLIGHT_CLASS = "highlight";
 export const HIGHLIGHT_WITH_LINE = "highlight-with-line";
@@ -47,7 +50,7 @@ export const getGroupByColumns = (
     case "labels":
       return getLabelsColumns(label) as any;
     case "assignees":
-      return getAssigneeColumns(member) as any;
+      return getAssigneeColumns(member);
     case "created_by":
       return getCreatedByColumns(member) as any;
     default:
@@ -68,7 +71,7 @@ const getCycleColumns = (cycleStore: ICycleStore): IGroupByColumn[] | undefined 
       cycleGroups.push({
         id: cycle.id,
         name: cycle.name,
-        icon: <CycleGroupIcon cycleGroup={cycleStatus as TCycleGroups} className="h-3.5 w-3.5" />,
+        icon: <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />,
         payload: { cycle_id: cycle.id },
       });
     }
@@ -76,7 +79,7 @@ const getCycleColumns = (cycleStore: ICycleStore): IGroupByColumn[] | undefined 
   cycleGroups.push({
     id: "None",
     name: "None",
-    icon: <ContrastIcon className="h-3.5 w-3.5" />,
+    icon: <CycleIcon className="h-3.5 w-3.5" />,
     payload: { cycle_id: null },
   });
 
@@ -95,14 +98,14 @@ const getModuleColumns = (moduleStore: IIssueModuleStore): IGroupByColumn[] | un
       moduleGroups.push({
         id: moduleInfo.id,
         name: moduleInfo.name,
-        icon: <DiceIcon className="h-3.5 w-3.5" />,
+        icon: <ModuleIcon className="h-3.5 w-3.5" />,
         payload: { module_ids: [moduleInfo.id] },
       });
   }) as any;
   moduleGroups.push({
     id: "None",
     name: "None",
-    icon: <DiceIcon className="h-3.5 w-3.5" />,
+    icon: <ModuleIcon className="h-3.5 w-3.5" />,
     payload: { module_ids: [] },
   });
 
@@ -199,11 +202,8 @@ export const getDisplayPropertiesCount = (
   return count;
 };
 
-export const getIssueBlockId = (
-  issueId: string | undefined,
-  groupId: string | undefined,
-  subGroupId?: string | undefined
-) => `issue_${issueId}_${groupId}_${subGroupId}`;
+export const getIssueBlockId = (issueId: string | undefined, groupId: string | undefined, subGroupId?: string) =>
+  `issue_${issueId}_${groupId}_${subGroupId}`;
 
 /**
  * returns empty Array if groupId is None
@@ -224,7 +224,7 @@ export const removeNillKeys = <T,>(obj: T) =>
   Object.fromEntries(Object.entries(obj ?? {}).filter(([key, value]) => key && !isNil(value)));
 
 /**
- * This Method returns if the the grouped values are subGrouped
+ * This Method returns if the grouped values are subGrouped
  * @param groupedIssueIds
  * @returns
  */

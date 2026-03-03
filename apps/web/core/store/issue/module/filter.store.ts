@@ -1,11 +1,16 @@
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
 import { computedFn } from "mobx-utils";
-import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
-import {
-  EIssuesStoreType,
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TIssueKanbanFilters,
@@ -15,12 +20,14 @@ import {
   TWorkItemFilterExpression,
   TSupportedFilterForUpdate,
 } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
 import { IssueFiltersService } from "@/services/issue_filter.service";
-import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import type { IBaseIssueFilterStore } from "../helpers/issue-filter-helper.store";
+import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
-import { IIssueRootStore } from "../root.store";
+import type { IIssueRootStore } from "../root.store";
 // constants
 // services
 
@@ -206,7 +213,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
       if (isEmpty(this.filters) || isEmpty(this.filters[moduleId])) return;
 
       const _filters = {
-        richFilters: this.filters[moduleId].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[moduleId].richFilters,
         displayFilters: this.filters[moduleId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[moduleId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[moduleId].kanbanFilters as TIssueKanbanFilters,
@@ -247,7 +254,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.moduleIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+            this.rootIssueStore.moduleIssues.clear(true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {

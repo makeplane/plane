@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import pytest
 from datetime import timedelta
 from uuid import uuid4
@@ -14,9 +18,7 @@ class TestApiTokenEndpoint:
 
     # POST /user/api-tokens/ tests
     @pytest.mark.django_db
-    def test_create_api_token_success(
-        self, session_client, create_user, api_token_data
-    ):
+    def test_create_api_token_success(self, session_client, create_user, api_token_data):
         """Test successful API token creation"""
         # Arrange
         session_client.force_authenticate(user=create_user)
@@ -38,9 +40,7 @@ class TestApiTokenEndpoint:
         assert token.label == api_token_data["label"]
 
     @pytest.mark.django_db
-    def test_create_api_token_for_bot_user(
-        self, session_client, create_bot_user, api_token_data
-    ):
+    def test_create_api_token_for_bot_user(self, session_client, create_bot_user, api_token_data):
         """Test API token creation for bot user"""
         # Arrange
         session_client.force_authenticate(user=create_bot_user)
@@ -111,9 +111,7 @@ class TestApiTokenEndpoint:
         APIToken.objects.create(label="Token 1", user=create_user, user_type=0)
         APIToken.objects.create(label="Token 2", user=create_user, user_type=0)
         # Create a service token (should be excluded)
-        APIToken.objects.create(
-            label="Service Token", user=create_user, user_type=0, is_service=True
-        )
+        APIToken.objects.create(label="Service Token", user=create_user, user_type=0, is_service=True)
         url = reverse("api-tokens")
 
         # Act
@@ -140,13 +138,11 @@ class TestApiTokenEndpoint:
 
     # GET /user/api-tokens/<pk>/ tests
     @pytest.mark.django_db
-    def test_get_specific_api_token(
-        self, session_client, create_user, create_api_token_for_user
-    ):
+    def test_get_specific_api_token(self, session_client, create_user, create_api_token_for_user):
         """Test retrieving a specific API token"""
         # Arrange
         session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens", kwargs={"pk": create_api_token_for_user.pk})
+        url = reverse("api-tokens-details", kwargs={"pk": create_api_token_for_user.pk})
 
         # Act
         response = session_client.get(url)
@@ -155,9 +151,7 @@ class TestApiTokenEndpoint:
         assert response.status_code == status.HTTP_200_OK
         assert str(response.data["id"]) == str(create_api_token_for_user.pk)
         assert response.data["label"] == create_api_token_for_user.label
-        assert (
-            "token" not in response.data
-        )  # Token should not be visible in read serializer
+        assert "token" not in response.data  # Token should not be visible in read serializer
 
     @pytest.mark.django_db
     def test_get_nonexistent_api_token(self, session_client, create_user):
@@ -165,7 +159,7 @@ class TestApiTokenEndpoint:
         # Arrange
         session_client.force_authenticate(user=create_user)
         fake_pk = uuid4()
-        url = reverse("api-tokens", kwargs={"pk": fake_pk})
+        url = reverse("api-tokens-details", kwargs={"pk": fake_pk})
 
         # Act
         response = session_client.get(url)
@@ -182,11 +176,9 @@ class TestApiTokenEndpoint:
         unique_email = f"other-{unique_id}@plane.so"
         unique_username = f"other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
-        other_token = APIToken.objects.create(
-            label="Other Token", user=other_user, user_type=0
-        )
+        other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)
         session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens", kwargs={"pk": other_token.pk})
+        url = reverse("api-tokens-details", kwargs={"pk": other_token.pk})
 
         # Act
         response = session_client.get(url)
@@ -196,13 +188,11 @@ class TestApiTokenEndpoint:
 
     # DELETE /user/api-tokens/<pk>/ tests
     @pytest.mark.django_db
-    def test_delete_api_token_success(
-        self, session_client, create_user, create_api_token_for_user
-    ):
+    def test_delete_api_token_success(self, session_client, create_user, create_api_token_for_user):
         """Test successful API token deletion"""
         # Arrange
         session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens", kwargs={"pk": create_api_token_for_user.pk})
+        url = reverse("api-tokens-details", kwargs={"pk": create_api_token_for_user.pk})
 
         # Act
         response = session_client.delete(url)
@@ -217,7 +207,7 @@ class TestApiTokenEndpoint:
         # Arrange
         session_client.force_authenticate(user=create_user)
         fake_pk = uuid4()
-        url = reverse("api-tokens", kwargs={"pk": fake_pk})
+        url = reverse("api-tokens-details", kwargs={"pk": fake_pk})
 
         # Act
         response = session_client.delete(url)
@@ -234,11 +224,9 @@ class TestApiTokenEndpoint:
         unique_email = f"delete-other-{unique_id}@plane.so"
         unique_username = f"delete_other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
-        other_token = APIToken.objects.create(
-            label="Other Token", user=other_user, user_type=0
-        )
+        other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)
         session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens", kwargs={"pk": other_token.pk})
+        url = reverse("api-tokens-details", kwargs={"pk": other_token.pk})
 
         # Act
         response = session_client.delete(url)
@@ -252,11 +240,9 @@ class TestApiTokenEndpoint:
     def test_delete_service_api_token_forbidden(self, session_client, create_user):
         """Test deleting a service API token (should fail)"""
         # Arrange
-        service_token = APIToken.objects.create(
-            label="Service Token", user=create_user, user_type=0, is_service=True
-        )
+        service_token = APIToken.objects.create(label="Service Token", user=create_user, user_type=0, is_service=True)
         session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens", kwargs={"pk": service_token.pk})
+        url = reverse("api-tokens-details", kwargs={"pk": service_token.pk})
 
         # Act
         response = session_client.delete(url)
@@ -268,13 +254,11 @@ class TestApiTokenEndpoint:
 
     # PATCH /user/api-tokens/<pk>/ tests
     @pytest.mark.django_db
-    def test_patch_api_token_success(
-        self, session_client, create_user, create_api_token_for_user
-    ):
+    def test_patch_api_token_success(self, session_client, create_user, create_api_token_for_user):
         """Test successful API token update"""
         # Arrange
         session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens", kwargs={"pk": create_api_token_for_user.pk})
+        url = reverse("api-tokens-details", kwargs={"pk": create_api_token_for_user.pk})
         update_data = {
             "label": "Updated Token Label",
             "description": "Updated description",
@@ -294,13 +278,11 @@ class TestApiTokenEndpoint:
         assert create_api_token_for_user.description == update_data["description"]
 
     @pytest.mark.django_db
-    def test_patch_api_token_partial_update(
-        self, session_client, create_user, create_api_token_for_user
-    ):
+    def test_patch_api_token_partial_update(self, session_client, create_user, create_api_token_for_user):
         """Test partial API token update"""
         # Arrange
         session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens", kwargs={"pk": create_api_token_for_user.pk})
+        url = reverse("api-tokens-details", kwargs={"pk": create_api_token_for_user.pk})
         original_description = create_api_token_for_user.description
         update_data = {"label": "Only Label Updated"}
 
@@ -318,7 +300,7 @@ class TestApiTokenEndpoint:
         # Arrange
         session_client.force_authenticate(user=create_user)
         fake_pk = uuid4()
-        url = reverse("api-tokens", kwargs={"pk": fake_pk})
+        url = reverse("api-tokens-details", kwargs={"pk": fake_pk})
         update_data = {"label": "New Label"}
 
         # Act
@@ -336,11 +318,9 @@ class TestApiTokenEndpoint:
         unique_email = f"patch-other-{unique_id}@plane.so"
         unique_username = f"patch_other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
-        other_token = APIToken.objects.create(
-            label="Other Token", user=other_user, user_type=0
-        )
+        other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)
         session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens", kwargs={"pk": other_token.pk})
+        url = reverse("api-tokens-details", kwargs={"pk": other_token.pk})
         update_data = {"label": "Hacked Label"}
 
         # Act
@@ -353,6 +333,56 @@ class TestApiTokenEndpoint:
         other_token.refresh_from_db()
         assert other_token.label == "Other Token"
 
+    @pytest.mark.django_db
+    def test_patch_cannot_modify_token(self, session_client, create_user, create_api_token_for_user):
+        """Test that token value cannot be modified via PATCH"""
+        # Arrange
+        session_client.force_authenticate(user=create_user)
+        url = reverse("api-tokens-details", kwargs={"pk": create_api_token_for_user.pk})
+        original_token = create_api_token_for_user.token
+        update_data = {"token": "plane_api_malicious_token_value"}
+
+        # Act
+        response = session_client.patch(url, update_data, format="json")
+
+        # Assert
+        assert response.status_code == status.HTTP_200_OK
+        create_api_token_for_user.refresh_from_db()
+        assert create_api_token_for_user.token == original_token
+
+    @pytest.mark.django_db
+    def test_patch_cannot_modify_user_type(self, session_client, create_user, create_api_token_for_user):
+        """Test that user_type cannot be modified via PATCH"""
+        # Arrange
+        session_client.force_authenticate(user=create_user)
+        url = reverse("api-tokens-details", kwargs={"pk": create_api_token_for_user.pk})
+        update_data = {"user_type": 1}
+
+        # Act
+        response = session_client.patch(url, update_data, format="json")
+
+        # Assert
+        assert response.status_code == status.HTTP_200_OK
+        create_api_token_for_user.refresh_from_db()
+        assert create_api_token_for_user.user_type == 0
+
+    @pytest.mark.django_db
+    def test_patch_cannot_modify_service_token(self, session_client, create_user):
+        """Test that service tokens cannot be modified through user token endpoint"""
+        # Arrange
+        service_token = APIToken.objects.create(label="Service Token", user=create_user, user_type=0, is_service=True)
+        session_client.force_authenticate(user=create_user)
+        url = reverse("api-tokens-details", kwargs={"pk": service_token.pk})
+        update_data = {"label": "Hacked Service Token"}
+
+        # Act
+        response = session_client.patch(url, update_data, format="json")
+
+        # Assert
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        service_token.refresh_from_db()
+        assert service_token.label == "Service Token"
+
     # Authentication tests
     @pytest.mark.django_db
     def test_all_endpoints_require_authentication(self, api_client):
@@ -361,9 +391,9 @@ class TestApiTokenEndpoint:
         endpoints = [
             (reverse("api-tokens"), "get"),
             (reverse("api-tokens"), "post"),
-            (reverse("api-tokens", kwargs={"pk": uuid4()}), "get"),
-            (reverse("api-tokens", kwargs={"pk": uuid4()}), "patch"),
-            (reverse("api-tokens", kwargs={"pk": uuid4()}), "delete"),
+            (reverse("api-tokens-details", kwargs={"pk": uuid4()}), "get"),
+            (reverse("api-tokens-details", kwargs={"pk": uuid4()}), "patch"),
+            (reverse("api-tokens-details", kwargs={"pk": uuid4()}), "delete"),
         ]
 
         # Act & Assert

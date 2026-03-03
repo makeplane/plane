@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 // ui
@@ -6,7 +10,7 @@ import { Checkbox } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 type Props = {
   className?: string;
@@ -16,7 +20,7 @@ type Props = {
   selectionHelpers: TSelectionHelper;
 };
 
-export const MultipleSelectEntityAction: React.FC<Props> = observer((props) => {
+export const MultipleSelectEntityAction = observer(function MultipleSelectEntityAction(props: Props) {
   const { className, disabled = false, groupId, id, selectionHelpers } = props;
   // derived values
   const isSelected = selectionHelpers.getIsEntitySelected(id);
@@ -25,7 +29,7 @@ export const MultipleSelectEntityAction: React.FC<Props> = observer((props) => {
 
   return (
     <Checkbox
-      className={cn("!outline-none size-3.5", className)}
+      className={cn("size-3.5 !outline-none", className)}
       iconClassName="size-3"
       onClick={(e) => {
         e.stopPropagation();

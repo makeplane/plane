@@ -1,11 +1,16 @@
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
 import { computedFn } from "mobx-utils";
-import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
-import {
-  EIssuesStoreType,
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TIssueKanbanFilters,
@@ -15,12 +20,14 @@ import {
   TWorkItemFilterExpression,
   TSupportedFilterForUpdate,
 } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
-import { IssueFiltersService } from "@/services/issue_filter.service";
-import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import type { IBaseIssueFilterStore } from "../helpers/issue-filter-helper.store";
+import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
-import { IIssueRootStore } from "../root.store";
+import type { IIssueRootStore } from "../root.store";
+import { ProjectService } from "@/services/project";
 // constants
 // services
 
@@ -55,7 +62,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   // root store
   rootIssueStore: IIssueRootStore;
   // services
-  issueFilterService;
+  projectService;
 
   constructor(_rootStore: IIssueRootStore) {
     super();
@@ -73,7 +80,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
     // root store
     this.rootIssueStore = _rootStore;
     // services
-    this.issueFilterService = new IssueFiltersService();
+    this.projectService = new ProjectService();
   }
 
   get issueFilters() {
@@ -128,7 +135,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   );
 
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
-    const _filters = await this.issueFilterService.fetchProjectIssueFilters(workspaceSlug, projectId);
+    const _filters = await this.projectService.getProjectUserProperties(workspaceSlug, projectId);
 
     const richFilters = _filters?.rich_filters;
     const displayFilters = this.computedDisplayFilters(_filters?.display_filters);
@@ -175,7 +182,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
       });
 
       this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
-      await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
+      await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
         rich_filters: filters,
       });
     } catch (error) {
@@ -189,7 +196,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
       if (isEmpty(this.filters) || isEmpty(this.filters[projectId])) return;
 
       const _filters = {
-        richFilters: this.filters[projectId].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[projectId].richFilters,
         displayFilters: this.filters[projectId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[projectId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[projectId].kanbanFilters as TIssueKanbanFilters,
@@ -230,14 +237,14 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.projectIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+            this.rootIssueStore.projectIssues.clear(true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
             this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
           }
 
-          await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
+          await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
             display_filters: _filters.displayFilters,
           });
 
@@ -257,7 +264,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             });
           });
 
-          await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
+          await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
             display_properties: _filters.displayProperties,
           });
           break;

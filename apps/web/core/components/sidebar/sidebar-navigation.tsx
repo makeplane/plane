@@ -1,6 +1,9 @@
-"use client";
-import React, { FC } from "react";
-// helpers
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { cn } from "@plane/utils";
 
 type TSidebarNavItem = {
@@ -9,16 +12,15 @@ type TSidebarNavItem = {
   children?: React.ReactNode;
 };
 
-export const SidebarNavItem: FC<TSidebarNavItem> = (props) => {
+export function SidebarNavItem(props: TSidebarNavItem) {
   const { className, isActive, children } = props;
   return (
     <div
       className={cn(
-        "cursor-pointer relative group w-full flex items-center justify-between gap-1.5 rounded px-2 py-1 outline-none",
+        "group relative flex w-full cursor-pointer items-center justify-between gap-1.5 rounded-md px-2 py-1 outline-none",
         {
-          "text-custom-primary-200 bg-custom-primary-100/10": isActive,
-          "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
-            !isActive,
+          "!bg-layer-transparent-active text-primary": isActive,
+          "text-secondary hover:bg-layer-transparent-hover active:bg-layer-transparent-active": !isActive,
         },
         className
       )}
@@ -26,4 +28,4 @@ export const SidebarNavItem: FC<TSidebarNavItem> = (props) => {
       {children}
     </div>
   );
-};
+}

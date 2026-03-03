@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import base64
 import hashlib
 from django.conf import settings
@@ -31,9 +35,7 @@ def decrypt_data(encrypted_data):
     try:
         if encrypted_data:
             cipher_suite = Fernet(derive_key(settings.SECRET_KEY))
-            decrypted_data = cipher_suite.decrypt(
-                encrypted_data.encode()
-            )  # Convert string back to bytes
+            decrypted_data = cipher_suite.decrypt(encrypted_data.encode())  # Convert string back to bytes
             return decrypted_data.decode()
         else:
             return ""

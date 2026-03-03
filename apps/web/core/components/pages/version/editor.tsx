@@ -1,17 +1,23 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import type { TDisplayConfig } from "@plane/editor";
 import type { JSONContent, TPageVersion } from "@plane/types";
-import { isJSONContentEmpty } from "@plane/utils";
 import { Loader } from "@plane/ui";
+import { isJSONContentEmpty } from "@plane/utils";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;
@@ -19,7 +25,7 @@ export type TVersionEditorProps = {
   storeType: EPageStoreType;
 };
 
-export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
+export const PagesVersionEditor = observer(function PagesVersionEditor(props: TVersionEditorProps) {
   const { activeVersion, versionDetails } = props;
   // params
   const { workspaceSlug, projectId } = useParams();

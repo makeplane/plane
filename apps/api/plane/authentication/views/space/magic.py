@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
@@ -58,9 +62,7 @@ class MagicSignInSpaceEndpoint(View):
 
         if code == "" or email == "":
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED"],
                 error_message="MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED",
             )
             params = exc.get_error_dict()
@@ -88,9 +90,7 @@ class MagicSignInSpaceEndpoint(View):
 
         # Active User
         try:
-            provider = MagicCodeProvider(
-                request=request, key=f"magic_{email}", code=code
-            )
+            provider = MagicCodeProvider(request=request, key=f"magic_{email}", code=code)
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
@@ -121,9 +121,7 @@ class MagicSignUpSpaceEndpoint(View):
 
         if code == "" or email == "":
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED"],
                 error_message="MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED",
             )
             params = exc.get_error_dict()
@@ -150,9 +148,7 @@ class MagicSignUpSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            provider = MagicCodeProvider(
-                request=request, key=f"magic_{email}", code=code
-            )
+            provider = MagicCodeProvider(request=request, key=f"magic_{email}", code=code)
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)

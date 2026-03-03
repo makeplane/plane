@@ -1,10 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane package imports
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { IInsightField, ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";
+import type { IInsightField } from "@plane/constants";
+import { ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IAnalyticsResponse, TAnalyticsTabsBase } from "@plane/types";
+import type { IAnalyticsResponse, TAnalyticsTabsBase } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
@@ -43,10 +50,13 @@ const getInsightLabel = (
   return `${prefix}${baseTranslation}${suffix}`;
 };
 
-const TotalInsights: React.FC<{
+const TotalInsights = observer(function TotalInsights({
+  analyticsType,
+  peekView,
+}: {
   analyticsType: TAnalyticsTabsBase;
   peekView?: boolean;
-}> = observer(({ analyticsType, peekView }) => {
+}) {
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();
   const { t } = useTranslation();

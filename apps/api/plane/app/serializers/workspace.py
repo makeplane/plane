@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 from rest_framework import serializers
 
@@ -107,7 +111,7 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
     invite_link = serializers.SerializerMethodField()
 
     def get_invite_link(self, obj):
-        return f"/workspace-invitations/?invitation_id={obj.id}&email={obj.email}&slug={obj.workspace.slug}"
+        return f"/workspace-invitations/?invitation_id={obj.id}&slug={obj.workspace.slug}&token={obj.token}"
 
     class Meta:
         model = WorkspaceMemberInvite
@@ -173,9 +177,7 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
         )
 
         if workspace_user_link.exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this workspace and owner"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this workspace and owner"})
 
         return super().create(validated_data)
 
@@ -189,9 +191,7 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
         )
 
         if workspace_user_link.exclude(pk=instance.id).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this workspace and owner"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this workspace and owner"})
 
         return super().update(instance, validated_data)
 
@@ -219,11 +219,7 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
         return project.identifier if project else None
 
     def get_assignees(self, obj):
-        return list(
-            obj.assignees.filter(issue_assignee__deleted_at__isnull=True).values_list(
-                "id", flat=True
-            )
-        )
+        return list(obj.assignees.filter(issue_assignee__deleted_at__isnull=True).values_list("id", flat=True))
 
 
 class ProjectRecentVisitSerializer(serializers.ModelSerializer):
@@ -234,9 +230,9 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "logo_props", "project_members", "identifier"]
 
     def get_project_members(self, obj):
-        members = ProjectMember.objects.filter(
-            project_id=obj.id, member__is_bot=False, is_active=True
-        ).values_list("member", flat=True)
+        members = ProjectMember.objects.filter(project_id=obj.id, member__is_bot=False, is_active=True).values_list(
+            "member", flat=True
+        )
 
         return members
 
@@ -257,11 +253,7 @@ class PageRecentVisitSerializer(serializers.ModelSerializer):
         ]
 
     def get_project_id(self, obj):
-        return (
-            obj.project_id
-            if hasattr(obj, "project_id")
-            else obj.projects.values_list("id", flat=True).first()
-        )
+        return obj.project_id if hasattr(obj, "project_id") else obj.projects.values_list("id", flat=True).first()
 
     def get_project_identifier(self, obj):
         project = obj.projects.first()
@@ -319,13 +311,9 @@ class StickySerializer(BaseSerializer):
     def validate(self, data):
         # Validate description content for security
         if "description_html" in data and data["description_html"]:
-            is_valid, error_msg, sanitized_html = validate_html_content(
-                data["description_html"]
-            )
+            is_valid, error_msg, sanitized_html = validate_html_content(data["description_html"])
             if not is_valid:
-                raise serializers.ValidationError(
-                    {"error": "html content is not valid"}
-                )
+                raise serializers.ValidationError({"error": "html content is not valid"})
             # Update the data with sanitized HTML if available
             if sanitized_html is not None:
                 data["description_html"] = sanitized_html
@@ -333,9 +321,7 @@ class StickySerializer(BaseSerializer):
         if "description_binary" in data and data["description_binary"]:
             is_valid, error_msg = validate_binary_data(data["description_binary"])
             if not is_valid:
-                raise serializers.ValidationError(
-                    {"description_binary": "Invalid binary data"}
-                )
+                raise serializers.ValidationError({"description_binary": "Invalid binary data"})
 
         return data
 

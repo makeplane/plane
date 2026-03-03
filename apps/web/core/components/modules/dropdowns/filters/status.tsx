@@ -1,11 +1,15 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ModuleStatusIcon } from "@plane/propel/icons";
-import { TModuleStatus } from "@plane/types";
+import type { TModuleStatus } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 
@@ -15,7 +19,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterStatus: React.FC<Props> = observer((props) => {
+export const FilterStatus = observer(function FilterStatus(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -44,7 +48,7 @@ export const FilterStatus: React.FC<Props> = observer((props) => {
               />
             ))
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <p className="text-11 text-placeholder italic">No matches found</p>
           )}
         </div>
       )}

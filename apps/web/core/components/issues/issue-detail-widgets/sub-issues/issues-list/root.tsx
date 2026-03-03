@@ -1,18 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ListFilter } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import {
-  EIssueServiceType,
-  EIssuesStoreType,
-  GroupByColumnTypes,
-  TIssue,
-  TIssueServiceType,
-  TSubIssueOperations,
-} from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { GroupByColumnTypes, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
-import { Button } from "@plane/ui";
 import { SectionEmptyState } from "@/components/empty-state/section-empty-state-root";
 import { getGroupByColumns, isWorkspaceLevel } from "@/components/issues/issue-layouts/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -24,7 +24,7 @@ type Props = {
   parentIssueId: string;
   rootIssueId: string;
   spacingLeft: number;
-  disabled: boolean;
+  canEdit: boolean;
   handleIssueCrudState: (
     key: "create" | "existing" | "update" | "delete",
     issueId: string,
@@ -35,13 +35,13 @@ type Props = {
   storeType: EIssuesStoreType;
 };
 
-export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
+export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Props) {
   const {
     workspaceSlug,
     projectId,
     parentIssueId,
     rootIssueId,
-    disabled,
+    canEdit,
     handleIssueCrudState,
     subIssueOperations,
     issueServiceType = EIssueServiceType.ISSUES,
@@ -102,7 +102,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
           icon={<ListFilter />}
           customClassName={storeType !== EIssuesStoreType.EPIC ? "border-none" : ""}
           actionElement={
-            <Button variant="neutral-primary" size="sm" onClick={() => resetFilters(rootIssueId)}>
+            <Button variant="secondary" onClick={() => resetFilters(rootIssueId)}>
               {t("sub_work_item.empty_state.list_filters.action")}
             </Button>
           }
@@ -116,7 +116,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
             workspaceSlug={workspaceSlug}
             group={group}
             serviceType={issueServiceType}
-            disabled={disabled}
+            canEdit={canEdit}
             parentIssueId={parentIssueId}
             rootIssueId={rootIssueId}
             handleIssueCrudState={handleIssueCrudState}

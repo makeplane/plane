@@ -1,6 +1,14 @@
-import { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
+// assets
+import AllFiltersImage from "@/app/assets/empty-state/cycle/all-filters.svg?url";
+import NameFilterImage from "@/app/assets/empty-state/cycle/name-filter.svg?url";
 // components
 import { CyclesList } from "@/components/cycles/list";
 // ui
@@ -8,16 +16,13 @@ import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
-// assets
-import AllFiltersImage from "@/public/empty-state/cycle/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/cycle/name-filter.svg";
 
 export interface IArchivedCyclesView {
   workspaceSlug: string;
   projectId: string;
 }
 
-export const ArchivedCyclesView: FC<IArchivedCyclesView> = observer((props) => {
+export const ArchivedCyclesView = observer(function ArchivedCyclesView(props: IArchivedCyclesView) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getFilteredArchivedCycleIds, loader } = useCycle();
@@ -29,15 +34,15 @@ export const ArchivedCyclesView: FC<IArchivedCyclesView> = observer((props) => {
 
   if (filteredArchivedCycleIds.length === 0)
     return (
-      <div className="h-full w-full grid place-items-center">
+      <div className="grid h-full w-full place-items-center">
         <div className="text-center">
-          <Image
+          <img
             src={archivedCyclesSearchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
-            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
+            className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching cycles"
           />
-          <h5 className="text-xl font-medium mt-7 mb-1">No matching cycles</h5>
-          <p className="text-custom-text-400 text-base">
+          <h5 className="mt-7 mb-1 text-18 font-medium">No matching cycles</h5>
+          <p className="text-14 text-placeholder">
             {archivedCyclesSearchQuery.trim() === ""
               ? "Remove the filters to see all cycles"
               : "Remove the search criteria to see all cycles"}

@@ -1,9 +1,17 @@
-import React, { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon, TModuleStatus } from "@plane/propel/icons";
-import { IModule } from "@plane/types";
+import type { TModuleStatus } from "@plane/propel/icons";
+import { ModuleStatusIcon } from "@plane/propel/icons";
+import type { IModule } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 
 type Props = {
@@ -12,7 +20,7 @@ type Props = {
   handleModuleDetailsChange: (payload: Partial<IModule>) => Promise<void>;
 };
 
-export const ModuleStatusDropdown: FC<Props> = observer((props: Props) => {
+export const ModuleStatusDropdown = observer(function ModuleStatusDropdown(props: Props) {
   const { isDisabled, moduleDetails, handleModuleDetailsChange } = props;
   const { t } = useTranslation();
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
@@ -23,7 +31,7 @@ export const ModuleStatusDropdown: FC<Props> = observer((props: Props) => {
     <CustomSelect
       customButton={
         <span
-          className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
+          className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-11 ${
             isDisabled ? "cursor-not-allowed" : "cursor-pointer"
           }`}
           style={{

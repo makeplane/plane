@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -18,7 +24,7 @@ type Props = {
   updateTotalPages: (count: number) => void;
 };
 
-export const WorkspaceActivityListPage: React.FC<Props> = (props) => {
+export function WorkspaceActivityListPage(props: Props) {
   const { cursor, perPage, updateResultsCount, updateTotalPages } = props;
   // router
   const { workspaceSlug, userId } = useParams();
@@ -46,4 +52,4 @@ export const WorkspaceActivityListPage: React.FC<Props> = (props) => {
   }, [updateResultsCount, updateTotalPages, userProfileActivity]);
 
   return <ActivityList activity={userProfileActivity} />;
-};
+}

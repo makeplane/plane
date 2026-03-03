@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export enum ECardVariant {
   WITHOUT_SHADOW = "without-shadow",
   WITH_SHADOW = "with-shadow",
@@ -18,11 +24,10 @@ export interface ICardProperties {
   [key: string]: string;
 }
 
-const DEFAULT_STYLE =
-  "bg-custom-background-100 rounded-lg border-[0.5px] border-custom-border-200 w-full flex flex-col";
+const DEFAULT_STYLE = "bg-surface-1 rounded-lg border-[0.5px] border-subtle w-full flex flex-col";
 export const containerStyle: ICardProperties = {
   [ECardVariant.WITHOUT_SHADOW]: "",
-  [ECardVariant.WITH_SHADOW]: "hover:shadow-custom-shadow-4xl duration-300",
+  [ECardVariant.WITH_SHADOW]: "hover:shadow-raised-200 duration-300",
 };
 export const spacings = {
   [ECardSpacing.SM]: "p-4",

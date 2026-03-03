@@ -1,8 +1,14 @@
-import { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
-import { E_SORT_ORDER, TActivityFilters, filterActivityOnSelectedFilters } from "@plane/constants";
-import { TCommentsOperations } from "@plane/types";
+import type { E_SORT_ORDER, TActivityFilters, EActivityFilterType } from "@plane/constants";
+import { BASE_ACTIVITY_FILTER_TYPES, filterActivityOnSelectedFilters } from "@plane/constants";
+import type { TCommentsOperations } from "@plane/types";
 // components
 import { CommentCard } from "@/components/comments/card/root";
 // hooks
@@ -26,7 +32,7 @@ type TIssueActivityCommentRoot = {
   sortOrder: E_SORT_ORDER;
 };
 
-export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer((props) => {
+export const IssueActivityCommentRoot = observer(function IssueActivityCommentRoot(props: TIssueActivityCommentRoot) {
   const {
     workspaceSlug,
     isIntakeIssue,
@@ -60,6 +66,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
           <CommentCard
             key={activityComment.id}
             workspaceSlug={workspaceSlug}
+            entityId={issueId}
             comment={comment}
             activityOperations={activityOperations}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
@@ -67,19 +74,23 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
             showCopyLinkOption={!isIntakeIssue}
             disabled={disabled}
             projectId={projectId}
+            enableReplies
           />
-        ) : activityComment.activity_type === "ACTIVITY" ? (
+        ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
           <IssueActivityItem
+            key={activityComment.id}
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
           />
         ) : activityComment.activity_type === "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY" ? (
           <IssueAdditionalPropertiesActivity
+            key={activityComment.id}
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
           />
         ) : activityComment.activity_type === "WORKLOG" ? (
           <IssueActivityWorklog
+            key={activityComment.id}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             issueId={issueId}

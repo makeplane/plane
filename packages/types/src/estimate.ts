@@ -1,4 +1,10 @@
-import { EEstimateSystem, EEstimateUpdateStages } from "./enums";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { EEstimateSystem, EEstimateUpdateStages } from "./enums";
 
 export interface IEstimatePoint {
   id: string | undefined;

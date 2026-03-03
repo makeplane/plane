@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from .analytic import urlpatterns as analytic_urls
 from .api import urlpatterns as api_urls
 from .asset import urlpatterns as asset_urls
@@ -17,6 +21,7 @@ from .views import urlpatterns as view_urls
 from .webhook import urlpatterns as webhook_urls
 from .workspace import urlpatterns as workspace_urls
 from .timezone import urlpatterns as timezone_urls
+from .exporter import urlpatterns as exporter_urls
 
 urlpatterns = [
     *analytic_urls,
@@ -38,4 +43,5 @@ urlpatterns = [
     *api_urls,
     *webhook_urls,
     *timezone_urls,
+    *exporter_urls,
 ]

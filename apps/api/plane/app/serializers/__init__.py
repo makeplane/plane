@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from .base import BaseSerializer
 from .user import (
     UserSerializer,
@@ -37,6 +41,7 @@ from .project import (
     ProjectMemberAdminSerializer,
     ProjectPublicMemberSerializer,
     ProjectMemberRoleSerializer,
+    ProjectMemberPreferenceSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import IssueViewSerializer, ViewIssueListSerializer
@@ -51,7 +56,7 @@ from .issue import (
     IssueCreateSerializer,
     IssueActivitySerializer,
     IssueCommentSerializer,
-    IssueUserPropertySerializer,
+    ProjectUserPropertySerializer,
     IssueAssigneeSerializer,
     LabelSerializer,
     IssueSerializer,

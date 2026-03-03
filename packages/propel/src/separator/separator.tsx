@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { Separator as SeparatorPrimitive } from "@base-ui-components/react/separator";
 import { cn } from "../utils";
@@ -10,18 +16,21 @@ interface SeparatorProps extends React.ComponentProps<typeof SeparatorPrimitive>
   orientation?: "horizontal" | "vertical";
 }
 
-const Separator = React.forwardRef<React.ElementRef<typeof SeparatorPrimitive>, SeparatorProps>(
-  ({ orientation = "horizontal", ...props }, ref) => (
+const Separator = React.forwardRef(function Separator(
+  { orientation = "horizontal", className, ...props }: SeparatorProps,
+  ref: React.ForwardedRef<React.ElementRef<typeof SeparatorPrimitive>>
+) {
+  return (
     <SeparatorPrimitive
       ref={ref}
       orientation={orientation}
       data-slot="separator"
       data-orientation={orientation}
       {...props}
-      className={cn("bg-custom-border-200", "shrink-0", orientation === "horizontal" ? "h-px w-full" : "h-full w-px")}
+      className={cn("bg-subtle-1", "shrink-0", orientation === "horizontal" ? "h-px w-full" : "h-full w-px", className)}
     />
-  )
-);
+  );
+});
 
 Separator.displayName = "Separator";
 

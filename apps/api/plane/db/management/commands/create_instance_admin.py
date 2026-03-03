@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.core.management.base import BaseCommand, CommandError
 
@@ -28,9 +32,7 @@ class Command(BaseCommand):
             instance = Instance.objects.last()
 
             # Get or create an instance admin
-            _, created = InstanceAdmin.objects.get_or_create(
-                user=user, instance=instance, role=20
-            )
+            _, created = InstanceAdmin.objects.get_or_create(user=user, instance=instance, role=20)
 
             if not created:
                 raise CommandError("The provided email is already an instance admin.")

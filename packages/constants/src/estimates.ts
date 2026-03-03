@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
-import { TEstimateSystems } from "@plane/types";
+import type { TEstimateSystems } from "@plane/types";
 
 export const MAX_ESTIMATE_POINT_INPUT_LENGTH = 20;
 

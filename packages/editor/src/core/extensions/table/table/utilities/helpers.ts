@@ -1,7 +1,15 @@
-import { type Editor, findParentNode } from "@tiptap/core";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { findParentNode } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import type { EditorState, Selection, Transaction } from "@tiptap/pm/state";
-import { CellSelection, type Rect, TableMap } from "@tiptap/pm/tables";
+import { CellSelection, TableMap } from "@tiptap/pm/tables";
+import type { Rect } from "@tiptap/pm/tables";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 

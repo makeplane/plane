@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import uuid
 import base64
@@ -25,9 +29,7 @@ def get_entity_id_field(entity_type, entity_id):
         FileAsset.EntityTypeContext.ISSUE_DESCRIPTION: {"issue_id": entity_id},
         FileAsset.EntityTypeContext.PAGE_DESCRIPTION: {"page_id": entity_id},
         FileAsset.EntityTypeContext.COMMENT_DESCRIPTION: {"comment_id": entity_id},
-        FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION: {
-            "draft_issue_id": entity_id
-        },
+        FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION: {"draft_issue_id": entity_id},
     }
     return entity_mapping.get(entity_type, {})
 
@@ -87,14 +89,10 @@ def copy_assets(entity, entity_identifier, project_id, asset_ids, user_id):
     duplicated_assets = []
     workspace = entity.workspace
     storage = S3Storage()
-    original_assets = FileAsset.objects.filter(
-        workspace=workspace, project_id=project_id, id__in=asset_ids
-    )
+    original_assets = FileAsset.objects.filter(workspace=workspace, project_id=project_id, id__in=asset_ids)
 
     for original_asset in original_assets:
-        destination_key = (
-            f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
-        )
+        destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
         duplicated_asset = FileAsset.objects.create(
             attributes={
                 "name": original_asset.attributes.get("name"),
@@ -118,17 +116,13 @@ def copy_assets(entity, entity_identifier, project_id, asset_ids, user_id):
             }
         )
     if duplicated_assets:
-        FileAsset.objects.filter(
-            pk__in=[item["new_asset_id"] for item in duplicated_assets]
-        ).update(is_uploaded=True)
+        FileAsset.objects.filter(pk__in=[item["new_asset_id"] for item in duplicated_assets]).update(is_uploaded=True)
 
     return duplicated_assets
 
 
 @shared_task
-def copy_s3_objects_of_description_and_assets(
-    entity_name, entity_identifier, project_id, slug, user_id
-):
+def copy_s3_objects_of_description_and_assets(entity_name, entity_identifier, project_id, slug, user_id):
     """
     Step 1: Extract asset ids from the description_html of the entity
     Step 2: Duplicate the assets
@@ -144,19 +138,15 @@ def copy_s3_objects_of_description_and_assets(
         entity = model_class.objects.get(id=entity_identifier)
         asset_ids = extract_asset_ids(entity.description_html, "image-component")
 
-        duplicated_assets = copy_assets(
-            entity, entity_identifier, project_id, asset_ids, user_id
-        )
+        duplicated_assets = copy_assets(entity, entity_identifier, project_id, asset_ids, user_id)
 
         updated_html = update_description(entity, duplicated_assets, "image-component")
 
         external_data = sync_with_external_service(entity_name, updated_html)
 
         if external_data:
-            entity.description = external_data.get("description")
-            entity.description_binary = base64.b64decode(
-                external_data.get("description_binary")
-            )
+            entity.description_json = external_data.get("description_json")
+            entity.description_binary = base64.b64decode(external_data.get("description_binary"))
             entity.save()
 
         return

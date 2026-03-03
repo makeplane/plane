@@ -1,13 +1,17 @@
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { set, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IIssueLabel, IIssueLabelTree } from "@plane/types";
+import type { IIssueLabel, IIssueLabelTree } from "@plane/types";
 // helpers
 import { buildTree } from "@plane/utils";
 // services
-import { syncIssuesWithDeletedLabels } from "@/local-db/utils/load-workspace";
 import { IssueLabelService } from "@/services/issue";
 // store
 import type { CoreRootStore } from "./root.store";
@@ -300,7 +304,6 @@ export class LabelStore implements ILabelStore {
       runInAction(() => {
         delete this.labelMap[labelId];
       });
-      syncIssuesWithDeletedLabels([labelId]);
     });
   };
 }

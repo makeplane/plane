@@ -1,4 +1,10 @@
 /**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+/**
  * Extended logical operators
  */
 export const EXTENDED_LOGICAL_OPERATOR = {} as const;
@@ -17,6 +23,11 @@ export const EXTENDED_COLLECTION_OPERATOR = {} as const;
  * Extended comparison operators
  */
 export const EXTENDED_COMPARISON_OPERATOR = {} as const;
+
+/**
+ * Extended operators that support multiple values
+ */
+export const EXTENDED_MULTI_VALUE_OPERATORS = [] as const;
 
 /**
  * All extended operators

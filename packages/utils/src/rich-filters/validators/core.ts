@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
-import { SingleOrArray, TFilterExpression, TFilterProperty, TFilterValue } from "@plane/types";
+import type { SingleOrArray, TFilterExpression, TFilterProperty, TFilterValue } from "@plane/types";
 // local imports
 import { getGroupChildren } from "../types";
 import { isConditionNode, isGroupNode } from "../types/core";

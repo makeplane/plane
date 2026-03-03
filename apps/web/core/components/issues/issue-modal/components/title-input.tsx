@@ -1,13 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React from "react";
 import { observer } from "mobx-react";
-import { Control, Controller, FormState } from "react-hook-form";
+import type { Control, FormState } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // ui
 import { Input } from "@plane/ui";
 // helpers
@@ -22,7 +27,7 @@ type TIssueTitleInputProps = {
   handleFormChange: () => void;
 };
 
-export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props) => {
+export const IssueTitleInput = observer(function IssueTitleInput(props: TIssueTitleInputProps) {
   const {
     control,
     issueTitleRef,
@@ -67,13 +72,13 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
             ref={issueTitleRef || ref}
             hasError={Boolean(errors.name)}
             placeholder={t("title")}
-            className="w-full text-base"
+            className="w-full text-body-sm-regular"
             autoFocus
             tabIndex={getIndex("name")}
           />
         )}
       />
-      <span className="text-xs font-medium text-red-500">{errors?.name?.message}</span>
+      <span className="text-caption-sm-medium text-danger-primary">{errors?.name?.message}</span>
     </div>
   );
 });

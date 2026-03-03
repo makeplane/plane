@@ -1,18 +1,25 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useEffect, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IUserLite } from "@plane/types";
+import { CheckIcon, SearchIcon, SuspendedUserIcon } from "@plane/propel/icons";
+import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
+import type { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
-import { cn, getFileURL } from "@plane/utils";
+import { cn, getFileURL, sortByCurrentUserThenSelected } from "@plane/utils";
 // hooks
+import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -25,9 +32,10 @@ interface Props {
   optionsClassName?: string;
   placement: Placement | undefined;
   referenceElement: HTMLButtonElement | null;
+  value?: string[] | string | null;
 }
 
-export const MemberOptions: React.FC<Props> = observer((props: Props) => {
+export const MemberOptions = observer(function MemberOptions(props: Props) {
   const {
     getUserDetails,
     isOpen,
@@ -36,7 +44,10 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     optionsClassName = "",
     placement,
     referenceElement,
+    value,
   } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // refs
   const inputRef = useRef<HTMLInputElement | null>(null);
   // states
@@ -46,6 +57,9 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
   const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
+  const {
+    workspace: { isUserSuspended },
+  } = useMember();
   const { isMobile } = usePlatformOS();
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -84,8 +98,19 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
         query: `${userDetails?.display_name} ${userDetails?.first_name} ${userDetails?.last_name}`,
         content: (
           <div className="flex items-center gap-2">
-            <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
-            <span className="flex-grow truncate">
+            <div className="w-4">
+              {isUserSuspended(userId, workspaceSlug?.toString()) ? (
+                <SuspendedUserIcon className="h-3.5 w-3.5 text-placeholder" />
+              ) : (
+                <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
+              )}
+            </div>
+            <span
+              className={cn(
+                "flex-grow truncate",
+                isUserSuspended(userId, workspaceSlug?.toString()) ? "text-placeholder" : ""
+              )}
+            >
               {currentUser?.id === userId ? t("you") : userDetails?.display_name}
             </span>
           </div>
@@ -94,14 +119,17 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     })
     .filter((o) => !!o);
 
-  const filteredOptions =
-    query === "" ? options : options?.filter((o) => o?.query.toLowerCase().includes(query.toLowerCase()));
+  const filteredOptions = sortByCurrentUserThenSelected(
+    query === "" ? options : options?.filter((o) => o?.query.toLowerCase().includes(query.toLowerCase())),
+    value,
+    currentUser?.id
+  );
 
   return createPortal(
     <Combobox.Options data-prevent-outside-click static>
       <div
         className={cn(
-          "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-30",
+          "z-30 my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none",
           optionsClassName
         )}
         ref={setPopperElement}
@@ -110,12 +138,12 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
         }}
         {...attributes.popper}
       >
-        <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-          <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+        <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
+          <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}
-            className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+            className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("search")}
@@ -133,25 +161,36 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
                       key={option.value}
                       value={option.value}
                       className={({ active, selected }) =>
-                        `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
-                          active ? "bg-custom-background-80" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                        cn(
+                          "flex w-full items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none",
+                          active && "bg-layer-transparent-hover",
+                          selected ? "text-primary" : "text-secondary",
+                          isUserSuspended(option.value, workspaceSlug?.toString())
+                            ? "cursor-not-allowed"
+                            : "cursor-pointer"
+                        )
                       }
+                      disabled={isUserSuspended(option.value, workspaceSlug?.toString())}
                     >
                       {({ selected }) => (
                         <>
                           <span className="flex-grow truncate">{option.content}</span>
-                          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                          {isUserSuspended(option.value, workspaceSlug?.toString()) && (
+                            <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
+                              Suspended
+                            </Pill>
+                          )}
                         </>
                       )}
                     </Combobox.Option>
                   )
               )
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">{t("no_matching_results")}</p>
+              <p className="px-1.5 py-1 text-placeholder italic">{t("no_matching_results")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-custom-text-400">{t("loading")}</p>
+            <p className="px-1.5 py-1 text-placeholder italic">{t("loading")}</p>
           )}
         </div>
       </div>

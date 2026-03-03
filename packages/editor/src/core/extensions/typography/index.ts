@@ -1,8 +1,9 @@
-import { Extension, InputRule } from "@tiptap/core";
+import type { InputRule } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+import type { TypographyOptions } from "./inputRules";
 import {
-  TypographyOptions,
   emDash,
   ellipsis,
   leftArrow,

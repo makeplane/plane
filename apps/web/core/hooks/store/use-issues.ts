@@ -1,9 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useContext } from "react";
-import merge from "lodash/merge";
-import { EIssuesStoreType, TIssueMap } from "@plane/types";
+import { merge } from "lodash-es";
+import type { TIssueMap } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { StoreContext } from "@/lib/store-context";
 // plane web types
-import { IProjectEpics, IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { IProjectEpics, IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 // types
 import type { ITeamIssues, ITeamIssuesFilter } from "@/plane-web/store/issue/team";
 import type { ITeamProjectWorkItemsFilter, ITeamProjectWorkItems } from "@/plane-web/store/issue/team-project";

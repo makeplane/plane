@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.db import models
 
@@ -44,12 +48,8 @@ class IntakeIssueStatus(models.IntegerChoices):
 
 
 class IntakeIssue(ProjectBaseModel):
-    intake = models.ForeignKey(
-        "db.Intake", related_name="issue_intake", on_delete=models.CASCADE
-    )
-    issue = models.ForeignKey(
-        "db.Issue", related_name="issue_intake", on_delete=models.CASCADE
-    )
+    intake = models.ForeignKey("db.Intake", related_name="issue_intake", on_delete=models.CASCADE)
+    issue = models.ForeignKey("db.Issue", related_name="issue_intake", on_delete=models.CASCADE)
     status = models.IntegerField(
         choices=(
             (-2, "Pending"),

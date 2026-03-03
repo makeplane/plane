@@ -1,18 +1,30 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
+    "emitDeclarationOnly": false,
     "esModuleInterop": true,
-    "incremental": false,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "isolatedModules": true,
-    "lib": ["es2022", "DOM", "DOM.Iterable"],
-    "module": "NodeNext",
+    "lib": ["es2023"],
+    "module": "preserve",
     "moduleDetection": "force",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ES2022"
+    "target": "esnext",
+    "tsBuildInfoFile": ".turbo/tsconfig.tsbuildinfo",
+    "verbatimModuleSyntax": true
   }
 }

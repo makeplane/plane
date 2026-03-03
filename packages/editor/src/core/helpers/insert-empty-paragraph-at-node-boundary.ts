@@ -1,14 +1,17 @@
-import { KeyboardShortcutCommand } from "@tiptap/core";
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { KeyboardShortcutCommand } from "@tiptap/core";
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 
 type Direction = "up" | "down";
 
-export const insertEmptyParagraphAtNodeBoundaries: (
-  direction: Direction,
-  nodeType: string
-) => KeyboardShortcutCommand =
+export const insertEmptyParagraphAtNodeBoundaries: (direction: Direction, nodeType: string) => KeyboardShortcutCommand =
   (direction, nodeType) =>
   ({ editor }) => {
     try {

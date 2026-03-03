@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export const renderEmoji = (
   emoji:
     | string
@@ -10,7 +16,7 @@ export const renderEmoji = (
 
   if (typeof emoji === "object")
     return (
-      <span style={{ color: emoji.color }} className="material-symbols-rounded text-lg">
+      <span style={{ color: emoji.color }} className="material-symbols-rounded text-16">
         {emoji.name}
       </span>
     );

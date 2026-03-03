@@ -1,5 +1,10 @@
-import isEqual from "lodash/isEqual";
-import set from "lodash/set";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { isEqual, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // components
@@ -314,7 +319,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
   });
 
   /**
-   * updates the block's position such as marginLeft and width wile dragging
+   * updates the block's position such as marginLeft and width while dragging
    * @param id
    * @param deltaLeft
    * @param deltaWidth

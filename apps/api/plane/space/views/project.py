@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.db.models import Exists, OuterRef
 
@@ -16,9 +20,7 @@ class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -27,16 +29,12 @@ class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
-        deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
-        ).values_list
+        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").values_list
         projects = (
             Project.objects.filter(workspace=deploy_board.workspace)
             .annotate(
                 is_public=Exists(
-                    DeployBoard.objects.filter(
-                        anchor=anchor, project_id=OuterRef("pk"), entity_name="project"
-                    )
+                    DeployBoard.objects.filter(anchor=anchor, project_id=OuterRef("pk"), entity_name="project")
                 )
             )
             .filter(is_public=True)
@@ -69,6 +67,11 @@ class ProjectMembersEndpoint(BaseAPIView):
 
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
+        if not deploy_board:
+            return Response(
+                {"error": "Invalid anchor"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         members = ProjectMember.objects.filter(
             project=deploy_board.project,
@@ -77,10 +80,7 @@ class ProjectMembersEndpoint(BaseAPIView):
         ).values(
             "id",
             "member",
-            "member__first_name",
-            "member__last_name",
             "member__display_name",
-            "project",
-            "workspace",
+            "member__avatar",
         )
         return Response(members, status=status.HTTP_200_OK)

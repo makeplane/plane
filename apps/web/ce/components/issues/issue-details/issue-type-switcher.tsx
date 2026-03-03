@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // store hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -9,7 +15,7 @@ export type TIssueTypeSwitcherProps = {
   disabled: boolean;
 };
 
-export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((props) => {
+export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIssueTypeSwitcherProps) {
   const { issueId } = props;
   // store hooks
   const {

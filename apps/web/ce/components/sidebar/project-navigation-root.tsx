@@ -1,6 +1,10 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC } from "react";
+import type { FC } from "react";
 // components
 import { ProjectNavigation } from "@/components/workspace/sidebar/project-navigation";
 
@@ -9,7 +13,7 @@ type TProjectItemsRootProps = {
   projectId: string;
 };
 
-export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = (props) => {
+export function ProjectNavigationRoot(props: TProjectItemsRootProps) {
   const { workspaceSlug, projectId } = props;
   return <ProjectNavigation workspaceSlug={workspaceSlug} projectId={projectId} />;
-};
+}

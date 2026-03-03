@@ -1,9 +1,12 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveIcon, ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
+import { ArchiveIcon, CycleIcon, ModuleIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 // ui
@@ -15,8 +18,8 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 type TProps = {
   activeTab: "issues" | "cycles" | "modules";
@@ -32,21 +35,21 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
   issues: {
     label: "Work items",
     href: "/issues",
-    icon: LayersIcon,
+    icon: WorkItemsIcon,
   },
   cycles: {
     label: "Cycles",
     href: "/cycles",
-    icon: ContrastIcon,
+    icon: CycleIcon,
   },
   modules: {
     label: "Modules",
     href: "/modules",
-    icon: DiceIcon,
+    icon: ModuleIcon,
   },
 };
 
-export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
+export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(props: TProps) {
   const { activeTab } = props;
   // router
   const router = useAppRouter();
@@ -69,13 +72,13 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumb workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                   label="Archives"
-                  icon={<ArchiveIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -84,7 +87,7 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
                 component={
                   <BreadcrumbLink
                     label={activeTabBreadcrumbDetail.label}
-                    icon={<activeTabBreadcrumbDetail.icon className="h-4 w-4 text-custom-text-300" />}
+                    icon={<activeTabBreadcrumbDetail.icon className="h-4 w-4 text-tertiary" />}
                   />
                 }
               />
@@ -96,7 +99,7 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
               tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "work items" : "work item"} in project's archived`}
               position="bottom"
             >
-              <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+              <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2.5 py-0.5 text-center text-11 font-semibold text-accent-primary">
                 {issueCount}
               </span>
             </Tooltip>

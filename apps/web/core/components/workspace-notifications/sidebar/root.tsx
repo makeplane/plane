@@ -1,10 +1,15 @@
-"use client";
-import { FC, useCallback } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { NOTIFICATION_TABS, TNotificationTab } from "@plane/constants";
+import type { TNotificationTab } from "@plane/constants";
+import { NOTIFICATION_TABS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
 import { cn, getNumberCount } from "@plane/utils";
@@ -13,7 +18,7 @@ import { CountChip } from "@/components/common/count-chip";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-
+// plane web components
 import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/list-root";
 // local imports
 import { NotificationEmptyState } from "./empty-state";
@@ -21,7 +26,7 @@ import { AppliedFilters } from "./filters/applied-filter";
 import { NotificationSidebarHeader } from "./header";
 import { NotificationsLoader } from "./loader";
 
-export const NotificationsSidebarRoot: FC = observer(() => {
+export const NotificationsSidebarRoot = observer(function NotificationsSidebarRoot() {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
@@ -53,12 +58,12 @@ export const NotificationsSidebarRoot: FC = observer(() => {
   return (
     <div
       className={cn(
-        "relative border-0 md:border-r border-custom-border-200 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all max-md:overflow-hidden",
-        currentSelectedNotificationId ? "w-0 md:w-2/6" : "w-full md:w-2/6"
+        "relative z-[10] h-full flex-shrink-0 border-0 border-subtle bg-surface-1 transition-all max-md:overflow-hidden md:border-r",
+        currentSelectedNotificationId ? "w-0 md:w-3/12" : "w-full md:w-3/12"
       )}
     >
-      <div className="relative w-full h-full flex flex-col">
-        <Row className="h-header border-b border-custom-border-200 flex flex-shrink-0">
+      <div className="relative flex h-full w-full flex-col">
+        <Row className="flex h-header flex-shrink-0 border-b border-subtle">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
         </Row>
 
@@ -66,15 +71,16 @@ export const NotificationsSidebarRoot: FC = observer(() => {
           {NOTIFICATION_TABS.map((tab) => (
             <div
               key={tab.value}
-              className="h-full px-3 relative cursor-pointer"
+              className="relative h-full cursor-pointer px-3"
               onClick={() => handleTabClick(tab.value)}
             >
               <div
                 className={cn(
-                  `relative h-full flex justify-center items-center gap-1 text-sm transition-all`,
-                  currentNotificationTab === tab.value
-                    ? "text-custom-primary-100"
-                    : "text-custom-text-100 hover:text-custom-text-200"
+                  "relative flex h-full items-center justify-center gap-1 text-body-xs-medium transition-all",
+                  {
+                    "text-accent-primary": currentNotificationTab === tab.value,
+                    "text-primary hover:text-secondary": currentNotificationTab !== tab.value,
+                  }
                 )}
               >
                 <div className="font-medium">{t(tab.i18n_label)}</div>
@@ -83,7 +89,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
                 )}
               </div>
               {currentNotificationTab === tab.value && (
-                <div className="border absolute bottom-0 right-0 left-0 rounded-t-md border-custom-primary-100" />
+                <div className="absolute right-0 bottom-0 left-0 rounded-t-md border border-accent-strong" />
               )}
             </div>
           ))}
@@ -94,7 +100,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
 
         {/* rendering notifications */}
         {loader === "init-loader" ? (
-          <div className="relative w-full h-full overflow-hidden">
+          <div className="relative h-full w-full overflow-hidden">
             <NotificationsLoader />
           </div>
         ) : (
@@ -104,8 +110,8 @@ export const NotificationsSidebarRoot: FC = observer(() => {
                 <NotificationListRoot workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
               </ContentWrapper>
             ) : (
-              <div className="relative w-full h-full flex justify-center items-center">
-                <NotificationEmptyState />
+              <div className="relative flex h-full w-full items-center justify-center">
+                <NotificationEmptyState currentNotificationTab={currentNotificationTab} />
               </div>
             )}
           </>

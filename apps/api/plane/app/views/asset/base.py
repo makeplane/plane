@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -20,12 +24,8 @@ class FileAssetEndpoint(BaseAPIView):
         asset_key = str(workspace_id) + "/" + asset_key
         files = FileAsset.objects.filter(asset=asset_key)
         if files.exists():
-            serializer = FileAssetSerializer(
-                files, context={"request": request}, many=True
-            )
-            return Response(
-                {"data": serializer.data, "status": True}, status=status.HTTP_200_OK
-            )
+            serializer = FileAssetSerializer(files, context={"request": request}, many=True)
+            return Response({"data": serializer.data, "status": True}, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"error": "Asset key does not exist", "status": False},
@@ -65,9 +65,7 @@ class UserAssetsEndpoint(BaseAPIView):
         files = FileAsset.objects.filter(asset=asset_key, created_by=request.user)
         if files.exists():
             serializer = FileAssetSerializer(files, context={"request": request})
-            return Response(
-                {"data": serializer.data, "status": True}, status=status.HTTP_200_OK
-            )
+            return Response({"data": serializer.data, "status": True}, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"error": "Asset key does not exist", "status": False},

@@ -1,16 +1,19 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useEffect, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { DiceIcon } from "@plane/propel/icons";
-import { IModule } from "@plane/types";
-import { cn } from "@plane/utils";
+import { CheckIcon, SearchIcon, ModuleIcon } from "@plane/propel/icons";
+import type { IModule } from "@plane/types";
+import { cn, sortBySelectedFirst } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -30,10 +33,11 @@ interface Props {
   onDropdownOpen?: () => void;
   placement: Placement | undefined;
   referenceElement: HTMLButtonElement | null;
+  value?: string[] | string | null;
 }
 
-export const ModuleOptions = observer((props: Props) => {
-  const { getModuleById, isOpen, moduleIds, multiple, onDropdownOpen, placement, referenceElement } = props;
+export const ModuleOptions = observer(function ModuleOptions(props: Props) {
+  const { getModuleById, isOpen, moduleIds, multiple, onDropdownOpen, placement, referenceElement, value } = props;
   // refs
   const inputRef = useRef<HTMLInputElement | null>(null);
   // states
@@ -85,7 +89,7 @@ export const ModuleOptions = observer((props: Props) => {
       query: `${moduleDetails?.name}`,
       content: (
         <div className="flex items-center gap-2">
-          <DiceIcon className="h-3 w-3 flex-shrink-0" />
+          <ModuleIcon className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{moduleDetails?.name}</span>
         </div>
       ),
@@ -97,29 +101,31 @@ export const ModuleOptions = observer((props: Props) => {
       query: t("module.no_module"),
       content: (
         <div className="flex items-center gap-2">
-          <DiceIcon className="h-3 w-3 flex-shrink-0" />
+          <ModuleIcon className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{t("module.no_module")}</span>
         </div>
       ),
     });
 
-  const filteredOptions =
-    query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
+  const filteredOptions = sortBySelectedFirst(
+    query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase())),
+    value
+  );
 
   return (
     <Combobox.Options className="fixed z-10" static>
       <div
-        className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+        className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}
       >
-        <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-          <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+        <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
+          <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}
-            className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+            className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("common.search.label")}
@@ -136,11 +142,11 @@ export const ModuleOptions = observer((props: Props) => {
                   value={option.value}
                   className={({ active, selected }) =>
                     cn(
-                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
+                      "flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none",
                       {
-                        "bg-custom-background-80": active,
-                        "text-custom-text-100": selected,
-                        "text-custom-text-200": !selected,
+                        "bg-layer-transparent-hover": active,
+                        "text-primary": selected,
+                        "text-secondary": !selected,
                       }
                     )
                   }
@@ -148,16 +154,16 @@ export const ModuleOptions = observer((props: Props) => {
                   {({ selected }) => (
                     <>
                       <span className="flex-grow truncate">{option.content}</span>
-                      {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                      {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                     </>
                   )}
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.search.no_matching_results")}</p>
+              <p className="px-1.5 py-1 text-placeholder italic">{t("common.search.no_matching_results")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.loading")}</p>
+            <p className="px-1.5 py-1 text-placeholder italic">{t("common.loading")}</p>
           )}
         </div>
       </div>

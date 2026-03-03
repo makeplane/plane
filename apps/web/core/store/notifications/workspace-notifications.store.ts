@@ -1,12 +1,16 @@
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import update from "lodash/update";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { orderBy, isEmpty, update, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { ENotificationTab, ENotificationLoader, ENotificationQueryParamType, TNotificationTab } from "@plane/constants";
-import {
+import type { TNotificationTab } from "@plane/constants";
+import { ENotificationTab, ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
+import type {
   TNotification,
   TNotificationFilter,
   TNotificationLite,
@@ -19,7 +23,8 @@ import { convertToEpoch } from "@plane/utils";
 // services
 import workspaceNotificationService from "@/services/workspace-notification.service";
 // store
-import { Notification, INotification } from "@/store/notifications/notification";
+import type { INotification } from "@/store/notifications/notification";
+import { Notification } from "@/store/notifications/notification";
 import type { CoreRootStore } from "@/store/root.store";
 
 type TNotificationLoader = ENotificationLoader | undefined;
@@ -145,7 +150,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
         }
       })
       // .filter((n) => (this.filters.read ? (n.read_at ? true : false) : n.read_at ? false : true))
-      .map((n) => n.id) as string[];
+      .map((n) => n.id);
     return workspaceNotificationIds;
   });
 

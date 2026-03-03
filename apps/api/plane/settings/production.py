@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """Production settings"""
 
 import os
@@ -28,9 +32,7 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": True,
     "formatters": {
-        "verbose": {
-            "format": "%(asctime)s [%(process)d] %(levelname)s %(name)s: %(message)s"
-        },
+        "verbose": {"format": "%(asctime)s [%(process)d] %(levelname)s %(name)s: %(message)s"},
         "json": {
             "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
             "fmt": "%(levelname)s %(asctime)s %(module)s %(name)s %(message)s",
@@ -85,6 +87,16 @@ LOGGING = {
         },
         "plane.mongo": {
             "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.authentication": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.migrations": {
+            "level": "DEBUG" if DEBUG else "INFO",
             "handlers": ["console"],
             "propagate": False,
         },

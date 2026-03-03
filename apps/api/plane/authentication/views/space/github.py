@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import uuid
 
@@ -32,9 +36,7 @@ class GitHubOauthInitiateSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -47,9 +49,7 @@ class GitHubOauthInitiateSpaceEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -68,9 +68,7 @@ class GitHubCallbackSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -81,9 +79,7 @@ class GitHubCallbackSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -95,7 +91,7 @@ class GitHubCallbackSpaceEndpoint(View):
             # Process workspace and project invitations
             # redirect to referer path
             next_path = validate_next_path(next_path=next_path)
-            
+
             url = f"{base_host(request=request, is_space=True).rstrip('/')}{next_path}"
             if url_has_allowed_host_and_scheme(url, allowed_hosts=get_allowed_hosts()):
                 return HttpResponseRedirect(url)
@@ -104,8 +100,6 @@ class GitHubCallbackSpaceEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)

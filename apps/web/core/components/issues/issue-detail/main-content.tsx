@@ -1,13 +1,19 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
+import { EFileAssetType, EIssueServiceType } from "@plane/types";
 import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
+import { DescriptionInput } from "@/components/editor/rich-text/description-input";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -22,7 +28,6 @@ import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-dup
 // services
 import { WorkItemVersionService } from "@/services/issue";
 // local imports
-import { IssueDescriptionInput } from "../description-input";
 import { IssueDetailWidgets } from "../issue-detail-widgets";
 import { NameDescriptionUpdateStatus } from "../issue-update-status";
 import { PeekOverviewProperties } from "../peek-overview/properties";
@@ -30,7 +35,7 @@ import { IssueTitleInput } from "../title-input";
 import { IssueActivity } from "./issue-activity";
 import { IssueParentDetail } from "./parent";
 import { IssueReaction } from "./reactions";
-import { TIssueOperations } from "./root";
+import type { TIssueOperations } from "./root";
 // services init
 const workItemVersionService = new WorkItemVersionService();
 
@@ -43,7 +48,7 @@ type Props = {
   isArchived: boolean;
 };
 
-export const IssueMainContent: React.FC<Props> = observer((props) => {
+export const IssueMainContent = observer(function IssueMainContent(props: Props) {
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -87,7 +92,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
+      <div className="space-y-4 rounded-lg">
         {issue.parent_id && (
           <IssueParentDetail
             workspaceSlug={workspaceSlug}
@@ -127,16 +132,24 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        <IssueDescriptionInput
-          editorRef={editorRef}
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issue.id}
-          initialValue={issue.description_html}
+        <DescriptionInput
+          issueSequenceId={issue.sequence_id}
+          containerClassName="p-0 border-none"
           disabled={isArchived || !isEditable}
-          issueOperations={issueOperations}
+          editorRef={editorRef}
+          entityId={issue.id}
+          fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+          initialValue={issue.description_html}
+          onSubmit={async (value, isMigrationUpdate) => {
+            if (!issue.id || !issue.project_id) return;
+            await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+              description_html: value,
+              ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
+            });
+          }}
+          projectId={issue.project_id}
           setIsSubmitting={(value) => setIsSubmitting(value)}
-          containerClassName="-ml-3 border-none"
+          workspaceSlug={workspaceSlug}
         />
 
         <div className="flex items-center justify-between gap-2">

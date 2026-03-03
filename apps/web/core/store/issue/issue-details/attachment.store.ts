@@ -1,18 +1,19 @@
-import concat from "lodash/concat";
-import debounce from "lodash/debounce";
-import pull from "lodash/pull";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { uniq, pull, set, debounce, update, concat } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // types
-import { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap, TIssueServiceType } from "@plane/types";
+import type { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap, TIssueServiceType } from "@plane/types";
 // services
 import { IssueAttachmentService } from "@/services/issue";
-import { IIssueRootStore } from "../root.store";
-import { IIssueDetail } from "./root.store";
+import type { IIssueRootStore } from "../root.store";
+import type { IIssueDetail } from "./root.store";
 
 export type TAttachmentUploadStatus = {
   id: string;

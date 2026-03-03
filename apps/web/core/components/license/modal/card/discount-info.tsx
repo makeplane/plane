@@ -1,7 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useTheme } from "next-themes";
 // plane imports
-import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
+import type { TBillingFrequency } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
+
+import ScribbleBlack from "@/app/assets/scribble/scribble-black.svg?url";
+import ScribbleWhite from "@/app/assets/scribble/scribble-white.svg?url";
 
 type TDiscountInfoProps = {
   className?: string;
@@ -22,7 +32,7 @@ const getActualPrice = (frequency: TBillingFrequency, subscriptionType: EProduct
   }
 };
 
-export const DiscountInfo = ({ className, currency, frequency, price, subscriptionType }: TDiscountInfoProps) => {
+export function DiscountInfo({ className, currency, frequency, price, subscriptionType }: TDiscountInfoProps) {
   const { resolvedTheme } = useTheme();
   // derived values
   const actualPrice = getActualPrice(frequency, subscriptionType);
@@ -41,13 +51,9 @@ export const DiscountInfo = ({ className, currency, frequency, price, subscripti
       {actualPrice != price && (
         <span className={cn("relative", className)}>
           <img
-            src={
-              resolvedTheme === "dark"
-                ? "https://images.plane.so/pricing/hero/scribble-white.svg"
-                : "https://images.plane.so/pricing/hero/scribble-black.svg"
-            }
-            alt="image"
-            className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-full scale-x-125"
+            src={resolvedTheme === "dark" ? ScribbleWhite : ScribbleBlack}
+            alt="scribble"
+            className="absolute top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 scale-x-125"
           />
           {currency}
           {actualPrice}
@@ -57,4 +63,4 @@ export const DiscountInfo = ({ className, currency, frequency, price, subscripti
       {price}
     </>
   );
-};
+}

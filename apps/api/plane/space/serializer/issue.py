@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.utils import timezone
 
@@ -130,12 +134,8 @@ class IssueLinkSerializer(BaseSerializer):
 
     # Validation if url already exists
     def create(self, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"), issue_id=validated_data.get("issue_id")
-        ).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+        if IssueLink.objects.filter(url=validated_data.get("url"), issue_id=validated_data.get("issue_id")).exists():
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
         return IssueLink.objects.create(**validated_data)
 
 
@@ -167,12 +167,8 @@ class IssueSerializer(BaseSerializer):
     parent_detail = IssueStateFlatSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
-    related_issues = IssueRelationSerializer(
-        read_only=True, source="issue_relation", many=True
-    )
-    issue_relations = RelatedIssueSerializer(
-        read_only=True, source="issue_related", many=True
-    )
+    related_issues = IssueRelationSerializer(read_only=True, source="issue_relation", many=True)
+    issue_relations = RelatedIssueSerializer(read_only=True, source="issue_related", many=True)
     issue_cycle = IssueCycleDetailSerializer(read_only=True)
     issue_module = IssueModuleDetailSerializer(read_only=True)
     issue_link = IssueLinkSerializer(read_only=True, many=True)
@@ -201,7 +197,7 @@ class IssueFlatSerializer(BaseSerializer):
         fields = [
             "id",
             "name",
-            "description",
+            "description_json",
             "description_html",
             "priority",
             "start_date",
@@ -290,13 +286,9 @@ class IssueCreateSerializer(BaseSerializer):
 
         # Validate description content for security
         if "description_html" in data and data["description_html"]:
-            is_valid, error_msg, sanitized_html = validate_html_content(
-                data["description_html"]
-            )
+            is_valid, error_msg, sanitized_html = validate_html_content(data["description_html"])
             if not is_valid:
-                raise serializers.ValidationError(
-                    {"error": "html content is not valid"}
-                )
+                raise serializers.ValidationError({"error": "html content is not valid"})
             # Update the data with sanitized HTML if available
             if sanitized_html is not None:
                 data["description_html"] = sanitized_html
@@ -431,9 +423,7 @@ class IssueVoteSerializer(BaseSerializer):
 
 
 class IssuePublicSerializer(BaseSerializer):
-    reactions = IssueReactionSerializer(
-        read_only=True, many=True, source="issue_reactions"
-    )
+    reactions = IssueReactionSerializer(read_only=True, many=True, source="issue_reactions")
     votes = IssueVoteSerializer(read_only=True, many=True)
     module_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)

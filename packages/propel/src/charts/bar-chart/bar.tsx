@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 // plane imports
-import { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
+import type { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
 import { cn } from "../../utils/classname";
 
 // Constants
@@ -10,6 +16,7 @@ const BAR_TOP_BORDER_RADIUS = 4; // Border radius for the top of bars
 const BAR_BOTTOM_BORDER_RADIUS = 4; // Border radius for the bottom of bars
 const DEFAULT_LOLLIPOP_LINE_WIDTH = 2; // Width of lollipop stick
 const DEFAULT_LOLLIPOP_CIRCLE_RADIUS = 8; // Radius of lollipop circle
+const DEFAULT_BAR_FILL_COLOR = "#000000"; // Default color when fill is a function - black
 
 // Types
 interface TShapeProps {
@@ -54,7 +61,7 @@ const getBarPath = (x: number, y: number, width: number, height: number, topRadi
   Z
 `;
 
-const PercentageText = ({
+function PercentageText({
   x,
   y,
   percentage,
@@ -64,14 +71,16 @@ const PercentageText = ({
   y: number;
   percentage: number;
   className?: string;
-}) => (
-  <text x={x} y={y} textAnchor="middle" className={cn("text-xs font-medium", className)} fill="currentColor">
-    {percentage}%
-  </text>
-);
+}) {
+  return (
+    <text x={x} y={y} textAnchor="middle" className={cn("text-xs font-medium", className)} fill="currentColor">
+      {percentage}%
+    </text>
+  );
+}
 
 // Base Components
-const CustomBar = React.memo((props: TBarProps) => {
+const CustomBar = React.memo(function CustomBar(props: TBarProps) {
   const {
     opacity,
     fill,
@@ -107,9 +116,12 @@ const CustomBar = React.memo((props: TBarProps) => {
     <g>
       <path
         d={getBarPath(x, y, width, height, topBorderRadius, bottomBorderRadius)}
-        className="transition-opacity duration-200"
         fill={fill}
         opacity={opacity}
+        style={{
+          transition: "opacity 200ms",
+          fill: fill,
+        }}
       />
       {showText && (
         <PercentageText x={x + width / 2} y={textY} percentage={currentBarPercentage} className={textClassName} />
@@ -118,7 +130,7 @@ const CustomBar = React.memo((props: TBarProps) => {
   );
 });
 
-const CustomBarLollipop = React.memo((props: TBarProps) => {
+const CustomBarLollipop = React.memo(function CustomBarLollipop(props: TBarProps) {
   const { fill, x, y, width, height, dataKey, stackKeys, payload, textClassName, showPercentage, dotted } = props;
 
   const currentBarPercentage = calculatePercentage(payload, stackKeys, dataKey);
@@ -169,6 +181,8 @@ const createShapeVariant =
       />
     );
   };
+
+export { DEFAULT_BAR_FILL_COLOR };
 
 export const barShapeVariants: Record<
   TBarChartShapeVariant,

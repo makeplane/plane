@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // components
 import { CycleCreateUpdateModal } from "@/components/cycles/modal";
@@ -14,7 +20,7 @@ export type TProjectLevelModalsProps = {
   projectId: string;
 };
 
-export const ProjectLevelModals = observer((props: TProjectLevelModalsProps) => {
+export const ProjectLevelModals = observer(function ProjectLevelModals(props: TProjectLevelModalsProps) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const {

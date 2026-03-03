@@ -1,11 +1,17 @@
-import { FC, MutableRefObject } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC, MutableRefObject } from "react";
 // components
-import { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
+import type { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
 // hooks
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
 import { IssueBlockRoot } from "./block-root";
-import { TRenderQuickActions } from "./list-view-types";
+import type { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
   issueIds: TGroupedIssues | any;
@@ -22,7 +28,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const IssueBlocksList: FC<Props> = (props) => {
+export function IssueBlocksList(props: Props) {
   const {
     issueIds,
     issuesMap,
@@ -64,4 +70,4 @@ export const IssueBlocksList: FC<Props> = (props) => {
         ))}
     </div>
   );
-};
+}

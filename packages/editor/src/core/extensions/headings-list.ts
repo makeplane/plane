@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // constants
@@ -8,6 +14,12 @@ import type { IMarking } from "@/types";
 export type HeadingExtensionStorage = {
   headings: IMarking[];
 };
+
+declare module "@tiptap/core" {
+  interface Storage {
+    [CORE_EXTENSIONS.HEADINGS_LIST]: HeadingExtensionStorage;
+  }
+}
 
 export const HeadingListExtension = Extension.create<unknown, HeadingExtensionStorage>({
   name: CORE_EXTENSIONS.HEADINGS_LIST,
@@ -43,7 +55,10 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
 
         this.storage.headings = headings;
 
-        this.editor.emit("update", { editor: this.editor, transaction: newState.tr });
+        this.editor.emit("update", {
+          editor: this.editor,
+          transaction: newState.tr,
+        });
 
         return null;
       },

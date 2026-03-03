@@ -1,13 +1,20 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, useState, FormEvent } from "react";
+import type { FormEvent } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Info, X } from "lucide-react";
+import { Info } from "lucide-react";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CheckIcon, CloseIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
-import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
+import { Spinner } from "@plane/ui";
 import { cn, isEstimatePointValuesRepeated } from "@plane/utils";
 import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // helpers
@@ -28,7 +35,7 @@ type TEstimatePointCreate = {
   handleEstimatePointError?: (newValue: string, message: string | undefined, mode?: "add" | "delete") => void;
 };
 
-export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) => {
+export const EstimatePointCreate = observer(function EstimatePointCreate(props: TEstimatePointCreate) {
   const {
     workspaceSlug,
     projectId,
@@ -81,7 +88,7 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
 
       const currentEstimatePointValues = estimatePoints
         .map((point) => point?.value || undefined)
-        .filter((value) => value != undefined) as string[];
+        .filter((value) => value != undefined);
       const isRepeated =
         (estimateType && isEstimatePointValuesRepeated(currentEstimatePointValues, estimateType, estimateInputValue)) ||
         false;
@@ -166,11 +173,11 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
   };
 
   return (
-    <form onSubmit={handleCreate} className="relative flex items-center gap-2 text-base pr-2.5">
+    <form onSubmit={handleCreate} className="relative flex items-center gap-2 pr-2.5 text-14">
       <div
         className={cn(
-          "relative w-full border rounded flex items-center my-1",
-          estimatePointError?.message ? `border-red-500` : `border-custom-border-200`
+          "relative my-1 flex w-full items-center rounded-sm border",
+          estimatePointError?.message ? `border-danger-strong` : `border-subtle`
         )}
       >
         <EstimateInputRoot
@@ -180,7 +187,7 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
         />
         {estimatePointError?.message && (
           <Tooltip tooltipContent={estimatePointError?.message} position="bottom">
-            <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-red-500">
+            <div className="relative mr-3 flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center overflow-hidden text-danger-primary">
               <Info size={14} />
             </div>
           </Tooltip>
@@ -190,19 +197,19 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
       {estimateInputValue && estimateInputValue.length > 0 && (
         <button
           type="submit"
-          className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-green-500"
+          className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs text-success-primary transition-colors hover:bg-layer-1"
           disabled={loader}
         >
-          {loader ? <Spinner className="w-4 h-4" /> : <Check size={14} />}
+          {loader ? <Spinner className="h-4 w-4" /> : <CheckIcon width={14} height={14} />}
         </button>
       )}
       <button
         type="button"
-        className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+        className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1"
         onClick={handleClose}
         disabled={loader}
       >
-        <X size={14} className="text-custom-text-200" />
+        <CloseIcon height={14} width={14} className="text-secondary" />
       </button>
     </form>
   );

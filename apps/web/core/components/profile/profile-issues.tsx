@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -10,7 +16,7 @@ import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/kan
 import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/roots/profile-issues-root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/work-item-filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -19,12 +25,9 @@ type Props = {
   type: "assigned" | "subscribed" | "created";
 };
 
-export const ProfileIssuesPage = observer((props: Props) => {
+export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Props) {
   const { type } = props;
-  const { workspaceSlug, userId } = useParams() as {
-    workspaceSlug: string;
-    userId: string;
-  };
+  const { workspaceSlug, userId } = useParams();
   // store hooks
   const {
     issues: { setViewId },
@@ -59,9 +62,9 @@ export const ProfileIssuesPage = observer((props: Props) => {
       >
         {({ filter: profileWorkItemsFilter }) => (
           <>
-            <div className="flex flex-col h-full w-full">
+            <div className="flex h-full w-full flex-col">
               {profileWorkItemsFilter && <WorkItemFiltersRow filter={profileWorkItemsFilter} />}
-              <div className="-z-1 relative h-full w-full overflow-auto">
+              <div className="relative h-full w-full overflow-auto">
                 {activeLayout === "list" ? (
                   <ProfileIssuesListLayout />
                 ) : activeLayout === "kanban" ? (

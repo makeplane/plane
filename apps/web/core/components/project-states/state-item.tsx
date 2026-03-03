@@ -1,13 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { observer } from "mobx-react";
 // Plane
-import { TDraggableData } from "@plane/constants";
-import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
+import type { TDraggableData } from "@plane/constants";
+import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 import { cn, getCurrentStateSequence } from "@plane/utils";
 // components
@@ -24,7 +28,7 @@ type TStateItem = {
   stateItemClassName?: string;
 };
 
-export const StateItem: FC<TStateItem> = observer((props) => {
+export const StateItem = observer(function StateItem(props: TStateItem) {
   const {
     groupKey,
     groupedStates,
@@ -98,10 +102,10 @@ export const StateItem: FC<TStateItem> = observer((props) => {
             const destinationData = self.data as TDraggableData;
 
             if (sourceData && destinationData && sourceData.id) {
-              const destinationGroupKey = destinationData.groupKey as TStateGroups;
+              const destinationGroupKey = destinationData.groupKey;
               const edge = extractClosestEdge(destinationData) || undefined;
               const payload: Partial<IState> = {
-                id: sourceData.id as string,
+                id: sourceData.id,
                 group: destinationGroupKey,
                 sequence: getCurrentStateSequence(groupedStates[destinationGroupKey], destinationData, edge),
               };
@@ -131,7 +135,7 @@ export const StateItem: FC<TStateItem> = observer((props) => {
       <div
         ref={draggableElementRef}
         className={cn(
-          "relative border border-custom-border-100 bg-custom-background-100 py-3 px-3.5 rounded group",
+          "group relative rounded-sm border border-subtle bg-surface-1 px-3.5 py-3",
           isDragging ? `opacity-50` : `opacity-100`,
           totalStates === 1 ? `cursor-auto` : `cursor-grab`,
           stateItemClassName

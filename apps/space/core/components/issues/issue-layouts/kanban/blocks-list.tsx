@@ -1,7 +1,13 @@
-import { MutableRefObject } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 //types
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 // components
 import { KanbanIssueBlock } from "./block";
 
@@ -13,14 +19,13 @@ interface IssueBlocksListProps {
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
-export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((props) => {
+export const KanbanIssueBlocksList = observer(function KanbanIssueBlocksList(props: IssueBlocksListProps) {
   const { subGroupId, groupId, issueIds, displayProperties, scrollableContainerRef } = props;
 
   return (
     <>
-      {issueIds && issueIds.length > 0 ? (
-        <>
-          {issueIds.map((issueId) => {
+      {issueIds && issueIds.length > 0
+        ? issueIds.map((issueId) => {
             if (!issueId) return null;
 
             let draggableId = issueId;
@@ -37,9 +42,8 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((p
                 scrollableContainerRef={scrollableContainerRef}
               />
             );
-          })}
-        </>
-      ) : null}
+          })
+        : null}
     </>
   );
 });

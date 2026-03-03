@@ -1,8 +1,14 @@
-import { computePosition, flip, shift } from "@floating-ui/dom";
-import { type Editor, posToDOMRect } from "@tiptap/react";
-import { SuggestionKeyDownProps } from "@tiptap/suggestion";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { FloatingOverlay } from "@floating-ui/react";
+import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 // plane imports
+import { useOutsideClickDetector } from "@plane/hooks";
 import { cn } from "@plane/utils";
 
 export type EmojiItem = {
@@ -10,44 +16,27 @@ export type EmojiItem = {
   emoji: string;
   shortcodes: string[];
   tags: string[];
-  fallbackImage?: string;
-};
-
-const updatePosition = (editor: Editor, element: HTMLElement) => {
-  const virtualElement = {
-    getBoundingClientRect: () => posToDOMRect(editor.view, editor.state.selection.from, editor.state.selection.to),
-  };
-
-  computePosition(virtualElement, element, {
-    placement: "bottom-start",
-    strategy: "absolute",
-    middleware: [shift(), flip()],
-  }).then(({ x, y, strategy }) => {
-    Object.assign(element.style, {
-      width: "max-content",
-      position: strategy,
-      left: `${x}px`,
-      top: `${y}px`,
-    });
-  });
 };
 
 export type EmojiListRef = {
   onKeyDown: (props: SuggestionKeyDownProps) => boolean;
 };
 
-type Props = {
-  items: EmojiItem[];
-  command: (item: { name: string }) => void;
-  editor: Editor;
-  query: string;
+export type EmojisListDropdownProps = SuggestionProps<EmojiItem, { name: string }> & {
+  onClose: () => void;
+  forceOpen?: boolean;
 };
 
-export const EmojiList = forwardRef<EmojiListRef, Props>((props, ref) => {
-  const { items, command, editor, query } = props;
+export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
+  props: EmojisListDropdownProps,
+  ref: React.ForwardedRef<EmojiListRef>
+) {
+  const { items, command, query, onClose, forceOpen = false } = props;
+  // states
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isVisible, setIsVisible] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  // refs
+  const dropdownContainerRef = useRef<HTMLDivElement>(null);
 
   const selectItem = useCallback(
     (index: number): void => {
@@ -61,55 +50,35 @@ export const EmojiList = forwardRef<EmojiListRef, Props>((props, ref) => {
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent): boolean => {
-      if (query.length <= 0) {
+      // Allow keyboard navigation if we have items to show
+      if (items.length === 0) {
         return false;
       }
-      if (event.key === "Escape") {
-        event.preventDefault();
-        return true;
+
+      // Don't handle keyboard if modal shouldn't be visible (query empty without forceOpen)
+      if (query.length === 0 && !forceOpen) {
+        return false;
       }
 
       if (event.key === "ArrowUp") {
-        event.preventDefault();
         setSelectedIndex((prev) => (prev + items.length - 1) % items.length);
         return true;
       }
 
       if (event.key === "ArrowDown") {
-        event.preventDefault();
         setSelectedIndex((prev) => (prev + 1) % items.length);
         return true;
       }
 
       if (event.key === "Enter") {
-        event.preventDefault();
         selectItem(selectedIndex);
         return true;
       }
 
       return false;
     },
-    [query.length, items.length, selectItem, selectedIndex]
+    [items.length, query.length, forceOpen, selectItem, selectedIndex]
   );
-
-  // Update position when items change
-  useEffect(() => {
-    if (containerRef.current && editor) {
-      updatePosition(editor, containerRef.current);
-    }
-  }, [items, editor]);
-
-  // Handle scroll events
-  useEffect(() => {
-    const handleScroll = () => {
-      if (containerRef.current && editor) {
-        updatePosition(editor, containerRef.current);
-      }
-    };
-
-    document.addEventListener("scroll", handleScroll, true);
-    return () => document.removeEventListener("scroll", handleScroll, true);
-  }, [editor]);
 
   // Show animation
   useEffect(() => {
@@ -123,7 +92,7 @@ export const EmojiList = forwardRef<EmojiListRef, Props>((props, ref) => {
 
   // Scroll selected item into view
   useEffect(() => {
-    const container = containerRef.current;
+    const container = dropdownContainerRef.current;
     if (!container) return;
 
     const item = container.querySelector(`#emoji-item-${selectedIndex}`) as HTMLElement;
@@ -145,20 +114,37 @@ export const EmojiList = forwardRef<EmojiListRef, Props>((props, ref) => {
     [handleKeyDown]
   );
 
-  if (query.length <= 0) {
-    return null;
-  }
+  useOutsideClickDetector(dropdownContainerRef, onClose);
+
+  if (query.length === 0 && !forceOpen) return null;
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        position: "absolute",
-        zIndex: 100,
-      }}
-      className={`transition-all duration-200 transform ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
-    >
-      <div className="z-10 max-h-[90vh] w-[16rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-1">
+    <>
+      {/* Backdrop */}
+      <FloatingOverlay
+        style={{
+          zIndex: 99,
+        }}
+        lockScroll
+      />
+      <div
+        ref={dropdownContainerRef}
+        className={cn(
+          "invisible relative max-h-80 w-[14rem] space-y-2 overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 opacity-0 shadow-raised-200 transition-opacity",
+          {
+            "visible opacity-100": isVisible,
+          }
+        )}
+        style={{
+          zIndex: 100,
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+        }}
+      >
         {items.length ? (
           items.map((item, index) => {
             const isSelected = index === selectedIndex;
@@ -170,21 +156,15 @@ export const EmojiList = forwardRef<EmojiListRef, Props>((props, ref) => {
                 id={`emoji-item-${index}`}
                 type="button"
                 className={cn(
-                  "flex items-center gap-2 w-full rounded px-2 py-1.5 text-sm text-left truncate text-custom-text-200 hover:bg-custom-background-80 transition-colors duration-150",
+                  "flex w-full items-center gap-2 truncate rounded-sm px-2 py-1.5 text-left text-13 text-secondary transition-colors duration-150 hover:bg-layer-1-hover",
                   {
-                    "bg-custom-background-80": isSelected,
+                    "bg-layer-1-hover": isSelected,
                   }
                 )}
                 onClick={() => selectItem(index)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <span className="size-5 grid place-items-center flex-shrink-0 text-base">
-                  {item.fallbackImage ? (
-                    <img src={item.fallbackImage} alt={item.name} className="size-4 object-contain" />
-                  ) : (
-                    item.emoji
-                  )}
-                </span>
+                <span className="grid size-5 flex-shrink-0 place-items-center text-14">{item.emoji}</span>
                 <span className="flex-grow truncate">
                   <span className="font-medium">:{item.name}:</span>
                 </span>
@@ -192,11 +172,11 @@ export const EmojiList = forwardRef<EmojiListRef, Props>((props, ref) => {
             );
           })
         ) : (
-          <div className="text-center text-sm text-custom-text-400 py-2">No emojis found</div>
+          <div className="py-2 text-center text-13 text-placeholder">No emojis found</div>
         )}
       </div>
-    </div>
+    </>
   );
 });
 
-EmojiList.displayName = "EmojiList";
+EmojisListDropdown.displayName = "EmojisListDropdown";

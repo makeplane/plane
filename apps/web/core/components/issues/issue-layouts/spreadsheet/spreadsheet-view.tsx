@@ -1,11 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // plane constants
 import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/constants";
 // types
-import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
+import type { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -36,7 +42,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const SpreadsheetView: React.FC<Props> = observer((props) => {
+export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const {
     displayProperties,
     displayFilters,
@@ -71,15 +77,9 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         return true;
       });
 
-  if (!issueIds || issueIds.length === 0)
-    return (
-      <div className="grid h-full w-full place-items-center">
-        <LogoSpinner />
-      </div>
-    );
-
+  if (!issueIds || issueIds.length === 0) return <></>;
   return (
-    <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
+    <div className="relative flex h-full w-full flex-col overflow-x-hidden bg-layer-1 whitespace-nowrap text-secondary">
       <div ref={portalRef} className="spreadsheet-menu-portal" />
       <MultipleSelectGroup
         containerRef={containerRef}
@@ -109,8 +109,8 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 isEpic={isEpic}
               />
             </div>
-            <div className="border-t border-custom-border-100">
-              <div className="z-5 sticky bottom-0 left-0 mb-3">
+            <div className="border-t border-subtle">
+              <div className="sticky bottom-0 left-0 z-5">
                 {enableQuickCreateIssue && !disableIssueCreation && (
                   <QuickAddIssueRoot
                     layout={EIssueLayoutTypes.SPREADSHEET}

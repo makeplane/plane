@@ -1,6 +1,13 @@
-import { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
 // plane imports
-import { EEstimateSystem, TEstimateSystemKeys } from "@plane/types";
+import type { TEstimateSystemKeys } from "@plane/types";
+import { EEstimateSystem } from "@plane/types";
 // plane web imports
 import { EstimateTimeInput } from "@/plane-web/components/estimates/inputs";
 // local imports
@@ -13,14 +20,14 @@ type TEstimateInputRootProps = {
   value?: string;
 };
 
-export const EstimateInputRoot: FC<TEstimateInputRootProps> = (props) => {
+export function EstimateInputRoot(props: TEstimateInputRootProps) {
   const { estimateType, handleEstimateInputValue, value } = props;
 
   switch (estimateType) {
     case EEstimateSystem.POINTS:
       return (
         <EstimateNumberInput
-          value={value ? parseInt(value) : undefined}
+          value={value ? parseFloat(value) : undefined}
           handleEstimateInputValue={handleEstimateInputValue}
         />
       );
@@ -36,4 +43,4 @@ export const EstimateInputRoot: FC<TEstimateInputRootProps> = (props) => {
     default:
       return null;
   }
-};
+}

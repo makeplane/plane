@@ -1,14 +1,20 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
+import uniq from "lodash-es/uniq";
 import { observer } from "mobx-react";
 // plane package imports
-import { E_SORT_ORDER, TActivityFilters, defaultActivityFilters, EUserPermissions } from "@plane/constants";
+import type { TActivityFilters } from "@plane/constants";
+import { E_SORT_ORDER, defaultActivityFilters, EUserPermissions } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
 //types
-import { TFileSignedURLResponse, TIssueComment } from "@plane/types";
+import type { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 // components
 import { CommentCreate } from "@/components/comments/comment-create";
 // hooks
@@ -19,7 +25,7 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { ActivityFilterRoot } from "@/plane-web/components/issues/worklog/activity/filter-root";
 import { IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog/activity/worklog-create-button";
 import { IssueActivityCommentRoot } from "./activity-comment-root";
-import { useCommentOperations } from "./helper";
+import { useWorkItemCommentOperations } from "./helper";
 import { ActivitySortRoot } from "./sort-root";
 
 type TIssueActivity = {
@@ -37,7 +43,7 @@ export type TActivityOperations = {
   uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
 };
 
-export const IssueActivity: FC<TIssueActivity> = observer((props) => {
+export const IssueActivity = observer(function IssueActivity(props: TIssueActivity) {
   const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
   // i18n
   const { t } = useTranslation();
@@ -73,7 +79,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       _filters = [...selectedFilters, filter];
     }
 
-    setFilterValue(_filters);
+    setFilterValue(uniq(_filters));
   };
 
   const toggleSortOrder = () => {
@@ -81,7 +87,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   };
 
   // helper hooks
-  const activityOperations = useCommentOperations(workspaceSlug, projectId, issueId);
+  const activityOperations = useWorkItemCommentOperations(workspaceSlug, projectId, issueId);
 
   const project = getProjectById(projectId);
   const renderCommentCreationBox = useMemo(
@@ -99,10 +105,10 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   if (!project) return <></>;
 
   return (
-    <div className="space-y-4 pt-3">
+    <div className="space-y-4">
       {/* header */}
       <div className="flex items-center justify-between">
-        <div className="text-lg text-custom-text-100">{t("common.activity")}</div>
+        <div className="text-h5-medium text-primary">{t("common.activity")}</div>
         <div className="flex items-center gap-2">
           {isWorklogButtonEnabled && (
             <IssueActivityWorklogCreateButton

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """plane URL Configuration"""
 
 from django.conf import settings
@@ -38,8 +42,6 @@ if settings.DEBUG:
     try:
         import debug_toolbar
 
-        urlpatterns = [
-            re_path(r"^__debug__/", include(debug_toolbar.urls))
-        ] + urlpatterns
+        urlpatterns = [re_path(r"^__debug__/", include(debug_toolbar.urls))] + urlpatterns
     except ImportError:
         pass

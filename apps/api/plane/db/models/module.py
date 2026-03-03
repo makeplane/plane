@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.conf import settings
 from django.db import models
@@ -63,12 +67,8 @@ class ModuleStatus(models.TextChoices):
 class Module(ProjectBaseModel):
     name = models.CharField(max_length=255, verbose_name="Module Name")
     description = models.TextField(verbose_name="Module Description", blank=True)
-    description_text = models.JSONField(
-        verbose_name="Module Description RT", blank=True, null=True
-    )
-    description_html = models.JSONField(
-        verbose_name="Module Description HTML", blank=True, null=True
-    )
+    description_text = models.JSONField(verbose_name="Module Description RT", blank=True, null=True)
+    description_html = models.JSONField(verbose_name="Module Description HTML", blank=True, null=True)
     start_date = models.DateField(null=True)
     target_date = models.DateField(null=True)
     status = models.CharField(
@@ -83,9 +83,7 @@ class Module(ProjectBaseModel):
         default="planned",
         max_length=20,
     )
-    lead = models.ForeignKey(
-        "db.User", on_delete=models.SET_NULL, related_name="module_leads", null=True
-    )
+    lead = models.ForeignKey("db.User", on_delete=models.SET_NULL, related_name="module_leads", null=True)
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         blank=True,
@@ -152,12 +150,8 @@ class ModuleMember(ProjectBaseModel):
 
 
 class ModuleIssue(ProjectBaseModel):
-    module = models.ForeignKey(
-        "db.Module", on_delete=models.CASCADE, related_name="issue_module"
-    )
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="issue_module"
-    )
+    module = models.ForeignKey("db.Module", on_delete=models.CASCADE, related_name="issue_module")
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_module")
 
     class Meta:
         unique_together = ["issue", "module", "deleted_at"]
@@ -180,9 +174,7 @@ class ModuleIssue(ProjectBaseModel):
 class ModuleLink(ProjectBaseModel):
     title = models.CharField(max_length=255, blank=True, null=True)
     url = models.URLField()
-    module = models.ForeignKey(
-        Module, on_delete=models.CASCADE, related_name="link_module"
-    )
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="link_module")
     metadata = models.JSONField(default=dict)
 
     class Meta:
@@ -196,9 +188,7 @@ class ModuleLink(ProjectBaseModel):
 
 
 class ModuleUserProperties(ProjectBaseModel):
-    module = models.ForeignKey(
-        "db.Module", on_delete=models.CASCADE, related_name="module_user_properties"
-    )
+    module = models.ForeignKey("db.Module", on_delete=models.CASCADE, related_name="module_user_properties")
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

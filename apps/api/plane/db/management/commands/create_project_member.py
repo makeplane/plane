@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from typing import Any
 from django.core.management import BaseCommand, CommandError
@@ -8,7 +12,7 @@ from plane.db.models import (
     WorkspaceMember,
     ProjectMember,
     Project,
-    IssueUserProperty,
+    ProjectUserProperty,
 )
 
 
@@ -19,9 +23,7 @@ class Command(BaseCommand):
         # Positional argument
         parser.add_argument("--project_id", type=str, nargs="?", help="Project ID")
         parser.add_argument("--user_email", type=str, nargs="?", help="User Email")
-        parser.add_argument(
-            "--role", type=int, nargs="?", help="Role of the user in the project"
-        )
+        parser.add_argument("--role", type=int, nargs="?", help="Role of the user in the project")
 
     def handle(self, *args: Any, **options: Any):
         try:
@@ -46,41 +48,24 @@ class Command(BaseCommand):
                 raise CommandError("Project not found")
 
             # Check if the user exists in the workspace
-            if not WorkspaceMember.objects.filter(
-                workspace=project.workspace, member=user, is_active=True
-            ).exists():
+            if not WorkspaceMember.objects.filter(workspace=project.workspace, member=user, is_active=True).exists():
                 raise CommandError("User not member in workspace")
 
-            # Get the smallest sort order
-            smallest_sort_order = (
-                ProjectMember.objects.filter(workspace_id=project.workspace_id)
-                .order_by("sort_order")
-                .first()
-            )
-
-            if smallest_sort_order:
-                sort_order = smallest_sort_order.sort_order - 1000
-            else:
-                sort_order = 65535
 
             if ProjectMember.objects.filter(project=project, member=user).exists():
                 # Update the project member
                 ProjectMember.objects.filter(project=project, member=user).update(
-                    is_active=True, sort_order=sort_order, role=role
+                    is_active=True, role=role
                 )
             else:
                 # Create the project member
-                ProjectMember.objects.create(
-                    project=project, member=user, role=role, sort_order=sort_order
-                )
+                ProjectMember.objects.create(project=project, member=user, role=role)
 
             # Issue Property
-            IssueUserProperty.objects.get_or_create(user=user, project=project)
+            ProjectUserProperty.objects.get_or_create(user=user, project=project)
 
             # Success message
-            self.stdout.write(
-                self.style.SUCCESS(f"User {user_email} added to project {project_id}")
-            )
+            self.stdout.write(self.style.SUCCESS(f"User {user_email} added to project {project_id}"))
             return
         except CommandError as e:
             self.stdout.write(self.style.ERROR(e))

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import os
 import logging
@@ -79,9 +83,7 @@ app.conf.beat_schedule = {
 # Setup logging
 @after_setup_logger.connect
 def setup_loggers(logger, *args, **kwargs):
-    formatter = JsonFormatter(
-        '"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s'
-    )
+    formatter = JsonFormatter('"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s')
     handler = logging.StreamHandler()
     handler.setFormatter(fmt=formatter)
     logger.addHandler(handler)
@@ -89,9 +91,7 @@ def setup_loggers(logger, *args, **kwargs):
 
 @after_setup_task_logger.connect
 def setup_task_loggers(logger, *args, **kwargs):
-    formatter = JsonFormatter(
-        '"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s'
-    )
+    formatter = JsonFormatter('"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s')
     handler = logging.StreamHandler()
     handler.setFormatter(fmt=formatter)
     logger.addHandler(handler)

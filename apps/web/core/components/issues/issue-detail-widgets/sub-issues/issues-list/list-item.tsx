@@ -1,11 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
-import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
-// plane imports
+import { Link as Loader } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { LinkIcon, EditIcon, TrashIcon, CloseIcon, ChevronRightIcon } from "@plane/propel/icons";
+// plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueServiceType, EIssuesStoreType, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import type { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { ControlLink, CustomMenu } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // helpers
@@ -28,7 +34,7 @@ type Props = {
   parentIssueId: string;
   rootIssueId: string;
   spacingLeft: number;
-  disabled: boolean;
+  canEdit: boolean;
   handleIssueCrudState: (
     key: "create" | "existing" | "update" | "delete",
     issueId: string,
@@ -40,7 +46,7 @@ type Props = {
   storeType?: EIssuesStoreType;
 };
 
-export const SubIssuesListItem: React.FC<Props> = observer((props) => {
+export const SubIssuesListItem = observer(function SubIssuesListItem(props: Props) {
   const {
     workspaceSlug,
     projectId,
@@ -48,7 +54,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
     rootIssueId,
     issueId,
     spacingLeft = 10,
-    disabled,
+    canEdit,
     handleIssueCrudState,
     subIssueOperations,
     issueServiceType = EIssueServiceType.ISSUES,
@@ -107,20 +113,20 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
       >
         {issue && (
           <div
-            className="group relative flex min-h-11 h-full w-full items-center pr-2 py-1 transition-all hover:bg-custom-background-90"
+            className="group relative flex h-full min-h-11 w-full items-center py-1 pr-2 transition-all hover:bg-surface-2"
             style={{ paddingLeft: `${spacingLeft}px` }}
           >
-            <div className="flex size-5 items-center justify-center flex-shrink-0">
+            <div className="flex size-5 flex-shrink-0 items-center justify-center">
               {/* disable the chevron when current issue is also the root issue*/}
               {subIssueCount > 0 && !isCurrentIssueRoot && (
                 <>
                   {subIssueHelpers.preview_loader.includes(issue.id) ? (
-                    <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-sm bg-custom-background-80 transition-all">
+                    <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-xs bg-layer-1 transition-all">
                       <Loader width={14} strokeWidth={2} className="animate-spin" />
                     </div>
                   ) : (
                     <div
-                      className="flex h-full w-full cursor-pointer items-center justify-center text-custom-text-400 hover:text-custom-text-300"
+                      className="flex h-full w-full cursor-pointer items-center justify-center text-placeholder hover:text-tertiary"
                       onClick={async (e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -132,7 +138,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                         setSubIssueHelpers(parentIssueId, "issue_visibility", issueId);
                       }}
                     >
-                      <ChevronRight
+                      <ChevronRightIcon
                         className={cn("size-3.5 transition-all", {
                           "rotate-90": subIssueHelpers.issue_visibility.includes(issue.id),
                         })}
@@ -144,7 +150,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
               )}
             </div>
 
-            <div className="flex w-full truncate cursor-pointer items-center gap-3">
+            <div className="flex w-full cursor-pointer items-center gap-3 truncate">
               <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
                 <div className="flex-shrink-0">
                   {projectDetail && (
@@ -153,18 +159,19 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                       issueTypeId={issue.type_id}
                       projectIdentifier={projectDetail.identifier}
                       issueSequenceId={issue.sequence_id}
-                      textContainerClassName="text-xs text-custom-text-200"
+                      size="xs"
+                      variant="secondary"
                     />
                   )}
                 </div>
               </WithDisplayPropertiesHOC>
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="w-full truncate text-sm text-custom-text-100">{issue.name}</span>
+                <span className="w-0 flex-1 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
 
             <div
-              className="flex-shrink-0 text-sm"
+              className="flex-shrink-0 text-13"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -174,35 +181,31 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                 workspaceSlug={workspaceSlug}
                 parentIssueId={parentIssueId}
                 issueId={issueId}
-                disabled={disabled}
+                canEdit={canEdit}
                 updateSubIssue={subIssueOperations.updateSubIssue}
                 displayProperties={displayProperties}
                 issue={issue}
               />
             </div>
 
-            <div className="flex-shrink-0 text-sm">
+            <div className="flex-shrink-0 text-13">
               <CustomMenu placement="bottom-end" ellipsis>
-                {disabled && (
+                {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       handleIssueCrudState("update", parentIssueId, { ...issue });
                       toggleCreateIssueModal(true);
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                      <EditIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>{t("issue.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}
 
                 <CustomMenu.MenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
+                  onClick={() => {
                     subIssueOperations.copyLink(workItemLink);
                   }}
                 >
@@ -212,17 +215,15 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                   </div>
                 </CustomMenu.MenuItem>
 
-                {disabled && (
+                {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
+                    onClick={() => {
                       if (issue.project_id)
                         subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <X className="h-3.5 w-3.5" strokeWidth={2} />
+                      <CloseIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       {issueServiceType === EIssueServiceType.ISSUES
                         ? t("issue.remove.parent.label")
                         : t("issue.remove.label")}
@@ -230,17 +231,15 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                   </CustomMenu.MenuItem>
                 )}
 
-                {disabled && (
+                {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
+                    onClick={() => {
                       handleIssueCrudState("delete", parentIssueId, issue);
                       toggleDeleteIssueModal(issue.id);
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <Trash className="h-3.5 w-3.5" strokeWidth={2} />
+                      <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>{t("issue.delete.label")}</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -263,7 +262,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
             parentIssueId={issue.id}
             rootIssueId={rootIssueId}
             spacingLeft={spacingLeft + 22}
-            disabled={disabled}
+            canEdit={canEdit}
             handleIssueCrudState={handleIssueCrudState}
             subIssueOperations={subIssueOperations}
           />

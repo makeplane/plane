@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from django.urls import path
 
 
@@ -30,9 +34,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/analytic-view/<uuid:pk>/",
-        AnalyticViewViewset.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        AnalyticViewViewset.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="analytic-view",
     ),
     path(

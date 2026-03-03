@@ -1,8 +1,14 @@
-"use client";
-import React, { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -17,7 +23,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const RelationsCollapsible: FC<Props> = observer((props) => {
+export const RelationsCollapsible = observer(function RelationsCollapsible(props: Props) {
   const { workspaceSlug, issueId, disabled = false, issueServiceType } = props;
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);

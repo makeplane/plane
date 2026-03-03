@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // components
 import { IssueEmojiReactions } from "@/components/issues/reactions/issue-emoji-reactions";
@@ -10,7 +16,7 @@ type Props = {
   anchor: string;
 };
 
-export const IssueReactions: React.FC<Props> = observer((props) => {
+export const IssueReactions = observer(function IssueReactions(props: Props) {
   const { anchor } = props;
   // store hooks
   const { canVote, canReact } = usePublish(anchor);

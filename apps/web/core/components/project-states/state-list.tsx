@@ -1,8 +1,11 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC } from "react";
 import { observer } from "mobx-react";
-import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
+import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 // components
 import { StateItem } from "@/components/project-states";
 
@@ -16,7 +19,7 @@ type TStateList = {
   stateItemClassName?: string;
 };
 
-export const StateList: FC<TStateList> = observer((props) => {
+export const StateList = observer(function StateList(props: TStateList) {
   const {
     groupKey,
     groupedStates,

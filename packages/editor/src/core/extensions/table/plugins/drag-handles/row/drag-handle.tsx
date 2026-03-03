@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   autoUpdate,
   flip,
@@ -12,9 +18,11 @@ import {
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/core";
 import { Ellipsis } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import {
   findTable,
@@ -34,7 +42,7 @@ import {
   updateRowDragMarker,
   updateRowDropMarker,
 } from "../marker-utils";
-import { updateCellContentVisibility } from "../utils";
+import { showCellContent } from "../utils";
 import { RowOptionsDropdown } from "./dropdown";
 import { calculateRowDropIndex, constructRowDragPreview, getTableRowNodesInfo } from "./utils";
 
@@ -43,10 +51,29 @@ export type RowDragHandleProps = {
   row: number;
 };
 
-export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
+export function RowDragHandle(props: RowDragHandleProps) {
   const { editor, row } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // Track active event listeners for cleanup
+  const activeListenersRef = useRef<{
+    mouseup?: (e: MouseEvent) => void;
+    mousemove?: (e: MouseEvent) => void;
+  }>({});
+
+  // Cleanup window event listeners on unmount
+  useEffect(() => {
+    const listenersRef = activeListenersRef.current;
+    return () => {
+      // Remove any lingering window event listeners when component unmounts
+      if (listenersRef.mouseup) {
+        window.removeEventListener("mouseup", listenersRef.mouseup);
+      }
+      if (listenersRef.mousemove) {
+        window.removeEventListener("mousemove", listenersRef.mousemove);
+      }
+    };
+  }, []);
   // floating ui
   const { refs, floatingStyles, context } = useFloating({
     placement: "bottom-start",
@@ -59,7 +86,16 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
       }),
     ],
     open: isDropdownOpen,
-    onOpenChange: setIsDropdownOpen,
+    onOpenChange: (open) => {
+      setIsDropdownOpen(open);
+      if (open) {
+        editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.TABLE);
+      } else {
+        setTimeout(() => {
+          editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.TABLE);
+        }, 0);
+      }
+    },
     whileElementsMounted: autoUpdate,
   });
   const click = useClick(context);
@@ -67,10 +103,32 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
   const role = useRole(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([dismiss, click, role]);
 
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      context.onOpenChange(false);
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isDropdownOpen, context]);
+
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       e.preventDefault();
+
+      // Prevent multiple simultaneous drag operations
+      // If there are already listeners attached, remove them first
+      if (activeListenersRef.current.mouseup) {
+        window.removeEventListener("mouseup", activeListenersRef.current.mouseup);
+      }
+      if (activeListenersRef.current.mousemove) {
+        window.removeEventListener("mousemove", activeListenersRef.current.mousemove);
+      }
+      activeListenersRef.current.mouseup = undefined;
+      activeListenersRef.current.mousemove = undefined;
 
       const table = findTable(editor.state.selection);
       if (!table) return;
@@ -94,8 +152,9 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
         hideDropMarker(dropMarker);
         hideDragMarker(dragMarker);
 
+        // Show cell content by clearing decorations
         if (isCellSelection(editor.state.selection)) {
-          updateCellContentVisibility(editor, false);
+          showCellContent(editor);
         }
 
         if (row !== dropIndex) {
@@ -111,6 +170,9 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
         }
         window.removeEventListener("mouseup", handleFinish);
         window.removeEventListener("mousemove", handleMove);
+        // Clear the ref
+        activeListenersRef.current.mouseup = undefined;
+        activeListenersRef.current.mousemove = undefined;
       };
 
       let pseudoRow: HTMLElement | undefined;
@@ -146,6 +208,9 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
       };
 
       try {
+        // Store references for cleanup
+        activeListenersRef.current.mouseup = handleFinish;
+        activeListenersRef.current.mousemove = handleMove;
         window.addEventListener("mouseup", handleFinish);
         window.addEventListener("mousemove", handleMove);
       } catch (error) {
@@ -158,21 +223,18 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
 
   return (
     <>
-      <div className="table-row-handle-container absolute z-20 top-0 left-0 flex justify-center items-center h-full -translate-x-1/2">
+      <div className="table-row-handle-container absolute top-0 left-0 z-20 flex h-full -translate-x-1/2 items-center justify-center">
         <button
           ref={refs.setReference}
           {...getReferenceProps()}
           type="button"
           onMouseDown={handleMouseDown}
-          className={cn(
-            "py-1 bg-custom-background-90 border border-custom-border-400 rounded outline-none transition-all duration-200",
-            {
-              "!opacity-100 bg-custom-primary-100 border-custom-primary-100": isDropdownOpen,
-              "hover:bg-custom-background-80": !isDropdownOpen,
-            }
-          )}
+          className={cn("rounded-sm border border-strong-1 bg-layer-1 py-1 transition-all duration-200 outline-none", {
+            "border-accent-strong bg-accent-primary !opacity-100": isDropdownOpen,
+            "hover:bg-layer-1-hover": !isDropdownOpen,
+          })}
         >
-          <Ellipsis className="size-4 text-custom-text-100 rotate-90" />
+          <Ellipsis className="size-4 rotate-90 text-primary" />
         </button>
       </div>
       {isDropdownOpen && (
@@ -184,9 +246,8 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
             }}
             lockScroll
           />
-
           <div
-            className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
+            className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-raised-200"
             ref={refs.setFloating}
             {...getFloatingProps()}
             style={{
@@ -194,10 +255,10 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
               zIndex: 100,
             }}
           >
-            <RowOptionsDropdown editor={editor} onClose={() => setIsDropdownOpen(false)} />
+            <RowOptionsDropdown editor={editor} onClose={() => context.onOpenChange(false)} />
           </div>
         </FloatingPortal>
       )}
     </>
   );
-};
+}

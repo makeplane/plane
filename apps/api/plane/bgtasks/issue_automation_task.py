@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 from datetime import timedelta
@@ -39,15 +43,9 @@ def archive_old_issues():
                     state__group__in=["completed", "cancelled"],
                 ),
                 Q(issue_cycle__isnull=True)
-                | (
-                    Q(issue_cycle__cycle__end_date__lt=timezone.now())
-                    & Q(issue_cycle__isnull=False)
-                ),
+                | (Q(issue_cycle__cycle__end_date__lt=timezone.now()) & Q(issue_cycle__isnull=False)),
                 Q(issue_module__isnull=True)
-                | (
-                    Q(issue_module__module__target_date__lt=timezone.now())
-                    & Q(issue_module__isnull=False)
-                ),
+                | (Q(issue_module__module__target_date__lt=timezone.now()) & Q(issue_module__isnull=False)),
             ).filter(
                 Q(issue_intake__status=1)
                 | Q(issue_intake__status=-1)
@@ -67,15 +65,11 @@ def archive_old_issues():
 
                 # Bulk Update the issues and log the activity
                 if issues_to_update:
-                    Issue.objects.bulk_update(
-                        issues_to_update, ["archived_at"], batch_size=100
-                    )
+                    Issue.objects.bulk_update(issues_to_update, ["archived_at"], batch_size=100)
                     _ = [
                         issue_activity.delay(
                             type="issue.activity.updated",
-                            requested_data=json.dumps(
-                                {"archived_at": str(archive_at), "automation": True}
-                            ),
+                            requested_data=json.dumps({"archived_at": str(archive_at), "automation": True}),
                             actor_id=str(project.created_by_id),
                             issue_id=issue.id,
                             project_id=project_id,
@@ -95,9 +89,7 @@ def archive_old_issues():
 def close_old_issues():
     try:
         # Get all the projects whose close_in is greater than 0
-        projects = Project.objects.filter(close_in__gt=0).select_related(
-            "default_state"
-        )
+        projects = Project.objects.filter(close_in__gt=0).select_related("default_state")
 
         for project in projects:
             project_id = project.id
@@ -112,15 +104,9 @@ def close_old_issues():
                     state__group__in=["backlog", "unstarted", "started"],
                 ),
                 Q(issue_cycle__isnull=True)
-                | (
-                    Q(issue_cycle__cycle__end_date__lt=timezone.now())
-                    & Q(issue_cycle__isnull=False)
-                ),
+                | (Q(issue_cycle__cycle__end_date__lt=timezone.now()) & Q(issue_cycle__isnull=False)),
                 Q(issue_module__isnull=True)
-                | (
-                    Q(issue_module__module__target_date__lt=timezone.now())
-                    & Q(issue_module__isnull=False)
-                ),
+                | (Q(issue_module__module__target_date__lt=timezone.now()) & Q(issue_module__isnull=False)),
             ).filter(
                 Q(issue_intake__status=1)
                 | Q(issue_intake__status=-1)
@@ -142,15 +128,11 @@ def close_old_issues():
 
                 # Bulk Update the issues and log the activity
                 if issues_to_update:
-                    Issue.objects.bulk_update(
-                        issues_to_update, ["state"], batch_size=100
-                    )
+                    Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
                     [
                         issue_activity.delay(
                             type="issue.activity.updated",
-                            requested_data=json.dumps(
-                                {"closed_to": str(issue.state_id)}
-                            ),
+                            requested_data=json.dumps({"closed_to": str(issue.state_id)}),
                             actor_id=str(project.created_by_id),
                             issue_id=issue.id,
                             project_id=project_id,

@@ -1,10 +1,15 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+
 // plane types
-import { TInboxIssueFilterMemberKeys } from "@plane/types";
+import { CloseIcon } from "@plane/propel/icons";
+import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
 import { Avatar, Tag } from "@plane/ui";
 // helpers
@@ -18,7 +23,9 @@ type InboxIssueAppliedFiltersMember = {
   label: string;
 };
 
-export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> = observer((props) => {
+export const InboxIssueAppliedFiltersMember = observer(function InboxIssueAppliedFiltersMember(
+  props: InboxIssueAppliedFiltersMember
+) {
   const { filterKey, label } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
@@ -35,13 +42,13 @@ export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> 
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-xs text-custom-text-200">{label}</div>
+      <div className="text-11 text-secondary">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div key={value} className="relative flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
-            <div className="flex-shrink-0 relative flex justify-center items-center overflow-hidden">
+          <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+            <div className="relative flex flex-shrink-0 items-center justify-center overflow-hidden">
               <Avatar
                 name={optionDetail.display_name}
                 src={getFileURL(optionDetail.avatar_url)}
@@ -49,22 +56,22 @@ export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> 
                 size="sm"
               />
             </div>
-            <div className="text-xs truncate">{optionDetail?.display_name}</div>
+            <div className="truncate text-11">{optionDetail?.display_name}</div>
             <div
-              className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+              className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
               onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(value))}
             >
-              <X className={`w-3 h-3`} />
+              <CloseIcon className={`h-3 w-3`} />
             </div>
           </div>
         );
       })}
 
       <div
-        className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+        className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
         onClick={clearFilter}
       >
-        <X className={`w-3 h-3`} />
+        <CloseIcon className={`h-3 w-3`} />
       </div>
     </Tag>
   );

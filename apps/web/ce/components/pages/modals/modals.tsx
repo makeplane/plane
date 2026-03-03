@@ -1,15 +1,21 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React from "react";
+import type React from "react";
 import { observer } from "mobx-react";
 // components
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageModalsProps = {
   page: TPageInstance;
   storeType: EPageStoreType;
 };
 
-export const PageModals: React.FC<TPageModalsProps> = observer((props) => null);
+export const PageModals = observer(function PageModals(props: TPageModalsProps) {
+  return null;
+});

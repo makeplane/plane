@@ -1,12 +1,15 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { BarChart2, Briefcase, Layers } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { ContrastIcon } from "@plane/propel/icons";
+import { AnalyticsIcon, CycleIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -14,7 +17,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { SidebarWorkspaceMenuHeader } from "./workspace-menu-header";
 import { SidebarWorkspaceMenuItem } from "./workspace-menu-item";
 
-export const SidebarWorkspaceMenu = observer(() => {
+export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
   // router params
   const { workspaceSlug } = useParams();
   // local storage
@@ -28,28 +31,28 @@ export const SidebarWorkspaceMenu = observer(() => {
       labelTranslationKey: "sidebar.projects",
       href: `/${workspaceSlug}/projects/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: Briefcase,
+      Icon: ProjectIcon,
     },
     {
       key: "views",
       labelTranslationKey: "sidebar.views",
       href: `/${workspaceSlug}/workspace-views/all-issues/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: Layers,
+      Icon: ViewsIcon,
     },
     {
       key: "active-cycles",
       labelTranslationKey: "sidebar.cycles",
       href: `/${workspaceSlug}/active-cycles/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: ContrastIcon,
+      Icon: CycleIcon,
     },
     {
       key: "analytics",
       labelTranslationKey: "sidebar.analytics",
       href: `/${workspaceSlug}/analytics/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: BarChart2,
+      Icon: AnalyticsIcon,
     },
   ];
 
@@ -66,7 +69,7 @@ export const SidebarWorkspaceMenu = observer(() => {
         leaveTo="transform scale-95 opacity-0"
       >
         {isWorkspaceMenuOpen && (
-          <Disclosure.Panel as="div" className="flex flex-col mt-0.5 gap-0.5" static>
+          <Disclosure.Panel as="div" className="mt-0.5 flex flex-col gap-0.5" static>
             {SIDEBAR_WORKSPACE_MENU_ITEMS.map((item) => (
               <SidebarWorkspaceMenuItem key={item.key} item={item} />
             ))}

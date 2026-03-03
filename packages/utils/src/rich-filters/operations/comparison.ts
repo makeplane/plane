@@ -1,15 +1,19 @@
-import compact from "lodash/compact";
-import isEqual from "lodash/isEqual";
-import sortBy from "lodash/sortBy";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { compact, isEqual, sortBy } from "lodash-es";
 // plane imports
-import {
-  FILTER_NODE_TYPE,
+import type {
   TFilterConditionNode,
   TFilterExpression,
   TFilterGroupNode,
   TFilterProperty,
   TFilterValue,
 } from "@plane/types";
+import { FILTER_NODE_TYPE } from "@plane/types";
 // local imports
 import { isConditionNode, isGroupNode } from "../types/core";
 import { processGroupNode } from "../types/shared";

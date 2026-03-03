@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // types
-import { TButtonVariants } from "./types";
+import type { TButtonVariants } from "./types";
 
 export const BORDER_BUTTON_VARIANTS: TButtonVariants[] = ["border-with-text", "border-without-text"];
 

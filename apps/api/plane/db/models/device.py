@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # models.py
 from django.db import models
 from django.conf import settings
@@ -11,9 +15,7 @@ class Device(BaseModel):
         WEB = "WEB", "Web"
         DESKTOP = "DESKTOP", "Desktop"
 
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="devices"
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="devices")
     device_id = models.CharField(max_length=255, blank=True, null=True)
     device_type = models.CharField(max_length=255, choices=DeviceType.choices)
     push_token = models.CharField(max_length=255, blank=True, null=True)
@@ -26,12 +28,8 @@ class Device(BaseModel):
 
 
 class DeviceSession(BaseModel):
-    device = models.ForeignKey(
-        Device, on_delete=models.CASCADE, related_name="sessions"
-    )
-    session = models.ForeignKey(
-        "db.Session", on_delete=models.CASCADE, related_name="device_sessions"
-    )
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="sessions")
+    session = models.ForeignKey("db.Session", on_delete=models.CASCADE, related_name="device_sessions")
     is_active = models.BooleanField(default=True)
     user_agent = models.CharField(max_length=255, null=True, blank=True)
     ip_address = models.GenericIPAddressField(null=True, blank=True)

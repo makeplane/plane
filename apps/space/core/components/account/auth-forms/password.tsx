@@ -1,12 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // plane imports
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
-import { Button, Input, Spinner, PasswordStrengthIndicator } from "@plane/ui";
+import { Input, Spinner, PasswordStrengthIndicator } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // types
 import { EAuthModes, EAuthSteps } from "@/types/auth";
@@ -34,7 +39,7 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
+export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props) {
   const { email, nextPath, isSMTPConfigured, handleAuthStep, handleEmailClear, mode } = props;
   // ref
   const formRef = useRef<HTMLFormElement>(null);
@@ -117,12 +122,10 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       <input type="hidden" value={passwordFormData.email} name="email" />
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
-        <label className="text-sm font-medium text-custom-text-300" htmlFor="email">
+        <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
-        <div
-          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-100`}
-        >
+        <div className={`relative flex items-center rounded-md border border-subtle bg-surface-1`}>
           <Input
             id="email"
             name="email"
@@ -130,12 +133,12 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             value={passwordFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 border-0`}
+            className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder`}
             disabled
           />
           {passwordFormData.email.length > 0 && (
             <XCircle
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+              className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
               onClick={handleEmailClear}
             />
           )}
@@ -143,30 +146,30 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+        <label className="text-13 font-medium text-tertiary" htmlFor="password">
           {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
         </label>
-        <div className="relative flex items-center rounded-md bg-custom-background-100">
+        <div className="relative flex items-center rounded-md bg-surface-1">
           <Input
             type={showPassword?.password ? "text" : "password"}
             name="password"
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
             placeholder="Enter password"
-            className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+            className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
-            autoComplete="on"
+            autoComplete="off"
             autoFocus
           />
           {showPassword?.password ? (
             <EyeOff
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+              className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
               onClick={() => handleShowPassword("password")}
             />
           ) : (
             <Eye
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+              className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
               onClick={() => handleShowPassword("password")}
             />
           )}
@@ -176,42 +179,43 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
 
       {mode === EAuthModes.SIGN_UP && (
         <div className="space-y-1">
-          <label className="text-sm text-custom-text-300 font-medium" htmlFor="confirm_password">
+          <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
             Confirm password
           </label>
-          <div className="relative flex items-center rounded-md bg-custom-background-100">
+          <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
               type={showPassword?.retypePassword ? "text" : "password"}
               name="confirm_password"
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder="Confirm password"
-              className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
+              autoComplete="off"
             />
             {showPassword?.retypePassword ? (
               <EyeOff
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                 onClick={() => handleShowPassword("retypePassword")}
               />
             ) : (
               <Eye
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                 onClick={() => handleShowPassword("retypePassword")}
               />
             )}
           </div>
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
-            renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
+            renderPasswordMatchError && <span className="text-13 text-danger-primary">Passwords don{"'"}t match</span>}
         </div>
       )}
 
       <div className="space-y-2.5">
         {mode === EAuthModes.SIGN_IN ? (
           <>
-            <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+            <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
               {isSubmitting ? (
                 <Spinner height="20px" width="20px" />
               ) : isSMTPConfigured ? (
@@ -224,16 +228,16 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               <Button
                 type="button"
                 onClick={redirectToUniqueCodeSignIn}
-                variant="outline-primary"
+                variant="secondary"
                 className="w-full"
-                size="lg"
+                size="xl"
               >
                 Sign in with unique code
               </Button>
             )}
           </>
         ) : (
-          <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+          <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
             {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
           </Button>
         )}

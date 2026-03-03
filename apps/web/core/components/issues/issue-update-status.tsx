@@ -1,14 +1,20 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { RefreshCw } from "lucide-react";
 // types
-import { TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
 
 type Props = {
   isSubmitting: TNameDescriptionLoader;
 };
 
-export const NameDescriptionUpdateStatus: React.FC<Props> = observer((props) => {
+export const NameDescriptionUpdateStatus = observer(function NameDescriptionUpdateStatus(props: Props) {
   const { isSubmitting } = props;
 
   return (
@@ -19,9 +25,9 @@ export const NameDescriptionUpdateStatus: React.FC<Props> = observer((props) => 
         }`}
       >
         {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
-          <RefreshCw className="animate-spin size-3.5 stroke-custom-text-300" />
+          <RefreshCw className="size-3.5 animate-spin stroke-tertiary" />
         )}
-        <span className="text-sm text-custom-text-300">{isSubmitting === "submitting" ? "Saving..." : "Saved"}</span>
+        <span className="text-13 text-tertiary">{isSubmitting === "submitting" ? "Saving..." : "Saved"}</span>
       </div>
     </>
   );

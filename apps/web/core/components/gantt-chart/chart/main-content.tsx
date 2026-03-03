@@ -1,8 +1,20 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-import { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@plane/types";
+import type {
+  ChartDataType,
+  IBlockUpdateData,
+  IBlockUpdateDependencyData,
+  IGanttBlock,
+  TGanttViews,
+} from "@plane/types";
 import { cn, getDate } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
@@ -11,7 +23,11 @@ import { GanttChartSidebar, MonthChartView, QuarterChartView, WeekChartView } fr
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // plane web components
-import { TimelineDependencyPaths, TimelineDraggablePath } from "@/plane-web/components/gantt-chart";
+import {
+  TimelineDependencyPaths,
+  TimelineDraggablePath,
+  GanttAdditionalLayers,
+} from "@/plane-web/components/gantt-chart";
 import { GanttChartRowList } from "@/plane-web/components/gantt-chart/blocks/block-row-list";
 import { GanttChartBlocksList } from "@/plane-web/components/gantt-chart/blocks/blocks-list";
 import { IssueBulkOperationsRoot } from "@/plane-web/components/issues/bulk-operations";
@@ -50,7 +66,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const GanttChartMainContent: React.FC<Props> = observer((props) => {
+export const GanttChartMainContent = observer(function GanttChartMainContent(props: Props) {
   const {
     blockIds,
     loadMoreBlocks,
@@ -161,7 +177,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
               // DO NOT REMOVE THE ID
               id="gantt-container"
               className={cn(
-                "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-custom-border-200",
+                "vertical-scrollbar horizontal-scrollbar flex scrollbar-lg h-full w-full overflow-auto border-t-[0.5px] border-subtle",
                 {
                   "mb-8": bottomSpacing,
                 }
@@ -179,11 +195,11 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                 enableSelection={enableSelection}
                 sidebarToRender={sidebarToRender}
                 title={title}
-                quickAdd={quickAdd}
                 selectionHelpers={helpers}
+                showAllBlocks={showAllBlocks}
                 isEpic={isEpic}
               />
-              <div className="relative min-h-full h-max flex-shrink-0 flex-grow">
+              <div className="relative h-max min-h-full flex-shrink-0 flex-grow">
                 <ActiveChartView />
                 {currentViewData && (
                   <div
@@ -205,6 +221,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                     />
                     <TimelineDependencyPaths isEpic={isEpic} />
                     <TimelineDraggablePath />
+                    <GanttAdditionalLayers itemsContainerWidth={itemsContainerWidth} blockCount={blockIds.length} />
                     <GanttChartBlocksList
                       blockIds={blockIds}
                       blockToRender={blockToRender}
@@ -220,6 +237,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                 )}
               </div>
             </div>
+            {quickAdd ? quickAdd : null}
             <IssueBulkOperationsRoot selectionHelpers={helpers} />
           </>
         )}

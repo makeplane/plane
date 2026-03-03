@@ -1,27 +1,31 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { PenSquare } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue } from "@plane/types";
-import { cn } from "@plane/utils";
+import { AddWorkItemIcon } from "@plane/propel/icons";
+import type { TIssue } from "@plane/types";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { SidebarAddButton } from "@/components/sidebar/add-button";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import useLocalStorage from "@/hooks/use-local-storage";
-// plane web components
-import { AppSearch } from "@/plane-web/components/workspace/sidebar/app-search";
 
-export const SidebarQuickActions = observer(() => {
+export const SidebarQuickActions = observer(function SidebarQuickActions() {
   const { t } = useTranslation();
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
-  const [isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);
+  const [_isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);
   // refs
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const timeoutRef = useRef<any>();
@@ -73,27 +77,20 @@ export const SidebarQuickActions = observer(() => {
         fetchIssueDetails={false}
         isDraft
       />
-      <div className={cn("flex items-center justify-between gap-1 cursor-pointer", {})}>
-        <button
-          type="button"
-          className={cn(
-            "relative flex flex-shrink-0 flex-grow items-center gap-2 h-8 text-custom-sidebar-text-300 rounded outline-none hover:bg-custom-sidebar-background-90 px-3 border-[0.5px] border-custom-sidebar-border-300",
-            {
-              "cursor-not-allowed opacity-50 ": disabled,
-            }
-          )}
-          data-ph-element={SIDEBAR_TRACKER_ELEMENTS.CREATE_WORK_ITEM_BUTTON}
-          onClick={() => {
-            toggleCreateIssueModal(true);
-          }}
+      <div className="flex cursor-pointer items-center justify-between gap-2">
+        <SidebarAddButton
+          label={
+            <>
+              <AddWorkItemIcon className="size-4" />
+              <span className="max-w-[145px] truncate text-13 font-medium">{t("sidebar.new_work_item")}</span>
+            </>
+          }
+          onClick={() => toggleCreateIssueModal(true)}
+          disabled={disabled}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          disabled={disabled}
-        >
-          <PenSquare className="size-4" />
-          <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
-        </button>
-        <AppSearch />
+          data-ph-element={SIDEBAR_TRACKER_ELEMENTS.CREATE_WORK_ITEM_BUTTON}
+        />
       </div>
     </>
   );

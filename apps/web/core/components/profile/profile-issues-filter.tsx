@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -6,17 +12,20 @@ import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constant
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 
-export const ProfileIssuesFilter = observer(() => {
+export const ProfileIssuesFilter = observer(function ProfileIssuesFilter() {
   // i18n
   const { t } = useTranslation();
   // router
-  const { workspaceSlug, userId } = useParams();
+  const { workspaceSlug, userId: routeUserId } = useParams();
+  const userId = routeUserId ? routeUserId.toString() : undefined;
   // store hook
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -27,13 +36,7 @@ export const ProfileIssuesFilter = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !userId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.DISPLAY_FILTERS,
-        { layout: layout },
-        userId.toString()
-      );
+      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, userId);
     },
     [workspaceSlug, updateFilters, userId]
   );
@@ -46,7 +49,7 @@ export const ProfileIssuesFilter = observer(() => {
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
         updatedDisplayFilter,
-        userId.toString()
+        userId
       );
     },
     [workspaceSlug, updateFilters, userId]
@@ -55,13 +58,7 @@ export const ProfileIssuesFilter = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !userId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
-        userId.toString()
-      );
+      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_PROPERTIES, property, userId);
     },
     [workspaceSlug, updateFilters, userId]
   );
@@ -73,6 +70,7 @@ export const ProfileIssuesFilter = observer(() => {
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
+      {userId && <WorkItemFiltersToggle entityType={EIssuesStoreType.PROFILE} entityId={userId} />}
       <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={

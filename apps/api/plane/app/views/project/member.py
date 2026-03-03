@@ -1,6 +1,11 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Min
 
 # Module imports
 from .base import BaseViewSet, BaseAPIView
@@ -8,11 +13,12 @@ from plane.app.serializers import (
     ProjectMemberSerializer,
     ProjectMemberAdminSerializer,
     ProjectMemberRoleSerializer,
+    ProjectMemberPreferenceSerializer,
 )
 
 from plane.app.permissions import WorkspaceUserPermission
 
-from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
+from plane.db.models import Project, ProjectMember, ProjectUserProperty, WorkspaceMember
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
@@ -48,7 +54,7 @@ class ProjectMemberViewSet(BaseViewSet):
         # Check if the members array is empty
         if not len(members):
             return Response(
-                {"error": "Atleast one member is required"},
+                {"error": "At least one member is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -57,9 +63,7 @@ class ProjectMemberViewSet(BaseViewSet):
         bulk_issue_props = []
 
         # Create a dictionary of the member_id and their roles
-        member_roles = {
-            member.get("member_id"): member.get("role") for member in members
-        }
+        member_roles = {member.get("member_id"): member.get("role") for member in members}
 
         # check the workspace role of the new user
         for member in member_roles:
@@ -68,17 +72,13 @@ class ProjectMemberViewSet(BaseViewSet):
             ).role
             if workspace_member_role in [20] and member_roles.get(member) in [5, 15]:
                 return Response(
-                    {
-                        "error": "You cannot add a user with role lower than the workspace role"
-                    },
+                    {"error": "You cannot add a user with role lower than the workspace role"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if workspace_member_role in [5] and member_roles.get(member) in [15, 20]:
                 return Response(
-                    {
-                        "error": "You cannot add a user with role higher than the workspace role"
-                    },
+                    {"error": "You cannot add a user with role higher than the workspace role"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -92,28 +92,25 @@ class ProjectMemberViewSet(BaseViewSet):
             bulk_project_members.append(project_member)
 
         # Update the roles of the existing members
-        ProjectMember.objects.bulk_update(
-            bulk_project_members, ["is_active", "role"], batch_size=100
-        )
+        ProjectMember.objects.bulk_update(bulk_project_members, ["is_active", "role"], batch_size=100)
 
-        # Get the list of project members of the requested workspace with the given slug
-        project_members = (
-            ProjectMember.objects.filter(
+        # Get the minimum sort_order for each member in the workspace
+        member_sort_orders = (
+            ProjectUserProperty.objects.filter(
                 workspace__slug=slug,
-                member_id__in=[member.get("member_id") for member in members],
+                user_id__in=[member.get("member_id") for member in members],
             )
-            .values("member_id", "sort_order")
-            .order_by("sort_order")
+            .values("user_id")
+            .annotate(min_sort_order=Min("sort_order"))
         )
+        # Convert to dictionary for easy lookup: {user_id: min_sort_order}
+        sort_order_map = {str(item["user_id"]): item["min_sort_order"] for item in member_sort_orders}
 
         # Loop through requested members
         for member in members:
-            # Get the sort orders of the member
-            sort_order = [
-                project_member.get("sort_order")
-                for project_member in project_members
-                if str(project_member.get("member_id")) == str(member.get("member_id"))
-            ]
+            member_id = str(member.get("member_id"))
+            # Get the minimum sort_order for this member, or use default
+            min_sort_order = sort_order_map.get(member_id)
             # Create a new project member
             bulk_project_members.append(
                 ProjectMember(
@@ -121,26 +118,22 @@ class ProjectMemberViewSet(BaseViewSet):
                     role=member.get("role", 5),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    sort_order=(sort_order[0] - 10000 if len(sort_order) else 65535),
                 )
             )
             # Create a new issue property
             bulk_issue_props.append(
-                IssueUserProperty(
+                ProjectUserProperty(
                     user_id=member.get("member_id"),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
+                    sort_order=(min_sort_order - 10000 if min_sort_order is not None else 65535),
                 )
             )
 
         # Bulk create the project members and issue properties
-        project_members = ProjectMember.objects.bulk_create(
-            bulk_project_members, batch_size=10, ignore_conflicts=True
-        )
+        project_members = ProjectMember.objects.bulk_create(bulk_project_members, batch_size=10, ignore_conflicts=True)
 
-        _ = IssueUserProperty.objects.bulk_create(
-            bulk_issue_props, batch_size=10, ignore_conflicts=True
-        )
+        _ = ProjectUserProperty.objects.bulk_create(bulk_issue_props, batch_size=10, ignore_conflicts=True)
 
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
@@ -172,16 +165,46 @@ class ProjectMemberViewSet(BaseViewSet):
             member__member_workspace__is_active=True,
         ).select_related("project", "member", "workspace")
 
-        serializer = ProjectMemberRoleSerializer(
-            project_members, fields=("id", "member", "role"), many=True
+        serializer = ProjectMemberRoleSerializer(project_members, fields=("id", "member", "role"), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def retrieve(self, request, slug, project_id, pk):
+        requesting_project_member = ProjectMember.objects.get(
+            project_id=project_id,
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
         )
+
+        project_member = (
+            ProjectMember.objects.filter(
+                pk=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+                member__is_bot=False,
+                is_active=True,
+            )
+            .select_related("project", "member", "workspace")
+            .first()
+        )
+
+        if not project_member:
+            return Response(
+                {"error": "Project member not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if requesting_project_member.role > ROLE.GUEST.value:
+            serializer = ProjectMemberAdminSerializer(project_member)
+        else:
+            serializer = ProjectMemberRoleSerializer(project_member, fields=("id", "member", "role"))
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
-        project_member = ProjectMember.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, is_active=True
-        )
+        project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, is_active=True)
 
         # Fetch the workspace role of the project member
         workspace_role = WorkspaceMember.objects.get(
@@ -203,20 +226,15 @@ class ProjectMemberViewSet(BaseViewSet):
             is_active=True,
         )
 
-        if workspace_role in [5] and int(
-            request.data.get("role", project_member.role)
-        ) in [15, 20]:
+        if workspace_role in [5] and int(request.data.get("role", project_member.role)) in [15, 20]:
             return Response(
-                {
-                    "error": "You cannot add a user with role higher than the workspace role"
-                },
+                {"error": "You cannot add a user with role higher than the workspace role"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if (
             "role" in request.data
-            and int(request.data.get("role", project_member.role))
-            > requested_project_member.role
+            and int(request.data.get("role", project_member.role)) > requested_project_member.role
             and not is_workspace_admin
         ):
             return Response(
@@ -224,9 +242,7 @@ class ProjectMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = ProjectMemberSerializer(
-            project_member, data=request.data, partial=True
-        )
+        serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -252,9 +268,7 @@ class ProjectMemberViewSet(BaseViewSet):
         # User cannot remove himself
         if str(project_member.id) == str(requesting_project_member.id):
             return Response(
-                {
-                    "error": "You cannot remove yourself from the workspace. Please use leave workspace"
-                },
+                {"error": "You cannot remove yourself from the workspace. Please use leave workspace"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         # User cannot deactivate higher role
@@ -287,7 +301,7 @@ class ProjectMemberViewSet(BaseViewSet):
         ):
             return Response(
                 {
-                    "error": "You cannot leave the project as your the only admin of the project you will have to either delete the project or create an another admin"
+                    "error": "You cannot leave the project as your the only admin of the project you will have to either delete the project or create an another admin"  # noqa: E501
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -323,7 +337,34 @@ class UserProjectRolesEndpoint(BaseAPIView):
             member__member_workspace__is_active=True,
         ).values("project_id", "role")
 
-        project_members = {
-            str(member["project_id"]): member["role"] for member in project_members
-        }
+        project_members = {str(member["project_id"]): member["role"] for member in project_members}
         return Response(project_members, status=status.HTTP_200_OK)
+
+
+class ProjectMemberPreferenceEndpoint(BaseAPIView):
+    def get_queryset(self, slug, project_id, member_id):
+        return ProjectMember.objects.get(
+            project_id=project_id,
+            member_id=member_id,
+            workspace__slug=slug,
+        )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def patch(self, request, slug, project_id, member_id):
+        project_member = self.get_queryset(slug, project_id, member_id)
+
+        serializer = ProjectMemberPreferenceSerializer(project_member, {"preferences": request.data}, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response({"preferences": serializer.data["preferences"]}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, member_id):
+        project_member = self.get_queryset(slug, project_id, member_id)
+
+        serializer = ProjectMemberPreferenceSerializer(project_member)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,6 +1,13 @@
-import { IProjectIssues, ProjectIssues } from "@/store/issue/project";
-import { IIssueRootStore } from "@/store/issue/root.store";
-import { IProjectEpicsFilter } from "./filter.store";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { IProjectIssues } from "@/store/issue/project";
+import { ProjectIssues } from "@/store/issue/project";
+import type { IIssueRootStore } from "@/store/issue/root.store";
+import type { IProjectEpicsFilter } from "./filter.store";
 
 // @ts-nocheck - This class will never be used, extending similar class to avoid type errors
 

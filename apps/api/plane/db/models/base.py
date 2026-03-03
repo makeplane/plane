@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import uuid
 
 # Django imports
@@ -11,9 +15,7 @@ from ..mixins import AuditModel
 
 
 class BaseModel(AuditModel):
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
-    )
+    id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
 
     class Meta:
         abstract = True

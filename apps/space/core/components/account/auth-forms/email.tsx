@@ -1,13 +1,19 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, FormEvent, useMemo, useRef, useState } from "react";
+import type { FormEvent } from "react";
+import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { CircleAlert, XCircle } from "lucide-react";
 // types
-import { IEmailCheckData } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IEmailCheckData } from "@plane/types";
 // ui
-import { Button, Input, Spinner } from "@plane/ui";
+import { Input, Spinner } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 import { checkEmailValidity } from "@/helpers/string.helper";
@@ -17,7 +23,7 @@ type TAuthEmailForm = {
   onSubmit: (data: IEmailCheckData) => Promise<void>;
 };
 
-export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
+export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailForm) {
   const { onSubmit, defaultEmail } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,13 +52,13 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
   return (
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
       <div className="space-y-1">
-        <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
+        <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
         <div
           className={cn(
-            `relative flex items-center rounded-md bg-custom-background-100 border`,
-            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-custom-border-100`
+            `relative flex items-center rounded-md border bg-surface-1`,
+            !isFocused && Boolean(emailError?.email) ? `border-danger-strong` : `border-subtle`
           )}
           onFocus={() => {
             setIsFocused(true);
@@ -68,8 +74,8 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
-            autoComplete="on"
+            className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder autofill:bg-danger-subtle focus:bg-none active:bg-transparent`}
+            autoComplete="off"
             autoFocus
             ref={inputRef}
           />
@@ -83,18 +89,18 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
               }}
               tabIndex={-1}
             >
-              <XCircle className="h-10 w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs" />
+              <XCircle className="h-10 w-11 stroke-placeholder px-3 text-11 hover:cursor-pointer" />
             </button>
           )}
         </div>
         {emailError?.email && !isFocused && (
-          <p className="flex items-center gap-1 text-xs text-red-600 px-0.5">
+          <p className="flex items-center gap-1 px-0.5 text-11 text-danger-primary">
             <CircleAlert height={12} width={12} />
             {emailError.email}
           </p>
         )}
       </div>
-      <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+      <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
         {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
       </Button>
     </form>

@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -6,7 +10,8 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { DropIndicator, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { DropIndicator } from "@plane/ui";
 import { HIGHLIGHT_WITH_LINE, highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 
 type Props = {
@@ -17,7 +22,7 @@ type Props = {
   onDrop: (draggingBlockId: string | undefined, droppedBlockId: string | undefined, dropAtEndOfList: boolean) => void;
 };
 
-export const GanttDnDHOC = observer((props: Props) => {
+export const GanttDnDHOC = observer(function GanttDnDHOC(props: Props) {
   const { id, isLastChild, children, onDrop, isDragEnabled } = props;
   // states
   const [isDragging, setIsDragging] = useState(false);

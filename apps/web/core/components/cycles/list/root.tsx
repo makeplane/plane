@@ -1,4 +1,11 @@
-import React, { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // components
@@ -20,7 +27,7 @@ export interface ICyclesList {
   isArchived?: boolean;
 }
 
-export const CyclesList: FC<ICyclesList> = observer((props) => {
+export const CyclesList = observer(function CyclesList(props: ICyclesList) {
   const { completedCycleIds, upcomingCycleIds, cycleIds, workspaceSlug, projectId, isArchived = false } = props;
   const { t } = useTranslation();
 
@@ -39,7 +46,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
               <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
                 {({ open }) => (
                   <>
-                    <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
+                    <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
                       <CycleListGroupHeader
                         title={t("project_cycles.upcoming_cycle.label")}
                         type="upcoming"
@@ -58,7 +65,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
             <Disclosure as="div" className="flex flex-shrink-0 flex-col pb-7">
               {({ open }) => (
                 <>
-                  <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
+                  <Disclosure.Button className="sticky top-0 z-2 w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
                     <CycleListGroupHeader
                       title={t("project_cycles.completed_cycle.label")}
                       type="completed"

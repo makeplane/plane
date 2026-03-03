@@ -1,14 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 import { DashedCircle } from "./dashed-circle";
 
-export const BacklogGroupIcon: React.FC<ISvgIcons> = ({
-  width = "20",
-  height = "20",
-  className,
-  color = "#60646C",
-}) => {
+export function BacklogGroupIcon({ width = "20", height = "20", className, color = "#60646C" }: ISvgIcons) {
   // SVG parameters
   const viewBoxSize = 16;
   const center = viewBoxSize / 2;
@@ -24,4 +25,4 @@ export const BacklogGroupIcon: React.FC<ISvgIcons> = ({
       <DashedCircle center={center} radius={radius} color={color} percentage={0} />
     </svg>
   );
-};
+}

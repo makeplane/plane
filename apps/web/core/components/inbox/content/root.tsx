@@ -1,8 +1,14 @@
-import { FC, useEffect, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
 // components
 import { ContentWrapper } from "@plane/ui";
 // hooks
@@ -23,7 +29,7 @@ type TInboxContentRoot = {
   embedRemoveCurrentNotification?: () => void;
 };
 
-export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
+export const InboxContentRoot = observer(function InboxContentRoot(props: TInboxContentRoot) {
   const {
     workspaceSlug,
     projectId,
@@ -80,8 +86,8 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
 
   return (
     <>
-      <div className="w-full h-full overflow-hidden relative flex flex-col">
-        <div className="flex-shrink-0 min-h-[52px] z-[11]">
+      <div className="relative flex h-full w-full flex-col overflow-hidden">
+        <div className="z-[11] min-h-[52px] flex-shrink-0">
           <InboxIssueActionsHeader
             setIsMobileSidebar={setIsMobileSidebar}
             isMobileSidebar={isMobileSidebar}
@@ -93,7 +99,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             embedRemoveCurrentNotification={embedRemoveCurrentNotification}
           />
         </div>
-        <ContentWrapper className="space-y-5 divide-y-2 divide-custom-border-200">
+        <ContentWrapper className="divide-y-2 divide-subtle-1">
           <InboxIssueMainContent
             workspaceSlug={workspaceSlug}
             projectId={projectId}

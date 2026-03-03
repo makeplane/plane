@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from django.utils import timezone
 from django.db import DatabaseError
@@ -30,14 +34,10 @@ def recent_visited_task(entity_name, entity_identifier, user_id, project_id, slu
             except DatabaseError:
                 pass
         else:
-            recent_visited_count = UserRecentVisit.objects.filter(
-                user_id=user_id, workspace_id=workspace.id
-            ).count()
+            recent_visited_count = UserRecentVisit.objects.filter(user_id=user_id, workspace_id=workspace.id).count()
             if recent_visited_count == 20:
                 recent_visited = (
-                    UserRecentVisit.objects.filter(
-                        user_id=user_id, workspace_id=workspace.id
-                    )
+                    UserRecentVisit.objects.filter(user_id=user_id, workspace_id=workspace.id)
                     .order_by("created_at")
                     .first()
                 )

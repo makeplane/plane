@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate, ICalendarWeek } from "@plane/types";
@@ -5,21 +11,16 @@ import { cn, getOrderedDays, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 // types
-import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import { ICycleIssuesFilter } from "@/store/issue/cycle";
-import { IModuleIssuesFilter } from "@/store/issue/module";
-import { IProjectIssuesFilter } from "@/store/issue/project";
-import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { ICycleIssuesFilter } from "@/store/issue/cycle";
+import type { IModuleIssuesFilter } from "@/store/issue/module";
+import type { IProjectIssuesFilter } from "@/store/issue/project";
+import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarDayTile } from "./day-tile";
 
 type Props = {
-  issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
@@ -44,7 +45,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const CalendarWeekDays: React.FC<Props> = observer((props) => {
+export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props) {
   const {
     issuesFilterStore,
     issues,
@@ -84,7 +85,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={cn("grid divide-custom-border-200 md:divide-x-[0.5px]", {
+      className={cn("grid divide-subtle-1 md:divide-x-[0.5px]", {
         "grid-cols-7": showWeekends,
         "grid-cols-5": !showWeekends,
         "h-full": calendarLayout !== "month",

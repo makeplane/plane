@@ -1,9 +1,15 @@
-import { MutableRefObject } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+import type { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // local imports
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { TRenderQuickActions } from "../list/list-view-types";
 import { KanbanIssueBlock } from "./block";
 
 interface IssueBlocksListProps {
@@ -21,7 +27,7 @@ interface IssueBlocksListProps {
   isEpic?: boolean;
 }
 
-export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((props) => {
+export const KanbanIssueBlocksList = observer(function KanbanIssueBlocksList(props: IssueBlocksListProps) {
   const {
     sub_group_id,
     groupId,

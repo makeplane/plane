@@ -1,11 +1,15 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { Fragment, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 
 type Props = {
   children: React.ReactNode;
@@ -13,7 +17,7 @@ type Props = {
   placement?: Placement;
 };
 
-export const FiltersDropdown: React.FC<Props> = (props) => {
+export function FiltersDropdown(props: Props) {
   const { children, title = "Dropdown", placement } = props;
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -31,8 +35,8 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
         return (
           <>
             <Popover.Button as={React.Fragment}>
-              <Button ref={setReferenceElement} variant="neutral-primary" size="sm">
-                <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
+              <Button ref={setReferenceElement} variant="secondary">
+                <div className={`${open ? "text-primary" : "text-secondary"}`}>
                   <span>{title}</span>
                 </div>
               </Button>
@@ -48,7 +52,7 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
             >
               <Popover.Panel>
                 <div
-                  className="z-10 overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg"
+                  className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-200"
                   ref={setPopperElement}
                   style={styles.popper}
                   {...attributes.popper}
@@ -62,4 +66,4 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
       }}
     </Popover>
   );
-};
+}

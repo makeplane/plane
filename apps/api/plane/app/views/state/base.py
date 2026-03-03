@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from itertools import groupby
 from collections import defaultdict
@@ -10,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from .. import BaseViewSet
+from .. import BaseViewSet, BaseAPIView
 from plane.app.serializers import StateSerializer
 from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import State, Issue
@@ -57,9 +61,7 @@ class StateViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
         try:
-            state = State.objects.get(
-                pk=pk, project_id=project_id, workspace__slug=slug
-            )
+            state = State.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
             serializer = StateSerializer(state, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -103,20 +105,14 @@ class StateViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN])
     def mark_as_default(self, request, slug, project_id, pk):
         # Select all the states which are marked as default
-        _ = State.objects.filter(
-            workspace__slug=slug, project_id=project_id, default=True
-        ).update(default=False)
-        _ = State.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        ).update(default=True)
+        _ = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).update(default=False)
+        _ = State.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk).update(default=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def destroy(self, request, slug, project_id, pk):
-        state = State.objects.get(
-            is_triage=False, pk=pk, project_id=project_id, workspace__slug=slug
-        )
+        state = State.objects.get(is_triage=False, pk=pk, project_id=project_id, workspace__slug=slug)
 
         if state.default:
             return Response(
@@ -125,7 +121,7 @@ class StateViewSet(BaseViewSet):
             )
 
         # Check for any issues in the state
-        issue_exist = Issue.issue_objects.filter(state=pk).exists()
+        issue_exist = Issue.objects.filter(state=pk).exists()
 
         if issue_exist:
             return Response(
@@ -135,3 +131,16 @@ class StateViewSet(BaseViewSet):
 
         state.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IntakeStateEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        state = State.triage_objects.filter(workspace__slug=slug, project_id=project_id).first()
+        if not state:
+            return Response(
+                {"error": "Triage state not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        return Response(StateSerializer(state).data, status=status.HTTP_200_OK)

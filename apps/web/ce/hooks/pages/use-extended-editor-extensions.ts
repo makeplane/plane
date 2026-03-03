@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { IEditorPropsExtended } from "@plane/editor";
 import type { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import type { TPageInstance } from "@/store/pages/base-page";
-import { EPageStoreType } from "../store";
+import type { EPageStoreType } from "../store";
 
 export type TExtendedEditorExtensionsHookParams = {
   workspaceSlug: string;

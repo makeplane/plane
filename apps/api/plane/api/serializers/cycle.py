@@ -1,10 +1,14 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 import pytz
 from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import Cycle, CycleIssue
+from plane.db.models import Cycle, CycleIssue, User, Project
 from plane.utils.timezone_converter import convert_to_utc
 
 
@@ -15,6 +19,13 @@ class CycleCreateSerializer(BaseSerializer):
     Manages cycle creation including project timezone conversion, date range validation,
     and UTC normalization for time-bound iteration planning and sprint management.
     """
+
+    owned_by = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        required=False,
+        allow_null=True,
+        help_text="User who owns the cycle. If not provided, defaults to the current user.",
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -48,6 +59,18 @@ class CycleCreateSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
+        project_id = self.initial_data.get("project_id") or (
+            self.instance.project_id if self.instance and hasattr(self.instance, "project_id") else None
+        )
+
+        if not project_id:
+            raise serializers.ValidationError("Project ID is required")
+
+        project = Project.objects.filter(id=project_id).first()
+        if not project:
+            raise serializers.ValidationError("Project not found")
+        if not project.cycle_view:
+            raise serializers.ValidationError("Cycles are not enabled for this project")
         if (
             data.get("start_date", None) is not None
             and data.get("end_date", None) is not None
@@ -55,19 +78,7 @@ class CycleCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Start date cannot exceed end date")
 
-        if (
-            data.get("start_date", None) is not None
-            and data.get("end_date", None) is not None
-        ):
-            project_id = self.initial_data.get("project_id") or (
-                self.instance.project_id
-                if self.instance and hasattr(self.instance, "project_id")
-                else None
-            )
-
-            if not project_id:
-                raise serializers.ValidationError("Project ID is required")
-
+        if data.get("start_date", None) is not None and data.get("end_date", None) is not None:
             data["start_date"] = convert_to_utc(
                 date=str(data.get("start_date").date()),
                 project_id=project_id,
@@ -77,6 +88,10 @@ class CycleCreateSerializer(BaseSerializer):
                 date=str(data.get("end_date", None).date()),
                 project_id=project_id,
             )
+
+        if not data.get("owned_by"):
+            data["owned_by"] = self.context["request"].user
+
         return data
 
 
@@ -166,9 +181,7 @@ class CycleIssueRequestSerializer(serializers.Serializer):
     cycle assignment and sprint planning workflows.
     """
 
-    issues = serializers.ListField(
-        child=serializers.UUIDField(), help_text="List of issue IDs to add to the cycle"
-    )
+    issues = serializers.ListField(child=serializers.UUIDField(), help_text="List of issue IDs to add to the cycle")
 
 
 class TransferCycleIssueRequestSerializer(serializers.Serializer):
@@ -179,6 +192,4 @@ class TransferCycleIssueRequestSerializer(serializers.Serializer):
     and relationship updates for sprint reallocation workflows.
     """
 
-    new_cycle_id = serializers.UUIDField(
-        help_text="ID of the target cycle to transfer issues to"
-    )
+    new_cycle_id = serializers.UUIDField(help_text="ID of the target cycle to transfer issues to")

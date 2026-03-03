@@ -1,10 +1,14 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 // plane imports
-import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@plane/constants";
+import type { ENotificationFilterType } from "@plane/constants";
+import { FILTER_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { PopoverMenu } from "@plane/ui";
@@ -12,8 +16,9 @@ import { PopoverMenu } from "@plane/ui";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { NotificationFilterOptionItem } from "./menu-option-item";
+import { IconButton } from "@plane/propel/icon-button";
 
-export const NotificationFilter: FC = observer(() => {
+export const NotificationFilter = observer(function NotificationFilter() {
   // hooks
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -28,9 +33,7 @@ export const NotificationFilter: FC = observer(() => {
       data={translatedFilterTypeOptions}
       button={
         <Tooltip tooltipContent={t("notification.options.filters")} isMobile={isMobile} position="bottom">
-          <div className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm outline-none">
-            <ListFilter className="h-3 w-3" />
-          </div>
+          <IconButton size="base" variant="ghost" icon={ListFilter} />
         </Tooltip>
       }
       keyExtractor={(item: { label: string; value: ENotificationFilterType }) => item.value}

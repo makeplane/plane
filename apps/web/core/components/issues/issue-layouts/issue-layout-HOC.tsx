@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { EIssueLayoutTypes } from "@plane/types";
@@ -13,7 +19,7 @@ import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // local imports
 import { IssueLayoutEmptyState } from "./empty-states";
 
-const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
+function ActiveLoader(props: { layout: EIssueLayoutTypes }) {
   const { layout } = props;
   switch (layout) {
     case EIssueLayoutTypes.LIST:
@@ -29,14 +35,14 @@ const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
     default:
       return null;
   }
-};
+}
 
 interface Props {
   children: string | React.ReactNode | React.ReactNode[];
   layout: EIssueLayoutTypes;
 }
 
-export const IssueLayoutHOC = observer((props: Props) => {
+export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
   const { layout } = props;
 
   const storeType = useIssueStoreType();

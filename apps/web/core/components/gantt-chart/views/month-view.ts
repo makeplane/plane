@@ -1,10 +1,17 @@
-import cloneDeep from "lodash/cloneDeep";
-import uniqBy from "lodash/uniqBy";
-//
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { cloneDeep, uniqBy } from "lodash-es";
+// plane imports
 import type { ChartDataType } from "@plane/types";
+// local imports
 import { months } from "../data";
 import { getNumberOfDaysBetweenTwoDates, getNumberOfDaysInMonth } from "./helpers";
-import { getWeeksBetweenTwoDates, IWeekBlock } from "./week-view";
+import type { IWeekBlock } from "./week-view";
+import { getWeeksBetweenTwoDates } from "./week-view";
 
 export interface IMonthBlock {
   today: boolean;

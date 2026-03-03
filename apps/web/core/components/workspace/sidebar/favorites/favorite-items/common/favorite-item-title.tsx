@@ -1,5 +1,10 @@
-"use client";
-import React, { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -12,7 +17,7 @@ type Props = {
   icon: React.ReactNode;
 };
 
-export const FavoriteItemTitle: FC<Props> = observer((props) => {
+export const FavoriteItemTitle = observer(function FavoriteItemTitle(props: Props) {
   const { href, title, icon } = props;
   // store hooks
   const { toggleSidebar } = useAppTheme();
@@ -24,9 +29,9 @@ export const FavoriteItemTitle: FC<Props> = observer((props) => {
 
   return (
     <Tooltip tooltipContent={title} isMobile={isMobile} position="right" className="ml-8">
-      <Link href={href} className="flex items-center gap-1.5 truncate w-full" draggable onClick={handleOnClick}>
-        <span className="flex items-center justify-center size-5">{icon}</span>
-        <span className="text-sm leading-5 font-medium flex-1 truncate">{title}</span>
+      <Link href={href} className="flex w-full items-center gap-1.5 truncate" draggable onClick={handleOnClick}>
+        <span className="flex size-5 items-center justify-center">{icon}</span>
+        <span className="flex-1 truncate text-13 leading-5 font-medium">{title}</span>
       </Link>
     </Tooltip>
   );

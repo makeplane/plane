@@ -1,7 +1,11 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, useCallback } from "react";
-import cloneDeep from "lodash/cloneDeep";
+import { useCallback } from "react";
+import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // constants
@@ -14,13 +18,13 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 // types
-import { TIssueQueryFilters } from "@/types/issue";
+import type { TIssueQueryFilters } from "@/types/issue";
 
 type IssueFiltersDropdownProps = {
   anchor: string;
 };
 
-export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((props) => {
+export const IssueFiltersDropdown = observer(function IssueFiltersDropdown(props: IssueFiltersDropdownProps) {
   const { anchor } = props;
   // router
   const router = useRouter();
@@ -58,7 +62,7 @@ export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((pro
   );
 
   return (
-    <div className="z-10 flex h-full w-full flex-col">
+    <div className="relative">
       <FiltersDropdown title="Filters" placement="bottom-end">
         <FilterSelection
           filters={issueFilters?.filters ?? {}}

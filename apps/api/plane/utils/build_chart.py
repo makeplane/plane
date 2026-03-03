@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from typing import Dict, Any, Tuple, Optional, List, Union
 
 
@@ -51,7 +55,7 @@ def get_x_axis_field() -> Dict[str, Tuple[str, str, Optional[Dict[str, Any]]]]:
             "assignees__display_name",
             {"issue_assignee__deleted_at__isnull": True},
         ),
-        "ESTIMATE_POINTS": ("estimate_point__value", "estimate_point__key", None),
+        "ESTIMATE_POINTS": ("estimate_point__key", "estimate_point__value", None),
         "CYCLES": (
             "issue_cycle__cycle_id",
             "issue_cycle__cycle__name",
@@ -82,11 +86,7 @@ def process_grouped_data(
         if key not in response:
             response[key] = {
                 "key": key if key else "none",
-                "name": (
-                    item.get("display_name", key)
-                    if item.get("display_name", key)
-                    else "None"
-                ),
+                "name": (item.get("display_name", key) if item.get("display_name", key) else "None"),
                 "count": 0,
             }
         group_key = str(item["group_key"]) if item["group_key"] else "none"
@@ -104,9 +104,7 @@ def build_number_chart_response(
     y_axis: str,
     aggregate_func: Aggregate,
 ) -> List[Dict[str, Any]]:
-    count = (
-        queryset.filter(**y_axis_filter).aggregate(total=aggregate_func).get("total", 0)
-    )
+    count = queryset.filter(**y_axis_filter).aggregate(total=aggregate_func).get("total", 0)
     return [{"key": y_axis, "name": y_axis, "count": count}]
 
 
@@ -136,9 +134,7 @@ def build_simple_chart_response(
     queryset: QuerySet, id_field: str, name_field: str, aggregate_func: Aggregate
 ) -> List[Dict[str, Any]]:
     data = (
-        queryset.annotate(
-            key=F(id_field), display_name=F(name_field) if name_field else F(id_field)
-        )
+        queryset.annotate(key=F(id_field), display_name=F(name_field) if name_field else F(id_field))
         .values("key", "display_name")
         .annotate(count=aggregate_func)
         .order_by("key")
@@ -170,12 +166,8 @@ def build_analytics_chart(
 
     field_mapping = get_x_axis_field()
 
-    id_field, name_field, additional_filter = field_mapping.get(
-        x_axis, (None, None, {})
-    )
-    group_field, group_name_field, group_additional_filter = field_mapping.get(
-        group_by, (None, None, {})
-    )
+    id_field, name_field, additional_filter = field_mapping.get(x_axis, (None, None, {}))
+    group_field, group_name_field, group_additional_filter = field_mapping.get(group_by, (None, None, {}))
 
     # Apply additional filters if they exist
     if additional_filter or {}:
@@ -196,9 +188,7 @@ def build_analytics_chart(
             aggregate_func,
         )
     else:
-        response = build_simple_chart_response(
-            queryset, id_field, name_field, aggregate_func
-        )
+        response = build_simple_chart_response(queryset, id_field, name_field, aggregate_func)
         schema = {}
 
     return {"data": response, "schema": schema}

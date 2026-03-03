@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -47,9 +51,7 @@ class SignInAuthEndpoint(View):
         if not email or not password:
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "REQUIRED_EMAIL_PASSWORD_SIGN_IN"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_EMAIL_PASSWORD_SIGN_IN"],
                 error_message="REQUIRED_EMAIL_PASSWORD_SIGN_IN",
                 payload={"email": str(email)},
             )
@@ -155,9 +157,7 @@ class SignUpAuthEndpoint(View):
         if not email or not password:
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "REQUIRED_EMAIL_PASSWORD_SIGN_UP"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_EMAIL_PASSWORD_SIGN_UP"],
                 error_message="REQUIRED_EMAIL_PASSWORD_SIGN_UP",
                 payload={"email": str(email)},
             )

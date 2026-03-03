@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from urllib.parse import urlencode, urljoin
 import uuid
@@ -47,9 +51,7 @@ class InstanceAdminEndpoint(BaseAPIView):
         role = request.data.get("role", 20)
 
         if not email:
-            return Response(
-                {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         instance = Instance.objects.first()
         if instance is None:
@@ -61,9 +63,7 @@ class InstanceAdminEndpoint(BaseAPIView):
         # Fetch the user
         user = User.objects.get(email=email)
 
-        instance_admin = InstanceAdmin.objects.create(
-            instance=instance, user=user, role=role
-        )
+        instance_admin = InstanceAdmin.objects.create(instance=instance, user=user, role=role)
         serializer = InstanceAdminSerializer(instance_admin)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -127,9 +127,7 @@ class InstanceAdminSignUpEndpoint(View):
         # return error if the email and password is not present
         if not email or not password or not first_name:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME"],
                 error_message="REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME",
                 payload={
                     "email": email,
@@ -140,7 +138,10 @@ class InstanceAdminSignUpEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request, is_admin=True),
+                base_host(
+                    request=request,
+                    is_admin=True,
+                ),
                 "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -190,8 +191,8 @@ class InstanceAdminSignUpEndpoint(View):
             results = zxcvbn(password)
             if results["score"] < 3:
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_ADMIN_PASSWORD"],
-                    error_message="INVALID_ADMIN_PASSWORD",
+                    error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                    error_message="PASSWORD_TOO_WEAK",
                     payload={
                         "email": email,
                         "first_name": first_name,
@@ -234,7 +235,7 @@ class InstanceAdminSignUpEndpoint(View):
 
             # get tokens for user
             user_login(request=request, user=user, is_admin=True)
-            url = urljoin(base_host(request=request, is_admin=True), "general")
+            url = urljoin(base_host(request=request, is_admin=True), "general/")
             return HttpResponseRedirect(url)
 
 
@@ -353,7 +354,7 @@ class InstanceAdminSignInEndpoint(View):
 
         # get tokens for user
         user_login(request=request, user=user, is_admin=True)
-        url = urljoin(base_host(request=request, is_admin=True), "general")
+        url = urljoin(base_host(request=request, is_admin=True), "general/")
         return HttpResponseRedirect(url)
 
 
@@ -369,10 +370,7 @@ class InstanceAdminUserSessionEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        if (
-            request.user.is_authenticated
-            and InstanceAdmin.objects.filter(user=request.user).exists()
-        ):
+        if request.user.is_authenticated and InstanceAdmin.objects.filter(user=request.user).exists():
             serializer = InstanceAdminMeSerializer(request.user)
             data = {"is_authenticated": True}
             data["user"] = serializer.data
@@ -393,14 +391,8 @@ class InstanceAdminSignOutEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_admin=True),
-                next_path=""
-            )
+            url = get_safe_redirect_url(base_url=base_host(request=request, is_admin=True), next_path="")
             return HttpResponseRedirect(url)
         except Exception:
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_admin=True),
-                next_path=""
-            )
+            url = get_safe_redirect_url(base_url=base_host(request=request, is_admin=True), next_path="")
             return HttpResponseRedirect(url)

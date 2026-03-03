@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -12,7 +16,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseViewSet
-from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard
+from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard, State, StateGroup
 from plane.app.serializers import (
     IssueSerializer,
     IntakeIssueSerializer,
@@ -50,9 +54,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         return IntakeIssue.objects.none()
 
     def list(self, request, anchor, intake_id):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         if project_deploy_board.intake is None:
             return Response(
                 {"error": "Intake is not enabled for this Project Board"},
@@ -95,9 +97,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_intake",
-                    queryset=IntakeIssue.objects.only(
-                        "status", "duplicate_to", "snoozed_till", "source"
-                    ),
+                    queryset=IntakeIssue.objects.only("status", "duplicate_to", "snoozed_till", "source"),
                 )
             )
         )
@@ -105,9 +105,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         return Response(issues_data, status=status.HTTP_200_OK)
 
     def create(self, request, anchor, intake_id):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         if project_deploy_board.intake is None:
             return Response(
                 {"error": "Intake is not enabled for this Project Board"},
@@ -115,9 +113,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             )
 
         if not request.data.get("issue", {}).get("name", False):
-            return Response(
-                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check for valid priority
         if request.data.get("issue", {}).get("priority", "none") not in [
@@ -127,19 +123,32 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             "urgent",
             "none",
         ]:
-            return Response(
-                {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
+            return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # get the triage state
+        triage_state = State.triage_objects.filter(
+            project_id=project_deploy_board.project_id, workspace_id=project_deploy_board.workspace_id
+        ).first()
+
+        if not triage_state:
+            triage_state = State.objects.create(
+                name="Triage",
+                group=StateGroup.TRIAGE.value,
+                project_id=project_deploy_board.project_id,
+                workspace_id=project_deploy_board.workspace_id,
+                color="#4E5355",
+                sequence=65000,
+                default=False,
             )
 
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
-            description=request.data.get("issue", {}).get("description", {}),
-            description_html=request.data.get("issue", {}).get(
-                "description_html", "<p></p>"
-            ),
+            description_json=request.data.get("issue", {}).get("description_json", {}),
+            description_html=request.data.get("issue", {}).get("description_html", "<p></p>"),
             priority=request.data.get("issue", {}).get("priority", "low"),
             project_id=project_deploy_board.project_id,
+            state_id=triage_state.id,
         )
 
         # Create an Issue Activity
@@ -164,9 +173,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, anchor, intake_id, pk):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         if project_deploy_board.intake is None:
             return Response(
                 {"error": "Intake is not enabled for this Project Board"},
@@ -197,17 +204,15 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         # viewers and guests since only viewers and guests
         issue_data = {
             "name": issue_data.get("name", issue.name),
-            "description_html": issue_data.get(
-                "description_html", issue.description_html
-            ),
-            "description": issue_data.get("description", issue.description),
+            "description_html": issue_data.get("description_html", issue.description_html),
+            "description_json": issue_data.get("description_json", issue.description_json),
         }
 
         issue_serializer = IssueCreateSerializer(
             issue,
             data=issue_data,
             partial=True,
-            context={"project_id": project_deploy_board.project_id},
+            context={"project_id": project_deploy_board.project_id, "allow_triage_state": True},
         )
 
         if issue_serializer.is_valid():
@@ -221,9 +226,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                     actor_id=str(request.user.id),
                     issue_id=str(issue.id),
                     project_id=str(project_deploy_board.project_id),
-                    current_instance=json.dumps(
-                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
-                    ),
+                    current_instance=json.dumps(IssueSerializer(current_instance).data, cls=DjangoJSONEncoder),
                     epoch=int(timezone.now().timestamp()),
                 )
             issue_serializer.save()
@@ -231,9 +234,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, anchor, intake_id, pk):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         if project_deploy_board.intake is None:
             return Response(
                 {"error": "Intake is not enabled for this Project Board"},
@@ -255,9 +256,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, anchor, intake_id, pk):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         if project_deploy_board.intake is None:
             return Response(
                 {"error": "Intake is not enabled for this Project Board"},

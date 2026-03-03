@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TDescriptionVersion } from "@plane/types";
+import type { TDescriptionVersion } from "@plane/types";
 import { Avatar, CustomMenu } from "@plane/ui";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
@@ -12,7 +18,7 @@ type Props = {
   version: TDescriptionVersion;
 };
 
-export const DescriptionVersionsDropdownItem: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsDropdownItem = observer(function DescriptionVersionsDropdownItem(props: Props) {
   const { onClick, version } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -30,7 +36,7 @@ export const DescriptionVersionsDropdownItem: React.FC<Props> = observer((props)
           src={getFileURL(versionCreator?.avatar_url ?? "")}
         />
       </span>
-      <p className="text-xs text-custom-text-200 flex items-center gap-1.5">
+      <p className="flex items-center gap-1.5 text-11 text-secondary">
         <span className="font-medium">{versionCreator?.display_name ?? t("common.deactivated_user")}</span>
         <span>{calculateTimeAgo(version.last_saved_at)}</span>
       </p>

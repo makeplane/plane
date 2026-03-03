@@ -1,8 +1,14 @@
-import { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
-import { TInboxIssueFilterDateKeys } from "@plane/types";
+import { CloseIcon } from "@plane/propel/icons";
+import type { TInboxIssueFilterDateKeys } from "@plane/types";
 // helpers
 import { Tag } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
@@ -15,7 +21,9 @@ type InboxIssueAppliedFiltersDate = {
   label: string;
 };
 
-export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = observer((props) => {
+export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedFiltersDate(
+  props: InboxIssueAppliedFiltersDate
+) {
   const { filterKey, label } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
@@ -39,28 +47,28 @@ export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = ob
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-xs text-custom-text-200">{label}</div>
+      <div className="text-11 text-secondary">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div key={value} className="relative flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
-            <div className="text-xs truncate">{optionDetail?.name}</div>
+          <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+            <div className="truncate text-11">{optionDetail?.name}</div>
             <div
-              className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+              className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
               onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(optionDetail?.value))}
             >
-              <X className={`w-3 h-3`} />
+              <CloseIcon className={`h-3 w-3`} />
             </div>
           </div>
         );
       })}
 
       <div
-        className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+        className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
         onClick={clearFilter}
       >
-        <X className={`w-3 h-3`} />
+        <CloseIcon className={`h-3 w-3`} />
       </div>
     </Tag>
   );

@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { format, isValid } from "date-fns";
-import isNumber from "lodash/isNumber";
+import { isNumber } from "lodash-es";
 
 export const timeAgo = (time: any) => {
   switch (typeof time) {

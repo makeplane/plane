@@ -1,10 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useRef } from "react";
-// import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { TSticky } from "@plane/types";
+import type { TSticky } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
 import { StickyEditor } from "@/components/editor/sticky-editor";
 // hooks
@@ -24,7 +29,7 @@ type TProps = {
   handleDelete: () => void;
 };
 
-export const StickyInput = (props: TProps) => {
+export function StickyInput(props: TProps) {
   const { stickyData, workspaceSlug, handleUpdate, stickyId, handleDelete, handleChange, showToolbar } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -81,12 +86,13 @@ export const StickyInput = (props: TProps) => {
               return "Click to type here";
             }}
             containerClassName={cn(
-              "w-full min-h-[256px] max-h-[540px] overflow-y-scroll vertical-scrollbar scrollbar-sm p-4 text-base",
+              "vertical-scrollbar scrollbar-sm max-h-[540px] min-h-[256px] w-full overflow-y-scroll p-4 text-14",
               {
                 "max-h-[588px]": isStickiesPage,
               }
             )}
             uploadFile={async () => ""}
+            duplicateFile={async () => ""}
             showToolbar={showToolbar}
             parentClassName="border-none p-0"
             handleDelete={handleDelete}
@@ -97,4 +103,4 @@ export const StickyInput = (props: TProps) => {
       />
     </div>
   );
-};
+}

@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import "reflect-metadata";
-import { RequestHandler } from "express";
+import type { RequestHandler } from "express";
 
 // Define valid HTTP methods
 type RestMethod = "get" | "post" | "put" | "patch" | "delete";

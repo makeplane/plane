@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """Development settings"""
 
 import os
@@ -13,9 +17,7 @@ MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # noqa
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 # Only show emails in console don't send it to smtp
-EMAIL_BACKEND = os.environ.get(
-    "EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
-)
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 
 CACHES = {
     "default": {
@@ -74,6 +76,16 @@ LOGGING = {
             "propagate": False,
         },
         "plane.mongo": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.authentication": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.migrations": {
             "level": "INFO",
             "handlers": ["console"],
             "propagate": False,

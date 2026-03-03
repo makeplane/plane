@@ -1,4 +1,10 @@
-import { Editor, Extensions } from "@tiptap/core";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor, Extensions } from "@tiptap/core";
 // components
 import { EditorContainer } from "@/components/editors";
 // constants
@@ -7,7 +13,7 @@ import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { getEditorClassNames } from "@/helpers/common";
 import { useEditor } from "@/hooks/use-editor";
 // types
-import { IEditorProps } from "@/types";
+import type { IEditorProps } from "@/types";
 import { EditorContentWrapper } from "./editor-content";
 
 type Props = IEditorProps & {
@@ -16,7 +22,7 @@ type Props = IEditorProps & {
   extensions: Extensions;
 };
 
-export const EditorWrapper: React.FC<Props> = (props) => {
+export function EditorWrapper(props: Props) {
   const {
     children,
     containerClassName,
@@ -27,6 +33,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     editorProps,
     extendedEditorProps,
     extensions,
+    getEditorMetaData,
     id,
     initialValue,
     isTouchDevice,
@@ -40,6 +47,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     handleEditorReady,
     autofocus,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     value,
   } = props;
@@ -55,6 +63,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    getEditorMetaData,
     id,
     isTouchDevice,
     initialValue,
@@ -65,6 +74,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     handleEditorReady,
     autofocus,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     value,
   });
@@ -91,4 +101,4 @@ export const EditorWrapper: React.FC<Props> = (props) => {
       </div>
     </EditorContainer>
   );
-};
+}

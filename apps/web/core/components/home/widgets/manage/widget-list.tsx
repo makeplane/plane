@@ -1,16 +1,23 @@
-import {
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type {
   DragLocationHistory,
   DropTargetRecord,
   ElementDragPayload,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useHome } from "@/hooks/store/use-home";
 import { WidgetItem } from "./widget-item";
-import { getInstructionFromPayload, TargetData } from "./widget.helpers";
+import type { TargetData } from "./widget.helpers";
+import { getInstructionFromPayload } from "./widget.helpers";
 
-export const WidgetList = observer(({ workspaceSlug }: { workspaceSlug: string }) => {
+export const WidgetList = observer(function WidgetList({ workspaceSlug }: { workspaceSlug: string }) {
   const { orderedWidgets, reorderWidget, toggleWidget } = useHome();
   const { t } = useTranslation();
 

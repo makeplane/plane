@@ -1,6 +1,14 @@
-import { type Editor, findParentNodeClosestToPos, type KeyboardShortcutCommand } from "@tiptap/core";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { findParentNodeClosestToPos } from "@tiptap/core";
+import type { Editor, KeyboardShortcutCommand } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import { CellSelection, TableMap } from "@tiptap/pm/tables";
+import type { CellSelection } from "@tiptap/pm/tables";
+import { TableMap } from "@tiptap/pm/tables";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions

@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // helpers
-import { IWebhook, IWorkspace } from "@plane/types";
+import type { IWebhook, IWorkspace } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
 // types
 

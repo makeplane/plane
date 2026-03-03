@@ -1,14 +1,20 @@
-import { FC, useEffect, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useEffect, useState } from "react";
 // constants
-import { EPageAccess, PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { TPage } from "@plane/types";
+import type { EPageAccess } from "@plane/constants";
+import type { TPage } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
 // local imports
 import { PageForm } from "./page-form";
 
@@ -22,7 +28,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const CreatePageModal: FC<Props> = (props) => {
+export function CreatePageModal(props: Props) {
   const {
     workspaceSlug,
     projectId,
@@ -61,20 +67,11 @@ export const CreatePageModal: FC<Props> = (props) => {
     try {
       const pageData = await createPage(pageFormData);
       if (pageData) {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            id: pageData.id,
-          },
-        });
         handleStateClear();
         if (redirectionEnabled) router.push(`/${workspaceSlug}/projects/${projectId}/pages/${pageData.id}`);
       }
-    } catch (error: any) {
-      captureError({
-        eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-        error,
-      });
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -93,4 +90,4 @@ export const CreatePageModal: FC<Props> = (props) => {
       />
     </ModalCore>
   );
-};
+}

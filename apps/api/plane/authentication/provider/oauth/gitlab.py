@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import os
 from datetime import datetime
@@ -80,26 +84,21 @@ class GitLabOAuthProvider(OauthAdapter):
             "redirect_uri": self.redirect_uri,
             "grant_type": "authorization_code",
         }
-        token_response = self.get_user_token(
-            data=data, headers={"Accept": "application/json"}
-        )
+        token_response = self.get_user_token(data=data, headers={"Accept": "application/json"})
         super().set_token_data(
             {
                 "access_token": token_response.get("access_token"),
                 "refresh_token": token_response.get("refresh_token", None),
                 "access_token_expired_at": (
                     datetime.fromtimestamp(
-                        token_response.get("created_at")
-                        + token_response.get("expires_in"),
+                        token_response.get("created_at") + token_response.get("expires_in"),
                         tz=pytz.utc,
                     )
                     if token_response.get("expires_in")
                     else None
                 ),
                 "refresh_token_expired_at": (
-                    datetime.fromtimestamp(
-                        token_response.get("refresh_token_expired_at"), tz=pytz.utc
-                    )
+                    datetime.fromtimestamp(token_response.get("refresh_token_expired_at"), tz=pytz.utc)
                     if token_response.get("refresh_token_expired_at")
                     else None
                 ),

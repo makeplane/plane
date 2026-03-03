@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 // helpers
@@ -16,7 +22,7 @@ type Props = {
  * - Same year, different month: "Jan 24 - Feb 6, 2025"
  * - Different year: "Dec 28, 2024 - Jan 4, 2025"
  */
-export const MergedDateDisplay: React.FC<Props> = observer((props) => {
+export const MergedDateDisplay = observer(function MergedDateDisplay(props: Props) {
   const { startDate, endDate, className = "" } = props;
 
   // Parse dates

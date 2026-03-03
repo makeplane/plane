@@ -1,21 +1,33 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Extension } from "@tiptap/core";
 import codemark from "prosemirror-codemark";
 // helpers
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { restorePublicImages } from "@/helpers/image-helpers";
 // plugins
-import { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/utils";
+import type { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/utils";
 import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
-// types
-
 import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
-type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI | TAdditionalActiveDropbarExtensions;
+
+type TActiveDropbarExtensions =
+  | CORE_EXTENSIONS.MENTION
+  | CORE_EXTENSIONS.EMOJI
+  | CORE_EXTENSIONS.SLASH_COMMANDS
+  | CORE_EXTENSIONS.TABLE
+  | "bubble-menu"
+  | CORE_EXTENSIONS.SIDE_MENU
+  | TAdditionalActiveDropbarExtensions;
 
 declare module "@tiptap/core" {
   interface Commands {
-    utility: {
+    [CORE_EXTENSIONS.UTILITY]: {
       updateAssetsUploadStatus: (updatedStatus: TFileHandler["assetsUploadStatus"]) => () => void;
       updateAssetsList: (
         args:
@@ -26,7 +38,12 @@ declare module "@tiptap/core" {
               idToRemove: string;
             }
       ) => () => void;
+      addActiveDropbarExtension: (extension: TActiveDropbarExtensions) => () => void;
+      removeActiveDropbarExtension: (extension: TActiveDropbarExtensions) => () => void;
     };
+  }
+  interface Storage {
+    [CORE_EXTENSIONS.UTILITY]: UtilityExtensionStorage;
   }
 }
 
@@ -38,18 +55,18 @@ export type UtilityExtensionStorage = {
   isTouchDevice: boolean;
 };
 
-type Props = Pick<IEditorProps, "disabledExtensions"> & {
+type Props = Pick<IEditorProps, "disabledExtensions" | "flaggedExtensions" | "getEditorMetaData"> & {
   fileHandler: TFileHandler;
   isEditable: boolean;
   isTouchDevice: boolean;
 };
 
 export const UtilityExtension = (props: Props) => {
-  const { disabledExtensions, fileHandler, isEditable, isTouchDevice } = props;
+  const { disabledExtensions, flaggedExtensions, fileHandler, getEditorMetaData, isEditable, isTouchDevice } = props;
   const { restore } = fileHandler;
 
   return Extension.create<Record<string, unknown>, UtilityExtensionStorage>({
-    name: "utility",
+    name: CORE_EXTENSIONS.UTILITY,
     priority: 1000,
 
     addProseMirrorPlugins() {
@@ -60,9 +77,13 @@ export const UtilityExtension = (props: Props) => {
           fileHandler,
         }),
         ...codemark({ markType: this.editor.schema.marks.code }),
-        MarkdownClipboardPlugin(this.editor),
+        MarkdownClipboardPlugin({
+          editor: this.editor,
+          getEditorMetaData,
+        }),
         DropHandlerPlugin({
           disabledExtensions,
+          flaggedExtensions,
           editor: this.editor,
         }),
       ];
@@ -101,6 +122,18 @@ export const UtilityExtension = (props: Props) => {
             }
           }
           this.storage.assetsList = Array.from(uniqueAssets);
+        },
+        addActiveDropbarExtension: (extension) => () => {
+          const index = this.storage.activeDropbarExtensions.indexOf(extension);
+          if (index === -1) {
+            this.storage.activeDropbarExtensions.push(extension);
+          }
+        },
+        removeActiveDropbarExtension: (extension) => () => {
+          const index = this.storage.activeDropbarExtensions.indexOf(extension);
+          if (index !== -1) {
+            this.storage.activeDropbarExtensions.splice(index, 1);
+          }
         },
       };
     },

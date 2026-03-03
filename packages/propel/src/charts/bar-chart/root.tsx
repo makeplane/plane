@@ -1,6 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useMemo, useState } from "react";
 import {
   BarChart as CoreBarChart,
@@ -14,16 +18,14 @@ import {
 } from "recharts";
 // plane imports
 import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
-import { TBarChartProps } from "@plane/types";
+import type { TBarChartProps } from "@plane/types";
 // local components
 import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
-import { barShapeVariants } from "./bar";
+import { barShapeVariants, DEFAULT_BAR_FILL_COLOR } from "./bar";
 
-const DEFAULT_BAR_FILL_COLOR = "#000000";
-
-export const BarChart = React.memo(<K extends string, T extends string>(props: TBarChartProps<K, T>) => {
+export const BarChart = React.memo(function BarChart<K extends string, T extends string>(props: TBarChartProps<K, T>) {
   const {
     data,
     bars,
@@ -131,7 +133,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           barSize={barSize}
           className="recharts-wrapper"
         >
-          <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
+          <CartesianGrid stroke="var(--border-color-subtle)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
             tick={(props) => {
@@ -178,8 +180,8 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           {showTooltip && (
             <Tooltip
               cursor={{
-                fill: "currentColor",
-                className: "text-custom-background-90/80 cursor-pointer",
+                fill: "var(--alpha-black-300)",
+                className: "bg-layer-1 cursor-pointer",
               }}
               wrapperStyle={{
                 pointerEvents: "auto",

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,15 +15,15 @@ import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
-import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 // store
-import { type EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { TPageRootHandlers } from "../editor/page-root";
+import type { TPageRootHandlers } from "../editor/page-root";
 import { PageNavigationPaneTabPanelsRoot } from "./tab-panels/root";
 import { PageNavigationPaneTabsList } from "./tabs-list";
-import { INavigationPaneExtension } from "./types/extensions";
+import type { INavigationPaneExtension } from "./types/extensions";
 
 import {
   PAGE_NAVIGATION_PANE_TAB_KEYS,
@@ -36,7 +42,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
+export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(props: Props) {
   const { handleClose, isNavigationPaneOpen, page, versionHistory, extensions = [], storeType } = props;
 
   // navigation
@@ -83,7 +89,7 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
 
   return (
     <aside
-      className="flex-shrink-0 h-full flex flex-col bg-custom-background-100 pt-3.5 border-l border-custom-border-200 transition-all duration-300 ease-out"
+      className="flex h-full shrink-0 flex-col border-l border-subtle bg-surface-1 pt-3.5 transition-all duration-300 ease-out"
       style={{
         width: `${paneWidth}px`,
         marginRight: isNavigationPaneOpen ? "0px" : `-${paneWidth}px`,
@@ -93,7 +99,7 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
         <Tooltip tooltipContent={t("page_navigation_pane.close_button")}>
           <button
             type="button"
-            className="size-3.5 grid place-items-center text-custom-text-200 hover:text-custom-text-100 transition-colors"
+            className="grid size-3.5 place-items-center text-secondary transition-colors hover:text-primary"
             onClick={handleClose}
             aria-label={t("page_navigation_pane.close_button")}
           >
@@ -102,7 +108,7 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
         </Tooltip>
       </div>
 
-      <div className="flex-1 flex flex-col overflow-hidden animate-slide-in-right">
+      <div className="animate-slide-in-right flex flex-1 flex-col overflow-hidden">
         {ActiveExtension ? (
           <ActiveExtension.component page={page} extensionData={ActiveExtension.data} storeType={storeType} />
         ) : showNavigationTabs ? (

@@ -1,26 +1,30 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FileText } from "lucide-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { PageIcon } from "@plane/propel/icons";
 // plane imports
-import { IFavorite, TLogoProps } from "@plane/types";
+import type { IFavorite, TLogoProps } from "@plane/types";
 // components
-import { Logo } from "@/components/common/logo";
 // plane web constants
-import { FAVORITE_ITEM_ICONS, FAVORITE_ITEM_LINKS } from "@/plane-web/constants/sidebar-favorites";
+import { FAVORITE_ITEM_ICONS, FAVORITE_ITEM_LINKS } from "@/constants/sidebar-favorites";
 
-export const getFavoriteItemIcon = (type: string, logo?: TLogoProps | undefined) => {
-  const Icon = FAVORITE_ITEM_ICONS[type] || FileText;
+export const getFavoriteItemIcon = (type: string, logo?: TLogoProps) => {
+  const Icon = FAVORITE_ITEM_ICONS[type] || PageIcon;
 
   return (
     <>
-      <div className="hidden group-hover:flex items-center justify-center size-5">
-        <Icon className="flex-shrink-0 size-4 stroke-[1.5] m-auto" />
+      <div className="hidden size-5 items-center justify-center group-hover:flex">
+        <Icon className="m-auto size-4 flex-shrink-0 stroke-[1.5]" />
       </div>
-      <div className="flex items-center justify-center size-5 group-hover:hidden">
+      <div className="flex size-5 items-center justify-center group-hover:hidden">
         {logo?.in_use ? (
           <Logo logo={logo} size={16} type={type === "project" ? "material" : "lucide"} />
         ) : (
-          <Icon className="flex-shrink-0 size-4 stroke-[1.5] m-auto" />
+          <Icon className="m-auto size-4 flex-shrink-0 stroke-[1.5]" />
         )}
       </div>
     </>

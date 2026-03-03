@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """
 OpenAPI authentication extensions for drf-spectacular.
 
@@ -10,7 +14,8 @@ from drf_spectacular.extensions import OpenApiAuthenticationExtension
 
 class APIKeyAuthenticationExtension(OpenApiAuthenticationExtension):
     """
-    OpenAPI authentication extension for plane.api.middleware.api_authentication.APIKeyAuthentication
+    OpenAPI authentication extension for
+    plane.api.middleware.api_authentication.APIKeyAuthentication
     """
 
     target_class = "plane.api.middleware.api_authentication.APIKeyAuthentication"
@@ -25,5 +30,5 @@ class APIKeyAuthenticationExtension(OpenApiAuthenticationExtension):
             "type": "apiKey",
             "in": "header",
             "name": "X-API-Key",
-            "description": "API key authentication. Provide your API key in the X-API-Key header.",
+            "description": "API key authentication. Provide your API key in the X-API-Key header.",  # noqa: E501
         }

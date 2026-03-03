@@ -1,14 +1,17 @@
-import concat from "lodash/concat";
-import pull from "lodash/pull";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { pull, concat, update, uniq, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
+// Plane Imports
+import type { TIssueComment, TIssueCommentMap, TIssueCommentIdMap, TIssueServiceType } from "@plane/types";
 // services
-import { TIssueComment, TIssueCommentMap, TIssueCommentIdMap, TIssueServiceType } from "@plane/types";
 import { IssueCommentService } from "@/services/issue";
 // types
-import { IIssueDetail } from "./root.store";
+import type { IIssueDetail } from "./root.store";
 
 export type TCommentLoader = "fetch" | "create" | "update" | "delete" | "mutate" | undefined;
 

@@ -1,8 +1,14 @@
-import set from "lodash/set";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { set } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TCycleDisplayFilters, TCycleFilters, TCycleFiltersByState } from "@plane/types";
+import type { TCycleDisplayFilters, TCycleFilters, TCycleFiltersByState } from "@plane/types";
 // store
 import type { CoreRootStore } from "./root.store";
 

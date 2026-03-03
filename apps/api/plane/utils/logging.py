@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import logging.handlers as handlers
 import time
 
@@ -20,9 +24,7 @@ class SizedTimedRotatingFileHandler(handlers.TimedRotatingFileHandler):
         interval=1,
         utc=False,
     ):
-        handlers.TimedRotatingFileHandler.__init__(
-            self, filename, when, interval, backupCount, encoding, delay, utc
-        )
+        handlers.TimedRotatingFileHandler.__init__(self, filename, when, interval, backupCount, encoding, delay, utc)
         self.maxBytes = maxBytes
 
     def shouldRollover(self, record):

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import os
 from urllib.parse import urlencode, urljoin
@@ -55,9 +59,7 @@ class ForgotPasswordEndpoint(APIView):
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
-        (EMAIL_HOST,) = get_configuration_value(
-            [{"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST")}]
-        )
+        (EMAIL_HOST,) = get_configuration_value([{"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST")}])
 
         if not (EMAIL_HOST):
             exc = AuthenticationException(
@@ -82,9 +84,7 @@ class ForgotPasswordEndpoint(APIView):
             uidb64, token = generate_password_token(user=user)
             current_site = base_host(request=request, is_app=True)
             # send the forgot password email
-            forgot_password.delay(
-                user.first_name, user.email, uidb64, token, current_site
-            )
+            forgot_password.delay(user.first_name, user.email, uidb64, token, current_site)
             return Response(
                 {"message": "Check your email to reset your password"},
                 status=status.HTTP_200_OK,
@@ -145,8 +145,8 @@ class ResetPasswordEndpoint(View):
             results = zxcvbn(password)
             if results["score"] < 3:
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-                    error_message="INVALID_PASSWORD",
+                    error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                    error_message="PASSWORD_TOO_WEAK",
                 )
                 url = urljoin(
                     base_host(request=request, is_app=True),

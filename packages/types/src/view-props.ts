@@ -1,6 +1,13 @@
-import { TIssue } from "./issues/issue";
-import { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
-import { CompleteOrEmpty } from "./utils";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { IProjectMemberNavigationPreferences } from "./project";
+import type { TIssue } from "./issues/issue";
+import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
+import type { CompleteOrEmpty } from "./utils";
 
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
@@ -100,13 +107,15 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "cycle_id",
   "module_id",
   "project_id",
+  "created_at",
+  "updated_at",
 ] as const;
 export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number];
 
 export type TWorkItemFilterConditionKey = `${TWorkItemFilterProperty}__${TSupportedOperators}`;
 
 export type TWorkItemFilterConditionData = Partial<{
-  [K in TWorkItemFilterConditionKey]: string;
+  [K in TWorkItemFilterConditionKey]: string | boolean | number;
 }>;
 
 export type TWorkItemFilterAndGroup = {
@@ -190,6 +199,22 @@ export interface IIssueFiltersResponse {
   rich_filters: TWorkItemFilterExpression;
   display_filters: IIssueDisplayFilterOptions;
   display_properties: IIssueDisplayProperties;
+}
+
+export interface IProjectUserPropertiesResponse extends IIssueFiltersResponse {
+  sort_order: number;
+  preferences: {
+    pages: {
+      block_display: boolean;
+    };
+    navigation: IProjectMemberNavigationPreferences;
+  };
+}
+
+export interface IWorkspaceUserPropertiesResponse extends IIssueFiltersResponse {
+  navigation_project_limit?: number;
+  navigation_control_preference?: "ACCORDION" | "TABBED";
+  // Note: show_limited_projects is derived from navigation_project_limit (0 = false, >0 = true)
 }
 
 export interface IWorkspaceIssueFilterOptions {

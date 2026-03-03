@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third Party imports
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -14,9 +18,7 @@ class ProjectModulesEndpoint(BaseAPIView):
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
         if not deploy_board:
-            return Response(
-                {"error": "Invalid anchor"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Invalid anchor"}, status=status.HTTP_404_NOT_FOUND)
 
         modules = Module.objects.filter(
             workspace__slug=deploy_board.workspace.slug,

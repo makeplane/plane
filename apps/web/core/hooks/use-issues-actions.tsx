@@ -1,10 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useMemo } from "react";
 // types
 import { useParams } from "next/navigation";
-import { EDraftIssuePaginationType, TSupportedFilterTypeForUpdate } from "@plane/constants";
-import {
-  EIssuesStoreType,
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
+import { EDraftIssuePaginationType } from "@plane/constants";
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IssuePaginationOptions,
@@ -14,11 +20,7 @@ import {
   TProfileViews,
   TSupportedFilterForUpdate,
 } from "@plane/types";
-import {
-  useTeamIssueActions,
-  useTeamProjectWorkItemsActions,
-  useTeamViewIssueActions,
-} from "@/plane-web/helpers/issue-action-helper";
+import { EIssuesStoreType } from "@plane/types";
 import { useIssues } from "./store/use-issues";
 
 export interface IssueActions {
@@ -43,28 +45,21 @@ export interface IssueActions {
 }
 
 export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
-  const teamIssueActions = useTeamIssueActions();
   const projectIssueActions = useProjectIssueActions();
   const projectEpicsActions = useProjectEpicsActions();
   const cycleIssueActions = useCycleIssueActions();
   const moduleIssueActions = useModuleIssueActions();
-  const teamViewIssueActions = useTeamViewIssueActions();
   const projectViewIssueActions = useProjectViewIssueActions();
   const globalIssueActions = useGlobalIssueActions();
   const profileIssueActions = useProfileIssueActions();
   const archivedIssueActions = useArchivedIssueActions();
   const workspaceDraftIssueActions = useWorkspaceDraftIssueActions();
-  const teamProjectWorkItemsActions = useTeamProjectWorkItemsActions();
 
   switch (storeType) {
-    case EIssuesStoreType.TEAM_VIEW:
-      return teamViewIssueActions;
     case EIssuesStoreType.PROJECT_VIEW:
       return projectViewIssueActions;
     case EIssuesStoreType.PROFILE:
       return profileIssueActions;
-    case EIssuesStoreType.TEAM:
-      return teamIssueActions;
     case EIssuesStoreType.ARCHIVED:
       return archivedIssueActions;
     case EIssuesStoreType.CYCLE:
@@ -78,8 +73,6 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
       return workspaceDraftIssueActions;
     case EIssuesStoreType.EPIC:
       return projectEpicsActions;
-    case EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS:
-      return teamProjectWorkItemsActions;
     case EIssuesStoreType.PROJECT:
     default:
       return projectIssueActions;

@@ -1,6 +1,12 @@
-import { TFilterValue } from "../expression";
-import { TSupportedOperators } from "../operators";
-import { TBaseFilterFieldConfig, IFilterOption } from "./shared";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { TFilterValue } from "../expression";
+import type { TSupportedOperators } from "../operators";
+import type { TBaseFilterFieldConfig, IFilterOption } from "./shared";
 
 /**
  * Core filter types

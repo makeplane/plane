@@ -1,11 +1,16 @@
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
 import { computedFn } from "mobx-utils";
-import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
-import {
-  EIssuesStoreType,
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TIssueKanbanFilters,
@@ -16,13 +21,15 @@ import {
   TWorkItemFilterExpression,
   TSupportedFilterForUpdate,
 } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // services
-import { ViewService } from "@/plane-web/services";
-import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import { ViewService } from "@/services/view.service";
+import type { IBaseIssueFilterStore } from "../helpers/issue-filter-helper.store";
+import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
-import { IIssueRootStore } from "../root.store";
+import type { IIssueRootStore } from "../root.store";
 // constants
 
 export interface IProjectViewIssuesFilter extends IBaseIssueFilterStore {
@@ -215,7 +222,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
       if (isEmpty(this.filters) || isEmpty(this.filters[viewId])) return;
 
       const _filters = {
-        richFilters: this.filters[viewId].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[viewId].richFilters,
         displayFilters: this.filters[viewId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[viewId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[viewId].kanbanFilters as TIssueKanbanFilters,
@@ -256,7 +263,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.projectIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+            this.rootIssueStore.projectIssues.clear(true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {

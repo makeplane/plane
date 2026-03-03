@@ -1,29 +1,48 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   useFloating,
+  autoUpdate,
   offset,
   flip,
   shift,
-  autoUpdate,
   useDismiss,
   useInteractions,
   FloatingPortal,
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/react";
-import { Copy, LucideIcon, Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-// constants
+import { CopyIcon, TrashIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
+// constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-import { IEditorProps } from "@/types";
+// types
+import type { IEditorProps } from "@/types";
+// components
+import { getNodeOptions } from "./block-menu-options";
 
 type Props = {
+  disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
-  disabledExtensions?: IEditorProps["disabledExtensions"];
+  workItemIdentifier?: IEditorProps["workItemIdentifier"];
+};
+export type BlockMenuOption = {
+  icon: LucideIcon | React.FC<ISvgIcons>;
+  key: string;
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  isDisabled?: boolean;
 };
 
-export const BlockMenu = (props: Props) => {
-  const { editor } = props;
+export function BlockMenu(props: Props) {
+  const { editor, workItemIdentifier } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -43,6 +62,20 @@ export const BlockMenu = (props: Props) => {
   const dismiss = useDismiss(context);
   const { getFloatingProps } = useInteractions([dismiss]);
 
+  const openBlockMenu = useCallback(() => {
+    if (!isOpen) {
+      setIsOpen(true);
+      editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+    }
+  }, [editor, isOpen]);
+
+  const closeBlockMenu = useCallback(() => {
+    if (isOpen) {
+      setIsOpen(false);
+      editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+    }
+  }, [editor, isOpen]);
+
   // Handle click on drag handle
   const handleClickDragHandle = useCallback(
     (event: MouseEvent) => {
@@ -60,42 +93,35 @@ export const BlockMenu = (props: Props) => {
         // Set the virtual reference as the reference element
         refs.setReference(virtualReferenceRef.current);
 
-        // Ensure the targeted block is selected
-        const rect = dragHandle.getBoundingClientRect();
-        const coords = { left: rect.left + rect.width / 2, top: rect.top + rect.height / 2 };
-        const posAtCoords = editor.view.posAtCoords(coords);
-        if (posAtCoords) {
-          const $pos = editor.state.doc.resolve(posAtCoords.pos);
-          const nodePos = $pos.before($pos.depth);
-          editor.chain().setNodeSelection(nodePos).run();
-        }
         // Show the menu
-        setIsOpen(true);
+        openBlockMenu();
         return;
       }
 
       // If clicking outside and not on a menu item, hide the menu
       if (menuRef.current && !menuRef.current.contains(target)) {
-        setIsOpen(false);
+        closeBlockMenu();
       }
     },
-    [refs]
+    [refs, openBlockMenu, closeBlockMenu]
   );
 
+  // Set up event listeners
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsOpen(false);
+        closeBlockMenu();
       }
     };
 
     const handleScroll = () => {
-      setIsOpen(false);
+      closeBlockMenu();
     };
+
     document.addEventListener("click", handleClickDragHandle);
     document.addEventListener("contextmenu", handleClickDragHandle);
     document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("scroll", handleScroll, true); // Using capture phase
+    document.addEventListener("scroll", handleScroll, true);
 
     return () => {
       document.removeEventListener("click", handleClickDragHandle);
@@ -103,7 +129,7 @@ export const BlockMenu = (props: Props) => {
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("scroll", handleScroll, true);
     };
-  }, [handleClickDragHandle]);
+  }, [editor.commands, handleClickDragHandle, closeBlockMenu]);
 
   // Animation effect
   useEffect(() => {
@@ -122,38 +148,24 @@ export const BlockMenu = (props: Props) => {
     }
   }, [isOpen]);
 
-  const MENU_ITEMS: {
-    icon: LucideIcon;
-    key: string;
-    label: string;
-    onClick: (e: React.MouseEvent) => void;
-    isDisabled?: boolean;
-  }[] = [
+  const MENU_ITEMS: BlockMenuOption[] = [
     {
-      icon: Trash2,
+      icon: TrashIcon,
       key: "delete",
       label: "Delete",
-      onClick: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+      onClick: (_e) => {
         // Execute the delete action
         editor.chain().deleteSelection().focus().run();
-
-        setIsOpen(false);
       },
     },
     {
-      icon: Copy,
+      icon: CopyIcon,
       key: "duplicate",
       label: "Duplicate",
       isDisabled:
         editor.state.selection.content().content.firstChild?.type.name === CORE_EXTENSIONS.IMAGE ||
         editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE),
-      onClick: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+      onClick: (_e) => {
         try {
           const { state } = editor;
           const { selection } = state;
@@ -187,14 +199,15 @@ export const BlockMenu = (props: Props) => {
             console.error(error.message);
           }
         }
-        setIsOpen(false);
       },
     },
+    ...getNodeOptions(editor),
   ];
 
   if (!isOpen) {
     return null;
   }
+
   return (
     <FloatingPortal>
       <div
@@ -204,28 +217,31 @@ export const BlockMenu = (props: Props) => {
         }}
         style={{
           ...floatingStyles,
-          zIndex: 99,
           animationFillMode: "forwards",
           transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)", // Expo ease out
+          zIndex: 100,
         }}
         className={cn(
-          "z-20 max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-custom-border-200 bg-custom-background-100 p-1.5 shadow-custom-shadow-rg",
-          "transition-all duration-300 transform origin-top-right",
-          isAnimatedIn ? "opacity-100 scale-100" : "opacity-0 scale-75"
+          "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-subtle bg-surface-1 p-1.5 shadow-raised-200",
+          "origin-top-right transform transition-all duration-300",
+          isAnimatedIn ? "scale-100 opacity-100" : "scale-75 opacity-0"
         )}
-        data-prevent-outside-click
         {...getFloatingProps()}
       >
         {MENU_ITEMS.map((item) => {
-          if (item.isDisabled) {
-            return null;
-          }
+          if (item.isDisabled) return null;
+
           return (
             <button
               key={item.key}
               type="button"
-              className="flex w-full items-center gap-1.5 truncate rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-90"
-              onClick={item.onClick}
+              className="flex w-full items-center gap-1.5 truncate rounded-sm px-1 py-1.5 text-11 text-secondary hover:bg-layer-1"
+              onClick={(e) => {
+                item.onClick(e);
+                e.preventDefault();
+                e.stopPropagation();
+                closeBlockMenu();
+              }}
               disabled={item.isDisabled}
             >
               <item.icon className="h-3 w-3" />
@@ -236,4 +252,4 @@ export const BlockMenu = (props: Props) => {
       </div>
     </FloatingPortal>
   );
-};
+}

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from plane.db.models import Profile, Workspace, WorkspaceMemberInvite
 
 
@@ -26,9 +30,7 @@ def get_redirection_path(user):
         return f"{workspace.slug}"
 
     fallback_workspace = (
-        Workspace.objects.filter(
-            workspace_member__member_id=user.id, workspace_member__is_active=True
-        )
+        Workspace.objects.filter(workspace_member__member_id=user.id, workspace_member__is_active=True)
         .order_by("created_at")
         .first()
     )

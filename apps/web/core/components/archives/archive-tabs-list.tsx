@@ -1,9 +1,15 @@
-import { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // types
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
@@ -29,7 +35,7 @@ const ARCHIVES_TAB_LIST: {
   },
 ];
 
-export const ArchiveTabsList: FC = observer(() => {
+export const ArchiveTabsList = observer(function ArchiveTabsList() {
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
@@ -48,10 +54,10 @@ export const ArchiveTabsList: FC = observer(() => {
           tab.shouldRender(projectDetails) && (
             <Link key={tab.key} href={`/${workspaceSlug}/projects/${projectId}/archives/${tab.key}`}>
               <span
-                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 py-4 px-4 text-sm font-medium outline-none ${
+                className={`flex min-w-min flex-shrink-0 border-b-2 px-4 py-4 text-13 font-medium whitespace-nowrap outline-none ${
                   pathname.includes(tab.key)
-                    ? "border-custom-primary-100 text-custom-primary-100"
-                    : "border-transparent hover:border-custom-border-200 text-custom-text-300 hover:text-custom-text-400"
+                    ? "border-accent-strong text-accent-primary"
+                    : "border-transparent text-tertiary hover:border-subtle hover:text-placeholder"
                 }`}
               >
                 {tab.label}

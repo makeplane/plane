@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // types
-import { TIssuesListTypes } from "@plane/types";
+import type { TIssuesListTypes } from "@plane/types";
 
 export enum EDurationFilters {
   NONE = "none",
@@ -44,8 +50,8 @@ export const DURATION_FILTER_OPTIONS: {
 // random background colors for project cards
 export const PROJECT_BACKGROUND_COLORS = [
   "bg-gray-500/20",
-  "bg-green-500/20",
-  "bg-red-500/20",
+  "bg-success-subtle",
+  "bg-danger-subtle",
   "bg-orange-500/20",
   "bg-blue-500/20",
   "bg-yellow-500/20",

@@ -1,4 +1,10 @@
 /**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+/**
  * Core logical operators
  */
 export const CORE_LOGICAL_OPERATOR = {
@@ -25,6 +31,11 @@ export const CORE_COLLECTION_OPERATOR = {
 export const CORE_COMPARISON_OPERATOR = {
   RANGE: "range",
 } as const;
+
+/**
+ * Core operators that support multiple values
+ */
+export const CORE_MULTI_VALUE_OPERATORS = [CORE_COLLECTION_OPERATOR.IN, CORE_COMPARISON_OPERATOR.RANGE] as const;
 
 /**
  * All core operators

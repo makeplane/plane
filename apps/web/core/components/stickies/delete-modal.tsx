@@ -1,10 +1,15 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 
 interface IStickyDelete {
   isOpen: boolean;
@@ -12,7 +17,7 @@ interface IStickyDelete {
   handleClose: () => void;
 }
 
-export const StickyDeleteModal: React.FC<IStickyDelete> = observer((props) => {
+export const StickyDeleteModal = observer(function StickyDeleteModal(props: IStickyDelete) {
   const { isOpen, handleClose, handleSubmit } = props;
   // states
   const [loader, setLoader] = useState(false);

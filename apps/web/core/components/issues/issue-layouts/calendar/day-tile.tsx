@@ -1,14 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
-import { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate } from "@plane/types";
 // types
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
@@ -16,21 +20,16 @@ import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { MONTHS_LIST } from "@/constants/calendar";
 // helpers
 // types
-import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import { ICycleIssuesFilter } from "@/store/issue/cycle";
-import { IModuleIssuesFilter } from "@/store/issue/module";
-import { IProjectIssuesFilter } from "@/store/issue/project";
-import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { ICycleIssuesFilter } from "@/store/issue/cycle";
+import type { IModuleIssuesFilter } from "@/store/issue/module";
+import type { IProjectIssuesFilter } from "@/store/issue/project";
+import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarIssueBlocks } from "./issue-blocks";
 
 type Props = {
-  issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
@@ -55,7 +54,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const CalendarDayTile: React.FC<Props> = observer((props) => {
+export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
   const {
     issuesFilterStore,
     date,
@@ -142,25 +141,25 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const isWeekend = [0, 6].includes(date.date.getDay());
   const isMonthLayout = calendarLayout === "month";
 
-  const normalBackground = isWeekend ? "bg-custom-background-90" : "bg-custom-background-100";
-  const draggingOverBackground = isWeekend ? "bg-custom-background-80" : "bg-custom-background-90";
+  const normalBackground = isWeekend ? "bg-layer-1" : "bg-layer-transparent";
+  const draggingOverBackground = isWeekend ? "bg-layer-1" : "bg-layer-transparent-hover";
 
   return (
     <>
-      <div ref={dayTileRef} className="group relative flex h-full w-full flex-col bg-custom-background-90">
+      <div ref={dayTileRef} className="group relative flex h-full w-full flex-col">
         {/* header */}
         <div
-          className={`hidden flex-shrink-0 items-center justify-end px-2 py-1.5 text-right text-xs md:flex ${
+          className={`hidden flex-shrink-0 justify-end px-2 py-1.5 text-right text-11 md:flex ${
             isMonthLayout // if month layout, highlight current month days
               ? date.is_current_month
                 ? "font-medium"
-                : "text-custom-text-300"
+                : "text-tertiary"
               : "font-medium" // if week layout, highlight all days
-          } ${isWeekend ? "bg-custom-background-90" : "bg-custom-background-100"} `}
+          } ${isWeekend ? "bg-layer-1" : "bg-layer-transparent"} `}
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
           {isToday ? (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-primary-100 text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent-primary text-on-color">
               {date.date.getDate()}
             </span>
           ) : (
@@ -169,7 +168,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         </div>
 
         {/* content */}
-        <div className="h-full w-full hidden md:block">
+        <div className="hidden h-full w-full md:block">
           <div
             className={cn(
               `h-full w-full select-none ${isDraggingOver ? `${draggingOverBackground} opacity-70` : normalBackground}`,
@@ -201,16 +200,16 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         <div
           onClick={() => setSelectedDate(date.date)}
           className={cn(
-            "text-sm py-2.5 h-full w-full font-medium mx-auto flex flex-col justify-start items-center md:hidden cursor-pointer opacity-80",
+            "mx-auto flex h-full w-full cursor-pointer flex-col items-center justify-start py-2.5 text-13 font-medium opacity-80 md:hidden",
             {
-              "bg-custom-background-100": !isWeekend,
+              "bg-layer-2": !isWeekend,
             }
           )}
         >
           <div
-            className={cn("size-6 flex items-center justify-center rounded-full", {
-              "bg-custom-primary-100 text-white": isSelectedDate,
-              "bg-custom-primary-100/10 text-custom-primary-100 ": isToday && !isSelectedDate,
+            className={cn("flex size-6 items-center justify-center rounded-full", {
+              "bg-accent-primary text-on-color": isSelectedDate,
+              "bg-accent-primary/10 text-accent-primary": isToday && !isSelectedDate,
             })}
           >
             {date.date.getDate()}

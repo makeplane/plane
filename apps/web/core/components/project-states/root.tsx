@@ -1,11 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
 import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles, IState, TStateOperationsCallbacks } from "@plane/types";
+import type { IState, TStateOperationsCallbacks } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 import { ProjectStateLoader, GroupList } from "@/components/project-states";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -16,7 +22,7 @@ type TProjectState = {
   projectId: string;
 };
 
-export const ProjectStateRoot: FC<TProjectState> = observer((props) => {
+export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProjectState) {
   const { workspaceSlug, projectId } = props;
   // hooks
   const {
@@ -62,13 +68,11 @@ export const ProjectStateRoot: FC<TProjectState> = observer((props) => {
   if (!groupedProjectStates) return <ProjectStateLoader />;
 
   return (
-    <div className="py-3">
-      <GroupList
-        groupedStates={groupedProjectStates}
-        stateOperationsCallbacks={stateOperationsCallbacks}
-        isEditable={isEditable}
-        shouldTrackEvents
-      />
-    </div>
+    <GroupList
+      groupedStates={groupedProjectStates}
+      stateOperationsCallbacks={stateOperationsCallbacks}
+      isEditable={isEditable}
+      shouldTrackEvents
+    />
   );
 });

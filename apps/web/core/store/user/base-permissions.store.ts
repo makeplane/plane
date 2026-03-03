@@ -1,24 +1,23 @@
-import set from "lodash/set";
-import unset from "lodash/unset";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { unset, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
+import type { TUserPermissions, TUserPermissionsLevel } from "@plane/constants";
 import {
   EUserPermissions,
   EUserPermissionsLevel,
-  TUserPermissions,
-  TUserPermissionsLevel,
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS,
 } from "@plane/constants";
-import {
-  EUserProjectRoles,
-  EUserWorkspaceRoles,
-  IUserProjectsRole,
-  IWorkspaceMemberMe,
-  TProjectMembership,
-} from "@plane/types";
+import type { EUserProjectRoles, IUserProjectsRole, IWorkspaceMemberMe, TProjectMembership } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 // plane web imports
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import projectMemberService from "@/services/project/project-member.service";
@@ -39,7 +38,11 @@ export interface IBaseUserPermissionStore {
   workspaceInfoBySlug: (workspaceSlug: string) => IWorkspaceMemberMe | undefined;
   getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => TUserPermissions | EUserWorkspaceRoles | undefined;
   getProjectRolesByWorkspaceSlug: (workspaceSlug: string) => IUserProjectsRole;
-  getProjectRoleByWorkspaceSlugAndProjectId: (workspaceSlug: string, projectId: string) => EUserPermissions | undefined;
+  getProjectRoleByWorkspaceSlugAndProjectId: (
+    workspaceSlug: string,
+    projectId?: string
+  ) => EUserPermissions | undefined;
+  fetchWorkspaceLevelProjectEntities: (workspaceSlug: string, projectId: string) => void;
   allowPermissions: (
     allowPermissions: ETempUserRole[],
     level: TUserPermissionsLevel,
@@ -116,7 +119,7 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    * @param { string } projectId
    * @returns { EUserPermissions | undefined }
    */
-  protected getProjectRole = computedFn((workspaceSlug: string, projectId: string): EUserPermissions | undefined => {
+  protected getProjectRole = computedFn((workspaceSlug: string, projectId?: string): EUserPermissions | undefined => {
     if (!workspaceSlug || !projectId) return undefined;
     const projectRole = this.workspaceProjectsPermissions?.[workspaceSlug]?.[projectId];
     if (!projectRole) return undefined;
@@ -149,8 +152,17 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    */
   abstract getProjectRoleByWorkspaceSlugAndProjectId: (
     workspaceSlug: string,
-    projectId: string
+    projectId?: string
   ) => EUserPermissions | undefined;
+
+  /**
+   * @description Fetches project-level entities that are not automatically loaded by the project wrapper.
+   * This is used when joining a project to ensure all necessary workspace-level project data is available.
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @returns { Promise<void> }
+   */
+  abstract fetchWorkspaceLevelProjectEntities: (workspaceSlug: string, projectId: string) => void;
 
   /**
    * @description Returns whether the user has the permission to access a page
@@ -313,6 +325,7 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
         runInAction(() => {
           set(this.workspaceProjectsPermissions, [workspaceSlug, projectId], projectMemberRole);
         });
+        void this.fetchWorkspaceLevelProjectEntities(workspaceSlug, projectId);
       }
     } catch (error) {
       console.error("Error user joining the project", error);

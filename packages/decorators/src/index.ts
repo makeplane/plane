@@ -1,13 +1,9 @@
-// Export individual decorators
-export { Controller, Middleware } from "./rest";
-export { Get, Post, Put, Patch, Delete } from "./rest";
-export { WebSocket } from "./websocket";
-export { registerControllers } from "./controller";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-// Also provide namespaced exports for better organization
-import * as RestDecorators from "./rest";
-import * as WebSocketDecorators from "./websocket";
-
-// Named namespace exports
-export const Rest = RestDecorators;
-export const WebSocketNS = WebSocketDecorators;
+export * from "./controller";
+export * from "./rest";
+export * from "./websocket";

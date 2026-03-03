@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django models
 from django.db import models
 
@@ -5,9 +9,7 @@ from .base import BaseModel
 
 
 class AnalyticView(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", related_name="analytics", on_delete=models.CASCADE
-    )
+    workspace = models.ForeignKey("db.Workspace", related_name="analytics", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     query = models.JSONField()

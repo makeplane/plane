@@ -1,8 +1,13 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 // plane imports
-import { E_PASSWORD_STRENGTH, EErrorAlertType, EAuthErrorCodes, TAuthErrorInfo } from "@plane/constants";
+import type { TAuthErrorInfo } from "@plane/constants";
+import { E_PASSWORD_STRENGTH, EErrorAlertType, EAuthErrorCodes } from "@plane/constants";
 
 /**
  * @description Password strength levels
@@ -79,7 +84,7 @@ export const getPasswordCriteria = (password: string): PasswordCriteria[] => [
 
 // Error code messages
 const errorCodeMessages: {
-  [key in EAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAuthErrorCodes]: { title: string; message: (email?: string) => ReactNode };
 } = {
   // global
   [EAuthErrorCodes.INSTANCE_NOT_CONFIGURED]: {
@@ -93,6 +98,10 @@ const errorCodeMessages: {
   [EAuthErrorCodes.INVALID_PASSWORD]: {
     title: `Invalid password`,
     message: () => `Invalid password. Please try again.`,
+  },
+  [EAuthErrorCodes.PASSWORD_TOO_WEAK]: {
+    title: `Password too weak`,
+    message: () => `Please use a stronger password.`,
   },
   [EAuthErrorCodes.SMTP_NOT_CONFIGURED]: {
     title: `SMTP not configured`,
@@ -294,10 +303,7 @@ const errorCodeMessages: {
 };
 
 // Error handler
-export const authErrorHandler = (
-  errorCode: EAuthErrorCodes,
-  email?: string | undefined
-): TAuthErrorInfo | undefined => {
+export const authErrorHandler = (errorCode: EAuthErrorCodes, email?: string): TAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EAuthErrorCodes.INSTANCE_NOT_CONFIGURED,
     EAuthErrorCodes.INVALID_EMAIL,

@@ -1,4 +1,10 @@
-import { ReactNode } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { ReactNode } from "react";
 import Link from "next/link";
 // plane imports
 import { SUPPORT_EMAIL } from "@plane/constants";
@@ -41,6 +47,7 @@ export enum EAuthenticationErrorCodes {
   USER_ACCOUNT_DEACTIVATED = "5019",
   // Password strength
   INVALID_PASSWORD = "5020",
+  PASSWORD_TOO_WEAK = "5021",
   SMTP_NOT_CONFIGURED = "5025",
   // Sign Up
   USER_ALREADY_EXIST = "5030",
@@ -78,7 +85,7 @@ export enum EAuthenticationErrorCodes {
   INCORRECT_OLD_PASSWORD = "5135",
   MISSING_PASSWORD = "5138",
   INVALID_NEW_PASSWORD = "5140",
-  // set passowrd
+  // set password
   PASSWORD_ALREADY_SET = "5145",
   // Admin
   ADMIN_ALREADY_EXIST = "5150",
@@ -101,8 +108,9 @@ export type TAuthErrorInfo = {
   message: ReactNode;
 };
 
+// TODO: move all error messages to translation files
 const errorCodeMessages: {
-  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string) => ReactNode };
 } = {
   // global
   [EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED]: {
@@ -131,11 +139,15 @@ const errorCodeMessages: {
   },
   [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
     title: `User account deactivated`,
-    message: () => `User account deactivated. Please contact ${!!SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
+    message: () => `User account deactivated. Please contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
   },
   [EAuthenticationErrorCodes.INVALID_PASSWORD]: {
     title: `Invalid password`,
     message: () => `Invalid password. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.PASSWORD_TOO_WEAK]: {
+    title: `Password too weak`,
+    message: () => `Please use a stronger password.`,
   },
   [EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED]: {
     title: `SMTP not configured`,
@@ -149,7 +161,7 @@ const errorCodeMessages: {
       <div>
         Your account is already registered.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Sign In
@@ -185,7 +197,7 @@ const errorCodeMessages: {
       <div>
         No account found.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Create one
@@ -331,7 +343,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user already exists.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -343,7 +355,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user does not exist.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -360,10 +372,7 @@ const errorCodeMessages: {
   },
 };
 
-export const authErrorHandler = (
-  errorCode: EAuthenticationErrorCodes,
-  email?: string | undefined
-): TAuthErrorInfo | undefined => {
+export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: string): TAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED,
     EAuthenticationErrorCodes.INVALID_EMAIL,
@@ -415,6 +424,7 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED,
     EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED,
+    EAuthenticationErrorCodes.PASSWORD_TOO_WEAK,
   ];
 
   if (bannerAlertErrorCodes.includes(errorCode))
@@ -427,3 +437,8 @@ export const authErrorHandler = (
 
   return undefined;
 };
+
+export const passwordErrors = [
+  EAuthenticationErrorCodes.PASSWORD_TOO_WEAK,
+  EAuthenticationErrorCodes.INVALID_NEW_PASSWORD,
+];

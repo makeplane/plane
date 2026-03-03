@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -12,7 +18,7 @@ import { useProject } from "@/hooks/store/use-project";
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import ActiveProjectItem from "./active-project-item";
 
-const ActiveProjects = observer(() => {
+const ActiveProjects = observer(function ActiveProjects() {
   const { t } = useTranslation();
   const { fetchProjectAnalyticsCount } = useProject();
   const { workspaceSlug } = useParams();
@@ -32,7 +38,7 @@ const ActiveProjects = observer(() => {
       subtitle={selectedDurationLabel}
       className="md:col-span-2"
     >
-      <div className="flex flex-col gap-4 h-[350px] overflow-auto">
+      <div className="flex h-[350px] flex-col gap-4 overflow-auto">
         {isProjectAnalyticsCountLoading &&
           Array.from({ length: 5 }).map((_, index) => <Loader.Item key={index} height="40px" width="100%" />)}
         {!isProjectAnalyticsCountLoading &&

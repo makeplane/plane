@@ -1,22 +1,13 @@
-import { ReactNode } from "react";
-import Image from "next/image";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import Link from "next/link";
-import { KeyRound, Mails } from "lucide-react";
 // plane packages
-import { SUPPORT_EMAIL, EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
-import { TGetBaseAuthenticationModeProps, TInstanceAuthenticationModes } from "@plane/types";
-import { resolveGeneralTheme } from "@plane/utils";
-// components
-import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";
-import { GithubConfiguration } from "@/components/authentication/github-config";
-import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
-import { GoogleConfiguration } from "@/components/authentication/google-config";
-import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
-// images
-import githubLightModeImage from "@/public/logos/github-black.png";
-import githubDarkModeImage from "@/public/logos/github-white.png";
-import GitlabLogo from "@/public/logos/gitlab-logo.svg";
-import GoogleLogo from "@/public/logos/google-logo.svg";
+import type { TAdminAuthErrorInfo } from "@plane/constants";
+import { SUPPORT_EMAIL, EAdminAuthErrorCodes } from "@plane/constants";
 
 export enum EErrorAlertType {
   BANNER_ALERT = "BANNER_ALERT",
@@ -27,7 +18,7 @@ export enum EErrorAlertType {
 }
 
 const errorCodeMessages: {
-  [key in EAdminAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAdminAuthErrorCodes]: { title: string; message: (email?: string) => React.ReactNode };
 } = {
   // admin
   [EAdminAuthErrorCodes.ADMIN_ALREADY_EXIST]: {
@@ -59,7 +50,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user already exists.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -71,7 +62,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user does not exist.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -80,14 +71,11 @@ const errorCodeMessages: {
   },
   [EAdminAuthErrorCodes.ADMIN_USER_DEACTIVATED]: {
     title: `User account deactivated`,
-    message: () => `User account deactivated. Please contact ${!!SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
+    message: () => `User account deactivated. Please contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
   },
 };
 
-export const authErrorHandler = (
-  errorCode: EAdminAuthErrorCodes,
-  email?: string | undefined
-): TAdminAuthErrorInfo | undefined => {
+export const authErrorHandler = (errorCode: EAdminAuthErrorCodes, email?: string): TAdminAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EAdminAuthErrorCodes.ADMIN_ALREADY_EXIST,
     EAdminAuthErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME,
@@ -110,53 +98,3 @@ export const authErrorHandler = (
 
   return undefined;
 };
-
-export const getBaseAuthenticationModes: (props: TGetBaseAuthenticationModeProps) => TInstanceAuthenticationModes[] = ({
-  disabled,
-  updateConfig,
-  resolvedTheme,
-}) => [
-  {
-    key: "unique-codes",
-    name: "Unique codes",
-    description:
-      "Log in or sign up for Plane using codes sent via email. You need to have set up SMTP to use this method.",
-    icon: <Mails className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
-    config: <EmailCodesConfiguration disabled={disabled} updateConfig={updateConfig} />,
-  },
-  {
-    key: "passwords-login",
-    name: "Passwords",
-    description: "Allow members to create accounts with passwords and use it with their email addresses to sign in.",
-    icon: <KeyRound className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
-    config: <PasswordLoginConfiguration disabled={disabled} updateConfig={updateConfig} />,
-  },
-  {
-    key: "google",
-    name: "Google",
-    description: "Allow members to log in or sign up for Plane with their Google accounts.",
-    icon: <Image src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
-    config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
-  },
-  {
-    key: "github",
-    name: "GitHub",
-    description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
-    icon: (
-      <Image
-        src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
-        height={20}
-        width={20}
-        alt="GitHub Logo"
-      />
-    ),
-    config: <GithubConfiguration disabled={disabled} updateConfig={updateConfig} />,
-  },
-  {
-    key: "gitlab",
-    name: "GitLab",
-    description: "Allow members to log in or sign up to plane with their GitLab accounts.",
-    icon: <Image src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
-    config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
-  },
-];

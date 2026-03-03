@@ -1,13 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TIssueLink, TIssueServiceType } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssueLink, TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
-import { TLinkOperations } from "../../issue-detail/links";
+import type { TLinkOperations } from "../../issue-detail/links";
 
 export const useLinkOperations = (
   workspaceSlug: string,

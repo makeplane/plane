@@ -1,19 +1,24 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import requests
+from django.db import DatabaseError, IntegrityError
 
 # Django imports
 from django.utils import timezone
-from django.db import DatabaseError, IntegrityError
+
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
 
 # Module imports
 from plane.db.models import Account
+from plane.utils.exception_logger import log_exception
 
 from .base import Adapter
-from plane.authentication.adapter.error import (
-    AuthenticationException,
-    AUTHENTICATION_ERROR_CODES,
-)
-from plane.utils.exception_logger import log_exception
 
 
 class OauthAdapter(Adapter):
@@ -48,6 +53,8 @@ class OauthAdapter(Adapter):
             return "GITHUB_OAUTH_PROVIDER_ERROR"
         elif self.provider == "gitlab":
             return "GITLAB_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "gitea":
+            return "GITEA_OAUTH_PROVIDER_ERROR"
         else:
             return "OAUTH_NOT_CONFIGURED"
 
@@ -72,10 +79,9 @@ class OauthAdapter(Adapter):
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
+            self.logger.warning("Error getting user token")
             code = self.authentication_error_code()
-            raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code)
-            )
+            raise AuthenticationException(error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code))
 
     def get_user_response(self):
         try:
@@ -84,10 +90,14 @@ class OauthAdapter(Adapter):
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
-            code = self.authentication_error_code()
-            raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code)
+            self.logger.warning(
+                "Error getting user response",
+                extra={
+                    "headers": headers,
+                },
             )
+            code = self.authentication_error_code()
+            raise AuthenticationException(error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code))
 
     def set_user_data(self, data):
         self.user_data = data
@@ -104,12 +114,8 @@ class OauthAdapter(Adapter):
             if account:
                 account.access_token = self.token_data.get("access_token")
                 account.refresh_token = self.token_data.get("refresh_token", None)
-                account.access_token_expired_at = self.token_data.get(
-                    "access_token_expired_at"
-                )
-                account.refresh_token_expired_at = self.token_data.get(
-                    "refresh_token_expired_at"
-                )
+                account.access_token_expired_at = self.token_data.get("access_token_expired_at")
+                account.refresh_token_expired_at = self.token_data.get("refresh_token_expired_at")
                 account.last_connected_at = timezone.now()
                 account.id_token = self.token_data.get("id_token", "")
                 account.save()
@@ -118,17 +124,11 @@ class OauthAdapter(Adapter):
                 Account.objects.create(
                     user=user,
                     provider=self.provider,
-                    provider_account_id=self.user_data.get("user", {}).get(
-                        "provider_id"
-                    ),
+                    provider_account_id=self.user_data.get("user", {}).get("provider_id"),
                     access_token=self.token_data.get("access_token"),
                     refresh_token=self.token_data.get("refresh_token", None),
-                    access_token_expired_at=self.token_data.get(
-                        "access_token_expired_at"
-                    ),
-                    refresh_token_expired_at=self.token_data.get(
-                        "refresh_token_expired_at"
-                    ),
+                    access_token_expired_at=self.token_data.get("access_token_expired_at"),
+                    refresh_token_expired_at=self.token_data.get("refresh_token_expired_at"),
                     last_connected_at=timezone.now(),
                     id_token=self.token_data.get("id_token", ""),
                 )

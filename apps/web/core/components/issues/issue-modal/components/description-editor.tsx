@@ -1,15 +1,22 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Sparkle } from "lucide-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType, TIssue } from "@plane/types";
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
+import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
 import { GptAssistantPopover } from "@/components/core/modals/gpt-assistant-popover";
@@ -22,7 +29,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // services
 import { AIService } from "@/services/ai.service";
 const workspaceService = new WorkspaceService();
@@ -47,7 +54,7 @@ type TIssueDescriptionEditorProps = {
   onClose: () => void;
 };
 
-export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = observer((props) => {
+export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(props: TIssueDescriptionEditorProps) {
   const {
     control,
     isDraft,
@@ -74,7 +81,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "";
   const { config } = useInstance();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // platform
   const { isMobile } = usePlatformOS();
 
@@ -147,9 +154,9 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
   };
 
   return (
-    <div className="border-[0.5px] border-custom-border-200 rounded-lg relative">
+    <div className="relative rounded-lg border-[0.5px] border-subtle-1 bg-layer-2">
       {descriptionHtmlData === undefined || !projectId ? (
-        <Loader className="min-h-[120px] max-h-64 space-y-2 overflow-hidden rounded-md border border-custom-border-200 p-3 py-2 pt-3">
+        <Loader className="max-h-64 min-h-[120px] space-y-2 overflow-hidden rounded-md border border-subtle p-3 py-2 pt-3">
           <Loader.Item width="100%" height="26px" />
           <div className="flex items-center gap-2">
             <Loader.Item width="26px" height="26px" />
@@ -163,7 +170,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
           <div className="flex items-center gap-2">
             <Loader.Item width="50%" height="26px" />
           </div>
-          <div className="border-0.5 absolute bottom-2 right-3.5 z-10 flex items-center gap-2">
+          <div className="border-0.5 absolute right-3.5 bottom-2 z-10 flex items-center gap-2">
             <Loader.Item width="100px" height="26px" />
             <Loader.Item width="50px" height="26px" />
           </div>
@@ -179,7 +186,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 id="issue-modal-editor"
                 initialValue={value ?? ""}
                 value={descriptionHtmlData}
-                workspaceSlug={workspaceSlug?.toString() as string}
+                workspaceSlug={workspaceSlug?.toString()}
                 workspaceId={workspaceId}
                 projectId={projectId}
                 onChange={(_description: object, description_html: string) => {
@@ -218,6 +225,21 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                     throw new Error("Asset upload failed. Please try again later.");
                   }
                 }}
+                duplicateFile={async (assetId: string) => {
+                  try {
+                    const { asset_id } = await duplicateEditorAsset({
+                      assetId,
+                      entityId: issueId,
+                      entityType: isDraft ? EFileAssetType.DRAFT_ISSUE_DESCRIPTION : EFileAssetType.ISSUE_DESCRIPTION,
+                      projectId,
+                      workspaceSlug,
+                    });
+                    onAssetUpload(asset_id);
+                    return asset_id;
+                  } catch {
+                    throw new Error("Asset duplication failed. Please try again later.");
+                  }
+                }}
               />
             )}
           />
@@ -225,7 +247,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
             {issueName && issueName.trim() !== "" && config?.has_llm_configured && (
               <button
                 type="button"
-                className={`flex items-center gap-1 rounded bg-custom-background-90 hover:bg-custom-background-80 px-1.5 py-1 text-xs ${
+                className={`flex items-center gap-1 rounded-sm bg-surface-2 px-1.5 py-1 text-caption-sm-regular hover:bg-layer-1 ${
                   iAmFeelingLucky ? "cursor-wait" : ""
                 }`}
                 onClick={handleAutoGenerateDescription}
@@ -256,7 +278,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 button={
                   <button
                     type="button"
-                    className="flex items-center gap-1 rounded px-1.5 py-1 text-xs bg-custom-background-90 hover:bg-custom-background-80"
+                    className="flex items-center gap-1 rounded-sm bg-surface-2 px-1.5 py-1 text-caption-sm-regular hover:bg-layer-1"
                     onClick={() => setGptAssistantModal((prevData) => !prevData)}
                     tabIndex={-1}
                   >

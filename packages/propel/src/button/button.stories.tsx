@@ -1,87 +1,110 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Button, EButtonVariant, EButtonSize } from "./button";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-const meta: Meta<typeof Button> = {
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Button } from "./button";
+
+const meta = {
   title: "Components/Button",
   component: Button,
   parameters: {
     layout: "centered",
   },
   tags: ["autodocs"],
-  argTypes: {
-    variant: {
-      control: "select",
-      options: Object.values(EButtonVariant),
-    },
-    size: {
-      control: "select",
-      options: Object.values(EButtonSize),
-    },
-  },
-};
-
-export default meta;
-type Story = StoryObj<typeof Button>;
-
-export const Default: Story = {
   args: {
     children: "Button",
   },
-};
+} satisfies Meta<typeof Button>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
 
 export const Primary: Story = {
   args: {
-    variant: EButtonVariant.PRIMARY,
+    variant: "primary",
     children: "Primary Button",
+  },
+};
+
+export const ErrorFill: Story = {
+  args: {
+    variant: "error-fill",
+    children: "Error Button",
+  },
+};
+
+export const ErrorOutline: Story = {
+  args: {
+    variant: "error-outline",
+    children: "Error Outline Button",
   },
 };
 
 export const Secondary: Story = {
   args: {
-    variant: EButtonVariant.SECONDARY,
+    variant: "secondary",
     children: "Secondary Button",
   },
 };
 
-export const Outline: Story = {
+export const Tertiary: Story = {
   args: {
-    variant: EButtonVariant.OUTLINE,
-    children: "Outline Button",
+    variant: "tertiary",
+    children: "Tertiary Button",
   },
 };
 
 export const Ghost: Story = {
   args: {
-    variant: EButtonVariant.GHOST,
+    variant: "ghost",
     children: "Ghost Button",
   },
 };
 
-export const Destructive: Story = {
+export const Link: Story = {
   args: {
-    variant: EButtonVariant.DESTRUCTIVE,
-    children: "Destructive Button",
+    variant: "link",
+    children: "Link Button",
   },
 };
 
 export const Small: Story = {
   args: {
-    size: EButtonSize.SM,
+    size: "sm",
     children: "Small Button",
   },
 };
 
-export const Medium: Story = {
+export const Base: Story = {
   args: {
-    size: EButtonSize.MD,
-    children: "Medium Button",
+    size: "base",
+    children: "Base Button",
   },
 };
 
 export const Large: Story = {
   args: {
-    size: EButtonSize.LG,
+    size: "lg",
     children: "Large Button",
+  },
+};
+
+export const ExtraLarge: Story = {
+  args: {
+    size: "xl",
+    children: "Extra Large Button",
+  },
+};
+
+export const Loading: Story = {
+  args: {
+    loading: true,
+    children: "Loading Button",
   },
 };
 
@@ -92,28 +115,95 @@ export const Disabled: Story = {
   },
 };
 
+export const WithPrependIcon: Story = {
+  args: {
+    prependIcon: (
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M12 5v14m-7-7h14" />
+      </svg>
+    ),
+    children: "With Prepend Icon",
+  },
+};
+
+export const WithAppendIcon: Story = {
+  args: {
+    appendIcon: (
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M9 5l7 7-7 7" />
+      </svg>
+    ),
+    children: "With Append Icon",
+  },
+};
+
 export const AllVariants: Story = {
-  render: () => (
-    <div className="space-y-4">
-      <div className="flex gap-2">
-        <Button variant={EButtonVariant.PRIMARY}>Primary</Button>
-        <Button variant={EButtonVariant.SECONDARY}>Secondary</Button>
-        <Button variant={EButtonVariant.OUTLINE}>Outline</Button>
-        <Button variant={EButtonVariant.GHOST}>Ghost</Button>
-        <Button variant={EButtonVariant.DESTRUCTIVE}>Destructive</Button>
+  render() {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <h3 className="text-16 font-semibold">Primary Variants</h3>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="primary">Primary</Button>
+            <Button variant="error-fill">Error Fill</Button>
+            <Button variant="error-outline">Error Outline</Button>
+            <Button variant="secondary">Secondary</Button>
+            <Button variant="tertiary">Tertiary</Button>
+            <Button variant="ghost">Ghost</Button>
+            <Button variant="link">Link</Button>
+          </div>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
 
 export const AllSizes: Story = {
-  render: () => (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Button size={EButtonSize.SM}>Small</Button>
-        <Button size={EButtonSize.MD}>Medium</Button>
-        <Button size={EButtonSize.LG}>Large</Button>
+  render() {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Button size="sm">Small</Button>
+          <Button size="base">Base</Button>
+          <Button size="lg">Large</Button>
+          <Button size="xl">Extra Large</Button>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
+};
+
+export const AllStates: Story = {
+  render() {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <h3 className="text-16 font-semibold">Button States</h3>
+          <div className="flex flex-wrap gap-2">
+            <Button>Default</Button>
+            <Button loading>Loading</Button>
+            <Button disabled>Disabled</Button>
+          </div>
+        </div>
+      </div>
+    );
+  },
 };

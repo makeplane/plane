@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from .analytic import AnalyticView
 from .api import APIActivityLog, APIToken
 from .asset import FileAsset
@@ -34,7 +38,6 @@ from .issue import (
     IssueLabel,
     IssueLink,
     IssueMention,
-    IssueUserProperty,
     IssueReaction,
     IssueRelation,
     IssueSequence,
@@ -52,12 +55,14 @@ from .project import (
     ProjectIdentifier,
     ProjectMember,
     ProjectMemberInvite,
+    ProjectNetwork,
     ProjectPublicMember,
+    ProjectUserProperty,
 )
 from .session import Session
 from .social_connection import SocialLoginConnection
-from .state import State
-from .user import Account, Profile, User
+from .state import State, StateGroup, DEFAULT_STATES
+from .user import Account, Profile, User, BotTypeEnum
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (

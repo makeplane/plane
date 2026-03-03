@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import zoneinfo
 from django.conf import settings
@@ -105,9 +109,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
-                )
+                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
 
             return response
         except Exception as exc:
@@ -190,9 +192,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
-                )
+                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
             return response
 
         except Exception as exc:

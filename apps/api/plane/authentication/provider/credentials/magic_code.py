@@ -1,8 +1,11 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 import os
-import random
-import string
+import secrets
 
 
 # Module imports
@@ -50,13 +53,7 @@ class MagicCodeProvider(CredentialAdapter):
 
     def initiate(self):
         ## Generate a random token
-        token = (
-            "".join(random.choices(string.ascii_lowercase, k=4))
-            + "-"
-            + "".join(random.choices(string.ascii_lowercase, k=4))
-            + "-"
-            + "".join(random.choices(string.ascii_lowercase, k=4))
-        )
+        token = str(secrets.randbelow(900000) + 100000)
 
         ri = redis_instance()
 
@@ -72,17 +69,13 @@ class MagicCodeProvider(CredentialAdapter):
                 email = str(self.key).replace("magic_", "", 1)
                 if User.objects.filter(email=email).exists():
                     raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES[
-                            "EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"
-                        ],
+                        error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"],
                         error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN",
                         payload={"email": str(email)},
                     )
                 else:
                     raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES[
-                            "EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP"
-                        ],
+                        error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP"],
                         error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP",
                         payload={"email": self.key},
                     )
@@ -128,17 +121,13 @@ class MagicCodeProvider(CredentialAdapter):
                 email = str(self.key).replace("magic_", "", 1)
                 if User.objects.filter(email=email).exists():
                     raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES[
-                            "INVALID_MAGIC_CODE_SIGN_IN"
-                        ],
+                        error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_IN"],
                         error_message="INVALID_MAGIC_CODE_SIGN_IN",
                         payload={"email": str(email)},
                     )
                 else:
                     raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES[
-                            "INVALID_MAGIC_CODE_SIGN_UP"
-                        ],
+                        error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_UP"],
                         error_message="INVALID_MAGIC_CODE_SIGN_UP",
                         payload={"email": str(email)},
                     )

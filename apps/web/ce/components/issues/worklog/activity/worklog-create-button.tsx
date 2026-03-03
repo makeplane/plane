@@ -1,6 +1,10 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC } from "react";
+import type { FC } from "react";
 
 type TIssueActivityWorklogCreateButton = {
   workspaceSlug: string;
@@ -9,4 +13,6 @@ type TIssueActivityWorklogCreateButton = {
   disabled: boolean;
 };
 
-export const IssueActivityWorklogCreateButton: FC<TIssueActivityWorklogCreateButton> = () => <></>;
+export function IssueActivityWorklogCreateButton(_props: TIssueActivityWorklogCreateButton) {
+  return <></>;
+}

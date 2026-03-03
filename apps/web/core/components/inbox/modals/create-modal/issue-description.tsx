@@ -1,12 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, RefObject } from "react";
+import type { FC, RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
@@ -16,7 +21,7 @@ import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 const workspaceService = new WorkspaceService();
 
@@ -33,7 +38,7 @@ type TInboxIssueDescription = {
 };
 
 // TODO: have to implement GPT Assistance
-export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props) => {
+export const InboxIssueDescription = observer(function InboxIssueDescription(props: TInboxIssueDescription) {
   const {
     containerClassName,
     workspaceSlug,
@@ -48,7 +53,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
   // i18n
   const { t } = useTranslation();
   // store hooks
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const { loader } = useProjectInbox();
   const { isMobile } = usePlatformOS();
 
@@ -56,7 +61,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
 
   if (loader === "issue-loading")
     return (
-      <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
+      <Loader className="min-h-[6rem] rounded-md border border-subtle">
         <Loader.Item width="100%" height="140px" />
       </Loader>
     );
@@ -99,6 +104,20 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
         } catch (error) {
           console.log("Error in uploading work item asset:", error);
           throw new Error("Asset upload failed. Please try again later.");
+        }
+      }}
+      duplicateFile={async (assetId: string) => {
+        try {
+          const { asset_id } = await duplicateEditorAsset({
+            assetId,
+            entityType: EFileAssetType.ISSUE_DESCRIPTION,
+            projectId,
+            workspaceSlug,
+          });
+          onAssetUpload?.(asset_id);
+          return asset_id;
+        } catch {
+          throw new Error("Asset duplication failed. Please try again later.");
         }
       }}
     />

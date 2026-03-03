@@ -1,16 +1,23 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
-import { ColumnDef, Row, RowData } from "@tanstack/react-table";
+import type { ColumnDef, Row, RowData } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Briefcase, UserRound } from "lucide-react";
-// plane package imports
+import { UserRound } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { AnalyticsTableDataMap, WorkItemInsightColumns } from "@plane/types";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { ProjectIcon } from "@plane/propel/icons";
+// plane package imports
+import type { AnalyticsTableDataMap, WorkItemInsightColumns } from "@plane/types";
 // plane web components
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useProject } from "@/hooks/store/use-project";
@@ -31,7 +38,7 @@ declare module "@tanstack/react-table" {
   }
 }
 
-const WorkItemsInsightTable = observer(() => {
+const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
   // router
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();
@@ -82,7 +89,7 @@ const WorkItemsInsightTable = observer(() => {
                   {project?.logo_props ? (
                     <Logo logo={project.logo_props} size={18} />
                   ) : (
-                    <Briefcase className="h-4 w-4" />
+                    <ProjectIcon className="h-4 w-4" />
                   )}
                   {project?.name}
                 </div>
@@ -109,17 +116,15 @@ const WorkItemsInsightTable = observer(() => {
                       shape="circle"
                     />
                   ) : (
-                    <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-custom-background-80  capitalize overflow-hidden">
+                    <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-layer-1 capitalize">
                       {row.original.display_name ? (
                         row.original.display_name?.[0]
                       ) : (
-                        <UserRound className="text-custom-text-200 " size={12} />
+                        <UserRound className="text-secondary" size={12} />
                       )}
                     </div>
                   )}
-                  <span className="break-words text-custom-text-200">
-                    {row.original.display_name ?? t(`Unassigned`)}
-                  </span>
+                  <span className="break-words text-secondary">{row.original.display_name ?? t(`Unassigned`)}</span>
                 </div>
               </div>
             ),

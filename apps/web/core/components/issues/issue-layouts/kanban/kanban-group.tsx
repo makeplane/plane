@@ -1,6 +1,11 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -10,7 +15,8 @@ import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 //types
-import {
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type {
   TGroupedIssues,
   TIssue,
   IIssueDisplayProperties,
@@ -18,11 +24,16 @@ import {
   TSubGroupedIssues,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
-  EIssueLayoutTypes,
 } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EIssueLayoutTypes } from "@plane/types";
 import { cn } from "@plane/utils";
-import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
+import type { GroupDropLocation } from "@/components/issues/issue-layouts/utils";
+import {
+  highlightIssueOnDrop,
+  getSourceFromDropPayload,
+  getDestinationFromDropPayload,
+  getIssueBlockId,
+} from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -32,9 +43,8 @@ import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
 //
 import { GroupDragOverlay } from "../group-drag-overlay";
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { TRenderQuickActions } from "../list/list-view-types";
 import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
-import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
 import { KanbanIssueBlocksList } from "./blocks-list";
 
 interface IKanbanGroup {
@@ -62,7 +72,7 @@ interface IKanbanGroup {
   isEpic?: boolean;
 }
 
-export const KanbanGroup = observer((props: IKanbanGroup) => {
+export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   const {
     groupId,
     sub_group_id,
@@ -251,7 +261,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     <KanbanIssueBlockLoader />
   ) : (
     <div
-      className="w-full sticky bottom-0 p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
+      className="sticky bottom-0 w-full cursor-pointer p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline"
       onClick={loadMoreIssuesInThisGroup}
     >
       {t("common.load_more")} &darr;
@@ -264,14 +274,14 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   const canDragIssuesInCurrentGrouping =
     !!group_by &&
     DRAG_ALLOWED_GROUPS.includes(group_by) &&
-    (!!sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
+    (sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
 
   return (
     <div
       id={`${groupId}__${sub_group_id}`}
       className={cn(
-        "relative h-full transition-all min-h-[120px]",
-        { "bg-custom-background-80 rounded": isDraggingOverColumn },
+        "relative h-full min-h-[120px] transition-all",
+        { "rounded-sm bg-layer-1": isDraggingOverColumn },
         { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlayBeVisible }
       )}
       ref={columnRef}
@@ -301,12 +311,22 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         isEpic={isEpic}
       />
 
-      {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
+      {shouldLoadMore &&
+        (isSubGroup ? (
+          <>{loadMore}</>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <KanbanIssueBlockLoader key={index} />
+            ))}
+            <KanbanIssueBlockLoader ref={setIntersectionElement} />
+          </div>
+        ))}
 
       {enableQuickIssueCreate &&
         !disableIssueCreation &&
         !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id) && (
-          <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
+          <div className="sticky bottom-0 w-full bg-surface-2 py-0.5">
             <QuickAddIssueRoot
               layout={EIssueLayoutTypes.KANBAN}
               QuickAddButton={KanbanQuickAddIssueButton}

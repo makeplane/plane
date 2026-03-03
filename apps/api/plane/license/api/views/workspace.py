@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -24,10 +28,7 @@ class InstanceWorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        workspace = (
-            Workspace.objects.filter(slug__iexact=slug).exists()
-            or slug in RESTRICTED_WORKSPACE_SLUGS
-        )
+        workspace = Workspace.objects.filter(slug__iexact=slug).exists() or slug in RESTRICTED_WORKSPACE_SLUGS
         return Response({"status": not workspace}, status=status.HTTP_200_OK)
 
 
@@ -45,18 +46,14 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
         )
 
         member_count = (
-            WorkspaceMember.objects.filter(
-                workspace=OuterRef("id"), member__is_bot=False, is_active=True
-            )
+            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member__is_bot=False, is_active=True)
             .select_related("owner")
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
 
-        workspaces = Workspace.objects.annotate(
-            total_projects=project_count, total_members=member_count
-        )
+        workspaces = Workspace.objects.annotate(total_projects=project_count, total_members=member_count)
 
         # Add search functionality
         search = request.query_params.get("search", None)

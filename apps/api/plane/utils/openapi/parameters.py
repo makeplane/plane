@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """
 Common OpenAPI parameters for drf-spectacular.
 
@@ -336,7 +340,7 @@ ORDER_BY_PARAMETER = OpenApiParameter(
         OpenApiExample(
             name="State group",
             value="state__group",
-            description="Order by state group (backlog, unstarted, started, completed, cancelled)",
+            description="Order by state group (backlog, unstarted, started, completed, cancelled)",  # noqa: E501
         ),
         OpenApiExample(
             name="Assignee name",

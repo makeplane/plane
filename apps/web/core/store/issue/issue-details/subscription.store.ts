@@ -1,10 +1,16 @@
-import set from "lodash/set";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
-import { EIssueServiceType } from "@plane/types";
+import type { EIssueServiceType } from "@plane/types";
 import { IssueService } from "@/services/issue/issue.service";
 // types
-import { IIssueDetail } from "./root.store";
+import type { IIssueDetail } from "./root.store";
 export interface IIssueSubscriptionStoreActions {
   addSubscription: (issueId: string, isSubscribed: boolean | undefined | null) => void;
   fetchSubscriptions: (workspaceSlug: string, projectId: string, issueId: string) => Promise<boolean>;

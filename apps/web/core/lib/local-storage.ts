@@ -1,4 +1,10 @@
-import isEmpty from "lodash/isEmpty";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { isEmpty } from "lodash-es";
 
 export const storage = {
   set: (key: string, value: object | string | boolean): void => {

@@ -1,21 +1,16 @@
-import clone from "lodash/clone";
-import concat from "lodash/concat";
-import get from "lodash/get";
-import indexOf from "lodash/indexOf";
-import isEmpty from "lodash/isEmpty";
-import isEqual from "lodash/isEqual";
-import orderBy from "lodash/orderBy";
-import pull from "lodash/pull";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { isEqual, concat, get, indexOf, isEmpty, orderBy, pull, set, uniq, update, clone } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants
 import { ALL_ISSUES, ISSUE_PRIORITIES } from "@plane/constants";
 // types
-import {
-  EIssueServiceType,
+import type {
   TIssue,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -30,20 +25,18 @@ import {
   TPaginationData,
   TBulkOperationsPayload,
   IBlockUpdateDependencyData,
-  EIssueLayoutTypes,
 } from "@plane/types";
+import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 // helpers
 import { convertToISODateString } from "@plane/utils";
-// local-db
-import { SPECIAL_ORDER_BY } from "@/local-db/utils/query-constructor";
-import { updatePersistentLayer } from "@/local-db/utils/utils";
+// plane web imports
 import { workItemSortWithOrderByExtended } from "@/plane-web/store/issue/helpers/base-issue.store";
 // services
 import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
 //
-import { IIssueRootStore } from "../root.store";
+import type { IIssueRootStore } from "../root.store";
 import {
   getDifference,
   getGroupIssueKeyActions,
@@ -52,7 +45,7 @@ import {
   getSortOrderToFilterEmptyValues,
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
-import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
+import type { IBaseIssueFilterStore } from "./issue-filter-helper.store";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -71,7 +64,7 @@ export interface IBaseIssuesStore {
 
   //actions
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  clear(shouldClearPaginationOptions?: boolean, clearForLocal?: boolean): void;
+  clear(shouldClearPaginationOptions?: boolean): void;
   // helper methods
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
@@ -288,20 +281,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
     if (!displayFilters) return;
 
-    const layout = displayFilters.layout;
-    const orderBy = displayFilters.order_by;
-
-    // Temporary code to fix no load order by
-    if (
-      this.rootIssueStore.rootStore.user.localDBEnabled &&
-      this.rootIssueStore.rootStore.router.projectId &&
-      layout !== EIssueLayoutTypes.SPREADSHEET &&
-      orderBy &&
-      Object.keys(SPECIAL_ORDER_BY).includes(orderBy)
-    ) {
-      return "sort_order";
-    }
-
     return displayFilters?.order_by;
   }
 
@@ -334,15 +313,15 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     const allIssues = groupedIssueIds[ALL_ISSUES] ?? [];
     if (!this.groupBy && !this.subGroupBy && allIssues && Array.isArray(allIssues)) {
-      return allIssues as string[];
+      return allIssues;
     }
 
     if (this.groupBy && groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
-      return (groupedIssueIds[groupId] ?? []) as string[];
+      return groupedIssueIds[groupId] ?? [];
     }
 
     if (this.groupBy && this.subGroupBy && groupId && subGroupId) {
-      return ((groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? []) as string[];
+      return (groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? [];
     }
 
     return undefined;
@@ -494,7 +473,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // Update all the GroupIds to this Store's groupedIssueIds and update Individual group issue counts
     runInAction(() => {
-      this.clear(shouldClearPaginationOptions, true);
+      this.clear(shouldClearPaginationOptions);
       this.updateGroupedIssueIds(groupedIssues, groupedIssueCount);
       this.loader[getGroupKey()] = undefined;
     });
@@ -559,8 +538,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // If shouldUpdateList is true, call fetchParentStats
     shouldUpdateList && (await this.fetchParentStats(workspaceSlug, projectId));
-
-    updatePersistentLayer(response.id);
 
     return response;
   }
@@ -1173,22 +1150,17 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   /**
    * Method called to clear out the current store
    */
-  clear(shouldClearPaginationOptions = true, clearForLocal = false) {
-    if (
-      (this.rootIssueStore.rootStore.user?.localDBEnabled && clearForLocal) ||
-      (!this.rootIssueStore.rootStore.user?.localDBEnabled && !clearForLocal)
-    ) {
-      runInAction(() => {
-        this.groupedIssueIds = undefined;
-        this.issuePaginationData = {};
-        this.groupedIssueCount = {};
-        if (shouldClearPaginationOptions) {
-          this.paginationOptions = undefined;
-        }
-      });
-      this.controller.abort();
-      this.controller = new AbortController();
-    }
+  clear(shouldClearPaginationOptions = true) {
+    runInAction(() => {
+      this.groupedIssueIds = undefined;
+      this.issuePaginationData = {};
+      this.groupedIssueCount = {};
+      if (shouldClearPaginationOptions) {
+        this.paginationOptions = undefined;
+      }
+    });
+    this.controller.abort();
+    this.controller = new AbortController();
   }
 
   /**
@@ -1439,7 +1411,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // if groupedIssueIds is an array, update the `groupedIssueIds` store at the issuePath
     if (groupedIssueIds && Array.isArray(groupedIssueIds)) {
       update(this, ["groupedIssueIds", ...issuePath], (issueIds: string[] = []) =>
-        this.issuesSortWithOrderBy(uniq(concat(issueIds, groupedIssueIds as string[])), this.orderBy)
+        this.issuesSortWithOrderBy(uniq(concat(issueIds, groupedIssueIds)), this.orderBy)
       );
       // return true to indicate the store has been updated
       return true;
@@ -1503,7 +1475,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // if the key for accumulator is not the current action,
     // Meaning if the key already has an action ADD and the current one is REMOVE,
-    // The the key is deleted as both the actions cancel each other out
+    // The key is deleted as both the actions cancel each other out
     if (accumulator[key] !== action) {
       delete accumulator[key];
     }
@@ -1651,7 +1623,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   getArrayStringArray = (
     issueObject: Partial<TIssue> | undefined,
     value: string | string[] | undefined | null,
-    groupByKey?: TIssueGroupByOptions | undefined
+    groupByKey?: TIssueGroupByOptions
   ): string[] => {
     // if issue object is undefined return empty array
     if (!issueObject) return [];
@@ -1683,7 +1655,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   };
 
   /**
-   * This Method is used to get data of the issue based on the ids of the data for states, labels adn assignees
+   * This Method is used to get data of the issue based on the ids of the data for states, labels and assignees
    * @param dataType what type of data is being sent
    * @param dataIds id/ids of the data that is to be populated
    * @param order ascending or descending for arrays of data

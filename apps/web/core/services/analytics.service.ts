@@ -1,6 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { IAnalyticsResponse, TAnalyticsTabsBase, TAnalyticsGraphsBase, TAnalyticsFilterParams } from "@plane/types";
+import type {
+  IAnalyticsResponse,
+  TAnalyticsTabsBase,
+  TAnalyticsGraphsBase,
+  TAnalyticsFilterParams,
+} from "@plane/types";
 // services
 import { APIService } from "./api.service";
 

@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
-import { TFilterGroupNode, TFilterProperty } from "@plane/types";
+import type { TFilterGroupNode, TFilterProperty } from "@plane/types";
 // local imports
 import { getGroupChildren } from "../types/shared";
 

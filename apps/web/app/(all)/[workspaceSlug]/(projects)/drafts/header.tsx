@@ -1,13 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { PenSquare } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
+import { Button } from "@plane/propel/button";
+import { DraftIcon } from "@plane/propel/icons";
 import { EIssuesStoreType } from "@plane/types";
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CountChip } from "@/components/common/count-chip";
@@ -18,7 +23,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 
-export const WorkspaceDraftHeader = observer(() => {
+export const WorkspaceDraftHeader = observer(function WorkspaceDraftHeader() {
   // state
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks
@@ -47,7 +52,7 @@ export const WorkspaceDraftHeader = observer(() => {
             <Breadcrumbs>
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbLink label={t("drafts")} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />
+                  <BreadcrumbLink label={t("drafts")} icon={<DraftIcon className="h-4 w-4 text-tertiary" />} />
                 }
               />
             </Breadcrumbs>
@@ -63,7 +68,7 @@ export const WorkspaceDraftHeader = observer(() => {
           {joinedProjectIds && joinedProjectIds.length > 0 && (
             <Button
               variant="primary"
-              size="sm"
+              size="lg"
               className="items-center gap-1"
               onClick={() => setIsDraftIssueModalOpen(true)}
               disabled={!isAuthorizedUser}

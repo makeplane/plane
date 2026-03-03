@@ -1,10 +1,16 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC, useCallback, useMemo, useState } from "react";
-import { Plus } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
-import { EIssueServiceType, TIssueLink } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssueLink } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
@@ -24,7 +30,7 @@ export type TIssueLinkRoot = {
   disabled?: boolean;
 };
 
-export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
+export function IssueLinkRoot(props: TIssueLinkRoot) {
   // props
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
@@ -114,19 +120,19 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
         issueServiceType={EIssueServiceType.ISSUES}
       />
 
-      <div className="py-1 text-xs">
+      <div className="py-1 text-11">
         <div className="flex items-center justify-between gap-2">
           <h4>Links</h4>
           {!disabled && (
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
+              className={`grid h-7 w-7 place-items-center rounded-sm p-1 duration-300 outline-none hover:bg-surface-2 ${
                 disabled ? "cursor-not-allowed" : "cursor-pointer"
               }`}
               onClick={() => toggleIssueLinkModal(true)}
               disabled={disabled}
             >
-              <Plus className="h-4 w-4" />
+              <PlusIcon className="h-4 w-4" />
             </button>
           )}
         </div>
@@ -137,4 +143,4 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
       </div>
     </>
   );
-};
+}

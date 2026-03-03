@@ -1,21 +1,20 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useState } from "react";
-import omit from "lodash/omit";
+import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import {
-  ARCHIVABLE_STATE_GROUPS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  WORK_ITEM_TRACKER_ELEMENTS,
-} from "@plane/constants";
-import { EIssuesStoreType, TIssue } from "@plane/types";
-import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import type { TIssue } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -26,10 +25,11 @@ import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layo
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
-import { IQuickActionProps } from "../list/list-view-types";
-import { useProjectIssueMenuItems, MenuItemFactoryProps } from "./helper";
+import type { IQuickActionProps } from "../list/list-view-types";
+import type { MenuItemFactoryProps } from "./helper";
+import { useProjectIssueMenuItems } from "./helper";
 
-export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
+export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActions(props: IQuickActionProps) {
   const {
     issue,
     handleDelete,
@@ -102,13 +102,15 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
 
   const MENU_ITEMS = useProjectIssueMenuItems(menuItemProps);
 
-  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
-    ...item,
-    onClick: () => {
-      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      onClick: () => {
+        item.action();
+      },
+    };
+  });
 
   return (
     <>
@@ -171,8 +173,8 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
                     <h5>{item.title}</h5>
                     {item.description && (
                       <p
-                        className={cn("text-custom-text-300 whitespace-pre-line", {
-                          "text-custom-text-400": item.disabled,
+                        className={cn("whitespace-pre-line text-tertiary", {
+                          "text-placeholder": item.disabled,
                         })}
                       >
                         {item.description}
@@ -184,7 +186,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
                 className={cn(
                   "flex items-center gap-2",
                   {
-                    "text-custom-text-400": item.disabled,
+                    "text-placeholder": item.disabled,
                   },
                   item.className
                 )}
@@ -192,16 +194,13 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
                 {item.nestedMenuItems.map((nestedItem) => (
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
+                    onClick={() => {
                       nestedItem.action();
                     }}
                     className={cn(
                       "flex items-center gap-2",
                       {
-                        "text-custom-text-400": nestedItem.disabled,
+                        "text-placeholder": nestedItem.disabled,
                       },
                       nestedItem.className
                     )}
@@ -212,8 +211,8 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
                       <h5>{nestedItem.title}</h5>
                       {nestedItem.description && (
                         <p
-                          className={cn("text-custom-text-300 whitespace-pre-line", {
-                            "text-custom-text-400": nestedItem.disabled,
+                          className={cn("whitespace-pre-line text-tertiary", {
+                            "text-placeholder": nestedItem.disabled,
                           })}
                         >
                           {nestedItem.description}
@@ -230,16 +229,13 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
+              onClick={() => {
                 item.action();
               }}
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -250,8 +246,8 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("whitespace-pre-line text-tertiary", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

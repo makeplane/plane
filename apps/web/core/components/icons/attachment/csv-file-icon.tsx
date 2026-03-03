@@ -1,10 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
-import Image from "next/image";
 // image
-import CSVFileIcon from "@/public/attachment/csv-icon.png";
+import CSVFileIcon from "@/app/assets/attachment/csv-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
-export const CsvIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <Image src={CSVFileIcon} height={height} width={width} alt="CSVFileIcon" />
-);
+export function CsvIcon({ width, height }: ImageIconPros) {
+  return <img src={CSVFileIcon} width={width} height={height} alt="CSVFileIcon" />;
+}

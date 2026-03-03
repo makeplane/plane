@@ -1,6 +1,13 @@
-import { ChangeEvent } from "react";
-import { Controller, useFormContext, UseFormSetValue } from "react-hook-form";
-import { Info } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { ChangeEvent } from "react";
+import type { UseFormSetValue } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
+import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -11,16 +18,18 @@ import { cn, projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
 // plane utils
 // helpers
 // plane-web types
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 
 type Props = {
   setValue: UseFormSetValue<TProject>;
   isMobile: boolean;
-  isChangeInIdentifierRequired: boolean;
-  setIsChangeInIdentifierRequired: (value: boolean) => void;
+  shouldAutoSyncIdentifier: boolean;
+  setShouldAutoSyncIdentifier: (value: boolean) => void;
+  handleFormOnChange?: () => void;
 };
-const ProjectCommonAttributes: React.FC<Props> = (props) => {
-  const { setValue, isMobile, isChangeInIdentifierRequired, setIsChangeInIdentifierRequired } = props;
+
+function ProjectCommonAttributes(props: Props) {
+  const { setValue, isMobile, shouldAutoSyncIdentifier, setShouldAutoSyncIdentifier, handleFormOnChange } = props;
   const {
     formState: { errors },
     control,
@@ -29,21 +38,24 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
   const { t } = useTranslation();
 
-  const handleNameChange = (onChange: (...event: any[]) => void) => (e: ChangeEvent<HTMLInputElement>) => {
-    if (!isChangeInIdentifierRequired) {
+  const handleNameChange =
+    (onChange: (event: ChangeEvent<HTMLInputElement>) => void) => (e: ChangeEvent<HTMLInputElement>) => {
+      if (!shouldAutoSyncIdentifier) {
+        onChange(e);
+        return;
+      }
+      if (e.target.value === "") setValue("identifier", "");
+      else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, 10));
       onChange(e);
-      return;
-    }
-    if (e.target.value === "") setValue("identifier", "");
-    else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, 5));
-    onChange(e);
-  };
+      handleFormOnChange?.();
+    };
 
-  const handleIdentifierChange = (onChange: any) => (e: ChangeEvent<HTMLInputElement>) => {
+  const handleIdentifierChange = (onChange: (value: string) => void) => (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     const alphanumericValue = projectIdentifierSanitizer(value);
-    setIsChangeInIdentifierRequired(false);
+    setShouldAutoSyncIdentifier(false);
     onChange(alphanumericValue);
+    handleFormOnChange?.();
   };
   return (
     <div className="grid grid-cols-1 gap-x-2 gap-y-3 md:grid-cols-4">
@@ -67,12 +79,12 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               onChange={handleNameChange(onChange)}
               hasError={Boolean(errors.name)}
               placeholder={t("project_name")}
-              className="w-full focus:border-blue-400"
+              className="focus:border-blue-400 w-full"
               tabIndex={getIndex("name")}
             />
           )}
         />
-        <span className="text-xs text-red-500">{errors?.name?.message}</span>
+        <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
       </div>
       <div className="relative">
         <Controller
@@ -85,11 +97,11 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) || t("only_alphanumeric_non_latin_characters_allowed"),
             minLength: {
               value: 1,
-              message: t("project_id_must_be_at_least_1_character"),
+              message: t("project_id_min_char"),
             },
             maxLength: {
-              value: 5,
-              message: t("project_id_must_be_at_most_5_characters"),
+              value: 10,
+              message: t("project_id_max_char"),
             },
           }}
           render={({ field: { value, onChange } }) => (
@@ -101,7 +113,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               onChange={handleIdentifierChange(onChange)}
               hasError={Boolean(errors.identifier)}
               placeholder={t("project_id")}
-              className={cn("w-full text-xs focus:border-blue-400 pr-7", {
+              className={cn("focus:border-blue-400 w-full pr-7 text-11", {
                 uppercase: value,
               })}
               tabIndex={getIndex("identifier")}
@@ -111,12 +123,12 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
         <Tooltip
           isMobile={isMobile}
           tooltipContent={t("project_id_tooltip_content")}
-          className="text-sm"
+          className="text-13"
           position="right-start"
         >
-          <Info className="absolute right-2 top-2.5 h-3 w-3 text-custom-text-400" />
+          <InfoIcon className="absolute top-2.5 right-2 h-3 w-3 text-placeholder" />
         </Tooltip>
-        <span className="text-xs text-red-500">{errors?.identifier?.message}</span>
+        <span className="text-11 text-danger-primary">{errors?.identifier?.message}</span>
       </div>
       <div className="md:col-span-4">
         <Controller
@@ -128,8 +140,11 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               name="description"
               value={value}
               placeholder={t("description")}
-              onChange={onChange}
-              className="!h-24 text-sm focus:border-blue-400"
+              onChange={(e) => {
+                onChange(e);
+                handleFormOnChange?.();
+              }}
+              className="focus:border-blue-400 !h-24 text-13"
               hasError={Boolean(errors?.description)}
               tabIndex={getIndex("description")}
             />
@@ -138,6 +153,6 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}
 
 export default ProjectCommonAttributes;

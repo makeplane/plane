@@ -1,9 +1,13 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 
-import { TProjectActivity } from "@/plane-web/types";
+import type { TProjectActivity } from "@/plane-web/types";
 import { ActivityBlockComponent } from "./activity-block";
 import { iconsMap, messages } from "./helper";
 
@@ -13,7 +17,7 @@ type TActivityItem = {
   ends?: "top" | "bottom" | undefined;
 };
 
-export const ActivityItem: FC<TActivityItem> = observer((props) => {
+export const ActivityItem = observer(function ActivityItem(props: TActivityItem) {
   const { activity, showProject = true, ends } = props;
 
   if (!activity) return null;

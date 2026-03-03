@@ -1,8 +1,17 @@
-import { FC, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronRight, CircleDashed } from "lucide-react";
+import { CircleDashed } from "lucide-react";
 import { ALL_ISSUES } from "@plane/constants";
-import { EIssuesStoreType, IGroupByColumn, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import { ChevronRightIcon } from "@plane/propel/icons";
+import type { IGroupByColumn, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { SubIssuesListItem } from "./list-item";
@@ -13,7 +22,7 @@ interface TSubIssuesListGroupProps {
   workspaceSlug: string;
   group: IGroupByColumn;
   serviceType: TIssueServiceType;
-  disabled: boolean;
+  canEdit: boolean;
   parentIssueId: string;
   rootIssueId: string;
   handleIssueCrudState: (
@@ -26,11 +35,11 @@ interface TSubIssuesListGroupProps {
   spacingLeft?: number;
 }
 
-export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props) => {
+export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TSubIssuesListGroupProps) {
   const {
     group,
     serviceType,
-    disabled,
+    canEdit,
     parentIssueId,
     rootIssueId,
     projectId,
@@ -57,17 +66,17 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
         title={
           !isAllIssues && (
             <div className="flex items-center gap-2 p-3">
-              <ChevronRight
-                className={cn("size-3.5 transition-all text-custom-text-400", {
+              <ChevronRightIcon
+                className={cn("size-3.5 text-placeholder transition-all", {
                   "rotate-90": isCollapsibleOpen,
                 })}
                 strokeWidth={2.5}
               />
-              <div className="flex-shrink-0 grid place-items-center overflow-hidden">
+              <div className="grid flex-shrink-0 place-items-center overflow-hidden">
                 {group.icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
               </div>
-              <span className="text-sm text-custom-text-100 font-medium">{group.name}</span>
-              <span className="text-sm text-custom-text-400">{workItemIds.length}</span>
+              <span className="text-13 font-medium text-primary">{group.name}</span>
+              <span className="text-13 text-placeholder">{workItemIds.length}</span>
             </div>
           )
         }
@@ -81,7 +90,7 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
             parentIssueId={parentIssueId}
             rootIssueId={rootIssueId}
             issueId={workItemId}
-            disabled={disabled}
+            canEdit={canEdit}
             handleIssueCrudState={handleIssueCrudState}
             subIssueOperations={subIssueOperations}
             issueServiceType={serviceType}

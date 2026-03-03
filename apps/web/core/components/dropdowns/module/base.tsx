@@ -1,10 +1,15 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IModule } from "@plane/types";
+import type { IModule } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -13,7 +18,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITHOUT_TEXT } from "../constants";
-import { TDropdownProps } from "../types";
+import type { TDropdownProps } from "../types";
 import { ModuleButtonContent } from "./button-content";
 import { ModuleOptions } from "./module-options";
 
@@ -42,7 +47,7 @@ type TModuleDropdownBaseProps = TDropdownProps & {
       }
   );
 
-export const ModuleDropdownBase: React.FC<TModuleDropdownBaseProps> = observer((props) => {
+export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TModuleDropdownBaseProps) {
   const {
     button,
     buttonClassName,
@@ -112,10 +117,7 @@ export const ModuleDropdownBase: React.FC<TModuleDropdownBaseProps> = observer((
         <button
           ref={setReferenceElement}
           type="button"
-          className={cn(
-            "clickable block h-full w-full outline-none hover:bg-custom-background-80",
-            buttonContainerClassName
-          )}
+          className={cn("clickable block h-full w-full outline-none hover:bg-layer-1", buttonContainerClassName)}
           onClick={handleOnClick}
           disabled={disabled}
           tabIndex={tabIndex}
@@ -127,9 +129,9 @@ export const ModuleDropdownBase: React.FC<TModuleDropdownBaseProps> = observer((
           ref={setReferenceElement}
           type="button"
           className={cn(
-            "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
+            "clickable block h-full max-w-full outline-none hover:bg-layer-1",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
@@ -191,6 +193,7 @@ export const ModuleDropdownBase: React.FC<TModuleDropdownBaseProps> = observer((
           multiple={multiple}
           getModuleById={getModuleById}
           moduleIds={moduleIds}
+          value={value}
         />
       )}
     </ComboDropDown>

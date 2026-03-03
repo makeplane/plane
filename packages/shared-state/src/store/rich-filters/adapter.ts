@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
-import { IFilterAdapter, TExternalFilter, TFilterExpression, TFilterProperty } from "@plane/types";
+import type { IFilterAdapter, TExternalFilter, TFilterExpression, TFilterProperty } from "@plane/types";
 
 /**
  * Abstract base class for converting between external filter formats and internal filter expressions.
@@ -8,9 +14,10 @@ import { IFilterAdapter, TExternalFilter, TFilterExpression, TFilterProperty } f
  * @template K - Property key type that extends TFilterProperty
  * @template E - External filter type that extends TExternalFilter
  */
-export abstract class FilterAdapter<K extends TFilterProperty, E extends TExternalFilter>
-  implements IFilterAdapter<K, E>
-{
+export abstract class FilterAdapter<K extends TFilterProperty, E extends TExternalFilter> implements IFilterAdapter<
+  K,
+  E
+> {
   /**
    * Converts an external filter format to internal filter expression.
    * Must be implemented by concrete adapter classes.

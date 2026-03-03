@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -9,7 +15,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useSticky } from "@/hooks/use-stickies";
 import { StickiesLayout } from "./stickies-list";
 
-export const StickiesInfinite = observer(() => {
+export const StickiesInfinite = observer(function StickiesInfinite() {
   const { workspaceSlug } = useParams();
   // hooks
   const { fetchWorkspaceStickies, fetchNextWorkspaceStickies, getWorkspaceStickyIds, loader, paginationInfo } =
@@ -44,12 +50,12 @@ export const StickiesInfinite = observer(() => {
           hasNextPage &&
           workspaceStickies?.length >= STICKIES_PER_PAGE && (
             <div
-              className={cn("flex min-h-[300px] box-border p-2 w-full")}
+              className={cn("box-border flex min-h-[300px] w-full p-2")}
               ref={setElementRef}
               id="intersection-element"
             >
-              <div className="flex w-full rounded min-h-[300px]">
-                <Loader className="w-full h-full">
+              <div className="flex min-h-[300px] w-full rounded-sm">
+                <Loader className="h-full w-full">
                   <Loader.Item height="100%" width="100%" />
                 </Loader>
               </div>

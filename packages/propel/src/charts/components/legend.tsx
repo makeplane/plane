@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
-import { LegendProps } from "recharts";
+import type { LegendProps } from "recharts";
 // plane imports
-import { TChartLegend } from "@plane/types";
+import type { TChartLegend } from "@plane/types";
 import { cn } from "../../utils/classname";
 
 export const getLegendProps = (args: TChartLegend): LegendProps => {
@@ -31,12 +37,12 @@ export const getLegendProps = (args: TChartLegend): LegendProps => {
   };
 };
 
-const CustomLegend = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div"> &
+const CustomLegend = React.forwardRef(function CustomLegend(
+  props: React.ComponentProps<"div"> &
     Pick<LegendProps, "payload" | "formatter" | "onClick" | "onMouseEnter" | "onMouseLeave"> &
-    TChartLegend
->((props, ref) => {
+    TChartLegend,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
   const { formatter, layout, onClick, onMouseEnter, onMouseLeave, payload } = props;
 
   if (!payload?.length) return null;
@@ -44,17 +50,17 @@ const CustomLegend = React.forwardRef<
   return (
     <div
       ref={ref}
-      className={cn("flex items-center px-4 overflow-scroll vertical-scrollbar scrollbar-sm", {
+      className={cn("vertical-scrollbar flex scrollbar-sm items-center overflow-scroll px-4", {
         "max-h-full flex-col items-start py-4": layout === "vertical",
       })}
     >
       {payload.map((item, index) => (
         <div
           key={item.value}
-          className={cn("flex items-center gap-1.5 text-custom-text-300 text-sm font-medium whitespace-nowrap", {
+          className={cn("flex items-center gap-1.5 text-13 font-medium whitespace-nowrap text-tertiary", {
             "px-2": layout === "horizontal",
             "py-2": layout === "vertical",
-            "pl-0 pt-0": index === 0,
+            "pt-0 pl-0": index === 0,
             "pr-0 pb-0": index === payload.length - 1,
             "cursor-pointer": !!props.onClick,
           })}
@@ -63,7 +69,7 @@ const CustomLegend = React.forwardRef<
           onMouseLeave={(e) => onMouseLeave?.(item, index, e)}
         >
           <div
-            className="flex-shrink-0 size-2 rounded-sm"
+            className="size-2 flex-shrink-0 rounded-xs"
             style={{
               backgroundColor: item.color,
             }}

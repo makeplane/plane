@@ -1,10 +1,10 @@
 {
   "name": "plane",
-  "description": "Open-source project management that unlocks customer value",
-  "repository": "https://github.com/makeplane/plane.git",
-  "version": "1.0.0",
-  "license": "AGPL-3.0",
+  "version": "1.2.0",
   "private": true,
+  "description": "Open-source project management that unlocks customer value",
+  "license": "AGPL-3.0",
+  "repository": "https://github.com/makeplane/plane.git",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --concurrency=18",
@@ -12,33 +12,70 @@
     "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "fix": "turbo run fix",
     "fix:format": "turbo run fix:format",
+    "fix:lint": "turbo run fix:lint",
     "check": "turbo run check",
     "check:lint": "turbo run check:lint",
-    "check:format": "turbo run check:format"
+    "check:format": "turbo run check:format",
+    "check:types": "turbo run check:types",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "prettier": "latest",
-    "prettier-plugin-tailwindcss": "^0.6.14",
-    "turbo": "^2.5.6"
+    "husky": "9.1.7",
+    "lint-staged": "16.2.7",
+    "oxfmt": "0.35.0",
+    "oxlint": "1.51.0",
+    "turbo": "2.8.12"
   },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [
+      "pnpm exec oxfmt --no-error-on-unmatched-pattern"
+    ],
+    "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts}": [
+      "pnpm exec oxlint --fix --deny-warnings"
+    ]
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "packageManager": "pnpm@10.30.2+sha512.36cdc707e7b7940a988c9c1ecf88d084f8514b5c3f085f53a2e244c2921d3b2545bc20dd4ebe1fc245feec463bb298aecea7a63ed1f7680b877dc6379d8d0cb4",
   "pnpm": {
     "overrides": {
+      "express": "catalog:",
+      "mdast-util-to-hast": "13.2.1",
+      "valibot": "1.2.0",
+      "glob": "11.1.0",
+      "js-yaml": "4.1.1",
       "brace-expansion": "2.0.2",
       "nanoid": "3.3.8",
       "esbuild": "0.25.0",
       "@babel/helpers": "7.26.10",
       "@babel/runtime": "7.26.10",
       "chokidar": "3.6.0",
+      "happy-dom": "20.0.2",
       "tar-fs": "3.0.9",
       "prosemirror-view": "1.40.0",
       "@types/express": "4.17.23",
       "typescript": "catalog:",
-      "sharp": "catalog:",
-      "vite": "7.0.7"
-    }
-  },
-  "packageManager": "pnpm@10.12.1",
-  "engines": {
-    "node": ">=22.18.0"
+      "vite": "catalog:",
+      "qs": "6.14.2",
+      "diff": "5.2.2",
+      "webpack": "5.104.1",
+      "lodash-es": "catalog:",
+      "@isaacs/brace-expansion": "5.0.1",
+      "lodash": "4.17.23",
+      "markdown-it": "14.1.1",
+      "rollup": "4.59.0",
+      "minimatch@3": "3.1.4",
+      "minimatch@10": "10.2.3",
+      "serialize-javascript": "7.0.3",
+      "ajv@6": "6.14.0",
+      "ajv@8": "8.18.0"
+    },
+    "onlyBuiltDependencies": [
+      "turbo"
+    ],
+    "ignoredBuiltDependencies": [
+      "sharp"
+    ]
   }
 }

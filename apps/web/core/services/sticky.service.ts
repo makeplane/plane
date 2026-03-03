@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // helpers
 import { STICKIES_PER_PAGE, API_BASE_URL } from "@plane/constants";
-import { TSticky } from "@plane/types";
+import type { TSticky } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
