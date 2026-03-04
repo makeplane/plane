@@ -58,7 +58,7 @@ class SwingSSOProvider(CredentialAdapter):
                 {"key": "SWING_SSO_URL", "default": os.environ.get("SWING_SSO_URL", "")},
                 {"key": "SWING_SSO_CLIENT_ID", "default": os.environ.get("SWING_SSO_CLIENT_ID", "")},
                 {"key": "SWING_SSO_CLIENT_SECRET", "default": os.environ.get("SWING_SSO_CLIENT_SECRET", "")},
-                {"key": "SWING_SSO_COMPANY_CODE", "default": os.environ.get("SWING_SSO_COMPANY_CODE", "sh")},
+                {"key": "SWING_SSO_COMPANY_CODE", "default": os.environ.get("SWING_SSO_COMPANY_CODE", "VN")},
             ]
         )
 

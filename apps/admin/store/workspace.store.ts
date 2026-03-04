@@ -28,6 +28,7 @@ export interface IWorkspaceStore {
   // fetch actions
   fetchWorkspaces: () => Promise<IWorkspace[]>;
   fetchNextWorkspaces: () => Promise<IWorkspace[]>;
+  fetchAllWorkspaces: () => Promise<void>;
   // curd actions
   createWorkspace: (data: IWorkspace) => Promise<IWorkspace>;
   bulkCreateWorkspaces: (workspaces: Array<{ name: string; organization_size?: string }>) => Promise<IWorkspaceBulkCreateResponse>;
@@ -56,6 +57,7 @@ export class WorkspaceStore implements IWorkspaceStore {
       // fetch actions
       fetchWorkspaces: action,
       fetchNextWorkspaces: action,
+      fetchAllWorkspaces: action,
       // curd actions
       createWorkspace: action,
       bulkCreateWorkspaces: action,
@@ -136,6 +138,16 @@ export class WorkspaceStore implements IWorkspaceStore {
       throw error;
     } finally {
       this.loader = "loaded";
+    }
+  };
+
+  /**
+   * @description Fetches all workspaces across all pages
+   */
+  fetchAllWorkspaces = async (): Promise<void> => {
+    await this.fetchWorkspaces();
+    while (this.paginationInfo?.next_page_results) {
+      await this.fetchNextWorkspaces();
     }
   };
 

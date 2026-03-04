@@ -18,6 +18,17 @@ export interface IWorkLog {
     display_name: string;
     avatar_url: string;
   };
+  issue_detail?: {
+    id: string;
+    name: string;
+    sequence_id: number;
+    identifier: string;
+  };
+  project_detail?: {
+    id: string;
+    name: string;
+    identifier: string;
+  };
 }
 
 export interface IWorkLogCreate {

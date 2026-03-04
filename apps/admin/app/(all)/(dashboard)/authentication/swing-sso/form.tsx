@@ -44,7 +44,7 @@ export function InstanceSwingSSOConfigForm(props: Props) {
       SWING_SSO_URL: config["SWING_SSO_URL"],
       SWING_SSO_CLIENT_ID: config["SWING_SSO_CLIENT_ID"],
       SWING_SSO_CLIENT_SECRET: config["SWING_SSO_CLIENT_SECRET"],
-      SWING_SSO_COMPANY_CODE: config["SWING_SSO_COMPANY_CODE"] || "sh",
+      SWING_SSO_COMPANY_CODE: config["SWING_SSO_COMPANY_CODE"] || "VN",
     },
   });
 
@@ -80,8 +80,8 @@ export function InstanceSwingSSOConfigForm(props: Props) {
       key: "SWING_SSO_COMPANY_CODE",
       type: "text",
       label: "Company code",
-      description: 'The company code sent to Swing SSO (default: "sh").',
-      placeholder: "sh",
+      description: 'The company code sent to Swing SSO (default: "VN").',
+      placeholder: "VN",
       error: Boolean(errors.SWING_SSO_COMPANY_CODE),
       required: true,
     },

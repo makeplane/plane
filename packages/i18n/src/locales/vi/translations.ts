@@ -2171,6 +2171,13 @@ export default {
         toggle_title: "Bật tiếp nhận",
         toggle_description: "Cho phép thành viên dự án tạo yêu cầu tiếp nhận trong ứng dụng.",
       },
+      time_tracking: {
+        title: "Theo dõi thời gian",
+        short_title: "Theo dõi thời gian",
+        description: "Bật theo dõi thời gian để cho phép thành viên ghi lại số giờ làm việc trên các vấn đề.",
+        toggle_title: "Bật theo dõi thời gian",
+        toggle_description: "Thành viên dự án sẽ có thể ghi lại số giờ làm việc trên các vấn đề.",
+      },
     },
   },
   project_cycles: {
@@ -2582,6 +2589,14 @@ export default {
         title: "Dự án chưa bật tính năng chế độ xem.",
         description:
           "Chế độ xem là khối xây dựng cơ bản của dự án. Bật chế độ xem từ cài đặt dự án để bắt đầu sử dụng chúng.",
+        primary_button: {
+          text: "Quản lý tính năng",
+        },
+      },
+      time_tracking: {
+        title: "Dự án chưa bật tính năng chấm công.",
+        description:
+          "Tính năng chấm công cho phép thành viên ghi nhận giờ làm việc trên mục công việc. Bật chấm công từ cài đặt dự án để bắt đầu sử dụng.",
         primary_button: {
           text: "Quản lý tính năng",
         },

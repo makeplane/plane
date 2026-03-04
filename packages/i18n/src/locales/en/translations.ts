@@ -2158,6 +2158,13 @@ export default {
         toggle_title: "Enable intake",
         toggle_description: "Let project members create in app intake requests.",
       },
+      time_tracking: {
+        title: "Time Tracking",
+        short_title: "Time Tracking",
+        description: "Enable time tracking to allow members to log work hours on issues.",
+        toggle_title: "Enable time tracking",
+        toggle_description: "Project members will be able to log work hours on issues.",
+      },
     },
   },
   project_cycles: {
@@ -2570,6 +2577,14 @@ export default {
         title: "Views are not enabled for the project.",
         description:
           "Views are the building blocks of your project. Enable views from project settings to start using them.",
+        primary_button: {
+          text: "Manage features",
+        },
+      },
+      time_tracking: {
+        title: "Time tracking is not enabled for this project.",
+        description:
+          "Time tracking allows members to log work hours on issues. Enable time tracking from project settings to start using it.",
         primary_button: {
           text: "Manage features",
         },

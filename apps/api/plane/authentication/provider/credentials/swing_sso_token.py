@@ -57,7 +57,7 @@ class SwingSSOTokenProvider(CredentialAdapter):
             [
                 {"key": "IS_SWING_SSO_ENABLED", "default": os.environ.get("IS_SWING_SSO_ENABLED", "0")},
                 {"key": "SWING_SSO_URL", "default": os.environ.get("SWING_SSO_URL", "")},
-                {"key": "SWING_SSO_COMPANY_CODE", "default": os.environ.get("SWING_SSO_COMPANY_CODE", "sh")},
+                {"key": "SWING_SSO_COMPANY_CODE", "default": os.environ.get("SWING_SSO_COMPANY_CODE", "VN")},
             ]
         )
 

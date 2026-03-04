@@ -2150,6 +2150,13 @@ export default {
         toggle_title: "접수 활성화",
         toggle_description: "프로젝트 멤버가 앱 내에서 접수 요청을 생성할 수 있도록 허용합니다.",
       },
+      time_tracking: {
+        title: "시간 추적",
+        short_title: "시간 추적",
+        description: "멤버가 이슈에 작업 시간을 기록할 수 있도록 시간 추적을 활성화합니다.",
+        toggle_title: "시간 추적 활성화",
+        toggle_description: "프로젝트 멤버가 이슈에 작업 시간을 기록할 수 있습니다.",
+      },
     },
   },
   project_cycles: {
@@ -2557,6 +2564,14 @@ export default {
       view: {
         title: "프로젝트에 뷰가 활성화되지 않았습니다.",
         description: "뷰는 프로젝트의 구성 요소입니다. 프로젝트 설정에서 뷰를 활성화하여 사용하세요.",
+        primary_button: {
+          text: "기능 관리",
+        },
+      },
+      time_tracking: {
+        title: "이 프로젝트에 시간 추적이 활성화되지 않았습니다.",
+        description:
+          "시간 추적을 통해 멤버가 작업 항목에 근무 시간을 기록할 수 있습니다. 프로젝트 설정에서 시간 추적을 활성화하여 사용하세요.",
         primary_button: {
           text: "기능 관리",
         },
