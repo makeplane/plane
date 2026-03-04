@@ -1,6 +1,6 @@
 # Project Roadmap & Status
 
-**Last Updated**: 2026-03-04 (Remove None Priority feature completed)
+**Last Updated**: 2026-03-04 (Worklog & Time Tracking features completed)
 **Current Version**: 1.2.3
 **Next Release Target**: Q2 2026
 
@@ -82,6 +82,18 @@
   - ✅ API returns 400 for priority=none filter requests (breaking change)
   - ✅ Full-stack implementation (backend models, serializers, API views, frontend UI)
   - ✅ Documentation: Changelog, architecture updates, breaking change notes
+- ✅ Worklog (Time Tracking) Phases 1-9 (Mar 2026)
+  - ✅ Backend validation: 12h/day limit (720 min), no future dates, 7-working-day edit window
+  - ✅ Permission enforcement: ADMIN-only edit/delete with 7-day window, MEMBER create-only
+  - ✅ API endpoints: Issue-level CRUD, project/workspace summaries, timesheet grid, bulk upsert
+  - ✅ Serializer architecture: Standard + bulk entry semantics, date range validation
+  - ✅ Frontend validation: Date picker restrictions, error toasts, edit window checks
+  - ✅ Daily reminder: Celery task at UTC 10:00, email + in-app notifications
+  - ✅ User preferences: `UserNotificationPreference.worklog_reminder` toggle
+  - ✅ Code modularization: `time_tracking.py` → `time_tracking/{summary,timesheet_grid,timesheet_bulk}.py`
+  - ✅ i18n: EN/KO/VI translations (20+ keys)
+  - ✅ Phase 9 Feature Flag Gating: Sidebar nav gated, route guard with EmptyState, "Log Time" button info popup, worklog property hidden
+  - ✅ Documentation: Comprehensive specification in `worklog-specification.md` + feature flag section
 
 ## Planned Roadmap (2026)
 

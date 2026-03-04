@@ -1,123 +1,218 @@
 ---
-title: "Time Tracking / Work Log Feature"
-description: "Log work by members on issues, compare estimated vs actual time"
-status: complete
+title: "Time Tracking / Work Log Feature (Consolidated)"
+description: "Complete worklog system: CRUD, reports, edit-from-activity, business rules, permissions, reminders, feature gating"
+status: in-progress
 priority: P1
-effort: 16h
+effort: 26h
 branch: preview
-tags: [time-tracking, worklog, issues, reporting]
+tags: [time-tracking, worklog, issues, reporting, validation, permissions, celery]
 created: 2026-02-18
+updated: 2026-03-04
+merged-from: [260218-2149-time-tracking-management, 260303-1648-worklog-edit-from-activity]
 ---
 
-# Time Tracking / Work Log
+# Time Tracking / Work Log (Consolidated Plan)
 
 ## Overview
-Add time tracking to Plane: worklog entries on issues, time estimates, estimated-vs-actual comparison, reporting. Leverages existing CE stubs and `is_time_tracking_enabled` project flag.
+
+Complete time tracking for Plane: worklog CRUD, time estimates, reports, edit-from-activity, business rules (max 12h/day, 7-day backdate, no future dates), permission enforcement, daily reminders, and feature flag gating. Leverages CE stubs and `is_time_tracking_enabled` project flag.
 
 ## Phases
 
-| # | Phase | Status | Effort | File |
-|---|-------|--------|--------|------|
-| 1 | Database & API (Backend) | complete | 4h | [phase-01](phase-01-database-and-api.md) |
-| 2 | Types, Constants & i18n | complete | 1.5h | [phase-02](phase-02-types-constants-i18n.md) |
-| 3 | Frontend Service & Store | complete | 2h | [phase-03](phase-03-frontend-service-and-store.md) |
-| 4 | UI Components (Issue Detail) | complete | 4h | [phase-04](phase-04-ui-components-issue-detail.md) |
-| 5 | Time Tracking Reports | complete | 3h | [phase-05](phase-05-time-tracking-reports.md) |
-| 6 | Testing & Polish | complete | 1.5h | [phase-06](phase-06-testing-and-polish.md) |
+### Group A: Core Time Tracking (from plan 260218-2149)
+
+| #   | Phase                        | Status   | Effort | File                                               |
+| --- | ---------------------------- | -------- | ------ | -------------------------------------------------- |
+| 1   | Database & API (Backend)     | complete | 4h     | [phase-01](phase-01-database-and-api.md)           |
+| 2   | Types, Constants & i18n      | complete | 1.5h   | [phase-02](phase-02-types-constants-i18n.md)       |
+| 3   | Frontend Service & Store     | complete | 2h     | [phase-03](phase-03-frontend-service-and-store.md) |
+| 4   | UI Components (Issue Detail) | complete | 4h     | [phase-04](phase-04-ui-components-issue-detail.md) |
+| 5   | Time Tracking Reports        | complete | 3h     | [phase-05](phase-05-time-tracking-reports.md)      |
+| 6   | Testing & Polish             | complete | 1.5h   | [phase-06](phase-06-testing-and-polish.md)         |
+
+### Group B: Worklog Enhancements (from plan 260303-1648)
+
+| #   | Phase                                  | Status   | Effort | File                                                     |
+| --- | -------------------------------------- | -------- | ------ | -------------------------------------------------------- |
+| 10  | Backend: Verify & Fix Permissions      | complete | 1h     | [phase-10](phase-10-backend-verify-permissions.md)       |
+| 11  | Frontend: Wire Filters + Pagination    | complete | 1.5h   | [phase-11](phase-11-frontend-wire-filters-pagination.md) |
+| 12  | Frontend: Export + i18n + Code Quality | complete | 1h     | [phase-12](phase-12-frontend-export-i18n-cleanup.md)     |
+| 13  | Frontend: Edit from Activity Click     | complete | 1.5h   | [phase-13](phase-13-frontend-edit-from-activity.md)      |
+| 14  | Backend: Validation Rules              | complete | 1.5h   | [phase-14](phase-14-backend-validation-rules.md)         |
+| 15  | Backend: Permission Enforcement        | complete | 1h     | [phase-15](phase-15-backend-permission-enforcement.md)   |
+| 16  | Frontend: Validation & UX              | complete | 1.5h   | [phase-16](phase-16-frontend-validation-ux.md)           |
+| 17  | Backend: Daily Reminder Notification   | complete | 1.5h   | [phase-17](phase-17-backend-daily-reminder.md)           |
+
+### Group C: Remaining Work (Order: 9 → 7 → 8a → 8b)
+
+| #   | Phase                                                | Status   | Effort | File                                                |
+| --- | ---------------------------------------------------- | -------- | ------ | --------------------------------------------------- |
+| 9   | Feature Flag Gating & UX Guards                      | complete | 2h     | [phase-09](phase-09-feature-flag-gating.md)         |
+| 7   | Overload Calculation Engine                          | pending  | 6h     | [phase-07](phase-07-overload-calculation-engine.md) |
+| 8a  | Hierarchical Dashboards: L1-L2 (Team + Manager)      | pending  | 5h     | [phase-08a](phase-08a-dashboards-l1-l2.md)          |
+| 8b  | Hierarchical Dashboards: L3-L5 (Director + DGD + GD) | pending  | 5h     | [phase-08b](phase-08b-dashboards-l3-l5.md)          |
+
+## Business Rules (from Group B)
+
+| Rule                                 | Backend                                    | Frontend                             |
+| ------------------------------------ | ------------------------------------------ | ------------------------------------ |
+| Max 12h (720min) per entry/day       | Serializer validates ≤ 720min              | Error toast on exceed                |
+| No future dates                      | `logged_at <= today`                       | Date picker `max=today`              |
+| Backdate limit: 7 working days       | Reject if `logged_at` < 7 working days ago | Date picker `min` restriction        |
+| Member can't edit/delete             | Return 403 for MEMBER on PATCH/DELETE      | Hide edit/delete UI for non-admin    |
+| Admin 7-day edit window              | 403 if `logged_at` > 7 working days ago    | Disable edit/delete for old worklogs |
+| Daily reminder at 5PM VN (UTC 10:00) | Celery Beat → Notification + email         | Existing notification UI             |
+
+## Permission Rules
+
+- **Create worklog**: ADMIN + MEMBER
+- **Edit/Delete own worklog**: MEMBER — NOT ALLOWED after creation
+- **Edit/Delete any worklog**: ADMIN — only within 7 working days of `logged_at`
+- **Older worklogs**: Locked for everyone
 
 ## Key Dependencies
-- Existing CE stubs: `apps/web/ce/components/issues/worklog/`
+
+- CE stubs: `apps/web/ce/components/issues/worklog/`
 - Project flag: `is_time_tracking_enabled` on Project model
-- Activity system: `WORKLOG` type already checked in activity-comment-root.tsx
-- Exporter: `issue_worklogs` already in exporter choices
+- Activity system: `WORKLOG` type in activity-comment-root.tsx
+- Exporter: `issue_worklogs` in exporter choices
+- Notification model: `plane.db.models.Notification`
+- Celery Beat: configured in `plane/celery.py`
 
 ## Architecture
+
 ```
-IssueWorkLog model (new) ←→ DRF ViewSet ←→ worklog.service.ts ←→ MobX store ←→ CE stub components
-Issue.estimate_time (new field) ←→ existing Issue serializer ←→ existing issue store
+IssueWorkLog model ←→ DRF ViewSet (v0 plane/app/) ←→ worklog.service.ts ←→ MobX store ←→ CE components
+Issue.estimate_time ←→ Issue serializer ←→ issue store
+Celery Beat → daily reminder task → Notification model + email
 ```
+
+## Confirmed Decisions (All Sessions)
+
+### Core Architecture
+
+- **Manual entry only** — no live timer (YAGNI)
+- **v0 API layer** — `plane/app/` following IssueComment pattern
+- **CE implementation** — available to all editions
+- **Separate estimate_time field** — independent from story points
+- **Reports as sidebar tab** — project-level, default to current cycle
+- **Enabled by default** — `is_time_tracking_enabled` default = True
+
+### Business Rules
+
+- **720min per entry** — single entry max = daily max = 12h
+- **Legacy worklogs >720min** — reject on update, force fix (no grandfathering)
+- **Working days** — Mon-Fri, no holiday calendar (KISS)
+- **Member permissions** — cannot edit/delete after creation (strict)
+
+### Reminders
+
+- **Reminder time** — UTC 10:00 (5PM Vietnam)
+- **Scope** — user-level, 1 notification + 1 email per user per day
+- **Message** — i18n (EN/KO/VI), friendly generic nudge, no project listing
+- **Toggle** — `worklog_reminder` in UserNotificationPreference
+- **Email** — must-have, investigate existing pipeline during implementation
+
+### Feature Gating (Phase 9)
+
+- **Sidebar** — hide when `is_time_tracking_enabled === false`
+- **Log Time button** — show friendly popup when disabled
+- **Route guard** — disabled message on `/time-tracking/*`
+- **i18n** — EN, VI, KO translations for disabled popup
 
 ## Validation Log
 
-### Session 1 — 2026-02-18
-**Trigger:** Initial plan creation validation
-**Questions asked:** 5
+> Full validation history preserved below from both original plans.
+
+### Sessions 1-2 (2026-02-18) — Core Architecture
+
+- **Session 1**: 5 questions — manual entry, reports location, admin visibility, estimate_time field, report default filter
+- **Session 2**: 3 questions — API version (v0), CE/EE split (CE), default state (enabled)
+- See original plan `260218-2149` for full Q&A
+
+### Session 3 (2026-03-04) — Feature Flag Gating
+
+- New requirements: sidebar gating, Log Time button popup, route guards
+- Codebase audit: toggle page ✅, settings constant ✅, sidebar nav ❌, TS type ❌, button check ❌, route guard ❌, i18n ❌
+- Created Phase 9
+
+### Sessions 4-12 (2026-03-03 to 2026-03-04) — Worklog Enhancements
+
+Merged from plan `260303-1648-worklog-edit-from-activity`:
+
+- **Session 1**: 4Q — reminder time (UTC 10:00), member permissions (strict), duration cap (720), working days (Mon-Fri)
+- **Session 2**: 4Q — bulk daily limit (yes), reminder scope (per-project→later reverted), idempotency (yes), translations (actual KO/VI)
+- **Session 3**: 3Q — email method (reuse existing), email preferences (separate toggle), email content (simple CTA)
+- **Session 4**: 0Q — reverted to workspace-level reminder, fixed message, toggle in Notifications
+- **Session 5**: 3Q — email compatibility (investigate), CTA link (per-project), utility location (keep in serializer)
+- **Session 6**: 3Q — multi-project CTA (all links), notification sender (investigate), error format (check existing)
+- **Session 7**: 3Q — legacy >720min (reject), is_time_tracking_enabled (exists), email (must-have)
+- **Session 8**: 0Q — reverted to user-level, 1 email/day, generic message
+- **Session 9**: 3Q — MAX_DURATION=720 confirmed, email deferred to impl, notification UI deferred to impl
+
+### Session 10 (2026-03-04) — Remaining Phases Validation
+
+**Trigger:** Pre-implementation validation of pending Phases 7, 8, 9
+**Questions asked:** 7
 
 #### Questions & Answers
 
-1. **[UX]** The plan stores duration as integer minutes only (manual entry). Should we also include a start/stop timer for real-time tracking?
-   - Options: Manual entry only (Recommended) | Manual + live timer | Manual + timer in Phase 2
-   - **Answer:** Manual entry only
-   - **Rationale:** YAGNI — keeps scope focused, most teams log retroactively. Timer adds complexity (background state, browser tab management) with low ROI.
+1. **[Scope]** Phase 9 (Feature Flag Gating, 2h) is independent and low-risk, while Phases 7-8 depend on bank-specific models (StaffProfile, Department, DashboardLevelMapping). Should Phase 9 be implemented first?
+   - Options: Phase 9 first (Recommended) | Phase 7→8→9 as planned | Only Phase 9 for now
+   - **Answer:** Phase 9 first (Recommended)
+   - **Rationale:** Ship feature gating independently since it has no dependencies on bank models; unblocks QA earlier
 
-2. **[Architecture]** Where should the Time Tracking Reports page live in the navigation?
-   - Options: Project settings tab (Recommended) | Project-level sidebar tab | Workspace analytics | Skip reports
-   - **Answer:** Project-level sidebar tab
-   - **Rationale:** Reports are a primary view, not a settings page. Sidebar tab (like Issues, Cycles, Modules) makes it more discoverable and frequently accessible.
+2. **[Dependencies]** Phases 7-8 reference Department, StaffProfile, and bank hierarchy models. Do these models already exist in the codebase, or are they planned for a separate feature?
+   - Options: Already exist | Planned separately | Don't exist, skip 7-8
+   - **Answer:** Already exist
+   - **Rationale:** Confirms Phases 7-8 can proceed without waiting for external dependencies
 
-3. **[Privacy]** Should admins/managers see ALL members' worklogs, or only aggregated summaries?
-   - Options: Full visibility (Recommended) | Aggregated only | Configurable per project
-   - **Answer:** Full visibility
-   - **Rationale:** Standard for time tracking tools. Admins need audit-level detail. Simplifies implementation.
+3. **[Architecture]** Phase 7's overload formula uses Issue.estimate_time for remaining estimate. What should happen when estimate_time is null (not set on an issue)?
+   - Options: Treat as 0 (Recommended) | Exclude from calculation | Flag as 'incomplete data'
+   - **Answer:** Treat as 0 (Recommended)
+   - **Rationale:** KISS — no estimate means no remaining work assumed. Avoids complexity of partial data handling.
 
-4. **[Architecture]** The plan adds `estimate_time` (minutes) directly to the Issue model. Separate from existing story point EstimatePoint system?
-   - Options: Separate field (Recommended) | Extend EstimatePoint | No time estimates
-   - **Answer:** Separate field
-   - **Rationale:** Keeps story points and time estimates independent. No risk of breaking existing estimate workflows.
+4. **[Scope]** Phase 8 creates 20+ new files across 5 dashboard levels (10h effort). Should it be split into sub-phases for incremental delivery?
+   - Options: Split into 2-3 sub-phases (Recommended) | Keep as single phase | MVP: L1-L2 only
+   - **Answer:** Split into 2-3 sub-phases (Recommended)
+   - **Rationale:** Reduces risk, enables incremental review and testing
 
-5. **[Scope]** What data should the report show by default?
-   - Options: Current cycle/sprint | Last 30 days | All time
-   - **Answer:** Current cycle/sprint
-   - **Rationale:** Most actionable for sprint reviews. Aligns with agile workflow. Users can change filter for broader view.
+5. **[Architecture]** Phase 7 triggers Celery recalculation on every worklog mutation with countdown=60s debounce. For a department with 50+ members, should the Celery task recalculate the entire department or just the affected member?
+   - Options: Member only + lazy dept rollup (Recommended) | Full department recalc | Member + async dept rollup
+   - **Answer:** Member only + lazy dept rollup (Recommended)
+   - **Rationale:** Reduces write amplification; department/org aggregation cached and computed on dashboard request
 
-#### Confirmed Decisions
-- **Manual entry only**: No live timer — simple hours+minutes input
-- **Reports as sidebar tab**: Project-level tab alongside Issues, Cycles, Modules
-- **Full admin visibility**: Admins see all individual worklog entries
-- **Separate estimate_time field**: Independent from story point system
-- **Default to current cycle**: Report defaults to active cycle's issues
+6. **[Scope]** Phase 8 sub-phase split: how should the 5 dashboard levels be grouped?
+   - Options: 8a: L1-L2, 8b: L3-L5 (Recommended) | 8a: Backend all, 8b: Frontend all | 8a: L1-L3, 8b: L4-L5
+   - **Answer:** 8a: L1-L2, 8b: L3-L5 (Recommended)
+   - **Rationale:** Team + Manager dashboards are most-used; ship them first for early feedback
 
-#### Action Items
-- [ ] Phase 5: Change reports from project settings to project sidebar tab
-- [ ] Phase 5: Add cycle-based default filter
-- [ ] Phase 5: Update route from `/settings/time-tracking/` to project-level tab route
-
-#### Impact on Phases
-- **Phase 5**: Reports page moves from project settings to project sidebar tab. Route changes from `/settings/time-tracking/` to `/projects/[id]/time-tracking/`. Default filter = current active cycle. Navigation link goes in project sidebar, not settings sidebar.
-
-### Session 2 — 2026-02-18
-**Trigger:** Re-validation to cover remaining unvalidated decisions (API version, CE/EE split, default state)
-**Questions asked:** 3
-
-#### Questions & Answers
-
-1. **[Architecture]** Phase 1 uses v1 API endpoints (`/api/v1/workspaces/.../worklogs/`). However, the codebase has legacy v0 (`plane/app/`) and new v1 (`plane/api/`). The existing IssueComment pattern is in v0. Which API version should worklogs use?
-   - Options: v0 (plane/app/) (Recommended) | v1 (plane/api/) | Both v0 + v1
-   - **Answer:** v0 (plane/app/)
-   - **Rationale:** Follow IssueComment pattern exactly. Worklogs are issue sub-resources like comments. Keeps consistency with existing codebase patterns. Less disruption.
-
-2. **[Scope]** Phase 4 modifies CE stubs directly (`apps/web/ce/components/issues/worklog/`). The CE/EE split means EE may have its own implementations. Should we implement in CE (available to all) or create a separate layer?
-   - Options: Implement in CE (Recommended) | Create EE-only | Core in CE, advanced in EE
-   - **Answer:** Implement in CE
-   - **Rationale:** Time tracking available to all editions. Fill in the empty stubs directly. No premium gating needed.
-
-3. **[Assumptions]** The plan assumes `is_time_tracking_enabled` is toggled per-project in project settings. Should time tracking be enabled by default for new projects, or opt-in?
-   - Options: Opt-in (disabled by default) | Enabled by default (Recommended) | Workspace-level toggle
-   - **Answer:** Enabled by default
-   - **Rationale:** Available out of the box. Teams can disable if unwanted. Increases feature discoverability. Existing field defaults to `False` — need to change default to `True`.
+7. **[Tradeoffs]** Phase 9 route guard: when time tracking is disabled and user navigates to /time-tracking URL directly, what should happen?
+   - Options: Show EmptyState with message (Recommended) | Redirect to project home | Show toast + redirect
+   - **Answer:** Show EmptyState with message (Recommended)
+   - **Rationale:** Follows existing Views/Cycles/Modules pattern; provides context to user about why feature is unavailable
 
 #### Confirmed Decisions
-- **v0 API layer**: Worklogs in `plane/app/` following IssueComment pattern, NOT `plane/api/`
-- **CE implementation**: Fill CE stubs directly, available to all editions
-- **Enabled by default**: Change `is_time_tracking_enabled` default from `False` to `True`
+
+- **Implementation order**: Phase 9 → 7 → 8a → 8b
+- **Null estimate_time**: Treat as 0 (no remaining work)
+- **Celery recalc scope**: Member-only + lazy dept/org rollup on dashboard read
+- **Phase 8 split**: 8a (L1-L2 Team+Manager), 8b (L3-L5 Director+DGD+GD)
+- **Route guard UX**: EmptyState with friendly disabled message
 
 #### Action Items
-- [ ] Phase 1: Change API location from `plane/api/` to `plane/app/` (views, serializers, urls)
-- [ ] Phase 1: Update endpoint paths from `/api/v1/` to `/api/v0/` prefix
-- [ ] Phase 1: Add migration to change `is_time_tracking_enabled` default to `True`
-- [ ] Phase 3: Update service endpoint URLs to match v0 paths
+
+- [ ] Split Phase 8 into phase-08a and phase-08b files
+- [ ] Update Phase 7: null estimate_time → 0, member-only recalc, lazy dept rollup
+- [ ] Update Phase 9: route guard = EmptyState pattern
+- [ ] Update plan.md phase table to reflect new order and split
 
 #### Impact on Phases
-- **Phase 1**: All API code goes in `plane/app/views/issue/worklog.py`, `plane/app/serializers/worklog.py`, `plane/app/urls/worklog.py` (NOT `plane/api/`). Endpoint prefix is `/api/` not `/api/v1/`. Add migration changing `is_time_tracking_enabled` default to `True`.
-- **Phase 3**: Service URLs must match v0 API paths (`/api/workspaces/...` not `/api/v1/workspaces/...`).
-- **Phase 4**: Confirmed — implement directly in CE stubs.
+
+- Phase 7: Change pre-aggregation from eager (write dept/org rows on every mutation) to lazy (compute on dashboard request, cache). Update null estimate handling.
+- Phase 8: Split into 8a (L1-L2, ~5h) and 8b (L3-L5, ~5h)
+- Phase 9: Confirm route guard uses EmptyState pattern (already planned, just confirming)
+
+## Archived Plan Reference
+
+- Original plan 2: `plans/260303-1648-worklog-edit-from-activity/plan.md` (archived, merged here)
