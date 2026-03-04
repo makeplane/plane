@@ -30,12 +30,12 @@ type LiteTextEditorWrapperProps = MakeOptional<
   workspaceId: string;
 } & (
     | {
-      editable: false;
-    }
+        editable: false;
+      }
     | {
-      editable: true;
-      uploadFile: TFileHandler["upload"];
-    }
+        editable: true;
+        uploadFile: TFileHandler["upload"];
+      }
   );
 
 export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
