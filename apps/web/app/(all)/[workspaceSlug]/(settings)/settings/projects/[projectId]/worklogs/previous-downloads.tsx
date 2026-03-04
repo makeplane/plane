@@ -74,8 +74,10 @@ function PreviousDownloadsComponent({ isOpen, onToggle }: IPreviousDownloadsProp
 
       setIsLoading(true);
       try {
+        const params = new URLSearchParams({ per_page: "10" });
+        if (cursor) params.set("cursor", cursor);
         const response = await fetch(
-          `/api/workspaces/${workspaceSlug}/projects/${projectId}/exporter-history/?cursor=${cursor || ""}`,
+          `/api/workspaces/${workspaceSlug}/projects/${projectId}/worklogs/export/?${params.toString()}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -83,14 +85,14 @@ function PreviousDownloadsComponent({ isOpen, onToggle }: IPreviousDownloadsProp
         );
 
         if (response.ok) {
-          const data = (await response.json());
+          const data = await response.json();
           setHistory(data.results || []);
           setPaginationMeta({
-            hasNext: (data.has_next as boolean) || false,
-            hasPrev: (data.has_prev as boolean) || false,
+            hasNext: (data.next_page_results as boolean) || false,
+            hasPrev: (data.prev_page_results as boolean) || false,
             nextCursor: (data.next_cursor as string | null) || null,
             prevCursor: (data.prev_cursor as string | null) || null,
-            totalCount: (data.count as number) || 0,
+            totalCount: (data.total_count as number) || 0,
           });
         }
       } finally {

@@ -133,7 +133,7 @@ function WorklogSettingsPage() {
           onSelectedUsersChange={setSelectedUsers}
           dateRange={dateRange}
           onDateRangeChange={setDateRange}
-          onExport={() => void handleExport()}
+          onExport={(provider) => void handleExport(provider)}
         />
         <div className="mt-6 flex flex-col w-full">
           {projectWorklogs.isLoading && worklogs.length === 0 ? (
