@@ -1,10 +1,7 @@
-**[Ngữ cảnh]**
-Tôi đang sử dụng mã nguồn mở Plane.so bản Community Edition (CE) để phát triển và deploy tự host (self-hosted) cho môi trường của Shinhan Bank Vietnam. Tôi không có các tính năng của bản Plane Business/Pro, do đó tôi cần đóng vai trò là kỹ sư hệ thống tự phát triển và tích hợp (clone) các tính năng đó vào bản CE.
-
 **[Mục tiêu]**
-Hãy giúp tôi phân tích, lên kế hoạch chi tiết và lập trình cho tính năng: **[TÊN TÍNH NĂNG - Vd: Custom Workflows / Master Plan / Advanced Roadmap ...]**
+Hãy giúp tôi phân tích, lên kế hoạch chi tiết và lập trình cho tính năng: **[TÊN TÍNH NĂNG - Vd: Project settings / Worklogs / ...]**
 
-- Đây là tài liệu/link/hình ảnh/video tham khảo của bản Pro: **[CHÈN LINK HOẶC MÔ TẢ VÀO ĐÂY]**
+- Đây là tài liệu/link/hình ảnh/video tham khảo của bản Pro: **[[CHÈN LINK HOẶC MÔ TẢ VÀO ĐÂY](https://app.plane.so/shinhan-ict/settings/projects/5af53e43-efbf-46b5-ad73-a10944d1409c/worklogs/)]**
 - Đầu vào bổ sung (nếu có): **[Mô tả thêm các đặc thù mà anh muốn, ví dụ "Chỉ cho Admin sửa", "Tích hợp sẵn bộ màu của Shinhan..."]**
 
 **[Yêu cầu Bắt buộc - Tuyệt đối tuân thủ]**
@@ -21,4 +18,4 @@ Hãy giúp tôi phân tích, lên kế hoạch chi tiết và lập trình cho t
 - **Giai đoạn 2 (User Feedback):** Dừng lại báo cáo để tôi duyệt bộ Plan này xem có thiếu sót luồng nào so với bản Pro không.
 - **Giai đoạn 3 (Thực thi - Execution Mode):** Sau khi tôi đồng ý, hãy step-by-step thực hiện code theo đúng checklist đã vạch ra, từ Backend lên Frontend, và tự verify (kiểm tra lỗi Vite/Django) cho tới khi tính năng chạy hoàn hảo.
 
-Hãy xác nhận bạn đã hiểu ngữ cảnh và bắt đầu triển khai Giai đoạn 1 dựa trên thông tin tôi vừa cung cấp!
+Hãy xác nhận bạn đã hiểu ngữ cảnh và bắt đầu triển khai Giai đoạn 1 dựa trên thông tin tôi vừa cung cấp. Chỉ triển khai giai đoạn 1 và không được implement bất cứ gì cả!

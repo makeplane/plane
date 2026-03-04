@@ -973,6 +973,20 @@
   --border-color-priority-medium: var(--priority-medium);
   --border-color-priority-low: var(--priority-low);
   --border-color-priority-none: var(--priority-none);
+
+  /* ---------- GEMINI support (text-color-*, border-color-*) ---------- */
+  --color-color-primary: var(--txt-primary);
+  --color-color-secondary: var(--txt-secondary);
+  --color-color-tertiary: var(--txt-tertiary);
+  --color-color-placeholder: var(--txt-placeholder);
+  --color-color-disabled: var(--txt-disabled);
+  --color-color-accent-primary: var(--txt-accent-primary);
+  --color-color-accent-secondary: var(--txt-accent-secondary);
+  --color-color-success-primary: var(--txt-success-primary);
+  --color-color-warning-primary: var(--txt-warning-primary);
+  --color-color-danger-primary: var(--txt-danger-primary);
+  --color-color-subtle: var(--border-subtle);
+  --color-color-strong: var(--border-strong);
 }
 
 /* ---------- Typography tokens ---------- */
@@ -1267,6 +1281,7 @@
 @utility scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+
   &::-webkit-scrollbar {
     display: none;
   }

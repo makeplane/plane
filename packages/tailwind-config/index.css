@@ -52,6 +52,7 @@ body {
   * {
     scrollbar-width: none;
   }
+
   .vertical-scrollbar,
   .horizontal-scrollbar {
     scrollbar-width: initial;
@@ -122,10 +123,12 @@ body {
     height: 10px;
     width: 10px;
   }
+
   &::-webkit-scrollbar-thumb {
     border: 3px solid rgba(0, 0, 0, 0);
   }
 }
+
 @utility scrollbar-sm {
   &::-webkit-scrollbar {
     height: 12px;
@@ -136,6 +139,7 @@ body {
     border: 3px solid rgba(0, 0, 0, 0);
   }
 }
+
 @utility scrollbar-md {
   &::-webkit-scrollbar {
     height: 14px;
@@ -146,6 +150,7 @@ body {
     border: 3px solid rgba(0, 0, 0, 0);
   }
 }
+
 @utility scrollbar-lg {
   &::-webkit-scrollbar {
     height: 16px;

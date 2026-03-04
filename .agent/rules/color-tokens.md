@@ -19,6 +19,17 @@ paths:
 
 **Common mistake:** `text-tertiary` is WRONG → must be `text-color-tertiary`
 
+## Tailwind v4 Infrastructure Naming — CRITICAL
+
+To ensure Tailwind v4 generates utility classes with the `color-` infix, CSS variables in `variables.css` MUST use a double-namespace:
+
+| Desired Utility  | Required CSS Var Structure | Example                             |
+| :--------------- | :------------------------- | :---------------------------------- |
+| `text-color-*`   | `--text-color-color-*`     | `--text-color-color-danger-primary` |
+| `border-color-*` | `--border-color-color-*`   | `--border-color-color-subtle`       |
+
+**Why?** Tailwind v4 strips the prefix. `--text-color-danger` becomes `text-danger`. To get `text-color-danger`, the variable MUST be `--text-color-color-danger`.
+
 ## Backgrounds
 
 | Token                                           | Usage                                                         |
