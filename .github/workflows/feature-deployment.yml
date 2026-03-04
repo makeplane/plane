@@ -48,7 +48,7 @@ jobs:
 
       - id: checkout_files
         name: Checkout Files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
   full_build_push:
     runs-on: ubuntu-22.04
@@ -76,10 +76,10 @@ jobs:
           endpoint: ${{ env.BUILDX_ENDPOINT }}
 
       - name: Check out the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build and Push to Docker Hub
-        uses: docker/build-push-action@v6.9.0
+        uses: docker/build-push-action@v6.19.2
         with:
           context: .
           file: ./aio/Dockerfile-app
@@ -112,7 +112,7 @@ jobs:
           sudo apt-get install -y python3-pip
           pip3 install awscli
       - name: Tailscale
-        uses: tailscale/github-action@v2
+        uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
