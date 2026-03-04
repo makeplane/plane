@@ -250,10 +250,17 @@ AWS_DEFAULT_ACL = "public-read"
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
 AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None) or os.environ.get("MINIO_ENDPOINT_URL", None)
+# External MinIO endpoint for presigned URLs (browser-accessible).
+# Defaults to replacing internal Docker hostname with localhost.
+MINIO_EXTERNAL_ENDPOINT = os.environ.get("MINIO_EXTERNAL_ENDPOINT", None)
 if AWS_S3_ENDPOINT_URL and USE_MINIO:
     parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
     AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
     AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
+    if not MINIO_EXTERNAL_ENDPOINT:
+        # Auto-derive: replace internal hostname with localhost, keep port
+        _parsed_s3 = urlparse(AWS_S3_ENDPOINT_URL)
+        MINIO_EXTERNAL_ENDPOINT = f"{_parsed_s3.scheme}://localhost:{_parsed_s3.port}"
 
 # RabbitMQ connection settings
 RABBITMQ_HOST = os.environ.get("RABBITMQ_HOST", "localhost")
@@ -288,6 +295,8 @@ CELERY_IMPORTS = (
     # issue version tasks
     "plane.bgtasks.issue_version_sync",
     "plane.bgtasks.issue_description_version_sync",
+    # export tasks
+    "plane.bgtasks.worklog_export_task",
 )
 
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))

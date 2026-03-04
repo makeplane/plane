@@ -58,11 +58,14 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
             ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
         )
 
+        # For presigned URLs, use the external MinIO endpoint accessible from
+        # the browser. MINIO_EXTERNAL_ENDPOINT allows overriding the internal
+        # Docker hostname (e.g. "http://plane-minio:9000") with a browser-
+        # accessible URL (e.g. "http://localhost:9000").
+        external_endpoint = getattr(settings, "MINIO_EXTERNAL_ENDPOINT", None) or settings.AWS_S3_ENDPOINT_URL
         presign_s3 = boto3.client(
             "s3",
-            endpoint_url=(
-                f"{settings.AWS_S3_URL_PROTOCOL}//{str(settings.AWS_S3_CUSTOM_DOMAIN).replace('/uploads', '')}/"
-            ),
+            endpoint_url=external_endpoint,
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             config=Config(signature_version="s3v4"),
