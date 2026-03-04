@@ -25,7 +25,7 @@ export function ProjectNavigationRoot(props: TProjectItemsRootProps) {
 
   const additionalNavItems = useCallback(
     (_ws: string, _pid: string): TNavigationItem[] => {
-      // Show Time Tracking entry for all projects (no feature flag exists yet)
+      // Show Time Tracking when enabled via project settings
       // Guarded by ADMIN/MEMBER access in ProjectNavigation's allowPermissions check
       if (!project) return [];
       return [
@@ -36,7 +36,7 @@ export function ProjectNavigationRoot(props: TProjectItemsRootProps) {
           href: `/${_ws}/projects/${_pid}/time-tracking`,
           icon: Timer,
           access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-          shouldRender: true,
+          shouldRender: project?.is_time_tracking_enabled !== false,
           sortOrder: 7,
         },
       ];
