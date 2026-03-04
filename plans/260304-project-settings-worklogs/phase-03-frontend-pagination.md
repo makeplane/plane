@@ -9,7 +9,7 @@
 ## Overview
 
 - **Priority:** P2
-- **Status:** pending
+- **Status:** done
 - Replace "Load more" button with "1-X of Y" + Prev/Next pagination footer.
 
 ## Key Insights

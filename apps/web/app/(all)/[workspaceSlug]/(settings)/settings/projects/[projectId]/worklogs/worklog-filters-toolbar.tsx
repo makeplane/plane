@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { ChevronDown, FileText } from "lucide-react";
+import { ChevronDown, FileSpreadsheet, FileText } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { CustomMenu } from "@plane/ui";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
@@ -18,7 +18,7 @@ interface Props {
   onSelectedUsersChange: (val: string[]) => void;
   dateRange: TDateRange;
   onDateRangeChange: (val: TDateRange) => void;
-  onExportCSV: () => void;
+  onExport: (provider: "csv" | "xlsx") => void;
 }
 
 export const WorklogFiltersToolbar = ({
@@ -27,7 +27,7 @@ export const WorklogFiltersToolbar = ({
   onSelectedUsersChange,
   dateRange,
   onDateRangeChange,
-  onExportCSV,
+  onExport,
 }: Props) => (
   <div className="my-6 flex items-center justify-between px-5">
     <div className="flex items-center gap-3">
@@ -65,10 +65,16 @@ export const WorklogFiltersToolbar = ({
         </div>
       }
     >
-      <CustomMenu.MenuItem onClick={onExportCSV}>
+      <CustomMenu.MenuItem onClick={() => onExport("csv")}>
         <div className="flex items-center gap-2">
           <FileText className="w-4 h-4" />
           <span>Export as CSV</span>
+        </div>
+      </CustomMenu.MenuItem>
+      <CustomMenu.MenuItem onClick={() => onExport("xlsx")}>
+        <div className="flex items-center gap-2">
+          <FileSpreadsheet className="w-4 h-4" />
+          <span>Export as Excel</span>
         </div>
       </CustomMenu.MenuItem>
     </CustomMenu>

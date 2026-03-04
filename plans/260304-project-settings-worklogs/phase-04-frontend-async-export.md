@@ -9,7 +9,7 @@
 ## Overview
 
 - **Priority:** P2
-- **Status:** pending
+- **Status:** done
 - Replace client-side CSV blob export with async backend export. Add "Export as Excel" option.
 
 ## Key Insights
@@ -25,6 +25,7 @@
 - Dropdown shows: "Export as CSV" and "Export as Excel"
 - Clicking either triggers POST to `/export-worklogs/` with provider + current filters
 - Show toast notification: "Export started. Check Previous Downloads when ready."
+- Auto-expand Previous Downloads section after triggering export
 - Remove `downloadCSV` helper and client-side export logic from page.tsx
 
 ### Non-functional
@@ -36,9 +37,9 @@
 ```
 User clicks "Export as CSV"
   → worklogService.triggerExport(slug, projectId, "csv", filters)
-  → POST /api/.../export-worklogs/?project=...
+  → POST /api/workspaces/{slug}/projects/{projectId}/worklogs/export/
   → Toast: "Export started"
-  → User checks Previous Downloads section (Phase 5)
+  → Auto-expand Previous Downloads section + start polling
 ```
 
 ## Related Code Files
@@ -61,7 +62,7 @@ User clicks "Export as CSV"
      provider: "csv" | "xlsx",
      filters?: Record<string, string>
    ): Promise<{ message: string; export_id: string }> {
-     return this.post(`/api/workspaces/${workspaceSlug}/export-worklogs/?project=${projectId}`, {
+     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/worklogs/export/`, {
        provider,
        filters,
      }).then(getData);
@@ -88,7 +89,9 @@ User clicks "Export as CSV"
 
 4. **Update `page.tsx`**:
    - Remove `downloadCSV` function and `handleExportCSV`
+   <!-- Updated: Validation Session 1 - auto-expand Previous Downloads after export -->
    - Add `handleExport` that calls `projectWorklogs.triggerExport(...)` + shows toast
+   - After successful trigger, set `isPreviousDownloadsOpen = true` (shared state or ref callback)
    - Pass `onExport={handleExport}` to toolbar
    - Use `useToast()` for notification (or `setToast` from `@plane/ui`)
 

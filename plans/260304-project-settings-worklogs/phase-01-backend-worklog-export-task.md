@@ -10,7 +10,7 @@
 ## Overview
 
 - **Priority:** P2
-- **Status:** pending
+- **Status:** done
 - Create a new Celery task that queries `IssueWorkLog`, serializes data, creates zip, uploads to S3.
 
 ## Key Insights
@@ -31,6 +31,8 @@
 
 - Task must handle large datasets without OOM (stream if needed)
 - Task must update ExporterHistory status: queued → processing → completed/failed
+- Empty queryset → create zip with headers-only file, status = completed (not failed)
+<!-- Updated: Validation Session 1 - empty export creates headers-only file -->
 
 ## Architecture
 
