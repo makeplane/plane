@@ -6,6 +6,13 @@
 
 import { API_BASE_URL } from "@plane/constants";
 import type { IWorkspace, TWorkspacePaginationInfo } from "@plane/types";
+
+export interface IWorkspaceBulkCreateResponse {
+  created: IWorkspace[];
+  skipped: Array<{ row_number: number; name: string; slug: string; reason: string }>;
+  total_created: number;
+  total_skipped: number;
+}
 import { APIService } from "../api.service";
 
 /**
@@ -63,6 +70,21 @@ export class InstanceWorkspaceService extends APIService {
    */
   async create(data: Partial<IWorkspace>): Promise<IWorkspace> {
     return this.post("/api/instances/workspaces/", data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Bulk creates workspaces from a parsed array. Slug is auto-generated on the backend.
+   * @param workspaces - Array of workspace objects with name and optional organization_size
+   * @returns Promise resolving to created/skipped summary
+   */
+  async bulkCreate(
+    workspaces: Array<{ name: string; organization_size?: string }>
+  ): Promise<IWorkspaceBulkCreateResponse> {
+    return this.post("/api/instances/workspaces/bulk-create/", { workspaces })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -8,9 +8,12 @@ import { set } from "lodash-es";
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
 // plane imports
 import { InstanceWorkspaceService } from "@plane/services";
+import type { IWorkspaceBulkCreateResponse } from "@plane/services";
 import type { IWorkspace, TLoader, TPaginationInfo } from "@plane/types";
 // root store
 import type { RootStore } from "@/store/root.store";
+
+export type { IWorkspaceBulkCreateResponse };
 
 export interface IWorkspaceStore {
   // observables
@@ -27,6 +30,7 @@ export interface IWorkspaceStore {
   fetchNextWorkspaces: () => Promise<IWorkspace[]>;
   // curd actions
   createWorkspace: (data: IWorkspace) => Promise<IWorkspace>;
+  bulkCreateWorkspaces: (workspaces: Array<{ name: string; organization_size?: string }>) => Promise<IWorkspaceBulkCreateResponse>;
 }
 
 export class WorkspaceStore implements IWorkspaceStore {
@@ -53,6 +57,7 @@ export class WorkspaceStore implements IWorkspaceStore {
       fetchNextWorkspaces: action,
       // curd actions
       createWorkspace: action,
+      bulkCreateWorkspaces: action,
     });
     this.instanceWorkspaceService = new InstanceWorkspaceService();
   }
@@ -148,6 +153,27 @@ export class WorkspaceStore implements IWorkspaceStore {
       return workspace;
     } catch (error) {
       console.error("Error creating workspace", error);
+      throw error;
+    } finally {
+      this.loader = "loaded";
+    }
+  };
+
+  /**
+   * @description Bulk creates workspaces from a parsed Excel row array.
+   * Uses the InstanceWorkspaceService.bulkCreate() method.
+   */
+  bulkCreateWorkspaces = async (
+    workspaces: Array<{ name: string; organization_size?: string }>
+  ): Promise<IWorkspaceBulkCreateResponse> => {
+    try {
+      this.loader = "mutation";
+      const result = await this.instanceWorkspaceService.bulkCreate(workspaces);
+      runInAction(() => {
+        result.created.forEach((ws: IWorkspace) => set(this.workspaces, [ws.id], ws));
+      });
+      return result;
+    } catch (error) {
       throw error;
     } finally {
       this.loader = "loaded";

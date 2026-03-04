@@ -33,3 +33,4 @@ from .user import (
     InstanceUserWorkspaceEndpoint,
 )
 from .user_bulk_import import InstanceUserBulkImportEndpoint
+from .workspace_bulk_create import InstanceWorkspaceBulkCreateEndpoint
