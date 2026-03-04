@@ -29,7 +29,7 @@
 ## Requirements
 
 ### Functional
-- "Import from Excel" button on `/workspace/` page → navigates to `/workspace/bulk-import`
+- "Bulk Create Workspace" button on `/workspace/` page → navigates to `/workspace/bulk-import`
 - "Download Template" button on import page → generates & downloads `workspace-import-template.xlsx`
 - File picker: accept `.xlsx`, `.xls`
 <!-- Updated: Validation Session 1 - No slug column; template is name + organization_size only -->
@@ -47,7 +47,7 @@
 
 ```
 workspace/page.tsx
-  └─ "Import from Excel" button → Link to /workspace/bulk-import
+  └─ "Bulk Create Workspace" button → Link to /workspace/bulk-import
 
 workspace/bulk-import/page.tsx
   └─ <PageWrapper>
@@ -78,7 +78,7 @@ WorkspaceStore.bulkCreateWorkspaces(workspaces)
 **Modify:**
 - `apps/admin/store/workspace.store.ts` — add `bulkCreateWorkspaces()` action + interface method (inline API call)
 - `apps/admin/hooks/store/use-workspace.tsx` — expose `bulkCreateWorkspaces`
-- `apps/admin/app/(all)/(dashboard)/workspace/page.tsx` — add "Import from Excel" Link button
+- `apps/admin/app/(all)/(dashboard)/workspace/page.tsx` — add "Bulk Create Workspace" Link button
 - `apps/admin/package.json` — add `"xlsx": "^0.18.5"` (or latest SheetJS CE)
 
 ## Embedded Rules (Phase-Specific)
@@ -118,7 +118,7 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import Link from "next/link";
 // Navigation button:
 <Link href="/workspace/bulk-import" className={getButtonStyling("secondary", "base")}>
-  Import from Excel
+  Bulk Create Workspace
 </Link>
 // Action button:
 <Button variant="primary" size="lg" loading={isSubmitting} onClick={handleSubmit}>
@@ -202,7 +202,7 @@ bulkCreateWorkspaces = async (workspaces: Array<{ name: string; organization_siz
 
 7. **Add button to workspace listing page** `apps/admin/app/(all)/(dashboard)/workspace/page.tsx`:
    - In the header actions `<div className="flex items-center gap-2">` (around line 132)
-   - Add before "Create workspace": `<Link href="/workspace/bulk-import" className={getButtonStyling("secondary", "base")}>Import from Excel</Link>`
+   - Add before "Create workspace": `<Link href="/workspace/bulk-import" className={getButtonStyling("secondary", "base")}>Bulk Create Workspace</Link>`
 
 8. **Verify** - no TypeScript errors: `pnpm --filter @plane/admin check:lint` or type-check
 
@@ -215,7 +215,7 @@ bulkCreateWorkspaces = async (workspaces: Array<{ name: string; organization_siz
 - [ ] Expose in `use-workspace.tsx`
 - [ ] Create `workspace-bulk-import-form.tsx` component
 - [ ] Create `workspace/bulk-import/page.tsx` route
-- [ ] Add "Import from Excel" button to `workspace/page.tsx`
+- [ ] Add "Bulk Create Workspace" button to `workspace/page.tsx`
 - [ ] Verify no TypeScript/lint errors
 
 ## Post-Phase Checklist
@@ -227,13 +227,13 @@ bulkCreateWorkspaces = async (workspaces: Array<{ name: string; organization_siz
 - [ ] Toast shown on success/error (TOAST_TYPE.SUCCESS/ERROR/WARNING)
 - [ ] Results table shows skipped rows with reason column
 - [ ] "Download Template" downloads valid `.xlsx` with correct headers
-- [ ] "Import from Excel" button visible on `/workspace/` page
+- [ ] "Bulk Create Workspace" button visible on `/workspace/` page
 - [ ] No `console.error` leaks in production paths (catch errors properly)
 - [ ] Components under 200 lines each (split if needed)
 
 ## Success Criteria
 
-- Admin visits `/god-mode/workspace/` → sees "Import from Excel" button
+- Admin visits `/god-mode/workspace/` → sees "Bulk Create Workspace" button
 - Clicking opens `/god-mode/workspace/bulk-import`
 - Can download template with `name`, `slug`, `organization_size` headers
 - Upload filled `.xlsx` → preview table shows parsed rows

@@ -7,7 +7,7 @@
 - Has "Create workspace" Link → `/workspace/create`
 - Uses `useWorkspace()` hook for store access
 - Action buttons area: `<div className="flex items-center gap-2">` (lines 132–136)
-- **Add**: "Import from Excel" button beside "Create workspace"
+- **Add**: "Bulk Create Workspace" button beside "Create workspace"
 
 ## Existing Bulk Import Route (Users)
 

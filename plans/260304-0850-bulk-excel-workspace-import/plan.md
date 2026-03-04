@@ -13,7 +13,7 @@ created: 2026-03-04
 
 ## Overview
 
-Add "Import from Excel" button on the god-mode `/workspace/` admin page. Admin uploads `.xlsx`/`.xls` file → frontend parses it with `xlsx` (SheetJS) → preview rows → bulk POST to new backend endpoint → show results.
+Add "Bulk Create Workspace" button on the god-mode `/workspace/` admin page. Admin uploads `.xlsx`/`.xls` file → frontend parses it with `xlsx` (SheetJS) → preview rows → bulk POST to new backend endpoint → show results.
 
 ## Architecture Decision
 

@@ -13,6 +13,13 @@ export interface IWorkspaceBulkCreateResponse {
   total_created: number;
   total_skipped: number;
 }
+
+export interface IWorkspaceBulkAssignResponse {
+  assigned: Array<{ email: string; workspace_slug: string; role: number }>;
+  skipped: Array<{ row_number: number; email: string; workspace_slug: string; reason: string }>;
+  total_assigned: number;
+  total_skipped: number;
+}
 import { APIService } from "../api.service";
 
 /**
@@ -85,6 +92,16 @@ export class InstanceWorkspaceService extends APIService {
     workspaces: Array<{ name: string; organization_size?: string }>
   ): Promise<IWorkspaceBulkCreateResponse> {
     return this.post("/api/instances/workspaces/bulk-create/", { workspaces })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async bulkAssignMembers(
+    members: Array<{ email: string; workspace_slug: string; role: number }>
+  ): Promise<IWorkspaceBulkAssignResponse> {
+    return this.post("/api/instances/workspaces/bulk-assign-members/", { members })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
