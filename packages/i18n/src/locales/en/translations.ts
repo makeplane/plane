@@ -242,7 +242,7 @@ export default {
   docs: "Docs",
   full_changelog: "Full changelog",
   support: "Support",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Powered by Plane Pages",
   please_select_at_least_one_invitation: "Please select at least one invitation.",
   please_select_at_least_one_invitation_description: "Please select at least one invitation to join the workspace.",
@@ -2695,7 +2695,7 @@ export default {
     help_actions: {
       open_keyboard_shortcuts: "Open keyboard shortcuts",
       open_plane_documentation: "Open Plane documentation",
-      join_discord: "Join our Discord",
+      join_forum: "Join our Forum",
       report_bug: "Report a bug",
       chat_with_us: "Chat with us",
     },

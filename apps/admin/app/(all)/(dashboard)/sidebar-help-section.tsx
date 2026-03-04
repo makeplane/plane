@@ -7,11 +7,11 @@
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { HelpCircle, MoveLeft } from "lucide-react";
+import { HelpCircle, MessageSquare, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
 import { WEB_BASE_URL } from "@plane/constants";
 // plane internal packages
-import { DiscordIcon, GithubIcon, NewTabIcon, PageIcon } from "@plane/propel/icons";
+import { GithubIcon, NewTabIcon, PageIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -25,9 +25,9 @@ const helpOptions = [
     Icon: PageIcon,
   },
   {
-    name: "Join our Discord",
-    href: "https://discord.com/invite/A92xrEGCge",
-    Icon: DiscordIcon,
+    name: "Join our Forum",
+    href: "https://forum.plane.so",
+    Icon: MessageSquare,
   },
   {
     name: "Report a bug",

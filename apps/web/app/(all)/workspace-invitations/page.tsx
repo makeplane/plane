@@ -115,7 +115,7 @@ function WorkspaceInvitationPage() {
               <EmptySpaceItem
                 Icon={Share2}
                 title="Join our community of active creators"
-                href="https://discord.com/invite/A92xrEGCge"
+                href="https://forum.plane.so"
               />
             </EmptySpace>
           )
