@@ -20,19 +20,20 @@
 │   ═════════════════════                                 │
 │     ▲         ▲         ▲                               │
 │     │         │         │                               │
+│   user/     user/     user/                             │
 │   feat/     fix/      chore/                            │
 │   xxx       xxx       xxx                               │
 │                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
 
-| Branch    | Mục đích                           | Ai merge?                           |
-| --------- | ---------------------------------- | ----------------------------------- |
-| `preview` | Production — code ổn định, đã test | Lead / Manager                      |
-| `develop` | Development — tích hợp feature mới | Developer                           |
-| `feat/*`  | Feature mới                        | Developer (tạo & merge vào develop) |
-| `fix/*`   | Sửa bug                            | Developer                           |
-| `chore/*` | Config, docs, refactor             | Developer                           |
+| Branch         | Mục đích                           | Ai merge?                           |
+| -------------- | ---------------------------------- | ----------------------------------- |
+| `preview`      | Production — code ổn định, đã test | Lead / Manager                      |
+| `develop`      | Development — tích hợp feature mới | Developer                           |
+| `user/feat/*`  | Feature mới                        | Developer (tạo & merge vào develop) |
+| `user/fix/*`   | Sửa bug                            | Developer                           |
+| `user/chore/*` | Config, docs, refactor             | Developer                           |
 
 ---
 
@@ -46,14 +47,16 @@ git checkout develop
 git pull origin develop
 
 # 2. Tạo branch mới từ develop
-git checkout -b feat/ten-tinh-nang
+git checkout -b username/feat/ten-tinh-nang
 ```
 
-> **Quy tắc đặt tên branch:**
+> **Quy tắc đặt tên branch:** `{username}/{type}/{description}`
 >
-> - `feat/login-page` — tính năng mới
-> - `fix/broken-sidebar` — sửa bug
-> - `chore/update-deps` — công việc kỹ thuật
+> - `duonglx/feat/login-page` — tính năng mới
+> - `thanhnv/fix/broken-sidebar` — sửa bug
+> - `minhpt/chore/update-deps` — công việc kỹ thuật
+>
+> Lợi ích: biết ai đang làm gì, tránh trùng tên, dễ dọn dẹp branch cũ.
 
 ### Bước 2 — Code & Commit
 
@@ -86,7 +89,7 @@ git commit -m "feat(auth): implement login form validation"
 
 ```bash
 # Push branch lên remote
-git push -u origin feat/ten-tinh-nang
+git push -u origin username/feat/ten-tinh-nang
 ```
 
 Sau đó tạo PR trên GitHub hoặc dùng CLI:
@@ -117,7 +120,7 @@ git checkout develop
 git pull origin develop
 
 # Xóa branch cũ (đã merge)
-git branch -d feat/ten-tinh-nang
+git branch -d username/feat/ten-tinh-nang
 ```
 
 ---
@@ -165,7 +168,7 @@ gh pr create --base preview --head develop \
 
 ```bash
 # Cập nhật develop vào branch của bạn
-git checkout feat/ten-tinh-nang
+git checkout username/feat/ten-tinh-nang
 git merge develop
 
 # Giải quyết conflict trong editor
@@ -178,7 +181,7 @@ git push
 ### 2. Cần cập nhật develop mới nhất vào branch đang làm
 
 ```bash
-git checkout feat/ten-tinh-nang
+git checkout username/feat/ten-tinh-nang
 git merge develop
 # hoặc
 git rebase develop  # (nếu chưa push)
@@ -191,7 +194,7 @@ git rebase develop  # (nếu chưa push)
 git reset --soft HEAD~1
 
 # Switch sang branch đúng
-git checkout -b feat/branch-dung
+git checkout -b username/feat/branch-dung
 git commit -m "feat: message"
 ```
 
@@ -201,10 +204,10 @@ git commit -m "feat: message"
 # Tạo hotfix từ preview
 git checkout preview
 git pull origin preview
-git checkout -b fix/critical-bug
+git checkout -b username/fix/critical-bug
 
 # Fix → commit → push
-git push -u origin fix/critical-bug
+git push -u origin username/fix/critical-bug
 
 # Tạo PR trực tiếp vào preview
 gh pr create --base preview --title "fix: critical bug in production"
@@ -216,7 +219,7 @@ git push origin develop
 ```
 
 ```
-  preview ◀── fix/critical-bug (PR trực tiếp)
+  preview ◀── username/fix/critical-bug (PR trực tiếp)
      │
      ▼
   develop ◀── merge preview (đồng bộ ngược)
@@ -258,7 +261,7 @@ git push origin develop
 ```
 Developer A          Developer B          Lead/Manager
     │                    │                     │
-    ├─ feat/login        ├─ fix/sidebar        │
+    ├─ a/feat/login      ├─ b/fix/sidebar      │
     │                    │                     │
     ├─ PR → develop ───▶ │                     │
     │                    ├─ PR → develop ─────▶│
@@ -280,4 +283,4 @@ Developer A          Developer B          Lead/Manager
 
 ---
 
-_Cập nhật: 2026-02-23 | Repo: github.com/shbvn/plane_
+_Cập nhật: 2026-03-03 | Repo: github.com/shbvn/plane_

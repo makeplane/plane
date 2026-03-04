@@ -14,6 +14,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkLog } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { useWorklog } from "@/hooks/store/use-worklog";
+import { getMinAllowedDate } from "./utils/worklog-date-utils";
 
 type TWorklogModal = {
   isOpen: boolean;
@@ -24,7 +25,10 @@ type TWorklogModal = {
   existingWorklog?: IWorkLog;
 };
 
-const todayDate = () => new Date().toISOString().split("T")[0];
+const todayDate = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
 
 export const WorklogModal = observer(function WorklogModal(props: TWorklogModal) {
   const { isOpen, onClose, workspaceSlug, projectId, issueId, existingWorklog } = props;
@@ -85,8 +89,9 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
           setToast({ type: TOAST_TYPE.SUCCESS, title: t("worklog.logged"), message: t("worklog.logged_successfully") });
         }
         onClose();
-      } catch {
-        setToast({ type: TOAST_TYPE.ERROR, title: t("worklog.error"), message: t("worklog.save_failed") });
+      } catch (err: unknown) {
+        const apiError = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+        setToast({ type: TOAST_TYPE.ERROR, title: t("worklog.error"), message: apiError || t("worklog.save_failed") });
       } finally {
         setIsSubmitting(false);
       }
@@ -109,6 +114,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
             id="worklog-date"
             type="date"
             value={loggedAt}
+            min={getMinAllowedDate()}
             max={todayDate()}
             onChange={(e) => setLoggedAt(e.target.value)}
             className="rounded-md border-[0.5px] border-subtle-1 bg-layer-2 px-3 py-2 text-13 text-primary focus:outline-none"

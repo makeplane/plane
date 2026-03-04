@@ -515,42 +515,69 @@ Option 2: Token-based from Swing Portal
 
 ## Time Tracking (Work Logs)
 
-### Core Model
+**Detailed Specification**: See [`worklog-specification.md`](./worklog-specification.md) for comprehensive validation rules, API details, permission model, Celery reminder architecture, feature flag gating, and known issues.
 
-**IssueWorkLog**: Tracks time logged on issues per member
+### Quick Reference
 
-| Field              | Type        | Purpose                          |
-| ------------------ | ----------- | -------------------------------- |
-| `issue`            | FK → Issue  | Work log belongs to issue        |
-| `logged_by`        | FK → User   | Team member who logged time      |
-| `duration_minutes` | PositiveInt | Minutes spent (e.g., 120 = 2hrs) |
-| `description`      | TextField   | Notes on work completed          |
-| `logged_at`        | DateField   | Date work was performed          |
+**IssueWorkLog Model**:
+
+- `duration_minutes`: 1–1440 min per entry, max 720 min per user per day
+- `logged_at`: No future dates, within 7 working days (Mon–Fri) of today
+- `logged_by`: Team member; ADMIN-only edit/delete with 7-day edit window
+
+**Key Constraints**:
+
+- Daily limit: 12 hours (720 min) per user per day
+- Edit window: 7 working days from `logged_at` (ADMIN only)
+- Feature flag: `is_time_tracking_enabled` per project (default=True)
+- User preference: `UserNotificationPreference.worklog_reminder` (opt-in daily reminder)
 
 **Project Flag**:
 
-- `is_time_tracking_enabled` (Boolean, default=True) - Feature toggle per project
+### Feature Flag Gating
 
-### API Endpoints
+All time tracking UI is gated behind `is_time_tracking_enabled`:
 
-| Endpoint                                                               | Method | Purpose                           |
-| ---------------------------------------------------------------------- | ------ | --------------------------------- |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | GET    | List worklogs for issue           |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | POST   | Create worklog entry              |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | PATCH  | Update worklog                    |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | DELETE | Delete worklog                    |
-| `/api/v1/workspaces/{slug}/projects/{pid}/worklogs/summary/`           | GET    | Project summary (by member/issue) |
-| `/api/v1/workspaces/{slug}/time-tracking/summary/`                     | GET    | Workspace summary                 |
+| Component             | Gating Method                                       | Behavior                       |
+| --------------------- | --------------------------------------------------- | ------------------------------ |
+| **Sidebar nav**       | `shouldRender: !!project?.is_time_tracking_enabled` | Menu item hidden when disabled |
+| **Route guard**       | `time-tracking/layout.tsx` check                    | Direct URL shows EmptyState    |
+| **"Log Time" button** | Check in `worklog-create-button.tsx`                | Shows info popup when disabled |
+| **Worklog property**  | Component unmount when disabled                     | Removed from issue sidebar     |
 
-**Permissions**: ROLE.ADMIN and ROLE.MEMBER; creator can edit own logs; requires `is_time_tracking_enabled`
+**Backend enforcement** (independent of frontend):
+
+- API returns 400 error if worklog create attempted on disabled project
+- ViewSet checks `is_time_tracking_enabled` before allowing operations
+
+### API Endpoints (Core)
+
+| Endpoint                                                               | Method | Purpose                              |
+| ---------------------------------------------------------------------- | ------ | ------------------------------------ |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | GET    | List worklogs for issue              |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | POST   | Create worklog entry                 |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | PATCH  | Update worklog (ADMIN, 7-day window) |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | DELETE | Delete worklog (ADMIN, 7-day window) |
+| `/api/v1/workspaces/{slug}/projects/{pid}/worklogs/summary/`           | GET    | Project summary (by member/issue)    |
+| `/api/v1/workspaces/{slug}/time-tracking/summary/`                     | GET    | Workspace summary                    |
+| `/api/v1/workspaces/{slug}/time-tracking/timesheet-grid/`              | GET    | Timesheet matrix (member × date)     |
+| `/api/v1/workspaces/{slug}/time-tracking/bulk/`                        | POST   | Batch create/update/delete           |
 
 ### Frontend
 
 - **Route**: `/:workspaceSlug/projects/:projectId/time-tracking`
 - **Page**: `TimeTrackingReportPage` - Summary, filters, worklog table
 - **Store**: `WorklogStore` (MobX) - CRUD + summary queries
-- **Components**: WorklogModal, IssueWorklogProperty
+- **Components**: WorklogModal, IssueWorklogProperty, WorklogActivity
 - **Sidebar Nav**: "Time Tracking" link in project navigation
+
+### Daily Reminder (Celery)
+
+- **Task**: `worklog_daily_reminder` (UTC 10:00)
+- **Delivery**: Email + in-app notification
+- **Target**: Users in projects with time tracking enabled, who haven't logged today
+- **Opt-out**: Via `UserNotificationPreference.worklog_reminder`
+- **Note**: Timezone-aware; fires at local date for each user
 
 ## Scalability Patterns
 

@@ -15,8 +15,9 @@
 ## Overview
 
 - **Priority**: P1
-- **Status**: pending
-- **Effort**: 10h
+- **Status**: split (Validation Session 10)
+- **Effort**: 10h → split into 8a (5h) + 8b (5h)
+- **See:** [phase-08a-dashboards-l1-l2.md](phase-08a-dashboards-l1-l2.md) | [phase-08b-dashboards-l3-l5.md](phase-08b-dashboards-l3-l5.md)
 - Build 5-level hierarchical dashboard with role-based access. Each level shows progressively aggregated workload data from WorkloadSnapshot.
 
 ## Key Insights

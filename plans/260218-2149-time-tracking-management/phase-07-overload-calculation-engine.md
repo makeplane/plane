@@ -20,11 +20,16 @@
 
 <!-- Updated: Validation Session 3 - Weekly period Mon-Sun, simple 8h*weekdays capacity -->
 
+<!-- Updated: Validation Session 10 - Member-only recalc, lazy dept rollup, null estimate=0 -->
+
 - Formula: `allocation_pct = (actual_hours_logged + remaining_estimate_hours) / daily_capacity_hours`
 - `daily_capacity_hours = 8 * weekdays_in_week` (MVP: no leave adjustment, future iteration)
+- **Null estimate_time**: Treat as 0 (no remaining work assumed) — KISS
 - **Period granularity: Weekly (Mon-Sun)** — ~52 snapshots/member/year
 - Trigger on every worklog mutation (create/update/delete) via Celery
-- WorkloadSnapshot stores computed results for dashboard queries (avoids recalc on read)
+- **Recalc scope: Member-only** — Celery task only recalculates the affected member's snapshot
+- **Dept/org aggregation: Lazy** — computed on dashboard request with caching, NOT pre-aggregated on every mutation
+- WorkloadSnapshot stores per-member results; department/org rollups computed at read time
 - Use ChangeTrackerMixin on IssueWorkLog to detect changes in duration_minutes
 - Add week boundary utility: `get_week_boundaries(date) → (monday, sunday)`
 
@@ -64,15 +69,13 @@ IssueWorkLogViewSet (create/update/delete)
   → bank_workload_calculation.delay(issue_id, member_id)
     → Celery task:
       1. Aggregate actual_hours from IssueWorkLog for member in period
-      <!-- Updated: Validation Session 4 - Use Issue.estimate_time field, pre-aggregate dept/org rows -->
-      2. Aggregate remaining_estimate from assigned Issues (Issue.estimate_time - logged_minutes) / 60
+      <!-- Updated: Validation Session 10 - Member-only recalc, lazy dept rollup, null estimate=0 -->
+      2. Aggregate remaining_estimate from assigned Issues: (COALESCE(estimate_time, 0) - logged_minutes) / 60
       3. Calculate daily_capacity (8h * working_days)
       4. allocation_pct = (actual + remaining) / capacity
       5. status = green/yellow/red based on thresholds
       6. Upsert WorkloadSnapshot for (member, period)
-      7. Pre-aggregate: write department-level + org-level summary rows in WorkloadSnapshot
-         (member=null, department=dept for dept-level; member=null, department=null for org-level)
-    → Dashboard queries read from WorkloadSnapshot (pre-aggregated rows for L4/L5)
+    → Dept/org aggregation: computed lazily on dashboard API request (cached, not pre-aggregated)
 ```
 
 ### WorkloadSnapshot Model
@@ -219,8 +222,10 @@ class WorkloadSnapshot(BaseModel):
 
 <!-- Updated: Validation Session 4 - countdown=60s debounce confirmed -->
 
+<!-- Updated: Validation Session 10 - Member-only recalc confirmed -->
+
 - **Calculation frequency**: Use `countdown=60` on all `.delay()` calls. Last trigger wins due to upsert. Simple debounce.
-- **Large departments**: 50+ members → batch calculation, not per-member task
+- **Large departments**: Member-only recalc. Dept/org rollup lazy-computed on dashboard read with caching.
 <!-- Updated: Validation Session 3 - MVP simple capacity confirmed -->
 - **Working days calculation**: MVP = 8h \* weekdays (Mon-Fri) per week. Leave/shift/part-time deferred to future iteration.
 - **Timezone handling**: Period boundaries must respect workspace timezone

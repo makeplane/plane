@@ -187,6 +187,7 @@ export interface IUserEmailNotificationSettings {
   comment: boolean;
   mention: boolean;
   issue_completed: boolean;
+  worklog_reminder: boolean;
 }
 
 export type TProfileViews = "assigned" | "created" | "subscribed";

@@ -100,18 +100,37 @@ export const PROJECT_SETTINGS: Record<TProjectSettingsTabs, TProjectSettingsItem
     access: [EUserProjectRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/automations/`,
   },
+  worklogs: {
+    key: "worklogs",
+    i18n_label: "project_settings.worklogs.label",
+    href: `/worklogs`,
+    access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/worklogs/`,
+  },
+  features_time_tracking: {
+    key: "features_time_tracking",
+    i18n_label: "project_settings.features.time_tracking.short_title",
+    href: `/features/time-tracking`,
+    access: [EUserProjectRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/features/time-tracking/`,
+  },
 };
 
 export const PROJECT_SETTINGS_FLAT_MAP: TProjectSettingsItem[] = Object.values(PROJECT_SETTINGS);
 
 export const GROUPED_PROJECT_SETTINGS: Record<PROJECT_SETTINGS_CATEGORY, TProjectSettingsItem[]> = {
-  [PROJECT_SETTINGS_CATEGORY.GENERAL]: [PROJECT_SETTINGS["general"], PROJECT_SETTINGS["members"]],
+  [PROJECT_SETTINGS_CATEGORY.GENERAL]: [
+    PROJECT_SETTINGS["general"],
+    PROJECT_SETTINGS["members"],
+    PROJECT_SETTINGS["worklogs"],
+  ],
   [PROJECT_SETTINGS_CATEGORY.FEATURES]: [
     PROJECT_SETTINGS["features_cycles"],
     PROJECT_SETTINGS["features_modules"],
     PROJECT_SETTINGS["features_views"],
     PROJECT_SETTINGS["features_pages"],
     PROJECT_SETTINGS["features_intake"],
+    PROJECT_SETTINGS["features_time_tracking"],
   ],
   [PROJECT_SETTINGS_CATEGORY.WORK_STRUCTURE]: [
     PROJECT_SETTINGS["states"],

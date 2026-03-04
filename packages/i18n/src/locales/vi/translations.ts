@@ -2098,6 +2098,13 @@ export default {
         },
       },
     },
+    worklogs: {
+      label: "Nhật ký công việc",
+      heading: "Nhật ký công việc",
+      description: "Xem và quản lý nhật ký công việc đã ghi nhận trong dự án.",
+      empty_title: "Không tìm thấy nhật ký công việc",
+      empty_description: "Thành viên chưa ghi nhận thời gian làm việc.",
+    },
     automations: {
       heading: "Automations",
       description:
@@ -2163,6 +2170,13 @@ export default {
           "Cho phép những người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất; mà không làm gián đoạn quy trình làm việc của bạn.",
         toggle_title: "Bật tiếp nhận",
         toggle_description: "Cho phép thành viên dự án tạo yêu cầu tiếp nhận trong ứng dụng.",
+      },
+      time_tracking: {
+        title: "Theo dõi thời gian",
+        short_title: "Theo dõi thời gian",
+        description: "Bật theo dõi thời gian để cho phép thành viên ghi lại số giờ làm việc trên các vấn đề.",
+        toggle_title: "Bật theo dõi thời gian",
+        toggle_description: "Thành viên dự án sẽ có thể ghi lại số giờ làm việc trên các vấn đề.",
       },
     },
   },
@@ -2575,6 +2589,14 @@ export default {
         title: "Dự án chưa bật tính năng chế độ xem.",
         description:
           "Chế độ xem là khối xây dựng cơ bản của dự án. Bật chế độ xem từ cài đặt dự án để bắt đầu sử dụng chúng.",
+        primary_button: {
+          text: "Quản lý tính năng",
+        },
+      },
+      time_tracking: {
+        title: "Dự án chưa bật tính năng chấm công.",
+        description:
+          "Tính năng chấm công cho phép thành viên ghi nhận giờ làm việc trên mục công việc. Bật chấm công từ cài đặt dự án để bắt đầu sử dụng.",
         primary_button: {
           text: "Quản lý tính năng",
         },
@@ -3060,6 +3082,20 @@ export default {
     update: "Cập nhật",
     description_optional: "Mô tả (tùy chọn)",
     description_placeholder: "Bạn đã làm gì?",
+    deleted: "Đã xóa",
+    deleted_successfully: "Xóa nhật ký thành công.",
+    delete_failed: "Xóa nhật ký thất bại.",
+    locked: "Nhật ký này đã bị khóa",
+    locked_description: "Nhật ký cũ hơn 7 ngày làm việc không thể chỉnh sửa",
+    daily_limit_exceeded: "Vượt giới hạn thời gian trong ngày",
+    daily_limit_description: "Tối đa 12 giờ mỗi ngày.",
+    no_future_dates: "Không thể ghi nhận thời gian cho ngày trong tương lai",
+    backdate_limit: "Không thể ghi nhận thời gian quá 7 ngày làm việc trước",
+    reminder_title: "Nhắc nhở ghi nhận giờ làm việc",
+    reminder_message:
+      "Hey bạn ơi! 👋 Một ngày làm việc sắp kết thúc rồi — đừng quên ghi nhận giờ làm việc cho hôm nay nhé. Việc cập nhật timesheet đều đặn giúp cả team nắm bắt tiến độ tốt hơn đấy. Chỉ mất một phút thôi, bạn tương lai sẽ cảm ơn bạn hiện tại! Ghé vào project và log time trước khi hết ngày nha.",
+    reminder_toggle: "Nhắc nhở ghi nhận giờ",
+    reminder_toggle_description: "Nhắc nhở hàng ngày lúc 5 giờ chiều để ghi nhận giờ làm việc",
   },
   department: {
     label: "Phòng ban",

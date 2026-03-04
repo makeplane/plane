@@ -23,6 +23,8 @@ from plane.license.api.views import (
     InstanceUserBulkImportEndpoint,
     InstanceUserResetPasswordEndpoint,
     InstanceUserWorkspaceEndpoint,
+    InstanceWorkspaceBulkCreateEndpoint,
+    InstanceWorkspaceBulkAssignMembersEndpoint,
 )
 
 urlpatterns = [
@@ -76,6 +78,8 @@ urlpatterns = [
         name="instance-workspace-availability",
     ),
     path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
+    path("workspaces/bulk-create/", InstanceWorkspaceBulkCreateEndpoint.as_view(), name="instance-workspace-bulk-create"),
+    path("workspaces/bulk-assign-members/", InstanceWorkspaceBulkAssignMembersEndpoint.as_view(), name="instance-workspace-bulk-assign-members"),
     # Swing SSO test (admin-only, needs instances path for admin session cookie)
     path("swing-sso/test/", SwingSSOTestEndpoint.as_view(), name="swing-sso-test"),
     # User management

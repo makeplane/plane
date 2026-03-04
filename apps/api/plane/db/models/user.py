@@ -117,7 +117,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # timezone
     USER_TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
-    user_timezone = models.CharField(max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES)
+    user_timezone = models.CharField(max_length=255, default="Asia/Bangkok", choices=USER_TIMEZONE_CHOICES)
 
     # email validation
     is_email_valid = models.BooleanField(default=False)
@@ -249,7 +249,7 @@ class Profile(TimeAuditModel):
     mobile_timezone_auto_set = models.BooleanField(default=False)
     # language
     language = models.CharField(max_length=255, default="en")
-    start_of_the_week = models.PositiveSmallIntegerField(choices=START_OF_THE_WEEK_CHOICES, default=SUNDAY)
+    start_of_the_week = models.PositiveSmallIntegerField(choices=START_OF_THE_WEEK_CHOICES, default=MONDAY)
     goals = models.JSONField(default=dict)
     background_color = models.CharField(max_length=255, default=get_random_color)
 

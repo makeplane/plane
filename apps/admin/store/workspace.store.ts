@@ -8,9 +8,12 @@ import { set } from "lodash-es";
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
 // plane imports
 import { InstanceWorkspaceService } from "@plane/services";
+import type { IWorkspaceBulkCreateResponse, IWorkspaceBulkAssignResponse } from "@plane/services";
 import type { IWorkspace, TLoader, TPaginationInfo } from "@plane/types";
 // root store
 import type { RootStore } from "@/store/root.store";
+
+export type { IWorkspaceBulkCreateResponse, IWorkspaceBulkAssignResponse };
 
 export interface IWorkspaceStore {
   // observables
@@ -25,8 +28,11 @@ export interface IWorkspaceStore {
   // fetch actions
   fetchWorkspaces: () => Promise<IWorkspace[]>;
   fetchNextWorkspaces: () => Promise<IWorkspace[]>;
+  fetchAllWorkspaces: () => Promise<void>;
   // curd actions
   createWorkspace: (data: IWorkspace) => Promise<IWorkspace>;
+  bulkCreateWorkspaces: (workspaces: Array<{ name: string; organization_size?: string }>) => Promise<IWorkspaceBulkCreateResponse>;
+  bulkAssignMembers: (members: Array<{ email: string; workspace_slug: string; role: number }>) => Promise<IWorkspaceBulkAssignResponse>;
 }
 
 export class WorkspaceStore implements IWorkspaceStore {
@@ -51,8 +57,11 @@ export class WorkspaceStore implements IWorkspaceStore {
       // fetch actions
       fetchWorkspaces: action,
       fetchNextWorkspaces: action,
+      fetchAllWorkspaces: action,
       // curd actions
       createWorkspace: action,
+      bulkCreateWorkspaces: action,
+      bulkAssignMembers: action,
     });
     this.instanceWorkspaceService = new InstanceWorkspaceService();
   }
@@ -132,6 +141,16 @@ export class WorkspaceStore implements IWorkspaceStore {
     }
   };
 
+  /**
+   * @description Fetches all workspaces across all pages
+   */
+  fetchAllWorkspaces = async (): Promise<void> => {
+    await this.fetchWorkspaces();
+    while (this.paginationInfo?.next_page_results) {
+      await this.fetchNextWorkspaces();
+    }
+  };
+
   // curd actions
   /**
    * @description Creates a new workspace
@@ -151,6 +170,37 @@ export class WorkspaceStore implements IWorkspaceStore {
       throw error;
     } finally {
       this.loader = "loaded";
+    }
+  };
+
+  /**
+   * @description Bulk creates workspaces from a parsed Excel row array.
+   * Uses the InstanceWorkspaceService.bulkCreate() method.
+   */
+  bulkCreateWorkspaces = async (
+    workspaces: Array<{ name: string; organization_size?: string }>
+  ): Promise<IWorkspaceBulkCreateResponse> => {
+    try {
+      this.loader = "mutation";
+      const result = await this.instanceWorkspaceService.bulkCreate(workspaces);
+      runInAction(() => {
+        result.created.forEach((ws: IWorkspace) => set(this.workspaces, [ws.id], ws));
+      });
+      return result;
+    } catch (error) {
+      throw error;
+    } finally {
+      this.loader = "loaded";
+    }
+  };
+
+  bulkAssignMembers = async (
+    members: Array<{ email: string; workspace_slug: string; role: number }>
+  ): Promise<IWorkspaceBulkAssignResponse> => {
+    try {
+      return await this.instanceWorkspaceService.bulkAssignMembers(members);
+    } catch (error) {
+      throw error;
     }
   };
 }

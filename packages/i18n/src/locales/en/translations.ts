@@ -2087,6 +2087,13 @@ export default {
         },
       },
     },
+    worklogs: {
+      label: "Worklogs",
+      heading: "Worklogs",
+      description: "View and manage worklogs logged in this project.",
+      empty_title: "No worklogs found",
+      empty_description: "Members haven't logged any time yet.",
+    },
     automations: {
       label: "Automations",
       heading: "Automations",
@@ -2150,6 +2157,13 @@ export default {
         description: "Let non-members share bugs, feedback, and suggestions; without disrupting your workflow.",
         toggle_title: "Enable intake",
         toggle_description: "Let project members create in app intake requests.",
+      },
+      time_tracking: {
+        title: "Time Tracking",
+        short_title: "Time Tracking",
+        description: "Enable time tracking to allow members to log work hours on issues.",
+        toggle_title: "Enable time tracking",
+        toggle_description: "Project members will be able to log work hours on issues.",
       },
     },
   },
@@ -2563,6 +2577,14 @@ export default {
         title: "Views are not enabled for the project.",
         description:
           "Views are the building blocks of your project. Enable views from project settings to start using them.",
+        primary_button: {
+          text: "Manage features",
+        },
+      },
+      time_tracking: {
+        title: "Time tracking is not enabled for this project.",
+        description:
+          "Time tracking allows members to log work hours on issues. Enable time tracking from project settings to start using it.",
         primary_button: {
           text: "Manage features",
         },
@@ -3046,6 +3068,20 @@ export default {
     update: "Update",
     description_optional: "Description (optional)",
     description_placeholder: "What did you work on?",
+    deleted: "Deleted",
+    deleted_successfully: "Work log deleted successfully.",
+    delete_failed: "Failed to delete work log.",
+    locked: "This worklog is locked",
+    locked_description: "Worklogs older than 7 working days cannot be edited",
+    daily_limit_exceeded: "Daily time limit exceeded",
+    daily_limit_description: "Maximum 12 hours per day.",
+    no_future_dates: "Cannot log time for future dates",
+    backdate_limit: "Cannot log time more than 7 working days ago",
+    reminder_title: "Time tracking reminder",
+    reminder_message:
+      "Hey there! 👋 Just a friendly nudge — don't forget to log your working hours for today. Keeping your timesheet up to date helps the whole team stay on track. It only takes a minute, and your future self will thank you! Head over to your project and log your time before the day wraps up.",
+    reminder_toggle: "Worklog reminder",
+    reminder_toggle_description: "Daily reminder at 5PM to log your time",
   },
   department: {
     label: "Department",

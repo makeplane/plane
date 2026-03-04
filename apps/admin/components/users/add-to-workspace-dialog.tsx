@@ -4,11 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
+import { Check, Search } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { Dialog, EDialogWidth } from "@plane/propel/dialog";
+import { Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 import { useInstanceUser, useWorkspace } from "@/hooks/store";
@@ -33,36 +35,98 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
   existingWorkspaceIds,
 }: Props) {
   const { addUserToWorkspace } = useInstanceUser();
-  const { workspaces, workspaceIds } = useWorkspace();
-  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState("");
+  const { workspaces, workspaceIds, fetchAllWorkspaces, loader } = useWorkspace();
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectedRole, setSelectedRole] = useState(15);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const availableWorkspaces = workspaceIds
-    .filter((id) => !existingWorkspaceIds.includes(id))
-    .map((id) => workspaces[id])
-    .filter(Boolean);
-
-  const handleSubmit = async () => {
-    if (!selectedWorkspaceId) return;
-    setIsSubmitting(true);
-    try {
-      await addUserToWorkspace(userId, selectedWorkspaceId, selectedRole);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "User added to workspace" });
-      handleClose();
-    } catch (err) {
-      const error = err as Record<string, string>;
-      setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: error?.error || "Failed to add to workspace" });
-    } finally {
-      setIsSubmitting(false);
+  // Fetch all workspaces when dialog opens
+  useEffect(() => {
+    if (open) {
+      void fetchAllWorkspaces();
     }
+  }, [open, fetchAllWorkspaces]);
+
+  const isLoading = loader === "init-loader";
+
+  const availableWorkspaces = useMemo(
+    () =>
+      workspaceIds
+        .filter((id) => !existingWorkspaceIds.includes(id))
+        .map((id) => workspaces[id])
+        .filter(Boolean),
+    [workspaceIds, existingWorkspaceIds, workspaces]
+  );
+
+  // Filter by search query (name or slug)
+  const filteredWorkspaces = useMemo(() => {
+    if (!searchQuery.trim()) return availableWorkspaces;
+    const q = searchQuery.toLowerCase();
+    return availableWorkspaces.filter((ws) => ws.name.toLowerCase().includes(q) || ws.slug.toLowerCase().includes(q));
+  }, [availableWorkspaces, searchQuery]);
+
+  // Toggle single workspace selection
+  const toggleWorkspace = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
 
-  const handleClose = () => {
-    setSelectedWorkspaceId("");
-    setSelectedRole(15);
-    onClose();
+  // Select/deselect all visible (filtered) workspaces
+  const allFilteredSelected = filteredWorkspaces.length > 0 && filteredWorkspaces.every((ws) => selectedIds.has(ws.id));
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (allFilteredSelected) {
+        filteredWorkspaces.forEach((ws) => next.delete(ws.id));
+      } else {
+        filteredWorkspaces.forEach((ws) => next.add(ws.id));
+      }
+      return next;
+    });
   };
+
+  const handleClose = useCallback(() => {
+    setSelectedIds(new Set());
+    setSelectedRole(15);
+    setSearchQuery("");
+    onClose();
+  }, [onClose]);
+
+  const handleSubmit = useCallback(async () => {
+    if (selectedIds.size === 0) return;
+    setIsSubmitting(true);
+    const ids = Array.from(selectedIds);
+    let successCount = 0;
+    let failCount = 0;
+    for (const wsId of ids) {
+      try {
+        await addUserToWorkspace(userId, wsId, selectedRole);
+        successCount++;
+      } catch {
+        failCount++;
+      }
+    }
+    if (successCount > 0) {
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: `Added to ${successCount} workspace${successCount > 1 ? "s" : ""}`,
+      });
+    }
+    if (failCount > 0) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error",
+        message: `Failed to add to ${failCount} workspace${failCount > 1 ? "s" : ""}`,
+      });
+    }
+    setIsSubmitting(false);
+    handleClose();
+  }, [selectedIds, addUserToWorkspace, userId, selectedRole, handleClose]);
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()} modal>
@@ -70,30 +134,89 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
         <div className="p-6">
           <Dialog.Title>Add to Workspace</Dialog.Title>
           <div className="mt-4 space-y-4">
+            {/* Workspace multi-select with search */}
             <div className="space-y-1">
-              <label htmlFor="workspace-select" className="block text-13 font-medium text-color-primary">
-                Workspace
-              </label>
-              <select
-                id="workspace-select"
-                value={selectedWorkspaceId}
-                onChange={(e) => setSelectedWorkspaceId(e.target.value)}
-                className="w-full rounded-md border border-color-subtle bg-layer-2 px-3 py-2 text-13"
-              >
-                <option value="">Select a workspace</option>
-                {availableWorkspaces.map((ws) => (
-                  <option key={ws.id} value={ws.id}>
-                    {ws.name} ({ws.slug})
-                  </option>
-                ))}
-              </select>
-              {availableWorkspaces.length === 0 && (
+              <div className="flex items-center justify-between">
+                <label htmlFor="workspace-search" className="block text-13 font-medium text-color-primary">
+                  Workspace
+                </label>
+                {selectedIds.size > 0 && <span className="text-11 text-color-accent">{selectedIds.size} selected</span>}
+              </div>
+              {isLoading ? (
+                <Loader className="space-y-2">
+                  <Loader.Item height="36px" width="100%" />
+                </Loader>
+              ) : availableWorkspaces.length === 0 ? (
                 <p className="text-11 text-color-tertiary">User is already a member of all workspaces.</p>
+              ) : (
+                <div className="rounded-md border border-color-subtle">
+                  {/* Search input */}
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-color-tertiary" />
+                    <input
+                      id="workspace-search"
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search workspace..."
+                      className="w-full rounded-t-md border-b border-color-subtle bg-layer-2 py-2 pl-8 pr-3 text-13 outline-none placeholder:text-color-tertiary"
+                    />
+                  </div>
+                  {/* Select all toggle */}
+                  {filteredWorkspaces.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={toggleSelectAll}
+                      className="flex w-full items-center gap-2 border-b border-color-subtle px-3 py-1.5 text-left text-11 font-medium text-color-accent hover:bg-layer-3"
+                    >
+                      <span
+                        className={`flex h-3.5 w-3.5 items-center justify-center rounded border ${
+                          allFilteredSelected ? "border-color-accent bg-color-accent text-white" : "border-color-subtle"
+                        }`}
+                      >
+                        {allFilteredSelected && <Check className="h-2.5 w-2.5" />}
+                      </span>
+                      {allFilteredSelected ? "Deselect all" : `Select all (${filteredWorkspaces.length})`}
+                    </button>
+                  )}
+                  {/* Workspace list */}
+                  <div className="max-h-48 overflow-auto">
+                    {filteredWorkspaces.length === 0 ? (
+                      <p className="px-3 py-2 text-13 text-color-tertiary">No workspace found</p>
+                    ) : (
+                      filteredWorkspaces.map((ws) => {
+                        const isSelected = selectedIds.has(ws.id);
+                        return (
+                          <button
+                            key={ws.id}
+                            type="button"
+                            onClick={() => toggleWorkspace(ws.id)}
+                            className={`flex w-full items-center gap-2 px-3 py-2 text-left text-13 transition-colors hover:bg-layer-3 ${
+                              isSelected ? "bg-layer-3 text-color-primary" : "text-color-secondary"
+                            }`}
+                          >
+                            <span
+                              className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded border ${
+                                isSelected ? "border-color-accent bg-color-accent text-white" : "border-color-subtle"
+                              }`}
+                            >
+                              {isSelected && <Check className="h-2.5 w-2.5" />}
+                            </span>
+                            <span className="flex-1 truncate">
+                              {ws.name} <span className="text-color-tertiary">({ws.slug})</span>
+                            </span>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
               )}
             </div>
+            {/* Role selector (applies to all selected workspaces) */}
             <div className="space-y-1">
               <label htmlFor="role-select" className="block text-13 font-medium text-color-primary">
-                Role
+                Role <span className="text-color-tertiary font-normal">(applies to all selected)</span>
               </label>
               <select
                 id="role-select"
@@ -117,9 +240,9 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
               variant="primary"
               onClick={() => void handleSubmit()}
               loading={isSubmitting}
-              disabled={!selectedWorkspaceId}
+              disabled={selectedIds.size === 0}
             >
-              Add
+              {selectedIds.size > 1 ? `Add to ${selectedIds.size} workspaces` : "Add"}
             </Button>
           </div>
         </div>

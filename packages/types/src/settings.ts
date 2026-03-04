@@ -37,7 +37,9 @@ export type TProjectSettingsTabs =
   | "states"
   | "labels"
   | "estimates"
-  | "automations";
+  | "automations"
+  | "worklogs"
+  | "features_time_tracking";
 export type TProjectSettingsItem = {
   key: TProjectSettingsTabs;
   i18n_label: string;
