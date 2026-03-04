@@ -6,12 +6,18 @@
 
 import { Outlet, useParams, useLocation, useNavigate } from "react-router";
 import { User, BarChart2, Users } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Header, EHeaderVariant } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useAppRouter } from "@/hooks/use-app-router";
 // local
 import { TimeTrackingHeader } from "./header";
 
@@ -26,6 +32,11 @@ export default function TimeTrackingLayout() {
   const { workspaceSlug, projectId } = useParams<{ workspaceSlug: string; projectId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
+  const router = useAppRouter();
+  const { currentProjectDetails } = useProject();
+  const { allowPermissions } = useUserPermissions();
+  // Only Workspace Admins can toggle time tracking
+  const canManageFeatures = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const basePath = `/${workspaceSlug}/projects/${projectId}/time-tracking`;
   const activeTab = (() => {
@@ -34,6 +45,24 @@ export default function TimeTrackingLayout() {
     if (pathname.endsWith("/capacity")) return "capacity";
     return "timesheet";
   })();
+
+  // Feature flag guard: show empty state when time tracking is disabled
+  if (currentProjectDetails?.is_time_tracking_enabled === false)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <DetailedEmptyState
+          title={t("disabled_project.empty_state.time_tracking.title")}
+          description={t("disabled_project.empty_state.time_tracking.description")}
+          primaryButton={{
+            text: t("disabled_project.empty_state.time_tracking.primary_button.text"),
+            onClick: () => {
+              router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
+            },
+            disabled: !canManageFeatures,
+          }}
+        />
+      </div>
+    );
 
   return (
     <div className="flex flex-col h-full w-full overflow-hidden">
