@@ -28,7 +28,7 @@ export const ProjectViewEmptyState = observer(function ProjectViewEmptyState() {
   ) : undefined;
 
   const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
-  const canUserCreateWorkItem = isCreatingIssueAllowed && roleNumber !== EUserPermissions.SUPERVISOR && roleNumber !== EUserPermissions.EXECUTOR;
+  const canUserCreateWorkItem = isCreatingIssueAllowed;
 
   return (
     // TODO: Add translation

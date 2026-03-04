@@ -281,7 +281,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
   const issue = getIssueById(issueId);
   // checking if issue is editable, based on user role
   const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.SUPERVISOR, EUserPermissions.EXECUTOR],
     EUserPermissionsLevel.PROJECT,
     workspaceSlug,
     projectId

@@ -264,7 +264,10 @@ export class UserStore implements IUserStore {
     const userPermissions =
       (allWorkspaceProjectRoles &&
         Object.keys(allWorkspaceProjectRoles)
-          .filter((key) => allWorkspaceProjectRoles[key] >= EUserPermissions.MEMBER)
+          .filter((key) => {
+            const role = allWorkspaceProjectRoles[key];
+            return role >= EUserPermissions.EXECUTOR && role !== EUserPermissions.GUEST;
+          })
           .reduce(
             (res: { [projectId: string]: number }, key: string) => ((res[key] = allWorkspaceProjectRoles[key]), res),
             {}

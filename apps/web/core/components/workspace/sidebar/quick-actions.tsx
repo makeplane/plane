@@ -32,15 +32,14 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
   // local storage
   const { storedValue, setValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
   // derived values
-  const canCreateIssue = allowPermissions(
+  const isCreatingIssueAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
 
   const workspaceRole = workspaceSlug ? getWorkspaceRoleByWorkspaceSlug(workspaceSlug) : undefined;
   const roleNumber = workspaceRole ? Number(workspaceRole) : undefined;
-  const canUserCreateWorkItem =
-    canCreateIssue && roleNumber !== EUserPermissions.SUPERVISOR && roleNumber !== EUserPermissions.EXECUTOR;
+  const canUserCreateWorkItem = isCreatingIssueAllowed;
 
   const disabled = joinedProjectIds.length === 0 || !canUserCreateWorkItem;
   const workspaceDraftIssue = workspaceSlug ? (storedValue?.[workspaceSlug] ?? undefined) : undefined;

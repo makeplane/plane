@@ -298,7 +298,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
 
   // Check if issue is editable, based on user role
   const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.SUPERVISOR, EUserPermissions.EXECUTOR],
     EUserPermissionsLevel.PROJECT,
     peekIssue?.workspaceSlug,
     peekIssue?.projectId

@@ -64,7 +64,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
   ) : undefined;
 
   const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
-  const canUserCreateWorkItem = canUserCreateIssue && roleNumber !== EUserPermissions.SUPERVISOR && roleNumber !== EUserPermissions.EXECUTOR;
+  const canUserCreateWorkItem = canUserCreateIssue;
 
   return (
     <Header>

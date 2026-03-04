@@ -106,7 +106,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   ) : undefined;
 
   const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
-  const canUserCreateWorkItem = canUserCreateIssue && roleNumber !== EUserPermissions.SUPERVISOR && roleNumber !== EUserPermissions.EXECUTOR;
+  const canUserCreateWorkItem = canUserCreateIssue;
 
   if (!viewDetails) return;
 
