@@ -1,40 +1,50 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Architecture
 
-## Role & Responsibilities
+- React 18 + Router v7 + MobX + Tailwind v4 | Django 4.2 + DRF + Postgres + Celery
+- CE pattern: new features in `ce/`, never modify `core/`
+- UI: prefer `@plane/propel/*` over `@plane/ui`
 
-Your role is to analyze user requirements, delegate tasks to appropriate sub-agents, and ensure cohesive delivery of features that meet specifications and architectural standards.
+## Rules & Workflows
 
-## Workflows
+- Detailed rules: `.claude/rules/` (auto-loaded by file path)
+- **Workflow**: `.claude/rules/primary-workflow.md` (orchestrator pipeline)
+- **Orchestration**: `.claude/rules/orchestration-protocol.md` (subagent delegation)
+- **Dev rules**: `.claude/rules/development-rules.md` (always loaded)
+- Skills catalog: `.claude/skills/` (activate per task)
+- Docs: `./docs/`
 
-- Primary workflow: `./.claude/rules/primary-workflow.md`
-- Development rules: `./.claude/rules/development-rules.md`
-- Orchestration protocols: `./.claude/rules/orchestration-protocol.md`
-- Documentation management: `./.claude/rules/documentation-management.md`
-- And other workflows: `./.claude/rules/*`
+## Git Safety (NON-NEGOTIABLE)
 
-**IMPORTANT:** Analyze the skills catalog and activate the skills that are needed for the task during the process.
-**IMPORTANT:** You must follow strictly the development rules in `./.claude/rules/development-rules.md` file.
-**IMPORTANT:** Before you plan or proceed any implementation, always read the `./README.md` file first to get context.
-**IMPORTANT:** Sacrifice grammar for the sake of concision when writing reports.
-**IMPORTANT:** In reports, list any unresolved questions at the end, if any.
+- Origin: `github.com/shbvn/plane.git` | Default: `preview` | Staging: `develop`
+- Branch: `{user}/{type}/{desc}` → develop (PR) → preview (PR)
+- ❌ NEVER pull/merge/rebase from upstream (`makeplane/plane`)
+- ❌ NEVER force push to `preview` or `develop`
+- ❌ NEVER push directly to `preview` or `develop` (PR required, 1 review)
+- For commits, PRs, merges: use `/git` skill
+
+## Build
+
+- PM: pnpm | Lint: `pnpm check:lint` | Format: `pnpm check:format`
+- Backend tests: `cd apps/api && python run_tests.py`
+
+## File Standards
+
+- kebab-case, <200 lines code, <150 lines components
+- YAGNI / KISS / DRY
+
+## Python Skills
+
+- Use `.claude/skills/.venv/bin/python3` for skill scripts
+- Fix broken skills directly, don't stop
 
 ## Hook Response Protocol
 
 ### Privacy Block Hook (`@@PRIVACY_PROMPT@@`)
 
-When a tool call is blocked by the privacy-block hook, the output contains a JSON marker between `@@PRIVACY_PROMPT_START@@` and `@@PRIVACY_PROMPT_END@@`. **You MUST use the `AskUserQuestion` tool** to get proper user approval.
-
-**Required Flow:**
-
-1. Parse the JSON from the hook output
-2. Use `AskUserQuestion` with the question data from the JSON
-3. Based on user's selection:
-   - **"Yes, approve access"** → Use `bash cat "filepath"` to read the file (bash is auto-approved)
-   - **"No, skip this file"** → Continue without accessing the file
-
-**Example AskUserQuestion call:**
+When blocked by privacy hook, output contains JSON between `@@PRIVACY_PROMPT_START@@` and `@@PRIVACY_PROMPT_END@@`.
+**You MUST use `AskUserQuestion`** to get user approval:
 
 ```json
 {
@@ -52,75 +62,19 @@ When a tool call is blocked by the privacy-block hook, the output contains a JSO
 }
 ```
 
-**IMPORTANT:** Always ask the user via `AskUserQuestion` first. Never try to work around the privacy block without explicit user approval.
+- **"Yes"** → Use `bash cat "filepath"` to read
+- **"No"** → Continue without accessing
 
-## Python Scripts (Skills)
+## Modularization
 
-When running Python scripts from `.claude/skills/`, use the venv Python interpreter:
-
-- **Linux/macOS:** `.claude/skills/.venv/bin/python3 scripts/xxx.py`
-- **Windows:** `.claude\skills\.venv\Scripts\python.exe scripts\xxx.py`
-
-This ensures packages installed by `install.sh` (google-genai, pypdf, etc.) are available.
-
-**IMPORTANT:** When scripts of skills failed, don't stop, try to fix them directly.
-
-## [IMPORTANT] Consider Modularization
-
-- If a code file exceeds 200 lines of code, consider modularizing it
+- Files >200 lines → split into focused modules
 - Check existing modules before creating new
-- Analyze logical separation boundaries (functions, classes, concerns)
-- Use kebab-case naming with long descriptive names, it's fine if the file name is long because this ensures file names are self-documenting for LLM tools (Grep, Glob, Search)
-- Write descriptive code comments
-- After modularization, continue with main task
-- When not to modularize: Markdown files, plain text files, bash scripts, configuration files, environment variables files, etc.
+- kebab-case with descriptive names
+- Markdown/text/config files: don't modularize
 
-## Documentation Management
-
-We keep all important docs in `./docs` folder and keep updating them, structure like below:
+## Docs
 
 ```
-./docs
-├── project-overview-pdr.md
-├── code-standards.md
-├── codebase-summary.md
-├── design-guidelines.md
-├── deployment-guide.md
-├── system-architecture.md
-└── project-roadmap.md
+./docs: project-overview-pdr.md | code-standards.md | codebase-summary.md
+        design-guidelines.md | deployment-guide.md | system-architecture.md
 ```
-
-## [CRITICAL] Git Safety Rules
-
-This is a **private fork** of `makeplane/plane`. These rules are **NON-NEGOTIABLE**.
-
-### Repository Info
-
-- **Origin**: `https://github.com/shbvn/plane.git` (our repo — push/pull here)
-- **Default branch**: `preview` (production) — NOT `main`
-- **Staging branch**: `develop`
-- **Branch naming**: `{username}/{type}/{description}` (e.g., `duonglx/feat/dashboard-v2`)
-
-### Branch Flow
-
-```
-preview (production) ← develop (staging) ← {username}/{type}/{desc} (feature)
-```
-
-- Feature branches: create from `develop`, PR to `develop`
-- Release: PR from `develop` to `preview`
-- Hotfix: branch from `preview`, PR to `preview`, then sync back to `develop`
-
-### NEVER Do These (Upstream Protection)
-
-- ❌ `git pull upstream` / `git merge upstream/*` / `git rebase upstream/*`
-- ❌ `git fetch upstream && git reset --hard upstream/*`
-- ❌ Any operation bringing `makeplane/plane` changes into our branches
-- ❌ Force push to `preview` or `develop`
-- ❌ Push directly to `preview` or `develop` (PR required, 1 review minimum)
-
-### Git Skill
-
-For commits, PRs, merges: use `/git` skill which has detailed workflow references.
-
-**IMPORTANT:** _MUST READ_ and _MUST COMPLY_ all _INSTRUCTIONS_ in project `./CLAUDE.md`, especially _WORKFLOWS_ section is _CRITICALLY IMPORTANT_, this rule is _MANDATORY. NON-NEGOTIABLE. NO EXCEPTIONS. MUST REMEMBER AT ALL TIMES!!!_
