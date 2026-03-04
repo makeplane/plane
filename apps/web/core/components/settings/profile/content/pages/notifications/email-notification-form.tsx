@@ -72,7 +72,7 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
                 value={value}
                 onChange={(newValue) => {
                   onChange(newValue);
-                  handleSettingChange("property_change", newValue);
+                  void handleSettingChange("property_change", newValue);
                 }}
                 size="sm"
               />
@@ -92,7 +92,7 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
                 value={value}
                 onChange={(newValue) => {
                   onChange(newValue);
-                  handleSettingChange("state_change", newValue);
+                  void handleSettingChange("state_change", newValue);
                 }}
                 size="sm"
               />
@@ -113,7 +113,7 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
                   value={value}
                   onChange={(newValue) => {
                     onChange(newValue);
-                    handleSettingChange("issue_completed", newValue);
+                    void handleSettingChange("issue_completed", newValue);
                   }}
                   size="sm"
                 />
@@ -134,7 +134,7 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
                 value={value}
                 onChange={(newValue) => {
                   onChange(newValue);
-                  handleSettingChange("comment", newValue);
+                  void handleSettingChange("comment", newValue);
                 }}
                 size="sm"
               />
@@ -154,7 +154,27 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
                 value={value}
                 onChange={(newValue) => {
                   onChange(newValue);
-                  handleSettingChange("mention", newValue);
+                  void handleSettingChange("mention", newValue);
+                }}
+                size="sm"
+              />
+            )}
+          />
+        }
+      />
+      <SettingsControlItem
+        title={t("worklog.reminder_toggle")}
+        description={t("worklog.reminder_toggle_description")}
+        control={
+          <Controller
+            control={control}
+            name="worklog_reminder"
+            render={({ field: { value, onChange } }) => (
+              <ToggleSwitch
+                value={value}
+                onChange={(newValue) => {
+                  onChange(newValue);
+                  void handleSettingChange("worklog_reminder", newValue);
                 }}
                 size="sm"
               />

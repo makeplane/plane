@@ -77,6 +77,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
         "schedule": crontab(hour=3, minute=45),  # UTC 03:45
     },
+    "check-every-day-to-send-worklog-reminder": {
+        "task": "plane.bgtasks.worklog_reminder_task.worklog_daily_reminder",
+        "schedule": crontab(hour=10, minute=0),  # UTC 10:00 = 5PM Vietnam
+    },
 }
 
 

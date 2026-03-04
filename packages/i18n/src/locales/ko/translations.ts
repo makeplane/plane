@@ -2079,6 +2079,13 @@ export default {
         },
       },
     },
+    worklogs: {
+      label: "작업 일지",
+      heading: "작업 일지",
+      description: "프로젝트에서 기록된 작업 일지를 조회하고 관리합니다.",
+      empty_title: "작업 일지를 찾을 수 없습니다",
+      empty_description: "아직 기록된 작업 시간이 없습니다.",
+    },
     automations: {
       heading: "Automations",
       description:
@@ -3032,6 +3039,20 @@ export default {
     update: "업데이트",
     description_optional: "설명 (선택사항)",
     description_placeholder: "무엇을 작업했나요?",
+    deleted: "삭제됨",
+    deleted_successfully: "작업 로그가 삭제되었습니다.",
+    delete_failed: "작업 로그 삭제에 실패했습니다.",
+    locked: "이 작업 로그는 잠겨 있습니다",
+    locked_description: "7 영업일 이전의 작업 로그는 편집할 수 없습니다",
+    daily_limit_exceeded: "일일 시간 한도 초과",
+    daily_limit_description: "하루 최대 12시간까지 기록 가능합니다.",
+    no_future_dates: "미래 날짜에 시간을 기록할 수 없습니다",
+    backdate_limit: "7 영업일 이전의 날짜에 시간을 기록할 수 없습니다",
+    reminder_title: "근무 시간 기록 알림",
+    reminder_message:
+      "안녕하세요! 👋 오늘 하루도 수고 많으셨습니다. 혹시 오늘의 근무 시간을 아직 기록하지 않으셨나요? 타임시트를 꾸준히 업데이트하면 팀 전체가 더 효율적으로 협업할 수 있어요. 잠깐이면 되니까, 퇴근 전에 프로젝트에서 시간을 기록해 주세요!",
+    reminder_toggle: "작업 로그 알림",
+    reminder_toggle_description: "매일 오후 5시에 시간 기록 알림 받기",
   },
   department: {
     label: "부서",
