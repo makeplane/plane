@@ -722,7 +722,6 @@ export default {
     link: "Link",
     estimates: "Estimates",
     estimate: "Estimate",
-    estimate_time: "Estimate time",
     created_at: "Created at",
     completed_at: "Completed at",
     layout: "Layout",

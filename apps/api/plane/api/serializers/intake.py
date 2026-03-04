@@ -167,4 +167,4 @@ class IssueDataSerializer(serializers.Serializer):
 
     name = serializers.CharField(max_length=255, help_text="Issue name")
     description_html = serializers.CharField(required=False, allow_null=True, help_text="Issue description HTML")
-    priority = serializers.ChoiceField(choices=Issue.PRIORITY_CHOICES, default="none", help_text="Issue priority")
+    priority = serializers.ChoiceField(choices=Issue.PRIORITY_CHOICES, default="medium", help_text="Issue priority")

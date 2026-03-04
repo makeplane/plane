@@ -84,10 +84,6 @@ export const ISSUE_PRIORITIES: {
     key: "low",
     title: "Low",
   },
-  {
-    key: "none",
-    title: "None",
-  },
 ];
 
 export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
@@ -296,7 +292,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   priority: {
     i18n_title: "common.priority",
     ascendingOrderKey: "priority",
-    ascendingOrderTitle: "None",
+    ascendingOrderTitle: "Low",
     descendingOrderKey: "-priority",
     descendingOrderTitle: "Urgent",
     icon: "PriorityPropertyIcon",

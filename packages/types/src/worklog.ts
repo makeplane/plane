@@ -42,7 +42,6 @@ export interface IWorkLogSummary {
   by_issue: Array<{
     issue_id: string;
     issue_name: string;
-    estimate_time: number | null;
     total_minutes: number;
   }>;
 }
@@ -79,9 +78,6 @@ export interface ICapacityMember {
   display_name: string;
   avatar_url: string;
   total_logged_minutes: number;
-  total_estimated_minutes: number;
-  issue_count: number;
-  status: "normal" | "overload" | "under";
   days?: Record<string, number>;
 }
 
@@ -90,6 +86,5 @@ export interface ICapacityReportResponse {
   date_to: string;
   members: ICapacityMember[];
   project_total_logged: number;
-  project_total_estimated: number;
   project_daily_totals?: Record<string, { minutes: number; issue_count: number }>;
 }

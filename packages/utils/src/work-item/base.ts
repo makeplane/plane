@@ -148,7 +148,7 @@ export const createIssuePayload: (projectId: string, formData: Partial<TIssue>) 
   const payload: TIssue = {
     id: uuidv4(),
     project_id: projectId,
-    priority: "none",
+    priority: "medium",
     label_ids: [],
     assignee_ids: [],
     sub_issues_count: 0,

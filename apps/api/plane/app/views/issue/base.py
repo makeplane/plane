@@ -392,8 +392,14 @@ class IssueViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
 
+        # Normalize empty strings to None for optional UUID FK fields
+        data = request.data.copy()
+        for field in ("state_id", "parent_id", "estimate_point"):
+            if data.get(field) == "":
+                data[field] = None
+
         serializer = IssueCreateSerializer(
-            data=request.data,
+            data=data,
             context={
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,

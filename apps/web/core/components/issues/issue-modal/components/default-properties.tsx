@@ -113,7 +113,6 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
       <Controller
         control={control}
         name="priority"
-        rules={{ validate: (v) => v !== "none" || (t("priority_is_required")) }}
         render={({ field: { value, onChange } }) => (
           <div className={cn("h-7 rounded-sm", errors.priority && "outline outline-1 outline-danger-strong")}>
             <PriorityDropdown

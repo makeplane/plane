@@ -713,7 +713,6 @@ export default {
     link: "링크",
     estimates: "추정",
     estimate: "추정",
-    estimate_time: "예상 시간",
     created_at: "생성일",
     completed_at: "완료일",
     layout: "레이아웃",

@@ -82,7 +82,7 @@ function BorderButton(props: ButtonProps) {
   return (
     <Tooltip
       tooltipHeading={t("priority")}
-      tooltipContent={priorityDetails?.title ?? t("common.none")}
+      tooltipContent={priorityDetails?.title ?? t("issue.priority.medium")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -90,7 +90,7 @@ function BorderButton(props: ButtonProps) {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm px-2 py-0.5",
-          priorityClasses[priority ?? "none"],
+          priorityClasses[priority ?? "medium"],
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -128,8 +128,8 @@ function BorderButton(props: ButtonProps) {
         {!hideText && (
           <span
             className={cn("flex-grow truncate text-body-xs-medium", {
-              "text-secondary": priority && priority !== "none",
-              "text-placeholder": !priority || priority === "none",
+              "text-secondary": !!priority,
+              "text-placeholder": !priority,
             })}
           >
             {priorityDetails?.title ?? placeholder}
@@ -173,7 +173,7 @@ function BackgroundButton(props: ButtonProps) {
   return (
     <Tooltip
       tooltipHeading={t("priority")}
-      tooltipContent={t(priorityDetails?.key ?? "none")}
+      tooltipContent={t(priorityDetails?.key ?? "medium")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -181,7 +181,7 @@ function BackgroundButton(props: ButtonProps) {
       <div
         className={cn(
           "h-full flex items-center gap-1.5 rounded-sm px-2 py-0.5",
-          priorityClasses[priority ?? "none"],
+          priorityClasses[priority ?? "medium"],
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -219,8 +219,8 @@ function BackgroundButton(props: ButtonProps) {
         {!hideText && (
           <span
             className={cn("flex-grow truncate text-body-xs-medium", {
-              "text-secondary": priority && priority !== "none",
-              "text-placeholder": !priority || priority === "none",
+              "text-secondary": !!priority,
+              "text-placeholder": !priority,
             })}
           >
             {priorityDetails?.title ?? t("common.priority") ?? placeholder}
@@ -257,7 +257,7 @@ function TransparentButton(props: ButtonProps) {
   return (
     <Tooltip
       tooltipHeading={t("priority")}
-      tooltipContent={priorityDetails?.title ?? t("common.none")}
+      tooltipContent={priorityDetails?.title ?? t("issue.priority.medium")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -303,8 +303,8 @@ function TransparentButton(props: ButtonProps) {
         {!hideText && (
           <span
             className={cn("flex-grow truncate text-body-xs-medium", {
-              "text-secondary": priority && priority !== "none",
-              "text-placeholder": !priority || priority === "none",
+              "text-secondary": !!priority,
+              "text-placeholder": !priority,
             })}
           >
             {priorityDetails?.title ?? t("common.priority") ?? placeholder}
@@ -338,7 +338,7 @@ export function PriorityDropdown(props: Props) {
     placement,
     showTooltip = false,
     tabIndex,
-    value = "none",
+    value = "medium",
     renderByDefault = true,
   } = props;
   // states

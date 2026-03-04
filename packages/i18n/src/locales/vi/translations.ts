@@ -727,7 +727,6 @@ export default {
     link: "Liên kết",
     estimates: "Ước tính",
     estimate: "Ước tính",
-    estimate_time: "Thời gian ước tính",
     created_at: "Được tạo vào",
     completed_at: "Hoàn thành vào",
     layout: "Bố cục",
