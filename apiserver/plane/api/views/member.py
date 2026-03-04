@@ -178,6 +178,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                 "last_name": request.data.get("last_name", ""),
                 "role": request.data.get("role", 15),
                 "hub_codes": hub_codes_for_creation,
+                "username": request.data.get("username"),
             }
         if not user:
             user = self.create_user(user_data)

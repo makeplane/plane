@@ -88,14 +88,15 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         custom_property = get_object_or_404(IssueCustomProperty, pk=pk, issue_id=issue_id)
         new_value = request.data.get('value')
         
+        serializer = self.serializer_class(custom_property)
+        current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
+
         # Process the property value using the helper method
         custom_property, error_response = self._process_property_value(custom_property, new_value)
         if error_response:
             return error_response
-            
-        serializer = self.serializer_class(custom_property)
+
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
-        current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
         actor_id = str(request.user.id) if request.user else "Unknown"
         issue_id_str = str(issue_id) if issue_id else "Unknown issue ID"
         slug = self.kwargs.get("slug")
