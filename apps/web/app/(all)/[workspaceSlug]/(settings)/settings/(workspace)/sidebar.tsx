@@ -1,5 +1,5 @@
 import { useParams, usePathname } from "next/navigation";
-import { ArrowUpToLine, Building, CreditCard, Users, Webhook } from "lucide-react";
+import { ArrowUpToLine, Building, Users, Webhook } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 // plane imports
 import {
@@ -23,7 +23,6 @@ export const WORKSPACE_SETTINGS_ICONS: Record<keyof typeof WORKSPACE_SETTINGS, L
   general: Building,
   members: Users,
   export: ArrowUpToLine,
-  "billing-and-plans": CreditCard,
   webhooks: Webhook,
 };
 
@@ -63,7 +62,7 @@ export function WorkspaceSettingsSidebar(props: TWorkspaceSettingsSidebarProps) 
       shouldRender={(data: { key: string; access?: EUserWorkspaceRoles[] | undefined }) =>
         data.access
           ? shouldRenderSettingLink(workspaceSlug.toString(), data.key) &&
-            allowPermissions(data.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())
+          allowPermissions(data.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())
           : false
       }
       actionIcons={WorkspaceActionIcons}

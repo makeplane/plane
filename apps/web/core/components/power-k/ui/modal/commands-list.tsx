@@ -1,6 +1,4 @@
 import type { TPowerKCommandConfig, TPowerKContext, TPowerKPageType } from "../../core/types";
-import { PowerKModalPagesList } from "../pages";
-import { PowerKContextBasedPagesList } from "../pages/context-based";
 import { PowerKModalSearchMenu } from "./search-menu";
 
 export type TPowerKCommandsListProps = {
@@ -35,17 +33,6 @@ export function ProjectsAppPowerKCommandsList(props: TPowerKCommandsListProps) {
         searchTerm={searchTerm}
         updateSearchTerm={setSearchTerm}
         handleSearchMenuClose={handleSearchMenuClose}
-      />
-      <PowerKContextBasedPagesList
-        activeContext={context.activeContext}
-        activePage={activePage}
-        handleSelection={handlePageDataSelection}
-      />
-      <PowerKModalPagesList
-        activePage={activePage}
-        context={context}
-        onPageDataSelect={handlePageDataSelection}
-        onCommandSelect={handleCommandSelect}
       />
     </>
   );
