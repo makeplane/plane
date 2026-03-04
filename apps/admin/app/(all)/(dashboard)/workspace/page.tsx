@@ -130,6 +130,12 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <Link href="/workspace/bulk-import" className={getButtonStyling("secondary", "base")}>
+                  Bulk Create Workspace
+                </Link>
+                <Link href="/workspace/bulk-assign" className={getButtonStyling("secondary", "base")}>
+                  Bulk Assign Workspace
+                </Link>
                 <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
                   Create workspace
                 </Link>

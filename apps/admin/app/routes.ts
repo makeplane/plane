@@ -13,6 +13,8 @@ export default [
     route("general", "./(all)/(dashboard)/general/page.tsx"),
     route("workspace", "./(all)/(dashboard)/workspace/page.tsx"),
     route("workspace/create", "./(all)/(dashboard)/workspace/create/page.tsx"),
+    route("workspace/bulk-import", "./(all)/(dashboard)/workspace/bulk-import/page.tsx"),
+    route("workspace/bulk-assign", "./(all)/(dashboard)/workspace/bulk-assign/page.tsx"),
     route("email", "./(all)/(dashboard)/email/page.tsx"),
     route("authentication", "./(all)/(dashboard)/authentication/page.tsx"),
     route("authentication/github", "./(all)/(dashboard)/authentication/github/page.tsx"),
