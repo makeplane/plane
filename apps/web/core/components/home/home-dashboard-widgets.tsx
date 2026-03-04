@@ -15,7 +15,6 @@ import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { HomePageHeader } from "@/plane-web/components/home/header";
 // local imports
-import { StickiesWidget } from "../stickies/widget";
 import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
@@ -38,7 +37,7 @@ export const HOME_WIDGETS_LIST: {
     title: "home.recents.title",
   },
   my_stickies: {
-    component: StickiesWidget,
+    component: null,
     fullWidth: false,
     title: "stickies.title",
   },
@@ -71,7 +70,7 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
   const noWidgetsResolvedPath = resolvedTheme === "light" ? lightWidgetsAsset : darkWidgetsAsset;
 
   // derived values
-  const isWikiApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
+  const isWikiApp = workspaceSlug ? pathname.includes(`/${workspaceSlug.toString()}/pages`) : false;
   if (!workspaceSlug) return null;
   if (loading || loader !== "loaded") return <HomeLoader />;
 

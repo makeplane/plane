@@ -294,7 +294,7 @@ export default {
   stay_ahead_of_blockers: "Предупреждение блокирующих рабочих элементов",
   stay_ahead_of_blockers_description: "Выявление проблем между проектами и скрытых зависимостей между циклами.",
   analytics: "Аналитика",
-  workspace_invites: "Приглашения в рабочее пространство",
+  workspace_invites: "Приглашения",
   enter_god_mode: "Режим администратора",
   workspace_logo: "Логотип рабочего пространства",
   new_issue: "Новый рабочий элемент",
