@@ -32,7 +32,7 @@
     "@effect/platform-node": "^0.104.0",
     "@fontsource/inter": "5.2.8",
     "@hocuspocus/extension-database": "2.15.2",
-    "@hocuspocus/extension-logger": "2.15.2",
+    "@hocuspocus/extension-logger": "3.4.4",
     "@hocuspocus/extension-redis": "2.15.2",
     "@hocuspocus/server": "2.15.2",
     "@hocuspocus/transformer": "2.15.2",
