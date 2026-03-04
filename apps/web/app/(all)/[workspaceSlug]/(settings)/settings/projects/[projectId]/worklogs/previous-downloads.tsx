@@ -1,62 +1,107 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-return */
 import { useEffect, useState, useCallback } from "react";
-import { RefreshCw, ChevronDown } from "lucide-react";
+import { RefreshCw, ChevronDown, Download } from "lucide-react";
 import { observer } from "mobx-react";
-import { useParams } from "react-router";
+import { Avatar } from "@plane/propel/avatar";
 import { Collapsible, Table } from "@plane/ui";
 
+import { CEProjectWorklogService } from "@/plane-web/services/project-worklog.service";
+import type { IExporterHistory } from "@/plane-web/types/worklog-export";
 import { WorklogPaginationFooter } from "./worklog-pagination-footer";
-import type { IExporterHistory } from "../../../../../../ce/types/worklog-export";
 
 interface IPreviousDownloadsProps {
+  workspaceSlug: string;
+  projectId: string;
   isOpen: boolean;
   onToggle: () => void;
 }
 
-interface ExportColumn {
-  key: string;
-  label: string;
-  width: string;
-  render: (row: any) => JSX.Element | string | null;
-}
+const worklogService = new CEProjectWorklogService();
 
-const getExportColumns = (): ExportColumn[] => [
+const STATUS_STYLES: Record<string, string> = {
+  completed: "text-green-600",
+  processing: "text-amber-500",
+  queued: "text-blue-500",
+  failed: "text-red-500",
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  completed: "Completed",
+  processing: "Processing",
+  queued: "Queued",
+  failed: "Failed",
+};
+
+const getExportColumns = () => [
   {
-    key: "status",
-    label: "Status",
-    width: "120px",
-    render: (row: any) => {
-      const status = row.status as string;
-      return (
-        <span className="text-xs">
-          {status === "completed" ? "Ready" : status === "processing" ? "Processing" : "Failed"}
-        </span>
-      );
-    },
+    key: "initiated_by",
+    content: "Exported By",
+    tdRender: (row: IExporterHistory) => (
+      <div className="flex items-center gap-2">
+        <div className="flex-shrink-0 h-5 w-5">
+          <Avatar src={row.initiated_by_detail?.avatar} name={row.initiated_by_detail?.display_name} size={20} />
+        </div>
+        <span className="text-sm">{row.initiated_by_detail?.display_name ?? "—"}</span>
+      </div>
+    ),
   },
   {
     key: "created_at",
-    label: "Created",
-    width: "150px",
-    render: (row: any) => {
-      const createdAt = row.created_at as string;
-      return new Date(createdAt).toLocaleDateString();
-    },
+    content: "Exported On",
+    tdRender: (row: IExporterHistory) => (
+      <span className="text-sm">
+        {new Date(row.created_at).toLocaleString("sv-SE", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })}
+      </span>
+    ),
   },
   {
-    key: "actions",
-    label: "Actions",
-    width: "100px",
-    render: () => null,
+    key: "project",
+    content: "Exported projects",
+    tdRender: (row: IExporterHistory) => <span className="text-sm">{row.project?.length ?? 0} project(s)</span>,
+  },
+  {
+    key: "provider",
+    content: "Format",
+    tdRender: (row: IExporterHistory) => <span className="text-sm">{row.provider === "xlsx" ? "Excel" : "CSV"}</span>,
+  },
+  {
+    key: "status",
+    content: "Status",
+    tdRender: (row: IExporterHistory) => (
+      <span className={`text-sm ${STATUS_STYLES[row.status] ?? "text-color-tertiary"}`}>
+        {STATUS_LABELS[row.status] ?? row.status}
+      </span>
+    ),
+  },
+  {
+    key: "download",
+    content: "Download",
+    tdRender: (row: IExporterHistory) =>
+      row.status === "completed" && row.url ? (
+        <a
+          href={row.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-sm text-link-primary hover:underline"
+        >
+          <Download className="h-3.5 w-3.5" />
+          Download
+        </a>
+      ) : (
+        <span className="text-color-tertiary text-sm">—</span>
+      ),
   },
 ];
 
-function PreviousDownloadsComponent({ isOpen, onToggle }: IPreviousDownloadsProps) {
-  const { workspaceSlug, projectId } = useParams<{
-    workspaceSlug: string;
-    projectId: string;
-  }>();
+const PAGE_SIZE = 10;
 
+function PreviousDownloadsComponent({ workspaceSlug, projectId, isOpen, onToggle }: IPreviousDownloadsProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [history, setHistory] = useState<IExporterHistory[]>([]);
@@ -74,27 +119,17 @@ function PreviousDownloadsComponent({ isOpen, onToggle }: IPreviousDownloadsProp
 
       setIsLoading(true);
       try {
-        const params = new URLSearchParams({ per_page: "10" });
-        if (cursor) params.set("cursor", cursor);
-        const response = await fetch(
-          `/api/workspaces/${workspaceSlug}/projects/${projectId}/worklogs/export/?${params.toString()}`,
-          {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setHistory(data.results || []);
-          setPaginationMeta({
-            hasNext: (data.next_page_results as boolean) || false,
-            hasPrev: (data.prev_page_results as boolean) || false,
-            nextCursor: (data.next_cursor as string | null) || null,
-            prevCursor: (data.prev_cursor as string | null) || null,
-            totalCount: (data.total_count as number) || 0,
-          });
-        }
+        const data = await worklogService.getExportHistory(workspaceSlug, projectId, cursor ?? undefined);
+        setHistory(data.results || []);
+        setPaginationMeta({
+          hasNext: !!data.next_page_results,
+          hasPrev: !!data.prev_page_results,
+          nextCursor: data.next_cursor || null,
+          prevCursor: data.prev_cursor || null,
+          totalCount: data.total_count ?? 0,
+        });
+      } catch (error) {
+        console.error("Failed to fetch export history", error);
       } finally {
         setIsLoading(false);
       }
@@ -122,61 +157,68 @@ function PreviousDownloadsComponent({ isOpen, onToggle }: IPreviousDownloadsProp
   };
 
   const columns = getExportColumns();
-  const rangeStart = (currentPage - 1) * 10 + 1;
-  const rangeEnd = Math.min(currentPage * 10, paginationMeta.totalCount);
+  const rangeStart = (currentPage - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min(currentPage * PAGE_SIZE, paginationMeta.totalCount);
+
+  const triggerTitle = (
+    <div className="flex w-full items-center justify-between px-5 py-3">
+      <span className="text-sm font-medium text-color-primary">Previous Downloads</span>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          className="p-1 rounded hover:bg-layer-2 text-color-secondary"
+          onClick={(e) => {
+            e.stopPropagation();
+            void fetchHistory();
+            setCurrentPage(1);
+          }}
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
+        </button>
+        <ChevronDown className={`h-4 w-4 text-color-secondary transition-transform ${isOpen ? "rotate-180" : ""}`} />
+      </div>
+    </div>
+  );
 
   return (
-    <Collapsible.CollapsibleRoot isOpen={isOpen} onToggle={onToggle} className="mt-6">
-      <Collapsible.CollapsibleTrigger className="flex w-full items-center justify-between px-5 py-3 hover:bg-layer-1-hover rounded-md cursor-pointer">
-        <span className="text-sm font-medium text-color-primary">Previous Downloads</span>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="p-1 rounded hover:bg-layer-2 text-color-secondary"
-            onClick={(e) => {
-              e.stopPropagation();
-              void fetchHistory();
-              setCurrentPage(1);
-            }}
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
-          </button>
-          <ChevronDown className={`h-4 w-4 text-color-secondary transition-transform ${isOpen ? "rotate-180" : ""}`} />
-        </div>
-      </Collapsible.CollapsibleTrigger>
-      <Collapsible.CollapsibleContent>
-        {history.length > 0 ? (
-          <>
-            <Table
-              data={history}
-              columns={columns}
-              keyExtractor={(row: any) => (row as IExporterHistory).id}
-              tableClassName="w-full border-t border-color-subtle"
-              tHeadTrClassName="!divide-x-0 border-b border-color-subtle !bg-transparent"
-              tBodyTrClassName="!divide-x-0 border-b border-color-subtle py-2 hover:bg-layer-1-hover"
-              thClassName="text-left py-3 px-5 font-normal"
-              tdClassName="py-3 px-5"
+    <Collapsible
+      title={triggerTitle}
+      isOpen={isOpen}
+      onToggle={onToggle}
+      className="mt-6"
+      buttonClassName="flex w-full hover:bg-layer-1-hover rounded-md cursor-pointer"
+    >
+      {history.length > 0 ? (
+        <>
+          <Table
+            data={history}
+            columns={columns}
+            keyExtractor={(row: IExporterHistory) => row.id}
+            tableClassName="w-full border-t border-color-subtle"
+            tHeadTrClassName="!divide-x-0 border-b border-color-subtle !bg-transparent"
+            tBodyTrClassName="!divide-x-0 border-b border-color-subtle py-2 hover:bg-layer-1-hover"
+            thClassName="text-left py-3 px-5 font-normal"
+            tdClassName="py-3 px-5"
+          />
+          {paginationMeta.totalCount > PAGE_SIZE && (
+            <WorklogPaginationFooter
+              rangeStart={rangeStart}
+              rangeEnd={rangeEnd}
+              totalCount={paginationMeta.totalCount}
+              hasNext={paginationMeta.hasNext}
+              hasPrev={paginationMeta.hasPrev}
+              isLoading={isLoading}
+              onNext={() => handlePageChange("next")}
+              onPrev={() => handlePageChange("prev")}
             />
-            {paginationMeta.totalCount > 10 && (
-              <WorklogPaginationFooter
-                rangeStart={rangeStart}
-                rangeEnd={rangeEnd}
-                totalCount={paginationMeta.totalCount}
-                hasNext={paginationMeta.hasNext}
-                hasPrev={paginationMeta.hasPrev}
-                isLoading={isLoading}
-                onNext={() => handlePageChange("next")}
-                onPrev={() => handlePageChange("prev")}
-              />
-            )}
-          </>
-        ) : (
-          <div className="flex items-center justify-center py-8 text-sm text-color-tertiary">
-            {isLoading ? "Loading..." : "No previous downloads"}
-          </div>
-        )}
-      </Collapsible.CollapsibleContent>
-    </Collapsible.CollapsibleRoot>
+          )}
+        </>
+      ) : (
+        <div className="flex items-center justify-center py-8 text-sm text-color-tertiary">
+          {isLoading ? "Loading..." : "No previous downloads"}
+        </div>
+      )}
+    </Collapsible>
   );
 }
 
