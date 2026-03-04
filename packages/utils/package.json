@@ -41,8 +41,8 @@
     "rehype-remark": "^10.0.1",
     "remark-gfm": "^4.0.1",
     "remark-stringify": "^11.0.0",
-    "sanitize-html": "2.17.0",
-    "tailwind-merge": "3.4.0",
+    "sanitize-html": "2.17.1",
+    "tailwind-merge": "3.5.0",
     "unified": "^11.0.5",
     "uuid": "catalog:"
   },
