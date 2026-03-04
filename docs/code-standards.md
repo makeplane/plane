@@ -656,9 +656,49 @@ for issue in issues:
     print(issue.assignee.name)  # Query for each issue
 ```
 
+## Issue Properties Standards
+
+### Priority System (v1.2.3)
+
+**Valid Priority Values**:
+
+```typescript
+// @plane/types - IIssuePriority
+type IIssuePriority = "urgent" | "high" | "medium" | "low";
+
+// Frontend constants
+const PRIORITY_OPTIONS = ["urgent", "high", "medium", "low"];
+
+// Backend choices (models)
+PRIORITY_CHOICES = [
+  ("urgent", "Urgent"),
+  ("high", "High"),
+  ("medium", "Medium"),
+  ("low", "Low"),
+];
+```
+
+**Default Priority**:
+
+- New issues default to `priority="medium"` (changed from "none" in v1.2.3)
+- Both backend and frontend enforce this default
+- Data migration (0131) converted all existing "none" → "medium"
+
+**Type Safety**:
+
+- TypeScript type `TIssuePriorities` includes "none" for backward compatibility (edge case rendering)
+- Runtime: API rejects `priority=none` filter with HTTP 400
+- PriorityIcon component still supports "none" for safety (unreachable post-migration)
+
+**API Validation**:
+
+- Backend filter validator (`filters/converters.py`) only accepts: urgent, high, medium, low
+- Requests with `?priority=none` return HTTP 400 Bad Request (intentional breaking change)
+- Update API clients to remove "none" from priority filters
+
 ---
 
-**Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/code-standards.md`
-**Lines**: ~520
-**Status**: Final
-**Related**: `/docs/eslint.md` (existing ESLint documentation)
+**Document Location**: `/Users/ngoctran/Documents/Shinhan/plane/docs/code-standards.md`
+**Lines**: ~695
+**Status**: Final (Updated with Priority System standards)
+**Related**: `/docs/eslint.md` (existing ESLint documentation), `/docs/system-architecture.md` (breaking changes)

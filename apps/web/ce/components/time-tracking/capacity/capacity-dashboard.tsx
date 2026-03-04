@@ -66,17 +66,14 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
 
     const exportData = capacityData.members.map((member) => ({
       "Member Name": member.display_name,
-      "Total Estimated (h)": (member.total_estimated_minutes / 60).toFixed(2),
       "Total Logged (h)": (member.total_logged_minutes / 60).toFixed(2),
-      "Issue Count": member.issue_count,
-      Status: member.status.toUpperCase(),
       ...Object.keys(member.days || {}).reduce<Record<string, string>>((acc, date) => {
         acc[date] = (((member.days && member.days[date]) || 0) / 60).toFixed(2);
         return acc;
       }, {}),
     }));
 
-    const csv = generateCsv(csvConfig)(exportData as any);
+    const csv = generateCsv(csvConfig)(exportData as Array<Record<string, string>>);
     download(csvConfig)(csv);
   };
 
@@ -115,22 +112,14 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
               </div>
               {t("capacity_dashboard")}
             </h2>
-            <p className="text-xs text-secondary mt-1.5 ml-0.5">
-              {t("capacity_dashboard_description")}
-            </p>
+            <p className="text-xs text-secondary mt-1.5 ml-0.5">{t("capacity_dashboard_description")}</p>
           </div>
         </div>
       </div>
 
       <div className="flex-grow overflow-y-auto custom-scrollbar">
         <div className="px-6 mb-4 text-primary">
-          <CapacitySummaryCards
-            totalLoggedMinutes={capacityData.project_total_logged}
-            totalEstimatedMinutes={capacityData.project_total_estimated}
-            members={capacityData.members}
-            dateFrom={capacityData.date_from}
-            dateTo={capacityData.date_to}
-          />
+          <CapacitySummaryCards totalLoggedMinutes={capacityData.project_total_logged} />
         </div>
 
         {/* Filters Bar - Positioned above the table but below charts */}
@@ -154,7 +143,11 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
               <DateRangeDropdown
                 buttonVariant="transparent-with-text"
                 value={dateRange}
-                onSelect={(range) => setDateRange(range ? { from: range.from, to: range.to || undefined } : { from: undefined, to: undefined })}
+                onSelect={(range) =>
+                  setDateRange(
+                    range ? { from: range.from, to: range.to || undefined } : { from: undefined, to: undefined }
+                  )
+                }
                 buttonClassName="!h-7 !px-2.5 !py-0.5 text-[11px]"
                 isClearable
               />

@@ -65,65 +65,25 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
               >
                 {t("capacity_member")}
               </th>
-              <th scope="col" className="px-3 py-2 text-right">
-                {t("capacity_total_estimated")}
-              </th>
-              <th scope="col" className="px-3 py-2 text-right">
-                {t("capacity_total_logged")}
-              </th>
               <th scope="col" className="px-3 py-2 text-right border-r border-subtle">
-                {t("work_items")}
+                {t("capacity_total_logged")}
               </th>
               {days.map((day) => (
                 <th key={day.toISOString()} scope="col" className="px-2 py-2 text-center min-w-[70px]">
                   {format(day, "MMM dd")}
                 </th>
               ))}
-              <th scope="col" className="px-3 py-2 text-center border-l border-subtle">
-                {t("status")}
-              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-subtle/50">
             {members.length === 0 ? (
               <tr>
-                <td colSpan={5 + days.length} className="px-4 py-8 text-center text-sm text-secondary">
+                <td colSpan={2 + days.length} className="px-4 py-8 text-center text-sm text-secondary">
                   {t("capacity_no_data")}
                 </td>
               </tr>
             ) : (
               members.map((member) => {
-                const isOverloaded = member.status === "overload";
-                const isNormal = member.status === "normal";
-                const isUnder = member.status === "under";
-
-                let statusBgClassName = "";
-                let statusTextClassName = "text-secondary";
-                let statusBorderClassName = "border-transparent";
-                let tooltipKey = "capacity_normal";
-
-                if (isOverloaded) {
-                  statusBgClassName = "bg-danger-subtle";
-                  statusTextClassName = "text-danger-primary";
-                  statusBorderClassName = "border-danger-subtle";
-                  tooltipKey = "capacity_overloaded";
-                } else if (isNormal) {
-                  statusBgClassName = "bg-success-subtle";
-                  statusTextClassName = "text-success-primary";
-                  statusBorderClassName = "border-success-subtle";
-                  tooltipKey = "capacity_normal";
-                } else if (isUnder) {
-                  statusBgClassName = "bg-warning-subtle";
-                  statusTextClassName = "text-warning-primary";
-                  statusBorderClassName = "border-warning-subtle";
-                  tooltipKey = "capacity_under_capacity";
-                } else {
-                  statusBgClassName = "bg-surface-2";
-                  statusTextClassName = "text-secondary";
-                  statusBorderClassName = "border-subtle";
-                  tooltipKey = "capacity_no_data";
-                }
-
                 const memberDays = member.days || {};
 
                 return (
@@ -134,16 +94,8 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
                         <span className="truncate max-w-[130px] font-semibold">{member.display_name}</span>
                       </div>
                     </td>
-                    <td className="px-3 py-2 text-right text-secondary/80 font-medium">
-                      {formatHours(member.total_estimated_minutes)}h
-                    </td>
-                    <td
-                      className={`px-3 py-2 text-right font-bold ${isOverloaded ? "text-color-error" : "text-primary"}`}
-                    >
+                    <td className="px-3 py-2 text-right text-primary font-bold border-r border-subtle/30">
                       {formatHours(member.total_logged_minutes)}h
-                    </td>
-                    <td className="px-3 py-2 text-right text-secondary/80 font-medium border-r border-subtle/30">
-                      {member.issue_count}
                     </td>
 
                     {days.map((day) => {
@@ -167,24 +119,6 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
                         </td>
                       );
                     })}
-
-                    <td className="px-3 py-2 text-center border-l border-subtle/30">
-                      <div className="flex justify-center items-center">
-                        <Tooltip tooltipContent={t(tooltipKey)}>
-                          <div
-                            className={`px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-wider ${statusBgClassName} ${statusTextClassName} ${statusBorderClassName}`}
-                          >
-                            {isOverloaded
-                              ? t("capacity_overloaded")
-                              : isUnder
-                                ? t("capacity_under_capacity")
-                                : member.total_estimated_minutes > 0
-                                  ? t("capacity_normal")
-                                  : "-"}
-                          </div>
-                        </Tooltip>
-                      </div>
-                    </td>
                   </tr>
                 );
               })
@@ -192,18 +126,13 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
           </tbody>
           {members.length > 0 && (
             <tfoot className="bg-surface-2/50 border-t border-subtle font-bold text-primary">
-              {/* Row 1: Logged Time Totals */}
-              <tr className="border-b border-subtle/30">
+              <tr>
                 <td className="px-3 py-2 sticky left-0 z-10 bg-surface-2 border-r border-subtle text-[10px] text-tertiary uppercase">
                   {t("total_logged_time")}
                 </td>
-                <td className="px-3 py-2 text-right text-xs">
-                  {formatHours(members.reduce((acc, m) => acc + m.total_estimated_minutes, 0))}h
-                </td>
-                <td className="px-3 py-2 text-right text-xs">
+                <td className="px-3 py-2 text-right text-xs border-r border-subtle">
                   {formatHours(members.reduce((acc, m) => acc + m.total_logged_minutes, 0))}h
                 </td>
-                <td className="px-3 py-2 text-right border-r border-subtle"></td>
                 {days.map((day) => {
                   const dateStr = format(day, "yyyy-MM-dd");
                   const dailyMinutes = projectDailyTotals?.[dateStr]?.minutes ?? 0;
@@ -213,28 +142,6 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
                     </td>
                   );
                 })}
-                <td className="px-3 py-2 border-l border-subtle"></td>
-              </tr>
-              {/* Row 2: Work Item Totals */}
-              <tr>
-                <td className="px-3 py-2 sticky left-0 z-10 bg-surface-2 border-r border-subtle text-[10px] text-tertiary uppercase">
-                  {t("total_work_items")}
-                </td>
-                <td className="px-3 py-2 text-right"></td>
-                <td className="px-3 py-2 text-right"></td>
-                <td className="px-3 py-2 text-right border-r border-subtle text-xs">
-                  {members.reduce((acc, m) => acc + m.issue_count, 0)}
-                </td>
-                {days.map((day) => {
-                  const dateStr = format(day, "yyyy-MM-dd");
-                  const dailyIssues = projectDailyTotals?.[dateStr]?.issue_count ?? 0;
-                  return (
-                    <td key={dateStr} className="px-3 py-2 text-center text-[11px] text-secondary font-medium">
-                      {dailyIssues > 0 ? `${dailyIssues} ${t("capacity_items")}` : "-"}
-                    </td>
-                  );
-                })}
-                <td className="px-3 py-2 border-l border-subtle"></td>
               </tr>
             </tfoot>
           )}

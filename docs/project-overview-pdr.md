@@ -179,6 +179,7 @@ Plane is a modern, open-source project management tool designed for teams to tra
 - PostgreSQL 15.7+ required (no legacy DB support)
 - Real-time features require WebSocket support
 - File uploads limited to 5MB per request (configurable)
+- Issue priority system: 4 levels (urgent, high, medium, low) — "none" removed in v1.2.3
 
 **External Dependencies**:
 

@@ -3,10 +3,9 @@
 # See the LICENSE file for details.
 
 from celery import shared_task
-from django.db.models import Sum, F, Value, CharField
-from django.db.models.functions import Coalesce
+from django.db.models import Sum
 
-from plane.db.models import IssueWorkLog, Issue, ProjectMember
+from plane.db.models import IssueWorkLog, ProjectMember
 from plane.utils.exception_logger import log_exception
 
 
@@ -14,8 +13,7 @@ from plane.utils.exception_logger import log_exception
 def generate_capacity_report(workspace_slug: str, project_id: str, date_from: str, date_to: str):
     """Generate per-member capacity report for a project.
 
-    Computes total logged minutes vs total estimated minutes for each member
-    who is assigned issues in the project during the given date range.
+    Computes total logged minutes per member during the given date range.
 
     Args:
         workspace_slug: Workspace slug string.
@@ -73,71 +71,29 @@ def generate_capacity_report(workspace_slug: str, project_id: str, date_from: st
                 date_str = str(row["logged_at"])
                 member_days_map[mid][date_str] = row["daily_logged"]
 
-        # Get estimated time per assignee (from issues assigned in project)
-        estimated_qs = (
-            Issue.issue_objects.filter(
-                workspace__slug=workspace_slug,
-                project_id=project_id,
-                estimate_time__isnull=False,
-            )
-            .values("assignees")
-            .annotate(
-                total_estimated=Sum("estimate_time"),
-                issue_count=Sum(Value(1)),
-            )
-        )
-
-        estimated_map = {}
-        issue_count_map = {}
-        for row in estimated_qs:
-            assignee_id = str(row["assignees"]) if row["assignees"] else None
-            if assignee_id:
-                estimated_map[assignee_id] = row["total_estimated"] or 0
-                issue_count_map[assignee_id] = row["issue_count"] or 0
-
         # Build result
         result_members = []
         total_logged = 0
-        total_estimated = 0
 
         for mid, info in member_map.items():
             member_logged = logged_map.get(mid, 0) or 0
-            member_estimated = estimated_map.get(mid, 0)
-            member_issues = issue_count_map.get(mid, 0)
-
-            if member_estimated > 0 and member_logged > member_estimated:
-                member_status = "overload"
-            elif member_estimated > 0 and member_logged < member_estimated:
-                member_status = "under"
-            else:
-                member_status = "normal"
-
             total_logged += member_logged
-            total_estimated += member_estimated
-
             result_members.append({
                 "member_id": mid,
                 "display_name": info["display_name"],
                 "avatar_url": info["avatar_url"],
                 "total_logged_minutes": member_logged,
-                "total_estimated_minutes": member_estimated,
-                "issue_count": member_issues,
-                "status": member_status,
                 "days": member_days_map.get(mid, {}),
             })
 
-        # Sort: overloaded first, then by logged desc
-        status_order = {"overload": 0, "under": 1, "normal": 2}
-        result_members.sort(
-            key=lambda m: (status_order.get(m["status"], 3), -m["total_logged_minutes"])
-        )
+        # Sort: by logged desc
+        result_members.sort(key=lambda m: -m["total_logged_minutes"])
 
         return {
             "date_from": date_from,
             "date_to": date_to,
             "members": result_members,
             "project_total_logged": total_logged,
-            "project_total_estimated": total_estimated,
         }
 
     except Exception as e:

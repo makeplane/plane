@@ -107,7 +107,6 @@ class Issue(ProjectBaseModel):
         ("high", "High"),
         ("medium", "Medium"),
         ("low", "Low"),
-        ("none", "None"),
     )
     parent = models.ForeignKey(
         "self",
@@ -140,7 +139,7 @@ class Issue(ProjectBaseModel):
         max_length=30,
         choices=PRIORITY_CHOICES,
         verbose_name="Issue Priority",
-        default="none",
+        default="medium",
     )
     start_date = models.DateField(null=True, blank=True)
     target_date = models.DateField(null=True, blank=True)
@@ -166,10 +165,8 @@ class Issue(ProjectBaseModel):
         null=True,
         blank=True,
     )
-    estimate_time = models.PositiveIntegerField(
-        null=True, blank=True, help_text="Time estimate in minutes"
-    )
-
+    # Total time spent in minutes (aggregated from worklogs)
+    time_spent = models.PositiveIntegerField(default=0)
     issue_objects = IssueManager()
 
     class Meta:
@@ -673,7 +670,6 @@ class IssueVersion(ProjectBaseModel):
         ("high", "High"),
         ("medium", "Medium"),
         ("low", "Low"),
-        ("none", "None"),
     )
 
     parent = models.UUIDField(blank=True, null=True)
@@ -684,7 +680,7 @@ class IssueVersion(ProjectBaseModel):
         max_length=30,
         choices=PRIORITY_CHOICES,
         verbose_name="Issue Priority",
-        default="none",
+        default="medium",
     )
     start_date = models.DateField(null=True, blank=True)
     target_date = models.DateField(null=True, blank=True)

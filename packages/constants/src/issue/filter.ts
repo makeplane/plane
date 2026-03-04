@@ -88,12 +88,6 @@ export const ISSUE_PRIORITY_FILTERS: TIssueFilterPriorityObject[] = [
     className: "bg-layer-2 text-priority-low border-strong",
     icon: "signal_cellular_alt_1_bar",
   },
-  {
-    key: "none",
-    titleTranslationKey: "common.none",
-    className: "bg-layer-2 text-priority-none border-strong",
-    icon: "block",
-  },
 ];
 
 export type TFiltersLayoutOptions = {

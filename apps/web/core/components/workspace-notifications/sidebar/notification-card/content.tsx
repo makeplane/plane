@@ -8,7 +8,6 @@ import type { ReactNode } from "react";
 // plane imports
 import type { TNotification } from "@plane/types";
 import {
-  convertMinutesToHoursMinutesString,
   renderFormattedDate,
   sanitizeCommentForNotification,
   stripAndTruncateHTML,
@@ -105,13 +104,6 @@ export const BASE_NOTIFICATION_CONTENT_MAP: TNotificationContentMap = {
   }),
   description: ({ newValue }) => ({
     value: stripAndTruncateHTML(newValue || "", 55),
-    showConnector: true,
-  }),
-  estimate_time: ({ newValue, oldValue }) => ({
-    value:
-      newValue !== ""
-        ? convertMinutesToHoursMinutesString(Number(newValue))
-        : convertMinutesToHoursMinutesString(Number(oldValue)),
     showConnector: true,
   }),
 };

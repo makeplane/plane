@@ -296,8 +296,7 @@ User
 │   │   │   ├── IssueComment (1:N)
 │   │   │   ├── IssueLink (1:N)
 │   │   │   ├── IssueActivity (1:N)
-│   │   │   ├── IssueWorkLog (1:N) - Time tracking
-│   │   │   └── estimate_time (PositiveInt, nullable) - Time estimate in minutes
+│   │   │   └── IssueWorkLog (1:N) - Time tracking
 │   │   ├── Cycle (1:N)
 │   │   │   └── CycleIssue → Issue (M:N)
 │   │   ├── Module (1:N)
@@ -528,11 +527,6 @@ Option 2: Token-based from Swing Portal
 | `description`      | TextField   | Notes on work completed          |
 | `logged_at`        | DateField   | Date work was performed          |
 
-**Issue Fields**:
-
-- `estimate_time` (PositiveInt, nullable) - Expected duration in minutes
-- Enables comparison of estimated vs actual time
-
 **Project Flag**:
 
 - `is_time_tracking_enabled` (Boolean, default=True) - Feature toggle per project
@@ -622,68 +616,13 @@ services:
 
 ## Admin User Management System
 
-### Architecture
+Instance administrators can manage users and workspace assignments via admin app.
 
-```
-Admin Frontend (apps/admin)
-  ├─ /users - List users with search/pagination
-  ├─ /users/create - Create new instance user
-  ├─ /users/:id - User detail with workspace assignments
-  └─ Components
-      ├─ User list table
-      ├─ Create form
-      ├─ Reset password dialog
-      └─ Add to workspace dialog
+**Frontend** (`apps/admin`): User list, create form, detail view with workspace assignment & password reset dialogs
 
-     │
-     ▼
+**Backend** (`plane/license/api`): InstanceUserViewSet with CRUD + password reset + workspace assignment endpoints
 
-Admin API (plane/license/api)
-  ├─ Views: InstanceUserViewSet
-  │   ├─ GET /users/ - List (paginated, sorted)
-  │   ├─ POST /users/ - Create new user
-  │   ├─ GET /users/{id}/ - Retrieve user
-  │   ├─ PATCH /users/{id}/ - Update user
-  │   ├─ POST /users/{id}/reset-password/ - Password reset
-  │   └─ POST /users/{id}/add-workspace/ - Workspace assignment
-  │
-  └─ Serializers
-      ├─ User list response (with workspace summaries)
-      ├─ User detail (full workspace assignments)
-      └─ Create request validation
-
-     │
-     ▼
-
-Database (PostgreSQL)
-  ├─ User table (login, email, profile)
-  ├─ WorkspaceMember table (user → workspace role)
-  └─ Workspace table (organization data)
-```
-
-### Admin User Workflows
-
-**Create User**:
-
-1. Admin fills form (email, first name, last name)
-2. System auto-generates random password
-3. User created in DB
-4. Email sent with login link + temp password
-5. User can reset password on first login
-
-**Reset Password**:
-
-1. Admin selects user → Reset Password
-2. System generates temp password
-3. Email sent with login link + password
-4. User logs in and changes password
-
-**Add to Workspace**:
-
-1. Admin selects user → Add to Workspace dialog
-2. Choose workspace + role (Admin/Member)
-3. User added as WorkspaceMember
-4. User can now access workspace
+**Workflows**: Create user (auto-generate password), reset password, add user to workspace, manage workspace roles
 
 ## Real-Time Collaboration System
 
@@ -828,6 +767,7 @@ Volumes:
 
 ---
 
-**Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/system-architecture.md`
-**Lines**: ~590
-**Status**: Updated with Swing SSO auth flow and Admin User Management system
+**Document Location**: `/Users/ngoctran/Documents/Shinhan/plane/docs/system-architecture.md`
+**Last Updated**: 2026-03-04
+**Status**: Final (detailed breaking changes → `/docs/breaking-changes.md`)
+**Related**: See `/docs/breaking-changes.md` for Priority System (v1.2.3) migration guide

@@ -122,7 +122,6 @@ export const ANALYTICS_PRIORITY_OPTIONS = [
   { key: "high", label: "High" },
   { key: "medium", label: "Medium" },
   { key: "low", label: "Low" },
-  { key: "none", label: "None" },
 ];
 
 // Hardcoded state group filter values

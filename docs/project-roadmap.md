@@ -1,6 +1,6 @@
 # Project Roadmap & Status
 
-**Last Updated**: 2026-03-02 (Swing SSO & Admin User Management features completed)
+**Last Updated**: 2026-03-04 (Remove None Priority feature completed)
 **Current Version**: 1.2.3
 **Next Release Target**: Q2 2026
 
@@ -75,6 +75,13 @@
   - ✅ Dialogs: Workspace assignment, password reset
   - ✅ Integration: MobX store, API service, frontend components
   - ✅ Documentation: Updated codebase-summary, system-architecture
+- ✅ Remove None Priority Feature (Mar 2026)
+  - ✅ Simplified priority system from 5 levels to 4 (urgent, high, medium, low)
+  - ✅ Set "medium" as new default priority for all issues and drafts
+  - ✅ Created Django data migration (0131) for none→medium conversion
+  - ✅ API returns 400 for priority=none filter requests (breaking change)
+  - ✅ Full-stack implementation (backend models, serializers, API views, frontend UI)
+  - ✅ Documentation: Changelog, architecture updates, breaking change notes
 
 ## Planned Roadmap (2026)
 

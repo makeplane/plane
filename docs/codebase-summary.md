@@ -202,11 +202,6 @@ plane.so/
   - Indexes on `(issue, logged_by)` and `(project, logged_at)` for performance
   - Related name: `issue.issue_worklogs`
 
-- **Issue.estimate_time Field** (`plane/db/models/issue.py`)
-  - New PositiveIntegerField on Issue model
-  - Stores time estimate in minutes
-  - Nullable field for optional usage
-
 - **Project.is_time_tracking_enabled Flag** (`plane/db/models/project.py`)
   - Boolean field defaulting to `True`
   - Controls worklog feature availability per project
@@ -520,6 +515,39 @@ apps/api/
 
 ---
 
-**Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/codebase-summary.md`
-**Lines**: ~530
-**Status**: Updated with Swing SSO and Admin User Management features
+### Priority System (v1.2.3)
+
+**Backend Models** (`plane/db/models/`):
+
+- **Issue.PRIORITY_CHOICES**: `(urgent, high, medium, low)` - 4 levels (removed "none")
+- **Default**: `priority="medium"` in Issue, IssueVersion, DraftIssue models
+- **Migration 0131**: `migrate_none_priority_to_medium.py` - Updates all existing `priority="none"` → `"medium"` in Issue, IssueVersion, DraftIssue tables
+
+**Backend Utilities** (`plane/utils/`):
+
+- `order_queryset.py`: `PRIORITY_ORDER = ["urgent", "high", "medium", "low"]`
+- `grouper.py`: Priority grouping returns 4 levels
+- `analytics_plot.py`: Priority ordering excludes "none"
+- `filters/converters.py`: `DEFAULT_VALID_CHOICES["priority"]` = 4 levels only
+- Requests filtering by `priority=none` return HTTP 400
+
+**Frontend Types** (`packages/types/`):
+
+- **TIssuePriorities**: Still includes "none" for type safety (edge case backward compatibility)
+- **PriorityIcon**: Component continues supporting "none" (won't be called post-migration)
+
+**Frontend Constants** (`packages/constants/`):
+
+- `PRIORITY_OPTIONS = ["urgent", "high", "medium", "low"]` - 4 options, no "none"
+- Priority dropdown selectors removed "none" option
+
+**Data Migration**:
+- Migration command: `python manage.py migrate db` (runs 0131 automatically)
+- All database "none" values converted to "medium" in one atomic transaction
+- Irreversible migration (no reverse path)
+
+---
+
+**Document Location**: `/Users/ngoctran/Documents/Shinhan/plane/docs/codebase-summary.md`
+**Lines**: ~560
+**Status**: Updated with Priority System simplification and migration details

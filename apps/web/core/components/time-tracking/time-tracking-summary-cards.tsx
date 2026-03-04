@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  *
- * Three KPI summary cards: total logged, total estimated, variance.
+ * KPI summary card: total logged.
  */
 
 import type { FC } from "react";
@@ -27,27 +27,8 @@ const KpiCard: FC<TKpiCardProps> = ({ label, value, valueClassName = "text-prima
   </div>
 );
 
-export const TimeTrackingSummaryCards: FC<TTimeTrackingSummaryCardsProps> = ({ summary }) => {
-  // Sum estimate_time across all issues (null treated as 0)
-  const totalEstimatedMinutes = summary.by_issue.reduce((sum, issue) => sum + (issue.estimate_time ?? 0), 0);
-
-  const variance = summary.total_duration_minutes - totalEstimatedMinutes;
-  const varianceDisplay =
-    variance === 0 ? "0m" : `${variance > 0 ? "+" : ""}${formatMinutesToDisplay(Math.abs(variance))}`;
-  const varianceClass = variance > 0 ? "text-red-500" : variance < 0 ? "text-green-500" : "text-primary";
-
-  return (
-    <div className="flex gap-4 flex-wrap">
-      <KpiCard label="Total Logged" value={formatMinutesToDisplay(summary.total_duration_minutes)} />
-      <KpiCard
-        label="Total Estimated"
-        value={totalEstimatedMinutes > 0 ? formatMinutesToDisplay(totalEstimatedMinutes) : "—"}
-      />
-      <KpiCard
-        label="Variance"
-        value={totalEstimatedMinutes > 0 ? varianceDisplay : "—"}
-        valueClassName={totalEstimatedMinutes > 0 ? varianceClass : "text-tertiary"}
-      />
-    </div>
-  );
-};
+export const TimeTrackingSummaryCards: FC<TTimeTrackingSummaryCardsProps> = ({ summary }) => (
+  <div className="flex gap-4 flex-wrap">
+    <KpiCard label="Total Logged" value={formatMinutesToDisplay(summary.total_duration_minutes)} />
+  </div>
+);

@@ -36,7 +36,6 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
-import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
 import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
 import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
@@ -123,7 +122,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             buttonVariant="transparent-with-text"
             className="w-full h-7.5 grow rounded-sm"
             buttonContainerClassName="w-full text-left h-7.5"
-            buttonClassName={`text-body-xs-medium whitespace-nowrap [&_svg]:size-3.5 ${!issue?.priority || issue?.priority === "none" ? "text-placeholder" : ""}`}
+            buttonClassName={`text-body-xs-medium whitespace-nowrap [&_svg]:size-3.5 ${!issue?.priority ? "text-placeholder" : ""}`}
           />
         </SidebarPropertyListItem>
 
@@ -260,14 +259,6 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           disabled={disabled}
         />
 
-        <WorkItemAdditionalSidebarProperties
-          workItemId={issue.id}
-          workItemTypeId={issue.type_id}
-          projectId={projectId}
-          workspaceSlug={workspaceSlug}
-          isEditable={!disabled}
-          isPeekView
-        />
       </div>
     </div>
   );

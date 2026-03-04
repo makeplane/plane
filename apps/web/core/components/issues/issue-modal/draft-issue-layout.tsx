@@ -45,7 +45,6 @@ export const DraftIssueLayout = observer(function DraftIssueLayout(props: DraftI
       if (typeof value === "object" && isEmpty(value)) delete sanitizedChanges[issueKey];
       if (Array.isArray(value) && value.length === 0) delete sanitizedChanges[issueKey];
       if (issueKey === "project_id") delete sanitizedChanges.project_id;
-      if (issueKey === "priority" && value && value === "none") delete sanitizedChanges.priority;
       if (
         issueKey === "description_html" &&
         changesMade?.description_html &&
