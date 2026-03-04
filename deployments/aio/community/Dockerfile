@@ -55,11 +55,13 @@ COPY dist/plane.env /app/plane.env
 COPY supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
 RUN mkdir -p /app/logs/access && \
+    mkdir -p /app/monitor && \
+    mkdir -p /app/email/tls && \
     mkdir -p /app/logs/error && \
     mkdir -p /app/data && \
     chmod +x /app/start.sh
 
-VOLUME ['/app/data', '/app/logs']
+VOLUME ["/app/data", "/app/logs", "/app/monitor", "/app/email/tls"]
 
 EXPOSE 80 443
 
