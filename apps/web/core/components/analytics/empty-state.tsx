@@ -26,7 +26,7 @@ function AnalyticsEmptyState({ title, description, assetPath, className }: Props
   return (
     <div
       className={cn(
-        "flex h-full w-full items-center justify-center overflow-y-auto rounded-lg border border-subtle px-5 py-10 md:px-20",
+        "flex h-full w-full items-center justify-center overflow-y-auto rounded-lg border border-color-subtle px-5 py-10 md:px-20",
         className
       )}
     >
@@ -41,7 +41,7 @@ function AnalyticsEmptyState({ title, description, assetPath, className }: Props
         )}
         <div className="flex flex-shrink flex-col items-center gap-1.5 text-center">
           <h3 className={cn("text-18 font-semibold")}>{title}</h3>
-          {description && <p className="text-13 text-tertiary max-w-[350px]">{description}</p>}
+          {description && <p className="text-13 text-color-tertiary max-w-[350px]">{description}</p>}
         </div>
       </div>
     </div>

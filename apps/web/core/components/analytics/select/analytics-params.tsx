@@ -71,7 +71,7 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
               label={
                 <div className="flex items-center gap-2">
                   <CalendarLayoutIcon className="h-3 w-3" />
-                  <span className={cn("text-secondary", value && "text-primary")}>
+                  <span className={cn("text-color-secondary", value && "text-color-primary")}>
                     {xAxisOptions.find((v) => v.value === value)?.label || "Add Property"}
                   </span>
                 </div>
@@ -92,7 +92,7 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
               label={
                 <div className="flex items-center gap-2">
                   <SlidersHorizontal className="h-3 w-3" />
-                  <span className={cn("text-secondary", value && "text-primary")}>
+                  <span className={cn("text-color-secondary", value && "text-color-primary")}>
                     {groupByOptions.find((v) => v.value === value)?.label || "Add Property"}
                   </span>
                 </div>
