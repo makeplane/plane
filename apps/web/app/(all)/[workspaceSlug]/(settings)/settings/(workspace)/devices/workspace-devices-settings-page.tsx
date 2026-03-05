@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
@@ -161,10 +162,18 @@ const WorkspaceDevicesSettingsPage = observer(() => {
       closeFormModal();
       await loadDevices();
     } catch (err) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: getErrorMessage(err, formMode === "edit" ? "Unable to update device." : "Unable to create device."),
-      });
+      if (formMode === "edit") {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: getErrorMessage(err, "Unable to update device."),
+        });
+      } else {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Device is not registered.",
+          message: getErrorMessage(err, "Unable to register device."),
+        });
+      }
     } finally {
       setIsMutating(false);
     }
@@ -260,15 +269,15 @@ const WorkspaceDevicesSettingsPage = observer(() => {
           title="Devices"
           description="Manage workspace-level devices access and configuration from this tab."
           customButton={
-            <button
-              type="button"
-              className="inline-flex items-center gap-1 text-sm font-medium text-custom-primary-100 transition-colors hover:text-custom-primary-200 disabled:cursor-not-allowed disabled:text-custom-text-400"
+            <Button
+              variant="primary"
+              size="sm"
+              prependIcon={<Plus className="h-4 w-4" />}
               onClick={openCreateModal}
               disabled={isFormOptionsLoading || isMutating}
             >
-              <Plus className="h-4 w-4" />
-              Add Device
-            </button>
+              Register Device
+            </Button>
           }
         />
 

@@ -19,7 +19,16 @@ type TFormErrors = Partial<Record<keyof TDeviceFormValues, string>>;
 const validateForm = (values: TDeviceFormValues): TFormErrors => {
   const errors: TFormErrors = {};
 
-  if (values.pin.trim().length > 0 && values.pin.trim().length !== 6) errors.pin = "PIN must be 6 characters";
+  if (!values.appName.trim()) errors.appName = "Application Name is required";
+  if (!values.deviceName.trim()) errors.deviceName = "Device Name is required";
+  if (!values.deviceType.trim()) errors.deviceType = "Device type is required";
+
+  const pin = values.pin.trim();
+  if (!pin) {
+    errors.pin = "PIN is required";
+  } else if (!/^\d{6}$/.test(pin)) {
+    errors.pin = "PIN must be a 6-digit number";
+  }
 
   return errors;
 };
@@ -45,7 +54,6 @@ export const DeviceFormModal = ({
 
   const formErrors = useMemo(() => validateForm(formValues), [formValues]);
   const hasErrors = Object.keys(formErrors).length > 0;
-  const selectedUserLabel = options.users.find((user) => user.id === formValues.userId)?.label ?? "Select user";
 
   const handleFieldChange = <K extends keyof TDeviceFormValues>(field: K, value: TDeviceFormValues[K]) => {
     setFormValues((prev) => ({
