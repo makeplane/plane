@@ -196,7 +196,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
   );
 
   return (
-    <div className="flex flex-col gap-12 ">
+    <div className="flex flex-col gap-12">
       {priorityChartLoading ? (
         <ChartLoader />
       ) : parsedData?.data && parsedData.data.length > 0 ? (

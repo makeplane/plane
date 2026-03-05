@@ -15,11 +15,12 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
 // ui
 import { CustomSelect, Input } from "@plane/ui";
+import { validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -126,8 +127,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
               name="name"
               rules={{
                 required: t("common.errors.required"),
-                validate: (value) =>
-                  /^[\w\s-]*$/.test(value) || t("workspace_creation.errors.validation.name_alphanumeric"),
+                validate: (value) => validateWorkspaceName(value, true),
                 maxLength: {
                   value: 80,
                   message: t("workspace_creation.errors.validation.name_length"),
@@ -160,8 +160,8 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
             {t("workspace_creation.form.url.label")}
             <span className="ml-0.5 text-danger-primary">*</span>
           </label>
-          <div className="flex w-full items-center rounded-md border border-subtle px-3 bg-layer-2">
-            <span className="whitespace-nowrap text-12 text-secondary">{window && window.location.host}/</span>
+          <div className="flex w-full items-center rounded-md border border-subtle bg-layer-2 px-3">
+            <span className="text-12 whitespace-nowrap text-secondary">{window && window.location.host}/</span>
             <Controller
               control={control}
               name="slug"
@@ -178,7 +178,8 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
                   type="text"
                   value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                   onChange={(e) => {
-                    if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
+                    const validation = validateSlug(e.target.value);
+                    if (validation === true) setInvalidSlug(false);
                     else setInvalidSlug(true);
                     onChange(e.target.value.toLowerCase());
                   }}

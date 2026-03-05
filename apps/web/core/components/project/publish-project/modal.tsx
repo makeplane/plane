@@ -202,22 +202,22 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
             <Loader.Item height="30px" />
           </Loader>
         ) : (
-          <div className="px-5 space-y-4">
+          <div className="space-y-4 px-5">
             {isProjectPublished && projectPublishSettings && (
               <>
-                <div className="border border-strong rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2 rounded-md border border-strong py-1.5 pr-1 pl-4">
                   <a
                     href={publishLink}
-                    className="text-13 text-secondary truncate"
+                    className="truncate text-13 text-secondary"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     {publishLink}
                   </a>
-                  <div className="flex-shrink-0 flex items-center gap-1">
+                  <div className="flex flex-shrink-0 items-center gap-1">
                     <a
                       href={publishLink}
-                      className="size-8 grid place-items-center bg-layer-3 hover:bg-layer-3-hover rounded-sm"
+                      className="grid size-8 place-items-center rounded-sm bg-layer-3 hover:bg-layer-3-hover"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -225,17 +225,17 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                     </a>
                     <button
                       type="button"
-                      className="h-8 bg-layer-3 hover:bg-layer-3-hover rounded-sm text-11 font-medium py-2 px-3"
+                      className="h-8 rounded-sm bg-layer-3 px-3 py-2 text-11 font-medium hover:bg-layer-3-hover"
                       onClick={handleCopyLink}
                     >
                       Copy link
                     </button>
                   </div>
                 </div>
-                <p className="text-13 font-medium text-accent-primary flex items-center gap-1 mt-3">
-                  <span className="relative grid place-items-center size-2.5">
-                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-accent-primary opacity-75" />
-                    <span className="relative inline-flex rounded-full size-1.5 bg-accent-primary" />
+                <p className="mt-3 flex items-center gap-1 text-13 font-medium text-accent-primary">
+                  <span className="relative grid size-2.5 place-items-center">
+                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent-primary opacity-75" />
+                    <span className="relative inline-flex size-1.5 rounded-full bg-accent-primary" />
                   </span>
                   This project is now live on web
                 </p>
@@ -312,7 +312,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
         )}
 
         {/* modal handlers */}
-        <div className="relative flex items-center justify-between border-t border-subtle px-5 py-4 mt-4">
+        <div className="relative mt-4 flex items-center justify-between border-t border-subtle px-5 py-4">
           <div className="flex items-center gap-1 text-13 text-placeholder">
             <GlobeIcon className="size-3.5" />
             <div className="text-13">Anyone with the link can access</div>

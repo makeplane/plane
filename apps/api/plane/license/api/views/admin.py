@@ -191,8 +191,8 @@ class InstanceAdminSignUpEndpoint(View):
             results = zxcvbn(password)
             if results["score"] < 3:
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_ADMIN_PASSWORD"],
-                    error_message="INVALID_ADMIN_PASSWORD",
+                    error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                    error_message="PASSWORD_TOO_WEAK",
                     payload={
                         "email": email,
                         "first_name": first_name,

@@ -51,26 +51,26 @@ export function NameColumn(props: NameProps) {
   return (
     <Disclosure>
       {() => (
-        <div className="relative group">
-          <div className="flex items-center gap-x-4 gap-y-2 w-72 justify-between">
-            <div className="flex items-center gap-x-2 gap-y-2 flex-1">
+        <div className="group relative">
+          <div className="flex w-72 items-center justify-between gap-x-4 gap-y-2">
+            <div className="flex flex-1 items-center gap-x-2 gap-y-2">
               {isSuspended ? (
-                <div className="bg-layer-1 rounded-full p-0.5">
-                  <SuspendedUserIcon className="h-4 w-4 text-placeholder" />
+                <div className="rounded-full bg-layer-1">
+                  <SuspendedUserIcon className="size-6 text-placeholder" />
                 </div>
               ) : avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex h-6 w-6 items-center justify-center rounded-full capitalize text-on-color">
+                  <span className="relative flex size-6 items-center justify-center rounded-full text-on-color capitalize">
                     <img
                       src={getFileURL(avatar_url)}
-                      className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                      className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
                       alt={display_name || email}
                     />
                   </span>
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex h-4 w-4 text-11 items-center justify-center rounded-full  capitalize text-tertiary bg-layer-3">
+                  <span className="relative flex size-6 items-center justify-center rounded-full bg-layer-3 text-11 text-tertiary capitalize">
                     {(email ?? display_name ?? "?")[0]}
                   </span>
                 </Link>
@@ -90,7 +90,7 @@ export function NameColumn(props: NameProps) {
                   <div
                     role="button"
                     tabIndex={0}
-                    className="flex items-center gap-x-3 cursor-pointer"
+                    className="flex cursor-pointer items-center gap-x-3"
                     onClick={() => setRemoveMemberModal(rowData)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
@@ -136,13 +136,13 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
   return (
     <>
       {isSuspended ? (
-        <div className="w-32 flex ">
+        <div className="flex w-32">
           <Pill variant={EPillVariant.DEFAULT} size={EPillSize.SM} className="border-none">
             Suspended
           </Pill>
         </div>
       ) : isRoleNonEditable ? (
-        <div className="w-32 flex ">
+        <div className="flex w-32">
           <span>{ROLE[rowData.role]}</span>
         </div>
       ) : (
@@ -171,12 +171,12 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
                 }
               }}
               label={
-                <div className="flex ">
+                <div className="flex">
                   <span>{ROLE[rowData.role]}</span>
                 </div>
               }
               buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-danger-strong" : "border-none"}`}
-              className="rounded-md p-0 w-32"
+              className="w-32 rounded-md p-0"
               input
             >
               {Object.keys(ROLE).map((item) => (

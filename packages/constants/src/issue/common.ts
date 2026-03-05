@@ -176,10 +176,6 @@ export const ISSUE_DISPLAY_PROPERTIES: {
     titleTranslationKey: "issue.display.properties.id",
   },
   {
-    key: "issue_type",
-    titleTranslationKey: "issue.display.properties.issue_type",
-  },
-  {
     key: "assignee",
     titleTranslationKey: "common.assignee",
   },

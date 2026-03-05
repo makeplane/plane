@@ -23,6 +23,7 @@ export default {
     favorites: "Favoritos",
     pro: "Pro",
     upgrade: "Upgrade",
+    stickies: "Anotações",
   },
   auth: {
     common: {
@@ -414,7 +415,7 @@ export default {
   docs: "Documentos",
   full_changelog: "Changelog completo",
   support: "Suporte",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Desenvolvido por Plane Pages",
   please_select_at_least_one_invitation: "Selecione pelo menos um convite.",
   please_select_at_least_one_invitation_description:

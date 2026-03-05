@@ -23,6 +23,7 @@ export default {
     favorites: "Favoriler",
     pro: "Pro",
     upgrade: "Yükselt",
+    stickies: "Yapışkan notlar",
   },
   auth: {
     common: {
@@ -408,7 +409,7 @@ export default {
   docs: "Dokümanlar",
   full_changelog: "Tam Değişiklik Kaydı",
   support: "Destek",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Plane Pages tarafından desteklenmektedir",
   please_select_at_least_one_invitation: "Lütfen en az bir davet seçin.",
   please_select_at_least_one_invitation_description: "Çalışma alanına katılmak için lütfen en az bir davet seçin.",

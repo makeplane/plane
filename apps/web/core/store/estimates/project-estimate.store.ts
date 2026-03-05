@@ -10,7 +10,7 @@ import { computedFn } from "mobx-utils";
 // types
 import type { IEstimate as IEstimateType, IEstimateFormData, TEstimateSystemKeys } from "@plane/types";
 // plane web services
-import estimateService from "@/plane-web/services/project/estimate.service";
+import estimateService from "@/services/estimate.service";
 // plane web store
 import type { IEstimate } from "@/plane-web/store/estimates/estimate";
 import { Estimate } from "@/plane-web/store/estimates/estimate";

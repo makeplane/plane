@@ -18,6 +18,10 @@ from typing import Any, Dict, List, Union
 from openpyxl import Workbook, load_workbook
 
 
+# Module imports
+from plane.utils.csv_utils import sanitize_csv_row, sanitize_csv_value
+
+
 class BaseFormatter(ABC):
     @abstractmethod
     def encode(self, data: List[Dict]) -> Union[str, bytes]:
@@ -128,11 +132,12 @@ class CSVFormatter(BaseFormatter):
 
             # Write data rows in the same field order
             for row in data:
-                writer.writerow([row.get(key, "") for key in fieldnames])
+                writer.writerow(sanitize_csv_row([row.get(key, "") for key in fieldnames]))
         else:
             writer = csv.DictWriter(output, fieldnames=fieldnames, delimiter=self.delimiter)
             writer.writeheader()
-            writer.writerows(data)
+            for row in data:
+                writer.writerow({k: sanitize_csv_value(row.get(k, "")) for k in fieldnames})
 
         return output.getvalue()
 

@@ -96,7 +96,8 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
         }
       }
     },
-    issueId
+    issueId,
+    ["main-sidebar"]
   );
 
   const handleKeyDown = () => {
@@ -121,11 +122,11 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
   const peekOverviewIssueClassName = cn(
     !embedIssue
       ? "absolute z-[25] flex flex-col overflow-hidden rounded-sm border border-subtle bg-surface-1 transition-all duration-300"
-      : `w-full h-full`,
+      : `h-full w-full`,
     !embedIssue && {
-      "top-0 bottom-0 right-0 w-full md:w-[50%] border-0 border-l": peekMode === "side-peek",
-      "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
-      "inset-0 m-4 absolute": peekMode === "full-screen",
+      "top-0 right-0 bottom-0 w-full border-0 border-l md:w-[50%]": peekMode === "side-peek",
+      "top-[8.33%] left-[8.33%] size-5/6": peekMode === "modal",
+      "absolute inset-0 m-4": peekMode === "full-screen",
     }
   );
 
@@ -172,9 +173,9 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                 embedIssue={embedIssue}
               />
               {/* content */}
-              <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
+              <div className="vertical-scrollbar relative scrollbar-md h-full w-full overflow-hidden overflow-y-auto">
                 {["side-peek", "modal"].includes(peekMode) ? (
-                  <div className="relative flex flex-col gap-3 px-8 py-5 space-y-3">
+                  <div className="relative flex flex-col gap-3 space-y-3 px-8 py-5">
                     <PeekOverviewIssueDetails
                       editorRef={editorRef}
                       workspaceSlug={workspaceSlug}
@@ -247,7 +248,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                       </div>
                     </div>
                     <div
-                      className={`h-full !w-[400px] flex-shrink-0 border-l border-subtle p-4 py-5 overflow-hidden vertical-scrollbar scrollbar-sm ${
+                      className={`vertical-scrollbar scrollbar-sm h-full !w-[400px] flex-shrink-0 overflow-hidden border-l border-subtle p-4 py-5 ${
                         is_archived ? "pointer-events-none" : ""
                       }`}
                     >

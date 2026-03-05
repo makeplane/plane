@@ -9,6 +9,9 @@ from typing import Any, Dict, List, Type
 
 from openpyxl import Workbook
 
+# Module imports
+from plane.utils.csv_utils import sanitize_csv_row
+
 
 class BaseFormatter:
     """Base class for export formatters."""
@@ -84,7 +87,7 @@ class CSVFormatter(BaseFormatter):
         buf = io.StringIO()
         writer = csv.writer(buf, delimiter=",", quoting=csv.QUOTE_ALL)
         for row in data:
-            writer.writerow(row)
+            writer.writerow(sanitize_csv_row(row))
         buf.seek(0)
         return buf.getvalue()
 

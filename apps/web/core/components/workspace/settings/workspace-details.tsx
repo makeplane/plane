@@ -15,7 +15,7 @@ import { EditIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
 import { CustomSelect, Input } from "@plane/ui";
-import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
+import { cn, copyUrlToClipboard, getFileURL, validateWorkspaceName } from "@plane/utils";
 // components
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 import { TimezoneSelect } from "@/components/global/timezone-select";
@@ -145,28 +145,28 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
           />
         )}
       />
-      <div className={cn("w-full flex flex-col gap-y-7", { "opacity-60": !isAdmin })}>
+      <div className={cn("flex w-full flex-col gap-y-7", { "opacity-60": !isAdmin })}>
         <div className="flex items-center gap-5">
-          <div className="shrink-0 flex flex-col gap-1">
+          <div className="flex shrink-0 flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
               {workspaceLogo && workspaceLogo !== "" ? (
                 <div className="relative flex size-14">
                   <img
                     src={getFileURL(workspaceLogo)}
-                    className="absolute left-0 top-0 size-full rounded-md object-cover"
+                    className="absolute top-0 left-0 size-full rounded-md object-cover"
                     alt="Workspace Logo"
                   />
                 </div>
               ) : (
-                <div className="relative size-14 text-24 grid place-items-center rounded-md bg-accent-primary uppercase text-on-color">
+                <div className="relative grid size-14 place-items-center rounded-md bg-accent-primary text-24 text-on-color uppercase">
                   {currentWorkspace?.name?.charAt(0) ?? "N"}
                 </div>
               )}
             </button>
           </div>
           <div className="flex flex-col gap-1">
-            <div className="text-h5-semibold leading-6 mb:-my-5">{watch("name")}</div>
-            <button type="button" onClick={handleCopyUrl} className="text-body-xs-regular tracking-tight text-left">{`${
+            <div className="mb:-my-5 text-h5-semibold leading-6">{watch("name")}</div>
+            <button type="button" onClick={handleCopyUrl} className="text-left text-body-xs-regular tracking-tight">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
             {isAdmin && (
@@ -195,11 +195,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 control={control}
                 name="name"
                 rules={{
-                  required: t("workspace_settings.settings.general.errors.name.required"),
-                  maxLength: {
-                    value: 80,
-                    message: t("workspace_settings.settings.general.errors.name.max_length"),
-                  },
+                  validate: (value) => validateWorkspaceName(value, true),
                 }}
                 render={({ field: { value, onChange, ref } }) => (
                   <Input
@@ -216,6 +212,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   />
                 )}
               />
+              {errors.name && <p className="text-caption-sm-regular text-danger-primary">{errors.name.message}</p>}
             </div>
             <div className="flex flex-col gap-2">
               <h4 className="text-body-sm-medium text-tertiary">

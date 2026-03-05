@@ -168,7 +168,7 @@ export function EditorContainer(props: Props) {
         onClick={handleContainerClick}
         onMouseLeave={handleContainerMouseLeave}
         className={cn(
-          `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
+          `editor-container relative cursor-text line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
           {
             "active-editor": editor?.isFocused && editor?.isEditable,
           },

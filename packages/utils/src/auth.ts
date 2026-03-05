@@ -99,6 +99,10 @@ const errorCodeMessages: {
     title: `Invalid password`,
     message: () => `Invalid password. Please try again.`,
   },
+  [EAuthErrorCodes.PASSWORD_TOO_WEAK]: {
+    title: `Password too weak`,
+    message: () => `Please use a stronger password.`,
+  },
   [EAuthErrorCodes.SMTP_NOT_CONFIGURED]: {
     title: `SMTP not configured`,
     message: () => `SMTP not configured. Please contact your administrator.`,

@@ -138,12 +138,12 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         optionsOrder={[
           "full-screen",
           "sticky-toolbar",
+          "copy-markdown",
+          "version-history",
           "make-a-copy",
-          "toggle-access",
           "archive-restore",
           "delete",
-          "version-history",
-          "copy-markdown",
+          "toggle-access",
           "export",
         ]}
         page={page}

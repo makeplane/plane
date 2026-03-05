@@ -79,7 +79,7 @@ function ProjectCommonAttributes(props: Props) {
               onChange={handleNameChange(onChange)}
               hasError={Boolean(errors.name)}
               placeholder={t("project_name")}
-              className="w-full focus:border-blue-400"
+              className="focus:border-blue-400 w-full"
               tabIndex={getIndex("name")}
             />
           )}
@@ -113,7 +113,7 @@ function ProjectCommonAttributes(props: Props) {
               onChange={handleIdentifierChange(onChange)}
               hasError={Boolean(errors.identifier)}
               placeholder={t("project_id")}
-              className={cn("w-full text-11 focus:border-blue-400 pr-7", {
+              className={cn("focus:border-blue-400 w-full pr-7 text-11", {
                 uppercase: value,
               })}
               tabIndex={getIndex("identifier")}
@@ -126,7 +126,7 @@ function ProjectCommonAttributes(props: Props) {
           className="text-13"
           position="right-start"
         >
-          <InfoIcon className="absolute right-2 top-2.5 h-3 w-3 text-placeholder" />
+          <InfoIcon className="absolute top-2.5 right-2 h-3 w-3 text-placeholder" />
         </Tooltip>
         <span className="text-11 text-danger-primary">{errors?.identifier?.message}</span>
       </div>
@@ -144,7 +144,7 @@ function ProjectCommonAttributes(props: Props) {
                 onChange(e);
                 handleFormOnChange?.();
               }}
-              className="!h-24 text-13 focus:border-blue-400"
+              className="focus:border-blue-400 !h-24 text-13"
               hasError={Boolean(errors?.description)}
               tabIndex={getIndex("description")}
             />

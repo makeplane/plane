@@ -24,9 +24,10 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+// layouts
+import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
-import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 import { WorkItemDetailRoot } from "@/plane-web/components/browse/workItem-detail";
 
 import type { Route } from "./+types/page";

@@ -23,6 +23,7 @@ export default {
     favorites: "Favorite",
     pro: "Pro",
     upgrade: "Treci la versiunea superioară",
+    stickies: "Notițe",
   },
   auth: {
     common: {
@@ -411,7 +412,7 @@ export default {
   docs: "Documentație",
   full_changelog: "Jurnal complet al modificărilor",
   support: "Suport",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Oferit de Plane Documentație",
   please_select_at_least_one_invitation: "Te rugăm să selectezi cel puțin o invitație.",
   please_select_at_least_one_invitation_description:

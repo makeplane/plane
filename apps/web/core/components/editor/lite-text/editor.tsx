@@ -23,7 +23,7 @@ import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web service
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 import { LiteToolbar } from "./lite-toolbar";
 const workspaceService = new WorkspaceService();
 
@@ -120,7 +120,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
   return (
     <div
       className={cn(
-        "relative border border-subtle rounded-sm",
+        "relative rounded-sm border border-subtle",
         {
           "p-3": editable && !isLiteVariant,
         },
@@ -132,7 +132,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
       {/* Wrapper for lite toolbar layout */}
       <div className={cn(isLiteVariant && editable ? "flex items-end gap-1" : "")}>
         {/* Main Editor - always rendered once */}
-        <div className={cn(isLiteVariant && editable ? "flex-1 min-w-0" : "")}>
+        <div className={cn(isLiteVariant && editable ? "min-w-0 flex-1" : "")}>
           <LiteTextEditorWithRef
             ref={ref}
             disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
@@ -195,8 +195,8 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
       {isFullVariant && editable && (
         <div
           className={cn(
-            "transition-all duration-300 ease-out origin-top overflow-hidden",
-            isFocused ? "max-h-[200px] opacity-100 scale-y-100 mt-3" : "max-h-0 opacity-0 scale-y-0 invisible"
+            "origin-top overflow-hidden transition-all duration-300 ease-out",
+            isFocused ? "mt-3 max-h-[200px] scale-y-100 opacity-100" : "invisible max-h-0 scale-y-0 opacity-0"
           )}
         >
           <IssueCommentToolbar

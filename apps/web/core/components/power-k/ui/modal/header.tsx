@@ -43,7 +43,7 @@ export function PowerKModalHeader(props: Props) {
 
       {/* Search Input */}
       <div className="flex items-center gap-2 px-4 py-3">
-        <SearchIcon className="shrink-0 size-4 text-placeholder" />
+        <SearchIcon className="size-4 shrink-0 text-placeholder" />
         <Command.Input
           value={searchTerm}
           onValueChange={onSearchChange}

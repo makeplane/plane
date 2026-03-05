@@ -1,16 +1,17 @@
 {
   "name": "live",
   "version": "1.2.0",
-  "license": "AGPL-3.0",
+  "private": true,
   "description": "A realtime collaborative server powers Plane's rich text editor",
+  "license": "AGPL-3.0",
+  "author": "Plane Software Inc.",
+  "type": "module",
   "main": "./dist/start.mjs",
   "module": "./dist/start.mjs",
   "exports": {
     ".": "./dist/start.mjs",
     "./package.json": "./package.json"
   },
-  "private": true,
-  "type": "module",
   "scripts": {
     "build": "tsc --noEmit && tsdown",
     "dev": "tsdown --watch --onSuccess \"node --env-file=.env .\"",
@@ -18,14 +19,13 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=160",
+    "check:lint": "oxlint --max-warnings=119 .",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier . --cache --check",
-    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=160",
-    "fix:format": "prettier . --cache --write",
+    "check:format": "oxfmt --check .",
+    "fix:lint": "oxlint --fix .",
+    "fix:format": "oxfmt .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
-  "author": "Plane Software Inc.",
   "dependencies": {
     "@dotenvx/dotenvx": "catalog:",
     "@effect/platform": "^0.94.0",
@@ -42,8 +42,6 @@
     "@plane/types": "workspace:*",
     "@react-pdf/renderer": "^4.3.0",
     "@react-pdf/types": "^2.9.2",
-    "@sentry/node": "catalog:",
-    "@sentry/profiling-node": "catalog:",
     "@tiptap/core": "catalog:",
     "@tiptap/html": "catalog:",
     "axios": "catalog:",

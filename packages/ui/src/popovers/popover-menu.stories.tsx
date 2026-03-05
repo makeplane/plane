@@ -31,7 +31,7 @@ const meta: Meta<typeof PopoverMenu<TPopoverMenu>> = {
     ],
     keyExtractor: (item, index: number) => `${item.id}-${index}`,
     render: (item: TPopoverMenu) => (
-      <div className="text-13 text-gray-600 hover:text-gray-700 rounded-xs cursor-pointer hover:bg-gray-200 transition-all px-1.5 py-0.5 capitalize">
+      <div className="text-gray-600 hover:text-gray-700 hover:bg-gray-200 cursor-pointer rounded-xs px-1.5 py-0.5 text-13 capitalize transition-all">
         {item.name}
       </div>
     ),

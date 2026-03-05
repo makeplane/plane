@@ -51,7 +51,7 @@ export function Popover(props: TPopover) {
           ref={popoverButtonRef as Ref<HTMLButtonElement>}
           className={cn(
             {
-              "flex justify-center items-center text-14 h-6 w-6 rounded-sm transition-all bg-surface-2 hover:bg-layer-1":
+              "flex h-6 w-6 items-center justify-center rounded-sm bg-surface-2 text-14 transition-all hover:bg-layer-1":
                 !button,
             },
             buttonClassName
@@ -75,7 +75,7 @@ export function Popover(props: TPopover) {
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
-          className={cn("absolute left-0 top-full z-20 w-screen max-w-xs mt-2", panelClassName)}
+          className={cn("absolute top-full left-0 z-20 mt-2 w-screen max-w-xs", panelClassName)}
         >
           {children}
         </HeadlessReactPopover.Panel>

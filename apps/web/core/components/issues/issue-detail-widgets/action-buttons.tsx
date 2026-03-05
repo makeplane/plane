@@ -35,7 +35,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       {!hideWidgets?.includes("sub-work-items") && (
         <SubIssuesActionButton
           issueId={issueId}

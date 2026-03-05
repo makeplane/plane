@@ -28,9 +28,9 @@ export function CalloutBlockColorSelector(props: Props) {
 
   return (
     <div
-      className={cn("opacity-0 pointer-events-none absolute top-2 right-2 z-10 transition-opacity", {
-        "group-hover/callout-node:opacity-100 group-hover/callout-node:pointer-events-auto": !disabled,
-        "opacity-100 pointer-events-auto": isOpen,
+      className={cn("pointer-events-none absolute top-2 right-2 z-10 opacity-0 transition-opacity", {
+        "group-hover/callout-node:pointer-events-auto group-hover/callout-node:opacity-100": !disabled,
+        "pointer-events-auto opacity-100": isOpen,
       })}
       contentEditable={false}
     >
@@ -42,7 +42,7 @@ export function CalloutBlockColorSelector(props: Props) {
             e.stopPropagation();
           }}
           className={cn(
-            "flex items-center gap-1 h-full whitespace-nowrap py-1 px-2.5 text-13 font-medium text-tertiary hover:bg-layer-1-hover active:bg-layer-1-active rounded-sm transition-colors",
+            "flex h-full items-center gap-1 rounded-sm px-2.5 py-1 text-13 font-medium whitespace-nowrap text-tertiary transition-colors hover:bg-layer-1-hover active:bg-layer-1-active",
             {
               "bg-layer-1": isOpen,
             }
@@ -50,16 +50,16 @@ export function CalloutBlockColorSelector(props: Props) {
           disabled={disabled}
         >
           <span className="text-12">Color</span>
-          <ChevronDownIcon className="flex-shrink-0 size-3" />
+          <ChevronDownIcon className="size-3 flex-shrink-0" />
         </button>
         {isOpen && (
-          <section className="absolute top-full right-0 z-10 mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 shadow-raised-200 animate-in fade-in slide-in-from-top-1">
+          <section className="animate-in fade-in slide-in-from-top-1 absolute top-full right-0 z-10 mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 shadow-raised-200">
             <div className="flex items-center gap-2">
               {COLORS_LIST.map((color) => (
                 <button
                   key={color.key}
                   type="button"
-                  className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
+                  className="size-6 flex-shrink-0 rounded-sm border-[0.5px] border-strong-1 transition-opacity hover:opacity-60"
                   style={{
                     backgroundColor: color.backgroundColor,
                   }}
@@ -68,7 +68,7 @@ export function CalloutBlockColorSelector(props: Props) {
               ))}
               <button
                 type="button"
-                className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1-hover transition-colors"
+                className="grid size-6 flex-shrink-0 place-items-center rounded-sm border-[0.5px] border-strong-1 text-tertiary transition-colors hover:bg-layer-1-hover"
                 onClick={() => handleColorSelect(null)}
               >
                 <Ban className="size-4" />

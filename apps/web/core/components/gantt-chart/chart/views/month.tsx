@@ -30,12 +30,12 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
   const marginLeftDays = getNumberOfDaysBetweenTwoDates(monthsStartDate, weeksStartDate);
 
   return (
-    <div className="absolute top-0 left-0 min-h-full h-max w-max flex">
+    <div className="absolute top-0 left-0 flex h-max min-h-full w-max">
       {currentViewData && (
         <div className="relative flex flex-col outline-[0.25px] outline-subtle-1">
           {/** Header Div */}
           <div
-            className="w-full sticky top-0 z-[5] bg-surface-1 flex-shrink-0"
+            className="sticky top-0 z-[5] w-full flex-shrink-0 bg-surface-1"
             style={{
               height: `${HEADER_HEIGHT}px`,
             }}
@@ -49,14 +49,14 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   style={{ width: `${monthBlock.days * currentViewData?.data.dayWidth}px` }}
                 >
                   <div
-                    className="sticky flex items-center font-regular z-[1] m-1 whitespace-nowrap px-3 py-1 text-14 capitalize bg-surface-1 text-secondary"
+                    className="sticky z-[1] m-1 flex items-center bg-surface-1 px-3 py-1 text-14 font-regular whitespace-nowrap text-secondary capitalize"
                     style={{
                       left: `${SIDEBAR_WIDTH}px`,
                     }}
                   >
                     {monthBlock?.title}
                     {monthBlock.today && (
-                      <span className={cn("rounded-sm ml-2 font-medium bg-accent-primary px-1 text-9 text-on-color")}>
+                      <span className={cn("ml-2 rounded-sm bg-accent-primary px-1 text-9 font-medium text-on-color")}>
                         Current
                       </span>
                     )}
@@ -65,12 +65,12 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
               ))}
             </div>
             {/** Weeks Sub title */}
-            <div className="h-5 w-full flex">
+            <div className="flex h-5 w-full">
               {weeks?.map((weekBlock) => (
                 <div
                   key={`sub-title-${weekBlock.startDate.toString()}-${weekBlock.endDate.toString()}`}
                   className={cn(
-                    "flex flex-shrink-0 py-1 px-2 text-center capitalize justify-between outline-[0.25px] outline-subtle-1",
+                    "flex flex-shrink-0 justify-between px-2 py-1 text-center capitalize outline-[0.25px] outline-subtle-1",
                     {
                       "bg-accent-primary/20": weekBlock.today,
                     }
@@ -92,7 +92,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
             </div>
           </div>
           {/** Week Columns */}
-          <div className="h-full w-full flex-grow flex">
+          <div className="flex h-full w-full flex-grow">
             {weeks?.map((weekBlock) => (
               <div
                 key={`column-${weekBlock.startDate.toString()}-${weekBlock.endDate.toString()}`}

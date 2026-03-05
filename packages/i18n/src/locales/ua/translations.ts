@@ -415,7 +415,7 @@ export default {
   docs: "Документацію",
   full_changelog: "Повний журнал змін",
   support: "Підтримка",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Працює на Plane Pages",
   please_select_at_least_one_invitation: "Виберіть принаймні одне запрошення.",
   please_select_at_least_one_invitation_description:
@@ -1311,7 +1311,8 @@ export default {
         request_button: "Запитати адміністратора інстанції",
       },
       validation: {
-        name_alphanumeric: "Назви робочих просторів можуть містити лише « » (пробіл), «-», «_» і алфанумеричні символи.",
+        name_alphanumeric:
+          "Назви робочих просторів можуть містити лише « » (пробіл), «-», «_» і алфанумеричні символи.",
         name_length: "Назва обмежена 80 символами.",
         url_alphanumeric: "URL може містити лише «-» та алфанумеричні символи.",
         url_length: "URL обмежений 48 символами.",
@@ -2004,8 +2005,7 @@ export default {
     automations: {
       label: "Автоматизація",
       heading: "Автоматизація",
-      description:
-        "Налаштовуйте автоматичні дії, щоб спростити керування проєктом і зменшити ручні операції.",
+      description: "Налаштовуйте автоматичні дії, щоб спростити керування проєктом і зменшити ручні операції.",
       "auto-archive": {
         title: "Автоматично архівувати закриті одиниці",
         description: "Plane архівуватиме завершені або скасовані одиниці.",
@@ -2859,7 +2859,7 @@ export default {
     help_actions: {
       open_keyboard_shortcuts: "Відкрити гарячі клавіші",
       open_plane_documentation: "Відкрити документацію Plane",
-      join_discord: "Приєднатися до Discord",
+      join_forum: "Приєднатися до Forum",
       report_bug: "Повідомити про помилку",
       chat_with_us: "Написати нам",
     },

@@ -20,7 +20,7 @@ export function FavoriteStar(props: Props) {
   const { buttonClassName, iconClassName, onClick, selected } = props;
 
   return (
-    <button type="button" className={cn("h-4 w-4 grid place-items-center", buttonClassName)} onClick={onClick}>
+    <button type="button" className={cn("grid h-4 w-4 place-items-center", buttonClassName)} onClick={onClick}>
       <Star
         className={cn(
           "h-4 w-4 text-tertiary transition-all",

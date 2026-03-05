@@ -15,13 +15,13 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace } from "@plane/types";
 import { Spinner } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
-// plane-web imports
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
-import { WorkspaceService } from "@/plane-web/services";
+// services
+import { WorkspaceService } from "@/services/workspace.service";
 // local components
 import { CommonOnboardingHeader } from "../common";
 
@@ -46,11 +46,12 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   // plane hooks
   const { t } = useTranslation();
   // store hooks
+  const { config } = useInstance();
   const { updateUserProfile } = useUserProfile();
   const { fetchCurrentUserSettings } = useUserSettings();
   const { createWorkspace, fetchWorkspaces } = useWorkspace();
 
-  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
 
   // form info
   const {
@@ -113,7 +114,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
 
   const isButtonDisabled = !isValid || invalidSlug || isSubmitting;
 
-  if (!isWorkspaceCreationEnabled) {
+  if (isWorkspaceCreationDisabled) {
     return (
       <div className="flex flex-col gap-10">
         <span className="text-center text-14 text-tertiary">
@@ -135,7 +136,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
+            className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
             htmlFor="name"
           >
             {t("workspace_creation.form.name.label")}
@@ -145,8 +146,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             name="name"
             rules={{
               required: t("common.errors.required"),
-              validate: (value) =>
-                /^[\w\s-]*$/.test(value) || t("workspace_creation.errors.validation.name_alphanumeric"),
+              validate: (value) => validateWorkspaceName(value, true),
               maxLength: {
                 value: 80,
                 message: t("workspace_creation.errors.validation.name_length"),
@@ -169,7 +169,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   placeholder="Enter workspace name"
                   ref={ref}
                   className={cn(
-                    "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong placeholder:text-placeholder focus:border-transparent transition-all duration-200",
+                    "w-full rounded-md border border-strong bg-surface-1 px-3 py-2 text-secondary transition-all duration-200 placeholder:text-placeholder focus:border-transparent focus:ring-2 focus:ring-accent-strong focus:outline-none",
                     {
                       "border-strong": !errors.name,
                       "border-danger-strong": errors.name,
@@ -185,7 +185,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
         </div>
         <div className="flex flex-col gap-2">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
+            className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
             htmlFor="slug"
           >
             {t("workspace_creation.form.url.label")}
@@ -203,14 +203,14 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             render={({ field: { value, ref, onChange } }) => (
               <div
                 className={cn(
-                  "flex items-center w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong focus:border-transparent transition-all duration-200",
+                  "flex w-full items-center rounded-md border border-strong bg-surface-1 px-3 py-2 text-secondary transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-accent-strong focus:outline-none",
                   {
                     "border-strong": !errors.name,
                     "border-danger-strong": errors.name,
                   }
                 )}
               >
-                <span className={cn("pr-0 text-secondary rounded-md whitespace-nowrap")}>
+                <span className={cn("rounded-md pr-0 whitespace-nowrap text-secondary")}>
                   {window && window.location.host}/
                 </span>
                 <input
@@ -219,14 +219,15 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   type="text"
                   value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                   onChange={(e) => {
-                    if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
+                    const validation = validateSlug(e.target.value);
+                    if (validation === true) setInvalidSlug(false);
                     else setInvalidSlug(true);
                     onChange(e.target.value.toLowerCase());
                   }}
                   ref={ref}
                   placeholder={t("workspace_creation.form.url.placeholder")}
                   className={cn(
-                    "w-full px-3 py-0 pl-0 text-secondary border-none ring-none outline-none rounded-md bg-surface-1 placeholder:text-placeholder"
+                    "ring-none w-full rounded-md border-none bg-surface-1 px-3 py-0 pl-0 text-secondary outline-none placeholder:text-placeholder"
                   )}
                 />
               </div>
@@ -245,7 +246,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
         </div>
         <div className="flex flex-col gap-2">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
+            className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
             htmlFor="organization_size"
           >
             {t("workspace_creation.form.organization_size.label")}
@@ -267,10 +268,10 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                           e.stopPropagation();
                           onChange(size);
                         }}
-                        className={`text-13 px-3 py-2 rounded-lg border transition-all duration-200 flex gap-1 items-center justify-between ${
+                        className={`flex items-center justify-between gap-1 rounded-lg border px-3 py-2 text-13 transition-all duration-200 ${
                           isSelected
                             ? "border-subtle bg-layer-1 text-secondary"
-                            : "border-subtle hover:border-strong text-tertiary"
+                            : "border-subtle text-tertiary hover:border-strong"
                         }`}
                       >
                         <CircleCheck className={cn("size-4 text-placeholder", isSelected && "text-secondary")} />

@@ -114,7 +114,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
       <AuthFormHeader title="Set password" description="Create a new password." />
       <form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
         <div className="space-y-1">
-          <label className="text-13 text-tertiary font-medium" htmlFor="email">
+          <label className="text-13 font-medium text-tertiary" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-surface-1">
@@ -125,14 +125,14 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               value={user?.email}
               //hasError={Boolean(errors.email)}
               placeholder={t("auth.common.email.placeholder")}
-              className="h-10 w-full border border-strong !bg-surface-1 pr-12 text-placeholder cursor-not-allowed"
-              autoComplete="on"
+              className="h-10 w-full cursor-not-allowed border border-strong !bg-surface-1 pr-12 text-placeholder"
+              autoComplete="off"
               disabled
             />
           </div>
         </div>
         <div className="space-y-1">
-          <label className="text-13 text-tertiary font-medium" htmlFor="password">
+          <label className="text-13 font-medium text-tertiary" htmlFor="password">
             {t("auth.common.password.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-surface-1">
@@ -147,7 +147,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               minLength={8}
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
-              autoComplete="on"
+              autoComplete="new-password"
               autoFocus
             />
             {showPassword.password ? (
@@ -165,7 +165,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
           <PasswordStrengthIndicator password={passwordFormData.password} isFocused={isPasswordInputFocused} />
         </div>
         <div className="space-y-1">
-          <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
+          <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
             {t("auth.common.password.confirm_password.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-surface-1">
@@ -178,6 +178,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
+              autoComplete="new-password"
             />
             {showPassword.retypePassword ? (
               <EyeOff

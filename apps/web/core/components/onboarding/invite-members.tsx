@@ -31,7 +31,7 @@ import type { IUser, IWorkspace } from "@plane/types";
 // ui
 import { Input, Spinner } from "@plane/ui";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // components
 import { SwitchAccountDropdown } from "./switch-account-dropdown";
 
@@ -189,7 +189,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                 <Listbox.Button
                   type="button"
                   ref={setReferenceElement}
-                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-13 border-[0.5px] border-strong"
+                  className="flex w-full items-center justify-between gap-1 rounded-md border-[0.5px] border-strong px-2.5 py-2 text-13"
                 >
                   <span
                     className={`text-13 ${
@@ -208,7 +208,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
 
                 <Listbox.Options as="div">
                   <div
-                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-strong bg-surface-1 shadow-sm focus:outline-none"
+                    className="shadow-sm absolute z-10 mt-1 h-fit w-48 space-y-1 rounded-md border border-strong bg-surface-1 p-2 focus:outline-none sm:w-60"
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}
@@ -219,13 +219,13 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                         key={key}
                         value={parseInt(key)}
                         className={({ active, selected }) =>
-                          `cursor-pointer select-none truncate rounded-sm px-1 py-1.5 ${
+                          `cursor-pointer truncate rounded-sm px-1 py-1.5 select-none ${
                             active || selected ? "bg-onboarding-background-400/40" : ""
                           } ${selected ? "text-primary" : "text-secondary"}`
                         }
                       >
                         {({ selected }) => (
-                          <div className="flex items-center text-wrap gap-2 p-1">
+                          <div className="flex items-center gap-2 p-1 text-wrap">
                             <div className="flex flex-col">
                               <div className="text-13 font-medium">{t(value.i18n_title)}</div>
                               <div className="flex text-11 text-tertiary">{t(value.i18n_description)}</div>
@@ -334,26 +334,26 @@ export function InviteMembers(props: Props) {
   }, [fields, append]);
 
   return (
-    <div className="flex w-full h-full">
-      <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
-        <div className="flex flex-col w-full items-center justify-center p-8 mt-6 md:w-4/5 mx-auto">
-          <div className="text-center space-y-1 py-4 mx-auto w-4/5">
+    <div className="flex h-full w-full">
+      <div className="h-full w-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
+        <div className="mx-auto mt-6 flex w-full flex-col items-center justify-center p-8 md:w-4/5">
+          <div className="mx-auto w-4/5 space-y-1 py-4 text-center">
             <h3 className="text-24 font-bold text-primary">Invite your teammates</h3>
             <p className="font-medium text-placeholder">
               Work in plane happens best with your team. Invite them now to use Plane to its potential.
             </p>
           </div>
           <form
-            className="w-full mx-auto mt-2 space-y-4"
+            className="mx-auto mt-2 w-full space-y-4"
             onSubmit={handleSubmit(onSubmit)}
             onKeyDown={(e) => {
               if (e.code === "Enter") e.preventDefault();
             }}
           >
-            <div className="w-full text-13 py-4">
-              <div className="group relative grid grid-cols-10 gap-4 mx-8 py-2">
-                <div className="col-span-6 px-1 text-13 text-secondary font-medium">Email</div>
-                <div className="col-span-4 px-1 text-13 text-secondary font-medium">Role</div>
+            <div className="w-full py-4 text-13">
+              <div className="group relative mx-8 grid grid-cols-10 gap-4 py-2">
+                <div className="col-span-6 px-1 text-13 font-medium text-secondary">Email</div>
+                <div className="col-span-4 px-1 text-13 font-medium text-secondary">Role</div>
               </div>
               <div className="mb-3 space-y-3 sm:space-y-4">
                 {fields.map((field, index) => (
@@ -375,14 +375,14 @@ export function InviteMembers(props: Props) {
               </div>
               <button
                 type="button"
-                className="flex items-center mx-8 gap-1.5 bg-transparent text-13 font-medium text-accent-primary outline-accent-strong"
+                className="mx-8 flex items-center gap-1.5 bg-transparent text-13 font-medium text-accent-primary outline-accent-strong"
                 onClick={appendField}
               >
                 <PlusIcon className="h-4 w-4" strokeWidth={2} />
                 Add another
               </button>
             </div>
-            <div className="flex flex-col mx-auto px-8 sm:px-2 items-center justify-center gap-4 w-full max-w-96">
+            <div className="mx-auto flex w-full max-w-96 flex-col items-center justify-center gap-4 px-8 sm:px-2">
               <Button
                 variant="primary"
                 type="submit"

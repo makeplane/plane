@@ -90,7 +90,7 @@ export const SubWorkItemTitleActions = observer(function SubWorkItemTitleActions
   return (
     // prevent click everywhere
     <div
-      className="flex gap-2 items-center"
+      className="flex items-center gap-2"
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();

@@ -16,11 +16,12 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { CustomSelect, Input, Spinner } from "@plane/ui";
+import { validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
@@ -106,11 +107,11 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
           <Button
             variant="ghost"
             size="xl"
-            className="w-full flex items-center gap-2 text-14 bg-surface-2"
+            className="flex w-full items-center gap-2 bg-surface-2 text-14"
             onClick={handleCurrentViewChange}
           >
             I want to join invited workspaces{" "}
-            <span className="bg-accent-primary/80 h-4 w-4 flex items-center justify-center rounded-xs text-11 font-medium text-on-color">
+            <span className="flex h-4 w-4 items-center justify-center rounded-xs bg-accent-primary/80 text-11 font-medium text-on-color">
               {invitedWorkspaces}
             </span>
           </Button>
@@ -121,14 +122,14 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
           </div>
         </>
       )}
-      <div className="text-center space-y-1 py-4 mx-auto">
+      <div className="mx-auto space-y-1 py-4 text-center">
         <h3 className="text-24 font-bold text-primary">{t("workspace_creation.heading")}</h3>
         <p className="font-medium text-placeholder">{t("workspace_creation.subheading")}</p>
       </div>
-      <form className="w-full mx-auto mt-2 space-y-4" onSubmit={handleSubmit(handleCreateWorkspace)}>
+      <form className="mx-auto mt-2 w-full space-y-4" onSubmit={handleSubmit(handleCreateWorkspace)}>
         <div className="space-y-1">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
+            className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
             htmlFor="name"
           >
             {t("workspace_creation.form.name.label")}
@@ -138,8 +139,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
             name="name"
             rules={{
               required: t("common.errors.required"),
-              validate: (value) =>
-                /^[\w\s-]*$/.test(value) || t("workspace_creation.errors.validation.name_alphanumeric"),
+              validate: (value) => validateWorkspaceName(value, true),
               maxLength: {
                 value: 80,
                 message: t("workspace_creation.errors.validation.name_length"),
@@ -172,7 +172,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
         </div>
         <div className="space-y-1">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
+            className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
             htmlFor="slug"
           >
             {t("workspace_creation.form.url.label")}
@@ -193,14 +193,15 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                   invalidSlug ? "border-danger-strong" : "border-strong"
                 }`}
               >
-                <span className="whitespace-nowrap text-13">{window && window.location.host}/</span>
+                <span className="text-13 whitespace-nowrap">{window && window.location.host}/</span>
                 <Input
                   id="slug"
                   name="slug"
                   type="text"
                   value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                   onChange={(e) => {
-                    if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
+                    const validation = validateSlug(e.target.value);
+                    if (validation === true) setInvalidSlug(false);
                     else setInvalidSlug(true);
                     onChange(e.target.value.toLowerCase());
                   }}
@@ -226,7 +227,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
         <hr className="w-full border-strong" />
         <div className="space-y-1">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
+            className="text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
             htmlFor="organization_size"
           >
             {t("workspace_creation.form.organization_size.label")}

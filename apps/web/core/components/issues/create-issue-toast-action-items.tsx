@@ -61,12 +61,12 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
   };
 
   return (
-    <div className="flex items-center gap-1 text-11 text-secondary -ml-2">
+    <div className="-ml-2 flex items-center gap-1 text-11 text-secondary">
       <a
         href={workItemLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-accent-primary px-2 py-1 hover:bg-surface-2 font-medium rounded-sm"
+        className="rounded-sm px-2 py-1 font-medium text-accent-primary hover:bg-surface-2"
       >
         {`View ${isEpic ? "epic" : "work item"}`}
       </a>
@@ -78,7 +78,7 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
       ) : (
         <>
           <button
-            className="cursor-pointer hidden group-hover:flex px-2 py-1 text-tertiary hover:text-secondary hover:bg-surface-2 rounded-sm"
+            className="hidden cursor-pointer rounded-sm px-2 py-1 text-tertiary group-hover:flex hover:bg-surface-2 hover:text-secondary"
             onClick={copyToClipboard}
           >
             Copy link

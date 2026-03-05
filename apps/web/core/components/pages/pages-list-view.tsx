@@ -34,7 +34,7 @@ export const PagesListView = observer(function PagesListView(props: TPageView) {
 
   // pages loader
   return (
-    <div className="relative w-full h-full overflow-hidden flex flex-col">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
       {/* tab header */}
       {isAnyPageAvailable && (
         <PagesListHeaderRoot

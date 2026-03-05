@@ -27,7 +27,7 @@ export function EstimateInputRoot(props: TEstimateInputRootProps) {
     case EEstimateSystem.POINTS:
       return (
         <EstimateNumberInput
-          value={value ? parseInt(value) : undefined}
+          value={value ? parseFloat(value) : undefined}
           handleEstimateInputValue={handleEstimateInputValue}
         />
       );

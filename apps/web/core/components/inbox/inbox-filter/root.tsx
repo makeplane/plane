@@ -18,11 +18,11 @@ import useSize from "@/hooks/use-window-size";
 import { InboxIssueFilterSelection } from "./filters/filter-selection";
 import { InboxIssueOrderByDropdown } from "./sorting/order-by";
 
-const smallButton = <ListFilter className="size-3 " />;
+const smallButton = <ListFilter className="size-3" />;
 
 const largeButton = (
   <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
-    <ListFilter className="size-3 " />
+    <ListFilter className="size-3" />
     <span>Filters</span>
     <ChevronDownIcon className="size-3" strokeWidth={2} />
   </div>

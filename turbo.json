@@ -1,6 +1,6 @@
 {
-  "$schema": "https://turborepo.com/schema.json",
-  "globalDependencies": [".npmrc", ".prettierrc", "eslint.config.mjs"],
+  "$schema": "https://v2-8-12.turborepo.dev/schema.json",
+  "globalDependencies": [".npmrc", ".oxfmtrc.json", ".oxlintrc.json"],
   "globalEnv": [
     "APP_VERSION",
     "DEV",
@@ -50,12 +50,11 @@
     },
     "check:format": {
       "inputs": ["$TURBO_DEFAULT$"],
-      "outputs": ["node_modules/.cache/prettier/**"]
+      "outputs": []
     },
     "check:lint": {
-      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
-      "outputs": ["node_modules/.cache/eslint/**"]
+      "outputs": []
     },
     "check:types": {
       "dependsOn": ["^build"],
@@ -76,12 +75,11 @@
     },
     "fix:format": {
       "inputs": ["$TURBO_DEFAULT$"],
-      "outputs": ["node_modules/.cache/prettier/**"]
+      "outputs": []
     },
     "fix:lint": {
-      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
-      "outputs": ["node_modules/.cache/eslint/**"]
+      "outputs": []
     },
     "start": {
       "cache": false,

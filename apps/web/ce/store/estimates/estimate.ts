@@ -14,7 +14,7 @@ import type {
   TEstimateSystemKeys,
 } from "@plane/types";
 // plane web services
-import estimateService from "@/plane-web/services/project/estimate.service";
+import estimateService from "@/services/estimate.service";
 // store
 import type { IEstimatePoint } from "@/store/estimates/estimate-point";
 import { EstimatePoint } from "@/store/estimates/estimate-point";

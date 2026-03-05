@@ -12,7 +12,7 @@ export function LabelActivityChip(props: TIssueLabelPill) {
   const { name, color } = props;
   return (
     <Tooltip tooltipContent={name}>
-      <span className="inline-flex w-min max-w-32 cursor-default flex-shrink-0 items-center gap-2 truncate whitespace-nowrap rounded-full border border-strong px-2 py-0.5 text-11">
+      <span className="inline-flex w-min max-w-32 flex-shrink-0 cursor-default items-center gap-2 truncate rounded-full border border-strong px-2 py-0.5 text-11 whitespace-nowrap">
         <span
           className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
           style={{

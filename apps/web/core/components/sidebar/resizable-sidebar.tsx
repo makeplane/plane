@@ -178,10 +178,11 @@ export function ResizableSidebar({
     <>
       {/* Main Sidebar */}
       <div
+        id="main-sidebar"
         className={cn(
-          "h-full z-20 bg-surface-1 border-r border-subtle",
+          "z-20 h-full border-r border-subtle bg-surface-1",
           !isResizing && "transition-all duration-300 ease-in-out",
-          isCollapsed ? "translate-x-[-100%] opacity-0 w-0" : "translate-x-0 opacity-100",
+          isCollapsed ? "w-0 translate-x-[-100%] opacity-0" : "translate-x-0 opacity-100",
           isMobile && "absolute",
           className
         )}
@@ -192,10 +193,11 @@ export function ResizableSidebar({
         }}
         role="complementary"
         aria-label="Main sidebar"
+        data-prevent-outside-click={isMobile}
       >
         <aside
           className={cn(
-            "group/sidebar h-full w-full bg-surface-1 overflow-hidden relative flex flex-col pt-3",
+            "group/sidebar relative flex h-full w-full flex-col overflow-hidden bg-surface-1 pt-3",
             isAnyExtendedSidebarExpanded && "rounded-none"
           )}
         >
@@ -204,7 +206,7 @@ export function ResizableSidebar({
           {/* Resize Handle */}
           <div
             className={cn(
-              "transition-all duration-200 cursor-ew-resize absolute h-full w-1 z-[20]",
+              "absolute z-[20] h-full w-1 cursor-ew-resize transition-all duration-200",
               !isResizing && "hover:bg-surface-2",
               isResizing && "w-1.5 bg-layer-1",
               "top-0 right-0"
@@ -220,7 +222,7 @@ export function ResizableSidebar({
       {/* Peek View */}
       <div
         className={cn(
-          "absolute left-0 z-20 bg-surface-1 shadow-sm h-full",
+          "shadow-sm absolute left-0 z-20 h-full bg-surface-1",
           !isResizing && "transition-all duration-300 ease-in-out",
           isCollapsed && showPeek ? "translate-x-0 opacity-100" : "translate-x-[-100%] opacity-0",
           "pointer-events-none",
@@ -237,8 +239,8 @@ export function ResizableSidebar({
       >
         <aside
           className={cn(
-            "group/sidebar h-full w-full bg-surface-1 overflow-hidden relative flex flex-col z-20 pt-4",
-            "self-center border-r border-subtle rounded-md rounded-tl-none rounded-bl-none",
+            "group/sidebar relative z-20 flex h-full w-full flex-col overflow-hidden bg-surface-1 pt-4",
+            "self-center rounded-md rounded-tl-none rounded-bl-none border-r border-subtle",
             isAnyExtendedSidebarExpanded && "rounded-none"
           )}
         >
@@ -246,7 +248,7 @@ export function ResizableSidebar({
           {/* Resize Handle */}
           <div
             className={cn(
-              "transition-all duration-200 cursor-ew-resize absolute h-full w-1 z-[20]",
+              "absolute z-[20] h-full w-1 cursor-ew-resize transition-all duration-200",
               !isResizing && "hover:bg-surface-2",
               isResizing && "bg-layer-1",
               "top-0 right-0"
