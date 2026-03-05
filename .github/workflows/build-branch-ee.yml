@@ -11,6 +11,14 @@ on:
         options:
           - "Build"
           - "Release"
+      build_images_type:
+        description: "Images to build"
+        required: true
+        type: choice
+        default: "regular"
+        options:
+          - "regular"
+          - "fips"
       releaseVersion:
         description: "Release Version"
         type: string
@@ -20,23 +28,18 @@ on:
         type: boolean
         default: false
         required: true
-      fips_build:
-        description: "Build for FIPS"
-        required: false
-        default: false
-        type: boolean
       arm64:
         description: "Build for ARM64 architecture"
         required: false
         default: false
         type: boolean
-      airgapped_build:
-        description: "Build for airgapped installation"
+      aio_build:
+        description: "Build for AIO docker image"
         required: false
         default: false
         type: boolean
-      aio_build:
-        description: "Build for AIO docker image"
+      cloud_builder:
+        description: "Build using Cloud Builder"
         required: false
         default: false
         type: boolean
@@ -47,10 +50,9 @@ env:
   BUILD_TYPE: ${{ github.event.inputs.build_type }}
   RELEASE_VERSION: ${{ github.event.inputs.releaseVersion }}
   IS_PRERELEASE: ${{ github.event.inputs.isPrerelease }}
-  AIRGAPPED_BUILD: ${{ github.event.inputs.airgapped_build }}
-  GNUPGHOME: ${{ github.workspace }}/.gnupg
   AIO_BUILD: ${{ github.event.inputs.aio_build }}
-  FIPS_BUILD: ${{ github.event.inputs.fips_build }}
+  CLOUD_BUILDER: ${{ github.event.inputs.cloud_builder }}
+  BUILD_IMAGES_TYPE: ${{ github.event.inputs.build_images_type }}
 
 jobs:
   branch_build_setup:
@@ -82,7 +84,6 @@ jobs:
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
       build_prerelease: ${{ steps.set_env_variables.outputs.BUILD_PRERELEASE }}
       release_version: ${{ steps.set_env_variables.outputs.RELEASE_VERSION }}
-      airgapped_build: ${{ steps.set_env_variables.outputs.AIRGAPPED_BUILD }}
       arm64_build: ${{ steps.set_env_variables.outputs.ARM64_BUILD }}
       aio_build: ${{ steps.set_env_variables.outputs.AIO_BUILD }}
       fips_build: ${{ steps.set_env_variables.outputs.FIPS_BUILD }}
@@ -91,40 +92,60 @@ jobs:
       - id: set_env_variables
         name: Set Environment Variables
         run: |
-          if [ "${{ env.ARM64_BUILD }}" == "true" ] || ([ "${{ env.BUILD_TYPE }}" == "Release" ] && [ "${{ env.IS_PRERELEASE }}" != "true" ]); then
+          if [ "${{ env.CLOUD_BUILDER }}" == "true" ]; then
             echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
-            echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
             echo "BUILDX_ENDPOINT=makeplane/plane-dev" >> $GITHUB_OUTPUT
-            echo "ARM64_BUILD=true" >> $GITHUB_OUTPUT
           else
             echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
-            echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
             echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
+          fi
+
+          if [ "${{ env.ARM64_BUILD }}" == "true" ] || ([ "${{ env.BUILD_TYPE }}" == "Release" ] && [ "${{ env.IS_PRERELEASE }}" != "true" ]); then
+            echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
+            echo "ARM64_BUILD=true" >> $GITHUB_OUTPUT
+          else
+            echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
             echo "ARM64_BUILD=false" >> $GITHUB_OUTPUT
           fi
+
           BR_NAME=$( echo "${{ env.TARGET_BRANCH }}" |sed 's/[^a-zA-Z0-9.-]//g')
           echo "TARGET_BRANCH=$BR_NAME" >> $GITHUB_OUTPUT
-          echo "DH_IMG_WEB=web-commercial" >> $GITHUB_OUTPUT
-          echo "DH_IMG_SPACE=space-commercial" >> $GITHUB_OUTPUT
-          echo "DH_IMG_ADMIN=admin-commercial" >> $GITHUB_OUTPUT
-          echo "DH_IMG_LIVE=live-commercial" >> $GITHUB_OUTPUT
-          echo "DH_IMG_BACKEND=backend-commercial" >> $GITHUB_OUTPUT
-          echo "DH_IMG_PROXY=proxy-commercial" >> $GITHUB_OUTPUT
-          echo "DH_IMG_MONITOR=monitor-commercial" >> $GITHUB_OUTPUT
-          echo "DH_IMG_SILO=silo-commercial" >> $GITHUB_OUTPUT
-          echo "DH_IMG_EMAIL=email-commercial" >> $GITHUB_OUTPUT
-          echo "DH_IMG_PI=plane-pi-commercial" >> $GITHUB_OUTPUT
-          echo "DH_IMG_AIO=plane-aio-commercial" >> $GITHUB_OUTPUT
 
-          echo "FIPS_BUILD=${{ env.FIPS_BUILD }}" >> $GITHUB_OUTPUT
+          if [ "${{ env.BUILD_IMAGES_TYPE }}" == "fips" ]; then
+            echo "FIPS_BUILD=true" >> $GITHUB_OUTPUT
+            echo "DH_IMG_WEB=web-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_SPACE=space-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_ADMIN=admin-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_LIVE=live-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_BACKEND=backend-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_PROXY=proxy-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_MONITOR=monitor-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_SILO=silo-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_EMAIL=email-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_PI=plane-pi-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_AIO=plane-aio-commercial-fips" >> $GITHUB_OUTPUT
+          else
+            echo "FIPS_BUILD=false" >> $GITHUB_OUTPUT
+            echo "DH_IMG_WEB=web-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_SPACE=space-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_ADMIN=admin-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_LIVE=live-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_BACKEND=backend-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_PROXY=proxy-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_MONITOR=monitor-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_SILO=silo-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_EMAIL=email-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_PI=plane-pi-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_AIO=plane-aio-commercial" >> $GITHUB_OUTPUT
+          fi
+
           echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
           BUILD_PRERELEASE=false
           RELVERSION="latest"
 
-          BUILD_AIRGAPPED=${{ env.AIRGAPPED_BUILD }}
           BUILD_AIO=${{ env.AIO_BUILD }}
 
           if [ "${{ env.BUILD_TYPE }}" == "Release" ]; then
@@ -157,7 +178,7 @@ jobs:
             BUILD_AIO=true
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
-            echo "artifact_s3_suffix=${{ env.AIRGAPPED_BUILD }}" >> $GITHUB_OUTPUT
+            echo "artifact_s3_suffix=$BR_NAME" >> $GITHUB_OUTPUT  
           elif [ "${{ env.TARGET_BRANCH }}" == "preview" ] || [ "${{ env.TARGET_BRANCH }}" == "develop" ] || [ "${{ env.TARGET_BRANCH }}" == "uat" ]; then
             echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
             echo "artifact_s3_suffix=$BR_NAME" >> $GITHUB_OUTPUT
@@ -165,7 +186,6 @@ jobs:
             echo "artifact_upload_to_s3=false" >> $GITHUB_OUTPUT
             echo "artifact_s3_suffix=$BR_NAME" >> $GITHUB_OUTPUT
           fi
-          echo "AIRGAPPED_BUILD=${BUILD_AIRGAPPED}" >> $GITHUB_OUTPUT
           echo "AIO_BUILD=${BUILD_AIO}" >> $GITHUB_OUTPUT
 
   branch_build_push_admin:
@@ -182,10 +202,9 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
-          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/admin/Dockerfile.fips') || '' }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_admin }}
           build-context: .
-          dockerfile-path: ./apps/admin/Dockerfile.admin
+          dockerfile-path: ${{ needs.branch_build_setup.outputs.fips_build == 'true' && './apps/admin/Dockerfile.fips' || './apps/admin/Dockerfile.admin' }}
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -205,10 +224,9 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
-          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/web/Dockerfile.fips') || '' }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_web }}
           build-context: .
-          dockerfile-path: ./apps/web/Dockerfile.web
+          dockerfile-path: ${{ needs.branch_build_setup.outputs.fips_build == 'true' && './apps/web/Dockerfile.fips' || './apps/web/Dockerfile.web' }}
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -228,10 +246,9 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
-          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/space/Dockerfile.fips') || '' }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_space }}
           build-context: .
-          dockerfile-path: ./apps/space/Dockerfile.space
+          dockerfile-path: ${{ needs.branch_build_setup.outputs.fips_build == 'true' && './apps/space/Dockerfile.fips' || './apps/space/Dockerfile.space' }}
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -251,10 +268,9 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
-          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/live/Dockerfile.fips') || '' }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_live }}
           build-context: .
-          dockerfile-path: ./apps/live/Dockerfile.live
+          dockerfile-path: ${{ needs.branch_build_setup.outputs.fips_build == 'true' && './apps/live/Dockerfile.fips' || './apps/live/Dockerfile.live' }}
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -274,10 +290,9 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
-          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/silo/Dockerfile.fips') || '' }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_silo }}
           build-context: .
-          dockerfile-path: ./apps/silo/Dockerfile.silo
+          dockerfile-path: ${{ needs.branch_build_setup.outputs.fips_build == 'true' && './apps/silo/Dockerfile.fips' || './apps/silo/Dockerfile.silo' }}
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -297,10 +312,9 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
-          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/api/Dockerfile.fips') || '' }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}
           build-context: ./apps/api
-          dockerfile-path: ./apps/api/Dockerfile.api
+          dockerfile-path: ${{ needs.branch_build_setup.outputs.fips_build == 'true' && './apps/api/Dockerfile.fips' || './apps/api/Dockerfile.api' }}
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -320,10 +334,9 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
-          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/proxy/Dockerfile.fips') || '' }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
           build-context: ./apps/proxy
-          dockerfile-path: ./apps/proxy/Dockerfile.ee
+          dockerfile-path: ${{ needs.branch_build_setup.outputs.fips_build == 'true' && './apps/proxy/Dockerfile.fips' || './apps/proxy/Dockerfile.ee' }}
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -357,10 +370,9 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
-          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/monitor/Dockerfile.fips') || '' }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_monitor }}
           build-context: ./apps/monitor
-          dockerfile-path: ./apps/monitor/Dockerfile
+          dockerfile-path: ${{ needs.branch_build_setup.outputs.fips_build == 'true' && './apps/monitor/Dockerfile.fips' || './apps/monitor/Dockerfile' }}
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -386,10 +398,9 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
-          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/email/Dockerfile.fips') || '' }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_email }}
           build-context: ./apps/email
-          dockerfile-path: ./apps/email/Dockerfile
+          dockerfile-path: ${{ needs.branch_build_setup.outputs.fips_build == 'true' && './apps/email/Dockerfile.fips' || './apps/email/Dockerfile' }}
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -409,10 +420,9 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
-          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/pi/Dockerfile.fips') || '' }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_pi }}
           build-context: ./apps/pi
-          dockerfile-path: ./apps/pi/Dockerfile.api
+          dockerfile-path: ${{ needs.branch_build_setup.outputs.fips_build == 'true' && './apps/pi/Dockerfile.fips' || './apps/pi/Dockerfile.api' }}
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -481,7 +491,7 @@ jobs:
             PLANE_VERSION=${{ steps.prepare_aio_assets.outputs.AIO_BUILD_VERSION }}
 
   upload_artifacts_s3:
-    if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' || needs.branch_build_setup.outputs.airgapped_build == 'true' }}
+    if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
     name: Upload artifacts to S3 Bucket
     runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
@@ -492,7 +502,6 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     env:
       ARTIFACT_SUFFIX: ${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}
-      FIPS_BUILD: ${{ needs.branch_build_setup.outputs.fips_build }}
       AWS_ACCESS_KEY_ID: ${{ secrets.SELF_HOST_BUCKET_ACCESS_KEY }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.SELF_HOST_BUCKET_SECRET_KEY }}
     steps:
@@ -507,27 +516,29 @@ jobs:
 
           mkdir -p ~/${{ env.ARTIFACT_SUFFIX }}
 
-          sed -i 's@APP_RELEASE_VERSION=.*@APP_RELEASE_VERSION='${{ env.ARTIFACT_SUFFIX }}'@' deployments/cli/commercial/variables.env
-          cp deployments/cli/commercial/variables.env ~/${{ env.ARTIFACT_SUFFIX }}/variables.env
 
-          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/cli/commercial/docker-compose.yml
-          cp deployments/cli/commercial/docker-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-caddy.yml
-          cp deployments/cli/commercial/docker-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
-
-          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/coolify/commercial/coolify-compose.yml
-          cp deployments/coolify/commercial/coolify-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose.yml
-
-          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/portainer/commercial/portainer-compose.yml
-          cp deployments/portainer/commercial/portainer-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose.yml
-
-          if [ "${{ env.FIPS_BUILD }}" = "true" ]; then
+          if [ "${{ needs.branch_build_setup.outputs.fips_build }}" = "true" ]; then
             cp ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-fips.yml
             cp ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose-fips.yml
             cp ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose-fips.yml
             sed -i 's/-commercial:/-commercial-fips:/g' ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-fips.yml
             sed -i 's/-commercial:/-commercial-fips:/g' ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose-fips.yml
             sed -i 's/-commercial:/-commercial-fips:/g' ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose-fips.yml
+          else
+            sed -i 's@APP_RELEASE_VERSION=.*@APP_RELEASE_VERSION='${{ env.ARTIFACT_SUFFIX }}'@' deployments/cli/commercial/variables.env
+            cp deployments/cli/commercial/variables.env ~/${{ env.ARTIFACT_SUFFIX }}/variables.env
+
+            sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/cli/commercial/docker-compose.yml
+            cp deployments/cli/commercial/docker-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-caddy.yml
+            cp deployments/cli/commercial/docker-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
+
+            sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/coolify/commercial/coolify-compose.yml
+            cp deployments/coolify/commercial/coolify-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose.yml
+
+            sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/portainer/commercial/portainer-compose.yml
+            cp deployments/portainer/commercial/portainer-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose.yml
           fi
+
 
           # required for prime-cli backward compatibility
           cp apps/proxy/Caddyfile.ee ~/${{ env.ARTIFACT_SUFFIX }}/Caddyfile
@@ -614,39 +625,42 @@ jobs:
           path: ~/${{ env.ARTIFACT_SUFFIX }}/podman-quadlets.tar.gz
 
       - name: Upload docker-compose.yml
+        if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
         uses: actions/upload-artifact@v4
         with:
           name: docker-compose.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
 
-      - name: Upload coolify-compose.yml
-        uses: actions/upload-artifact@v4
-        with:
-          name: coolify-compose.yml
-          path: ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose.yml
-
-      - name: Upload portainer-compose.yml
-        uses: actions/upload-artifact@v4
-        with:
-          name: portainer-compose.yml
-          path: ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose.yml
-
-      - name: Upload docker-compose-fips.yml
-        if: env.FIPS_BUILD == 'true'
+      - name: Upload docker-compose.yml
+        if: ${{ needs.branch_build_setup.outputs.fips_build == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: docker-compose-fips.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-fips.yml
 
-      - name: Upload coolify-compose-fips.yml
-        if: env.FIPS_BUILD == 'true'
+      - name: Upload coolify-compose.yml
+        if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coolify-compose.yml
+          path: ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose.yml
+
+      - name: Upload coolify-compose.yml
+        if: ${{ needs.branch_build_setup.outputs.fips_build == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: coolify-compose-fips.yml
           path: ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose-fips.yml
 
-      - name: Upload portainer-compose-fips.yml
-        if: env.FIPS_BUILD == 'true'
+      - name: Upload portainer-compose.yml
+        if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: portainer-compose.yml
+          path: ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose.yml
+
+      - name: Upload portainer-compose.yml
+        if: ${{ needs.branch_build_setup.outputs.fips_build == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: portainer-compose-fips.yml
@@ -680,17 +694,10 @@ jobs:
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
       ARTIFACT_SUFFIX: ${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}
-      FIPS_BUILD: ${{ needs.branch_build_setup.outputs.fips_build }}
       AIRGAPPED_ARM64_BUILD: ${{ needs.branch_build_setup.outputs.arm64_build == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      # - name: Download Artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     path: /tmp/airgapped
-      #     merge-multiple: true
 
       - name: Download podman quadlets
         uses: actions/download-artifact@v4
@@ -700,24 +707,22 @@ jobs:
 
       - name: Update docker-compose
         run: |
-          sed -i 's@APP_RELEASE_VERSION=.*@APP_RELEASE_VERSION='${{ env.ARTIFACT_SUFFIX }}'@' deployments/cli/commercial/variables.env
-          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/cli/commercial/docker-compose.yml
-          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/coolify/commercial/coolify-compose.yml
-          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/portainer/commercial/portainer-compose.yml
-
-          cp deployments/cli/commercial/docker-compose.yml deployments/cli/commercial/docker-compose-caddy.yml
-          cp deployments/portainer/commercial/portainer-compose.yml deployments/portainer/commercial/swarm-compose.yml
-
-          if [ "${{ env.FIPS_BUILD }}" = "true" ]; then
-            cp deployments/cli/commercial/docker-compose.yml deployments/cli/commercial/docker-compose-fips.yml
-            cp deployments/coolify/commercial/coolify-compose.yml deployments/coolify/commercial/coolify-compose-fips.yml
-            cp deployments/portainer/commercial/portainer-compose.yml deployments/portainer/commercial/portainer-compose-fips.yml
-            sed -i 's/-commercial:/-commercial-fips:/g' deployments/cli/commercial/docker-compose-fips.yml
-            sed -i 's/-commercial:/-commercial-fips:/g' deployments/coolify/commercial/coolify-compose-fips.yml
-            sed -i 's/-commercial:/-commercial-fips:/g' deployments/portainer/commercial/portainer-compose-fips.yml
+          if [ "${{ needs.branch_build_setup.outputs.fips_build }}" = "true" ]; then
+            sed -i 's@APP_RELEASE_VERSION=.*@APP_RELEASE_VERSION='${{ env.ARTIFACT_SUFFIX }}'@' deployments/cli/commercial/variables.env
+            sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/cli/commercial/docker-compose.yml
+            sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/coolify/commercial/coolify-compose.yml
+            sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/portainer/commercial/portainer-compose.yml
+          else
+            sed -i 's@APP_RELEASE_VERSION=.*@APP_RELEASE_VERSION='${{ env.ARTIFACT_SUFFIX }}'@' deployments/cli/commercial/variables.env
+            sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/cli/commercial/docker-compose.yml
+            sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/coolify/commercial/coolify-compose.yml
+            sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deployments/portainer/commercial/portainer-compose.yml
+            cp deployments/cli/commercial/docker-compose.yml deployments/cli/commercial/docker-compose-caddy.yml
+            cp deployments/portainer/commercial/portainer-compose.yml deployments/portainer/commercial/swarm-compose.yml
           fi
 
       - name: Create Release
+        if: ${{ needs.branch_build_setup.outputs.fips_build == 'false' }}
         id: create_release
         uses: softprops/action-gh-release@v2.0.8
         env:
@@ -735,298 +740,10 @@ jobs:
             ${{ github.workspace }}/deployments/portainer/commercial/portainer-compose.yml
             ${{ github.workspace }}/deployments/portainer/commercial/swarm-compose.yml
             ${{ github.workspace }}/deployments/podman/commercial/podman-quadlets.tar.gz
-            ${{ (env.FIPS_BUILD == 'true' && format('{0}/deployments/cli/commercial/docker-compose-fips.yml', github.workspace)) || '' }}
-            ${{ (env.FIPS_BUILD == 'true' && format('{0}/deployments/coolify/commercial/coolify-compose-fips.yml', github.workspace)) || '' }}
-            ${{ (env.FIPS_BUILD == 'true' && format('{0}/deployments/portainer/commercial/portainer-compose-fips.yml', github.workspace)) || '' }}
 
-  package_airgapped_artifacts:
-    if: ${{ needs.branch_build_setup.outputs.airgapped_build == 'true' }}
-    name: Package Airgapped Artifacts
-    runs-on: ubuntu-22.04-4core
-    needs:
-      [
-        branch_build_setup,
-        branch_build_push_admin,
-        branch_build_push_web,
-        branch_build_push_space,
-        branch_build_push_live,
-        branch_build_push_api,
-        branch_build_push_proxy,
-        branch_build_push_monitor,
-        branch_build_push_email,
-        branch_build_push_silo,
-        branch_build_push_plane_pi,
-        upload_artifacts_s3,
-      ]
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.SELF_HOST_BUCKET_ACCESS_KEY }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.SELF_HOST_BUCKET_SECRET_KEY }}
-      AWS_DEFAULT_REGION: ${{ vars.SELF_HOST_BUCKET_REGION }}
-      REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
-      ARTIFACT_SUFFIX: ${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}
-      AIRGAPPED_RELEASE_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
-      S3_PATH: "s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}"
-      S3_REGION: ${{ vars.SELF_HOST_BUCKET_REGION }}
-      COMMIT_HASH: $(git rev-parse HEAD)
-      PRESIGNED_URL_EXPIRY: 604800 # 7 days (max allowed by AWS)
-      AIRGAPPED_ARM64_BUILD: ${{ needs.branch_build_setup.outputs.arm64_build == 'true' }}
-    steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
-
-      - id: install-qemu
-        uses: docker/setup-qemu-action@v3
-
-      - name: Docker Setup
-        uses: docker/setup-buildx-action@v3
-
-      - name: Setup yq
-        run: |
-          echo "Installing yq..."
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
-
-      - name: Install crane
-        run: |
-          echo "Installing crane..."
-          curl -sL "https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz" | tar -xz -C /usr/local/bin crane
-          sudo chmod +x /usr/local/bin/crane
-
-      - id: install-aws-cli
-        uses: unfor19/install-aws-cli-action@v1
-        with:
-          version: 2
-
-      - name: Get secrets by name
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
-        with:
-          secret-ids: |
-            GPG_KEYS,github/actions/plane-ee/branch-build-ee
-          parse-json-secrets: true
-
-      - name: Save GPG secrets
-        id: save_gpg_secrets
-        run: |
-          mkdir -p /tmp/gpg_keys
-
-          single_line_key="${{ env.GPG_KEYS_GPG_PRIVATE_KEY }}"
-          begin_part="-----BEGIN PGP PRIVATE KEY BLOCK----- "
-          end_part="-----END PGP PRIVATE KEY BLOCK-----"
-          middle=$(echo "$single_line_key" | sed "s/$begin_part//" | sed "s/$end_part//")
-
-          formatted_middle=$(echo "$middle" | sed 's/ /\n/g')
-          pem_key="${begin_part}${formatted_middle}${end_part}"
-          passphrase="${{ env.GPG_KEYS_GPG_PRIVATE_KEY_PASSPHRASE }}"
-
-          echo "$begin_part" > /tmp/gpg_keys/gpg_private_key.pem
-          echo "$formatted_middle" >> /tmp/gpg_keys/gpg_private_key.pem
-          echo "$end_part" >> /tmp/gpg_keys/gpg_private_key.pem
-
-          echo "$passphrase" > /tmp/gpg_keys/gpg_private_key_passphrase.txt
-
-          echo "GPG_PRIVATE_KEY_PASSPHRASE=${passphrase}" >> $GITHUB_OUTPUT
-
-      - name: Download podman quadlets
-        uses: actions/download-artifact@v4
-        with:
-          name: podman-quadlets.tar.gz
-          path: /tmp/podman-quadlets
-
-      - id: package_airgapped_artifacts
-        name: Package Airgapped Artifacts
-        env:
-          GPG_PUBLIC_KEY_ID: ${{ vars.GPG_PUBLIC_KEY_ID }}
-          CR_PASSPHRASE_FILE: ${{ env.GNUPGHOME }}/gpg-passphrase
-        run: |
-          echo "Setup GPG environment..."
-
-          GPG_PRIVATE_KEY=$(cat /tmp/gpg_keys/gpg_private_key.pem)
-          GPG_PRIVATE_KEY_PASSPHRASE=${{ steps.save_gpg_secrets.outputs.GPG_PRIVATE_KEY_PASSPHRASE }}
-
-          mkdir -p ${{env.GNUPGHOME}}
-          chmod 700 ${{env.GNUPGHOME}}
-          # Disable the use of the gpg-agent
-          echo "use-agent" >> ${{env.GNUPGHOME}}/gpg.conf
-          echo "pinentry-mode loopback" >> ${{env.GNUPGHOME}}/gpg.conf
-          echo "no-tty" >> ${{env.GNUPGHOME}}/gpg.conf
-          echo "no-autostart" >> ${{env.GNUPGHOME}}/gpg-agent.conf
-          echo "allow-loopback-pinentry" >> ${{env.GNUPGHOME}}/gpg-agent.conf
-          echo "${GPG_PRIVATE_KEY_PASSPHRASE}" > ${{env.CR_PASSPHRASE_FILE}}
-
-          echo "Importing GPG key..."
-          echo "${GPG_PRIVATE_KEY}" | gpg --import --batch --yes
-          if [ $? -ne 0 ]; then
-            echo "GPG key import failed!"
-            exit 1
-          fi
-          echo "GPG key imported successfully."
-
-          echo "Exporting GPG public key..."
-          gpg --export -a $GPG_PUBLIC_KEY_ID > "/tmp/plane_public_key.asc"
-
-          AIRGAPPED_RELEASE_VERSION=${{ env.AIRGAPPED_RELEASE_VERSION }}
-          if [ "${{ needs.branch_build_setup.outputs.build_type}}" == "Build" ]; then
-            AIRGAPPED_RELEASE_VERSION=${{ needs.branch_build_setup.outputs.gh_branch_name }}
-          fi
-          echo "AIRGAPPED_RELEASE_VERSION=$AIRGAPPED_RELEASE_VERSION" >> $GITHUB_ENV
-
-          # Common function for packaging and signing
-          package_and_sign() {
-            local platform_suffix=$1 # "amd64" or "arm64"
-            local s3_path_prefix="${{ env.S3_PATH }}/airgapped-${platform_suffix}"
-            local tarball_name="airgapped-${platform_suffix}.tar.gz"
-            local sha_file="${tarball_name}.sha256"
-            local asc_file="${sha_file}.asc"
-
-            mkdir -p "/tmp/airgapped-${platform_suffix}"
-            cp /tmp/podman-quadlets/podman-quadlets.tar.gz .
-
-            echo "Copying platform specific files to /tmp/airgapped-${platform_suffix}..."
-            cp docker-compose.yml "/tmp/airgapped-${platform_suffix}/airgapped-docker-compose-${platform_suffix}.yml"
-            # For our first run, if we're in amd64, we'll need to copy the plane.env file
-            if [ "${platform_suffix}" == "amd64" ]; then
-              cp plane.env "/tmp/airgapped-plane.env"
-              cp install.sh "/tmp/airgapped-install.sh"
-            fi
-
-            echo "Packaging airgapped artifacts for ${platform_suffix}..."
-            tar -czf "${tarball_name}" *
-
-            cp "${tarball_name}" "/tmp/airgapped-${platform_suffix}/"
-
-            echo "Generating SHA256 sum for ${tarball_name}..."
-            sha256sum "${tarball_name}" > "${sha_file}"
-
-            echo "Signing SHA256 sum for ${tarball_name} with key ID ${GPG_PUBLIC_KEY_ID}..."
-            gpg --local-user ${GPG_PUBLIC_KEY_ID} --pinentry-mode loopback  --detach-sign --armor --batch --yes --passphrase-file "${{env.CR_PASSPHRASE_FILE}}" "${sha_file}"
-            if [ $? -ne 0 ]; then
-              echo "GPG signing failed for ${platform_suffix}!"
-              exit 1
-            fi
-            echo "GPG signing successful for ${platform_suffix}."
-
-            echo "Copying ${asc_file} to /tmp/airgapped-${platform_suffix}..."
-            cp "${asc_file}" "/tmp/airgapped-${platform_suffix}/"
-
-            echo "Uploading ${platform_suffix} artifacts to S3..."
-            aws s3 cp "${tarball_name}" "${s3_path_prefix}.tar.gz"
-            aws s3 cp "${asc_file}" "${s3_path_prefix}.tar.gz.sha256.asc"
-            echo "${platform_suffix} artifacts and signatures uploaded to S3 at ${s3_path_prefix}"
-
-            echo "Creating presigned URLs for ${platform_suffix} artifacts..."
-            S3_PRESIGNED_URL=$(aws s3 presign "${s3_path_prefix}.tar.gz" --expires-in ${{ env.PRESIGNED_URL_EXPIRY }} --region ${{ env.S3_REGION }})
-            echo "$S3_PRESIGNED_URL" > "/tmp/presigned_url_${platform_suffix}.txt"
-
-            S3_PRESIGNED_URL_ASC=$(aws s3 presign "${s3_path_prefix}.tar.gz.sha256.asc" --expires-in ${{ env.PRESIGNED_URL_EXPIRY }} --region ${{ env.S3_REGION }})
-            echo "$S3_PRESIGNED_URL_ASC" > "/tmp/presigned_url_${platform_suffix}_sha256_asc.txt"
-            echo "Presigned URLs for ${platform_suffix} created."
-          }
-
-          # Build for amd64
-          echo "Starting AMD64 build..."
-          cd ${{ github.workspace }}/deployments/airgapped/commercial
-          bash ./build.sh --release=$AIRGAPPED_RELEASE_VERSION --platform=linux/amd64
-          cd dist
-          package_and_sign "amd64"
-
-          # Build for arm64
-          echo "AIRGAPPED_ARM64_BUILD=${{ env.AIRGAPPED_ARM64_BUILD }}" >> $GITHUB_OUTPUT
-          if [ "${{ env.AIRGAPPED_ARM64_BUILD }}" == "true" ]; then
-            echo "Starting ARM64 build..."
-            cd ${{ github.workspace }}/deployments/airgapped/commercial
-            bash ./build.sh --release=$AIRGAPPED_RELEASE_VERSION --platform=linux/arm64
-            cd dist
-            package_and_sign "arm64"
-          fi
-
-          echo "COMMIT_HASH=$(git rev-parse HEAD)" >> $GITHUB_ENV
-
-      - name: Upload Public Key
-        uses: actions/upload-artifact@v4
-        with:
-          name: plane_public_key.asc
-          path: /tmp/plane_public_key.asc
-
-      - name: Upload Airgapped Plane Env
-        uses: actions/upload-artifact@v4
-        with:
-          name: airgapped-plane.env
-          path: /tmp/airgapped-plane.env
-
-      - name: Upload Airgapped Install Script
-        uses: actions/upload-artifact@v4
-        with:
-          name: airgapped-install.sh
-          path: /tmp/airgapped-install.sh
-
-      - name: Upload Airgapped Docker Compose (AMD64)
-        uses: actions/upload-artifact@v4
-        with:
-          name: airgapped-docker-compose-amd64.yml
-          path: /tmp/airgapped-amd64/airgapped-docker-compose-amd64.yml
-
-      # - name: Upload Airgapped Tarball (AMD64)
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: airgapped-amd64.tar.gz
-      #     path: /tmp//airgapped-amd64/airgapped-amd64.tar.gz
-
-      - name: Upload Tarball Signature (AMD64)
-        uses: actions/upload-artifact@v4
-        with:
-          name: airgapped-amd64.tar.gz.sha256.asc
-          path: /tmp/airgapped-amd64/airgapped-amd64.tar.gz.sha256.asc
-
-      - name: Upload Airgapped Presigned URL (AMD64)
-        uses: actions/upload-artifact@v4
-        with:
-          name: pre-signed-url-amd64.txt
-          path: /tmp/presigned_url_amd64.txt
-
-      - name: Upload Airgapped Presigned URL (AMD64 SHA256 ASC)
-        uses: actions/upload-artifact@v4
-        with:
-          name: pre-signed-url-amd64-sha256.asc.txt
-          path: /tmp/presigned_url_amd64_sha256_asc.txt
-
-      - name: Upload Airgapped Docker Compose (ARM64)
-        if: ${{ steps.package_airgapped_artifacts.outputs.AIRGAPPED_ARM64_BUILD == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: airgapped-docker-compose-arm64.yml
-          path: /tmp/airgapped-arm64/airgapped-docker-compose-arm64.yml
-
-      # - name: Upload Airgapped Tarball (ARM64)
-      #   if: ${{ steps.package_airgapped_artifacts.outputs.AIRGAPPED_ARM64_BUILD == 'true' }}
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: airgapped-arm64.tar.gz
-      #     path: /tmp/airgapped-arm64/airgapped-arm64.tar.gz
-
-      - name: Upload Tarball Signature (ARM64)
-        if: ${{ steps.package_airgapped_artifacts.outputs.AIRGAPPED_ARM64_BUILD == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: airgapped-arm64.tar.gz.sha256.asc
-          path: /tmp/airgapped-arm64/airgapped-arm64.tar.gz.sha256.asc
-
-      - name: Upload Airgapped Presigned URL (ARM64)
-        if: ${{ steps.package_airgapped_artifacts.outputs.AIRGAPPED_ARM64_BUILD == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: pre-signed-url-arm64.txt
-          path: /tmp/presigned_url_arm64.txt
-
-      - name: Upload Airgapped Presigned URL (ARM64 SHA256 ASC)
-        if: ${{ steps.package_airgapped_artifacts.outputs.AIRGAPPED_ARM64_BUILD == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: pre-signed-url-arm64-sha256.asc.txt
-          path: /tmp/presigned_url_arm64_sha256_asc.txt
-
-      - name: Attach Airgapped Artifacts (AMD64)
-        if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
+      - name: Create Release FIPS
+        if: ${{ needs.branch_build_setup.outputs.fips_build == 'true' }}
+        id: create_release_fips
         uses: softprops/action-gh-release@v2.0.8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
@@ -1035,74 +752,9 @@ jobs:
           name: ${{ env.REL_VERSION }}
           draft: false
           prerelease: ${{ env.IS_PRERELEASE }}
+          generate_release_notes: true
           files: |
-            /tmp/airgapped-plane.env
-            /tmp/airgapped-install.sh
-            /tmp/plane_public_key.asc
-            /tmp/airgapped-amd64/airgapped-docker-compose-amd64.yml
-            /tmp/airgapped-amd64/airgapped-amd64.tar.gz
-            /tmp/airgapped-amd64/airgapped-amd64.tar.gz.sha256.asc
-
-      - name: Attach Airgapped Artifacts (ARM64)
-        if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' && needs.branch_build_setup.outputs.arm64_build == 'true' }}
-        uses: softprops/action-gh-release@v2.0.8
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ env.REL_VERSION }}
-          name: ${{ env.REL_VERSION }}
-          draft: false
-          prerelease: ${{ env.IS_PRERELEASE }}
-          files: |
-            /tmp/airgapped-arm64/airgapped-docker-compose-arm64.yml
-            /tmp/airgapped-arm64/airgapped-arm64.tar.gz
-            /tmp/airgapped-arm64/airgapped-arm64.tar.gz.sha256.asc
-
-      - name: Airgapped Package Summary
-        run: |
-
-          # Print Step Build Summary
-          echo "# 🚀 Airgapped Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 🌍 Artifacts" >> $GITHUB_STEP_SUMMARY
-          echo "| Key | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| Release Version | \`${{ env.AIRGAPPED_RELEASE_VERSION }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| S3 Path Public Key | \`${{ env.S3_PATH }}/plane_public_key.asc\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| S3 Path Plane Env | \`${{ env.S3_PATH }}/airgapped-plane.env\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| S3 Path AMD | \`${{ env.S3_PATH }}/airgapped-amd64.tar.gz\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| S3 Path AMD SHA256 | \`${{ env.S3_PATH }}/airgapped-amd64.tar.gz.sha256\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| S3 Path AMD SHA256 ASC | \`${{ env.S3_PATH }}/airgapped-amd64.tar.gz.sha256.asc\` |" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.package_airgapped_artifacts.outputs.AIRGAPPED_ARM64_BUILD }}" == "true" ]; then
-            echo "| S3 Path ARM | \`${{ env.S3_PATH }}/airgapped-arm64.tar.gz\` |" >> $GITHUB_STEP_SUMMARY
-            echo "| S3 Path ARM SHA256 | \`${{ env.S3_PATH }}/airgapped-arm64.tar.gz.sha256\` |" >> $GITHUB_STEP_SUMMARY
-            echo "| S3 Path ARM SHA256 ASC | \`${{ env.S3_PATH }}/airgapped-arm64.tar.gz.sha256.asc\` |" >> $GITHUB_STEP_SUMMARY
-          fi
-          echo "| Git Branch | \`${{env.TARGET_BRANCH}}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Git Commit Hash | \`${{ env.COMMIT_HASH }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
-          ## 📘 Usage Instructions
-          ```bash
-          curl -fsSL -o airgapped-[amd64|arm64].tar.gz "<presigned-url>"
-          mkdir -p airgapped
-          tar -xzf airgapped-[amd64|arm64].tar.gz -C airgapped
-          cd airgapped
-          bash install.sh
-          ```
-
-          Importing Public Key for Verification
-          ```bash
-          curl -fsSL -o plane_public_key.asc "<presigned-url>"
-          gpg --import plane_public_key.asc
-          ```
-
-          Verification of SHA256 and ASC files:
-          ```bash
-          curl -fsSL -o airgapped-[amd64|arm64].tar.gz "<presigned-url>"
-          sha256sum -c airgapped-[amd64|arm64].tar.gz.sha256
-          curl -fsSL -o airgapped-[amd64|arm64].tar.gz.sha256.asc "<presigned-url>"
-          gpg --verify airgapped-[amd64|arm64].tar.gz.sha256.asc
-          ```
-          EOF
+            ${{ github.workspace }}/deployments/cli/commercial/variables.env
+            ${{ github.workspace }}/deployments/cli/commercial/docker-compose-fips.yml
+            ${{ github.workspace }}/deployments/coolify/commercial/coolify-compose-fips.yml
+            ${{ github.workspace }}/deployments/portainer/commercial/portainer-compose-fips.yml
