@@ -55,6 +55,8 @@
   },
   "pnpm": {
     "overrides": {
+      "react": "catalog:",
+      "react-dom": "catalog:",
       "express": "catalog:",
       "mdast-util-to-hast": "13.2.1",
       "body-parser": "2.2.1",
