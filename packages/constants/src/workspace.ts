@@ -107,6 +107,20 @@ export const WORKSPACE_SETTINGS = {
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks/`,
   },
+  "media-server": {
+    key: "media-server",
+    i18n_label: "Media Server",
+    href: `/settings/media-server`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/media-server/`,
+  },
+  devices: {
+    key: "devices",
+    i18n_label: "Devices",
+    href: `/settings/devices`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/devices/`,
+  }
 };
 
 export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
@@ -124,6 +138,8 @@ export const WORKSPACE_SETTINGS_LINKS: {
   WORKSPACE_SETTINGS["members"],
   WORKSPACE_SETTINGS["billing-and-plans"],
   WORKSPACE_SETTINGS["export"],
+  WORKSPACE_SETTINGS["media-server"],
+  WORKSPACE_SETTINGS["devices"],
   WORKSPACE_SETTINGS["webhooks"],
 ];
 

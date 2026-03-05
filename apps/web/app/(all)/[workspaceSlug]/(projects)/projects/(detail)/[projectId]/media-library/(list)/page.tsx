@@ -239,7 +239,7 @@ const MediaLibraryListPage = observer(() => {
       <div className="flex flex-col gap-8 px-6 py-4">
         {showSkeleton ? (
           viewMode === "list" ? (
-            <div className="flex flex-col gap-8 p-10 animate-pulse">
+            <div className="flex flex-col gap-8 animate-pulse">
               {Array.from({ length: 3 }).map((_, index) => (
                 <section key={`skeleton-list-${index}`} className="flex flex-col gap-3">
                   <div className="h-4 w-32 rounded bg-custom-background-90" />

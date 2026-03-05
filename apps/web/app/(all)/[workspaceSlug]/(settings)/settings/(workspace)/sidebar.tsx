@@ -1,5 +1,5 @@
 import { useParams, usePathname } from "next/navigation";
-import { ArrowUpToLine, Building, CreditCard, Users, Webhook } from "lucide-react";
+import { ArrowUpToLine, Building, CreditCard, HardDrive, Server, Users, Webhook } from "lucide-react";
 import {
   EUserPermissionsLevel,
   GROUPED_WORKSPACE_SETTINGS,
@@ -17,6 +17,8 @@ const ICONS = {
   members: Users,
   export: ArrowUpToLine,
   "billing-and-plans": CreditCard,
+  "media-server": Server,
+  devices: HardDrive,
   webhooks: Webhook,
 };
 
