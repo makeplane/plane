@@ -48,6 +48,7 @@ from plane.db.models import (
     IssueView,
     User,
     BotTypeEnum,
+    WorkspaceUserLink,
 )
 
 logger = logging.getLogger("plane.worker")
@@ -507,6 +508,30 @@ def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_us
         issue_view.save(disable_auto_set_user=True)
 
 
+def create_workspace_quick_links(workspace: Workspace, bot_user: User) -> None:
+    """Creates workspace quick links for the workspace
+
+    Args:
+    workspace: The workspace containing the projects
+    bot_user: The bot user to use for creating the views
+    """
+    quick_link_seeds = read_seed_file("quick_link.json")
+    if not quick_link_seeds:
+        return
+
+    for quick_link_seed in quick_link_seeds:
+        quick_link_seed.pop("id")
+        quick_link_view = WorkspaceUserLink(
+            **quick_link_seed,
+            workspace=workspace,
+            created_by_id=bot_user.id,
+            owner_id=bot_user.id,
+        )
+
+        quick_link_view.save(disable_auto_set_user=True)
+        logger.info("Quick Links created")
+
+
 @shared_task
 def workspace_seed(workspace_id: uuid.UUID) -> None:
     """Seeds a new workspace with initial project data.
@@ -545,6 +570,9 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
             role=20,
             company_role="",
         )
+
+        # Create quick links
+        create_workspace_quick_links(workspace, bot_user)
 
         # Create a project with the same name as workspace
         project_map = create_project_and_member(workspace, bot_user)

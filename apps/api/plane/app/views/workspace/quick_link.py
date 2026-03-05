@@ -14,10 +14,12 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import WorkspaceUserLink, Workspace
+from plane.db.models import WorkspaceUserLink, Workspace, BotTypeEnum
 from plane.app.serializers import WorkspaceUserLinkSerializer
 from ..base import BaseViewSet
 from plane.app.permissions import allow_permission, ROLE
+
+from django.db.models import Q
 
 
 class QuickLinkViewSet(BaseViewSet):
@@ -66,7 +68,10 @@ class QuickLinkViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
-        quick_links = WorkspaceUserLink.objects.filter(workspace__slug=slug, owner=request.user)
+        quick_links = WorkspaceUserLink.objects.filter(
+            Q(workspace__slug=slug),
+            Q(owner=request.user) | Q(owner__is_bot=True, owner__bot_type=BotTypeEnum.WORKSPACE_SEED.value),
+        ).order_by("created_at")
 
         serializer = WorkspaceUserLinkSerializer(quick_links, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
