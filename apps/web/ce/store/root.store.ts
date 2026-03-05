@@ -12,12 +12,15 @@ import type { ITimelineStore } from "./timeline";
 import { TimeLineStore } from "./timeline";
 import { DashboardStore } from "./dashboards/dashboard.store";
 import { ProjectWorklogStore } from "./project/worklog.store";
+import type { IWorkflowStore } from "./workflow.store";
+import { WorkflowStore } from "./workflow.store";
 
 export class RootStore extends CoreRootStore {
   timelineStore: ITimelineStore;
   worklog: IWorklogStore;
   customDashboard: DashboardStore;
   projectWorklog: ProjectWorklogStore;
+  workflowStore: IWorkflowStore;
 
   constructor() {
     super();
@@ -26,5 +29,6 @@ export class RootStore extends CoreRootStore {
     this.worklog = new WorklogStore();
     this.customDashboard = new DashboardStore(this);
     this.projectWorklog = new ProjectWorklogStore();
+    this.workflowStore = new WorkflowStore();
   }
 }
