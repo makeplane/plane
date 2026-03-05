@@ -34,10 +34,20 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     defaultValues: {
       LLM_API_KEY: config["LLM_API_KEY"],
       LLM_MODEL: config["LLM_MODEL"],
+      LLM_BASE_URL: config["LLM_BASE_URL"],
     },
   });
 
   const aiFormFields: TControllerInputFormField[] = [
+    {
+      key: "LLM_BASE_URL",
+      type: "text",
+      label: "Base URL",
+      description: "The base URL for your LLM API. Leave empty for default OpenAI endpoint.",
+      placeholder: "https://api.openai.com/v1",
+      error: Boolean(errors.LLM_BASE_URL),
+      required: false,
+    },
     {
       key: "LLM_MODEL",
       type: "text",
@@ -100,8 +110,8 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     <div className="space-y-8">
       <div className="space-y-3">
         <div>
-          <div className="pb-1 text-18 font-medium text-primary">OpenAI</div>
-          <div className="text-13 font-regular text-tertiary">If you use ChatGPT, this is for you.</div>
+          <div className="pb-1 text-18 font-medium text-primary">AI / LLM</div>
+          <div className="text-13 font-regular text-tertiary">Configure your LLM provider settings. Supports OpenAI-compatible APIs.</div>
         </div>
         <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-12 gap-y-8 lg:grid-cols-3">
           {aiFormFields.map((field) => (
