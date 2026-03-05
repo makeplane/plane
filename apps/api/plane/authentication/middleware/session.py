@@ -15,11 +15,39 @@ class SessionMiddleware(MiddlewareMixin):
         engine = import_module(settings.SESSION_ENGINE)
         self.SessionStore = engine.SessionStore
 
+    def _is_admin_path(self, request):
+        return "instances" in request.path
+
+    def _is_coach_path(self, request):
+        return request.path.startswith("/auth/coach/")
+
+    def _get_cookie_name(self, request):
+        if self._is_admin_path(request):
+            return settings.ADMIN_SESSION_COOKIE_NAME
+
+        if request.COOKIES.get(settings.SESSION_COOKIE_NAME):
+            return settings.SESSION_COOKIE_NAME
+
+        if request.COOKIES.get(settings.COACH_SESSION_COOKIE_NAME) or self._is_coach_path(request):
+            return settings.COACH_SESSION_COOKIE_NAME
+
+        return settings.SESSION_COOKIE_NAME
+
+    def _get_cookie_age(self, request):
+        cookie_name = getattr(request, "_session_cookie_name", self._get_cookie_name(request))
+
+        if cookie_name == settings.ADMIN_SESSION_COOKIE_NAME:
+            return settings.ADMIN_SESSION_COOKIE_AGE
+
+        if cookie_name == settings.COACH_SESSION_COOKIE_NAME:
+            return settings.COACH_SESSION_COOKIE_AGE
+
+        return request.session.get_expiry_age()
+
     def process_request(self, request):
-        if "instances" in request.path:
-            session_key = request.COOKIES.get(settings.ADMIN_SESSION_COOKIE_NAME)
-        else:
-            session_key = request.COOKIES.get(settings.SESSION_COOKIE_NAME)
+        cookie_name = self._get_cookie_name(request)
+        session_key = request.COOKIES.get(cookie_name)
+        request._session_cookie_name = cookie_name
         request.session = self.SessionStore(session_key)
 
     def process_response(self, request, response):
@@ -36,8 +64,7 @@ class SessionMiddleware(MiddlewareMixin):
             return response
         # First check if we need to delete this cookie.
         # The session should be deleted only if the session is entirely empty.
-        is_admin_path = "instances" in request.path
-        cookie_name = settings.ADMIN_SESSION_COOKIE_NAME if is_admin_path else settings.SESSION_COOKIE_NAME
+        cookie_name = getattr(request, "_session_cookie_name", self._get_cookie_name(request))
 
         if cookie_name in request.COOKIES and empty:
             response.delete_cookie(
@@ -55,12 +82,7 @@ class SessionMiddleware(MiddlewareMixin):
                     max_age = None
                     expires = None
                 else:
-                    # Use different max_age based on whether it's an admin cookie
-                    if is_admin_path:
-                        max_age = settings.ADMIN_SESSION_COOKIE_AGE
-                    else:
-                        max_age = request.session.get_expiry_age()
-
+                    max_age = self._get_cookie_age(request)
                     expires_time = time.time() + max_age
                     expires = http_date(expires_time)
 

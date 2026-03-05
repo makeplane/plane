@@ -2,6 +2,9 @@ from django.urls import path
 
 from .views import (
     CSRFTokenEndpoint,
+    CoachSessionEndpoint,
+    CoachSignInEndpoint,
+    CoachSignOutEndpoint,
     ForgotPasswordEndpoint,
     SetUserPasswordEndpoint,
     ResetPasswordEndpoint,
@@ -39,6 +42,10 @@ from .views import (
 )
 
 urlpatterns = [
+    # coach auth
+    path("coach/sign-in/", CoachSignInEndpoint.as_view(), name="coach-sign-in"),
+    path("coach/sign-out/", CoachSignOutEndpoint.as_view(), name="coach-sign-out"),
+    path("coach/session/", CoachSessionEndpoint.as_view(), name="coach-session"),
     # credentials
     path("sign-in/", SignInAuthEndpoint.as_view(), name="sign-in"),
     path("sign-up/", SignUpAuthEndpoint.as_view(), name="sign-up"),

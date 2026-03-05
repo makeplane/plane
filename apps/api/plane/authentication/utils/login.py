@@ -13,6 +13,8 @@ def user_login(request, user, is_app=False, is_admin=False, is_space=False):
     # If is admin cookie set the custom age
     if is_admin:
         request.session.set_expiry(settings.ADMIN_SESSION_COOKIE_AGE)
+    elif getattr(request, "_session_cookie_name", None) == settings.COACH_SESSION_COOKIE_NAME:
+        request.session.set_expiry(settings.COACH_SESSION_COOKIE_AGE)
 
     device_info = {
         "user_agent": request.META.get("HTTP_USER_AGENT", ""),

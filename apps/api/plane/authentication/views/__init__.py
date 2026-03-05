@@ -1,4 +1,5 @@
 from .common import ChangePasswordEndpoint, CSRFTokenEndpoint, SetUserPasswordEndpoint
+from .coach import CoachSessionEndpoint, CoachSignInEndpoint, CoachSignOutEndpoint
 
 from .app.check import EmailCheckEndpoint
 
