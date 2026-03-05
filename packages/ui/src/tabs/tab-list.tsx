@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Tab } from "@headlessui/react";
 import type { LucideProps } from "lucide-react";
 import type { FC } from "react";
@@ -38,7 +44,7 @@ function TabListInner({ tabs, tabListClassName, tabClassName, size = "md", selec
     <Tab.List
       as="div"
       className={cn(
-        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-1",
+        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md bg-layer-1 p-0.5 text-13",
         tabListClassName
       )}
     >
@@ -46,12 +52,12 @@ function TabListInner({ tabs, tabListClassName, tabClassName, size = "md", selec
         <Tab
           className={({ selected }) =>
             cn(
-              "flex items-center justify-center p-1 min-w-fit w-full font-medium text-primary outline-none focus:outline-none cursor-pointer transition-all rounded-sm",
+              "flex w-full min-w-fit cursor-pointer items-center justify-center rounded-sm p-1 font-medium text-primary transition-all outline-none focus:outline-none",
               (selectedTab ? selectedTab === tab.key : selected)
-                ? "bg-layer-transparent-active text-primary shadow-sm"
+                ? "shadow-sm bg-layer-transparent-active text-primary"
                 : tab.disabled
-                  ? "text-placeholder cursor-not-allowed"
-                  : "text-placeholder hover:text-tertiary hover:bg-layer-transparent-hover",
+                  ? "cursor-not-allowed text-placeholder"
+                  : "text-placeholder hover:bg-layer-transparent-hover hover:text-tertiary",
               {
                 "text-11": size === "sm",
                 "text-13": size === "md",

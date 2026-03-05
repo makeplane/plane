@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -38,7 +44,7 @@ export function PageSearchInput(props: Props) {
         <IconButton
           variant="ghost"
           size="lg"
-          className="shrink-0 my-auto -mr-1"
+          className="my-auto -mr-1 shrink-0"
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
@@ -48,16 +54,16 @@ export function PageSearchInput(props: Props) {
       )}
       <div
         className={cn(
-          "flex items-center justify-start rounded-md border border-transparent text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+          "flex w-0 items-center justify-start overflow-hidden rounded-md border border-transparent text-placeholder opacity-0 transition-[width] ease-linear",
           {
-            "w-64 px-2.5 py-1.5 border-subtle opacity-100": isSearchOpen,
+            "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
           }
         )}
       >
         <SearchIcon className="h-3.5 w-3.5" />
         <input
           ref={inputRef}
-          className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none ml-2"
+          className="ml-2 w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
           placeholder="Search pages"
           value={searchQuery}
           onChange={(e) => updateSearchQuery(e.target.value)}

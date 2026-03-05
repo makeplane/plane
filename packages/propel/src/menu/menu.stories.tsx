@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Settings, User, LogOut, Mail, Bell, HelpCircle } from "lucide-react";
 import { Menu } from "./menu";
@@ -142,7 +148,7 @@ export const CustomButton: Story = {
     return (
       <Menu
         customButton={
-          <button className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">Custom Button</button>
+          <button className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-on-color">Custom Button</button>
         }
       >
         <Menu.MenuItem onClick={() => alert("Option 1")}>Option 1</Menu.MenuItem>
@@ -209,7 +215,7 @@ export const ComplexMenu: Story = {
           <div className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
             <span>Notifications</span>
-            <span className="ml-auto rounded-sm bg-red-500 px-2 py-0.5 text-11 text-on-color">3</span>
+            <span className="bg-red-500 ml-auto rounded-sm px-2 py-0.5 text-11 text-on-color">3</span>
           </div>
         </Menu.MenuItem>
         <Menu.MenuItem onClick={() => alert("Help")}>
@@ -226,7 +232,7 @@ export const ComplexMenu: Story = {
           <Menu.MenuItem onClick={() => alert("Privacy Settings")}>Privacy</Menu.MenuItem>
           <Menu.MenuItem onClick={() => alert("Security Settings")}>Security</Menu.MenuItem>
         </Menu.SubMenu>
-        <div className="my-1 border-t border-gray-200" />
+        <div className="border-gray-200 my-1 border-t" />
         <Menu.MenuItem onClick={() => alert("Logout")}>
           <div className="flex items-center gap-2 text-danger-primary">
             <LogOut className="h-4 w-4" />

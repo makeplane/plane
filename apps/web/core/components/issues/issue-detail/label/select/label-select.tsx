@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
@@ -135,7 +141,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
 
         <Combobox.Options className="fixed z-10">
           <div
-            className={`z-10 my-1 w-48 whitespace-nowrap rounded-sm border border-strong bg-surface-1 py-2.5 text-11 shadow-raised-200 focus:outline-none`}
+            className={`z-10 my-1 w-48 rounded-sm border border-strong bg-surface-1 py-2.5 text-11 whitespace-nowrap shadow-raised-200 focus:outline-none`}
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
@@ -154,7 +160,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                 />
               </div>
             </div>
-            <div className={`vertical-scrollbar scrollbar-sm mt-2 max-h-48 space-y-1 overflow-y-scroll px-2 pr-0`}>
+            <div className={`vertical-scrollbar mt-2 scrollbar-sm max-h-48 space-y-1 overflow-y-scroll px-2 pr-0`}>
               {isLoading ? (
                 <p className="text-center text-secondary">{t("common.loading")}</p>
               ) : filteredOptions.length > 0 ? (
@@ -163,7 +169,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                     key={option.value}
                     value={option.value}
                     className={({ selected }) =>
-                      `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 hover:bg-layer-1 ${
+                      `flex cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none hover:bg-layer-1 ${
                         selected ? "text-primary" : "text-secondary"
                       }`
                     }
@@ -181,7 +187,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                   </Combobox.Option>
                 ))
               ) : submitting ? (
-                <Loader className="spin  h-3.5 w-3.5" />
+                <Loader className="spin h-3.5 w-3.5" />
               ) : canCreateLabel ? (
                 <Combobox.Option
                   value={query}
@@ -203,7 +209,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                   )}
                 </Combobox.Option>
               ) : (
-                <p className="text-left text-secondary ">{t("common.search.no_matching_results")}</p>
+                <p className="text-left text-secondary">{t("common.search.no_matching_results")}</p>
               )}
             </div>
           </div>

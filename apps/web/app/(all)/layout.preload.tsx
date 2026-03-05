@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // TODO: Check if we need this
 // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#link-relpreload
 // export const usePreloadResources = () => {

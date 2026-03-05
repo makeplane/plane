@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info } from "lucide-react";
@@ -189,7 +195,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <CoverImage src={coverImage} alt="Project cover image" className="h-44 w-full rounded-md" />
-        <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
+        <div className="absolute bottom-4 z-5 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
             <Controller
               control={control}
@@ -232,7 +238,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               <span className="flex items-center gap-2 text-13">
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
-                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color " />}
+                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color" />}
                   {currentNetwork && t(currentNetwork?.i18n_label)}
                 </span>
               </span>
@@ -258,7 +264,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
           </div>
         </div>
       </div>
-      <div className="my-8 flex flex-col gap-8">
+      <div className="mt-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
           <h4 className="text-13">{t("common.project_name")}</h4>
           <Controller
@@ -307,7 +313,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             )}
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="flex flex-col gap-1">
             <h4 className="text-13">Project ID</h4>
             <div className="relative">
@@ -347,7 +353,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 className="text-13"
                 position="right-start"
               >
-                <Info className="absolute right-2 top-2.5 h-4 w-4 text-placeholder" />
+                <Info className="absolute top-2.5 right-2 h-4 w-4 text-placeholder" />
               </Tooltip>
             </div>
             <span className="text-11 text-danger-primary">
@@ -398,7 +404,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               }}
             />
           </div>
-          <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
+          <div className="col-span-1 flex flex-col gap-1 sm:col-span-2 xl:col-span-1">
             <h4 className="text-13">{t("common.project_timezone")}</h4>
             <Controller
               name="timezone"
@@ -426,7 +432,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             <Button variant="primary" size="lg" type="submit" loading={isLoading} disabled={!isAdmin}>
               {isLoading ? t("updating") : t("common.update_project")}
             </Button>
-            <span className="text-13 italic text-placeholder">
+            <span className="text-13 text-placeholder italic">
               {t("common.created_on")} {renderFormattedDate(project?.created_at)}
             </span>
           </>

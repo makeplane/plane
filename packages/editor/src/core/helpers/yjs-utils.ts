@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Buffer } from "buffer";
 import type { Extensions, JSONContent } from "@tiptap/core";
 import { getSchema } from "@tiptap/core";
@@ -215,7 +221,7 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
     const { contentBinaryEncoded, contentHTML, contentJSON } =
       getAllDocumentFormatsFromRichTextEditorBinaryData(contentBinary);
     allFormats = {
-      description: contentJSON,
+      description_json: contentJSON,
       description_html: contentHTML,
       description_binary: contentBinaryEncoded,
     };
@@ -228,7 +234,7 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
       false
     );
     allFormats = {
-      description: contentJSON,
+      description_json: contentJSON,
       description_html: contentHTML,
       description_binary: contentBinaryEncoded,
     };

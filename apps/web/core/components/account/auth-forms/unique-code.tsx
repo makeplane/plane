@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
@@ -92,7 +98,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
         <label htmlFor="email" className="text-13 font-medium text-tertiary">
           {t("auth.common.email.label")}
         </label>
-        <div className={`relative flex items-center rounded-md bg-surface-1 border border-strong`}>
+        <div className={`relative flex items-center rounded-md border border-strong bg-surface-1`}>
           <Input
             id="email"
             name="email"
@@ -100,14 +106,14 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
-            className="disable-autofill-style h-10 w-full placeholder:text-placeholder border-0"
-            autoComplete="on"
+            className="h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder"
+            autoComplete="off"
             disabled
           />
           {uniqueCodeFormData.email.length > 0 && (
             <button
               type="button"
-              className="absolute right-3 size-5 grid place-items-center"
+              className="absolute right-3 grid size-5 place-items-center"
               aria-label={t("aria_labels.auth_forms.clear_email")}
               onClick={handleEmailClear}
             >
@@ -127,10 +133,11 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
           placeholder={t("auth.common.unique_code.placeholder")}
-          className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
+          className="h-10 w-full border border-strong !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
+          autoComplete="off"
           autoFocus
         />
-        <div className="flex w-full items-center justify-between px-1 text-11 pt-1">
+        <div className="flex w-full items-center justify-between px-1 pt-1 text-11">
           <p className="flex items-center gap-1 font-medium text-success-primary">
             <CircleCheck height={12} width={12} />
             {t("auth.common.unique_code.paste_code")}

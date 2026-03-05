@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -7,7 +13,7 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { CheckIcon, SearchIcon, ModuleIcon } from "@plane/propel/icons";
 import type { IModule } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn, sortBySelectedFirst } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -27,10 +33,11 @@ interface Props {
   onDropdownOpen?: () => void;
   placement: Placement | undefined;
   referenceElement: HTMLButtonElement | null;
+  value?: string[] | string | null;
 }
 
 export const ModuleOptions = observer(function ModuleOptions(props: Props) {
-  const { getModuleById, isOpen, moduleIds, multiple, onDropdownOpen, placement, referenceElement } = props;
+  const { getModuleById, isOpen, moduleIds, multiple, onDropdownOpen, placement, referenceElement, value } = props;
   // refs
   const inputRef = useRef<HTMLInputElement | null>(null);
   // states
@@ -100,8 +107,10 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
       ),
     });
 
-  const filteredOptions =
-    query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
+  const filteredOptions = sortBySelectedFirst(
+    query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase())),
+    value
+  );
 
   return (
     <Combobox.Options className="fixed z-10" static>
@@ -133,7 +142,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
                   value={option.value}
                   className={({ active, selected }) =>
                     cn(
-                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5",
+                      "flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none",
                       {
                         "bg-layer-transparent-hover": active,
                         "text-primary": selected,
@@ -151,10 +160,10 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-placeholder">{t("common.search.no_matching_results")}</p>
+              <p className="px-1.5 py-1 text-placeholder italic">{t("common.search.no_matching_results")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-placeholder">{t("common.loading")}</p>
+            <p className="px-1.5 py-1 text-placeholder italic">{t("common.loading")}</p>
           )}
         </div>
       </div>

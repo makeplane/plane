@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -77,15 +83,15 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
 
   return (
     <div className="group relative flex border-b border-subtle">
-      <div className="flex w-full items-center overflow-x-auto px-4 gap-2 horizontal-scrollbar scrollbar-sm">
+      <div className="horizontal-scrollbar flex scrollbar-sm w-full items-center gap-2 overflow-x-auto px-4">
         <ArchiveTabsList />
       </div>
       {/* filter options */}
-      <div className="h-full flex items-center gap-3 self-end px-8">
+      <div className="flex h-full items-center gap-3 self-end px-8">
         {!isSearchOpen && (
           <button
             type="button"
-            className="-mr-5 p-2 hover:bg-layer-1 rounded-sm text-placeholder grid place-items-center"
+            className="-mr-5 grid place-items-center rounded-sm p-2 text-placeholder hover:bg-layer-1"
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
@@ -96,9 +102,9 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
         )}
         <div
           className={cn(
-            "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-surface-1 text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+            "ml-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-surface-1 text-placeholder opacity-0 transition-[width] ease-linear",
             {
-              "w-64 px-2.5 py-1.5 border-subtle opacity-100": isSearchOpen,
+              "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
             }
           )}
         >

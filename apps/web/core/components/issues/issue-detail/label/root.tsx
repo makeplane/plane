@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -92,7 +98,7 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
   );
 
   return (
-    <div className="relative flex flex-wrap items-center gap-1 min-h-7.5 w-full px-2">
+    <div className="relative flex min-h-7.5 w-full flex-wrap items-center gap-1 px-2">
       <LabelList
         workspaceSlug={workspaceSlug}
         projectId={projectId}

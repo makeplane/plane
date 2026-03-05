@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -104,12 +110,12 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
       <div className="space-y-5 p-5">
         <h3 className="text-18 font-medium text-secondary">{data ? t("view.update.label") : t("view.create.label")}</h3>
         <div className="space-y-3">
-          <div className="flex items-start gap-2 w-full">
+          <div className="flex w-full items-start gap-2">
             <EmojiPicker
               iconType="lucide"
               isOpen={isOpen}
               handleToggle={(val: boolean) => setIsOpen(val)}
-              className="flex items-center justify-center flex-shrink0"
+              className="flex-shrink0 flex items-center justify-center"
               buttonClassName="flex items-center justify-center"
               label={
                 <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
@@ -145,7 +151,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                   : EmojiIconPickerTypes.ICON
               }
             />
-            <div className="space-y-1 flew-grow w-full">
+            <div className="flew-grow w-full space-y-1">
               <Controller
                 control={control}
                 name="name"
@@ -183,7 +189,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                   id="description"
                   name="description"
                   placeholder={t("common.description")}
-                  className="w-full text-14 resize-none min-h-24"
+                  className="min-h-24 w-full resize-none text-14"
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
@@ -273,7 +279,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
         <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
           {t("common.cancel")}
         </Button>

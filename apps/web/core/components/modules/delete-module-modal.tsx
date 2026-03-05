@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -74,7 +80,7 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
       content={
         <>
           Are you sure you want to delete module-{" "}
-          <span className="break-all font-medium text-primary">{data?.name}</span>? All of the data related to the
+          <span className="font-medium break-all text-primary">{data?.name}</span>? All of the data related to the
           module will be permanently removed. This action cannot be undone.
         </>
       }

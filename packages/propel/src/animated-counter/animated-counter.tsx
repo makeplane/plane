@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect } from "react";
 import { cn } from "../utils";
 
@@ -44,7 +50,7 @@ export function AnimatedCounter({ count, className, size = "md" }: AnimatedCount
   const sizeClass = sizeClasses[size];
 
   return (
-    <div className={cn("relative inline-flex items-center justify-center overflow-hidden min-w-2", sizeClass)}>
+    <div className={cn("relative inline-flex min-w-2 items-center justify-center overflow-hidden", sizeClass)}>
       {/* Previous number sliding out */}
       {isAnimating && (
         <span
@@ -56,8 +62,8 @@ export function AnimatedCounter({ count, className, size = "md" }: AnimatedCount
             direction === "down" && "[--slide-out-dir:100%]",
             sizeClass,
             {
-              "animate-slide-out animate-fade-out": isAnimating && direction === "up",
-              "animate-slide-out-down animate-fade-out": isAnimating && direction === "down",
+              "animate-fade-out animate-slide-out": isAnimating && direction === "up",
+              "animate-fade-out animate-slide-out-down": isAnimating && direction === "down",
             }
           )}
         >

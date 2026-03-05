@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -67,7 +73,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
             }}
             size="lg"
           >
-            <div className="sm:hidden block">{t("add")}</div>
+            <div className="block sm:hidden">{t("add")}</div>
             <div className="hidden sm:block">{t("project_module.add_module")}</div>
           </Button>
         ) : (

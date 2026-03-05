@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { lazy, Suspense } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -65,7 +71,7 @@ const ProjectInsights = observer(function ProjectInsights() {
           {projectInsightsData && (
             <Suspense fallback={<ProjectInsightsLoader />}>
               <RadarChart
-                className="h-[350px] w-full lg:w-3/5 text-accent-primary"
+                className="h-[350px] w-full text-accent-primary lg:w-3/5"
                 data={projectInsightsData}
                 dataKey="key"
                 radars={[
@@ -91,7 +97,7 @@ const ProjectInsights = observer(function ProjectInsights() {
           )}
           <div className="w-full lg:w-2/5">
             <div className="text-13 text-tertiary">{t("workspace_analytics.summary_of_projects")}</div>
-            <div className=" mb-3 border-b border-subtle py-2">{t("workspace_analytics.all_projects")}</div>
+            <div className="mb-3 border-b border-subtle py-2">{t("workspace_analytics.all_projects")}</div>
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between text-13 text-tertiary">
                 <div>{t("workspace_analytics.trend_on_charts")}</div>

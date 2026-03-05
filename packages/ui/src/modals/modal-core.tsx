@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Dialog, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
 // constants
@@ -51,7 +57,7 @@ export function ModalCore(props: Props) {
             >
               <Dialog.Panel
                 className={cn(
-                  "relative transform rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all w-full",
+                  "relative w-full transform rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all",
                   width,
                   className
                 )}

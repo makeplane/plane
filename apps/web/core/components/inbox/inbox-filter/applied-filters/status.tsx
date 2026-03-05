@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { INBOX_STATUS } from "@plane/constants";
@@ -30,16 +36,16 @@ export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueApplie
         if (!optionDetail) return <></>;
         return (
           <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
-            <div className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden">
+            <div className="relative flex h-3 w-3 flex-shrink-0 items-center justify-center overflow-hidden">
               <InboxStatusIcon type={optionDetail?.status} />
             </div>
-            <div className="text-11 truncate">{t(optionDetail?.i18n_title)}</div>
+            <div className="truncate text-11">{t(optionDetail?.i18n_title)}</div>
             {handleFilterValue(optionDetail?.status).length >= 1 && (
               <div
-                className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
+                className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
                 onClick={() => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))}
               >
-                <CloseIcon className={`w-3 h-3`} />
+                <CloseIcon className={`h-3 w-3`} />
               </div>
             )}
           </div>

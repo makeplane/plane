@@ -1,4 +1,9 @@
-import React from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -7,7 +12,8 @@ import type { IWorkspaceIntegration } from "@plane/types";
 import GithubLogo from "@/app/assets/logos/github-square.png?url";
 import SlackLogo from "@/app/assets/services/slack.png?url";
 // components
-import { SelectRepository, SelectChannel } from "@/components/integration";
+import { SelectChannel } from "@/components/integration/slack/select-channel";
+import { SelectRepository } from "@/components/integration/github/select-repository";
 // constants
 import { PROJECT_GITHUB_REPOSITORY } from "@/constants/fetch-keys";
 // services
@@ -84,7 +90,7 @@ export function IntegrationCard({ integration }: Props) {
             <div className="h-10 w-10 flex-shrink-0">
               <img
                 src={integrationDetails[integration.integration_detail.provider].logo}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
                 alt={`${integration.integration_detail.title} Logo`}
               />
             </div>

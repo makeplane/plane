@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -23,7 +29,7 @@ export const HeaderSubGroupByCard = observer(function HeaderSubGroupByCard(props
   const { icon, title, count, column_id, collapsedGroups, sub_group_by, handleCollapsedGroups } = props;
   return (
     <div
-      className={`relative flex w-full flex-shrink-0 flex-row items-center gap-1 rounded-xs py-1.5 cursor-pointer`}
+      className={`relative flex w-full flex-shrink-0 cursor-pointer flex-row items-center gap-1 rounded-xs py-1.5`}
       onClick={() => handleCollapsedGroups("sub_group_by", column_id)}
     >
       <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1">

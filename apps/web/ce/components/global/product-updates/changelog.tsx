@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // hooks
@@ -66,15 +72,15 @@ export const ProductUpdatesChangelog = observer(function ProductUpdatesChangelog
   }
 
   return (
-    <div className="flex flex-col h-[550px] vertical-scrollbar scrollbar-xs overflow-hidden overflow-y-scroll px-6 mx-0.5 relative">
+    <div className="vertical-scrollbar relative mx-0.5 flex scrollbar-xs h-[550px] flex-col overflow-hidden overflow-y-scroll px-6">
       {isLoading && (
-        <Loader className="flex flex-col gap-3 absolute inset-0 w-full h-full items-center justify-center">
+        <Loader className="absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-3">
           <Loader.Item height="95%" width="95%" />
         </Loader>
       )}
       <iframe
         src={changeLogUrl}
-        className={`w-full h-full ${isLoading ? "opacity-0" : "opacity-100"} transition-opacity duration-200`}
+        className={`h-full w-full ${isLoading ? "opacity-0" : "opacity-100"} transition-opacity duration-200`}
         onLoad={handleIframeLoad}
         onError={handleIframeError}
       />

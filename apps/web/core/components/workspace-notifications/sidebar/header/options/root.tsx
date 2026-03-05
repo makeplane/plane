@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { CheckCheck, RefreshCw } from "lucide-react";
 // plane imports
@@ -46,7 +52,7 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
   };
 
   return (
-    <div className="relative flex justify-center items-center gap-2 text-body-xs-medium">
+    <div className="relative flex items-center justify-center gap-2 text-body-xs-medium">
       {/* mark all notifications as read*/}
       <Tooltip tooltipContent={t("notification.options.mark_all_as_read")} isMobile={isMobile} position="bottom">
         <IconButton

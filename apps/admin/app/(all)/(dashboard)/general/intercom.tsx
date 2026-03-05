@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -50,16 +56,16 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
   return (
     <>
       <div className="flex items-center gap-14">
-        <div className="grow flex items-center gap-4">
+        <div className="flex grow items-center gap-4">
           <div className="shrink-0">
-            <div className="flex items-center justify-center size-11 bg-layer-1 rounded-lg">
-              <MessageSquare className="size-5 text-tertiary p-0.5" />
+            <div className="flex size-11 items-center justify-center rounded-lg bg-layer-1">
+              <MessageSquare className="size-5 p-0.5 text-tertiary" />
             </div>
           </div>
 
           <div className="grow">
-            <div className="text-13 font-medium text-primary leading-5">Chat with us</div>
-            <div className="text-11 font-regular text-tertiary leading-5">
+            <div className="text-13 leading-5 font-medium text-primary">Chat with us</div>
+            <div className="text-11 leading-5 font-regular text-tertiary">
               Let your users chat with us via Intercom or another service. Toggling Telemetry off turns this off
               automatically.
             </div>

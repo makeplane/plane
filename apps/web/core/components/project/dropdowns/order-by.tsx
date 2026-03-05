@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { ArrowDownWideNarrow } from "lucide-react";
 // plane imports
 import { PROJECT_ORDER_BY_OPTIONS } from "@plane/constants";
@@ -31,12 +37,12 @@ export function ProjectOrderByDropdown(props: Props) {
         <>
           {isMobile ? (
             <div className={getButtonStyling("secondary", "lg")}>
-              <ArrowDownWideNarrow className="shrink-0 size-3.5" strokeWidth={2} />
+              <ArrowDownWideNarrow className="size-3.5 shrink-0" strokeWidth={2} />
               {orderByDetails && t(orderByDetails?.i18n_label)}
             </div>
           ) : (
             <div className={getButtonStyling("secondary", "lg")}>
-              <ArrowDownWideNarrow className="shrink-0 size-3.5" strokeWidth={2} />
+              <ArrowDownWideNarrow className="size-3.5 shrink-0" strokeWidth={2} />
               {orderByDetails && t(orderByDetails?.i18n_label)}
             </div>
           )}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -18,10 +24,10 @@ function ProjectSettingsPage() {
   // derived values
   const resolvedPath = resolvedTheme === "dark" ? ProjectDarkEmptyState : ProjectLightEmptyState;
   return (
-    <div className="flex flex-col gap-4 items-center justify-center h-full max-w-[480px] mx-auto">
+    <div className="mx-auto flex h-full max-w-[480px] flex-col items-center justify-center gap-4">
       <img src={resolvedPath} alt="No projects yet" />
       <div className="text-16 font-semibold text-tertiary">No projects yet</div>
-      <div className="text-13 text-tertiary text-center">
+      <div className="text-center text-13 text-tertiary">
         Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you
         need to get things done.
       </div>

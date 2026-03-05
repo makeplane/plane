@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export type { ISvgIcons } from "./type";
 export type { IconName } from "./registry";
 export { ICON_REGISTRY } from "./registry";
@@ -19,7 +25,6 @@ export * from "./create-icon";
 export * from "./cycle";
 export * from "./default-icon";
 export * from "./dice-icon";
-export * from "./discord-icon";
 export * from "./display-properties";
 export * from "./done-icon";
 export * from "./dropdown-icon";

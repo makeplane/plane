@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import pytz
 from uuid import uuid4
@@ -135,6 +139,8 @@ class Project(BaseModel):
     def __str__(self):
         """Return name of the project"""
         return f"{self.name} <{self.workspace.name}>"
+
+    FORBIDDEN_IDENTIFIER_CHARS_PATTERN = r"^.*[&+,:;$^}{*=?@#|'<>.()%!-].*$"
 
     class Meta:
         unique_together = [

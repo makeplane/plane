@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { CircleCheck } from "lucide-react";
 import React from "react";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
@@ -29,7 +35,7 @@ export function PasswordStrengthIndicator({
     <div className={cn("space-y-3")}>
       {/* Strength Indicator */}
       <div className="space-y-2">
-        <div className="flex gap-1 w-full transition-all duration-300 ease-linear">
+        <div className="flex w-full gap-1 transition-all duration-300 ease-linear">
           {[0, 1, 2].map((fragmentIndex) => (
             <div
               key={fragmentIndex}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // constants
@@ -45,19 +51,19 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
       <tr>
         {/* Single header column containing both identifier and workitem */}
         <th
-          className="group/list-header md:sticky min-w-60 left-0 z-[15] h-11 bg-layer-1 text-13 font-medium border-r-[0.5px] border-subtle"
+          className="group/list-header left-0 z-[15] h-11 min-w-60 border-r-[0.5px] border-subtle bg-layer-1 text-13 font-medium md:sticky"
           tabIndex={-1}
         >
-          <div className="flex items-center gap-2 h-full w-full px-page-x">
+          <div className="flex h-full w-full items-center gap-2 px-page-x">
             {/* Workitem header section */}
-            <div className="flex items-center gap-1 flex-grow h-full py-2.5 min-w-80">
+            <div className="flex h-full min-w-80 flex-grow items-center gap-1 py-2.5">
               {canSelectIssues && (
-                <div className="flex-shrink-0 flex items-center w-3.5 mr-1">
+                <div className="mr-1 flex w-3.5 flex-shrink-0 items-center">
                   <MultipleSelectGroupAction
                     className={cn(
-                      "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
+                      "pointer-events-none size-3.5 opacity-0 !outline-none group-hover/list-header:pointer-events-auto group-hover/list-header:opacity-100",
                       {
-                        "opacity-100 pointer-events-auto": !isGroupSelectionEmpty,
+                        "pointer-events-auto opacity-100": !isGroupSelectionEmpty,
                       }
                     )}
                     groupID={SPREADSHEET_SELECT_GROUP}

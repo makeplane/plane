@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
@@ -175,7 +181,7 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
 
   const content = (
     <div
-      className={cn("relative flex flex-col h-full select-none rounded-xs bg-surface-1 shadow", {
+      className={cn("shadow relative flex h-full flex-col rounded-xs bg-surface-1 select-none", {
         "inset-0 z-[25] bg-surface-1": fullScreenMode,
         "border-[0.5px] border-subtle": border,
       })}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { Combobox } from "@headlessui/react";
 // hooks
@@ -21,7 +27,7 @@ export const BulkDeleteIssuesModalItem = observer(function BulkDeleteIssuesModal
       as="div"
       value={issue.id}
       className={({ active }) =>
-        `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 my-0.5 ${
+        `my-0.5 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 select-none ${
           active ? "bg-layer-1 text-primary" : ""
         }`
       }

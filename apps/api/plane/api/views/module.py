@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -410,7 +414,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
                 {"error": "Archived module cannot be edited"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = ModuleSerializer(module, data=request.data, context={"project_id": project_id}, partial=True)
+        serializer = ModuleUpdateSerializer(module, data=request.data, context={"project_id": project_id}, partial=True)
         if serializer.is_valid():
             if (
                 request.data.get("external_id")

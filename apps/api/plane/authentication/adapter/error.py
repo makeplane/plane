@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 AUTHENTICATION_ERROR_CODES = {
     # Global
     "INSTANCE_NOT_CONFIGURED": 5000,
@@ -9,6 +13,7 @@ AUTHENTICATION_ERROR_CODES = {
     "USER_ACCOUNT_DEACTIVATED": 5019,
     # Password strength
     "INVALID_PASSWORD": 5020,
+    "PASSWORD_TOO_WEAK": 5021,
     "SMTP_NOT_CONFIGURED": 5025,
     # Sign Up
     "USER_ALREADY_EXIST": 5030,

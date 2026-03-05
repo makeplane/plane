@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isNodeSelection } from "@tiptap/core";
 import type { Editor } from "@tiptap/core";
 import { BubbleMenu, useEditorState } from "@tiptap/react";
@@ -186,7 +192,7 @@ export function EditorBubbleMenu(props: Props) {
       {!isSelecting && (
         <div
           ref={menuRef}
-          className="flex py-2 divide-x divide-subtle-1 rounded-lg border border-subtle bg-surface-1 shadow-raised-200 overflow-x-scroll horizontal-scrollbar scrollbar-xs"
+          className="horizontal-scrollbar flex scrollbar-xs divide-x divide-subtle-1 overflow-x-scroll rounded-lg border border-subtle bg-surface-1 py-2 shadow-raised-200"
         >
           <div className="px-2">
             <BubbleMenuNodeSelector editor={editor} />
@@ -211,7 +217,7 @@ export function EditorBubbleMenu(props: Props) {
                   e.stopPropagation();
                 }}
                 className={cn(
-                  "size-7 grid place-items-center rounded-sm text-tertiary hover:bg-layer-1 active:bg-layer-1 transition-colors",
+                  "grid size-7 place-items-center rounded-sm text-tertiary transition-colors hover:bg-layer-1 active:bg-layer-1",
                   {
                     "bg-layer-1 text-primary": editorState[item.key],
                   }

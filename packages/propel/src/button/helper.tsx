@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 
@@ -7,24 +13,24 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-accent-primary hover:bg-accent-primary-hover active:bg-accent-primary-active disabled:bg-layer-disabled text-on-color disabled:text-on-color-disabled",
+          "bg-accent-primary text-on-color hover:bg-accent-primary-hover active:bg-accent-primary-active disabled:bg-layer-disabled disabled:text-on-color-disabled",
         "error-fill":
-          "bg-danger-primary hover:bg-danger-primary-hover active:bg-danger-primary-active disabled:bg-layer-disabled text-on-color disabled:text-disabled",
+          "bg-danger-primary text-on-color hover:bg-danger-primary-hover active:bg-danger-primary-active disabled:bg-layer-disabled disabled:text-disabled",
         "error-outline":
           "bg-layer-2 hover:bg-danger-subtle active:bg-danger-subtle-hover disabled:bg-layer-2 text-danger-secondary disabled:text-disabled border border-danger-strong disabled:border-subtle-1",
         secondary:
           "bg-layer-2 hover:bg-layer-2-hover active:bg-layer-2-active disabled:bg-layer-transparent text-secondary disabled:text-disabled border border-strong disabled:border-subtle-1 shadow-raised-100",
         tertiary:
-          "bg-layer-3 hover:bg-layer-3-hover active:bg-layer-3-active disabled:bg-layer-transparent text-secondary disabled:text-disabled",
+          "bg-layer-3 text-secondary hover:bg-layer-3-hover active:bg-layer-3-active disabled:bg-layer-transparent disabled:text-disabled",
         ghost:
-          "bg-layer-transparent hover:bg-layer-transparent-hover active:bg-layer-transparent-active focus:bg-layer-transparent-active disabled:bg-layer-transparent text-secondary disabled:text-disabled",
-        link: "px-0 underline text-link-primary hover:text-link-primary-hover active:text-link-primary-hover focus:text-link-primary-hover disabled:text-disabled",
+          "bg-layer-transparent text-secondary hover:bg-layer-transparent-hover focus:bg-layer-transparent-active active:bg-layer-transparent-active disabled:bg-layer-transparent disabled:text-disabled",
+        link: "px-0 text-link-primary underline hover:text-link-primary-hover focus:text-link-primary-hover active:text-link-primary-hover disabled:text-disabled",
       },
       size: {
-        sm: "h-5 px-1.5 text-caption-md-medium rounded-sm",
-        base: "h-6 px-2 text-body-xs-medium rounded-md",
-        lg: "h-7 px-2 text-body-xs-medium rounded-md",
-        xl: "h-8 px-2 text-body-sm-medium rounded-md",
+        sm: "h-5 rounded-sm px-1.5 text-caption-md-medium",
+        base: "h-6 rounded-md px-2 text-body-xs-medium",
+        lg: "h-7 rounded-md px-2 text-body-xs-medium",
+        xl: "h-8 rounded-md px-2 text-body-sm-medium",
       },
     },
     defaultVariants: {

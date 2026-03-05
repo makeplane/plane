@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Toast, ToastStatic, setToast, updateToast, setPromiseToast, TOAST_TYPE } from "./toast";
 
@@ -22,10 +28,10 @@ export const Provider: Story = {
       <div>
         <Toast theme="light" />
         <div className="space-y-2">
-          <p className="text-13 text-gray-600">
+          <p className="text-gray-600 text-13">
             Toast provider is required to display toasts. It should be added to your app root.
           </p>
-          <code className="block rounded-sm bg-gray-100 p-2 text-11">{`<Toast theme="light" />`}</code>
+          <code className="bg-gray-100 block rounded-sm p-2 text-11">{`<Toast theme="light" />`}</code>
         </div>
       </div>
     );
@@ -132,7 +138,7 @@ export const Loading: Story = {
               title: "Loading...",
             })
           }
-          className="rounded-sm bg-layer-2 border border-subtle px-4 py-2 text-13 text-primary hover:bg-layer-1"
+          className="rounded-sm border border-subtle bg-layer-2 px-4 py-2 text-13 text-primary hover:bg-layer-1"
         >
           Show Loading Toast
         </button>
@@ -297,7 +303,7 @@ export const AllTypes: Story = {
                 title: "Loading",
               })
             }
-            className="rounded-sm bg-layer-2 border border-subtle px-3 py-2 text-13 text-primary hover:bg-layer-1"
+            className="rounded-sm border border-subtle bg-layer-2 px-3 py-2 text-13 text-primary hover:bg-layer-1"
           >
             Loading
           </button>
@@ -394,7 +400,7 @@ export const StaticVariants: Story = {
     return (
       <div className="grid grid-cols-1 gap-4">
         <div>
-          <p className="text-13 text-secondary mb-2 font-medium">All toast variants (static):</p>
+          <p className="mb-2 text-13 font-medium text-secondary">All toast variants (static):</p>
         </div>
         <div className="flex flex-col gap-3">
           <ToastStatic type={TOAST_TYPE.SUCCESS} title="Success" message="Your changes have been saved successfully." />
@@ -477,8 +483,8 @@ export const StaticWithActions: Story = {
 export const StaticDarkMode: Story = {
   render() {
     return (
-      <div className="flex flex-col gap-3 p-6 bg-canvas rounded-lg" data-theme="dark">
-        <p className="text-13 text-secondary mb-2 font-medium">Toast variants in dark mode:</p>
+      <div className="flex flex-col gap-3 rounded-lg bg-canvas p-6" data-theme="dark">
+        <p className="mb-2 text-13 font-medium text-secondary">Toast variants in dark mode:</p>
         <ToastStatic
           type={TOAST_TYPE.SUCCESS}
           title="Success"
@@ -501,99 +507,99 @@ export const DesignTokens: Story = {
     return (
       <div className="space-y-6">
         <div>
-          <h2 className="text-16 font-semibold text-primary mb-2">Toast Design Tokens</h2>
+          <h2 className="mb-2 text-16 font-semibold text-primary">Toast Design Tokens</h2>
           <p className="text-13 text-secondary">
             The toast component uses semantic design tokens from the Plane design system.
           </p>
         </div>
 
         <div>
-          <h3 className="text-14 font-semibold text-primary mb-3">Token Mapping by Variant</h3>
+          <h3 className="mb-3 text-14 font-semibold text-primary">Token Mapping by Variant</h3>
           <div className="overflow-x-auto">
-            <table className="w-full text-11 border border-subtle rounded-lg">
+            <table className="w-full rounded-lg border border-subtle text-11">
               <thead>
                 <tr className="bg-layer-1">
-                  <th className="text-left px-3 py-2 font-semibold text-primary border-b border-subtle">Variant</th>
-                  <th className="text-left px-3 py-2 font-semibold text-primary border-b border-subtle">Title Text</th>
-                  <th className="text-left px-3 py-2 font-semibold text-primary border-b border-subtle">Icon BG</th>
-                  <th className="text-left px-3 py-2 font-semibold text-primary border-b border-subtle">Toast BG</th>
-                  <th className="text-left px-3 py-2 font-semibold text-primary border-b border-subtle">Border</th>
+                  <th className="border-b border-subtle px-3 py-2 text-left font-semibold text-primary">Variant</th>
+                  <th className="border-b border-subtle px-3 py-2 text-left font-semibold text-primary">Title Text</th>
+                  <th className="border-b border-subtle px-3 py-2 text-left font-semibold text-primary">Icon BG</th>
+                  <th className="border-b border-subtle px-3 py-2 text-left font-semibold text-primary">Toast BG</th>
+                  <th className="border-b border-subtle px-3 py-2 text-left font-semibold text-primary">Border</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b border-subtle">
                   <td className="px-3 py-2 font-medium text-primary">Success</td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-primary</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">text-primary</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-success-primary</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">bg-success-primary</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-surface-1</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">bg-surface-1</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">border-subtle</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">border-subtle</code>
                   </td>
                 </tr>
                 <tr className="border-b border-subtle">
                   <td className="px-3 py-2 font-medium text-primary">Error</td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-primary</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">text-primary</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-danger-primary</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">bg-danger-primary</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-surface-1</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">bg-surface-1</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">border-subtle</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">border-subtle</code>
                   </td>
                 </tr>
                 <tr className="border-b border-subtle">
                   <td className="px-3 py-2 font-medium text-primary">Warning</td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-primary</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">text-primary</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-warning-primary</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">bg-warning-primary</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-surface-1</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">bg-surface-1</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">border-subtle</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">border-subtle</code>
                   </td>
                 </tr>
                 <tr className="border-b border-subtle">
                   <td className="px-3 py-2 font-medium text-primary">Info</td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-primary</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">text-primary</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-accent-primary</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">bg-accent-primary</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-surface-1</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">bg-surface-1</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">border-subtle</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">border-subtle</code>
                   </td>
                 </tr>
                 <tr>
                   <td className="px-3 py-2 font-medium text-primary">Loading</td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-primary</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">text-primary</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-layer-2</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">bg-layer-2</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-surface-1</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">bg-surface-1</code>
                   </td>
                   <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">border-subtle</code>
+                    <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">border-subtle</code>
                   </td>
                 </tr>
               </tbody>
@@ -603,29 +609,29 @@ export const DesignTokens: Story = {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <h3 className="text-14 font-semibold text-primary mb-3">Typography</h3>
+            <h3 className="mb-3 text-14 font-semibold text-primary">Typography</h3>
             <ul className="space-y-2 text-12 text-secondary">
               <li>
                 <span className="font-medium text-primary">Title:</span>{" "}
-                <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-14 font-semibold</code>
+                <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">text-14 font-semibold</code>
               </li>
               <li>
                 <span className="font-medium text-primary">Message:</span>{" "}
-                <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-13</code>
+                <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">text-13</code>
               </li>
               <li>
                 <span className="font-medium text-primary">Message Color:</span>{" "}
-                <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-secondary</code>
+                <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">text-secondary</code>
               </li>
               <li>
                 <span className="font-medium text-primary">Action Button:</span>{" "}
-                <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-13 font-medium</code>
+                <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">text-13 font-medium</code>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-14 font-semibold text-primary mb-3">Dimensions & Styling</h3>
+            <h3 className="mb-3 text-14 font-semibold text-primary">Dimensions & Styling</h3>
             <ul className="space-y-2 text-12 text-secondary">
               <li>
                 <span className="font-medium text-primary">Width:</span> 350px
@@ -638,7 +644,7 @@ export const DesignTokens: Story = {
               </li>
               <li>
                 <span className="font-medium text-primary">Shadow:</span>{" "}
-                <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">shadow-raised-200</code>
+                <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">shadow-raised-200</code>
               </li>
               <li>
                 <span className="font-medium text-primary">Border Width:</span> 1px
@@ -648,7 +654,7 @@ export const DesignTokens: Story = {
         </div>
 
         <div>
-          <h3 className="text-14 font-semibold text-primary mb-3">Icon Specifications</h3>
+          <h3 className="mb-3 text-14 font-semibold text-primary">Icon Specifications</h3>
           <ul className="space-y-2 text-12 text-secondary">
             <li>
               <span className="font-medium text-primary">Icon Size:</span> 20x20px
@@ -662,11 +668,11 @@ export const DesignTokens: Story = {
             </li>
             <li>
               <span className="font-medium text-primary">Icon Color:</span>{" "}
-              <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-on-color</code>
+              <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">text-on-color</code>
             </li>
             <li>
               <span className="font-medium text-primary">Icon Background:</span>{" "}
-              <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">
+              <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">
                 bg-{"{"}variant{"}"}-primary
               </code>
             </li>
@@ -675,16 +681,16 @@ export const DesignTokens: Story = {
             </li>
             <li>
               <span className="font-medium text-primary">Close Icon Color:</span>{" "}
-              <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">
+              <code className="rounded bg-layer-1 px-1.5 py-0.5 text-10">
                 text-icon-secondary hover:text-icon-tertiary
               </code>
             </li>
           </ul>
         </div>
 
-        <div className="bg-layer-1 p-4 rounded-lg">
-          <h3 className="text-14 font-semibold text-primary mb-2">Visual Examples</h3>
-          <p className="text-12 text-secondary mb-4">See how the tokens are applied across all toast variants:</p>
+        <div className="rounded-lg bg-layer-1 p-4">
+          <h3 className="mb-2 text-14 font-semibold text-primary">Visual Examples</h3>
+          <p className="mb-4 text-12 text-secondary">See how the tokens are applied across all toast variants:</p>
           <div className="flex flex-col gap-3">
             <ToastStatic
               type={TOAST_TYPE.SUCCESS}

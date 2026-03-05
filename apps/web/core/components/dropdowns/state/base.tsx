@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -239,14 +245,14 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
                       key={option.value}
                       option={option}
                       selectedValue={value}
-                      className="flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5"
+                      className="flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none"
                     />
                   ))
                 ) : (
-                  <p className="px-1.5 py-1 italic text-placeholder">{t("no_matching_results")}</p>
+                  <p className="px-1.5 py-1 text-placeholder italic">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="px-1.5 py-1 italic text-placeholder">{t("loading")}</p>
+                <p className="px-1.5 py-1 text-placeholder italic">{t("loading")}</p>
               )}
             </div>
           </div>

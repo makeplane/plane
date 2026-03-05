@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { useState } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -61,16 +67,16 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
                 }
               }}
               className={cn(
-                "group h-full flex items-center gap-2 px-1.5 py-1 text-13 font-medium text-tertiary cursor-pointer rounded-sm rounded-r-none",
+                "group flex h-full cursor-pointer items-center gap-2 rounded-sm rounded-r-none px-1.5 py-1 text-13 font-medium text-tertiary",
                 {
                   "hover:bg-layer-1 hover:text-primary": !isLast,
                 }
               )}
             >
-              {shouldTruncate && <div className="flex @4xl:hidden text-tertiary">...</div>}
+              {shouldTruncate && <div className="flex text-tertiary @4xl:hidden">...</div>}
               <div
                 className={cn("flex gap-2", {
-                  "hidden @4xl:flex gap-2 items-center": shouldTruncate,
+                  "hidden items-center gap-2 @4xl:flex": shouldTruncate,
                 })}
               >
                 {icon && <Breadcrumbs.Icon>{icon}</Breadcrumbs.Icon>}
@@ -95,7 +101,7 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
       disabled={navigationDisabled}
       className="h-full rounded-sm"
       customButtonClassName={cn(
-        "group flex items-center gap-0.5 rounded-sm hover:bg-surface-2 outline-none cursor-pointer h-full rounded-sm",
+        "group flex h-full cursor-pointer items-center gap-0.5 rounded-sm outline-none hover:bg-surface-2",
         {
           "bg-surface-2": isDropdownOpen,
         }

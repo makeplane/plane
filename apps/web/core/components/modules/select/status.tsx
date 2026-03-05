@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 
 // react hook form
@@ -32,7 +38,7 @@ export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
             value={value}
             label={
               <div
-                className={`flex items-center justify-center gap-2 text-11 py-0.5 ${error ? "text-danger-primary" : ""}`}
+                className={`flex items-center justify-center gap-2 py-0.5 text-11 ${error ? "text-danger-primary" : ""}`}
               >
                 {value ? (
                   <ModuleStatusIcon status={value} />

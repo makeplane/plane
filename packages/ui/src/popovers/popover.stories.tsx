@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { Popover } from "./popover";
@@ -17,12 +23,12 @@ type Story = StoryObj<typeof Popover>;
 // components
 const RenderCustomPopoverComponent = (
   <div className="space-y-2">
-    <div className="text-13 font-medium text-gray-500">Your custom component</div>
+    <div className="text-gray-500 text-13 font-medium">Your custom component</div>
     <div>
       {["option1", "option2", "option3"].map((option) => (
         <div
           key={option}
-          className="text-13 text-gray-600 hover:text-gray-700 rounded-xs cursor-pointer hover:bg-gray-200 transition-all px-1.5 py-0.5 capitalize"
+          className="text-gray-600 hover:text-gray-700 hover:bg-gray-200 cursor-pointer rounded-xs px-1.5 py-0.5 text-13 capitalize transition-all"
         >
           {option}
         </div>
@@ -44,7 +50,7 @@ export const CustomMenuButton: Story = {
   args: {
     popperPosition: "bottom-start",
     button: (
-      <div className="p-2 text-13 font-medium rounded-sm bg-gray-100 hover:bg-gray-200 transition-all">
+      <div className="bg-gray-100 hover:bg-gray-200 rounded-sm p-2 text-13 font-medium transition-all">
         Custom Menu Button
       </div>
     ),

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Download, Edit, Share, Star, Archive } from "lucide-react";
 import { CopyIcon, TrashIcon } from "../icons";
@@ -181,9 +187,9 @@ export const OnFileCard: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="w-64 p-4 border border-subtle rounded-lg hover:bg-layer-1 cursor-pointer">
+          <div className="w-64 cursor-pointer rounded-lg border border-subtle p-4 hover:bg-layer-1">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-accent-primary rounded-sm flex items-center justify-center text-on-color text-16">
+              <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-accent-primary text-16 text-on-color">
                 📄
               </div>
               <div className="flex-1">
@@ -228,7 +234,7 @@ export const OnImage: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="relative w-80 h-56 bg-layer-1 rounded-lg overflow-hidden cursor-pointer">
+          <div className="relative h-56 w-80 cursor-pointer overflow-hidden rounded-lg bg-layer-1">
             <div className="absolute inset-0 flex items-center justify-center text-placeholder">Image Placeholder</div>
           </div>
         </ContextMenu.Trigger>
@@ -260,8 +266,8 @@ export const OnText: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="w-96 p-6 border border-subtle rounded-lg">
-            <h3 className="text-16 font-semibold mb-2">Context Menu on Text</h3>
+          <div className="w-96 rounded-lg border border-subtle p-6">
+            <h3 className="mb-2 text-16 font-semibold">Context Menu on Text</h3>
             <p className="text-tertiary">
               Right click anywhere on this text area to see the context menu. This demonstrates how context menus can be
               applied to text content areas.

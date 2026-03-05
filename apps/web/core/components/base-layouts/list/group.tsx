@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { IBaseLayoutsListItem, IBaseLayoutsListGroupProps } from "@plane/types";
@@ -38,7 +44,7 @@ export const BaseListGroup = observer(function BaseListGroup<T extends IBaseLayo
       })}
     >
       {/* Group Header */}
-      <div className="sticky top-0 w-full shrink-0 border-b border-subtle bg-layer-1 hover:bg-layer-1-hover py-1 px-6 cursor-pointer z-10">
+      <div className="sticky top-0 z-10 w-full shrink-0 cursor-pointer border-b border-subtle bg-layer-1 px-6 py-1 hover:bg-layer-1-hover">
         {renderGroupHeader ? (
           renderGroupHeader({ group, itemCount: itemIds.length, isCollapsed, onToggleGroup })
         ) : (
@@ -76,8 +82,8 @@ export const BaseListGroup = observer(function BaseListGroup<T extends IBaseLayo
       )}
 
       {isDraggingOver && enableDragDrop && (
-        <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center text-13 font-medium text-tertiary rounded-sm bg-layer-1/85 border-[1px] border-strong z-[2]">
-          <div className="p-3 my-8 flex flex-col rounded-sm items-center text-secondary">
+        <div className="absolute top-0 left-0 z-[2] flex h-full w-full items-center justify-center rounded-sm border-[1px] border-strong bg-layer-1/85 text-13 font-medium text-tertiary">
+          <div className="my-8 flex flex-col items-center rounded-sm p-3 text-secondary">
             {t("common.drop_here_to_move")}
           </div>
         </div>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Disclosure } from "@headlessui/react";
@@ -69,7 +75,7 @@ const ActiveCyclesComponent = observer(function ActiveCyclesComponent({
         className="!border-b-transparent"
       />
       <Row className="bg-surface-1 pt-3 pb-6">
-        <div className="grid grid-cols-1 bg-surface-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 bg-surface-1 lg:grid-cols-2 xl:grid-cols-3">
           <ActiveCycleProgress
             handleFiltersUpdate={handleFiltersUpdate}
             projectId={projectId}
@@ -115,7 +121,7 @@ export const ActiveCycleRoot = observer(function ActiveCycleRoot(props: IActiveC
         <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
           {({ open }) => (
             <>
-              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-layer-1 cursor-pointer">
+              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
                 <CycleListGroupHeader title={t("project_cycles.active_cycle.label")} type="current" isExpanded={open} />
               </Disclosure.Button>
               <Disclosure.Panel>

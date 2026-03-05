@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -151,7 +157,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
       tabIndex={tabIndex}
       value={value}
       onChange={dropdownOnChange}
-      className="relative flex-shrink-0 h-full"
+      className="relative h-full flex-shrink-0"
       multiple
       disabled={disabled}
       onKeyDown={handleKeyDown}
@@ -159,13 +165,13 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
       <button
         type="button"
         ref={setReferenceElement}
-        className={cn("h-full flex cursor-pointer items-center gap-2 text-11", buttonContainerClassName)}
+        className={cn("flex h-full cursor-pointer items-center gap-2 text-11", buttonContainerClassName)}
         onClick={handleOnClick}
       >
         {label ? (
           label
         ) : value && value.length > 0 ? (
-          <span className={cn("flex items-center justify-center gap-2 text-11 h-full", buttonClassName)}>
+          <span className={cn("flex h-full items-center justify-center gap-2 text-11", buttonClassName)}>
             <IssueLabelsList
               labels={value.map((v) => labelsList?.find((l) => l.id === v)) ?? []}
               length={3}
@@ -175,7 +181,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
         ) : (
           <div
             className={cn(
-              "h-full flex items-center justify-center gap-1 rounded-sm border-[0.5px] border-strong px-2 py-1 text-11 hover:bg-layer-1",
+              "flex h-full items-center justify-center gap-1 rounded-sm border-[0.5px] border-strong px-2 py-1 text-11 hover:bg-layer-1",
               buttonClassName
             )}
           >
@@ -219,7 +225,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                             className={({ active }) =>
                               `${
                                 active ? "bg-layer-1" : ""
-                              } group flex w-full cursor-pointer select-none items-center gap-2 truncate rounded-sm px-1 py-1.5 text-secondary`
+                              } group flex w-full cursor-pointer items-center gap-2 truncate rounded-sm px-1 py-1.5 text-secondary select-none`
                             }
                             value={label.id}
                           >
@@ -244,7 +250,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                     } else
                       return (
                         <div key={label.id} className="border-y border-subtle">
-                          <div className="flex select-none items-center gap-2 truncate p-2 text-primary">
+                          <div className="flex items-center gap-2 truncate p-2 text-primary select-none">
                             <Component className="h-3 w-3" /> {label.name}
                           </div>
                           <div>
@@ -254,7 +260,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                                 className={({ active }) =>
                                   `${
                                     active ? "bg-layer-1" : ""
-                                  } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded-sm px-1 py-1.5 text-secondary`
+                                  } group flex min-w-[14rem] cursor-pointer items-center gap-2 truncate rounded-sm px-1 py-1.5 text-secondary select-none`
                                 }
                                 value={child.id}
                               >
@@ -281,7 +287,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                       );
                   })
                 ) : submitting ? (
-                  <Loader className="animate-spin h-3.5 w-3.5" />
+                  <Loader className="h-3.5 w-3.5 animate-spin" />
                 ) : createLabelEnabled ? (
                   <p
                     onClick={() => {
@@ -300,10 +306,10 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                     )}
                   </p>
                 ) : (
-                  <p className="text-placeholder italic py-1 px-1.5">{t("no_matching_results")}</p>
+                  <p className="px-1.5 py-1 text-placeholder italic">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="text-placeholder italic py-1 px-1.5">{t("loading")}</p>
+                <p className="px-1.5 py-1 text-placeholder italic">{t("loading")}</p>
               )}
             </div>
           </div>

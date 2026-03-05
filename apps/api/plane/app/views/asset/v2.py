@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import uuid
 
@@ -575,7 +579,7 @@ class ProjectAssetEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, pk):
         # get the asset id
-        asset = FileAsset.objects.get(id=pk)
+        asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import { useParams } from "next/navigation";
@@ -84,7 +90,7 @@ export function ProjectSettingLabelItem(props: Props) {
           className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
         >
           <div
-            className={`py-3 px-1 group relative flex items-center justify-between gap-2 space-y-3 rounded-sm  ${
+            className={`group relative flex items-center justify-between gap-2 space-y-3 rounded-sm px-1 py-3 ${
               isDroppingInLabel ? "" : "border-[0.5px] border-subtle"
             } ${isDragging || isParentDragging ? "bg-layer-1" : "bg-surface-1"}`}
           >

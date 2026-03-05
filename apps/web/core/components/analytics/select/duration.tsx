@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane package imports
 import type { ReactNode } from "react";
 import React from "react";
@@ -39,7 +45,7 @@ function DurationDropdown({ placeholder = "Duration", onChange, value }: Props) 
       onChange={onChange}
       options={options}
       label={
-        <div className="flex items-center gap-2 p-1 ">
+        <div className="flex items-center gap-2 p-1">
           <Calendar className="h-4 w-4" />
           {value ? ANALYTICS_DURATION_FILTER_OPTIONS.find((opt) => opt.value === value)?.name : placeholder}
         </div>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/react";
 import type { FC, ReactNode } from "react";
@@ -162,7 +168,7 @@ export function EditorContainer(props: Props) {
         onClick={handleContainerClick}
         onMouseLeave={handleContainerMouseLeave}
         className={cn(
-          `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
+          `editor-container relative cursor-text line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
           {
             "active-editor": editor?.isFocused && editor?.isEditable,
           },

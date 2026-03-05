@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -77,11 +83,11 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
     >
       <div className="space-y-3">
         {formattedConfig ? (
-          <div className={cn("w-full flex items-center gap-14 rounded-sm")}>
+          <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
             <div className="flex grow items-center gap-4">
               <div className="grow">
-                <div className="text-16 font-medium pb-1">Prevent anyone else from creating a workspace.</div>
-                <div className={cn("font-regular leading-5 text-tertiary text-11")}>
+                <div className="pb-1 text-16 font-medium">Prevent anyone else from creating a workspace.</div>
+                <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
                   Toggling this on will let only you create workspaces. You will have to invite users to new workspaces.
                 </div>
               </div>
@@ -110,15 +116,15 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
         )}
         {workspaceLoader !== "init-loader" ? (
           <>
-            <div className="pt-6 flex items-center justify-between gap-2">
+            <div className="flex items-center justify-between gap-2 pt-6">
               <div className="flex flex-col items-start gap-x-2">
                 <div className="flex items-center gap-2 text-16 font-medium">
                   All workspaces on this instance <span className="text-tertiary">• {workspaceIds.length}</span>
                   {workspaceLoader && ["mutation", "pagination"].includes(workspaceLoader) && (
-                    <LoaderIcon className="w-4 h-4 animate-spin" />
+                    <LoaderIcon className="h-4 w-4 animate-spin" />
                   )}
                 </div>
-                <div className={cn("font-regular leading-5 text-tertiary text-11")}>
+                <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
                   You can&apos;t yet delete workspaces and you can only go to the workspace if you are an Admin or a
                   Member.
                 </div>
@@ -143,7 +149,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                   disabled={workspaceLoader === "pagination"}
                 >
                   Load more
-                  {workspaceLoader === "pagination" && <LoaderIcon className="w-3 h-3 animate-spin" />}
+                  {workspaceLoader === "pagination" && <LoaderIcon className="h-3 w-3 animate-spin" />}
                 </Button>
               </div>
             )}

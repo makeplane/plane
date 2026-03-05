@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -65,7 +71,7 @@ export function IssueLink({ activity }: { activity: IIssueActivity }) {
           <span className="font-regular break-all">{activity.issue_detail?.name}</span>
         </a>
       ) : (
-        <span className="inline-flex items-center gap-1 font-medium text-primary whitespace-nowrap">
+        <span className="inline-flex items-center gap-1 font-medium whitespace-nowrap text-primary">
           {" a work item"}{" "}
         </span>
       )}
@@ -322,7 +328,7 @@ const activityDetails: {
             added a new label{" "}
             <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink font-medium text-primary break-all line-clamp-1">{activity.new_value}</span>
+              <span className="line-clamp-1 flex-shrink font-medium break-all text-primary">{activity.new_value}</span>
             </span>
             {showIssue && (
               <span className="">
@@ -338,7 +344,7 @@ const activityDetails: {
             removed the label{" "}
             <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink font-medium text-primary break-all line-clamp-1">{activity.old_value}</span>
+              <span className="line-clamp-1 flex-shrink font-medium break-all text-primary">{activity.old_value}</span>
             </span>
             {showIssue && (
               <span>
@@ -532,7 +538,7 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removed the parent <span className="font-medium text-primary whitespace-nowrap">{activity.old_value}</span>
+            removed the parent <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -544,7 +550,7 @@ const activityDetails: {
       else
         return (
           <>
-            set the parent to <span className="font-medium text-primary whitespace-nowrap">{activity.new_value}</span>
+            set the parent to <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -579,14 +585,14 @@ const activityDetails: {
         return (
           <>
             marked that {showIssue ? <IssueLink activity={activity} /> : "this work item"} relates to{" "}
-            <span className="font-medium text-primary whitespace-nowrap">{activity.new_value}</span>.
+            <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed the relation from{" "}
-            <span className="font-medium text-primary whitespace-nowrap">{activity.old_value}</span>.
+            <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>.
           </>
         );
     },
@@ -598,14 +604,14 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} is blocking work item{" "}
-            <span className="font-medium text-primary whitespace-nowrap">{activity.new_value}</span>.
+            <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed the blocking work item{" "}
-            <span className="font-medium text-primary whitespace-nowrap">{activity.old_value}</span>.
+            <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>.
           </>
         );
     },
@@ -617,14 +623,14 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} is being blocked by{" "}
-            <span className="font-medium text-primary whitespace-nowrap">{activity.new_value}</span>.
+            <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed {showIssue ? <IssueLink activity={activity} /> : "this work item"} being blocked by work item{" "}
-            <span className="font-medium text-primary whitespace-nowrap">{activity.old_value}</span>.
+            <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>.
           </>
         );
     },
@@ -636,14 +642,14 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} as duplicate of{" "}
-            <span className="font-medium text-primary whitespace-nowrap">{activity.new_value}</span>.
+            <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed {showIssue ? <IssueLink activity={activity} /> : "this work item"} as a duplicate of{" "}
-            <span className="font-medium text-primary whitespace-nowrap">{activity.old_value}</span>.
+            <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>.
           </>
         );
     },
@@ -652,7 +658,7 @@ const activityDetails: {
   state: {
     message: (activity, showIssue) => (
       <>
-        set the state to <span className="font-medium text-primary break-all">{activity.new_value}</span>
+        set the state to <span className="font-medium break-all text-primary">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
@@ -681,7 +687,7 @@ const activityDetails: {
         return (
           <>
             set the start date to{" "}
-            <span className="font-medium text-primary whitespace-nowrap">
+            <span className="font-medium whitespace-nowrap text-primary">
               {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
@@ -713,7 +719,7 @@ const activityDetails: {
         return (
           <>
             set the due date to{" "}
-            <span className="font-medium text-primary whitespace-nowrap">
+            <span className="font-medium whitespace-nowrap text-primary">
               {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (

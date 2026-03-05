@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // components
 import { cn } from "@plane/utils";
@@ -10,12 +16,12 @@ export const NotificationMenuOptionItem = observer(function NotificationMenuOpti
   if (type === "menu-item")
     return (
       <div
-        className="flex items-center gap-2 cursor-pointer mx-2 px-2 p-1 transition-all hover:bg-layer-1 rounded-xs"
+        className="mx-2 flex cursor-pointer items-center gap-2 rounded-xs p-1 px-2 transition-all hover:bg-layer-1"
         onClick={() => onClick && onClick()}
       >
         {prependIcon && prependIcon}
         <div
-          className={cn("whitespace-nowrap text-body-xs-medium", {
+          className={cn("text-body-xs-medium whitespace-nowrap", {
             "text-primary": isActive,
             "text-secondary": !isActive,
           })}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { AlertCircle, Ban, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 import { cn } from "../utils";
@@ -40,7 +46,7 @@ export function PriorityIcon(props: IPriorityIcon) {
       {withContainer ? (
         <div
           className={cn(
-            "flex items-center justify-center border rounded-sm p-0.5 flex-shrink-0",
+            "flex flex-shrink-0 items-center justify-center rounded-sm border p-0.5",
             priorityClasses[priority ?? "none"],
             containerClassName
           )}

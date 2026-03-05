@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -104,15 +110,15 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
         excludedElementId="extended-project-sidebar-toggle"
         className="px-0"
       >
-        <div className="flex flex-col gap-1 w-full sticky top-4 px-4">
+        <div className="sticky top-4 flex w-full flex-col gap-1 px-4">
           <div className="flex items-center justify-between">
-            <span className="text-13 font-semibold text-tertiary py-1.5">Projects</span>
+            <span className="py-1.5 text-13 font-semibold text-tertiary">Projects</span>
             {isAuthorizedUser && (
               <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                 <button
                   type="button"
                   data-ph-element={PROJECT_TRACKER_ELEMENTS.EXTENDED_SIDEBAR_ADD_BUTTON}
-                  className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0 text-tertiary hover:text-secondary transition-colors"
+                  className="flex-shrink-0 rounded-sm p-0.5 text-tertiary transition-colors hover:bg-layer-1 hover:text-secondary"
                   onClick={() => {
                     setIsProjectModalOpen(true);
                   }}
@@ -122,7 +128,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
               </Tooltip>
             )}
           </div>
-          <div className="ml-auto flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1 w-full">
+          <div className="ml-auto flex w-full items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1">
             <SearchIcon className="h-3.5 w-3.5 text-placeholder" />
             <input
               className="w-full max-w-[234px] border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
@@ -134,7 +140,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
           </div>
         </div>
         {filteredProjects.length === 0 ? (
-          <div className="flex flex-col items-center mt-4 p-10">
+          <div className="mt-4 flex flex-col items-center p-10">
             <EmptyStateCompact
               title={t("common_empty_state.search.title")}
               description={t("common_empty_state.search.description")}
@@ -144,7 +150,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
             />
           </div>
         ) : (
-          <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 pl-9 pr-2">
+          <div className="vertical-scrollbar mt-4 flex scrollbar-sm flex-grow flex-col gap-0.5 overflow-x-hidden overflow-y-auto pr-2 pl-9">
             {filteredProjects.map((projectId, index) => (
               <SidebarProjectsListItem
                 key={projectId}

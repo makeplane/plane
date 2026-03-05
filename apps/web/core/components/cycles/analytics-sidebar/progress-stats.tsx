@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 // plane imports
@@ -128,7 +134,7 @@ export const CycleProgressStats = observer(function CycleProgressStats(props: TC
           {PROGRESS_STATS.map((stat) => (
             <Tab
               className={cn(
-                `p-1 w-full text-primary outline-none focus:outline-none cursor-pointer transition-all`,
+                `w-full cursor-pointer p-1 text-primary transition-all outline-none focus:outline-none`,
                 roundedTab ? `rounded-3xl border border-subtle` : `rounded-sm`,
                 stat.key === currentTab
                   ? "bg-layer-transparent-active text-secondary"

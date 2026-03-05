@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import Link from "next/link";
@@ -170,8 +176,8 @@ export function InstanceGiteaConfigForm(props: Props) {
         handleClose={() => setIsDiscardChangesModalOpen(false)}
       />
       <div className="flex flex-col gap-8">
-        <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
-          <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
+        <div className="grid w-full grid-cols-2 gap-x-12 gap-y-8">
+          <div className="col-span-2 flex flex-col gap-y-4 pt-1 md:col-span-1">
             <div className="pt-2.5 text-18 font-medium">Gitea-provided details for Plane</div>
             {GITEA_FORM_FIELDS.map((field) => (
               <ControllerInput
@@ -205,7 +211,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-layer-1 rounded-lg">
+            <div className="flex flex-col gap-y-4 rounded-lg bg-layer-1 px-6 pt-1.5 pb-4">
               <div className="pt-2 text-18 font-medium">Plane-provided details for Gitea</div>
               {GITEA_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />

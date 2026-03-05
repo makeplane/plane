@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 // types
 import { Button } from "@plane/propel/button";
@@ -45,9 +51,9 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
       <div className="space-y-5 px-5 py-8 sm:p-6">
-        <h3 className="text-16 font-medium leading-6 text-primary">Join Project?</h3>
+        <h3 className="text-16 leading-6 font-medium text-primary">Join Project?</h3>
         <p>
-          Are you sure you want to join the project <span className="break-words font-semibold">{project?.name}</span>?
+          Are you sure you want to join the project <span className="font-semibold break-words">{project?.name}</span>?
           Please click the &apos;Join Project&apos; button below to continue.
         </p>
         <div className="space-y-3" />

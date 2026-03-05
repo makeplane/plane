@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -26,7 +32,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { CoverImage } from "@/components/common/cover-image";
 import { DeleteProjectModal } from "./delete-project-modal";
 import { JoinProjectModal } from "./join-project-modal";
-import { ArchiveRestoreProjectModal } from "./settings/archive-project/archive-restore-modal";
+import { ArchiveRestoreProjectModal } from "./archive-restore-modal";
 
 type Props = {
   project: IProject;
@@ -200,22 +206,22 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         }}
         data-prevent-progress={!isMemberOfProject || isArchived}
         className={cn(
-          "flex flex-col justify-between group/project-card border border-subtle bg-layer-2 hover:shadow-raised-200 hover:border-strong w-full rounded-lg overflow-hidden duration-300 transition-all"
+          "group/project-card flex w-full flex-col justify-between overflow-hidden rounded-lg border border-subtle bg-layer-2 transition-all duration-300 hover:border-strong hover:shadow-raised-200"
         )}
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
-        <div className="relative h-[118px] w-full rounded-t ">
+        <div className="relative h-[118px] w-full rounded-t">
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
 
           <CoverImage
             src={project.cover_image_url}
             alt={project.name}
-            className="absolute left-0 top-0 h-full w-full rounded-t"
+            className="absolute top-0 left-0 h-full w-full rounded-t"
           />
 
           <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
-              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded-sm bg-white/10">
+              <div className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-sm bg-white/10">
                 <Logo logo={project.logo_props} size={18} />
               </div>
 
@@ -223,7 +229,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 <h3 className="truncate font-semibold text-on-color">{project.name}</h3>
                 <span className="flex items-center gap-1.5">
                   <p className="text-11 font-medium text-on-color">{project.identifier} </p>
-                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color " />}
+                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color" />}
                 </span>
               </div>
             </div>
@@ -265,7 +271,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             "opacity-90": isArchived,
           })}
         >
-          <p className="line-clamp-2 break-words text-13 text-tertiary">
+          <p className="line-clamp-2 text-13 break-words text-tertiary">
             {project.description && project.description.trim() !== ""
               ? project.description
               : `Created on ${renderFormattedDate(project.created_at)}`}
@@ -293,16 +299,16 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </AvatarGroup>
                   </div>
                 ) : (
-                  <span className="text-13 italic text-placeholder">No Member Yet</span>
+                  <span className="text-13 text-placeholder italic">No Member Yet</span>
                 )}
               </Tooltip>
-              {isArchived && <div className="text-11 text-placeholder font-medium">Archived</div>}
+              {isArchived && <div className="text-11 font-medium text-placeholder">Archived</div>}
             </div>
             {isArchived ? (
               hasAdminRole && (
                 <div className="flex items-center justify-center gap-2">
                   <div
-                    className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
+                    className="flex items-center justify-center text-11 font-medium text-placeholder hover:text-secondary"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -315,7 +321,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </div>
                   </div>
                   <div
-                    className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
+                    className="flex items-center justify-center text-11 font-medium text-placeholder hover:text-secondary"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -340,7 +346,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       <Settings className="h-3.5 w-3.5" />
                     </Link>
                   ) : (
-                    <span className="flex items-center gap-1 text-placeholder text-13">
+                    <span className="flex items-center gap-1 text-13 text-placeholder">
                       <CheckIcon className="h-3.5 w-3.5" />
                       Joined
                     </span>

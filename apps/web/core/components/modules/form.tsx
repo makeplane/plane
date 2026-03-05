@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
@@ -145,7 +151,7 @@ export function ModuleForm(props: Props) {
                   value={value}
                   onChange={onChange}
                   placeholder={t("description")}
-                  className="w-full text-14 resize-none min-h-24"
+                  className="min-h-24 w-full resize-none text-14"
                   hasError={Boolean(errors?.description)}
                   tabIndex={getIndex("description")}
                 />
@@ -226,7 +232,7 @@ export function ModuleForm(props: Props) {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
         <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
           {t("cancel")}
         </Button>

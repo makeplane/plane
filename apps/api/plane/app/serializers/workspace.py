@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 from rest_framework import serializers
 
@@ -107,7 +111,7 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
     invite_link = serializers.SerializerMethodField()
 
     def get_invite_link(self, obj):
-        return f"/workspace-invitations/?invitation_id={obj.id}&email={obj.email}&slug={obj.workspace.slug}"
+        return f"/workspace-invitations/?invitation_id={obj.id}&slug={obj.workspace.slug}&token={obj.token}"
 
     class Meta:
         model = WorkspaceMemberInvite

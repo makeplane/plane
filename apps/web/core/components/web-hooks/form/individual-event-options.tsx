@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import type { IWebhook } from "@plane/types";
@@ -55,7 +61,7 @@ export function WebhookIndividualEventOptions({ control }: Props) {
                   {option.label}
                 </label>
               </div>
-              <p className="ml-6 mt-0.5 text-11 text-tertiary">{option.description}</p>
+              <p className="mt-0.5 ml-6 text-11 text-tertiary">{option.description}</p>
             </div>
           )}
         />

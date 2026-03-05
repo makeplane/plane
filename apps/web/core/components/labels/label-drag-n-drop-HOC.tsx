@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { MutableRefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -27,7 +33,7 @@ export function LabelDragPreview(props: LabelDragPreviewProps) {
   const { label, isGroup } = props;
 
   return (
-    <div className="py-3 pl-2 pr-4 border-[1px] border-subtle bg-surface-1">
+    <div className="border-[1px] border-subtle bg-surface-1 py-3 pr-4 pl-2">
       <LabelName name={label.name} color={label.color} isGroup={isGroup} />
     </div>
   );

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { DOMParser } from "@tiptap/pm/model";
 import type { EditorProps } from "@tiptap/pm/view";
 // plane utils
@@ -15,7 +21,7 @@ export const CoreEditorProps = (props: TArgs): EditorProps => {
   return {
     attributes: {
       class: cn(
-        "prose prose-brand max-w-full prose-headings:font-display font-default focus:outline-none",
+        "prose-brand prose-headings:font-display font-default max-w-full prose focus:outline-none",
         editorClassName
       ),
     },

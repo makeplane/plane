@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { CheckIcon } from "lucide-react";
 import * as React from "react";
 // ui
@@ -39,14 +45,14 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
             }
           }}
           className={cn(
-            "group h-full flex items-center gap-2 px-1.5 py-1 text-13 font-medium text-tertiary cursor-pointer rounded-sm rounded-r-none",
+            "group flex h-full cursor-pointer items-center gap-2 rounded-sm rounded-r-none px-1.5 py-1 text-13 font-medium text-tertiary",
             {
               "hover:bg-layer-1 hover:text-primary": !isLast,
             }
           )}
         >
-          <div className="flex @4xl:hidden text-tertiary">...</div>
-          <div className="hidden @4xl:flex gap-2 items-center">
+          <div className="flex text-tertiary @4xl:hidden">...</div>
+          <div className="hidden items-center gap-2 @4xl:flex">
             {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
             <Breadcrumbs.Label>{selectedItem?.title}</Breadcrumbs.Label>
           </div>
@@ -81,7 +87,7 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
       placement="bottom-start"
       className="h-full rounded-sm"
       customButtonClassName={cn(
-        "group flex items-center gap-0.5 rounded-sm hover:bg-surface-2 outline-none cursor-pointer h-full rounded-sm",
+        "group flex h-full cursor-pointer items-center gap-0.5 rounded-sm outline-none hover:bg-surface-2",
         {
           "bg-surface-2": isOpen,
         }
@@ -119,7 +125,7 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-tertiary whitespace-pre-line", {
+                  className={cn("whitespace-pre-line text-tertiary", {
                     "text-placeholder": item.disabled,
                   })}
                 >
@@ -127,7 +133,7 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
                 </p>
               )}
             </div>
-            {item.key === selectedItemKey && <CheckIcon className="flex-shrink-0 size-3.5" />}
+            {item.key === selectedItemKey && <CheckIcon className="size-3.5 flex-shrink-0" />}
           </CustomMenu.MenuItem>
         );
       })}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Handle } from "hast-util-to-mdast";
 // local imports
 import { createTextNode } from "./common";
@@ -29,13 +35,19 @@ export const parseCustomComponents = (args: TArgs): Record<string, Handle> => {
     },
     "mention-component": (_state, node) => {
       const properties = node.properties || {};
-      const userId = String(properties.entity_identifier);
-      const userDetails = metaData.user_mentions.find((user) => user.id === userId);
-      if (!userDetails) return createTextNode("");
-      return createTextNode(`[@${userDetails.display_name || "Unknown user"}](${userDetails.url || ""}) `);
+      const mentionType = String(properties.entity_name);
+
+      let url: string = "";
+      let tag: string = "@";
+      if (mentionType === "user_mention") {
+        const userId = String(properties.entity_identifier);
+        const userDetails = metaData.user_mentions.find((user) => user.id === userId);
+        if (!userDetails) return createTextNode("");
+        url = userDetails.url || "";
+        tag = `@${userDetails.display_name || "Unknown user"}`;
+      }
+
+      return createTextNode(`[${tag}](${url}) `);
     },
-    ...parseExtendedCustomComponents({ metaData }),
   };
 };
-
-export const parseExtendedCustomComponents = (_args: TArgs): Record<string, Handle> => ({});

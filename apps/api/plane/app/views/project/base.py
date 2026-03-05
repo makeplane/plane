@@ -1,10 +1,14 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
+from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery, Count
 from django.utils import timezone
 
 # Third Party imports
@@ -24,18 +28,18 @@ from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
     UserFavorite,
     DeployBoard,
-    ProjectUserProperty,
     Intake,
     Project,
     ProjectIdentifier,
     ProjectMember,
     ProjectNetwork,
+    ProjectUserProperty,
     State,
     DEFAULT_STATES,
-    UserFavorite,
     Workspace,
     WorkspaceMember,
 )
+from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host
 
 
@@ -46,11 +50,10 @@ class ProjectViewSet(BaseViewSet):
     use_read_replica = True
 
     def get_queryset(self):
-        sort_order = ProjectMember.objects.filter(
-            member=self.request.user,
+        sort_order = ProjectUserProperty.objects.filter(
+            user=self.request.user,
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
-            is_active=True,
         ).values("sort_order")
         return self.filter_queryset(
             super()
@@ -136,11 +139,10 @@ class ProjectViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
-        sort_order = ProjectMember.objects.filter(
-            member=self.request.user,
+        sort_order = ProjectUserProperty.objects.filter(
+            user=self.request.user,
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
-            is_active=True,
         ).values("sort_order")
 
         projects = (
@@ -153,6 +155,15 @@ class ProjectViewSet(BaseViewSet):
                     is_active=True,
                 ).values("role")
             )
+            .annotate(
+                intake_count=Count(
+                    "project_intakeissue",
+                    filter=Q(
+                        project_intakeissue__status=IntakeIssueStatus.PENDING.value,
+                        project_intakeissue__deleted_at__isnull=True,
+                    ),
+                )
+            )
             .annotate(inbox_view=F("intake_view"))
             .annotate(sort_order=Subquery(sort_order))
             .distinct()
@@ -163,6 +174,7 @@ class ProjectViewSet(BaseViewSet):
             "sort_order",
             "logo_props",
             "member_role",
+            "intake_count",
             "archived_at",
             "workspace",
             "cycle_view",

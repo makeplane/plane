@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 import uuid
@@ -56,7 +60,11 @@ class IssueAttachmentEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset)
     def delete(self, request, slug, project_id, issue_id, pk):
-        issue_attachment = FileAsset.objects.get(pk=pk)
+        issue_attachment = FileAsset.objects.filter(
+            pk=pk, workspace__slug=slug, project_id=project_id, issue_id=issue_id
+        ).first()
+        if not issue_attachment:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         issue_attachment.asset.delete(save=False)
         issue_attachment.delete()
         issue_activity.delay(

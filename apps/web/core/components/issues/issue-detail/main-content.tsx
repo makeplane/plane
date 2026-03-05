@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -86,7 +92,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
+      <div className="space-y-4 rounded-lg">
         {issue.parent_id && (
           <IssueParentDetail
             workspaceSlug={workspaceSlug}
@@ -134,6 +140,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           entityId={issue.id}
           fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
           initialValue={issue.description_html}
+          key={issue.id}
           onSubmit={async (value, isMigrationUpdate) => {
             if (!issue.id || !issue.project_id) return;
             await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {

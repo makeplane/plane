@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope } from "lucide-react";
 // plane imports
@@ -75,7 +81,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
     <ContentWrapper className="gap-10">
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
-          "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",
+          "bg-gradient-to-l from-[#CFCFCF] to-[#212121]": userProfile?.theme.theme === "dark",
           "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": userProfile?.theme.theme === "light",
         })}
       >
@@ -95,29 +101,29 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
               {t("upgrade")}
             </a>
           </div>
-          <span className="absolute left-0 top-0">
+          <span className="absolute top-0 left-0">
             <img
               src={isDarkMode ? ctaL1Dark : ctaL1Light}
-              className="w-[125px] h-[125px] object-contain rounded-xl"
+              className="h-[125px] w-[125px] rounded-xl object-contain"
               alt="l-1"
             />
           </span>
         </div>
         <div className="relative hidden w-1/2 lg:block">
-          <span className="absolute bottom-0 right-0">
-            <img src={isDarkMode ? ctaR1Dark : ctaR1Light} className="w-full h-full object-contain" alt="r-1" />
+          <span className="absolute right-0 bottom-0">
+            <img src={isDarkMode ? ctaR1Dark : ctaR1Light} className="h-full w-full object-contain" alt="r-1" />
           </span>
-          <span className="absolute -bottom-16 right-1/2 rounded-xl">
-            <img src={isDarkMode ? ctaR2Dark : ctaR2Light} className="w-full h-full object-contain" alt="r-2" />
+          <span className="absolute right-1/2 -bottom-16 rounded-xl">
+            <img src={isDarkMode ? ctaR2Dark : ctaR2Light} className="h-full w-full object-contain" alt="r-2" />
           </span>
         </div>
       </div>
       <div className="grid h-full grid-cols-1 gap-5 pb-8 lg:grid-cols-2 xl:grid-cols-3">
         {WORKSPACE_ACTIVE_CYCLES_DETAILS.map((item) => (
           <div key={item.title} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-layer-1 p-4">
-            <div className="flex gap-2 justify-between">
+            <div className="flex justify-between gap-2">
               <h3 className="font-medium">{t(item.key)}</h3>
-              <item.icon className="mt-1 h-4 w-4 text-blue-500" />
+              <item.icon className="text-blue-500 mt-1 h-4 w-4" />
             </div>
             <span className="text-13 text-tertiary">{t(`${item.key}_description`)}</span>
           </div>
