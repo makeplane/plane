@@ -307,6 +307,8 @@ export default {
   analytics: "분석",
   dashboards: "대시보드",
   workspace_invites: "작업 공간 초대",
+  search_workspace: "워크스페이스 검색...",
+  no_workspace_found: "워크스페이스를 찾을 수 없습니다",
   enter_god_mode: "갓 모드로 전환",
   workspace_logo: "작업 공간 로고",
   new_issue: "새 작업 항목",
