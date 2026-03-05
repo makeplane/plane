@@ -24,17 +24,17 @@ import gitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 import googleLogo from "@/app/assets/logos/google-logo.svg?url";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
-import { getDesktopAPI } from "@/hooks/use-desktop";
+import { getDesktopAPI, isDesktop } from "@/hooks/use-desktop";
 
 // Providers that have desktop OAuth endpoints
 const DESKTOP_OAUTH_PROVIDERS = new Set(["google", "github", "gitlab", "gitea"]);
 
 // Helper to handle OAuth navigation
 const handleOAuthNavigation = async (provider: string, next_path: string | null) => {
-  const planeDesktop = getDesktopAPI();
   const params = new URLSearchParams();
   if (next_path) params.set("next_path", next_path);
-  if (planeDesktop && DESKTOP_OAUTH_PROVIDERS.has(provider)) {
+  if (isDesktop() && DESKTOP_OAUTH_PROVIDERS.has(provider)) {
+    const planeDesktop = getDesktopAPI();
     // Start PKCE flow — generate code_verifier in main process, get code_challenge
     const pkce = await planeDesktop.startPKCEFlow();
     params.set("code_challenge", pkce.code_challenge);
