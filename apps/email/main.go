@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -26,7 +27,16 @@ func createServer(be *services.Backend, addr string, forceTLS bool) *smtp.Server
 
 	s.ReadTimeout = 60 * time.Second
 	s.WriteTimeout = 60 * time.Second
-	s.MaxMessageBytes = 1024 * 1024
+	
+	// Configure max message size from environment variable or use default 10MB
+	maxMessageBytes := int64(10 * 1024 * 1024) // Default: 10MB
+	if maxSizeStr := os.Getenv("MAX_ATTACHMENT_SIZE"); maxSizeStr != "" {
+		if parsedSize, err := strconv.ParseInt(maxSizeStr, 10, 64); err == nil && parsedSize > 0 {
+			maxMessageBytes = parsedSize
+		}
+	}
+	s.MaxMessageBytes = maxMessageBytes
+	
 	s.MaxRecipients = 50
 	s.AllowInsecureAuth = !forceTLS
 	s.EnableREQUIRETLS = forceTLS
