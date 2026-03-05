@@ -2108,7 +2108,8 @@ export default {
     workflows: {
       label: "Quy trình",
       heading: "Quy trình",
-      description: "Kiểm soát các chuyển đổi trạng thái được phép và ai có thể thực hiện chúng.",
+      description:
+        "Tự động hóa chuyển đổi trạng thái công việc và thiết lập quy tắc để kiểm soát cách các tác vụ di chuyển qua quy trình dự án.",
       live_toggle_label: "Bật",
       live_toggle_on: "Quy trình đang hoạt động — các chuyển đổi được thực thi.",
       live_toggle_off: "Quy trình không hoạt động — tất cả các chuyển đổi đều được phép.",
@@ -2119,6 +2120,11 @@ export default {
       allow_issue_creation: "Cho phép tạo công việc mới",
       add_transition: "Thêm thay đổi trạng thái được phép",
       add_reviewers: "Thêm người xét duyệt",
+      change_state_to: "Chuyển trạng thái sang",
+      n_permitted_state_changes:
+        "{count, plural, one{# thay đổi trạng thái được phép} other{# thay đổi trạng thái được phép}}",
+      n_listed_reviewers: "{count, plural, one{# người xét duyệt} other{# người xét duyệt}}",
+      when_reviewed_by: "Được xét duyệt bởi",
       no_transitions: "Chưa có chuyển đổi được phép.",
       delete_transition_title: "Bạn có chắc chắn muốn xóa quy tắc thay đổi trạng thái này không?",
       delete_transition_body: "Sau khi xóa, bạn không thể hoàn tác thay đổi này.",

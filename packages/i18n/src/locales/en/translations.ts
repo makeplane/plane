@@ -2097,7 +2097,8 @@ export default {
     workflows: {
       label: "Workflows",
       heading: "Workflows",
-      description: "Control which state transitions are permitted and who can perform them.",
+      description:
+        "Automate work item transitions and set rules to control how tasks move through your project pipeline.",
       live_toggle_label: "Live",
       live_toggle_on: "Workflow is active — transitions are enforced.",
       live_toggle_off: "Workflow is inactive — all transitions are allowed.",
@@ -2109,6 +2110,10 @@ export default {
       allow_issue_creation: "Allow new work items",
       add_transition: "Add permitted state change",
       add_reviewers: "Add reviewers",
+      change_state_to: "Change state to",
+      n_permitted_state_changes: "{count, plural, one{# permitted state change} other{# permitted state changes}}",
+      n_listed_reviewers: "{count, plural, one{# listed reviewer} other{# listed reviewers}}",
+      when_reviewed_by: "When reviewed by",
       no_transitions: "No permitted transitions yet.",
       delete_transition_title: "Are you sure you want to delete this state-change rule?",
       delete_transition_body:

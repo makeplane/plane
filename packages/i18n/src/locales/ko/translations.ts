@@ -2089,7 +2089,8 @@ export default {
     workflows: {
       label: "워크플로우",
       heading: "워크플로우",
-      description: "허용된 상태 전환과 수행 가능한 사용자를 제어합니다.",
+      description:
+        "작업 항목 전환을 자동화하고 프로젝트 파이프라인을 통해 작업이 이동하는 방식을 제어하는 규칙을 설정합니다.",
       live_toggle_label: "활성화",
       live_toggle_on: "워크플로우가 활성화되어 있습니다 — 전환이 적용됩니다.",
       live_toggle_off: "워크플로우가 비활성화되어 있습니다 — 모든 전환이 허용됩니다.",
@@ -2100,6 +2101,10 @@ export default {
       allow_issue_creation: "새 작업 항목 허용",
       add_transition: "허용된 상태 변경 추가",
       add_reviewers: "검토자 추가",
+      change_state_to: "상태 변경",
+      n_permitted_state_changes: "{count, plural, one{# 허용된 상태 변경} other{# 허용된 상태 변경}}",
+      n_listed_reviewers: "{count, plural, one{# 등록된 검토자} other{# 등록된 검토자}}",
+      when_reviewed_by: "검토자",
       no_transitions: "아직 허용된 전환이 없습니다.",
       delete_transition_title: "이 상태 변경 규칙을 삭제하시겠습니까?",
       delete_transition_body: "삭제 후에는 변경 사항을 취소할 수 없습니다.",
