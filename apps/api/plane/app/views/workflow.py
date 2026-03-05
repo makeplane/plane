@@ -50,15 +50,12 @@ class WorkflowStateConfigViewSet(BaseViewSet):
 
     def get_queryset(self):
         return self.model.objects.filter(
+            project_id=self.kwargs.get("project_id"),
             project__workspace__slug=self.kwargs.get("slug"),
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    def list(self, request, slug):
-        project_id = request.query_params.get("project_id")
-        if not project_id:
-            return Response({"error": "project_id is required"}, status=status.HTTP_400_BAD_REQUEST)
-
+    def list(self, request, slug, project_id):
         states = State.objects.filter(
             project_id=project_id,
             project__workspace__slug=slug,
@@ -97,7 +94,7 @@ class WorkflowStateConfigViewSet(BaseViewSet):
         return Response(result, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN])
-    def partial_update(self, request, slug, state_id):
+    def partial_update(self, request, slug, project_id, state_id):
         try:
             state = State.objects.get(pk=state_id, project__workspace__slug=slug)
         except State.DoesNotExist:
@@ -367,7 +364,7 @@ class WorkflowTransitionApproverViewSet(BaseViewSet):
     def destroy(self, request, slug, project_id, transition_id, pk):
         try:
             approver = WorkflowTransitionApprover.objects.get(
-                pk=pk,
+                approver_id=pk,
                 transition_id=transition_id,
                 project_id=project_id,
                 project__workspace__slug=slug,

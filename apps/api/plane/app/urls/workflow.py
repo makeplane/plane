@@ -12,14 +12,14 @@ from plane.app.views.workflow import (
 )
 
 urlpatterns = [
-    # Workspace-scoped state configs (flat dict by state UUID)
+    # Project-scoped state configs (flat dict by state UUID)
     path(
-        "workspaces/<str:slug>/workflow-states/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflow-states/",
         WorkflowStateConfigViewSet.as_view({"get": "list"}),
         name="workflow-state-configs",
     ),
     path(
-        "workspaces/<str:slug>/workflow-states/<uuid:state_id>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflow-states/<uuid:state_id>/",
         WorkflowStateConfigViewSet.as_view({"patch": "partial_update"}),
         name="workflow-state-config-detail",
     ),
