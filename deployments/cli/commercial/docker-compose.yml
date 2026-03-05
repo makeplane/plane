@@ -21,6 +21,7 @@ x-email-env: &email-env
   EMAIL_SAVE_ENDPOINT: http://api:8000/intake/email/
   TLS_CERT_PATH: ${TLS_CERT_PATH:-}
   TLS_PRIV_KEY_PATH: ${TLS_PRIV_KEY_PATH:-}
+  MAX_ATTACHMENT_SIZE: ${MAX_ATTACHMENT_SIZE:-10485760}
 
 x-proxy-env: &proxy-env
   SITE_ADDRESS: ${SITE_ADDRESS:-localhost:80}
