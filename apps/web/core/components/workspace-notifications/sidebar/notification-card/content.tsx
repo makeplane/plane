@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 // plane imports
 import type { TNotification } from "@plane/types";
@@ -167,7 +173,7 @@ export function NotificationContent({
   };
 
   const renderTriggerName = () => (
-    <span className="text-primary font-medium">
+    <span className="font-medium text-primary">
       {triggeredBy?.is_bot ? triggeredBy.first_name : triggeredBy?.display_name}{" "}
     </span>
   );
@@ -204,9 +210,9 @@ export function NotificationContent({
       {verb !== "deleted" && (
         <>
           {showConnector && <span className="text-tertiary">to </span>}
-          <span className="text-primary font-medium">{renderValue()}</span>
+          <span className="font-medium text-primary">{renderValue()}</span>
           {notificationField === "comment" && renderCommentBox && (
-            <div className="scale-75 origin-left">
+            <div className="origin-left scale-75">
               <LiteTextEditor
                 editable={false}
                 id=""

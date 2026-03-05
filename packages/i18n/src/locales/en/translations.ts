@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   submit: "Submit",
   cancel: "Cancel",
@@ -236,7 +242,7 @@ export default {
   docs: "Docs",
   full_changelog: "Full changelog",
   support: "Support",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Powered by Plane Pages",
   please_select_at_least_one_invitation: "Please select at least one invitation.",
   please_select_at_least_one_invitation_description: "Please select at least one invitation to join the workspace.",
@@ -1236,7 +1242,7 @@ export default {
           comic: {
             title: "Analytics works best with Cycles + Modules",
             description:
-              "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
+              "First, timebox your work items into Cycles and, if you can, group work items that span more than a cycle into Modules. Check out both on the left nav.",
           },
         },
       },
@@ -1841,6 +1847,43 @@ export default {
         title: "No estimate systems yet",
         description: "Create a set of estimates to communicate the amount of work per work item.",
         primary_button: "Add estimate system",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cycles",
+        short_title: "Cycles",
+        description: "Schedule work in flexible periods that adapt to this project's unique rhythm and pace.",
+        toggle_title: "Enable cycles",
+        toggle_description: "Plan work in focused timeframes.",
+      },
+      modules: {
+        title: "Modules",
+        short_title: "Modules",
+        description: "Organize work into sub-projects with dedicated leads and assignees.",
+        toggle_title: "Enable modules",
+        toggle_description: "Project members will be able to create and edit modules.",
+      },
+      views: {
+        title: "Views",
+        short_title: "Views",
+        description: "Save custom sorts, filters, and display options or share them with your team.",
+        toggle_title: "Enable views",
+        toggle_description: "Project members will be able to create and edit views.",
+      },
+      pages: {
+        title: "Pages",
+        short_title: "Pages",
+        description: "Create and edit free-form content; notes, docs, anything.",
+        toggle_title: "Enable pages",
+        toggle_description: "Project members will be able to create and edit pages.",
+      },
+      intake: {
+        title: "Intake",
+        short_title: "Intake",
+        description: "Let non-members share bugs, feedback, and suggestions; without disrupting your workflow.",
+        toggle_title: "Enable intake",
+        toggle_description: "Let project members create in app intake requests.",
       },
     },
   },
@@ -2652,7 +2695,7 @@ export default {
     help_actions: {
       open_keyboard_shortcuts: "Open keyboard shortcuts",
       open_plane_documentation: "Open Plane documentation",
-      join_discord: "Join our Discord",
+      join_forum: "Join our Forum",
       report_bug: "Report a bug",
       chat_with_us: "Chat with us",
     },
@@ -2707,8 +2750,4 @@ export default {
   enter_number_of_projects: "Enter number of projects",
   pin: "Pin",
   unpin: "Unpin",
-  sidebar: {
-    stickies: "Stickies",
-    your_work: "Your work",
-  },
 } as const;

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -60,13 +66,13 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
         render={
           <div
             id={`issue-${issueId}`}
-            className="relative flex h-full w-full cursor-pointer items-center rounded-sm space-between"
+            className="space-between relative flex h-full w-full cursor-pointer items-center rounded-sm"
             style={blockStyle}
             onClick={handleIssuePeekOverview}
           >
-            <div className="absolute left-0 top-0 h-full w-full bg-surface-1/50 " />
+            <div className="absolute top-0 left-0 h-full w-full bg-surface-1/50" />
             <div
-              className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-13 text-primary flex-1"
+              className="sticky w-auto flex-1 truncate overflow-hidden px-2.5 py-1 text-13 text-primary"
               style={{ left: `${SIDEBAR_WIDTH}px` }}
             >
               {issueDetails?.name}
@@ -74,7 +80,7 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
             {isEpic && (
               <IssueStats
                 issueId={issueId}
-                className="sticky mx-2 font-medium text-primary overflow-hidden truncate w-auto justify-end flex-shrink-0"
+                className="sticky mx-2 w-auto flex-shrink-0 justify-end truncate overflow-hidden font-medium text-primary"
                 showProgressText={duration >= 2}
               />
             )}

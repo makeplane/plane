@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
@@ -31,25 +37,25 @@ export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppl
         if (!optionDetail) return <></>;
         return (
           <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
-            <div className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden">
+            <div className="relative flex h-3 w-3 flex-shrink-0 items-center justify-center overflow-hidden">
               <PriorityIcon priority={optionDetail.key} className="h-3 w-3" />
             </div>
-            <div className="text-11 truncate">{optionDetail?.title}</div>
+            <div className="truncate text-11">{optionDetail?.title}</div>
             <div
-              className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
+              className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
               onClick={() => handleInboxIssueFilters("priority", handleFilterValue(optionDetail?.key))}
             >
-              <CloseIcon className={`w-3 h-3`} />
+              <CloseIcon className={`h-3 w-3`} />
             </div>
           </div>
         );
       })}
 
       <div
-        className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
+        className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
         onClick={clearFilter}
       >
-        <CloseIcon className={`w-3 h-3`} />
+        <CloseIcon className={`h-3 w-3`} />
       </div>
     </Tag>
   );

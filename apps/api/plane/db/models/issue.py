@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python import
 from uuid import uuid4
 
@@ -128,7 +132,7 @@ class Issue(ProjectBaseModel):
         blank=True,
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, default=dict)
+    description_json = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
@@ -800,7 +804,7 @@ class IssueDescriptionVersion(ProjectBaseModel):
                 description_binary=issue.description_binary,
                 description_html=issue.description_html,
                 description_stripped=issue.description_stripped,
-                description_json=issue.description,
+                description_json=issue.description_json,
             )
             return True
         except Exception as e:

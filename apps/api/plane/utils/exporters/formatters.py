@@ -1,9 +1,16 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import csv
 import io
 import json
 from typing import Any, Dict, List, Type
 
 from openpyxl import Workbook
+
+# Module imports
+from plane.utils.csv_utils import sanitize_csv_row
 
 
 class BaseFormatter:
@@ -80,7 +87,7 @@ class CSVFormatter(BaseFormatter):
         buf = io.StringIO()
         writer = csv.writer(buf, delimiter=",", quoting=csv.QUOTE_ALL)
         for row in data:
-            writer.writerow(row)
+            writer.writerow(sanitize_csv_row(row))
         buf.seek(0)
         return buf.getvalue()
 

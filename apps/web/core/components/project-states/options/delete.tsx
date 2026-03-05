@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Loader } from "lucide-react";
@@ -75,7 +81,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
       <button
         type="button"
         className={cn(
-          "flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden transition-colors cursor-pointer focus:outline-none",
+          "flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-colors focus:outline-none",
           isDeleteDisabled ? "bg-surface-2 text-secondary" : "text-danger-primary hover:bg-layer-1"
         )}
         disabled={isDeleteDisabled}
@@ -89,7 +95,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
           disabled={!isDeleteDisabled}
           className="focus:outline-none"
         >
-          {isDelete ? <Loader className="w-3.5 h-3.5 text-secondary" /> : <CloseIcon className="w-3.5 h-3.5" />}
+          {isDelete ? <Loader className="h-3.5 w-3.5 text-secondary" /> : <CloseIcon className="h-3.5 w-3.5" />}
         </Tooltip>
       </button>
     </>

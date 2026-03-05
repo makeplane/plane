@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -55,9 +61,9 @@ export const ModuleGanttBlock = observer(function ModuleGanttBlock(props: Props)
           )
         }
       >
-        <div className="absolute left-0 top-0 h-full w-full bg-surface-1/50" />
+        <div className="absolute top-0 left-0 h-full w-full bg-surface-1/50" />
         <div
-          className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-13 text-primary"
+          className="sticky w-auto truncate overflow-hidden px-2.5 py-1 text-13 text-primary"
           style={{ left: `${SIDEBAR_WIDTH}px` }}
         >
           {moduleDetails?.name}

@@ -1,4 +1,9 @@
-import * as Sentry from "@sentry/react-router";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Links, Meta, Outlet, Scripts } from "react-router";
 // assets
 import appleTouchIcon from "@/app/assets/favicon/apple-touch-icon.png?url";
@@ -84,16 +89,12 @@ export default function Root() {
 
 export function HydrateFallback() {
   return (
-    <div className="bg-surface-1 relative flex h-screen w-full items-center justify-center">
+    <div className="relative flex h-screen w-full items-center justify-center bg-surface-1">
       <LogoSpinner />
     </div>
   );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  if (error) {
-    Sentry.captureException(error);
-  }
-
   return <ErrorPage />;
 }

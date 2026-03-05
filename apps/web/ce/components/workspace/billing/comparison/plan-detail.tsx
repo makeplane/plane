@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import {
@@ -47,18 +53,18 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
   };
 
   return (
-    <div className="flex flex-col justify-between col-span-1 p-3 space-y-0.5">
+    <div className="col-span-1 flex flex-col justify-between space-y-0.5 p-3">
       {/* Plan name and pricing section */}
       <div className="flex flex-col items-start">
-        <div className="flex w-full gap-2 items-center text-h4-semibold">
+        <div className="flex w-full items-center gap-2 text-h4-semibold">
           <span>{subscriptionName}</span>
           {subscriptionType === EProductSubscriptionEnum.PRO && (
-            <span className="px-2 py-0.5 rounded-sm text-on-color bg-accent-primary text-caption-sm-medium">
+            <span className="rounded-sm bg-accent-primary px-2 py-0.5 text-caption-sm-medium text-on-color">
               Popular
             </span>
           )}
         </div>
-        <div className="flex gap-x-2 items-start text-tertiary pb-1">
+        <div className="flex items-start gap-x-2 pb-1 text-tertiary">
           {isSubscriptionActive && displayPrice !== undefined && (
             <div className="flex items-center gap-1 text-h3-semibold text-primary">
               <DiscountInfo
@@ -93,7 +99,7 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
       )}
 
       {/* Subscription button */}
-      <div className="flex flex-col gap-1 py-3 items-start">
+      <div className="flex flex-col items-start gap-1 py-3">
         <Button variant="primary" size="lg" onClick={handleRedirection} className="w-full">
           {isSubscriptionActive ? `Upgrade to ${subscriptionName}` : t("common.upgrade_cta.talk_to_sales")}
         </Button>

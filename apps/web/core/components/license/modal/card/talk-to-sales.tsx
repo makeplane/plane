@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // types
 // plane imports
@@ -49,7 +55,7 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
   const renderActionButton = (price: TSubscriptionPrice) => (
     <>
       <div className="pb-4 text-center">
-        <div className="text-20 font-semibold h-9 flex justify-center items-center">
+        <div className="flex h-9 items-center justify-center text-20 font-semibold">
           {isLoading ? (
             <Loader className="flex flex-col items-center justify-center">
               <Loader.Item height="36px" width="4rem" />
@@ -65,7 +71,7 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
           <Loader.Item height="38px" width="14rem" />
         </Loader>
       ) : (
-        <div className="flex flex-col items-center justify-center w-full">
+        <div className="flex w-full flex-col items-center justify-center">
           <a href={href} target="_blank" className={cn(getButtonStyling("primary", "lg"), "w-56")} rel="noreferrer">
             Talk to Sales
           </a>

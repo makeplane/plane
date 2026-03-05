@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import type { LucideIcon } from "lucide-react";
 import type { ISvgIcons } from "../icons";
@@ -42,7 +48,7 @@ const ToolbarRoot = React.forwardRef(function ToolbarRoot(
   return (
     <div
       ref={ref}
-      className={cn("flex h-9 w-full items-stretch gap-1.5 bg-surface-2 overflow-x-scroll", className)}
+      className={cn("flex h-9 w-full items-stretch gap-1.5 overflow-x-scroll bg-surface-2", className)}
       {...props}
     >
       {children}
@@ -80,7 +86,7 @@ const ToolbarItem = React.forwardRef(function ToolbarItem(
       ref={ref}
       type="button"
       className={cn(
-        "grid place-items-center aspect-square rounded-xs p-0.5 text-placeholder hover:bg-layer-1 transition-colors",
+        "grid aspect-square place-items-center rounded-xs p-0.5 text-placeholder transition-colors hover:bg-layer-1",
         {
           "bg-layer-1 text-primary": isActive,
         },
@@ -120,7 +126,7 @@ const ToolbarSeparator = React.forwardRef(function ToolbarSeparator(
   { className, ...props }: ToolbarSeparatorProps,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
-  return <div ref={ref} className={cn("h-full w-px bg-subtle-1 mx-1", className)} {...props} />;
+  return <div ref={ref} className={cn("bg-subtle-1 mx-1 h-full w-px", className)} {...props} />;
 });
 
 const buttonVariants = {
@@ -142,8 +148,8 @@ const ToolbarSubmitButton = React.forwardRef(function ToolbarSubmitButton(
         ref={ref}
         className={cn(
           "inline-flex items-center justify-center gap-2 rounded-md px-2.5 py-1.5 text-11 font-medium transition-colors duration-200",
-          "focus:outline-none focus:ring-2 focus:ring-accent-strong/20 focus:ring-offset-2",
-          "disabled:opacity-50 disabled:pointer-events-none",
+          "focus:ring-2 focus:ring-accent-strong/20 focus:ring-offset-2 focus:outline-none",
+          "disabled:pointer-events-none disabled:opacity-50",
           buttonVariants[variant],
           className
         )}

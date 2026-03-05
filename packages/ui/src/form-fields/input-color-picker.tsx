@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Popover, Transition } from "@headlessui/react";
 import * as React from "react";
 import * as ColorPicker from "react-color";
@@ -52,7 +58,7 @@ export function InputColorPicker(props: InputColorPickerProps) {
         style={style}
       />
 
-      <Popover as="div" className="absolute right-1 top-1/2 z-10 -translate-y-1/2">
+      <Popover as="div" className="absolute top-1/2 right-1 z-10 -translate-y-1/2">
         {() => (
           <>
             <Popover.Button as={React.Fragment}>

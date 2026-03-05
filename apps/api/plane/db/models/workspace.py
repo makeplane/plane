@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import pytz
 from typing import Optional, Any
@@ -110,16 +114,6 @@ def get_issue_props():
 def slug_validator(value):
     if value in RESTRICTED_WORKSPACE_SLUGS:
         raise ValidationError("Slug is not valid")
-
-
-def get_default_product_tour():
-    return {
-        "work_items": False,
-        "cycles": False,
-        "modules": False,
-        "intake": False,
-        "pages": False,
-    }
 
 
 class Workspace(BaseModel):
@@ -338,7 +332,6 @@ class WorkspaceUserProperties(BaseModel):
         choices=NavigationControlPreference.choices,
         default=NavigationControlPreference.ACCORDION,
     )
-    product_tour = models.JSONField(default=get_default_product_tour)
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]

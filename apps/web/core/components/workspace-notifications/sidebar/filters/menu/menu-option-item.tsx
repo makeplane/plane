@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 
 import type { ENotificationFilterType } from "@plane/constants";
@@ -28,11 +34,11 @@ export const NotificationFilterOptionItem = observer(function NotificationFilter
   return (
     <div
       key={value}
-      className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-layer-1 rounded-xs"
+      className="flex cursor-pointer items-center gap-2 rounded-xs p-1 px-2 transition-all hover:bg-layer-1"
       onClick={() => handleFilterTypeChange(value, !isSelected)}
     >
       <div
-        className={cn("flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-xs transition-all", {
+        className={cn("flex h-3 w-3 flex-shrink-0 items-center justify-center rounded-xs transition-all", {
           "bg-accent-primary text-on-color": isSelected,
           "bg-surface-2": !isSelected,
         })}
@@ -40,7 +46,7 @@ export const NotificationFilterOptionItem = observer(function NotificationFilter
         {isSelected && <CheckIcon className="h-2.5 w-2.5" />}
       </div>
       <div
-        className={cn("whitespace-nowrap text-body-xs-medium", {
+        className={cn("text-body-xs-medium whitespace-nowrap", {
           "text-primary": isSelected,
           "text-secondary": !isSelected,
         })}

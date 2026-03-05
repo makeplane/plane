@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   aria_labels: {
     projects_sidebar: {
@@ -13,18 +19,18 @@ export default {
       open_favorites_menu: "Відкрити меню улюблених",
       close_favorites_menu: "Закрити меню улюблених",
       enter_folder_name: "Введіть назву папки",
-      create_new_project: "Створити новий проект",
-      open_projects_menu: "Відкрити меню проектів",
-      close_projects_menu: "Закрити меню проектів",
+      create_new_project: "Створити новий проєкт",
+      open_projects_menu: "Відкрити меню проєктів",
+      close_projects_menu: "Закрити меню проєктів",
       toggle_quick_actions_menu: "Перемкнути меню швидких дій",
-      open_project_menu: "Відкрити меню проекту",
-      close_project_menu: "Закрити меню проекту",
+      open_project_menu: "Відкрити меню проєкту",
+      close_project_menu: "Закрити меню проєкту",
       collapse_sidebar: "Згорнути бічну панель",
       expand_sidebar: "Розгорнути бічну панель",
       edition_badge: "Відкрити модал платних планів",
     },
     auth_forms: {
-      clear_email: "Очистити email",
+      clear_email: "Очистити адресу електронної пошти",
       show_password: "Показати пароль",
       hide_password: "Приховати пароль",
       close_alert: "Закрити сповіщення",

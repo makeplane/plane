@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { Expand, Shrink } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -32,7 +38,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
 
   return (
     <Row
-      className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap py-2 bg-surface-1"
+      className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 bg-surface-1 py-2 whitespace-nowrap"
       style={{ height: `${GANTT_BREADCRUMBS_HEIGHT}px` }}
     >
       <div className="ml-auto">
@@ -46,7 +52,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
           <div
             key={chartView?.key}
             className={cn(
-              "cursor-pointer rounded-md p-1 px-2 text-11 bg-layer-transparent hover:bg-layer-transparent-hover",
+              "cursor-pointer rounded-md bg-layer-transparent p-1 px-2 text-11 hover:bg-layer-transparent-hover",
               {
                 "bg-layer-transparent-selected": currentView === chartView?.key,
               }
@@ -61,7 +67,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
       {showToday && (
         <button
           type="button"
-          className="rounded-md p-1 px-2 text-11 bg-layer-transparent hover:bg-layer-transparent-hover"
+          className="rounded-md bg-layer-transparent p-1 px-2 text-11 hover:bg-layer-transparent-hover"
           onClick={handleToday}
         >
           {t("common.today")}
@@ -70,7 +76,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
 
       <button
         type="button"
-        className="flex items-center justify-center rounded-md border border-subtle p-1 transition-all bg-layer-transparent hover:bg-layer-transparent-hover"
+        className="flex items-center justify-center rounded-md border border-subtle bg-layer-transparent p-1 transition-all hover:bg-layer-transparent-hover"
         onClick={toggleFullScreenMode}
       >
         {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}

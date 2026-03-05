@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { TUserPermissions } from "./enums";
 import type { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
 import type { TLoginMediums } from "./instance";
@@ -188,12 +194,8 @@ export type TProfileViews = "assigned" | "created" | "subscribed";
 export type TPublicMember = {
   id: string;
   member: string;
-  member__avatar: string;
-  member__first_name: string;
-  member__last_name: string;
   member__display_name: string;
-  project: string;
-  workspace: string;
+  member__avatar: string;
 };
 
 // export interface ICurrentUser {

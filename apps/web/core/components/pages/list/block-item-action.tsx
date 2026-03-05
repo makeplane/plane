@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { Earth, Info, Minus } from "lucide-react";
 // plane imports
@@ -47,11 +53,11 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
         </Tooltip>
       </div>
       {/* vertical divider */}
-      <Minus className="h-5 w-5 text-placeholder rotate-90 -mx-3" strokeWidth={1} />
+      <Minus className="-mx-3 h-5 w-5 rotate-90 text-placeholder" strokeWidth={1} />
 
       {/* page info */}
       <Tooltip tooltipContent={`Created on ${renderFormattedDate(created_at)}`}>
-        <span className="h-4 w-4 grid place-items-center cursor-default">
+        <span className="grid h-4 w-4 cursor-default place-items-center">
           <Info className="h-4 w-4 text-tertiary" />
         </span>
       </Tooltip>

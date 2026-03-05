@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import random
 import string
@@ -32,6 +36,16 @@ def get_mobile_default_onboarding():
         "profile_complete": False,
         "workspace_create": False,
         "workspace_join": False,
+    }
+
+
+def get_default_product_tour():
+    return {
+        "work_items": False,
+        "cycles": False,
+        "modules": False,
+        "intake": False,
+        "pages": False,
     }
 
 
@@ -245,6 +259,7 @@ class Profile(TimeAuditModel):
     # marketing
     has_marketing_email_consent = models.BooleanField(default=False)
     is_subscribed_to_changelog = models.BooleanField(default=False)
+    product_tour = models.JSONField(default=get_default_product_tour)
 
     class Meta:
         verbose_name = "Profile"

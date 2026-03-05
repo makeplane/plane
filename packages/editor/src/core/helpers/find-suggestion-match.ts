@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { escapeForRegEx } from "@tiptap/core";
 import type { Trigger, SuggestionMatch } from "@tiptap/suggestion";
 

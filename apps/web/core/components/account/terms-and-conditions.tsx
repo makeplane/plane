@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import Link from "next/link";
 import { EAuthModes } from "@plane/constants";
@@ -29,7 +35,7 @@ function LegalLink({ href, children }: { href: string; children: React.ReactNode
 export function TermsAndConditions({ authType = EAuthModes.SIGN_IN }: TermsAndConditionsProps) {
   return (
     <div className="flex items-center justify-center">
-      <p className="text-center text-13 text-tertiary whitespace-pre-line">
+      <p className="text-center text-13 whitespace-pre-line text-tertiary">
         {`${MESSAGES[authType]}, you understand and agree to \n our `}
         <LegalLink href={LEGAL_LINKS.termsOfService}>Terms of Service</LegalLink> and{" "}
         <LegalLink href={LEGAL_LINKS.privacyPolicy}>Privacy Policy</LegalLink>.

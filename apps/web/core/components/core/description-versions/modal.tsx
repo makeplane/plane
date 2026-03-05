@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -74,7 +80,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
       <div className="p-4" data-prevent-outside-click>
         {/* Header */}
         <div className="flex items-center justify-between gap-2 py-0.5">
-          <div className="flex-shrink-0 flex items-center gap-2 text-13">
+          <div className="flex flex-shrink-0 items-center gap-2 text-13">
             <p className="flex items-center gap-1">
               {t("description_versions.edited_by")}
               <span className="flex-shrink-0">
@@ -89,11 +95,11 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
               {calculateTimeAgo(activeVersionDetails?.last_saved_at ?? "")}
             </p>
           </div>
-          <div className="flex-shrink-0 flex items-center">
+          <div className="flex flex-shrink-0 items-center">
             <button
               type="button"
               onClick={() => handleNavigation("prev")}
-              className={cn("size-6 text-secondary grid place-items-center rounded-sm outline-none transition-colors", {
+              className={cn("grid size-6 place-items-center rounded-sm text-secondary transition-colors outline-none", {
                 "hover:bg-layer-1": !isPrevDisabled,
                 "opacity-50": isPrevDisabled,
               })}
@@ -104,7 +110,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
             <button
               type="button"
               onClick={() => handleNavigation("next")}
-              className={cn("size-6 text-secondary grid place-items-center rounded-sm outline-none transition-colors", {
+              className={cn("grid size-6 place-items-center rounded-sm text-secondary transition-colors outline-none", {
                 "hover:bg-layer-1": !isNextDisabled,
                 "opacity-50": isNextDisabled,
               })}
@@ -149,7 +155,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
         </div>
         {/* End version description */}
         {/* Footer */}
-        <div className="flex items-center justify-between gap-2 pt-4 border-t-[0.5px] border-subtle">
+        <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-subtle pt-4">
           <Tooltip tooltipContent={t("common.actions.copy_markdown")}>
             <IconButton type="button" variant="ghost" size="base" onClick={handleCopyMarkdown} icon={CopyIcon} />
           </Tooltip>

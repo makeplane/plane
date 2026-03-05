@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
@@ -39,7 +45,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
   } = props;
   const { t } = useTranslation();
   // states
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(value || "");
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // ref to track if there are unsaved changes
   const hasUnsavedChanges = useRef(false);
@@ -145,9 +151,9 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
         <TextArea
           id="title-input"
           className={cn(
-            "block w-full resize-none overflow-hidden rounded-sm border-none bg-transparent px-3 py-0 text-20 font-medium outline-none ring-0",
+            "block w-full resize-none overflow-hidden rounded-sm border-none bg-transparent px-3 py-0 text-20 font-medium ring-0 outline-none",
             {
-              "ring-1 ring-danger-strong mx-2.5": title?.length === 0,
+              "mx-2.5 ring-1 ring-danger-strong": title?.length === 0,
             },
             className
           )}
@@ -161,7 +167,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
         />
         <div
           className={cn(
-            "pointer-events-none absolute bottom-1 right-1 z-[2] rounded-sm bg-surface-1 p-0.5 text-11 text-secondary opacity-0 transition-opacity",
+            "pointer-events-none absolute right-1 bottom-1 z-[2] rounded-sm bg-surface-1 p-0.5 text-11 text-secondary opacity-0 transition-opacity",
             {
               "opacity-100": isLengthVisible,
             }

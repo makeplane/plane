@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Maximize } from "lucide-react";
 import { useEffect, useState } from "react";
 // plane imports
@@ -47,7 +53,7 @@ export function ImageFullScreenActionRoot(props: Props) {
             e.stopPropagation();
             setIsFullScreenEnabled(true);
           }}
-          className="flex-shrink-0 h-full grid place-items-center text-on-color/60 hover:text-on-color transition-colors"
+          className="grid h-full flex-shrink-0 place-items-center text-on-color/60 transition-colors hover:text-on-color"
           aria-label="View image in full screen"
         >
           <Maximize className="size-3" />

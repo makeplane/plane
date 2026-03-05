@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 // plane imports
@@ -33,7 +39,7 @@ export function InboxIssueCreateModalRoot(props: TInboxIssueCreateModalRoot) {
       isOpen={modalState}
       position={EModalPosition.TOP}
       width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
-      className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"
+      className="rounded-lg !bg-transparent shadow-none transition-[width] ease-linear"
     >
       <InboxIssueCreateRoot
         workspaceSlug={workspaceSlug}

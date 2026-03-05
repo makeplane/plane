@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import {
@@ -43,13 +49,13 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.VIIXL} className="rounded-2xl">
-      <div className="p-10 max-h-[90vh] overflow-auto">
-        <div className="grid grid-cols-12 gap-6 h-full">
+      <div className="max-h-[90vh] overflow-auto p-10">
+        <div className="grid h-full grid-cols-12 gap-6">
           {/* Free Plan Section */}
           <div className={cn(COMMON_CARD_CLASSNAME)}>
-            <div className="text-24 font-bold leading-8 flex">Upgrade to a paid plan and unlock missing features.</div>
+            <div className="flex text-24 leading-8 font-bold">Upgrade to a paid plan and unlock missing features.</div>
             <div className="mt-4 mb-2">
-              <p className="text-13 mb-4 pr-8 text-primary">
+              <p className="mb-4 pr-8 text-13 text-primary">
                 Dashboards, Workflows, Approvals, Time Management, and other superpowers are just a click away. Upgrade
                 today to unlock features your teams need yesterday.
               </p>

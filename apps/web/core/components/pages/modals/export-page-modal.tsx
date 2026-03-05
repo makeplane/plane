@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import type { PageProps } from "@react-pdf/renderer";
 import { pdf } from "@react-pdf/renderer";
@@ -199,7 +205,7 @@ export function ExportPageModal(props: Props) {
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.SM}>
       <div>
-        <div className="p-5 space-y-5">
+        <div className="space-y-5 p-5">
           <h3 className="text-18 font-medium text-secondary">Export page</h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-2">
@@ -275,7 +281,7 @@ export function ExportPageModal(props: Props) {
             )}
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
           <Button variant="secondary" size="lg" onClick={handleClose}>
             Cancel
           </Button>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // components
 import { Tooltip } from "@plane/propel/tooltip";
@@ -17,7 +23,7 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
             {labelDetails.map((label) => (
               <div
                 key={label.id}
-                className="flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11 shadow-sm"
+                className="shadow-sm flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11"
               >
                 <Tooltip position="top" tooltipHeading="Label" tooltipContent={label.name} isMobile={isMobile}>
                   <div className="flex items-center gap-1.5 text-secondary">
@@ -34,7 +40,7 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
             ))}
           </>
         ) : (
-          <div className="flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11 shadow-sm">
+          <div className="shadow-sm flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11">
             <Tooltip
               position="top"
               tooltipHeading="Labels"

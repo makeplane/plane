@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 
 // components
@@ -109,7 +115,7 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          className="rounded-sm bg-layer-transparent hover:bg-layer-transparent-hover px-2.5 py-1 text-11 font-medium text-secondary  hover:text-primary"
+          className="rounded-sm bg-layer-transparent px-2.5 py-1 text-11 font-medium text-secondary hover:bg-layer-transparent-hover hover:text-primary"
           onClick={handleToday}
         >
           {t("common.today")}

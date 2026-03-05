@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
@@ -49,7 +55,7 @@ export const ProjectBreadcrumb = observer(function ProjectBreadcrumb(props: TPro
 
   // helpers
   const renderIcon = (projectDetails: TProject) => (
-    <span className="grid place-items-center flex-shrink-0 size-4">
+    <span className="grid size-4 flex-shrink-0 place-items-center">
       <Logo logo={projectDetails.logo_props} size={14} />
     </span>
   );

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -103,7 +109,7 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
         maxHeight="2xl"
         disabled={isOperatorSelectionDisabled}
         customButton={
-          <div className="flex items-center h-full" aria-disabled={isOperatorSelectionDisabled}>
+          <div className="flex h-full items-center" aria-disabled={isOperatorSelectionDisabled}>
             {filterConfig.getLabelForOperator(selectedOperatorOption)}
           </div>
         }

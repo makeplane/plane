@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme as useNextTheme } from "next-themes";
@@ -33,14 +39,14 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   const getSidebarMenuItems = () => (
     <Menu.Items
       className={cn(
-        "absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-subtle rounded-md border border-subtle bg-surface-1 px-1 py-2 text-11 shadow-lg outline-none",
+        "shadow-lg absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-subtle rounded-md border border-subtle bg-surface-1 px-1 py-2 text-11 outline-none",
         {
           "left-4": isSidebarCollapsed,
         }
       )}
     >
       <div className="flex flex-col gap-2.5 pb-2">
-        <span className="px-2 text-secondary truncate">{currentUser?.email}</span>
+        <span className="truncate px-2 text-secondary">{currentUser?.email}</span>
       </div>
       <div className="py-2">
         <Menu.Item

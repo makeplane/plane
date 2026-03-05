@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -162,7 +168,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         </div>
 
         {/* content */}
-        <div className="h-full w-full hidden md:block">
+        <div className="hidden h-full w-full md:block">
           <div
             className={cn(
               `h-full w-full select-none ${isDraggingOver ? `${draggingOverBackground} opacity-70` : normalBackground}`,
@@ -194,16 +200,16 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         <div
           onClick={() => setSelectedDate(date.date)}
           className={cn(
-            "text-13 py-2.5 h-full w-full font-medium mx-auto flex flex-col justify-start items-center md:hidden cursor-pointer opacity-80",
+            "mx-auto flex h-full w-full cursor-pointer flex-col items-center justify-start py-2.5 text-13 font-medium opacity-80 md:hidden",
             {
               "bg-layer-2": !isWeekend,
             }
           )}
         >
           <div
-            className={cn("size-6 flex items-center justify-center rounded-full", {
+            className={cn("flex size-6 items-center justify-center rounded-full", {
               "bg-accent-primary text-on-color": isSelectedDate,
-              "bg-accent-primary/10 text-accent-primary ": isToday && !isSelectedDate,
+              "bg-accent-primary/10 text-accent-primary": isToday && !isSelectedDate,
             })}
           >
             {date.date.getDate()}

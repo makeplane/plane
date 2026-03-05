@@ -1,0 +1,45 @@
+name: Copy Right Check
+
+on:
+    workflow_dispatch:
+    pull_request:
+        branches:
+            - "preview"
+        types:
+            - "opened"
+            - "synchronize"
+            - "ready_for_review"
+            - "review_requested"
+            - "reopened"
+
+jobs:
+    license-check:
+        name: Copy Right Check
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6
+
+            - name: Set up Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version: "1.22"
+
+            - name: Install addlicense
+              run: |
+                  go install github.com/google/addlicense@latest
+                  echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+            - name: Check Copyright For Python Files
+              run: |
+                  set -e
+                  echo "Running copyright check..."
+                  addlicense -check -f COPYRIGHT.txt -ignore "**/migrations/**" $(git ls-files '*.py')
+                  echo "Copyright check passed."
+
+            - name: Check Copyright For TypeScript Files
+              run: |
+                  set -e
+                  echo "Running copyright check..."
+                  addlicense -check -f COPYRIGHT.txt -ignore "**/*.config.ts" -ignore "**/*.d.ts" $(git ls-files '*.ts' '*.tsx')
+                  echo "Copyright check passed."

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { Transition } from "@headlessui/react";
 // plane imports
@@ -33,14 +39,14 @@ export function SelectedOptionsDisplay<V extends TFilterValue>(props: TSelectedO
   }
 
   return (
-    <div className="flex items-center h-full overflow-hidden">
+    <div className="flex h-full items-center overflow-hidden">
       {selectedOptions.slice(0, displayCount).map((option, index) => (
         <React.Fragment key={index}>
           <div className="flex items-center whitespace-nowrap">
             {option?.icon && <span className={cn("mr-1", option.iconClassName)}>{option.icon}</span>}
-            <span className="truncate max-w-24">{option?.label}</span>
+            <span className="max-w-24 truncate">{option?.label}</span>
           </div>
-          {index < Math.min(displayCount, selectedOptions.length) - 1 && <span className="text-tertiary mx-1">,</span>}
+          {index < Math.min(displayCount, selectedOptions.length) - 1 && <span className="mx-1 text-tertiary">,</span>}
         </React.Fragment>
       ))}
       {remainingCount > 0 && (
@@ -50,7 +56,7 @@ export function SelectedOptionsDisplay<V extends TFilterValue>(props: TSelectedO
           enter="transition-opacity duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
-          className="text-tertiary whitespace-nowrap ml-1"
+          className="ml-1 whitespace-nowrap text-tertiary"
         >
           +{remainingCount} more
         </Transition>

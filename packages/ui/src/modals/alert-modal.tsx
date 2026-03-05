@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { LucideIcon } from "lucide-react";
 import { AlertTriangle, Info } from "lucide-react";
 import React from "react";
@@ -70,11 +76,11 @@ export function AlertModalCore(props: Props) {
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={position} width={width}>
-      <div className="p-5 flex flex-col sm:flex-row items-center sm:items-start gap-4">
+      <div className="flex flex-col items-center gap-4 p-5 sm:flex-row sm:items-start">
         {!hideIcon && (
           <span
             className={cn(
-              "flex-shrink-0 grid place-items-center rounded-full size-12 sm:size-10",
+              "grid size-12 flex-shrink-0 place-items-center rounded-full sm:size-10",
               VARIANT_CLASSES[variant]
             )}
           >
@@ -86,7 +92,7 @@ export function AlertModalCore(props: Props) {
           <p className="mt-1 text-13 text-secondary">{content}</p>
         </div>
       </div>
-      <div className="px-5 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t-[0.5px] border-subtle">
+      <div className="flex flex-col-reverse gap-2 border-t-[0.5px] border-subtle px-5 py-4 sm:flex-row sm:justify-end">
         <Button variant="secondary" onClick={handleClose}>
           {secondaryButtonText}
         </Button>

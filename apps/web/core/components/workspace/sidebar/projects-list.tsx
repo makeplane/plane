@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useRef, useEffect } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -165,11 +171,11 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
       >
         <>
           <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
-            <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-layer-transparent-hover">
+            <div className="group flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-placeholder hover:bg-layer-transparent-hover">
               <Disclosure.Button
                 as="button"
                 type="button"
-                className="w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
+                className="flex w-full items-center gap-1 text-left text-13 font-semibold whitespace-nowrap text-placeholder"
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
                 aria-label={t(
                   isAllProjectsListOpen
@@ -190,7 +196,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                         setIsProjectModalOpen(true);
                       }}
                       data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_TOOLTIP}
-                      className="hidden group-hover:inline-flex text-placeholder"
+                      className="hidden text-placeholder group-hover:inline-flex"
                       aria-label={t("aria_labels.projects_sidebar.create_new_project")}
                     />
                   </Tooltip>
@@ -248,7 +254,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                         <button
                           type="button"
                           onClick={() => toggleExtendedProjectSidebar()}
-                          className="flex items-center gap-1.5 text-13 font-medium flex-grow text-tertiary"
+                          className="flex flex-grow items-center gap-1.5 text-13 font-medium text-tertiary"
                           id="extended-project-sidebar-toggle"
                           aria-label={t(
                             isExtendedProjectSidebarOpened
@@ -256,7 +262,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                               : "aria_labels.app_sidebar.open_extended_sidebar"
                           )}
                         >
-                          <Ellipsis className="flex-shrink-0 size-4" />
+                          <Ellipsis className="size-4 flex-shrink-0" />
                           <span>{isExtendedProjectSidebarOpened ? "Hide" : "More"}</span>
                         </button>
                       </SidebarNavItem>
@@ -272,7 +278,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
           <button
             type="button"
             data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_BUTTON}
-            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-13 leading-5 font-medium text-secondary hover:bg-surface-2 rounded-md"
+            className="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-13 leading-5 font-medium text-secondary hover:bg-surface-2"
             onClick={() => {
               toggleCreateProjectModal(true);
             }}

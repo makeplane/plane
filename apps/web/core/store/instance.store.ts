@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
 import type { IInstance, IInstanceConfig } from "@plane/types";

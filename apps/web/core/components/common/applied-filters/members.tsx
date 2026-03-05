@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
 // plane ui
@@ -28,7 +34,7 @@ export const AppliedMembersFilters = observer(function AppliedMembersFilters(pro
         if (!memberDetails) return null;
 
         return (
-          <div key={memberId} className="flex items-center gap-1 rounded-sm bg-layer-1 py-1 px-1.5 text-11">
+          <div key={memberId} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
             <Avatar
               name={memberDetails.display_name}
               src={getFileURL(memberDetails.avatar_url)}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // icons
 import { DATE_BEFORE_FILTER_OPTIONS } from "@plane/constants";
@@ -36,7 +42,7 @@ export const AppliedDateFilters = observer(function AppliedDateFilters(props: Pr
   return (
     <>
       {values.map((date) => (
-        <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-1 py-1 px-1.5 text-11">
+        <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
           <span className="normal-case">{getDateLabel(date)}</span>
           {editable && (
             <button

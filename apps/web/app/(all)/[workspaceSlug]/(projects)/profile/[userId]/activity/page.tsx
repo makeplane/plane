@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -54,7 +60,7 @@ function ProfileActivityPage() {
           <h3 className="text-16 font-medium">{t("profile.stats.recent_activity.title")}</h3>
           {canDownloadActivity && <DownloadActivityButton />}
         </div>
-        <div className="vertical-scrollbar scrollbar-md flex h-full flex-col overflow-y-auto px-5 md:px-9">
+        <div className="vertical-scrollbar flex scrollbar-md h-full flex-col overflow-y-auto px-5 md:px-9">
           {activityPages}
           {pageCount < totalPages && resultsCount !== 0 && (
             <div className="flex w-full items-center justify-center text-11">

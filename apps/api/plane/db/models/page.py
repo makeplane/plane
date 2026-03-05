@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import uuid
 
 from django.conf import settings
@@ -25,7 +29,7 @@ class Page(BaseModel):
 
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="pages")
     name = models.TextField(blank=True)
-    description = models.JSONField(default=dict, blank=True)
+    description_json = models.JSONField(default=dict, blank=True)
     description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)

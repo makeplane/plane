@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 // ui
@@ -74,20 +80,20 @@ export const DetailedEmptyState = observer(function DetailedEmptyState(props: Pr
   return (
     <div
       className={cn(
-        "flex items-center justify-center min-h-full min-w-full overflow-y-auto py-10 md:px-20 px-5",
+        "flex min-h-full min-w-full items-center justify-center overflow-y-auto px-5 py-10 md:px-20",
         className
       )}
     >
       <div className={cn("flex flex-col gap-5", sizeClasses[size])}>
-        <div className="flex flex-col gap-1.5 shrink-0">
+        <div className="flex shrink-0 flex-col gap-1.5">
           <h3 className={cn("text-18 font-semibold", { "font-medium": !description })}>{title}</h3>
           {description && <p className="text-13">{description}</p>}
         </div>
 
-        {assetPath && <img src={assetPath} alt={title} className="w-full h-auto" loading="lazy" />}
+        {assetPath && <img src={assetPath} alt={title} className="h-auto w-full" loading="lazy" />}
 
         {hasButtons && (
-          <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
+          <div className="relative flex w-full flex-shrink-0 items-center justify-center gap-2">
             {/* primary button */}
             {customPrimaryButton ??
               (primaryButton?.text && <CustomButton config={primaryButton} variant="primary" size={size} />)}

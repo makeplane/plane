@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isEqual, concat, get, indexOf, isEmpty, orderBy, pull, set, uniq, update, clone } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -1198,6 +1204,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const issueId = issue?.id ?? issueBeforeUpdate?.id;
     if (!issueId) return;
 
+    // Get display filters to check if 'Show sub Work items' is enabled - Donot add Work item to main list if disabled.
+    const isShowWorkItemsEnabled = this.issueFilterStore.issueFilters?.displayFilters?.sub_issue ?? false;
+
     // get issueUpdates from another method by passing down the three arguments
     // issueUpdates is nothing but an array of objects that contain the path of the issueId list that need updating and also the action that needs to be performed at the path
     const issueUpdates = this.getUpdateDetails(issue, issueBeforeUpdate, action);
@@ -1207,6 +1216,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       for (const issueUpdate of issueUpdates) {
         //if update is add, add it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.ADD) {
+          const isSubIssue = issue?.parent_id;
+          if (isSubIssue && !isShowWorkItemsEnabled) continue;
           // add issue Id at the path
           update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) =>
             this.issuesSortWithOrderBy(uniq(concat(issueIds, issueId)), this.orderBy)
@@ -1469,7 +1480,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // if the key for accumulator is not the current action,
     // Meaning if the key already has an action ADD and the current one is REMOVE,
-    // The the key is deleted as both the actions cancel each other out
+    // The key is deleted as both the actions cancel each other out
     if (accumulator[key] !== action) {
       delete accumulator[key];
     }

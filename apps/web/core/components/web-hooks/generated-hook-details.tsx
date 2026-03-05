@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // components
 // ui
 import { useTranslation } from "@plane/i18n";
@@ -24,7 +30,7 @@ export function GeneratedHookDetails(props: Props) {
         </div>
         <WebhookSecretKey data={webhookDetails} />
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
         <Button variant="secondary" size="lg" onClick={handleClose}>
           Close
         </Button>

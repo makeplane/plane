@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { PanelRight } from "lucide-react";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
@@ -15,7 +21,7 @@ export const SidebarHamburgerToggle = observer(function SidebarHamburgerToggle()
   return (
     <button
       type="button"
-      className="group flex-shrink-0 size-7 grid place-items-center rounded-sm hover:bg-layer-1 transition-all bg-surface-2"
+      className="group grid size-7 flex-shrink-0 place-items-center rounded-sm bg-surface-2 transition-all hover:bg-layer-1"
       onClick={handleClick}
     >
       <PanelRight className="size-3.5 text-secondary transition-all group-hover:text-primary" />

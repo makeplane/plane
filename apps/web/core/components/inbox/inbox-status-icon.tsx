@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { AlertTriangle, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { CopyIcon } from "@plane/propel/icons";
 import type { TInboxIssueStatus } from "@plane/types";
@@ -45,5 +51,5 @@ export function InboxStatusIcon({
   if (type === undefined) return null;
   const Icon = ICON_PROPERTIES[type];
   if (!Icon) return null;
-  return <Icon.icon size={size} className={cn(`w-3 h-3 ${renderColor && Icon?.textColor(false)}`, className)} />;
+  return <Icon.icon size={size} className={cn(`h-3 w-3 ${renderColor && Icon?.textColor(false)}`, className)} />;
 }

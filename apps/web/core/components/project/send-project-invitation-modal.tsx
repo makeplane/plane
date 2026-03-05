@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
@@ -169,7 +175,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(onSubmit)} className="p-5">
         <div className="space-y-5">
-          <h3 className="text-16 font-medium leading-6 text-primary">
+          <h3 className="text-16 leading-6 font-medium text-primary">
             {t("project_settings.members.invite_members.title")}
           </h3>
           <div className="mt-2">
@@ -178,8 +184,8 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
 
           <div className="mb-3 space-y-4">
             {fields.map((field, index) => (
-              <div key={field.id} className="group mb-1 flex items-start justify-between gap-x-4 text-13 w-full">
-                <div className="flex flex-col gap-1 grow w-full">
+              <div key={field.id} className="group mb-1 flex w-full items-start justify-between gap-x-4 text-13">
+                <div className="flex w-full grow flex-col gap-1">
                   <Controller
                     control={control}
                     name={`members.${index}.member_id`}
@@ -190,7 +196,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                         <CustomSearchSelect
                           value={value}
                           customButton={
-                            <button className="flex w-full items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2 text-left text-13 text-secondary shadow-sm duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
+                            <button className="shadow-sm flex w-full items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2 text-left text-13 text-secondary duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
                               {value && value !== "" ? (
                                 <div className="flex items-center gap-2">
                                   <Avatar
@@ -229,7 +235,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                   )}
                 </div>
 
-                <div className="flex items-center justify-between gap-2 shrink-0">
+                <div className="flex shrink-0 items-center justify-between gap-2">
                   <div className="flex flex-col gap-1">
                     <Controller
                       name={`members.${index}.role`}
@@ -239,7 +245,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                         <CustomSelect
                           {...field}
                           customButton={
-                            <div className="flex w-24 items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2.5 text-left text-13 text-secondary shadow-sm duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
+                            <div className="shadow-sm flex w-24 items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2.5 text-left text-13 text-secondary duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
                               <span className="capitalize">{field.value ? ROLE[field.value] : "Select role"}</span>
                               <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                             </div>

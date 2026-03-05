@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
@@ -154,7 +160,7 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
                     <h5>{item.title}</h5>
                     {item.description && (
                       <p
-                        className={cn("text-tertiary whitespace-pre-line", {
+                        className={cn("whitespace-pre-line text-tertiary", {
                           "text-placeholder": item.disabled,
                         })}
                       >
@@ -192,7 +198,7 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
                       <h5>{nestedItem.title}</h5>
                       {nestedItem.description && (
                         <p
-                          className={cn("text-tertiary whitespace-pre-line", {
+                          className={cn("whitespace-pre-line text-tertiary", {
                             "text-placeholder": nestedItem.disabled,
                           })}
                         >
@@ -227,7 +233,7 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-tertiary whitespace-pre-line", {
+                    className={cn("whitespace-pre-line text-tertiary", {
                       "text-placeholder": item.disabled,
                     })}
                   >

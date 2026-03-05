@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 // plane imports
@@ -41,6 +47,7 @@ export enum EAuthenticationErrorCodes {
   USER_ACCOUNT_DEACTIVATED = "5019",
   // Password strength
   INVALID_PASSWORD = "5020",
+  PASSWORD_TOO_WEAK = "5021",
   SMTP_NOT_CONFIGURED = "5025",
   // Sign Up
   USER_ALREADY_EXIST = "5030",
@@ -101,6 +108,7 @@ export type TAuthErrorInfo = {
   message: ReactNode;
 };
 
+// TODO: move all error messages to translation files
 const errorCodeMessages: {
   [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string) => ReactNode };
 } = {
@@ -137,6 +145,10 @@ const errorCodeMessages: {
     title: `Invalid password`,
     message: () => `Invalid password. Please try again.`,
   },
+  [EAuthenticationErrorCodes.PASSWORD_TOO_WEAK]: {
+    title: `Password too weak`,
+    message: () => `Please use a stronger password.`,
+  },
   [EAuthenticationErrorCodes.SMTP_NOT_CONFIGURED]: {
     title: `SMTP not configured`,
     message: () => `SMTP not configured. Please contact your administrator.`,
@@ -149,7 +161,7 @@ const errorCodeMessages: {
       <div>
         Your account is already registered.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Sign In
@@ -185,7 +197,7 @@ const errorCodeMessages: {
       <div>
         No account found.&nbsp;
         <Link
-          className="underline underline-offset-4 font-medium hover:font-bold transition-all"
+          className="font-medium underline underline-offset-4 transition-all hover:font-bold"
           href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
         >
           Create one
@@ -331,7 +343,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user already exists.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -343,7 +355,7 @@ const errorCodeMessages: {
     message: () => (
       <div>
         Admin user does not exist.&nbsp;
-        <Link className="underline underline-offset-4 font-medium hover:font-bold transition-all" href={`/admin`}>
+        <Link className="font-medium underline underline-offset-4 transition-all hover:font-bold" href={`/admin`}>
           Sign In
         </Link>
         &nbsp;now.
@@ -412,6 +424,7 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED,
     EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED,
+    EAuthenticationErrorCodes.PASSWORD_TOO_WEAK,
   ];
 
   if (bannerAlertErrorCodes.includes(errorCode))
@@ -424,3 +437,8 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
 
   return undefined;
 };
+
+export const passwordErrors = [
+  EAuthenticationErrorCodes.PASSWORD_TOO_WEAK,
+  EAuthenticationErrorCodes.INVALID_NEW_PASSWORD,
+];

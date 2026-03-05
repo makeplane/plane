@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
@@ -84,7 +90,7 @@ export const SubWorkItemTitleActions = observer(function SubWorkItemTitleActions
   return (
     // prevent click everywhere
     <div
-      className="flex gap-2 items-center"
+      className="flex items-center gap-2"
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
@@ -90,12 +96,12 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
       <div className="space-y-5 px-5 py-8 sm:p-6">
-        <h3 className="text-16 font-medium leading-6 text-primary">Upload Image</h3>
+        <h3 className="text-16 leading-6 font-medium text-primary">Upload Image</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-center gap-3">
             <div
               {...getRootProps()}
-              className={`relative grid h-80 w-80 cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 ${
+              className={`relative grid h-80 w-80 cursor-pointer place-items-center rounded-lg p-12 text-center focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 focus:outline-none ${
                 (image === null && isDragActive) || !value
                   ? "border-2 border-dashed border-subtle hover:bg-surface-2"
                   : ""
@@ -105,14 +111,14 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
                 <>
                   <button
                     type="button"
-                    className="absolute right-0 top-0 z-40 -translate-y-1/2 translate-x-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
+                    className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
                   >
                     Edit
                   </button>
                   <img
                     src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
                     alt="image"
-                    className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
+                    className="absolute top-0 left-0 h-full w-full rounded-md object-cover"
                   />
                 </>
               ) : (

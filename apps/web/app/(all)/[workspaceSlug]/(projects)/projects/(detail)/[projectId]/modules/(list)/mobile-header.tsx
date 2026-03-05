@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -16,11 +22,11 @@ export const ModulesListMobileHeader = observer(function ModulesListMobileHeader
     <div className="flex justify-start md:hidden">
       <CustomMenu
         maxHeight={"md"}
-        className="flex flex-grow justify-start text-secondary text-13 py-2 border-b border-subtle bg-surface-1"
+        className="flex flex-grow justify-start border-b border-subtle bg-surface-1 py-2 text-13 text-secondary"
         // placement="bottom-start"
         customButton={
-          <Row className="flex flex-grow justify-center text-secondary text-13 gap-2">
-            <span>Layout</span> <ChevronDownIcon className="h-4 w-4 text-secondary my-auto" strokeWidth={1} />
+          <Row className="flex flex-grow justify-center gap-2 text-13 text-secondary">
+            <span>Layout</span> <ChevronDownIcon className="my-auto h-4 w-4 text-secondary" strokeWidth={1} />
           </Row>
         }
         customButtonClassName="flex flex-grow justify-center items-center text-secondary text-13"

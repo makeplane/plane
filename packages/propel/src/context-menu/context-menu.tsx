@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { ContextMenu as ContextMenuPrimitive } from "@base-ui-components/react/context-menu";
 import { cn } from "../utils";
@@ -59,7 +65,7 @@ const ContextMenuContent = React.forwardRef(function ContextMenuContent(
     >
       <ContextMenuPrimitive.Popup
         className={cn(
-          "z-50 min-w-32 overflow-hidden rounded-md border border-subtle bg-surface-1 p-1 shadow-md",
+          "shadow-md z-50 min-w-32 overflow-hidden rounded-md border border-subtle bg-surface-1 p-1",
           "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2",
@@ -81,7 +87,7 @@ const ContextMenuItem = React.forwardRef(function ContextMenuItem(
     <ContextMenuPrimitive.Item
       ref={ref}
       className={cn(
-        "relative flex cursor-default select-none items-center rounded-xs px-2 py-1.5 text-13 outline-none",
+        "relative flex cursor-default items-center rounded-xs px-2 py-1.5 text-13 outline-none select-none",
         "focus:bg-surface-2 focus:text-primary",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
@@ -99,7 +105,7 @@ const ContextMenuSeparator = React.forwardRef(function ContextMenuSeparator(
   ref: React.ForwardedRef<React.ElementRef<typeof ContextMenuPrimitive.Separator>>
 ) {
   return (
-    <ContextMenuPrimitive.Separator ref={ref} className={cn("-mx-1 my-1 h-px bg-subtle-1", className)} {...props} />
+    <ContextMenuPrimitive.Separator ref={ref} className={cn("bg-subtle-1 -mx-1 my-1 h-px", className)} {...props} />
   );
 });
 
@@ -113,7 +119,7 @@ const ContextMenuSubmenuTrigger = React.forwardRef(function ContextMenuSubmenuTr
     <ContextMenuPrimitive.SubmenuTrigger
       ref={ref}
       className={cn(
-        "flex cursor-default select-none items-center rounded-xs px-2 py-1.5 text-13 outline-none focus:outline-none",
+        "flex cursor-default items-center rounded-xs px-2 py-1.5 text-13 outline-none select-none focus:outline-none",
         "focus:bg-surface-2 data-[state=open]:bg-surface-2",
         className
       )}
