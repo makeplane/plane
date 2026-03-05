@@ -16,7 +16,7 @@ export function APITokenSettingsLoader(props: Props) {
     <section className="w-full overflow-y-auto">
       <div className="mb-2 flex items-center justify-between border-b border-subtle pb-3.5">
         <h3 className="text-xl font-medium">{title}</h3>
-        <span className="h-8 w-28 bg-layer-1 rounded-sm" />
+        <span className="h-8 w-28 rounded-sm bg-layer-1" />
       </div>
       <div className="divide-y-[0.5px] divide-subtle-1">
         {range(2).map((i) => (
