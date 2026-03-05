@@ -1744,6 +1744,7 @@ export default {
           button: "Send invitations",
           button_loading: "Sending invitations",
           placeholder: "name@company.com",
+          no_suggestions: "No members found",
           errors: {
             required: "We need an email address to invite them.",
             invalid: "Email is invalid",

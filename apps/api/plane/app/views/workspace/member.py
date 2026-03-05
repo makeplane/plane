@@ -16,12 +16,13 @@ from plane.app.permissions import WorkspaceEntityPermission, allow_permission, R
 # Module imports
 from plane.app.serializers import (
     ProjectMemberRoleSerializer,
+    UserAdminLiteSerializer,
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue
+from plane.db.models import Project, ProjectMember, User, WorkspaceMember, DraftIssue
 from plane.utils.cache import invalidate_cache
 
 from .. import BaseViewSet
@@ -31,7 +32,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     serializer_class = WorkspaceMemberAdminSerializer
     model = WorkspaceMember
 
-    search_fields = ["member__display_name", "member__first_name"]
+    search_fields = ["member__display_name", "member__first_name", "member__email"]
     use_read_replica = True
 
     def get_queryset(self):
@@ -52,6 +53,22 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             serializer = WorkspaceMemberAdminSerializer(workspace_members, fields=("id", "member", "role"), many=True)
         else:
             serializer = WorkSpaceMemberSerializer(workspace_members, fields=("id", "member", "role"), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def user_search(self, request, slug):
+        """Search all platform users by email, name, or display name for workspace invite autocomplete."""
+        search = request.query_params.get("search", "").strip()
+        if not search or len(search) < 2:
+            return Response([], status=status.HTTP_200_OK)
+        users = User.objects.filter(
+            Q(email__icontains=search)
+            | Q(display_name__icontains=search)
+            | Q(first_name__icontains=search)
+            | Q(last_name__icontains=search),
+            is_active=True,
+        ).order_by("display_name")[:10]
+        serializer = UserAdminLiteSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")

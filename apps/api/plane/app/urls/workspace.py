@@ -105,6 +105,11 @@ urlpatterns = [
         name="workspace-member",
     ),
     path(
+        "workspaces/<str:slug>/members/user-search/",
+        WorkSpaceMemberViewSet.as_view({"get": "user_search"}),
+        name="workspace-member-user-search",
+    ),
+    path(
         "workspaces/<str:slug>/members/leave/",
         WorkSpaceMemberViewSet.as_view({"post": "leave"}),
         name="leave-workspace-members",
