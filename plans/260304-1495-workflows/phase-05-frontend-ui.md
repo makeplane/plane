@@ -13,11 +13,13 @@ Build the configuration interface inside Project Settings to visualize and edit 
 - Three-dot menu with: Reset workflow, View change history.
 - For each project state, render a collapsible card showing:
   - State name + icon
-  - **"Allow new work items"** toggle
-  - List of **permitted state transitions** (with target state + reviewer list)
-  - **"Add permitted state change"** button → dropdown to pick a target state
-  - **"Add reviewers"** button per transition → member picker
-  - Delete button per transition
+  - **Summary badges**: `🔀 N permitted state changes • 👥 N listed reviewers` (ICU plural format)
+  - **"Allow new work items"** toggle (right side of card header)
+  - Expand/collapse **chevron on the right** side
+  - List of **permitted state transitions** in format: `Change state to → [● State]`
+  - Each transition row shows: reviewer count badge + **"Add reviewers"** button + delete + expand chevron
+  - **"Add permitted state change"** button → outlined button with `border border-color-subtle bg-layer-2`
+  - Expandable **"When reviewed by"** section per transition with reviewer chips + remove (`×`) button
 - Visual: matches PRO UI (see screenshot analysis in `workflow-ux-analysis.md`)
 
 ### Issue Rejection UX (across 5 layouts):
@@ -91,31 +93,32 @@ When workflow is live (`is_live = true`), a **special icon** appears next to eac
 
 **This icon should ONLY appear when `workflow.is_live === true`.** Otherwise, render nothing.
 
-## Related Code Files
+## Code Files & Implementation Status
 
-**Settings:**
+### Settings (✅ COMPLETED — 2026-03-05)
 
-- Files to create: `apps/web/ce/components/projects/settings/workflows/root.tsx`
-- Files to create: `apps/web/ce/components/projects/settings/workflows/workflow-state-card.tsx`
-- Files to create: `apps/web/ce/components/projects/settings/workflows/transition-row.tsx`
-- Files to create: `apps/web/ce/components/projects/settings/workflows/activity-log.tsx` (for "View change history")
-- Files to create: `apps/web/app/(all)/[workspaceSlug]/projects/[projectId]/settings/workflows/page.tsx`
-- Files to modify: Project settings sidebar navigation to add "Workflows" link
-- Files to modify: `packages/i18n/src/locales/{en,vi,ko}/translations.ts`
+| File                                                                                             | Status      | Notes                                                                                            |
+| ------------------------------------------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------ |
+| `apps/web/app/(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/workflows/page.tsx` | ✅ Modified | Live toggle + 3-dot menu in `SettingsHeading` `control` prop (top-right)                         |
+| `apps/web/ce/components/projects/settings/workflows/root.tsx`                                    | ✅ Modified | Simplified — removed standalone header, renders state cards only                                 |
+| `apps/web/ce/components/projects/settings/workflows/workflow-state-card.tsx`                     | ✅ Modified | Summary badges, right-side chevron, outlined "Add" button                                        |
+| `apps/web/ce/components/projects/settings/workflows/transition-row.tsx`                          | ✅ Modified | "Change state to →" format, "Add reviewers" button, reviewer picker, expandable reviewer section |
+| `apps/web/ce/components/projects/settings/workflows/activity-log.tsx`                            | ✅ Created  | "View change history" panel                                                                      |
+| `packages/i18n/src/locales/{en,ko,vi}/translations.ts`                                           | ✅ Modified | Added ICU plural keys, updated subtitle                                                          |
 
-**🆕 Workflow Active Indicator (issue views):**
+### 🆕 Workflow Active Indicator (issue views):
 
-- Files to create: `apps/web/ce/components/issues/workflow/workflow-indicator-icon.tsx` — icon on Kanban column headers
-- Files to create: `apps/web/ce/components/issues/workflow/workflow-state-info-popup.tsx` — popup showing transition rules
-- Files to create: `apps/web/ce/components/issues/workflow/workflow-drag-blocker-card.tsx` — inline card shown at bottom of Kanban column during blocked drag
-- Files to create: `apps/web/ce/components/issues/workflow/workflow-blocker-modal.tsx` — dedicated blocker modal for non-Kanban layouts showing allowed reviewers <!-- Updated: Validation Session 6 - REINSTATED; Session 5 removal reversed -->
-- Files to modify: Kanban column header component — inject indicator icon + hide `+ New work item` in restricted states
-- Files to modify: List state group header — same hiding of `+ New work item`
+| File                                                                    | Status  |
+| ----------------------------------------------------------------------- | ------- |
+| `apps/web/ce/components/issues/workflow/workflow-indicator-icon.tsx`    | ⬜ TODO |
+| `apps/web/ce/components/issues/workflow/workflow-state-info-popup.tsx`  | ⬜ TODO |
+| `apps/web/ce/components/issues/workflow/workflow-drag-blocker-card.tsx` | ⬜ TODO |
+| `apps/web/ce/components/issues/workflow/workflow-blocker-modal.tsx`     | ⬜ TODO |
 
-**Issue Rejection UX (error handling):**
+### Issue Rejection UX (error handling):
 
 - Verify existing issue update code in `apps/web/ce/store/issue/` handles 403 and reads `error.WORKFLOW_TRANSITION_BLOCKED`.
-- <!-- Updated: Validation Session 6 - Non-Kanban layouts use WorkflowBlockerModal (not toast-only); Kanban uses inline drag blocker card -->
+<!-- Updated: Validation Session 6 - Non-Kanban layouts use WorkflowBlockerModal (not toast-only); Kanban uses inline drag blocker card -->
 
 ## Embedded Rules
 
@@ -123,20 +126,46 @@ When workflow is live (`is_live = true`), a **special icon** appears next to eac
 2. **UI Priority**: `@plane/propel` subpath imports only. E.g., `import { Button } from "@plane/propel/button"`, `import { Switch } from "@plane/propel/switch"`.
 3. **CustomMenu**: Use `CustomMenu` from `@plane/ui` for three-dot menus inside `apps/web/`.
 4. **Semantic Colors**: `bg-surface-1` for card backgrounds, `bg-layer-2` for input/dropdown areas, `text-color-primary`, `border-color-subtle`.
-5. **i18n**: MUST use `useTranslation()` for ALL user-visible text.
-6. **Toast Feedback**: Import and fire `setToast` after every API mutation.
+5. **i18n**: MUST use `useTranslation()` for ALL user-visible text. Use ICU MessageFormat for plurals: `{count, plural, one{...} other{...}}`.
+6. **Toast Feedback**: Import and fire `setToast` after every API mutation. Use root-level keys: `t("success")`, `t("error")`.
 7. **MobX observer**: Wrap any component reading store data with `observer()`.
 
-## Implementation Steps
+## Implementation Details (Completed)
 
-### Part A: Workflow Settings UI
+### Part A: Workflow Settings UI ✅
 
-1. Add translations in all 3 locale files: `workflow.settings.*` keys + `workflow.indicator.*` keys for popup.
-2. Create `workflow-state-card.tsx`: collapsible per-state config with allow/deny toggle.
-3. Create `transition-row.tsx`: shows target state + reviewer pills + delete button.
-4. Create `root.tsx`: fetches workflow on mount, renders Live toggle + all state cards.
-5. Create `page.tsx` for route, includes `PageHead` with translated title.
-6. Wire up the page to project settings sidebar nav.
+#### Key Design Decisions (from 2026-03-05 UI refinement session)
+
+1. **Live toggle placement**: Moved from standalone left-aligned row in `root.tsx` → into `SettingsHeading` `control` prop in `page.tsx`. This renders it top-right, inline with the page title, matching the reference design on app.plane.so.
+
+2. **Summary badges**: Each state card header now shows `🔀 N permitted state changes • 👥 N listed reviewers` using ICU MessageFormat pluralization. The badge counts transitions and unique reviewers across all transitions for that state.
+
+3. **Transition row format**: Changed from flat list (`● Done — All Members`) to the reference format:
+
+   ```
+   Change state to  →  ● Done    👥 1 listed reviewer    [Add reviewers]  🗑  ∨
+   ```
+
+4. **"Add reviewers" flow**: Each transition row has an "Add reviewers" button that toggles an inline member picker. Members are fetched from `useMember().project.getProjectMemberIds()`. On selection, calls `workflowStore.addApprovers()`.
+
+5. **Expandable reviewer section**: Each transition has a chevron (∨) to toggle a "When reviewed by" section showing reviewer chips with `×` to remove.
+
+6. **"Add permitted state change" button**: Changed from `variant="link-neutral"` text link to an outlined button: `border border-color-subtle bg-layer-2 hover:bg-layer-3 text-[11px] rounded-md`.
+
+7. **i18n pluralization**: Project uses ICU MessageFormat (`{count, plural, one{...} other{...}}`), NOT i18next's `_plural` suffix. Translation keys consolidated:
+   - `n_permitted_state_changes`: `"{count, plural, one{# permitted state change} other{# permitted state changes}}"`
+   - `n_listed_reviewers`: `"{count, plural, one{# listed reviewer} other{# listed reviewers}}"`
+
+8. **Subtitle text**: Updated from "Control which state transitions are permitted and who can perform them." to "Automate work item transitions and set rules to control how tasks move through your project pipeline." across en/ko/vi.
+
+#### Translation Keys Added (under `project_settings.workflows`)
+
+| Key                         | English Value                                                                     |
+| --------------------------- | --------------------------------------------------------------------------------- |
+| `change_state_to`           | "Change state to"                                                                 |
+| `n_permitted_state_changes` | `{count, plural, one{# permitted state change} other{# permitted state changes}}` |
+| `n_listed_reviewers`        | `{count, plural, one{# listed reviewer} other{# listed reviewers}}`               |
+| `when_reviewed_by`          | "When reviewed by"                                                                |
 
 <!-- Updated: Validation Session 4 - fetchWorkflow called on board mount -->
 <!-- Updated: Validation Session 6 - WorkflowBlockerModal REINSTATED for non-Kanban layouts; mount as portal in project layout -->
@@ -194,17 +223,29 @@ When workflow is live (`is_live = true`), a **special icon** appears next to eac
 
 ## Post-Phase Checklist
 
-- [ ] Settings page renders correctly under project settings.
-- [ ] Live toggle calls API + shows success toast.
-- [ ] Adding/removing transitions calls API correctly.
-- [ ] `@plane/propel` is solely used for foundational components (no custom dropdowns).
-- [ ] `bg-layer-2` applied to all input/select areas in workflow config.
-- [ ] All text uses `t()` translation function.
+### Part A: Settings UI ✅
+
+- [x] Settings page renders correctly under project settings.
+- [x] Live toggle positioned top-right with 3-dot menu, calls API + shows success toast.
+- [x] Page subtitle matches reference: "Automate work item transitions..."
+- [x] State cards show summary badges: `N permitted state changes • N listed reviewers`.
+- [x] Transition rows show `Change state to → [State]` format.
+- [x] "Add reviewers" button opens inline member picker, adds via `addApprovers()`.
+- [x] Expandable "When reviewed by" section shows reviewer chips with remove.
+- [x] "Add permitted state change" is outlined button (not text link).
+- [x] Adding/removing transitions calls API correctly.
+- [x] `@plane/propel` is solely used for foundational components (no custom dropdowns).
+- [x] `bg-layer-2` applied to all input/select areas in workflow config.
+- [x] All text uses `t()` translation function with ICU MessageFormat plurals.
+- [x] Toast uses root-level keys: `t("success")`, `t("error")` (not `common.saved`).
+- [x] `PageHead` component included on page.
+
+### Part B & C: Issue Views (⬜ TODO)
+
 - [ ] 403 error from issue PATCH in non-Kanban layouts opens `WorkflowBlockerModal` showing allowed reviewers (no toast). <!-- Updated: Validation Session 6 -->
 - [ ] Kanban drag over blocked column shows `WorkflowDragBlockerCard` inline; drop is prevented (no API call).
 - [ ] `WorkflowDragBlockerCard` shows "All Members" when transition has no reviewers.
 - [ ] `WorkflowDragBlockerCard` cleared on dragLeave/dragEnd.
-- [ ] `PageHead` component included on page.
 - [ ] 🆕 Workflow active icon (⇄) appears on Kanban column headers when `is_live = true`.
 - [ ] 🆕 Popup shows `"State change / For work items in [source] / [reviewers] can move it to [target]"`.
 - [ ] 🆕 Popup shows "All Members can move it to [target]" when no reviewers.
@@ -219,7 +260,37 @@ When workflow is live (`is_live = true`), a **special icon** appears next to eac
 
 ## Completion Status
 
-**Status**: COMPLETED
-**Completed on**: 2026-03-05
+**Part A — Settings UI**: ✅ COMPLETED (2026-03-05)
+**Part B — Workflow Indicator**: ⬜ TODO
+**Part C — Issue Enforcement**: ⬜ TODO
 
-Complete frontend UI implementation delivered: Workflow settings page with state configuration, transition management, and activity logging. Issue enforcement UI across all 5 layouts (Kanban, List, Calendar, Gantt, Spreadsheet) with client-side blocker cards, modal overlays, and visual indicator icons. All CE components integrated with MobX store and i18n support.
+### Part A Completion Notes (2026-03-05)
+
+Refined workflow settings UI to match reference design on app.plane.so. Key changes:
+
+- Moved Live toggle + 3-dot menu from standalone header in `root.tsx` to `SettingsHeading` control in `page.tsx`
+- Added summary badges with ICU MessageFormat pluralization to state card headers
+- Rewrote transition rows with "Change state to →" format, "Add reviewers" button + member picker, and expandable reviewer section
+- Fixed translation keys from `_plural` suffix pattern to ICU MessageFormat
+- Fixed toast keys from `common.saved`/`common.error` to root-level `success`/`error`
+- Updated subtitle text across en/ko/vi locales
+
+**UI Polish & Refinements (2026-03-05 later):**
+
+- Migrated inline "Add reviewers" and "Add permitted state change" popovers to use `@plane/ui`'s structured `CustomSearchSelect` component with search and multi-select capabilities.
+- Fixed transition row styling to precisely match reference images (white bg, dashed separator, custom button styling).
+- Updated typography classes (`text-sm` → `text-13`, `text-xs` → `text-12`) to strictly adhere to Plane's custom numeric text sizing tokens instead of generic Tailwind defaults.
+
+**Bug Fixes (2026-03-05 afternoon):**
+
+| Bug                                             | Root Cause                                                                                                                        | Fix                                                                                                                       |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Reviewer dropdown shows already-added reviewers | `memberOptions` included all project members                                                                                      | Filter `memberIds` to exclude `approvers` in `transition-row.tsx`                                                         |
+| Cannot remove reviewers (DELETE 404)            | Backend `destroy` looked up by `pk` (record UUID) but frontend sends `approver_id` (user UUID) — serializer returns user IDs only | Changed `pk=pk` to `approver_id=pk` in `WorkflowTransitionApproverViewSet.destroy()`                                      |
+| Native `window.confirm` for delete transition   | Used `confirm()` instead of Plane's standard dialog                                                                               | Replaced with `AlertModalCore` from `@plane/ui` + existing i18n keys `delete_transition_title` / `delete_transition_body` |
+
+Files changed:
+
+- `apps/api/plane/app/views/workflow.py` — `WorkflowTransitionApproverViewSet.destroy()`: `pk=pk` → `approver_id=pk`
+- `apps/web/ce/components/projects/settings/workflows/transition-row.tsx` — Filter already-added reviewers, simplified to single-select add, hide button when all added
+- `apps/web/ce/components/projects/settings/workflows/workflow-state-card.tsx` — `confirm()` → `AlertModalCore`, added `deleteTransitionId` state
