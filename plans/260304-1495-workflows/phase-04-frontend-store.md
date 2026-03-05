@@ -41,7 +41,10 @@ Implement the MobX stores and API services for fetching and saving Project Workf
    - `fetchWorkflow(workspaceSlug, projectId)`: fetch both `/workflow/` (for isLive) and `/workflow-states/` (for states), then `runInAction` to set `workflowByProject.set(projectId, { isLive, states })`
    - Computed `isLive(projectId)`: returns `workflowByProject.get(projectId)?.isLive ?? false`
    - Mutations: `updateIsLive`, `updateStateConfig`, `addTransition`, `removeTransition`, `addApprovers`, `removeApprover`
-   - <!-- Updated: Validation Session 5 - NO blockerModal (modal removed entirely); add client-side transition check instead -->
+   - <!-- Updated: Validation Session 6 - blockerModal REINSTATED (Session 5 removal reversed); non-Kanban layouts use modal, not toast -->
+   - `blockerModal: { isOpen: boolean; allowedReviewers: string[]; fromState: string; toState: string } | null` observable — owned by store; non-Kanban layouts open this on 403.
+   - `openBlockerModal(payload: { allowedReviewers: string[]; fromState: string; toState: string })` action.
+   - `closeBlockerModal()` action.
    - `isTransitionAllowed(projectId: string, fromStateId: string, toStateId: string): boolean` — computed/method: checks if a `WorkflowTransition` from→to exists in store for the project. Returns `true` if workflow not live or transition exists.
    - `getTransitionReviewers(projectId: string, fromStateId: string, toStateId: string): string[]` — returns list of approver user IDs for that transition (empty = All Members allowed)
 4. Modify `RootStore` in `apps/web/ce/store/root.store.ts` to include `workflow: WorkflowStore`.
@@ -56,3 +59,10 @@ Implement the MobX stores and API services for fetching and saving Project Workf
 ## Success Criteria
 
 - CE components can access `useWorkflowStore(projectId)`.
+
+## Completion Status
+
+**Status**: COMPLETED
+**Completed on**: 2026-03-05
+
+MobX workflow store fully implemented with API service integration. State management, blockerModal observable, and computed helpers functional. Frontend store ready for settings UI and issue enforcement components.

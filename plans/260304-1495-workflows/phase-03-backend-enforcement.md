@@ -111,7 +111,7 @@ The frontend displays this as either an error toast or a modal/blocker overlay.
        if not is_allowed:
            return Response({"error": "WORKFLOW_TRANSITION_BLOCKED", ...detail}, status=403)
    ```
-6. Check if bulk state update endpoints also need this guard (e.g. `IssueViewSet.bulk_update` if exists).
+6. <!-- Updated: Validation Session 6 - Bulk enforcement is REQUIRED --> Also apply workflow enforcement to bulk state update endpoints: locate any `bulk_update` or equivalent endpoint in `IssueViewSet` or related viewsets; call `check_workflow_transition` for each issue being updated; collect per-issue errors and return partial failure response where applicable.
 
 ## Post-Phase Checklist
 
@@ -129,3 +129,10 @@ The frontend displays this as either an error toast or a modal/blocker overlay.
 - Unauthorized state transitions return 403 with structured error.
 - Creating issues in restricted states returns 400.
 - Authorized transitions proceed normally.
+
+## Completion Status
+
+**Status**: COMPLETED
+**Completed on**: 2026-03-05
+
+Workflow enforcement logic integrated into IssueViewSet. Creation guards, transition guards, and bulk update enforcement all implemented. 403 and 400 response handling functional across all issue modification endpoints.

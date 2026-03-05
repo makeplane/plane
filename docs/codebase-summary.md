@@ -587,8 +587,70 @@ apps/api/
 - All database "none" values converted to "medium" in one atomic transaction
 - Irreversible migration (no reverse path)
 
+### Workflow Enforcement Feature
+
+**Backend Models** (`plane/db/models/workflow.py`):
+
+- **ProjectWorkflow** - Master toggle for workflow enforcement (is_live boolean per project)
+- **WorkflowStateConfig** - Per-state configuration for whether new issues can be created in a state
+- **WorkflowTransition** - Defines allowed state transitions (state → transition_state)
+- **WorkflowTransitionApprover** - Restricts who can perform specific transitions (user-level authorization)
+- **WorkflowActivity** - Audit log for workflow configuration changes (field, old_value, new_value, actor)
+- **Migration 0133**: `0133_workflow_models.py` - Creates all 5 models with unique constraints
+
+**Backend API Endpoints** (`plane/app/views/workflow.py` and `plane/app/urls/workflow.py`):
+
+- `GET /api/workspaces/{slug}/workflow-states/?project_id={id}` - List state configs (flat dict by state UUID)
+- `PATCH /api/workspaces/{slug}/workflow-states/{state_id}/` - Update allow_issue_creation flag
+- `GET /api/workspaces/{slug}/projects/{id}/workflow/` - Fetch project workflow master toggle
+- `PATCH /api/workspaces/{slug}/projects/{id}/workflow/` - Toggle is_live flag
+- `POST /api/workspaces/{slug}/projects/{id}/workflow/reset/` - Reset workflow to defaults
+- `GET /api/workspaces/{slug}/projects/{id}/workflow/activity/` - Fetch audit log
+- `POST /api/workspaces/{slug}/projects/{id}/workflow-transitions/` - Create state transition
+- `DELETE /api/workspaces/{slug}/projects/{id}/workflow-transitions/{id}/` - Delete transition
+- `POST /api/workspaces/{slug}/projects/{id}/workflow-transitions/{id}/approvers/` - Add approver to transition
+- `DELETE /api/workspaces/{slug}/projects/{id}/workflow-transitions/{id}/approvers/{id}/` - Remove approver
+
+**Enforcement** (`plane/app/views/issue/issue.py` - IssueViewSet):
+
+- HTTP 403: Unauthorized state transition (transition not allowed or user not in approver list)
+- HTTP 400: Issue creation in restricted state (WorkflowStateConfig.allow_issue_creation = false)
+- Checks `ProjectWorkflow.is_live` before applying restrictions
+
+**Frontend Store** (`apps/web/ce/store/workflow.store.ts`):
+
+- **WorkflowStore** - MobX store managing workflow state per project
+- Observable: `workflowByProject` (map of project ID to workflow data), `blockerModal` (UI state)
+- Actions: `fetchWorkflow()`, `updateIsLive()`, `updateStateConfig()`, `addTransition()`, `removeTransition()`, `addApprovers()`, `removeApprover()`, `resetWorkflow()`, `fetchActivity()`
+- Helpers: `isLive()`, `isTransitionAllowed()`, `getTransitionReviewers()`
+- Blocker modal methods: `openBlockerModal()`, `closeBlockerModal()`
+
+**Frontend Service** (`apps/web/ce/services/workflow.service.ts`):
+
+- `getWorkflowStates()`, `getProjectWorkflow()`, `updateProjectWorkflow()`
+- `updateWorkflowStateConfig()`, `addTransition()`, `deleteTransition()`
+- `addApprover()`, `deleteApprover()`, `resetWorkflow()`, `getWorkflowActivity()`
+
+**Frontend Components** (`apps/web/ce/components/`):
+
+- **workflow-disabled-overlay.tsx** - Kanban drag-block overlay when drag blocked
+- **workflow-disabled-message.tsx** - Message shown when workflow is disabled on drop
+- **workflow-drag-blocker-card.tsx** - Blocker card UI in Kanban
+- **workflow-blocker-modal.tsx** - Modal shown in non-Kanban layouts to prevent transition
+- **workflow-state-info-popup.tsx** - Popup showing transition rules and approvers
+- **workflow-indicator-icon.tsx** - Icon displayed on column headers showing workflow active
+- **projects/settings/workflows/workflow-state-card.tsx** - UI for state config editing
+- **workflow/use-workflow-drag-n-drop.ts** - Hook for drag-drop blocking logic
+- **workflow/workflow-group-tree.tsx** - Tree view of workflow transitions
+
+**Frontend Route**:
+
+- `/settings/projects/{projectId}/workflows` - Settings page for configuring workflow states, transitions, and approvers
+
+**CE Pattern**: All workflow code isolated in `apps/web/ce/` and `apps/api/plane/` (no core modifications)
+
 ---
 
 **Document Location**: `/Users/ngoctran/Documents/Shinhan/plane/docs/codebase-summary.md`
-**Lines**: ~560
-**Status**: Updated with Priority System simplification and migration details
+**Lines**: ~620
+**Status**: Updated with Workflows feature documentation

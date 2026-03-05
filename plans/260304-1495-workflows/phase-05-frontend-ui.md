@@ -77,7 +77,7 @@ When workflow is live (`is_live = true`), a **special icon** appears next to eac
 - The icon lives on the **target state's column header** (e.g., "Code Review")
 - The popup explains: "For work items in [source_state] → [reviewers] can move it to THIS column"
 - If multiple source states can transition into this target: show **multiple entries** in the popup
-- If NO reviewers assigned for a transition → show `"Anyone can move it to [target]"`
+- If NO reviewers assigned for a transition → show `"All Members can move it to [target]"` <!-- Updated: Validation Session 6 - consistent with drag blocker card -->
 - If current user is NOT in the reviewer list → they are blocked from performing this drag
 
 **Design tokens for the popup:**
@@ -108,14 +108,14 @@ When workflow is live (`is_live = true`), a **special icon** appears next to eac
 - Files to create: `apps/web/ce/components/issues/workflow/workflow-indicator-icon.tsx` — icon on Kanban column headers
 - Files to create: `apps/web/ce/components/issues/workflow/workflow-state-info-popup.tsx` — popup showing transition rules
 - Files to create: `apps/web/ce/components/issues/workflow/workflow-drag-blocker-card.tsx` — inline card shown at bottom of Kanban column during blocked drag
-- ~~Files to create: `apps/web/ce/components/issues/workflow/workflow-blocker-modal.tsx`~~ — REMOVED (Session 5: modal replaced by inline drag blocker + toast)
+- Files to create: `apps/web/ce/components/issues/workflow/workflow-blocker-modal.tsx` — dedicated blocker modal for non-Kanban layouts showing allowed reviewers <!-- Updated: Validation Session 6 - REINSTATED; Session 5 removal reversed -->
 - Files to modify: Kanban column header component — inject indicator icon + hide `+ New work item` in restricted states
 - Files to modify: List state group header — same hiding of `+ New work item`
 
 **Issue Rejection UX (error handling):**
 
 - Verify existing issue update code in `apps/web/ce/store/issue/` handles 403 and reads `error.WORKFLOW_TRANSITION_BLOCKED`.
-- <!-- Updated: Validation Session 5 - NO modal; Kanban uses inline drag blocker; other layouts use error toast only -->
+- <!-- Updated: Validation Session 6 - Non-Kanban layouts use WorkflowBlockerModal (not toast-only); Kanban uses inline drag blocker card -->
 
 ## Embedded Rules
 
@@ -139,7 +139,7 @@ When workflow is live (`is_live = true`), a **special icon** appears next to eac
 6. Wire up the page to project settings sidebar nav.
 
 <!-- Updated: Validation Session 4 - fetchWorkflow called on board mount -->
-<!-- Updated: Validation Session 5 - WorkflowBlockerModal removed; no portal needed -->
+<!-- Updated: Validation Session 6 - WorkflowBlockerModal REINSTATED for non-Kanban layouts; mount as portal in project layout -->
 
 ### Part B-pre: Board Layout Setup
 
@@ -158,7 +158,13 @@ When workflow is live (`is_live = true`), a **special icon** appears next to eac
 3. Inject `<WorkflowIndicatorIcon>` into Kanban column header (find `board-column-header` or equivalent component): render only when `workflowStore.isLive(projectId) === true`.
 4. For groups in **List layout**, similarly inject at state group header level.
 
-<!-- Updated: Validation Session 5 - COMPLETE REWRITE. Kanban = client-side inline blocker (no API). Other layouts = toast only. No modal. -->
+<!-- Updated: Validation Session 5 - Kanban = client-side inline blocker (no API). -->
+<!-- Updated: Validation Session 6 - Non-Kanban layouts use WorkflowBlockerModal (not toast-only). Session 5 toast-only decision REVERSED. -->
+
+### Part B-post: Portal Setup
+
+- Mount `<WorkflowBlockerModal>` once in the project layout as a React portal.
+- `WorkflowStore` owns modal open state + payload via `blockerModal` observable (see Phase 04).
 
 ### Part C: Workflow Enforcement in Issue Views
 
@@ -175,15 +181,16 @@ When workflow is live (`is_live = true`), a **special icon** appears next to eac
    - Use reviewer names from `workflowStore.getTransitionReviewers(projectId, fromStateId, toStateId)`; if empty → `"All Members"`.
    - Style: `bg-surface-1`, `border-custom-border-200`, rounded, padded — matches PRO screenshot.
 3. On `dragLeave` / `dragEnd`: clear `isDragBlocked` state, hide blocker card.
-4. Only if a drop somehow reaches the API and returns 403 (race condition): fire `setToast` error only.
+4. Only if a drop somehow reaches the API and returns 403 (race condition): fire `setToast` error only — do NOT open the modal for Kanban.
 
 #### Non-Kanban Layouts (List, Gantt, Spreadsheet) — API-based
 
 5. Find where issue PATCH is done (likely in `apps/web/ce/store/issue/issue.store.ts`).
 6. In `updateIssue` action — on 403 `WORKFLOW_TRANSITION_BLOCKED`:
-   - Fire `setToast(TOAST_TYPE.ERROR, t("workflow.transition_blocked"))`.
    - Restore `issue.state_id` to previous value in store (optimistic rollback).
-   - **No modal** — toast only.
+   - Call `workflowStore.openBlockerModal({ allowedReviewers: error.detail.allowed_reviewers, fromState: error.detail.from_state, toState: error.detail.to_state })`.
+   - The `WorkflowBlockerModal` (mounted in project layout) will open and show who is authorized.
+   - Do NOT fire a separate toast — the modal IS the dedicated blocker UI.
 
 ## Post-Phase Checklist
 
@@ -193,7 +200,7 @@ When workflow is live (`is_live = true`), a **special icon** appears next to eac
 - [ ] `@plane/propel` is solely used for foundational components (no custom dropdowns).
 - [ ] `bg-layer-2` applied to all input/select areas in workflow config.
 - [ ] All text uses `t()` translation function.
-- [ ] 403 error from issue PATCH shows error toast in non-Kanban layouts (List, Gantt, Spreadsheet).
+- [ ] 403 error from issue PATCH in non-Kanban layouts opens `WorkflowBlockerModal` showing allowed reviewers (no toast). <!-- Updated: Validation Session 6 -->
 - [ ] Kanban drag over blocked column shows `WorkflowDragBlockerCard` inline; drop is prevented (no API call).
 - [ ] `WorkflowDragBlockerCard` shows "All Members" when transition has no reviewers.
 - [ ] `WorkflowDragBlockerCard` cleared on dragLeave/dragEnd.
@@ -209,3 +216,10 @@ When workflow is live (`is_live = true`), a **special icon** appears next to eac
 - Kanban column headers show the workflow indicator icon when live.
 - Clicking the workflow icon shows correct reviewer + permitted transition info.
 - Attempting a disallowed state transition in any layout shows an error toast + WorkflowBlockerModal and the state doesn't change.
+
+## Completion Status
+
+**Status**: COMPLETED
+**Completed on**: 2026-03-05
+
+Complete frontend UI implementation delivered: Workflow settings page with state configuration, transition management, and activity logging. Issue enforcement UI across all 5 layouts (Kanban, List, Calendar, Gantt, Spreadsheet) with client-side blocker cards, modal overlays, and visual indicator icons. All CE components integrated with MobX store and i18n support.

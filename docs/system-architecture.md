@@ -422,6 +422,48 @@ Option 2: Token-based from Swing Portal
 2. Does user have required role?
 3. Can user access resource?
 
+### Workflow Enforcement (State Transitions & Approvals)
+
+**Purpose**: Control which states an issue can move to and who can approve transitions.
+
+**Workflow Master Toggle**:
+
+- Each project has a `ProjectWorkflow` record with `is_live` boolean
+- When `is_live=true`, enforce all workflow rules
+- When `is_live=false`, all transitions allowed (backward compatibility)
+
+**State-Level Restrictions**:
+
+- `WorkflowStateConfig.allow_issue_creation` - Whether new issues can be created in a specific state
+- HTTP 400 returned if issue creation attempted in restricted state
+- Prevents issues "appearing" in end states (e.g., Done)
+
+**Transition Rules**:
+
+- `WorkflowTransition` defines allowed state paths (state → transition_state)
+- Only transitions explicitly defined are permitted
+- HTTP 403 returned for unauthorized transitions
+
+**Approver-Level Control**:
+
+- `WorkflowTransitionApprover` restricts who can perform a specific transition
+- Can be empty (any project member), or limited to specific users
+- HTTP 403 returned if current user not in approver list
+- Frontend blocks drag-drop in Kanban with overlay; shows modal in other layouts
+
+**Audit Trail**:
+
+- `WorkflowActivity` logs all workflow config changes
+- Tracks: field name, old_value, new_value, actor (who made change), timestamp
+- Used for compliance and change history
+
+**Frontend Enforcement**:
+
+- Kanban view: Drag-drop blocked with visual overlay when transition disallowed
+- Non-Kanban (List, Calendar, etc.): Modal prevents state change attempt
+- Column headers show workflow indicator icon when workflow is active
+- State info popup displays allowed transitions and required approvers
+
 ## Organizational Structure: Department & Staff Management
 
 ### Department Model

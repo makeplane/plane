@@ -4,6 +4,49 @@ All significant changes, features, and fixes are recorded here in reverse-chrono
 
 ---
 
+## [2026-03-05]
+
+### Feature: Workflow Enforcement (State Transitions & Approvals)
+
+**Summary:** Project teams can define allowed state transitions, restrict issue creation in certain states, and require approvals from specific users before state changes.
+
+**Backend:**
+
+- New models: `ProjectWorkflow`, `WorkflowStateConfig`, `WorkflowTransition`, `WorkflowTransitionApprover`, `WorkflowActivity`
+- Migration 0133: `0133_workflow_models.py` - Creates workflow tables with unique constraints
+- 9 new REST endpoints under `/api/workspaces/{slug}/projects/{id}/workflow*/`
+- API: `WorkflowStateConfigViewSet`, `ProjectWorkflowViewSet`, `WorkflowTransitionViewSet`, `WorkflowTransitionApproverViewSet`
+- Enforcement in `IssueViewSet`: HTTP 403 for unauthorized transitions, HTTP 400 for creation in restricted states
+- Audit trail: All workflow config changes logged via `WorkflowActivity`
+- Helper utility: `plane/utils/workflow_checker.py` for transition validation
+
+**Frontend (apps/web/ce):**
+
+- MobX Store: `WorkflowStore` with `useWorkflowStore()` hook
+- Service: `WorkflowService` - API integration for all workflow endpoints
+- Settings page: `/settings/projects/{projectId}/workflows` with state config, transition rules, and approver management
+- Components:
+  - `workflow-disabled-overlay.tsx` - Kanban drag-block visual
+  - `workflow-blocker-modal.tsx` - Non-Kanban state change prevention
+  - `workflow-indicator-icon.tsx` - Column header workflow badge
+  - `workflow-state-info-popup.tsx` - Inline transition rules display
+  - `workflow-drag-n-drop.ts` hook - Drag-drop blocking logic
+- UX patterns:
+  - Kanban: Drag blocked with overlay + tooltip on hover
+  - List/Calendar/etc.: Modal prevents transition before POST attempt
+  - Column headers show workflow active indicator when `is_live=true`
+
+**CE Pattern:** All code isolated in `apps/web/ce/` and `apps/api/plane/` (no core modifications)
+
+**Configuration:**
+
+- Project-level toggle: `ProjectWorkflow.is_live` (default: false, backward compatible)
+- Per-state: `WorkflowStateConfig.allow_issue_creation` (default: true)
+- Transition rules: Only explicitly defined transitions allowed
+- Approvals: Optional per-transition user restrictions
+
+---
+
 ## [2026-03-04]
 
 ### Feature: Bulk Assign Workspace Members via Excel
@@ -11,6 +54,7 @@ All significant changes, features, and fixes are recorded here in reverse-chrono
 **Summary:** God-mode admin can upload an `.xlsx` file to bulk-add users to workspaces without manual one-by-one assignment.
 
 **Backend:**
+
 - New POST endpoint `POST /api/instances/workspaces/bulk-assign-members/`
 - Validates each row (email, workspace slug, role); skips rows with unknown users or already-active members with a reason string
 - No DB migrations required — uses existing `WorkspaceMember` model
@@ -18,6 +62,7 @@ All significant changes, features, and fixes are recorded here in reverse-chrono
 - Extended: `apps/api/plane/license/api/views/__init__.py`, `apps/api/plane/license/urls.py`
 
 **Frontend (apps/admin):**
+
 - New page `/workspace/bulk-assign` with three-step flow: Excel upload → row preview → results display
 - New components: `workspace-bulk-assign-form.tsx`, `workspace-bulk-assign-preview.tsx`, `workspace-bulk-assign-results.tsx`
 - Excel parsed client-side via `xlsx` (SheetJS), JSON payload sent to backend
@@ -26,14 +71,14 @@ All significant changes, features, and fixes are recorded here in reverse-chrono
 - Service method added to `packages/services/src/workspace/instance-workspace.service.ts`
 
 **Decisions recorded:**
+
 - Member role value: `15` (matches DB `ROLE_CHOICES`, spec had a typo of `10`)
 - User not found: skip row with reason (no auto-invite)
 - Already a member: skip row with reason (no role update)
-- UX pattern: dedicated page (mirrors existing Bulk Import page)
-=======
-**Last Updated**: 2026-03-04
-**Version**: 1.2.3
-**Format**: [Keep a Changelog](https://keepachangelog.com/) style
+- # UX pattern: dedicated page (mirrors existing Bulk Import page)
+  **Last Updated**: 2026-03-04
+  **Version**: 1.2.3
+  **Format**: [Keep a Changelog](https://keepachangelog.com/) style
 
 All notable changes to the Plane project are documented here. This file tracks features, breaking changes, bug fixes, and improvements across the full stack.
 
@@ -42,17 +87,20 @@ All notable changes to the Plane project are documented here. This file tracks f
 ## [1.2.3] - 2026-03-04
 
 ### Added
+
 - **Remove None Priority Feature** - Simplified priority system from 5 levels to 4
   - Removed "none" from priority options across full stack
   - Set "medium" as new default priority for all new issues and drafts
   - Created Django data migration (0131) to convert all existing "none" records to "medium"
 
 ### Changed
+
 - **Priority System** - Now supports only 4 levels: urgent, high, medium, low (previously 5 with "none")
 - **Issue Model Defaults** - Default priority changed from "none" to "medium" in Issue, IssueVersion, DraftIssue models
 - **Priority Ordering** - Updated all priority ordering/grouping lists to reflect 4-priority system
 
 ### Breaking Changes
+
 - **API Filter Rejection** - Requests filtering by `priority=none` now return HTTP 400 Bad Request
   - Intentional breaking change to enforce new priority system
   - Clients must update filter logic to use valid priorities: urgent, high, medium, low
@@ -60,10 +108,12 @@ All notable changes to the Plane project are documented here. This file tracks f
 - **Default Priority** - New issues default to "medium" instead of "none"
 
 ### Deprecated
+
 - Priority value "none" deprecated in API filters (will return 400)
 - Priority UI selectors no longer expose "none" option
 
 ### Technical Details
+
 - **Migration Command**: `python manage.py makemigrations db --empty --name migrate_none_priority_to_medium`
 - **Affected Tables**: Issue, IssueVersion, DraftIssue
 - **Type Safety**: TIssuePriorities type retains "none" for edge case backward compatibility
@@ -74,6 +124,7 @@ All notable changes to the Plane project are documented here. This file tracks f
 ## [1.2.2] - 2026-03-03
 
 ### Added
+
 - **Time Tracking Management** - Comprehensive time tracking and capacity planning features
   - Remove estimate_time field from issue properties
   - Add time_spent model for tracking actual hours worked
@@ -81,10 +132,12 @@ All notable changes to the Plane project are documented here. This file tracks f
   - Capacity summary and planning views
 
 ### Changed
+
 - **Issue Properties** - Removed estimate_time from Issue model and frontend components
 - **Time Tracking Components** - Updated to use new time_spent model instead of estimate_time
 
 ### Fixed
+
 - Time tracking data consistency across Issue, IssueVersion tables
 
 ---
@@ -92,6 +145,7 @@ All notable changes to the Plane project are documented here. This file tracks f
 ## [1.2.1] - 2026-03-02
 
 ### Added
+
 - **Admin User Management** - Instance administrator controls for user and workspace management
   - User CRUD operations (create, read, update, delete users)
   - Password reset functionality
@@ -100,10 +154,12 @@ All notable changes to the Plane project are documented here. This file tracks f
   - MobX store integration for state management
 
 ### Changed
+
 - Admin app routes and components for user management
 - Instance admin permissions and access controls
 
 ### Technical Details
+
 - **Routes**: `/admin/users` (list, create, detail pages)
 - **Store**: `instance-user.store.ts` for user state management
 - **Service**: `instance-user.service.ts` for API integration
@@ -113,6 +169,7 @@ All notable changes to the Plane project are documented here. This file tracks f
 ## [1.2.0] - 2026-02-28
 
 ### Added
+
 - **Swing SSO Authentication** - Integration with Swing portal for single sign-on
   - Provider implementation with credentials and token flows
   - Config keys: IS_SWING_SSO_ENABLED, SWING_SSO_URL, CLIENT_ID, CLIENT_SECRET, COMPANY_CODE
@@ -137,6 +194,7 @@ All notable changes to the Plane project are documented here. This file tracks f
   - Customizable label colors and descriptions
 
 ### Changed
+
 - **Issue Modal** - Enhanced with required field validation and default property management
 - **Dashboard V2** - Complete redesign and implementation
   - 8 implementation phases completed (C1, C2, H1, H2, M1-M4)
@@ -145,6 +203,7 @@ All notable changes to the Plane project are documented here. This file tracks f
   - Dashboard CRUD with favorites/pinning
 
 ### Fixed
+
 - XSS vulnerability in delete modal component
 - Color token validation in dashboard toolbar
 - Code duplication in utility functions (DRY refactoring)
@@ -155,6 +214,7 @@ All notable changes to the Plane project are documented here. This file tracks f
 ## [1.1.5] - 2025-11-30
 
 ### Added
+
 - **Design System Overhaul** - Propel UI library implementation
   - New component library with design tokens
   - Accessibility improvements (WCAG AA compliance)
@@ -181,6 +241,7 @@ All notable changes to the Plane project are documented here. This file tracks f
   - Retry and delivery tracking
 
 ### Changed
+
 - **Analytics Dashboard Pro** - Professional analytics features
   - 6 widget types (line, bar, pie, scatter, table, metric)
   - Multi-dashboard CRUD
@@ -189,6 +250,7 @@ All notable changes to the Plane project are documented here. This file tracks f
   - Favorites/pinning with unified UserFavorite system
 
 ### Performance
+
 - Optimized database queries for large datasets
 - Implemented caching strategies
 - Query optimization across ORM calls
@@ -198,22 +260,26 @@ All notable changes to the Plane project are documented here. This file tracks f
 ## [1.1.0] - 2025-09-15
 
 ### Added
+
 - **API v1 Release** - Stable REST API for integrations
   - OpenAPI specification
   - Token-based authentication
   - Rate limiting
 
 ### Changed
+
 - **Enhanced Notification System** - Improved notification delivery
   - In-app notifications
   - Email notification templates
   - Digest options
 
 ### Fixed
+
 - Notification delivery reliability
 - Background task retry logic
 
 ### Performance
+
 - Database connection pooling
 - Query optimization
 - Caching layer improvements
@@ -223,12 +289,14 @@ All notable changes to the Plane project are documented here. This file tracks f
 ## [1.0.5] - 2025-06-30
 
 ### Added
+
 - **Performance Optimization** - System-wide performance improvements
   - Database indexing strategy
   - Query optimization
   - Frontend bundle size reduction
 
 ### Fixed
+
 - Slow page load issues
 - Memory leaks in real-time collaboration
 - Cache invalidation race conditions
@@ -238,6 +306,7 @@ All notable changes to the Plane project are documented here. This file tracks f
 ## [1.0.0] - 2024-12-15
 
 ### Added
+
 - **Initial Release** - Plane.so public launch
   - Core project management (issues, cycles, modules)
   - Workspace & project management
@@ -252,6 +321,7 @@ All notable changes to the Plane project are documented here. This file tracks f
   - Self-hosting options (Docker Compose, Docker Swarm, Kubernetes)
 
 ### Architecture
+
 - Monorepo structure with pnpm + Turborepo
 - React 18 frontend with MobX state management
 - Django 4.2 + DRF backend
@@ -266,17 +336,20 @@ All notable changes to the Plane project are documented here. This file tracks f
 ## Versioning & Release Notes
 
 ### Version Format
+
 - **Major.Minor.Patch** (e.g., 1.2.3)
 - **Major**: Breaking API changes, significant architecture shifts
 - **Minor**: New features (backward compatible)
 - **Patch**: Bug fixes, performance improvements, non-breaking changes
 
 ### Release Cycle
+
 - **Monthly patches** (bug fixes, minor improvements)
 - **Quarterly minor releases** (new features, enhancements)
 - **Annual major releases** (architecture changes, breaking changes)
 
 ### Deployment Strategy
+
 - **Feature branches** → PR to `develop` (staging)
 - **Release PRs** → merge `develop` to `preview` (production)
 - **Hotfixes** → branch from `preview`, PR to `preview`, sync back to `develop`
@@ -286,6 +359,7 @@ All notable changes to the Plane project are documented here. This file tracks f
 ## Contributing to Changelog
 
 ### When to Update
+
 - After implementing a feature (add to "Added" section)
 - After fixing a bug (add to "Fixed" section)
 - After removing functionality (add to "Removed" section)
@@ -293,6 +367,7 @@ All notable changes to the Plane project are documented here. This file tracks f
 - After deprecating features (add to "Deprecated" section)
 
 ### Format Guidelines
+
 - Use present tense ("Add" not "Added")
 - Be descriptive and user-focused
 - Include technical details for breaking changes
@@ -300,7 +375,9 @@ All notable changes to the Plane project are documented here. This file tracks f
 - Group related changes together
 
 ### Breaking Change Notation
+
 Always clearly mark breaking changes:
+
 ```
 ### Breaking Changes
 - **API Endpoint**: Description of what changed and migration path

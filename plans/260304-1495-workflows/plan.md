@@ -18,13 +18,13 @@ Implement the Workflows feature cloned from Plane PRO to control Issue state tra
 
 ## Phase List
 
-| Phase | Title                                                      | Description                                                                     | Status  |
-| ----- | ---------------------------------------------------------- | ------------------------------------------------------------------------------- | ------- |
-| 01    | [Backend Models](phase-01-backend-models.md)               | Database models for ProjectWorkflow, WorkflowState, and WorkflowStateTransition | Pending |
-| 02    | [Backend API Views](phase-02-backend-api.md)               | DRF ViewSets, serializers, and URLs to manage Project Workflows                 | Pending |
-| 03    | [Backend API Enforcement](phase-03-backend-enforcement.md) | Modify IssueViewSet to reject unpermitted state changes based on Workflow rules | Pending |
-| 04    | [Frontend Service & Store](phase-04-frontend-store.md)     | CE setup: APIService, MobX root.store extension for workflow                    | Pending |
-| 05    | [Frontend Settings UI](phase-05-frontend-ui.md)            | Project Settings page for configuring Workflows (UI & Integration)              | Pending |
+| Phase | Title                                                      | Description                                                                     | Status    |
+| ----- | ---------------------------------------------------------- | ------------------------------------------------------------------------------- | --------- |
+| 01    | [Backend Models](phase-01-backend-models.md)               | Database models for ProjectWorkflow, WorkflowState, and WorkflowStateTransition | Completed |
+| 02    | [Backend API Views](phase-02-backend-api.md)               | DRF ViewSets, serializers, and URLs to manage Project Workflows                 | Completed |
+| 03    | [Backend API Enforcement](phase-03-backend-enforcement.md) | Modify IssueViewSet to reject unpermitted state changes based on Workflow rules | Completed |
+| 04    | [Frontend Service & Store](phase-04-frontend-store.md)     | CE setup: APIService, MobX root.store extension for workflow                    | Completed |
+| 05    | [Frontend Settings UI](phase-05-frontend-ui.md)            | Project Settings page for configuring Workflows (UI & Integration)              | Completed |
 
 ## Validation Log
 
@@ -239,3 +239,50 @@ Implement the Workflows feature cloned from Plane PRO to control Issue state tra
 
 - Phase 04: REMOVE `blockerModal` observable; ADD computed `isTransitionAllowed(projectId, fromStateId, toStateId)` that checks transitions in store
 - Phase 05: Rewrite Part C — Kanban uses dragOver client-side check + inline blocker card; other layouts use toast only; remove WorkflowBlockerModal entirely
+
+---
+
+### Session 6 — 2026-03-05
+
+**Trigger:** Pre-implementation validation surfaced three remaining decision points; Session 5 UX decision reversed by user.
+**Questions asked:** 3
+
+#### Questions & Answers
+
+1. **[UX]** Session 5 removed WorkflowBlockerModal for non-Kanban layouts (toast-only). Is toast-only correct, or should a dedicated blocker UI (modal/overlay) be used?
+   - Options: Keep stale text (modal) | Leave Session 5 toast-only as-is
+   - **Answer:** Keep stale text — the Phase 05 Requirements text ("NOT just a generic toast — dedicated blocker UI") is CORRECT
+   - **Custom input:** "the correct ui is NOT just a generic toast — this is a dedicated blocker UI (modal or prominent overlay)"
+   - **Rationale:** Session 5 incorrectly removed the modal based on screenshot interpretation. The user confirms: non-Kanban layouts MUST show WorkflowBlockerModal (showing allowed reviewers), not just a toast. Session 5 decision is REVERSED. Kanban keeps its client-side inline drag blocker card (which IS a prominent overlay inside the column).
+
+2. **[UX]** Phase 05 indicator popup showed "Anyone can move it to [target]" for no-reviewer transitions. Should it be "All Members" (matching drag blocker card and PRO copy)?
+   - Options: All Members (consistent) | Anyone (keep as-is)
+   - **Answer:** All Members (consistent with drag blocker)
+   - **Rationale:** Use "All Members" everywhere — indicator popup and drag blocker card must match PRO copy exactly.
+
+3. **[Architecture]** Should bulk state update endpoints (e.g. `IssueViewSet.bulk_update`) also enforce workflow transition rules?
+   - Options: Yes, enforce on bulk | No, skip for MVP
+   - **Answer:** Yes, enforce on bulk updates too
+   - **Rationale:** Workflow rules must apply consistently regardless of how many issues are updated at once. Phase 03 must locate and patch bulk update endpoints.
+
+#### Confirmed Decisions
+
+- **Non-Kanban blocker**: WorkflowBlockerModal REINSTATED — modal opens on 403 showing allowed reviewers (Session 5 toast-only decision REVERSED)
+- **Kanban blocker**: Unchanged — inline drag blocker card in target column (client-side, no API call)
+- **No-reviewer indicator copy**: "All Members" used everywhere (popup + drag blocker)
+- **Bulk enforcement**: Phase 03 must enforce workflow on bulk state update endpoints
+
+#### Action Items
+
+- [x] Phase 05: Fix line 81 indicator popup "Anyone" → "All Members"
+- [x] Phase 05: Reinstate `workflow-blocker-modal.tsx` in file list
+- [x] Phase 05: Rewrite Part C non-Kanban to open modal on 403 (remove "No modal — toast only")
+- [x] Phase 05: Update checklist item (was "shows error toast in non-Kanban layouts")
+- [x] Phase 04: Reinstate `blockerModal` observable + `openBlockerModal`/`closeBlockerModal` actions
+- [x] Phase 03: Resolve step 6 — bulk enforcement now REQUIRED (no longer a "check if")
+
+#### Impact on Phases
+
+- Phase 03: Add bulk update enforcement to step 6
+- Phase 04: Reinstate `blockerModal` observable + modal actions
+- Phase 05: Non-Kanban Part C shows modal not toast; `workflow-blocker-modal.tsx` reinstated; portal mounted in project layout
