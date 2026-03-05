@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
@@ -84,9 +90,9 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
       ) : (
         <div
           className={cn(
-            "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-surface-1 text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+            "ml-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-surface-1 text-placeholder opacity-0 transition-[width] ease-linear",
             {
-              "w-64 px-2.5 py-1.5 border-subtle opacity-100": isSearchOpen,
+              "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
             }
           )}
         >

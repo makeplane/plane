@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { USER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -9,12 +15,12 @@ import { cn } from "@plane/utils";
 export function ProductUpdatesFooter() {
   const { t } = useTranslation();
   return (
-    <div className="flex items-center justify-between flex-shrink-0 gap-4 m-6 mb-4">
+    <div className="m-6 mb-4 flex flex-shrink-0 items-center justify-between gap-4">
       <div className="flex items-center gap-2">
         <a
           href="https://go.plane.so/p-docs"
           target="_blank"
-          className="text-13 text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
           rel="noreferrer"
         >
           {t("docs")}
@@ -26,7 +32,7 @@ export function ProductUpdatesFooter() {
           data-ph-element={USER_TRACKER_ELEMENTS.CHANGELOG_REDIRECTED}
           href="https://go.plane.so/p-changelog"
           target="_blank"
-          className="text-13 text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
           rel="noreferrer"
         >
           {t("full_changelog")}
@@ -37,7 +43,7 @@ export function ProductUpdatesFooter() {
         <a
           href="mailto:support@plane.so"
           target="_blank"
-          className="text-13 text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
           rel="noreferrer"
         >
           {t("support")}
@@ -46,12 +52,12 @@ export function ProductUpdatesFooter() {
           <circle cx={1} cy={1} r={1} />
         </svg>
         <a
-          href="https://go.plane.so/p-discord"
+          href="https://forum.plane.so"
           target="_blank"
-          className="text-13 text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
           rel="noreferrer"
         >
-          Discord
+          Forum
         </a>
       </div>
       <a
@@ -59,7 +65,7 @@ export function ProductUpdatesFooter() {
         target="_blank"
         className={cn(
           getButtonStyling("secondary", "base"),
-          "flex gap-1.5 items-center text-center font-medium hover:underline underline-offset-2 outline-none"
+          "flex items-center gap-1.5 text-center font-medium underline-offset-2 outline-none hover:underline"
         )}
         rel="noreferrer"
       >

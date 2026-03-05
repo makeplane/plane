@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // helpers
 import { cn } from "@plane/utils";
@@ -15,7 +21,7 @@ export function FavoriteItemWrapper(props: Props) {
       <div
         ref={elementRef}
         className={cn(
-          "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
+          "group/project-item relative flex w-full items-center rounded-md px-2 py-1.5 text-primary hover:bg-layer-transparent-hover",
           {
             "bg-surface-2": isMenuActive,
           }

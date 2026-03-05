@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
 import type { TIssue } from "@plane/types";
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";

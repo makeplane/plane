@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -47,7 +53,7 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
         </div>
       </div>
 
-      <div className="h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
+      <div className="vertical-scrollbar scrollbar-sm h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5">
         {/* status */}
         <div className="py-2">
           <FilterStatus searchQuery={filtersSearchQuery} />

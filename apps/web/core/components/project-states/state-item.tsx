@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -129,7 +135,7 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
       <div
         ref={draggableElementRef}
         className={cn(
-          "relative border border-subtle bg-surface-1 py-3 px-3.5 rounded-sm group",
+          "group relative rounded-sm border border-subtle bg-surface-1 px-3.5 py-3",
           isDragging ? `opacity-50` : `opacity-100`,
           totalStates === 1 ? `cursor-auto` : `cursor-grab`,
           stateItemClassName

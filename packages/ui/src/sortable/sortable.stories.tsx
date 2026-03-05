@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { Sortable } from "./sortable";
@@ -17,7 +23,7 @@ const meta: Meta<typeof Sortable<StoryItem>> = {
     ],
     render: (item: StoryItem) => (
       // <Draggable data={item} className="rounded-lg">
-      <div className="border ">{item.name}</div>
+      <div className="border">{item.name}</div>
       // </Draggable>
     ),
     onChange: (data) => console.log(data.map(({ id }) => id)),

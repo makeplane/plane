@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import type {
   DropTargetRecord,
@@ -108,7 +114,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
 
   if (loader === "loaded" && workspaceStickyIds.length === 0) {
     return (
-      <div className="size-full grid place-items-center">
+      <div className="grid size-full place-items-center">
         {isStickiesPage ? (
           <>
             {searchQuery ? (

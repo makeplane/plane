@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -76,11 +82,11 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
   const VersionEditor = editorComponent;
 
   return (
-    <div className="flex-grow flex flex-col overflow-hidden">
+    <div className="flex flex-grow flex-col overflow-hidden">
       {versionDetailsError ? (
-        <div className="flex-grow grid place-items-center">
+        <div className="grid flex-grow place-items-center">
           <div className="flex flex-col items-center gap-4 text-center">
-            <span className="flex-shrink-0 grid place-items-center size-11 text-tertiary">
+            <span className="grid size-11 flex-shrink-0 place-items-center text-tertiary">
               <TriangleAlert className="size-10" />
             </span>
             <div>
@@ -94,15 +100,15 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
         </div>
       ) : (
         <>
-          <div className="min-h-14 py-3 px-5 border-b border-subtle flex items-center justify-between gap-2">
+          <div className="flex min-h-14 items-center justify-between gap-2 border-b border-subtle px-5 py-3">
             <div className="flex items-center gap-4">
               <h6 className="text-14 font-medium">
                 {versionDetails
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
                   : "Loading version details"}
               </h6>
-              <span className="flex-shrink-0 flex items-center gap-1 text-11 font-medium text-accent-primary bg-accent-primary/20 py-1 px-1.5 rounded-sm">
-                <EyeIcon className="flex-shrink-0 size-3" />
+              <span className="flex flex-shrink-0 items-center gap-1 rounded-sm bg-accent-primary/20 px-1.5 py-1 text-11 font-medium text-accent-primary">
+                <EyeIcon className="size-3 flex-shrink-0" />
                 View only
               </span>
             </div>
@@ -112,7 +118,7 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               </Button>
             )}
           </div>
-          <div className="pt-8 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
+          <div className="vertical-scrollbar scrollbar-sm h-full overflow-y-scroll pt-8">
             <VersionEditor activeVersion={activeVersion} storeType={storeType} versionDetails={versionDetails} />
           </div>
         </>

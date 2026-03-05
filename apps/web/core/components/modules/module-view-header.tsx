@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -94,13 +100,13 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
   const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0 || displayFilters?.favorites;
 
   return (
-    <div className="hidden h-full sm:flex items-center gap-2 self-end">
+    <div className="hidden h-full items-center gap-2 self-end sm:flex">
       <div className="flex items-center">
         {!isSearchOpen && (
           <IconButton
             variant="ghost"
             size="lg"
-            className="-mr-1 p-"
+            className="p- -mr-1"
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
@@ -110,9 +116,9 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
         )}
         <div
           className={cn(
-            "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-surface-1 text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+            "ml-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-surface-1 text-placeholder opacity-0 transition-[width] ease-linear",
             {
-              "w-64 px-2.5 py-1.5 border-subtle opacity-100": isSearchOpen,
+              "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
             }
           )}
         >
@@ -165,7 +171,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
           memberIds={workspaceMemberIds ?? undefined}
         />
       </FiltersDropdown>
-      <div className="hidden md:flex items-center gap-1 rounded-sm bg-layer-3 p-1">
+      <div className="hidden items-center gap-1 rounded-sm bg-layer-3 p-1 md:flex">
         {MODULE_VIEW_LAYOUTS.map((layout) => (
           <Tooltip key={layout.key} tooltipContent={t(layout.i18n_title)} isMobile={isMobile}>
             <button

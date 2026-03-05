@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.utils import timezone
 from django.core.validators import URLValidator
@@ -18,7 +22,7 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueComment,
-    IssueUserProperty,
+    ProjectUserProperty,
     IssueAssignee,
     IssueSubscriber,
     IssueLabel,
@@ -53,7 +57,7 @@ class IssueFlatSerializer(BaseSerializer):
         fields = [
             "id",
             "name",
-            "description",
+            "description_json",
             "description_html",
             "priority",
             "start_date",
@@ -346,9 +350,9 @@ class IssueActivitySerializer(BaseSerializer):
         fields = "__all__"
 
 
-class IssueUserPropertySerializer(BaseSerializer):
+class ProjectUserPropertySerializer(BaseSerializer):
     class Meta:
-        model = IssueUserProperty
+        model = ProjectUserProperty
         fields = "__all__"
         read_only_fields = ["user", "workspace", "project"]
 

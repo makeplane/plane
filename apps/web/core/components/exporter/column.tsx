@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Download } from "lucide-react";
 import type { IExportData } from "@plane/types";
 import { getDate, getFileURL, renderFormattedDate } from "@plane/utils";
@@ -21,15 +27,15 @@ export const useExportColumns = () => {
           <div className="flex items-center gap-x-2">
             <div>
               {avatar_url && avatar_url.trim() !== "" ? (
-                <span className="relative flex h-4 w-4 items-center justify-center rounded-full capitalize text-on-color">
+                <span className="relative flex h-4 w-4 items-center justify-center rounded-full text-on-color capitalize">
                   <img
                     src={getFileURL(avatar_url)}
-                    className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                    className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
                     alt={display_name || email}
                   />
                 </span>
               ) : (
-                <span className="relative flex h-4 w-4 items-center justify-center rounded-full bg-gray-700 capitalize text-on-color text-11">
+                <span className="bg-gray-700 relative flex h-4 w-4 items-center justify-center rounded-full text-11 text-on-color capitalize">
                   {(email ?? display_name ?? "?")[0]}
                 </span>
               )}
@@ -70,7 +76,7 @@ export const useExportColumns = () => {
       content: "Status",
       tdRender: (rowData: RowData) => (
         <span
-          className={`rounded-sm text-11 px-2 py-1 capitalize ${
+          className={`rounded-sm px-2 py-1 text-11 capitalize ${
             rowData.status === "completed"
               ? "bg-success-subtle text-success-primary"
               : rowData.status === "processing"
@@ -94,7 +100,7 @@ export const useExportColumns = () => {
           <>
             {rowData.status == "completed" ? (
               <a target="_blank" href={rowData?.url} rel="noopener noreferrer">
-                <button className="w-full flex items-center gap-1 text-accent-primary font-medium">
+                <button className="flex w-full items-center gap-1 font-medium text-accent-primary">
                   <Download className="h-4 w-4" />
                   <div>Download</div>
                 </button>

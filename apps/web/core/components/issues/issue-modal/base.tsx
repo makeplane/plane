@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
@@ -381,7 +387,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       isOpen={isOpen}
       position={EModalPosition.TOP}
       width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
-      className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"
+      className="rounded-lg !bg-transparent shadow-none transition-[width] ease-linear"
     >
       {withDraftIssueWrapper ? (
         <DraftIssueLayout {...commonIssueModalProps} changesMade={changesMade} onChange={handleFormChange} />

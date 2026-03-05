@@ -1,7 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
-import * as Sentry from "@sentry/react-router";
 import appleTouchIcon from "@/app/assets/favicon/apple-touch-icon.png?url";
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
 import favicon32 from "@/app/assets/favicon/favicon-32x32.png?url";
@@ -69,7 +74,7 @@ export const meta: Route.MetaFunction = () => [
 
 export default function Root() {
   return (
-    <div className="bg-canvas min-h-screen">
+    <div className="min-h-screen bg-canvas">
       <Outlet />
     </div>
   );
@@ -84,10 +89,6 @@ export function HydrateFallback() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  if (error) {
-    Sentry.captureException(error);
-  }
-
   return (
     <div>
       <p>Something went wrong.</p>

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import socket
 import ipaddress
@@ -34,7 +38,7 @@ class WebhookSerializer(DynamicBaseSerializer):
 
         for addr in ip_addresses:
             ip = ipaddress.ip_address(addr[4][0])
-            if ip.is_loopback:
+            if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
                 raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
 
         # Additional validation for multiple request domains and their subdomains
@@ -69,7 +73,7 @@ class WebhookSerializer(DynamicBaseSerializer):
 
             for addr in ip_addresses:
                 ip = ipaddress.ip_address(addr[4][0])
-                if ip.is_loopback:
+                if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
                     raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
 
             # Additional validation for multiple request domains and their subdomains

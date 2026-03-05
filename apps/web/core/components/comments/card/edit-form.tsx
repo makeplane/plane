@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
@@ -111,7 +117,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
             className={cn(
-              "group rounded-lg border border-success-subtle size-7 grid place-items-center shadow-raised-100 bg-success-subtle duration-300",
+              "group grid size-7 place-items-center rounded-lg border border-success-subtle bg-success-subtle shadow-raised-100 duration-300",
               isDisabled ? "" : "hover:bg-success-subtle-1"
             )}
           >
@@ -122,7 +128,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
           type="button"
           disabled={isSubmitting}
           className={cn(
-            "group rounded-lg border border-danger-subtle size-7 grid place-items-center shadow-raised-100 bg-danger-subtle duration-300",
+            "group grid size-7 place-items-center rounded-lg border border-danger-subtle bg-danger-subtle shadow-raised-100 duration-300",
             isSubmitting ? "" : "hover:bg-danger-subtle-hover"
           )}
           onClick={() => {

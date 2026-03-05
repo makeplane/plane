@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -76,14 +82,14 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
         >
           <Disclosure
             as="div"
-            className={`rounded-sm  text-primary ${
+            className={`rounded-sm text-primary ${
               !isDroppingInLabel ? "border-[0.5px] border-subtle" : ""
             } ${isDragging ? "bg-layer-1" : "bg-surface-1"}`}
             defaultOpen
           >
             {({ open }) => (
               <>
-                <div className={`py-3 pl-1 pr-3 ${!isUpdating && "max-h-full overflow-y-hidden"}`}>
+                <div className={`py-3 pr-3 pl-1 ${!isUpdating && "max-h-full overflow-y-hidden"}`}>
                   <>
                     <div className="relative flex cursor-pointer items-center justify-between gap-2">
                       {isEditLabelForm ? (

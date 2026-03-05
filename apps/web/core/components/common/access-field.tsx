@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { LucideIcon } from "lucide-react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
@@ -33,7 +39,7 @@ export function AccessField(props: Props) {
               type="button"
               onClick={() => onChange(access.key)}
               className={cn(
-                "flex-shrink-0 relative flex justify-center items-center w-5 h-5 rounded-xs p-1 transition-all",
+                "relative flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-xs p-1 transition-all",
                 value === access.key ? "bg-layer-1" : "hover:bg-layer-1"
               )}
               tabIndex={2 + index}

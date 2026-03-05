@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 
 interface ColorPickerProps {
@@ -19,9 +25,9 @@ export function ColorPicker(props: ColorPickerProps) {
   };
 
   return (
-    <div className="flex items-center justify-center relative">
+    <div className="relative flex items-center justify-center">
       <button
-        className={`size-4 rounded-full cursor-pointer conical-gradient ${className}`}
+        className={`size-4 cursor-pointer rounded-full conical-gradient ${className}`}
         onClick={handleOnClick}
         aria-label="Open color picker"
       />
@@ -30,7 +36,7 @@ export function ColorPicker(props: ColorPickerProps) {
         type="color"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="absolute inset-0 size-4 invisible"
+        className="invisible absolute inset-0 size-4"
         aria-hidden="true"
       />
     </div>

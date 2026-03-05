@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane utils
 import { cn } from "@plane/utils";
 // types
@@ -48,7 +54,7 @@ export function CommandMenuItem(props: Props) {
       type="button"
       id={`item-${sectionIndex}-${itemIndex}`}
       className={cn(
-        "flex items-center gap-2 w-full rounded-sm px-1 py-1.5 text-13 text-left truncate text-secondary hover:bg-layer-1-hover",
+        "flex w-full items-center gap-2 truncate rounded-sm px-1 py-1.5 text-left text-13 text-secondary hover:bg-layer-1-hover",
         {
           "bg-layer-1-hover": isSelected,
         }
@@ -56,7 +62,7 @@ export function CommandMenuItem(props: Props) {
       onClick={onClick}
       onMouseEnter={onMouseEnter}
     >
-      <span className="size-5 grid place-items-center flex-shrink-0" style={item.iconContainerStyle}>
+      <span className="grid size-5 flex-shrink-0 place-items-center" style={item.iconContainerStyle}>
         {item.icon}
       </span>
       <p className="flex-grow truncate text-12">{query ? highlightMatch(item.title, query) : item.title}</p>

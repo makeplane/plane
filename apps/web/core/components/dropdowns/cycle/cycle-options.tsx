@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -146,7 +152,7 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
                   key={option.value}
                   value={option.value}
                   className={({ active, selected }) =>
-                    `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 ${
+                    `flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none ${
                       active ? "bg-layer-transparent-hover" : ""
                     } ${selected ? "text-primary" : "text-secondary"}`
                   }
@@ -160,10 +166,10 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-placeholder">{t("common.search.no_matches_found")}</p>
+              <p className="px-1.5 py-1 text-placeholder italic">{t("common.search.no_matches_found")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-placeholder">{t("common.loading")}</p>
+            <p className="px-1.5 py-1 text-placeholder italic">{t("common.loading")}</p>
           )}
         </div>
       </div>

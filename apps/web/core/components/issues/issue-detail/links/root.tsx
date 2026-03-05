@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo, useState } from "react";
 
 import { PlusIcon } from "@plane/propel/icons";
@@ -120,7 +126,7 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           {!disabled && (
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded-sm p-1 outline-none duration-300 hover:bg-surface-2 ${
+              className={`grid h-7 w-7 place-items-center rounded-sm p-1 duration-300 outline-none hover:bg-surface-2 ${
                 disabled ? "cursor-not-allowed" : "cursor-pointer"
               }`}
               onClick={() => toggleIssueLinkModal(true)}

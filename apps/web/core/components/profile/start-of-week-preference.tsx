@@ -1,12 +1,19 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { START_OF_THE_WEEK_OPTIONS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EStartOfTheWeek } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
+// components
+import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
-import { PreferencesSection } from "../preferences/section";
 
 const getStartOfWeekLabel = (startOfWeek: EStartOfTheWeek) =>
   START_OF_THE_WEEK_OPTIONS.find((option) => option.value === startOfWeek)?.label;
@@ -27,27 +34,27 @@ export const StartOfWeekPreference = observer(function StartOfWeekPreference(pro
   };
 
   return (
-    <PreferencesSection
+    <SettingsControlItem
       title={props.option.title}
       description={props.option.description}
       control={
-        <div className="">
-          <CustomSelect
-            value={userProfile.start_of_the_week}
-            label={getStartOfWeekLabel(userProfile.start_of_the_week)}
-            onChange={handleStartOfWeekChange}
-            input
-            maxHeight="lg"
-          >
-            <>
-              {START_OF_THE_WEEK_OPTIONS.map((day) => (
-                <CustomSelect.Option key={day.value} value={day.value}>
-                  {day.label}
-                </CustomSelect.Option>
-              ))}
-            </>
-          </CustomSelect>
-        </div>
+        <CustomSelect
+          value={userProfile.start_of_the_week}
+          label={getStartOfWeekLabel(userProfile.start_of_the_week)}
+          onChange={handleStartOfWeekChange}
+          buttonClassName="border border-subtle-1"
+          input
+          maxHeight="lg"
+          placement="bottom-end"
+        >
+          <>
+            {START_OF_THE_WEEK_OPTIONS.map((day) => (
+              <CustomSelect.Option key={day.value} value={day.value}>
+                {day.label}
+              </CustomSelect.Option>
+            ))}
+          </>
+        </CustomSelect>
       }
     />
   );

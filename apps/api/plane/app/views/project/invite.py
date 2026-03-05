@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import jwt
 from datetime import datetime
@@ -24,7 +28,7 @@ from plane.db.models import (
     User,
     WorkspaceMember,
     Project,
-    IssueUserProperty,
+    ProjectUserProperty,
 )
 from plane.db.models.project import ProjectNetwork
 from plane.utils.host import base_host
@@ -160,9 +164,9 @@ class UserProjectInvitationsViewset(BaseViewSet):
             ignore_conflicts=True,
         )
 
-        IssueUserProperty.objects.bulk_create(
+        ProjectUserProperty.objects.bulk_create(
             [
-                IssueUserProperty(
+                ProjectUserProperty(
                     project_id=project_id,
                     user=request.user,
                     workspace=workspace,
@@ -220,7 +224,7 @@ class ProjectJoinEndpoint(BaseAPIView):
                 if project_member is None:
                     # Create a Project Member
                     _ = ProjectMember.objects.create(
-                        workspace_id=project_invite.workspace_id,
+                        project_id=project_id,
                         member=user,
                         role=project_invite.role,
                     )

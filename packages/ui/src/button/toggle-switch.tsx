@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Switch } from "@headlessui/react";
 // helpers
 import { cn } from "../utils";
@@ -20,14 +26,14 @@ function ToggleSwitch(props: IToggleSwitchProps) {
       disabled={disabled}
       onChange={onChange}
       className={cn(
-        "relative inline-flex flex-shrink-0 h-6 w-10 cursor-pointer rounded-full border border-subtle transition-colors duration-200 ease-in-out focus:outline-none bg-layer-1",
+        "relative inline-flex h-6 w-10 flex-shrink-0 cursor-pointer rounded-full border border-subtle bg-layer-1 transition-colors duration-200 ease-in-out focus:outline-none",
         {
           "h-4 w-7": size === "sm",
           "h-5 w-9": size === "md",
           "bg-accent-primary": value && !disabled,
           "bg-(--text-color-icon-placeholder)": !value && !disabled,
-          "cursor-not-allowed opacity-50 bg-accent-primary": value && disabled,
-          "cursor-not-allowed opacity-50 bg-(--text-color-icon-placeholder)": !value && disabled,
+          "cursor-not-allowed bg-accent-primary opacity-50": value && disabled,
+          "cursor-not-allowed bg-(--text-color-icon-placeholder) opacity-50": !value && disabled,
         },
         className
       )}
@@ -36,7 +42,7 @@ function ToggleSwitch(props: IToggleSwitchProps) {
       <span
         aria-hidden="true"
         className={cn(
-          "inline-block self-center h-5 w-5 transform rounded-full bg-(--text-color-icon-on-color) ring-0 transition duration-200 ease-in-out",
+          "inline-block h-5 w-5 transform self-center rounded-full bg-(--text-color-icon-on-color) ring-0 transition duration-200 ease-in-out",
           {
             "h-3 w-3 translate-x-3.5": size === "sm" && value,
             "h-3 w-3 translate-x-0.5": size === "sm" && !value,

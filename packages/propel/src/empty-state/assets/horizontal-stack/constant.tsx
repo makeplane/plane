@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   CustomerHorizontalStackIllustration,
   EpicHorizontalStackIllustration,
@@ -23,83 +29,83 @@ import {
 
 export const HorizontalStackAssetsMap = [
   {
-    asset: <CustomerHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <CustomerHorizontalStackIllustration className="h-20 w-20" />,
     title: "Customer",
   },
   {
-    asset: <EpicHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <EpicHorizontalStackIllustration className="h-20 w-20" />,
     title: "Epic",
   },
   {
-    asset: <EstimateHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <EstimateHorizontalStackIllustration className="h-20 w-20" />,
     title: "Estimate",
   },
   {
-    asset: <ExportHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <ExportHorizontalStackIllustration className="h-20 w-20" />,
     title: "Export",
   },
   {
-    asset: <IntakeHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <IntakeHorizontalStackIllustration className="h-20 w-20" />,
     title: "Intake",
   },
   {
-    asset: <LabelHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <LabelHorizontalStackIllustration className="h-20 w-20" />,
     title: "Label",
   },
   {
-    asset: <LinkHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <LinkHorizontalStackIllustration className="h-20 w-20" />,
     title: "Link",
   },
   {
-    asset: <MembersHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <MembersHorizontalStackIllustration className="h-20 w-20" />,
     title: "Members",
   },
   {
-    asset: <NoteHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <NoteHorizontalStackIllustration className="h-20 w-20" />,
     title: "Note",
   },
   {
-    asset: <PriorityHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <PriorityHorizontalStackIllustration className="h-20 w-20" />,
     title: "Priority",
   },
   {
-    asset: <ProjectHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <ProjectHorizontalStackIllustration className="h-20 w-20" />,
     title: "Project",
   },
   {
-    asset: <SettingsHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <SettingsHorizontalStackIllustration className="h-20 w-20" />,
     title: "Settings",
   },
   {
-    asset: <StateHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <StateHorizontalStackIllustration className="h-20 w-20" />,
     title: "State",
   },
   {
-    asset: <TemplateHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <TemplateHorizontalStackIllustration className="h-20 w-20" />,
     title: "Template",
   },
   {
-    asset: <TokenHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <TokenHorizontalStackIllustration className="h-20 w-20" />,
     title: "Token",
   },
   {
-    asset: <UnknownHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <UnknownHorizontalStackIllustration className="h-20 w-20" />,
     title: "Unknown",
   },
   {
-    asset: <UpdateHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <UpdateHorizontalStackIllustration className="h-20 w-20" />,
     title: "Update",
   },
   {
-    asset: <WebhookHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <WebhookHorizontalStackIllustration className="h-20 w-20" />,
     title: "Webhook",
   },
   {
-    asset: <WorkItemHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <WorkItemHorizontalStackIllustration className="h-20 w-20" />,
     title: "WorkItem",
   },
   {
-    asset: <WorklogHorizontalStackIllustration className="w-20 h-20" />,
+    asset: <WorklogHorizontalStackIllustration className="h-20 w-20" />,
     title: "Worklog",
   },
 ];

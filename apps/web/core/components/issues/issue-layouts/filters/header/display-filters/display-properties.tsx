@@ -1,14 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane constants
 import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IIssueDisplayProperties } from "@plane/types";
-// plane web helpers
-import { shouldRenderDisplayProperty } from "@/plane-web/helpers/issue-filter.helper";
 // components
 import { FilterHeader } from "../helpers/filter-header";
 
@@ -32,12 +35,8 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
   } = props;
   // hooks
   const { t } = useTranslation();
-  // router
-  const { workspaceSlug, projectId: routerProjectId } = useParams();
   // states
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
-  // derived values
-  const projectId = routerProjectId ? routerProjectId?.toString() : undefined;
 
   // Filter out "cycle" and "module" keys if cycleViewDisabled or moduleViewDisabled is true
   // Also filter out display properties that should not be rendered
@@ -49,7 +48,7 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
       case "modules":
         return !moduleViewDisabled;
       default:
-        return shouldRenderDisplayProperty({ workspaceSlug: workspaceSlug?.toString(), projectId, key: property.key });
+        return true;
     }
   }).map((property) => {
     if (isEpic && property.key === "sub_issue_count") {

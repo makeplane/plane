@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import os
 from urllib.parse import urlencode
@@ -135,8 +139,8 @@ class ResetPasswordSpaceEndpoint(View):
             results = zxcvbn(password)
             if results["score"] < 3:
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-                    error_message="INVALID_PASSWORD",
+                    error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                    error_message="PASSWORD_TOO_WEAK",
                 )
                 url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
                 return HttpResponseRedirect(url)

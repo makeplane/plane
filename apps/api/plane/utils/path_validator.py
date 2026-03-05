@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.conf import settings

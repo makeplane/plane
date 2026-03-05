@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -249,10 +255,10 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
               {currentActiveEstimateId === undefined ? (
                 <div
-                  className={`flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 text-secondary`}
+                  className={`flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 text-secondary select-none`}
                 >
                   {/* NOTE: This condition renders when estimates are not enabled for the project */}
-                  <div className="flex-grow flex items-center gap-2">
+                  <div className="flex flex-grow items-center gap-2">
                     <EstimatePropertyIcon className="h-3 w-3 flex-shrink-0" />
                     <span className="flex-grow truncate">{t("project_settings.estimates.no_estimate")}</span>
                   </div>
@@ -266,7 +272,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
                           {({ active, selected }) => (
                             <div
                               className={cn(
-                                "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5",
+                                "flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none",
                                 {
                                   "bg-layer-transparent-hover": active,
                                   "text-primary": selected,
@@ -281,10 +287,10 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
                         </Combobox.Option>
                       ))
                     ) : (
-                      <p className="px-1.5 py-1 italic text-placeholder">{t("common.search.no_matching_results")}</p>
+                      <p className="px-1.5 py-1 text-placeholder italic">{t("common.search.no_matching_results")}</p>
                     )
                   ) : (
-                    <p className="px-1.5 py-1 italic text-placeholder">{t("common.loading")}</p>
+                    <p className="px-1.5 py-1 text-placeholder italic">{t("common.loading")}</p>
                   )}
                 </>
               )}

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -744,7 +748,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                 "name",
                 "state_id",
                 "sort_order",
-                "description",
+                "description_json",
                 "description_html",
                 "description_stripped",
                 "description_binary",

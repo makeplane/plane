@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import base64
 import nh3
@@ -135,8 +139,6 @@ ATTRIBUTES = {
         "rowspan",
         "colwidth",
         "background",
-        "hideContent",
-        "hidecontent",
         "style",
     },
     "td": {
@@ -146,8 +148,6 @@ ATTRIBUTES = {
         "background",
         "textColor",
         "textcolor",
-        "hideContent",
-        "hidecontent",
         "style",
     },
     "tr": {"background", "textColor", "textcolor", "style"},

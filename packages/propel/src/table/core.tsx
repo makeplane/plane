@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 
 import { cn } from "../utils/classname";
@@ -18,7 +24,7 @@ const TableHeader = React.forwardRef(function TableHeader(
   { className, ...props }: React.ComponentPropsWithoutRef<"thead">,
   ref: React.ForwardedRef<React.ComponentRef<"thead">>
 ) {
-  return <thead ref={ref} className={cn("bg-layer-1 py-4 border-y border-subtle", className)} {...props} />;
+  return <thead ref={ref} className={cn("border-y border-subtle bg-layer-1 py-4", className)} {...props} />;
 });
 TableHeader.displayName = "TableHeader";
 

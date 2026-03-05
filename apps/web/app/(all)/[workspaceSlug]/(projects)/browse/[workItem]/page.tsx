@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -18,9 +24,10 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+// layouts
+import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
-import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 import { WorkItemDetailRoot } from "@/plane-web/components/browse/workItem-detail";
 
 import type { Route } from "./+types/page";

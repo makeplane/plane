@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -19,7 +25,7 @@ const IconWrapper = React.memo(function IconWrapper({ icon }: { icon: React.Reac
 IconWrapper.displayName = "IconWrapper";
 
 const LabelWrapper = React.memo(function LabelWrapper({ label }: { label: React.ReactNode }) {
-  return <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate text-primary">{label}</div>;
+  return <div className="relative line-clamp-1 block max-w-[150px] truncate overflow-hidden text-primary">{label}</div>;
 });
 
 LabelWrapper.displayName = "LabelWrapper";

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // helpers
 import { cn } from "@plane/utils";
@@ -20,7 +26,7 @@ export function OnboardingStepIndicator({ currentStep, totalSteps }: OnboardingS
       indicators.push(
         <div
           key={`line-${i}`}
-          className={cn("h-1.5 -ml-0.5 w-full", {
+          className={cn("-ml-0.5 h-1.5 w-full", {
             "bg-success-primary": isCompleted,
             "bg-surface-1": !isCompleted,
             "rounded-l-full": isFirstStep,
@@ -36,10 +42,10 @@ export function OnboardingStepIndicator({ currentStep, totalSteps }: OnboardingS
 
   return (
     <div className="flex flex-col justify-center">
-      <div className="text-13 text-tertiary font-medium">
+      <div className="text-13 font-medium text-tertiary">
         {currentStep} of {totalSteps} steps
       </div>
-      <div className="flex items-center justify-center my-0.5 mx-1 w-40 lg:w-52">{renderIndicators()}</div>
+      <div className="mx-1 my-0.5 flex w-40 items-center justify-center lg:w-52">{renderIndicators()}</div>
     </div>
   );
 }

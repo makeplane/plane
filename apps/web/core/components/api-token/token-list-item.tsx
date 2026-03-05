@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { XCircle } from "lucide-react";
 // plane imports
@@ -46,7 +52,7 @@ export function ApiTokenListItem(props: Props) {
         </div>
         <div className="mt-1 flex w-full flex-col justify-center">
           {token.description.trim() !== "" && (
-            <p className="mb-1 max-w-[70%] break-words text-13">{token.description}</p>
+            <p className="mb-1 max-w-[70%] text-13 break-words">{token.description}</p>
           )}
           <p className="mb-1 text-11 leading-6 text-placeholder">
             {token.is_active

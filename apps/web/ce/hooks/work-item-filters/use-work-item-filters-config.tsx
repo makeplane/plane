@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
 import { AtSign, Briefcase } from "lucide-react";
 // plane imports
@@ -174,7 +180,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         filterIcon: LabelPropertyIcon,
         labels: workItemLabels ?? [],
         getOptionIcon: (color) => (
-          <span className="flex flex-shrink-0 size-2.5 rounded-full" style={{ backgroundColor: color }} />
+          <span className="flex size-2.5 flex-shrink-0 rounded-full" style={{ backgroundColor: color }} />
         ),
         ...operatorConfigs,
       }),

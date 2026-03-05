@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -80,8 +86,8 @@ export const InboxContentRoot = observer(function InboxContentRoot(props: TInbox
 
   return (
     <>
-      <div className="w-full h-full overflow-hidden relative flex flex-col">
-        <div className="flex-shrink-0 min-h-[52px] z-[11]">
+      <div className="relative flex h-full w-full flex-col overflow-hidden">
+        <div className="z-[11] min-h-[52px] flex-shrink-0">
           <InboxIssueActionsHeader
             setIsMobileSidebar={setIsMobileSidebar}
             isMobileSidebar={isMobileSidebar}

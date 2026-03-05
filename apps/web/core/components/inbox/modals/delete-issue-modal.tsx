@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // types
@@ -72,7 +78,7 @@ export const DeleteInboxIssueModal = observer(function DeleteInboxIssueModal({
       content={
         <>
           Are you sure you want to delete work item{" "}
-          <span className="break-words font-medium text-primary">
+          <span className="font-medium break-words text-primary">
             {projectDetails?.identifier}-{data?.sequence_id}
           </span>
           {""}? The work item will only be deleted from the intake and this action cannot be undone.

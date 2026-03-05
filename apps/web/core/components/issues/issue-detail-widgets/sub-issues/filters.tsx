@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -44,11 +50,11 @@ export const SubIssueFilters = observer(function SubIssueFilters(props: TSubIssu
         menuButton={
           <div
             className={cn(
-              "p-1 rounded-sm  relative transition-all duration-200",
+              "relative rounded-sm p-1 transition-all duration-200",
               isFilterApplied && "bg-accent-primary/20"
             )}
           >
-            {isFilterApplied && <span className="p-1 rounded-full bg-accent-primary absolute -top-1 -right-1" />}
+            {isFilterApplied && <span className="absolute -top-1 -right-1 rounded-full bg-accent-primary p-1" />}
             <ListFilter className="h-3.5 w-3.5 text-primary" />
           </div>
         }

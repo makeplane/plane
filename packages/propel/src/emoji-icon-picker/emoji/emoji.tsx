@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef } from "react";
 import { EmojiPicker } from "frimousse";
 import { cn } from "../../utils";
@@ -28,20 +34,20 @@ export function EmojiRoot(props: EmojiRootProps) {
   return (
     <EmojiPicker.Root
       data-slot="emoji-picker"
-      className="isolate flex flex-col rounded-md h-full w-full border-none p-2"
+      className="isolate flex h-full w-full flex-col rounded-md border-none p-2"
       onEmojiSelect={(val) => onChange(val.emoji)}
     >
-      <div className="flex items-center gap-2 justify-between [&>[data-slot='emoji-picker-search-wrapper']]:flex-grow [&>[data-slot='emoji-picker-search-wrapper']]:p-0 px-1.5 py-2 sticky top-0 z-10 bg-surface-1">
+      <div className="sticky top-0 z-10 flex items-center justify-between gap-2 bg-surface-1 px-1.5 py-2 [&>[data-slot='emoji-picker-search-wrapper']]:flex-grow [&>[data-slot='emoji-picker-search-wrapper']]:p-0">
         <div ref={searchWrapperRef} data-slot="emoji-picker-search-wrapper" className="p-2">
           <EmojiPicker.Search
             placeholder={searchPlaceholder}
             disabled={searchDisabled}
-            className="block rounded-md bg-transparent placeholder-(--text-color-placeholder) focus:outline-none px-3 py-2 border-[0.5px] border-subtle text-16 p-0 h-full w-full flex-grow-0 focus:border-accent-strong"
+            className="block h-full w-full flex-grow-0 rounded-md border-[0.5px] border-subtle bg-transparent p-0 px-3 py-2 text-16 placeholder-(--text-color-placeholder) focus:border-accent-strong focus:outline-none"
           />
         </div>
         <EmojiPicker.SkinToneSelector
           data-slot="emoji-picker-skin-tone-selector"
-          className="bg-surface-1 hover:bg-accent mx-2 mb-1.5 size-8 rounded-md text-16 flex-shrink-0"
+          className="hover:bg-accent mx-2 mb-1.5 size-8 flex-shrink-0 rounded-md bg-surface-1 text-16"
         />
       </div>
       <EmojiPicker.Viewport data-slot="emoji-picker-content" className={cn("relative flex-1 outline-none")}>
@@ -52,7 +58,7 @@ export function EmojiRoot(props: EmojiRootProps) {
             CategoryHeader: ({ category, ...props }) => (
               <div
                 data-slot="emoji-picker-list-category-header"
-                className="bg-surface-1 text-tertiary px-3 pb-1.5 text-11 font-medium"
+                className="bg-surface-1 px-3 pb-1.5 text-11 font-medium text-tertiary"
                 {...props}
               >
                 {category.label}

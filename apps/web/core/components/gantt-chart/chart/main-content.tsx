@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -171,7 +177,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
               // DO NOT REMOVE THE ID
               id="gantt-container"
               className={cn(
-                "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-subtle",
+                "vertical-scrollbar horizontal-scrollbar flex scrollbar-lg h-full w-full overflow-auto border-t-[0.5px] border-subtle",
                 {
                   "mb-8": bottomSpacing,
                 }
@@ -193,7 +199,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
                 showAllBlocks={showAllBlocks}
                 isEpic={isEpic}
               />
-              <div className="relative min-h-full h-max flex-shrink-0 flex-grow">
+              <div className="relative h-max min-h-full flex-shrink-0 flex-grow">
                 <ActiveChartView />
                 {currentViewData && (
                   <div

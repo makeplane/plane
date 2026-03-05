@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Skeleton } from "./index";
 
@@ -18,7 +24,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render() {
     return (
-      <Skeleton className="w-80 flex flex-col gap-2">
+      <Skeleton className="flex w-80 flex-col gap-2">
         <Skeleton.Item height="40px" width="100%" />
       </Skeleton>
     );
@@ -28,7 +34,7 @@ export const Default: Story = {
 export const Card: Story = {
   render() {
     return (
-      <Skeleton className="w-80 flex flex-col gap-4">
+      <Skeleton className="flex w-80 flex-col gap-4">
         <Skeleton.Item height="200px" width="100%" />
         <div className="flex flex-col gap-2">
           <Skeleton.Item height="20px" width="60%" />
@@ -42,11 +48,11 @@ export const Card: Story = {
 export const List: Story = {
   render() {
     return (
-      <Skeleton className="w-96 flex flex-col gap-3">
+      <Skeleton className="flex w-96 flex-col gap-3">
         {[...Array(5)].map((_, i) => (
           <div key={i} className="flex gap-3">
             <Skeleton.Item height="40px" width="40px" className="rounded-full" />
-            <div className="flex-1 flex flex-col gap-2">
+            <div className="flex flex-1 flex-col gap-2">
               <Skeleton.Item height="16px" width="70%" />
               <Skeleton.Item height="12px" width="50%" />
             </div>
@@ -60,7 +66,7 @@ export const List: Story = {
 export const Table: Story = {
   render() {
     return (
-      <Skeleton className="w-full flex flex-col gap-3">
+      <Skeleton className="flex w-full flex-col gap-3">
         <div className="flex gap-4">
           <Skeleton.Item height="20px" width="150px" />
           <Skeleton.Item height="20px" width="200px" />
@@ -81,10 +87,10 @@ export const Table: Story = {
 export const Profile: Story = {
   render() {
     return (
-      <Skeleton className="w-80 flex flex-col gap-4">
+      <Skeleton className="flex w-80 flex-col gap-4">
         <div className="flex items-center gap-4">
           <Skeleton.Item height="80px" width="80px" className="rounded-full" />
-          <div className="flex-1 flex flex-col gap-2">
+          <div className="flex flex-1 flex-col gap-2">
             <Skeleton.Item height="20px" width="60%" />
             <Skeleton.Item height="16px" width="40%" />
           </div>
@@ -124,7 +130,7 @@ export const AvatarGroup: Story = {
 export const Text: Story = {
   render() {
     return (
-      <Skeleton className="w-96 flex flex-col gap-2">
+      <Skeleton className="flex w-96 flex-col gap-2">
         <Skeleton.Item height="16px" width="100%" />
         <Skeleton.Item height="16px" width="95%" />
         <Skeleton.Item height="16px" width="90%" />
@@ -147,7 +153,7 @@ export const Button: Story = {
 export const Input: Story = {
   render() {
     return (
-      <Skeleton className="w-80 flex flex-col gap-2">
+      <Skeleton className="flex w-80 flex-col gap-2">
         <Skeleton.Item height="14px" width="80px" />
         <Skeleton.Item height="40px" width="100%" className="rounded-md" />
       </Skeleton>
@@ -158,7 +164,7 @@ export const Input: Story = {
 export const Form: Story = {
   render() {
     return (
-      <Skeleton className="w-96 flex flex-col gap-4">
+      <Skeleton className="flex w-96 flex-col gap-4">
         <div className="flex flex-col gap-2">
           <Skeleton.Item height="14px" width="80px" />
           <Skeleton.Item height="40px" width="100%" className="rounded-md" />
@@ -180,7 +186,7 @@ export const Form: Story = {
 export const ProductCard: Story = {
   render() {
     return (
-      <Skeleton className="w-72 flex flex-col gap-3 p-4 border rounded-lg">
+      <Skeleton className="flex w-72 flex-col gap-3 rounded-lg border p-4">
         <Skeleton.Item height="200px" width="100%" className="rounded-md" />
         <div className="flex flex-col gap-2">
           <Skeleton.Item height="20px" width="80%" />

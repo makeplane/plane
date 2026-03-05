@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
@@ -162,7 +168,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-tertiary whitespace-pre-line", {
+                    className={cn("whitespace-pre-line text-tertiary", {
                       "text-placeholder": item.disabled,
                     })}
                   >

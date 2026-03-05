@@ -1,4 +1,8 @@
-import type { TExtendedInstanceAuthenticationModeKeys } from "./auth-ee";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 export type TCoreInstanceAuthenticationModeKeys =
   | "unique-codes"
@@ -8,9 +12,7 @@ export type TCoreInstanceAuthenticationModeKeys =
   | "gitlab"
   | "gitea";
 
-export type TInstanceAuthenticationModeKeys =
-  | TCoreInstanceAuthenticationModeKeys
-  | TExtendedInstanceAuthenticationModeKeys;
+export type TInstanceAuthenticationModeKeys = TCoreInstanceAuthenticationModeKeys;
 
 export type TInstanceAuthenticationModes = {
   key: TInstanceAuthenticationModeKeys;
@@ -18,6 +20,7 @@ export type TInstanceAuthenticationModes = {
   description: string;
   icon: React.ReactNode;
   config: React.ReactNode;
+  enabledConfigKey: TInstanceAuthenticationMethodKeys;
   unavailable?: boolean;
 };
 

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import type { LucideIcon } from "lucide-react";
 // plane imports
@@ -50,7 +56,7 @@ export const ReadonlyMember = observer(function ReadonlyMember(props: TReadonlyM
     <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
       {!hideIcon && Icon && <Icon className="size-4 flex-shrink-0" />}
       <div className="flex items-center gap-2">
-        <div className="size-4 rounded-full bg-layer-1 flex items-center justify-center">
+        <div className="flex size-4 items-center justify-center rounded-full bg-layer-1">
           <span className="text-13 font-medium">
             {member?.display_name?.charAt(0) ?? member?.email?.charAt(0) ?? "?"}
           </span>

@@ -1,4 +1,10 @@
-import React, { useState, useEffect } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useState, useEffect } from "react";
 // plane imports
 // import { useTranslation } from "@plane/i18n";
 import type { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from "@plane/types";
@@ -12,7 +18,7 @@ import type { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from
 // import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 // import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 const workspaceService = new WorkspaceService();
 

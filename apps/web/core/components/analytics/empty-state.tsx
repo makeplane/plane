@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useTheme } from "next-themes";
 // plane package imports
 import { cn } from "@plane/utils";
@@ -35,7 +41,7 @@ function AnalyticsEmptyState({ title, description, assetPath, className }: Props
         )}
         <div className="flex flex-shrink flex-col items-center gap-1.5 text-center">
           <h3 className={cn("text-18 font-semibold")}>{title}</h3>
-          {description && <p className="text-13 text-tertiary max-w-[350px]">{description}</p>}
+          {description && <p className="max-w-[350px] text-13 text-tertiary">{description}</p>}
         </div>
       </div>
     </div>

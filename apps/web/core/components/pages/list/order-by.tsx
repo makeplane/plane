@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
@@ -31,7 +37,7 @@ export function PageOrderByDropdown(props: Props) {
     <CustomMenu
       customButton={
         <div className={getButtonStyling("secondary", "lg")}>
-          {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
+          {!isDescending ? <ArrowUpWideNarrow className="size-3" /> : <ArrowDownWideNarrow className="size-3" />}
           {orderByDetails?.label}
         </div>
       }

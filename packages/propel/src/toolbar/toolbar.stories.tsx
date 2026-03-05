@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   Bold,
@@ -35,8 +41,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render() {
     return (
-      <div className="p-4 space-y-4">
-        <div className="w-96 border rounded-sm">
+      <div className="space-y-4 p-4">
+        <div className="w-96 rounded-sm border">
           <Toolbar>
             <Toolbar.Group isFirst>
               <Toolbar.Item icon={Undo} tooltip="Undo" />
@@ -98,7 +104,7 @@ export const WithActiveStates: Story = {
 export const CommentToolbar: Story = {
   render() {
     return (
-      <div className="p-4 space-y-4">
+      <div className="space-y-4 p-4">
         <h3 className="text-13 font-medium">Comment Toolbar with Access Control</h3>
         <div className="rounded-sm border-[0.5px] border-subtle p-1">
           <Toolbar>

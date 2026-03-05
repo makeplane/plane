@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState, useRef } from "react";
 import { Rocket } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -142,11 +148,11 @@ export function ExistingIssuesListModal(props: Props) {
       >
         <div className="relative m-1">
           <SearchIcon
-            className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
+            className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
             aria-hidden="true"
           />
           <Combobox.Input
-            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
+            className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
             placeholder={t("common.search.placeholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -160,7 +166,7 @@ export function ExistingIssuesListModal(props: Props) {
               {selectedIssues.map((issue) => (
                 <div
                   key={issue.id}
-                  className="flex items-center gap-1 whitespace-nowrap rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-11 text-primary"
+                  className="flex items-center gap-1 rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-11 whitespace-nowrap text-primary"
                 >
                   <IssueIdentifier
                     projectId={issue.project_id}
@@ -181,7 +187,7 @@ export function ExistingIssuesListModal(props: Props) {
               ))}
             </div>
           ) : (
-            <div className="w-min whitespace-nowrap rounded-md border border-subtle bg-layer-1 p-2 text-11">
+            <div className="w-min rounded-md border border-subtle bg-layer-1 p-2 text-11 whitespace-nowrap">
               {t("issue.select.empty")}
             </div>
           )}
@@ -247,7 +253,7 @@ export function ExistingIssuesListModal(props: Props) {
                         htmlFor={`issue-${issue.id}`}
                         value={issue}
                         className={({ active }) =>
-                          `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
+                          `group my-0.5 flex w-full cursor-pointer items-center justify-between gap-2 rounded-md px-3 py-2 text-secondary select-none ${
                             active ? "bg-layer-1 text-primary" : ""
                           } ${selected ? "text-primary" : ""}`
                         }
@@ -281,7 +287,7 @@ export function ExistingIssuesListModal(props: Props) {
                             sequenceId: issue?.sequence_id,
                           })}
                           target="_blank"
-                          className="z-1 relative hidden flex-shrink-0 text-secondary hover:text-primary group-hover:block"
+                          className="relative z-1 hidden flex-shrink-0 text-secondary group-hover:block hover:text-primary"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                         >
@@ -296,7 +302,7 @@ export function ExistingIssuesListModal(props: Props) {
           )}
         </Combobox.Options>
       </Combobox>
-      <div className="flex justify-between items-center p-3">
+      <div className="flex items-center justify-between p-3">
         <Button
           variant="link"
           onClick={handleSelectIssues}

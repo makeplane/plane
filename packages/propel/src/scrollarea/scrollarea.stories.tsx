@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ScrollArea } from "./scrollarea";
 
@@ -26,8 +32,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render(args) {
     return (
-      <ScrollArea {...args} className="h-64 w-80 border rounded-lg">
-        <div className="p-4 space-y-4">
+      <ScrollArea {...args} className="h-64 w-80 rounded-lg border">
+        <div className="space-y-4 p-4">
           <h3 className="text-16 font-semibold">Long Text Content</h3>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
@@ -56,7 +62,7 @@ export const Default: Story = {
 export const Sizes: Story = {
   render() {
     const content = (
-      <div className="p-4 space-y-2">
+      <div className="space-y-2 p-4">
         {[...Array(10)].map((_, i) => (
           <p key={i}>Line {i + 1}: This is some scrollable content to demonstrate different sizes.</p>
         ))}
@@ -67,19 +73,19 @@ export const Sizes: Story = {
       <div className="flex flex-col gap-6">
         <div className="space-y-2">
           <div className="text-13 font-medium">Small</div>
-          <ScrollArea className="h-48 w-80 border rounded-lg" size="sm">
+          <ScrollArea className="h-48 w-80 rounded-lg border" size="sm">
             {content}
           </ScrollArea>
         </div>
         <div className="space-y-2">
           <div className="text-13 font-medium">Medium</div>
-          <ScrollArea className="h-48 w-80 border rounded-lg" size="md">
+          <ScrollArea className="h-48 w-80 rounded-lg border" size="md">
             {content}
           </ScrollArea>
         </div>
         <div className="space-y-2">
           <div className="text-13 font-medium">Large</div>
-          <ScrollArea className="h-48 w-80 border rounded-lg" size="lg">
+          <ScrollArea className="h-48 w-80 rounded-lg border" size="lg">
             {content}
           </ScrollArea>
         </div>
@@ -91,8 +97,8 @@ export const Sizes: Story = {
 export const ScrollTypeAlways: Story = {
   render() {
     return (
-      <ScrollArea className="h-64 w-80 border rounded-lg" scrollType="always">
-        <div className="p-4 space-y-2">
+      <ScrollArea className="h-64 w-80 rounded-lg border" scrollType="always">
+        <div className="space-y-2 p-4">
           <h3 className="text-16 font-semibold">Always Visible Scrollbar</h3>
           {[...Array(15)].map((_, i) => (
             <p key={i}>Line {i + 1}: The scrollbar is always visible.</p>
@@ -106,8 +112,8 @@ export const ScrollTypeAlways: Story = {
 export const ScrollTypeScroll: Story = {
   render() {
     return (
-      <ScrollArea className="h-64 w-80 border rounded-lg" scrollType="scroll">
-        <div className="p-4 space-y-2">
+      <ScrollArea className="h-64 w-80 rounded-lg border" scrollType="scroll">
+        <div className="space-y-2 p-4">
           <h3 className="text-16 font-semibold">Scroll to Show</h3>
           <p className="text-13 text-placeholder">Scrollbar appears when scrolling</p>
           {[...Array(15)].map((_, i) => (
@@ -122,8 +128,8 @@ export const ScrollTypeScroll: Story = {
 export const ScrollTypeHover: Story = {
   render() {
     return (
-      <ScrollArea className="h-64 w-80 border rounded-lg" scrollType="hover">
-        <div className="p-4 space-y-2">
+      <ScrollArea className="h-64 w-80 rounded-lg border" scrollType="hover">
+        <div className="space-y-2 p-4">
           <h3 className="text-16 font-semibold">Hover to Show</h3>
           <p className="text-13 text-placeholder">Scrollbar appears on hover</p>
           {[...Array(15)].map((_, i) => (
@@ -138,10 +144,10 @@ export const ScrollTypeHover: Story = {
 export const HorizontalScroll: Story = {
   render() {
     return (
-      <ScrollArea className="h-32 w-96 border rounded-lg" orientation="horizontal">
-        <div className="flex gap-4 p-4 w-[1200px]">
+      <ScrollArea className="h-32 w-96 rounded-lg border" orientation="horizontal">
+        <div className="flex w-[1200px] gap-4 p-4">
           {[...Array(12)].map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-32 h-20 bg-layer-1 rounded-sm flex items-center justify-center">
+            <div key={i} className="flex h-20 w-32 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
               Item {i + 1}
             </div>
           ))}
@@ -154,8 +160,8 @@ export const HorizontalScroll: Story = {
 export const BothDirections: Story = {
   render() {
     return (
-      <ScrollArea className="h-64 w-96 border rounded-lg">
-        <div className="w-[800px] p-4 space-y-2">
+      <ScrollArea className="h-64 w-96 rounded-lg border">
+        <div className="w-[800px] space-y-2 p-4">
           <h3 className="text-16 font-semibold">Both Directions</h3>
           <p className="text-13 text-placeholder">Content scrolls both vertically and horizontally</p>
           {[...Array(20)].map((_, i) => (
@@ -173,16 +179,16 @@ export const BothDirections: Story = {
 export const ListExample: Story = {
   render() {
     return (
-      <ScrollArea className="h-80 w-96 border rounded-lg">
+      <ScrollArea className="h-80 w-96 rounded-lg border">
         <div className="p-4">
-          <h3 className="text-16 font-semibold mb-4">User List</h3>
+          <h3 className="mb-4 text-16 font-semibold">User List</h3>
           <div className="space-y-2">
             {[...Array(25)].map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 p-3 bg-layer-1 rounded-sm hover:bg-surface-2 cursor-pointer"
+                className="flex cursor-pointer items-center gap-3 rounded-sm bg-layer-1 p-3 hover:bg-surface-2"
               >
-                <div className="w-10 h-10 rounded-full bg-accent-primary flex items-center justify-center text-on-color font-medium">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-primary font-medium text-on-color">
                   {String.fromCharCode(65 + (i % 26))}
                 </div>
                 <div>
@@ -232,7 +238,7 @@ async function fetchData() {
 }`;
 
     return (
-      <ScrollArea className="h-96 w-full max-w-2xl border rounded-lg bg-surface-1">
+      <ScrollArea className="h-96 w-full max-w-2xl rounded-lg border bg-surface-1">
         <pre className="p-4 text-13">
           <code>{code}</code>
         </pre>
@@ -244,12 +250,12 @@ async function fetchData() {
 export const ChatMessages: Story = {
   render() {
     return (
-      <ScrollArea className="h-96 w-full max-w-md border rounded-lg">
-        <div className="p-4 space-y-4">
+      <ScrollArea className="h-96 w-full max-w-md rounded-lg border">
+        <div className="space-y-4 p-4">
           {[...Array(20)].map((_, i) => (
             <div key={i} className={`flex ${i % 3 === 0 ? "justify-end" : "justify-start"}`}>
               <div
-                className={`max-w-[70%] p-3 rounded-lg ${i % 3 === 0 ? "bg-accent-primary text-on-color" : "bg-layer-1"}`}
+                className={`max-w-[70%] rounded-lg p-3 ${i % 3 === 0 ? "bg-accent-primary text-on-color" : "bg-layer-1"}`}
               >
                 <div className="text-13">{i % 3 === 0 ? "You" : `User ${i + 1}`}</div>
                 <div className="mt-1">Message content for message number {i + 1}</div>
@@ -265,9 +271,9 @@ export const ChatMessages: Story = {
 export const DataTable: Story = {
   render() {
     return (
-      <ScrollArea className="h-96 w-full max-w-3xl border rounded-lg">
+      <ScrollArea className="h-96 w-full max-w-3xl rounded-lg border">
         <table className="w-full">
-          <thead className="bg-layer-1 sticky top-0">
+          <thead className="sticky top-0 bg-layer-1">
             <tr>
               <th className="px-4 py-2 text-left">ID</th>
               <th className="px-4 py-2 text-left">Name</th>
@@ -283,7 +289,7 @@ export const DataTable: Story = {
                 <td className="px-4 py-2">user{i + 1}@example.com</td>
                 <td className="px-4 py-2">
                   <span
-                    className={`px-2 py-1 rounded-sm text-11 ${i % 3 === 0 ? "bg-success-primary text-success-primary" : "bg-gray-500/20 text-gray-500"}`}
+                    className={`rounded-sm px-2 py-1 text-11 ${i % 3 === 0 ? "bg-success-primary text-success-primary" : "bg-gray-500/20 text-gray-500"}`}
                   >
                     {i % 3 === 0 ? "Active" : "Inactive"}
                   </span>

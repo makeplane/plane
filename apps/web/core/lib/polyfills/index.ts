@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 if (typeof window !== "undefined" && window) {
   // Add request callback polyfill to browser in case it does not exist
   window.requestIdleCallback =

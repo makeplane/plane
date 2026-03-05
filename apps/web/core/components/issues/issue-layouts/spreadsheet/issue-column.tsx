@@ -1,10 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 // components
 import { SPREADSHEET_COLUMNS } from "@/plane-web/components/issues/issue-layouts/utils";
-import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
+import { shouldRenderColumn } from "@/helpers/issue-filter.helper";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 type Props = {
@@ -39,7 +45,7 @@ export const IssueColumn = observer(function IssueColumn(props: Props) {
     >
       <td
         tabIndex={0}
-        className="h-11 min-w-36 text-13 after:absolute after:w-full after:bottom-[-1px] after:border after:border-subtle border-r-[1px] border-subtle"
+        className="h-11 min-w-36 border-r-[1px] border-subtle text-13 after:absolute after:bottom-[-1px] after:w-full after:border after:border-subtle"
         ref={tableCellRef}
       >
         <Column

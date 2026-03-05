@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,6 +14,7 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { InstanceWorkspaceService } from "@plane/services";
 import type { IWorkspace } from "@plane/types";
+import { validateSlug, validateWorkspaceName } from "@plane/utils";
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // hooks
@@ -90,14 +97,7 @@ export function WorkspaceCreateForm() {
               control={control}
               name="name"
               rules={{
-                required: "This is a required field.",
-                validate: (value) =>
-                  /^[\w\s-]*$/.test(value) ||
-                  `Workspaces names can contain only (" "), ( - ), ( _ ) and alphanumeric characters.`,
-                maxLength: {
-                  value: 80,
-                  message: "Limit your name to 80 characters.",
-                },
+                validate: (value) => validateWorkspaceName(value, true),
               }}
               render={({ field: { value, ref, onChange } }) => (
                 <Input
@@ -123,17 +123,13 @@ export function WorkspaceCreateForm() {
         </div>
         <div className="flex flex-col gap-1">
           <h4 className="text-13 text-tertiary">Set your workspace&apos;s URL</h4>
-          <div className="flex gap-0.5 w-full items-center rounded-md border-[0.5px] border-subtle px-3">
-            <span className="whitespace-nowrap text-13 text-secondary">{workspaceBaseURL}</span>
+          <div className="flex w-full items-center gap-0.5 rounded-md border-[0.5px] border-subtle px-3">
+            <span className="text-13 whitespace-nowrap text-secondary">{workspaceBaseURL}</span>
             <Controller
               control={control}
               name="slug"
               rules={{
-                required: "The URL is a required field.",
-                maxLength: {
-                  value: 48,
-                  message: "Limit your URL to 48 characters.",
-                },
+                validate: (value) => validateSlug(value),
               }}
               render={({ field: { onChange, value, ref } }) => (
                 <Input
@@ -192,7 +188,7 @@ export function WorkspaceCreateForm() {
           </div>
         </div>
       </div>
-      <div className="flex max-w-4xl items-center py-1 gap-4">
+      <div className="flex max-w-4xl items-center gap-4 py-1">
         <Button
           variant="primary"
           size="lg"

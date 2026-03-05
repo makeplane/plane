@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -123,9 +129,9 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
         className="w-full cursor-pointer"
       >
         {issue && (
-          <div className="group relative flex min-h-11 h-full w-full items-center px-1.5 py-1 transition-all hover:bg-surface-2">
+          <div className="group relative flex h-full min-h-11 w-full items-center px-1.5 py-1 transition-all hover:bg-surface-2">
             <span className="size-5 flex-shrink-0" />
-            <div className="flex flex-1 min-w-0 cursor-pointer items-center gap-3">
+            <div className="flex min-w-0 flex-1 cursor-pointer items-center gap-3">
               <div className="flex-shrink-0">
                 {projectDetail && (
                   <IssueIdentifier
@@ -140,7 +146,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
               </div>
 
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="flex-1 w-0 truncate text-13 text-primary">{issue.name}</span>
+                <span className="w-0 flex-1 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
             <div
@@ -158,7 +164,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 issueServiceType={issueServiceType}
               />
             </div>
-            <div className="pl-2 flex-shrink-0 text-13">
+            <div className="flex-shrink-0 pl-2 text-13">
               <CustomMenu placement="bottom-end" ellipsis>
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleEditIssue}>

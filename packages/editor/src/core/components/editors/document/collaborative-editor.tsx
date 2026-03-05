@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
@@ -104,7 +110,7 @@ function CollaborativeDocumentEditorInner(props: ICollaborativeDocumentEditorPro
       <div
         className={cn(
           "transition-opacity duration-200",
-          showContentSkeleton && !isLoading && "opacity-0 pointer-events-none"
+          showContentSkeleton && !isLoading && "pointer-events-none opacity-0"
         )}
       >
         <PageRenderer

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
@@ -77,7 +83,7 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       content={
         <>
           Are you sure you want to delete page-{" "}
-          <span className="break-words font-medium text-primary break-all">{getPageName(name)}</span> ? The Page will be
+          <span className="font-medium break-words break-all text-primary">{getPageName(name)}</span> ? The Page will be
           deleted permanently. This action cannot be undone.
         </>
       }

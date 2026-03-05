@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
@@ -170,6 +176,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             entityId={issue.id}
             fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
             initialValue={issue.description_html ?? "<p></p>"}
+            key={issue.id}
             onSubmit={async (value, isMigrationUpdate) => {
               if (!issue.id || !issue.project_id) return;
               await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
@@ -179,7 +186,6 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             }}
             projectId={issue.project_id}
             setIsSubmitting={(value) => setIsSubmitting(value)}
-            swrDescription={issue.description_html ?? "<p></p>"}
             workspaceSlug={workspaceSlug}
           />
         )}

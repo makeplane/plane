@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -106,7 +112,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
         <div className="h-10 w-10 flex-shrink-0">
           <img
             src={integrationDetails[integration.provider].logo}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             alt={`${integration.title} Logo`}
           />
         </div>

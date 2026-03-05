@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import type { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
 import { observer } from "mobx-react";
@@ -190,7 +196,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
   );
 
   return (
-    <div className="flex flex-col gap-12 ">
+    <div className="flex flex-col gap-12">
       {priorityChartLoading ? (
         <ChartLoader />
       ) : parsedData?.data && parsedData.data.length > 0 ? (

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { HelpCircle, MessagesSquare, User } from "lucide-react";
@@ -73,7 +79,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           <button
             type="button"
             onClick={() => toggleShortcutsListModal(true)}
-            className="flex w-full items-center justify-sbg-layer-211 hover:bg-layer-1"
+            className="justify-sbg-layer-211 flex w-full items-center hover:bg-layer-1"
           >
             <span className="text-11">{t("keyboard_shortcuts")}</span>
           </button>
@@ -82,19 +88,17 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           <button
             type="button"
             onClick={() => setProductUpdatesModalOpen(true)}
-            className="flex w-full items-center justify-sbg-layer-211 hover:bg-layer-1"
+            className="justify-sbg-layer-211 flex w-full items-center hover:bg-layer-1"
           >
             <span className="text-11">{t("whats_new")}</span>
           </button>
         </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={() => window.open("https://go.plane.so/p-discord", "_blank", "noopener,noreferrer")}
-        >
+        <CustomMenu.MenuItem onClick={() => window.open("https://forum.plane.so", "_blank", "noopener,noreferrer")}>
           <div className="flex items-center gap-x-2 rounded-sm text-11">
-            <span className="text-11">Discord</span>
+            <span className="text-11">Forum</span>
           </div>
         </CustomMenu.MenuItem>
-        <div className="px-1 pt-2 mt-1 text-11 text-secondary border-t border-subtle">
+        <div className="mt-1 border-t border-subtle px-1 pt-2 text-11 text-secondary">
           <PlaneVersionNumber />
         </div>
       </CustomMenu>

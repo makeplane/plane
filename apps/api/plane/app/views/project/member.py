@@ -1,6 +1,11 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Min
 
 # Module imports
 from .base import BaseViewSet, BaseAPIView
@@ -13,7 +18,7 @@ from plane.app.serializers import (
 
 from plane.app.permissions import WorkspaceUserPermission
 
-from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
+from plane.db.models import Project, ProjectMember, ProjectUserProperty, WorkspaceMember
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
@@ -89,24 +94,23 @@ class ProjectMemberViewSet(BaseViewSet):
         # Update the roles of the existing members
         ProjectMember.objects.bulk_update(bulk_project_members, ["is_active", "role"], batch_size=100)
 
-        # Get the list of project members of the requested workspace with the given slug
-        project_members = (
-            ProjectMember.objects.filter(
+        # Get the minimum sort_order for each member in the workspace
+        member_sort_orders = (
+            ProjectUserProperty.objects.filter(
                 workspace__slug=slug,
-                member_id__in=[member.get("member_id") for member in members],
+                user_id__in=[member.get("member_id") for member in members],
             )
-            .values("member_id", "sort_order")
-            .order_by("sort_order")
+            .values("user_id")
+            .annotate(min_sort_order=Min("sort_order"))
         )
+        # Convert to dictionary for easy lookup: {user_id: min_sort_order}
+        sort_order_map = {str(item["user_id"]): item["min_sort_order"] for item in member_sort_orders}
 
         # Loop through requested members
         for member in members:
-            # Get the sort orders of the member
-            sort_order = [
-                project_member.get("sort_order")
-                for project_member in project_members
-                if str(project_member.get("member_id")) == str(member.get("member_id"))
-            ]
+            member_id = str(member.get("member_id"))
+            # Get the minimum sort_order for this member, or use default
+            min_sort_order = sort_order_map.get(member_id)
             # Create a new project member
             bulk_project_members.append(
                 ProjectMember(
@@ -114,22 +118,22 @@ class ProjectMemberViewSet(BaseViewSet):
                     role=member.get("role", 5),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    sort_order=(sort_order[0] - 10000 if len(sort_order) else 65535),
                 )
             )
             # Create a new issue property
             bulk_issue_props.append(
-                IssueUserProperty(
+                ProjectUserProperty(
                     user_id=member.get("member_id"),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
+                    sort_order=(min_sort_order - 10000 if min_sort_order is not None else 65535),
                 )
             )
 
         # Bulk create the project members and issue properties
         project_members = ProjectMember.objects.bulk_create(bulk_project_members, batch_size=10, ignore_conflicts=True)
 
-        _ = IssueUserProperty.objects.bulk_create(bulk_issue_props, batch_size=10, ignore_conflicts=True)
+        _ = ProjectUserProperty.objects.bulk_create(bulk_issue_props, batch_size=10, ignore_conflicts=True)
 
         project_members = ProjectMember.objects.filter(
             project_id=project_id,

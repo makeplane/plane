@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -115,22 +121,22 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
 
   return (
     <>
-      <div className="sticky z-10 top-0 pt-2 flex items-center justify-between bg-surface-1">
-        <div className="flex items-center justify-center size-5">
+      <div className="sticky top-0 z-10 flex items-center justify-between bg-surface-1 pt-2">
+        <div className="flex size-5 items-center justify-center">
           <button
-            className="flex size-6 items-center justify-center rounded-full bg-layer-3 hover:bg-layer-3-hover flex-shrink-0"
+            className="flex size-6 flex-shrink-0 items-center justify-center rounded-full bg-layer-3 hover:bg-layer-3-hover"
             onClick={() => handleClose()}
           >
             <ChevronRightIcon className="size-4 stroke-2 text-secondary" />
           </button>
         </div>
       </div>
-      <div className="flex flex-col gap-2 w-full">
+      <div className="flex w-full flex-col gap-2">
         <div className="flex items-start justify-between gap-3 pt-2">
-          <h4 className="w-full break-words text-18 font-semibold text-primary">{cycleDetails.name}</h4>
+          <h4 className="w-full text-18 font-semibold break-words text-primary">{cycleDetails.name}</h4>
           {currentCycle && (
             <span
-              className="flex h-6 min-w-20 px-3 items-center justify-center rounded-sm text-center text-11 font-medium whitespace-nowrap truncate"
+              className="flex h-6 min-w-20 items-center justify-center truncate rounded-sm px-3 text-center text-11 font-medium whitespace-nowrap"
               style={{
                 color: currentCycle.color,
                 backgroundColor: `${currentCycle.color}20`,
@@ -145,7 +151,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
           control={control}
           name="start_date"
           render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
-            <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-2">
               <Controller
                 control={control}
                 name="end_date"
@@ -173,7 +179,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
                     customTooltipContent={
                       <span className="flex gap-1">
                         {renderFormattedDateInUserTimezone(cycleDetails.start_date ?? "")}
-                        <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
+                        <ArrowRight className="my-auto h-3 w-3 flex-shrink-0" />
                         {renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}
                       </span>
                     }
@@ -185,7 +191,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
                 )}
               />
               {projectUTCOffset && (
-                <span className="rounded-md text-11 px-2 cursor-default  py-1 bg-layer-1 text-tertiary">
+                <span className="cursor-default rounded-md bg-layer-1 px-2 py-1 text-11 text-tertiary">
                   {projectUTCOffset}
                 </span>
               )}

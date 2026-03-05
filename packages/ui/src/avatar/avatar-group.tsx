@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
@@ -68,7 +74,7 @@ export function AvatarGroup(props: Props) {
         <Tooltip tooltipContent={`${totalAvatars} total`} disabled={!showTooltip}>
           <div
             className={cn(
-              "grid place-items-center rounded-full bg-accent-subtle text-9 text-accent-primary border border-subtle-1",
+              "grid place-items-center rounded-full border border-subtle-1 bg-accent-subtle text-9 text-accent-primary",
               {
                 [sizeInfo.avatarSize]: !isAValidNumber(size),
               }

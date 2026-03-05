@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { cn } from "@plane/utils";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 
@@ -16,7 +22,7 @@ export function ProfileSettingContentWrapper(props: Props) {
 
       <div
         className={cn(
-          "vertical-scrollbar scrollbar-md mx-auto h-full w-full flex flex-col px-8 md:px-20 lg:px-36 xl:px-56 py-10 md:py-16",
+          "vertical-scrollbar mx-auto flex scrollbar-md h-full w-full flex-col px-8 py-10 md:px-20 md:py-16 lg:px-36 xl:px-56",
           className
         )}
       >

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { action, makeObservable, runInAction } from "mobx";
 // base class
 import type {
@@ -9,7 +15,7 @@ import type {
   ViewFlags,
 } from "@plane/types";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // types
 import type { IBaseIssuesStore } from "../helpers/base-issues.store";
 import { BaseIssuesStore } from "../helpers/base-issues.store";

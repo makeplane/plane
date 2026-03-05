@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState, useCallback, useMemo } from "react";
 import { LockIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { PasswordInput, PasswordStrengthIndicator } from "@plane/ui";
@@ -70,10 +76,10 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
   );
 
   return (
-    <div className={`flex flex-col rounded-lg overflow-hidden transition-all duration-300 ease-in-out bg-surface-2`}>
+    <div className={`flex flex-col overflow-hidden rounded-lg bg-surface-2 transition-all duration-300 ease-in-out`}>
       <div
         className={cn(
-          "flex items-center justify-between transition-colors duration-200 px-3 py-2 text-13",
+          "flex items-center justify-between px-3 py-2 text-13 transition-colors duration-200",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           isExpanded && "pb-1"
         )}
@@ -91,7 +97,7 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
 
       <div className={expandedContentClasses}>
         {/* Password input */}
-        <div className="flex flex-col gap-2 transform transition-all duration-300 ease-in-out pt-1">
+        <div className="flex transform flex-col gap-2 pt-1 transition-all duration-300 ease-in-out">
           <PasswordInput
             id="password"
             value={passwordState.password}
@@ -104,12 +110,12 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
 
         <div className="flex flex-col gap-2 pb-2">
           {/* Confirm password label */}
-          <div className="text-tertiary font-medium transform transition-all duration-300 ease-in-out delay-75 text-13">
+          <div className="transform text-13 font-medium text-tertiary transition-all delay-75 duration-300 ease-in-out">
             Confirm password
           </div>
 
           {/* Confirm password input */}
-          <div className="transform transition-all duration-300 ease-in-out delay-100">
+          <div className="transform transition-all delay-100 duration-300 ease-in-out">
             <PasswordInput
               id="confirm-password"
               value={passwordState.confirmPassword}
@@ -117,8 +123,8 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
               placeholder="Confirm password"
               className="transition-all duration-200"
             />
-            {hasPasswordMismatch && <p className="text-11 text-danger-primary mt-1">Passwords do not match</p>}
-            {isPasswordValid && <p className="text-11 text-success-primary mt-1">✓ Passwords match</p>}
+            {hasPasswordMismatch && <p className="mt-1 text-11 text-danger-primary">Passwords do not match</p>}
+            {isPasswordValid && <p className="mt-1 text-11 text-success-primary">✓ Passwords match</p>}
           </div>
         </div>
       </div>

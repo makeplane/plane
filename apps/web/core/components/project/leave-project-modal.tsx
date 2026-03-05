@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -109,7 +115,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
         </span>
 
         <div className="text-secondary">
-          <p className="break-words text-13 ">
+          <p className="text-13 break-words">
             Enter the project name <span className="font-medium text-primary">{project?.name}</span> to continue:
           </p>
           <Controller
