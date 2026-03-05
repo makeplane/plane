@@ -693,6 +693,12 @@
   --color-*: initial;
   --color-white: oklch(1 0 0);
   --color-black: oklch(0.1482 0.0034 196.79);
+  /* --------- Shinhan Bank Colors --------- */
+  --color-shinhan-blue: #0070e0;
+  --color-shinhan-dark: #005bb5;
+  --color-shinhan-light: #e6f3ff;
+  --color-shinhan-gradientStart: #0047cc;
+  --color-shinhan-gradientEnd: #00d4ff;
   /* ---------- Border radius ---------- */
   --radius-4xl: initial;
   /* ---------- Border width ---------- */

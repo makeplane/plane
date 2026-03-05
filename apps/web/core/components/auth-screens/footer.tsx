@@ -4,14 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import { useTranslation } from "@plane/i18n";
-
 export function AuthFooter() {
-  const { t } = useTranslation();
-
   return (
-    <div className="flex flex-col items-center gap-2 text-center">
-      <span className="text-xs text-color-tertiary">{t("auth.footer.custom_powered_by")}</span>
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 text-[#6b7280] text-[13px] font-medium tracking-wide w-full text-center z-50">
+      Shinhan Bank Vietnam - Build on Plane Architecture
     </div>
   );
 }
