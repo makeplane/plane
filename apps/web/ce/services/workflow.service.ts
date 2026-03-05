@@ -7,14 +7,9 @@ export class WorkflowService extends APIService {
     super(API_BASE_URL);
   }
 
-  /** GET /workspaces/{slug}/workflow-states/?project_id={id} — flat dict keyed by state UUID */
-  async getWorkflowStates(
-    workspaceSlug: string,
-    projectId: string
-  ): Promise<Record<string, IWorkflowStateData>> {
-    return this.get(`/api/workspaces/${workspaceSlug}/workflow-states/`, {
-      params: { project_id: projectId },
-    })
+  /** GET /workspaces/{slug}/projects/{id}/workflow-states/ — flat dict keyed by state UUID */
+  async getWorkflowStates(workspaceSlug: string, projectId: string): Promise<Record<string, IWorkflowStateData>> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/workflow-states/`)
       .then((res: { data: Record<string, IWorkflowStateData> }) => res.data)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
@@ -43,13 +38,14 @@ export class WorkflowService extends APIService {
       });
   }
 
-  /** PATCH /workspaces/{slug}/workflow-states/{state_id}/ — toggle allow_issue_creation */
+  /** PATCH /workspaces/{slug}/projects/{id}/workflow-states/{state_id}/ — toggle allow_issue_creation */
   async updateWorkflowStateConfig(
     workspaceSlug: string,
+    projectId: string,
     stateId: string,
     payload: { allow_issue_creation: boolean }
   ): Promise<{ id: string; state: string; allow_issue_creation: boolean }> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/workflow-states/${stateId}/`, payload)
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/workflow-states/${stateId}/`, payload)
       .then((res: { data: { id: string; state: string; allow_issue_creation: boolean } }) => res.data)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
@@ -63,10 +59,10 @@ export class WorkflowService extends APIService {
     stateId: string,
     transitionStateId: string
   ): Promise<{ id: string; state: string; transition_state: string; approvers: string[] }> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/workflow-transitions/`,
-      { state_id: stateId, transition_state_id: transitionStateId }
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/workflow-transitions/`, {
+      state_id: stateId,
+      transition_state_id: transitionStateId,
+    })
       .then((res: { data: { id: string; state: string; transition_state: string; approvers: string[] } }) => res.data)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
@@ -75,9 +71,7 @@ export class WorkflowService extends APIService {
 
   /** DELETE /workspaces/{slug}/projects/{id}/workflow-transitions/{tid}/ */
   async deleteTransition(workspaceSlug: string, projectId: string, transitionId: string): Promise<void> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/workflow-transitions/${transitionId}/`
-    )
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/workflow-transitions/${transitionId}/`)
       .then(() => undefined)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
@@ -119,10 +113,7 @@ export class WorkflowService extends APIService {
 
   /** POST /workspaces/{slug}/projects/{id}/workflow/reset/ */
   async resetWorkflow(workspaceSlug: string, projectId: string): Promise<void> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/workflow/reset/`,
-      {}
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/workflow/reset/`, {})
       .then(() => undefined)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;

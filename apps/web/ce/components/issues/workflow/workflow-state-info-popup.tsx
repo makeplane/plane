@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */import { Popover } from "@headlessui/react";
+  import { Popover } from "@headlessui/react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -27,14 +27,21 @@ export const WorkflowStateInfoPopup = observer(function WorkflowStateInfoPopup({
   const { t } = useTranslation();
   const workflowStore = useWorkflowStore();
   const { getProjectStates } = useProjectState();
-  const { getProjectMemberDetails } = useMember();
+  const {
+    project: { getProjectMemberDetails },
+  } = useMember();
 
   const workflowData = workflowStore.workflowByProject.get(projectId);
   const states = getProjectStates(projectId) ?? [];
   const targetState = states.find((s) => s.id === targetStateId);
 
   // Find all (sourceState → targetState) transitions
-  const incomingTransitions: Array<{ sourceStateId: string; sourceStateName: string; sourceStateColor: string; approvers: string[] }> = [];
+  const incomingTransitions: Array<{
+    sourceStateId: string;
+    sourceStateName: string;
+    sourceStateColor: string;
+    approvers: string[];
+  }> = [];
   if (workflowData) {
     for (const [sourceStateId, stateData] of Object.entries(workflowData.states)) {
       for (const transition of Object.values(stateData.transitions)) {
@@ -55,7 +62,9 @@ export const WorkflowStateInfoPopup = observer(function WorkflowStateInfoPopup({
 
   const formatReviewerNames = (approverIds: string[]): string => {
     if (approverIds.length === 0) return t("project_settings.workflows.indicator_all_members");
-    const names = approverIds.map((id) => getProjectMemberDetails(id, projectId)?.member?.display_name ?? id.slice(0, 8));
+    const names = approverIds.map(
+      (id) => getProjectMemberDetails(id, projectId)?.member?.display_name ?? id.slice(0, 8)
+    );
     if (names.length <= 2) return names.join(` ${t("common.and")} `);
     return `${names.slice(0, 2).join(", ")} +${names.length - 2}`;
   };
@@ -75,19 +84,18 @@ export const WorkflowStateInfoPopup = observer(function WorkflowStateInfoPopup({
           <ul className="space-y-2">
             {incomingTransitions.map(({ sourceStateId, sourceStateName, sourceStateColor, approvers }) => (
               <li key={sourceStateId} className="text-xs text-color-secondary">
-                <span className="text-color-secondary">{t("project_settings.workflows.indicator_popup_for")}</span>
-                {" "}
+                <span className="text-color-secondary">{t("project_settings.workflows.indicator_popup_for")}</span>{" "}
                 <span className="inline-flex items-center gap-1 font-medium text-color-primary">
                   <span className="h-2 w-2 rounded-full" style={{ backgroundColor: sourceStateColor }} />
                   {sourceStateName}
                 </span>
                 {" — "}
-                <span className="font-medium text-color-primary">{formatReviewerNames(approvers)}</span>
-                {" "}
-                <span className="text-color-secondary">{t("project_settings.workflows.indicator_popup_can_move")}</span>
-                {" "}
+                <span className="font-medium text-color-primary">{formatReviewerNames(approvers)}</span>{" "}
+                <span className="text-color-secondary">{t("project_settings.workflows.indicator_popup_can_move")}</span>{" "}
                 <span className="inline-flex items-center gap-1 font-medium text-color-primary">
-                  {targetState && <span className="h-2 w-2 rounded-full" style={{ backgroundColor: targetState.color }} />}
+                  {targetState && (
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: targetState.color }} />
+                  )}
                   {targetState?.name}
                 </span>
               </li>

@@ -18,6 +18,10 @@ export const extendedRoutes: RouteConfigEntry[] = [
               "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/worklogs/page.tsx"
             ),
             route(
+              ":workspaceSlug/settings/projects/:projectId/workflows",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/workflows/page.tsx"
+            ),
+            route(
               ":workspaceSlug/settings/projects/:projectId/features/time-tracking",
               "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/time-tracking/page.tsx"
             ),

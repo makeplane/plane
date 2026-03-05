@@ -8,14 +8,16 @@ import { useState } from "react";
 import { useParams } from "react-router";
 import type { TIssueGroupByOptions } from "@plane/types";
 // hooks
+import { useUser } from "@/hooks/store/user";
 import { useWorkflowStore } from "@/hooks/store/use-workflow";
 
 export const useWorkFlowFDragNDrop = (
   groupBy: TIssueGroupByOptions | undefined,
-  subGroupBy?: TIssueGroupByOptions
+  _subGroupBy?: TIssueGroupByOptions
 ) => {
   const { projectId } = useParams<{ projectId: string }>();
   const workflowStore = useWorkflowStore();
+  const { data: currentUser } = useUser();
 
   // Track which source stateId is currently blocked for this destination column
   const [workflowDisabledSource, setWorkflowDisabledSource] = useState<string | undefined>(undefined);
@@ -38,7 +40,14 @@ export const useWorkFlowFDragNDrop = (
       return;
     }
 
-    const allowed = workflowStore.isTransitionAllowed(projectId, sourceGroupId, destinationGroupId);
+    // Don't show blocker on the source column itself
+    if (sourceGroupId === destinationGroupId) {
+      setWorkflowDisabledSource(undefined);
+      setIsWorkflowDropDisabled(false);
+      return;
+    }
+
+    const allowed = workflowStore.isTransitionAllowed(projectId, sourceGroupId, destinationGroupId, currentUser?.id);
     setIsWorkflowDropDisabled(!allowed);
     setWorkflowDisabledSource(!allowed ? sourceGroupId : undefined);
   };

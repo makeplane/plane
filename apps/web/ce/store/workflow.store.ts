@@ -1,11 +1,6 @@
 import { action, makeObservable, observable, ObservableMap, runInAction } from "mobx";
 // types
-import type {
-  IProjectWorkflow,
-  IProjectWorkflowStore,
-  IWorkflowActivity,
-  IWorkflowBlockerModal,
-} from "@plane/types";
+import type { IProjectWorkflow, IProjectWorkflowStore, IWorkflowActivity, IWorkflowBlockerModal } from "@plane/types";
 // service
 import { WorkflowService } from "../services/workflow.service";
 
@@ -47,7 +42,7 @@ export interface IWorkflowStore {
   ) => Promise<void>;
   resetWorkflow: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchActivity: (workspaceSlug: string, projectId: string) => Promise<IWorkflowActivity[]>;
-  isTransitionAllowed: (projectId: string, fromStateId: string, toStateId: string) => boolean;
+  isTransitionAllowed: (projectId: string, fromStateId: string, toStateId: string, currentUserId?: string) => boolean;
   getTransitionReviewers: (projectId: string, fromStateId: string, toStateId: string) => string[];
   openBlockerModal: (payload: { allowedReviewers: string[]; fromState: string; toState: string }) => void;
   closeBlockerModal: () => void;
@@ -87,16 +82,29 @@ export class WorkflowStore implements IWorkflowStore {
   };
 
   /**
-   * Checks if a transition from→to is defined in the store.
-   * Returns true if workflow is not live OR a matching transition exists.
+   * Checks if a transition from→to is permitted for the current user.
+   * Returns true if workflow is not live, or if a matching transition exists
+   * AND (no approvers are set OR currentUserId is in the approvers list).
    */
-  isTransitionAllowed = (projectId: string, fromStateId: string, toStateId: string): boolean => {
+  isTransitionAllowed = (
+    projectId: string,
+    fromStateId: string,
+    toStateId: string,
+    currentUserId?: string
+  ): boolean => {
     const data = this.workflowByProject.get(projectId);
     if (!data?.isLive) return true;
     const stateData = data.states[fromStateId];
     // Fail closed: if state not in store, treat as blocked to avoid silent bypass
     if (!stateData) return false;
-    return Object.values(stateData.transitions).some((t) => t.transition_state === toStateId);
+    const transition = Object.values(stateData.transitions).find((t) => t.transition_state === toStateId);
+    if (!transition) return false;
+    // If no approvers → anyone can perform it
+    if (!transition.approvers || transition.approvers.length === 0) return true;
+    // If currentUserId provided, check if user is an approver
+    if (currentUserId) return transition.approvers.includes(currentUserId);
+    // No user context available → treat transition as existing (fallback)
+    return true;
   };
 
   /**
@@ -148,7 +156,9 @@ export class WorkflowStore implements IWorkflowStore {
     stateId: string,
     allowIssueCreation: boolean
   ): Promise<void> => {
-    await this.service.updateWorkflowStateConfig(workspaceSlug, stateId, { allow_issue_creation: allowIssueCreation });
+    await this.service.updateWorkflowStateConfig(workspaceSlug, projectId, stateId, {
+      allow_issue_creation: allowIssueCreation,
+    });
 
     runInAction(() => {
       const current = this.workflowByProject.get(projectId);
@@ -246,10 +256,7 @@ export class WorkflowStore implements IWorkflowStore {
       const current = this.workflowByProject.get(projectId);
       if (current) {
         const resetStates = Object.fromEntries(
-          Object.keys(current.states).map((stateId) => [
-            stateId,
-            { allow_issue_creation: true, transitions: {} },
-          ])
+          Object.keys(current.states).map((stateId) => [stateId, { allow_issue_creation: true, transitions: {} }])
         );
         this.workflowByProject.set(projectId, { isLive: false, states: resetStates });
       }
@@ -271,4 +278,3 @@ export class WorkflowStore implements IWorkflowStore {
     this.blockerModal = null;
   };
 }
-

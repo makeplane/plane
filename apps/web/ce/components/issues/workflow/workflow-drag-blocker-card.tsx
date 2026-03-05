@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */import { ShieldX } from "lucide-react";
+  import { ShieldX } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // hooks
@@ -25,7 +25,9 @@ export const WorkflowDragBlockerCard = observer(function WorkflowDragBlockerCard
   const { t } = useTranslation();
   const workflowStore = useWorkflowStore();
   const { getProjectStates } = useProjectState();
-  const { getProjectMemberDetails } = useMember();
+  const {
+    project: { getProjectMemberDetails },
+  } = useMember();
 
   const states = getProjectStates(projectId) ?? [];
   const fromState = states.find((s) => s.id === fromStateId);
@@ -45,9 +47,7 @@ export const WorkflowDragBlockerCard = observer(function WorkflowDragBlockerCard
       <div className="flex items-start gap-2">
         <ShieldX className="h-4 w-4 flex-shrink-0 text-red-500 mt-0.5" />
         <div className="space-y-1">
-          <p className="text-xs font-medium text-color-primary">
-            {t("project_settings.workflows.drag_blocked_title")}
-          </p>
+          <p className="text-xs font-medium text-color-primary">{t("project_settings.workflows.drag_blocked_title")}</p>
           <p className="text-xs text-color-secondary">
             {t("project_settings.workflows.indicator_popup_for")}{" "}
             {fromState && (
