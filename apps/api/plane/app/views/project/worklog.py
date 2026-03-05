@@ -2,23 +2,15 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from datetime import datetime
-
 from rest_framework import status
 from rest_framework.response import Response
 
 from plane.app.permissions import ROLE, allow_permission
-from plane.app.serializers import IssueWorkLogSerializer
-from plane.app.views.base import BaseViewSet
-from plane.db.models import IssueWorkLog
-
-
-def _parse_date(value):
-    """Parse a YYYY-MM-DD string to date, returns None on invalid input."""
-    try:
-        return datetime.strptime(value, "%Y-%m-%d").date()
-    except (ValueError, TypeError):
-        return None
+from plane.app.serializers import ExporterHistorySerializer, IssueWorkLogSerializer
+from plane.app.views.base import BaseAPIView, BaseViewSet
+from plane.bgtasks.export_utils import parse_date
+from plane.bgtasks.worklog_export_task import worklog_export_task
+from plane.db.models import ExporterHistory, IssueWorkLog, Workspace
 
 
 class ProjectWorkLogViewSet(BaseViewSet):
@@ -59,8 +51,8 @@ class ProjectWorkLogViewSet(BaseViewSet):
             queryset = queryset.filter(logged_by_id__in=member_ids)
         if issue_id:
             queryset = queryset.filter(issue_id=issue_id)
-        parsed_from = _parse_date(date_from) if date_from else None
-        parsed_to = _parse_date(date_to) if date_to else None
+        parsed_from = parse_date(date_from) if date_from else None
+        parsed_to = parse_date(date_to) if date_to else None
         if parsed_from:
             queryset = queryset.filter(logged_at__gte=parsed_from)
         if parsed_to:
@@ -72,4 +64,73 @@ class ProjectWorkLogViewSet(BaseViewSet):
             on_results=lambda worklogs: IssueWorkLogSerializer(
                 worklogs, many=True
             ).data,
+        )
+
+
+class ProjectWorklogExportView(BaseAPIView):
+    """Trigger async worklog export and list export history for a project."""
+
+    ALLOWED_FILTER_KEYS = {"member_id", "date_from", "date_to"}
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id):
+        try:
+            workspace = Workspace.objects.get(slug=slug)
+        except Workspace.DoesNotExist:
+            return Response({"error": "Workspace not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        provider = request.data.get("provider", "csv")
+        filters = request.data.get("filters", {})
+
+        if provider not in ("csv", "xlsx"):
+            return Response(
+                {"error": "Invalid provider. Use 'csv' or 'xlsx'."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not isinstance(filters, dict) or not set(filters.keys()).issubset(self.ALLOWED_FILTER_KEYS):
+            return Response(
+                {"error": "Invalid filters."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        exporter = ExporterHistory.objects.create(
+            workspace=workspace,
+            project=[str(project_id)],
+            initiated_by=request.user,
+            provider=provider,
+            type="issue_worklogs",
+            filters=filters,
+        )
+
+        worklog_export_task.delay(
+            provider=provider,
+            workspace_id=str(workspace.id),
+            project_id=str(project_id),
+            token_id=exporter.token,
+            slug=slug,
+            filters=filters,
+        )
+
+        return Response(
+            {"message": "Export started", "export_id": str(exporter.id)},
+            status=status.HTTP_200_OK,
+        )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def get(self, request, slug, project_id):
+        history = (
+            ExporterHistory.objects.filter(
+                workspace__slug=slug,
+                type="issue_worklogs",
+                project__contains=[str(project_id)],
+            )
+            .select_related("workspace", "initiated_by")
+        )
+
+        return self.paginate(
+            order_by="-created_at",
+            request=request,
+            queryset=history,
+            on_results=lambda h: ExporterHistorySerializer(h, many=True).data,
         )

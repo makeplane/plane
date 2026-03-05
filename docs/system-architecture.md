@@ -515,7 +515,7 @@ Option 2: Token-based from Swing Portal
 
 ## Time Tracking (Work Logs)
 
-**Detailed Specification**: See [`worklog-specification.md`](./worklog-specification.md) for comprehensive validation rules, API details, permission model, Celery reminder architecture, feature flag gating, and known issues.
+See [`worklog-specification.md`](./worklog-specification.md) for comprehensive validation rules, API details, and feature flag gating.
 
 ### Quick Reference
 
@@ -525,12 +525,7 @@ Option 2: Token-based from Swing Portal
 - `logged_at`: No future dates, within 7 working days (Mon–Fri) of today
 - `logged_by`: Team member; ADMIN-only edit/delete with 7-day edit window
 
-**Key Constraints**:
-
-- Daily limit: 12 hours (720 min) per user per day
-- Edit window: 7 working days from `logged_at` (ADMIN only)
-- Feature flag: `is_time_tracking_enabled` per project (default=True)
-- User preference: `UserNotificationPreference.worklog_reminder` (opt-in daily reminder)
+**Key Constraints**: 12h/day limit (720 min), 7-day edit window (ADMIN only), feature flag per project, daily reminder opt-in
 
 **Project Flag**:
 
@@ -552,32 +547,41 @@ All time tracking UI is gated behind `is_time_tracking_enabled`:
 
 ### API Endpoints (Core)
 
-| Endpoint                                                               | Method | Purpose                              |
-| ---------------------------------------------------------------------- | ------ | ------------------------------------ |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | GET    | List worklogs for issue              |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | POST   | Create worklog entry                 |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | PATCH  | Update worklog (ADMIN, 7-day window) |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | DELETE | Delete worklog (ADMIN, 7-day window) |
-| `/api/v1/workspaces/{slug}/projects/{pid}/worklogs/summary/`           | GET    | Project summary (by member/issue)    |
-| `/api/v1/workspaces/{slug}/time-tracking/summary/`                     | GET    | Workspace summary                    |
-| `/api/v1/workspaces/{slug}/time-tracking/timesheet-grid/`              | GET    | Timesheet matrix (member × date)     |
-| `/api/v1/workspaces/{slug}/time-tracking/bulk/`                        | POST   | Batch create/update/delete           |
+| Endpoint                                                               | Method | Purpose                                         |
+| ---------------------------------------------------------------------- | ------ | ----------------------------------------------- |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | GET    | List worklogs for issue                         |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`      | POST   | Create worklog entry                            |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | PATCH  | Update worklog (ADMIN, 7-day window)            |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | DELETE | Delete worklog (ADMIN, 7-day window)            |
+| `/api/v1/workspaces/{slug}/projects/{pid}/worklogs/summary/`           | GET    | Project summary (by member/issue)               |
+| `/api/v1/workspaces/{slug}/time-tracking/summary/`                     | GET    | Workspace summary                               |
+| `/api/v1/workspaces/{slug}/time-tracking/timesheet-grid/`              | GET    | Timesheet matrix (member × date)                |
+| `/api/v1/workspaces/{slug}/time-tracking/bulk/`                        | POST   | Batch create/update/delete                      |
+| `/api/workspaces/{slug}/projects/{pid}/worklogs/`                      | GET    | List project worklogs with pagination & filters |
+| `/api/workspaces/{slug}/projects/{pid}/worklogs/export/`               | POST   | Trigger async worklog export (CSV/XLSX)         |
+| `/api/workspaces/{slug}/projects/{pid}/worklogs/export/`               | GET    | List export history for project                 |
 
-### Frontend
+### Celery Tasks
 
-- **Route**: `/:workspaceSlug/projects/:projectId/time-tracking`
-- **Page**: `TimeTrackingReportPage` - Summary, filters, worklog table
-- **Store**: `WorklogStore` (MobX) - CRUD + summary queries
-- **Components**: WorklogModal, IssueWorklogProperty, WorklogActivity
-- **Sidebar Nav**: "Time Tracking" link in project navigation
-
-### Daily Reminder (Celery)
+**Daily Reminder**:
 
 - **Task**: `worklog_daily_reminder` (UTC 10:00)
-- **Delivery**: Email + in-app notification
-- **Target**: Users in projects with time tracking enabled, who haven't logged today
-- **Opt-out**: Via `UserNotificationPreference.worklog_reminder`
-- **Note**: Timezone-aware; fires at local date for each user
+- Targets users in time-tracking-enabled projects who haven't logged today
+- Opt-out via `UserNotificationPreference.worklog_reminder`
+
+**Export Task**:
+
+- **Task**: `worklog_export_task` — generates CSV/XLSX archive with optional filters
+- Status: `queued` → `processing` → `completed` / `failed`
+- Output uploaded to S3 with presigned URL (7-day validity)
+
+### Worklog Pagination & Export
+
+| Endpoint                                                 | Method | Purpose                                                                                |
+| -------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------- |
+| `/api/workspaces/{slug}/projects/{pid}/worklogs/`        | GET    | List with pagination, filters (member_id, issue_id, date range), ordered by -logged_at |
+| `/api/workspaces/{slug}/projects/{pid}/worklogs/export/` | POST   | Trigger async CSV/XLSX export                                                          |
+| `/api/workspaces/{slug}/projects/{pid}/worklogs/export/` | GET    | List export history with download URLs                                                 |
 
 ## Scalability Patterns
 
@@ -794,7 +798,5 @@ Volumes:
 
 ---
 
-**Document Location**: `/Users/ngoctran/Documents/Shinhan/plane/docs/system-architecture.md`
 **Last Updated**: 2026-03-04
-**Status**: Final (detailed breaking changes → `/docs/breaking-changes.md`)
-**Related**: See `/docs/breaking-changes.md` for Priority System (v1.2.3) migration guide
+**Status**: Final | **Related**: `/docs/breaking-changes.md`

@@ -19,6 +19,7 @@ from plane.app.views import (
     ProjectArchiveUnarchiveEndpoint,
     ProjectMemberPreferenceEndpoint,
     ProjectWorkLogViewSet,
+    ProjectWorklogExportView,
 )
 
 
@@ -134,5 +135,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/worklogs/",
         ProjectWorkLogViewSet.as_view({"get": "list"}),
         name="project-worklogs",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/worklogs/export/",
+        ProjectWorklogExportView.as_view(),
+        name="project-worklog-export",
     ),
 ]

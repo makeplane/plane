@@ -212,6 +212,32 @@ plane.so/
   - Checks `is_time_tracking_enabled` before allowing operations
   - Logs worklog activities via `issue_activity.delay()`
 
+- **ProjectWorkLogViewSet** (`plane/app/views/project/worklog.py`)
+  - Lists all worklogs across a project with pagination
+  - Supports filters: `member_id`, `date_from`, `date_to`, `issue_id`
+  - Returns paginated IssueWorkLog records ordered by `-logged_at`
+
+- **ProjectWorklogExportView** (`plane/app/views/project/worklog.py`)
+  - POST: Trigger async export (CSV/XLSX) → queues `worklog_export_task` Celery task
+  - GET: List export history with pagination (via `ExporterHistory` model)
+  - Filters: `member_id`, `date_from`, `date_to` passed to backend
+  - Response: Export ID, status, presigned S3 download URL
+
+- **Worklog Export Celery Task** (`plane/bgtasks/worklog_export_task.py`)
+  - Generates CSV/XLSX archive of project worklogs
+  - Uses `DataExporter` with `WorklogExportSerializer` for format conversion
+  - Applies filters: member_id, date range (via `export_utils.parse_date`)
+  - Creates zip file, uploads to S3, updates `ExporterHistory` status/URL
+  - Handles empty queryset gracefully (creates headers-only file)
+
+- **Export Utilities** (`plane/bgtasks/export_utils.py`)
+  - Shared functions: `create_zip_file()`, `upload_to_s3()`, `parse_date()`
+  - Reused by both `export_task` and `worklog_export_task`
+
+- **WorklogExportSerializer** (`plane/utils/porters/serializers/worklog.py`)
+  - Serializes IssueWorkLog for CSV/XLSX export
+  - Flattened fields: Issue ID, Issue Name, Logged By, Duration (hours), Logged Date, Description, Project
+
 **Frontend**:
 
 - **WorklogStore** (`apps/web/core/store/worklog.store.ts`)
@@ -224,16 +250,30 @@ plane.so/
   - API integration layer for worklog endpoints
   - Methods: `listWorklogs()`, `createWorklog()`, `updateWorklog()`, `deleteWorklog()`, `getProjectSummary()`
 
+- **ProjectWorklogStore** (`apps/web/ce/store/project/worklog.store.ts`)
+  - MobX store for project-level worklog management
+  - Methods: `fetchWorklogs()`, `triggerExport()`, `fetchExportHistory()`, `pollExportStatus()`
+  - Manages pagination state (current page, page size, filters)
+  - Polling mechanism for async export completion
+
+- **ProjectWorklogService** (`apps/web/ce/services/project-worklog.service.ts`)
+  - API integration for project worklog endpoints
+  - Methods: `listWorklogs()`, `triggerExport()`, `getExportHistory()`
+
 - **Components**:
   - **WorklogModal** - Modal for creating/editing worklogs
   - **IssueWorklogProperty** - Displays worklog data on issue detail
   - **TimeTrackingReportPage** - Project-level time tracking report with filters/summary/table
+  - **WorklogFiltersToolbar** - Filters + Export (CSV/XLSX) dropdown
+  - **WorklogPaginationFooter** - Prev/Next pagination controls
+  - **WorklogTableColumns** - Column definitions for table display
+  - **PreviousDownloadsAccordion** - Shows export history with download links + polling
 
-- **Route**: `/:workspaceSlug/projects/:projectId/time-tracking`
-  - Located in `(detail)/[projectId]/time-tracking/`
-  - Page component displays `TimeTrackingReportPage`
+- **Route**: `/:workspaceSlug/projects/:projectId/(settings)/settings/projects/[projectId]/worklogs`
+  - Page displays filterable worklog table with pagination + export options
+  - Auto-expands Previous Downloads section after triggering export
 
-- **Sidebar Nav**: "Time Tracking" sidebar item under project navigation
+- **Sidebar Nav**: "Time Tracking" sidebar item under project navigation + "Worklogs" under settings
 
 ## Packages (Shared Libraries)
 
@@ -542,6 +582,7 @@ apps/api/
 - Priority dropdown selectors removed "none" option
 
 **Data Migration**:
+
 - Migration command: `python manage.py migrate db` (runs 0131 automatically)
 - All database "none" values converted to "medium" in one atomic transaction
 - Irreversible migration (no reverse path)

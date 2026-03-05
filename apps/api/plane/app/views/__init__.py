@@ -11,7 +11,7 @@ from .project.base import (
     ProjectArchiveUnarchiveEndpoint,
 )
 
-from .project.worklog import ProjectWorkLogViewSet
+from .project.worklog import ProjectWorkLogViewSet, ProjectWorklogExportView
 
 from .project.invite import (
     UserProjectInvitationsViewset,

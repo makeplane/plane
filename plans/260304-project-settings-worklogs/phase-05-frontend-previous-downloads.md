@@ -9,12 +9,14 @@
 ## Overview
 
 - **Priority:** P2
-- **Status:** pending
+- **Status:** done
 - Add collapsible "Previous Downloads" accordion below pagination footer showing export history table.
 
 ## Key Insights
 
 - Use `Collapsible` from `@plane/propel/collapsible` (compound component pattern)
+- Collapsible must support programmatic open (Phase 4 auto-expands after export trigger)
+<!-- Updated: Validation Session 1 - support programmatic open from Phase 4 -->
 - ExporterHistorySerializer returns: `id`, `created_at`, `provider`, `status`, `url`, `initiated_by_detail` (with `display_name`, `avatar_url`), `project`
 - Poll for status updates when any export is "queued" or "processing" (5s interval)
 - Use `Table` from `@plane/ui` consistent with worklog table above
@@ -70,6 +72,7 @@ Previous Downloads (Collapsible)
 1. **Add service method** in `project-worklog.service.ts`:
 
    ```typescript
+   <!-- Updated: Validation Session 1 - URL aligned with Phase 2 nested pattern -->
    async getExportHistory(
      workspaceSlug: string,
      projectId: string,

@@ -10,7 +10,7 @@
 ## Overview
 
 - **Priority:** P2
-- **Status:** pending
+- **Status:** done
 - Add two endpoints: POST to trigger export, GET to list export history for project worklogs.
 
 ## Key Insights
@@ -36,11 +36,11 @@
 ### Endpoints
 
 ```
-POST /api/workspaces/<slug>/export-worklogs/?project=<project_id>
+POST /api/workspaces/<slug>/projects/<project_id>/worklogs/export/
   Body: { provider: "csv"|"xlsx", filters: { member_id?, date_from?, date_to? } }
-  Response: 201 { message: "...", export_id: "..." }
+  Response: 200 { message: "...", export_id: "..." }
 
-GET /api/workspaces/<slug>/export-worklogs/?project=<project_id>
+GET /api/workspaces/<slug>/projects/<project_id>/worklogs/export/
   Params: per_page, cursor
   Response: paginated ExporterHistory list (type="issue_worklogs", project contains project_id)
 ```
@@ -63,11 +63,11 @@ GET /api/workspaces/<slug>/export-worklogs/?project=<project_id>
    Option A (preferred): Add as separate `ProjectWorklogExportView(BaseAPIView)` for clean separation.
 
    ```python
+   <!-- Updated: Validation Session 1 - URL changed to nested project pattern -->
    class ProjectWorklogExportView(BaseAPIView):
        @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
-       def post(self, request, slug):
+       def post(self, request, slug, project_id):
         workspace = Workspace.objects.get(slug=slug)
-        project_id = request.query_params.get("project")
            provider = request.data.get("provider", "csv")
            filters = request.data.get("filters", {})
 
@@ -98,8 +98,7 @@ GET /api/workspaces/<slug>/export-worklogs/?project=<project_id>
            }, status=200)
 
        @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
-       def get(self, request, slug):
-        project_id = request.query_params.get("project")
+       def get(self, request, slug, project_id):
            history = ExporterHistory.objects.filter(
                workspace__slug=slug,
                type="issue_worklogs",
@@ -117,10 +116,11 @@ GET /api/workspaces/<slug>/export-worklogs/?project=<project_id>
 2. **Add URL route** in `apps/api/plane/app/urls/project.py`:
 
    ```python
+   <!-- Updated: Validation Session 1 - nested under project -->
    path(
-       "workspaces/<str:slug>/export-worklogs/",
+       "workspaces/<str:slug>/projects/<uuid:project_id>/worklogs/export/",
        ProjectWorklogExportView.as_view(),
-       name="workspace-worklog-export",
+       name="project-worklog-export",
    ),
    ```
 

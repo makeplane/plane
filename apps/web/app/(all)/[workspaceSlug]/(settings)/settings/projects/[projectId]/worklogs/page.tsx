@@ -12,8 +12,8 @@ import { format as formatDateTime } from "date-fns";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IWorkLog } from "@plane/types";
-import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Table } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
@@ -26,19 +26,10 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectWorklogs } from "@/plane-web/hooks/store/use-project-worklog";
 // local
 import { WorklogsProjectSettingsHeader } from "./header";
-import { getWorklogColumns, formatMinutesToHours } from "./worklog-table-columns";
+import { getWorklogColumns } from "./worklog-table-columns";
 import { WorklogFiltersToolbar } from "./worklog-filters-toolbar";
-
-// Trigger browser download of a CSV string
-const downloadCSV = (csv: string, filename: string) => {
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
-};
+import { WorklogPaginationFooter } from "./worklog-pagination-footer";
+import { PreviousDownloads } from "./previous-downloads";
 
 // Build filter params from current filter state
 const buildFilterParams = (
@@ -62,6 +53,7 @@ function WorklogSettingsPage() {
     from: undefined,
     to: undefined,
   });
+  const [isPreviousDownloadsOpen, setIsPreviousDownloadsOpen] = useState(false);
 
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
@@ -73,21 +65,50 @@ function WorklogSettingsPage() {
     EUserPermissionsLevel.PROJECT
   );
 
+  const filterParams = useMemo(() => buildFilterParams(selectedUsers, dateRange), [selectedUsers, dateRange]);
+
   // Fetch worklogs with current filters
   useEffect(() => {
     if (workspaceSlug && projectId) {
-      const params = buildFilterParams(selectedUsers, dateRange);
-      void projectWorklogs.fetchWorklogs(workspaceSlug, projectId, params);
+      void projectWorklogs.fetchWorklogs(workspaceSlug, projectId, filterParams);
     }
-  }, [workspaceSlug, projectId, projectWorklogs, selectedUsers, dateRange]);
+  }, [workspaceSlug, projectId, projectWorklogs, filterParams]);
 
-  // Load more handler for pagination
-  const handleLoadMore = useCallback(() => {
-    if (workspaceSlug && projectId && projectWorklogs.hasMore && !projectWorklogs.isLoading) {
-      const params = buildFilterParams(selectedUsers, dateRange);
-      void projectWorklogs.fetchWorklogs(workspaceSlug, projectId, params, true);
+  // Pagination handlers
+  const handleNextPage = useCallback(() => {
+    if (workspaceSlug && projectId) {
+      void projectWorklogs.fetchPage(workspaceSlug, projectId, "next", filterParams);
     }
-  }, [workspaceSlug, projectId, projectWorklogs, selectedUsers, dateRange]);
+  }, [workspaceSlug, projectId, projectWorklogs, filterParams]);
+
+  const handlePrevPage = useCallback(() => {
+    if (workspaceSlug && projectId) {
+      void projectWorklogs.fetchPage(workspaceSlug, projectId, "prev", filterParams);
+    }
+  }, [workspaceSlug, projectId, projectWorklogs, filterParams]);
+
+  // Async export handler
+  const handleExport = useCallback(
+    async (provider: "csv" | "xlsx") => {
+      if (!workspaceSlug || !projectId) return;
+      try {
+        await projectWorklogs.triggerExport(workspaceSlug, projectId, provider, filterParams);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Export started",
+          message: "Check Previous Downloads when ready.",
+        });
+        setIsPreviousDownloadsOpen(true);
+      } catch {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Export failed",
+          message: "Something went wrong. Please try again.",
+        });
+      }
+    },
+    [workspaceSlug, projectId, projectWorklogs, filterParams]
+  );
 
   const pageTitle = projectDetails?.name ? `${projectDetails?.name} - Worklogs` : undefined;
   const worklogs = useMemo(
@@ -95,24 +116,6 @@ function WorklogSettingsPage() {
     [projectId, projectWorklogs.worklogs]
   );
   const columns = useMemo(() => getWorklogColumns(projectDetails?.name), [projectDetails?.name]);
-
-  // CSV export handler
-  const handleExportCSV = useCallback(() => {
-    if (!worklogs.length) return;
-    const header = "Issue,Logged By,Duration,Date,Description";
-    const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
-    const rows = worklogs.map((w: IWorkLog) =>
-      [
-        esc(w.issue_detail?.identifier || ""),
-        esc(w.logged_by_detail?.display_name || ""),
-        formatMinutesToHours(w.duration_minutes),
-        w.logged_at || "",
-        esc(w.description || ""),
-      ].join(",")
-    );
-    const projectName = projectDetails?.name || "project";
-    downloadCSV([header, ...rows].join("\n"), `${projectName}-worklogs.csv`);
-  }, [worklogs, projectDetails?.name]);
 
   if (workspaceUserInfo && !canPerformProjectAdminActions) {
     return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;
@@ -130,7 +133,7 @@ function WorklogSettingsPage() {
           onSelectedUsersChange={setSelectedUsers}
           dateRange={dateRange}
           onDateRangeChange={setDateRange}
-          onExportCSV={handleExportCSV}
+          onExport={(provider) => void handleExport(provider)}
         />
         <div className="mt-6 flex flex-col w-full">
           {projectWorklogs.isLoading && worklogs.length === 0 ? (
@@ -147,16 +150,16 @@ function WorklogSettingsPage() {
                 thClassName="text-left py-3 px-5 font-normal"
                 tdClassName="py-3 px-5"
               />
-              <div className="mt-4 flex items-center justify-end text-sm text-color-secondary p-5">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  disabled={!projectWorklogs.hasMore || projectWorklogs.isLoading}
-                  onClick={handleLoadMore}
-                >
-                  {projectWorklogs.isLoading ? "Loading..." : "Load more"}
-                </Button>
-              </div>
+              <WorklogPaginationFooter
+                rangeStart={projectWorklogs.rangeStart}
+                rangeEnd={projectWorklogs.rangeEnd}
+                totalCount={projectWorklogs.totalCount}
+                hasNext={projectWorklogs.hasMore}
+                hasPrev={projectWorklogs.hasPrev}
+                isLoading={projectWorklogs.isLoading}
+                onNext={handleNextPage}
+                onPrev={handlePrevPage}
+              />
             </div>
           ) : (
             <div className="w-full mt-10">
@@ -168,6 +171,12 @@ function WorklogSettingsPage() {
             </div>
           )}
         </div>
+        <PreviousDownloads
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          isOpen={isPreviousDownloadsOpen}
+          onToggle={() => setIsPreviousDownloadsOpen((prev) => !prev)}
+        />
       </section>
     </SettingsContentWrapper>
   );
