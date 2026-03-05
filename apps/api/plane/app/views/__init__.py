@@ -269,3 +269,10 @@ from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 from .timezone.base import TimezoneEndpoint
 
 from .capacity import ProjectCapacityEndpoint
+
+from .workflow import (
+    ProjectWorkflowViewSet,
+    WorkflowStateConfigViewSet,
+    WorkflowTransitionViewSet,
+    WorkflowTransitionApproverViewSet,
+)

@@ -33,6 +33,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import ROLE, allow_permission
+from plane.utils.workflow_checker import check_workflow_creation, check_workflow_transition
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueDetailSerializer,
@@ -398,6 +399,12 @@ class IssueViewSet(BaseViewSet):
             if data.get(field) == "":
                 data[field] = None
 
+        # Workflow creation guard: block if workflow is live and state restricts new items
+        if data.get("state_id"):
+            is_allowed, error_msg = check_workflow_creation(project_id, data["state_id"])
+            if not is_allowed:
+                return Response({"error": error_msg}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = IssueCreateSerializer(
             data=data,
             context={
@@ -666,6 +673,20 @@ class IssueViewSet(BaseViewSet):
 
         if not issue:
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Workflow transition guard: block if workflow is live and transition is not permitted
+        new_state_id = request.data.get("state_id")
+        if new_state_id and str(new_state_id) != str(issue.state_id):
+            is_allowed, detail = check_workflow_transition(project_id, issue.state_id, new_state_id, request.user)
+            if not is_allowed:
+                return Response(
+                    {
+                        "error": "WORKFLOW_TRANSITION_BLOCKED",
+                        "message": "You are not authorized to move this work item to the selected state.",
+                        "detail": detail,
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
 

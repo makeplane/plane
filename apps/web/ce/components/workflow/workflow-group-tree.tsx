@@ -4,14 +4,26 @@
  * See the LICENSE file for details.
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { observer } from "mobx-react";
+import { useParams } from "react-router";
 import type { TIssueGroupByOptions } from "@plane/types";
+// hooks
+import { useWorkflowStore } from "@/hooks/store/use-workflow";
+// components
+import { WorkflowIndicatorIcon } from "@/plane-web/components/issues/workflow/workflow-indicator-icon";
 
 type Props = {
   groupBy?: TIssueGroupByOptions;
   groupId: string | undefined;
 };
 
-export function WorkFlowGroupTree(props: Props) {
-  return <></>;
-}
+export const WorkFlowGroupTree = observer(function WorkFlowGroupTree({ groupBy, groupId }: Props) {
+  const { projectId } = useParams();
+  const workflowStore = useWorkflowStore();
+
+  // Only show indicator when grouping by state and workflow is live
+  if (!projectId || !groupId || groupBy !== "state") return <></>;
+  if (!workflowStore.isLive(projectId)) return <></>;
+
+  return <WorkflowIndicatorIcon projectId={projectId} stateId={groupId} />;
+});
