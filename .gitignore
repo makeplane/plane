@@ -1,6 +1,7 @@
 node_modules
 .next
 .yarn
+.claude/settings.local.json
 
 ### NextJS ###
 # Dependencies
