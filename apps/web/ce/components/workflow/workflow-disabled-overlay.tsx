@@ -84,7 +84,7 @@ export const WorkFlowDisabledOverlay = observer(function WorkFlowDisabledOverlay
     const names = approverIds.map(
       (id) => getProjectMemberDetails(id, projectId)?.member?.display_name ?? id.slice(0, 8)
     );
-    if (names.length <= 2) return names.join(` ${t("common.and")} `);
+    if (names.length <= 2) return names.join(" & ");
     return `${names.slice(0, 2).join(", ")} +${names.length - 2}`;
   };
 
