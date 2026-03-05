@@ -1,20 +1,20 @@
 {
   "name": "@plane/tailwind-config",
   "version": "2.3.0",
-  "license": "AGPL-3.0",
-  "description": "common tailwind configuration across monorepo",
-  "main": "tailwind.config.js",
   "private": true,
+  "description": "common tailwind configuration across monorepo",
+  "license": "AGPL-3.0",
+  "type": "module",
   "sideEffects": [
     "**/*.css"
   ],
-  "devDependencies": {
-    "@tailwindcss/postcss": "4.1.18",
-    "postcss": "8.5.6",
-    "tailwindcss": "4.1.18"
-  },
   "exports": {
     "./index.css": "./index.css",
     "./postcss.config.js": "./postcss.config.js"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "catalog:",
+    "postcss": "catalog:",
+    "tailwindcss": "catalog:"
   }
 }
