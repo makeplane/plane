@@ -37,6 +37,7 @@ def project_invitation(email, project_id, token, current_site, invitor):
             "first_name": user.first_name,
             "project_name": project.name,
             "invitation_url": abs_url,
+            "current_site": current_site,
         }
 
         html_content = render_to_string("emails/invitations/project_invitation.html", context)
