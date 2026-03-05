@@ -11,22 +11,22 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@makeplane/plane-node-sdk": "catalog:",
+    "@makeplane/plane-node-sdk": "0.2.8",
     "@plane/logger": "workspace:*",
-    "@sveltejs/acorn-typescript": "catalog:",
-    "acorn": "catalog:",
-    "acorn-walk": "catalog:",
+    "@sveltejs/acorn-typescript": "^1.0.5",
+    "acorn": "^8.15.0",
+    "acorn-walk": "^8.3.4",
     "axios": "catalog:",
-    "dd-trace": "catalog:",
-    "dotenv": "catalog:",
-    "express": "catalog:",
-    "zod": "^3.25.76"
+    "dd-trace": "^5.45.0",
+    "dotenv": "^16.3.1",
+    "express": "4.22.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/express": "catalog:",
     "@types/node": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "^4.0.8"
   }
 }

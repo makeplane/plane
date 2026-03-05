@@ -11,15 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { describe, expect, it, vi } from "vitest";
 import { createHash } from "crypto";
 import { readFileSync } from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+import { join } from "path";
 import { v4 as uuidv4 } from "uuid";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 import type { IParserExtension } from "@/lib/parser";
 import { ContentParser } from "@/lib/parser";
 import {
@@ -44,7 +39,7 @@ import {
 // Mock Plane Client - only includes the functions actually used by extensions
 const createMockPlaneClient = () => ({
   assets: {
-    uploadAsset: vi.fn().mockResolvedValue(mockUUID),
+    uploadAsset: jest.fn().mockResolvedValue(mockUUID),
   },
 });
 

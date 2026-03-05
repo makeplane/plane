@@ -1,7 +1,7 @@
 {
   "name": "@plane/mobile-editor",
-  "version": "2.3.0",
   "private": true,
+  "version": "2.3.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -21,26 +21,24 @@
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
     "lodash-es": "catalog:",
-    "lucide-react": "catalog:",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
     "mobx-utils": "catalog:",
-    "next-themes": "catalog:",
+    "lucide-react": "^0.454.0",
+    "next-themes": "0.4.6",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
   "devDependencies": {
     "@plane/tailwind-config": "workspace:*",
     "@plane/types": "workspace:*",
-    "@plane/typescript-config": "workspace:*",
-    "@tailwindcss/typography": "catalog:",
+    "@tailwindcss/typography": "0.5.19",
     "@types/lodash-es": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "catalog:",
-    "typescript": "catalog:",
+    "@vitejs/plugin-react": "^5.1.4",
     "vite": "catalog:",
-    "vite-plugin-node-polyfills": "catalog:",
-    "vite-tsconfig-paths": "catalog:"
+    "typescript": "catalog:",
+    "vite-plugin-node-polyfills": "^0.25.0"
   }
 }

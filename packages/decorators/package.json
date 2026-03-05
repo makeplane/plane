@@ -25,7 +25,7 @@
     "@types/express": "catalog:",
     "@types/node": "catalog:",
     "@types/ws": "catalog:",
-    "reflect-metadata": "catalog:",
+    "reflect-metadata": "^0.2.2",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },

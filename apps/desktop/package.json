@@ -1,24 +1,20 @@
 {
   "name": "desktop",
+  "productName": "Plane",
   "version": "0.1.0",
   "description": "Plane desktop application for project management",
-  "homepage": "https://plane.so",
-  "license": "AGPL-3.0",
-  "author": "Plane <support@plane.so>",
   "main": "./dist/main.js",
-  "exports": {
-    "./preload": "./dist/preload.js",
-    "./tab-bar-preload": "./dist/tab-bar-preload.js",
-    "./package.json": "./package.json"
-  },
+  "homepage": "https://plane.so",
   "scripts": {
     "dev": "tsdown --watch --onSuccess 'cp src/setup.html src/tab-bar.html dist/ && electron .'",
     "build": "tsdown && cp src/setup.html src/tab-bar.html dist/",
     "start": "pnpm build && electron ."
   },
+  "author": "Plane <support@plane.so>",
+  "license": "AGPL-3.0",
   "dependencies": {
-    "@todesktop/runtime": "catalog:",
-    "electron-store": "catalog:",
+    "@todesktop/runtime": "^2.1.3",
+    "electron-store": "^11.0.2",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
@@ -26,11 +22,15 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "conf": "catalog:",
-    "electron": "catalog:",
+    "conf": "^15.0.2",
+    "electron": "40.0.0",
     "tsdown": "catalog:",
-    "type-fest": "catalog:",
+    "type-fest": "^4.41.0",
     "typescript": "catalog:"
   },
-  "productName": "Plane"
+  "exports": {
+    "./preload": "./dist/preload.js",
+    "./tab-bar-preload": "./dist/tab-bar-preload.js",
+    "./package.json": "./package.json"
+  }
 }

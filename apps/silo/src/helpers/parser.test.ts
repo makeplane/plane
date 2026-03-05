@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { describe, expect, it } from "vitest";
 import { getReferredIssues } from "./parser";
 
 describe("getReferredIssues", () => {

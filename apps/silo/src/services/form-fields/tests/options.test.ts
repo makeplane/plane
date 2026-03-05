@@ -11,26 +11,20 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getPlaneClientV2 } from "@/helpers/plane-api-client-v2";
 import { Store } from "@/worker/base";
 import type { GetOptionsForEntityParams } from "../form-utils";
 import { FormUtils, OptionsEntity } from "../form-utils";
 
+// Mock the dependencies
+jest.mock("@/helpers/plane-api-client-v2");
+jest.mock("@/worker/base");
+
 const mockStore = {
-  get: vi.fn(),
-  set: vi.fn(),
+  get: jest.fn(),
+  set: jest.fn(),
 };
 
-// Mock the dependencies
-vi.mock("@/helpers/plane-api-client-v2", () => ({
-  getPlaneClientV2: vi.fn(),
-}));
-vi.mock("@/worker/base", () => ({
-  Store: {
-    getInstance: vi.fn(() => mockStore),
-  },
-}));
+(Store.getInstance as jest.Mock).mockReturnValue(mockStore);
 
 describe("FormUtils.getOptionsForEntity", () => {
   let formUtils: FormUtils;
@@ -38,32 +32,33 @@ describe("FormUtils.getOptionsForEntity", () => {
   let mockPlaneAPIClient: any;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
 
     // Mock the Plane API client
     mockPlaneAPIClient = {
       labels: {
-        list: vi.fn(),
+        list: jest.fn(),
       },
       states: {
-        list: vi.fn(),
+        list: jest.fn(),
       },
       workItemTypes: {
-        list: vi.fn(),
+        list: jest.fn(),
       },
       projects: {
-        getMembers: vi.fn(),
+        getMembers: jest.fn(),
       },
       workItemProperties: {
-        retrieve: vi.fn(),
+        retrieve: jest.fn(),
         options: {
-          list: vi.fn(),
+          list: jest.fn(),
         },
       },
     };
 
     // Mock the getPlaneClientV2 function
-    vi.mocked(getPlaneClientV2).mockReturnValue(mockPlaneAPIClient);
+    const { getPlaneClientV2 } = jest.requireMock("@/helpers/plane-api-client-v2");
+    getPlaneClientV2.mockReturnValue(mockPlaneAPIClient);
 
     formUtils = new FormUtils("test-access-token");
   });

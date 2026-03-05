@@ -28,7 +28,7 @@
     "mobx": "catalog:",
     "mobx-utils": "catalog:",
     "uuid": "catalog:",
-    "zod": "^3.25.76"
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",

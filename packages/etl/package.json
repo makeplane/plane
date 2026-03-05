@@ -34,28 +34,27 @@
     "fix:format": "oxfmt . --write"
   },
   "dependencies": {
-    "@flatfile/api": "catalog:",
+    "@flatfile/api": "^1.12.0",
     "@linear/sdk": "^37.0.0",
-    "@octokit/auth-app": "catalog:",
-    "@octokit/rest": "catalog:",
+    "@octokit/auth-app": "^7.1.0",
+    "@octokit/rest": "^21.0.2",
     "@plane/constants": "workspace:*",
     "@plane/sdk": "workspace:*",
     "@plane/types": "workspace:*",
-    "asana": "catalog:",
+    "asana": "^3.0.11",
     "axios": "catalog:",
-    "jira.js": "catalog:",
-    "node-html-parser": "catalog:",
-    "papaparse": "catalog:",
+    "jira.js": "^4.0.1",
+    "node-html-parser": "^6.1.13",
+    "papaparse": "^5.4.1",
     "uuid": "catalog:",
-    "zod": "^3.25.76"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@octokit/openapi-webhooks-types": "catalog:",
+    "@octokit/openapi-webhooks-types": "^8.3.0",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@types/papaparse": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "@octokit/openapi-webhooks-types": ">=8"

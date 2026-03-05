@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { logger } from "@plane/logger";
 import type { Client as PlaneClient } from "@plane/sdk";
 import { CONSTANTS } from "@/helpers/constants";
@@ -19,8 +18,8 @@ import type { IGitComment, IPullRequestDetails } from "@/types/behaviours/git";
 import { PullRequestBehaviour } from "../pull-request.behaviour";
 
 // Mock dependencies
-vi.mock("@plane/logger");
-vi.mock("@/env", () => ({
+jest.mock("@plane/logger");
+jest.mock("@/env", () => ({
   env: {
     APP_BASE_URL: "https://app.plane.so",
   },
@@ -35,18 +34,18 @@ type MockPullRequestData = {
 
 // Helper function to create a mock PR service
 const createMockPullRequestService = () => ({
-  getPullRequest: vi.fn(),
-  getPullRequestComments: vi.fn(),
-  createPullRequestComment: vi.fn(),
-  updatePullRequestComment: vi.fn(),
+  getPullRequest: jest.fn(),
+  getPullRequestComments: jest.fn(),
+  createPullRequestComment: jest.fn(),
+  updatePullRequestComment: jest.fn(),
 });
 
 // Helper function to create a mock Plane client
 const createMockPlaneClient = () => ({
   issue: {
-    getIssueByIdentifier: vi.fn(),
-    update: vi.fn(),
-    createLink: vi.fn(),
+    getIssueByIdentifier: jest.fn(),
+    update: jest.fn(),
+    createLink: jest.fn(),
   },
 });
 
@@ -95,7 +94,7 @@ describe("PullRequestBehaviour", () => {
     );
 
     // Clear all mocks before each test
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   describe("handleEvent", () => {

@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ExIssue, ExIssueComment, PlaneWebhookPayloadBase } from "@plane/sdk";
 import { E_PLANE_WEBHOOK_EVENT, E_PLANE_WEBHOOK_ACTION } from "@plane/sdk";
 import type { TWorkspaceConnection } from "@plane/types";
@@ -27,11 +26,11 @@ import {
 } from "../alerts";
 
 // Mock Store class for testing
-vi.mock("@/worker/base", () => ({
+jest.mock("@/worker/base", () => ({
   Store: {
-    getInstance: vi.fn(() => ({
-      get: vi.fn(),
-      set: vi.fn(),
+    getInstance: jest.fn(() => ({
+      get: jest.fn(),
+      set: jest.fn(),
     })),
   },
 }));
@@ -342,14 +341,14 @@ describe("Slack DM Alerts", () => {
 
     beforeEach(() => {
       mockStore = {
-        get: vi.fn(),
-        set: vi.fn(),
+        get: jest.fn(),
+        set: jest.fn(),
       };
-      (Store.getInstance as ReturnType<typeof vi.fn>).mockReturnValue(mockStore);
+      (Store.getInstance as jest.Mock).mockReturnValue(mockStore);
     });
 
     afterEach(() => {
-      vi.clearAllMocks();
+      jest.clearAllMocks();
     });
 
     it("should store new alert when no existing alert exists", async () => {
@@ -492,7 +491,7 @@ describe("Slack DM Alerts", () => {
         60
       );
 
-      const storedAlert = JSON.parse((mockStore.set as ReturnType<typeof vi.fn>).mock.calls[0][1]);
+      const storedAlert = JSON.parse((mockStore.set as jest.Mock).mock.calls[0][1]);
       expect(storedAlert.activities).toHaveLength(1); // Should not duplicate
     });
 
@@ -537,7 +536,7 @@ describe("Slack DM Alerts", () => {
         60
       );
 
-      const storedAlert = JSON.parse((mockStore.set as ReturnType<typeof vi.fn>).mock.calls[0][1]);
+      const storedAlert = JSON.parse((mockStore.set as jest.Mock).mock.calls[0][1]);
       expect(storedAlert.comment_id).toBe("comment1");
     });
 
