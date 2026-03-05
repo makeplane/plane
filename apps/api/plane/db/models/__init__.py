@@ -96,3 +96,11 @@ from .dashboard import Dashboard, DashboardWidget
 
 from .department import Department
 from .staff import StaffProfile, EmploymentStatus
+
+from .workflow import (
+    ProjectWorkflow,
+    WorkflowStateConfig,
+    WorkflowTransition,
+    WorkflowTransitionApprover,
+    WorkflowActivity,
+)
