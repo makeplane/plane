@@ -289,12 +289,12 @@ export default {
   signing_out: "Signing out",
   active_cycles: "Active cycles",
   active_cycles_description:
-    "Monitor cycles across projects, track high-priority work items, and zoom in cycles that need attention.",
+    "Monitor cycles across teams/projects, track high-priority work items, and zoom in cycles that need attention.",
   on_demand_snapshots_of_all_your_cycles: "On-demand snapshots of all your cycles",
   upgrade: "Upgrade",
   "10000_feet_view": "10,000-feet view of all active cycles.",
   "10000_feet_view_description":
-    "Zoom out to see running cycles across all your projects at once instead of going from Cycle to Cycle in each project.",
+    "Zoom out to see running cycles across all your teams/projects at once instead of going from Cycle to Cycle in each team/project.",
   get_snapshot_of_each_active_cycle: "Get a snapshot of each active cycle.",
   get_snapshot_of_each_active_cycle_description:
     "Track high-level metrics for all active cycles, see their state of progress, and get a sense of scope against deadlines.",
@@ -309,7 +309,7 @@ export default {
     "Investigate the state of any cycle that doesn't conform to expectations in one click.",
   stay_ahead_of_blockers: "Stay ahead of blockers.",
   stay_ahead_of_blockers_description:
-    "Spot challenges from one project to another and see inter-cycle dependencies that aren't obvious from any other view.",
+    "Spot challenges from one team/project to another and see inter-cycle dependencies that aren't obvious from any other view.",
   analytics: "Analytics",
   dashboards: "Dashboards",
   workspace_invites: "Workspace invites",
@@ -339,30 +339,31 @@ export default {
   favorite_removed_successfully: "Favorite removed successfully",
   failed_to_create_favorite: "Failed to create favorite",
   failed_to_rename_favorite: "Failed to rename favorite",
-  project_link_copied_to_clipboard: "Project link copied to clipboard",
+  project_link_copied_to_clipboard: "Team/Project link copied to clipboard",
   link_copied: "Link copied",
-  add_project: "Add project",
-  create_project: "Create project",
-  failed_to_remove_project_from_favorites: "Couldn't remove the project from favorites. Please try again.",
-  project_created_successfully: "Project created successfully",
-  project_created_successfully_description: "Project created successfully. You can now start adding work items to it.",
-  project_name_already_taken: "The project name is already taken.",
-  project_identifier_already_taken: "The project identifier is already taken.",
-  project_cover_image_alt: "Project cover image",
+  add_project: "Add team/project",
+  create_project: "Create team/project",
+  failed_to_remove_project_from_favorites: "Couldn't remove the team/project from favorites. Please try again.",
+  project_created_successfully: "Team/Project created successfully",
+  project_created_successfully_description:
+    "Team/Project created successfully. You can now start adding work items to it.",
+  project_name_already_taken: "The team/project name is already taken.",
+  project_identifier_already_taken: "The team/project identifier is already taken.",
+  project_cover_image_alt: "Team/Project cover image",
   name_is_required: "Name is required",
   title_should_be_less_than_255_characters: "Title should be less than 255 characters",
-  project_name: "Project name",
-  project_id_must_be_at_least_1_character: "Project ID must at least be of 1 character",
-  project_id_must_be_at_most_5_characters: "Project ID must at most be of 5 characters",
-  project_id: "Project ID",
-  project_id_tooltip_content: "Helps you identify work items in the project uniquely. Max 10 characters.",
+  project_name: "Team/Project name",
+  project_id_must_be_at_least_1_character: "Team/Project ID must at least be of 1 character",
+  project_id_must_be_at_most_5_characters: "Team/Project ID must at most be of 5 characters",
+  project_id: "Team/Project ID",
+  project_id_tooltip_content: "Helps you identify work items in the team/project uniquely. Max 10 characters.",
   description_placeholder: "Description",
   only_alphanumeric_non_latin_characters_allowed: "Only Alphanumeric & Non-latin characters are allowed.",
-  project_id_is_required: "Project ID is required",
+  project_id_is_required: "Team/Project ID is required",
   project_id_allowed_char: "Only Alphanumeric & Non-latin characters are allowed.",
-  project_id_min_char: "Project ID must at least be of 1 character",
-  project_id_max_char: "Project ID must at most be of 10 characters",
-  project_description_placeholder: "Enter project description",
+  project_id_min_char: "Team/Project ID must at least be of 1 character",
+  project_id_max_char: "Team/Project ID must at most be of 10 characters",
+  project_description_placeholder: "Enter team/project description",
   select_network: "Select network",
   lead: "Lead",
   date_range: "Date range",
@@ -371,23 +372,23 @@ export default {
   accessible_only_by_invite: "Accessible only by invite",
   anyone_in_the_workspace_except_guests_can_join: "Anyone in the workspace except Guests can join",
   creating: "Creating",
-  creating_project: "Creating project",
-  adding_project_to_favorites: "Adding project to favorites",
-  project_added_to_favorites: "Project added to favorites",
-  couldnt_add_the_project_to_favorites: "Couldn't add the project to favorites. Please try again.",
-  removing_project_from_favorites: "Removing project from favorites",
-  project_removed_from_favorites: "Project removed from favorites",
-  couldnt_remove_the_project_from_favorites: "Couldn't remove the project from favorites. Please try again.",
+  creating_project: "Creating team/project",
+  adding_project_to_favorites: "Adding team/project to favorites",
+  project_added_to_favorites: "Team/Project added to favorites",
+  couldnt_add_the_project_to_favorites: "Couldn't add the team/project to favorites. Please try again.",
+  removing_project_from_favorites: "Removing team/project from favorites",
+  project_removed_from_favorites: "Team/Project removed from favorites",
+  couldnt_remove_the_project_from_favorites: "Couldn't remove the team/project from favorites. Please try again.",
   add_to_favorites: "Add to favorites",
   remove_from_favorites: "Remove from favorites",
-  publish_project: "Publish project",
+  publish_project: "Publish team/project",
   publish: "Publish",
   copy_link: "Copy link",
-  leave_project: "Leave project",
-  join_the_project_to_rearrange: "Join the project to rearrange",
+  leave_project: "Leave team/project",
+  join_the_project_to_rearrange: "Join the team/project to rearrange",
   drag_to_rearrange: "Drag to rearrange",
   congrats: "Congrats!",
-  open_project: "Open project",
+  open_project: "Open team/project",
   issues: "Work items",
   cycles: "Cycles",
   modules: "Modules",
@@ -395,20 +396,20 @@ export default {
   intake: "Intake",
   time_tracking: "Time Tracking",
   work_management: "Work management",
-  projects_and_issues: "Projects and work items",
-  projects_and_issues_description: "Toggle these on or off this project.",
+  projects_and_issues: "Teams/Projects and work items",
+  projects_and_issues_description: "Toggle these on or off this team/project.",
   cycles_description:
-    "Timebox work per project and adjust the time period as needed. One cycle can be 2 weeks, the next 1 week.",
-  modules_description: "Organize work into sub-projects with dedicated leads and assignees.",
+    "Timebox work per team/project and adjust the time period as needed. One cycle can be 2 weeks, the next 1 week.",
+  modules_description: "Organize work into sub-teams/projects with dedicated leads and assignees.",
   views_description: "Save custom sorts, filters, and display options or share them with your team.",
   pages_description: "Create and edit free-form content; notes, docs, anything.",
   intake_description: "Let non-members share bugs, feedback, and suggestions; without disrupting your workflow.",
-  time_tracking_description: "Log time spent on work items and projects.",
+  time_tracking_description: "Log time spent on work items and teams/projects.",
   my_timesheet: "My Timesheet",
-  project_analytics: "Project Analytics",
+  project_analytics: "Team/Project Analytics",
   capacity: "Capacity",
   capacity_dashboard: "Capacity Dashboard",
-  capacity_dashboard_description: "View total logged time vs estimated capacity for project members",
+  capacity_dashboard_description: "View total logged time vs estimated capacity for team/project members",
   capacity_total_logged: "Total Logged",
   capacity_total_estimated: "Total Estimated",
   capacity_overloaded: "Overloaded",
@@ -429,7 +430,7 @@ export default {
   timesheet_save_success: "Timesheet saved",
   timesheet_no_issues: "No issues assigned for this week",
   timesheet_add_issue: "Add Issue",
-  work_management_description: "Manage your work and projects with ease.",
+  work_management_description: "Manage your work and teams/projects with ease.",
   documentation: "Documentation",
   message_support: "Message support",
   contact_sales: "Contact sales",
@@ -485,9 +486,9 @@ export default {
   updating: "Updating",
   create_new_issue: "Create new work item",
   editor_is_not_ready_to_discard_changes: "Editor is not ready to discard changes",
-  failed_to_move_issue_to_project: "Failed to move work item to project",
+  failed_to_move_issue_to_project: "Failed to move work item to team/project",
   create_more: "Create more",
-  add_to_project: "Add to project",
+  add_to_project: "Add to team/project",
   discard: "Discard",
   duplicate_issue_found: "Duplicate work item found",
   duplicate_issues_found: "Duplicate work items found",
@@ -532,7 +533,7 @@ export default {
   delete: "Delete",
   deleting: "Deleting",
   make_a_copy: "Make a copy",
-  move_to_project: "Move to project",
+  move_to_project: "Move to team/project",
   good: "Good",
   morning: "morning",
   afternoon: "afternoon",
@@ -575,7 +576,7 @@ export default {
   edited: "edited",
   bot: "Bot",
   settings_description:
-    "Manage your account, workspace, and project preferences all in one place. Switch between tabs to easily configure.",
+    "Manage your account, workspace, and team/project preferences all in one place. Switch between tabs to easily configure.",
   back_to_workspace: "Back to workspace",
   project_view: {
     sort_by: {
@@ -621,8 +622,8 @@ export default {
       quickstart_guide: "Your quickstart guide",
       not_right_now: "Not right now",
       create_project: {
-        title: "Create a project",
-        description: "Most things start with a project in Plane.",
+        title: "Create a team/project",
+        description: "Most things start with a team/project in Plane.",
         cta: "Get started",
       },
       invite_team: {
@@ -657,7 +658,7 @@ export default {
     recents: {
       title: "Recents",
       empty: {
-        project: "Your recent projects will appear here once you visit one.",
+        project: "Your recent teams/projects will appear here once you visit one.",
         page: "Your recent pages will appear here once you visit one.",
         issue: "Your recent work items will appear here once you visit one.",
         default: "You don't have any recents yet.",
@@ -706,8 +707,8 @@ export default {
     state_group: "State group",
     priorities: "Priorities",
     priority: "Priority",
-    team_project: "Team project",
-    project: "Project",
+    team_project: "Team team/project",
+    project: "Team/Project",
     cycle: "Cycle",
     cycles: "Cycles",
     module: "Module",
@@ -759,11 +760,11 @@ export default {
     general: "General",
     features: "Features",
     automation: "Automation",
-    project_name: "Project name",
-    project_id: "Project ID",
-    project_timezone: "Project Timezone",
+    project_name: "Team/Project name",
+    project_id: "Team/Project ID",
+    project_timezone: "Team/Project Timezone",
     created_on: "Created on",
-    update_project: "Update project",
+    update_project: "Update team/project",
     identifier_already_exists: "Identifier already exists",
     add_more: "Add more",
     defaults: "Defaults",
@@ -1161,7 +1162,7 @@ export default {
         "Are you sure you want to archive the work item? All your archived work items can be restored later.",
       success: {
         label: "Archive success",
-        message: "Your archives can be found in project archives.",
+        message: "Your archives can be found in team/project archives.",
       },
       failed: {
         message: "Work item could not be archived. Please try again.",
@@ -1170,7 +1171,7 @@ export default {
     restore: {
       success: {
         title: "Restore success",
-        message: "Your work item can be found in project work items.",
+        message: "Your work item can be found in team/project work items.",
       },
       failed: {
         message: "Work item could not be restored. Please try again.",
@@ -1284,9 +1285,9 @@ export default {
       },
     },
     errors: {
-      snooze_permission: "Only project admins can snooze/Un-snooze work items",
-      accept_permission: "Only project admins can accept work items",
-      decline_permission: "Only project admins can deny work items",
+      snooze_permission: "Only team/project admins can snooze/Un-snooze work items",
+      accept_permission: "Only team/project admins can accept work items",
+      decline_permission: "Only team/project admins can deny work items",
     },
     actions: {
       accept: "Accept",
@@ -1297,7 +1298,7 @@ export default {
       delete: "Delete",
       open: "Open work item",
       mark_as_duplicate: "Mark as duplicate",
-      move: "Move {value} to project work items",
+      move: "Move {value} to team/project work items",
     },
     source: {
       "in-app": "in-app",
@@ -1389,14 +1390,14 @@ export default {
   workspace_dashboard: {
     empty_state: {
       general: {
-        title: "Overview of your projects, activity, and metrics",
+        title: "Overview of your teams/projects, activity, and metrics",
         description:
-          "Welcome to Plane, we are excited to have you here. Create your first project and track your work items, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
+          "Welcome to Plane, we are excited to have you here. Create your first team/project and track your work items, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
         primary_button: {
-          text: "Build your first project",
+          text: "Build your first team/project",
           comic: {
-            title: "Everything starts with a project in Plane",
-            description: "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+            title: "Everything starts with a team/project in Plane",
+            description: "A team/project could be a product's roadmap, a marketing campaign, or launching a new car.",
           },
         },
       },
@@ -1408,7 +1409,7 @@ export default {
     open_tasks: "Total open tasks",
     error: "There was some error in fetching the data.",
     work_items_closed_in: "Work items closed in",
-    selected_projects: "Selected projects",
+    selected_projects: "Selected teams/projects",
     total_members: "Total Members",
     total_guests: "Total Guests",
     total_admins: "Total Admins",
@@ -1446,7 +1447,7 @@ export default {
     tabs: {
       scope_and_demand: "Scope and Demand",
       custom: "Custom Analytics",
-      projects_by_status: "Projects by status",
+      projects_by_status: "Teams/Projects by status",
       intake_trends: "Intake Trends",
       cycle_progress: "Cycle Progress",
       module_progress: "Module Progress",
@@ -1470,14 +1471,14 @@ export default {
       declined: "Declined",
       duplicate: "Duplicate",
     },
-    project_insights: "Project Insights",
-    summary_of_projects: "Summary of Projects",
-    all_projects: "All Projects",
+    project_insights: "Team/Project Insights",
+    summary_of_projects: "Summary of Teams/Projects",
+    all_projects: "All Teams/Projects",
     trend_on_charts: "Trend on charts",
-    active_projects: "Active Projects",
+    active_projects: "Active Teams/Projects",
     customized_insights: "Customized Insights",
     created_vs_resolved: "Created vs Resolved",
-    total_projects: "Total Projects",
+    total_projects: "Total Teams/Projects",
     total_users: "Total Users",
     total_work_items: "Total Work Items",
     total_intake: "Total Intake",
@@ -1497,9 +1498,9 @@ export default {
       general: {
         title: "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
         description:
-          "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
+          "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your team/project runs on time.",
         primary_button: {
-          text: "Start your first project",
+          text: "Start your first team/project",
           comic: {
             title: "Analytics works best with Cycles + Modules",
             description:
@@ -1510,9 +1511,9 @@ export default {
     },
   },
   workspace_projects: {
-    label: "{count, plural, one {Project} other {Projects}}",
+    label: "{count, plural, one {Team/Project} other {Teams/Projects}}",
     create: {
-      label: "Add Project",
+      label: "Add Team/Project",
     },
     network: {
       label: "Network",
@@ -1545,7 +1546,7 @@ export default {
       members_length: "Number of members",
     },
     scope: {
-      my_projects: "My projects",
+      my_projects: "My teams/projects",
       archived_projects: "Archived",
     },
     common: {
@@ -1553,34 +1554,34 @@ export default {
     },
     empty_state: {
       general: {
-        title: "No active projects",
+        title: "No active teams/projects",
         description:
-          "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
+          "Think of each team/project as the parent for goal-oriented work. Teams/Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new team/project or filter for archived teams/projects.",
         primary_button: {
-          text: "Start your first project",
+          text: "Start your first team/project",
           comic: {
-            title: "Everything starts with a project in Plane",
-            description: "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+            title: "Everything starts with a team/project in Plane",
+            description: "A team/project could be a product's roadmap, a marketing campaign, or launching a new car.",
           },
         },
       },
       no_projects: {
-        title: "No project",
-        description: "To create work items or manage your work, you need to create a project or be a part of one.",
+        title: "No team/project",
+        description: "To create work items or manage your work, you need to create a team/project or be a part of one.",
         primary_button: {
-          text: "Start your first project",
+          text: "Start your first team/project",
           comic: {
-            title: "Everything starts with a project in Plane",
-            description: "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+            title: "Everything starts with a team/project in Plane",
+            description: "A team/project could be a product's roadmap, a marketing campaign, or launching a new car.",
           },
         },
       },
       filter: {
-        title: "No matching projects",
-        description: "No projects detected with the matching criteria. \n Create a new project instead.",
+        title: "No matching teams/projects",
+        description: "No teams/projects detected with the matching criteria. \n Create a new team/project instead.",
       },
       search: {
-        description: "No projects detected with the matching criteria.\nCreate a new project instead",
+        description: "No teams/projects detected with the matching criteria.\nCreate a new team/project instead",
       },
     },
   },
@@ -1588,8 +1589,8 @@ export default {
     add_view: "Add view",
     empty_state: {
       "all-issues": {
-        title: "No work items in the project",
-        description: "First project done! Now, slice your work into trackable pieces with work items. Let's go!",
+        title: "No work items in the team/project",
+        description: "First team/project done! Now, slice your work into trackable pieces with work items. Let's go!",
         primary_button: {
           text: "Create new work item",
         },
@@ -1680,7 +1681,7 @@ export default {
     },
     activity: {
       heading: "Activity",
-      description: "Track your recent actions and changes across all projects and work items.",
+      description: "Track your recent actions and changes across all teams/projects and work items.",
     },
   },
   workspace_settings: {
@@ -1745,7 +1746,7 @@ export default {
           description: "Invite people to collaborate on your workspace.",
           button: "Send invitations",
           button_loading: "Sending invitations",
-          placeholder: "name@company.com",
+          placeholder: "Enter name or email",
           no_suggestions: "No members found",
           errors: {
             required: "We need an email address to invite them.",
@@ -1763,12 +1764,13 @@ export default {
       },
       exports: {
         heading: "Exports",
-        description: "Export your project data in various formats and access your export history with download links.",
+        description:
+          "Export your team/project data in various formats and access your export history with download links.",
         title: "Exports",
         exporting: "Exporting",
         previous_exports: "Previous exports",
         export_separate_files: "Export the data into separate files",
-        exporting_projects: "Exporting project",
+        exporting_projects: "Exporting team/project",
         format: "Format",
         filters_info: "Apply filters to export specific work items based on your criteria.",
         modal: {
@@ -1787,7 +1789,7 @@ export default {
       },
       webhooks: {
         heading: "Webhooks",
-        description: "Automate notifications to external services when project events occur.",
+        description: "Automate notifications to external services when team/project events occur.",
         title: "Webhooks",
         add_webhook: "Add webhook",
         modal: {
@@ -1953,36 +1955,36 @@ export default {
   },
   project_settings: {
     general: {
-      enter_project_id: "Enter project ID",
+      enter_project_id: "Enter team/project ID",
       please_select_a_timezone: "Please select a timezone",
       archive_project: {
-        title: "Archive project",
+        title: "Archive team/project",
         description:
-          "Archiving a project will unlist your project from your side navigation although you will still be able to access it from your projects page. You can restore the project or delete it whenever you want.",
-        button: "Archive project",
+          "Archiving a team/project will unlist your team/project from your side navigation although you will still be able to access it from your teams/projects page. You can restore the team/project or delete it whenever you want.",
+        button: "Archive team/project",
       },
       delete_project: {
-        title: "Delete project",
+        title: "Delete team/project",
         description:
-          "When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.",
-        button: "Delete my project",
+          "When deleting a team/project, all of the data and resources within that team/project will be permanently removed and cannot be recovered.",
+        button: "Delete my team/project",
       },
       toast: {
-        success: "Project updated successfully",
-        error: "Project could not be updated. Please try again.",
+        success: "Team/Project updated successfully",
+        error: "Team/Project could not be updated. Please try again.",
       },
     },
     members: {
       label: "Members",
-      project_lead: "Project lead",
+      project_lead: "Team/Project lead",
       default_assignee: "Default assignee",
       guest_super_permissions: {
         title: "Grant view access to all work items for guest users:",
-        sub_heading: "This will allow guests to have view access to all the project work items.",
+        sub_heading: "This will allow guests to have view access to all the team/project work items.",
       },
       invite_members: {
         title: "Invite members",
-        sub_heading: "Invite members to work on your project.",
+        sub_heading: "Invite members to work on your team/project.",
         select_co_worker: "Select co-worker",
       },
     },
@@ -2009,7 +2011,7 @@ export default {
       heading: "Estimates",
       description: "Set up estimation systems to track and communicate the effort required for each work item.",
       label: "Estimates",
-      title: "Enable estimates for my project",
+      title: "Enable estimates for my team/project",
       enable_description: "They help you in communicating complexity and workload of the team.",
       no_estimate: "No estimate",
       new: "New estimate system",
@@ -2036,7 +2038,7 @@ export default {
         updated: {
           success: {
             title: "Estimate modified",
-            message: "The estimate has been updated in your project.",
+            message: "The estimate has been updated in your team/project.",
           },
           error: {
             title: "Estimate modification failed",
@@ -2093,7 +2095,7 @@ export default {
     worklogs: {
       label: "Worklogs",
       heading: "Worklogs",
-      description: "View and manage worklogs logged in this project.",
+      description: "View and manage worklogs logged in this team/project.",
       empty_title: "No worklogs found",
       empty_description: "Members haven't logged any time yet.",
     },
@@ -2101,14 +2103,14 @@ export default {
       label: "Workflows",
       heading: "Workflows",
       description:
-        "Automate work item transitions and set rules to control how tasks move through your project pipeline.",
+        "Automate work item transitions and set rules to control how tasks move through your team/project pipeline.",
       live_toggle_label: "Live",
       live_toggle_on: "Workflow is active — transitions are enforced.",
       live_toggle_off: "Workflow is inactive — all transitions are allowed.",
       reset: "Reset workflow",
       reset_confirm_title: "Are you sure you want to reset this workflow?",
       reset_confirm_body:
-        "Once reset, all your custom workflow settings will be removed. You will have to set them again if you want them running for this project.",
+        "Once reset, all your custom workflow settings will be removed. You will have to set them again if you want them running for this team/project.",
       view_history: "View change history",
       allow_issue_creation: "Allow new work items",
       add_transition: "Add permitted state change",
@@ -2120,7 +2122,7 @@ export default {
       no_transitions: "No permitted transitions yet.",
       delete_transition_title: "Are you sure you want to delete this state-change rule?",
       delete_transition_body:
-        "Once deleted, you can't undo this change and you will have to set the rule again if you want it running for this project.",
+        "Once deleted, you can't undo this change and you will have to set the rule again if you want it running for this team/project.",
       blocker_title: "Transition not permitted",
       blocker_body: "Only {{reviewers}} can move this work item to {{state}}.",
       blocker_all_members: "All Members",
@@ -2141,7 +2143,7 @@ export default {
       label: "Automations",
       heading: "Automations",
       description:
-        "Configure automated actions to streamline your project management workflow and reduce manual tasks.",
+        "Configure automated actions to streamline your team/project management workflow and reduce manual tasks.",
       "auto-archive": {
         title: "Auto-archive closed work items",
         description: "Plane will auto archive work items that have been completed or canceled.",
@@ -2157,7 +2159,7 @@ export default {
     empty_state: {
       labels: {
         title: "No labels yet",
-        description: "Create labels to help organize and filter work items in you project.",
+        description: "Create labels to help organize and filter work items in you team/project.",
       },
       estimates: {
         title: "No estimate systems yet",
@@ -2169,44 +2171,44 @@ export default {
       cycles: {
         title: "Cycles",
         short_title: "Cycles",
-        description: "Schedule work in flexible periods that adapt to this project's unique rhythm and pace.",
+        description: "Schedule work in flexible periods that adapt to this team/project's unique rhythm and pace.",
         toggle_title: "Enable cycles",
         toggle_description: "Plan work in focused timeframes.",
       },
       modules: {
         title: "Modules",
         short_title: "Modules",
-        description: "Organize work into sub-projects with dedicated leads and assignees.",
+        description: "Organize work into sub-teams/projects with dedicated leads and assignees.",
         toggle_title: "Enable modules",
-        toggle_description: "Project members will be able to create and edit modules.",
+        toggle_description: "Team/Project members will be able to create and edit modules.",
       },
       views: {
         title: "Views",
         short_title: "Views",
         description: "Save custom sorts, filters, and display options or share them with your team.",
         toggle_title: "Enable views",
-        toggle_description: "Project members will be able to create and edit views.",
+        toggle_description: "Team/Project members will be able to create and edit views.",
       },
       pages: {
         title: "Pages",
         short_title: "Pages",
         description: "Create and edit free-form content; notes, docs, anything.",
         toggle_title: "Enable pages",
-        toggle_description: "Project members will be able to create and edit pages.",
+        toggle_description: "Team/Project members will be able to create and edit pages.",
       },
       intake: {
         title: "Intake",
         short_title: "Intake",
         description: "Let non-members share bugs, feedback, and suggestions; without disrupting your workflow.",
         toggle_title: "Enable intake",
-        toggle_description: "Let project members create in app intake requests.",
+        toggle_description: "Let team/project members create in app intake requests.",
       },
       time_tracking: {
         title: "Time Tracking",
         short_title: "Time Tracking",
         description: "Enable time tracking to allow members to log work hours on issues.",
         toggle_title: "Enable time tracking",
-        toggle_description: "Project members will be able to log work hours on issues.",
+        toggle_description: "Team/Project members will be able to log work hours on issues.",
       },
     },
   },
@@ -2304,7 +2306,7 @@ export default {
       general: {
         title: "Group and timebox your work in Cycles.",
         description:
-          "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
+          "Break work down by timeboxed chunks, work backwards from your team/project deadline to set dates, and make tangible progress as a team.",
         primary_button: {
           text: "Set your first cycle",
           comic: {
@@ -2336,7 +2338,7 @@ export default {
       },
       archived: {
         title: "No archived cycles yet",
-        description: "To tidy up your project, archive completed cycles. Find them here once archived.",
+        description: "To tidy up your team/project, archive completed cycles. Find them here once archived.",
       },
     },
   },
@@ -2345,7 +2347,7 @@ export default {
       no_issues: {
         title: "Create a work item and assign it to someone, even yourself",
         description:
-          "Think of work items as jobs, tasks, work, or JTBD. Which we like. A work item and its sub-work items are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes work items to move your project towards its goal.",
+          "Think of work items as jobs, tasks, work, or JTBD. Which we like. A work item and its sub-work items are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes work items to move your team/project towards its goal.",
         primary_button: {
           text: "Create your first work item",
           comic: {
@@ -2380,9 +2382,9 @@ export default {
     delete_module: "Delete module",
     empty_state: {
       general: {
-        title: "Map your project milestones to Modules and track aggregated work easily.",
+        title: "Map your team/project milestones to Modules and track aggregated work easily.",
         description:
-          "A group of work items that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
+          "A group of work items that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by team/project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
         primary_button: {
           text: "Build your first module",
           comic: {
@@ -2404,7 +2406,8 @@ export default {
       },
       archived: {
         title: "No archived Modules yet",
-        description: "To tidy up your project, archive completed or cancelled modules. Find them here once archived.",
+        description:
+          "To tidy up your team/project, archive completed or cancelled modules. Find them here once archived.",
       },
       sidebar: {
         in_active: "This module isn't active yet.",
@@ -2429,9 +2432,9 @@ export default {
   project_views: {
     empty_state: {
       general: {
-        title: "Save filtered views for your project. Create as many as you need",
+        title: "Save filtered views for your team/project. Create as many as you need",
         description:
-          "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
+          "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a team/project can see everyone’s views and choose whichever suits their needs best.",
         primary_button: {
           text: "Create your first view",
           comic: {
@@ -2457,7 +2460,7 @@ export default {
         title:
           "Write a note, a doc, or a full knowledge base. Get Galileo, Plane's AI assistant, to help you get started",
         description:
-          "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
+          "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your team/project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
         primary_button: {
           text: "Create your first page",
         },
@@ -2471,7 +2474,7 @@ export default {
       },
       public: {
         title: "No public pages yet",
-        description: "See pages shared with everyone in your project right here.",
+        description: "See pages shared with everyone in your team/project right here.",
         primary_button: {
           text: "Create your first page",
         },
@@ -2585,49 +2588,49 @@ export default {
   disabled_project: {
     empty_state: {
       inbox: {
-        title: "Intake is not enabled for the project.",
+        title: "Intake is not enabled for the team/project.",
         description:
-          "Intake helps you manage incoming requests to your project and add them as work items in your workflow. Enable intake from project settings to manage requests.",
+          "Intake helps you manage incoming requests to your team/project and add them as work items in your workflow. Enable intake from team/project settings to manage requests.",
         primary_button: {
           text: "Manage features",
         },
       },
       cycle: {
-        title: "Cycles is not enabled for this project.",
+        title: "Cycles is not enabled for this team/project.",
         description:
-          "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
+          "Break work down by timeboxed chunks, work backwards from your team/project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your team/project to start using them.",
         primary_button: {
           text: "Manage features",
         },
       },
       module: {
-        title: "Modules are not enabled for the project.",
+        title: "Modules are not enabled for the team/project.",
         description:
-          "Modules are the building blocks of your project. Enable modules from project settings to start using them.",
+          "Modules are the building blocks of your team/project. Enable modules from team/project settings to start using them.",
         primary_button: {
           text: "Manage features",
         },
       },
       page: {
-        title: "Pages are not enabled for the project.",
+        title: "Pages are not enabled for the team/project.",
         description:
-          "Pages are the building blocks of your project. Enable pages from project settings to start using them.",
+          "Pages are the building blocks of your team/project. Enable pages from team/project settings to start using them.",
         primary_button: {
           text: "Manage features",
         },
       },
       view: {
-        title: "Views are not enabled for the project.",
+        title: "Views are not enabled for the team/project.",
         description:
-          "Views are the building blocks of your project. Enable views from project settings to start using them.",
+          "Views are the building blocks of your team/project. Enable views from team/project settings to start using them.",
         primary_button: {
           text: "Manage features",
         },
       },
       time_tracking: {
-        title: "Time tracking is not enabled for this project.",
+        title: "Time tracking is not enabled for this team/project.",
         description:
-          "Time tracking allows members to log work hours on issues. Enable time tracking from project settings to start using it.",
+          "Time tracking allows members to log work hours on issues. Enable time tracking from team/project settings to start using it.",
         primary_button: {
           text: "Manage features",
         },
@@ -2723,7 +2726,7 @@ export default {
     },
     member: {
       title: "Member",
-      description: "Ability to read, write, edit, and delete entities inside projects, cycles, and modules",
+      description: "Ability to read, write, edit, and delete entities inside teams/projects, cycles, and modules",
     },
     admin: {
       title: "Admin",
@@ -2731,7 +2734,7 @@ export default {
     },
   },
   user_roles: {
-    product_or_project_manager: "Product / Project Manager",
+    product_or_project_manager: "Product / Team/Project Manager",
     development_or_engineering: "Development / Engineering",
     founder_or_executive: "Founder / Executive",
     freelancer_or_consultant: "Freelancer / Consultant",
@@ -2749,7 +2752,7 @@ export default {
     },
     jira: {
       title: "Jira",
-      description: "Import work items and epics from Jira projects and epics.",
+      description: "Import work items and epics from Jira teams/projects and epics.",
     },
   },
   exporter: {
@@ -2959,7 +2962,7 @@ export default {
       create_view: "New view",
       create_cycle: "New cycle",
       create_module: "New module",
-      create_project: "New project",
+      create_project: "New team/project",
       create_workspace: "New workspace",
     },
     navigation_actions: {
@@ -2968,8 +2971,8 @@ export default {
       nav_inbox: "Go to inbox",
       nav_your_work: "Go to your work",
       nav_account_settings: "Go to account settings",
-      open_project: "Open a project",
-      nav_projects_list: "Go to projects list",
+      open_project: "Open a team/project",
+      nav_projects_list: "Go to teams/projects list",
       nav_all_workspace_work_items: "Go to all work items",
       nav_assigned_workspace_work_items: "Go to assigned work items",
       nav_created_workspace_work_items: "Go to created work items",
@@ -2984,13 +2987,13 @@ export default {
       nav_project_cycles: "Go to cycles",
       open_project_module: "Open a module",
       nav_project_modules: "Go to modules",
-      open_project_view: "Open a project view",
-      nav_project_views: "Go to project views",
+      open_project_view: "Open a team/project view",
+      nav_project_views: "Go to team/project views",
       nav_project_pages: "Go to pages",
       nav_project_intake: "Go to intake",
-      nav_project_archives: "Go to project archives",
-      open_project_setting: "Open a project setting",
-      nav_project_settings: "Go to project settings",
+      nav_project_archives: "Go to team/project archives",
+      open_project_setting: "Open a team/project setting",
+      nav_project_settings: "Go to team/project settings",
     },
     account_actions: {
       sign_out: "Sign out",
@@ -3033,12 +3036,12 @@ export default {
     page_placeholders: {
       default: "Type a command or search",
       open_workspace: "Open a workspace",
-      open_project: "Open a project",
+      open_project: "Open a team/project",
       open_workspace_setting: "Open a workspace setting",
       open_project_cycle: "Open a cycle",
       open_project_module: "Open a module",
-      open_project_view: "Open a project view",
-      open_project_setting: "Open a project setting",
+      open_project_view: "Open a team/project view",
+      open_project_setting: "Open a team/project setting",
       update_work_item_state: "Change state",
       update_work_item_priority: "Change priority",
       update_work_item_assignee: "Assign to",
@@ -3077,8 +3080,8 @@ export default {
   personal: "Personal",
   accordion_navigation_control: "Accordion sidebar navigation",
   horizontal_navigation_bar: "Tabbed Navigation",
-  show_limited_projects_on_sidebar: "Show limited projects on sidebar",
-  enter_number_of_projects: "Enter number of projects",
+  show_limited_projects_on_sidebar: "Show limited teams/projects on sidebar",
+  enter_number_of_projects: "Enter number of teams/projects",
   pin: "Pin",
   unpin: "Unpin",
   // Worklog / Time Tracking
@@ -3122,7 +3125,7 @@ export default {
     backdate_limit: "Cannot log time more than 7 working days ago",
     reminder_title: "Time tracking reminder",
     reminder_message:
-      "Hey there! 👋 Just a friendly nudge — don't forget to log your working hours for today. Keeping your timesheet up to date helps the whole team stay on track. It only takes a minute, and your future self will thank you! Head over to your project and log your time before the day wraps up.",
+      "Hey there! 👋 Just a friendly nudge — don't forget to log your working hours for today. Keeping your timesheet up to date helps the whole team stay on track. It only takes a minute, and your future self will thank you! Head over to your team/project and log your time before the day wraps up.",
     reminder_toggle: "Worklog reminder",
     reminder_toggle_description: "Daily reminder at 5PM to log your time",
   },
@@ -3137,7 +3140,7 @@ export default {
     description: { label: "Description", placeholder: "Enter description" },
     parent: { label: "Parent department" },
     manager: { label: "Manager" },
-    linked_project: { label: "Linked project", link: "Link Project" },
+    linked_project: { label: "Linked team/project", link: "Link Team/Project" },
     empty: "No departments found. Add your first department to get started.",
     staff_count: "{count, plural, one {# member} other {# members}}",
     deleted: "Department deleted",
@@ -3164,7 +3167,7 @@ export default {
     phone: { placeholder: "Phone" },
     date_of_joining: { label: "Joined Date", placeholder: "Date of joining" },
     password: { placeholder: "Initial password" },
-    is_department_manager: "Department Manager (auto-join children projects)",
+    is_department_manager: "Department Manager (auto-join children teams/projects)",
     status: {
       label: "Status",
       active: "Active",
@@ -3191,8 +3194,8 @@ export default {
     name_label: "Name your dashboard",
     name_placeholder: "Dashboard name",
     description_label: "Description",
-    choose_projects: "Choose projects",
-    project_description: "Data from these projects will power this dashboard.",
+    choose_projects: "Choose teams/projects",
+    project_description: "Data from these teams/projects will power this dashboard.",
     cancel: "Cancel",
     create_dashboard: "Create dashboard",
     update_dashboard: "Update dashboard",
@@ -3239,7 +3242,7 @@ export default {
     empty: "No dashboards found",
     default: "Default",
     widgets: "{count} widgets",
-    projects: "{count} projects",
+    projects: "{count} teams/projects",
     name_required: "Name is required",
     max_characters: "Max {count} characters",
     // Form modal
@@ -3327,10 +3330,10 @@ export default {
     delete_confirm_prefix: "Are you sure you want to delete",
     delete_confirm_suffix: "? This action cannot be undone and all widgets will be permanently removed.",
     // Project picker in dashboard form
-    projects_label: "Projects",
-    projects_hint: "Select projects to scope widget data",
-    projects_selected: "project(s) selected",
-    no_projects: "No projects available in this workspace",
+    projects_label: "Teams/Projects",
+    projects_hint: "Select teams/projects to scope widget data",
+    projects_selected: "team/project(s) selected",
+    no_projects: "No teams/projects available in this workspace",
     // M2: line type options
     line_type: "Line Type",
     line_type_solid: "Solid",

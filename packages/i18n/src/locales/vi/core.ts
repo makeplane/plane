@@ -6,7 +6,7 @@
 
 export default {
   sidebar: {
-    projects: "Teams/Dự án",
+    projects: "Nhóm/Dự án",
     pages: "Trang",
     new_work_item: "Mục công việc mới",
     home: "Trang chủ",

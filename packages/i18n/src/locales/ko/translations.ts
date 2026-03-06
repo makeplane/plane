@@ -6,7 +6,7 @@
 
 export default {
   sidebar: {
-    projects: "Teams/프로젝트",
+    projects: "팀/프로젝트",
     pages: "페이지",
     new_work_item: "새 작업 항목",
     home: "홈",
@@ -286,11 +286,11 @@ export default {
   signing_out: "로그아웃 중",
   active_cycles: "활성 주기",
   active_cycles_description:
-    "프로젝트 전반의 주기를 모니터링하고, 고우선 작업 항목을 추적하며, 주의가 필요한 주기를 확대합니다.",
+    "팀/프로젝트 전반의 주기를 모니터링하고, 고우선 작업 항목을 추적하며, 주의가 필요한 주기를 확대합니다.",
   on_demand_snapshots_of_all_your_cycles: "모든 주기의 주문형 스냅샷",
   upgrade: "업그레이드",
   "10000_feet_view": "10,000피트 뷰",
-  "10000_feet_view_description": "모든 프로젝트의 주기를 한 번에 확인할 수 있습니다.",
+  "10000_feet_view_description": "모든 팀/프로젝트의 주기를 한 번에 확인할 수 있습니다.",
   get_snapshot_of_each_active_cycle: "각 활성 주기의 스냅샷을 얻으세요.",
   get_snapshot_of_each_active_cycle_description:
     "모든 활성 주기의 고수준 메트릭을 추적하고, 진행 상태를 확인하며, 마감일에 대한 범위를 파악합니다.",
@@ -303,7 +303,7 @@ export default {
   zoom_into_cycles_that_need_attention_description: "기대에 부합하지 않는 주기의 상태를 한 번에 조사합니다.",
   stay_ahead_of_blockers: "차단 요소를 미리 파악하세요.",
   stay_ahead_of_blockers_description:
-    "프로젝트 간의 문제를 파악하고 다른 뷰에서 명확하지 않은 주기 간의 종속성을 확인합니다.",
+    "팀/프로젝트 간의 문제를 파악하고 다른 뷰에서 명확하지 않은 주기 간의 종속성을 확인합니다.",
   analytics: "분석",
   dashboards: "대시보드",
   workspace_invites: "작업 공간 초대",
@@ -314,7 +314,7 @@ export default {
   new_issue: "새 작업 항목",
   your_work: "나의 작업",
   drafts: "초안",
-  projects: "Teams/프로젝트",
+  projects: "팀/프로젝트",
   views: "보기",
   workspace: "작업 공간",
   archives: "아카이브",
@@ -333,31 +333,31 @@ export default {
   favorite_removed_successfully: "즐겨찾기가 성공적으로 제거되었습니다",
   failed_to_create_favorite: "즐겨찾기 생성 실패",
   failed_to_rename_favorite: "즐겨찾기 이름 변경 실패",
-  project_link_copied_to_clipboard: "프로젝트 링크가 클립보드에 복사되었습니다",
+  project_link_copied_to_clipboard: "팀/프로젝트 링크가 클립보드에 복사되었습니다",
   link_copied: "링크 복사됨",
-  add_project: "프로젝트 추가",
-  create_project: "프로젝트 생성",
-  failed_to_remove_project_from_favorites: "프로젝트를 즐겨찾기에서 제거하지 못했습니다. 다시 시도해주세요.",
-  project_created_successfully: "프로젝트가 성공적으로 생성되었습니다",
+  add_project: "팀/프로젝트 추가",
+  create_project: "팀/프로젝트 생성",
+  failed_to_remove_project_from_favorites: "팀/프로젝트를 즐겨찾기에서 제거하지 못했습니다. 다시 시도해주세요.",
+  project_created_successfully: "팀/프로젝트가 성공적으로 생성되었습니다",
   project_created_successfully_description:
-    "프로젝트가 성공적으로 생성되었습니다. 이제 작업 항목을 추가할 수 있습니다.",
-  project_name_already_taken: "프로젝트 이름이 이미 사용 중입니다.",
-  project_identifier_already_taken: "프로젝트 식별자가 이미 사용 중입니다.",
-  project_cover_image_alt: "프로젝트 커버 이미지",
+    "팀/프로젝트가 성공적으로 생성되었습니다. 이제 작업 항목을 추가할 수 있습니다.",
+  project_name_already_taken: "팀/프로젝트 이름이 이미 사용 중입니다.",
+  project_identifier_already_taken: "팀/프로젝트 식별자가 이미 사용 중입니다.",
+  project_cover_image_alt: "팀/프로젝트 커버 이미지",
   name_is_required: "이름이 필요합니다",
   title_should_be_less_than_255_characters: "제목은 255자 미만이어야 합니다",
-  project_name: "프로젝트 이름",
-  project_id_must_be_at_least_1_character: "프로젝트 ID는 최소 1자 이상이어야 합니다",
-  project_id_must_be_at_most_5_characters: "프로젝트 ID는 최대 5자 이하여야 합니다",
-  project_id: "프로젝트 ID",
+  project_name: "팀/프로젝트 이름",
+  project_id_must_be_at_least_1_character: "팀/프로젝트 ID는 최소 1자 이상이어야 합니다",
+  project_id_must_be_at_most_5_characters: "팀/프로젝트 ID는 최대 5자 이하여야 합니다",
+  project_id: "팀/프로젝트 ID",
   project_id_tooltip_content: "작업 항목을 고유하게 식별하는 데 도움이 됩니다. 최대 10자.",
   description_placeholder: "설명",
   only_alphanumeric_non_latin_characters_allowed: "영숫자 및 비라틴 문자만 허용됩니다.",
-  project_id_is_required: "프로젝트 ID가 필요합니다",
+  project_id_is_required: "팀/프로젝트 ID가 필요합니다",
   project_id_allowed_char: "영숫자 및 비라틴 문자만 허용됩니다.",
-  project_id_min_char: "프로젝트 ID는 최소 1자 이상이어야 합니다",
-  project_id_max_char: "프로젝트 ID는 최대 10자 이하여야 합니다",
-  project_description_placeholder: "프로젝트 설명 입력",
+  project_id_min_char: "팀/프로젝트 ID는 최소 1자 이상이어야 합니다",
+  project_id_max_char: "팀/프로젝트 ID는 최대 10자 이하여야 합니다",
+  project_description_placeholder: "팀/프로젝트 설명 입력",
   select_network: "네트워크 선택",
   lead: "리드",
   date_range: "날짜 범위",
@@ -366,23 +366,23 @@ export default {
   accessible_only_by_invite: "초대에 의해서만 접근 가능",
   anyone_in_the_workspace_except_guests_can_join: "게스트를 제외한 작업 공간의 모든 사람이 참여할 수 있습니다",
   creating: "생성 중",
-  creating_project: "프로젝트 생성 중",
-  adding_project_to_favorites: "프로젝트를 즐겨찾기에 추가 중",
-  project_added_to_favorites: "프로젝트가 즐겨찾기에 추가되었습니다",
-  couldnt_add_the_project_to_favorites: "프로젝트를 즐겨찾기에 추가하지 못했습니다. 다시 시도해주세요.",
-  removing_project_from_favorites: "프로젝트를 즐겨찾기에서 제거 중",
-  project_removed_from_favorites: "프로젝트가 즐겨찾기에서 제거되었습니다",
-  couldnt_remove_the_project_from_favorites: "프로젝트를 즐겨찾기에서 제거하지 못했습니다. 다시 시도해주세요.",
+  creating_project: "팀/프로젝트 생성 중",
+  adding_project_to_favorites: "팀/프로젝트를 즐겨찾기에 추가 중",
+  project_added_to_favorites: "팀/프로젝트가 즐겨찾기에 추가되었습니다",
+  couldnt_add_the_project_to_favorites: "팀/프로젝트를 즐겨찾기에 추가하지 못했습니다. 다시 시도해주세요.",
+  removing_project_from_favorites: "팀/프로젝트를 즐겨찾기에서 제거 중",
+  project_removed_from_favorites: "팀/프로젝트가 즐겨찾기에서 제거되었습니다",
+  couldnt_remove_the_project_from_favorites: "팀/프로젝트를 즐겨찾기에서 제거하지 못했습니다. 다시 시도해주세요.",
   add_to_favorites: "즐겨찾기에 추가",
   remove_from_favorites: "즐겨찾기에서 제거",
-  publish_project: "프로젝트 게시",
+  publish_project: "팀/프로젝트 게시",
   publish: "게시",
   copy_link: "링크 복사",
-  leave_project: "프로젝트 떠나기",
-  join_the_project_to_rearrange: "프로젝트에 참여하여 재정렬",
+  leave_project: "팀/프로젝트 떠나기",
+  join_the_project_to_rearrange: "팀/프로젝트에 참여하여 재정렬",
   drag_to_rearrange: "드래그하여 재정렬",
   congrats: "축하합니다!",
-  open_project: "프로젝트 열기",
+  open_project: "팀/프로젝트 열기",
   issues: "작업 항목",
   cycles: "주기",
   modules: "모듈",
@@ -390,20 +390,20 @@ export default {
   intake: "접수",
   time_tracking: "시간 추적",
   work_management: "작업 관리",
-  projects_and_issues: "프로젝트 및 작업 항목",
-  projects_and_issues_description: "이 프로젝트에서 이들을 켜거나 끕니다.",
+  projects_and_issues: "팀/프로젝트 및 작업 항목",
+  projects_and_issues_description: "이 팀/프로젝트에서 이들을 켜거나 끕니다.",
   cycles_description:
-    "프로젝트별로 작업 시간을 설정하고 필요에 따라 기간을 조정하세요. 한 주기는 2주일일 수 있고, 다음은 1주일일 수 있습니다.",
-  modules_description: "작업을 전담 리더와 담당자가 있는 하위 프로젝트로 구성하세요.",
+    "팀/프로젝트별로 작업 시간을 설정하고 필요에 따라 기간을 조정하세요. 한 주기는 2주일일 수 있고, 다음은 1주일일 수 있습니다.",
+  modules_description: "작업을 전담 리더와 담당자가 있는 하위 팀/프로젝트로 구성하세요.",
   views_description: "사용자 정의 정렬, 필터 및 표시 옵션을 저장하거나 팀과 공유하세요.",
   pages_description: "자유 형식의 콘텐츠를 작성하고 편집하세요. 메모, 문서, 무엇이든 가능합니다.",
   intake_description: "비회원이 버그, 피드백, 제안을 공유할 수 있도록 하되, 워크플로우를 방해하지 않도록 합니다.",
-  time_tracking_description: "작업 항목 및 프로젝트에 소요된 시간을 기록하세요.",
+  time_tracking_description: "작업 항목 및 팀/프로젝트에 소요된 시간을 기록하세요.",
   my_timesheet: "내 타임시트",
-  project_analytics: "프로젝트 분석",
+  project_analytics: "팀/프로젝트 분석",
   capacity: "용량",
   capacity_dashboard: "용량 대시보드",
-  capacity_dashboard_description: "프로젝트 멤버당 추정 용량 대비 총 기록된 시간 확인",
+  capacity_dashboard_description: "팀/프로젝트 멤버당 추정 용량 대비 총 기록된 시간 확인",
   capacity_total_logged: "총 기록 시간",
   capacity_total_estimated: "총 추정 시간",
   capacity_overloaded: "과부하",
@@ -424,7 +424,7 @@ export default {
   timesheet_save_success: "타임시트 저장됨",
   timesheet_no_issues: "이번 주 할당된 이슈 없음",
   timesheet_add_issue: "이슈 추가",
-  work_management_description: "작업 및 프로젝트를 쉽게 관리합니다.",
+  work_management_description: "작업 및 팀/프로젝트를 쉽게 관리합니다.",
   documentation: "문서",
   message_support: "지원 메시지",
   contact_sales: "영업 문의",
@@ -479,9 +479,9 @@ export default {
   updating: "업데이트 중",
   create_new_issue: "새 작업 항목 생성",
   editor_is_not_ready_to_discard_changes: "편집기가 변경 사항을 폐기할 준비가 되지 않았습니다",
-  failed_to_move_issue_to_project: "작업 항목을 프로젝트로 이동하지 못했습니다",
+  failed_to_move_issue_to_project: "작업 항목을 팀/프로젝트로 이동하지 못했습니다",
   create_more: "더 많이 생성",
-  add_to_project: "프로젝트에 추가",
+  add_to_project: "팀/프로젝트에 추가",
   discard: "폐기",
   duplicate_issue_found: "중복된 작업 항목 발견",
   duplicate_issues_found: "중복된 작업 항목 발견",
@@ -526,7 +526,7 @@ export default {
   delete: "삭제",
   deleting: "삭제 중",
   make_a_copy: "복사본 만들기",
-  move_to_project: "프로젝트로 이동",
+  move_to_project: "팀/프로젝트로 이동",
   good: "좋은",
   morning: "아침",
   afternoon: "오후",
@@ -569,7 +569,7 @@ export default {
   edited: "수정됨",
   bot: "봇",
   settings_description:
-    "계정, 작업 공간 및 프로젝트 환경 설정을 한 곳에서 관리하세요. 탭을 전환하여 쉽게 구성할 수 있습니다.",
+    "계정, 작업 공간 및 팀/프로젝트 환경 설정을 한 곳에서 관리하세요. 탭을 전환하여 쉽게 구성할 수 있습니다.",
   back_to_workspace: "작업 공간으로 돌아가기",
   project_view: {
     sort_by: {
@@ -615,8 +615,8 @@ export default {
       quickstart_guide: "빠른 시작 가이드",
       not_right_now: "지금은 안 함",
       create_project: {
-        title: "프로젝트 생성",
-        description: "Plane에서 대부분의 작업은 프로젝트로 시작됩니다.",
+        title: "팀/프로젝트 생성",
+        description: "Plane에서 대부분의 작업은 팀/프로젝트로 시작됩니다.",
         cta: "시작하기",
       },
       invite_team: {
@@ -651,14 +651,14 @@ export default {
     recents: {
       title: "최근 항목",
       empty: {
-        project: "최근 방문한 프로젝트가 여기에 표시됩니다.",
+        project: "최근 방문한 팀/프로젝트가 여기에 표시됩니다.",
         page: "최근 방문한 페이지가 여기에 표시됩니다.",
         issue: "최근 방문한 작업 항목이 여기에 표시됩니다.",
         default: "아직 최근 항목이 없습니다.",
       },
       filters: {
         all: "모든",
-        projects: "Teams/프로젝트",
+        projects: "팀/프로젝트",
         pages: "페이지",
         issues: "작업 항목",
       },
@@ -700,8 +700,8 @@ export default {
     state_group: "상태 그룹",
     priorities: "우선순위",
     priority: "우선순위",
-    team_project: "팀 프로젝트",
-    project: "프로젝트",
+    team_project: "팀 팀/프로젝트",
+    project: "팀/프로젝트",
     cycle: "주기",
     cycles: "주기",
     module: "모듈",
@@ -750,11 +750,11 @@ export default {
     general: "일반",
     features: "기능",
     automation: "자동화",
-    project_name: "프로젝트 이름",
-    project_id: "프로젝트 ID",
-    project_timezone: "프로젝트 시간대",
+    project_name: "팀/프로젝트 이름",
+    project_id: "팀/프로젝트 ID",
+    project_timezone: "팀/프로젝트 시간대",
     created_on: "생성일",
-    update_project: "프로젝트 업데이트",
+    update_project: "팀/프로젝트 업데이트",
     identifier_already_exists: "식별자가 이미 존재합니다",
     add_more: "더 추가",
     defaults: "기본값",
@@ -909,7 +909,7 @@ export default {
     select: "선택",
     upgrade: "업그레이드",
     add_seats: "좌석 추가",
-    projects: "Teams/프로젝트",
+    projects: "팀/프로젝트",
     workspace: "작업 공간",
     workspaces: "작업 공간",
     team: "팀",
@@ -1154,7 +1154,7 @@ export default {
       confirm_message: "작업 항목을 아카이브하시겠습니까? 모든 아카이브된 작업 항목은 나중에 복원할 수 있습니다.",
       success: {
         label: "아카이브 성공",
-        message: "아카이브된 항목은 프로젝트 아카이브에서 찾을 수 있습니다.",
+        message: "아카이브된 항목은 팀/프로젝트 아카이브에서 찾을 수 있습니다.",
       },
       failed: {
         message: "작업 항목을 아카이브할 수 없습니다. 다시 시도해주세요.",
@@ -1163,7 +1163,7 @@ export default {
     restore: {
       success: {
         title: "복원 성공",
-        message: "작업 항목을 프로젝트 작업 항목에서 찾을 수 있습니다.",
+        message: "작업 항목을 팀/프로젝트 작업 항목에서 찾을 수 있습니다.",
       },
       failed: {
         message: "작업 항목을 복원할 수 없습니다. 다시 시도해주세요.",
@@ -1277,9 +1277,9 @@ export default {
       },
     },
     errors: {
-      snooze_permission: "프로젝트 관리자만 작업 항목을 미루거나 미루기 해제할 수 있습니다",
-      accept_permission: "프로젝트 관리자만 작업 항목을 수락할 수 있습니다",
-      decline_permission: "프로젝트 관리자만 작업 항목을 거절할 수 있습니다",
+      snooze_permission: "팀/프로젝트 관리자만 작업 항목을 미루거나 미루기 해제할 수 있습니다",
+      accept_permission: "팀/프로젝트 관리자만 작업 항목을 수락할 수 있습니다",
+      decline_permission: "팀/프로젝트 관리자만 작업 항목을 거절할 수 있습니다",
     },
     actions: {
       accept: "수락",
@@ -1290,7 +1290,7 @@ export default {
       delete: "삭제",
       open: "작업 항목 열기",
       mark_as_duplicate: "중복으로 표시",
-      move: "{value}을(를) 프로젝트 작업 항목으로 이동",
+      move: "{value}을(를) 팀/프로젝트 작업 항목으로 이동",
     },
     source: {
       "in-app": "앱 내",
@@ -1381,14 +1381,14 @@ export default {
   workspace_dashboard: {
     empty_state: {
       general: {
-        title: "프로젝트, 활동 및 메트릭 개요",
+        title: "팀/프로젝트, 활동 및 메트릭 개요",
         description:
-          "Plane에 오신 것을 환영합니다. 첫 번째 프로젝트를 생성하고 작업 항목을 추적하면 이 페이지가 진행 상황을 돕는 공간으로 변합니다. 관리자도 팀의 진행을 돕는 항목을 볼 수 있습니다.",
+          "Plane에 오신 것을 환영합니다. 첫 번째 팀/프로젝트를 생성하고 작업 항목을 추적하면 이 페이지가 진행 상황을 돕는 공간으로 변합니다. 관리자도 팀의 진행을 돕는 항목을 볼 수 있습니다.",
         primary_button: {
-          text: "첫 번째 프로젝트 생성",
+          text: "첫 번째 팀/프로젝트 생성",
           comic: {
-            title: "Plane에서 모든 것은 프로젝트로 시작됩니다",
-            description: "프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
+            title: "Plane에서 모든 것은 팀/프로젝트로 시작됩니다",
+            description: "팀/프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
           },
         },
       },
@@ -1400,7 +1400,7 @@ export default {
     open_tasks: "열린 작업 항목",
     error: "데이터를 가져오는 중 오류가 발생했습니다.",
     work_items_closed_in: "닫힌 작업 항목",
-    selected_projects: "선택된 프로젝트",
+    selected_projects: "선택된 팀/프로젝트",
     total_members: "총 멤버",
     total_guests: "총 게스트",
     total_admins: "총 관리자",
@@ -1438,7 +1438,7 @@ export default {
     tabs: {
       scope_and_demand: "범위 및 수요",
       custom: "맞춤형 분석",
-      projects_by_status: "상태별 프로젝트",
+      projects_by_status: "상태별 팀/프로젝트",
       intake_trends: "Intake 추세",
       cycle_progress: "주기 진행률",
       module_progress: "모듈 진행률",
@@ -1460,9 +1460,9 @@ export default {
       general: {
         title: "진행 상황, 워크로드 및 할당을 추적하세요. 트렌드를 파악하고 장애물을 제거하며 더 빠르게 작업하세요",
         description:
-          "범위 대 수요, 추정치 및 범위 크리프를 확인하세요. 팀 구성원과 팀의 성과를 파악하고 프로젝트가 제시간에 실행되도록 하세요.",
+          "범위 대 수요, 추정치 및 범위 크리프를 확인하세요. 팀 구성원과 팀의 성과를 파악하고 팀/프로젝트가 제시간에 실행되도록 하세요.",
         primary_button: {
-          text: "첫 번째 프로젝트 시작",
+          text: "첫 번째 팀/프로젝트 시작",
           comic: {
             title: "분석은 사이클 + 모듈과 함께 가장 잘 작동합니다",
             description:
@@ -1474,7 +1474,7 @@ export default {
     created_vs_resolved: "생성됨 vs 해결됨",
     customized_insights: "맞춤형 인사이트",
     backlog_work_items: "Draft {entity}",
-    active_projects: "활성 프로젝트",
+    active_projects: "활성 팀/프로젝트",
     trend_on_charts: "차트의 추세",
     completed: "완료됨",
     pending: "대기 중",
@@ -1489,12 +1489,12 @@ export default {
       declined: "거절됨",
       duplicate: "중복",
     },
-    all_projects: "모든 프로젝트",
-    summary_of_projects: "프로젝트 요약",
-    project_insights: "프로젝트 인사이트",
+    all_projects: "모든 팀/프로젝트",
+    summary_of_projects: "팀/프로젝트 요약",
+    project_insights: "팀/프로젝트 인사이트",
     started_work_items: "시작된 {entity}",
     total_work_items: "총 {entity}",
-    total_projects: "총 프로젝트 수",
+    total_projects: "총 팀/프로젝트 수",
     total_users: "총 사용자 수",
     total_intake: "총 수입",
     un_started_work_items: "시작되지 않은 {entity}",
@@ -1502,9 +1502,9 @@ export default {
     total: "총 {entity}",
   },
   workspace_projects: {
-    label: "{count, plural, one {프로젝트} other {프로젝트}}",
+    label: "{count, plural, one {팀/프로젝트} other {팀/프로젝트}}",
     create: {
-      label: "프로젝트 추가",
+      label: "팀/프로젝트 추가",
     },
     network: {
       label: "네트워크",
@@ -1537,7 +1537,7 @@ export default {
       members_length: "멤버 수",
     },
     scope: {
-      my_projects: "내 프로젝트",
+      my_projects: "내 팀/프로젝트",
       archived_projects: "아카이브",
     },
     common: {
@@ -1545,34 +1545,34 @@ export default {
     },
     empty_state: {
       general: {
-        title: "활성 프로젝트 없음",
+        title: "활성 팀/프로젝트 없음",
         description:
-          "각 프로젝트를 목표 지향 작업의 부모로 생각하세요. 프로젝트는 작업, 주기 및 모듈이 존재하는 곳이며, 동료와 함께 목표를 달성하는 데 도움이 됩니다. 새 프로젝트를 생성하거나 아카이브된 프로젝트를 필터링하세요.",
+          "각 팀/프로젝트를 목표 지향 작업의 부모로 생각하세요. 팀/프로젝트는 작업, 주기 및 모듈이 존재하는 곳이며, 동료와 함께 목표를 달성하는 데 도움이 됩니다. 새 팀/프로젝트를 생성하거나 아카이브된 팀/프로젝트를 필터링하세요.",
         primary_button: {
-          text: "첫 번째 프로젝트 시작",
+          text: "첫 번째 팀/프로젝트 시작",
           comic: {
-            title: "Plane에서 모든 것은 프로젝트로 시작됩니다",
-            description: "프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
+            title: "Plane에서 모든 것은 팀/프로젝트로 시작됩니다",
+            description: "팀/프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
           },
         },
       },
       no_projects: {
-        title: "프로젝트 없음",
-        description: "작업 항목을 생성하거나 작업을 관리하려면 프로젝트를 생성하거나 참여해야 합니다.",
+        title: "팀/프로젝트 없음",
+        description: "작업 항목을 생성하거나 작업을 관리하려면 팀/프로젝트를 생성하거나 참여해야 합니다.",
         primary_button: {
-          text: "첫 번째 프로젝트 시작",
+          text: "첫 번째 팀/프로젝트 시작",
           comic: {
-            title: "Plane에서 모든 것은 프로젝트로 시작됩니다",
-            description: "프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
+            title: "Plane에서 모든 것은 팀/프로젝트로 시작됩니다",
+            description: "팀/프로젝트는 제품 로드맵, 마케팅 캠페인 또는 새로운 자동차 출시일 수 있습니다.",
           },
         },
       },
       filter: {
-        title: "일치하는 프로젝트 없음",
-        description: "일치하는 프로젝트가 없습니다. 대신 새 프로젝트를 생성하세요.",
+        title: "일치하는 팀/프로젝트 없음",
+        description: "일치하는 팀/프로젝트가 없습니다. 대신 새 팀/프로젝트를 생성하세요.",
       },
       search: {
-        description: "일치하는 프로젝트가 없습니다. 대신 새 프로젝트를 생성하세요",
+        description: "일치하는 팀/프로젝트가 없습니다. 대신 새 팀/프로젝트를 생성하세요",
       },
     },
   },
@@ -1580,8 +1580,8 @@ export default {
     add_view: "뷰 추가",
     empty_state: {
       "all-issues": {
-        title: "프로젝트에 작업 항목 없음",
-        description: "첫 번째 프로젝트 완료! 이제 작업 항목을 추적 가능한 조각으로 나누세요. 시작합시다!",
+        title: "팀/프로젝트에 작업 항목 없음",
+        description: "첫 번째 팀/프로젝트 완료! 이제 작업 항목을 추적 가능한 조각으로 나누세요. 시작합시다!",
         primary_button: {
           text: "새 작업 항목 생성",
         },
@@ -1672,7 +1672,7 @@ export default {
     },
     activity: {
       heading: "활동",
-      description: "모든 프로젝트 및 작업 항목에 걸친 최근 활동과 변경 사항을 추적하세요.",
+      description: "모든 팀/프로젝트 및 작업 항목에 걸친 최근 활동과 변경 사항을 추적하세요.",
     },
   },
   workspace_settings: {
@@ -1737,7 +1737,8 @@ export default {
           description: "작업 공간에서 협업할 사람들을 초대하세요.",
           button: "초대 전송",
           button_loading: "초대 전송 중",
-          placeholder: "name@company.com",
+          placeholder: "이름 또는 이메일 입력",
+          no_suggestions: "멤버를 찾을 수 없습니다",
           errors: {
             required: "초대하려면 이메일 주소가 필요합니다.",
             invalid: "이메일이 유효하지 않습니다",
@@ -1944,36 +1945,36 @@ export default {
   },
   project_settings: {
     general: {
-      enter_project_id: "프로젝트 ID 입력",
+      enter_project_id: "팀/프로젝트 ID 입력",
       please_select_a_timezone: "시간대를 선택하세요",
       archive_project: {
-        title: "프로젝트 아카이브",
+        title: "팀/프로젝트 아카이브",
         description:
-          "프로젝트를 아카이브하면 사이드 내비게이션에서 프로젝트가 목록에서 제외되지만 프로젝트 페이지에서 여전히 접근할 수 있습니다. 언제든지 프로젝트를 복원하거나 삭제할 수 있습니다.",
-        button: "프로젝트 아카이브",
+          "팀/프로젝트를 아카이브하면 사이드 내비게이션에서 팀/프로젝트가 목록에서 제외되지만 팀/프로젝트 페이지에서 여전히 접근할 수 있습니다. 언제든지 팀/프로젝트를 복원하거나 삭제할 수 있습니다.",
+        button: "팀/프로젝트 아카이브",
       },
       delete_project: {
-        title: "프로젝트 삭제",
+        title: "팀/프로젝트 삭제",
         description:
-          "프로젝트를 삭제하면 해당 프로젝트 내의 모든 데이터와 리소스가 영구적으로 삭제되며 복구할 수 없습니다.",
-        button: "프로젝트 삭제",
+          "팀/프로젝트를 삭제하면 해당 팀/프로젝트 내의 모든 데이터와 리소스가 영구적으로 삭제되며 복구할 수 없습니다.",
+        button: "팀/프로젝트 삭제",
       },
       toast: {
-        success: "프로젝트가 성공적으로 업데이트되었습니다",
-        error: "프로젝트를 업데이트할 수 없습니다. 다시 시도해주세요.",
+        success: "팀/프로젝트가 성공적으로 업데이트되었습니다",
+        error: "팀/프로젝트를 업데이트할 수 없습니다. 다시 시도해주세요.",
       },
     },
     members: {
       label: "멤버",
-      project_lead: "프로젝트 리드",
+      project_lead: "팀/프로젝트 리드",
       default_assignee: "기본 담당자",
       guest_super_permissions: {
         title: "게스트 사용자에게 모든 작업 항목에 대한 보기 권한 부여:",
-        sub_heading: "이렇게 하면 게스트가 모든 프로젝트 작업 항목에 대한 보기 권한을 갖게 됩니다.",
+        sub_heading: "이렇게 하면 게스트가 모든 팀/프로젝트 작업 항목에 대한 보기 권한을 갖게 됩니다.",
       },
       invite_members: {
         title: "멤버 초대",
-        sub_heading: "프로젝트에서 작업할 멤버를 초대하세요.",
+        sub_heading: "팀/프로젝트에서 작업할 멤버를 초대하세요.",
         select_co_worker: "동료 선택",
       },
     },
@@ -1999,7 +2000,7 @@ export default {
     estimates: {
       heading: "Estimates",
       label: "추정",
-      title: "프로젝트 추정 활성화",
+      title: "팀/프로젝트 추정 활성화",
       enable_description: "They help you in communicating complexity and workload of the team.",
       description: "팀의 복잡성과 작업량을 전달하는 데 도움이 됩니다.",
       no_estimate: "추정 없음",
@@ -2027,7 +2028,7 @@ export default {
         updated: {
           success: {
             title: "추정 수정됨",
-            message: "프로젝트의 추정이 업데이트되었습니다.",
+            message: "팀/프로젝트의 추정이 업데이트되었습니다.",
           },
           error: {
             title: "추정 수정 실패",
@@ -2084,7 +2085,7 @@ export default {
     worklogs: {
       label: "작업 일지",
       heading: "작업 일지",
-      description: "프로젝트에서 기록된 작업 일지를 조회하고 관리합니다.",
+      description: "팀/프로젝트에서 기록된 작업 일지를 조회하고 관리합니다.",
       empty_title: "작업 일지를 찾을 수 없습니다",
       empty_description: "아직 기록된 작업 시간이 없습니다.",
     },
@@ -2092,7 +2093,7 @@ export default {
       label: "워크플로우",
       heading: "워크플로우",
       description:
-        "작업 항목 전환을 자동화하고 프로젝트 파이프라인을 통해 작업이 이동하는 방식을 제어하는 규칙을 설정합니다.",
+        "작업 항목 전환을 자동화하고 팀/프로젝트 파이프라인을 통해 작업이 이동하는 방식을 제어하는 규칙을 설정합니다.",
       live_toggle_label: "활성화",
       live_toggle_on: "워크플로우가 활성화되어 있습니다 — 전환이 적용됩니다.",
       live_toggle_off: "워크플로우가 비활성화되어 있습니다 — 모든 전환이 허용됩니다.",
@@ -2146,7 +2147,7 @@ export default {
     empty_state: {
       labels: {
         title: "레이블 없음",
-        description: "프로젝트에서 작업 항목을 구성하고 필터링하는 데 도움이 되는 레이블을 생성하세요.",
+        description: "팀/프로젝트에서 작업 항목을 구성하고 필터링하는 데 도움이 되는 레이블을 생성하세요.",
       },
       estimates: {
         title: "추정 시스템 없음",
@@ -2158,44 +2159,44 @@ export default {
       cycles: {
         title: "사이클",
         short_title: "사이클",
-        description: "이 프로젝트의 고유한 리듬과 속도에 적응하는 유연한 기간으로 작업을 예약합니다.",
+        description: "이 팀/프로젝트의 고유한 리듬과 속도에 적응하는 유연한 기간으로 작업을 예약합니다.",
         toggle_title: "사이클 활성화",
         toggle_description: "집중된 기간에 작업을 계획합니다.",
       },
       modules: {
         title: "모듈",
         short_title: "모듈",
-        description: "전담 리더와 담당자가 있는 하위 프로젝트로 작업을 구성합니다.",
+        description: "전담 리더와 담당자가 있는 하위 팀/프로젝트로 작업을 구성합니다.",
         toggle_title: "모듈 활성화",
-        toggle_description: "프로젝트 멤버가 모듈을 생성하고 편집할 수 있습니다.",
+        toggle_description: "팀/프로젝트 멤버가 모듈을 생성하고 편집할 수 있습니다.",
       },
       views: {
         title: "보기",
         short_title: "보기",
         description: "사용자 정의 정렬, 필터 및 표시 옵션을 저장하거나 팀과 공유합니다.",
         toggle_title: "보기 활성화",
-        toggle_description: "프로젝트 멤버가 보기를 생성하고 편집할 수 있습니다.",
+        toggle_description: "팀/프로젝트 멤버가 보기를 생성하고 편집할 수 있습니다.",
       },
       pages: {
         title: "페이지",
         short_title: "페이지",
         description: "자유 형식 콘텐츠를 생성하고 편집합니다: 메모, 문서, 무엇이든.",
         toggle_title: "페이지 활성화",
-        toggle_description: "프로젝트 멤버가 페이지를 생성하고 편집할 수 있습니다.",
+        toggle_description: "팀/프로젝트 멤버가 페이지를 생성하고 편집할 수 있습니다.",
       },
       intake: {
         title: "접수",
         short_title: "접수",
         description: "워크플로를 방해하지 않고 비회원이 버그, 피드백 및 제안을 공유할 수 있도록 합니다.",
         toggle_title: "접수 활성화",
-        toggle_description: "프로젝트 멤버가 앱 내에서 접수 요청을 생성할 수 있도록 허용합니다.",
+        toggle_description: "팀/프로젝트 멤버가 앱 내에서 접수 요청을 생성할 수 있도록 허용합니다.",
       },
       time_tracking: {
         title: "시간 추적",
         short_title: "시간 추적",
         description: "멤버가 이슈에 작업 시간을 기록할 수 있도록 시간 추적을 활성화합니다.",
         toggle_title: "시간 추적 활성화",
-        toggle_description: "프로젝트 멤버가 이슈에 작업 시간을 기록할 수 있습니다.",
+        toggle_description: "팀/프로젝트 멤버가 이슈에 작업 시간을 기록할 수 있습니다.",
       },
     },
   },
@@ -2292,7 +2293,7 @@ export default {
       general: {
         title: "작업을 주기로 그룹화하고 시간 상자화하세요.",
         description:
-          "작업을 시간 상자로 나누고, 프로젝트 마감일에서 역으로 날짜를 설정하며, 팀으로서 실질적인 진전을 이루세요.",
+          "작업을 시간 상자로 나누고, 팀/프로젝트 마감일에서 역으로 날짜를 설정하며, 팀으로서 실질적인 진전을 이루세요.",
         primary_button: {
           text: "첫 번째 주기 설정",
           comic: {
@@ -2324,7 +2325,8 @@ export default {
       },
       archived: {
         title: "아카이브된 주기 없음",
-        description: "프로젝트를 정리하려면 완료된 주기를 아카이브하세요. 아카이브된 주기는 여기에서 찾을 수 있습니다.",
+        description:
+          "팀/프로젝트를 정리하려면 완료된 주기를 아카이브하세요. 아카이브된 주기는 여기에서 찾을 수 있습니다.",
       },
     },
   },
@@ -2333,7 +2335,7 @@ export default {
       no_issues: {
         title: "작업 항목을 생성하고 누군가에게 할당하세요, 심지어 자신에게도",
         description:
-          "작업 항목을 작업, 작업, 작업 또는 JTBD로 생각하세요. 작업 항목과 하위 작업 항목은 일반적으로 팀원에게 할당된 시간 기반 작업입니다. 팀은 작업 항목을 생성, 할당 및 완료하여 프로젝트 목표를 향해 나아갑니다.",
+          "작업 항목을 작업, 작업, 작업 또는 JTBD로 생각하세요. 작업 항목과 하위 작업 항목은 일반적으로 팀원에게 할당된 시간 기반 작업입니다. 팀은 작업 항목을 생성, 할당 및 완료하여 팀/프로젝트 목표를 향해 나아갑니다.",
         primary_button: {
           text: "첫 번째 작업 항목 생성",
           comic: {
@@ -2368,9 +2370,9 @@ export default {
     delete_module: "모듈 삭제",
     empty_state: {
       general: {
-        title: "프로젝트 마일스톤을 모듈로 매핑하고 집계된 작업을 쉽게 추적하세요.",
+        title: "팀/프로젝트 마일스톤을 모듈로 매핑하고 집계된 작업을 쉽게 추적하세요.",
         description:
-          "논리적이고 계층적인 부모에 속하는 작업 항목 그룹이 모듈을 형성합니다. 이를 프로젝트 마일스톤별로 작업을 추적하는 방법으로 생각하세요. 모듈은 자체 기간과 마감일을 가지며, 마일스톤에 얼마나 가까운지 또는 먼지를 확인하는 데 도움이 되는 분석을 제공합니다.",
+          "논리적이고 계층적인 부모에 속하는 작업 항목 그룹이 모듈을 형성합니다. 이를 팀/프로젝트 마일스톤별로 작업을 추적하는 방법으로 생각하세요. 모듈은 자체 기간과 마감일을 가지며, 마일스톤에 얼마나 가까운지 또는 먼지를 확인하는 데 도움이 되는 분석을 제공합니다.",
         primary_button: {
           text: "첫 번째 모듈 생성",
           comic: {
@@ -2392,7 +2394,7 @@ export default {
       archived: {
         title: "아카이브된 모듈 없음",
         description:
-          "프로젝트를 정리하려면 완료되거나 취소된 모듈을 아카이브하세요. 아카이브된 모듈은 여기에서 찾을 수 있습니다.",
+          "팀/프로젝트를 정리하려면 완료되거나 취소된 모듈을 아카이브하세요. 아카이브된 모듈은 여기에서 찾을 수 있습니다.",
       },
       sidebar: {
         in_active: "이 모듈은 아직 활성화되지 않았습니다.",
@@ -2417,9 +2419,9 @@ export default {
   project_views: {
     empty_state: {
       general: {
-        title: "프로젝트에 대한 필터링된 뷰를 저장하세요. 필요한 만큼 생성하세요",
+        title: "팀/프로젝트에 대한 필터링된 뷰를 저장하세요. 필요한 만큼 생성하세요",
         description:
-          "뷰는 자주 사용하는 필터 또는 쉽게 접근하고 싶은 필터 세트입니다. 프로젝트의 모든 동료가 모든 사람의 뷰를 보고 자신에게 가장 적합한 뷰를 선택할 수 있습니다.",
+          "뷰는 자주 사용하는 필터 또는 쉽게 접근하고 싶은 필터 세트입니다. 팀/프로젝트의 모든 동료가 모든 사람의 뷰를 보고 자신에게 가장 적합한 뷰를 선택할 수 있습니다.",
         primary_button: {
           text: "첫 번째 뷰 생성",
           comic: {
@@ -2444,7 +2446,7 @@ export default {
       general: {
         title: "메모, 문서 또는 전체 지식 기반을 작성하세요. Galileo, Plane의 AI 도우미가 시작을 도와줍니다",
         description:
-          "페이지는 Plane에서 생각을 정리하는 공간입니다. 회의 메모를 작성하고, 쉽게 형식을 지정하고, 작업 항목을 포함하고, 구성 요소 라이브러리를 사용하여 레이아웃을 작성하고, 모든 것을 프로젝트의 맥락에서 유지하세요. 문서를 빠르게 작성하려면 단축키나 버튼 클릭으로 Galileo, Plane의 AI를 호출하세요.",
+          "페이지는 Plane에서 생각을 정리하는 공간입니다. 회의 메모를 작성하고, 쉽게 형식을 지정하고, 작업 항목을 포함하고, 구성 요소 라이브러리를 사용하여 레이아웃을 작성하고, 모든 것을 팀/프로젝트의 맥락에서 유지하세요. 문서를 빠르게 작성하려면 단축키나 버튼 클릭으로 Galileo, Plane의 AI를 호출하세요.",
         primary_button: {
           text: "첫 번째 페이지 생성",
         },
@@ -2458,7 +2460,7 @@ export default {
       },
       public: {
         title: "공개 페이지 없음",
-        description: "프로젝트의 모든 사람과 공유된 페이지를 여기에서 확인하세요.",
+        description: "팀/프로젝트의 모든 사람과 공유된 페이지를 여기에서 확인하세요.",
         primary_button: {
           text: "첫 번째 페이지 생성",
         },
@@ -2572,46 +2574,46 @@ export default {
   disabled_project: {
     empty_state: {
       inbox: {
-        title: "프로젝트에 접수가 활성화되지 않았습니다.",
+        title: "팀/프로젝트에 접수가 활성화되지 않았습니다.",
         description:
-          "접수는 프로젝트로 들어오는 요청을 관리하고 이를 워크플로우의 작업 항목으로 추가하는 데 도움이 됩니다. 프로젝트 설정에서 접수를 활성화하여 요청을 관리하세요.",
+          "접수는 팀/프로젝트로 들어오는 요청을 관리하고 이를 워크플로우의 작업 항목으로 추가하는 데 도움이 됩니다. 팀/프로젝트 설정에서 접수를 활성화하여 요청을 관리하세요.",
         primary_button: {
           text: "기능 관리",
         },
       },
       cycle: {
-        title: "이 프로젝트에 주기가 활성화되지 않았습니다.",
+        title: "이 팀/프로젝트에 주기가 활성화되지 않았습니다.",
         description:
-          "작업을 시간 상자로 나누고, 프로젝트 마감일에서 역으로 날짜를 설정하며, 팀으로서 실질적인 진전을 이루세요. 프로젝트에 주기 기능을 활성화하여 사용하세요.",
+          "작업을 시간 상자로 나누고, 팀/프로젝트 마감일에서 역으로 날짜를 설정하며, 팀으로서 실질적인 진전을 이루세요. 팀/프로젝트에 주기 기능을 활성화하여 사용하세요.",
         primary_button: {
           text: "기능 관리",
         },
       },
       module: {
-        title: "프로젝트에 모듈이 활성화되지 않았습니다.",
-        description: "모듈은 프로젝트의 구성 요소입니다. 프로젝트 설정에서 모듈을 활성화하여 사용하세요.",
+        title: "팀/프로젝트에 모듈이 활성화되지 않았습니다.",
+        description: "모듈은 팀/프로젝트의 구성 요소입니다. 팀/프로젝트 설정에서 모듈을 활성화하여 사용하세요.",
         primary_button: {
           text: "기능 관리",
         },
       },
       page: {
-        title: "프로젝트에 페이지가 활성화되지 않았습니다.",
-        description: "페이지는 프로젝트의 구성 요소입니다. 프로젝트 설정에서 페이지를 활성화하여 사용하세요.",
+        title: "팀/프로젝트에 페이지가 활성화되지 않았습니다.",
+        description: "페이지는 팀/프로젝트의 구성 요소입니다. 팀/프로젝트 설정에서 페이지를 활성화하여 사용하세요.",
         primary_button: {
           text: "기능 관리",
         },
       },
       view: {
-        title: "프로젝트에 뷰가 활성화되지 않았습니다.",
-        description: "뷰는 프로젝트의 구성 요소입니다. 프로젝트 설정에서 뷰를 활성화하여 사용하세요.",
+        title: "팀/프로젝트에 뷰가 활성화되지 않았습니다.",
+        description: "뷰는 팀/프로젝트의 구성 요소입니다. 팀/프로젝트 설정에서 뷰를 활성화하여 사용하세요.",
         primary_button: {
           text: "기능 관리",
         },
       },
       time_tracking: {
-        title: "이 프로젝트에 시간 추적이 활성화되지 않았습니다.",
+        title: "이 팀/프로젝트에 시간 추적이 활성화되지 않았습니다.",
         description:
-          "시간 추적을 통해 멤버가 작업 항목에 근무 시간을 기록할 수 있습니다. 프로젝트 설정에서 시간 추적을 활성화하여 사용하세요.",
+          "시간 추적을 통해 멤버가 작업 항목에 근무 시간을 기록할 수 있습니다. 팀/프로젝트 설정에서 시간 추적을 활성화하여 사용하세요.",
         primary_button: {
           text: "기능 관리",
         },
@@ -2706,7 +2708,7 @@ export default {
     },
     member: {
       title: "멤버",
-      description: "프로젝트, 주기 및 모듈 내에서 엔티티를 읽고, 쓰고, 편집하고, 삭제할 수 있는 권한",
+      description: "팀/프로젝트, 주기 및 모듈 내에서 엔티티를 읽고, 쓰고, 편집하고, 삭제할 수 있는 권한",
     },
     admin: {
       title: "관리자",
@@ -2714,7 +2716,7 @@ export default {
     },
   },
   user_roles: {
-    product_or_project_manager: "제품 / 프로젝트 관리자",
+    product_or_project_manager: "제품 / 팀/프로젝트 관리자",
     development_or_engineering: "개발 / 엔지니어링",
     founder_or_executive: "창립자 / 임원",
     freelancer_or_consultant: "프리랜서 / 컨설턴트",
@@ -2732,7 +2734,7 @@ export default {
     },
     jira: {
       title: "Jira",
-      description: "Jira 프로젝트 및 에픽에서 작업 항목과 에픽을 가져옵니다.",
+      description: "Jira 팀/프로젝트 및 에픽에서 작업 항목과 에픽을 가져옵니다.",
     },
   },
   exporter: {
@@ -2942,7 +2944,7 @@ export default {
       create_view: "새 보기",
       create_cycle: "새 주기",
       create_module: "새 모듈",
-      create_project: "새 프로젝트",
+      create_project: "새 팀/프로젝트",
       create_workspace: "새 작업 공간",
     },
     navigation_actions: {
@@ -2951,8 +2953,8 @@ export default {
       nav_inbox: "받은 편지함으로 이동",
       nav_your_work: "나의 작업으로 이동",
       nav_account_settings: "계정 설정으로 이동",
-      open_project: "프로젝트 열기",
-      nav_projects_list: "프로젝트 목록으로 이동",
+      open_project: "팀/프로젝트 열기",
+      nav_projects_list: "팀/프로젝트 목록으로 이동",
       nav_all_workspace_work_items: "모든 작업 항목으로 이동",
       nav_assigned_workspace_work_items: "지정된 작업 항목으로 이동",
       nav_created_workspace_work_items: "생성한 작업 항목으로 이동",
@@ -2967,13 +2969,13 @@ export default {
       nav_project_cycles: "주기로 이동",
       open_project_module: "모듈 열기",
       nav_project_modules: "모듈로 이동",
-      open_project_view: "프로젝트 보기 열기",
-      nav_project_views: "프로젝트 보기로 이동",
+      open_project_view: "팀/프로젝트 보기 열기",
+      nav_project_views: "팀/프로젝트 보기로 이동",
       nav_project_pages: "페이지로 이동",
       nav_project_intake: "접수로 이동",
-      nav_project_archives: "프로젝트 보관함으로 이동",
-      open_project_setting: "프로젝트 설정 열기",
-      nav_project_settings: "프로젝트 설정으로 이동",
+      nav_project_archives: "팀/프로젝트 보관함으로 이동",
+      open_project_setting: "팀/프로젝트 설정 열기",
+      nav_project_settings: "팀/프로젝트 설정으로 이동",
     },
     account_actions: {
       sign_out: "로그아웃",
@@ -3016,12 +3018,12 @@ export default {
     page_placeholders: {
       default: "명령어를 입력하거나 검색",
       open_workspace: "작업 공간 열기",
-      open_project: "프로젝트 열기",
+      open_project: "팀/프로젝트 열기",
       open_workspace_setting: "작업 공간 설정 열기",
       open_project_cycle: "주기 열기",
       open_project_module: "모듈 열기",
-      open_project_view: "프로젝트 보기 열기",
-      open_project_setting: "프로젝트 설정 열기",
+      open_project_view: "팀/프로젝트 보기 열기",
+      open_project_setting: "팀/프로젝트 설정 열기",
       update_work_item_state: "상태 변경",
       update_work_item_priority: "우선순위 변경",
       update_work_item_assignee: "담당자 지정",
@@ -3060,8 +3062,8 @@ export default {
   personal: "개인",
   accordion_navigation_control: "아코디언 사이드바 탐색",
   horizontal_navigation_bar: "탭 탐색",
-  show_limited_projects_on_sidebar: "사이드바에 제한된 프로젝트 표시",
-  enter_number_of_projects: "프로젝트 수 입력",
+  show_limited_projects_on_sidebar: "사이드바에 제한된 팀/프로젝트 표시",
+  enter_number_of_projects: "팀/프로젝트 수 입력",
   pin: "고정",
   unpin: "고정 해제",
   // Worklog / Time Tracking
@@ -3105,7 +3107,7 @@ export default {
     backdate_limit: "7 영업일 이전의 날짜에 시간을 기록할 수 없습니다",
     reminder_title: "근무 시간 기록 알림",
     reminder_message:
-      "안녕하세요! 👋 오늘 하루도 수고 많으셨습니다. 혹시 오늘의 근무 시간을 아직 기록하지 않으셨나요? 타임시트를 꾸준히 업데이트하면 팀 전체가 더 효율적으로 협업할 수 있어요. 잠깐이면 되니까, 퇴근 전에 프로젝트에서 시간을 기록해 주세요!",
+      "안녕하세요! 👋 오늘 하루도 수고 많으셨습니다. 혹시 오늘의 근무 시간을 아직 기록하지 않으셨나요? 타임시트를 꾸준히 업데이트하면 팀 전체가 더 효율적으로 협업할 수 있어요. 잠깐이면 되니까, 퇴근 전에 팀/프로젝트에서 시간을 기록해 주세요!",
     reminder_toggle: "작업 로그 알림",
     reminder_toggle_description: "매일 오후 5시에 시간 기록 알림 받기",
   },
@@ -3120,7 +3122,7 @@ export default {
     description: { label: "설명", placeholder: "설명을 입력하세요" },
     parent: { label: "상위 부서" },
     manager: { label: "관리자" },
-    linked_project: { label: "연결된 프로젝트", link: "프로젝트 연결" },
+    linked_project: { label: "연결된 팀/프로젝트", link: "팀/프로젝트 연결" },
     empty: "부서가 없습니다. 첫 번째 부서를 추가하여 시작하세요.",
     staff_count: "{count, plural, one {# 명} other {# 명}}",
     deleted: "부서 삭제됨",
@@ -3147,7 +3149,7 @@ export default {
     phone: { placeholder: "전화번호" },
     date_of_joining: { label: "입사일", placeholder: "입사일" },
     password: { placeholder: "초기 비밀번호" },
-    is_department_manager: "부서 관리자 (하위 프로젝트 자동 참여)",
+    is_department_manager: "부서 관리자 (하위 팀/프로젝트 자동 참여)",
     status: {
       label: "상태",
       active: "활성",
@@ -3222,7 +3224,7 @@ export default {
     empty: "대시보드가 없습니다",
     default: "기본",
     widgets: "{count}개 위젯",
-    projects: "{count}개 프로젝트",
+    projects: "{count}개 팀/프로젝트",
     name_required: "이름이 필요합니다",
     max_characters: "최대 {count}자",
     // Form modal
@@ -3309,10 +3311,10 @@ export default {
     delete_confirm_prefix: "삭제하시겠습니까?",
     delete_confirm_suffix: "? 이 작업은 되돌릴 수 없으며 모든 위젯이 영구적으로 삭제됩니다.",
     // Project picker in dashboard form
-    projects_label: "프로젝트",
-    projects_hint: "위젯 데이터 범위를 지정할 프로젝트를 선택하세요",
-    projects_selected: "개 프로젝트 선택됨",
-    no_projects: "이 워크스페이스에 사용 가능한 프로젝트가 없습니다",
+    projects_label: "팀/프로젝트",
+    projects_hint: "위젯 데이터 범위를 지정할 팀/프로젝트를 선택하세요",
+    projects_selected: "개 팀/프로젝트 선택됨",
+    no_projects: "이 워크스페이스에 사용 가능한 팀/프로젝트가 없습니다",
     // M2: line type options
     line_type: "선 유형",
     line_type_solid: "실선",

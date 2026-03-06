@@ -6,7 +6,7 @@
 
 export default {
   sidebar: {
-    projects: "Teams/Dự án",
+    projects: "Nhóm/Dự án",
     pages: "Trang",
     new_work_item: "Mục công việc mới",
     home: "Trang chủ",
@@ -290,12 +290,12 @@ export default {
   signing_out: "Đang đăng xuất",
   active_cycles: "Chu kỳ hoạt động",
   active_cycles_description:
-    "Theo dõi chu kỳ trên các dự án, theo dõi mục công việc ưu tiên cao và chú ý đến các chu kỳ cần quan tâm.",
+    "Theo dõi chu kỳ trên các nhóm/dự án, theo dõi mục công việc ưu tiên cao và chú ý đến các chu kỳ cần quan tâm.",
   on_demand_snapshots_of_all_your_cycles: "Ảnh chụp nhanh theo yêu cầu của tất cả chu kỳ của bạn",
   upgrade: "Nâng cấp",
   "10000_feet_view": "Góc nhìn tổng quan về tất cả chu kỳ hoạt động.",
   "10000_feet_view_description":
-    "Phóng to tầm nhìn để xem tất cả chu kỳ đang diễn ra trong tất cả dự án cùng một lúc, thay vì xem từng chu kỳ trong mỗi dự án.",
+    "Phóng to tầm nhìn để xem tất cả chu kỳ đang diễn ra trong tất cả nhóm/dự án cùng một lúc, thay vì xem từng chu kỳ trong mỗi nhóm/dự án.",
   get_snapshot_of_each_active_cycle: "Nhận ảnh chụp nhanh của mỗi chu kỳ hoạt động.",
   get_snapshot_of_each_active_cycle_description:
     "Theo dõi số liệu tổng hợp cho tất cả chu kỳ hoạt động, xem trạng thái tiến độ và hiểu phạm vi liên quan đến thời hạn.",
@@ -309,7 +309,7 @@ export default {
     "Điều tra bất kỳ trạng thái chu kỳ nào không đáp ứng mong đợi chỉ bằng một cú nhấp chuột.",
   stay_ahead_of_blockers: "Đi trước các yếu tố chặn.",
   stay_ahead_of_blockers_description:
-    "Phát hiện thách thức từ dự án này sang dự án khác và xem các phụ thuộc giữa các chu kỳ không dễ thấy từ các chế độ xem khác.",
+    "Phát hiện thách thức từ nhóm/dự án này sang nhóm/dự án khác và xem các phụ thuộc giữa các chu kỳ không dễ thấy từ các chế độ xem khác.",
   analytics: "Phân tích",
   dashboards: "Bảng thông tin",
   workspace_invites: "Lời mời không gian làm việc",
@@ -320,7 +320,7 @@ export default {
   new_issue: "Mục công việc mới",
   your_work: "Công việc của tôi",
   drafts: "Bản nháp",
-  projects: "Teams/Dự án",
+  projects: "Nhóm/Dự án",
   views: "Chế độ xem",
   workspace: "Không gian làm việc",
   archives: "Lưu trữ",
@@ -339,31 +339,31 @@ export default {
   favorite_removed_successfully: "Đã xóa mục yêu thích thành công",
   failed_to_create_favorite: "Không thể tạo mục yêu thích",
   failed_to_rename_favorite: "Không thể đổi tên mục yêu thích",
-  project_link_copied_to_clipboard: "Đã sao chép liên kết dự án vào bảng tạm",
+  project_link_copied_to_clipboard: "Đã sao chép liên kết nhóm/dự án vào bảng tạm",
   link_copied: "Đã sao chép liên kết",
-  add_project: "Thêm dự án",
-  create_project: "Tạo dự án",
-  failed_to_remove_project_from_favorites: "Không thể xóa dự án khỏi mục yêu thích. Vui lòng thử lại.",
-  project_created_successfully: "Dự án đã được tạo thành công",
+  add_project: "Thêm nhóm/dự án",
+  create_project: "Tạo nhóm/dự án",
+  failed_to_remove_project_from_favorites: "Không thể xóa nhóm/dự án khỏi mục yêu thích. Vui lòng thử lại.",
+  project_created_successfully: "Nhóm/Dự án đã được tạo thành công",
   project_created_successfully_description:
-    "Dự án đã được tạo thành công. Bây giờ bạn có thể bắt đầu thêm mục công việc.",
-  project_name_already_taken: "Tên dự án đã được sử dụng.",
-  project_identifier_already_taken: "ID dự án đã được sử dụng.",
-  project_cover_image_alt: "Ảnh bìa dự án",
+    "Nhóm/Dự án đã được tạo thành công. Bây giờ bạn có thể bắt đầu thêm mục công việc.",
+  project_name_already_taken: "Tên nhóm/dự án đã được sử dụng.",
+  project_identifier_already_taken: "ID nhóm/dự án đã được sử dụng.",
+  project_cover_image_alt: "Ảnh bìa nhóm/dự án",
   name_is_required: "Tên là bắt buộc",
   title_should_be_less_than_255_characters: "Tiêu đề phải ít hơn 255 ký tự",
-  project_name: "Tên dự án",
-  project_id_must_be_at_least_1_character: "ID dự án phải có ít nhất 1 ký tự",
-  project_id_must_be_at_most_5_characters: "ID dự án chỉ được tối đa 5 ký tự",
-  project_id: "ID dự án",
-  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong dự án của bạn. Tối đa 10 ký tự.",
+  project_name: "Tên nhóm/dự án",
+  project_id_must_be_at_least_1_character: "ID nhóm/dự án phải có ít nhất 1 ký tự",
+  project_id_must_be_at_most_5_characters: "ID nhóm/dự án chỉ được tối đa 5 ký tự",
+  project_id: "ID nhóm/dự án",
+  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong nhóm/dự án của bạn. Tối đa 10 ký tự.",
   description_placeholder: "Mô tả",
   only_alphanumeric_non_latin_characters_allowed: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
-  project_id_is_required: "ID dự án là bắt buộc",
+  project_id_is_required: "ID nhóm/dự án là bắt buộc",
   project_id_allowed_char: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
-  project_id_min_char: "ID dự án phải có ít nhất 1 ký tự",
-  project_id_max_char: "ID dự án chỉ được tối đa 10 ký tự",
-  project_description_placeholder: "Nhập mô tả dự án",
+  project_id_min_char: "ID nhóm/dự án phải có ít nhất 1 ký tự",
+  project_id_max_char: "ID nhóm/dự án chỉ được tối đa 10 ký tự",
+  project_description_placeholder: "Nhập mô tả nhóm/dự án",
   select_network: "Chọn mạng",
   lead: "Người phụ trách",
   date_range: "Khoảng thời gian",
@@ -373,23 +373,23 @@ export default {
   anyone_in_the_workspace_except_guests_can_join:
     "Bất kỳ ai trong không gian làm việc ngoại trừ khách đều có thể tham gia",
   creating: "Đang tạo",
-  creating_project: "Đang tạo dự án",
-  adding_project_to_favorites: "Đang thêm dự án vào mục yêu thích",
-  project_added_to_favorites: "Đã thêm dự án vào mục yêu thích",
-  couldnt_add_the_project_to_favorites: "Không thể thêm dự án vào mục yêu thích. Vui lòng thử lại.",
-  removing_project_from_favorites: "Đang xóa dự án khỏi mục yêu thích",
-  project_removed_from_favorites: "Đã xóa dự án khỏi mục yêu thích",
-  couldnt_remove_the_project_from_favorites: "Không thể xóa dự án khỏi mục yêu thích. Vui lòng thử lại.",
+  creating_project: "Đang tạo nhóm/dự án",
+  adding_project_to_favorites: "Đang thêm nhóm/dự án vào mục yêu thích",
+  project_added_to_favorites: "Đã thêm nhóm/dự án vào mục yêu thích",
+  couldnt_add_the_project_to_favorites: "Không thể thêm nhóm/dự án vào mục yêu thích. Vui lòng thử lại.",
+  removing_project_from_favorites: "Đang xóa nhóm/dự án khỏi mục yêu thích",
+  project_removed_from_favorites: "Đã xóa nhóm/dự án khỏi mục yêu thích",
+  couldnt_remove_the_project_from_favorites: "Không thể xóa nhóm/dự án khỏi mục yêu thích. Vui lòng thử lại.",
   add_to_favorites: "Thêm vào mục yêu thích",
   remove_from_favorites: "Xóa khỏi mục yêu thích",
-  publish_project: "Xuất bản dự án",
+  publish_project: "Xuất bản nhóm/dự án",
   publish: "Xuất bản",
   copy_link: "Sao chép liên kết",
-  leave_project: "Rời dự án",
-  join_the_project_to_rearrange: "Tham gia dự án để sắp xếp lại",
+  leave_project: "Rời nhóm/dự án",
+  join_the_project_to_rearrange: "Tham gia nhóm/dự án để sắp xếp lại",
   drag_to_rearrange: "Kéo để sắp xếp lại",
   congrats: "Chúc mừng!",
-  open_project: "Mở dự án",
+  open_project: "Mở nhóm/dự án",
   issues: "Mục công việc",
   cycles: "Chu kỳ",
   modules: "Mô-đun",
@@ -397,22 +397,22 @@ export default {
   intake: "Thu thập",
   time_tracking: "Theo dõi thời gian",
   work_management: "Quản lý công việc",
-  projects_and_issues: "Dự án và mục công việc",
+  projects_and_issues: "Nhóm/Dự án và mục công việc",
   projects_and_issues_description:
-    "Bật hoặc tắt các tính năng này trong dự án này. Có thể thay đổi theo thời gian phù hợp với nhu cầu.",
+    "Bật hoặc tắt các tính năng này trong nhóm/dự án này. Có thể thay đổi theo thời gian phù hợp với nhu cầu.",
   cycles_description:
-    "Thiết lập thời gian làm việc theo dự án và điều chỉnh thời gian nếu cần. Một chu kỳ có thể là 2 tuần, chu kỳ tiếp theo là 1 tuần.",
-  modules_description: "Tổ chức công việc thành các dự án con với người lãnh đạo và người được phân công riêng.",
+    "Thiết lập thời gian làm việc theo nhóm/dự án và điều chỉnh thời gian nếu cần. Một chu kỳ có thể là 2 tuần, chu kỳ tiếp theo là 1 tuần.",
+  modules_description: "Tổ chức công việc thành các nhóm/dự án con với người lãnh đạo và người được phân công riêng.",
   views_description: "Lưu các tùy chọn sắp xếp, lọc và hiển thị tùy chỉnh hoặc chia sẻ chúng với nhóm của bạn.",
   pages_description: "Tạo và chỉnh sửa nội dung tự do: ghi chú, tài liệu, bất cứ điều gì.",
   intake_description:
     "Cho phép người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất mà không làm gián đoạn quy trình làm việc của bạn.",
-  time_tracking_description: "Ghi lại thời gian dành cho các mục công việc và dự án.",
+  time_tracking_description: "Ghi lại thời gian dành cho các mục công việc và nhóm/dự án.",
   my_timesheet: "Bảng chấm công",
-  project_analytics: "Phân tích dự án",
+  project_analytics: "Phân tích nhóm/dự án",
   capacity: "Công suất",
   capacity_dashboard: "Bảng tổng quan Công suất",
-  capacity_dashboard_description: "Xem tổng thời gian đã ghi nhận so với công suất ước tính của thành viên dự án",
+  capacity_dashboard_description: "Xem tổng thời gian đã ghi nhận so với công suất ước tính của thành viên nhóm/dự án",
   capacity_total_logged: "Đã ghi nhận",
   capacity_total_estimated: "Ước tính",
   capacity_overloaded: "Quá tải",
@@ -433,7 +433,7 @@ export default {
   timesheet_save_success: "Đã lưu bảng chấm công",
   timesheet_no_issues: "Không có issue nào cho tuần này",
   timesheet_add_issue: "Thêm công việc",
-  work_management_description: "Quản lý công việc và dự án của bạn một cách dễ dàng.",
+  work_management_description: "Quản lý công việc và nhóm/dự án của bạn một cách dễ dàng.",
   documentation: "Tài liệu",
   message_support: "Liên hệ hỗ trợ",
   contact_sales: "Liên hệ bộ phận bán hàng",
@@ -492,9 +492,9 @@ export default {
   updating: "Đang cập nhật",
   create_new_issue: "Tạo mục công việc mới",
   editor_is_not_ready_to_discard_changes: "Trình soạn thảo chưa sẵn sàng để hủy bỏ thay đổi",
-  failed_to_move_issue_to_project: "Không thể di chuyển mục công việc đến dự án",
+  failed_to_move_issue_to_project: "Không thể di chuyển mục công việc đến nhóm/dự án",
   create_more: "Tạo thêm",
-  add_to_project: "Thêm vào dự án",
+  add_to_project: "Thêm vào nhóm/dự án",
   discard: "Hủy bỏ",
   duplicate_issue_found: "Đã tìm thấy mục công việc trùng lặp",
   duplicate_issues_found: "Đã tìm thấy các mục công việc trùng lặp",
@@ -539,7 +539,7 @@ export default {
   delete: "Xóa",
   deleting: "Đang xóa",
   make_a_copy: "Tạo bản sao",
-  move_to_project: "Di chuyển đến dự án",
+  move_to_project: "Di chuyển đến nhóm/dự án",
   good: "Chào buổi sáng",
   morning: "Buổi sáng",
   afternoon: "Buổi chiều",
@@ -582,7 +582,7 @@ export default {
   edited: "đã chỉnh sửa",
   bot: "bot",
   settings_description:
-    "Quản lý cài đặt tài khoản, không gian làm việc và dự án tại một nơi. Chuyển đổi giữa các tab để cấu hình dễ dàng.",
+    "Quản lý cài đặt tài khoản, không gian làm việc và nhóm/dự án tại một nơi. Chuyển đổi giữa các tab để cấu hình dễ dàng.",
   back_to_workspace: "Quay lại không gian làm việc",
   project_view: {
     sort_by: {
@@ -628,8 +628,8 @@ export default {
       quickstart_guide: "Hướng dẫn nhanh",
       not_right_now: "Không phải bây giờ",
       create_project: {
-        title: "Tạo dự án",
-        description: "Trong Plane, hầu hết mọi thứ đều bắt đầu từ dự án.",
+        title: "Tạo nhóm/dự án",
+        description: "Trong Plane, hầu hết mọi thứ đều bắt đầu từ nhóm/dự án.",
         cta: "Bắt đầu",
       },
       invite_team: {
@@ -665,14 +665,14 @@ export default {
     recents: {
       title: "Gần đây",
       empty: {
-        project: "Sau khi truy cập dự án, các dự án gần đây của bạn sẽ xuất hiện ở đây.",
+        project: "Sau khi truy cập nhóm/dự án, các nhóm/dự án gần đây của bạn sẽ xuất hiện ở đây.",
         page: "Sau khi truy cập trang, các trang gần đây của bạn sẽ xuất hiện ở đây.",
         issue: "Sau khi truy cập mục công việc, các mục công việc gần đây của bạn sẽ xuất hiện ở đây.",
-        default: "Bạn chưa có dự án gần đây nào.",
+        default: "Bạn chưa có nhóm/dự án gần đây nào.",
       },
       filters: {
         all: "Tất cả",
-        projects: "Teams/Dự án",
+        projects: "Nhóm/Dự án",
         pages: "Trang",
         issues: "Mục công việc",
       },
@@ -714,8 +714,8 @@ export default {
     state_group: "Nhóm trạng thái",
     priorities: "Ưu tiên",
     priority: "Ưu tiên",
-    team_project: "Dự án nhóm",
-    project: "Dự án",
+    team_project: "Nhóm/Dự án nhóm",
+    project: "Nhóm/Dự án",
     cycle: "Chu kỳ",
     cycles: "Chu kỳ",
     module: "Mô-đun",
@@ -764,11 +764,11 @@ export default {
     general: "Chung",
     features: "Tính năng",
     automation: "Tự động hóa",
-    project_name: "Tên dự án",
-    project_id: "ID dự án",
-    project_timezone: "Múi giờ dự án",
+    project_name: "Tên nhóm/dự án",
+    project_id: "ID nhóm/dự án",
+    project_timezone: "Múi giờ nhóm/dự án",
     created_on: "Được tạo vào",
-    update_project: "Cập nhật dự án",
+    update_project: "Cập nhật nhóm/dự án",
     identifier_already_exists: "Định danh đã tồn tại",
     add_more: "Thêm nữa",
     defaults: "Mặc định",
@@ -923,7 +923,7 @@ export default {
     select: "Chọn",
     upgrade: "Nâng cấp",
     add_seats: "Thêm vị trí",
-    projects: "Teams/Dự án",
+    projects: "Nhóm/Dự án",
     workspace: "Không gian làm việc",
     workspaces: "Không gian làm việc",
     team: "Nhóm",
@@ -1169,7 +1169,7 @@ export default {
         "Bạn có chắc chắn muốn lưu trữ mục công việc này không? Tất cả mục công việc đã lưu trữ có thể được khôi phục sau.",
       success: {
         label: "Lưu trữ thành công",
-        message: "Mục đã lưu trữ của bạn có thể được tìm thấy trong phần lưu trữ của dự án.",
+        message: "Mục đã lưu trữ của bạn có thể được tìm thấy trong phần lưu trữ của nhóm/dự án.",
       },
       failed: {
         message: "Không thể lưu trữ mục công việc. Vui lòng thử lại.",
@@ -1178,7 +1178,7 @@ export default {
     restore: {
       success: {
         title: "Khôi phục thành công",
-        message: "Mục công việc của bạn có thể được tìm thấy trong mục công việc của dự án.",
+        message: "Mục công việc của bạn có thể được tìm thấy trong mục công việc của nhóm/dự án.",
       },
       failed: {
         message: "Không thể khôi phục mục công việc. Vui lòng thử lại.",
@@ -1292,9 +1292,9 @@ export default {
       },
     },
     errors: {
-      snooze_permission: "Chỉ quản trị viên dự án mới có thể tạm hoãn/hủy tạm hoãn mục công việc",
-      accept_permission: "Chỉ quản trị viên dự án mới có thể chấp nhận mục công việc",
-      decline_permission: "Chỉ quản trị viên dự án mới có thể từ chối mục công việc",
+      snooze_permission: "Chỉ quản trị viên nhóm/dự án mới có thể tạm hoãn/hủy tạm hoãn mục công việc",
+      accept_permission: "Chỉ quản trị viên nhóm/dự án mới có thể chấp nhận mục công việc",
+      decline_permission: "Chỉ quản trị viên nhóm/dự án mới có thể từ chối mục công việc",
     },
     actions: {
       accept: "Chấp nhận",
@@ -1305,7 +1305,7 @@ export default {
       delete: "Xóa",
       open: "Mở mục công việc",
       mark_as_duplicate: "Đánh dấu là trùng lặp",
-      move: "Di chuyển {value} đến mục công việc dự án",
+      move: "Di chuyển {value} đến mục công việc nhóm/dự án",
     },
     source: {
       "in-app": "Trong ứng dụng",
@@ -1397,14 +1397,14 @@ export default {
   workspace_dashboard: {
     empty_state: {
       general: {
-        title: "Tổng quan về dự án, hoạt động và chỉ số",
+        title: "Tổng quan về nhóm/dự án, hoạt động và chỉ số",
         description:
-          "Chào mừng đến với Plane, chúng tôi rất vui khi bạn ở đây. Tạo dự án đầu tiên của bạn và theo dõi mục công việc, trang này sẽ trở thành không gian giúp bạn tiến triển. Quản trị viên cũng sẽ thấy dự án giúp nhóm tiến triển.",
+          "Chào mừng đến với Plane, chúng tôi rất vui khi bạn ở đây. Tạo nhóm/dự án đầu tiên của bạn và theo dõi mục công việc, trang này sẽ trở thành không gian giúp bạn tiến triển. Quản trị viên cũng sẽ thấy nhóm/dự án giúp nhóm tiến triển.",
         primary_button: {
-          text: "Xây dựng dự án đầu tiên của bạn",
+          text: "Xây dựng nhóm/dự án đầu tiên của bạn",
           comic: {
-            title: "Trong Plane, mọi thứ đều bắt đầu với dự án",
-            description: "Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới.",
+            title: "Trong Plane, mọi thứ đều bắt đầu với nhóm/dự án",
+            description: "Nhóm/Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới.",
           },
         },
       },
@@ -1416,7 +1416,7 @@ export default {
     open_tasks: "Tổng nhiệm vụ đang mở",
     error: "Đã xảy ra lỗi khi truy xuất dữ liệu.",
     work_items_closed_in: "Mục công việc đã đóng trong",
-    selected_projects: "Dự án đã chọn",
+    selected_projects: "Nhóm/Dự án đã chọn",
     total_members: "Tổng số thành viên",
     total_guests: "Tổng số khách",
     total_admins: "Tổng số Quản trị viên",
@@ -1454,7 +1454,7 @@ export default {
     tabs: {
       scope_and_demand: "Phạm vi và nhu cầu",
       custom: "Phân tích tùy chỉnh",
-      projects_by_status: "Dự án theo trạng thái",
+      projects_by_status: "Nhóm/Dự án theo trạng thái",
       intake_trends: "Xu hướng Intake",
       cycle_progress: "Tiến trình chu kỳ",
       module_progress: "Tiến trình mô-đun",
@@ -1477,9 +1477,9 @@ export default {
         title:
           "Theo dõi tiến độ, khối lượng công việc và phân bổ. Phát hiện xu hướng, loại bỏ rào cản và tăng tốc công việc",
         description:
-          "Xem phạm vi so với nhu cầu, ước tính và mở rộng phạm vi. Theo dõi hiệu suất của các thành viên trong nhóm và đội nhóm, đảm bảo dự án của bạn hoạt động đúng tiến độ.",
+          "Xem phạm vi so với nhu cầu, ước tính và mở rộng phạm vi. Theo dõi hiệu suất của các thành viên trong nhóm và đội nhóm, đảm bảo nhóm/dự án của bạn hoạt động đúng tiến độ.",
         primary_button: {
-          text: "Bắt đầu dự án đầu tiên của bạn",
+          text: "Bắt đầu nhóm/dự án đầu tiên của bạn",
           comic: {
             title: "Phân tích hoạt động tốt nhất với Chu kỳ + Mô-đun",
             description:
@@ -1491,9 +1491,9 @@ export default {
     created_vs_resolved: "Đã tạo vs Đã giải quyết",
     customized_insights: "Thông tin chi tiết tùy chỉnh",
     backlog_work_items: "Draft {entity}",
-    active_projects: "Dự án đang hoạt động",
+    active_projects: "Nhóm/Dự án đang hoạt động",
     trend_on_charts: "Xu hướng trên biểu đồ",
-    all_projects: "Tất cả dự án",
+    all_projects: "Tất cả nhóm/dự án",
     completed: "Đã hoàn thành",
     pending: "Đang chờ xử lý",
     started: "Đã bắt đầu",
@@ -1507,11 +1507,11 @@ export default {
       declined: "Đã từ chối",
       duplicate: "Trùng lặp",
     },
-    summary_of_projects: "Tóm tắt dự án",
-    project_insights: "Thông tin chi tiết dự án",
+    summary_of_projects: "Tóm tắt nhóm/dự án",
+    project_insights: "Thông tin chi tiết nhóm/dự án",
     started_work_items: "{entity} đã bắt đầu",
     total_work_items: "Tổng số {entity}",
-    total_projects: "Tổng số dự án",
+    total_projects: "Tổng số nhóm/dự án",
     total_users: "Tổng số người dùng",
     total_intake: "Tổng thu",
     un_started_work_items: "{entity} chưa bắt đầu",
@@ -1519,9 +1519,9 @@ export default {
     total: "Tổng số {entity}",
   },
   workspace_projects: {
-    label: "{count, plural, one {dự án} other {dự án}}",
+    label: "{count, plural, one {nhóm/dự án} other {nhóm/dự án}}",
     create: {
-      label: "Thêm dự án",
+      label: "Thêm nhóm/dự án",
     },
     network: {
       label: "Network",
@@ -1554,7 +1554,7 @@ export default {
       members_length: "Số lượng thành viên",
     },
     scope: {
-      my_projects: "Dự án của tôi",
+      my_projects: "Nhóm/Dự án của tôi",
       archived_projects: "Đã lưu trữ",
     },
     common: {
@@ -1562,35 +1562,35 @@ export default {
     },
     empty_state: {
       general: {
-        title: "Không có dự án hoạt động",
+        title: "Không có nhóm/dự án hoạt động",
         description:
-          "Coi mỗi dự án như là cấp cha của công việc định hướng mục tiêu. Dự án là nơi chứa mục công việc, chu kỳ và mô-đun, cùng với đồng nghiệp giúp bạn đạt được mục tiêu. Tạo dự án mới hoặc lọc dự án đã lưu trữ.",
+          "Coi mỗi nhóm/dự án như là cấp cha của công việc định hướng mục tiêu. Nhóm/Dự án là nơi chứa mục công việc, chu kỳ và mô-đun, cùng với đồng nghiệp giúp bạn đạt được mục tiêu. Tạo nhóm/dự án mới hoặc lọc nhóm/dự án đã lưu trữ.",
         primary_button: {
-          text: "Bắt đầu dự án đầu tiên của bạn",
+          text: "Bắt đầu nhóm/dự án đầu tiên của bạn",
           comic: {
-            title: "Trong Plane, mọi thứ đều bắt đầu với dự án",
-            description: "Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới.",
+            title: "Trong Plane, mọi thứ đều bắt đầu với nhóm/dự án",
+            description: "Nhóm/Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới.",
           },
         },
       },
       no_projects: {
-        title: "Không có dự án",
+        title: "Không có nhóm/dự án",
         description:
-          "Để tạo mục công việc hoặc quản lý công việc của bạn, bạn cần tạo dự án hoặc trở thành một phần của dự án.",
+          "Để tạo mục công việc hoặc quản lý công việc của bạn, bạn cần tạo nhóm/dự án hoặc trở thành một phần của nhóm/dự án.",
         primary_button: {
-          text: "Bắt đầu dự án đầu tiên của bạn",
+          text: "Bắt đầu nhóm/dự án đầu tiên của bạn",
           comic: {
-            title: "Trong Plane, mọi thứ đều bắt đầu với dự án",
-            description: "Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới.",
+            title: "Trong Plane, mọi thứ đều bắt đầu với nhóm/dự án",
+            description: "Nhóm/Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới.",
           },
         },
       },
       filter: {
-        title: "Không có dự án phù hợp",
-        description: "Không phát hiện dự án nào phù hợp với điều kiện tìm kiếm.\nTạo dự án mới.",
+        title: "Không có nhóm/dự án phù hợp",
+        description: "Không phát hiện nhóm/dự án nào phù hợp với điều kiện tìm kiếm.\nTạo nhóm/dự án mới.",
       },
       search: {
-        description: "Không phát hiện dự án nào phù hợp với điều kiện tìm kiếm.\nTạo dự án mới",
+        description: "Không phát hiện nhóm/dự án nào phù hợp với điều kiện tìm kiếm.\nTạo nhóm/dự án mới",
       },
     },
   },
@@ -1598,9 +1598,9 @@ export default {
     add_view: "Thêm chế độ xem",
     empty_state: {
       "all-issues": {
-        title: "Không có mục công việc trong dự án",
+        title: "Không có mục công việc trong nhóm/dự án",
         description:
-          "Dự án đầu tiên hoàn thành! Bây giờ, hãy chia nhỏ công việc của bạn thành các mục công việc có thể theo dõi. Hãy bắt đầu nào!",
+          "Nhóm/Dự án đầu tiên hoàn thành! Bây giờ, hãy chia nhỏ công việc của bạn thành các mục công việc có thể theo dõi. Hãy bắt đầu nào!",
         primary_button: {
           text: "Tạo mục công việc mới",
         },
@@ -1691,7 +1691,7 @@ export default {
     },
     activity: {
       heading: "Hoạt động",
-      description: "Theo dõi các hành động và thay đổi gần đây trên tất cả dự án và mục công việc.",
+      description: "Theo dõi các hành động và thay đổi gần đây trên tất cả nhóm/dự án và mục công việc.",
     },
   },
   workspace_settings: {
@@ -1756,7 +1756,8 @@ export default {
           description: "Mời người cộng tác trong không gian làm việc của bạn.",
           button: "Gửi lời mời",
           button_loading: "Đang gửi lời mời",
-          placeholder: "name@company.com",
+          placeholder: "Nhập tên hoặc email",
+          no_suggestions: "Không tìm thấy thành viên",
           errors: {
             required: "Chúng tôi cần một địa chỉ email để mời họ.",
             invalid: "Email không hợp lệ",
@@ -1963,36 +1964,36 @@ export default {
   },
   project_settings: {
     general: {
-      enter_project_id: "Nhập ID dự án",
+      enter_project_id: "Nhập ID nhóm/dự án",
       please_select_a_timezone: "Vui lòng chọn múi giờ",
       archive_project: {
-        title: "Lưu trữ dự án",
+        title: "Lưu trữ nhóm/dự án",
         description:
-          "Lưu trữ dự án sẽ hủy liệt kê dự án của bạn khỏi thanh điều hướng bên, nhưng bạn vẫn có thể truy cập nó từ trang dự án. Bạn có thể khôi phục hoặc xóa dự án bất cứ lúc nào.",
-        button: "Lưu trữ dự án",
+          "Lưu trữ nhóm/dự án sẽ hủy liệt kê nhóm/dự án của bạn khỏi thanh điều hướng bên, nhưng bạn vẫn có thể truy cập nó từ trang nhóm/dự án. Bạn có thể khôi phục hoặc xóa nhóm/dự án bất cứ lúc nào.",
+        button: "Lưu trữ nhóm/dự án",
       },
       delete_project: {
-        title: "Xóa dự án",
+        title: "Xóa nhóm/dự án",
         description:
-          "Khi xóa dự án, tất cả dữ liệu và tài nguyên trong dự án đó sẽ bị xóa vĩnh viễn và không thể khôi phục.",
-        button: "Xóa dự án của tôi",
+          "Khi xóa nhóm/dự án, tất cả dữ liệu và tài nguyên trong nhóm/dự án đó sẽ bị xóa vĩnh viễn và không thể khôi phục.",
+        button: "Xóa nhóm/dự án của tôi",
       },
       toast: {
-        success: "Dự án đã được cập nhật thành công",
-        error: "Không thể cập nhật dự án. Vui lòng thử lại.",
+        success: "Nhóm/Dự án đã được cập nhật thành công",
+        error: "Không thể cập nhật nhóm/dự án. Vui lòng thử lại.",
       },
     },
     members: {
       label: "Thành viên",
-      project_lead: "Người phụ trách dự án",
+      project_lead: "Người phụ trách nhóm/dự án",
       default_assignee: "Người nhận mặc định",
       guest_super_permissions: {
         title: "Cấp quyền cho người dùng khách xem tất cả mục công việc:",
-        sub_heading: "Điều này sẽ cho phép khách xem tất cả mục công việc của dự án.",
+        sub_heading: "Điều này sẽ cho phép khách xem tất cả mục công việc của nhóm/dự án.",
       },
       invite_members: {
         title: "Mời thành viên",
-        sub_heading: "Mời thành viên tham gia dự án của bạn.",
+        sub_heading: "Mời thành viên tham gia nhóm/dự án của bạn.",
         select_co_worker: "Chọn đồng nghiệp",
       },
     },
@@ -2018,7 +2019,7 @@ export default {
     estimates: {
       heading: "Estimates",
       label: "Ước tính",
-      title: "Bật ước tính cho dự án của tôi",
+      title: "Bật ước tính cho nhóm/dự án của tôi",
       enable_description: "They help you in communicating complexity and workload of the team.",
       description: "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm.",
       no_estimate: "Không có ước tính",
@@ -2046,7 +2047,7 @@ export default {
         updated: {
           success: {
             title: "Đã cập nhật ước tính",
-            message: "Điểm ước tính đã được cập nhật trong dự án của bạn",
+            message: "Điểm ước tính đã được cập nhật trong nhóm/dự án của bạn",
           },
           error: {
             title: "Không thể cập nhật ước tính",
@@ -2103,7 +2104,7 @@ export default {
     worklogs: {
       label: "Nhật ký công việc",
       heading: "Nhật ký công việc",
-      description: "Xem và quản lý nhật ký công việc đã ghi nhận trong dự án.",
+      description: "Xem và quản lý nhật ký công việc đã ghi nhận trong nhóm/dự án.",
       empty_title: "Không tìm thấy nhật ký công việc",
       empty_description: "Thành viên chưa ghi nhận thời gian làm việc.",
     },
@@ -2111,7 +2112,7 @@ export default {
       label: "Quy trình",
       heading: "Quy trình",
       description:
-        "Tự động hóa chuyển đổi trạng thái công việc và thiết lập quy tắc để kiểm soát cách các tác vụ di chuyển qua quy trình dự án.",
+        "Tự động hóa chuyển đổi trạng thái công việc và thiết lập quy tắc để kiểm soát cách các tác vụ di chuyển qua quy trình nhóm/dự án.",
       live_toggle_label: "Bật",
       live_toggle_on: "Quy trình đang hoạt động — các chuyển đổi được thực thi.",
       live_toggle_off: "Quy trình không hoạt động — tất cả các chuyển đổi đều được phép.",
@@ -2166,7 +2167,7 @@ export default {
     empty_state: {
       labels: {
         title: "Chưa có nhãn",
-        description: "Tạo nhãn để giúp tổ chức và lọc mục công việc trong dự án của bạn.",
+        description: "Tạo nhãn để giúp tổ chức và lọc mục công việc trong nhóm/dự án của bạn.",
       },
       estimates: {
         title: "Chưa có hệ thống ước tính",
@@ -2179,30 +2180,31 @@ export default {
         title: "Chu kỳ",
         short_title: "Chu kỳ",
         description:
-          "Lên lịch công việc trong các khoảng thời gian linh hoạt thích ứng với nhịp điệu và tốc độ độc đáo của dự án này.",
+          "Lên lịch công việc trong các khoảng thời gian linh hoạt thích ứng với nhịp điệu và tốc độ độc đáo của nhóm/dự án này.",
         toggle_title: "Bật chu kỳ",
         toggle_description: "Lập kế hoạch công việc trong khung thời gian tập trung.",
       },
       modules: {
         title: "Mô-đun",
         short_title: "Mô-đun",
-        description: "Tổ chức công việc thành các dự án phụ với người dẫn đầu và người được phân công chuyên trách.",
+        description:
+          "Tổ chức công việc thành các nhóm/dự án phụ với người dẫn đầu và người được phân công chuyên trách.",
         toggle_title: "Bật mô-đun",
-        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa mô-đun.",
+        toggle_description: "Thành viên nhóm/dự án sẽ có thể tạo và chỉnh sửa mô-đun.",
       },
       views: {
         title: "Chế độ xem",
         short_title: "Chế độ xem",
         description: "Lưu các tùy chọn sắp xếp, bộ lọc và hiển thị tùy chỉnh hoặc chia sẻ chúng với nhóm của bạn.",
         toggle_title: "Bật chế độ xem",
-        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa chế độ xem.",
+        toggle_description: "Thành viên nhóm/dự án sẽ có thể tạo và chỉnh sửa chế độ xem.",
       },
       pages: {
         title: "Trang",
         short_title: "Trang",
         description: "Tạo và chỉnh sửa nội dung tự do: ghi chú, tài liệu, bất cứ thứ gì.",
         toggle_title: "Bật trang",
-        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa trang.",
+        toggle_description: "Thành viên nhóm/dự án sẽ có thể tạo và chỉnh sửa trang.",
       },
       intake: {
         title: "Tiếp nhận",
@@ -2210,14 +2212,14 @@ export default {
         description:
           "Cho phép những người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất; mà không làm gián đoạn quy trình làm việc của bạn.",
         toggle_title: "Bật tiếp nhận",
-        toggle_description: "Cho phép thành viên dự án tạo yêu cầu tiếp nhận trong ứng dụng.",
+        toggle_description: "Cho phép thành viên nhóm/dự án tạo yêu cầu tiếp nhận trong ứng dụng.",
       },
       time_tracking: {
         title: "Theo dõi thời gian",
         short_title: "Theo dõi thời gian",
         description: "Bật theo dõi thời gian để cho phép thành viên ghi lại số giờ làm việc trên các vấn đề.",
         toggle_title: "Bật theo dõi thời gian",
-        toggle_description: "Thành viên dự án sẽ có thể ghi lại số giờ làm việc trên các vấn đề.",
+        toggle_description: "Thành viên nhóm/dự án sẽ có thể ghi lại số giờ làm việc trên các vấn đề.",
       },
     },
   },
@@ -2315,7 +2317,7 @@ export default {
       general: {
         title: "Nhóm và đặt khung thời gian cho công việc của bạn trong chu kỳ.",
         description:
-          "Chia nhỏ công việc theo khung thời gian, đặt ngày từ thời hạn dự án và đạt được tiến độ cụ thể với tư cách là một nhóm.",
+          "Chia nhỏ công việc theo khung thời gian, đặt ngày từ thời hạn nhóm/dự án và đạt được tiến độ cụ thể với tư cách là một nhóm.",
         primary_button: {
           text: "Thiết lập chu kỳ đầu tiên của bạn",
           comic: {
@@ -2348,7 +2350,7 @@ export default {
       archived: {
         title: "Chưa có chu kỳ đã lưu trữ",
         description:
-          "Để tổ chức dự án của bạn, hãy lưu trữ chu kỳ đã hoàn thành. Bạn có thể tìm thấy chúng ở đây sau khi lưu trữ.",
+          "Để tổ chức nhóm/dự án của bạn, hãy lưu trữ chu kỳ đã hoàn thành. Bạn có thể tìm thấy chúng ở đây sau khi lưu trữ.",
       },
     },
   },
@@ -2357,7 +2359,7 @@ export default {
       no_issues: {
         title: "Tạo mục công việc và giao nó cho ai đó, thậm chí là chính bạn",
         description:
-          "Xem mục công việc như công việc, nhiệm vụ hoặc công việc cần hoàn thành. Mục công việc và các mục công việc con của chúng thường dựa trên thời gian, được giao cho thành viên nhóm để thực hiện. Nhóm của bạn thúc đẩy dự án đạt được mục tiêu bằng cách tạo, giao và hoàn thành mục công việc.",
+          "Xem mục công việc như công việc, nhiệm vụ hoặc công việc cần hoàn thành. Mục công việc và các mục công việc con của chúng thường dựa trên thời gian, được giao cho thành viên nhóm để thực hiện. Nhóm của bạn thúc đẩy nhóm/dự án đạt được mục tiêu bằng cách tạo, giao và hoàn thành mục công việc.",
         primary_button: {
           text: "Tạo mục công việc đầu tiên của bạn",
           comic: {
@@ -2392,9 +2394,9 @@ export default {
     delete_module: "Xóa mô-đun",
     empty_state: {
       general: {
-        title: "Ánh xạ cột mốc dự án vào mô-đun, dễ dàng theo dõi công việc tổng hợp.",
+        title: "Ánh xạ cột mốc nhóm/dự án vào mô-đun, dễ dàng theo dõi công việc tổng hợp.",
         description:
-          "Một nhóm mục công việc thuộc cấp cha trong cấu trúc logic tạo thành một mô-đun. Xem nó như một cách theo dõi công việc theo cột mốc dự án. Chúng có chu kỳ riêng và thời hạn cùng với các tính năng phân tích giúp bạn hiểu bạn đang ở đâu so với cột mốc.",
+          "Một nhóm mục công việc thuộc cấp cha trong cấu trúc logic tạo thành một mô-đun. Xem nó như một cách theo dõi công việc theo cột mốc nhóm/dự án. Chúng có chu kỳ riêng và thời hạn cùng với các tính năng phân tích giúp bạn hiểu bạn đang ở đâu so với cột mốc.",
         primary_button: {
           text: "Xây dựng mô-đun đầu tiên của bạn",
           comic: {
@@ -2416,7 +2418,7 @@ export default {
       archived: {
         title: "Chưa có mô-đun đã lưu trữ",
         description:
-          "Để tổ chức dự án của bạn, hãy lưu trữ mô-đun đã hoàn thành hoặc đã hủy. Bạn có thể tìm thấy chúng ở đây sau khi lưu trữ.",
+          "Để tổ chức nhóm/dự án của bạn, hãy lưu trữ mô-đun đã hoàn thành hoặc đã hủy. Bạn có thể tìm thấy chúng ở đây sau khi lưu trữ.",
       },
       sidebar: {
         in_active: "Mô-đun này chưa được kích hoạt.",
@@ -2441,9 +2443,9 @@ export default {
   project_views: {
     empty_state: {
       general: {
-        title: "Lưu chế độ xem đã lọc cho dự án của bạn. Tạo bao nhiêu tùy ý",
+        title: "Lưu chế độ xem đã lọc cho nhóm/dự án của bạn. Tạo bao nhiêu tùy ý",
         description:
-          "Chế độ xem là bộ bộ lọc đã lưu mà bạn thường xuyên sử dụng hoặc muốn truy cập dễ dàng. Tất cả đồng nghiệp trong dự án có thể thấy chế độ xem của mọi người và chọn cái phù hợp nhất với nhu cầu của họ.",
+          "Chế độ xem là bộ bộ lọc đã lưu mà bạn thường xuyên sử dụng hoặc muốn truy cập dễ dàng. Tất cả đồng nghiệp trong nhóm/dự án có thể thấy chế độ xem của mọi người và chọn cái phù hợp nhất với nhu cầu của họ.",
         primary_button: {
           text: "Tạo chế độ xem đầu tiên của bạn",
           comic: {
@@ -2469,7 +2471,7 @@ export default {
       general: {
         title: "Viết ghi chú, tài liệu hoặc cơ sở kiến thức đầy đủ. Để trợ lý AI Galileo của Plane giúp bạn bắt đầu",
         description:
-          "Trang là không gian ghi lại suy nghĩ trong Plane. Ghi lại các ghi chú cuộc họp, định dạng dễ dàng, nhúng mục công việc, sử dụng thư viện thành phần để bố cục và lưu tất cả trong ngữ cảnh dự án. Để hoàn thành nhanh bất kỳ tài liệu nào, bạn có thể gọi AI Galileo của Plane thông qua phím tắt hoặc nhấp nút.",
+          "Trang là không gian ghi lại suy nghĩ trong Plane. Ghi lại các ghi chú cuộc họp, định dạng dễ dàng, nhúng mục công việc, sử dụng thư viện thành phần để bố cục và lưu tất cả trong ngữ cảnh nhóm/dự án. Để hoàn thành nhanh bất kỳ tài liệu nào, bạn có thể gọi AI Galileo của Plane thông qua phím tắt hoặc nhấp nút.",
         primary_button: {
           text: "Tạo trang đầu tiên của bạn",
         },
@@ -2483,7 +2485,7 @@ export default {
       },
       public: {
         title: "Chưa có trang công khai",
-        description: "Xem các trang được chia sẻ với mọi người trong dự án tại đây.",
+        description: "Xem các trang được chia sẻ với mọi người trong nhóm/dự án tại đây.",
         primary_button: {
           text: "Tạo trang đầu tiên của bạn",
         },
@@ -2597,47 +2599,49 @@ export default {
   disabled_project: {
     empty_state: {
       inbox: {
-        title: "Dự án chưa bật tính năng thu thập.",
+        title: "Nhóm/Dự án chưa bật tính năng thu thập.",
         description:
-          "Tính năng thu thập giúp bạn quản lý các yêu cầu đến của dự án và thêm chúng như mục công việc trong quy trình làm việc. Bật tính năng thu thập từ cài đặt dự án để quản lý yêu cầu.",
+          "Tính năng thu thập giúp bạn quản lý các yêu cầu đến của nhóm/dự án và thêm chúng như mục công việc trong quy trình làm việc. Bật tính năng thu thập từ cài đặt nhóm/dự án để quản lý yêu cầu.",
         primary_button: {
           text: "Quản lý tính năng",
         },
       },
       cycle: {
-        title: "Dự án này chưa bật tính năng chu kỳ.",
+        title: "Nhóm/Dự án này chưa bật tính năng chu kỳ.",
         description:
-          "Chia nhỏ công việc theo khung thời gian, đặt ngày từ thời hạn dự án, và đạt được tiến độ cụ thể với tư cách là một nhóm. Bật tính năng chu kỳ cho dự án của bạn để bắt đầu sử dụng.",
+          "Chia nhỏ công việc theo khung thời gian, đặt ngày từ thời hạn nhóm/dự án, và đạt được tiến độ cụ thể với tư cách là một nhóm. Bật tính năng chu kỳ cho nhóm/dự án của bạn để bắt đầu sử dụng.",
         primary_button: {
           text: "Quản lý tính năng",
         },
       },
       module: {
-        title: "Dự án chưa bật tính năng mô-đun.",
-        description: "Mô-đun là khối xây dựng cơ bản của dự án. Bật mô-đun từ cài đặt dự án để bắt đầu sử dụng chúng.",
+        title: "Nhóm/Dự án chưa bật tính năng mô-đun.",
+        description:
+          "Mô-đun là khối xây dựng cơ bản của nhóm/dự án. Bật mô-đun từ cài đặt nhóm/dự án để bắt đầu sử dụng chúng.",
         primary_button: {
           text: "Quản lý tính năng",
         },
       },
       page: {
-        title: "Dự án chưa bật tính năng trang.",
-        description: "Trang là khối xây dựng cơ bản của dự án. Bật trang từ cài đặt dự án để bắt đầu sử dụng chúng.",
+        title: "Nhóm/Dự án chưa bật tính năng trang.",
+        description:
+          "Trang là khối xây dựng cơ bản của nhóm/dự án. Bật trang từ cài đặt nhóm/dự án để bắt đầu sử dụng chúng.",
         primary_button: {
           text: "Quản lý tính năng",
         },
       },
       view: {
-        title: "Dự án chưa bật tính năng chế độ xem.",
+        title: "Nhóm/Dự án chưa bật tính năng chế độ xem.",
         description:
-          "Chế độ xem là khối xây dựng cơ bản của dự án. Bật chế độ xem từ cài đặt dự án để bắt đầu sử dụng chúng.",
+          "Chế độ xem là khối xây dựng cơ bản của nhóm/dự án. Bật chế độ xem từ cài đặt nhóm/dự án để bắt đầu sử dụng chúng.",
         primary_button: {
           text: "Quản lý tính năng",
         },
       },
       time_tracking: {
-        title: "Dự án chưa bật tính năng chấm công.",
+        title: "Nhóm/Dự án chưa bật tính năng chấm công.",
         description:
-          "Tính năng chấm công cho phép thành viên ghi nhận giờ làm việc trên mục công việc. Bật chấm công từ cài đặt dự án để bắt đầu sử dụng.",
+          "Tính năng chấm công cho phép thành viên ghi nhận giờ làm việc trên mục công việc. Bật chấm công từ cài đặt nhóm/dự án để bắt đầu sử dụng.",
         primary_button: {
           text: "Quản lý tính năng",
         },
@@ -2736,7 +2740,7 @@ export default {
     },
     member: {
       title: "Thành viên",
-      description: "Có thể đọc, viết, chỉnh sửa và xóa thực thể trong dự án, chu kỳ và mô-đun",
+      description: "Có thể đọc, viết, chỉnh sửa và xóa thực thể trong nhóm/dự án, chu kỳ và mô-đun",
     },
     admin: {
       title: "Quản trị viên",
@@ -2762,7 +2766,7 @@ export default {
     },
     jira: {
       title: "Jira",
-      description: "Nhập mục công việc và sử thi từ dự án và sử thi Jira.",
+      description: "Nhập mục công việc và sử thi từ nhóm/dự án và sử thi Jira.",
     },
   },
   exporter: {
@@ -2971,7 +2975,7 @@ export default {
       create_view: "Chế độ xem mới",
       create_cycle: "Chu kỳ mới",
       create_module: "Mô-đun mới",
-      create_project: "Dự án mới",
+      create_project: "Nhóm/Dự án mới",
       create_workspace: "Không gian làm việc mới",
     },
     navigation_actions: {
@@ -2980,8 +2984,8 @@ export default {
       nav_inbox: "Đến hộp thư đến",
       nav_your_work: "Đến công việc của tôi",
       nav_account_settings: "Đến cài đặt tài khoản",
-      open_project: "Mở dự án",
-      nav_projects_list: "Đến danh sách dự án",
+      open_project: "Mở nhóm/dự án",
+      nav_projects_list: "Đến danh sách nhóm/dự án",
       nav_all_workspace_work_items: "Đến tất cả mục công việc",
       nav_assigned_workspace_work_items: "Đến mục công việc được giao",
       nav_created_workspace_work_items: "Đến mục công việc đã tạo",
@@ -2996,13 +3000,13 @@ export default {
       nav_project_cycles: "Đến chu kỳ",
       open_project_module: "Mở mô-đun",
       nav_project_modules: "Đến mô-đun",
-      open_project_view: "Mở chế độ xem dự án",
-      nav_project_views: "Đến chế độ xem dự án",
+      open_project_view: "Mở chế độ xem nhóm/dự án",
+      nav_project_views: "Đến chế độ xem nhóm/dự án",
       nav_project_pages: "Đến trang",
       nav_project_intake: "Đến thu thập",
-      nav_project_archives: "Đến kho lưu trữ dự án",
-      open_project_setting: "Mở cài đặt dự án",
-      nav_project_settings: "Đến cài đặt dự án",
+      nav_project_archives: "Đến kho lưu trữ nhóm/dự án",
+      open_project_setting: "Mở cài đặt nhóm/dự án",
+      nav_project_settings: "Đến cài đặt nhóm/dự án",
     },
     account_actions: {
       sign_out: "Đăng xuất",
@@ -3045,12 +3049,12 @@ export default {
     page_placeholders: {
       default: "Nhập lệnh hoặc tìm kiếm",
       open_workspace: "Mở không gian làm việc",
-      open_project: "Mở dự án",
+      open_project: "Mở nhóm/dự án",
       open_workspace_setting: "Mở cài đặt không gian làm việc",
       open_project_cycle: "Mở chu kỳ",
       open_project_module: "Mở mô-đun",
-      open_project_view: "Mở chế độ xem dự án",
-      open_project_setting: "Mở cài đặt dự án",
+      open_project_view: "Mở chế độ xem nhóm/dự án",
+      open_project_setting: "Mở cài đặt nhóm/dự án",
       update_work_item_state: "Đổi trạng thái",
       update_work_item_priority: "Đổi mức ưu tiên",
       update_work_item_assignee: "Giao cho",
@@ -3089,8 +3093,8 @@ export default {
   personal: "Cá nhân",
   accordion_navigation_control: "Thanh bên dạng accordion",
   horizontal_navigation_bar: "Điều hướng dạng tab",
-  show_limited_projects_on_sidebar: "Hiển thị số dự án giới hạn trên thanh bên",
-  enter_number_of_projects: "Nhập số lượng dự án",
+  show_limited_projects_on_sidebar: "Hiển thị số nhóm/dự án giới hạn trên thanh bên",
+  enter_number_of_projects: "Nhập số lượng nhóm/dự án",
   pin: "Ghim",
   unpin: "Bỏ ghim",
   // Worklog / Time Tracking
@@ -3149,7 +3153,7 @@ export default {
     description: { label: "Mô tả", placeholder: "Nhập mô tả" },
     parent: { label: "Phòng ban cha" },
     manager: { label: "Quản lý" },
-    linked_project: { label: "Dự án liên kết", link: "Liên kết dự án" },
+    linked_project: { label: "Nhóm/Dự án liên kết", link: "Liên kết nhóm/dự án" },
     empty: "Không tìm thấy phòng ban. Thêm phòng ban đầu tiên để bắt đầu.",
     staff_count: "{count, plural, one {# thành viên} other {# thành viên}}",
     deleted: "Đã xóa phòng ban",
@@ -3176,7 +3180,7 @@ export default {
     phone: { placeholder: "Số điện thoại" },
     date_of_joining: { label: "Ngày vào làm", placeholder: "Ngày vào làm" },
     password: { placeholder: "Mật khẩu ban đầu" },
-    is_department_manager: "Trưởng phòng (tự động tham gia dự án con)",
+    is_department_manager: "Trưởng phòng (tự động tham gia nhóm/dự án con)",
     status: {
       label: "Trạng thái",
       active: "Đang hoạt động",
@@ -3251,7 +3255,7 @@ export default {
     empty: "Không tìm thấy bảng phân tích",
     default: "Mặc định",
     widgets: "{count} widget",
-    projects: "{count} dự án",
+    projects: "{count} nhóm/dự án",
     name_required: "Tên là bắt buộc",
     max_characters: "Tối đa {count} ký tự",
     // Form modal
@@ -3338,10 +3342,10 @@ export default {
     delete_confirm_prefix: "Bạn có chắc chắn muốn xóa",
     delete_confirm_suffix: "? Hành động này không thể hoàn tác và tất cả widget sẽ bị xóa vĩnh viễn.",
     // Project picker in dashboard form
-    projects_label: "Dự án",
-    projects_hint: "Chọn dự án để giới hạn dữ liệu widget",
-    projects_selected: "dự án đã chọn",
-    no_projects: "Không có dự án nào trong không gian làm việc này",
+    projects_label: "Nhóm/Dự án",
+    projects_hint: "Chọn nhóm/dự án để giới hạn dữ liệu widget",
+    projects_selected: "nhóm/dự án đã chọn",
+    no_projects: "Không có nhóm/dự án nào trong không gian làm việc này",
     // M2: line type options
     line_type: "Kiểu đường",
     line_type_solid: "Liền nét",
