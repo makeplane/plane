@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-
 // plane imports
 import { TabsContent } from "@plane/propel/tabs";
 // components
@@ -33,7 +32,7 @@ export function PageNavigationPaneTabPanelsRoot(props: Props) {
         <TabsContent
           key={tab.key}
           value={tab.key}
-          className="size-full overflow-y-auto vertical-scrollbar scrollbar-sm outline-none"
+          className="vertical-scrollbar scrollbar-sm size-full overflow-y-auto outline-none"
         >
           {tab.key === "outline" && <PageNavigationPaneOutlineTabPanel page={page} />}
           {tab.key === "info" && <PageNavigationPaneInfoTabPanel page={page} versionHistory={versionHistory} />}

@@ -197,7 +197,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
         <Popover.Panel className="absolute right-0 z-20 mt-2 rounded-md border border-subtle bg-surface-1 shadow-raised-200">
           <div
             ref={imagePickerRef}
-            className="flex h-96 w-80 flex-col overflow-auto rounded border border-subtle bg-surface-1 shadow-raised-200 md:h-[36rem] md:w-[36rem] p-2"
+            className="flex h-96 w-80 flex-col overflow-auto rounded border border-subtle bg-surface-1 p-2 shadow-raised-200 md:h-[36rem] md:w-[36rem]"
           >
             <Tabs>
               <TabsList>
@@ -211,7 +211,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                 <TabsContent value="unsplash">
                   {(unsplashImages || !unsplashError) && (
                     <>
-                      <div className="flex gap-x-2 items-center">
+                      <div className="flex items-center gap-x-2">
                         <Controller
                           control={control}
                           name="search"
@@ -230,7 +230,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                               onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                               ref={ref}
                               placeholder="Search for images"
-                              className="w-full text-sm"
+                              className="text-sm w-full"
                             />
                           )}
                         />
@@ -259,7 +259,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                             ))}
                           </div>
                         ) : (
-                          <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
+                          <p className="text-xs text-custom-text-300 pt-7 text-center">No images found.</p>
                         )
                       ) : (
                         <Loader className="grid grid-cols-4 gap-4">
@@ -298,10 +298,11 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                     <div className="flex w-full flex-1 items-center gap-3">
                       <div
                         {...getRootProps()}
-                        className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 focus:outline-none ${(image === null && isDragActive) || !value
+                        className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 focus:outline-none ${
+                          (image === null && isDragActive) || !value
                             ? "border-2 border-dashed border-subtle hover:bg-surface-2"
                             : ""
-                          }`}
+                        }`}
                       >
                         <button
                           type="button"

@@ -41,7 +41,7 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
   const planeName = getSubscriptionName(planVariant);
 
   return (
-    <div className="flex flex-col py-6 px-3 bg-layer-1 rounded-xl">
+    <div className="flex flex-col rounded-xl bg-layer-1 px-3 py-6">
       <Tabs value={selectedPlan} onValueChange={(value) => setSelectedPlan(value as TBillingFrequency)}>
         <div className="flex w-full justify-center">
           <TabsList>
