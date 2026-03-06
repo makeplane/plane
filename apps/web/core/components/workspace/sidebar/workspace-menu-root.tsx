@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
@@ -47,8 +47,11 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
   // translation
   const { t } = useTranslation();
   // local state
+  // local state
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  // refs
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const handleWorkspaceNavigation = (workspace: IWorkspace): void => {
     void updateUserProfile({ last_workspace_id: workspace?.id });
@@ -82,6 +85,14 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
   // Toggle sidebar dropdown state when either menu is open
   useEffect(() => {
     toggleAnySidebarDropdown(isWorkspaceMenuOpen);
+    if (isWorkspaceMenuOpen) {
+      // Focus input when menu opens, handle HeadlessUI timing
+      setTimeout(() => {
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+        }
+      }, 50);
+    }
   }, [isWorkspaceMenuOpen, toggleAnySidebarDropdown]);
 
   return (
@@ -173,6 +184,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                       <div className="relative flex items-center w-full">
                         <Search className="absolute left-2.5 size-3.5 text-placeholder" />
                         <input
+                          ref={searchInputRef}
                           type="text"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
