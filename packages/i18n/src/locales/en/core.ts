@@ -6,7 +6,7 @@
 
 export default {
   sidebar: {
-    projects: "Projects",
+    projects: "Teams/Projects",
     pages: "Pages",
     new_work_item: "New work item",
     home: "Home",

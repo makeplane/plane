@@ -6,7 +6,7 @@
 
 export default {
   sidebar: {
-    projects: "프로젝트",
+    projects: "Teams/프로젝트",
     pages: "페이지",
     new_work_item: "새 작업 항목",
     home: "홈",
@@ -314,7 +314,7 @@ export default {
   new_issue: "새 작업 항목",
   your_work: "나의 작업",
   drafts: "초안",
-  projects: "프로젝트",
+  projects: "Teams/프로젝트",
   views: "보기",
   workspace: "작업 공간",
   archives: "아카이브",
@@ -658,7 +658,7 @@ export default {
       },
       filters: {
         all: "모든",
-        projects: "프로젝트",
+        projects: "Teams/프로젝트",
         pages: "페이지",
         issues: "작업 항목",
       },
@@ -909,7 +909,7 @@ export default {
     select: "선택",
     upgrade: "업그레이드",
     add_seats: "좌석 추가",
-    projects: "프로젝트",
+    projects: "Teams/프로젝트",
     workspace: "작업 공간",
     workspaces: "작업 공간",
     team: "팀",

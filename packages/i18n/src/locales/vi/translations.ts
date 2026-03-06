@@ -6,7 +6,7 @@
 
 export default {
   sidebar: {
-    projects: "Dự án",
+    projects: "Teams/Dự án",
     pages: "Trang",
     new_work_item: "Mục công việc mới",
     home: "Trang chủ",
@@ -320,7 +320,7 @@ export default {
   new_issue: "Mục công việc mới",
   your_work: "Công việc của tôi",
   drafts: "Bản nháp",
-  projects: "Dự án",
+  projects: "Teams/Dự án",
   views: "Chế độ xem",
   workspace: "Không gian làm việc",
   archives: "Lưu trữ",
@@ -672,7 +672,7 @@ export default {
       },
       filters: {
         all: "Tất cả",
-        projects: "Dự án",
+        projects: "Teams/Dự án",
         pages: "Trang",
         issues: "Mục công việc",
       },
@@ -923,7 +923,7 @@ export default {
     select: "Chọn",
     upgrade: "Nâng cấp",
     add_seats: "Thêm vị trí",
-    projects: "Dự án",
+    projects: "Teams/Dự án",
     workspace: "Không gian làm việc",
     workspaces: "Không gian làm việc",
     team: "Nhóm",

@@ -6,7 +6,7 @@
 
 export default {
   sidebar: {
-    projects: "Projects",
+    projects: "Teams/Projects",
     pages: "Pages",
     new_work_item: "New work item",
     home: "Home",
@@ -320,7 +320,7 @@ export default {
   new_issue: "New work item",
   your_work: "Your work",
   drafts: "Drafts",
-  projects: "Projects",
+  projects: "Teams/Projects",
   views: "Views",
   workspace: "Workspace",
   archives: "Archives",
@@ -664,7 +664,7 @@ export default {
       },
       filters: {
         all: "All",
-        projects: "Projects",
+        projects: "Teams/Projects",
         pages: "Pages",
         issues: "Work items",
       },
@@ -928,7 +928,7 @@ export default {
     select: "Select",
     upgrade: "Upgrade",
     add_seats: "Add Seats",
-    projects: "Projects",
+    projects: "Teams/Projects",
     workspace: "Workspace",
     workspaces: "Workspaces",
     team: "Team",
