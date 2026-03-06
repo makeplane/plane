@@ -120,6 +120,8 @@ const normalizeDeviceCode = (deviceCode: string) => deviceCode.trim().toUpperCas
 
 const pickRandomChar = (characters: string) => characters.charAt(Math.floor(Math.random() * characters.length));
 
+const escapeSqlStringValue = (value: unknown) => (typeof value === "string" ? value.replace(/'/g, "''") : value);
+
 const createRandomDeviceCode = () => {
   const letters = Array.from({ length: AUTO_DEVICE_CODE_LETTER_COUNT }, () => pickRandomChar(AUTO_DEVICE_CODE_LETTERS))
     .join("")
@@ -241,7 +243,8 @@ const buildDeviceMutationPayload = async (cpServerBaseUrl: string, values: TDevi
       return {
         field: mapping.field,
         type: mapping.type,
-        value,
+        // CP server interpolates these values into SQL strings, so apostrophes must be escaped.
+        value: escapeSqlStringValue(value),
       };
     })
     .filter((item): item is { field: string; type: number; value: unknown } => item !== null);
