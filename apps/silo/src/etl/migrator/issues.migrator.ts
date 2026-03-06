@@ -601,6 +601,9 @@ const processAttachments = async (
         related_entity: issue.external_id,
         entity_external_id: attachment.external_id,
         entity_name: attachment.attributes.name,
+        additional_data: {
+          attachment: attachment,
+        },
       });
     }
   }

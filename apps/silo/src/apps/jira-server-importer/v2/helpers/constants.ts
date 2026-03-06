@@ -13,6 +13,8 @@
 
 export const KNOWN_CUSTOM_FIELDS = {
   EPIC_LINK: "Epic Link",
+  START_DATE: "Start Date",
+  COMPLETION_DATE: "Completion Date",
 };
 
 export const KNOWN_CUSTOM_FIELDS_REVERSE_MAP = Object.entries(KNOWN_CUSTOM_FIELDS).reduce(
