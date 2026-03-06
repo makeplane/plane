@@ -44,7 +44,7 @@ const handleOAuthNavigation = async (provider: string, next_path: string | null)
     planeDesktop.openExternal(desktopOAuthUrl);
   } else {
     // For web or unsupported desktop providers, navigate directly
-    window.location.assign(`${API_BASE_URL}/auth/${provider}/${params.toString()}`);
+    window.location.assign(`${API_BASE_URL}/auth/${provider}/?${params.toString()}`);
   }
 };
 
