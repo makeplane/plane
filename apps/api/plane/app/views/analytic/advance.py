@@ -5,7 +5,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from typing import Dict, List, Any
-from django.db.models import QuerySet, Q, Count, Case, When, Value, CharField
+from django.db.models import QuerySet, Q, Count, Case, When, Value, CharField, OuterRef, Subquery
 from django.db.models.functions import Concat, TruncMonth
 from django.http import HttpRequest
 from django.utils import timezone
@@ -236,12 +236,20 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
             )
 
         elif type == "projects":
+            # Use a subquery for member_count to avoid counting only the current user's
+            # membership row (caused by project_filters joining on project_projectmember__member=user)
+            member_count_subquery = (
+                ProjectMember.objects.filter(project=OuterRef("pk"), is_active=True)
+                .values("project")
+                .annotate(count=Count("id"))
+                .values("count")
+            )
             return Response(
                 [
                     {
                         "project_id": item["id"],
                         "project__name": item["name"],
-                        "members": item["member_count"],
+                        "members": item["member_count"] or 0,
                         "work_items": item["issue_count"],
                         "state_groups": {
                             "started": item["started_issues"],
@@ -253,7 +261,7 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                     }
                     for item in Project.objects.filter(**self.filters["project_filters"])
                     .annotate(
-                        member_count=Count("project_projectmember", distinct=True, filter=Q(project_projectmember__is_active=True)),
+                        member_count=Subquery(member_count_subquery),
                         issue_count=Count("project_issue", distinct=True),
                         started_issues=Count("project_issue", filter=Q(project_issue__state__group="started"), distinct=True),
                         completed_issues=Count("project_issue", filter=Q(project_issue__state__group="completed"), distinct=True),
