@@ -86,12 +86,12 @@ export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType
     liteTextFlagged.push("multi-column");
   }
 
-  if (!installed_apps.includes(E_INTEGRATION_KEYS.MERMAID)) {
+  if (!installed_apps?.includes(E_INTEGRATION_KEYS.MERMAID)) {
     documentFlagged.push("mermaid-diagrams");
     richTextFlagged.push("mermaid-diagrams");
   }
 
-  if (!installed_apps.includes(E_INTEGRATION_KEYS.DRAWIO)) {
+  if (!installed_apps?.includes(E_INTEGRATION_KEYS.DRAWIO)) {
     documentFlagged.push("drawio");
   }
 
