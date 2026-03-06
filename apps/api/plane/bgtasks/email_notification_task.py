@@ -163,6 +163,11 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
             ri = redis_instance()
             base_api = ri.get(str(issue_id)).decode() if ri.get(str(issue_id)) else None
 
+            # Fallback to WEB_URL if Redis key expired (TTL 600s)
+            if not base_api:
+                import os
+                base_api = os.environ.get("WEB_URL", "")
+
             # Skip if base api is not present
             if not base_api:
                 return
