@@ -164,7 +164,7 @@ class InstanceEndpoint(BaseAPIView):
         data["has_llm_configured"] = bool(LLM_API_KEY)
 
         # File size settings
-        data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+        data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880000)) # 5GB
 
         # is smtp configured
         data["is_smtp_configured"] = bool(EMAIL_HOST)
