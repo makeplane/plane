@@ -49,7 +49,11 @@ class GoogleOauthInitiateSpaceEndpoint(View):
 
         try:
             state = uuid.uuid4().hex
-            provider = GoogleOAuthProvider(request=request, state=state)
+            provider = GoogleOAuthProvider(
+                request=request,
+                state=state,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/auth/spaces/google/callback/",
+            )
             request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
@@ -89,7 +93,11 @@ class GoogleCallbackSpaceEndpoint(View):
             )
             return HttpResponseRedirect(url)
         try:
-            provider = GoogleOAuthProvider(request=request, code=code)
+            provider = GoogleOAuthProvider(
+                request=request,
+                code=code,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/auth/spaces/google/callback/",
+            )
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)

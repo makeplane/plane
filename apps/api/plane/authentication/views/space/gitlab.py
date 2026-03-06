@@ -50,7 +50,11 @@ class GitLabOauthInitiateSpaceEndpoint(View):
 
         try:
             state = uuid.uuid4().hex
-            provider = GitLabOAuthProvider(request=request, state=state)
+            provider = GitLabOAuthProvider(
+                request=request,
+                state=state,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/auth/spaces/gitlab/callback/",
+            )
             request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
@@ -92,7 +96,11 @@ class GitLabCallbackSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            provider = GitLabOAuthProvider(request=request, code=code)
+            provider = GitLabOAuthProvider(
+                request=request,
+                code=code,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/auth/spaces/gitlab/callback/",
+            )
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)

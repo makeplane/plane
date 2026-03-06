@@ -49,7 +49,11 @@ class GitHubOauthInitiateSpaceEndpoint(View):
 
         try:
             state = uuid.uuid4().hex
-            provider = GitHubOAuthProvider(request=request, state=state)
+            provider = GitHubOAuthProvider(
+                request=request,
+                state=state,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/auth/spaces/github/callback/",
+            )
             request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
@@ -91,7 +95,11 @@ class GitHubCallbackSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            provider = GitHubOAuthProvider(request=request, code=code)
+            provider = GitHubOAuthProvider(
+                request=request,
+                code=code,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/auth/spaces/github/callback/",
+            )
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
