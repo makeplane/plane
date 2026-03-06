@@ -313,6 +313,8 @@ export default {
   analytics: "Analytics",
   dashboards: "Dashboards",
   workspace_invites: "Workspace invites",
+  search_workspace: "Search workspace...",
+  no_workspace_found: "No workspace found",
   enter_god_mode: "Enter god mode",
   workspace_logo: "Workspace logo",
   new_issue: "New work item",

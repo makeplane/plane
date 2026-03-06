@@ -313,6 +313,8 @@ export default {
   analytics: "Phân tích",
   dashboards: "Bảng thông tin",
   workspace_invites: "Lời mời không gian làm việc",
+  search_workspace: "Tìm kiếm workspace...",
+  no_workspace_found: "Không tìm thấy workspace phù hợp",
   enter_god_mode: "Vào chế độ quản trị viên",
   workspace_logo: "Logo không gian làm việc",
   new_issue: "Mục công việc mới",

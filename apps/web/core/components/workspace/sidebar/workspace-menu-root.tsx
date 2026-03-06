@@ -8,7 +8,7 @@ import { Fragment, useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { CirclePlus, LogOut, Mails } from "lucide-react";
+import { CirclePlus, LogOut, Mails, Search, X } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
@@ -48,8 +48,11 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
   const { t } = useTranslation();
   // local state
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleWorkspaceNavigation = (workspace: IWorkspace) => updateUserProfile({ last_workspace_id: workspace?.id });
+  const handleWorkspaceNavigation = (workspace: IWorkspace): void => {
+    void updateUserProfile({ last_workspace_id: workspace?.id });
+  };
 
   const handleSignOut = async () => {
     await signOut().catch(() =>
@@ -67,6 +70,13 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
     }
   };
   const workspacesList = orderWorkspacesList(Object.values(workspaces ?? {}));
+
+  const filteredWorkspaces = searchQuery
+    ? workspacesList.filter((w) => w.name.toLowerCase().includes(searchQuery.toLowerCase().trim()))
+    : activeWorkspace
+      ? [activeWorkspace, ...workspacesList.filter((w) => w.id !== activeWorkspace?.id)]
+      : workspacesList;
+
   // TODO: fix workspaces list scroll
 
   // Toggle sidebar dropdown state when either menu is open
@@ -86,6 +96,9 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
         // Update local state directly
         if (isWorkspaceMenuOpen !== open) {
           setIsWorkspaceMenuOpen(open);
+          if (!open) {
+            setSearchQuery("");
+          }
         }
 
         return (
@@ -155,30 +168,54 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                   )}
                 >
                   <div className="overflow-x-hidden vertical-scrollbar scrollbar-sm flex max-h-96 flex-col items-start justify-start overflow-y-scroll">
-                    <span className="rounded-md text-left px-4 sticky top-0 z-21 h-full w-full bg-surface-1 pb-1 pt-3 text-13 font-medium text-placeholder truncate flex-shrink-0">
-                      {currentUser?.email}
-                    </span>
+                    <div className="sticky top-0 z-21 flex-shrink-0 bg-surface-1 w-full flex flex-col px-4 pt-3 pb-2 gap-2">
+                      <span className="text-13 font-medium text-placeholder truncate w-full">{currentUser?.email}</span>
+                      <div className="relative flex items-center w-full">
+                        <Search className="absolute left-2.5 size-3.5 text-placeholder" />
+                        <input
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === " ") {
+                              e.stopPropagation();
+                            }
+                          }}
+                          placeholder={t("search_workspace") || "Search workspace..."}
+                          className="w-full bg-layer-2 border border-color-subtle rounded-md pl-8 pr-8 py-1.5 text-13 text-secondary focus:outline-none focus:border-color-brand-base"
+                        />
+                        {searchQuery && (
+                          <button
+                            type="button"
+                            onClick={() => setSearchQuery("")}
+                            className="absolute right-2.5 text-placeholder hover:text-secondary focus:outline-none"
+                          >
+                            <X className="size-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
                     {workspacesList ? (
                       <div className="size-full flex flex-col items-start justify-start">
-                        {(activeWorkspace
-                          ? [
-                              activeWorkspace,
-                              ...workspacesList.filter((workspace) => workspace.id !== activeWorkspace?.id),
-                            ]
-                          : workspacesList
-                        ).map((workspace) => (
-                          <SidebarDropdownItem
-                            key={workspace.id}
-                            workspace={workspace}
-                            activeWorkspace={activeWorkspace}
-                            handleItemClick={handleItemClick}
-                            handleWorkspaceNavigation={handleWorkspaceNavigation}
-                            handleClose={close}
-                          />
-                        ))}
+                        {filteredWorkspaces.length > 0 ? (
+                          filteredWorkspaces.map((workspace) => (
+                            <SidebarDropdownItem
+                              key={workspace.id}
+                              workspace={workspace}
+                              activeWorkspace={activeWorkspace}
+                              handleItemClick={handleItemClick}
+                              handleWorkspaceNavigation={handleWorkspaceNavigation}
+                              handleClose={close}
+                            />
+                          ))
+                        ) : (
+                          <div className="w-full px-4 py-3 text-center text-13 text-placeholder italic">
+                            {t("no_workspace_found") || "No workspace found"}
+                          </div>
+                        )}
                       </div>
                     ) : (
-                      <div className="w-full">
+                      <div className="w-full p-4">
                         <Loader className="space-y-2">
                           <Loader.Item height="30px" />
                           <Loader.Item height="30px" />
@@ -214,7 +251,9 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                         as="button"
                         type="button"
                         className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-13 font-medium text-danger-primary hover:bg-layer-transparent-hover"
-                        onClick={handleSignOut}
+                        onClick={() => {
+                          void handleSignOut();
+                        }}
                       >
                         <LogOut className="size-4 flex-shrink-0" />
                         {t("sign_out")}
