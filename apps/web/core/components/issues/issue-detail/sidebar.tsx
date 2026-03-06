@@ -41,6 +41,7 @@ import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-detai
 import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
 import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
+import { CompletedAtProperty } from "@/plane-web/components/issues/issue-details/sidebar/completed-at-property";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import { IssueCycleSelect } from "./cycle-select";
 import { IssueLabel } from "./label";
@@ -90,7 +91,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
               <StateDropdown
                 value={issue?.state_id}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+                onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
                 projectId={projectId?.toString() ?? ""}
                 disabled={!isEditable}
                 buttonVariant="transparent-with-text"
@@ -105,7 +106,9 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             <SidebarPropertyListItem icon={MembersPropertyIcon} label={t("common.assignees")}>
               <MemberDropdown
                 value={issue?.assignee_ids ?? undefined}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
+                onChange={(val) =>
+                  void issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })
+                }
                 disabled={!isEditable}
                 projectId={projectId?.toString() ?? ""}
                 placeholder={t("issue.add.assignee")}
@@ -123,7 +126,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             <SidebarPropertyListItem icon={PriorityPropertyIcon} label={t("common.priority")}>
               <PriorityDropdown
                 value={issue?.priority}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
+                onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
                 disabled={!isEditable}
                 buttonVariant="transparent-with-text"
                 className="w-full h-7.5 grow rounded-sm"
@@ -146,7 +149,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 placeholder={t("issue.add.start_date")}
                 value={issue.start_date}
                 onChange={(val) =>
-                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                  void issueOperations.update(workspaceSlug, projectId, issueId, {
                     start_date: val ? renderFormattedPayloadDate(val) : null,
                   })
                 }
@@ -167,7 +170,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   placeholder={t("issue.add.due_date")}
                   value={issue.target_date}
                   onChange={(val) =>
-                    issueOperations.update(workspaceSlug, projectId, issueId, {
+                    void issueOperations.update(workspaceSlug, projectId, issueId, {
                       target_date: val ? renderFormattedPayloadDate(val) : null,
                     })
                   }
@@ -187,12 +190,14 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               </div>
             </SidebarPropertyListItem>
 
+            <CompletedAtProperty issueId={issueId} />
+
             {projectId && areEstimateEnabledByProjectId(projectId) && (
               <SidebarPropertyListItem icon={EstimatePropertyIcon} label={t("common.estimate")}>
                 <EstimateDropdown
                   value={issue?.estimate_point ?? undefined}
                   onChange={(val: string | undefined) =>
-                    issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })
+                    void issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })
                   }
                   projectId={projectId}
                   disabled={!isEditable}
@@ -264,7 +269,6 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               issueId={issueId}
               disabled={!isEditable}
             />
-
           </div>
         </div>
       </div>

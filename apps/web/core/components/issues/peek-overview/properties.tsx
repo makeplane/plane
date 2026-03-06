@@ -40,6 +40,7 @@ import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-detai
 import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
 import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
+import { CompletedAtProperty } from "@/plane-web/components/issues/issue-details/sidebar/completed-at-property";
 import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
 import { IssueLabel } from "../issue-detail/label";
@@ -84,7 +85,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
           <StateDropdown
             value={issue?.state_id}
-            onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+            onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
             projectId={projectId}
             disabled={disabled}
             buttonVariant="transparent-with-text"
@@ -99,7 +100,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         <SidebarPropertyListItem icon={MembersPropertyIcon} label={t("common.assignees")}>
           <MemberDropdown
             value={issue?.assignee_ids ?? undefined}
-            onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
+            onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
             disabled={disabled}
             projectId={projectId}
             placeholder={t("issue.add.assignee")}
@@ -117,7 +118,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         <SidebarPropertyListItem icon={PriorityPropertyIcon} label={t("common.priority")}>
           <PriorityDropdown
             value={issue?.priority}
-            onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
+            onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
             disabled={disabled}
             buttonVariant="transparent-with-text"
             className="w-full h-7.5 grow rounded-sm"
@@ -146,7 +147,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           <DateDropdown
             value={issue.start_date}
             onChange={(val) =>
-              issueOperations.update(workspaceSlug, projectId, issueId, {
+              void issueOperations.update(workspaceSlug, projectId, issueId, {
                 start_date: val ? renderFormattedPayloadDate(val) : null,
               })
             }
@@ -167,7 +168,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             <DateDropdown
               value={issue.target_date}
               onChange={(val) =>
-                issueOperations.update(workspaceSlug, projectId, issueId, {
+                void issueOperations.update(workspaceSlug, projectId, issueId, {
                   target_date: val ? renderFormattedPayloadDate(val) : null,
                 })
               }
@@ -188,11 +189,15 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           </div>
         </SidebarPropertyListItem>
 
+        <CompletedAtProperty issueId={issueId} />
+
         {isEstimateEnabled && (
           <SidebarPropertyListItem icon={EstimatePropertyIcon} label={t("common.estimate")}>
             <EstimateDropdown
               value={issue.estimate_point ?? undefined}
-              onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
+              onChange={(val) =>
+                void issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })
+              }
               projectId={projectId}
               disabled={disabled}
               buttonVariant="transparent-with-text"
@@ -258,7 +263,6 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           issueId={issueId}
           disabled={disabled}
         />
-
       </div>
     </div>
   );
