@@ -8,7 +8,7 @@ import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 
 // plane imports
-import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EIconSize, STATE_GROUPS, STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PlusIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
@@ -62,7 +62,15 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
       <div className="flex justify-between items-center gap-2">
         <div
           className="w-full flex items-center cursor-pointer py-1"
+          role="button"
+          tabIndex={0}
           onClick={() => (!currentStateExpanded ? handleExpand(groupKey) : handleGroupCollapse(groupKey))}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              if (!currentStateExpanded) handleExpand(groupKey);
+              else handleGroupCollapse(groupKey);
+            }
+          }}
         >
           <div
             className={cn(
@@ -78,7 +86,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
           <div className="flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden">
             <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} />
           </div>
-          <div className="text-14 font-medium text-secondary capitalize px-1">{groupKey}</div>
+          <div className="text-14 font-medium text-secondary px-1">{STATE_GROUPS[groupKey].label}</div>
         </div>
         <button
           type="button"
@@ -101,7 +109,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
 
       {shouldShowEmptyState && (
         <div className="flex flex-col justify-center items-center h-full py-4 text-13 text-tertiary">
-          <div>{t("project_settings.states.empty_state.title", { groupKey })}</div>
+          <div>{t("project_settings.states.empty_state.title", { groupKey: STATE_GROUPS[groupKey].label })}</div>
           {isEditable && <div>{t("project_settings.states.empty_state.description")}</div>}
         </div>
       )}

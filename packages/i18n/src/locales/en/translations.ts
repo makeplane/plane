@@ -1114,7 +1114,7 @@ export default {
     },
     states: {
       active: "Active",
-      backlog: "Backlog",
+      backlog: "Draft",
     },
     comments: {
       placeholder: "Add comment",
@@ -1454,7 +1454,7 @@ export default {
     },
     total: "Total {entity}",
     started_work_items: "Started {entity}",
-    backlog_work_items: "Backlog {entity}",
+    backlog_work_items: "Draft {entity}",
     un_started_work_items: "Unstarted {entity}",
     completed_work_items: "Completed {entity}",
     completed: "Completed",
@@ -1532,7 +1532,7 @@ export default {
       issue_delete: "Failed to delete work item",
     },
     state: {
-      backlog: "Backlog",
+      backlog: "Draft",
       unstarted: "Unstarted",
       started: "Started",
       completed: "Completed",
@@ -2804,7 +2804,7 @@ export default {
   },
   project_modules: {
     status: {
-      backlog: "Backlog",
+      backlog: "Draft",
       planned: "Planned",
       in_progress: "In Progress",
       paused: "Paused",
