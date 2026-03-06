@@ -179,9 +179,10 @@ def issue_import_task(import_job_id: str, actor_id: str):
                 # Assignees (may be comma-separated in file)
                 assignee_col = col_map.get("assignee", "")
                 if assignee_col and row.get(assignee_col):
+                    cell_value = row[assignee_col].strip().strip("[]")
                     raw_names = [
                         n.strip()
-                        for n in row[assignee_col].split(",")
+                        for n in cell_value.split(",")
                         if n.strip()
                     ]
                     for raw_name in raw_names:

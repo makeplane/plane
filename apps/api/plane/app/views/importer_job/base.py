@@ -81,7 +81,7 @@ class ImportUploadEndpoint(BaseAPIView):
             col_idx = headers.index(status_col)
             unique_statuses = sorted(
                 set(
-                    row[col_idx]
+                    row[col_idx].strip().strip("[]")
                     for row in rows
                     if col_idx < len(row) and row[col_idx].strip()
                 )
@@ -92,7 +92,8 @@ class ImportUploadEndpoint(BaseAPIView):
             assignee_seen = {}
             for row in rows:
                 if col_idx < len(row) and row[col_idx].strip():
-                    for name in row[col_idx].split(","):
+                    cell_value = row[col_idx].strip().strip("[]")
+                    for name in cell_value.split(","):
                         name = name.strip()
                         if name:
                             normalized = " ".join(name.lower().split())
