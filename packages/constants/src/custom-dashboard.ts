@@ -126,7 +126,7 @@ export const ANALYTICS_PRIORITY_OPTIONS = [
 
 // Hardcoded state group filter values
 export const ANALYTICS_STATE_GROUP_OPTIONS = [
-  { key: "backlog", label: "Backlog" },
+  { key: "backlog", label: "Draft" },
   { key: "unstarted", label: "Unstarted" },
   { key: "started", label: "Started" },
   { key: "completed", label: "Completed" },

@@ -4,15 +4,36 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
-import React from "react";
+import { useTranslation } from "@plane/i18n";
+import { DueDatePropertyIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
+import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 export type TWorkItemLayoutAdditionalProperties = {
   displayProperties: IIssueDisplayProperties;
   issue: TIssue;
 };
 
-export function WorkItemLayoutAdditionalProperties(props: TWorkItemLayoutAdditionalProperties) {
-  return <></>;
+export function WorkItemLayoutAdditionalProperties({ issue }: TWorkItemLayoutAdditionalProperties) {
+  const { t } = useTranslation();
+  const { getStateById } = useProjectState();
+
+  const stateDetails = getStateById(issue.state_id);
+
+  if (stateDetails?.group !== "completed") return null;
+
+  // Fall back to now if backend hasn't returned completed_at yet (optimistic state update)
+  const completedAt = issue.completed_at ?? new Date().toISOString();
+  const formattedDate = `${renderFormattedDate(completedAt)} ${renderFormattedTime(completedAt, "12-hour")}`;
+
+  return (
+    <Tooltip tooltipHeading={t("common.completed_at")} tooltipContent={formattedDate}>
+      <div className="flex h-5 flex-shrink-0 items-center gap-1 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
+        <DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />
+        <span className="text-caption-sm-regular truncate max-w-28">{formattedDate}</span>
+      </div>
+    </Tooltip>
+  );
 }

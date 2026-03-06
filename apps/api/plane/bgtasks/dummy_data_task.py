@@ -82,7 +82,7 @@ def create_project_members(workspace, project, members):
 def create_states(workspace, project, user_id):
     states = [
         {
-            "name": "Backlog",
+            "name": "Draft",
             "color": "#A3A3A3",
             "sequence": 15000,
             "group": "backlog",

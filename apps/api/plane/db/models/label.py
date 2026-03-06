@@ -64,6 +64,7 @@ DEFAULT_LABELS = [
     {"name": "Bank-wide Project", "color": "#0E8A16", "sort_order": 65535},
     {"name": "Daily",             "color": "#0075CA", "sort_order": 75535},
     {"name": "Weekly",            "color": "#E4E669", "sort_order": 85535},
+    {"name": "Bi-weekly",         "color": "#7057FF", "sort_order": 90535},
     {"name": "Monthly",           "color": "#D93F0B", "sort_order": 95535},
     {"name": "Quarterly",         "color": "#0693E3", "sort_order": 105535},
     {"name": "Half-year",         "color": "#FBCA04", "sort_order": 115535},

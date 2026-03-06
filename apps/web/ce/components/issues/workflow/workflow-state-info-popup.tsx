@@ -81,7 +81,7 @@ export const WorkflowStateInfoPopup = observer(function WorkflowStateInfoPopup({
     <Popover className="relative">
       <Popover.Button as="div">{children}</Popover.Button>
 
-      <Popover.Panel className="absolute left-0 top-full z-[60] mt-1 w-56 rounded-lg border border-color-subtle bg-surface-1 p-2.5 shadow-lg">
+      <Popover.Panel className="absolute right-0 top-full z-[60] mt-1 w-56 rounded-lg border border-color-subtle bg-surface-1 p-2.5 shadow-xl">
         <p className="mb-2 text-[12px] font-semibold text-color-primary">
           {t("project_settings.workflows.indicator_popup_title")}
         </p>

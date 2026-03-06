@@ -4,19 +4,14 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
-import React from "react";
-import { Paperclip } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
+import { LinkIcon, ViewsIcon } from "@plane/propel/icons";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // plane web imports
 import { WorkItemAdditionalWidgetActionButtons } from "@/plane-web/components/issues/issue-detail-widgets/action-buttons";
 // local imports
-import { IssueAttachmentActionButton } from "./attachments";
 import { IssueLinksActionButton } from "./links";
-import { RelationActionButton } from "./relations";
 import { SubIssuesActionButton } from "./sub-issues";
 import { IssueDetailWidgetButton } from "./widget-button";
 
@@ -50,6 +45,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           issueServiceType={issueServiceType}
         />
       )}
+      {/* TEMP: Add relation disabled
       {!hideWidgets?.includes("relations") && (
         <RelationActionButton
           issueId={issueId}
@@ -64,6 +60,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           issueServiceType={issueServiceType}
         />
       )}
+      */}
       {!hideWidgets?.includes("links") && (
         <IssueLinksActionButton
           customButton={
@@ -77,6 +74,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           issueServiceType={issueServiceType}
         />
       )}
+      {/* TEMP: Attachment disabled
       {!hideWidgets?.includes("attachments") && (
         <IssueAttachmentActionButton
           workspaceSlug={workspaceSlug}
@@ -93,6 +91,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           issueServiceType={issueServiceType}
         />
       )}
+      */}
       <WorkItemAdditionalWidgetActionButtons
         disabled={disabled}
         hideWidgets={hideWidgets ?? []}

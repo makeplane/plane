@@ -124,7 +124,7 @@ class Command(BaseCommand):
 
     def _create_states(self, ws, proj, admin):
         states = [
-            ("Backlog", "#A3A3A3", 15000, "backlog", True), ("Todo", "#3A3A3A", 25000, "unstarted", False),
+            ("Draft", "#A3A3A3", 15000, "backlog", True), ("Todo", "#3A3A3A", 25000, "unstarted", False),
             ("In Progress", "#F59E0B", 35000, "started", False), ("Done", "#16A34A", 45000, "completed", False),
             ("Cancelled", "#EF4444", 55000, "cancelled", False),
         ]

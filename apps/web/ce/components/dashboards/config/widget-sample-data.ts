@@ -22,7 +22,7 @@ const SAMPLE_CHART_DATA: Record<string, IAnalyticsChartData> = {
   },
   state_group: {
     data: [
-      { name: "Backlog", count: 8 },
+      { name: "Draft", count: 8 },
       { name: "Unstarted", count: 15 },
       { name: "Started", count: 22 },
       { name: "Completed", count: 30 },

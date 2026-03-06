@@ -6,7 +6,7 @@
 
 export default {
   sidebar: {
-    projects: "프로젝트",
+    projects: "Teams/프로젝트",
     pages: "페이지",
     new_work_item: "새 작업 항목",
     home: "홈",
@@ -314,7 +314,7 @@ export default {
   new_issue: "새 작업 항목",
   your_work: "나의 작업",
   drafts: "초안",
-  projects: "프로젝트",
+  projects: "Teams/프로젝트",
   views: "보기",
   workspace: "작업 공간",
   archives: "아카이브",
@@ -658,7 +658,7 @@ export default {
       },
       filters: {
         all: "모든",
-        projects: "프로젝트",
+        projects: "Teams/프로젝트",
         pages: "페이지",
         issues: "작업 항목",
       },
@@ -909,7 +909,7 @@ export default {
     select: "선택",
     upgrade: "업그레이드",
     add_seats: "좌석 추가",
-    projects: "프로젝트",
+    projects: "Teams/프로젝트",
     workspace: "작업 공간",
     workspaces: "작업 공간",
     team: "팀",
@@ -1108,7 +1108,7 @@ export default {
     },
     states: {
       active: "활성",
-      backlog: "백로그",
+      backlog: "Draft",
     },
     comments: {
       placeholder: "댓글 추가",
@@ -1473,7 +1473,7 @@ export default {
     },
     created_vs_resolved: "생성됨 vs 해결됨",
     customized_insights: "맞춤형 인사이트",
-    backlog_work_items: "백로그 {entity}",
+    backlog_work_items: "Draft {entity}",
     active_projects: "활성 프로젝트",
     trend_on_charts: "차트의 추세",
     completed: "완료됨",
@@ -1524,7 +1524,7 @@ export default {
       issue_delete: "작업 항목 삭제 실패",
     },
     state: {
-      backlog: "백로그",
+      backlog: "Draft",
       unstarted: "시작되지 않음",
       started: "시작됨",
       completed: "완료됨",
@@ -2787,7 +2787,7 @@ export default {
   },
   project_modules: {
     status: {
-      backlog: "백로그",
+      backlog: "Draft",
       planned: "계획됨",
       in_progress: "진행 중",
       paused: "일시 중지됨",

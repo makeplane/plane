@@ -6,7 +6,7 @@
 
 export default {
   sidebar: {
-    projects: "Dự án",
+    projects: "Teams/Dự án",
     pages: "Trang",
     new_work_item: "Mục công việc mới",
     home: "Trang chủ",
@@ -320,7 +320,7 @@ export default {
   new_issue: "Mục công việc mới",
   your_work: "Công việc của tôi",
   drafts: "Bản nháp",
-  projects: "Dự án",
+  projects: "Teams/Dự án",
   views: "Chế độ xem",
   workspace: "Không gian làm việc",
   archives: "Lưu trữ",
@@ -672,7 +672,7 @@ export default {
       },
       filters: {
         all: "Tất cả",
-        projects: "Dự án",
+        projects: "Teams/Dự án",
         pages: "Trang",
         issues: "Mục công việc",
       },
@@ -923,7 +923,7 @@ export default {
     select: "Chọn",
     upgrade: "Nâng cấp",
     add_seats: "Thêm vị trí",
-    projects: "Dự án",
+    projects: "Teams/Dự án",
     workspace: "Không gian làm việc",
     workspaces: "Không gian làm việc",
     team: "Nhóm",
@@ -1122,7 +1122,7 @@ export default {
     },
     states: {
       active: "Hoạt động",
-      backlog: "Tồn đọng",
+      backlog: "Draft",
     },
     comments: {
       placeholder: "Thêm bình luận",
@@ -1490,7 +1490,7 @@ export default {
     },
     created_vs_resolved: "Đã tạo vs Đã giải quyết",
     customized_insights: "Thông tin chi tiết tùy chỉnh",
-    backlog_work_items: "{entity} tồn đọng",
+    backlog_work_items: "Draft {entity}",
     active_projects: "Dự án đang hoạt động",
     trend_on_charts: "Xu hướng trên biểu đồ",
     all_projects: "Tất cả dự án",
@@ -1541,7 +1541,7 @@ export default {
       issue_delete: "Xóa mục công việc thất bại",
     },
     state: {
-      backlog: "Tồn đọng",
+      backlog: "Draft",
       unstarted: "Chưa bắt đầu",
       started: "Đang tiến hành",
       completed: "Đã hoàn thành",
@@ -2817,7 +2817,7 @@ export default {
   },
   project_modules: {
     status: {
-      backlog: "Tồn đọng",
+      backlog: "Draft",
       planned: "Đã lên kế hoạch",
       in_progress: "Đang tiến hành",
       paused: "Đã tạm dừng",
