@@ -14,7 +14,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { Monitor, Smartphone } from "lucide-react";
+import { Monitor, Smartphone, ShieldUser } from "lucide-react";
 // plane internal packages
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -27,7 +27,7 @@ import { ControllerInput } from "@/components/common/controller-input";
 import type { TControllerSwitchFormField } from "@/components/common/controller-switch";
 import { ControllerSwitch } from "@/components/common/controller-switch";
 import type { TCopyField } from "@/components/common/copy-field";
-import { CopyField } from "@/components/common/copy-field";
+import { ServiceDetailsSection } from "@/components/authentication/service-details-section";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -208,6 +208,38 @@ export function InstanceOIDCConfigForm(props: Props) {
     },
   ];
 
+  const OIDC_ADMIN_SERVICE_DETAILS: TCopyField[] = [
+    {
+      key: "admin_origin_uri",
+      label: "Origin URL",
+      url: `${originURL}/api/instances/admin/oidc/`,
+      description:
+        "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
+    },
+    {
+      key: "admin_callback_uri",
+      label: "Redirect URL",
+      url: `${originURL}/api/instances/admin/oidc/callback/`,
+      description: (
+        <>
+          We will generate this for you. Add this in the <CodeBlock darkerShade>Sign-in redirect URI</CodeBlock> field
+          of your IdP.
+        </>
+      ),
+    },
+    {
+      key: "admin_logout_uri",
+      label: "Logout URL",
+      url: `${originURL}/api/instances/admin/oidc/logout/`,
+      description: (
+        <>
+          We will generate this for you. Add this in the <CodeBlock darkerShade>Logout redirect URI</CodeBlock> field of
+          your IdP.
+        </>
+      ),
+    },
+  ];
+
   const onSubmit = async (formData: OIDCConfigFormValues) => {
     const payload: Partial<OIDCConfigFormValues> = { ...formData };
 
@@ -289,30 +321,13 @@ export function InstanceOIDCConfigForm(props: Props) {
 
             <div className="flex flex-col gap-y-4">
               {/* web service details */}
-              <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
-                  <Monitor className="w-3 h-3" />
-                  Web
-                </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
-                  {OIDC_SERVICE_DETAILS.map((field) => (
-                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-                  ))}
-                </div>
-              </div>
+              <ServiceDetailsSection icon={Monitor} title="Web" fields={OIDC_SERVICE_DETAILS} />
 
               {/* mobile service details */}
-              <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
-                  <Smartphone className="w-3 h-3" />
-                  Mobile
-                </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
-                  {OIDC_MOBILE_SERVICE_DETAILS.map((field) => (
-                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-                  ))}
-                </div>
-              </div>
+              <ServiceDetailsSection icon={Smartphone} title="Mobile" fields={OIDC_MOBILE_SERVICE_DETAILS} />
+
+              {/* admin service details */}
+              <ServiceDetailsSection icon={ShieldUser} title="Admin" fields={OIDC_ADMIN_SERVICE_DETAILS} />
             </div>
           </div>
         </div>

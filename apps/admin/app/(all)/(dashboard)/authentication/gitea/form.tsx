@@ -15,6 +15,7 @@ import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { Monitor, ShieldUser } from "lucide-react";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
@@ -28,7 +29,7 @@ import { ControllerInput } from "@/components/common/controller-input";
 import type { TControllerSwitchFormField } from "@/components/common/controller-switch";
 import { ControllerSwitch } from "@/components/common/controller-switch";
 import type { TCopyField } from "@/components/common/copy-field";
-import { CopyField } from "@/components/common/copy-field";
+import { ServiceDetailsSection } from "@/components/authentication/service-details-section";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -124,11 +125,34 @@ export function InstanceGiteaConfigForm(props: Props) {
     label: "Gitea",
   };
 
-  const GITEA_SERVICE_FIELD: TCopyField[] = [
+  const GITEA_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Callback_URI",
       label: "Callback URI",
       url: `${originURL}/auth/gitea/callback/`,
+      description: (
+        <>
+          We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
+          field{" "}
+          <a
+            tabIndex={-1}
+            href={`${control._formValues.GITEA_HOST || "https://gitea.com"}/user/settings/applications`}
+            target="_blank"
+            className="text-accent-primary hover:underline"
+            rel="noreferrer"
+          >
+            here.
+          </a>
+        </>
+      ),
+    },
+  ];
+
+  const GITEA_ADMIN_SERVICE_DETAILS: TCopyField[] = [
+    {
+      key: "admin_callback_uri",
+      label: "Callback URI",
+      url: `${originURL}/api/instances/admin/gitea/callback/`,
       description: (
         <>
           We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
@@ -217,12 +241,15 @@ export function InstanceGiteaConfigForm(props: Props) {
               </div>
             </div>
           </div>
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-layer-1 rounded-lg">
-              <div className="pt-2 text-18 font-medium">Plane-provided details for Gitea</div>
-              {GITEA_SERVICE_FIELD.map((field) => (
-                <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-              ))}
+          <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
+            <div className="pt-2 text-18 font-medium">Plane-provided details for Gitea</div>
+
+            <div className="flex flex-col gap-y-4">
+              {/* web service details */}
+              <ServiceDetailsSection icon={Monitor} title="Web" fields={GITEA_SERVICE_DETAILS} />
+
+              {/* admin service details */}
+              <ServiceDetailsSection icon={ShieldUser} title="Admin" fields={GITEA_ADMIN_SERVICE_DETAILS} />
             </div>
           </div>
         </div>

@@ -77,6 +77,14 @@ class InstanceAdmin(BaseModel):
         db_table = "instance_admins"
         ordering = ("-created_at",)
 
+    @classmethod
+    def is_instance_admin(cls, user):
+        """Check if the given user is an instance admin."""
+        instance = Instance.objects.first()
+        if not instance:
+            return False
+        return cls.objects.filter(instance=instance, user=user).exists()
+
 
 class InstanceConfiguration(BaseModel):
     # The instance configuration variables

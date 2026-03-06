@@ -11,6 +11,7 @@
 
 # Python imports
 from urllib.parse import urlencode, urljoin
+import os
 import uuid
 from zxcvbn import zxcvbn
 
@@ -36,6 +37,7 @@ from plane.license.api.serializers import (
     InstanceAdminSerializer,
 )
 from plane.license.models import Instance, InstanceAdmin
+from plane.license.utils.instance_value import get_configuration_value
 from plane.db.models import User, Profile
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.authentication.utils.login import user_login
@@ -44,6 +46,7 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
+from plane.authentication.rate_limit import AuthenticationThrottle
 from plane.utils.ip_address import get_client_ip
 from plane.utils.path_validator import get_safe_redirect_url
 from plane.silo.bgtasks.integration_apps_task import create_integration_applications
@@ -401,8 +404,81 @@ class InstanceAdminSignOutEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = get_safe_redirect_url(base_url=base_host(request=request, is_admin=True), next_path="")
+            host = base_host(request=request, is_admin=True)
+            url = urljoin(host, "general/")
             return HttpResponseRedirect(url)
         except Exception:
             url = get_safe_redirect_url(base_url=base_host(request=request, is_admin=True), next_path="")
             return HttpResponseRedirect(url)
+
+
+class InstanceAdminEmailCheckEndpoint(BaseAPIView):
+    permission_classes = [AllowAny]
+    throttle_classes = [AuthenticationThrottle]
+
+    def post(self, request):
+        # Check instance configuration
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
+                error_message="INSTANCE_NOT_CONFIGURED",
+            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
+
+        email = request.data.get("email", False)
+
+        if not email:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["EMAIL_REQUIRED"],
+                error_message="EMAIL_REQUIRED",
+            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate email
+        email = str(email).strip().lower()
+        try:
+            validate_email(email)
+        except ValidationError:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
+                error_message="INVALID_EMAIL",
+            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
+
+        (EMAIL_HOST, ENABLE_MAGIC_LINK_LOGIN) = get_configuration_value(
+            [
+                {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST", "")},
+                {
+                    "key": "ENABLE_MAGIC_LINK_LOGIN",
+                    "default": os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "1"),
+                },
+            ]
+        )
+
+        smtp_configured = bool(EMAIL_HOST)
+        is_magic_login_enabled = ENABLE_MAGIC_LINK_LOGIN == "1"
+
+        # Check if user exists
+        existing_user = User.objects.filter(email=email).first()
+
+        if existing_user:
+            return Response(
+                {
+                    "existing": True,
+                    "status": (
+                        "MAGIC_CODE"
+                        if existing_user.is_password_autoset and smtp_configured and is_magic_login_enabled
+                        else "CREDENTIAL"
+                    ),
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            {
+                "existing": False,
+                "status": ("MAGIC_CODE" if smtp_configured and is_magic_login_enabled else "CREDENTIAL"),
+            },
+            status=status.HTTP_200_OK,
+        )

@@ -15,7 +15,10 @@ import { index, layout, route } from "@react-router/dev/routes";
 import type { RouteConfig } from "@react-router/dev/routes";
 
 export default [
-  layout("./(all)/(home)/layout.tsx", [index("./(all)/(home)/page.tsx")]),
+  layout("./(all)/(home)/layout.tsx", [
+    index("./(all)/(home)/page.tsx"),
+    route("ldap", "./(all)/(home)/ldap/page.tsx"),
+  ]),
   layout("./(all)/(dashboard)/layout.tsx", [
     route("general", "./(all)/(dashboard)/general/page.tsx"),
     route("workspace", "./(all)/(dashboard)/workspace/page.tsx"),

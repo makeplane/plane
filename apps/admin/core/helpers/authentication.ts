@@ -41,3 +41,18 @@ export const canDisableAuthMethod = (
   const isCurrentlyEnabled = Boolean(parseInt(formattedConfig?.[configKey] ?? "0"));
   return !(isCurrentlyEnabled && enabledCount === 1);
 };
+
+/**
+ * Decodes a base64 encoded email from URL parameters.
+ * Used to decode the 'ctx' parameter that contains encoded email.
+ * @param encodedEmail - The base64 encoded email string
+ * @returns The decoded email or undefined if decoding fails
+ */
+export const decodeEmailFromUrl = (encodedEmail: string | null | undefined): string | undefined => {
+  if (!encodedEmail) return undefined;
+  try {
+    return atob(encodedEmail);
+  } catch {
+    return undefined;
+  }
+};

@@ -15,7 +15,7 @@ import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { Monitor } from "lucide-react";
+import { Monitor, Smartphone, ShieldUser } from "lucide-react";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
@@ -30,6 +30,7 @@ import { ControllerSwitch } from "@/components/common/controller-switch";
 import { ControllerInput } from "@/components/common/controller-input";
 import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
+import { ServiceDetailsSection } from "@/components/authentication/service-details-section";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -157,6 +158,50 @@ export function InstanceGoogleConfigForm(props: Props) {
     },
   ];
 
+  const GOOGLE_MOBILE_SERVICE_DETAILS: TCopyField[] = [
+    {
+      key: "mobile_callback_uri",
+      label: "Callback URI",
+      url: `${originURL}/auth/mobile/google/callback/`,
+      description: (
+        <p>
+          We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Redirect URI</CodeBlock>{" "}
+          field. For this OAuth client{" "}
+          <a
+            href="https://console.cloud.google.com/apis/credentials/oauthclient"
+            target="_blank"
+            className="text-accent-primary hover:underline"
+            rel="noreferrer"
+          >
+            here.
+          </a>
+        </p>
+      ),
+    },
+  ];
+
+  const GOOGLE_ADMIN_SERVICE_DETAILS: TCopyField[] = [
+    {
+      key: "admin_callback_uri",
+      label: "Callback URI",
+      url: `${originURL}/api/instances/admin/google/callback/`,
+      description: (
+        <p>
+          We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Redirect URI</CodeBlock>{" "}
+          field. For this OAuth client{" "}
+          <a
+            href="https://console.cloud.google.com/apis/credentials/oauthclient"
+            target="_blank"
+            className="text-accent-primary hover:underline"
+            rel="noreferrer"
+          >
+            here.
+          </a>
+        </p>
+      ),
+    },
+  ];
+
   const onSubmit = async (formData: GoogleConfigFormValues) => {
     const payload: Partial<GoogleConfigFormValues> = { ...formData };
 
@@ -238,17 +283,13 @@ export function InstanceGoogleConfigForm(props: Props) {
               </div>
 
               {/* web service details */}
-              <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
-                  <Monitor className="w-3 h-3" />
-                  Web
-                </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
-                  {GOOGLE_SERVICE_DETAILS.map((field) => (
-                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-                  ))}
-                </div>
-              </div>
+              <ServiceDetailsSection icon={Monitor} title="Web" fields={GOOGLE_SERVICE_DETAILS} />
+
+              {/* mobile service details */}
+              <ServiceDetailsSection icon={Smartphone} title="Mobile" fields={GOOGLE_MOBILE_SERVICE_DETAILS} />
+
+              {/* admin service details */}
+              <ServiceDetailsSection icon={ShieldUser} title="Admin" fields={GOOGLE_ADMIN_SERVICE_DETAILS} />
             </div>
           </div>
         </div>

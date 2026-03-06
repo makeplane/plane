@@ -80,6 +80,66 @@ const errorCodeMessages: {
     title: `User account deactivated`,
     message: () => `User account deactivated. Please contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
   },
+  [EAdminAuthErrorCodes.ADMIN_NOT_INSTANCE_ADMIN]: {
+    title: `Not authorized`,
+    message: () => `You are not authorized as an instance administrator.`,
+  },
+  [EAdminAuthErrorCodes.GOOGLE_NOT_CONFIGURED]: {
+    title: `Google not configured`,
+    message: () => `Google authentication is not configured. Please contact your administrator.`,
+  },
+  [EAdminAuthErrorCodes.GITHUB_NOT_CONFIGURED]: {
+    title: `GitHub not configured`,
+    message: () => `GitHub authentication is not configured. Please contact your administrator.`,
+  },
+  [EAdminAuthErrorCodes.GITLAB_NOT_CONFIGURED]: {
+    title: `GitLab not configured`,
+    message: () => `GitLab authentication is not configured. Please contact your administrator.`,
+  },
+  [EAdminAuthErrorCodes.GITEA_NOT_CONFIGURED]: {
+    title: `Gitea not configured`,
+    message: () => `Gitea authentication is not configured. Please contact your administrator.`,
+  },
+  [EAdminAuthErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR]: {
+    title: `Google authentication failed`,
+    message: () => `Google authentication failed. Please try again.`,
+  },
+  [EAdminAuthErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR]: {
+    title: `GitHub authentication failed`,
+    message: () => `GitHub authentication failed. Please try again.`,
+  },
+  [EAdminAuthErrorCodes.GITLAB_OAUTH_PROVIDER_ERROR]: {
+    title: `GitLab authentication failed`,
+    message: () => `GitLab authentication failed. Please try again.`,
+  },
+  [EAdminAuthErrorCodes.GITEA_OAUTH_PROVIDER_ERROR]: {
+    title: `Gitea authentication failed`,
+    message: () => `Gitea authentication failed. Please try again.`,
+  },
+  [EAdminAuthErrorCodes.OIDC_NOT_CONFIGURED]: {
+    title: `OIDC not configured`,
+    message: () => `OIDC authentication is not configured. Please contact your administrator.`,
+  },
+  [EAdminAuthErrorCodes.OIDC_PROVIDER_ERROR]: {
+    title: `OIDC authentication failed`,
+    message: () => `OIDC authentication failed. Please try again.`,
+  },
+  [EAdminAuthErrorCodes.SAML_NOT_CONFIGURED]: {
+    title: `SAML not configured`,
+    message: () => `SAML authentication is not configured. Please contact your administrator.`,
+  },
+  [EAdminAuthErrorCodes.SAML_PROVIDER_ERROR]: {
+    title: `SAML authentication failed`,
+    message: () => `SAML authentication failed. Please try again.`,
+  },
+  [EAdminAuthErrorCodes.LDAP_NOT_CONFIGURED]: {
+    title: `LDAP not configured`,
+    message: () => `LDAP authentication is not configured. Please contact your administrator.`,
+  },
+  [EAdminAuthErrorCodes.LDAP_AUTHENTICATION_FAILED]: {
+    title: `LDAP authentication failed`,
+    message: () => `LDAP authentication failed. Please check your credentials and try again.`,
+  },
 };
 
 export const authErrorHandler = (errorCode: EAdminAuthErrorCodes, email?: string): TAdminAuthErrorInfo | undefined => {
@@ -93,6 +153,21 @@ export const authErrorHandler = (errorCode: EAdminAuthErrorCodes, email?: string
     EAdminAuthErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EAdminAuthErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
     EAdminAuthErrorCodes.ADMIN_USER_DEACTIVATED,
+    EAdminAuthErrorCodes.ADMIN_NOT_INSTANCE_ADMIN,
+    EAdminAuthErrorCodes.GOOGLE_NOT_CONFIGURED,
+    EAdminAuthErrorCodes.GITHUB_NOT_CONFIGURED,
+    EAdminAuthErrorCodes.GITLAB_NOT_CONFIGURED,
+    EAdminAuthErrorCodes.GITEA_NOT_CONFIGURED,
+    EAdminAuthErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR,
+    EAdminAuthErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR,
+    EAdminAuthErrorCodes.GITLAB_OAUTH_PROVIDER_ERROR,
+    EAdminAuthErrorCodes.GITEA_OAUTH_PROVIDER_ERROR,
+    EAdminAuthErrorCodes.OIDC_NOT_CONFIGURED,
+    EAdminAuthErrorCodes.OIDC_PROVIDER_ERROR,
+    EAdminAuthErrorCodes.SAML_NOT_CONFIGURED,
+    EAdminAuthErrorCodes.SAML_PROVIDER_ERROR,
+    EAdminAuthErrorCodes.LDAP_NOT_CONFIGURED,
+    EAdminAuthErrorCodes.LDAP_AUTHENTICATION_FAILED,
   ];
 
   if (bannerAlertErrorCodes.includes(errorCode))

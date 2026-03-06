@@ -98,6 +98,24 @@ from .app.mobile.saml import (
     MobileSAMLMetadataEndpoint,
 )
 
+# Admin authentication exports
+from .admin import (
+    GoogleOauthInitiateAdminEndpoint,
+    GoogleCallbackAdminEndpoint,
+    GitHubOauthInitiateAdminEndpoint,
+    GitHubCallbackAdminEndpoint,
+    GitLabOauthInitiateAdminEndpoint,
+    GitLabCallbackAdminEndpoint,
+    GiteaOauthInitiateAdminEndpoint,
+    GiteaCallbackAdminEndpoint,
+    OIDCAuthInitiateAdminEndpoint,
+    OIDCCallbackAdminEndpoint,
+    SAMLAuthInitiateAdminEndpoint,
+    LDAPSignInAuthAdminEndpoint,
+    MagicGenerateAdminEndpoint,
+    MagicSignInAdminEndpoint,
+)
+
 from .oauth import CustomAuthorizationView
 
 # Desktop authentication exports

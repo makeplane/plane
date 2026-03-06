@@ -26,9 +26,9 @@ import type { TControllerInputFormField } from "@/components/common/controller-i
 import { ControllerInput } from "@/components/common/controller-input";
 // hooks
 import { useInstance } from "@/hooks/store";
-import { Monitor } from "lucide-react";
-import { CopyField } from "@/components/common/copy-field";
+import { Monitor, ShieldUser } from "lucide-react";
 import type { TCopyField } from "@/components/common/copy-field";
+import { ServiceDetailsSection } from "@/components/authentication/service-details-section";
 
 type Props = {
   config: IFormattedInstanceConfiguration;
@@ -149,6 +149,21 @@ export const InstanceLDAPConfigForm: FC<Props> = (props) => {
 
   // const LDAP_MOBILE_SERVICE_DETAILS: TCopyField[] = [];
 
+  const LDAP_ADMIN_SERVICE_DETAILS: TCopyField[] = [
+    {
+      key: "admin_authentication_endpoint",
+      label: "Authentication Endpoint",
+      url: `${originURL}/api/instances/admin/ldap/`,
+      description: (
+        <>
+          The endpoint where admins authenticate with their LDAP credentials. Ensure your LDAP server is accessible from
+          Plane. Standard ports: <CodeBlock darkerShade>389</CodeBlock> for LDAP, <CodeBlock darkerShade>636</CodeBlock>{" "}
+          for LDAPS (LDAP over SSL).
+        </>
+      ),
+    },
+  ];
+
   const onSubmit = async (formData: LDAPConfigFormValues) => {
     const payload: Partial<LDAPConfigFormValues> = { ...formData };
 
@@ -226,17 +241,10 @@ export const InstanceLDAPConfigForm: FC<Props> = (props) => {
             <div className="pt-2 text-18 font-medium">Plane-provided details for your IdP</div>
             <div className="flex flex-col gap-y-4">
               {/* web service details */}
-              <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
-                  <Monitor className="w-3 h-3" />
-                  Web
-                </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
-                  {LDAP_SERVICE_DETAILS.map((field) => (
-                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-                  ))}
-                </div>
-              </div>
+              <ServiceDetailsSection icon={Monitor} title="Web" fields={LDAP_SERVICE_DETAILS} />
+
+              {/* admin service details */}
+              <ServiceDetailsSection icon={ShieldUser} title="Admin" fields={LDAP_ADMIN_SERVICE_DETAILS} />
             </div>
           </div>
         </div>

@@ -14,14 +14,17 @@ import json
 import os
 from urllib.parse import urlencode, urljoin
 from xml.sax.saxutils import escape as xml_escape
+import time
 
 # Django imports
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-
+from django.utils.http import http_date
+from django.conf import settings
 from django.contrib.auth import logout
+
 
 # Module imports
 from plane.authentication.adapter.saml import SAMLAdapter, DEFAULT_ATTRIBUTE_MAPPING, DEFAULT_NAME_ID_FORMAT
@@ -30,7 +33,7 @@ from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
 )
 from plane.authentication.utils.redirection_path import get_redirection_path
-from plane.license.models import Instance
+from plane.license.models import Instance, InstanceAdmin
 from plane.license.utils.instance_value import get_configuration_value
 from plane.authentication.adapter.error import (
     AuthenticationException,
@@ -86,11 +89,42 @@ class SAMLAuthInitiateEndpoint(View):
 @method_decorator(csrf_exempt, name="dispatch")
 class SAMLCallbackEndpoint(View):
     def post(self, request):
-        host = request.session.get("host", "/")
+        relay_state = request.POST.get("RelayState", "")
+        is_admin = relay_state == "admin"
+        if is_admin:
+            host = base_host(request=request, is_admin=True)
+        else:
+            host = base_host(request=request, is_app=True)
         try:
             provider = SAMLAdapter(request=request)
             user = provider.authenticate()
-            # Login the user and record his device info
+
+            # Admin flow: verify instance admin and redirect to admin panel
+            if is_admin:
+                if not InstanceAdmin.is_instance_admin(user):
+                    raise AuthenticationException(
+                        error_code=AUTHENTICATION_ERROR_CODES["ADMIN_NOT_INSTANCE_ADMIN"],
+                        error_message="ADMIN_NOT_INSTANCE_ADMIN",
+                    )
+                # Login the user as admin
+                user_login(request=request, user=user, is_admin=True)
+                url = urljoin(host, "general/")
+                response = HttpResponseRedirect(url)
+                # for paths containing "instances"
+                max_age = settings.ADMIN_SESSION_COOKIE_AGE
+                response.set_cookie(
+                    settings.ADMIN_SESSION_COOKIE_NAME,
+                    request.session.session_key,
+                    max_age=max_age,
+                    expires=http_date(time.time() + max_age),
+                    domain=settings.SESSION_COOKIE_DOMAIN,
+                    path=settings.SESSION_COOKIE_PATH,
+                    secure=settings.SESSION_COOKIE_SECURE or None,
+                    httponly=settings.SESSION_COOKIE_HTTPONLY or None,
+                    samesite=settings.SESSION_COOKIE_SAMESITE,
+                )
+                return response
+            # App flow: login, process invitations, redirect to dashboard
             user_login(request=request, user=user)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)

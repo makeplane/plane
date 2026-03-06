@@ -28,7 +28,7 @@ import { ControllerInput } from "@/components/common/controller-input";
 import type { TControllerSwitchFormField } from "@/components/common/controller-switch";
 import { ControllerSwitch } from "@/components/common/controller-switch";
 import type { TCopyField } from "@/components/common/copy-field";
-import { CopyField } from "@/components/common/copy-field";
+import { ServiceDetailsSection } from "@/components/authentication/service-details-section";
 // hooks
 import { useInstance } from "@/hooks/store";
 import { NAME_ID_FORMAT_OPTIONS, SAMLAttributeMappingTable } from "@/plane-admin/components/authentication";
@@ -393,30 +393,10 @@ export function InstanceSAMLConfigForm(props: Props) {
 
             <div className="flex flex-col gap-y-4">
               {/* web service details */}
-              <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
-                  <Monitor className="w-3 h-3" />
-                  Web
-                </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
-                  {SAML_WEB_SERVICE_DETAILS.map((field) => (
-                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-                  ))}
-                </div>
-              </div>
+              <ServiceDetailsSection icon={Monitor} title="Web" fields={SAML_WEB_SERVICE_DETAILS} />
 
               {/* mobile service details */}
-              <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
-                  <Smartphone className="w-3 h-3" />
-                  Mobile
-                </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
-                  {SAML_MOBILE_SERVICE_DETAILS.map((field) => (
-                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-                  ))}
-                </div>
-              </div>
+              <ServiceDetailsSection icon={Smartphone} title="Mobile" fields={SAML_MOBILE_SERVICE_DETAILS} />
 
               {/* mapping details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
