@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """Global Settings"""
 
 # Python imports
@@ -380,6 +384,7 @@ ATTACHMENT_MIME_TYPES = [
     "application/vnd.ms-powerpoint",
     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
     "text/plain",
+    "text/markdown",
     "application/rtf",
     "application/vnd.oasis.opendocument.spreadsheet",
     "application/vnd.oasis.opendocument.text",
@@ -447,6 +452,8 @@ ATTACHMENT_MIME_TYPES = [
     "application/x-sql",
     # Gzip
     "application/x-gzip",
+    # Markdown
+    "text/markdown",
 ]
 
 # Seed directory path

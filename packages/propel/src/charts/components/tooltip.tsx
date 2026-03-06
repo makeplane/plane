@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import { Card, ECardSpacing } from "../../card";
@@ -22,10 +28,10 @@ export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
 
   return (
     <Card
-      className="flex flex-col max-h-[40vh] w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
+      className="vertical-scrollbar flex scrollbar-sm max-h-[40vh] w-[12rem] flex-col overflow-y-scroll"
       spacing={ECardSpacing.SM}
     >
-      <p className="flex-shrink-0 text-11 text-primary font-medium border-b border-subtle pb-2 truncate">{label}</p>
+      <p className="flex-shrink-0 truncate border-b border-subtle pb-2 text-11 font-medium text-primary">{label}</p>
       {filteredPayload.map((item) => {
         if (!item.dataKey) return null;
 
@@ -39,13 +45,13 @@ export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
             <div className="flex items-center gap-2 truncate">
               {itemDotColors[item?.dataKey] && (
                 <div
-                  className="flex-shrink-0 size-2 rounded-xs"
+                  className="size-2 flex-shrink-0 rounded-xs"
                   style={{
                     backgroundColor: itemDotColors[item?.dataKey],
                   }}
                 />
               )}
-              <span className="text-tertiary truncate">{itemLabels[item?.dataKey]}:</span>
+              <span className="truncate text-tertiary">{itemLabels[item?.dataKey]}:</span>
             </div>
             <span className="flex-shrink-0 font-medium text-secondary">{item?.value}</span>
           </div>

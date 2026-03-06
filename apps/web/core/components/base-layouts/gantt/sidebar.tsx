@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { RefObject } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -103,7 +109,7 @@ export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBa
                       >
                         <Row
                           className={cn(
-                            "group w-full flex items-center gap-2 pr-4 bg-layer-transparent hover:bg-layer-transparent-hover",
+                            "group flex w-full items-center gap-2 bg-layer-transparent pr-4 hover:bg-layer-transparent-hover",
                             {
                               "bg-layer-transparent-hover": isBlockHoveredOn,
                             }
@@ -132,7 +138,7 @@ export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBa
           })}
           {canLoadMoreBlocks && (
             <div ref={setIntersectionElement} className="p-2">
-              <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded-sm md:px-1 px-4 py-1.5 bg-layer-1 animate-pulse" />
+              <div className="flex h-10 w-full animate-pulse items-center justify-between gap-1.5 rounded-sm bg-layer-1 px-4 py-1.5 md:h-8 md:px-1" />
             </div>
           )}
         </>

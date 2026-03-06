@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Menu } from "@headlessui/react";
 import { MoreHorizontal } from "lucide-react";
 import * as React from "react";
@@ -194,7 +200,7 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
     >
       <div
         className={cn(
-          "my-1 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 focus:outline-none min-w-[12rem] whitespace-nowrap",
+          "my-1 min-w-[12rem] overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap focus:outline-none",
           {
             "max-h-60": maxHeight === "lg",
             "max-h-48": maxHeight === "md",
@@ -271,9 +277,9 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
                   <button
                     ref={setReferenceElement}
                     type="button"
-                    className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-11 duration-300 ${
+                    className={`flex items-center justify-between gap-1 rounded-md px-2.5 py-1 text-11 whitespace-nowrap duration-300 ${
                       open ? "text-primary" : "text-secondary"
-                    } ${noBorder ? "" : "border border-strong shadow-sm focus:outline-none"} ${
+                    } ${noBorder ? "" : "shadow-sm border border-strong focus:outline-none"} ${
                       disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
                     } ${buttonClassName}`}
                     onClick={handleMenuButtonClick}
@@ -394,7 +400,7 @@ function SubMenu(props: ICustomSubMenuProps) {
           {({ active }) => (
             <div
               className={cn(
-                "w-full select-none rounded-sm px-1 py-1.5 text-left text-secondary flex items-center justify-between cursor-pointer",
+                "flex w-full cursor-pointer items-center justify-between rounded-sm px-1 py-1.5 text-left text-secondary select-none",
                 {
                   "bg-layer-transparent-hover": active && !disabled,
                   "text-placeholder": disabled,
@@ -456,7 +462,7 @@ function MenuItem(props: ICustomMenuItemProps) {
         <button
           type="button"
           className={cn(
-            "w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary",
+            "w-full truncate rounded-sm px-1 py-1.5 text-left text-secondary select-none",
             {
               "bg-layer-transparent-hover": active && !disabled,
               "text-placeholder": disabled,
@@ -486,7 +492,7 @@ function SubMenuTrigger(props: ICustomSubMenuTriggerProps) {
       {({ active }) => (
         <div
           className={cn(
-            "w-full select-none rounded-sm px-1 py-1.5 text-left text-secondary flex items-center justify-between",
+            "flex w-full items-center justify-between rounded-sm px-1 py-1.5 text-left text-secondary select-none",
             {
               "bg-layer-transparent-hover": active && !disabled,
               "text-placeholder": disabled,

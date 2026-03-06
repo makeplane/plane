@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { forwardRef, memo, useMemo } from "react";
 import { Dialog as BaseDialog } from "@base-ui-components/react";
 import { cn } from "../utils/classname";
@@ -40,7 +46,7 @@ const BASE_CLASSNAME = "relative text-left bg-surface-1 rounded-lg shadow-md w-f
 
 // Utility functions
 const getPositionClassNames = (position: DialogPosition) =>
-  cn("isolate fixed z-100", {
+  cn("fixed isolate z-100", {
     "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2": position === "center",
     "top-8 left-1/2 -translate-x-1/2": position === "top",
   });

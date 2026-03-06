@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -127,7 +133,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
     issues.length > 0 ? (
       <li className="p-2">
         {query === "" && (
-          <h2 className="mb-2 mt-4 px-3 text-11 font-semibold text-primary">Select work items to delete</h2>
+          <h2 className="mt-4 mb-2 px-3 text-11 font-semibold text-primary">Select work items to delete</h2>
         )}
         <ul className="text-13 text-secondary">
           {issues.map((issue) => (
@@ -165,12 +171,12 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
         >
           <div className="relative m-1">
             <SearchIcon
-              className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
+              className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
               aria-hidden="true"
             />
             <input
               type="text"
-              className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-13"
+              className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-primary outline-none focus:ring-0 sm:text-13"
               placeholder="Search..."
               onChange={(event) => setQuery(event.target.value)}
             />

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/core";
 import type { LucideIcon } from "lucide-react";
 import { AlignCenter, AlignLeft, AlignRight } from "lucide-react";
@@ -69,7 +75,7 @@ export function TextAlignmentSelector(props: Props) {
             item.command();
           }}
           className={cn(
-            "size-7 grid place-items-center rounded-sm text-tertiary hover:bg-layer-1 active:bg-layer-1 transition-colors",
+            "grid size-7 place-items-center rounded-sm text-tertiary transition-colors hover:bg-layer-1 active:bg-layer-1",
             {
               "bg-layer-1 text-primary": item.isActive(),
             }

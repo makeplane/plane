@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane package imports
 import React from "react";
 import { TrendingDown, TrendingUp } from "lucide-react";
@@ -58,7 +64,7 @@ function TrendPiece(props: Props) {
   return (
     <div
       className={cn(
-        "flex items-center gap-1 p-1 rounded-md",
+        "flex items-center gap-1 rounded-md p-1",
         variants[variant][isOnTrack ? "ontrack" : isOffTrack ? "offtrack" : "atrisk"],
         config.text,
         className

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane types
 import { StateGroupIcon } from "@plane/propel/icons";
@@ -23,7 +29,7 @@ export const PowerKProjectStatesMenuItems = observer(function PowerKProjectState
       {states.map((state) => (
         <PowerKModalCommandItem
           key={state.id}
-          iconNode={<StateGroupIcon stateGroup={state.group} color={state.color} className="shrink-0 size-3.5" />}
+          iconNode={<StateGroupIcon stateGroup={state.group} color={state.color} className="size-3.5 shrink-0" />}
           label={state.name}
           isSelected={state.id === selectedStateId}
           onSelect={() => handleSelect(state.id)}

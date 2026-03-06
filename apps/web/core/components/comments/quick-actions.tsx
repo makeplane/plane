@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
@@ -95,12 +101,12 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
             )}
             disabled={item.disabled}
           >
-            {item.icon && <item.icon className={cn("shrink-0 size-3", item.iconClassName)} />}
+            {item.icon && <item.icon className={cn("size-3 shrink-0", item.iconClassName)} />}
             <div>
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-tertiary whitespace-pre-line", {
+                  className={cn("whitespace-pre-line text-tertiary", {
                     "text-placeholder": item.disabled,
                   })}
                 >

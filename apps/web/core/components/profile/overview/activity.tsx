@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -43,7 +49,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
             <div className="space-y-5">
               {userProfileActivity.results.map((activity) => (
                 <div key={activity.id} className="flex gap-3">
-                  <div className="flex-shrink-0 grid place-items-center overflow-hidden rounded-sm h-6 w-6">
+                  <div className="grid h-6 w-6 flex-shrink-0 place-items-center overflow-hidden rounded-sm">
                     {activity.actor_detail?.avatar_url && activity.actor_detail?.avatar_url !== "" ? (
                       <img
                         src={getFileURL(activity.actor_detail?.avatar_url)}
@@ -71,7 +77,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
                         </span>
                       )}
                     </p>
-                    <p className="text-11 text-secondary whitespace-nowrap ">{calculateTimeAgo(activity.created_at)}</p>
+                    <p className="text-11 whitespace-nowrap text-secondary">{calculateTimeAgo(activity.created_at)}</p>
                   </div>
                 </div>
               ))}

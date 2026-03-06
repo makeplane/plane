@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { omit } from "lodash-es";
@@ -121,7 +127,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
       />
       <div
         id={`issue-${issue.id}`}
-        className=" relative border-b border-b-subtle-1 w-full cursor-pointer"
+        className="relative w-full cursor-pointer border-b border-b-subtle-1"
         onDoubleClick={() => {
           setIssueToEdit(issue);
           setCreateUpdateIssueModal(true);
@@ -130,7 +136,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
         <Row
           ref={issueRef}
           className={cn(
-            "group/list-block min-h-11 relative flex flex-col gap-3 bg-layer-transparent hover:bg-layer-transparent-hover py-3 text-13 transition-colors",
+            "group/list-block relative flex min-h-11 flex-col gap-3 bg-layer-transparent py-3 text-13 transition-colors hover:bg-layer-transparent-hover",
             {
               "md:flex-row md:items-center": isSidebarCollapsed,
               "lg:flex-row lg:items-center": !isSidebarCollapsed,
@@ -155,17 +161,17 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
                 </div>
 
                 {/* sub-issues chevron */}
-                <div className="size-4 grid place-items-center flex-shrink-0" />
+                <div className="grid size-4 flex-shrink-0 place-items-center" />
               </div>
 
               <Tooltip tooltipContent={issue.name} position="top-start" renderByDefault={false}>
-                <p className="w-full truncate cursor-pointer text-13 text-primary">{issue.name}</p>
+                <p className="w-full cursor-pointer truncate text-13 text-primary">{issue.name}</p>
               </Tooltip>
             </div>
 
             {/* quick actions */}
             <div
-              className={cn("block border border-strong rounded-sm", {
+              className={cn("block rounded-sm border border-strong", {
                 "md:hidden": isSidebarCollapsed,
                 "lg:hidden": !isSidebarCollapsed,
               })}
@@ -176,7 +182,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
 
           <div className="flex flex-shrink-0 items-center gap-2">
             <DraftIssueProperties
-              className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
+              className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-shrink-0 md:flex-grow" : "lg:flex-shrink-0 lg:flex-grow"} items-center gap-2 whitespace-nowrap`}
               issue={issue}
               updateIssue={async (projectId, issueId, data) => {
                 await updateIssue(workspaceSlug, issueId, data);

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 
@@ -24,7 +30,7 @@ export const StickiesWidget = observer(function StickiesWidget() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <div className="text-14 font-semibold text-tertiary">{t("stickies.title")}</div>
         {/* actions */}
         <div className="flex gap-2">
@@ -34,14 +40,14 @@ export const StickiesWidget = observer(function StickiesWidget() {
               toggleShowNewSticky(true);
               stickyOperations.create();
             }}
-            className="flex gap-1 text-13 font-medium text-accent-primary my-auto"
+            className="my-auto flex gap-1 text-13 font-medium text-accent-primary"
             disabled={creatingSticky}
           >
-            <PlusIcon className="size-4 my-auto" />
+            <PlusIcon className="my-auto size-4" />
             <span>{t("stickies.add")}</span>
             {creatingSticky && (
               <div
-                className="size-4 border-2 border-t-transparent border-accent-strong rounded-full animate-spin"
+                className="size-4 animate-spin rounded-full border-2 border-accent-strong border-t-transparent"
                 role="status"
                 aria-label="loading"
               />

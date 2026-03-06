@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { cn } from "@plane/utils";
 // helpers
 import { getCoverImageDisplayURL, DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
@@ -35,7 +41,7 @@ export function CoverImage(props: TCoverImageProps) {
 
   // Show loading skeleton when src is undefined/null and we don't want to show default
   if (!src && !showDefaultWhenEmpty) {
-    return <div className={cn("bg-layer-2 animate-pulse", className)} />;
+    return <div className={cn("animate-pulse bg-layer-2", className)} />;
   }
 
   const displayUrl = getCoverImageDisplayURL(src, fallbackUrl);

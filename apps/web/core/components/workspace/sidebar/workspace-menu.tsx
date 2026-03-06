@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -63,7 +69,7 @@ export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
         leaveTo="transform scale-95 opacity-0"
       >
         {isWorkspaceMenuOpen && (
-          <Disclosure.Panel as="div" className="flex flex-col mt-0.5 gap-0.5" static>
+          <Disclosure.Panel as="div" className="mt-0.5 flex flex-col gap-0.5" static>
             {SIDEBAR_WORKSPACE_MENU_ITEMS.map((item) => (
               <SidebarWorkspaceMenuItem key={item.key} item={item} />
             ))}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Combobox } from "@headlessui/react";
 
 import React from "react";
@@ -52,7 +58,7 @@ export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSele
                   disabled={option.disabled}
                   className={({ active, selected }) =>
                     cn(
-                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5",
+                      "flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none",
                       {
                         "bg-layer-1": active,
                         "text-primary": selected,
@@ -78,7 +84,7 @@ export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSele
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-placeholder">No matching results</p>
+              <p className="px-1.5 py-1 text-placeholder italic">No matching results</p>
             )
           ) : loader ? (
             <> {loader} </>

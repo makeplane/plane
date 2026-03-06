@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 
 /**
@@ -67,7 +73,7 @@ export function ShortcutBadge({ shortcut }: { shortcut: string | undefined }) {
   const formatted = formatShortcutForDisplay(shortcut);
 
   return (
-    <div className="shrink-0 pointer-events-none inline-flex items-center gap-1 select-none font-medium">
+    <div className="pointer-events-none inline-flex shrink-0 items-center gap-1 font-medium select-none">
       {formatted?.split("").map((char, index) => (
         <React.Fragment key={index}>
           <kbd className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary">
@@ -95,7 +101,7 @@ export function KeySequenceBadge({ sequence }: { sequence: string | undefined })
   const chars = sequence.split("");
 
   return (
-    <div className="shrink-0 pointer-events-none inline-flex items-center gap-1 select-none font-medium">
+    <div className="pointer-events-none inline-flex shrink-0 items-center gap-1 font-medium select-none">
       {chars.map((char, index) => (
         <React.Fragment key={index}>
           <kbd className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary">

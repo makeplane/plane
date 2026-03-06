@@ -1,11 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { SingleIntegrationCard } from "@/components/integration";
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SingleIntegrationCard } from "@/components/integration/single-integration-card";
 import { IntegrationAndImportExportBanner } from "@/components/ui/integration-and-import-export-banner";
 import { IntegrationsSettingsLoader } from "@/components/ui/loader/settings/integration";
 // constants
@@ -33,7 +38,7 @@ function WorkspaceIntegrationsPage() {
   if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   return (
-    <SettingsContentWrapper size="lg">
+    <>
       <PageHead title={pageTitle} />
       <section className="w-full overflow-y-auto">
         <IntegrationAndImportExportBanner bannerName="Integrations" />
@@ -47,7 +52,7 @@ function WorkspaceIntegrationsPage() {
           )}
         </div>
       </section>
-    </SettingsContentWrapper>
+    </>
   );
 }
 

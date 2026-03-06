@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useParams } from "next/navigation";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
@@ -42,7 +48,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <h3 className="text-16 font-medium leading-6 text-primary">Customize time range</h3>
+          <h3 className="text-16 leading-6 font-medium text-primary">Customize time range</h3>
           <div className="mt-8 flex items-center gap-2">
             <div className="flex w-full flex-col justify-center gap-1">
               {type === "auto-close" ? (
@@ -70,7 +76,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                           min={1}
                           max={12}
                         />
-                        <span className="absolute right-8 top-2.5 text-13 text-secondary">Months</span>
+                        <span className="absolute top-2.5 right-8 text-13 text-secondary">Months</span>
                       </div>
                     )}
                   />
@@ -104,7 +110,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                           min={1}
                           max={12}
                         />
-                        <span className="absolute right-8 top-2.5 text-13 text-secondary">Months</span>
+                        <span className="absolute top-2.5 right-8 text-13 text-secondary">Months</span>
                       </div>
                     )}
                   />

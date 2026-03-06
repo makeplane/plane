@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   ActionsIconsMap,
@@ -35,11 +41,11 @@ export const AllIcons: Story = {
     <div className="space-y-12">
       <div className="space-y-4">
         <h3 className="text-16 font-semibold text-primary">Sub-Brand Icons</h3>
-        <div className="grid grid-cols-12 gap-6 w-full">
+        <div className="grid w-full grid-cols-12 gap-6">
           {SubBrandIconsMap.map((item) => (
-            <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+            <div key={item.title} className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
               <div className="text-secondary">{item.icon}</div>
-              <p className="text-11 text-tertiary text-center">{item.title}</p>
+              <p className="text-center text-11 text-tertiary">{item.title}</p>
             </div>
           ))}
         </div>
@@ -47,11 +53,11 @@ export const AllIcons: Story = {
 
       <div className="space-y-4">
         <h3 className="text-16 font-semibold text-primary">Workspace Icons</h3>
-        <div className="grid grid-cols-12 gap-6 w-full">
+        <div className="grid w-full grid-cols-12 gap-6">
           {WorkspaceIconsMap.map((item) => (
-            <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+            <div key={item.title} className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
               <div className="text-secondary">{item.icon}</div>
-              <p className="text-11 text-tertiary text-center">{item.title}</p>
+              <p className="text-center text-11 text-tertiary">{item.title}</p>
             </div>
           ))}
         </div>
@@ -59,11 +65,11 @@ export const AllIcons: Story = {
 
       <div className="space-y-4">
         <h3 className="text-16 font-semibold text-primary">Project Icons</h3>
-        <div className="grid grid-cols-12 gap-6 w-full">
+        <div className="grid w-full grid-cols-12 gap-6">
           {ProjectIconsMap.map((item) => (
-            <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+            <div key={item.title} className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
               <div className="text-secondary">{item.icon}</div>
-              <p className="text-11 text-tertiary text-center">{item.title}</p>
+              <p className="text-center text-11 text-tertiary">{item.title}</p>
             </div>
           ))}
         </div>
@@ -71,11 +77,11 @@ export const AllIcons: Story = {
 
       <div className="space-y-4">
         <h3 className="text-16 font-semibold text-primary">Layout Icons</h3>
-        <div className="grid grid-cols-12 gap-6 w-full">
+        <div className="grid w-full grid-cols-12 gap-6">
           {LayoutIconsMap.map((item) => (
-            <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+            <div key={item.title} className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
               <div className="text-secondary">{item.icon}</div>
-              <p className="text-11 text-tertiary text-center">{item.title}</p>
+              <p className="text-center text-11 text-tertiary">{item.title}</p>
             </div>
           ))}
         </div>
@@ -83,11 +89,11 @@ export const AllIcons: Story = {
 
       <div className="space-y-4">
         <h3 className="text-16 font-semibold text-primary">Property Icons</h3>
-        <div className="grid grid-cols-12 gap-6 w-full">
+        <div className="grid w-full grid-cols-12 gap-6">
           {PropertyIconsMap.map((item) => (
-            <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+            <div key={item.title} className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
               <div className="text-secondary">{item.icon}</div>
-              <p className="text-11 text-tertiary text-center">{item.title}</p>
+              <p className="text-center text-11 text-tertiary">{item.title}</p>
             </div>
           ))}
         </div>
@@ -95,11 +101,11 @@ export const AllIcons: Story = {
 
       <div className="space-y-4">
         <h3 className="text-16 font-semibold text-primary">Actions Icons</h3>
-        <div className="grid grid-cols-12 gap-6 w-full">
+        <div className="grid w-full grid-cols-12 gap-6">
           {ActionsIconsMap.map((item) => (
-            <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+            <div key={item.title} className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
               <div className="text-secondary">{item.icon}</div>
-              <p className="text-11 text-tertiary text-center">{item.title}</p>
+              <p className="text-center text-11 text-tertiary">{item.title}</p>
             </div>
           ))}
         </div>
@@ -107,21 +113,21 @@ export const AllIcons: Story = {
 
       <div className="space-y-4">
         <h3 className="text-16 font-semibold text-primary">Arrows Icons</h3>
-        <div className="grid grid-cols-12 gap-6 w-full">
+        <div className="grid w-full grid-cols-12 gap-6">
           {ArrowsIconsMap.map((item) => (
-            <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+            <div key={item.title} className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
               <div className="text-secondary">{item.icon}</div>
-              <p className="text-11 text-tertiary text-center">{item.title}</p>
+              <p className="text-center text-11 text-tertiary">{item.title}</p>
             </div>
           ))}
         </div>
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-custom-text-100">Misc Icons</h3>
-        <div className="grid grid-cols-12 gap-6 w-full">
+        <h3 className="text-lg text-custom-text-100 font-semibold">Misc Icons</h3>
+        <div className="grid w-full grid-cols-12 gap-6">
           {MiscIconsMap.map((item) => (
-            <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+            <div key={item.title} className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
               <div className="text-custom-text-200">{item.icon}</div>
               <p className="text-xs text-custom-text-300 text-center">{item.title}</p>
             </div>
@@ -138,25 +144,25 @@ export const RegistryUsage: Story = {
       <div className="space-y-4">
         <h3 className="text-16 font-semibold text-primary">Registry-Based Usage</h3>
         <p className="text-13 text-tertiary">
-          Use the <code className="px-1 py-0.5 bg-layer-1 rounded-sm">Icon</code> component with{" "}
-          <code className="px-1 py-0.5 bg-layer-1 rounded-sm">name</code> prop for dynamic icon selection.
+          Use the <code className="rounded-sm bg-layer-1 px-1 py-0.5">Icon</code> component with{" "}
+          <code className="rounded-sm bg-layer-1 px-1 py-0.5">name</code> prop for dynamic icon selection.
         </p>
-        <div className="grid grid-cols-12 gap-6 w-full">
-          <div className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+        <div className="grid w-full grid-cols-12 gap-6">
+          <div className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
             <Icon name="workspace.home" className="text-secondary" />
-            <p className="text-11 text-tertiary text-center">workspace.home</p>
+            <p className="text-center text-11 text-tertiary">workspace.home</p>
           </div>
-          <div className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+          <div className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
             <Icon name="project.cycle" className="text-secondary" />
-            <p className="text-11 text-tertiary text-center">project.cycle</p>
+            <p className="text-center text-11 text-tertiary">project.cycle</p>
           </div>
-          <div className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+          <div className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
             <Icon name="layout.board" className="text-secondary" />
-            <p className="text-11 text-tertiary text-center">layout.board</p>
+            <p className="text-center text-11 text-tertiary">layout.board</p>
           </div>
-          <div className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+          <div className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
             <Icon name="property.priority" className="text-secondary" />
-            <p className="text-11 text-tertiary text-center">property.priority</p>
+            <p className="text-center text-11 text-tertiary">property.priority</p>
           </div>
         </div>
       </div>
@@ -166,18 +172,18 @@ export const RegistryUsage: Story = {
         <p className="text-13 text-tertiary">
           Import icon components directly for better tree-shaking and type safety.
         </p>
-        <div className="grid grid-cols-12 gap-6 w-full">
-          <div className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+        <div className="grid w-full grid-cols-12 gap-6">
+          <div className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
             <HomeIcon className="text-secondary" />
-            <p className="text-11 text-tertiary text-center">HomeIcon</p>
+            <p className="text-center text-11 text-tertiary">HomeIcon</p>
           </div>
-          <div className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+          <div className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
             <CycleIcon className="text-secondary" />
-            <p className="text-11 text-tertiary text-center">CycleIcon</p>
+            <p className="text-center text-11 text-tertiary">CycleIcon</p>
           </div>
-          <div className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+          <div className="col-span-2 flex flex-col items-center justify-center gap-3 p-4">
             <ProjectIcon className="text-secondary" />
-            <p className="text-11 text-tertiary text-center">ProjectIcon</p>
+            <p className="text-center text-11 text-tertiary">ProjectIcon</p>
           </div>
         </div>
       </div>

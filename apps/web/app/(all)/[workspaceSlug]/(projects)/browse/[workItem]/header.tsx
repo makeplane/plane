@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -32,9 +38,9 @@ export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDet
     <>
       {projectPreferences.navigationMode === "TABBED" && (
         <div className="z-20">
-          <Row className="h-header flex gap-2 w-full items-center border-b border-subtle bg-surface-1">
-            <div className="flex items-center gap-2 divide-x divide-subtle h-full w-full">
-              <div className="flex items-center gap-2 size-full flex-1">
+          <Row className="flex h-header w-full items-center gap-2 border-b border-subtle bg-surface-1">
+            <div className="flex h-full w-full items-center gap-2 divide-x divide-subtle">
+              <div className="flex size-full flex-1 items-center gap-2">
                 {sidebarCollapsed && (
                   <div className="shrink-0">
                     <AppSidebarToggleButton />

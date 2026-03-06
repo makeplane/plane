@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 /* eslint-disable no-useless-catch */
 
 import { set } from "lodash-es";
@@ -5,7 +11,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // types
 import type { IEstimate, IEstimatePoint as IEstimatePointType } from "@plane/types";
 // plane web services
-import estimateService from "@/plane-web/services/project/estimate.service";
+import estimateService from "@/services/estimate.service";
 // store
 import type { CoreRootStore } from "@/store/root.store";
 

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { SyntheticEvent } from "react";
 import { useCallback, useMemo } from "react";
 import { xor } from "lodash-es";
@@ -408,7 +414,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
               className={cn(
                 "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1",
                 {
-                  "hover:bg-layer-1 cursor-pointer": subIssueCount,
+                  "cursor-pointer hover:bg-layer-1": subIssueCount,
                 }
               )}
             >

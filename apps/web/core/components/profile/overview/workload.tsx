@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
 // types
@@ -22,12 +28,12 @@ export function ProfileWorkload({ stateDistribution }: Props) {
             <a>
               <Card direction={ECardDirection.ROW} spacing={ECardSpacing.SM}>
                 <div
-                  className="h-3 w-3 rounded-xs my-2"
+                  className="my-2 h-3 w-3 rounded-xs"
                   style={{
                     backgroundColor: STATE_GROUPS[group.state_group].color,
                   }}
                 />
-                <div className="space-y-1 flex-col">
+                <div className="flex-col space-y-1">
                   <span className="text-13 text-placeholder">
                     {group.state_group === "unstarted"
                       ? "Not started"

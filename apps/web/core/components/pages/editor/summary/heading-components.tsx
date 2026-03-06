@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import type { IMarking } from "@plane/editor";
 import { cn } from "@plane/utils";
@@ -12,7 +18,7 @@ const COMMON_CLASSNAME =
 
 export function OutlineHeading1({ marking, onClick }: THeadingComponentProps) {
   return (
-    <button type="button" onClick={onClick} className={cn(COMMON_CLASSNAME, "text-13 pl-1")}>
+    <button type="button" onClick={onClick} className={cn(COMMON_CLASSNAME, "pl-1 text-13")}>
       {marking.text}
     </button>
   );
@@ -20,7 +26,7 @@ export function OutlineHeading1({ marking, onClick }: THeadingComponentProps) {
 
 export function OutlineHeading2({ marking, onClick }: THeadingComponentProps) {
   return (
-    <button type="button" onClick={onClick} className={cn(COMMON_CLASSNAME, "text-11 pl-2")}>
+    <button type="button" onClick={onClick} className={cn(COMMON_CLASSNAME, "pl-2 text-11")}>
       {marking.text}
     </button>
   );
@@ -28,7 +34,7 @@ export function OutlineHeading2({ marking, onClick }: THeadingComponentProps) {
 
 export function OutlineHeading3({ marking, onClick }: THeadingComponentProps) {
   return (
-    <button type="button" onClick={onClick} className={cn(COMMON_CLASSNAME, "text-11 pl-4")}>
+    <button type="button" onClick={onClick} className={cn(COMMON_CLASSNAME, "pl-4 text-11")}>
       {marking.text}
     </button>
   );

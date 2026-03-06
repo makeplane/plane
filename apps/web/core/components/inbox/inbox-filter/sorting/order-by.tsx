@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
@@ -23,16 +29,16 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
     INBOX_ISSUE_ORDER_BY_OPTIONS.find((option) => inboxSorting?.order_by?.includes(option.key)) || undefined;
   const smallButton =
     inboxSorting?.sort_by === "asc" ? (
-      <ArrowUpWideNarrow className="size-3 " />
+      <ArrowUpWideNarrow className="size-3" />
     ) : (
-      <ArrowDownWideNarrow className="size-3 " />
+      <ArrowDownWideNarrow className="size-3" />
     );
   const largeButton = (
     <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
       {inboxSorting?.sort_by === "asc" ? (
-        <ArrowUpWideNarrow className="size-3 " />
+        <ArrowUpWideNarrow className="size-3" />
       ) : (
-        <ArrowDownWideNarrow className="size-3 " />
+        <ArrowDownWideNarrow className="size-3" />
       )}
       {t(orderByDetails?.i18n_label || "inbox_issue.order_by.created_at")}
       <ChevronDownIcon className="size-3" strokeWidth={2} />

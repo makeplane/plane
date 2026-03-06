@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -14,12 +20,12 @@ export function PageNavigationPaneAssetsTabEmptyState() {
   const { t } = useTranslation();
 
   return (
-    <div className="size-full grid place-items-center">
+    <div className="grid size-full place-items-center">
       <div className="flex flex-col items-center gap-y-6 text-center">
         <img src={resolvedPath} className="size-40 object-contain" alt="depicts the assets of a page" />
         <div className="space-y-2.5">
           <h4 className="text-14 font-medium">{t("page_navigation_pane.tabs.assets.empty_state.title")}</h4>
-          <p className="text-13 text-secondary font-medium">
+          <p className="text-13 font-medium text-secondary">
             {t("page_navigation_pane.tabs.assets.empty_state.description")}
           </p>
         </div>

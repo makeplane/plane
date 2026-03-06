@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
@@ -62,7 +68,7 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
               toggleCreateCycleModal(true);
             }}
           >
-            <div className="sm:hidden block">{t("add")}</div>
+            <div className="block sm:hidden">{t("add")}</div>
             <div className="hidden sm:block">{t("project_cycles.add_cycle")}</div>
           </Button>
         </Header.RightItem>

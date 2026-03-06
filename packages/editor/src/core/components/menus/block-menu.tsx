@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   useFloating,
   autoUpdate,
@@ -217,8 +223,8 @@ export function BlockMenu(props: Props) {
         }}
         className={cn(
           "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-subtle bg-surface-1 p-1.5 shadow-raised-200",
-          "transition-all duration-300 transform origin-top-right",
-          isAnimatedIn ? "opacity-100 scale-100" : "opacity-0 scale-75"
+          "origin-top-right transform transition-all duration-300",
+          isAnimatedIn ? "scale-100 opacity-100" : "scale-75 opacity-0"
         )}
         {...getFloatingProps()}
       >

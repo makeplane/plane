@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState, useMemo } from "react";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "../button/button";
@@ -194,7 +200,7 @@ export function AuthForm({
             <button
               type="button"
               onClick={handleModeChange}
-              className="ml-1 text-13 text-accent-primary hover:text-accent-secondary transition-colors duration-200"
+              className="ml-1 text-13 text-accent-primary transition-colors duration-200 hover:text-accent-secondary"
               disabled={disabled}
             >
               {getAlternateModeButtonText()}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -111,7 +117,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                 return (
                   <div
                     key={relationIssueId}
-                    className={`group flex items-center gap-1 rounded-sm px-1.5 pb-1 pt-1 leading-3 hover:bg-surface-2 ${currRelationOption?.className}`}
+                    className={`group flex items-center gap-1 rounded-sm px-1.5 pt-1 pb-1 leading-3 hover:bg-surface-2 ${currRelationOption?.className}`}
                   >
                     <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name} isMobile={isMobile}>
                       <Link

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { SyntheticEvent } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
@@ -212,7 +218,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                 </span>
               ) : (
                 <Tooltip tooltipContent="No lead">
-                  <SquareUser className="h-4 w-4 mx-1 text-tertiary " />
+                  <SquareUser className="mx-1 h-4 w-4 text-tertiary" />
                 </Tooltip>
               )}
             </div>

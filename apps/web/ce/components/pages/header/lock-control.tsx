@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { LockKeyhole, LockKeyholeOpen } from "lucide-react";
@@ -76,7 +82,7 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
           <button
             type="button"
             onClick={toggleLock}
-            className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-secondary hover:text-primary hover:bg-layer-1 transition-colors"
+            className="grid size-6 flex-shrink-0 place-items-center rounded-sm text-secondary transition-colors hover:bg-layer-1 hover:text-primary"
             aria-label="Lock"
           >
             <LockKeyhole className="size-3.5" />
@@ -88,11 +94,11 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
         <button
           type="button"
           onClick={toggleLock}
-          className="h-6 flex items-center gap-1 px-2 rounded-sm text-accent-primary bg-accent-primary/20 hover:bg-accent-primary/30 transition-colors"
+          className="flex h-6 items-center gap-1 rounded-sm bg-accent-primary/20 px-2 text-accent-primary transition-colors hover:bg-accent-primary/30"
           aria-label="Locked"
         >
-          <LockKeyhole className="flex-shrink-0 size-3.5 animate-lock-icon" />
-          <span className="text-11 font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in">
+          <LockKeyhole className="animate-lock-icon size-3.5 flex-shrink-0" />
+          <span className="animate-text-slide-in overflow-hidden text-11 font-medium whitespace-nowrap transition-all duration-500 ease-out">
             Locked
           </span>
         </button>
@@ -100,11 +106,11 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
 
       {displayState === "unlocked" && (
         <div
-          className="h-6 flex items-center gap-1 px-2 rounded-sm text-secondary animate-fade-out"
+          className="flex h-6 animate-fade-out items-center gap-1 rounded-sm px-2 text-secondary"
           aria-label="Unlocked"
         >
-          <LockKeyholeOpen className="flex-shrink-0 size-3.5 animate-unlock-icon" />
-          <span className="text-11 font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in animate-text-fade-out">
+          <LockKeyholeOpen className="animate-unlock-icon size-3.5 flex-shrink-0" />
+          <span className="animate-text-slide-in animate-text-fade-out overflow-hidden text-11 font-medium whitespace-nowrap transition-all duration-500 ease-out">
             Unlocked
           </span>
         </div>

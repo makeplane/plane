@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -21,7 +27,7 @@ export function ProfileStateDistribution({ stateDistribution, userProfile }: Pro
       <h3 className="text-16 font-medium">{t("profile.stats.state_distribution.title")}</h3>
       <Card className="h-full">
         {userProfile.state_distribution.length > 0 ? (
-          <div className="grid grid-cols-1 gap-x-6 md:grid-cols-2 w-full  h-[300px]">
+          <div className="grid h-[300px] w-full grid-cols-1 gap-x-6 md:grid-cols-2">
             <PieChart
               className="size-full"
               dataKey="value"

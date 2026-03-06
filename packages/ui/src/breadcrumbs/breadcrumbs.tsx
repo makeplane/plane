@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -12,10 +18,10 @@ type BreadcrumbsProps = {
 
 export function BreadcrumbItemLoader() {
   return (
-    <div className="flex items-center gap-2 h-7 animate-pulse">
-      <div className="group h-full flex items-center gap-2 rounded-sm px-2 py-1 text-13 font-medium">
-        <span className="h-full w-5 bg-layer-1 rounded-sm" />
-        <span className="h-full w-16 bg-layer-1 rounded-sm" />
+    <div className="flex h-7 animate-pulse items-center gap-2">
+      <div className="group flex h-full items-center gap-2 rounded-sm px-2 py-1 text-13 font-medium">
+        <span className="h-full w-5 rounded-sm bg-layer-1" />
+        <span className="h-full w-16 rounded-sm bg-layer-1" />
       </div>
     </div>
   );
@@ -37,7 +43,7 @@ function Breadcrumbs({ className, children, onBack, isLoading = false }: Breadcr
   const childrenArray = React.Children.toArray(children);
 
   return (
-    <div className={cn("flex items-center overflow-hidden gap-0.5 flex-grow", className)}>
+    <div className={cn("flex flex-grow items-center gap-0.5 overflow-hidden", className)}>
       {!isSmallScreen && (
         <>
           {childrenArray.map((child, index) => {
@@ -96,7 +102,7 @@ type BreadcrumbItemProps = {
 function BreadcrumbItem(props: BreadcrumbItemProps) {
   const { component, showSeparator = true, isLast = false } = props;
   return (
-    <div className="flex items-center gap-0.5 h-6">
+    <div className="flex h-6 items-center gap-0.5">
       {component}
       {showSeparator && !isLast && <BreadcrumbSeparator />}
     </div>
@@ -123,7 +129,7 @@ type BreadcrumbLabelProps = {
 function BreadcrumbLabel(props: BreadcrumbLabelProps) {
   const { children, className } = props;
   return (
-    <div className={cn("relative line-clamp-1 block max-w-[150px] overflow-hidden truncate", className)}>
+    <div className={cn("relative line-clamp-1 block max-w-[150px] truncate overflow-hidden", className)}>
       {children}
     </div>
   );
@@ -140,11 +146,11 @@ type BreadcrumbSeparatorProps = {
 function BreadcrumbSeparator(props: BreadcrumbSeparatorProps) {
   const { className, containerClassName, iconClassName, showDivider = false } = props;
   return (
-    <div className={cn("relative flex items-center justify-center h-full px-1.5 py-1", className)}>
-      {showDivider && <span className="absolute -left-0.5 top-0 h-full w-[1.8px] bg-surface-1" />}
+    <div className={cn("relative flex h-full items-center justify-center px-1.5 py-1", className)}>
+      {showDivider && <span className="absolute top-0 -left-0.5 h-full w-[1.8px] bg-surface-1" />}
       <div
         className={cn(
-          "flex items-center justify-center flex-shrink-0 rounded-sm text-placeholder transition-all",
+          "flex flex-shrink-0 items-center justify-center rounded-sm text-placeholder transition-all",
           containerClassName
         )}
       >
@@ -170,11 +176,11 @@ function BreadcrumbItemWrapper(props: BreadcrumbItemWrapperProps) {
     <Tooltip tooltipContent={label} position="bottom" disabled={!label || label === "" || disableTooltip}>
       <div
         className={cn(
-          "group h-full flex items-center gap-2 rounded-sm px-1.5 py-1 text-13 font-medium cursor-default",
+          "group flex h-full cursor-default items-center gap-2 rounded-sm px-1.5 py-1 text-13 font-medium",
           {
             "text-primary": isLast,
             "text-tertiary": !isLast,
-            "hover:text-primary hover:bg-layer-transparent-hover cursor-pointer": type === "link" && !isLast,
+            "cursor-pointer hover:bg-layer-transparent-hover hover:text-primary": type === "link" && !isLast,
           },
           className
         )}

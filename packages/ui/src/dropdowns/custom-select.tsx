@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Combobox } from "@headlessui/react";
 
 import React, { createContext, useCallback, useContext, useRef, useState } from "react";
@@ -80,7 +86,7 @@ function CustomSelect(props: ICustomSelectProps) {
               <button
                 ref={setReferenceElement}
                 type="button"
-                className={`flex items-center justify-between gap-1 text-11 rounded ${
+                className={`flex items-center justify-between gap-1 rounded text-11 ${
                   disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
                 } ${customButtonClassName}`}
                 onClick={toggleDropdown}
@@ -116,7 +122,7 @@ function CustomSelect(props: ICustomSelectProps) {
             <Combobox.Options data-prevent-outside-click>
               <div
                 className={cn(
-                  "my-1 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 focus:outline-none min-w-48 whitespace-nowrap z-30",
+                  "z-30 my-1 min-w-48 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap focus:outline-none",
                   optionsClassName
                 )}
                 ref={setPopperElement}
@@ -160,7 +166,7 @@ function Option(props: ICustomSelectItemProps) {
       value={value}
       className={({ active }) =>
         cn(
-          "cursor-pointer select-none truncate rounded-sm px-1 py-1.5 text-secondary flex items-center justify-between gap-2",
+          "flex cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 text-secondary select-none",
           {
             "bg-layer-transparent-hover": active,
           },
@@ -170,7 +176,7 @@ function Option(props: ICustomSelectItemProps) {
       onClick={handleClick}
     >
       {({ selected }) => (
-        <div className="flex items-center justify-between gap-2 w-full">
+        <div className="flex w-full items-center justify-between gap-2">
           {children}
           {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
         </div>

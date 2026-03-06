@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { Switch as BaseSwitch } from "@base-ui-components/react/switch";
 import { cn } from "../utils/classname";
@@ -35,7 +41,7 @@ function Switch({ value, onChange, label, size = "sm", disabled, className }: IT
       <BaseSwitch.Thumb
         aria-hidden="true"
         className={cn(
-          "inline-block self-center rounded-full shadow ring-0 transition-transform duration-200 ease-in-out",
+          "shadow inline-block self-center rounded-full ring-0 transition-transform duration-200 ease-in-out",
           // size
           size === "sm" ? "h-3 w-3" : size === "md" ? "h-4 w-4" : "h-5 w-5",
           // position + color by state

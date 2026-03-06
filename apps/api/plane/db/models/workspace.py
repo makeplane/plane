@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import pytz
 from typing import Optional, Any
@@ -112,16 +116,6 @@ def slug_validator(value):
         raise ValidationError("Slug is not valid")
 
 
-def get_default_product_tour():
-    return {
-        "work_items": False,
-        "cycles": False,
-        "modules": False,
-        "intake": False,
-        "pages": False,
-    }
-
-
 class Workspace(BaseModel):
     TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
 
@@ -214,6 +208,9 @@ class WorkspaceMember(BaseModel):
     default_props = models.JSONField(default=get_default_props)
     issue_props = models.JSONField(default=get_issue_props)
     is_active = models.BooleanField(default=True)
+    getting_started_checklist = models.JSONField(default=dict)
+    tips = models.JSONField(default=dict)
+    explored_features = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["workspace", "member", "deleted_at"]
@@ -335,7 +332,6 @@ class WorkspaceUserProperties(BaseModel):
         choices=NavigationControlPreference.choices,
         default=NavigationControlPreference.ACCORDION,
     )
-    product_tour = models.JSONField(default=get_default_product_tour)
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]

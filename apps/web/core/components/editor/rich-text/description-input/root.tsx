@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useState, useRef } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
@@ -13,7 +19,7 @@ import { RichTextEditor } from "@/components/editor/rich-text";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // local imports
 import { DescriptionInputLoader } from "./loader";
 // services init
@@ -22,6 +28,7 @@ const workspaceService = new WorkspaceService();
 type TFormData = {
   id: string;
   description_html: string;
+  description_json?: object;
   isMigrationUpdate: boolean;
 };
 
@@ -55,9 +62,19 @@ type Props = {
    */
   initialValue: string | undefined;
   /**
+   * @description Key, to ensure the editor is re-rendered when the key changes
+   */
+  key: string;
+  /**
    * @description Submit handler, the actual function which will be called when the form is submitted
    */
-  onSubmit: (value: string, isMigrationUpdate?: boolean) => Promise<void>;
+  onSubmit: (
+    value: {
+      description_html: string;
+      description_json: object | undefined;
+    },
+    isMigrationUpdate?: boolean
+  ) => Promise<void>;
   /**
    * @description Placeholder, if not provided, the placeholder will be the default placeholder
    */
@@ -97,13 +114,13 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
     entityId,
     fileAssetType,
     initialValue,
+    issueSequenceId,
     onSubmit,
     placeholder,
     projectId,
     setIsSubmitting,
     swrDescription,
     workspaceSlug,
-    issueSequenceId,
   } = props;
   // states
   const [localDescription, setLocalDescription] = useState<TFormData>({
@@ -113,6 +130,8 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   });
   // ref to track if there are unsaved changes
   const hasUnsavedChanges = useRef(false);
+  // ref to track last saved content (to skip onChange when content hasn't actually changed)
+  const lastSavedContent = useRef(initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>"));
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
@@ -132,7 +151,15 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   // submit handler
   const handleDescriptionFormSubmit = useCallback(
     async (formData: TFormData) => {
-      await onSubmit(formData.description_html, formData.isMigrationUpdate);
+      await onSubmit(
+        {
+          description_html: formData.description_html,
+          description_json: formData.description_json,
+        },
+        formData.isMigrationUpdate
+      );
+      // Update lastSavedContent after successful save
+      lastSavedContent.current = formData.description_html;
     },
     [onSubmit]
   );
@@ -140,14 +167,17 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   // reset form values
   useEffect(() => {
     if (!entityId) return;
+    const normalizedValue = initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>");
+    // Update last saved content when entity/initialValue changes
+    lastSavedContent.current = normalizedValue;
     reset({
       id: entityId,
-      description_html: initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>"),
+      description_html: normalizedValue,
       isMigrationUpdate: false,
     });
     setLocalDescription({
       id: entityId,
-      description_html: initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>"),
+      description_html: normalizedValue,
       isMigrationUpdate: false,
     });
     // Reset unsaved changes flag when form is reset
@@ -192,77 +222,76 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
 
   if (!workspaceDetails) return null;
 
+  if (!localDescription.description_html) return <DescriptionInputLoader />;
+
   return (
-    <>
-      {localDescription.description_html ? (
-        <Controller
-          name="description_html"
-          control={control}
-          render={({ field: { onChange } }) => (
-            <RichTextEditor
-              editable={!disabled}
-              ref={editorRef}
-              id={entityId}
-              issueSequenceId={issueSequenceId}
-              disabledExtensions={disabledExtensions}
-              initialValue={localDescription.description_html ?? "<p></p>"}
-              value={swrDescription ?? null}
-              workspaceSlug={workspaceSlug}
-              workspaceId={workspaceDetails.id}
-              projectId={projectId}
-              dragDropEnabled
-              onChange={(_description, description_html, options) => {
-                setIsSubmitting("submitting");
-                onChange(description_html);
-                setValue("isMigrationUpdate", options?.isMigrationUpdate ?? false);
-                hasUnsavedChanges.current = true;
-                debouncedFormSave();
-              }}
-              placeholder={placeholder ?? ((isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value)))}
-              searchMentionCallback={async (payload) =>
-                await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
-                  ...payload,
-                  project_id: projectId,
-                })
-              }
-              containerClassName={containerClassName}
-              uploadFile={async (blockId, file) => {
-                try {
-                  const { asset_id } = await uploadEditorAsset({
-                    blockId,
-                    data: {
-                      entity_identifier: entityId,
-                      entity_type: fileAssetType,
-                    },
-                    file,
-                    projectId,
-                    workspaceSlug,
-                  });
-                  return asset_id;
-                } catch (error) {
-                  console.log("Error in uploading asset:", error);
-                  throw new Error("Asset upload failed. Please try again later.");
-                }
-              }}
-              duplicateFile={async (assetId: string) => {
-                try {
-                  const { asset_id } = await duplicateEditorAsset({
-                    assetId,
-                    entityType: fileAssetType,
-                    projectId,
-                    workspaceSlug,
-                  });
-                  return asset_id;
-                } catch {
-                  throw new Error("Asset duplication failed. Please try again later.");
-                }
-              }}
-            />
-          )}
+    <Controller
+      name="description_html"
+      control={control}
+      render={({ field: { onChange } }) => (
+        <RichTextEditor
+          key={entityId}
+          editable={!disabled}
+          ref={editorRef}
+          id={entityId}
+          issueSequenceId={issueSequenceId}
+          disabledExtensions={disabledExtensions}
+          initialValue={localDescription.description_html ?? "<p></p>"}
+          value={swrDescription ?? null}
+          workspaceSlug={workspaceSlug}
+          workspaceId={workspaceDetails.id}
+          projectId={projectId}
+          dragDropEnabled
+          onChange={(description_json, description_html, options) => {
+            if (description_html === lastSavedContent.current) return;
+            setIsSubmitting("submitting");
+            onChange(description_html);
+            setValue("isMigrationUpdate", !!options?.isMigrationUpdate);
+            setValue("description_json", description_json);
+            hasUnsavedChanges.current = true;
+            debouncedFormSave();
+          }}
+          placeholder={placeholder ?? ((isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value)))}
+          searchMentionCallback={async (payload) =>
+            await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+              ...payload,
+              project_id: projectId,
+            })
+          }
+          containerClassName={containerClassName}
+          uploadFile={async (blockId, file) => {
+            try {
+              const { asset_id } = await uploadEditorAsset({
+                blockId,
+                data: {
+                  entity_identifier: entityId,
+                  entity_type: fileAssetType,
+                },
+                file,
+                projectId,
+                workspaceSlug,
+              });
+              return asset_id;
+            } catch (error) {
+              console.log("Error in uploading asset:", error);
+              throw new Error("Asset upload failed. Please try again later.");
+            }
+          }}
+          duplicateFile={async (assetId: string) => {
+            try {
+              const { asset_id } = await duplicateEditorAsset({
+                assetId,
+                entityType: fileAssetType,
+                projectId,
+                workspaceSlug,
+              });
+              return asset_id;
+            } catch {
+              throw new Error("Asset duplication failed. Please try again later.");
+            }
+          }}
         />
-      ) : (
-        <DescriptionInputLoader />
       )}
-    </>
+    />
   );
 });

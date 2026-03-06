@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { ArrowRightCircle } from "lucide-react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -81,7 +87,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
 
   return (
     <aside
-      className="shrink-0 h-full flex flex-col bg-surface-1 pt-3.5 border-l border-subtle transition-all duration-300 ease-out"
+      className="flex h-full shrink-0 flex-col border-l border-subtle bg-surface-1 pt-3.5 transition-all duration-300 ease-out"
       style={{
         width: `${paneWidth}px`,
         marginRight: isNavigationPaneOpen ? "0px" : `-${paneWidth}px`,
@@ -91,7 +97,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
         <Tooltip tooltipContent={t("page_navigation_pane.close_button")}>
           <button
             type="button"
-            className="size-3.5 grid place-items-center text-secondary hover:text-primary transition-colors"
+            className="grid size-3.5 place-items-center text-secondary transition-colors hover:text-primary"
             onClick={handleClose}
             aria-label={t("page_navigation_pane.close_button")}
           >
@@ -100,7 +106,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
         </Tooltip>
       </div>
 
-      <div className="flex-1 flex flex-col overflow-hidden animate-slide-in-right px-3">
+      <div className="animate-slide-in-right flex flex-1 flex-col overflow-hidden px-3">
         {ActiveExtension ? (
           <ActiveExtension.component page={page} extensionData={ActiveExtension.data} storeType={storeType} />
         ) : showNavigationTabs ? (

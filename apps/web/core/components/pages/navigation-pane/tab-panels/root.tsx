@@ -1,6 +1,12 @@
-import React from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+
 // plane imports
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@plane/propel/tabs";
+import { TabsContent } from "@plane/propel/tabs";
 // components
 import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // plane web imports

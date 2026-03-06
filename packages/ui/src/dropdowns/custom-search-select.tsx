@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Combobox } from "@headlessui/react";
 import { Info } from "lucide-react";
 import React, { useRef, useState } from "react";
@@ -140,14 +146,14 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                 <Combobox.Options data-prevent-outside-click static>
                   <div
                     className={cn(
-                      "my-1 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 py-2.5 text-11 focus:outline-none min-w-48 whitespace-nowrap z-30",
+                      "z-30 my-1 min-w-48 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 py-2.5 text-11 whitespace-nowrap focus:outline-none",
                       optionsClassName
                     )}
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}
                   >
-                    <div className="flex items-center gap-1.5 rounded-sm border border-subtle px-2 mx-2">
+                    <div className="mx-2 flex items-center gap-1.5 rounded-sm border border-subtle px-2">
                       <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
                       <Combobox.Input
                         className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
@@ -158,7 +164,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                       />
                     </div>
                     <div
-                      className={cn("mt-2 px-2 space-y-1 overflow-y-scroll vertical-scrollbar scrollbar-xs", {
+                      className={cn("vertical-scrollbar mt-2 scrollbar-xs space-y-1 overflow-y-scroll px-2", {
                         "max-h-96": maxHeight === "2xl",
                         "max-h-80": maxHeight === "xl",
                         "max-h-60": maxHeight === "lg",
@@ -175,10 +181,10 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                               value={option.value}
                               className={({ active }) =>
                                 cn(
-                                  "w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none",
+                                  "flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none",
                                   {
                                     "bg-layer-transparent-hover": active,
-                                    "text-placeholder opacity-60 cursor-not-allowed": option.disabled,
+                                    "cursor-not-allowed text-placeholder opacity-60": option.disabled,
                                   }
                                 )
                               }
@@ -207,10 +213,10 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                             </Combobox.Option>
                           ))
                         ) : (
-                          <p className="text-placeholder italic py-1 px-1.5">{noResultsMessage}</p>
+                          <p className="px-1.5 py-1 text-placeholder italic">{noResultsMessage}</p>
                         )
                       ) : (
-                        <p className="text-placeholder italic py-1 px-1.5">Loading...</p>
+                        <p className="px-1.5 py-1 text-placeholder italic">Loading...</p>
                       )}
                     </div>
                     {footerOption}

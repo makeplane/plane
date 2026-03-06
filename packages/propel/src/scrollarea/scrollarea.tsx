@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { ScrollArea as BaseScrollArea } from "@base-ui-components/react/scroll-area";
 
@@ -76,7 +82,7 @@ const ScrollBar = React.memo(function ScrollBar({
       data-slot="scroll-area-scrollbar"
       orientation={orientation}
       className={cn(
-        "group/track mr-1 flex justify-center rounded-sm bg-transparent opacity-0 transition-opacity delay-300 ",
+        "group/track mr-1 flex justify-center rounded-sm bg-transparent opacity-0 transition-opacity delay-300",
         orientation === "vertical" && verticalSizeStyles[size],
         orientation === "horizontal" && horizontalSizeStyles[size],
         scrollType === "always" && "opacity-100",

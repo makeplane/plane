@@ -160,7 +160,7 @@
     opacity: 0;
     pointer-events: none;
     outline: none;
-    z-index: 10;
+    z-index: 9;
     transition: all 0.2s ease;
 
     &:hover {

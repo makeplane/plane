@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -178,7 +184,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
           </div>
         </Header.LeftItem>
         <Header.RightItem className="items-center">
-          <div className="hidden items-center gap-2 md:flex ">
+          <div className="hidden items-center gap-2 md:flex">
             <div className="hidden @4xl:flex">
               <LayoutSelection
                 layouts={[
@@ -253,7 +259,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               icon={PanelRight}
               onClick={toggleSidebar}
               className={cn({
-                "text-accent-primary bg-accent-subtle": !isSidebarCollapsed,
+                "bg-accent-subtle text-accent-primary": !isSidebarCollapsed,
               })}
             />
             <CycleQuickActions

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Fragment, Node as ProsemirrorNode, Schema } from "@tiptap/pm/model";
 // extensions
 import { createCell } from "@/extensions/table/table/utilities/create-cell";

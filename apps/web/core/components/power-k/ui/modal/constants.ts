@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane web imports
 import { POWER_K_MODAL_PAGE_DETAILS_EXTENDED } from "@/plane-web/components/command-palette/power-k/constants";
 // local imports

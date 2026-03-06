@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -73,7 +79,7 @@ export const SidebarChart = observer(function SidebarChart(props: ProgressChartP
               />
             </Fragment>
           ) : (
-            <Loader className="w-full h-[160px] mt-4">
+            <Loader className="mt-4 h-[160px] w-full">
               <Loader.Item width="100%" height="100%" />
             </Loader>
           )}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -148,8 +154,8 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   );
 
   return (
-    <div className="relative size-full overflow-hidden flex transition-all duration-300 ease-in-out">
-      <div className="size-full flex flex-col overflow-hidden">
+    <div className="relative flex size-full overflow-hidden transition-all duration-300 ease-in-out">
+      <div className="flex size-full flex-col overflow-hidden">
         <PageVersionsOverlay
           editorComponent={PagesVersionEditor}
           fetchVersionDetails={handlers.fetchVersionDetails}

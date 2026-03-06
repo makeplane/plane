@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // local imports
 import { Button } from "../button/button";
 import { cn } from "../utils/classname";
@@ -24,7 +30,7 @@ export function EmptyStateDetailed({
     <div className={cn("flex size-full items-center justify-center", rootClassName)}>
       <div
         className={cn(
-          "flex max-w-[25rem] size-full flex-col justify-center gap-6 text-left",
+          "flex size-full max-w-[25rem] flex-col justify-center gap-6 text-left",
           {
             "items-center text-center": align === "center",
           },
@@ -40,7 +46,7 @@ export function EmptyStateDetailed({
         >
           {(title || description) && (
             <div className="flex flex-col gap-2">
-              {title && <h3 className="text-16 font-semibold leading-7 text-primary">{title}</h3>}
+              {title && <h3 className="text-16 leading-7 font-semibold text-primary">{title}</h3>}
               {description && <p className="text-13 leading-5 text-tertiary">{description}</p>}
             </div>
           )}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
@@ -26,14 +32,14 @@ export const IssueAttachmentsUploadItem = observer(function IssueAttachmentsUplo
   const { isMobile } = usePlatformOS();
 
   return (
-    <div className="flex items-center justify-between gap-3 h-11 bg-surface-2 pl-9 pr-2 pointer-events-none">
-      <div className="flex items-center gap-3 text-13 truncate">
+    <div className="pointer-events-none flex h-11 items-center justify-between gap-3 bg-surface-2 pr-2 pl-9">
+      <div className="flex items-center gap-3 truncate text-13">
         <div className="flex-shrink-0">{fileIcon}</div>
         <Tooltip tooltipContent={fileName} isMobile={isMobile}>
-          <p className="text-secondary font-medium truncate">{fileName}</p>
+          <p className="truncate font-medium text-secondary">{fileName}</p>
         </Tooltip>
       </div>
-      <div className="flex-shrink-0 flex items-center gap-2">
+      <div className="flex flex-shrink-0 items-center gap-2">
         <span className="flex-shrink-0">
           <CircularProgressIndicator size={20} strokeWidth={3} percentage={uploadStatus.progress} />
         </span>

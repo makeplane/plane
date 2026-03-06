@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "プロジェクト",
@@ -17,6 +23,7 @@ export default {
     favorites: "お気に入り",
     pro: "プロ",
     upgrade: "アップグレード",
+    stickies: "付箋",
   },
   auth: {
     common: {
@@ -401,7 +408,7 @@ export default {
   docs: "ドキュメント",
   full_changelog: "完全な変更履歴",
   support: "サポート",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Powered by Plane Pages",
   please_select_at_least_one_invitation: "少なくとも1つの招待を選択してください。",
   please_select_at_least_one_invitation_description:
@@ -1969,6 +1976,43 @@ export default {
         title: "見積もりシステムがまだありません",
         description: "作業項目ごとの作業量を伝えるための見積もりセットを作成します。",
         primary_button: "見積もりシステムを追加",
+      },
+    },
+    features: {
+      cycles: {
+        title: "サイクル",
+        short_title: "サイクル",
+        description: "このプロジェクト独自のリズムとペースに適応する柔軟な期間で作業をスケジュールします。",
+        toggle_title: "サイクルを有効にする",
+        toggle_description: "集中的な期間で作業を計画します。",
+      },
+      modules: {
+        title: "モジュール",
+        short_title: "モジュール",
+        description: "専任のリーダーと担当者を持つサブプロジェクトに作業を整理します。",
+        toggle_title: "モジュールを有効にする",
+        toggle_description: "プロジェクトメンバーはモジュールを作成および編集できるようになります。",
+      },
+      views: {
+        title: "ビュー",
+        short_title: "ビュー",
+        description: "カスタムソート、フィルター、表示オプションを保存したり、チームと共有したりします。",
+        toggle_title: "ビューを有効にする",
+        toggle_description: "プロジェクトメンバーはビューを作成および編集できるようになります。",
+      },
+      pages: {
+        title: "ページ",
+        short_title: "ページ",
+        description: "自由形式のコンテンツを作成および編集します：メモ、ドキュメント、何でも。",
+        toggle_title: "ページを有効にする",
+        toggle_description: "プロジェクトメンバーはページを作成および編集できるようになります。",
+      },
+      intake: {
+        title: "受付",
+        short_title: "受付",
+        description: "ワークフローを中断することなく、非メンバーがバグ、フィードバック、提案を共有できるようにします。",
+        toggle_title: "受付を有効にする",
+        toggle_description: "プロジェクトメンバーがアプリ内で受付リクエストを作成できるようにします。",
       },
     },
   },

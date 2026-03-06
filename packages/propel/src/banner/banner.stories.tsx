@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Banner } from "./banner";
 
@@ -116,7 +122,7 @@ function CloseButton({ onClick }: { onClick?: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="rounded-sm p-1 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+      className="rounded-sm p-1 transition-colors hover:bg-black/5 dark:hover:bg-white/5"
       aria-label="Dismiss"
     >
       <svg

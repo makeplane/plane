@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -139,7 +145,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
         <IssueLayoutHOC layout={EIssueLayoutTypes.CALENDAR}>
           <div
-            className={cn("flex md:h-full w-full flex-col overflow-y-auto", {
+            className={cn("flex w-full flex-col overflow-y-auto md:h-full", {
               "vertical-scrollbar scrollbar-lg": windowWidth > 768,
             })}
             ref={scrollableContainerRef}

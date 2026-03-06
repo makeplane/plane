@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { Button } from "@plane/propel/button";
@@ -44,7 +50,7 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
   return (
     <>
       <div className="pb-4 text-center">
-        <div className="text-20 font-semibold h-9">
+        <div className="h-9 text-20 font-semibold">
           {isLoading ? (
             <Loader className="flex flex-col items-center justify-center">
               <Loader.Item height="36px" width="4rem" />
@@ -66,7 +72,7 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
           <Loader.Item height="38px" width="14rem" />
         </Loader>
       ) : (
-        <div className="flex flex-col items-center justify-center w-full space-y-4">
+        <div className="flex w-full flex-col items-center justify-center space-y-4">
           <Button
             variant="primary"
             size="lg"

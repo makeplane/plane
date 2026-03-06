@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import pytest
 from rest_framework import status
 import uuid
@@ -6,7 +10,7 @@ from django.utils import timezone
 from plane.db.models import (
     Project,
     ProjectMember,
-    IssueUserProperty,
+    ProjectUserProperty,
     State,
     WorkspaceMember,
     User,
@@ -82,8 +86,8 @@ class TestProjectAPIPost(TestProjectBase):
         assert project_member.role == 20  # Administrator
         assert project_member.is_active is True
 
-        # Verify IssueUserProperty was created
-        assert IssueUserProperty.objects.filter(project=project, user=user).exists()
+        # Verify ProjectUserProperty was created
+        assert ProjectUserProperty.objects.filter(project=project, user=user).exists()
 
         # Verify default states were created
         states = State.objects.filter(project=project)
@@ -116,8 +120,8 @@ class TestProjectAPIPost(TestProjectBase):
         project = Project.objects.get(name=project_data["name"])
         assert ProjectMember.objects.filter(project=project, role=20).count() == 2
 
-        # Verify both have IssueUserProperty
-        assert IssueUserProperty.objects.filter(project=project).count() == 2
+        # Verify both have ProjectUserProperty
+        assert ProjectUserProperty.objects.filter(project=project).count() == 2
 
     @pytest.mark.django_db
     def test_create_project_guest_forbidden(self, session_client, workspace):

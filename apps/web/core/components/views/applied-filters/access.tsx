@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // icons
 import { useTranslation } from "@plane/i18n";
@@ -30,7 +36,7 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
         if (!label) return null;
 
         return (
-          <div key={access} className="flex items-center gap-1 rounded-sm bg-layer-1 py-1 px-1.5 text-11">
+          <div key={access} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
             <span className="normal-case">{t(label)}</span>
             {editable && (
               <button

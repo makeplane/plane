@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/react";
 import { ALargeSmall, Ban } from "lucide-react";
 import { useMemo } from "react";
@@ -36,7 +42,7 @@ export function BubbleMenuColorSelector(props: Props) {
         <>
           <span>Color</span>
           <span
-            className={cn("flex-shrink-0 size-6 grid place-items-center rounded-sm border-[0.5px] border-strong", {
+            className={cn("grid size-6 flex-shrink-0 place-items-center rounded-sm border-[0.5px] border-strong", {
               "bg-surface-1": !activeBackgroundColor,
             })}
             style={{
@@ -58,15 +64,15 @@ export function BubbleMenuColorSelector(props: Props) {
       getFloatingProps={getFloatingProps}
       getReferenceProps={getReferenceProps}
     >
-      <section className="mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 space-y-2 shadow-raised-200">
+      <section className="mt-1 space-y-2 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 shadow-raised-200">
         <div className="space-y-1.5">
-          <p className="text-11 text-tertiary font-semibold">Text colors</p>
+          <p className="text-11 font-semibold text-tertiary">Text colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
                 key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
+                className="size-6 flex-shrink-0 rounded-sm border-[0.5px] border-strong-1 transition-opacity hover:opacity-60"
                 style={{
                   backgroundColor: color.textColor,
                 }}
@@ -75,7 +81,7 @@ export function BubbleMenuColorSelector(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
+              className="grid size-6 flex-shrink-0 place-items-center rounded-sm border-[0.5px] border-strong-1 text-tertiary transition-colors hover:bg-layer-1"
               onClick={() => TextColorItem(editor).command({ color: undefined })}
             >
               <Ban className="size-4" />
@@ -83,13 +89,13 @@ export function BubbleMenuColorSelector(props: Props) {
           </div>
         </div>
         <div className="space-y-1.5">
-          <p className="text-11 text-tertiary font-semibold">Background colors</p>
+          <p className="text-11 font-semibold text-tertiary">Background colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
                 key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
+                className="size-6 flex-shrink-0 rounded-sm border-[0.5px] border-strong-1 transition-opacity hover:opacity-60"
                 style={{
                   backgroundColor: color.backgroundColor,
                 }}
@@ -98,7 +104,7 @@ export function BubbleMenuColorSelector(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
+              className="grid size-6 flex-shrink-0 place-items-center rounded-sm border-[0.5px] border-strong-1 text-tertiary transition-colors hover:bg-layer-1"
               onClick={() => BackgroundColorItem(editor).command({ color: undefined })}
             >
               <Ban className="size-4" />

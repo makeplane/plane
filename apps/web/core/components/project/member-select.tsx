@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -57,7 +63,7 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
     <CustomSearchSelect
       value={value}
       label={
-        <div className="flex items-center gap-2 h-3.5">
+        <div className="flex h-3.5 items-center gap-2">
           {selectedOption && (
             <Avatar name={selectedOption.member?.display_name} src={getFileURL(selectedOption.member?.avatar_url)} />
           )}

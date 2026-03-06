@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import type { Control, FieldArrayWithId, FormState } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -41,7 +47,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
       {fields.map((field, index) => (
         <div
           key={field.id}
-          className="relative group mb-1 flex items-start justify-between gap-x-4 text-body-xs-regular w-full"
+          className="group relative mb-1 flex w-full items-start justify-between gap-x-4 text-body-xs-regular"
         >
           <div className="w-full">
             <Controller
@@ -76,7 +82,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
               )}
             />
           </div>
-          <div className="flex items-center justify-between gap-2 shrink-0">
+          <div className="flex shrink-0 items-center justify-between gap-2">
             <div className="flex flex-col gap-1">
               <Controller
                 control={control}
@@ -87,7 +93,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                     value={value}
                     label={<span className="text-caption-sm-regular sm:text-body-xs-regular">{ROLE[value]}</span>}
                     onChange={onChange}
-                    className="flex-grow w-24"
+                    className="w-24 flex-grow"
                     input
                   >
                     {Object.entries(ROLE).map(([key, value]) => {

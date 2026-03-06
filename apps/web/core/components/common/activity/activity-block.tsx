@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // types
@@ -27,11 +33,11 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
   if (!activity) return <></>;
   return (
     <div
-      className={`relative flex items-start gap-2 text-caption-sm-regular  ${
+      className={`relative flex items-start gap-2 text-caption-sm-regular ${
         ends === "top" ? `pb-3` : ends === "bottom" ? `pt-3` : `py-3`
       }`}
     >
-      <div className="shrink-0  w-7 h-7 rounded-lg overflow-hidden flex justify-center items-center mt-0.5 z-[4] text-secondary border border-subtle shadow-raised-100">
+      <div className="z-[4] mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-subtle text-secondary shadow-raised-100">
         {Icon ? <Icon className="h-3.5 w-3.5 shrink-0" /> : <Network className="h-3.5 w-3.5 shrink-0" />}
       </div>
       <div className="w-full text-secondary">
@@ -43,7 +49,7 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
             isMobile={isMobile}
             tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
           >
-            <span className="whitespace-nowrap text-tertiary font-medium cursor-help">
+            <span className="cursor-help font-medium whitespace-nowrap text-tertiary">
               {calculateTimeAgo(activity.created_at)}
             </span>
           </Tooltip>

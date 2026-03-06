@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projets",
@@ -17,6 +23,7 @@ export default {
     favorites: "Favoris",
     pro: "Pro",
     upgrade: "Mettre à niveau",
+    stickies: "Post-it",
   },
   auth: {
     common: {
@@ -408,7 +415,7 @@ export default {
   docs: "Documentation",
   full_changelog: "Journal des modifications complet",
   support: "Support",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Propulsé par Plane Pages",
   please_select_at_least_one_invitation: "Veuillez sélectionner au moins une invitation.",
   please_select_at_least_one_invitation_description:
@@ -1995,6 +2002,46 @@ export default {
         title: "Pas encore de systèmes d’estimation",
         description: "Créez un ensemble d’estimations pour communiquer le volume de travail par élément de travail.",
         primary_button: "Ajouter un système d’estimation",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cycles",
+        short_title: "Cycles",
+        description:
+          "Planifiez le travail dans des périodes flexibles qui s'adaptent au rythme et au tempo uniques de ce projet.",
+        toggle_title: "Activer les cycles",
+        toggle_description: "Planifiez le travail dans des périodes ciblées.",
+      },
+      modules: {
+        title: "Modules",
+        short_title: "Modules",
+        description: "Organisez le travail en sous-projets avec des chefs de projet et des responsables dédiés.",
+        toggle_title: "Activer les modules",
+        toggle_description: "Les membres du projet pourront créer et modifier des modules.",
+      },
+      views: {
+        title: "Vues",
+        short_title: "Vues",
+        description:
+          "Enregistrez des tris, des filtres et des options d'affichage personnalisés ou partagez-les avec votre équipe.",
+        toggle_title: "Activer les vues",
+        toggle_description: "Les membres du projet pourront créer et modifier des vues.",
+      },
+      pages: {
+        title: "Pages",
+        short_title: "Pages",
+        description: "Créez et modifiez du contenu libre : notes, documents, n'importe quoi.",
+        toggle_title: "Activer les pages",
+        toggle_description: "Les membres du projet pourront créer et modifier des pages.",
+      },
+      intake: {
+        title: "Réception",
+        short_title: "Réception",
+        description:
+          "Permettez aux non-membres de partager des bugs, des commentaires et des suggestions ; sans perturber votre flux de travail.",
+        toggle_title: "Activer la réception",
+        toggle_description: "Permettre aux membres du projet de créer des demandes de réception dans l'application.",
       },
     },
   },

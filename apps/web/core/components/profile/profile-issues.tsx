@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -56,7 +62,7 @@ export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Prop
       >
         {({ filter: profileWorkItemsFilter }) => (
           <>
-            <div className="flex flex-col h-full w-full">
+            <div className="flex h-full w-full flex-col">
               {profileWorkItemsFilter && <WorkItemFiltersRow filter={profileWorkItemsFilter} />}
               <div className="relative h-full w-full overflow-auto">
                 {activeLayout === "list" ? (

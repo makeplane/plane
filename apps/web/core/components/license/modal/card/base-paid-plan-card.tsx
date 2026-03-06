@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
@@ -59,13 +65,13 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                   {features.map((feature) => (
                     <li
                       key={feature}
-                      className={cn("col-span-12 relative rounded-md p-2 flex", {
+                      className={cn("relative col-span-12 flex rounded-md p-2", {
                         "sm:col-span-6": !verticalFeatureList,
                       })}
                     >
-                      <p className="w-full text-caption-md-medium leading-5 flex items-center line-clamp-1">
-                        <CheckCircle className="size-4 mr-2 text-tertiary flex-shrink-0" />
-                        <span className="text-secondary truncate">{feature}</span>
+                      <p className="line-clamp-1 flex w-full items-center text-caption-md-medium leading-5">
+                        <CheckCircle className="mr-2 size-4 flex-shrink-0 text-tertiary" />
+                        <span className="truncate text-secondary">{feature}</span>
                       </p>
                     </li>
                   ))}

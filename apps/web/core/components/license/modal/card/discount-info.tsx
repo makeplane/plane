@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useTheme } from "next-themes";
 // plane imports
 import type { TBillingFrequency } from "@plane/types";
@@ -47,7 +53,7 @@ export function DiscountInfo({ className, currency, frequency, price, subscripti
           <img
             src={resolvedTheme === "dark" ? ScribbleWhite : ScribbleBlack}
             alt="scribble"
-            className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-full scale-x-125"
+            className="absolute top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 scale-x-125"
           />
           {currency}
           {actualPrice}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Combobox } from "@headlessui/react";
 import type { ElementType, KeyboardEventHandler, ReactNode, Ref } from "react";
 import React, { Fragment, forwardRef, useEffect, useRef, useState } from "react";
@@ -42,7 +48,7 @@ const ComboDropDown = forwardRef(function ComboDropDown(props: Props, ref) {
 
   if (!shouldRender) {
     return (
-      <div ref={dropDownButtonRef} className="h-full flex items-center">
+      <div ref={dropDownButtonRef} className="flex h-full items-center">
         {button}
       </div>
     );

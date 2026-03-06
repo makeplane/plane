@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
@@ -96,10 +102,10 @@ export const ViewListItemAction = observer(function ViewListItemAction(props: Pr
 
       {view?.anchor && publishLink ? (
         <div
-          className="px-3 py-1.5 bg-success-subtle text-success-primary rounded-sm text-11 font-medium flex items-center gap-1.5 cursor-pointer"
+          className="flex cursor-pointer items-center gap-1.5 rounded-sm bg-success-subtle px-3 py-1.5 text-11 font-medium text-success-primary"
           onClick={() => setPublishModalOpen(true)}
         >
-          <span className="flex-shrink-0 rounded-full size-1.5 bg-success-primary" />
+          <span className="size-1.5 flex-shrink-0 rounded-full bg-success-primary" />
           Live
         </div>
       ) : (

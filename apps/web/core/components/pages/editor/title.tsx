@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // editor
@@ -23,7 +29,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
   // page filters
   const { fontSize } = usePageFilters();
   // ui
-  const titleFontClassName = cn("tracking-[-2%] font-bold", {
+  const titleFontClassName = cn("font-bold tracking-[-2%]", {
     "text-[1.6rem] leading-[1.9rem]": fontSize === "small-font",
     "text-[2rem] leading-[2.375rem]": fontSize === "large-font",
   });
@@ -45,7 +51,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
       ) : (
         <div className="relative">
           <TextArea
-            className={cn(titleFontClassName, "block w-full border-none outline-none p-0 resize-none rounded-none")}
+            className={cn(titleFontClassName, "block w-full resize-none rounded-none border-none p-0 outline-none")}
             placeholder="Untitled"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -62,7 +68,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
           />
           <div
             className={cn(
-              "pointer-events-none absolute bottom-1 right-1 z-[2] font-regular rounded-sm bg-surface-1 p-0.5 text-11 text-secondary opacity-0 transition-opacity",
+              "pointer-events-none absolute right-1 bottom-1 z-[2] rounded-sm bg-surface-1 p-0.5 text-11 font-regular text-secondary opacity-0 transition-opacity",
               {
                 "opacity-100": isLengthVisible,
               }
