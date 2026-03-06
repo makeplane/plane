@@ -9,5 +9,6 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
-  }
+  },
+  "include": ["src", "tests", "../../apps/web"]
 }
