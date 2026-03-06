@@ -26,6 +26,7 @@ from .admin import (
     InstanceAdminUserMeEndpoint,
     InstanceAdminSignOutEndpoint,
     InstanceAdminUserSessionEndpoint,
+    InstanceAdminPasswordResetEndpoint,
     InstanceAdminEmailCheckEndpoint,
 )
 
@@ -36,3 +37,6 @@ from .workspace import (
 )
 
 from .changelog import CheckUpdateEndpoint
+
+
+from .user import InstanceUserManagementViewSet

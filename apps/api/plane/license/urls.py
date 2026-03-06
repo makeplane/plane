@@ -9,6 +9,8 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+from plane.license.api.views.user import InstanceUserManagementViewSet
+
 from django.urls import path
 
 from plane.license.api.views import (
@@ -28,6 +30,7 @@ from plane.license.api.views import (
     InstanceWorkSpaceEndpoint,
     AdminFeatureFlagEndpoint,
     CheckUpdateEndpoint,
+    InstanceAdminPasswordResetEndpoint
 )
 
 from plane.authentication.views import (
@@ -88,6 +91,11 @@ urlpatterns = [
         "admins/email-check/",
         InstanceAdminEmailCheckEndpoint.as_view(),
         name="instance-admin-email-check",
+    ),
+    path(
+        "admins/reset-password/",
+        InstanceAdminPasswordResetEndpoint.as_view(),
+        name="instance-admin-password-reset",
     ),
     path(
         "admins/sign-up-screen-visited/",
@@ -179,4 +187,7 @@ urlpatterns = [
         MagicSignInAdminEndpoint.as_view(),
         name="admin-magic-sign-in",
     ),
+    # Instance user management
+    path("users/", InstanceUserManagementViewSet.as_view(), name="instance-users-list"),
+    path("users/<uuid:pk>/", InstanceUserManagementViewSet.as_view(), name="instance-user-detail"),
 ]

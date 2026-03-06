@@ -44,7 +44,7 @@ const Input = React.forwardRef(function Input(props: InputProps, ref: React.Forw
       className={cn(
         "block rounded-md bg-layer-2 text-13 placeholder-tertiary border-subtle-1 focus:outline-none",
         {
-          "rounded-md border-[0.5px]": mode === "primary",
+          "rounded-md border": mode === "primary",
           "rounded-sm border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-accent-strong":
             mode === "transparent",
           "rounded-sm border-none bg-transparent ring-0": mode === "true-transparent",

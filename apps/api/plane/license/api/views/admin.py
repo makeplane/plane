@@ -35,6 +35,7 @@ from plane.license.api.permissions import InstanceAdminPermission
 from plane.license.api.serializers import (
     InstanceAdminMeSerializer,
     InstanceAdminSerializer,
+    InstanceAdminPasswordResetSerializer,
 )
 from plane.license.models import Instance, InstanceAdmin
 from plane.license.utils.instance_value import get_configuration_value
@@ -345,7 +346,7 @@ class InstanceAdminSignInEndpoint(View):
             return HttpResponseRedirect(url)
 
         # Check if the user is an instance admin
-        if not InstanceAdmin.objects.filter(instance=instance, user=user):
+        if not InstanceAdmin.objects.filter(instance=instance, user=user).exists():
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["ADMIN_AUTHENTICATION_FAILED"],
                 error_message="ADMIN_AUTHENTICATION_FAILED",
@@ -367,7 +368,9 @@ class InstanceAdminSignInEndpoint(View):
 
         # get tokens for user
         user_login(request=request, user=user, is_admin=True)
-        url = urljoin(base_host(request=request, is_admin=True), "general/")
+        # redirect path
+        path = "reset-password/" if user.is_password_reset_required else "general/"
+        url = urljoin(base_host(request=request, is_admin=True), path)
         return HttpResponseRedirect(url)
 
 
@@ -412,6 +415,19 @@ class InstanceAdminSignOutEndpoint(View):
             return HttpResponseRedirect(url)
 
 
+class InstanceAdminPasswordResetEndpoint(BaseAPIView):
+    permission_classes = [InstanceAdminPermission]
+
+    def post(self, request):
+        serializer = InstanceAdminPasswordResetSerializer(data=request.data, context={"request": request})
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        # Re-authenticate the user with new password
+        user_login(request=request, user=request.user, is_admin=True)
+
+        return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
 class InstanceAdminEmailCheckEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
     throttle_classes = [AuthenticationThrottle]

@@ -11,9 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TUserPermissions } from "./enums";
-import type { IIssueActivity, TIssuePriorities, TProductTour, TStateGroups } from ".";
-import type { TLoginMediums } from "./instance";
+import type { TUserPermissions } from "../enums";
+import type { IIssueActivity, TIssuePriorities } from "../issues";
+import type { TStateGroups } from "../state";
+import type { TLoginMediums } from "../instance";
+import type { TProductTour } from "../tour";
 
 /**
  * @description The start of the week for the user

@@ -201,8 +201,10 @@ class AdminFeatureFlagEndpoint(BaseAPIView):
             response.raise_for_status()
 
             values = response.json().get("values", {})
+
             oidc_saml_auth = values.get("OIDC_SAML_AUTH", False)
             ldap_auth = values.get("LDAP_AUTH", False)
+            instance_user_management = values.get("INSTANCE_USER_MANAGEMENT", False)
 
             ## Check if the configuration is already initialized
             (IS_OIDC_ENABLED, IS_SAML_ENABLED, IS_LDAP_ENABLED) = get_configuration_value(
@@ -225,6 +227,7 @@ class AdminFeatureFlagEndpoint(BaseAPIView):
             data = {
                 AdminFeatureFlag.OIDC_SAML_AUTH.value: oidc_saml_auth,
                 AdminFeatureFlag.LDAP_AUTH.value: ldap_auth,
+                AdminFeatureFlag.INSTANCE_USER_MANAGEMENT.value: instance_user_management,
             }
             return Response(data, status=response.status_code)
         except requests.exceptions.RequestException:

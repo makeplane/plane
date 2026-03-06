@@ -9,6 +9,9 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Python imports
+import requests
+
 # Django imports
 from django.conf import settings
 
@@ -16,6 +19,7 @@ from django.conf import settings
 from plane.db.models import User, WorkspaceMember, WorkspaceMemberInvite
 from plane.ee.models import WorkspaceLicense
 from plane.payment.utils.workspace_license_request import resync_workspace_license
+from plane.utils.exception_logger import log_exception
 
 
 def count_member_payments(members_list):
@@ -418,3 +422,32 @@ def workspace_member_check(slug, requested_invite_list, requested_role, current_
             current_role=current_role,
             workspace_license=workspace_license,
         )
+
+
+def instance_member_check(requested_invites_list):
+    """
+    Check if seats are available for the license
+    """
+    # Self-managed instances
+    if settings.PAYMENT_SERVER_BASE_URL:
+        try:
+            response = requests.get(
+                f"{settings.PAYMENT_SERVER_BASE_URL}/api/licenses/enterprise/current-plan/",
+                headers={"content-type": "application/json", "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN},
+            )
+
+            response.raise_for_status()
+
+            data = response.json()
+            occupied_seats = User.objects.filter(
+                is_active=True,
+                is_bot=False,
+            ).count()
+            purchased_seats = data.get("purchased_seats", 0)
+
+            return occupied_seats < purchased_seats
+        except Exception as e:
+            log_exception(e)
+            return False
+    else:
+        return False

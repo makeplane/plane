@@ -11,24 +11,22 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect } from "react";
-import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
-import { Outlet } from "react-router";
-import useSWR from "swr";
-// components
-import { AdminHeader } from "@/components/common/header";
+import { useRouter } from "@/app/compat/next/navigation";
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { NewUserPopup } from "@/components/new-user-popup";
-// hooks
 import { useUser } from "@/hooks/store";
-// plane admin hooks
 import { useInstanceFeatureFlags } from "@/plane-admin/hooks/store/use-instance-feature-flag";
-// local components
-import type { Route } from "./+types/layout";
-import { AdminSidebar } from "./sidebar";
+import { observer } from "mobx-react";
+import { useEffect } from "react";
+import type { FC } from "react";
+import useSWR from "swr";
 
-function AdminLayout(_props: Route.ComponentProps) {
+type Props = {
+  children: React.ReactNode;
+};
+
+export const InstanceAdminAuthWrapper: FC<Props> = observer(function InstanceAdminAuthWrapper(props: Props) {
+  // props
+  const { children } = props;
   // router
   const { replace } = useRouter();
   // store hooks
@@ -54,22 +52,7 @@ function AdminLayout(_props: Route.ComponentProps) {
     );
   }
 
-  if (isUserLoggedIn) {
-    return (
-      <div className="relative flex h-screen w-screen overflow-hidden">
-        <AdminSidebar />
-        <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
-          <AdminHeader />
-          <div className="h-full w-full overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md">
-            <Outlet />
-          </div>
-        </main>
-        <NewUserPopup />
-      </div>
-    );
-  }
+  if (isUserLoggedIn) return <>{children}</>;
 
   return <></>;
-}
-
-export default observer(AdminLayout);
+});

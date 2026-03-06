@@ -31,6 +31,7 @@ export * from "./feature-flag";
 export * from "./file";
 export * from "./file-extended";
 export * from "./filter";
+export * from "./form";
 export * from "./graph";
 export * from "./icon";
 export * from "./initiatives";
