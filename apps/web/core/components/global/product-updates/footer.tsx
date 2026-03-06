@@ -18,7 +18,7 @@ export function ProductUpdatesFooter() {
     <div className="m-6 mb-4 flex flex-shrink-0 items-center justify-between gap-4">
       <div className="flex items-center gap-2">
         <a
-          href="https://go.plane.so/p-docs"
+          href="https://go.mycustomsite.com/p-docs"
           target="_blank"
           className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
           rel="noreferrer"
@@ -30,7 +30,7 @@ export function ProductUpdatesFooter() {
         </svg>
         <a
           data-ph-element={USER_TRACKER_ELEMENTS.CHANGELOG_REDIRECTED}
-          href="https://go.plane.so/p-changelog"
+          href="https://go.mycustomsite.com/p-changelog"
           target="_blank"
           className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
           rel="noreferrer"
@@ -41,7 +41,7 @@ export function ProductUpdatesFooter() {
           <circle cx={1} cy={1} r={1} />
         </svg>
         <a
-          href="mailto:support@plane.so"
+          href="mailto:support@mycustomsite.com"
           target="_blank"
           className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
           rel="noreferrer"
@@ -52,7 +52,7 @@ export function ProductUpdatesFooter() {
           <circle cx={1} cy={1} r={1} />
         </svg>
         <a
-          href="https://forum.plane.so"
+          href="https://forum.mycustomsite.com"
           target="_blank"
           className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
           rel="noreferrer"
@@ -61,7 +61,7 @@ export function ProductUpdatesFooter() {
         </a>
       </div>
       <a
-        href="https://plane.so/pages"
+        href="https://mycustomsite.com/pages"
         target="_blank"
         className={cn(
           getButtonStyling("secondary", "base"),

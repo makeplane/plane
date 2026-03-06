@@ -22,7 +22,7 @@ export function StarUsOnGitHubLink() {
     <a
       aria-label={t("home.star_us_on_github")}
       className="flex flex-shrink-0 items-center gap-1.5 rounded-sm bg-layer-2 px-3 py-1.5"
-      href="https://github.com/makeplane/plane"
+      href="https://github.com/mycustomuser/plane"
       target="_blank"
       rel="noopener noreferrer"
     >

@@ -50,7 +50,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
         maxHeight="lg"
         closeOnSelect
       >
-        <CustomMenu.MenuItem onClick={() => window.open("https://go.plane.so/p-docs", "_blank")}>
+        <CustomMenu.MenuItem onClick={() => window.open("https://go.mycustomsite.com/p-docs", "_blank")}>
           <div className="flex items-center gap-x-2 rounded-sm text-11">
             <PageIcon className="h-3.5 w-3.5 text-secondary" height={14} width={14} />
             <span className="text-11">{t("documentation")}</span>
@@ -93,7 +93,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             <span className="text-11">{t("whats_new")}</span>
           </button>
         </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem onClick={() => window.open("https://forum.plane.so", "_blank", "noopener,noreferrer")}>
+        <CustomMenu.MenuItem onClick={() => window.open("https://forum.mycustomsite.com", "_blank", "noopener,noreferrer")}>
           <div className="flex items-center gap-x-2 rounded-sm text-11">
             <span className="text-11">Forum</span>
           </div>

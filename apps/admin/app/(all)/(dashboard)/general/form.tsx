@@ -127,7 +127,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
                 No PII is collected.This anonymized data is used to understand how you use Plane and build new features
                 in line with{" "}
                 <a
-                  href="https://developers.plane.so/self-hosting/telemetry"
+                  href="https://developers.mycustomsite.com/self-hosting/telemetry"
                   target="_blank"
                   className="text-accent-primary hover:underline"
                   rel="noreferrer"

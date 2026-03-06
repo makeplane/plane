@@ -17,7 +17,7 @@ class UserFactory(factory.django.DjangoModelFactory):
         django_get_or_create = ("email",)
 
     id = factory.LazyFunction(uuid4)
-    email = factory.Sequence(lambda n: f"user{n}@plane.so")
+    email = factory.Sequence(lambda n: f"user{n}@mycustomsite.com")
     password = factory.PostGenerationMethodCall("set_password", "password")
     first_name = factory.Sequence(lambda n: f"First{n}")
     last_name = factory.Sequence(lambda n: f"Last{n}")

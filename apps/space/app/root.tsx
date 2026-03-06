@@ -80,7 +80,7 @@ export const meta: Route.MetaFunction = () => [
     content:
       "software development, customer feedback, software, accelerate, code management, release management, project management, work item tracking, agile, scrum, kanban, collaboration",
   },
-  { name: "twitter:site", content: "@planepowers" },
+  { name: "twitter:site", content: "@mycustomtwitter" },
 ];
 
 export default function Root() {

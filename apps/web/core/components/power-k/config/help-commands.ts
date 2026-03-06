@@ -39,7 +39,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       i18n_title: "power_k.help_actions.open_plane_documentation",
       icon: FileText,
       action: () => {
-        window.open("https://docs.plane.so/", "_blank", "noopener,noreferrer");
+        window.open("https://docs.mycustomsite.com/", "_blank", "noopener,noreferrer");
       },
       isEnabled: () => true,
       isVisible: () => true,
@@ -52,7 +52,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       i18n_title: "power_k.help_actions.join_forum",
       icon: MessageSquare,
       action: () => {
-        window.open("https://forum.plane.so", "_blank", "noopener,noreferrer");
+        window.open("https://forum.mycustomsite.com", "_blank", "noopener,noreferrer");
       },
       isEnabled: () => true,
       isVisible: () => true,

@@ -9,7 +9,7 @@ export function MaintenanceMessage() {
     {
       key: "mail_to",
       label: "Contact Support",
-      value: "mailto:support@plane.so",
+      value: "mailto:support@mycustomsite.com",
     },
   ];
 

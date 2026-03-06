@@ -173,7 +173,7 @@ class TestApiTokenEndpoint:
         # Arrange
         # Create another user and their token with unique email and username
         unique_id = uuid4().hex[:8]
-        unique_email = f"other-{unique_id}@plane.so"
+        unique_email = f"other-{unique_id}@mycustomsite.com"
         unique_username = f"other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
         other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)
@@ -221,7 +221,7 @@ class TestApiTokenEndpoint:
         # Arrange
         # Create another user and their token with unique email and username
         unique_id = uuid4().hex[:8]
-        unique_email = f"delete-other-{unique_id}@plane.so"
+        unique_email = f"delete-other-{unique_id}@mycustomsite.com"
         unique_username = f"delete_other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
         other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)
@@ -315,7 +315,7 @@ class TestApiTokenEndpoint:
         # Arrange
         # Create another user and their token with unique email and username
         unique_id = uuid4().hex[:8]
-        unique_email = f"patch-other-{unique_id}@plane.so"
+        unique_email = f"patch-other-{unique_id}@mycustomsite.com"
         unique_username = f"patch_other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
         other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)

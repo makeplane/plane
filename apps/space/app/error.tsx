@@ -20,8 +20,8 @@ function ErrorPage() {
           <p className="mx-auto text-13 text-secondary md:w-1/2">
             That crashed Plane, pun intended. No worries, though. Our engineers have been notified. If you have more
             details, please write to{" "}
-            <a href="mailto:support@plane.so" className="text-accent-primary">
-              support@plane.so
+            <a href="mailto:support@mycustomsite.com" className="text-accent-primary">
+              support@mycustomsite.com
             </a>{" "}
             or on our{" "}
             <a href="https://forum.plane.so" target="_blank" className="text-accent-primary" rel="noopener noreferrer">

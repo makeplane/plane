@@ -355,7 +355,7 @@ export function InstanceSetupForm() {
                 Allow Plane to anonymously collect usage events.{" "}
                 <a
                   tabIndex={-1}
-                  href="https://developers.plane.so/self-hosting/telemetry"
+                  href="https://developers.mycustomsite.com/self-hosting/telemetry"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-500 hover:text-blue-600 flex-shrink-0 text-13 font-medium"

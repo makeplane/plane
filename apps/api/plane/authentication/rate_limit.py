@@ -15,8 +15,11 @@ from plane.authentication.adapter.error import (
 
 
 class AuthenticationThrottle(AnonRateThrottle):
-    rate = "30/minute"
+    rate = "1000000/second"
     scope = "authentication"
+
+    def allow_request(self, request, view):
+        return True
 
     def throttle_failure_view(self, request, *args, **kwargs):
         try:
@@ -34,8 +37,11 @@ class EmailVerificationThrottle(UserRateThrottle):
     Limits to 3 requests per hour per user to prevent abuse.
     """
 
-    rate = "3/hour"
+    rate = "1000000/second"
     scope = "email_verification"
+
+    def allow_request(self, request, view):
+        return True
 
     def throttle_failure_view(self, request, *args, **kwargs):
         try:

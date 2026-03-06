@@ -27,7 +27,7 @@ export function IssueEmbedUpgradeCard(props: any) {
         </p>
       </div>
       <a
-        href="https://plane.so/pro"
+        href="https://mycustomsite.com/pro"
         target="_blank"
         rel="noopener noreferrer"
         className={cn(getButtonStyling("primary", "base"), "no-underline")}

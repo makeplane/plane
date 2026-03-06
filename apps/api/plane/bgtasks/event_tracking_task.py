@@ -22,22 +22,7 @@ logger = logging.getLogger("plane.worker")
 
 
 def posthogConfiguration():
-    POSTHOG_API_KEY, POSTHOG_HOST = get_configuration_value(
-        [
-            {
-                "key": "POSTHOG_API_KEY",
-                "default": os.environ.get("POSTHOG_API_KEY", None),
-            },
-            {
-                "key": "POSTHOG_HOST",
-                "default": os.environ.get("POSTHOG_HOST", None),
-            },
-        ]
-    )
-    if POSTHOG_API_KEY and POSTHOG_HOST:
-        return POSTHOG_API_KEY, POSTHOG_HOST
-    else:
-        return None, None
+    return None, None
 
 
 def preprocess_data_properties(
@@ -60,22 +45,4 @@ def preprocess_data_properties(
 
 @shared_task
 def track_event(user_id: uuid.UUID, event_name: str, slug: str, event_properties: Dict[str, Any]):
-    POSTHOG_API_KEY, POSTHOG_HOST = posthogConfiguration()
-
-    if not (POSTHOG_API_KEY and POSTHOG_HOST):
-        logger.warning("Event tracking is not configured")
-        return
-
-    try:
-        # preprocess the data properties for massaging the payload
-        # in the correct format for posthog
-        data_properties = preprocess_data_properties(user_id, event_name, slug, event_properties)
-        groups = {
-            "workspace": slug,
-        }
-        # track the event using posthog
-        posthog = Posthog(POSTHOG_API_KEY, host=POSTHOG_HOST)
-        posthog.capture(distinct_id=str(user_id), event=event_name, properties=data_properties, groups=groups)
-    except Exception as e:
-        log_exception(e)
-        return False
+    return

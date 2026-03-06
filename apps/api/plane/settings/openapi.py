@@ -16,17 +16,17 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": (
         "The Plane REST API\n\n"
         "Visit our quick start guide and full API documentation at "
-        "[developers.plane.so](https://developers.plane.so/api-reference/introduction)."
+        "[developers.plane.so](https://developers.mycustomsite.com/api-reference/introduction)."
     ),
     "CONTACT": {
         "name": "Plane",
-        "url": "https://plane.so",
-        "email": "support@plane.so",
+        "url": "https://mycustomsite.com",
+        "email": "support@mycustomsite.com",
     },
     "VERSION": "0.0.1",
     "LICENSE": {
         "name": "GNU AGPLv3",
-        "url": "https://github.com/makeplane/plane/blob/preview/LICENSE.txt",
+        "url": "https://github.com/mycustomuser/plane/blob/preview/LICENSE.txt",
     },
     # ========================================================================
     # Schema Generation Settings
@@ -45,7 +45,7 @@ SPECTACULAR_SETTINGS = {
     # ========================================================================
     "SERVERS": [
         {"url": "http://localhost:8000", "description": "Local"},
-        {"url": "https://api.plane.so", "description": "Production"},
+        {"url": "https://api.mycustomsite.com", "description": "Production"},
     ],
     # ========================================================================
     # API Tag Definitions

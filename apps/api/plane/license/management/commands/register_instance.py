@@ -40,7 +40,7 @@ class Command(BaseCommand):
     def check_for_latest_version(self, fallback_version):
         try:
             response = requests.get(
-                "https://api.github.com/repos/makeplane/plane/releases/latest",
+                "https://api.github.com/repos/mycustomuser/plane/releases/latest",
                 timeout=10,
             )
             response.raise_for_status()
