@@ -5,12 +5,12 @@
  */
 
 import { observer } from "mobx-react";
-import { Tab } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@plane/propel/tabs";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { TCycleDistribution, TCycleEstimateDistribution, TCyclePlotType } from "@plane/types";
-import { cn, toFilterArray } from "@plane/utils";
+import { toFilterArray } from "@plane/utils";
 // components
 import type { TAssigneeData } from "@/components/core/sidebar/progress-stats/assignee";
 import { AssigneeStatComponent } from "@/components/core/sidebar/progress-stats/assignee";
@@ -30,9 +30,7 @@ type TCycleProgressStats = {
   groupedIssues: Record<string, number>;
   handleFiltersUpdate: (condition: TWorkItemFilterCondition) => void;
   isEditable?: boolean;
-  noBackground?: boolean;
   plotType: TCyclePlotType;
-  roundedTab?: boolean;
   selectedFilters: TSelectedFilterProgressStats;
   size?: "xs" | "sm";
   totalIssuesCount: number;
@@ -45,9 +43,7 @@ export const CycleProgressStats = observer(function CycleProgressStats(props: TC
     groupedIssues,
     handleFiltersUpdate,
     isEditable = false,
-    noBackground = false,
     plotType,
-    roundedTab = false,
     selectedFilters,
     size = "sm",
     totalIssuesCount,
@@ -59,8 +55,6 @@ export const CycleProgressStats = observer(function CycleProgressStats(props: TC
     `cycle-analytics-tab-${cycleId}`,
     "stat-assignees"
   );
-  // derived values
-  const currentTabIndex = (tab: string): number => PROGRESS_STATS.findIndex((stat) => stat.key === tab);
   const currentDistribution = distribution as TCycleDistribution;
   const currentEstimateDistribution = distribution as TCycleEstimateDistribution;
   const selectedAssigneeIds = toFilterArray(selectedFilters?.assignees?.value || []) as string[];
@@ -121,34 +115,16 @@ export const CycleProgressStats = observer(function CycleProgressStats(props: TC
 
   return (
     <div>
-      <Tab.Group defaultIndex={currentTabIndex(currentTab ? currentTab : "stat-assignees")}>
-        <Tab.List
-          as="div"
-          className={cn(
-            `flex w-full items-center justify-between gap-2 rounded-md p-1`,
-            roundedTab ? `rounded-3xl` : `rounded-md`,
-            noBackground ? `` : `bg-layer-2`,
-            size === "xs" ? `text-11` : `text-13`
-          )}
-        >
+      <Tabs defaultValue={currentTab ?? "stat-assignees"} onValueChange={(value) => setCycleTab(value)}>
+        <TabsList>
           {PROGRESS_STATS.map((stat) => (
-            <Tab
-              className={cn(
-                `w-full cursor-pointer p-1 text-primary transition-all outline-none focus:outline-none`,
-                roundedTab ? `rounded-3xl border border-subtle` : `rounded-sm`,
-                stat.key === currentTab
-                  ? "bg-layer-transparent-active text-secondary"
-                  : "text-placeholder hover:text-secondary"
-              )}
-              key={stat.key}
-              onClick={() => setCycleTab(stat.key)}
-            >
+            <TabsTrigger key={stat.key} value={stat.key}>
               {t(stat.i18n_title)}
-            </Tab>
+            </TabsTrigger>
           ))}
-        </Tab.List>
-        <Tab.Panels className="py-3 text-secondary">
-          <Tab.Panel key={"stat-states"}>
+        </TabsList>
+        <div className="py-3">
+          <TabsContent value="stat-states">
             <StateGroupStatComponent
               distribution={distributionStateData}
               handleStateGroupFiltersUpdate={handleStateGroupFiltersUpdate}
@@ -156,25 +132,25 @@ export const CycleProgressStats = observer(function CycleProgressStats(props: TC
               selectedStateGroups={selectedStateGroups}
               totalIssuesCount={totalIssuesCount}
             />
-          </Tab.Panel>
-          <Tab.Panel key={"stat-assignees"}>
+          </TabsContent>
+          <TabsContent value="stat-assignees">
             <AssigneeStatComponent
               distribution={distributionAssigneeData}
               handleAssigneeFiltersUpdate={handleAssigneeFiltersUpdate}
               isEditable={isEditable}
               selectedAssigneeIds={selectedAssigneeIds}
             />
-          </Tab.Panel>
-          <Tab.Panel key={"stat-labels"}>
+          </TabsContent>
+          <TabsContent value="stat-labels">
             <LabelStatComponent
               distribution={distributionLabelData}
               handleLabelFiltersUpdate={handleLabelFiltersUpdate}
               isEditable={isEditable}
               selectedLabelIds={selectedLabelIds}
             />
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+          </TabsContent>
+        </div>
+      </Tabs>
     </div>
   );
 });

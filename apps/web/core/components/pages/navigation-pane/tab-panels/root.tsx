@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+// plane imports
+import { TabsContent } from "@plane/propel/tabs";
 // components
 import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // plane web imports
@@ -15,7 +17,6 @@ import type { TPageInstance } from "@/store/pages/base-page";
 import { PageNavigationPaneAssetsTabPanel } from "./assets";
 import { PageNavigationPaneInfoTabPanel } from "./info/root";
 import { PageNavigationPaneOutlineTabPanel } from "./outline";
-import { Tabs } from "@plane/propel/tabs";
 
 type Props = {
   page: TPageInstance;
@@ -28,12 +29,16 @@ export function PageNavigationPaneTabPanelsRoot(props: Props) {
   return (
     <>
       {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
-        <Tabs.Content key={tab.key} value={tab.key} className="flex-1 overflow-hidden py-2">
+        <TabsContent
+          key={tab.key}
+          value={tab.key}
+          className="vertical-scrollbar scrollbar-sm size-full overflow-y-auto outline-none"
+        >
           {tab.key === "outline" && <PageNavigationPaneOutlineTabPanel page={page} />}
           {tab.key === "info" && <PageNavigationPaneInfoTabPanel page={page} versionHistory={versionHistory} />}
           {tab.key === "assets" && <PageNavigationPaneAssetsTabPanel page={page} />}
           <PageNavigationPaneAdditionalTabPanelsRoot activeTab={tab.key} page={page} />
-        </Tabs.Content>
+        </TabsContent>
       ))}
     </>
   );

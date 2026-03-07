@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { Tabs } from "@plane/propel/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@plane/propel/tabs";
 // components
 import { cn } from "@plane/utils";
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
@@ -80,9 +80,9 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
                       "flex w-full items-center justify-between gap-4 overflow-hidden border-b border-subtle bg-surface-1 px-6 py-2"
                     )}
                   >
-                    <Tabs.List className={"flex h-7 w-fit overflow-x-auto"}>
+                    <TabsList className={"flex h-7 w-fit overflow-x-auto"}>
                       {ANALYTICS_TABS.map((tab) => (
-                        <Tabs.Trigger
+                        <TabsTrigger
                           key={tab.key}
                           value={tab.key}
                           disabled={tab.isDisabled}
@@ -95,22 +95,22 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
                           }}
                         >
                           {tab.label}
-                        </Tabs.Trigger>
+                        </TabsTrigger>
                       ))}
-                    </Tabs.List>
+                    </TabsList>
 
                     <div className="flex-shrink-0">
                       <AnalyticsFilterActions />
                     </div>
                   </div>
                   {ANALYTICS_TABS.map((tab) => (
-                    <Tabs.Content
+                    <TabsContent
                       key={tab.key}
                       value={tab.key}
                       className={"h-full overflow-hidden overflow-y-auto px-2"}
                     >
                       <tab.content />
-                    </Tabs.Content>
+                    </TabsContent>
                   ))}
                 </div>
               </Tabs>
