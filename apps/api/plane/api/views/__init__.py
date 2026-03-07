@@ -62,3 +62,10 @@ from .user import UserEndpoint
 from .invite import WorkspaceInvitationsViewset
 
 from .sticky import StickyViewSet
+
+from .page import (
+    PageListCreateAPIEndpoint,
+    PageDetailAPIEndpoint,
+    PageArchiveUnarchiveAPIEndpoint,
+    PageLockUnlockAPIEndpoint,
+)
