@@ -3,71 +3,71 @@
 # django
 Django==4.2.29
 # rest framework
-djangorestframework==3.15.2
+djangorestframework==3.16.1
 # postgres
-psycopg==3.3.0
-psycopg-binary==3.3.0
-psycopg-c==3.3.0
+psycopg==3.3.3
+psycopg-binary==3.3.3
+psycopg-c==3.3.3
 dj-database-url==2.1.0
 # mongo
-pymongo==4.6.3
+pymongo==4.16.0
 # redis
 redis==5.0.4
 django-redis==5.4.0
 # cors
-django-cors-headers==4.3.1
+django-cors-headers==4.9.0
 # celery
-celery==5.4.0
-django_celery_beat==2.6.0
-django-celery-results==2.5.1
+celery==5.6.2
+django_celery_beat==2.9.0
+django-celery-results==2.6.0
 # file serve
-whitenoise==6.11.0
+whitenoise==6.12.0
 # fake data
 faker==25.0.0
 # filters
 django-filter==24.2
 # json model
-jsonmodels==2.7.0
+jsonmodels==2.8.0
 # storage
-django-storages==1.14.2
+django-storages==1.14.6
 # user management
 django-crum==0.7.9
 # web server
-uvicorn==0.29.0
+uvicorn==0.41.0
 # sockets
-channels==4.1.0
+channels==4.3.2
 # ai
 openai==1.63.2
 # slack
-slack-sdk==3.27.1
+slack-sdk==3.40.1
 # apm
-scout-apm==3.1.0
+scout-apm==3.5.3
 # xlsx generation
-openpyxl==3.1.2
+openpyxl==3.1.5
 # logging
 python-json-logger==4.0.0
 # html parser
-beautifulsoup4==4.12.3
+beautifulsoup4==4.14.3
 # analytics
 posthog==3.5.0
 # crypto
 cryptography==46.0.5
 # html validator
-lxml==6.0.0
+lxml==6.0.2
 # s3
-boto3==1.34.96
+boto3==1.42.63
 # password validator
-zxcvbn==4.4.28
+zxcvbn==4.5.0
 # timezone
 pytz==2024.1
 # jwt
-PyJWT==2.8.0
+PyJWT==2.11.0
 # OpenTelemetry
-opentelemetry-api==1.28.1
-opentelemetry-sdk==1.28.1
-opentelemetry-instrumentation-django==0.49b1
-opentelemetry-exporter-otlp==1.28.1
+opentelemetry-api==1.40.0
+opentelemetry-sdk==1.40.0
+opentelemetry-instrumentation-django==0.61b0
+opentelemetry-exporter-otlp==1.40.0
 # OpenAPI Specification
-drf-spectacular==0.28.0
+drf-spectacular==0.29.0
 # html sanitizer
-nh3==0.2.18
+nh3==0.3.3
