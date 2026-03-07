@@ -84,7 +84,7 @@
   "devDependencies": {
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@storybook/addon-designs": "10.0.2",
+    "@storybook/addon-designs": "11.1.2",
     "@storybook/addon-docs": "9.1.10",
     "@storybook/react-vite": "9.1.10",
     "@types/react": "catalog:",
