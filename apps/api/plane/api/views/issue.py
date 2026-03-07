@@ -302,6 +302,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
 
         external_id = request.GET.get("external_id")
         external_source = request.GET.get("external_source")
+        assignee_id = request.GET.get("assignee")
 
         if external_id and external_source:
             issue = Issue.objects.get(
@@ -346,6 +347,11 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         )
 
         total_issue_queryset = Issue.issue_objects.filter(project_id=project_id, workspace__slug=slug)
+
+        # filtering by assignee id
+        if assignee_id:
+            issue_queryset = issue_queryset.filter(assignees__id=assignee_id)
+            total_issue_queryset = total_issue_queryset.filter(assignees__id=assignee_id)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
