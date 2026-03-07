@@ -12,23 +12,7 @@ import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { SPREADSHEET_COLUMNS } from "@/plane-web/components/issues/issue-layouts/utils";
 import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-
-const COLUMN_WIDTHS: Partial<Record<keyof IIssueDisplayProperties, string>> = {
-  state: "80px",
-  priority: "80px",
-  assignee: "120px",
-  estimate: "80px",
-  labels: "80px",
-  start_date: "120px",
-  due_date: "120px",
-  created_on: "120px",
-  updated_on: "120px",
-  link: "80px",
-  attachment_count: "80px",
-  sub_issue_count: "80px",
-  cycle: "120px",
-  modules: "120px",
-};
+import { getColumnWidth, handleUpdateIssueLogic } from "./issue-column.logic";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -50,10 +34,6 @@ export const IssueColumn = observer(function IssueColumn(props: Props) {
 
   if (!Column) return null;
 
-  const handleUpdateIssue = async (issue: TIssue, data: Partial<TIssue>) => {
-    if (updateIssue) await updateIssue(issue.project_id, issue.id, data);
-  };
-
   return (
     <WithDisplayPropertiesHOC
       displayProperties={displayProperties}
@@ -64,15 +44,15 @@ export const IssueColumn = observer(function IssueColumn(props: Props) {
         tabIndex={0}
         className="h-11 text-13 after:absolute after:w-full after:bottom-[-1px] after:border after:border-subtle border-r-[1px] border-subtle"
         style={{
-          width: COLUMN_WIDTHS[property] ?? "auto",
-          minWidth: COLUMN_WIDTHS[property] ?? "auto",
+          width: getColumnWidth(property),
+          minWidth: getColumnWidth(property),
         }}
         ref={tableCellRef}
       >
         <Column
           issue={issueDetail}
           onChange={(issue, data) => {
-            void handleUpdateIssue(issue, data);
+            void handleUpdateIssueLogic(updateIssue, issue, data);
           }}
           disabled={disableUserActions}
           onClose={() => tableCellRef?.current?.focus()}
