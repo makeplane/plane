@@ -86,7 +86,7 @@
     "@plane/typescript-config": "workspace:*",
     "@storybook/addon-designs": "10.0.2",
     "@storybook/addon-docs": "9.1.10",
-    "@storybook/react-vite": "9.1.10",
+    "@storybook/react-vite": "10.2.14",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "storybook": "9.1.19",
