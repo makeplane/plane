@@ -51,7 +51,7 @@ export interface IWorkspaceIssues extends IBaseIssuesStore {
   archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 
-  quickAddIssue: undefined;
+  quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue>;
   clear(): void;
 }
 
@@ -115,6 +115,12 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
         signal: this.controller.signal,
       });
 
+      // If request was aborted, response will be undefined - skip processing
+      if (!response) {
+        this.setLoader(undefined);
+        return undefined;
+      }
+
       // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options, workspaceSlug, undefined, undefined, !isExistingPaginationOptions);
       return response;
@@ -154,6 +160,12 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
       // call the fetch issues API with the params for next page in issues
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
 
+      // Skip processing if response is undefined (e.g., aborted request)
+      if (!response) {
+        this.setLoader(undefined, groupId, subGroupId);
+        return undefined;
+      }
+
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);
       return response;
@@ -182,6 +194,36 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
   updateIssue = this.issueUpdate;
   archiveIssue = this.issueArchive;
 
-  // Setting them as undefined as they can not performed on workspace issues
-  quickAddIssue = undefined;
+  /**
+   * Quick add issue for workspace views
+   * Adds a temporary issue optimistically, then creates it via API
+   * @param workspaceSlug
+   * @param projectId - Required for workspace views since there's no project context
+   * @param data
+   * @returns
+   */
+  quickAddIssue = async (workspaceSlug: string, projectId: string, data: TIssue) => {
+    try {
+      // Add temporary issue to store for optimistic UI
+      this.addIssue(data);
+
+      // Create issue via API
+      const response = await this.createIssue(workspaceSlug, projectId, data);
+
+      // Remove temporary issue and add real one
+      runInAction(() => {
+        this.removeIssueFromList(data.id);
+        this.rootIssueStore.issues.removeIssue(data.id);
+      });
+
+      return response;
+    } catch (error) {
+      // Remove temporary issue on error
+      runInAction(() => {
+        this.removeIssueFromList(data.id);
+        this.rootIssueStore.issues.removeIssue(data.id);
+      });
+      throw error;
+    }
+  };
 }

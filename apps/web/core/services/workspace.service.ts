@@ -269,7 +269,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async getViewIssues(workspaceSlug: string, params: any, config = {}): Promise<TIssuesResponse> {
+  async getViewIssues(workspaceSlug: string, params: any, config = {}): Promise<TIssuesResponse | undefined> {
     const path = params.expand?.includes("issue_relation")
       ? `/api/workspaces/${workspaceSlug}/issues-detail/`
       : `/api/workspaces/${workspaceSlug}/issues/`;
@@ -282,7 +282,11 @@ export class WorkspaceService extends APIService {
     )
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        // Don't throw for aborted requests - they're expected when switching views/layouts
+        if (error?.code === "ERR_CANCELED" || error?.name === "CanceledError" || error?.name === "AbortError") {
+          return undefined;
+        }
+        throw error?.response?.data ?? error;
       });
   }
 

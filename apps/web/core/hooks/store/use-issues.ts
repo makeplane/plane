@@ -6,7 +6,7 @@
 
 import { useContext } from "react";
 import { merge } from "lodash-es";
-import type { TIssueMap } from "@plane/types";
+import type { TIssue, TIssueMap } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { StoreContext } from "@/lib/store-context";
 // plane web types
@@ -28,6 +28,7 @@ import type { IWorkspaceDraftIssues, IWorkspaceDraftIssuesFilter } from "@/store
 
 type defaultIssueStore = {
   issueMap: TIssueMap;
+  addIssuesToMap: (issues: TIssue[]) => void;
 };
 
 export type TStoreIssues = {
@@ -91,6 +92,7 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
 
   const defaultStore: defaultIssueStore = {
     issueMap: context.issue.issues.issuesMap,
+    addIssuesToMap: (issues: TIssue[]) => context.issue.issues.addIssue(issues),
   };
 
   switch (storeType) {

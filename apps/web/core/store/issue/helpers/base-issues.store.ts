@@ -65,6 +65,8 @@ export interface IBaseIssuesStore {
   //actions
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   clear(shouldClearPaginationOptions?: boolean): void;
+  clearIssueIds(): void;
+  setLoader(loaderValue: TLoader, groupId?: string, subGroupId?: string): void;
   // helper methods
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
@@ -225,6 +227,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       onfetchIssues: action.bound,
       onfetchNexIssues: action.bound,
       clear: action.bound,
+      clearIssueIds: action.bound,
       setLoader: action.bound,
       addIssue: action.bound,
       removeIssueFromList: action.bound,
@@ -1161,6 +1164,17 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     });
     this.controller.abort();
     this.controller = new AbortController();
+  }
+
+  /**
+   * Clears only the grouped issue IDs without aborting pending requests.
+   * Used when switching layouts to immediately show loader state.
+   */
+  clearIssueIds() {
+    runInAction(() => {
+      this.groupedIssueIds = undefined;
+      this.groupedIssueCount = {};
+    });
   }
 
   /**
