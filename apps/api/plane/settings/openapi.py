@@ -141,6 +141,21 @@ SPECTACULAR_SETTINGS = {
                 "*Use Cases:* Feature planning, release organization, progress tracking, team coordination."
             ),
         },
+        # Knowledge Management
+        {
+            "name": "Pages",
+            "description": (
+                "**Pages & Documentation**\n\n"
+                "Create and manage pages for project documentation, notes, and knowledge sharing. "
+                "Organize pages in hierarchies with parent-child relationships.\n\n"
+                "*Key Features:*\n"
+                "- Create, update, and delete pages\n"
+                "- Archive and unarchive pages with descendants\n"
+                "- Control page access (public or private)\n"
+                "- Organize pages in parent-child hierarchies\n\n"
+                "*Use Cases:* Project documentation, meeting notes, knowledge bases, team wikis."
+            ),
+        },
         # Core Project Management
         {
             "name": "Projects",
