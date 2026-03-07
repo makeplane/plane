@@ -47,6 +47,7 @@ from .parameters import (
     CYCLE_VIEW_PARAMETER,
     FIELDS_PARAMETER,
     EXPAND_PARAMETER,
+    ESTIMATE_ID_PARAMETER,
 )
 
 # Responses
@@ -126,6 +127,10 @@ from .examples import (
     STATE_UPDATE_EXAMPLE,
     INTAKE_ISSUE_CREATE_EXAMPLE,
     INTAKE_ISSUE_UPDATE_EXAMPLE,
+    ESTIMATE_CREATE_EXAMPLE,
+    ESTIMATE_UPDATE_EXAMPLE,
+    ESTIMATE_POINT_CREATE_EXAMPLE,
+    ESTIMATE_POINT_UPDATE_EXAMPLE,
     # Response Examples
     CYCLE_EXAMPLE,
     TRANSFER_CYCLE_ISSUE_SUCCESS_EXAMPLE,
@@ -145,6 +150,8 @@ from .examples import (
     PROJECT_MEMBER_EXAMPLE,
     CYCLE_ISSUE_EXAMPLE,
     STICKY_EXAMPLE,
+    ESTIMATE_EXAMPLE,
+    ESTIMATE_POINT_EXAMPLE,
 )
 
 # Helper decorators
@@ -165,6 +172,8 @@ from .decorators import (
     module_docs,
     module_issue_docs,
     state_docs,
+    estimate_docs,
+    estimate_point_docs,
 )
 
 # Schema processing hooks
@@ -206,6 +215,7 @@ __all__ = [
     "CYCLE_VIEW_PARAMETER",
     "FIELDS_PARAMETER",
     "EXPAND_PARAMETER",
+    "ESTIMATE_ID_PARAMETER",
     # Responses
     "UNAUTHORIZED_RESPONSE",
     "FORBIDDEN_RESPONSE",
@@ -279,6 +289,10 @@ __all__ = [
     "STATE_UPDATE_EXAMPLE",
     "INTAKE_ISSUE_CREATE_EXAMPLE",
     "INTAKE_ISSUE_UPDATE_EXAMPLE",
+    "ESTIMATE_CREATE_EXAMPLE",
+    "ESTIMATE_UPDATE_EXAMPLE",
+    "ESTIMATE_POINT_CREATE_EXAMPLE",
+    "ESTIMATE_POINT_UPDATE_EXAMPLE",
     # Response Examples
     "CYCLE_EXAMPLE",
     "TRANSFER_CYCLE_ISSUE_SUCCESS_EXAMPLE",
@@ -298,6 +312,8 @@ __all__ = [
     "PROJECT_MEMBER_EXAMPLE",
     "CYCLE_ISSUE_EXAMPLE",
     "STICKY_EXAMPLE",
+    "ESTIMATE_EXAMPLE",
+    "ESTIMATE_POINT_EXAMPLE",
     # Decorators
     "workspace_docs",
     "project_docs",
@@ -315,6 +331,8 @@ __all__ = [
     "module_docs",
     "module_issue_docs",
     "state_docs",
+    "estimate_docs",
+    "estimate_point_docs",
     # Hooks
     "preprocess_filter_api_v1_paths",
     "generate_operation_summary",

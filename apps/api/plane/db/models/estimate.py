@@ -10,11 +10,15 @@ from django.db.models import Q
 # Module imports
 from .project import ProjectBaseModel
 
+class EstimateType(models.TextChoices):
+    CATEGORIES = "categories", "Categories"
+    POINTS = "points", "Points"
+
 
 class Estimate(ProjectBaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(verbose_name="Estimate Description", blank=True)
-    type = models.CharField(max_length=255, default="categories")
+    type = models.CharField(max_length=255, choices=EstimateType.choices, default=EstimateType.CATEGORIES)
     last_used = models.BooleanField(default=False)
 
     def __str__(self):
