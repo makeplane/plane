@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "express-winston": "^4.2.0",
-    "winston": "^3.17.0"
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
