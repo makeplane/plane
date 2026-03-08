@@ -1,4 +1,11 @@
-import DOMPurify from "isomorphic-dompurify";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import sanitizeHtml from "sanitize-html";
+import type { Content, JSONContent } from "@plane/types";
 
 /**
  * @description Adds space between camelCase words
@@ -62,62 +69,12 @@ export const createSimilarString = (str: string) => {
  * @example
  * await copyUrlToClipboard("issues/123") // copies "https://example.com/issues/123"
  */
-/**
- * @description Copies text to clipboard
- * @param {string} text - Text to copy
- * @returns {Promise<void>} Promise that resolves when copying is complete
- * @example
- * await copyTextToClipboard("Hello, World!") // copies "Hello, World!" to clipboard
- */
-export const copyTextToClipboard = async (text: string): Promise<void> => {
-  if (typeof navigator === "undefined") return;
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (err) {
-    console.error("Failed to copy text: ", err);
-  }
-};
-
-/**
- * @description Copies full URL (origin + path) to clipboard
- * @param {string} path - URL path to copy
- * @returns {Promise<void>} Promise that resolves when copying is complete
- * @example
- * await copyUrlToClipboard("issues/123") // copies "https://example.com/issues/123"
- */
 export const copyUrlToClipboard = async (path: string) => {
-  const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-  await copyTextToClipboard(`${originUrl}/${path}`);
-};
-
-/**
- * @description Generates a deterministic HSL color based on input string
- * @param {string} string - Input string to generate color from
- * @returns {string} HSL color string
- * @example
- * generateRandomColor("hello") // returns consistent HSL color for "hello"
- * generateRandomColor("") // returns "rgb(var(--color-primary-100))"
- */
-export const generateRandomColor = (string: string): string => {
-  if (!string) return "rgb(var(--color-primary-100))";
-
-  string = `${string}`;
-
-  const uniqueId = string.length.toString() + string;
-  const combinedString = uniqueId + string;
-
-  const hash = Array.from(combinedString).reduce((acc, char) => {
-    const charCode = char.charCodeAt(0);
-    return (acc << 5) - acc + charCode;
-  }, 0);
-
-  const hue = hash % 360;
-  const saturation = 70;
-  const lightness = 60;
-
-  const randomColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-
-  return randomColor;
+  // get origin or default to empty string if not in browser
+  const originUrl = typeof window !== "undefined" ? window.location.origin : "";
+  // create URL object and ensure proper path formatting
+  const url = new URL(path, originUrl);
+  await copyTextToClipboard(url.toString());
 };
 
 /**
@@ -153,26 +110,6 @@ export const getNumberCount = (number: number): string => {
 };
 
 /**
- * @description Converts object to URL query parameters string
- * @param {Object} obj - Object to convert
- * @returns {string} URL query parameters string
- * @example
- * objToQueryParams({ page: 1, search: "test" }) // returns "page=1&search=test"
- * objToQueryParams({ a: null, b: "test" }) // returns "b=test"
- */
-export const objToQueryParams = (obj: any) => {
-  const params = new URLSearchParams();
-
-  if (!obj) return params.toString();
-
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined && value !== null) params.append(key, value as string);
-  }
-
-  return params.toString();
-};
-
-/**
  * @description: This function will capitalize the first letter of a string
  * @param str String
  * @returns String
@@ -180,39 +117,30 @@ export const objToQueryParams = (obj: any) => {
 export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
- * @description: This function will remove all the HTML tags from the string
+ * @description : This function will remove all the HTML tags from the string
+ * @param {string} htmlString
+ * @return {string}
+ * @example :
+ * const html = "<p>Some text</p>";
+const text = stripHTML(html);
+console.log(text); // Some text
+ */
+export const sanitizeHTML = (htmlString: string) => {
+  const sanitizedText = sanitizeHtml(htmlString, { allowedTags: [] }); // sanitize the string to remove all HTML tags
+  return sanitizedText.trim(); // trim the string to remove leading and trailing whitespaces
+};
+
+/**
+ * @description: This function will remove all the HTML tags from the string and truncate the string to the specified length
  * @param {string} html
+ * @param {number} length
  * @return {string}
  * @example:
  * const html = "<p>Some text</p>";
- * const text = stripHTML(html);
+ * const text = stripAndTruncateHTML(html);
  * console.log(text); // Some text
  */
-/**
- * @description Sanitizes HTML string by removing tags and properly escaping entities
- * @param {string} htmlString - HTML string to sanitize
- * @returns {string} Sanitized string with escaped HTML entities
- * @example
- * sanitizeHTML("<p>Hello & 'world'</p>") // returns "Hello &amp; &apos;world&apos;"
- */
-export const sanitizeHTML = (htmlString: string) => {
-  if (!htmlString) return "";
-
-  // First use DOMPurify to remove all HTML tags while preserving text content
-  const sanitizedText = DOMPurify.sanitize(htmlString, {
-    ALLOWED_TAGS: [],
-    ALLOWED_ATTR: [],
-    USE_PROFILES: {
-      html: false,
-      svg: false,
-      svgFilters: false,
-      mathMl: false,
-    },
-  });
-
-  // Additional escaping for quotes and apostrophes
-  return sanitizedText.trim().replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-};
+export const stripAndTruncateHTML = (html: string, length: number = 55) => truncateText(sanitizeHTML(html), length);
 
 /**
  * @returns {boolean} true if email is valid, false otherwise
@@ -233,27 +161,102 @@ export const checkEmailValidity = (email: string): boolean => {
 };
 
 export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] = []) => {
-  // Remove HTML tags using DOMPurify
-  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: allowedHTMLTags });
+  // Remove HTML tags using sanitize-html
+  const cleanText = sanitizeHtml(htmlString, { allowedTags: allowedHTMLTags });
   // Trim the string and check if it's empty
   return cleanText.trim() === "";
 };
 
 /**
- * @description this function returns whether a comment is empty or not by checking for the following conditions-
- * 1. If comment is undefined
- * 2. If comment is an empty string
- * 3. If comment is "<p></p>"
- * @param {string | undefined} comment
+ * @description
+ * Check if a JSONContent object is empty
+ * @param {JSONContent} content
  * @returns {boolean}
  */
-export const isCommentEmpty = (comment: string | undefined): boolean => {
+export const isJSONContentEmpty = (content: JSONContent | undefined): boolean => {
+  // If it has text, check if text is meaningful
+  if (!content) {
+    return true;
+  }
+  if (content.text !== undefined) {
+    return !content.text || content.text.trim() === "";
+  }
+
+  // If it has no content array, consider it empty
+  if (!content.content || content.content.length === 0) {
+    // Special case: empty paragraph nodes should be considered empty
+    if (content.type === "paragraph" || content.type === "doc") {
+      return true;
+    }
+    // For other node types without content (like hard breaks), check if they're meaningful
+    return (
+      content.type !== "hardBreak" &&
+      content.type !== "image" &&
+      content.type !== "mention-component" &&
+      content.type !== "image-component"
+    );
+  }
+
+  // Check if all nested content is empty
+  return content.content.every(isJSONContentEmpty);
+};
+
+/**
+ * @description
+ * This function will check if the comment is empty or not.
+ * It returns true if comment is empty.
+ * Now supports TipTap Content types (HTMLContent, JSONContent, JSONContent[], null)
+ *
+ * For HTML content:
+ * 1. If comment is undefined/null
+ * 2. If comment is an empty string
+ * 3. If comment is "<p></p>"
+ * 4. If comment contains only empty HTML tags
+ *
+ * For JSON content:
+ * 1. If content is null/undefined
+ * 2. If content has no meaningful text or nested content
+ * 3. If all nested content is empty
+ *
+ * @param {Content} comment - TipTap Content type
+ * @returns {boolean}
+ */
+export const isCommentEmpty = (comment: Content | undefined): boolean => {
+  // Handle null/undefined
+  if (!comment) return true;
+
+  // Handle HTMLContent (string)
+  if (typeof comment === "string") {
+    return (
+      comment.trim() === "" ||
+      comment === "<p></p>" ||
+      isEmptyHtmlString(comment, ["img", "mention-component", "image-component"])
+    );
+  }
+
+  // Handle JSONContent[] (array)
+  if (Array.isArray(comment)) {
+    return comment.length === 0 || comment.every(isJSONContentEmpty);
+  }
+
+  // Handle JSONContent (object)
+  return isJSONContentEmpty(comment);
+};
+
+/**
+ * @description
+ * Legacy function for backward compatibility with string comments
+ * @param {string | undefined} comment
+ * @returns {boolean}
+ * @deprecated Use isCommentEmpty with Content type instead
+ */
+export const isStringCommentEmpty = (comment: string | undefined): boolean => {
   // return true if comment is undefined
   if (!comment) return true;
   return (
     comment?.trim() === "" ||
     comment === "<p></p>" ||
-    isEmptyHtmlString(comment ?? "", ["img", "mention-component", "image-component"])
+    isEmptyHtmlString(comment ?? "", ["img", "mention-component", "image-component", "embed-component"])
   );
 };
 
@@ -279,43 +282,152 @@ export const checkURLValidity = (url: string): boolean => {
   return urlPattern.test(url);
 };
 
-// Browser-only clipboard functions
-// let copyTextToClipboard: (text: string) => Promise<void>;
+/**
+ * Combines array elements with a separator and adds a conjunction before the last element
+ * @param array Array of strings to combine
+ * @param separator Separator to use between elements (default: ", ")
+ * @param conjunction Conjunction to use before last element (default: "and")
+ * @returns Combined string with conjunction before the last element
+ */
+export const joinWithConjunction = (array: string[], separator: string = ", ", conjunction: string = "and"): string => {
+  if (!array || array.length === 0) return "";
+  if (array.length === 1) return array[0];
+  if (array.length === 2) return `${array[0]} ${conjunction} ${array[1]}`;
 
-// if (typeof window !== "undefined") {
-//   const fallbackCopyTextToClipboard = (text: string) => {
-//     const textArea = document.createElement("textarea");
-//     textArea.value = text;
+  const lastElement = array[array.length - 1];
+  const elementsExceptLast = array.slice(0, -1);
 
-//     // Avoid scrolling to bottom
-//     textArea.style.top = "0";
-//     textArea.style.left = "0";
-//     textArea.style.position = "fixed";
+  return `${elementsExceptLast.join(separator)}${separator}${conjunction} ${lastElement}`;
+};
 
-//     document.body.appendChild(textArea);
-//     textArea.focus();
-//     textArea.select();
+/**
+ * @description Ensures a URL has a protocol
+ * @param {string} url
+ * @returns {string}
+ * @example
+ * ensureUrlHasProtocol("example.com") => "http://example.com"
+ */
+export const ensureUrlHasProtocol = (url: string): string => (url.startsWith("http") ? url : `http://${url}`);
 
-//     try {
-//       // FIXME: Even though we are using this as a fallback, execCommand is deprecated 👎. We should find a better way to do this.
-//       // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
-//       document.execCommand("copy");
-//     } catch (err) {}
+/**
+ * @returns {boolean} true if searchQuery is substring of text in the same order, false otherwise
+ * @description Returns true if searchQuery is substring of text in the same order, false otherwise
+ * @param {string} text string to compare from
+ * @param {string} searchQuery
+ * @example substringMatch("hello world", "hlo") => true
+ * @example substringMatch("hello world", "hoe") => false
+ */
+export const substringMatch = (text: string, searchQuery: string): boolean => {
+  try {
+    let searchIndex = 0;
 
-//     document.body.removeChild(textArea);
-//   };
+    for (let i = 0; i < text.length; i++) {
+      if (text[i].toLowerCase() === searchQuery[searchIndex]?.toLowerCase()) searchIndex++;
 
-//   copyTextToClipboard = async (text: string) => {
-//     if (!navigator.clipboard) {
-//       fallbackCopyTextToClipboard(text);
-//       return;
-//     }
-//     await navigator.clipboard.writeText(text);
-//   };
-// } else {
-//   copyTextToClipboard = async () => {
-//     throw new Error("copyTextToClipboard is only available in browser environments");
-//   };
-// }
+      // All characters of searchQuery found in order
+      if (searchIndex === searchQuery.length) return true;
+    }
 
-// export { copyTextToClipboard };
+    // Not all characters of searchQuery found in order
+    return false;
+  } catch (_err) {
+    return false;
+  }
+};
+
+/**
+ * @description Copies text to clipboard
+ * @param {string} text - Text to copy
+ * @returns {Promise<void>} Promise that resolves when copying is complete
+ * @example
+ * await copyTextToClipboard("Hello, World!") // copies "Hello, World!" to clipboard
+ */
+const fallbackCopyTextToClipboard = (text: string) => {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+
+  // Avoid scrolling to bottom
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  try {
+    // FIXME: Even though we are using this as a fallback, execCommand is deprecated 👎. We should find a better way to do this.
+    // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
+    document.execCommand("copy");
+  } catch (_err) {
+    // catch fallback error
+  }
+
+  document.body.removeChild(textArea);
+};
+
+/**
+ * @description Copies text to clipboard
+ * @param {string} text - Text to copy
+ * @returns {Promise<void>} Promise that resolves when copying is complete
+ * @example
+ * await copyTextToClipboard("Hello, World!") // copies "Hello, World!" to clipboard
+ */
+export const copyTextToClipboard = async (text: string): Promise<void> => {
+  if (!navigator.clipboard) {
+    fallbackCopyTextToClipboard(text);
+    return;
+  }
+  await navigator.clipboard.writeText(text);
+};
+
+/**
+ * @description Joins URL path segments properly, removing duplicate slashes using URL encoding
+ * @param {...string} segments - URL path segments to join
+ * @returns {string} Properly joined URL path
+ * @example
+ * joinUrlPath("/workspace", "/projects") => "/workspace/projects"
+ * joinUrlPath("/workspace", "projects") => "/workspace/projects"
+ * joinUrlPath("workspace", "projects") => "/workspace/projects"
+ * joinUrlPath("/workspace/", "/projects/") => "/workspace/projects/"
+ */
+export const joinUrlPath = (...segments: string[]): string => {
+  if (segments.length === 0) return "";
+
+  // Filter out empty segments
+  const validSegments = segments.filter((segment) => segment !== "");
+  if (validSegments.length === 0) return "";
+
+  // Process segments to normalize slashes
+  const processedSegments = validSegments.map((segment, index) => {
+    let processed = segment;
+
+    // Remove leading slashes from all segments except the first
+    while (processed.startsWith("/")) {
+      processed = processed.substring(1);
+    }
+
+    // Remove trailing slashes from all segments except the last
+    if (index < validSegments.length - 1) {
+      while (processed.endsWith("/")) {
+        processed = processed.substring(0, processed.length - 1);
+      }
+    }
+
+    return processed;
+  });
+
+  // Join segments with single slash
+  const joined = processedSegments.join("/");
+
+  // Use URL constructor to normalize the path and handle double slashes
+  try {
+    // Create a dummy URL to leverage browser's URL normalization
+    const dummyUrl = new URL(`http://example.com/${joined}`);
+    return dummyUrl.pathname;
+  } catch {
+    // Fallback: manually handle double slashes by splitting and filtering
+    const pathParts = joined.split("/").filter((part) => part !== "");
+    return pathParts.length > 0 ? `/${pathParts.join("/")}` : "";
+  }
+};

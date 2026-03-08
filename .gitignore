@@ -1,5 +1,7 @@
 node_modules
 .next
+.yarn
+.claude/settings.local.json
 
 ### NextJS ###
 # Dependencies
@@ -15,19 +17,22 @@ node_modules
 /out/
 
 # Production
-/build
 dist/
 out/
+build/
+.react-router/
 
 # Misc
 .DS_Store
 *.pem
 .history
+tsconfig.tsbuildinfo
 
 # Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 .pnpm-debug.log*
 
 # Local env files
@@ -52,11 +57,14 @@ mediafiles
 .env
 .DS_Store
 logs/
+htmlcov/
+.coverage
 
 node_modules/
 assets/dist/
 npm-debug.log
 yarn-error.log
+pnpm-debug.log
 
 # Editor directories and files
 .idea
@@ -72,16 +80,34 @@ package-lock.json
 
 # lock files
 package-lock.json
-pnpm-lock.yaml
-pnpm-workspace.yaml
 
-.npmrc
+
+
 .secrets
 tmp/
+
 ## packages
 dist
 .temp/
 deploy/selfhost/plane-app/
+
 ## Storybook
 *storybook.log
 output.css
+
+dev-editor
+# Redis
+*.rdb
+*.rdb.gz
+
+storybook-static
+
+CLAUDE.md
+
+build/
+.react-router/
+
+build/
+.react-router/
+temp/
+scripts/

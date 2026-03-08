@@ -1,74 +1,127 @@
-import { useCallback, useEffect, useRef } from "react";
-import { Editor } from "@tiptap/react";
-import tippy, { Instance } from "tippy.js";
-import { Copy, LucideIcon, Trash2 } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-interface BlockMenuProps {
+import {
+  useFloating,
+  autoUpdate,
+  offset,
+  flip,
+  shift,
+  useDismiss,
+  useInteractions,
+  FloatingPortal,
+} from "@floating-ui/react";
+import type { Editor } from "@tiptap/react";
+import type { LucideIcon } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { CopyIcon, TrashIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { cn } from "@plane/utils";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// types
+import type { IEditorProps } from "@/types";
+// components
+import { getNodeOptions } from "./block-menu-options";
+
+type Props = {
+  disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
-}
+  flaggedExtensions?: IEditorProps["flaggedExtensions"];
+  workItemIdentifier?: IEditorProps["workItemIdentifier"];
+};
+export type BlockMenuOption = {
+  icon: LucideIcon | React.FC<ISvgIcons>;
+  key: string;
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  isDisabled?: boolean;
+};
 
-export const BlockMenu = (props: BlockMenuProps) => {
-  const { editor } = props;
-  const menuRef = useRef<HTMLDivElement>(null);
-  const popup = useRef<Instance | null>(null);
+export function BlockMenu(props: Props) {
+  const { editor, workItemIdentifier } = props;
+  const [isOpen, setIsOpen] = useState(false);
+  const [isAnimatedIn, setIsAnimatedIn] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const virtualReferenceRef = useRef<{ getBoundingClientRect: () => DOMRect }>({
+    getBoundingClientRect: () => new DOMRect(),
+  });
 
-  const handleClickDragHandle = useCallback((event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (target.matches("#drag-handle")) {
-      event.preventDefault();
+  // Set up Floating UI with virtual reference element
+  const { refs, floatingStyles, context } = useFloating({
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    middleware: [offset({ crossAxis: -10 }), flip(), shift()],
+    whileElementsMounted: autoUpdate,
+    placement: "left-start",
+  });
 
-      popup.current?.setProps({
-        getReferenceClientRect: () => target.getBoundingClientRect(),
-      });
+  const dismiss = useDismiss(context);
+  const { getFloatingProps } = useInteractions([dismiss]);
 
-      popup.current?.show();
-      return;
+  const openBlockMenu = useCallback(() => {
+    if (!isOpen) {
+      setIsOpen(true);
+      editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
     }
+  }, [editor, isOpen]);
 
-    popup.current?.hide();
-    return;
-  }, []);
-
-  useEffect(() => {
-    if (menuRef.current) {
-      menuRef.current.remove();
-      menuRef.current.style.visibility = "visible";
-
-      popup.current = tippy(document.body, {
-        getReferenceClientRect: null,
-        content: menuRef.current,
-        appendTo: () => document.querySelector(".frame-renderer"),
-        trigger: "manual",
-        interactive: true,
-        arrow: false,
-        placement: "left-start",
-        animation: "shift-away",
-        maxWidth: 500,
-        hideOnClick: true,
-        onShown: () => {
-          menuRef.current?.focus();
-        },
-      });
+  const closeBlockMenu = useCallback(() => {
+    if (isOpen) {
+      setIsOpen(false);
+      editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
     }
+  }, [editor, isOpen]);
 
-    return () => {
-      popup.current?.destroy();
-      popup.current = null;
-    };
-  }, []);
+  // Handle click on drag handle
+  const handleClickDragHandle = useCallback(
+    (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const dragHandle = target.closest("#drag-handle");
 
+      if (dragHandle) {
+        event.preventDefault();
+
+        // Update virtual reference with current drag handle position
+        virtualReferenceRef.current = {
+          getBoundingClientRect: () => dragHandle.getBoundingClientRect(),
+        };
+
+        // Set the virtual reference as the reference element
+        refs.setReference(virtualReferenceRef.current);
+
+        // Show the menu
+        openBlockMenu();
+        return;
+      }
+
+      // If clicking outside and not on a menu item, hide the menu
+      if (menuRef.current && !menuRef.current.contains(target)) {
+        closeBlockMenu();
+      }
+    },
+    [refs, openBlockMenu, closeBlockMenu]
+  );
+
+  // Set up event listeners
   useEffect(() => {
-    const handleKeyDown = () => {
-      popup.current?.hide();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeBlockMenu();
+      }
     };
 
     const handleScroll = () => {
-      popup.current?.hide();
+      closeBlockMenu();
     };
+
     document.addEventListener("click", handleClickDragHandle);
     document.addEventListener("contextmenu", handleClickDragHandle);
     document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("scroll", handleScroll, true); // Using capture phase
+    document.addEventListener("scroll", handleScroll, true);
 
     return () => {
       document.removeEventListener("click", handleClickDragHandle);
@@ -76,36 +129,43 @@ export const BlockMenu = (props: BlockMenuProps) => {
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("scroll", handleScroll, true);
     };
-  }, [handleClickDragHandle]);
+  }, [editor.commands, handleClickDragHandle, closeBlockMenu]);
 
-  const MENU_ITEMS: {
-    icon: LucideIcon;
-    key: string;
-    label: string;
-    onClick: (e: React.MouseEvent) => void;
-    isDisabled?: boolean;
-  }[] = [
+  // Animation effect
+  useEffect(() => {
+    if (isOpen) {
+      setIsAnimatedIn(false);
+      // Add a small delay before starting the animation
+      const timeout = setTimeout(() => {
+        requestAnimationFrame(() => {
+          setIsAnimatedIn(true);
+        });
+      }, 50);
+
+      return () => clearTimeout(timeout);
+    } else {
+      setIsAnimatedIn(false);
+    }
+  }, [isOpen]);
+
+  const MENU_ITEMS: BlockMenuOption[] = [
     {
-      icon: Trash2,
+      icon: TrashIcon,
       key: "delete",
       label: "Delete",
-      onClick: (e) => {
+      onClick: (_e) => {
+        // Execute the delete action
         editor.chain().deleteSelection().focus().run();
-        popup.current?.hide();
-        e.preventDefault();
-        e.stopPropagation();
       },
     },
     {
-      icon: Copy,
+      icon: CopyIcon,
       key: "duplicate",
       label: "Duplicate",
       isDisabled:
-        editor.state.selection.content().content.firstChild?.type.name === "image" || editor.isActive("imageComponent"),
-      onClick: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+        editor.state.selection.content().content.firstChild?.type.name === CORE_EXTENSIONS.IMAGE ||
+        editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE),
+      onClick: (_e) => {
         try {
           const { state } = editor;
           const { selection } = state;
@@ -139,36 +199,57 @@ export const BlockMenu = (props: BlockMenuProps) => {
             console.error(error.message);
           }
         }
-
-        popup.current?.hide();
       },
     },
+    ...getNodeOptions(editor),
   ];
 
-  return (
-    <div
-      ref={menuRef}
-      className="z-10 max-h-60 min-w-[7rem] overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
-    >
-      {MENU_ITEMS.map((item) => {
-        // Skip rendering the button if it should be disabled
-        if (item.isDisabled && item.key === "duplicate") {
-          return null;
-        }
+  if (!isOpen) {
+    return null;
+  }
 
-        return (
-          <button
-            key={item.key}
-            type="button"
-            className="flex w-full items-center gap-2 truncate rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-80"
-            onClick={item.onClick}
-            disabled={item.isDisabled}
-          >
-            <item.icon className="h-3 w-3" />
-            {item.label}
-          </button>
-        );
-      })}
-    </div>
+  return (
+    <FloatingPortal>
+      <div
+        ref={(node) => {
+          refs.setFloating(node);
+          menuRef.current = node;
+        }}
+        style={{
+          ...floatingStyles,
+          animationFillMode: "forwards",
+          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)", // Expo ease out
+          zIndex: 100,
+        }}
+        className={cn(
+          "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-subtle bg-surface-1 p-1.5 shadow-raised-200",
+          "transition-all duration-300 transform origin-top-right",
+          isAnimatedIn ? "opacity-100 scale-100" : "opacity-0 scale-75"
+        )}
+        {...getFloatingProps()}
+      >
+        {MENU_ITEMS.map((item) => {
+          if (item.isDisabled) return null;
+
+          return (
+            <button
+              key={item.key}
+              type="button"
+              className="flex w-full items-center gap-1.5 truncate rounded-sm px-1 py-1.5 text-11 text-secondary hover:bg-layer-1"
+              onClick={(e) => {
+                item.onClick(e);
+                e.preventDefault();
+                e.stopPropagation();
+                closeBlockMenu();
+              }}
+              disabled={item.isDisabled}
+            >
+              <item.icon className="h-3 w-3" />
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+    </FloatingPortal>
   );
-};
+}

@@ -1,4 +1,11 @@
-import { callOrReturn, getExtensionField, mergeAttributes, Node, ParentConfig } from "@tiptap/core";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { ParentConfig } from "@tiptap/core";
+import { callOrReturn, getExtensionField, mergeAttributes, Node } from "@tiptap/core";
 import { TextSelection } from "@tiptap/pm/state";
 import {
   addColumnAfter,
@@ -7,8 +14,7 @@ import {
   addRowBefore,
   CellSelection,
   columnResizing,
-  deleteColumn,
-  deleteRow,
+  deleteCellSelection,
   deleteTable,
   fixTables,
   goToNextCell,
@@ -19,26 +25,34 @@ import {
   toggleHeader,
   toggleHeaderCell,
 } from "@tiptap/pm/tables";
-
-import { tableControls } from "@/extensions/table/table/table-controls";
-import { TableView } from "@/extensions/table/table/table-view";
-import { createTable } from "@/extensions/table/table/utilities/create-table";
-import { deleteTableWhenAllCellsSelected } from "@/extensions/table/table/utilities/delete-table-when-all-cells-selected";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// local imports
+import { TableDragStatePlugin } from "../plugins/drag-state";
+import { TableColumnDragHandlePlugin } from "../plugins/drag-handles/column/plugin";
+import { TableRowDragHandlePlugin } from "../plugins/drag-handles/row/plugin";
+import { TableInsertPlugin } from "../plugins/insert-handlers/plugin";
+import { TableView } from "./table-view";
+import { createTable } from "./utilities/create-table";
+import { deleteColumnOrTable } from "./utilities/delete-column";
+import { handleDeleteKeyOnTable } from "./utilities/delete-key-shortcut";
+import { deleteRowOrTable } from "./utilities/delete-row";
 import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-action";
 import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
+import { DEFAULT_COLUMN_WIDTH } from ".";
 
-export interface TableOptions {
-  HTMLAttributes: Record<string, any>;
+type TableOptions = {
+  HTMLAttributes: Record<string, unknown>;
   resizable: boolean;
   handleWidth: number;
   cellMinWidth: number;
   lastColumnResizable: boolean;
   allowTableNodeSelection: boolean;
-}
+};
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    table: {
+    [CORE_EXTENSIONS.TABLE]: {
       insertTable: (options?: { rows?: number; cols?: number; withHeaderRow?: boolean }) => ReturnType;
       addColumnBefore: () => ReturnType;
       addColumnAfter: () => ReturnType;
@@ -52,6 +66,7 @@ declare module "@tiptap/core" {
       toggleHeaderColumn: () => ReturnType;
       toggleHeaderRow: () => ReturnType;
       toggleHeaderCell: () => ReturnType;
+      clearSelectedCells: () => ReturnType;
       mergeOrSplit: () => ReturnType;
       setCellAttribute: (name: string, value: any) => ReturnType;
       goToNextCell: () => ReturnType;
@@ -73,8 +88,8 @@ declare module "@tiptap/core" {
   }
 }
 
-export const Table = Node.create({
-  name: "table",
+export const Table = Node.create<TableOptions>({
+  name: CORE_EXTENSIONS.TABLE,
 
   addOptions() {
     return {
@@ -110,7 +125,13 @@ export const Table = Node.create({
       insertTable:
         ({ rows = 3, cols = 3, withHeaderRow = false } = {}) =>
         ({ tr, dispatch, editor }) => {
-          const node = createTable(editor.schema, rows, cols, withHeaderRow);
+          const node = createTable({
+            schema: editor.schema,
+            rowsCount: rows,
+            colsCount: cols,
+            withHeaderRow,
+            columnWidth: DEFAULT_COLUMN_WIDTH,
+          });
           if (dispatch) {
             const offset = tr.selection.anchor + 1;
 
@@ -129,10 +150,7 @@ export const Table = Node.create({
         () =>
         ({ state, dispatch }) =>
           addColumnAfter(state, dispatch),
-      deleteColumn:
-        () =>
-        ({ state, dispatch }) =>
-          deleteColumn(state, dispatch),
+      deleteColumn: deleteColumnOrTable,
       addRowBefore:
         () =>
         ({ state, dispatch }) =>
@@ -141,10 +159,7 @@ export const Table = Node.create({
         () =>
         ({ state, dispatch }) =>
           addRowAfter(state, dispatch),
-      deleteRow:
-        () =>
-        ({ state, dispatch }) =>
-          deleteRow(state, dispatch),
+      deleteRow: deleteRowOrTable,
       deleteTable:
         () =>
         ({ state, dispatch }) =>
@@ -169,6 +184,10 @@ export const Table = Node.create({
         () =>
         ({ state, dispatch }) =>
           toggleHeaderCell(state, dispatch),
+      clearSelectedCells:
+        () =>
+        ({ state, dispatch }) =>
+          deleteCellSelection(state, dispatch),
       mergeOrSplit:
         () =>
         ({ state, dispatch }) => {
@@ -214,37 +233,45 @@ export const Table = Node.create({
   addKeyboardShortcuts() {
     return {
       Tab: () => {
-        if (this.editor.isActive("table")) {
-          if (this.editor.isActive("listItem") || this.editor.isActive("taskItem")) {
-            return false;
-          }
-          if (this.editor.commands.goToNextCell()) {
-            return true;
-          }
+        if (!this.editor.isActive(CORE_EXTENSIONS.TABLE)) return false;
 
-          if (!this.editor.can().addRowAfter()) {
-            return false;
-          }
-
-          return this.editor.chain().addRowAfter().goToNextCell().run();
+        if (this.editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || this.editor.isActive(CORE_EXTENSIONS.TASK_ITEM)) {
+          return false;
         }
-        return false;
+
+        if (this.editor.commands.goToNextCell()) {
+          return true;
+        }
+
+        if (!this.editor.can().addRowAfter()) {
+          return false;
+        }
+
+        return this.editor.chain().addRowAfter().goToNextCell().run();
       },
-      "Shift-Tab": () => this.editor.commands.goToPreviousCell(),
-      Backspace: deleteTableWhenAllCellsSelected,
-      "Mod-Backspace": deleteTableWhenAllCellsSelected,
-      Delete: deleteTableWhenAllCellsSelected,
-      "Mod-Delete": deleteTableWhenAllCellsSelected,
+      "Shift-Tab": () => {
+        if (!this.editor.isActive(CORE_EXTENSIONS.TABLE)) return false;
+
+        if (this.editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || this.editor.isActive(CORE_EXTENSIONS.TASK_ITEM)) {
+          return false;
+        }
+
+        return this.editor.commands.goToPreviousCell();
+      },
+      Backspace: handleDeleteKeyOnTable,
+      "Mod-Backspace": handleDeleteKeyOnTable,
+      Delete: handleDeleteKeyOnTable,
+      "Mod-Delete": handleDeleteKeyOnTable,
       ArrowDown: insertLineBelowTableAction,
       ArrowUp: insertLineAboveTableAction,
     };
   },
 
   addNodeView() {
-    return ({ editor, getPos, node, decorations }) => {
+    return ({ editor, node, decorations, getPos }) => {
       const { cellMinWidth } = this.options;
 
-      return new TableView(node, cellMinWidth, decorations as any, editor, getPos as () => number);
+      return new TableView(node, cellMinWidth, decorations, editor, getPos);
     };
   },
 
@@ -255,7 +282,10 @@ export const Table = Node.create({
       tableEditing({
         allowTableNodeSelection: this.options.allowTableNodeSelection,
       }),
-      tableControls(),
+      TableDragStatePlugin,
+      TableInsertPlugin(this.editor),
+      TableColumnDragHandlePlugin(this.editor),
+      TableRowDragHandlePlugin(this.editor),
     ];
 
     if (isResizable) {

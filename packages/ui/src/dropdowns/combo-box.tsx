@@ -1,15 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Combobox } from "@headlessui/react";
-import React, {
-  ElementType,
-  Fragment,
-  KeyboardEventHandler,
-  ReactNode,
-  Ref,
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import type { ElementType, KeyboardEventHandler, ReactNode, Ref } from "react";
+import React, { Fragment, forwardRef, useEffect, useRef, useState } from "react";
 
 type Props = {
   as?: ElementType | undefined;
@@ -26,7 +23,7 @@ type Props = {
   children: ReactNode;
 };
 
-const ComboDropDown = forwardRef((props: Props, ref) => {
+const ComboDropDown = forwardRef(function ComboDropDown(props: Props, ref) {
   const { button, renderByDefault = true, children, ...rest } = props;
 
   const dropDownButtonRef = useRef<HTMLDivElement | null>(null);
@@ -58,7 +55,7 @@ const ComboDropDown = forwardRef((props: Props, ref) => {
   }
 
   return (
-    // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error, @typescript-eslint/ban-ts-comment
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     <Combobox {...rest} ref={ref}>
       <Combobox.Button as={Fragment}>{button}</Combobox.Button>

@@ -1,0 +1,34 @@
+{
+  "name": "@plane/decorators",
+  "version": "0.1.0",
+  "description": "Controller and route decorators for Express.js applications",
+  "license": "AGPL-3.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=29",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier . --cache --check",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=29",
+    "fix:format": "prettier . --cache --write",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
+  },
+  "devDependencies": {
+    "@plane/typescript-config": "workspace:*",
+    "@types/express": "4.17.23",
+    "@types/node": "catalog:",
+    "@types/ws": "^8.5.10",
+    "reflect-metadata": "^0.2.2",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts"
+}

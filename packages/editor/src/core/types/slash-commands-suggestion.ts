@@ -1,7 +1,12 @@
-import { CSSProperties } from "react";
-import { Editor, Range } from "@tiptap/core";
-// types
-import { TEditorCommands } from "@/types";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor, Range } from "@tiptap/core";
+import type { CSSProperties } from "react";
+import type { TEditorCommands } from "@/types";
 
 export type CommandProps = {
   editor: Editor;
@@ -19,4 +24,5 @@ export type ISlashCommandItem = {
   icon: React.ReactNode;
   iconContainerStyle?: CSSProperties;
   command: ({ editor, range }: CommandProps) => void;
+  badge?: React.ReactNode;
 };

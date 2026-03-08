@@ -1,14 +1,31 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { forwardRef, useCallback } from "react";
 // components
 import { EditorWrapper } from "@/components/editors";
-import { EditorBubbleMenu } from "@/components/menus";
+import { BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // extensions
-import { SideMenuExtension, SlashCommands } from "@/extensions";
+import { SideMenuExtension } from "@/extensions";
+// plane editor imports
+import { RichTextEditorAdditionalExtensions } from "@/plane-editor/extensions/rich-text-extensions";
 // types
-import { EditorRefApi, IRichTextEditor } from "@/types";
+import type { EditorRefApi, IRichTextEditorProps } from "@/types";
 
-const RichTextEditor = (props: IRichTextEditor) => {
-  const { disabledExtensions, dragDropEnabled, bubbleMenuEnabled = true, extensions: externalExtensions = [] } = props;
+function RichTextEditor(props: IRichTextEditorProps) {
+  const {
+    bubbleMenuEnabled = true,
+    disabledExtensions,
+    dragDropEnabled,
+    extensions: externalExtensions = [],
+    fileHandler,
+    flaggedExtensions,
+    extendedEditorProps,
+    workItemIdentifier,
+  } = props;
 
   const getExtensions = useCallback(() => {
     const extensions = [
@@ -17,28 +34,47 @@ const RichTextEditor = (props: IRichTextEditor) => {
         aiEnabled: false,
         dragDropEnabled: !!dragDropEnabled,
       }),
+      ...RichTextEditorAdditionalExtensions({
+        disabledExtensions,
+        fileHandler,
+        flaggedExtensions,
+        extendedEditorProps,
+      }),
     ];
-    if (!disabledExtensions?.includes("slash-commands")) {
-      extensions.push(
-        SlashCommands({
-          disabledExtensions,
-        })
-      );
-    }
 
     return extensions;
-  }, [dragDropEnabled, disabledExtensions, externalExtensions]);
+  }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler, flaggedExtensions, extendedEditorProps]);
 
   return (
     <EditorWrapper {...props} extensions={getExtensions()}>
-      {(editor) => <>{editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}</>}
+      {(editor) => (
+        <>
+          {editor && bubbleMenuEnabled && (
+            <EditorBubbleMenu
+              disabledExtensions={disabledExtensions}
+              editor={editor}
+              extendedEditorProps={extendedEditorProps}
+              flaggedExtensions={flaggedExtensions}
+            />
+          )}
+          <BlockMenu
+            editor={editor}
+            flaggedExtensions={flaggedExtensions}
+            disabledExtensions={disabledExtensions}
+            workItemIdentifier={workItemIdentifier}
+          />
+        </>
+      )}
     </EditorWrapper>
   );
-};
+}
 
-const RichTextEditorWithRef = forwardRef<EditorRefApi, IRichTextEditor>((props, ref) => (
-  <RichTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
-));
+const RichTextEditorWithRef = forwardRef(function RichTextEditorWithRef(
+  props: IRichTextEditorProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
+  return <RichTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />;
+});
 
 RichTextEditorWithRef.displayName = "RichTextEditorWithRef";
 

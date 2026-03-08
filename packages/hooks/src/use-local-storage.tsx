@@ -1,32 +1,34 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect, useCallback } from "react";
 
 export const getValueFromLocalStorage = (key: string, defaultValue: any) => {
-  if (typeof window === undefined || typeof window === "undefined")
-    return defaultValue;
+  if (typeof window === undefined || typeof window === "undefined") return defaultValue;
   try {
     const item = window.localStorage.getItem(key);
     return item ? JSON.parse(item) : defaultValue;
-  } catch (error) {
+  } catch (_error) {
     window.localStorage.removeItem(key);
     return defaultValue;
   }
 };
 
 export const setValueIntoLocalStorage = (key: string, value: any) => {
-  if (typeof window === undefined || typeof window === "undefined")
-    return false;
+  if (typeof window === undefined || typeof window === "undefined") return false;
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
     return true;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 };
 
 export const useLocalStorage = <T,>(key: string, initialValue: T) => {
-  const [storedValue, setStoredValue] = useState<T | null>(() =>
-    getValueFromLocalStorage(key, initialValue)
-  );
+  const [storedValue, setStoredValue] = useState<T | null>(() => getValueFromLocalStorage(key, initialValue));
 
   const setValue = useCallback(
     (value: T) => {

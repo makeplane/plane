@@ -1,10 +1,17 @@
-import React, { useState, useEffect, FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
+import React, { useState, useEffect } from "react";
 
 interface IRadialProgressBar {
   progress: number;
 }
 
-export const RadialProgressBar: FC<IRadialProgressBar> = (props) => {
+export function RadialProgressBar(props: IRadialProgressBar) {
   const { progress } = props;
   const [circumference, setCircumference] = useState(0);
 
@@ -42,4 +49,4 @@ export const RadialProgressBar: FC<IRadialProgressBar> = (props) => {
       </svg>
     </div>
   );
-};
+}

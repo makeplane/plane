@@ -1,11 +1,12 @@
-import { Editor } from "@tiptap/react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-export interface IMarking {
-  type: "heading";
-  level: number;
-  text: string;
-  sequence: number;
-}
+import type { Editor } from "@tiptap/react";
+// types
+import type { IMarking } from "@/types";
 
 function findNthH1(editor: Editor, n: number, level: number): number {
   let count = 0;

@@ -1,20 +1,27 @@
-import { Editor } from "@tiptap/core";
-import { AlignCenter, AlignLeft, AlignRight, LucideIcon } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor } from "@tiptap/core";
+import type { LucideIcon } from "lucide-react";
+import { AlignCenter, AlignLeft, AlignRight } from "lucide-react";
 // plane utils
 import { cn } from "@plane/utils";
 // components
 import { TextAlignItem } from "@/components/menus";
 // types
-import { TEditorCommands } from "@/types";
+import type { TEditorCommands } from "@/types";
+import type { EditorStateType } from "./root";
 
 type Props = {
   editor: Editor;
-  onClose: () => void;
+  editorState: EditorStateType;
 };
 
-export const TextAlignmentSelector: React.FC<Props> = (props) => {
-  const { editor, onClose } = props;
-
+export function TextAlignmentSelector(props: Props) {
+  const { editor, editorState } = props;
   const menuItem = TextAlignItem(editor);
 
   const textAlignmentOptions: {
@@ -32,10 +39,7 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
         menuItem.command({
           alignment: "left",
         }),
-      isActive: () =>
-        menuItem.isActive({
-          alignment: "left",
-        }),
+      isActive: () => editorState.left,
     },
     {
       itemKey: "text-align",
@@ -45,10 +49,7 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
         menuItem.command({
           alignment: "center",
         }),
-      isActive: () =>
-        menuItem.isActive({
-          alignment: "center",
-        }),
+      isActive: () => editorState.center,
     },
     {
       itemKey: "text-align",
@@ -58,12 +59,10 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
         menuItem.command({
           alignment: "right",
         }),
-      isActive: () =>
-        menuItem.isActive({
-          alignment: "right",
-        }),
+      isActive: () => editorState.right,
     },
   ];
+  if (editorState.code) return null;
 
   return (
     <div className="flex gap-0.5 px-2">
@@ -74,12 +73,11 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
           onClick={(e) => {
             e.stopPropagation();
             item.command();
-            onClose();
           }}
           className={cn(
-            "size-7 grid place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 transition-colors",
+            "size-7 grid place-items-center rounded-sm text-tertiary hover:bg-layer-1 active:bg-layer-1 transition-colors",
             {
-              "bg-custom-background-80 text-custom-text-100": item.isActive(),
+              "bg-layer-1 text-primary": item.isActive(),
             }
           )}
         >
@@ -88,4 +86,4 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
       ))}
     </div>
   );
-};
+}

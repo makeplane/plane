@@ -1,0 +1,53 @@
+@layer components {
+  .EmojiPickerReact {
+    --epr-category-navigation-button-size: 1.25rem !important;
+    --epr-category-label-height: 1.5rem !important;
+    --epr-emoji-size: 1.25rem !important;
+    --epr-picker-border-radius: 0.25rem !important;
+    --epr-horizontal-padding: 0.5rem !important;
+    --epr-emoji-padding: 0.5rem !important;
+    @apply bg-surface-1!;
+  }
+
+  .epr-main {
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  .epr-emoji-category-label {
+    font-size: 0.7875rem !important;
+    @apply bg-surface-1/80! text-tertiary!;
+  }
+
+  .epr-category-nav,
+  .epr-header-overlay {
+    padding: 0.5rem !important;
+  }
+
+  button.epr-emoji:hover > *,
+  button.epr-emoji:focus > * {
+    @apply bg-layer-2!;
+  }
+
+  input.epr-search {
+    font-size: 0.7875rem !important;
+    height: 2rem !important;
+    background: transparent !important;
+    @apply border-subtle!;
+    border-radius: 0.25rem !important;
+  }
+
+  input.epr-search::placeholder {
+    @apply text-placeholder!;
+  }
+
+  button.epr-btn-clear-search:hover {
+    @apply bg-layer-2!;
+    @apply text-tertiary!;
+  }
+
+  .epr-emoji-variation-picker {
+    @apply bg-surface-1!;
+    @apply border-subtle-1!;
+  }
+}

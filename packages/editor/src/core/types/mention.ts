@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane types
-import { TSearchEntities } from "@plane/types";
+import type { TSearchEntities } from "@plane/types";
 
 export type TMentionSuggestion = {
   entity_identifier: string;
@@ -16,12 +22,10 @@ export type TMentionSection = {
   items: TMentionSuggestion[];
 };
 
-export type TMentionComponentProps = Pick<TMentionSuggestion, "entity_identifier" | "entity_name">;
+export type TCallbackMentionComponentProps = Pick<TMentionSuggestion, "entity_identifier" | "entity_name">;
 
-export type TReadOnlyMentionHandler = {
-  renderComponent: (props: TMentionComponentProps) => React.ReactNode;
-};
-
-export type TMentionHandler = TReadOnlyMentionHandler & {
+export type TMentionHandler = {
+  getMentionedEntityDetails?: (entity_identifier: string) => { display_name: string } | undefined;
+  renderComponent: (props: TCallbackMentionComponentProps) => React.ReactNode;
   searchCallback?: (query: string) => Promise<TMentionSection[]>;
 };

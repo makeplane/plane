@@ -1,12 +1,21 @@
-import { Editor, getNodeType, getNodeAtPosition, isAtEndOfNode, isAtStartOfNode, isNodeActive } from "@tiptap/core";
-import { Node, NodeType } from "@tiptap/pm/model";
-import { EditorState } from "@tiptap/pm/state";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor } from "@tiptap/core";
+import { getNodeType, getNodeAtPosition, isAtEndOfNode, isAtStartOfNode, isNodeActive } from "@tiptap/core";
+import type { Node, NodeType } from "@tiptap/pm/model";
+import type { EditorState } from "@tiptap/pm/state";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 const findListItemPos = (typeOrName: string | NodeType, state: EditorState) => {
   const { $from } = state.selection;
   const nodeType = getNodeType(typeOrName, state.schema);
 
-  let currentNode = null;
+  let currentNode: Node | null = null;
   let currentDepth = $from.depth;
   let currentPos = $from.pos;
   let targetDepth: number | null = null;
@@ -72,7 +81,11 @@ const getPrevListDepth = (typeOrName: string, state: EditorState) => {
   // Traverse up the document structure from the adjusted position
   for (let d = resolvedPos.depth; d > 0; d--) {
     const node = resolvedPos.node(d);
-    if (node.type.name === "bulletList" || node.type.name === "orderedList" || node.type.name === "taskList") {
+    if (
+      [CORE_EXTENSIONS.BULLET_LIST, CORE_EXTENSIONS.ORDERED_LIST, CORE_EXTENSIONS.TASK_LIST].includes(
+        node.type.name as CORE_EXTENSIONS
+      )
+    ) {
       // Increment depth for each list ancestor found
       depth++;
     }
@@ -309,12 +322,12 @@ const isCurrentParagraphASibling = (state: EditorState): boolean => {
 
   // Ensure we're in a paragraph and the parent is a list item.
   if (
-    currentParagraphNode.type.name === "paragraph" &&
-    (listItemNode.type.name === "listItem" || listItemNode.type.name === "taskItem")
+    currentParagraphNode.type.name === CORE_EXTENSIONS.PARAGRAPH &&
+    [CORE_EXTENSIONS.LIST_ITEM, CORE_EXTENSIONS.TASK_ITEM].includes(listItemNode.type.name as CORE_EXTENSIONS)
   ) {
     let paragraphNodesCount = 0;
     listItemNode.forEach((child) => {
-      if (child.type.name === "paragraph") {
+      if (child.type.name === CORE_EXTENSIONS.PARAGRAPH) {
         paragraphNodesCount++;
       }
     });

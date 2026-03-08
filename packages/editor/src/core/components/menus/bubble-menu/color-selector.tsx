@@ -1,107 +1,117 @@
-import { Dispatch, FC, SetStateAction } from "react";
-import { Editor } from "@tiptap/react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor } from "@tiptap/react";
 import { ALargeSmall, Ban } from "lucide-react";
+import { useMemo } from "react";
+import type { FC } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
 import { COLORS_LIST } from "@/constants/common";
-// helpers
+// local imports
+import { FloatingMenuRoot } from "../floating-menu/root";
+import { useFloatingMenu } from "../floating-menu/use-floating-menu";
 import { BackgroundColorItem, TextColorItem } from "../menu-items";
+import type { EditorStateType } from "./root";
 
 type Props = {
   editor: Editor;
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  editorState: EditorStateType;
 };
 
-export const BubbleMenuColorSelector: FC<Props> = (props) => {
-  const { editor, isOpen, setIsOpen } = props;
+export function BubbleMenuColorSelector(props: Props) {
+  const { editor, editorState } = props;
+  // floating ui
+  const { options, getReferenceProps, getFloatingProps } = useFloatingMenu({});
 
-  const activeTextColor = COLORS_LIST.find((c) => TextColorItem(editor).isActive({ color: c.key }));
-  const activeBackgroundColor = COLORS_LIST.find((c) => BackgroundColorItem(editor).isActive({ color: c.key }));
+  const activeTextColor = useMemo(() => editorState.color, [editorState.color]);
+  const activeBackgroundColor = useMemo(() => editorState.backgroundColor, [editorState.backgroundColor]);
 
   return (
-    <div className="relative h-full">
-      <button
-        type="button"
-        onClick={(e) => {
-          setIsOpen(!isOpen);
-          e.stopPropagation();
-        }}
-        className="flex items-center gap-1 h-full whitespace-nowrap px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors"
-      >
-        <span>Color</span>
-        <span
-          className={cn(
-            "flex-shrink-0 size-6 grid place-items-center rounded border-[0.5px] border-custom-border-300",
-            {
-              "bg-custom-background-100": !activeBackgroundColor,
-            }
-          )}
-          style={{
-            backgroundColor: activeBackgroundColor ? activeBackgroundColor.backgroundColor : "transparent",
-          }}
-        >
-          <ALargeSmall
-            className={cn("size-3.5", {
-              "text-custom-text-100": !activeTextColor,
+    <FloatingMenuRoot
+      classNames={{
+        buttonContainer: "h-full",
+        button:
+          "flex items-center gap-1 h-full whitespace-nowrap px-3 text-13 font-medium text-tertiary hover:bg-layer-1 active:bg-layer-1 rounded-sm transition-colors",
+      }}
+      menuButton={
+        <>
+          <span>Color</span>
+          <span
+            className={cn("flex-shrink-0 size-6 grid place-items-center rounded-sm border-[0.5px] border-strong", {
+              "bg-surface-1": !activeBackgroundColor,
             })}
             style={{
-              color: activeTextColor ? activeTextColor.textColor : "inherit",
+              backgroundColor: activeBackgroundColor ? activeBackgroundColor.backgroundColor : "transparent",
             }}
-          />
-        </span>
-      </button>
-      {isOpen && (
-        <section className="fixed top-full z-[99999] mt-1 rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-2 space-y-2 shadow-custom-shadow-rg animate-in fade-in slide-in-from-top-1">
-          <div className="space-y-1.5">
-            <p className="text-xs text-custom-text-300 font-semibold">Text colors</p>
-            <div className="flex items-center gap-2">
-              {COLORS_LIST.map((color) => (
-                <button
-                  key={color.key}
-                  type="button"
-                  className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
-                  style={{
-                    backgroundColor: color.textColor,
-                  }}
-                  onClick={() => TextColorItem(editor).command({ color: color.key })}
-                />
-              ))}
+          >
+            <ALargeSmall
+              className={cn("size-3.5", {
+                "text-primary": !activeTextColor,
+              })}
+              style={{
+                color: activeTextColor ? activeTextColor.textColor : "inherit",
+              }}
+            />
+          </span>
+        </>
+      }
+      options={options}
+      getFloatingProps={getFloatingProps}
+      getReferenceProps={getReferenceProps}
+    >
+      <section className="mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 space-y-2 shadow-raised-200">
+        <div className="space-y-1.5">
+          <p className="text-11 text-tertiary font-semibold">Text colors</p>
+          <div className="flex items-center gap-2">
+            {COLORS_LIST.map((color) => (
               <button
+                key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
-                onClick={() => TextColorItem(editor).command({ color: undefined })}
-              >
-                <Ban className="size-4" />
-              </button>
-            </div>
+                className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
+                style={{
+                  backgroundColor: color.textColor,
+                }}
+                onClick={() => TextColorItem(editor).command({ color: color.key })}
+              />
+            ))}
+            <button
+              type="button"
+              className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
+              onClick={() => TextColorItem(editor).command({ color: undefined })}
+            >
+              <Ban className="size-4" />
+            </button>
           </div>
-          <div className="space-y-1.5">
-            <p className="text-xs text-custom-text-300 font-semibold">Background colors</p>
-            <div className="flex items-center gap-2">
-              {COLORS_LIST.map((color) => (
-                <button
-                  key={color.key}
-                  type="button"
-                  className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
-                  style={{
-                    backgroundColor: color.backgroundColor,
-                  }}
-                  onClick={() => BackgroundColorItem(editor).command({ color: color.key })}
-                />
-              ))}
+        </div>
+        <div className="space-y-1.5">
+          <p className="text-11 text-tertiary font-semibold">Background colors</p>
+          <div className="flex items-center gap-2">
+            {COLORS_LIST.map((color) => (
               <button
+                key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
-                onClick={() => BackgroundColorItem(editor).command({ color: undefined })}
-              >
-                <Ban className="size-4" />
-              </button>
-            </div>
+                className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
+                style={{
+                  backgroundColor: color.backgroundColor,
+                }}
+                onClick={() => BackgroundColorItem(editor).command({ color: color.key })}
+              />
+            ))}
+            <button
+              type="button"
+              className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
+              onClick={() => BackgroundColorItem(editor).command({ color: undefined })}
+            >
+              <Ban className="size-4" />
+            </button>
           </div>
-        </section>
-      )}
-    </div>
+        </div>
+      </section>
+    </FloatingMenuRoot>
   );
-};
+}

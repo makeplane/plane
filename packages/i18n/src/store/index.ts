@@ -1,10 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import IntlMessageFormat from "intl-messageformat";
-import get from "lodash/get";
-import { makeAutoObservable } from "mobx";
+import { get, merge } from "lodash-es";
+import { makeAutoObservable, runInAction } from "mobx";
 // constants
-import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, STORAGE_KEY } from "../constants";
+import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslationFiles } from "../constants";
+// core translations imports
+import { enCore, locales } from "../locales";
 // types
-import { TLanguage, ILanguageOption, ITranslations } from "../types";
+import type { TLanguage, ILanguageOption, ITranslations } from "../types";
 
 /**
  * Mobx store class for handling translations and language changes in the application
@@ -12,93 +20,165 @@ import { TLanguage, ILanguageOption, ITranslations } from "../types";
  * Uses IntlMessageFormat to format the translations
  */
 export class TranslationStore {
+  // Core translations that are always loaded
+  private coreTranslations: ITranslations = {
+    en: enCore,
+  };
   // List of translations for each language
   private translations: ITranslations = {};
   // Cache for IntlMessageFormat instances
   private messageCache: Map<string, IntlMessageFormat> = new Map();
   // Current language
   currentLocale: TLanguage = FALLBACK_LANGUAGE;
+  // Loading state
+  isLoading: boolean = true;
+  isInitialized: boolean = false;
+  // Set of loaded languages
+  private loadedLanguages: Set<TLanguage> = new Set();
 
   /**
    * Constructor for the TranslationStore class
    */
   constructor() {
     makeAutoObservable(this);
+    // Initialize with core translations immediately
+    this.translations = this.coreTranslations;
+    // Initialize language
     this.initializeLanguage();
+    // Load all the translations
     this.loadTranslations();
-  }
-
-  /**
-   * Loads translations from JSON files and initializes the message cache
-   */
-  private async loadTranslations() {
-    try {
-      // dynamic import of translations
-      const translations = {
-        en: (await import("../locales/en/translations.json")).default,
-        fr: (await import("../locales/fr/translations.json")).default,
-        es: (await import("../locales/es/translations.json")).default,
-        ja: (await import("../locales/ja/translations.json")).default,
-        "zh-CN": (await import("../locales/zh-CN/translations.json")).default,
-      };
-      this.translations = translations;
-      this.messageCache.clear(); // Clear cache when translations change
-    } catch (error) {
-      console.error("Failed to load translations:", error);
-    }
   }
 
   /** Initializes the language based on the local storage or browser language */
   private initializeLanguage() {
     if (typeof window === "undefined") return;
 
-    const savedLocale = localStorage.getItem(STORAGE_KEY) as TLanguage;
+    const savedLocale = localStorage.getItem(LANGUAGE_STORAGE_KEY) as TLanguage;
     if (this.isValidLanguage(savedLocale)) {
       this.setLanguage(savedLocale);
       return;
     }
 
-    const browserLang = this.getBrowserLanguage();
-    this.setLanguage(browserLang);
+    // Fallback to default language
+    this.setLanguage(FALLBACK_LANGUAGE);
+  }
+
+  /** Loads the translations for the current language */
+  private async loadTranslations(): Promise<void> {
+    try {
+      // Set initialized to true (Core translations are already loaded)
+      runInAction(() => {
+        this.isInitialized = true;
+      });
+      // Load current and fallback languages in parallel
+      await this.loadPrimaryLanguages();
+      // Load all remaining languages in parallel
+      this.loadRemainingLanguages();
+    } catch (error) {
+      console.error("Failed in translation initialization:", error);
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
+  private async loadPrimaryLanguages(): Promise<void> {
+    try {
+      // Load current and fallback languages in parallel
+      const languagesToLoad = new Set<TLanguage>([this.currentLocale]);
+      // Add fallback language only if different from current
+      if (this.currentLocale !== FALLBACK_LANGUAGE) {
+        languagesToLoad.add(FALLBACK_LANGUAGE);
+      }
+      // Load all primary languages in parallel
+      const loadPromises = Array.from(languagesToLoad).map((lang) => this.loadLanguageTranslations(lang));
+      await Promise.all(loadPromises);
+      // Update loading state
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    } catch (error) {
+      console.error("Failed to load primary languages:", error);
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
+  private loadRemainingLanguages(): void {
+    const remainingLanguages = SUPPORTED_LANGUAGES.map((lang) => lang.value).filter(
+      (lang) => !this.loadedLanguages.has(lang) && lang !== this.currentLocale && lang !== FALLBACK_LANGUAGE
+    );
+    // Load all remaining languages in parallel
+    Promise.all(remainingLanguages.map((lang) => this.loadLanguageTranslations(lang))).catch((error) => {
+      console.error("Failed to load some remaining languages:", error);
+    });
+  }
+
+  private async loadLanguageTranslations(language: TLanguage): Promise<void> {
+    // Skip if already loaded
+    if (this.loadedLanguages.has(language)) return;
+
+    try {
+      const translations = await this.importLanguageFile(language);
+      runInAction(() => {
+        // Use lodash merge for deep merging
+        this.translations[language] = merge({}, this.coreTranslations[language] || {}, translations.default);
+        // Add to loaded languages
+        this.loadedLanguages.add(language);
+        // Clear cache
+        this.messageCache.clear();
+      });
+    } catch (error) {
+      console.error(`Failed to load translations for ${language}:`, error);
+    }
+  }
+
+  /**
+   * Helper function to import and merge multiple translation files for a language
+   * @param language - The language code
+   * @param files - Array of file names to import (without .json extension)
+   * @returns Promise that resolves to merged translations
+   */
+  private async importAndMergeFiles(language: TLanguage, files: string[]) {
+    try {
+      const localeData = locales[language as keyof typeof locales];
+      if (!localeData) {
+        throw new Error(`Locale data not found for language: ${language}`);
+      }
+
+      // Filter out files that don't exist for this language
+      const availableFiles = files.filter((file) => {
+        const fileKey = file as keyof typeof localeData;
+        return fileKey in localeData;
+      });
+
+      const importPromises = availableFiles.map((file) => {
+        const fileKey = file as keyof typeof localeData;
+        return localeData[fileKey]();
+      });
+
+      const modules = await Promise.all(importPromises);
+      const merged = modules.reduce((acc: any, module: any) => merge(acc, module.default), {});
+      return { default: merged };
+    } catch (error) {
+      throw new Error(`Failed to import and merge files for ${language}: ${error}`);
+    }
+  }
+
+  /**
+   * Imports the translations for the given language
+   * @param language - The language to import the translations for
+   * @returns {Promise<any>}
+   */
+  private async importLanguageFile(language: TLanguage) {
+    const files = Object.values(ETranslationFiles);
+    return this.importAndMergeFiles(language, files);
   }
 
   /** Checks if the language is valid based on the supported languages */
   private isValidLanguage(lang: string | null): lang is TLanguage {
     return lang !== null && this.availableLanguages.some((l) => l.value === lang);
-  }
-
-  /** Checks if a language code is similar to any supported language */
-  private findSimilarLanguage(lang: string): TLanguage | null {
-    // Convert to lowercase for case-insensitive comparison
-    const normalizedLang = lang.toLowerCase();
-
-    // Find a supported language that includes or is included in the browser language
-    const similarLang = this.availableLanguages.find(
-      (l) => normalizedLang.includes(l.value.toLowerCase()) || l.value.toLowerCase().includes(normalizedLang)
-    );
-
-    return similarLang ? similarLang.value : null;
-  }
-
-  /** Gets the browser language based on the navigator.language */
-  private getBrowserLanguage(): TLanguage {
-    const browserLang = navigator.language;
-
-    // Check exact match first
-    if (this.isValidLanguage(browserLang)) {
-      return browserLang;
-    }
-
-    // Check base language without region code
-    const baseLang = browserLang.split("-")[0];
-    if (this.isValidLanguage(baseLang)) {
-      return baseLang as TLanguage;
-    }
-
-    // Try to find a similar language
-    const similarLang = this.findSimilarLanguage(browserLang) || this.findSimilarLanguage(baseLang);
-
-    return similarLang || FALLBACK_LANGUAGE;
   }
 
   /**
@@ -114,7 +194,6 @@ export class TranslationStore {
   /**
    * Gets the IntlMessageFormat instance for the given key and locale
    * Returns cached instance if available
-   * Throws an error if the key is not found in the translations
    */
   private getMessageInstance(key: string, locale: TLanguage): IntlMessageFormat | null {
     const cacheKey = this.getCacheKey(key, locale);
@@ -126,10 +205,10 @@ export class TranslationStore {
 
     // Get the message from the translations
     const message = get(this.translations[locale], key);
-    if (!message) return null;
+    if (typeof message !== "string") return null;
 
     try {
-      const formatter = new IntlMessageFormat(message as any, locale);
+      const formatter = new IntlMessageFormat(message, locale);
       this.messageCache.set(cacheKey, formatter);
       return formatter;
     } catch (error) {
@@ -146,7 +225,7 @@ export class TranslationStore {
    * @param params - The params to format the translation with
    * @returns The translated string
    */
-  t(key: string, params?: Record<string, any>): string {
+  t(key: string, params?: Record<string, unknown>): string {
     try {
       // Try current locale
       let formatter = this.getMessageInstance(key, this.currentLocale);
@@ -173,20 +252,26 @@ export class TranslationStore {
    * Sets the current language and updates the translations
    * @param lng - The new language
    */
-  setLanguage(lng: TLanguage): void {
+  async setLanguage(lng: TLanguage): Promise<void> {
     try {
       if (!this.isValidLanguage(lng)) {
         throw new Error(`Invalid language: ${lng}`);
       }
 
-      if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEY, lng);
+      // Safeguard in case background loading failed
+      if (!this.loadedLanguages.has(lng)) {
+        await this.loadLanguageTranslations(lng);
       }
-      this.currentLocale = lng;
-      this.messageCache.clear(); // Clear cache when language changes
+
       if (typeof window !== "undefined") {
+        localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
         document.documentElement.lang = lng;
       }
+
+      runInAction(() => {
+        this.currentLocale = lng;
+        this.messageCache.clear(); // Clear cache when language changes
+      });
     } catch (error) {
       console.error("Failed to set language:", error);
     }

@@ -1,43 +1,65 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
+import { CheckIcon } from "lucide-react";
 import * as React from "react";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
 // ui
-import { CustomMenu, TContextMenuItem } from "../dropdowns";
-// helpers
-import { cn } from "../../helpers";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TContextMenuItem } from "../dropdowns";
+import { CustomMenu } from "../dropdowns";
+import { cn } from "../utils";
+import { Breadcrumbs } from "./breadcrumbs";
 
 type TBreadcrumbNavigationDropdownProps = {
   selectedItemKey: string;
   navigationItems: TContextMenuItem[];
   navigationDisabled?: boolean;
+  handleOnClick?: () => void;
+  isLast?: boolean;
 };
 
-export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdownProps) => {
-  const { selectedItemKey, navigationItems, navigationDisabled = false } = props;
+export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdownProps) {
+  const { selectedItemKey, navigationItems, navigationDisabled = false, handleOnClick, isLast = false } = props;
+  const [isOpen, setIsOpen] = React.useState(false);
   // derived values
   const selectedItem = navigationItems.find((item) => item.key === selectedItemKey);
   const selectedItemIcon = selectedItem?.icon ? (
-    <selectedItem.icon className={cn("size-3.5", selectedItem.iconClassName)} />
+    <selectedItem.icon className={cn("size-4", selectedItem.iconClassName)} />
   ) : undefined;
 
   // if no selected item, return null
   if (!selectedItem) return null;
 
-  const NavigationButton = ({ className }: { className?: string }) => (
-    <li
-      className={cn(
-        "flex items-center justify-center cursor-default text-sm font-medium text-custom-text-200 group-hover:text-custom-text-100 outline-none",
-        className
-      )}
-      tabIndex={-1}
-    >
-      {selectedItemIcon && (
-        <div className="flex h-5 w-5 items-center justify-start overflow-hidden">{selectedItemIcon}</div>
-      )}
-      <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{selectedItem.title}</div>
-    </li>
-  );
+  function NavigationButton() {
+    return (
+      <Tooltip tooltipContent={selectedItem?.title} position="bottom" disabled={isOpen}>
+        <button
+          onClick={(e) => {
+            if (!isLast) {
+              e.preventDefault();
+              e.stopPropagation();
+              handleOnClick?.();
+            }
+          }}
+          className={cn(
+            "group h-full flex items-center gap-2 px-1.5 py-1 text-13 font-medium text-tertiary cursor-pointer rounded-sm rounded-r-none",
+            {
+              "hover:bg-layer-1 hover:text-primary": !isLast,
+            }
+          )}
+        >
+          <div className="flex @4xl:hidden text-tertiary">...</div>
+          <div className="hidden @4xl:flex gap-2 items-center">
+            {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
+            <Breadcrumbs.Label>{selectedItem?.title}</Breadcrumbs.Label>
+          </div>
+        </button>
+      </Tooltip>
+    );
+  }
 
   if (navigationDisabled) {
     return <NavigationButton />;
@@ -46,13 +68,37 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
   return (
     <CustomMenu
       customButton={
-        <div className="group flex items-center gap-1.5">
-          <NavigationButton className="cursor-pointer" />
-          <ChevronDownIcon className="size-4 text-custom-text-200 group-hover:text-custom-text-100" />
-        </div>
+        <>
+          <NavigationButton />
+          <Breadcrumbs.Separator
+            className={cn("rounded-r-sm", {
+              "bg-layer-1": isOpen && !isLast,
+              "hover:bg-layer-1": !isLast,
+            })}
+            containerClassName="p-0"
+            iconClassName={cn("group-hover:rotate-90 hover:text-primary", {
+              "text-primary": isOpen,
+              "rotate-90": isOpen || isLast,
+            })}
+            showDivider={!isLast}
+          />
+        </>
       }
       placement="bottom-start"
+      className="h-full rounded-sm"
+      customButtonClassName={cn(
+        "group flex items-center gap-0.5 rounded-sm hover:bg-surface-2 outline-none cursor-pointer h-full rounded-sm",
+        {
+          "bg-surface-2": isOpen,
+        }
+      )}
       closeOnSelect
+      menuButtonOnClick={() => {
+        setIsOpen(!isOpen);
+      }}
+      onMenuClose={() => {
+        setIsOpen(false);
+      }}
     >
       {navigationItems.map((item) => {
         if (item.shouldRender === false) return null;
@@ -68,19 +114,19 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
             className={cn(
               "flex items-center gap-2",
               {
-                "text-custom-text-400": item.disabled,
+                "text-placeholder": item.disabled,
               },
               item.className
             )}
             disabled={item.disabled}
           >
-            {item.icon && <item.icon className={cn("size-3.5", item.iconClassName)} />}
+            {item.icon && <item.icon className={cn("size-4 flex-shrink-0", item.iconClassName)} />}
             <div className="w-full">
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-custom-text-300 whitespace-pre-line", {
-                    "text-custom-text-400": item.disabled,
+                  className={cn("text-tertiary whitespace-pre-line", {
+                    "text-placeholder": item.disabled,
                   })}
                 >
                   {item.description}
@@ -93,4 +139,4 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
       })}
     </CustomMenu>
   );
-};
+}

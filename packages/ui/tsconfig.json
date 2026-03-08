@@ -1,9 +1,11 @@
 {
   "extends": "@plane/typescript-config/react-library.json",
+  "include": ["src"],
   "compilerOptions": {
-    "jsx": "react",
-    "lib": ["esnext", "dom"]
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": false,
+    "noImplicitReturns": false
   },
-  "include": ["."],
-  "exclude": ["dist", "build", "node_modules"]
+  "exclude": ["dist", "node_modules"]
 }

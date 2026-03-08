@@ -1,0 +1,255 @@
+x-db-env: &db-env
+  PGHOST: ${PGHOST:-plane-db}
+  PGDATABASE: ${PGDATABASE:-plane}
+  POSTGRES_USER: ${POSTGRES_USER:-plane}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-plane}
+  POSTGRES_DB: ${POSTGRES_DB:-plane}
+  POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+  PGDATA: ${PGDATA:-/var/lib/postgresql/data}
+
+x-redis-env: &redis-env
+  REDIS_HOST: ${REDIS_HOST:-plane-redis}
+  REDIS_PORT: ${REDIS_PORT:-6379}
+  REDIS_URL: ${REDIS_URL:-redis://plane-redis:6379/}
+
+x-minio-env: &minio-env
+  MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-access-key}
+  MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-secret-key}
+
+x-aws-s3-env: &aws-s3-env
+  AWS_REGION: ${AWS_REGION:-}
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-access-key}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-secret-key}
+  AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
+  AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+
+x-proxy-env: &proxy-env
+  APP_DOMAIN: ${APP_DOMAIN:-localhost}
+  FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+  CERT_EMAIL: ${CERT_EMAIL}
+  CERT_ACME_CA: ${CERT_ACME_CA}
+  CERT_ACME_DNS: ${CERT_ACME_DNS}
+  LISTEN_HTTP_PORT: ${LISTEN_HTTP_PORT:-80}
+  LISTEN_HTTPS_PORT: ${LISTEN_HTTPS_PORT:-443}
+  BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+  SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+
+x-mq-env: &mq-env # RabbitMQ Settings
+  RABBITMQ_HOST: ${RABBITMQ_HOST:-plane-mq}
+  RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+  RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-plane}
+  RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-plane}
+  RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-plane}
+  RABBITMQ_VHOST: ${RABBITMQ_VHOST:-plane}
+
+x-live-env: &live-env
+  API_BASE_URL: ${API_BASE_URL:-http://api:8000}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
+
+x-app-env: &app-env
+  WEB_URL: ${WEB_URL:-http://localhost}
+  DEBUG: ${DEBUG:-0}
+  CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+  GUNICORN_WORKERS: 1
+  USE_MINIO: ${USE_MINIO:-1}
+  DATABASE_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
+  SECRET_KEY: ${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
+  AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
+  API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
+  MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
+
+services:
+  web:
+    image: artifacts.plane.so/makeplane/plane-frontend:${APP_RELEASE:-stable}
+    deploy:
+      replicas: ${WEB_REPLICAS:-1}
+      restart_policy:
+        condition: any
+    depends_on:
+      - api
+      - worker
+
+  space:
+    image: artifacts.plane.so/makeplane/plane-space:${APP_RELEASE:-stable}
+    deploy:
+      replicas: ${SPACE_REPLICAS:-1}
+      restart_policy:
+        condition: any
+    depends_on:
+      - api
+      - worker
+      - web
+
+  admin:
+    image: artifacts.plane.so/makeplane/plane-admin:${APP_RELEASE:-stable}
+    deploy:
+      replicas: ${ADMIN_REPLICAS:-1}
+      restart_policy:
+        condition: any
+    depends_on:
+      - api
+      - web
+
+  live:
+    image: artifacts.plane.so/makeplane/plane-live:${APP_RELEASE:-stable}
+    environment:
+      <<: [*live-env, *redis-env]
+    deploy:
+      replicas: ${LIVE_REPLICAS:-1}
+      restart_policy:
+        condition: any
+    depends_on:
+      - api
+      - web
+
+  api:
+    image: artifacts.plane.so/makeplane/plane-backend:${APP_RELEASE:-stable}
+    command: ./bin/docker-entrypoint-api.sh
+    deploy:
+      replicas: ${API_REPLICAS:-1}
+      restart_policy:
+        condition: any
+    volumes:
+      - logs_api:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+    depends_on:
+      - plane-db
+      - plane-redis
+      - plane-mq
+
+  worker:
+    image: artifacts.plane.so/makeplane/plane-backend:${APP_RELEASE:-stable}
+    command: ./bin/docker-entrypoint-worker.sh
+    deploy:
+      replicas: ${WORKER_REPLICAS:-1}
+      restart_policy:
+        condition: any
+    volumes:
+      - logs_worker:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+      - plane-mq
+
+  beat-worker:
+    image: artifacts.plane.so/makeplane/plane-backend:${APP_RELEASE:-stable}
+    command: ./bin/docker-entrypoint-beat.sh
+    deploy:
+      replicas: ${BEAT_WORKER_REPLICAS:-1}
+      restart_policy:
+        condition: any
+    volumes:
+      - logs_beat-worker:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+      - plane-mq
+
+  migrator:
+    image: artifacts.plane.so/makeplane/plane-backend:${APP_RELEASE:-stable}
+    command: ./bin/docker-entrypoint-migrator.sh
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - logs_migrator:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+    depends_on:
+      - plane-db
+      - plane-redis
+
+  # Comment this if you already have a database running
+  plane-db:
+    image: postgres:15.7-alpine
+    command: postgres -c 'max_connections=1000'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    environment:
+      <<: *db-env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  plane-redis:
+    image: valkey/valkey:7.2.11-alpine
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    volumes:
+      - redisdata:/data
+
+  plane-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    environment:
+      <<: *mq-env
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  # Comment this if you using any external s3 compatible storage
+  plane-minio:
+    image: minio/minio:latest
+    command: server /export --console-address ":9090"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    environment:
+      <<: *minio-env
+    volumes:
+      - uploads:/export
+
+  # Comment this if you already have a reverse proxy running
+  proxy:
+    image: artifacts.plane.so/makeplane/plane-proxy:${APP_RELEASE:-stable}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    environment:
+      <<: *proxy-env
+    ports:
+      - target: 80
+        published: ${LISTEN_HTTP_PORT:-80}
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: ${LISTEN_HTTPS_PORT:-443}
+        protocol: tcp
+        mode: host
+    volumes:
+      - proxy_config:/config
+      - proxy_data:/data
+    depends_on:
+      - web
+      - api
+      - space
+      - admin
+      - live
+
+volumes:
+  pgdata:
+  redisdata:
+  uploads:
+  logs_api:
+  logs_worker:
+  logs_beat-worker:
+  logs_migrator:
+  rabbitmq_data:
+  proxy_config:
+  proxy_data:

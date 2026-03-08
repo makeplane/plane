@@ -1,12 +1,13 @@
-import { ReactNode } from "react";
-import zxcvbn from "zxcvbn";
-import {
-  E_PASSWORD_STRENGTH,
-  SPACE_PASSWORD_CRITERIA,
-  PASSWORD_MIN_LENGTH,
-  EErrorAlertType,
-  EAuthErrorCodes,
-} from "@plane/constants";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { ReactNode } from "react";
+// plane imports
+import type { TAuthErrorInfo } from "@plane/constants";
+import { E_PASSWORD_STRENGTH, EErrorAlertType, EAuthErrorCodes } from "@plane/constants";
 
 /**
  * @description Password strength levels
@@ -20,95 +21,70 @@ export enum PasswordStrength {
 }
 
 /**
- * @description Password strength criteria type
+ * Calculate password strength based on various criteria
  */
-export type PasswordCriterion = {
-  regex: RegExp;
-  description: string;
-};
-
-/**
- * @description Password strength criteria
- */
-export const PASSWORD_CRITERIA: PasswordCriterion[] = [
-  { regex: /[a-z]/, description: "lowercase" },
-  { regex: /[A-Z]/, description: "uppercase" },
-  { regex: /[0-9]/, description: "number" },
-  { regex: /[^a-zA-Z0-9]/, description: "special character" },
-];
-
-/**
- * @description Checks if password meets all criteria
- * @param {string} password - Password to check
- * @returns {boolean} Whether password meets all criteria
- */
-export const checkPasswordCriteria = (password: string): boolean =>
-  PASSWORD_CRITERIA.every((criterion) => criterion.regex.test(password));
-
-/**
- * @description Checks password strength against criteria
- * @param {string} password - Password to check
- * @returns {PasswordStrength} Password strength level
- * @example
- * checkPasswordStrength("abc") // returns PasswordStrength.WEAK
- * checkPasswordStrength("Abc123!@#") // returns PasswordStrength.STRONG
- */
-export const checkPasswordStrength = (password: string): PasswordStrength => {
-  if (!password || password.length === 0) return PasswordStrength.EMPTY;
-  if (password.length < PASSWORD_MIN_LENGTH) return PasswordStrength.WEAK;
-
-  const criteriaCount = PASSWORD_CRITERIA.filter((criterion) => criterion.regex.test(password)).length;
-
-  const zxcvbnScore = zxcvbn(password).score;
-
-  if (criteriaCount <= 1 || zxcvbnScore <= 1) return PasswordStrength.WEAK;
-  if (criteriaCount === 2 || zxcvbnScore === 2) return PasswordStrength.FAIR;
-  if (criteriaCount === 3 || zxcvbnScore === 3) return PasswordStrength.GOOD;
-  return PasswordStrength.STRONG;
-};
-
-export type TAuthErrorInfo = {
-  type: EErrorAlertType;
-  code: EAuthErrorCodes;
-  title: string;
-  message: ReactNode;
-};
-
-// Password strength check
 export const getPasswordStrength = (password: string): E_PASSWORD_STRENGTH => {
-  let passwordStrength: E_PASSWORD_STRENGTH = E_PASSWORD_STRENGTH.EMPTY;
-
   if (!password || password === "" || password.length <= 0) {
-    return passwordStrength;
+    return E_PASSWORD_STRENGTH.EMPTY;
   }
 
-  if (password.length >= PASSWORD_MIN_LENGTH) {
-    passwordStrength = E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID;
-  } else {
-    passwordStrength = E_PASSWORD_STRENGTH.LENGTH_NOT_VALID;
-    return passwordStrength;
+  if (password.length < 8) {
+    return E_PASSWORD_STRENGTH.LENGTH_NOT_VALID;
   }
 
-  const passwordCriteriaValidation = SPACE_PASSWORD_CRITERIA.map((criteria) =>
-    criteria.isCriteriaValid(password)
-  ).every((criterion) => criterion);
-  const passwordStrengthScore = zxcvbn(password).score;
+  // Check all criteria
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasDigit = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*()\-_+=\[\]{}|;:'",.<>?/]/.test(password);
 
-  if (passwordCriteriaValidation === false || passwordStrengthScore <= 2) {
-    passwordStrength = E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID;
-    return passwordStrength;
+  if (hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar) {
+    return E_PASSWORD_STRENGTH.STRENGTH_VALID;
   }
 
-  if (passwordCriteriaValidation === true && passwordStrengthScore >= 3) {
-    passwordStrength = E_PASSWORD_STRENGTH.STRENGTH_VALID;
-  }
-
-  return passwordStrength;
+  return E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID;
 };
+
+export type PasswordCriteria = {
+  key: string;
+  label: string;
+  isValid: boolean;
+};
+
+/**
+ * Get password criteria for validation display
+ */
+export const getPasswordCriteria = (password: string): PasswordCriteria[] => [
+  {
+    key: "length",
+    label: "Min 8 characters",
+    isValid: password.length >= 8,
+  },
+  {
+    key: "uppercase",
+    label: "Min 1 upper-case letter",
+    isValid: /[A-Z]/.test(password),
+  },
+  {
+    key: "lowercase",
+    label: "Min 1 lower-case letter",
+    isValid: /[a-z]/.test(password),
+  },
+  {
+    key: "number",
+    label: "Min 1 number",
+    isValid: /[0-9]/.test(password),
+  },
+  {
+    key: "special",
+    label: "Min 1 special character",
+    isValid: /[!@#$%^&*()\-_+=\[\]{}|;:'",.<>?/]/.test(password),
+  },
+];
 
 // Error code messages
 const errorCodeMessages: {
-  [key in EAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAuthErrorCodes]: { title: string; message: (email?: string) => ReactNode };
 } = {
   // global
   [EAuthErrorCodes.INSTANCE_NOT_CONFIGURED]: {
@@ -122,6 +98,10 @@ const errorCodeMessages: {
   [EAuthErrorCodes.INVALID_PASSWORD]: {
     title: `Invalid password`,
     message: () => `Invalid password. Please try again.`,
+  },
+  [EAuthErrorCodes.PASSWORD_TOO_WEAK]: {
+    title: `Password too weak`,
+    message: () => `Please use a stronger password.`,
   },
   [EAuthErrorCodes.SMTP_NOT_CONFIGURED]: {
     title: `SMTP not configured`,
@@ -323,10 +303,7 @@ const errorCodeMessages: {
 };
 
 // Error handler
-export const authErrorHandler = (
-  errorCode: EAuthErrorCodes,
-  email?: string | undefined
-): TAuthErrorInfo | undefined => {
+export const authErrorHandler = (errorCode: EAuthErrorCodes, email?: string): TAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EAuthErrorCodes.INSTANCE_NOT_CONFIGURED,
     EAuthErrorCodes.INVALID_EMAIL,

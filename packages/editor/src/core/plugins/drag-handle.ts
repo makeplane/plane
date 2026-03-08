@@ -1,25 +1,35 @@
-import { Fragment, Slice, Node, Schema } from "@tiptap/pm/model";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Node, Schema } from "@tiptap/pm/model";
+import { Fragment, Slice } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
-// @ts-expect-error __serializeForClipboard's is not exported
-import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
+import type { EditorView } from "@tiptap/pm/view";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
+import type { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
 
 const verticalEllipsisIcon =
   '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>';
 
 const generalSelectors = [
   "li",
-  "p:not(:first-child)",
+  "p.editor-paragraph-block:not(:first-child)",
   ".code-block",
   "blockquote",
-  "h1, h2, h3, h4, h5, h6",
+  "h1.editor-heading-block, h2.editor-heading-block, h3.editor-heading-block, h4.editor-heading-block, h5.editor-heading-block, h6.editor-heading-block",
   "[data-type=horizontalRule]",
-  ".table-wrapper",
+  "table:not(.table-drag-preview)",
   ".issue-embed",
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
+  ".editor-embed-component",
+  ".editor-drawio-component",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -38,13 +48,13 @@ const createDragHandleElement = (): HTMLElement => {
   dragHandleElement.draggable = true;
   dragHandleElement.dataset.dragHandle = "";
   dragHandleElement.classList.value =
-    "hidden sm:flex items-center size-5 aspect-square rounded-sm cursor-grab outline-none hover:bg-custom-background-80 active:bg-custom-background-80 active:cursor-grabbing transition-[background-color,_opacity] duration-200 ease-linear";
+    "hidden sm:flex items-center size-5 aspect-square rounded-xs cursor-grab outline-none hover:bg-layer-1-hover active:bg-layer-1 active:cursor-grabbing transition-[background-color,_opacity] duration-200 ease-linear";
 
   const iconElement1 = document.createElement("span");
-  iconElement1.classList.value = "pointer-events-none text-custom-text-300";
+  iconElement1.classList.value = "pointer-events-none text-tertiary";
   iconElement1.innerHTML = verticalEllipsisIcon;
   const iconElement2 = document.createElement("span");
-  iconElement2.classList.value = "pointer-events-none text-custom-text-300 -ml-2.5";
+  iconElement2.classList.value = "pointer-events-none text-tertiary -ml-2.5";
   iconElement2.innerHTML = verticalEllipsisIcon;
 
   dragHandleElement.appendChild(iconElement1);
@@ -64,7 +74,7 @@ const isScrollable = (node: HTMLElement | SVGElement) => {
   });
 };
 
-const getScrollParent = (node: HTMLElement | SVGElement) => {
+export const getScrollParent = (node: HTMLElement | SVGElement) => {
   if (scrollParentCache.has(node)) {
     return scrollParentCache.get(node);
   }
@@ -88,16 +98,23 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
   const elements = document.elementsFromPoint(coords.x, coords.y);
 
   for (const elem of elements) {
+    // Check for table wrapper first
+    if (elem.matches("table:not(.table-drag-preview)")) {
+      return elem;
+    }
+
     if (elem.matches("p:first-child") && elem.parentElement?.matches(".ProseMirror")) {
       return elem;
     }
 
-    // if the element is a <p> tag that is the first child of a td or th
-    if (
-      (elem.matches("td > p:first-child") || elem.matches("th > p:first-child")) &&
-      elem?.textContent?.trim() !== ""
-    ) {
-      return elem; // Return only if p tag is not empty in td or th
+    // Skip table cells
+    if (elem.closest("table")) {
+      continue;
+    }
+
+    // Skip elements inside .editor-embed-component
+    if (elem.closest(".editor-embed-component") && !elem.matches(".editor-embed-component")) {
+      continue;
     }
 
     // apply general selector
@@ -130,34 +147,11 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let listType = "";
   let isDragging = false;
   let lastClientY = 0;
-  let scrollAnimationFrame = null;
+  let scrollAnimationFrame: number | null = null;
   let isDraggedOutsideWindow: "top" | "bottom" | boolean = false;
   let isMouseInsideWhileDragging = false;
   let currentScrollSpeed = 0;
-
-  const handleClick = (event: MouseEvent, view: EditorView) => {
-    handleNodeSelection(event, view, false, options);
-  };
-
-  const handleDragStart = (event: DragEvent, view: EditorView) => {
-    const { listType: listTypeFromDragStart } = handleNodeSelection(event, view, true, options);
-    listType = listTypeFromDragStart;
-    isDragging = true;
-    lastClientY = event.clientY;
-    scroll();
-  };
-
-  const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView) => {
-    event.preventDefault();
-    isDragging = false;
-    isMouseInsideWhileDragging = false;
-    if (scrollAnimationFrame) {
-      cancelAnimationFrame(scrollAnimationFrame);
-      scrollAnimationFrame = null;
-    }
-
-    view?.dom.classList.remove("dragging");
-  };
+  let dragHandleElement: HTMLElement | null = null;
 
   function scroll() {
     if (!isDragging) {
@@ -165,7 +159,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       return;
     }
 
-    const scrollableParent = getScrollParent(dragHandleElement);
+    const scrollableParent = getScrollParent(dragHandleElement!);
     if (!scrollableParent) return;
 
     const scrollRegionUp = options.scrollThreshold.up;
@@ -191,10 +185,35 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       scrollableParent.scrollBy({ top: currentScrollSpeed });
     }
 
-    scrollAnimationFrame = requestAnimationFrame(scroll);
+    scrollAnimationFrame = requestAnimationFrame(scroll) as unknown as null;
   }
 
-  let dragHandleElement: HTMLElement | null = null;
+  const handleClick = (event: MouseEvent, view: EditorView) => {
+    handleNodeSelection(event, view, false, options);
+  };
+
+  const handleDragStart = (event: DragEvent, view: EditorView) => {
+    const { listType: listTypeFromDragStart } = handleNodeSelection(event, view, true, options) ?? {};
+    if (listTypeFromDragStart) {
+      listType = listTypeFromDragStart;
+    }
+    isDragging = true;
+    lastClientY = event.clientY;
+    scroll();
+  };
+
+  const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView) => {
+    event.preventDefault();
+    isDragging = false;
+    isMouseInsideWhileDragging = false;
+    if (scrollAnimationFrame) {
+      cancelAnimationFrame(scrollAnimationFrame);
+      scrollAnimationFrame = null;
+    }
+
+    view?.dom.classList.remove("dragging");
+  };
+
   // drag handle view actions
   const showDragHandle = () => dragHandleElement?.classList.remove("drag-handle-hidden");
   const hideDragHandle = () => {
@@ -295,7 +314,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
       // Traverse up the document tree to find if we're inside a list item
       for (let i = resolvedPos.depth; i > 0; i--) {
-        if (resolvedPos.node(i).type.name === "listItem") {
+        if (resolvedPos.node(i).type.name === CORE_EXTENSIONS.LIST_ITEM) {
           isDroppedInsideList = true;
           dropDepth = i;
           break;
@@ -303,7 +322,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       }
 
       // Handle nested list items and task items
-      if (droppedNode.type.name === "listItem") {
+      if (droppedNode.type.name === CORE_EXTENSIONS.LIST_ITEM) {
         let slice = view.state.selection.content();
         let newFragment = slice.content;
 
@@ -346,8 +365,8 @@ function flattenListStructure(fragment: Fragment, schema: Schema): Fragment {
         (node.content.firstChild.type === schema.nodes.bulletList ||
           node.content.firstChild.type === schema.nodes.orderedList)
       ) {
-        const sublist = node.content.firstChild;
-        const flattened = flattenListStructure(sublist.content, schema);
+        const subList = node.content.firstChild;
+        const flattened = flattenListStructure(subList.content, schema);
         flattened.forEach((subNode) => result.push(subNode));
       }
     }
@@ -374,8 +393,9 @@ const handleNodeSelection = (
   let draggedNodePos = nodePosAtDOM(node, view, options);
   if (draggedNodePos == null || draggedNodePos < 0) return;
 
-  // Handle blockquotes separately
-  if (node.matches("blockquote")) {
+  if (node.matches("table")) {
+    draggedNodePos = draggedNodePos - 2;
+  } else if (node.matches("blockquote")) {
     draggedNodePos = nodePosAtDOMForBlockQuotes(node, view);
     if (draggedNodePos === null || draggedNodePos === undefined) return;
   } else {
@@ -383,7 +403,10 @@ const handleNodeSelection = (
     const $pos = view.state.doc.resolve(draggedNodePos);
 
     // If it's a nested list item or task item, move up to the item level
-    if (($pos.parent.type.name === "listItem" || $pos.parent.type.name === "taskItem") && $pos.depth > 1) {
+    if (
+      [CORE_EXTENSIONS.LIST_ITEM, CORE_EXTENSIONS.TASK_ITEM].includes($pos.parent.type.name as CORE_EXTENSIONS) &&
+      $pos.depth > 1
+    ) {
       draggedNodePos = $pos.before($pos.depth);
     }
   }
@@ -401,14 +424,16 @@ const handleNodeSelection = (
     // Additional logic for drag start
     if (event instanceof DragEvent && !event.dataTransfer) return;
 
-    if (nodeSelection.node.type.name === "listItem" || nodeSelection.node.type.name === "taskItem") {
+    if (
+      [CORE_EXTENSIONS.LIST_ITEM, CORE_EXTENSIONS.TASK_ITEM].includes(nodeSelection.node.type.name as CORE_EXTENSIONS)
+    ) {
       listType = node.closest("ol, ul")?.tagName || "";
     }
 
     const slice = view.state.selection.content();
-    const { dom, text } = __serializeForClipboard(view, slice);
+    const { dom, text } = view.serializeForClipboard(slice);
 
-    if (event instanceof DragEvent) {
+    if (event instanceof DragEvent && event.dataTransfer) {
       event.dataTransfer.clearData();
       event.dataTransfer.setData("text/html", dom.innerHTML);
       event.dataTransfer.setData("text/plain", text);

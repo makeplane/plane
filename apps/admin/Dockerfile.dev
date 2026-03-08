@@ -1,0 +1,17 @@
+FROM node:22-alpine
+RUN apk add --no-cache libc6-compat
+# Set working directory
+WORKDIR /app
+
+COPY . .
+
+RUN corepack enable pnpm && pnpm add -g turbo
+RUN pnpm install
+
+ENV VITE_ADMIN_BASE_PATH="/god-mode"
+
+EXPOSE 3000
+
+VOLUME [ "/app/node_modules", "/app/admin/node_modules" ]
+
+CMD ["pnpm", "dev", "--filter=admin"]

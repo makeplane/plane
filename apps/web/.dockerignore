@@ -1,0 +1,11 @@
+node_modules
+.next
+.react-router
+.vite
+.turbo
+build
+dist
+*.log
+.env*
+!.env.example
+

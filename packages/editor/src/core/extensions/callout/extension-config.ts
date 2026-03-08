@@ -1,42 +1,54 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Node, mergeAttributes } from "@tiptap/core";
-import { Node as NodeType } from "@tiptap/pm/model";
-import { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import type { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
-import { EAttributeNames, TCalloutBlockAttributes } from "./types";
+import { ECalloutAttributeNames } from "./types";
+import type { CustomCalloutExtensionType, TCalloutBlockAttributes } from "./types";
 // utils
 import { DEFAULT_CALLOUT_BLOCK_ATTRIBUTES } from "./utils";
 
-// Extend Tiptap's Commands interface
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    calloutComponent: {
+    [CORE_EXTENSIONS.CALLOUT]: {
       insertCallout: () => ReturnType;
     };
   }
 }
 
-export const CustomCalloutExtensionConfig = Node.create({
-  name: "calloutComponent",
+export const CustomCalloutExtensionConfig: CustomCalloutExtensionType = Node.create({
+  name: CORE_EXTENSIONS.CALLOUT,
   group: "block",
   content: "block+",
 
   addAttributes() {
     const attributes = {
       // Reduce instead of map to accumulate the attributes directly into an object
-      ...Object.values(EAttributeNames).reduce((acc, value) => {
-        acc[value] = {
-          default: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[value],
-        };
-        return acc;
-      }, {}),
+      ...Object.values(ECalloutAttributeNames).reduce(
+        (acc, value) => {
+          acc[value] = {
+            default: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[value],
+          };
+          return acc;
+        },
+        {} as Record<ECalloutAttributeNames, { default: TCalloutBlockAttributes[ECalloutAttributeNames] }>
+      ),
     };
+
     return attributes;
   },
 
   addStorage() {
     return {
       markdown: {
-        serialize(state: MarkdownSerializerState, node: NodeType) {
+        serialize(state: MarkdownSerializerState, node: ProseMirrorNode) {
           const attrs = node.attrs as TCalloutBlockAttributes;
           const logoInUse = attrs["data-logo-in-use"];
           // add callout logo
@@ -60,7 +72,7 @@ export const CustomCalloutExtensionConfig = Node.create({
   parseHTML() {
     return [
       {
-        tag: `div[${EAttributeNames.BLOCK_TYPE}="${DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[EAttributeNames.BLOCK_TYPE]}"]`,
+        tag: `div[${ECalloutAttributeNames.BLOCK_TYPE}="${DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[ECalloutAttributeNames.BLOCK_TYPE]}"]`,
       },
     ];
   },

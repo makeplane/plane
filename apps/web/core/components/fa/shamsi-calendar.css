@@ -1,0 +1,106 @@
+/* [FA-CUSTOM] Styles for Shamsi calendar to match Plane design system */
+
+.fa-shamsi-calendar {
+  /* Override react-multi-date-picker defaults to match Plane's design tokens */
+  font-family: inherit !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.fa-shamsi-calendar .rmdp-wrapper {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.fa-shamsi-calendar .rmdp-calendar {
+  padding: 0;
+}
+
+.fa-shamsi-calendar .rmdp-header {
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 4px 0;
+  color: var(--txt-primary);
+}
+
+.fa-shamsi-calendar .rmdp-header-values {
+  color: var(--txt-primary);
+  font-weight: 600;
+}
+
+.fa-shamsi-calendar .rmdp-week-day {
+  color: var(--txt-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.fa-shamsi-calendar .rmdp-day {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  color: var(--txt-primary);
+}
+
+.fa-shamsi-calendar .rmdp-day:hover:not(.rmdp-disabled):not(.rmdp-selected) {
+  background-color: var(--bg-surface-2);
+}
+
+.fa-shamsi-calendar .rmdp-day.rmdp-today span {
+  background-color: var(--bg-layer-3);
+  color: var(--txt-primary);
+  font-weight: 600;
+}
+
+.fa-shamsi-calendar .rmdp-day.rmdp-selected span {
+  background-color: var(--bg-accent-primary) !important;
+  color: var(--txt-on-color) !important;
+  font-weight: 500;
+}
+
+.fa-shamsi-calendar .rmdp-day.rmdp-disabled {
+  color: var(--txt-tertiary);
+  opacity: 0.5;
+}
+
+.fa-shamsi-calendar .rmdp-day span {
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fa-shamsi-calendar .rmdp-arrow {
+  border-color: var(--txt-secondary);
+}
+
+.fa-shamsi-calendar .rmdp-arrow-container:hover {
+  background-color: var(--bg-surface-2);
+  border-radius: 4px;
+}
+
+/* Range selection styles */
+.fa-shamsi-calendar .rmdp-range {
+  background-color: var(--bg-accent-primary);
+  color: var(--txt-on-color);
+}
+
+.fa-shamsi-calendar .rmdp-range.start,
+.fa-shamsi-calendar .rmdp-range.end {
+  border-radius: 6px;
+}
+
+/* Outside days (other month) */
+.fa-shamsi-calendar .rmdp-deactive {
+  color: var(--txt-tertiary);
+}
+
+/* Month/Year picker dropdown */
+.fa-shamsi-calendar .rmdp-month-picker,
+.fa-shamsi-calendar .rmdp-year-picker {
+  background-color: var(--bg-surface-1);
+}

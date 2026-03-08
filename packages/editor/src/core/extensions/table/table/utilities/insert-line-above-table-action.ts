@@ -1,17 +1,25 @@
-import { KeyboardShortcutCommand } from "@tiptap/core";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { KeyboardShortcutCommand } from "@tiptap/core";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { findParentNodeOfType } from "@/helpers/common";
 
 export const insertLineAboveTableAction: KeyboardShortcutCommand = ({ editor }) => {
   // Check if the current selection or the closest node is a table
-  if (!editor.isActive("table")) return false;
+  if (!editor.isActive(CORE_EXTENSIONS.TABLE)) return false;
 
   try {
     // Get the current selection
     const { selection } = editor.state;
 
     // Find the table node and its position
-    const tableNode = findParentNodeOfType(selection, "table");
+    const tableNode = findParentNodeOfType(selection, [CORE_EXTENSIONS.TABLE]);
     if (!tableNode) return false;
 
     const tablePos = tableNode.pos;
@@ -39,7 +47,7 @@ export const insertLineAboveTableAction: KeyboardShortcutCommand = ({ editor }) 
 
       const prevNode = editor.state.doc.nodeAt(prevNodePos - 1);
 
-      if (prevNode && prevNode.type.name === "paragraph") {
+      if (prevNode && prevNode.type.name === CORE_EXTENSIONS.PARAGRAPH) {
         // If there's a paragraph before the table, move the cursor to the end of that paragraph
         const endOfParagraphPos = tablePos - prevNode.nodeSize;
         editor.chain().setTextSelection(endOfParagraphPos).run();

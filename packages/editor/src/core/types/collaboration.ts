@@ -1,49 +1,43 @@
-import { Extensions } from "@tiptap/core";
-import { EditorProps } from "@tiptap/pm/view";
-// plane editor types
-import { TEmbedConfig } from "@/plane-editor/types";
-// types
-import {
-  EditorReadOnlyRefApi,
-  EditorRefApi,
-  TExtensions,
-  TFileHandler,
-  TMentionHandler,
-  TReadOnlyMentionHandler,
-  TRealtimeConfig,
-  TUserDetails,
-} from "@/types";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+export type CollaborationError =
+  | { type: "auth-failed"; message: string }
+  | { type: "network-error"; message: string }
+  | { type: "forced-close"; code: number; message: string }
+  | { type: "max-retries"; message: string };
+
+/**
+ * Single-stage state machine for collaboration lifecycle.
+ * Stages represent the sequential progression: initial → connecting → awaiting-sync → synced
+ *
+ * Invariants:
+ * - "awaiting-sync" only occurs when connection is successful and sync is pending
+ * - "synced" occurs only after connection success and onSynced callback
+ * - "reconnecting" with attempt > 0 when retrying after a connection drop
+ * - "disconnected" is terminal (connection failed or forced close)
+ */
+export type CollabStage =
+  | { kind: "initial" }
+  | { kind: "connecting" }
+  | { kind: "awaiting-sync" }
+  | { kind: "synced" }
+  | { kind: "reconnecting"; attempt: number }
+  | { kind: "disconnected"; error: CollaborationError };
+
+/**
+ * Public collaboration state exposed to consumers.
+ * Contains the current stage and derived booleans for convenience.
+ */
+export type CollaborationState = {
+  stage: CollabStage;
+  isServerSynced: boolean;
+  isServerDisconnected: boolean;
+};
 
 export type TServerHandler = {
-  onConnect?: () => void;
-  onServerError?: () => void;
-};
-
-type TCollaborativeEditorHookProps = {
-  disabledExtensions: TExtensions[];
-  editable?: boolean;
-  editorClassName: string;
-  editorProps?: EditorProps;
-  extensions?: Extensions;
-  handleEditorReady?: (value: boolean) => void;
-  id: string;
-  realtimeConfig: TRealtimeConfig;
-  serverHandler?: TServerHandler;
-  user: TUserDetails;
-};
-
-export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
-  onTransaction?: () => void;
-  embedHandler?: TEmbedConfig;
-  fileHandler: TFileHandler;
-  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
-  mentionHandler: TMentionHandler;
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
-  tabIndex?: number;
-};
-
-export type TReadOnlyCollaborativeEditorProps = TCollaborativeEditorHookProps & {
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
-  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
-  mentionHandler: TReadOnlyMentionHandler;
+  onStateChange: (state: CollaborationState) => void;
 };

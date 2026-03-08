@@ -1,101 +1,129 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from "react";
-import { Editor } from "@tiptap/core";
-import { Check, Link, Trash } from "lucide-react";
-// plane utils
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor } from "@tiptap/core";
+
+import type { FC } from "react";
+import { useCallback, useRef, useState } from "react";
+import { LinkIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
+// plane imports
 import { cn } from "@plane/utils";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 import { setLinkEditor, unsetLinkEditor } from "@/helpers/editor-commands";
+import { FloatingMenuRoot } from "../floating-menu/root";
+import { useFloatingMenu } from "../floating-menu/use-floating-menu";
 
 type Props = {
   editor: Editor;
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const BubbleMenuLinkSelector: FC<Props> = (props) => {
-  const { editor, isOpen, setIsOpen } = props;
+export function BubbleMenuLinkSelector(props: Props) {
+  const { editor } = props;
+  // states
+  const [error, setError] = useState(false);
+  // floating ui
+  const { options, getReferenceProps, getFloatingProps } = useFloatingMenu({});
+  const { context } = options;
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onLinkSubmit = useCallback(() => {
+  const handleLinkSubmit = useCallback(() => {
     const input = inputRef.current;
-    const url = input?.value;
-    if (url && isValidHttpUrl(url)) {
-      setLinkEditor(editor, url);
-      setIsOpen(false);
+    if (!input) return;
+    const url = input.value;
+    if (!url) return;
+    const { isValid, url: validatedUrl } = isValidHttpUrl(url);
+    if (isValid) {
+      setLinkEditor(editor, validatedUrl);
+      context.onOpenChange(false);
+      setError(false);
+    } else {
+      setError(true);
     }
-  }, [editor, inputRef, setIsOpen]);
-
-  useEffect(() => {
-    inputRef.current && inputRef.current?.focus();
-  });
+  }, [editor, inputRef, context]);
 
   return (
-    <div className="relative h-full">
-      <button
-        type="button"
-        className={cn(
-          "h-full flex items-center gap-1 px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors",
+    <FloatingMenuRoot
+      classNames={{
+        buttonContainer: "h-full",
+        button: cn(
+          "h-full flex items-center gap-1 px-3 text-13 font-medium text-tertiary hover:bg-layer-1 active:bg-layer-1 rounded-sm whitespace-nowrap transition-colors",
           {
-            "bg-custom-background-80": isOpen,
-            "text-custom-text-100": editor.isActive("link"),
+            "bg-layer-1": context.open,
+            "text-primary": editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK),
           }
-        )}
-        onClick={(e) => {
-          setIsOpen(!isOpen);
-          e.stopPropagation();
-        }}
-      >
-        <span>Link</span>
-        <Link className="flex-shrink-0 size-3" />
-      </button>
-      {isOpen && (
+        ),
+      }}
+      getFloatingProps={getFloatingProps}
+      getReferenceProps={getReferenceProps}
+      menuButton={
+        <>
+          Link
+          <LinkIcon className="shrink-0 size-3" />
+        </>
+      }
+      options={options}
+    >
+      <div className="w-60 mt-1 rounded-md bg-surface-1 shadow-raised-200">
         <div
-          className="dow-xl fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 animate-in fade-in slide-in-from-top-1"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              onLinkSubmit();
-            }
-          }}
+          className={cn("flex rounded-sm  border-[0.5px] border-strong transition-colors", {
+            "border-danger-strong": error,
+          })}
         >
           <input
             ref={inputRef}
             type="url"
-            placeholder="Paste a link"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            className="flex-1 border-r border-custom-border-300 bg-custom-background-100 p-1 text-sm outline-none placeholder:text-custom-text-400"
+            placeholder="Enter or paste a link"
+            onClick={(e) => e.stopPropagation()}
+            className="flex-1 border-r-[0.5px] border-strong bg-surface-1 py-2 px-1.5 text-11 outline-none placeholder:text-placeholder rounded-sm"
             defaultValue={editor.getAttributes("link").href || ""}
+            onKeyDown={(e) => {
+              setError(false);
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleLinkSubmit();
+              }
+            }}
+            onFocus={() => setError(false)}
+            autoFocus
           />
           {editor.getAttributes("link").href ? (
             <button
               type="button"
-              className="flex items-center rounded-sm p-1 text-red-600 transition-all hover:bg-red-100 dark:hover:bg-red-800"
+              className="grid place-items-center rounded-xs p-1 text-danger-primary hover:bg-danger-subtle-hover transition-all"
               onClick={(e) => {
                 unsetLinkEditor(editor);
-                setIsOpen(false);
                 e.stopPropagation();
+                context.onOpenChange(false);
               }}
             >
-              <Trash className="h-4 w-4" />
+              <TrashIcon className="size-4" />
             </button>
           ) : (
             <button
-              className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-custom-background-90"
               type="button"
+              className="h-full aspect-square grid place-items-center p-1 rounded-xs text-tertiary hover:bg-layer-1 transition-all"
               onClick={(e) => {
-                onLinkSubmit();
                 e.stopPropagation();
+                handleLinkSubmit();
               }}
             >
-              <Check className="h-4 w-4" />
+              <CheckIcon className="size-4" />
             </button>
           )}
         </div>
-      )}
-    </div>
+        {error && (
+          <p className="text-11 text-danger-primary my-1 px-2 pointer-events-none animate-in fade-in slide-in-from-top-0">
+            Please enter a valid URL
+          </p>
+        )}
+      </div>
+    </FloatingMenuRoot>
   );
-};
+}

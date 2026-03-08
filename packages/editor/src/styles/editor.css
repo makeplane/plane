@@ -8,7 +8,7 @@
   -moz-user-select: text;
   -ms-user-select: text;
   user-select: text;
-  outline: none;
+  outline: none !important;
   cursor: text;
   font-family: var(--font-style);
   font-size: var(--font-size-regular);
@@ -24,7 +24,7 @@
 /* Placeholder only for the first line in an empty editor. */
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  float: left;
+  float: inline-start; /* [FA-CUSTOM] was: float: left — logical property for RTL */
   color: var(--color-placeholder);
   pointer-events: none;
   height: 0;
@@ -33,7 +33,7 @@
 /* Display Placeholders on every new line. */
 .ProseMirror p.is-empty::before {
   content: attr(data-placeholder);
-  float: left;
+  float: inline-start; /* [FA-CUSTOM] was: float: left — logical property for RTL */
   color: var(--color-placeholder);
   pointer-events: none;
   height: 0;
@@ -48,7 +48,8 @@
 .ProseMirror blockquote {
   font-style: normal;
   font-weight: 400;
-  border-left: 3px solid rgb(var(--color-border-300));
+  /* [FA-CUSTOM] was: @apply border-l-[3px] border-strong — logical property for RTL */
+  border-inline-start: 3px solid var(--border-color-strong);
 }
 
 .ProseMirror blockquote p::before,
@@ -76,7 +77,7 @@
     }
 
     &.ProseMirror-selectednode {
-      outline: 3px solid rgba(var(--color-primary-100));
+      outline: 3px solid var(--border-color-accent-strong);
       filter: brightness(90%);
     }
   }
@@ -84,7 +85,7 @@
 
 /* Custom gap cursor styles  */
 .ProseMirror-gapcursor::after {
-  border-top: 1px solid rgb(var(--color-text-100)) !important;
+  @apply border-t! border-strong!;
 }
 
 /* to-do list */
@@ -95,24 +96,24 @@ ul[data-type="taskList"] li {
 
 ul[data-type="taskList"] li > label {
   position: absolute;
-  left: -5px;
+  inset-inline-start: -5px; /* [FA-CUSTOM] was: left: -5px — logical property for RTL */
   margin: 0.1rem 0.15rem 0 0;
   user-select: none;
 }
 
 ul[data-type="taskList"] li > div {
-  margin-left: 1.15rem;
+  margin-inline-start: 1.15rem; /* [FA-CUSTOM] was: margin-left: 1.15rem — logical property for RTL */
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"] {
-  border: 1px solid rgba(var(--color-border-300)) !important;
+  @apply border! border-strong!;
   outline: none;
   border-radius: 2px;
   transform: scale(1.05);
 }
 
 .ProseMirror[contenteditable="true"] input[type="checkbox"]:hover {
-  background-color: rgba(var(--color-background-80));
+  background-color: color-mix(in srgb, var(--text-color-primary) 10%, transparent);
 }
 
 .ProseMirror[contenteditable="false"] input[type="checkbox"] {
@@ -120,19 +121,19 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
-  background-color: rgba(var(--color-primary-100)) !important;
-  border-color: rgba(var(--color-primary-100)) !important;
+  background-color: var(--background-color-accent-primary) !important;
+  border-color: var(--border-color-accent-strong) !important;
   color: white !important;
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"]:checked:hover {
-  background-color: rgba(var(--color-primary-300)) !important;
-  border-color: rgba(var(--color-primary-300)) !important;
+  background-color: var(--background-color-accent-primary-hover) !important;
+  border-color: var(--border-color-accent-strong) !important;
 }
 
 @media screen and (max-width: 768px) {
   ul[data-type="taskList"] li > label {
-    margin-right: 0.5rem;
+    margin-inline-end: 0.5rem; /* [FA-CUSTOM] was: margin-right — logical property for RTL */
   }
 }
 
@@ -151,12 +152,12 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   width: 0.8rem;
   height: 0.8rem;
   position: relative;
-  border: 1.5px solid rgb(var(--color-text-100));
-  margin-right: 0.2rem;
+  @apply border-md border-subtle-1;
+  margin-inline-end: 0.2rem; /* [FA-CUSTOM] was: margin-right — logical property for RTL */
   margin-top: 0.15rem;
 
   &:active {
-    background-color: rgb(var(--color-background-90));
+    background-color: var(--background-color-layer-1);
   }
 
   /* check sign */
@@ -205,7 +206,7 @@ ul[data-type="taskList"] li[data-checked="true"] {
 /* Overwrite tippy-box original max-width */
 
 .tippy-box {
-  max-width: 600px !important;
+  max-width: 800px !important;
 }
 
 .fade-in {
@@ -252,12 +253,12 @@ ul[data-type="taskList"] li[data-checked="true"] {
 
 div[data-type="horizontalRule"] {
   line-height: 0;
-  padding: 0.25rem 0;
+  padding: var(--divider-padding-top) 0 var(--divider-padding-bottom) 0;
   margin-top: 0;
   margin-bottom: 0;
 
   & > div {
-    border-bottom: 2px solid rgb(var(--color-border-200));
+    @apply border-b-lg border-subtle-1;
   }
 }
 
@@ -282,9 +283,9 @@ div[data-type="horizontalRule"] {
 
 div:focus .fake-cursor,
 span:focus .fake-cursor {
-  margin-right: -1px;
-  border-left-width: 1.5px;
-  border-left-style: solid;
+  margin-inline-end: -1px; /* [FA-CUSTOM] was: margin-right — logical property for RTL */
+  border-inline-start-width: 1.5px; /* [FA-CUSTOM] was: border-left-width — logical property for RTL */
+  border-inline-start-style: solid; /* [FA-CUSTOM] was: border-left-style — logical property for RTL */
   animation: blink 1s;
   animation-iteration-count: infinite;
   position: relative;
@@ -335,68 +336,68 @@ p.editor-paragraph-block {
 /* tailwind typography */
 .prose :where(h1.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-1-padding-top);
   }
 
-  padding-bottom: 4px;
-  font-size: var(--font-size-h1);
-  line-height: var(--line-height-h1);
-  font-weight: 600;
+  padding-bottom: var(--heading-1-padding-bottom);
+  font-size: var(--font-size-h1) !important;
+  line-height: var(--line-height-h1) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(h2.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-2-padding-top);
   }
 
-  padding-bottom: 4px;
-  font-size: var(--font-size-h2);
-  line-height: var(--line-height-h2);
-  font-weight: 600;
+  padding-bottom: var(--heading-2-padding-bottom);
+  font-size: var(--font-size-h2) !important;
+  line-height: var(--line-height-h2) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(h3.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-3-padding-top);
   }
 
-  padding-bottom: 4px;
-  font-size: var(--font-size-h3);
-  line-height: var(--line-height-h3);
-  font-weight: 600;
+  padding-bottom: var(--heading-3-padding-bottom);
+  font-size: var(--font-size-h3) !important;
+  line-height: var(--line-height-h3) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(h4.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-4-padding-top);
   }
 
-  padding-bottom: 4px;
-  font-size: var(--font-size-h4);
-  line-height: var(--line-height-h4);
-  font-weight: 600;
+  padding-bottom: var(--heading-4-padding-bottom);
+  font-size: var(--font-size-h4) !important;
+  line-height: var(--line-height-h4) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(h5.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 20px;
+    padding-top: var(--heading-5-padding-top);
   }
 
-  padding-bottom: 4px;
-  font-size: var(--font-size-h5);
-  line-height: var(--line-height-h5);
-  font-weight: 600;
+  padding-bottom: var(--heading-5-padding-bottom);
+  font-size: var(--font-size-h5) !important;
+  line-height: var(--line-height-h5) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(h6.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 20px;
+    padding-top: var(--heading-6-padding-top);
   }
 
-  padding-bottom: 4px;
-  font-size: var(--font-size-h6);
-  line-height: var(--line-height-h6);
-  font-weight: 600;
+  padding-bottom: var(--heading-6-padding-bottom);
+  font-size: var(--font-size-h6) !important;
+  line-height: var(--line-height-h6) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(p.editor-paragraph-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -405,23 +406,25 @@ p.editor-paragraph-block {
   }
 
   &:not(:first-child) {
-    padding-top: 4px;
+    padding-top: var(--paragraph-padding-top);
   }
 
-  &:last-child {
-    padding-bottom: 4px;
+  &:not(td p.editor-paragraph-block, th p.editor-paragraph-block) {
+    &:last-child {
+      padding-bottom: var(--paragraph-padding-bottom);
+    }
+
+    &:not(:last-child) {
+      padding-bottom: var(--paragraph-padding-between);
+    }
   }
 
-  &:not(:last-child) {
-    padding-bottom: 8px;
-  }
-
-  font-size: var(--font-size-regular);
-  line-height: var(--line-height-regular);
+  font-size: var(--font-size-regular) !important;
+  line-height: var(--line-height-regular) !important;
 }
 
 p.editor-paragraph-block + p.editor-paragraph-block {
-  padding-top: 8px !important;
+  padding-top: var(--paragraph-padding-between) !important;
 }
 
 .prose :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p.editor-paragraph-block,
@@ -488,3 +491,41 @@ p.editor-paragraph-block + p.editor-paragraph-block {
   background-color: var(--editor-colors-purple-background);
 }
 /* end background colors */
+
+/* emoji styles */
+span[data-name][data-type="emoji"] img {
+  display: inline !important;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  max-width: 1.25em;
+  max-height: 1.25em;
+}
+
+/* [FA-CUSTOM] RTL text direction support */
+.ProseMirror p[dir="rtl"],
+.ProseMirror h1[dir="rtl"],
+.ProseMirror h2[dir="rtl"],
+.ProseMirror h3[dir="rtl"],
+.ProseMirror h4[dir="rtl"],
+.ProseMirror h5[dir="rtl"],
+.ProseMirror h6[dir="rtl"] {
+  text-align: right;
+}
+
+.ProseMirror p[dir="ltr"],
+.ProseMirror h1[dir="ltr"],
+.ProseMirror h2[dir="ltr"],
+.ProseMirror h3[dir="ltr"],
+.ProseMirror h4[dir="ltr"],
+.ProseMirror h5[dir="ltr"],
+.ProseMirror h6[dir="ltr"] {
+  text-align: left;
+}
+/* end RTL text direction support */
+
+/* touch device styles */
+.touch-select-none {
+  user-select: none;
+  -webkit-user-select: none;
+}

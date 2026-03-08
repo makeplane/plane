@@ -1,6 +1,6 @@
 import { textInputRule } from "@tiptap/core";
 
-export interface TypographyOptions {
+export type TypographyOptions = {
   emDash: false | string;
   ellipsis: false | string;
   leftArrow: false | string;
@@ -20,7 +20,7 @@ export interface TypographyOptions {
   oneQuarter: false | string;
   threeQuarters: false | string;
   impliesArrowRight: false | string;
-}
+};
 
 export const emDash = (override?: string) =>
   textInputRule({

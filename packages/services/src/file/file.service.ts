@@ -1,6 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 // api service
+import type { TDuplicateAssetData, TDuplicateAssetResponse } from "@plane/types";
 import { APIService } from "../api.service";
 // helpers
 import { getAssetIdFromUrl } from "./helper";
@@ -59,6 +66,21 @@ export class FileService extends APIService {
   async restoreOldEditorAsset(workspaceId: string, src: string): Promise<void> {
     const assetKey = getAssetIdFromUrl(src);
     return this.post(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/restore/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Duplicates assets
+   * @param {string} workspaceSlug - The workspace slug
+   * @param {TDuplicateAssetData} data - The data for the duplicate assets
+   * @returns {Promise<TDuplicateAssetResponse>} Promise resolving to a record of asset IDs
+   * @throws {Error} If the request fails
+   */
+  async duplicateAssets(workspaceSlug: string, data: TDuplicateAssetData): Promise<TDuplicateAssetResponse> {
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

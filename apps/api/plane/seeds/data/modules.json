@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "name": "Core Workflow (System)",
+        "project_id": 1,
+        "sort_order": 1,
+        "status": "planned",
+        "description": "Manage, visualize, and track your work items across views."
+    },
+    {
+        "id": 2,
+        "name": "Onboarding Flow (Feature)",
+        "project_id": 1,
+        "sort_order": 2,
+        "status": "backlog",
+        "description": "Everything about getting started - creating a project, inviting teammates."
+    },
+    {
+        "id": 3,
+        "name": "Workspace Setup (Area)",
+        "project_id": 1,
+        "sort_order": 3,
+        "status": "in-progress",
+        "description": "The personalization layer - settings, labels, automations."
+    }
+]
