@@ -7,7 +7,7 @@ services:
     volumes:
       - redisdata:/data
     ports:
-      - "6379:6379"
+      - "6380:6379"
 
   plane-mq:
     image: rabbitmq:3.13.6-management-alpine
@@ -45,8 +45,8 @@ services:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
     ports:
-      - "9000:9000"
-      - "9090:9090"
+      - "9004:9000"
+      - "9091:9090"
 
   plane-db:
     image: postgres:15.7-alpine

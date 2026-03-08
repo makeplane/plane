@@ -36,6 +36,30 @@ PRIORITY_ALIASES = {
     "trivial": "none",
 }
 
+# Values that external tools (ClickUp, Jira, Asana, etc.) use to
+# represent "no value" in CSV/XLSX exports.
+_NULL_STRINGS = frozenset({
+    "null", "none", "n/a", "na", "nan", "undefined", "-", "—",
+})
+
+
+def _clean_cell(value: str | None) -> str | None:
+    """Sanitise a single CSV cell value.
+
+    * Strips whitespace
+    * Strips surrounding brackets / braces (``[]``, ``{}``)
+    * Converts null-like strings to ``None``
+
+    Returns the cleaned string, or ``None`` when the cell is effectively
+    empty.
+    """
+    if value is None:
+        return None
+    value = str(value).strip().strip("[]{}").strip()
+    if not value or value.lower() in _NULL_STRINGS:
+        return None
+    return value
+
 
 def _resolve_assignee_user(
     mapped_user_id, project, workspace, actor_id,
@@ -166,7 +190,7 @@ def issue_import_task(import_job_id: str, actor_id: str):
         for idx, row in enumerate(rows):
             try:
                 title_col = col_map.get("title", "")
-                title = row.get(title_col, "").strip() if title_col else ""
+                title = _clean_cell(row.get(title_col)) if title_col else None
 
                 if not title:
                     errors.append({
@@ -182,16 +206,15 @@ def issue_import_task(import_job_id: str, actor_id: str):
 
                 # Description
                 desc_col = col_map.get("description", "")
-                if desc_col and row.get(desc_col):
-                    desc_text = row[desc_col].strip()
-                    if desc_text:
-                        issue_data["description_html"] = f"<p>{desc_text}</p>"
-                        issue_data["description_stripped"] = desc_text
+                desc_text = _clean_cell(row.get(desc_col)) if desc_col else None
+                if desc_text:
+                    issue_data["description_html"] = f"<p>{desc_text}</p>"
+                    issue_data["description_stripped"] = desc_text
 
                 # State
                 status_col = col_map.get("status", "")
-                if status_col and row.get(status_col):
-                    raw_status = row[status_col].strip()
+                raw_status = _clean_cell(row.get(status_col)) if status_col else None
+                if raw_status:
                     mapped_state_id = status_map.get(raw_status)
                     if mapped_state_id and mapped_state_id in state_lookup:
                         issue_data["state"] = state_lookup[mapped_state_id]
@@ -202,8 +225,9 @@ def issue_import_task(import_job_id: str, actor_id: str):
 
                 # Priority
                 priority_col = col_map.get("priority", "")
-                if priority_col and row.get(priority_col):
-                    raw_priority = row[priority_col].strip().lower()
+                raw_priority = _clean_cell(row.get(priority_col)) if priority_col else None
+                if raw_priority:
+                    raw_priority = raw_priority.lower()
                     normalized = priority_map.get(raw_priority, raw_priority)
                     normalized = PRIORITY_ALIASES.get(normalized, normalized)
                     if normalized in VALID_PRIORITIES:
@@ -211,15 +235,17 @@ def issue_import_task(import_job_id: str, actor_id: str):
 
                 # Due date (target_date)
                 due_col = col_map.get("due_date", "")
-                if due_col and row.get(due_col):
-                    parsed_date = _parse_date(row[due_col].strip())
+                due_val = _clean_cell(row.get(due_col)) if due_col else None
+                if due_val:
+                    parsed_date = _parse_date(due_val)
                     if parsed_date:
                         issue_data["target_date"] = parsed_date
 
                 # Start date
                 start_col = col_map.get("start_date", "")
-                if start_col and row.get(start_col):
-                    parsed_date = _parse_date(row[start_col].strip())
+                start_val = _clean_cell(row.get(start_col)) if start_col else None
+                if start_val:
+                    parsed_date = _parse_date(start_val)
                     if parsed_date:
                         issue_data["start_date"] = parsed_date
 
@@ -231,11 +257,11 @@ def issue_import_task(import_job_id: str, actor_id: str):
 
                 # Assignees (may be comma-separated in file)
                 assignee_col = col_map.get("assignee", "")
-                if assignee_col and row.get(assignee_col):
-                    cell_value = row[assignee_col].strip().strip("[]")
+                assignee_val = _clean_cell(row.get(assignee_col)) if assignee_col else None
+                if assignee_val:
                     raw_names = [
                         n.strip()
-                        for n in cell_value.split(",")
+                        for n in assignee_val.split(",")
                         if n.strip()
                     ]
                     for raw_name in raw_names:
@@ -261,10 +287,11 @@ def issue_import_task(import_job_id: str, actor_id: str):
 
                 # Labels (comma-separated in file)
                 label_col = col_map.get("labels", "")
-                if label_col and row.get(label_col):
+                label_val = _clean_cell(row.get(label_col)) if label_col else None
+                if label_val:
                     raw_labels = [
                         lbl.strip()
-                        for lbl in row[label_col].split(",")
+                        for lbl in label_val.split(",")
                         if lbl.strip()
                     ]
                     for lbl_name in raw_labels:
@@ -288,20 +315,18 @@ def issue_import_task(import_job_id: str, actor_id: str):
 
                 # Track external ID for parent resolution
                 ext_id_col = col_map.get("external_id", "")
-                if ext_id_col and row.get(ext_id_col):
-                    ext_id = row[ext_id_col].strip()
-                    if ext_id:
-                        external_to_issue[ext_id] = issue
+                ext_id = _clean_cell(row.get(ext_id_col)) if ext_id_col else None
+                if ext_id:
+                    external_to_issue[ext_id] = issue
 
                 # Also map by row number (1-based, accounting for header)
                 external_to_issue[str(idx + 2)] = issue
 
                 # Track parent relationship for Pass 2
                 parent_col = col_map.get("parent_task_id", "")
-                if parent_col and row.get(parent_col):
-                    parent_ref = row[parent_col].strip()
-                    if parent_ref:
-                        pending_parents.append((issue, parent_ref))
+                parent_ref = _clean_cell(row.get(parent_col)) if parent_col else None
+                if parent_ref:
+                    pending_parents.append((issue, parent_ref))
 
                 # Log activity (batched — every 50th issue + first)
                 if imported == 1 or imported % 50 == 0:
