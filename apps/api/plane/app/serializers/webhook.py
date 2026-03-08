@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 # Python imports
+import os
 import socket
 import ipaddress
 from urllib.parse import urlparse
@@ -14,6 +15,8 @@ from rest_framework import serializers
 from .base import DynamicBaseSerializer
 from plane.db.models import Webhook, WebhookLog
 from plane.db.models.webhook import validate_domain, validate_schema
+
+ENABLE_WEBHOOK_SSRF_PROTECTION = os.environ.get("ENABLE_WEBHOOK_SSRF_PROTECTION", "1") != "0"
 
 
 class WebhookSerializer(DynamicBaseSerializer):
@@ -36,10 +39,11 @@ class WebhookSerializer(DynamicBaseSerializer):
         if not ip_addresses:
             raise serializers.ValidationError({"url": "No IP addresses found for the hostname."})
 
-        for addr in ip_addresses:
-            ip = ipaddress.ip_address(addr[4][0])
-            if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
-                raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
+        if ENABLE_WEBHOOK_SSRF_PROTECTION:
+            for addr in ip_addresses:
+                ip = ipaddress.ip_address(addr[4][0])
+                if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
+                    raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
 
         # Additional validation for multiple request domains and their subdomains
         request = self.context.get("request")
@@ -71,10 +75,11 @@ class WebhookSerializer(DynamicBaseSerializer):
             if not ip_addresses:
                 raise serializers.ValidationError({"url": "No IP addresses found for the hostname."})
 
-            for addr in ip_addresses:
-                ip = ipaddress.ip_address(addr[4][0])
-                if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
-                    raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
+            if ENABLE_WEBHOOK_SSRF_PROTECTION:
+                for addr in ip_addresses:
+                    ip = ipaddress.ip_address(addr[4][0])
+                    if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
+                        raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
 
             # Additional validation for multiple request domains and their subdomains
             request = self.context.get("request")
