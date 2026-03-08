@@ -3,11 +3,30 @@
 import { useCallback } from "react";
 import { CheckCircle, AlertTriangle, XCircle, Download } from "lucide-react";
 import { Button } from "@plane/propel/button";
+import { cn } from "@plane/utils";
 import type { UseImportWizardReturn } from "../hooks/use-import-wizard";
 
 type Props = {
   wizard: UseImportWizardReturn;
   onClose: () => void;
+};
+
+const STATUS_BANNER_STYLES: Record<string, string> = {
+  completed: "bg-success-subtle-1 text-success-primary",
+  completed_with_errors: "bg-warning-subtle text-warning-primary",
+  failed: "bg-danger-subtle text-danger-primary",
+};
+
+const STATUS_ICONS: Record<string, typeof CheckCircle> = {
+  completed: CheckCircle,
+  completed_with_errors: AlertTriangle,
+  failed: XCircle,
+};
+
+const STATUS_MESSAGES: Record<string, string> = {
+  completed: "Import completed successfully!",
+  completed_with_errors: "Import completed with some errors.",
+  failed: "Import failed.",
 };
 
 export function ImportResults({ wizard, onClose }: Props) {
@@ -33,32 +52,21 @@ export function ImportResults({ wizard, onClose }: Props) {
 
   if (!job) return null;
 
-  const isSuccess = job.status === "completed";
-  const isPartial = job.status === "completed_with_errors";
-  const isFailed = job.status === "failed";
+  const StatusIcon = STATUS_ICONS[job.status] ?? XCircle;
 
   return (
     <div className="space-y-4">
       {/* Status banner */}
       <div
-        className={`flex items-center gap-3 rounded-lg p-4 ${
-          isSuccess
-            ? "bg-green-500/10 text-green-600"
-            : isPartial
-              ? "bg-amber-500/10 text-amber-600"
-              : "bg-red-500/10 text-red-600"
-        }`}
+        className={cn(
+          "flex items-center gap-3 rounded-lg p-4",
+          STATUS_BANNER_STYLES[job.status] ?? STATUS_BANNER_STYLES.failed
+        )}
       >
-        {isSuccess && <CheckCircle className="size-5 shrink-0" />}
-        {isPartial && <AlertTriangle className="size-5 shrink-0" />}
-        {isFailed && <XCircle className="size-5 shrink-0" />}
+        <StatusIcon className="size-5 shrink-0" />
         <div>
-          <p className="text-sm font-medium">
-            {isSuccess && "Import completed successfully!"}
-            {isPartial && "Import completed with some errors."}
-            {isFailed && "Import failed."}
-          </p>
-          <p className="text-xs opacity-80">
+          <p className="text-body-sm-medium">{STATUS_MESSAGES[job.status] ?? "Import failed."}</p>
+          <p className="text-caption-md-regular opacity-80">
             {job.imported_count} imported, {job.skipped_count} skipped, {job.error_count} errors
           </p>
         </div>
@@ -66,48 +74,39 @@ export function ImportResults({ wizard, onClose }: Props) {
 
       {/* Result summary */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="rounded border border-custom-border-200 p-3 text-center">
-          <p className="text-2xl font-bold text-green-600">{job.imported_count}</p>
-          <p className="text-xs text-custom-text-300">Imported</p>
-        </div>
-        <div className="rounded border border-custom-border-200 p-3 text-center">
-          <p className="text-2xl font-bold text-amber-500">{job.skipped_count}</p>
-          <p className="text-xs text-custom-text-300">Skipped</p>
-        </div>
-        <div className="rounded border border-custom-border-200 p-3 text-center">
-          <p className="text-2xl font-bold text-red-500">{job.error_count}</p>
-          <p className="text-xs text-custom-text-300">Errors</p>
-        </div>
+        <ResultCard label="Imported" value={job.imported_count} colorClass="text-success-primary" />
+        <ResultCard label="Skipped" value={job.skipped_count} colorClass="text-warning-primary" />
+        <ResultCard label="Errors" value={job.error_count} colorClass="text-danger-primary" />
       </div>
 
       {/* Error log */}
-      {job.error_log && job.error_log.length > 0 && (
+      {!!job.error_log?.length && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium text-custom-text-100">Error Log</h4>
+            <h4 className="text-body-sm-medium text-primary">Error Log</h4>
             <Button variant="tertiary" size="sm" onClick={downloadErrorLog}>
               <Download className="mr-1 size-3.5" />
               Download CSV
             </Button>
           </div>
-          <div className="max-h-64 overflow-y-auto rounded border border-custom-border-200">
-            <table className="min-w-full text-xs">
+          <div className="max-h-64 overflow-y-auto rounded-lg border border-subtle">
+            <table className="min-w-full">
               <thead>
-                <tr className="bg-custom-background-80">
-                  <th className="px-3 py-2 text-left font-medium text-custom-text-200">Row</th>
-                  <th className="px-3 py-2 text-left font-medium text-custom-text-200">Error</th>
+                <tr className="bg-layer-3">
+                  <th className="px-3 py-2 text-left text-caption-md-medium text-secondary">Row</th>
+                  <th className="px-3 py-2 text-left text-caption-md-medium text-secondary">Error</th>
                 </tr>
               </thead>
               <tbody>
                 {job.error_log.slice(0, 50).map((entry, idx) => (
-                  <tr key={idx} className="border-t border-custom-border-200">
-                    <td className="whitespace-nowrap px-3 py-1.5 text-custom-text-300">{entry.row}</td>
-                    <td className="px-3 py-1.5 text-custom-text-100">{entry.error}</td>
+                  <tr key={idx} className="border-t border-subtle">
+                    <td className="whitespace-nowrap px-3 py-1.5 text-caption-md-regular text-tertiary">{entry.row}</td>
+                    <td className="px-3 py-1.5 text-caption-md-regular text-primary">{entry.error}</td>
                   </tr>
                 ))}
                 {job.error_log.length > 50 && (
-                  <tr className="border-t border-custom-border-200">
-                    <td colSpan={2} className="px-3 py-2 text-center text-custom-text-300">
+                  <tr className="border-t border-subtle">
+                    <td colSpan={2} className="px-3 py-2 text-center text-caption-md-regular text-tertiary">
                       ... and {job.error_log.length - 50} more errors (download CSV for full log)
                     </td>
                   </tr>
@@ -119,11 +118,20 @@ export function ImportResults({ wizard, onClose }: Props) {
       )}
 
       {/* Actions */}
-      <div className="flex justify-end border-t border-custom-border-200 pt-4">
+      <div className="flex justify-end border-t border-subtle pt-4">
         <Button variant="primary" size="sm" onClick={onClose}>
           Done
         </Button>
       </div>
+    </div>
+  );
+}
+
+function ResultCard({ label, value, colorClass }: { label: string; value: number; colorClass: string }) {
+  return (
+    <div className="rounded-lg border border-subtle p-3 text-center">
+      <p className={cn("text-h3-medium", colorClass)}>{value}</p>
+      <p className="text-caption-md-regular text-tertiary">{label}</p>
     </div>
   );
 }

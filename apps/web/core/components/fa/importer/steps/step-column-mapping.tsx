@@ -1,6 +1,7 @@
 // [FA-CUSTOM] Step 2: Map file columns to Plane fields
 
 import { Button } from "@plane/propel/button";
+import { CustomSearchSelect } from "@plane/ui";
 import type { UseImportWizardReturn } from "../hooks/use-import-wizard";
 
 type Props = {
@@ -40,40 +41,50 @@ export function StepColumnMapping({ wizard }: Props) {
 
   const isTitleMapped = !!columnMapping.title;
 
+  const columnOptions = [
+    { value: "", query: "skip", content: <span className="text-tertiary">— Skip —</span> },
+    ...columns.map((col) => ({
+      value: col,
+      query: col,
+      content: <span className="text-primary">{col}</span>,
+    })),
+  ];
+
   return (
     <div className="space-y-4">
-      <p className="text-sm text-custom-text-300">
+      <p className="text-body-xs-regular text-tertiary">
         Map each column from your file to the corresponding Plane field. Only <strong>Title</strong> is required.
       </p>
 
       <div className="space-y-2">
         {PLANE_FIELDS.map((field) => (
-          <div key={field.key} className="flex items-center gap-4 rounded px-3 py-2 hover:bg-custom-background-80">
+          <div key={field.key} className="flex items-center gap-4 rounded-lg px-3 py-2 hover:bg-layer-3">
             <div className="w-40 shrink-0">
-              <span className="text-sm text-custom-text-100">
+              <span className="text-body-sm-medium text-primary">
                 {field.label}
-                {field.required && <span className="ml-1 text-red-500">*</span>}
+                {field.required && <span className="ml-1 text-danger-primary">*</span>}
               </span>
             </div>
-            <div className="text-custom-text-300">&rarr;</div>
-            <select
+            <div className="text-tertiary">&rarr;</div>
+            <CustomSearchSelect
               value={columnMapping[field.key] || ""}
-              onChange={(e) => handleChange(field.key, e.target.value)}
-              className="w-full rounded border border-custom-border-200 bg-custom-background-100 px-3 py-1.5 text-sm text-custom-text-100"
-            >
-              <option value="">— Skip —</option>
-              {columns.map((col) => (
-                <option key={col} value={col}>
-                  {col}
-                </option>
-              ))}
-            </select>
+              onChange={(val: string) => handleChange(field.key, val)}
+              label={
+                <span className={columnMapping[field.key] ? "text-primary" : "text-tertiary"}>
+                  {columnMapping[field.key] || "— Skip —"}
+                </span>
+              }
+              options={columnOptions}
+              input
+              maxHeight="md"
+              buttonClassName="w-full"
+            />
           </div>
         ))}
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between border-t border-custom-border-200 pt-4">
+      <div className="flex items-center justify-between border-t border-subtle pt-4">
         <Button variant="tertiary" size="sm" onClick={() => wizard.setStep("upload")}>
           Back
         </Button>

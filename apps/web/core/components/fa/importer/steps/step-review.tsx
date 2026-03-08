@@ -19,7 +19,7 @@ export function StepReview({ wizard }: Props) {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-custom-text-300">Review your import configuration before starting.</p>
+      <p className="text-body-xs-regular text-tertiary">Review your import configuration before starting.</p>
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -30,24 +30,26 @@ export function StepReview({ wizard }: Props) {
       </div>
 
       {/* Column mapping summary */}
-      <div className="rounded border border-custom-border-200 p-3">
-        <h4 className="mb-2 text-xs font-medium uppercase text-custom-text-300">Column Mappings</h4>
+      <div className="rounded-lg border border-subtle p-3">
+        <h4 className="mb-2 text-caption-md-medium uppercase text-tertiary">Column Mappings</h4>
         <div className="space-y-1">
           {mappedColumns.map(([planeField, fileCol]) => (
-            <div key={planeField} className="flex items-center gap-2 text-xs">
-              <span className="w-28 shrink-0 font-medium text-custom-text-100">{planeField}</span>
-              <span className="text-custom-text-300">&larr;</span>
-              <span className="text-custom-text-200">{fileCol}</span>
+            <div key={planeField} className="flex items-center gap-2 text-caption-md-regular">
+              <span className="w-28 shrink-0 text-caption-md-medium text-primary">{planeField}</span>
+              <span className="text-tertiary">&larr;</span>
+              <span className="text-secondary">{fileCol}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Error display */}
-      {wizard.error && <div className="rounded-md bg-red-500/10 p-3 text-sm text-red-500">{wizard.error}</div>}
+      {wizard.error && (
+        <div className="rounded-md bg-danger-subtle p-3 text-body-xs-regular text-danger-primary">{wizard.error}</div>
+      )}
 
       {/* Navigation */}
-      <div className="flex items-center justify-between border-t border-custom-border-200 pt-4">
+      <div className="flex items-center justify-between border-t border-subtle pt-4">
         <Button variant="tertiary" size="sm" onClick={() => wizard.setStep("assignee_mapping")}>
           Back
         </Button>
@@ -67,9 +69,9 @@ export function StepReview({ wizard }: Props) {
 
 function SummaryCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded border border-custom-border-200 p-3">
-      <p className="text-xs text-custom-text-300">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-custom-text-100">{value}</p>
+    <div className="rounded-lg border border-subtle p-3">
+      <p className="text-caption-md-regular text-tertiary">{label}</p>
+      <p className="mt-1 text-h4-medium text-primary">{value}</p>
     </div>
   );
 }

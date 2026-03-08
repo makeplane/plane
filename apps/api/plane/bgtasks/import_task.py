@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 
 from celery import shared_task
+from django.contrib.auth import get_user_model
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
@@ -21,7 +22,70 @@ from plane.db.models import (
 from plane.utils.exception_logger import log_exception
 from plane.utils.importers.presets import get_priority_map
 
+User = get_user_model()
+
 logger = logging.getLogger(__name__)
+
+VALID_PRIORITIES = {"urgent", "high", "medium", "low", "none"}
+
+PRIORITY_ALIASES = {
+    "critical": "urgent",
+    "highest": "urgent",
+    "normal": "medium",
+    "minor": "low",
+    "trivial": "none",
+}
+
+
+def _resolve_assignee_user(
+    mapped_user_id, project, workspace, actor_id,
+    member_lookup, workspace_member_lookup,
+):
+    """
+    Resolve a mapped_user_id to a User instance, auto-adding
+    workspace members or pending-invite users to the project as needed.
+
+    Returns the User or None.
+    """
+    if mapped_user_id.startswith("invite:"):
+        invite_email = mapped_user_id[len("invite:"):]
+        invited_user = User.objects.filter(email=invite_email).first()
+        if not invited_user:
+            return None
+        ws_membership = WorkspaceMember.objects.filter(
+            workspace=workspace, member=invited_user, is_active=True,
+        ).first()
+        if not ws_membership:
+            return None
+        _ensure_project_member(project, workspace, invited_user, actor_id)
+        member_lookup[str(invited_user.id)] = invited_user
+        return invited_user
+
+    assignee_user = member_lookup.get(mapped_user_id)
+    if assignee_user:
+        return assignee_user
+
+    if mapped_user_id in workspace_member_lookup:
+        ws_user = workspace_member_lookup[mapped_user_id]
+        _ensure_project_member(project, workspace, ws_user, actor_id)
+        member_lookup[mapped_user_id] = ws_user
+        return ws_user
+
+    return None
+
+
+def _ensure_project_member(project, workspace, user, actor_id):
+    """Add a user to the project if not already a member."""
+    ProjectMember.objects.get_or_create(
+        project=project,
+        member=user,
+        defaults={
+            "role": 15,
+            "is_active": True,
+            "workspace": workspace,
+            "created_by_id": actor_id,
+        },
+    )
 
 
 @shared_task
@@ -140,20 +204,9 @@ def issue_import_task(import_job_id: str, actor_id: str):
                 priority_col = col_map.get("priority", "")
                 if priority_col and row.get(priority_col):
                     raw_priority = row[priority_col].strip().lower()
-                    valid_priorities = {
-                        "urgent", "high", "medium", "low", "none"
-                    }
-                    # Use preset-specific mapping first, then common aliases
                     normalized = priority_map.get(raw_priority, raw_priority)
-                    common_aliases = {
-                        "critical": "urgent",
-                        "highest": "urgent",
-                        "normal": "medium",
-                        "minor": "low",
-                        "trivial": "none",
-                    }
-                    normalized = common_aliases.get(normalized, normalized)
-                    if normalized in valid_priorities:
+                    normalized = PRIORITY_ALIASES.get(normalized, normalized)
+                    if normalized in VALID_PRIORITIES:
                         issue_data["priority"] = normalized
 
                 # Due date (target_date)
@@ -193,27 +246,10 @@ def issue_import_task(import_job_id: str, actor_id: str):
                         if not mapped_user_id:
                             continue
 
-                        assignee_user = member_lookup.get(mapped_user_id)
-
-                        if (
-                            not assignee_user
-                            and mapped_user_id in workspace_member_lookup
-                        ):
-                            # Auto-add workspace member to project
-                            ws_user = workspace_member_lookup[mapped_user_id]
-                            ProjectMember.objects.get_or_create(
-                                project=project,
-                                member=ws_user,
-                                defaults={
-                                    "role": 15,
-                                    "is_active": True,
-                                    "workspace": workspace,
-                                    "created_by_id": actor_id,
-                                },
-                            )
-                            member_lookup[mapped_user_id] = ws_user
-                            assignee_user = ws_user
-
+                        assignee_user = _resolve_assignee_user(
+                            mapped_user_id, project, workspace, actor_id,
+                            member_lookup, workspace_member_lookup,
+                        )
                         if assignee_user:
                             IssueAssignee.objects.create(
                                 issue=issue,

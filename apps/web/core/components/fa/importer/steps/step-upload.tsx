@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { FileSpreadsheet, Upload } from "lucide-react";
 import { Loader } from "@plane/ui";
+import { cn } from "@plane/utils";
 import type { TUploadResponse } from "@/services/import.service";
 import type { UseImportWizardReturn } from "../hooks/use-import-wizard";
 
@@ -59,7 +60,7 @@ export function StepUpload({ wizard }: Props) {
           <Loader.Item height="30px" />
           <Loader.Item height="30px" />
         </Loader>
-        <p className="text-sm text-custom-text-300">Parsing file...</p>
+        <p className="text-caption-md-regular text-tertiary">Parsing file...</p>
       </div>
     );
   }
@@ -70,9 +71,10 @@ export function StepUpload({ wizard }: Props) {
       <div
         role="button"
         tabIndex={0}
-        className={`flex cursor-pointer flex-col items-center gap-3 rounded-lg border-2 border-dashed p-10 transition-colors ${
-          dragOver ? "border-custom-primary-100 bg-custom-primary-100/5" : "border-custom-border-200"
-        }`}
+        className={cn(
+          "flex cursor-pointer flex-col items-center gap-3 rounded-lg border-2 border-dashed p-10 transition-colors",
+          dragOver ? "border-accent-primary bg-accent-subtle-hover/30" : "border-subtle"
+        )}
         onDragOver={(e) => {
           e.preventDefault();
           setDragOver(true);
@@ -84,16 +86,18 @@ export function StepUpload({ wizard }: Props) {
           if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click();
         }}
       >
-        <Upload className="size-10 text-custom-text-300" />
+        <Upload className="size-10 text-tertiary" />
         <div className="text-center">
-          <p className="text-sm font-medium text-custom-text-100">Drop your CSV or XLSX file here</p>
-          <p className="mt-1 text-xs text-custom-text-300">or click to browse</p>
+          <p className="text-body-sm-medium text-primary">Drop your CSV or XLSX file here</p>
+          <p className="mt-1 text-caption-md-regular text-tertiary">or click to browse</p>
         </div>
         <input ref={fileInputRef} type="file" accept=".csv,.xlsx" onChange={handleInputChange} className="hidden" />
       </div>
 
       {/* Error */}
-      {wizard.error && <div className="rounded-md bg-red-500/10 p-3 text-sm text-red-500">{wizard.error}</div>}
+      {wizard.error && (
+        <div className="rounded-md bg-danger-subtle p-3 text-body-xs-regular text-danger-primary">{wizard.error}</div>
+      )}
 
       {/* Preview (shown after upload, if uploadData exists but step hasn't advanced yet) */}
       {wizard.uploadData && wizard.step === "upload" && <PreviewSection data={wizard.uploadData} />}
@@ -105,16 +109,18 @@ function PreviewSection({ data }: { data: TUploadResponse }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3">
-        <FileSpreadsheet className="size-5 text-custom-primary-100" />
+        <FileSpreadsheet className="size-5 text-accent-primary" />
         <div>
-          <p className="text-sm font-medium text-custom-text-100">{data.file_name}</p>
-          <p className="text-xs text-custom-text-300">
+          <p className="text-body-sm-medium text-primary">{data.file_name}</p>
+          <p className="text-caption-md-regular text-tertiary">
             {data.total_rows} rows found
             {data.detected_preset !== "generic" && (
               <>
                 {" "}
                 &middot; Detected:{" "}
-                <span className="font-medium">{PRESET_LABELS[data.detected_preset] ?? data.detected_preset}</span>
+                <span className="text-caption-md-medium">
+                  {PRESET_LABELS[data.detected_preset] ?? data.detected_preset}
+                </span>
               </>
             )}
           </p>
@@ -123,12 +129,12 @@ function PreviewSection({ data }: { data: TUploadResponse }) {
 
       {/* Preview table */}
       {data.preview_rows?.length > 0 && (
-        <div className="overflow-x-auto rounded border border-custom-border-200">
-          <table className="min-w-full text-xs">
+        <div className="overflow-x-auto rounded-lg border border-subtle">
+          <table className="min-w-full">
             <thead>
-              <tr className="bg-custom-background-80">
+              <tr className="bg-layer-3">
                 {data.detected_columns.map((col: string) => (
-                  <th key={col} className="whitespace-nowrap px-3 py-2 text-left font-medium text-custom-text-200">
+                  <th key={col} className="whitespace-nowrap px-3 py-2 text-left text-caption-md-medium text-secondary">
                     {col}
                   </th>
                 ))}
@@ -136,9 +142,12 @@ function PreviewSection({ data }: { data: TUploadResponse }) {
             </thead>
             <tbody>
               {data.preview_rows.map((row: Record<string, string>, idx: number) => (
-                <tr key={idx} className="border-t border-custom-border-200">
+                <tr key={idx} className="border-t border-subtle">
                   {data.detected_columns.map((col: string) => (
-                    <td key={col} className="max-w-[200px] truncate whitespace-nowrap px-3 py-2 text-custom-text-300">
+                    <td
+                      key={col}
+                      className="max-w-[200px] truncate whitespace-nowrap px-3 py-2 text-caption-md-regular text-tertiary"
+                    >
                       {row[col] || "—"}
                     </td>
                   ))}

@@ -2,8 +2,8 @@
 
 import { X } from "lucide-react";
 import { cn } from "@plane/utils";
-import { useImportWizard  } from "./hooks/use-import-wizard";
-import type {ImportWizardStep} from "./hooks/use-import-wizard";
+import { useImportWizard } from "./hooks/use-import-wizard";
+import type { ImportWizardStep } from "./hooks/use-import-wizard";
 import { ImportProgress } from "./progress/import-progress";
 import { ImportResults } from "./progress/import-results";
 import { StepAssigneeMapping } from "./steps/step-assignee-mapping";
@@ -26,6 +26,12 @@ type Props = {
   onClose: () => void;
 };
 
+function getStepIndicatorStyle(idx: number, currentStepIndex: number): string {
+  if (idx < currentStepIndex) return "bg-success-subtle-1 text-success-primary";
+  if (idx === currentStepIndex) return "bg-accent-subtle-hover text-accent-primary";
+  return "bg-layer-3 text-tertiary";
+}
+
 export function ImportWizard({ workspaceSlug, projectId, onClose }: Props) {
   const wizard = useImportWizard(workspaceSlug, projectId);
 
@@ -33,47 +39,40 @@ export function ImportWizard({ workspaceSlug, projectId, onClose }: Props) {
   const isFlowStep = wizard.step !== "progress" && wizard.step !== "results";
 
   return (
-    <div className="rounded-lg border border-custom-border-200 bg-custom-background-100">
+    <div className="rounded-lg border border-subtle bg-layer-1">
       {/* Header with step indicator */}
-      <div className="flex items-center justify-between border-b border-custom-border-200 px-4 py-3">
+      <div className="flex items-center justify-between border-b border-subtle px-4 py-3">
         {isFlowStep ? (
           <div className="flex items-center gap-2">
             {STEPS.map((s, idx) => (
               <div key={s.key} className="flex items-center gap-2">
                 <div
                   className={cn(
-                    "flex size-7 items-center justify-center rounded-full text-xs font-medium",
-                    idx < currentStepIndex
-                      ? "bg-green-500/20 text-green-600"
-                      : idx === currentStepIndex
-                        ? "bg-custom-primary-100/20 text-custom-primary-100"
-                        : "bg-custom-background-80 text-custom-text-300"
+                    "flex size-7 items-center justify-center rounded-full text-caption-md-medium",
+                    getStepIndicatorStyle(idx, currentStepIndex)
                   )}
                 >
                   {idx < currentStepIndex ? "✓" : idx + 1}
                 </div>
                 <span
                   className={cn(
-                    "hidden text-xs sm:inline",
-                    idx === currentStepIndex ? "text-custom-text-100 font-medium" : "text-custom-text-300"
+                    "hidden text-caption-md-regular sm:inline",
+                    idx === currentStepIndex ? "text-primary text-caption-md-medium" : "text-tertiary"
                   )}
                 >
                   {s.label}
                 </span>
-                {idx < STEPS.length - 1 && <div className="h-px w-6 bg-custom-border-200" />}
+                {idx < STEPS.length - 1 && <div className="h-px w-6 bg-border-subtle" />}
               </div>
             ))}
           </div>
         ) : (
-          <span className="text-sm font-medium text-custom-text-100">
+          <span className="text-body-sm-medium text-primary">
             {wizard.step === "progress" ? "Importing..." : "Import Complete"}
           </span>
         )}
-        <button
-          onClick={onClose}
-          className="flex size-7 items-center justify-center rounded hover:bg-custom-background-80"
-        >
-          <X className="size-4 text-custom-text-300" />
+        <button onClick={onClose} className="flex size-7 items-center justify-center rounded hover:bg-layer-3">
+          <X className="size-4 text-tertiary" />
         </button>
       </div>
 
