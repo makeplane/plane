@@ -22,16 +22,16 @@
   font-size: 0.875rem;
   font-weight: 500;
   padding: 4px 0;
-  color: var(--color-text-primary, #171717);
+  color: var(--txt-primary);
 }
 
 .fa-shamsi-calendar .rmdp-header-values {
-  color: var(--color-text-primary, #171717);
+  color: var(--txt-primary);
   font-weight: 600;
 }
 
 .fa-shamsi-calendar .rmdp-week-day {
-  color: var(--color-text-secondary, #737373);
+  color: var(--txt-secondary);
   font-size: 0.75rem;
   font-weight: 500;
 }
@@ -41,27 +41,27 @@
   height: 32px;
   border-radius: 6px;
   font-size: 0.8125rem;
-  color: var(--color-text-primary, #171717);
+  color: var(--txt-primary);
 }
 
 .fa-shamsi-calendar .rmdp-day:hover:not(.rmdp-disabled):not(.rmdp-selected) {
-  background-color: var(--color-bg-surface-2, #f5f5f5);
+  background-color: var(--bg-surface-2);
 }
 
 .fa-shamsi-calendar .rmdp-day.rmdp-today span {
-  background-color: var(--color-bg-surface-2, #e5e5e5);
-  color: var(--color-text-primary, #171717);
+  background-color: var(--bg-layer-3);
+  color: var(--txt-primary);
   font-weight: 600;
 }
 
 .fa-shamsi-calendar .rmdp-day.rmdp-selected span {
-  background-color: var(--color-primary-100, #3f76ff) !important;
-  color: #ffffff !important;
+  background-color: var(--bg-accent-primary) !important;
+  color: var(--txt-on-color) !important;
   font-weight: 500;
 }
 
 .fa-shamsi-calendar .rmdp-day.rmdp-disabled {
-  color: var(--color-text-tertiary, #a3a3a3);
+  color: var(--txt-tertiary);
   opacity: 0.5;
 }
 
@@ -75,18 +75,18 @@
 }
 
 .fa-shamsi-calendar .rmdp-arrow {
-  border-color: var(--color-text-secondary, #737373);
+  border-color: var(--txt-secondary);
 }
 
 .fa-shamsi-calendar .rmdp-arrow-container:hover {
-  background-color: var(--color-bg-surface-2, #f5f5f5);
+  background-color: var(--bg-surface-2);
   border-radius: 4px;
 }
 
 /* Range selection styles */
 .fa-shamsi-calendar .rmdp-range {
-  background-color: var(--color-primary-100, #3f76ff);
-  color: #ffffff;
+  background-color: var(--bg-accent-primary);
+  color: var(--txt-on-color);
 }
 
 .fa-shamsi-calendar .rmdp-range.start,
@@ -96,11 +96,11 @@
 
 /* Outside days (other month) */
 .fa-shamsi-calendar .rmdp-deactive {
-  color: var(--color-text-tertiary, #a3a3a3);
+  color: var(--txt-tertiary);
 }
 
 /* Month/Year picker dropdown */
 .fa-shamsi-calendar .rmdp-month-picker,
 .fa-shamsi-calendar .rmdp-year-picker {
-  background-color: var(--color-bg-surface-1, #ffffff);
+  background-color: var(--bg-surface-1);
 }
