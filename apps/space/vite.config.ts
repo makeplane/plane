@@ -3,7 +3,12 @@ import * as dotenv from "@dotenvx/dotenvx";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { joinUrlPath } from "@plane/utils";
+
+const normalizeBasePath = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === "/") return "/";
+  return `/${trimmed.replace(/^\/+|\/+$/g, "")}/`;
+};
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
@@ -15,7 +20,7 @@ const viteEnv = Object.keys(process.env)
     return a;
   }, {});
 
-const basePath = joinUrlPath(process.env.VITE_SPACE_BASE_PATH ?? "", "/") ?? "/";
+const basePath = normalizeBasePath(process.env.VITE_SPACE_BASE_PATH ?? "");
 
 export default defineConfig(() => ({
   base: basePath,

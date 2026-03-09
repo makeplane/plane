@@ -439,6 +439,9 @@ export default {
       add: "Add quick Link",
       title: "Quicklink",
       title_plural: "Quicklinks",
+      open_in_same_tab: "Open in same tab",
+      open_links_in_new_tab: "Open links in new tab",
+      open_links_in_same_tab: "Open links in same tab",
     },
     recents: {
       title: "Recents",
