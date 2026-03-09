@@ -3,6 +3,15 @@ name = "Plane"
 version = "0.24.0"
 description = "Open-source project management that unlocks customer value"
 
+[tool.setuptools]
+py-modules = ["manage"]
+
+[tool.setuptools.packages.find]
+include = ["plane*"]
+
+[project.scripts]
+plane = "manage:main"
+
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
 exclude = [

@@ -47,10 +47,14 @@ RUN pip install -r requirements.txt --compile --no-cache-dir
 # App files
 # -------------------------
 COPY manage.py manage.py
+COPY pyproject.toml pyproject.toml
 COPY plane plane/
 COPY templates templates/
 COPY package.json package.json
 COPY ./bin ./bin/
+
+# Install the package to register the `plane` console script
+RUN pip install --no-deps --no-cache-dir .
 
 RUN mkdir -p /code/plane/logs && \
     chown -R 1001:0 /code/plane && \
