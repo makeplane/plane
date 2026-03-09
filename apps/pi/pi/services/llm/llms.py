@@ -23,6 +23,7 @@ from typing import Optional
 from uuid import UUID
 
 from langchain_anthropic import ChatAnthropic
+from langchain_aws import ChatBedrock
 from langchain_core.language_models.base import BaseLanguageModel
 from langchain_core.runnables import Runnable
 from langchain_core.runnables import RunnableConfig
@@ -42,7 +43,7 @@ class LLMConfig:
     """Configuration for LLM instances."""
 
     model: str
-    temperature: float = 0.2
+    temperature: Optional[float] = 0.2
     streaming: bool = False
     seed: Optional[int] = None
     max_completion_tokens: Optional[int] = None
@@ -285,10 +286,12 @@ def create_openai_llm(config: LLMConfig, track_tokens: bool = True, **overrides:
     openai_params: Dict[str, Any] = {
         "api_key": api_key,
         "model": config.model,
-        "temperature": config.temperature,
         "streaming": config.streaming,
         **overrides,
     }
+
+    if config.temperature is not None:
+        openai_params["temperature"] = config.temperature
 
     # Only include base_url if explicitly provided (for Azure OpenAI, proxies, etc.)
     if base_url:
@@ -405,15 +408,63 @@ def _is_custom_model(model_key: str) -> bool:
     )
 
 
-def _create_custom_llm_config(*, streaming: bool = False, temperature: float = 0.2) -> LLMConfig:
+def _create_custom_llm_config(*, streaming: bool = False) -> LLMConfig:
     """Build an LLMConfig for the custom self-hosted model."""
     return LLMConfig(
         model=settings.llm_config.CUSTOM_LLM_MODEL_KEY,
         base_url=settings.llm_config.CUSTOM_LLM_BASE_URL,
-        api_key=settings.llm_config.CUSTOM_LLM_API_KEY or "not-needed",
+        api_key=settings.llm_config.CUSTOM_LLM_API_KEY,
         streaming=streaming,
-        temperature=temperature,
+        temperature=None,
     )
+
+
+def _create_bedrock_llm(config: LLMConfig, track_tokens: bool = True, **overrides: Any) -> Any:
+    """Create a Bedrock LLM instance via ChatBedrock."""
+    bedrock_params: dict[str, Any] = {
+        "model": config.model,
+        "bedrock_api_key": config.api_key,
+        "region_name": settings.llm_config.CUSTOM_LLM_AWS_REGION,
+        "streaming": config.streaming or False,
+    }
+
+    if config.temperature is not None:
+        bedrock_params["temperature"] = config.temperature
+
+    # Bedrock uses max_tokens, not max_completion_tokens
+    if config.max_completion_tokens:
+        bedrock_params["max_tokens"] = config.max_completion_tokens
+
+    # Handle overrides - convert max_completion_tokens to max_tokens if present
+    if "max_completion_tokens" in overrides:
+        bedrock_params["max_tokens"] = overrides.pop("max_completion_tokens")
+
+    bedrock_params.update(overrides)
+
+    llm = ChatBedrock(**bedrock_params)
+    return TrackedLLM(llm, config.model) if track_tokens else llm
+
+
+def create_custom_llm(config: LLMConfig, track_tokens: bool = True, **overrides: Any) -> Any:
+    """Create the appropriate LangChain chat model based on CUSTOM_LLM_PROVIDER.
+
+    Supported values: openai (default), bedrock.
+    """
+    provider = settings.llm_config.CUSTOM_LLM_PROVIDER.lower().strip()
+
+    try:
+        if provider == "openai":
+            return create_openai_llm(config, track_tokens=track_tokens, **overrides)
+        elif provider == "bedrock":
+            return _create_bedrock_llm(config, track_tokens=track_tokens, **overrides)
+        else:
+            log.warning(f"Unknown CUSTOM_LLM_PROVIDER '{provider}' (supported: openai, bedrock). Falling back to openai.")
+            return create_openai_llm(config, track_tokens=track_tokens, **overrides)
+    except ImportError:
+        raise
+    except Exception as e:
+        log.error(f"Failed to create custom LLM (provider={provider}, model={config.model}): {e}")
+        raise
 
 
 # Pre-configured LLM instances
@@ -565,7 +616,7 @@ class LLMFactory:
         config_name = _get_config_name_for_model(model_name, "default")
 
         if config_name == "__custom__":
-            return create_openai_llm(_create_custom_llm_config(streaming=False, temperature=0.2))
+            return create_custom_llm(_create_custom_llm_config(streaming=False))
         elif config_name and config_name in _ANTHROPIC_CONFIGS:
             return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
         elif config_name and config_name in _DEFAULT_CONFIGS:
@@ -579,7 +630,7 @@ class LLMFactory:
         config_name = _get_config_name_for_model(model_name, "stream")
 
         if config_name == "__custom__":
-            return create_openai_llm(_create_custom_llm_config(streaming=True, temperature=0.2))
+            return create_custom_llm(_create_custom_llm_config(streaming=True))
         elif config_name and config_name in _ANTHROPIC_CONFIGS:
             return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
         elif config_name and config_name in _DEFAULT_CONFIGS:
@@ -593,7 +644,7 @@ class LLMFactory:
         config_name = _get_config_name_for_model(model_name, "decomposer")
 
         if config_name == "__custom__":
-            return create_openai_llm(_create_custom_llm_config(streaming=False, temperature=0.0))
+            return create_custom_llm(_create_custom_llm_config(streaming=False))
         elif config_name and config_name in _ANTHROPIC_CONFIGS:
             return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
         elif config_name and config_name in _DEFAULT_CONFIGS:
@@ -610,7 +661,7 @@ class LLMFactory:
         """
         # Custom model selected: use it for fast_llm too
         if _get_config_name_for_model(model_name, "fast") == "__custom__":
-            return create_openai_llm(_create_custom_llm_config(streaming=streaming, temperature=0.2))
+            return create_custom_llm(_create_custom_llm_config(streaming=streaming))
 
         # Use provider's fast-tier model
         has_openai_key = bool(settings.llm_config.OPENAI_API_KEY and settings.llm_config.OPENAI_API_KEY.strip())
@@ -678,10 +729,12 @@ def get_chat_llm(llm_name: str) -> Any:
             config = LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_6, streaming=True)
         elif _is_custom_model(llm_name):
             config = _create_custom_llm_config(streaming=True)
+            return create_custom_llm(config)
         else:
             # Fallback: use custom model if custom-only deployment, otherwise GPT-4.1
             if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_MODEL_KEY:
                 config = _create_custom_llm_config(streaming=True)
+                return create_custom_llm(config)
             else:
                 config = LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=True, temperature=0.2)
 
@@ -692,6 +745,7 @@ def get_chat_llm(llm_name: str) -> Any:
         # Fallback: use custom model if custom-only deployment, otherwise GPT-4.1
         if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_MODEL_KEY:
             fallback_config = _create_custom_llm_config(streaming=True)
+            return create_custom_llm(fallback_config)
         else:
             fallback_config = LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=True, temperature=0.2)
         return create_openai_llm(fallback_config)
@@ -709,8 +763,8 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
 
         # Custom self-hosted model takes priority
         if _is_custom_model(model):
-            config = _create_custom_llm_config(streaming=False, temperature=0.2)
-            return create_openai_llm(config, max_completion_tokens=4096)
+            config = _create_custom_llm_config(streaming=False)
+            return create_custom_llm(config, max_completion_tokens=4096)
 
         # Create a base config and pass SQL-specific parameters via overrides. This keeps the
         # specialised settings local to this helper without extending the generic LLMConfig.
@@ -807,8 +861,8 @@ def get_lightweight_llm(*, streaming: bool = False, temperature: float = 0.0) ->
 
     # Custom deployment: use the custom model
     if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_MODEL_KEY:
-        config = _create_custom_llm_config(streaming=streaming, temperature=temperature)
-        return create_openai_llm(config)
+        config = _create_custom_llm_config(streaming=streaming)
+        return create_custom_llm(config)
 
     # Fall back to DEFAULT model
     return LLMFactory.get_default_llm(settings.llm_model.DEFAULT)

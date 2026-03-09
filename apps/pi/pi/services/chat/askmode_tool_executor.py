@@ -311,7 +311,7 @@ async def execute_tools_for_ask_mode(
 
                         # Extract content from the accumulated message and emit as answer
                         if ai_message and hasattr(ai_message, "content") and ai_message.content:
-                            content = str(ai_message.content).strip()
+                            content = extract_text_from_content(ai_message.content).strip()
                             # Handle case where delimiter exists but answer is empty (fallback to reasoning)
                             ANSWER_DELIMITER = "ππANSWERππ"
                             if ANSWER_DELIMITER in content:

@@ -60,6 +60,7 @@ from .helpers.build_mode_helpers import selected_action_categories_display
 from .helpers.tool_utils import WordBatcher
 from .helpers.tool_utils import build_method_prompt
 from .helpers.tool_utils import classify_tool
+from .helpers.tool_utils import extract_text_from_content
 from .helpers.tool_utils import format_tool_query_for_display
 from .helpers.tool_utils import preflight_missing_required_fields
 from .helpers.tool_utils import tool_name_shown_to_user
@@ -533,7 +534,7 @@ async def execute_tools_for_build_mode(
 
                         # Extract content from the accumulated message and emit as answer
                         if accumulated_msg and hasattr(accumulated_msg, "content") and accumulated_msg.content:
-                            content_str = str(accumulated_msg.content).strip()
+                            content_str = extract_text_from_content(accumulated_msg.content).strip()
                             if content_str:
                                 answer_streaming_started = True
                                 final_answer_streamed = True
@@ -570,7 +571,7 @@ async def execute_tools_for_build_mode(
 
         # FAILSAFE: Detect if LLM mistakenly put tool_calls in content instead of using API
         # This can happen with certain models/prompts - detect and handle gracefully
-        response_content = str(getattr(response, "content", "") or "").strip()
+        response_content = extract_text_from_content(getattr(response, "content", "") or "").strip()
         if not _has_tool_calls and "```tool_calls" in response_content:
             log.warning(f"ChatID: {chat_id} - DETECTED: LLM output tool_calls as markdown instead of API. Stripping from content.")
             # Strip the tool_calls markdown block from content to avoid showing JSON to user
@@ -587,7 +588,7 @@ async def execute_tools_for_build_mode(
         if _has_tool_calls:
             # Yield reasoning chunk for the planner tool selection
             try:
-                _content_preview = str(getattr(response, "content", "") or "").strip()
+                _content_preview = extract_text_from_content(getattr(response, "content", "") or "").strip()
                 if _content_preview:
                     ## change point: "πspecial reasoning blockπ:
                     stage = "planner_tool_selection"
@@ -613,14 +614,14 @@ async def execute_tools_for_build_mode(
                     else:
                         tool_names.append(getattr(_tc, "name", ""))
 
-                reasoning_text = str(getattr(response, "content", "") or "").strip()
+                reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
                 reason_preview = reasoning_text or "(none)"
 
                 log.info(f"ChatID: {chat_id} - Planner selected tools: {tool_names}")
                 log.info(f"ChatID: {chat_id} - Planner reasoning: {reason_preview}")
             else:
                 # Log when no tool calls are made
-                reasoning_text = str(getattr(response, "content", "") or "").strip()
+                reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
                 log.info(f"ChatID: {chat_id} - Planner selected tools: []")
                 log.info(f"ChatID: {chat_id} - Planner reasoning (no tools): {reasoning_text}")
         except Exception as e:
@@ -1044,7 +1045,7 @@ async def execute_tools_for_build_mode(
             has_more_tool_calls = bool(getattr(response, "tool_calls", None))
             if has_more_tool_calls:
                 try:
-                    _iter_content = str(getattr(response, "content", "") or "").strip()
+                    _iter_content = extract_text_from_content(getattr(response, "content", "") or "").strip()
                     if _iter_content:
                         ## change point: "πspecial reasoning blockπ:
                         stage = "planner_tool_selection"
@@ -1063,7 +1064,7 @@ async def execute_tools_for_build_mode(
 
             # FAILSAFE: Detect if LLM mistakenly put tool_calls in content in iterations
             if not _has_tool_calls:
-                iter_content = str(getattr(response, "content", "") or "").strip()
+                iter_content = extract_text_from_content(getattr(response, "content", "") or "").strip()
                 if "```tool_calls" in iter_content:
                     log.warning(f"ChatID: {chat_id} - DETECTED (iteration {iteration_count}): LLM output tool_calls as markdown. Stripping.")
                     cleaned_content = re.sub(r"```tool_calls\s*\n?\[[\s\S]*?\]\s*\n?```", "", iter_content).strip()
@@ -1081,14 +1082,14 @@ async def execute_tools_for_build_mode(
                         else:
                             tool_names.append(getattr(_tc, "name", ""))
 
-                    reasoning_text = str(getattr(response, "content", "") or "").strip()
+                    reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
                     reason_preview = reasoning_text or "(none)"
 
                     log.info(f"ChatID: {chat_id} - Planner selected tools (iteration {iteration_count}): {tool_names}")
                     log.info(f"ChatID: {chat_id} - Planner reasoning (iteration {iteration_count}): {reason_preview}")
                 else:
                     # Log when no tool calls are made in iteration
-                    reasoning_text = str(getattr(response, "content", "") or "").strip()
+                    reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
                     log.info(f"ChatID: {chat_id} - Planner selected tools (iteration {iteration_count}): []")
                     log.info(f"ChatID: {chat_id} - Planner reasoning (iteration {iteration_count}, no tools): {reasoning_text}")
             except Exception as e:
@@ -1220,7 +1221,7 @@ async def execute_tools_for_build_mode(
             ANSWER_DELIMITER = "ππANSWERππ"
             content = ""
             if hasattr(response, "content") and response.content:
-                content = str(response.content).strip()
+                content = extract_text_from_content(response.content).strip()
                 # Strip delimiter - we only want the final answer part for persistence
                 if ANSWER_DELIMITER in content:
                     parts = content.split(ANSWER_DELIMITER, 1)
@@ -1280,7 +1281,7 @@ async def execute_tools_for_build_mode(
         ANSWER_DELIMITER = "ππANSWERππ"
         final_response_content = ""
         if hasattr(response, "content") and response.content:
-            content = str(response.content).strip()
+            content = extract_text_from_content(response.content).strip()
             # Strip delimiter - we only want the final answer part for persistence
             if ANSWER_DELIMITER in content:
                 parts = content.split(ANSWER_DELIMITER, 1)

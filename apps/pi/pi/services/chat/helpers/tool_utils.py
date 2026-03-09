@@ -2614,7 +2614,7 @@ async def batch_llm_stream_by_words(llm_stream: AsyncIterator[Any], words_per_ba
         if not chunk_content:
             continue
 
-        batched = batcher.add(str(chunk_content))
+        batched = batcher.add(extract_text_from_content(chunk_content))
         if batched:
             yield batched
 

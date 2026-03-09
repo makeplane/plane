@@ -17,6 +17,8 @@ from pydantic import SecretStr
 from pi import settings
 from pi.core.vectordb.client import VectorStore
 from pi.services.llm.llms import LLMConfig
+from pi.services.llm.llms import _create_custom_llm_config
+from pi.services.llm.llms import create_custom_llm
 from pi.services.llm.llms import create_openai_llm
 from pi.services.retrievers.pg_store import get_ml_model_id_sync
 
@@ -128,23 +130,46 @@ def validate_cohere_key(api_key: Optional[str] = None, base_url: Optional[str] =
 def validate_custom_llm(api_key: Optional[str] = None, base_url: Optional[str] = None, model_key: Optional[str] = None) -> tuple[bool, str]:
     """Validate custom self-hosted LLM connectivity."""
 
-    key = api_key or settings.llm_config.CUSTOM_LLM_API_KEY or "not-needed"
-    url = base_url or settings.llm_config.CUSTOM_LLM_BASE_URL
     model = model_key or settings.llm_config.CUSTOM_LLM_MODEL_KEY
+    provider = settings.llm_config.CUSTOM_LLM_PROVIDER.lower().strip()
 
-    if not url:
-        return False, "CUSTOM_LLM_BASE_URL not configured"
     if not model:
         return False, "CUSTOM_LLM_MODEL_KEY not configured"
 
+    if provider == "bedrock":
+        aws_region = settings.llm_config.CUSTOM_LLM_AWS_REGION
+        if not aws_region:
+            return False, "CUSTOM_LLM_AWS_REGION not configured"
+    else:
+        url = base_url or settings.llm_config.CUSTOM_LLM_BASE_URL
+        if not url:
+            return False, "CUSTOM_LLM_BASE_URL not configured"
+
     try:
-        config = LLMConfig(model=model, base_url=url, api_key=key, streaming=False, temperature=0.0)
-        llm = create_openai_llm(config, track_tokens=False)
-        llm.invoke("Hi")
-        return True, f"Valid custom LLM. Model: {model}, URL: {url}"
+        # Build the config exactly like the production code path
+        config = _create_custom_llm_config(streaming=False)
+
+        # Apply caller-supplied overrides
+        if api_key:
+            config.api_key = api_key
+        if base_url:
+            config.base_url = base_url
+        if model_key:
+            config.model = model_key
+
+        llm = create_custom_llm(config, track_tokens=False)
+        response = llm.invoke("Hi")
+
+        return True, (
+            f"Valid custom LLM. Model: {settings.llm_config.CUSTOM_LLM_MODEL_KEY}\n\n"
+            f"Base url: {settings.llm_config.CUSTOM_LLM_BASE_URL}\n\n"
+            f"Region: {settings.llm_config.CUSTOM_LLM_AWS_REGION}\n\n"
+            f"Response: {response.content}"
+        )
     except Exception as e:
         clean_msg = _extract_error_message(str(e))
-        return False, f"Custom LLM validation failed: {clean_msg}"
+        label = "Bedrock " if provider == "bedrock" else ""
+        return False, f"Custom {label}LLM validation failed: {clean_msg}"
 
 
 def validate_embedding_model_id(model_id: Optional[str] = None) -> tuple[bool, str]:

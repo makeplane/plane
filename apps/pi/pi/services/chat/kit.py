@@ -35,6 +35,7 @@ from pi.services.llm import llms
 from pi.services.llm.error_handling import llm_error_handler
 from pi.services.llm.error_handling import streaming_error_handler
 from pi.services.llm.llms import _is_custom_model
+from pi.services.llm.llms import create_custom_llm
 from pi.services.llm.llms import get_lightweight_llm
 
 # from pi.services.retrievers import thread_store
@@ -128,7 +129,7 @@ class ChatKit(AttachmentMixin):
                     model=TOOL_LLM,
                     base_url=settings.llm_config.CUSTOM_LLM_BASE_URL,
                     api_key=settings.llm_config.CUSTOM_LLM_API_KEY or "not-needed",
-                    temperature=0.2,
+                    temperature=None,
                     streaming=tool_llm_streaming,
                 )
             else:
@@ -161,7 +162,9 @@ class ChatKit(AttachmentMixin):
             settings.llm_model.CLAUDE_SONNET_4_6,
         ]
 
-        if is_direct_anthropic:
+        if _is_custom_model(switch_llm):
+            self.tool_llm = llms.LazyLLM(lambda cfg=tool_config: create_custom_llm(cfg))
+        elif is_direct_anthropic:
             # Use ChatAnthropic for direct Anthropic models (supports prompt caching)
             self.tool_llm = llms.LazyLLM(lambda: create_anthropic_llm(tool_config))
         else:
@@ -262,7 +265,7 @@ Provide concise, relevant context from the attachment(s):"""
             response = await context_llm.ainvoke([context_message])
 
             if hasattr(response, "content"):
-                return str(response.content).strip()
+                return extract_text_from_content(response.content).strip()
             else:
                 return str(response).strip()
 

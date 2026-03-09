@@ -291,12 +291,24 @@ class LLMConfig:
 
     # Custom Self-Hosted LLM Configuration
     CUSTOM_LLM_ENABLED: bool = field(default_factory=lambda: os.getenv("CUSTOM_LLM_ENABLED", "false").lower() == "true")
+
+    CUSTOM_LLM_NAME: str = field(default_factory=lambda: (os.getenv("CUSTOM_LLM_NAME") or "").strip() or "Custom LLM")
     CUSTOM_LLM_MODEL_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_MODEL_KEY", ""))
+    CUSTOM_LLM_DESCRIPTION: str = field(default_factory=lambda: (os.getenv("CUSTOM_LLM_DESCRIPTION") or "").strip() or "Custom LLM")
+    CUSTOM_LLM_PROVIDER: str = field(default_factory=lambda: (os.getenv("CUSTOM_LLM_PROVIDER") or "").strip() or "openai")
+
     CUSTOM_LLM_BASE_URL: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_BASE_URL", ""))
-    CUSTOM_LLM_API_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_API_KEY", "not-needed"))
-    CUSTOM_LLM_NAME: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_NAME", "Self-Hosted LLM"))
-    CUSTOM_LLM_DESCRIPTION: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_DESCRIPTION", "Custom self-hosted OpenAI-compatible model"))
+    CUSTOM_LLM_API_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_API_KEY", ""))
     CUSTOM_LLM_MAX_TOKENS: int = field(default_factory=lambda: int(os.getenv("CUSTOM_LLM_MAX_TOKENS", "128000")))
+    CUSTOM_LLM_AWS_REGION: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_AWS_REGION", ""))
+
+    # Provider → required config fields
+    LLM_PROVIDER_REQUIRED_ENV: dict[str, list[str]] = field(
+        default_factory=lambda: {
+            "openai": ["CUSTOM_LLM_MODEL_KEY", "CUSTOM_LLM_API_KEY", "CUSTOM_LLM_BASE_URL"],
+            "bedrock": ["CUSTOM_LLM_MODEL_KEY", "CUSTOM_LLM_API_KEY", "CUSTOM_LLM_AWS_REGION"],
+        }
+    )
 
 
 @dataclass
@@ -520,6 +532,14 @@ class Settings:
         colorlog.getLogger("botocore.endpoint").setLevel(colorlog.INFO)
         colorlog.getLogger("botocore.client").setLevel(colorlog.INFO)
         colorlog.getLogger("botocore.utils").setLevel(colorlog.INFO)
+        colorlog.getLogger("botocore.credentials").setLevel(colorlog.WARNING)
+        colorlog.getLogger("botocore.tokens").setLevel(colorlog.WARNING)
+
+        # Suppress langchain_aws noisy logs
+        colorlog.getLogger("langchain_aws").setLevel(colorlog.WARNING)
+        colorlog.getLogger("langchain_aws.utils").setLevel(colorlog.ERROR)
+        colorlog.getLogger("langchain_aws.llms.bedrock").setLevel(colorlog.WARNING)
+        colorlog.getLogger("langchain_aws.chat_models.bedrock").setLevel(colorlog.WARNING)
 
         # Suppress Datadog trace debug logs and errors (if agent not running)
         colorlog.getLogger("ddtrace").setLevel(colorlog.WARNING)
