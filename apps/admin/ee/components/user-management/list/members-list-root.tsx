@@ -19,6 +19,7 @@ import { useMemberColumns } from "./helper";
 import type { RowData } from "./helper";
 import { useInstanceUser } from "@/plane-admin/hooks/store/use-instance-user";
 import { RemoveMemberModal } from "../remove-member-modal";
+import { ToggleRoleModal } from "../toggle-role-modal";
 import { Button } from "@plane/propel/button";
 import useSWR from "swr";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
@@ -26,6 +27,9 @@ import { EmptyStateCompact } from "@plane/propel/empty-state";
 export const UserListRoot: FC = observer(function UserListRoot() {
   // state
   const [removeMemberModal, setRemoveMemberModal] = useState<RowData | null>(null);
+  const [toggleRoleModalData, setToggleRoleModalData] = useState<{ rowData: RowData; role: "user" | "admin" } | null>(
+    null
+  );
   // store hooks
   const { fetchUsers, prevPage, nextPage, hasPrevPage, hasNextPage, loader, userIds, users } = useInstanceUser();
 
@@ -34,7 +38,11 @@ export const UserListRoot: FC = observer(function UserListRoot() {
     setRemoveMemberModal(rowData);
   };
 
-  const columns = useMemberColumns({ handleRemoveMember });
+  const handleToggleRole = (rowData: RowData, role: "user" | "admin") => {
+    setToggleRoleModalData({ rowData, role });
+  };
+
+  const columns = useMemberColumns({ handleRemoveMember, handleToggleRole });
 
   // SWR
   useSWR(`USER_MANAGEMENT_LIST`, () => fetchUsers(), {
@@ -89,6 +97,16 @@ export const UserListRoot: FC = observer(function UserListRoot() {
           isOpen={!!removeMemberModal}
           onClose={() => setRemoveMemberModal(null)}
           data={removeMemberModal}
+        />
+      )}
+
+      {/* Toggle Role Modal */}
+      {toggleRoleModalData && (
+        <ToggleRoleModal
+          isOpen={!!toggleRoleModalData}
+          onClose={() => setToggleRoleModalData(null)}
+          data={toggleRoleModalData.rowData}
+          role={toggleRoleModalData.role}
         />
       )}
     </>

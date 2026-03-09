@@ -12,9 +12,6 @@
  */
 
 import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
-import { Menu } from "@plane/propel/menu";
-import { useInstanceUser } from "@/plane-admin/hooks/store/use-instance-user";
-import { useUser } from "@/hooks/store";
 import type { RowData } from "../helper";
 
 type TProps = {
@@ -22,13 +19,7 @@ type TProps = {
 };
 export const AccountTypeColumn = (props: TProps) => {
   const { rowData } = props;
-  const { toggleUserRole } = useInstanceUser();
-  const { currentUser } = useUser();
-
   const isSuspended = rowData.member.is_active === false;
-  const isAdmin = rowData.member.is_instance_admin;
-  const isCurrentUser = currentUser?.id === rowData.member.id;
-
   return (
     <div className="w-32">
       {isSuspended ? (
@@ -37,13 +28,8 @@ export const AccountTypeColumn = (props: TProps) => {
             Suspended
           </Pill>
         </div>
-      ) : isCurrentUser ? (
-        <div className="text-12">{isAdmin ? "Instance Admin" : "User"}</div>
       ) : (
-        <Menu label={isAdmin ? "Instance Admin" : "User"} noBorder>
-          <Menu.MenuItem onClick={() => toggleUserRole(rowData.member.id, "admin")}>Instance Admin</Menu.MenuItem>
-          <Menu.MenuItem onClick={() => toggleUserRole(rowData.member.id, "user")}>User</Menu.MenuItem>
-        </Menu>
+        <div className="text-caption-sm-regular">{rowData.member.is_instance_admin ? "Instance Admin" : "User"}</div>
       )}
     </div>
   );
