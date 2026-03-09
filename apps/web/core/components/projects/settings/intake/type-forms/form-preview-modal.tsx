@@ -27,11 +27,26 @@ type Props = {
   projectId: string;
   typeId: string;
   formTitle: string;
+  formDescription?: string;
+  showDescription?: boolean;
+  isTitleRequired?: boolean;
+  isDescriptionRequired?: boolean;
   selectedFields: string[];
 };
 
 export const IntakeFormPreviewModal = observer(function IntakeFormPreviewModal(props: Props) {
-  const { isOpen, onClose, projectId, typeId, formTitle, selectedFields } = props;
+  const {
+    isOpen,
+    onClose,
+    projectId,
+    typeId,
+    formTitle,
+    formDescription,
+    showDescription,
+    isTitleRequired,
+    isDescriptionRequired,
+    selectedFields,
+  } = props;
 
   // hooks
   const { t } = useTranslation();
@@ -78,6 +93,10 @@ export const IntakeFormPreviewModal = observer(function IntakeFormPreviewModal(p
               projectCoverImage={currentProjectDetails.cover_image_url}
               projectCoverImageFallback={DEFAULT_COVER_IMAGE_URL}
               formTitle={formTitle || ""}
+              formDescription={formDescription}
+              showDescription={showDescription}
+              isTitleRequired={isTitleRequired}
+              isDescriptionRequired={isDescriptionRequired}
               properties={formProperties}
               onSubmit={async (data) => console.log("Form submitted:", data)}
             />

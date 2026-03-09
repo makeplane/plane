@@ -6279,8 +6279,6 @@ the way you want to from the sources you specify.`,
       "sub-title": "Let the team know what you would like them to work on.",
       name: "Name",
       email: "Email",
-      about: "What's this work item about?",
-      description: "Describe what should happen",
       description_placeholder:
         "Add as much detail as you'd like to help the team identify your exact situation and needs.",
       loading: "Creating",

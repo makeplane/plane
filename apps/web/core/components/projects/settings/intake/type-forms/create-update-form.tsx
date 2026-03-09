@@ -19,6 +19,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { filterIntakeEligibleProperties } from "@plane/propel/domain/intake-form";
 import { CloseIcon, EyeOpenIcon } from "@plane/propel/icons";
+import { AlignLeft, CaseSensitive, Plus } from "lucide-react";
 import { Menu } from "@plane/propel/menu";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/propel/utils";
@@ -73,7 +74,10 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
 
     return {
       name: "",
+      description: "",
       work_item_type: typeId,
+      is_workitem_name_required: true,
+      is_workitem_description_required: true,
       ...data,
       form_fields: formFields,
     };
@@ -104,6 +108,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
   ];
 
   const selectedFields: string[] = watch("form_fields") as string[];
+  const showDescription = watch("is_workitem_description_required") ?? true;
 
   // handlers
   const handleSelectField = (fields: string[]) => {
@@ -161,7 +166,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
   return (
     <>
       <div className="bg-surface-1 rounded-md border border-subtle">
-        <div className="p-3">
+        <div className="p-4">
           {/* Form Header */}
           <div className="flex justify-between">
             <span className="text-secondary text-14 font-medium">
@@ -191,9 +196,11 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
               </Menu>
             </div>
           </div>
-          <div className="flex justify-between mt-3">
-            <div className="spacey-1 w-[65%]">
-              <label className="text-tertiary text-13 font-medium">{intakeFormT("form_title")}</label>
+          <div className="flex gap-5 justify-between mt-3">
+            <div className="flex flex-col gap-2 flex-grow">
+              <label className="text-primary text-14 font-medium">
+                Form title <span className="text-danger-primary">*</span>
+              </label>
               <Controller
                 control={control}
                 name="name"
@@ -214,18 +221,72 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
               />
               {errors.name && <p className="text-danger-primary text-11">{errors.name.message}</p>}
             </div>
-            <div className="spacey-1 w-[30%]">
-              <label className="text-tertiary text-13 font-medium">{intakeFormT("work_item_type")}</label>
-              <div className="p-2  border border-subtle-1 rounded-md flex items-center gap-2">
+            <div className="flex flex-col gap-2 w-[30%]">
+              <label className="text-primary text-14 font-medium">Work item type</label>
+              <div className="px-3 py-2 border border-subtle rounded-lg flex items-center gap-2">
                 <IssueTypeIdentifier issueTypeId={typeId} size={"xs"} />
-                <span className="text-secondary text-11">{workItemType?.name}</span>
+                <span className="text-placeholder text-14">{workItemType?.name}</span>
               </div>
             </div>
           </div>
+          {/* Form Description */}
+          <div className="mt-5 flex flex-col gap-2">
+            <label className="text-primary text-14 font-medium">Form description</label>
+            <Controller
+              control={control}
+              name="description"
+              rules={{}}
+              render={({ field }) => (
+                <textarea
+                  {...field}
+                  value={field.value ?? ""}
+                  placeholder="Describe your form here"
+                  className={cn(
+                    "w-full h-[100px] rounded-lg border border-subtle bg-transparent px-3 py-2 text-14 text-secondary placeholder:text-placeholder focus:border-primary focus:outline-none resize-none",
+                    errors.description && "border-danger-primary"
+                  )}
+                />
+              )}
+            />
+            {errors.description && <p className="text-danger-primary text-11">{errors.description.message}</p>}
+          </div>
           {/* Properties  List */}
-          <div className="mt-2 space-y-2">
-            <span className="text-placeholder text-11 uppercase font-medium">{t("properties")}</span>
-            <div className="flex flex-col gap-2">
+          <div className="mt-5 space-y-2">
+            <span className="text-disabled text-11 uppercase font-semibold">Properties</span>
+            <div className="flex flex-col gap-3">
+              {/* Built-in Title and Description fields */}
+              <div className="p-3 rounded-lg border border-subtle flex gap-2 items-center">
+                <div className="flex flex-1 gap-2 items-center">
+                  <CaseSensitive className="size-4 text-secondary" />
+                  <span className="text-secondary text-13 font-medium">Title</span>
+                </div>
+              </div>
+              {showDescription ? (
+                <div className="p-3 rounded-lg border border-subtle flex gap-2 items-center">
+                  <div className="flex flex-1 gap-2 items-center">
+                    <AlignLeft className="size-4 text-secondary" />
+                    <span className="text-secondary text-13 font-medium">Description</span>
+                  </div>
+                  <Menu ellipsis>
+                    <Menu.MenuItem
+                      onClick={() => setValue("is_workitem_description_required", false, { shouldDirty: true })}
+                      className="flex items-center gap-2 text-danger-primary"
+                    >
+                      <CloseIcon className="size-4" />
+                      <span className="text-11">Remove property</span>
+                    </Menu.MenuItem>
+                  </Menu>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setValue("is_workitem_description_required", true, { shouldDirty: true })}
+                  className="flex items-center gap-1 text-13 text-primary-muted hover:text-primary cursor-pointer"
+                >
+                  <Plus className="size-3.5" />
+                  <span>Add description</span>
+                </button>
+              )}
               {selectedFields.map((field) => (
                 <TypeFormPropertiesListItem
                   key={field}
@@ -245,7 +306,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
           </div>
         </div>
         {/* Form footer */}
-        <div className="border-t border-subtle flex justify-end gap-2 p-3">
+        <div className="border-t border-subtle flex justify-end gap-3 p-4">
           <Button variant="secondary" onClick={handleDiscard}>
             {t("discard")}
           </Button>
@@ -260,6 +321,10 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
         projectId={projectId.toString()}
         typeId={typeId}
         formTitle={watch("name") as string}
+        formDescription={watch("description") as string}
+        showDescription={showDescription}
+        isDescriptionRequired={showDescription}
+        isTitleRequired={(watch("is_workitem_name_required") ?? true) as boolean}
         selectedFields={selectedFields}
       />
     </>

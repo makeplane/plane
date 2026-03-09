@@ -40,6 +40,8 @@ class IntakeFormSettingsSerializer(BaseSerializer):
             "is_active",
             "intake",
             "work_item_type",
+            "is_workitem_description_required",
+            "is_workitem_name_required",
             "created_at",
             "updated_at",
             "workspace",
@@ -110,8 +112,8 @@ class IntakeFormFieldSerializer(BaseSerializer):
 class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
-    name = serializers.CharField(required=True)
-    description_html = serializers.CharField(required=True, allow_blank=True)
+    name = serializers.CharField(required=False)
+    description_html = serializers.CharField(required=False, allow_blank=True)
     values = serializers.JSONField(required=False)
     attachment_ids = serializers.ListField(required=False)
 
@@ -290,7 +292,7 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
 
         # Validate name
         if not attrs.get("name"):
-            raise serializers.ValidationError("Name is required")
+            attrs["name"] = "Untitled"
 
         return attrs
 

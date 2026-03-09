@@ -24,6 +24,8 @@ export type TIntakeTypeForm = {
   is_active?: boolean;
   description?: string;
   anchor?: string;
+  is_workitem_name_required?: boolean;
+  is_workitem_description_required?: boolean;
 };
 
 export type TIntakeFormSettingsResponse = Omit<TIntakeTypeForm, "form_fields"> & {
@@ -61,6 +63,10 @@ export type TIntakePublishFormProps = {
 
   // Form configuration
   formTitle: string;
+  formDescription?: string;
+  showDescription?: boolean;
+  isTitleRequired?: boolean;
+  isDescriptionRequired?: boolean;
   properties: TIntakeFormProperty[];
 
   // Form handlers

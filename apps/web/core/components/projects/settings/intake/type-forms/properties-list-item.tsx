@@ -35,11 +35,11 @@ export const TypeFormPropertiesListItem = observer(function TypeFormPropertiesLi
   const intakeFormT = (path: string) => t(`project_settings.features.intake.form.${path}`);
 
   return (
-    <div className="p-2 rounded-md border border-subtle-1">
+    <div className="p-3 rounded-lg border border-subtle">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
           <IssuePropertyLogo icon_props={property?.logo_props?.icon} colorClassName="text-secondary" size={12} />
-          <span className="text-secondary text-11">{property.display_name}</span>
+          <span className="text-secondary text-13 font-medium">{property.display_name}</span>
         </div>
         <div className="flex gap-2 items-center">
           {property.is_required && (

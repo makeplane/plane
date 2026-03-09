@@ -169,6 +169,10 @@ function CreateTypeFormModal({ formSettings, anchor }: TProps) {
                 // CoverImage1 is the default cover image in web/helpers/cover-image.helper.ts
                 projectCoverImageFallback={CoverImage1}
                 formTitle={formSettings.name}
+                formDescription={formSettings.description}
+                showDescription={formSettings.is_workitem_description_required !== false}
+                isTitleRequired={formSettings.is_workitem_name_required !== false}
+                isDescriptionRequired={formSettings.is_workitem_description_required !== false}
                 properties={formProperties}
                 isSubmitting={isSubmitting}
                 onSubmit={handleFormSubmit}
