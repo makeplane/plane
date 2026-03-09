@@ -11,12 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC, SyntheticEvent } from "react";
-import React from "react";
+import type { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
 // Plane
 import type { TIssuePriorities } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import type { DateRange } from "@plane/propel/calendar";
 import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
 import type { IIssueDisplayProperties } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
@@ -96,6 +96,14 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
       updateIssue(epic.project_id, epic.id, { target_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
+  const handleDateRangeUpdate = (range: DateRange) => {
+    if (updateIssue)
+      updateIssue(epic.project_id, epic.id, {
+        start_date: range.from ? renderFormattedPayloadDate(range.from) : null,
+        target_date: range.to ? renderFormattedPayloadDate(range.to) : null,
+      });
+  };
+
   const minDate = getDate(epic.start_date);
   minDate?.setDate(minDate.getDate());
 
@@ -151,8 +159,7 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
               to: getDate(epic.target_date) || undefined,
             }}
             onSelect={(range) => {
-              handleStartDate(range?.from ?? null);
-              handleTargetDate(range?.to ?? null);
+              if (range) handleDateRangeUpdate(range);
             }}
             hideIcon={{
               from: false,

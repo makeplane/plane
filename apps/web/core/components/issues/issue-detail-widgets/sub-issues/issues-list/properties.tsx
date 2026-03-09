@@ -16,6 +16,7 @@ import type { SyntheticEvent } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import type { DateRange } from "@plane/propel/calendar";
 import { StartDatePropertyIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
@@ -71,6 +72,15 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
     if (issue.project_id) {
       updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
         target_date: date ? renderFormattedPayloadDate(date) : null,
+      });
+    }
+  };
+
+  const handleDateRangeUpdate = (range: DateRange) => {
+    if (issue.project_id) {
+      updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
+        start_date: range.from ? renderFormattedPayloadDate(range.from) : null,
+        target_date: range.to ? renderFormattedPayloadDate(range.to) : null,
       });
     }
   };
@@ -153,8 +163,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             }}
             placement="top-end"
             onSelect={(range) => {
-              handleStartDate(range?.from ?? null);
-              handleTargetDate(range?.to ?? null);
+              if (range) handleDateRangeUpdate(range);
             }}
             hideIcon={{
               from: false,

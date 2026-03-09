@@ -60,6 +60,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
 import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
+import type { DateRange } from "@plane/propel/calendar";
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -172,6 +173,14 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       await updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
+  const handleDateRangeUpdate = async (range: DateRange) => {
+    if (updateIssue)
+      await updateIssue(issue.project_id, issue.id, {
+        start_date: range.from ? renderFormattedPayloadDate(range.from) : null,
+        target_date: range.to ? renderFormattedPayloadDate(range.to) : null,
+      });
+  };
+
   const handleEstimate = async (value: string | undefined) => {
     if (updateIssue) await updateIssue(issue.project_id, issue.id, { estimate_point: value });
   };
@@ -251,8 +260,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
               to: getDate(issue.target_date) || undefined,
             }}
             onSelect={(range) => {
-              handleStartDate(range?.from ?? null);
-              handleTargetDate(range?.to ?? null);
+              if (range) handleDateRangeUpdate(range);
             }}
             hideIcon={{
               from: false,
