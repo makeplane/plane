@@ -25,10 +25,11 @@ export interface RowData {
 
 type TProps = {
   handleRemoveMember: (rowData: RowData) => void;
+  handleToggleRole: (rowData: RowData, role: "user" | "admin") => void;
 };
 
 export const useMemberColumns = (props: TProps) => {
-  const { handleRemoveMember } = props;
+  const { handleRemoveMember, handleToggleRole } = props;
   // store hooks
   const { currentUser } = useUser();
   const instanceUser = useInstanceUser();
@@ -42,7 +43,12 @@ export const useMemberColumns = (props: TProps) => {
       key: "full_name",
       content: "",
       tdRender: (rowData: RowData) => (
-        <NameColumn currentUser={currentUser} rowData={rowData} handleRemoveMember={handleRemoveMember} />
+        <NameColumn
+          currentUser={currentUser}
+          rowData={rowData}
+          handleRemoveMember={handleRemoveMember}
+          handleToggleRole={handleToggleRole}
+        />
       ),
       thRender: () => (
         <MemberHeaderColumn
