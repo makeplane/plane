@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 // plane types
 import { useTranslation } from "@plane/i18n";
 import type { IUser } from "@plane/types";
@@ -23,23 +22,37 @@ export function UserGreetingsView(props: IUserGreetingsView) {
   // store hooks
   const { t } = useTranslation();
 
+  // Use profile timezone when set to a real zone; treat UTC/Etc/UTC as unset (common
+  // backend default) so we show local time. Otherwise use browser/OS timezone.
+  const profileZone = user?.user_timezone?.trim();
+  const isUtcDefault =
+    !profileZone || profileZone === "UTC" || profileZone === "Etc/UTC" || profileZone.toLowerCase() === "utc";
+  const timeZone = isUtcDefault
+    ? typeof Intl !== "undefined" && Intl.DateTimeFormat
+      ? Intl.DateTimeFormat().resolvedOptions().timeZone
+      : undefined
+    : profileZone;
+
   const hour = new Intl.DateTimeFormat("en-US", {
     hour12: false,
     hour: "numeric",
+    ...(timeZone && { timeZone }),
   }).format(currentTime);
 
   const date = new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
+    ...(timeZone && { timeZone }),
   }).format(currentTime);
 
   const weekDay = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
+    ...(timeZone && { timeZone }),
   }).format(currentTime);
 
   const timeString = new Intl.DateTimeFormat("en-US", {
-    timeZone: user?.user_timezone,
-    hour12: false, // Use 24-hour format
+    ...(timeZone && { timeZone }),
+    hour12: false,
     hour: "2-digit",
     minute: "2-digit",
   }).format(currentTime);
