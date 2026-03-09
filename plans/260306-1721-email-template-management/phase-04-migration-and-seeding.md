@@ -14,9 +14,10 @@
 
 ## Key Insights
 
-- System works without seeding — file fallback is default behavior
-- Seeding only needed if admin wants to start editing from current template content
-- List endpoint should show all registered templates regardless of DB existence
+- System works without seeding — list endpoint auto-creates empty DB records from registry
+- Seeding pre-populates html_content from file templates (so admin sees content immediately in editor)
+- Without seeding: templates show file-based content via fallback, admin must save to create override
+<!-- Updated: Validation Session 9 - List auto-creates records, seeding pre-fills content -->
 
 ## Requirements
 

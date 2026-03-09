@@ -31,7 +31,8 @@
 - Show available variables for selected template
 - Preview rendered HTML with sample data (iframe or shadow DOM)
 - Send test email to specified address
-- Reset template to default (delete DB override)
+- Reset template to default (clear content, keep record for stable UUID)
+<!-- Updated: Validation Session 9 - Reset clears content instead of deleting -->
 
 ### Non-functional
 
@@ -72,7 +73,8 @@ class EmailTemplateService {
   listTemplates(): Promise<IEmailTemplate[]>;
   getTemplate(id: string): Promise<IEmailTemplate>;
   updateTemplate(id: string, data: Partial<IEmailTemplate>): Promise<IEmailTemplate>;
-  resetTemplate(id: string): Promise<void>;
+  resetTemplate(id: string): Promise<IEmailTemplate>;  // POST reset, returns cleared record
+  <!-- Updated: Validation Session 9 - Reset via POST instead of DELETE -->
   previewTemplate(id: string): Promise<{ html: string }>;
   sendTestEmail(id: string, email: string): Promise<void>;
 }
@@ -125,6 +127,8 @@ interface IEmailTemplate {
   html_content: string;
   is_active: boolean;
   has_override: boolean;
+  is_critical: boolean; // Updated: Validation Session 18 - Critical templates cannot be disabled
+  is_complex: boolean; // Updated: Validation Session 20 - Complex templates show warning banner
   variables: Array<{ key: string; label: string; type: string }>;
   category: string;
   name: string;
@@ -135,28 +139,42 @@ interface IEmailTemplate {
 
 ## Implementation Steps
 
+<!-- Updated: Validation Session 15 - Scout admin app patterns before implementing -->
+
+0. **Pre-scout**: Verify admin app patterns before implementing
+   - Check existing store pattern (makeObservable usage, action patterns)
+   - Check existing service pattern (API base URL, method signatures)
+   - Check data fetching pattern (useSWR vs useEffect vs other)
+   - Check routing structure (routes.ts config, folder conventions)
+   - Check sidebar/navigation component location and pattern
+   - Document findings and adjust implementation accordingly
+
 1. **Types**: Define `IEmailTemplate` interface in store file or separate types file
 
 2. **Service**: Create `email-template.service.ts`
    - Extend pattern from existing admin services
    - Base URL: `/api/instances/email-templates/`
-   - Methods: list, get, update, reset (DELETE), preview (POST), testSend (POST)
+   - Methods: list, get, update, reset (POST, clear content), preview (POST), testSend (POST)
 
 3. **Store**: Create `email-template.store.ts`
    - `makeObservable` with explicit annotations
    - Observable: `templateMap`, `loader`
    - Actions: `fetchTemplates`, `updateTemplate`, `resetTemplate`, `previewTemplate`, `sendTestEmail`
-   - Computed: `templateList` (sorted by category), `getTemplateBySlug`
+   - Computed: `templateList` (sorted by category), `getTemplateById`
+   <!-- Updated: Validation Session 7 - Removed getTemplateBySlug, UUID only -->
 
 4. **Root Store**: Add `emailTemplate: EmailTemplateStore` to root store
 
 5. **Hook**: Create `use-email-template.ts` in `hooks/store/`
 
 6. **List Page**: `email-templates/page.tsx`
-   - useSWR to fetch templates
+   - Follow existing admin app data fetching pattern (check code before implementing — do NOT assume useSWR)
+   <!-- Updated: Validation Session 6 - Follow existing pattern, no i18n needed -->
    - Group by category, display as cards/table
    - Click navigates to `email-templates/{uuid}` (UUID from EmailTemplate model)
    - Show override badge if `has_override === true`
+   - Show disabled badge/icon if `is_active === false`
+   <!-- Updated: Validation Session 17 - Disabled indicator on list page -->
 
 7. **Editor Page**: `email-templates/[id]/page.tsx`
    - Fetch single template detail
@@ -167,6 +185,12 @@ interface IEmailTemplate {
 8. **Editor Form**: `template-editor-form.tsx`
    - Monaco Editor (lazy loaded via dynamic import) for HTML content with syntax highlighting
    - Subject line input
+   - is_active toggle button with visual indicator (disabled templates show warning banner: "Emails of this type will NOT be sent")
+   - Toggle hidden/disabled for critical templates (registry `critical=True` — auth/magic_signin, auth/forgot_password)
+   - Show "Advanced template — edit with caution" warning banner for complex templates (registry `complex=True`)
+     <!-- Updated: Validation Session 16 - Added is_active toggle UI -->
+     <!-- Updated: Validation Session 18 - Critical templates cannot be disabled, warning text on toggle -->
+     <!-- Updated: Validation Session 20 - Warning banner for complex templates -->
    - Save button calls `updateTemplate`
    - Reset button calls `resetTemplate` with confirmation
 
@@ -180,7 +204,9 @@ interface IEmailTemplate {
 
 11. **Test Send Form**: `template-test-send-form.tsx`
     - Email input + send button
-    - Toast notification on success/error
+    - API returns 202 Accepted (Celery task dispatched)
+    - Toast: "Test email queued" (not "sent") on success, error toast on failure
+    <!-- Updated: Validation Session 8 - Test-send via Celery, show "queued" message -->
 
 12. **Variable Warning**: Show warning banner/toast when save response contains `warnings` (missing variables)
 <!-- Updated: Validation Session 2 - Variable warning UI on save -->
@@ -200,12 +226,19 @@ interface IEmailTemplate {
 - [ ] Create store hook
 - [ ] Create list page
 - [ ] Create editor page
-- [ ] Create template-editor-form component
+- [ ] Create template-editor-form component (includes is_active toggle, disabled for critical templates)
+  <!-- Updated: Validation Session 16 - is_active toggle in editor -->
+  <!-- Updated: Validation Session 18 - Toggle disabled for critical templates, warning text on disable -->
 - [ ] Create template-variable-sidebar component
 - [ ] Create template-preview-pane component
 - [ ] Create template-test-send-form component
 - [ ] Add routes to routes.ts
+- [ ] Add disabled badge/icon on list page (is_active indicator)
+- [ ] Add warning banner for complex templates in editor (is_complex flag)
+<!-- Updated: Validation Session 20 - Complex template warning -->
 - [ ] Add sidebar navigation link
+- [ ] Manual QA: verify list, edit, preview, test-send, reset flows in browser
+<!-- Updated: Validation Session 12 - Frontend tests = manual QA per Session 6 decision -->
 
 ## Success Criteria
 
@@ -213,12 +246,13 @@ interface IEmailTemplate {
 - Editor displays current HTML content (DB override or file default)
 - Preview renders correctly with sample data
 - Test email arrives at specified address
-- Reset removes DB override and shows file default
+- Reset clears content and shows file default (record kept, UUID stable)
 - All components <150 lines
 
 ## Risk Assessment
 
-- **HTML editor UX**: Using Monaco Editor (@monaco-editor/react — needs install, not yet in deps) for syntax highlighting + autocomplete
+- **HTML editor UX**: Using Monaco Editor (@monaco-editor/react — install in apps/admin/package.json, verify bundler supports dynamic import) for syntax highlighting + autocomplete
+  <!-- Updated: Validation Session 11 - Install in admin app specifically, verify bundler -->
   <!-- Updated: Validation Session 5 - Monaco NOT in deps, needs pnpm add -->
   <!-- Updated: Validation Session 1 - Monaco Editor instead of textarea, UUID routing, +3h effort -->
 - **Preview XSS**: Sandboxed iframe with `srcdoc` prevents script execution in parent

@@ -20,7 +20,7 @@ from django.utils import timezone
 from plane.db.models import EmailNotificationLog, Issue, User
 from plane.license.utils.instance_value import get_email_configuration
 from plane.settings.redis import redis_instance
-from plane.utils.email import generate_plain_text_from_html
+from plane.utils.email import generate_plain_text_from_html, get_email_logo_url
 from plane.utils.exception_logger import log_exception
 
 
@@ -263,6 +263,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                 "user_preference": f"{base_api}/{str(issue.project.workspace.slug)}/settings/account/notifications/",
                 "comments": comments,
                 "entity_type": "issue",
+                "logo_url": get_email_logo_url(),
             }
             html_content = render_to_string("emails/notifications/issue-updates.html", context)
             text_content = generate_plain_text_from_html(html_content)

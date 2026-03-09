@@ -1,5 +1,7 @@
 # Phase 2: Template Registry
 
+> **Note:** Merged with Phase 1 as single implementation unit (Validation Session 12). Implement after Phase 1 model/API, before moving to frontend.
+
 ## Context Links
 
 - [Phase 1: Backend Model & API](./phase-01-backend-model-and-api.md)
@@ -44,15 +46,19 @@ TEMPLATE_REGISTRY = {
         "name": "Magic Sign-In",
         "category": "auth",
         "file_path": "emails/auth/magic_signin.html",
+        "critical": True,  # Updated: Validation Session 18 - Cannot be disabled
         "variables": [
             {"key": "code", "label": "Login Code", "type": "string"},
             {"key": "email", "label": "Recipient Email", "type": "string"},
         ],
+        "default_subject": "Your Login Code",
         "sample_data": {
             "code": "123456",
             "email": "user@example.com",
         },
     },
+    <!-- Updated: Validation Session 7 - default_subject added to all registry entries -->
+    <!-- Updated: Validation Session 18 - critical=True for auth/* templates (cannot be disabled) -->
     # ... 11 more templates
 }
 ```
@@ -60,40 +66,64 @@ TEMPLATE_REGISTRY = {
 ### Override Utility
 
 ```python
-def render_email_template(slug: str, context: dict) -> tuple[str, str]:
+def render_email_template(slug: str, context: dict) -> tuple[str, str] | None:
     """Render email template with DB override fallback to file.
-    Returns (subject, html_body). Subject empty string if no override."""
-    subject = ""
-    try:
-        template = EmailTemplate.objects.get(slug=slug, is_active=True)
-        from django.template import Template, Context
-        t = Template(template.html_content)
-        html = t.render(Context(context))
-        subject = template.subject or ""
-        return (subject, html)
-    except EmailTemplate.DoesNotExist:
-        registry = TEMPLATE_REGISTRY.get(slug)
-        if registry:
-            return (subject, render_to_string(registry["file_path"], context))
+    Returns (subject, html_body) or None if template is disabled."""
+    # Updated: Validation Session 18 - Returns None when disabled (block send)
+    registry = TEMPLATE_REGISTRY.get(slug)
+    if not registry:
         raise ValueError(f"Unknown template: {slug}")
+    default_subject = registry.get("default_subject", "")
+    try:
+        template = EmailTemplate.objects.get(slug=slug)
+        if not template.is_active:
+            # Updated: Validation Session 18 - Disabled template = block email send, return None
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"Template '{slug}' is disabled, skipping email send")
+            return None
+        if template.html_content:  # Has override
+            from django.template import Template, Context
+            try:
+                t = Template(template.html_content)
+                html = t.render(Context(context))
+                subject = template.subject or default_subject
+                return (subject, html)
+            except TemplateSyntaxError:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"TemplateSyntaxError in DB template '{slug}', falling back to file template")
+                return (default_subject, render_to_string(registry["file_path"], context))
+        # Empty content = reset state, use file fallback
+        return (default_subject, render_to_string(registry["file_path"], context))
+    except EmailTemplate.DoesNotExist:
+        return (default_subject, render_to_string(registry["file_path"], context))
+    # Updated: Validation Session 9 - Return registry default_subject in fallback, handle reset state
+    # Updated: Validation Session 13 - Catch TemplateSyntaxError, fallback to file template + log warning
+    # Updated: Validation Session 18 - is_active=False returns None (block send), not fallback
 ```
 
 ### Template Inventory (12 templates)
 
-| Slug                               | Category      | Variables                                                            |
-| ---------------------------------- | ------------- | -------------------------------------------------------------------- |
-| `auth/magic_signin`                | Auth          | code, email                                                          |
-| `auth/forgot_password`             | Auth          | email, forgot_password_url                                           |
-| `invitations/workspace_invitation` | Invitations   | first_name, workspace_name, abs_url, email                           |
-| `invitations/project_invitation`   | Invitations   | first_name, project_name, workspace_name, abs_url, email             |
-| `notifications/project_addition`   | Notifications | project_name, workspace_name, email, inviter_first_name, project_url |
-| `notifications/issue_updates`      | Notifications | (complex — issue data, summary)                                      |
-| `notifications/webhook_deactivate` | Notifications | webhook_url, workspace_name                                          |
-| `user/user_activation`             | User          | email                                                                |
-| `user/user_deactivation`           | User          | email                                                                |
-| `user/email_updated`               | User          | old_email, new_email                                                 |
-| `exports/analytics`                | Exports       | email, first_name                                                    |
-| `test_email`                       | System        | email                                                                |
+| Slug                               | Category      | Critical | Variables                                                            |
+| ---------------------------------- | ------------- | -------- | -------------------------------------------------------------------- |
+| `auth/magic_signin`                | Auth          | Yes      | code, email                                                          |
+| `auth/forgot_password`             | Auth          | Yes      | email, forgot_password_url                                           |
+| `invitations/workspace_invitation` | Invitations   | No       | first_name, workspace_name, abs_url, email                           |
+| `invitations/project_invitation`   | Invitations   | No       | first_name, project_name, workspace_name, abs_url, email             |
+| `notifications/project_addition`   | Notifications | No       | project_name, workspace_name, email, inviter_first_name, project_url |
+| `notifications/issue_updates`      | Notifications | No       | (complex — issue data, summary) — `complex: True`                    |
+
+<!-- Updated: Validation Session 20 - complex flag for templates with heavy template tag usage -->
+
+| `notifications/webhook_deactivate` | Notifications | No | webhook_url, workspace_name |
+| `user/user_activation` | User | No | email |
+| `user/user_deactivation` | User | No | email |
+| `user/email_updated` | User | No | old_email, new_email |
+| `exports/analytics` | Exports | No | email, first_name |
+| `test_email` | System | No | email |
+
+<!-- Updated: Validation Session 18 - Critical column added, auth/* templates marked critical -->
 
 ## Related Code Files
 
@@ -103,12 +133,21 @@ def render_email_template(slug: str, context: dict) -> tuple[str, str]:
 
 ### Modify
 
-- `apps/api/plane/bgtasks/project_add_user_email_task.py` — Use `render_email_template`
-- `apps/api/plane/bgtasks/user_activation_email_task.py` — Use `render_email_template`
-- `apps/api/plane/bgtasks/user_deactivation_email_task.py` — Use `render_email_template`
-- `apps/api/plane/bgtasks/user_email_update_task.py` — Use `render_email_template`
-- `apps/api/plane/bgtasks/email_notification_task.py` — Use `render_email_template`
-- (+ remaining bgtask files that call render_to_string for emails)
+<!-- Updated: Validation Session 17 - Complete enumerated file list (11 files, 12 calls) -->
+
+- `apps/api/plane/bgtasks/magic_link_code_task.py` — `auth/magic_signin`
+- `apps/api/plane/bgtasks/forgot_password_task.py` — `auth/forgot_password`
+- `apps/api/plane/bgtasks/workspace_invitation_task.py` — `invitations/workspace_invitation`
+- `apps/api/plane/bgtasks/project_invitation_task.py` — `invitations/project_invitation`
+- `apps/api/plane/bgtasks/project_add_user_email_task.py` — `notifications/project_addition`
+- `apps/api/plane/bgtasks/email_notification_task.py` — `notifications/issue-updates` ⚠️ **SPECIAL HANDLING**: Has post-email logic (EmailNotificationLog.update + release_lock). Must ensure lock release runs even when template disabled — place None check after lock, use finally block.
+  <!-- Updated: Validation Session 19 - Critical side effect: lock release must not be skipped -->
+- `apps/api/plane/bgtasks/webhook_task.py` — `notifications/webhook-deactivate`
+- `apps/api/plane/bgtasks/user_activation_email_task.py` — `user/user_activation`
+- `apps/api/plane/bgtasks/user_deactivation_email_task.py` — `user/user_deactivation`
+- `apps/api/plane/bgtasks/user_email_update_task.py` — `auth/magic_signin` + `user/email_updated` (2 calls)
+- `apps/api/plane/bgtasks/analytic_plot_export.py` — `exports/analytics`
+- `apps/api/plane/db/management/commands/test_email.py` — `test_email`
 
 ## Implementation Steps
 
@@ -121,29 +160,65 @@ def render_email_template(slug: str, context: dict) -> tuple[str, str]:
    - Fall back to file-based `render_to_string`
    - Wrap in try/except for template syntax errors
 
-3. Add `get_all_templates()` helper for list endpoint
-   - Merge registry metadata with DB override status (has_override, updated_at)
+3. Add `ensure_all_templates()` helper — auto-creates missing DB records from registry + cleans orphans
+   - Called by list endpoint before querying
+   - For each registry slug: if no DB record exists, bulk_create with empty html_content + default_subject
+   - Use `bulk_create(ignore_conflicts=True)` for race condition safety (multiple API workers)
+   <!-- Updated: Validation Session 20 - bulk_create(ignore_conflicts=True) for concurrency safety -->
+   - Delete orphaned DB records: `EmailTemplate.objects.exclude(slug__in=registry_slugs).delete()`
+   <!-- Updated: Validation Session 20 - Clean up orphans when registry changes -->
+   - Ensures all 12 templates always have UUID in DB
+   - Idempotent — safe to call multiple times
+   - **Cache with flag**: Module-level `_templates_ensured = False`. After first successful run, set `True`. Skip on subsequent calls within same process. Resets on restart.
+     <!-- Updated: Validation Session 9 - Auto-create DB records instead of virtual records -->
+     <!-- Updated: Validation Session 11 - Cache with module-level flag for performance -->
 
-4. Update bgtask files to use `render_email_template` instead of direct `render_to_string`
-   - Unpack tuple: `subject, html = render_email_template("slug", context)`
-   - Use DB subject with fallback: `subject = subject or "Hardcoded Subject Here"`
-   - Each bgtask file: ~2-3 line change
-   <!-- Updated: Validation Session 5 - subject unpacking pattern -->
+4. Add `get_all_templates()` helper for list endpoint
+   - Queries all EmailTemplate records (always 12 after ensure_all_templates)
+   - Enriches with registry metadata (name, category, variables, sample_data)
+   - Sets `has_override=True` when html_content is non-empty, `has_override=False` when empty
+   - Frontend receives uniform data shape with real UUIDs
+   <!-- Updated: Validation Session 7+9 - Real DB records, has_override based on content -->
 
-5. Verify each bgtask's context dict matches registry variable definitions
+5. Update bgtask files to use `render_email_template` instead of direct `render_to_string`
+   - Call: `result = render_email_template("slug", context)`
+   - Check: `if result is None: logger.info("Template disabled, skipping"); return`
+   - Unpack: `subject, html = result`
+   <!-- Updated: Validation Session 18 - Bgtask callers check for None return (disabled template) -->
+   - Subject returned from render_email_template() is already resolved (DB override or registry default)
+   - Bgtask simply uses returned subject — no hardcoded fallback needed. ~3-4 line change
+   <!-- Updated: Validation Session 9 - Bgtask no longer needs hardcoded subject fallback -->
+   - **Big bang migration**: Update ALL callers in single commit (no wrapper/v2 pattern)
+     <!-- Updated: Validation Session 5 - subject unpacking pattern -->
+     <!-- Updated: Validation Session 6 - Big bang migration strategy confirmed -->
+   - ⚠️ **EXCEPTION: `email_notification_task.py`**: Has `release_lock()` + `EmailNotificationLog.update(sent_at=...)` after send. Place None check AFTER lock acquisition. Ensure `release_lock()` in finally block so lock is released regardless of template status.
+   <!-- Updated: Validation Session 19 - email_notification_task.py has critical post-email side effects -->
+
+6. Verify each bgtask's context dict matches registry variable definitions
 
 ## Todo List
 
 - [ ] Create template registry with all 12 templates
 - [ ] Implement render_email_template utility
-- [ ] Implement get_all_templates helper
+- [ ] Implement ensure_all_templates helper (auto-create missing DB records)
+- [ ] Implement get_all_templates helper (query DB + enrich with registry metadata)
 - [ ] Update project_add_user_email_task.py
 - [ ] Update user_activation_email_task.py
 - [ ] Update user_deactivation_email_task.py
 - [ ] Update user_email_update_task.py
 - [ ] Update email_notification_task.py
-- [ ] Update remaining bgtask files (forgot_password, magic_signin, invitations, etc.)
+- [ ] Update magic_link_code_task.py
+- [ ] Update forgot_password_task.py
+- [ ] Update workspace_invitation_task.py
+- [ ] Update project_invitation_task.py
+- [ ] Update webhook_task.py
+- [ ] Update analytic_plot_export.py
+- [ ] Update test_email.py management command
 - [ ] Verify sample_data completeness for each template
+- [ ] Add `complex: True` to `notifications/issue_updates` registry entry
+<!-- Updated: Validation Session 20 - Complex template flag -->
+- [ ] Write backend tests for render_email_template utility + ensure_all_templates + get_all_templates
+<!-- Updated: Validation Session 12 - Tests inline per phase -->
 
 ## Success Criteria
 
@@ -161,3 +236,7 @@ def render_email_template(slug: str, context: dict) -> tuple[str, str]:
 
 - `render_email_template` uses Django's Template engine (sandboxed, no code execution)
 - Only admin-created content rendered — not user input
+- Rendering uses `Context()` only — NOT `RequestContext()`. No settings, request, or context processors exposed to template.
+<!-- Updated: Validation Session 8 - Restrict rendering context for defense in depth -->
+- Critical templates (auth/\*) cannot be disabled — prevents lockout scenarios (e.g., magic_signin disabled = no login)
+<!-- Updated: Validation Session 18 - Critical template protection -->

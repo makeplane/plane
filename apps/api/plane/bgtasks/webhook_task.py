@@ -50,7 +50,7 @@ from plane.db.models import (
     IssueAssignee,
 )
 from plane.license.utils.instance_value import get_email_configuration
-from plane.utils.email import generate_plain_text_from_html
+from plane.utils.email import generate_plain_text_from_html, get_email_logo_url
 from plane.utils.exception_logger import log_exception
 from plane.settings.mongo import MongoConnection
 
@@ -220,6 +220,7 @@ def send_webhook_deactivation_email(webhook_id: str, receiver_id: str, current_s
             "email": receiver.email,
             "message": message,
             "webhook_url": f"{current_site}/{str(webhook.workspace.slug)}/settings/webhooks/{str(webhook.id)}",
+            "logo_url": get_email_logo_url(),
         }
         html_content = render_to_string("emails/notifications/webhook-deactivate.html", context)
         text_content = generate_plain_text_from_html(html_content)
