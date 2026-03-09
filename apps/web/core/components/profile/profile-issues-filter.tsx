@@ -77,7 +77,7 @@ export const ProfileIssuesFilter = observer(function ProfileIssuesFilter() {
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
-      {userId && <WorkItemFiltersToggle entityType={EIssuesStoreType.PROFILE} entityId={userId} />}
+      {userId && <WorkItemFiltersToggle enablePQL entityType={EIssuesStoreType.PROFILE} entityId={userId} />}
       <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={

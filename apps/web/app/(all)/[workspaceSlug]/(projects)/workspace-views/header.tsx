@@ -160,7 +160,9 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
               workspaceSlug={workspaceSlug.toString()}
             />
           )}
-          {globalViewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={globalViewId} />}
+          {globalViewId && (
+            <WorkItemFiltersToggle enablePQL entityType={EIssuesStoreType.GLOBAL} entityId={globalViewId} />
+          )}
           {!isLocked && (
             <FiltersDropdown title={t("common.display")} placement="bottom-end">
               <DisplayFiltersSelection

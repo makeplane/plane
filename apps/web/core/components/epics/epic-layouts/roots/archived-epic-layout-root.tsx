@@ -19,8 +19,8 @@ import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 // components
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
 // hooks
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row/basic";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
@@ -69,7 +69,7 @@ export const ArchivedEpicLayoutRoot = observer(function ArchivedEpicLayoutRoot(p
       >
         {({ filter }) => (
           <>
-            {filter && <WorkItemFiltersRow filter={filter.richFiltersInstance} />}
+            <WorkItemFiltersRowWrapper filter={filter} />
             <div className="relative h-full w-full overflow-auto">
               <Suspense>
                 <ArchivedEpicListLayout />

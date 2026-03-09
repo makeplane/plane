@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { IIssueFilters } from "@plane/types";
 import { EIssueLayoutTypes, EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
@@ -121,14 +121,14 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
     const isStaticView = STATIC_VIEW_TYPES.includes(globalViewId);
     const hasViewDetails = Boolean(viewDetails);
 
-    if ((!isStaticView && !hasViewDetails) || !viewDetails) return undefined;
+    if (!isStaticView && !hasViewDetails) return undefined;
 
     return {
       displayFilters: workItemFilters?.displayFilters,
       displayProperties: workItemFilters?.displayProperties,
       kanbanFilters: workItemFilters?.kanbanFilters,
-      richFilters: viewDetails?.rich_filters,
-      pqlFilters: viewDetails?.pql_filters,
+      richFilters: viewDetails?.rich_filters || {},
+      pqlFilters: viewDetails?.pql_filters || DEFAULT_PQL_FILTER_VALUE,
       lastUsedFilterType: viewDetails?.last_used_filter || "rich_filters",
     };
   }, [globalViewId, viewDetails, workItemFilters]);

@@ -280,6 +280,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                       filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
                       initialWorkItemFilters={workItemFilters}
                       isTemporary
+                      handlePQLChange={onPQLFiltersChange}
                       updateFilters={async (updatedFilters) => {
                         switch (updatedFilters.type) {
                           case "rich_filters":

@@ -75,7 +75,7 @@ export const TeamHeaderFilters = observer(function TeamHeaderFilters(props: Prop
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
-      <WorkItemFiltersToggle entityType={EIssuesStoreType.TEAM} entityId={teamspaceId} />
+      <WorkItemFiltersToggle enablePQL entityType={EIssuesStoreType.TEAM} entityId={teamspaceId} />
       <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={

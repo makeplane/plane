@@ -76,7 +76,7 @@ export const TeamspaceProjectWorkItemFilters = observer(function TeamspaceProjec
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
-      <WorkItemFiltersToggle entityType={EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS} entityId={projectId} />
+      <WorkItemFiltersToggle enablePQL entityType={EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS} entityId={projectId} />
       <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={

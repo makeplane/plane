@@ -56,6 +56,7 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
     entityType,
     entityId,
     filtersToShowByLayout,
+    handlePQLChange,
     initialWorkItemFilters,
     isTemporary,
     updateFilters,
@@ -90,14 +91,15 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
         richFilters: {
           initialExpression: initialRichTextFilters,
           onExpressionChange: (expression) => updateFilters({ type: "rich_filters", expression }),
-          showOnMount,
         },
         pql: {
           initialValue: initialPqlFilters,
           onSubmit: async (value) => {
             await updateFilters({ type: "pql_filters", value });
           },
+          onValueChange: handlePQLChange,
         },
+        showOnMount,
         viewOptions,
         lastUsedFilterType,
         updateLastUsedFilterTypeCallback: async (filterType) => {

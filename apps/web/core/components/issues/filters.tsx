@@ -116,7 +116,7 @@ export const HeaderFilters = observer(function HeaderFilters(props: Props) {
         />
       </div>
       <div data-tour="work-item-step-2">
-        <WorkItemFiltersToggle entityType={storeType} entityId={projectId} />
+        <WorkItemFiltersToggle enablePQL entityType={storeType} entityId={projectId} />
       </div>
       <FiltersDropdown
         miniIcon={<SlidersHorizontal className="size-3.5" />}

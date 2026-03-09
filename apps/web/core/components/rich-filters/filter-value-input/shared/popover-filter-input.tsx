@@ -70,6 +70,7 @@ export const PopoverFilterInput = observer(function PopoverFilterInput(props: TP
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <Popover.Trigger>
         <button
+          type="button"
           className={cn(
             FILTER_BUTTON_CLASSNAMES,
             isOpen && "bg-layer-1",

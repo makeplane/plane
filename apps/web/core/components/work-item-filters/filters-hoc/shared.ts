@@ -16,6 +16,7 @@ import type { WorkItemFilterInstance } from "@plane/shared-state";
 import type {
   EIssuesStoreType,
   IIssueFilters,
+  PQLFilterValue,
   TWorkItemFilterExpression,
   TWorkItemFilterProperty,
   TWorkItemFiltersSaveViewOptions,
@@ -28,6 +29,7 @@ export type TSharedWorkItemFiltersProps = {
   entityType: EIssuesStoreType; // entity type (project, cycle, workspace, teamspace, etc)
   filtersToShowByLayout: TWorkItemFilterProperty[];
   updateFilters: (params: UpdateAdvancedFiltersParams) => Promise<void>;
+  handlePQLChange?: (newValue: PQLFilterValue) => void;
   isTemporary?: boolean;
   showOnMount?: boolean;
 } & ({ isTemporary: true; entityId?: string } | { isTemporary?: false; entityId: string }); // entity id (project_id, cycle_id, workspace_id, etc)

@@ -222,8 +222,9 @@ class TeamspaceUserPropertiesEndpoint(TeamspaceBaseEndpoint):
     permission_classes = [TeamspacePermission]
 
     def patch(self, request, slug, team_space_id):
-        team_space_properties = TeamspaceUserProperty.objects.get(
-            user=request.user, team_space_id=team_space_id, workspace__slug=slug
+        workspace = Workspace.objects.get(slug=slug)
+        team_space_properties, _ = TeamspaceUserProperty.objects.get_or_create(
+            user=request.user, team_space_id=team_space_id, workspace=workspace
         )
 
         team_space_properties.filters = request.data.get("filters", team_space_properties.filters)
@@ -235,8 +236,9 @@ class TeamspaceUserPropertiesEndpoint(TeamspaceBaseEndpoint):
         team_space_properties.display_properties = request.data.get(
             "display_properties", team_space_properties.display_properties
         )
-        team_space_properties.last_used_filter = request.data.get("last_used_filter", 
-                                                                  team_space_properties.last_used_filter)
+        team_space_properties.last_used_filter = request.data.get(
+            "last_used_filter", team_space_properties.last_used_filter
+        )
         team_space_properties.save()
 
         serializer = TeamspaceUserPropertySerializer(team_space_properties)

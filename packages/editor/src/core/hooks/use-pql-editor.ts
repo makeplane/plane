@@ -187,7 +187,7 @@ export const usePQLEditor = ({
       ) {
         ed.chain().focus().insertContent("(").run();
         applyInsertSuggestion(ed, suggestion);
-        ed.chain().focus().insertContent(", ").run();
+        // ed.chain().focus().insertContent(", ").run();
         handleDropdownClose();
         return;
       }
@@ -200,7 +200,7 @@ export const usePQLEditor = ({
       const isCompleteInListValue =
         "insertNode" in suggestion || (suggestion.kind === "function" && !suggestion.insertCursorInsideParens);
       if (isCompleteInListValue && (contextKind === "AFTER_IN" || contextKind === "AFTER_IN_COMMA")) {
-        ed.chain().focus().insertContent(", ").run();
+        // ed.chain().focus().insertContent(", ").run();
       }
       handleDropdownClose();
     },

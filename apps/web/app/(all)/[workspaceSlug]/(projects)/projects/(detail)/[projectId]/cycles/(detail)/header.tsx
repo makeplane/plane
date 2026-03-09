@@ -220,7 +220,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                 activeLayout={activeLayout}
               />
             </div>
-            <WorkItemFiltersToggle entityType={EIssuesStoreType.CYCLE} entityId={cycleId} />
+            <WorkItemFiltersToggle enablePQL entityType={EIssuesStoreType.CYCLE} entityId={cycleId} />
             <FiltersDropdown
               title={t("common.display")}
               placement="bottom-end"

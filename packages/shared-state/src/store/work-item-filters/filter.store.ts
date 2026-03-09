@@ -93,8 +93,8 @@ export class WorkItemFilterStore implements IWorkItemFilterStore {
         existingFilter.richFiltersInstance.onExpressionChange = params.richFilters.onExpressionChange;
       }
       // Update visibility if provided
-      if (params.richFilters.showOnMount !== undefined) {
-        existingFilter.richFiltersInstance.toggleVisibility(params.richFilters.showOnMount);
+      if (params.showOnMount !== undefined) {
+        existingFilter.richFiltersInstance.toggleVisibility(params.showOnMount);
       }
       return existingFilter;
     }

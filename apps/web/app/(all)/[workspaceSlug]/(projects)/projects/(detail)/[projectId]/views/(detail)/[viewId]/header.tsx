@@ -188,7 +188,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
               selectedLayout={activeLayout}
             />
           )}
-          {viewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.PROJECT_VIEW} entityId={viewId} />}
+          {viewId && <WorkItemFiltersToggle enablePQL entityType={EIssuesStoreType.PROJECT_VIEW} entityId={viewId} />}
           {!viewDetails.is_locked && (
             <FiltersDropdown title="Display" placement="bottom-end">
               <DisplayFiltersSelection

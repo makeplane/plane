@@ -29,11 +29,11 @@ import { workItemFiltersAdapter } from "./adapter";
 
 export type WorkItemFilterInstanceInitParams<E extends TExternalFilter> = {
   richFilters: {
-    showOnMount?: boolean;
     expressionOptions?: TExpressionOptions<E>;
     initialExpression?: TWorkItemFilterExpression;
     onExpressionChange?: (expression: TWorkItemFilterExpression) => void;
   };
+  showOnMount?: boolean;
   pql: InitializePQLFilterInstanceParams;
   viewOptions?: TWorkItemFiltersViewOptions<E>;
   lastUsedFilterType: AdvancedFilterType;
@@ -44,11 +44,13 @@ export interface IWorkItemFilterInstance {
   // observables
   lastUsedFilterType: AdvancedFilterType;
   viewOptions: TWorkItemFiltersViewOptions<TWorkItemFilterExpression> | undefined;
+  isFiltersRowVisible: boolean;
   // actions
   updateLastUsedFilterType: (filterType: AdvancedFilterType) => Promise<void>;
   clearFilters: () => Promise<void>;
   saveView: () => Promise<void>;
   updateView: () => Promise<void>;
+  toggleFiltersRowVisibility: (isVisible?: boolean) => void;
   // helpers
   canClearFilters: boolean;
   canSaveView: boolean;
@@ -62,6 +64,7 @@ export class WorkItemFilterInstance implements IWorkItemFilterInstance {
   // observables
   lastUsedFilterType: IWorkItemFilterInstance["lastUsedFilterType"] = "rich_filters";
   viewOptions: IWorkItemFilterInstance["viewOptions"];
+  isFiltersRowVisible: IWorkItemFilterInstance["isFiltersRowVisible"] = false;
   // instances
   richFiltersInstance: IWorkItemFilterInstance["richFiltersInstance"];
   pqlFiltersInstance: IWorkItemFilterInstance["pqlFiltersInstance"];
@@ -75,7 +78,7 @@ export class WorkItemFilterInstance implements IWorkItemFilterInstance {
       onExpressionChange: params.richFilters.onExpressionChange,
       options: {
         expression: { ...params.richFilters.expressionOptions, ...params.viewOptions },
-        visibility: params.richFilters.showOnMount
+        visibility: params.showOnMount
           ? { autoSetVisibility: false, isVisibleOnMount: true }
           : { autoSetVisibility: true },
       },
@@ -87,11 +90,17 @@ export class WorkItemFilterInstance implements IWorkItemFilterInstance {
     this.lastUsedFilterType = params.lastUsedFilterType;
     this.updateLastUsedFilterTypeCallback = params.updateLastUsedFilterTypeCallback;
     this.viewOptions = params.viewOptions;
+    this.isFiltersRowVisible =
+      !!params.showOnMount ||
+      (params.lastUsedFilterType === "rich_filters"
+        ? this.richFiltersInstance.hasActiveFilters
+        : params.pql.initialValue.stripped.trim() !== "");
 
     makeObservable<WorkItemFilterInstance, "activeFilterInstance">(this, {
       // observables
       lastUsedFilterType: observable.ref,
       viewOptions: observable.ref,
+      isFiltersRowVisible: observable.ref,
       // computed
       activeFilterInstance: computed,
       canClearFilters: computed,
@@ -102,6 +111,7 @@ export class WorkItemFilterInstance implements IWorkItemFilterInstance {
       clearFilters: action,
       saveView: action,
       updateView: action,
+      toggleFiltersRowVisibility: action,
     });
   }
 
@@ -155,5 +165,15 @@ export class WorkItemFilterInstance implements IWorkItemFilterInstance {
 
   updateView: IWorkItemFilterInstance["updateView"] = async () => {
     await this.activeFilterInstance?.updateView();
+  };
+
+  toggleFiltersRowVisibility: IWorkItemFilterInstance["toggleFiltersRowVisibility"] = (isVisible) => {
+    runInAction(() => {
+      if (isVisible === undefined) {
+        this.isFiltersRowVisible = !this.isFiltersRowVisible;
+      } else {
+        this.isFiltersRowVisible = isVisible;
+      }
+    });
   };
 }

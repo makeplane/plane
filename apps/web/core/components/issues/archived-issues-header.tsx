@@ -66,7 +66,7 @@ export const ArchivedIssuesHeader = observer(function ArchivedIssuesHeader() {
         <ArchiveTabsList />
       </Header.LeftItem>
       <Header.RightItem className="items-center">
-        <WorkItemFiltersToggle entityType={EIssuesStoreType.ARCHIVED} entityId={projectId} />
+        <WorkItemFiltersToggle enablePQL entityType={EIssuesStoreType.ARCHIVED} entityId={projectId} />
         <FiltersDropdown title={t("common.display")} placement="bottom-end">
           <DisplayFiltersSelection
             displayFilters={issueFilters?.displayFilters || {}}

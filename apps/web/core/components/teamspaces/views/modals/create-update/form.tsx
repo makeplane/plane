@@ -260,6 +260,7 @@ export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Prop
                       filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.filters}
                       initialWorkItemFilters={workItemFilters}
                       isTemporary
+                      handlePQLChange={onPQLFiltersChange}
                       updateFilters={async (updatedFilters) => {
                         switch (updatedFilters.type) {
                           case "rich_filters":

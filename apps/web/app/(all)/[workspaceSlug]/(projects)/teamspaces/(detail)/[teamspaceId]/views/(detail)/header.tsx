@@ -223,7 +223,7 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
             selectedLayout={activeLayout}
           />
         )}
-        {viewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.TEAM_VIEW} entityId={viewId} />}
+        {viewId && <WorkItemFiltersToggle enablePQL entityType={EIssuesStoreType.TEAM_VIEW} entityId={viewId} />}
         {!view?.is_locked && (
           <FiltersDropdown title={t("common.display")} placement="bottom-end">
             <DisplayFiltersSelection

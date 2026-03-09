@@ -17,6 +17,7 @@ import { observer } from "mobx-react";
 import type { PQLEditorHandle } from "@plane/editor";
 import { Tabs } from "@plane/propel/tabs";
 import type { AdvancedFilterType, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
 import type { TFiltersRowProps } from "@/components/rich-filters/filters-row";
 // local imports
@@ -47,7 +48,11 @@ export const WorkItemAdvancedFiltersRow = observer(function WorkItemAdvancedFilt
   if (!filter) return null;
 
   return (
-    <div className="p-2">
+    <div
+      className={cn("p-2", {
+        "p-0": rest.variant === "modal",
+      })}
+    >
       <Tabs
         value={selectedType}
         onValueChange={(value: AdvancedFilterType) => {

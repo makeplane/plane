@@ -15,6 +15,7 @@ import { observer } from "mobx-react";
 import { useParams } from "react-router";
 // plane imports
 import type { TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
 import type { TFiltersRowProps } from "@/components/rich-filters/filters-row";
 // plane web imports
@@ -35,14 +36,22 @@ export const WorkItemFiltersRowWrapper = observer(function WorkItemFiltersRowWra
 }: Props) {
   // params
   const { workspaceSlug } = useParams();
-  const isPQLEnabled = useFlag(workspaceSlug, "PQL");
+  // feature flag
+  const isPQLFlagEnabled = useFlag(workspaceSlug, "PQL");
+  const isFiltersRowVisible = !!rest.filter?.isFiltersRowVisible;
 
   if (!rest.filter) return null;
 
   return (
     <>
-      {!disablePQL && isPQLEnabled ? (
-        <WorkItemAdvancedFiltersRow {...rest} />
+      {!disablePQL && isPQLFlagEnabled ? (
+        <div
+          className={cn("w-full hidden transition-all", {
+            block: isFiltersRowVisible,
+          })}
+        >
+          <WorkItemAdvancedFiltersRow {...rest} />
+        </div>
       ) : (
         <WorkItemFiltersRow {...rest} filter={rest.filter.richFiltersInstance} />
       )}

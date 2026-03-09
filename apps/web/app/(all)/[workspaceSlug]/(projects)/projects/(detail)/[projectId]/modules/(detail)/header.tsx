@@ -214,7 +214,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                 activeLayout={activeLayout}
               />
             </div>
-            {moduleId && <WorkItemFiltersToggle entityType={EIssuesStoreType.MODULE} entityId={moduleId} />}
+            {moduleId && <WorkItemFiltersToggle enablePQL entityType={EIssuesStoreType.MODULE} entityId={moduleId} />}
             <FiltersDropdown
               title="Display"
               placement="bottom-end"

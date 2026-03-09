@@ -23,7 +23,7 @@ import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/boa
 import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/roots/profile-issues-root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row/basic";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -73,7 +73,7 @@ export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Prop
         {({ filter: profileWorkItemsFilter }) => (
           <>
             <div className="flex flex-col h-full w-full">
-              {profileWorkItemsFilter && <WorkItemFiltersRow filter={profileWorkItemsFilter.richFiltersInstance} />}
+              <WorkItemFiltersRowWrapper filter={profileWorkItemsFilter} />
               <div className="relative h-full w-full overflow-auto">
                 {activeLayout === "list" ? (
                   <ProfileIssuesListLayout />
