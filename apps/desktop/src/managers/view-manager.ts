@@ -22,6 +22,14 @@ import type { WindowLayoutMode } from "../stores/types";
 
 const TAB_BAR_HEIGHT = 44;
 
+/**
+ * Plane cloud deployment hosts.
+ * Self-hosted instances always serve app, api and assets from the same hostname,
+ * so cross-host handling is only needed for cloud hosts.
+ */
+const CLOUD_APP_HOST = "app.plane.so";
+const CLOUD_API_HOST = "api.plane.so";
+
 export class ViewManager {
   #views: Map<string, WebContentsView> = new Map();
   #loadedTabs: Set<string> = new Set();
@@ -341,57 +349,60 @@ export class ViewManager {
   }
 
   #setupViewHandlers(view: WebContentsView, id: string, instanceUrl: string): void {
-    const instanceHost = new URL(instanceUrl).hostname;
-
     view.webContents.setWindowOpenHandler(({ url: targetUrl }) => {
+      // Non-HTTP(S) URLs (mailto:, plane://, etc.): let Electron handle normally
       if (!targetUrl.startsWith("http://") && !targetUrl.startsWith("https://")) {
         return { action: "allow" };
       }
 
-      let targetHost: string;
-      try {
-        targetHost = new URL(targetUrl).hostname;
-      } catch {
-        void shell.openExternal(targetUrl);
-        return { action: "deny" };
-      }
+      switch (classifyDesktopNavigation(instanceUrl, targetUrl)) {
+        case "same_host_asset":
+        case "cloud_cross_host_asset":
+          view.webContents.downloadURL(targetUrl);
+          return { action: "deny" };
 
-      if (targetHost !== instanceHost) {
-        void shell.openExternal(targetUrl);
-        return { action: "deny" };
-      }
+        case "cloud_cross_host_auth":
+          // Auth redirect via window.open: open in a new in-app tab.
+          // The full URL is passed so the cross-host auth page loads correctly;
+          // tab path is corrected via did-navigate once auth redirects back to the instance.
+          this.createTab(targetUrl);
+          return { action: "deny" };
 
-      if (isAssetPath(targetUrl)) {
-        view.webContents.downloadURL(targetUrl);
-        return { action: "deny" };
-      }
+        case "same_host_page": {
+          const { pathname, search, hash } = new URL(targetUrl);
+          this.createTab(pathname + search + hash || "/");
+          return { action: "deny" };
+        }
 
-      const parsedUrl = new URL(targetUrl);
-      const newPath = parsedUrl.pathname + parsedUrl.search + parsedUrl.hash;
-      this.createTab(newPath || "/");
-      return { action: "deny" };
+        case "external_cross_host":
+        case "invalid_url":
+        default:
+          void shell.openExternal(targetUrl);
+          return { action: "deny" };
+      }
     });
 
     view.webContents.on("will-navigate", (event, targetUrl) => {
-      let targetHost: string;
-      try {
-        targetHost = new URL(targetUrl).hostname;
-      } catch {
-        return;
-      }
+      switch (classifyDesktopNavigation(instanceUrl, targetUrl)) {
+        case "same_host_asset":
+        case "cloud_cross_host_asset":
+          event.preventDefault();
+          view.webContents.downloadURL(targetUrl);
+          return;
 
-      if (targetHost !== instanceHost) {
-        event.preventDefault();
-        void shell.openExternal(targetUrl);
-        return;
-      }
+        case "same_host_page":
+        case "cloud_cross_host_auth":
+          return; // allow navigation to proceed in-app
 
-      if (!isAssetPath(targetUrl)) {
-        return;
-      }
+        case "external_cross_host":
+          event.preventDefault();
+          void shell.openExternal(targetUrl);
+          return;
 
-      event.preventDefault();
-      view.webContents.downloadURL(targetUrl);
+        case "invalid_url":
+        default:
+          return; // passthrough for unparseable URLs
+      }
     });
 
     view.webContents.on("page-title-updated", (_event, pageTitle) => {
@@ -715,5 +726,60 @@ export class ViewManager {
     const { width, height } = this.#window.getContentBounds();
     const tabBarHeight = this.#getTabBarHeight();
     view.setBounds({ x: 0, y: tabBarHeight, width, height: height - tabBarHeight });
+  }
+}
+
+/**
+ * How the desktop app should handle a given navigation URL.
+ *
+ * - "same_host_page":         Same hostname as instance, not an asset          → navigate in-app.
+ * - "same_host_asset":        Same hostname as instance, URL is a file/asset   → trigger download.
+ * - "cloud_cross_host_auth":  api.plane.so URL under /auth/                    → allow in-app (auth flow).
+ * - "cloud_cross_host_asset": api.plane.so URL that is a file/asset            → trigger download.
+ * - "external_cross_host":    Unrecognised different hostname                  → open in system browser.
+ * - "invalid_url":            Unparseable URL                                  → passthrough.
+ */
+type DesktopNavigationKind =
+  | "same_host_page"
+  | "same_host_asset"
+  | "cloud_cross_host_auth"
+  | "cloud_cross_host_asset"
+  | "external_cross_host"
+  | "invalid_url";
+
+/**
+ * Classifies a navigation URL so the desktop app can decide how to handle it.
+ * Single source of truth used by both setWindowOpenHandler and will-navigate.
+ *
+ * @param instanceUrl Full URL of the configured Plane instance (e.g. "https://app.plane.so").
+ * @param targetUrl   The URL being navigated to.
+ */
+function classifyDesktopNavigation(instanceUrl: string, targetUrl: string): DesktopNavigationKind {
+  try {
+    const instance = new URL(instanceUrl);
+    const target = new URL(targetUrl);
+    const isSameHost = target.hostname === instance.hostname;
+    const isCloudPair = instance.hostname === CLOUD_APP_HOST && target.hostname === CLOUD_API_HOST;
+    const isAsset = isAssetPath(targetUrl);
+    const isAuth = target.pathname.startsWith("/auth/");
+
+    if (isSameHost) {
+      return isAsset ? "same_host_asset" : "same_host_page";
+    }
+
+    if (isCloudPair) {
+      // Auth paths take priority: /auth/ navigation must stay in-app even if the path
+      // has a file-like suffix (unlikely, but explicit ordering makes intent clear).
+      if (isAuth) {
+        return "cloud_cross_host_auth";
+      }
+      if (isAsset) {
+        return "cloud_cross_host_asset";
+      }
+    }
+
+    return "external_cross_host";
+  } catch {
+    return "invalid_url";
   }
 }
