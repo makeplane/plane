@@ -46,12 +46,14 @@ export const StaffFormFields = observer(function StaffFormFields({ register, err
           <Input {...register("display_name")} placeholder="Display name" />
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">First name</label>
-          <Input {...register("first_name")} placeholder="First name" />
+          <label className="text-13 font-medium">First name *</label>
+          <Input {...register("first_name", { required: "Required" })} placeholder="First name" />
+          {errors.first_name && <p className="text-11 text-color-danger-primary">{errors.first_name.message}</p>}
         </div>
         <div className="space-y-1">
-          <label className="text-13 font-medium">Last name</label>
-          <Input {...register("last_name")} placeholder="Last name" />
+          <label className="text-13 font-medium">Last name *</label>
+          <Input {...register("last_name", { required: "Required" })} placeholder="Last name" />
+          {errors.last_name && <p className="text-11 text-color-danger-primary">{errors.last_name.message}</p>}
         </div>
         <div className="space-y-1">
           <label className="text-13 font-medium">Email *</label>

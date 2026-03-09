@@ -47,6 +47,8 @@ const StaffCreatePage = observer(function StaffCreatePage() {
         staff_id: data.staff_id,
         user: "",
         email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
         display_name: data.display_name || `${data.first_name} ${data.last_name}`.trim(),
         department: data.department || null,
         position: data.position,

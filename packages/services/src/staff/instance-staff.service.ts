@@ -60,7 +60,11 @@ export interface IInstanceStaffBulkImportResponse {
   errors: string[];
 }
 
-export type IInstanceStaffCreate = Omit<IInstanceStaff, "id" | "created_at" | "updated_at" | "user_detail" | "department_detail">;
+export type IInstanceStaffCreate = Omit<IInstanceStaff, "id" | "created_at" | "updated_at" | "user_detail" | "department_detail"> & {
+  first_name?: string;
+  last_name?: string;
+  password?: string;
+};
 export type IInstanceStaffUpdate = Partial<IInstanceStaffCreate>;
 
 export class InstanceStaffService extends APIService {

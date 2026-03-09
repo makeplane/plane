@@ -1,6 +1,7 @@
 # Python imports
 import csv
 import io
+import secrets
 
 # Django imports
 from django.db import transaction
@@ -88,9 +89,9 @@ class InstanceStaffEndpoint(BaseAPIView):
             )
 
         department = None
-        if data.get("department_id"):
+        if data.get("department"):
             department = Department.objects.filter(
-                pk=data["department_id"], deleted_at__isnull=True
+                pk=data["department"], deleted_at__isnull=True
             ).first()
             if not department:
                 return Response({"error": "Department not found"}, status=status.HTTP_400_BAD_REQUEST)
@@ -468,8 +469,9 @@ def _create_staff(department, data):
             "display_name": f"{data.get('last_name', '')} {data.get('first_name', '')}".strip(),
         },
     )
-    if user_created and data.get("password"):
-        user.set_password(data["password"])
+    if user_created:
+        password = data.get("password") or secrets.token_urlsafe(16)
+        user.set_password(password)
         user.save(update_fields=["password"])
 
     # Auto-join linked_workspace if department has one
