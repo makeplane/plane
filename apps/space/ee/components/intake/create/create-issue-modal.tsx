@@ -66,7 +66,7 @@ function CreateIssueModal({ project, anchor }: TProps) {
   const onSubmit = async (formData: Partial<TFormData>) => {
     // async request which may result error;
     try {
-      if (!descriptionEditorRef.current?.isEditorReadyToDiscard()) {
+      if (descriptionEditorRef.current && !descriptionEditorRef.current.isEditorReadyToDiscard()) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

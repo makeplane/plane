@@ -87,7 +87,7 @@ function CreateTypeFormModal({ formSettings, anchor }: TProps) {
   const handleFormSubmit = async (data: Record<string, unknown>): Promise<void> => {
     const formData = data as TFormSubmitData;
     try {
-      if (!descriptionEditorRef.current?.isEditorReadyToDiscard()) {
+      if (descriptionEditorRef.current && !descriptionEditorRef.current.isEditorReadyToDiscard()) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
