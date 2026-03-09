@@ -88,7 +88,7 @@ export const getReferredIssues = (text: string): LinkedIssues => {
 const extractIssues = (text: string, pattern: RegExp): string[] =>
   (text.match(pattern) || [])
     // Remove the square brackets from closed issues for consistency
-    .map((issue) => issue.replace(/[\[\]]/g, ""))
+    .map((issue) => issue.replace(/[[\]]/g, ""))
     .filter((issue): issue is string => issue != null);
 
 const createPlaneIssueReference = (issue: string, isClosing: boolean): IssueReference => {

@@ -21,24 +21,28 @@
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
     "lodash-es": "catalog:",
-    "lucide-react": "^0.454.0",
+    "lucide-react": "catalog:",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
     "mobx-utils": "catalog:",
-    "next-themes": "0.4.6",
+    "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@plane/tailwind-config": "workspace:*",
+    "@plane/tailwindcss": "workspace:*",
     "@plane/types": "workspace:*",
-    "@tailwindcss/typography": "0.5.19",
+    "@plane/typescript-config": "workspace:*",
+    "@tailwindcss/typography": "catalog:",
+    "@tailwindcss/vite": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "^5.1.4",
+    "@vitejs/plugin-react": "catalog:",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-node-polyfills": "^0.25.0"
+    "vite-plugin-node-polyfills": "catalog:",
+    "vite-tsconfig-paths": "catalog:"
   }
 }

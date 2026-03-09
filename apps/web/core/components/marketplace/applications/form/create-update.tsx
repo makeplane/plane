@@ -51,7 +51,7 @@ type Props = {
   handleFormSubmit: (data: Partial<TUserApplication>) => Promise<Partial<TUserApplication> | undefined>;
 };
 const singleUrlRegex =
-  /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+  /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const defaultFormData: Partial<TUserApplication> = {
   id: undefined,

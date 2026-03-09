@@ -1,6 +1,7 @@
 import path from "node:path";
 import * as dotenv from "@dotenvx/dotenvx";
 import { reactRouter } from "@react-router/dev/vite";
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { joinUrlPath } from "@plane/utils";
@@ -25,7 +26,7 @@ export default defineConfig(() => ({
   build: {
     assetsInlineLimit: 0,
   },
-  plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
+  plugins: [tailwindcss(), reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
   resolve: {
     alias: {
       // Next.js compatibility shims used within admin
@@ -44,7 +45,7 @@ export default defineConfig(() => ({
     devSourcemap: false,
   },
   optimizeDeps: {
-    exclude: ["@plane/tailwind-config"],
+    exclude: ["@plane/tailwindcss"],
     include: [
       "react",
       "react-dom",

@@ -13,7 +13,8 @@ RUN corepack enable pnpm
 
 FROM base AS builder
 
-RUN pnpm add -g turbo@2.7.4
+ARG TURBO_VERSION=2.8.13
+RUN pnpm add -g turbo@${TURBO_VERSION}
 
 COPY . .
 
@@ -23,9 +24,6 @@ RUN turbo prune --scope=space --docker
 # =========================================================================== #
 
 FROM base AS installer
-
-# Build in production mode; we still install dev deps explicitly below
-ENV NODE_ENV=production
 
 # Public envs required at build time (pick up via process.env)
 ARG VITE_API_BASE_URL=""
@@ -77,6 +75,8 @@ RUN pnpm turbo run build --filter=space
 # =========================================================================== #
 
 FROM base AS runner
+
+ENV NODE_ENV=production
 
 COPY --from=installer /app/apps/space/build ./apps/space/build
 COPY --from=installer /app/apps/space/node_modules ./apps/space/node_modules

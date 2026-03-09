@@ -1,0 +1,24 @@
+{
+  "name": "@plane/tailwindcss",
+  "version": "2.3.0",
+  "private": true,
+  "description": "common tailwind configuration across monorepo",
+  "license": "AGPL-3.0",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "style": "./index.css"
+    }
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "catalog:",
+    "tailwindcss": "catalog:"
+  },
+  "peerDependencies": {
+    "@tailwindcss/typography": "catalog:",
+    "tailwindcss": "catalog:"
+  }
+}

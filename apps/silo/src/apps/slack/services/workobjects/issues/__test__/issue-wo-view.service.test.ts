@@ -13,6 +13,7 @@
 
 // oxlint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+import { describe, expect, it, vi } from "vitest";
 import { IssueWorkObjectViewService } from "../issue-wo-view.service";
 import { EWorkObjectEntityType, EWorkObjectFieldType } from "@/apps/slack/types/workobjects";
 import type {
@@ -25,17 +26,17 @@ import type { ExIssueProperty, ExIssuePropertyOption, PlaneUser } from "@plane/s
 
 const MOCK_APP_BASE_URL = "https://app.plane.so";
 
-jest.mock("@/helpers/urls", () => ({
+vi.mock("@/helpers/urls", () => ({
   getUserProfileUrl: (workspaceSlug: string, userId: string) =>
     `${MOCK_APP_BASE_URL}/${workspaceSlug}/profile/${userId}`,
   getIssueUrlFromSequenceId: (workspaceSlug: string, projectIdentifier: string, sequenceId: string) =>
     `${MOCK_APP_BASE_URL}/${workspaceSlug}/browse/${projectIdentifier}-${sequenceId}`,
 }));
 
-jest.mock("@plane/logger", () => ({
+vi.mock("@plane/logger", () => ({
   logger: {
-    warn: jest.fn(),
-    info: jest.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
   },
 }));
 

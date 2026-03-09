@@ -2,4 +2,4 @@
 _.file = ".env"
 
 [tools]
-node = "22.18.0"
+node = { version = "22", postinstall = "corepack enable" }

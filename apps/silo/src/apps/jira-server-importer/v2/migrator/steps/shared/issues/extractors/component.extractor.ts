@@ -28,6 +28,6 @@ export class JiraComponentExtractor {
 
     return components
       .map((c) => (c.id ? buildExternalId(this.projectId, this.resourceId, c.id) : null))
-      .filter((c) => c !== null) as string[];
+      .filter((c) => c !== null);
   }
 }

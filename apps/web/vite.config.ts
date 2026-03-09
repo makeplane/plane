@@ -1,7 +1,8 @@
 import path from "node:path";
 import * as dotenv from "@dotenvx/dotenvx";
 import { reactRouter } from "@react-router/dev/vite";
-import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig, type PluginOption } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 
@@ -18,7 +19,11 @@ const viteEnv = Object.keys(process.env)
 // Fall back to VERCEL_GIT_COMMIT_SHA so Sentry release tracking works on Vercel
 viteEnv.VITE_APP_VERSION ||= process.env.VERCEL_GIT_COMMIT_SHA ?? "";
 
-const plugins = [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })];
+const plugins: PluginOption[] = [
+  tailwindcss(),
+  reactRouter(),
+  tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] }),
+];
 
 if (process.env.SENTRY_AUTH_TOKEN) {
   plugins.push(
@@ -64,7 +69,7 @@ export default defineConfig({
     devSourcemap: false,
   },
   optimizeDeps: {
-    exclude: ["@plane/tailwind-config"],
+    exclude: ["@plane/tailwindcss"],
     include: [
       "react",
       "react-dom",

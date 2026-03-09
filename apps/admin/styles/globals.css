@@ -1,4 +1,5 @@
-@import "@plane/tailwind-config/index.css";
+@import "@plane/tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* Scan admin app source files for Tailwind classes */
 @source "../app/**/*.{ts,tsx}";

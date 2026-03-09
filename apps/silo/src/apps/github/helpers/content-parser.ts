@@ -40,7 +40,7 @@ interface ContentParserOptions {
 export class GithubContentParser {
   private static readonly MENTION_PATTERN = /@([a-zA-Z0-9-]+)/g;
   private static readonly ISSUE_NUMBER_PATTERN = /#(\d+)/g;
-  private static readonly MARKDOWN_IMAGE_PATTERN = /\!\[(.*?)\]\((.*?)\)/gim;
+  private static readonly MARKDOWN_IMAGE_PATTERN = /!\[(.*?)\]\((.*?)\)/gim;
 
   private static readonly turndownService = new TurndownService({
     headingStyle: "atx",

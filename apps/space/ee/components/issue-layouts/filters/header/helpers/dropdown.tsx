@@ -60,9 +60,7 @@ export function FiltersDropdown(props: Props) {
           <>
             <Popover.Button as={React.Fragment}>
               {menuButton ? (
-                <button role="button" ref={setReferenceElement}>
-                  {menuButton}
-                </button>
+                <button ref={setReferenceElement}>{menuButton}</button>
               ) : (
                 <Button
                   disabled={disabled}

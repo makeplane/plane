@@ -324,7 +324,7 @@ export const TypeFormCreateUpdateRoot = observer(function TypeFormCreateUpdateRo
         formDescription={watch("description") as string}
         showDescription={showDescription}
         isDescriptionRequired={showDescription}
-        isTitleRequired={(watch("is_workitem_name_required") ?? true) as boolean}
+        isTitleRequired={watch("is_workitem_name_required") ?? true}
         selectedFields={selectedFields}
       />
     </>

@@ -136,14 +136,7 @@ export const RightDependencyDraggable = observer(function RightDependencyDraggab
       );
     }
     return combine(...combineArray);
-  }, [
-    rightDraggableRef?.current,
-    rightDroppableRef?.current,
-    block,
-    relatedBlockIds,
-    isStartDateAvailable,
-    isEndDateAvailable,
-  ]);
+  }, [rightDraggableRef?.current, block, relatedBlockIds, isStartDateAvailable, isEndDateAvailable]);
 
   return (
     <>

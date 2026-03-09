@@ -51,8 +51,10 @@ export default defineConfig({
   exports: {
     customExports: (exports) => ({
       ...exports,
-      "./styles/react-day-picker.css": "./dist/styles/react-day-picker.css",
-      "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
+      ".": {
+        ...(typeof exports["."] === "string" ? { import: exports["."] } : ((exports["."] as object) ?? {})),
+        style: "./dist/styles/index.css",
+      },
     }),
   },
   platform: "neutral",

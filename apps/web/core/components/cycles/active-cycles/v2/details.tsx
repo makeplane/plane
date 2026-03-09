@@ -87,7 +87,7 @@ export const ActiveCycleDetails = observer(function ActiveCycleDetails(props: Ac
     });
     resizeObserver.observe(ref.current);
     return () => resizeObserver.disconnect(); // clean up
-  }, [ref.current]);
+  }, []);
 
   if (!activeCycle)
     return (

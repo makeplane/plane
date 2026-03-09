@@ -78,7 +78,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
         getAllowedAxis: () => "vertical",
       })
     );
-  }, [ganttContainerRef?.current]);
+  }, []);
   // handling scroll functionality
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const { clientWidth, scrollLeft, scrollWidth } = e.currentTarget;

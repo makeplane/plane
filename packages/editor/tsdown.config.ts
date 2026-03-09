@@ -4,13 +4,15 @@ export default defineConfig({
   entry: ["src/index.ts", "src/lib.ts"],
   format: ["esm"],
   dts: true,
-  clean: false,
+  clean: true,
   copy: ["src/styles"],
   exports: {
     customExports: (exports) => ({
       ...exports,
-      "./styles.css": "./dist/styles/index.css",
-      "./styles": "./dist/styles/index.css",
+      ".": {
+        ...(typeof exports["."] === "string" ? { import: exports["."] } : ((exports["."] as object) ?? {})),
+        style: "./dist/styles/index.css",
+      },
     }),
   },
   platform: "neutral",

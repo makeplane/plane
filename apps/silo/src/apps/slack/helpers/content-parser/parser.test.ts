@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { describe, expect, it, vi } from "vitest";
 import type { TSlackContentParserConfig } from ".";
 import { getSlackContentParser } from ".";
 import type { SlackService } from "@plane/etl/slack";
@@ -21,7 +22,7 @@ import type { SlackService } from "@plane/etl/slack";
  */
 const createMockSlackService = () =>
   ({
-    getUserInfo: jest.fn((userId: string) =>
+    getUserInfo: vi.fn((userId: string) =>
       Promise.resolve({
         ok: true,
         user: {
@@ -31,7 +32,7 @@ const createMockSlackService = () =>
         },
       })
     ),
-    getConversationInfo: jest.fn((channelId: string) =>
+    getConversationInfo: vi.fn((channelId: string) =>
       Promise.resolve({
         ok: true,
         channel: {

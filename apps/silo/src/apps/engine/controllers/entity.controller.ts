@@ -231,7 +231,7 @@ export class EntityConnectionController {
   @useValidateUserAuthentication()
   async deleteEntityConnection(req: Request, res: Response) {
     try {
-      const { workspaceId, workspaceConnectionId, id: id } = req.params;
+      const { workspaceId, workspaceConnectionId, id } = req.params;
 
       if (!workspaceId || !workspaceConnectionId || !id) {
         return res.status(400).send({

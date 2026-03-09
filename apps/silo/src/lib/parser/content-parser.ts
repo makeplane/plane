@@ -20,7 +20,7 @@ import { logger } from "@plane/logger";
 import type { IParserExtension } from "./types";
 
 export class ContentParser {
-  private readonly MARKDOWN_IMAGE_PATTERN = /\!\[(.*?)\]\((.*?)\)/gim;
+  private readonly MARKDOWN_IMAGE_PATTERN = /!\[(.*?)\]\((.*?)\)/gim;
 
   /**
    * These extensions are run through the entire content before the main parsing process

@@ -1,11 +1,10 @@
-@import "@plane/tailwind-config/index.css";
-@import "@plane/editor/styles";
-@import "@plane/propel/styles/react-day-picker.css";
+@import "@plane/tailwindcss";
+@import "@plane/editor";
+@import "@plane/propel";
 @import "./animations.css";
 @import "./power-k.css";
 @import "./emoji.css";
 @plugin "@tailwindcss/typography";
-
 /* Scan web app source files for Tailwind classes */
 @source "../app/**/*.{ts,tsx}";
 @source "../core/**/*.{ts,tsx}";

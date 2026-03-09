@@ -67,7 +67,7 @@ export const ProjectBoardListItem = observer(function ProjectBoardListItem(props
         getInitialData: () => ({ id: project.id, type: "PROJECT" }),
       })
     );
-  }, [cardRef?.current, project, isDragAllowed, selectedGroupKey]);
+  }, [project, isDragAllowed, selectedGroupKey]);
   return (
     <div
       className="flex whitespace-nowrap gap-2 rounded-sm w-full"
