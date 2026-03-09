@@ -52,7 +52,11 @@ class GoogleOauthInitiateAdminEndpoint(View):
 
         try:
             state = uuid.uuid4().hex
-            provider = GoogleOAuthProvider(request=request, state=state)
+            provider = GoogleOAuthProvider(
+                request=request,
+                state=state,
+                redirect_uri=f"""{request.scheme}://{request.get_host()}/api/instances/admin/google/callback/""",
+            )
             request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
@@ -112,7 +116,11 @@ class GoogleCallbackAdminEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            provider = GoogleOAuthProvider(request=request, code=code)
+            provider = GoogleOAuthProvider(
+                request=request,
+                code=code,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/api/instances/admin/google/callback/",
+            )
             user = provider.authenticate()
             # Verify user is an instance admin
             if not InstanceAdmin.is_instance_admin(user):

@@ -52,7 +52,11 @@ class GiteaOauthInitiateAdminEndpoint(View):
 
         try:
             state = uuid.uuid4().hex
-            provider = GiteaOAuthProvider(request=request, state=state)
+            provider = GiteaOAuthProvider(
+                request=request,
+                state=state,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/api/instances/admin/gitea/callback/",
+            )
             request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
@@ -112,7 +116,11 @@ class GiteaCallbackAdminEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            provider = GiteaOAuthProvider(request=request, code=code)
+            provider = GiteaOAuthProvider(
+                request=request,
+                code=code,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/api/instances/admin/gitea/callback/",
+            )  # noqa: E501
             user = provider.authenticate()
             # Verify user is an instance admin
             if not InstanceAdmin.is_instance_admin(user):

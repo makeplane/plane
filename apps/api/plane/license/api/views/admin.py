@@ -47,7 +47,8 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
-from plane.authentication.rate_limit import AuthenticationThrottle
+from plane.license.rate_limit import AdminAuthenticationThrottle
+from plane.authentication.utils.session_limit import invalidate_all_user_sessions
 from plane.utils.ip_address import get_client_ip
 from plane.utils.path_validator import get_safe_redirect_url
 from plane.silo.bgtasks.integration_apps_task import create_integration_applications
@@ -96,7 +97,7 @@ class InstanceAdminEndpoint(BaseAPIView):
     @invalidate_cache(path="/api/instances/", user=False)
     def delete(self, request, pk):
         instance = Instance.objects.first()
-        InstanceAdmin.objects.filter(instance=instance, pk=pk).delete()
+        InstanceAdmin.objects.filter(instance=instance, pk=pk).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -255,6 +256,9 @@ class InstanceAdminSignUpEndpoint(View):
 
 class InstanceAdminSignInEndpoint(View):
     permission_classes = [AllowAny]
+    throttle_classes = [
+        AdminAuthenticationThrottle,
+    ]
 
     @invalidate_cache(path="/api/instances/", user=False)
     def post(self, request):
@@ -416,7 +420,18 @@ class InstanceAdminSignOutEndpoint(View):
 
 
 class InstanceAdminPasswordResetEndpoint(BaseAPIView):
-    permission_classes = [InstanceAdminPermission]
+    """
+    This endpoint is used by instance admin to reset their password.
+    This is different from the password reset flow used for normal users as this does not require the old password and
+    this will be used by new instance admins to reset their password on first login to god mode
+    """
+
+    permission_classes = [
+        InstanceAdminPermission,
+    ]
+    throttle_classes = [
+        AdminAuthenticationThrottle,
+    ]
 
     def post(self, request):
         serializer = InstanceAdminPasswordResetSerializer(data=request.data, context={"request": request})
@@ -427,10 +442,20 @@ class InstanceAdminPasswordResetEndpoint(BaseAPIView):
         # Re-authenticate the user with new password
         user_login(request=request, user=request.user, is_admin=True)
 
+        # Invalidate all other sessions for security
+        invalidate_all_user_sessions(
+            user=request.user,
+            exclude_session_key=request.session.session_key,
+        )
+
         return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+
+
 class InstanceAdminEmailCheckEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
-    throttle_classes = [AuthenticationThrottle]
+    throttle_classes = [
+        AdminAuthenticationThrottle,
+    ]
 
     def post(self, request):
         # Check instance configuration
