@@ -197,7 +197,6 @@ class ExtendedIssueFilterSet(IssueFilterSet):
 
     def filter_custom_property_value_isnull(self, queryset, name, value):
         """Filter by custom property value (is null)"""
-        from plane.ee.models.issue_properties import IssueProperty
         from plane.utils.exception_logger import log_exception
 
         try:
@@ -212,9 +211,6 @@ class ExtendedIssueFilterSet(IssueFilterSet):
             if not is_valid_uuid(property_id):
                 return Q()
 
-            # Get the property to determine its type
-            property_obj = IssueProperty.objects.get(id=property_id)
-
             # Check for at least one non-deleted property value for this property
             has_non_deleted_property_value = Q(
                 properties__isnull=False,
@@ -224,10 +220,10 @@ class ExtendedIssueFilterSet(IssueFilterSet):
             )
             if isnull_value in (True, "true", "True", 1, "1"):
                 # No non-deleted property values for this property
-                return Q(type_id=property_obj.issue_type_id) & ~has_non_deleted_property_value
+                return ~has_non_deleted_property_value
             else:
                 # Has at least one non-deleted property value for this property
-                return Q(type_id=property_obj.issue_type_id) & has_non_deleted_property_value
+                return has_non_deleted_property_value
 
         except Exception as e:
             log_exception(e)
@@ -296,75 +292,87 @@ class ExtendedIssueFilterSet(IssueFilterSet):
 
             # Build base filters for the subquery
             base_filters = {
-                "issue__type_id": property_obj.issue_type_id,
                 "property_id": property_id,
                 "property__deleted_at__isnull": True,
                 "deleted_at__isnull": True,
             }
 
+            property_filter = {}
+
+            matching_issue_queryset = IssuePropertyValue.objects.filter(**base_filters)
+            # Special handling for boolean: when value is false, no record may
+            # exist in IssuePropertyValue (false is the default). So instead of
+            # looking for explicit false records, find issues of the correct
+            # type that do NOT have an explicit true record.
+            if lookup == "exact" and property_obj.property_type == PropertyTypeEnum.BOOLEAN.value:
+                is_true = value in (True, "true", "True", 1, "1")
+                issues_with_true = matching_issue_queryset.filter(value_boolean=True).values_list("issue_id", flat=True)
+                if is_true:
+                    return Q(pk__in=issues_with_true)
+                else:
+                    return Q(type_id=property_obj.issue_type_id) & ~Q(pk__in=issues_with_true)
             # Add the lookup-specific filter
-            if lookup == "exact" and property_obj.property_type in [
+            elif lookup == "exact" and property_obj.property_type in [
                 PropertyTypeEnum.TEXT.value,
                 PropertyTypeEnum.URL.value,
-                PropertyTypeEnum.BOOLEAN.value,
                 PropertyTypeEnum.OPTION.value,
                 PropertyTypeEnum.RELATION.value,
                 PropertyTypeEnum.DATETIME.value,
                 PropertyTypeEnum.DECIMAL.value,
             ]:
-                base_filters[field_name] = value
+                property_filter[field_name] = value
             elif lookup == "in" and property_obj.property_type in [
                 PropertyTypeEnum.OPTION.value,
                 PropertyTypeEnum.RELATION.value,
             ]:
-                base_filters[f"{field_name}__in"] = value
+                property_filter[f"{field_name}__in"] = value
             elif lookup == "gte" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
                 PropertyTypeEnum.DATETIME.value,
             ]:
-                base_filters[f"{field_name}__gte"] = value
+                property_filter[f"{field_name}__gte"] = value
             elif lookup == "gt" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
                 PropertyTypeEnum.DATETIME.value,
             ]:
-                base_filters[f"{field_name}__gt"] = value
+                property_filter[f"{field_name}__gt"] = value
             elif lookup == "lte" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
                 PropertyTypeEnum.DATETIME.value,
             ]:
-                base_filters[f"{field_name}__lte"] = value
+                property_filter[f"{field_name}__lte"] = value
             elif lookup == "lt" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
                 PropertyTypeEnum.DATETIME.value,
             ]:
-                base_filters[f"{field_name}__lt"] = value
+                property_filter[f"{field_name}__lt"] = value
             elif lookup == "icontains" and property_obj.property_type in [
                 PropertyTypeEnum.TEXT.value,
                 PropertyTypeEnum.URL.value,
             ]:
-                base_filters[f"{field_name}__icontains"] = value
+                property_filter[f"{field_name}__icontains"] = value
             elif lookup == "contains" and property_obj.property_type in [
                 PropertyTypeEnum.TEXT.value,
                 PropertyTypeEnum.URL.value,
             ]:
-                base_filters[f"{field_name}__contains"] = value
+                property_filter[f"{field_name}__contains"] = value
             elif lookup == "startswith" and property_obj.property_type in [
                 PropertyTypeEnum.TEXT.value,
                 PropertyTypeEnum.URL.value,
             ]:
-                base_filters[f"{field_name}__startswith"] = value
+                property_filter[f"{field_name}__startswith"] = value
             elif lookup == "endswith" and property_obj.property_type in [
                 PropertyTypeEnum.TEXT.value,
                 PropertyTypeEnum.URL.value,
             ]:
-                base_filters[f"{field_name}__endswith"] = value
+                property_filter[f"{field_name}__endswith"] = value
             elif lookup == "range" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
                 PropertyTypeEnum.DATETIME.value,
             ]:
                 value = value.split(",")
                 if isinstance(value, list) and len(value) == 2:
-                    base_filters[f"{field_name}__range"] = value
+                    property_filter[f"{field_name}__range"] = value
                 else:
                     return Q()
             else:
@@ -372,10 +380,10 @@ class ExtendedIssueFilterSet(IssueFilterSet):
 
             # Use a subquery to find matching issue IDs
             # This ensures each custom property filter is independent
-            matching_issues = IssuePropertyValue.objects.filter(**base_filters).values_list("issue_id", flat=True)
+            matching_issue_ids = matching_issue_queryset.filter(**property_filter).values_list("issue_id", flat=True)
 
             # Return Q object with pk__in subquery
-            return Q(pk__in=matching_issues)
+            return Q(pk__in=matching_issue_ids)
 
         except Exception as e:
             log_exception(e)

@@ -22,7 +22,7 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -131,13 +131,13 @@ export const ProjectEpicsLayoutRoot = observer(function ProjectEpicsLayoutRoot()
         entityId={projectId}
         filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.epics.filters}
         initialWorkItemFilters={workItemFilters}
-        updateFilters={issuesFilter?.updateFilterExpression.bind(issuesFilter, workspaceSlug, projectId)}
+        updateFilters={issuesFilter?.updateAdvancedFilters.bind(issuesFilter, workspaceSlug, projectId)}
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       >
-        {({ filter: epicWorkItemsFilter }) => (
+        {({ filter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {epicWorkItemsFilter && <WorkItemFiltersRow filter={epicWorkItemsFilter} />}
+            <WorkItemFiltersRowWrapper filter={filter} />
             <div className="relative h-full w-full overflow-auto bg-layer-2">
               {/* mutation loader */}
               {issues?.getIssueLoader() === "mutation" && (

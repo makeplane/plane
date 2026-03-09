@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TExternalFilter } from "@plane/types";
+import type { TExternalFilter, TWorkItemFiltersSaveViewOptions, TWorkItemFiltersUpdateViewOptions } from "@plane/types";
 
 /**
  * Filter config options.
@@ -33,31 +33,12 @@ export type TClearFilterOptions = {
 };
 
 /**
- * Save view config.
- */
-export type TSaveViewOptions<E extends TExternalFilter> = {
-  label?: string;
-  onViewSave: (expression: E) => void | Promise<void>;
-  isDisabled?: boolean;
-};
-
-/**
- * Update view config.
- */
-export type TUpdateViewOptions<E extends TExternalFilter> = {
-  label?: string;
-  hasAdditionalChanges?: boolean;
-  onViewUpdate: (expression: E) => void | Promise<void>;
-  isDisabled?: boolean;
-};
-
-/**
  * Filter expression options.
  */
 export type TExpressionOptions<E extends TExternalFilter> = {
   clearFilterOptions?: TClearFilterOptions;
-  saveViewOptions?: TSaveViewOptions<E>;
-  updateViewOptions?: TUpdateViewOptions<E>;
+  saveViewOptions?: TWorkItemFiltersSaveViewOptions<E>;
+  updateViewOptions?: TWorkItemFiltersUpdateViewOptions<E>;
 };
 
 /**

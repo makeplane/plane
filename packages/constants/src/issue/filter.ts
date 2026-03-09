@@ -44,7 +44,8 @@ export enum EServerGroupByToFilterOptions {
 }
 
 export enum EIssueFilterType {
-  FILTERS = "rich_filters",
+  RICH_FILTERS = "rich_filters",
+  PQL_FILTERS = "pql_filters",
   DISPLAY_FILTERS = "display_filters",
   DISPLAY_PROPERTIES = "display_properties",
   KANBAN_FILTERS = "kanban_filters",

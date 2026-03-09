@@ -19,10 +19,11 @@ import useSWR from "swr";
 // plane imports
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import type { IIssueFilters } from "@plane/types";
 import { EIssueLayoutTypes, EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
 // components
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -105,7 +106,7 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   const searchParams = useSearchParams();
   // store hooks
   const {
-    issuesFilter: { filters, fetchFilters, updateFilterExpression },
+    issuesFilter: { filters, fetchFilters, updateAdvancedFilters },
     issues: { clear },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { fetchAllGlobalViews, getViewDetailsById } = useGlobalView();
@@ -114,19 +115,21 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   const workItemFilters = globalViewId ? filters?.[globalViewId] : undefined;
   const activeLayout: EIssueLayoutTypes | undefined = workItemFilters?.displayFilters?.layout;
   // Determine initial work item filters based on view type and availability
-  const initialWorkItemFilters = useMemo(() => {
+  const initialWorkItemFilters: IIssueFilters | undefined = useMemo(() => {
     if (!globalViewId) return undefined;
 
     const isStaticView = STATIC_VIEW_TYPES.includes(globalViewId);
     const hasViewDetails = Boolean(viewDetails);
 
-    if (!isStaticView && !hasViewDetails) return undefined;
+    if ((!isStaticView && !hasViewDetails) || !viewDetails) return undefined;
 
     return {
       displayFilters: workItemFilters?.displayFilters,
       displayProperties: workItemFilters?.displayProperties,
       kanbanFilters: workItemFilters?.kanbanFilters,
-      richFilters: viewDetails?.rich_filters ?? {},
+      richFilters: viewDetails?.rich_filters,
+      pqlFilters: viewDetails?.pql_filters,
+      lastUsedFilterType: viewDetails?.last_used_filter || "rich_filters",
     };
   }, [globalViewId, viewDetails, workItemFilters]);
 
@@ -192,13 +195,13 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
         entityType={EIssuesStoreType.GLOBAL}
         filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
         initialWorkItemFilters={initialWorkItemFilters}
-        updateFilters={updateFilterExpression.bind(updateFilterExpression, workspaceSlug, globalViewId)}
+        updateFilters={updateAdvancedFilters.bind(updateAdvancedFilters, workspaceSlug, globalViewId)}
         workspaceSlug={workspaceSlug}
       >
-        {({ filter: globalWorkItemsFilter }) => (
+        {({ filter }) => (
           <div className="h-full overflow-hidden bg-surface-1">
             <div className="flex h-full w-full flex-col border-b border-strong">
-              {globalWorkItemsFilter && <WorkItemFiltersRow filter={globalWorkItemsFilter} />}
+              <WorkItemFiltersRowWrapper filter={filter} />
               <WorkspaceActiveLayout
                 activeLayout={activeLayout}
                 isDefaultView={isDefaultView}

@@ -20,8 +20,8 @@ import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 // components
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
 // hooks
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
@@ -65,13 +65,13 @@ export const ArchivedIssueLayoutRoot = observer(function ArchivedIssueLayoutRoot
         entityId={projectId?.toString()}
         filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.archived_issues.filters}
         initialWorkItemFilters={workItemFilters}
-        updateFilters={issuesFilter?.updateFilterExpression.bind(issuesFilter, workspaceSlug, projectId)}
+        updateFilters={issuesFilter?.updateAdvancedFilters.bind(issuesFilter, workspaceSlug, projectId)}
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       >
-        {({ filter: archivedWorkItemsFilter }) => (
+        {({ filter }) => (
           <>
-            {archivedWorkItemsFilter && <WorkItemFiltersRow filter={archivedWorkItemsFilter} />}
+            <WorkItemFiltersRowWrapper filter={filter} />
             <div className="relative h-full w-full overflow-auto">
               <Suspense>
                 <ArchivedIssueListLayout />

@@ -53,13 +53,17 @@ from plane.utils.error_codes import ERROR_CODES
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.utils.filters import ComplexFilterBackend
+from plane.utils.pql import PQLFilterBackend
 from plane.utils.filters import IssueFilterSet
 
 
 class EpicArchiveViewSet(BaseViewSet):
     serializer_class = IssueFlatSerializer
     model = Issue
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (
+        ComplexFilterBackend,
+        PQLFilterBackend,
+    )
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, issues):

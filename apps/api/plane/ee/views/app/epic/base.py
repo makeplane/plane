@@ -89,11 +89,15 @@ from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
 from plane.utils.filters import ComplexFilterBackend
+from plane.utils.pql import PQLFilterBackend
 from plane.utils.filters import IssueFilterSet
 
 
 class EpicViewSet(BaseViewSet):
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (
+        ComplexFilterBackend,
+        PQLFilterBackend,
+    )
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, issues):
@@ -597,8 +601,10 @@ class EpicUserDisplayPropertyEndpoint(BaseAPIView):
 
         epic_property.filters = request.data.get("filters", epic_property.filters)
         epic_property.rich_filters = request.data.get("rich_filters", epic_property.rich_filters)
+        epic_property.pql_filters = request.data.get("pql_filters", epic_property.pql_filters)
         epic_property.display_filters = request.data.get("display_filters", epic_property.display_filters)
         epic_property.display_properties = request.data.get("display_properties", epic_property.display_properties)
+        epic_property.last_used_filter = request.data.get("last_used_filter", epic_property.last_used_filter)
         epic_property.save()
         serializer = EpicUserPropertySerializer(epic_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -641,7 +647,10 @@ class EpicAnalyticsEndpoint(BaseAPIView):
 
 
 class EpicDetailEndpoint(BaseAPIView):
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (
+        ComplexFilterBackend,
+        PQLFilterBackend,
+    )
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, epics):

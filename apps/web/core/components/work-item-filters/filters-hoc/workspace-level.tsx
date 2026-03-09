@@ -17,7 +17,13 @@ import { observer } from "mobx-react";
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import type { IWorkspaceView, TWorkItemFilterExpression } from "@plane/types";
+import type {
+  IWorkspaceView,
+  TWorkItemFilterExpression,
+  TWorkItemFiltersSaveViewOptions,
+  TWorkItemFiltersUpdateViewOptions,
+  WorkItemFilerViewCallbackArguments,
+} from "@plane/types";
 import { EUserProjectRoles, EViewAccess } from "@plane/types";
 // helpers
 import { removeNillKeys } from "@/helpers/common";
@@ -106,20 +112,23 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
     [viewDetails]
   );
 
-  const getViewFilterPayload: (filterExpression: TWorkItemFilterExpression) => Partial<IWorkspaceView> = useCallback(
-    (filterExpression: TWorkItemFilterExpression) => ({
-      rich_filters: cloneDeep(filterExpression),
+  const getViewFilterPayload = useCallback(
+    (args: WorkItemFilerViewCallbackArguments<TWorkItemFilterExpression>): Partial<IWorkspaceView> => ({
       display_filters: cloneDeep(initialWorkItemFilters?.displayFilters),
       display_properties: cloneDeep(initialWorkItemFilters?.displayProperties),
+      last_used_filter: args.type,
+      ...(args.type === "rich_filters"
+        ? { rich_filters: cloneDeep(args.expression) }
+        : { pql_filters: cloneDeep(args.value) }),
     }),
     [initialWorkItemFilters]
   );
 
   const handleViewSave = useCallback(
-    (expression: TWorkItemFilterExpression) => {
+    (args: WorkItemFilerViewCallbackArguments<TWorkItemFilterExpression>) => {
       setCreateViewPayload({
         ...getDefaultViewDetailPayload(),
-        ...getViewFilterPayload(expression),
+        ...getViewFilterPayload(args),
       });
       setIsCreateViewModalOpen(true);
     },
@@ -127,7 +136,7 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
   );
 
   const handleViewUpdate = useCallback(
-    (filterExpression: TWorkItemFilterExpression) => {
+    (args: WorkItemFilerViewCallbackArguments<TWorkItemFilterExpression>) => {
       if (!viewDetails) {
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -142,7 +151,7 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
         workspaceSlug,
         viewDetails.id,
         {
-          ...getViewFilterPayload(filterExpression),
+          ...getViewFilterPayload(args),
         },
         /* No need to sync filters here as updateFilters already handles it */
         false
@@ -165,7 +174,7 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
     [viewDetails, updateGlobalView, workspaceSlug, getViewFilterPayload]
   );
 
-  const saveViewOptions = useMemo(
+  const saveViewOptions: TWorkItemFiltersSaveViewOptions<TWorkItemFilterExpression> = useMemo(
     () => ({
       label: createViewLabel,
       isDisabled: !canCreateView,
@@ -174,7 +183,7 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
     [createViewLabel, canCreateView, handleViewSave]
   );
 
-  const updateViewOptions = useMemo(
+  const updateViewOptions: TWorkItemFiltersUpdateViewOptions<TWorkItemFilterExpression> = useMemo(
     () => ({
       label: updateViewLabel,
       isDisabled: !canUpdateView,
@@ -199,8 +208,10 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
         memberIds={getWorkspaceMemberIds(workspaceSlug)}
         labelIds={getWorkspaceLabelIds(workspaceSlug)}
         projectIds={joinedProjectIds}
-        saveViewOptions={saveViewOptions}
-        updateViewOptions={updateViewOptions}
+        viewOptions={{
+          saveViewOptions,
+          updateViewOptions,
+        }}
       >
         {children}
       </WorkItemFiltersHOC>

@@ -20,7 +20,7 @@ import { useWorkItemFilters } from "./use-work-item-filters";
 export const useWorkItemFilterInstance = (
   entityType: EIssuesStoreType,
   entityId: string | undefined
-): IWorkItemFilterInstance | undefined => {
+): IWorkItemFilterInstance["richFiltersInstance"] | undefined => {
   const { getFilter } = useWorkItemFilters();
-  return entityId ? getFilter(entityType, entityId) : undefined;
+  return entityId ? getFilter(entityType, entityId)?.richFiltersInstance : undefined;
 };

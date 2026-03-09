@@ -18,7 +18,13 @@ import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { enrichRichFiltersWithEntityContext } from "@plane/shared-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import type { IProjectView, TWorkItemFilterExpression } from "@plane/types";
+import type {
+  IProjectView,
+  TWorkItemFilterExpression,
+  TWorkItemFiltersSaveViewOptions,
+  TWorkItemFiltersUpdateViewOptions,
+  WorkItemFilerViewCallbackArguments,
+} from "@plane/types";
 import { EIssuesStoreType, EUserProjectRoles, EViewAccess } from "@plane/types";
 // helpers
 import { removeNillKeys } from "@/helpers/common";
@@ -166,18 +172,21 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
     [viewDetails]
   );
 
-  const getViewFilterPayload: (filterExpression: TWorkItemFilterExpression) => Partial<IProjectView> = useCallback(
-    (filterExpression: TWorkItemFilterExpression) => ({
-      rich_filters: cloneDeep(filterExpression),
+  const getViewFilterPayload = useCallback(
+    (args: WorkItemFilerViewCallbackArguments<TWorkItemFilterExpression>): Partial<IProjectView> => ({
       display_filters: cloneDeep(initialWorkItemFilters?.displayFilters),
       display_properties: cloneDeep(initialWorkItemFilters?.displayProperties),
+      last_used_filter: args.type,
+      ...(args.type === "rich_filters"
+        ? { rich_filters: cloneDeep(args.expression) }
+        : { pql_filters: cloneDeep(args.value) }),
     }),
     [initialWorkItemFilters]
   );
 
   const handleViewSave = useCallback(
-    (expression: TWorkItemFilterExpression) => {
-      const filterPayload = getViewFilterPayload(expression);
+    (args: WorkItemFilerViewCallbackArguments<TWorkItemFilterExpression>) => {
+      const filterPayload = getViewFilterPayload(args);
       const enrichedFilterPayload: Partial<IProjectView> = {
         ...filterPayload,
         rich_filters: enrichRichFiltersWithEntityContext({
@@ -197,7 +206,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   );
 
   const handleViewUpdate = useCallback(
-    (filterExpression: TWorkItemFilterExpression) => {
+    (args: WorkItemFilerViewCallbackArguments<TWorkItemFilterExpression>) => {
       if (!viewDetails) {
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -209,7 +218,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
       }
 
       updateView(workspaceSlug, projectId, viewDetails.id, {
-        ...getViewFilterPayload(filterExpression),
+        ...getViewFilterPayload(args),
       })
         .then(() => {
           setToast({
@@ -230,7 +239,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
     [viewDetails, updateView, workspaceSlug, projectId, getViewFilterPayload]
   );
 
-  const saveViewOptions = useMemo(
+  const saveViewOptions: TWorkItemFiltersSaveViewOptions<TWorkItemFilterExpression> = useMemo(
     () => ({
       label: createViewLabel,
       isDisabled: !canCreateView,
@@ -239,7 +248,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
     [createViewLabel, canCreateView, handleViewSave]
   );
 
-  const updateViewOptions = useMemo(
+  const updateViewOptions: TWorkItemFiltersUpdateViewOptions<TWorkItemFilterExpression> = useMemo(
     () => ({
       label: updateViewLabel,
       isDisabled: !canUpdateView,
@@ -272,8 +281,10 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
         milestoneIds={isMilestonesFeatureEnabled ? projectMilestoneIds : undefined}
         epicIds={isEpicEnabled ? projectEpicIds : undefined}
         customPropertyIds={customPropertyIds}
-        saveViewOptions={saveViewOptions}
-        updateViewOptions={updateViewOptions}
+        viewOptions={{
+          saveViewOptions,
+          updateViewOptions,
+        }}
       >
         {children}
       </WorkItemFiltersHOC>

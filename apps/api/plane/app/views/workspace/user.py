@@ -69,6 +69,7 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.filters import ComplexFilterBackend
+from plane.utils.pql import PQLFilterBackend
 from plane.utils.filters import IssueFilterSet
 
 
@@ -105,7 +106,10 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
 class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceViewerPermission]
 
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (
+        ComplexFilterBackend,
+        PQLFilterBackend,
+    )
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, issues):

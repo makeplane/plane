@@ -1,0 +1,99 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+/**
+ * PQL Editor — token highlighting, error underlines, placeholder
+ *
+ * Five semantic categories. Colors are defined as CSS custom properties so
+ * they respond automatically to the design system's light / dark theme.
+ */
+
+/* ── Color variables ──────────────────────────────────────────────────────── */
+
+:root {
+  --pql-field: var(--text-color-accent-primary);
+  --pql-operator: var(--color-label-emerald-text);
+  --pql-logical: var(--color-label-indigo-text);
+  --pql-function: var(--color-label-yellow-text);
+  --pql-error: var(--text-color-danger-secondary);
+  /* values use the inherited text color so they look like plain text */
+}
+
+/* ── Token decoration classes ─────────────────────────────────────────────── */
+
+/* Field names: priority, assignee, createdAt, … */
+.pql-token--field {
+  color: var(--pql-field);
+}
+
+/* Comparison + structural operators: =, !=, >=, ~, IN, IS, BETWEEN */
+.pql-token--operator {
+  color: var(--pql-operator);
+}
+
+/* Logical operators: AND, OR, NOT */
+.pql-token--logical {
+  color: var(--pql-logical);
+}
+
+/* Values: strings, numbers, true/false, null/empty — inherit text color */
+/* (no rule needed; undecorated tokens use the default foreground) */
+
+/* All functions: predicates, date, user, cycle, state, relation, history */
+.pql-token--function {
+  color: var(--pql-function);
+}
+
+/* Punctuation: (, ), , — subtle, no bright color */
+.pql-token--punctuation {
+  @apply text-placeholder;
+}
+
+/* Unrecognised character or unknown identifier */
+.pql-token--error {
+  color: var(--pql-error);
+}
+
+/* ── Error underline ─────────────────────────────────────────────────────── */
+
+.pql-error-underline {
+  text-decoration: underline wavy var(--txt-danger-secondary);
+  text-underline-offset: 3px;
+  text-decoration-skip-ink: none;
+  cursor: help;
+}
+
+/* ── Placeholder ─────────────────────────────────────────────────────────── */
+
+.pql-editor-content.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--txt-placeholder);
+  pointer-events: none;
+  height: 0;
+  font-weight: 500;
+}
+
+/* ── Editor reset ────────────────────────────────────────────────────────── */
+
+.pql-editor-content.ProseMirror {
+  caret-color: currentColor;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  outline: none;
+}
+
+.pql-editor-content.ProseMirror p {
+  @apply m-0 p-0 text-secondary;
+}

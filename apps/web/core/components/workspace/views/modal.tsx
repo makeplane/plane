@@ -55,6 +55,8 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
         rich_filters: {
           ...payload?.rich_filters,
         },
+        pql_filters: payload?.pql_filters,
+        last_used_filter: payload?.last_used_filter,
       };
       const res = await createGlobalView(workspaceSlug, payloadData);
       setToast({
@@ -82,6 +84,8 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
         query: {
           ...payload?.rich_filters,
         },
+        pql_filters: payload?.pql_filters,
+        last_used_filter: payload?.last_used_filter,
       };
       const res = await updateGlobalView(workspaceSlug, data.id, payloadData);
       if (res) {

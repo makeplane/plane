@@ -42,12 +42,16 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.filters import ComplexFilterBackend
+from plane.utils.pql import PQLFilterBackend
 from plane.utils.filters import IssueFilterSet
 
 
 class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
     permission_classes = [TeamspacePermission]
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (
+        ComplexFilterBackend,
+        PQLFilterBackend,
+    )
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, issues):
@@ -224,12 +228,15 @@ class TeamspaceUserPropertiesEndpoint(TeamspaceBaseEndpoint):
 
         team_space_properties.filters = request.data.get("filters", team_space_properties.filters)
         team_space_properties.rich_filters = request.data.get("rich_filters", team_space_properties.rich_filters)
+        team_space_properties.pql_filters = request.data.get("pql_filters", team_space_properties.pql_filters)
         team_space_properties.display_filters = request.data.get(
             "display_filters", team_space_properties.display_filters
         )
         team_space_properties.display_properties = request.data.get(
             "display_properties", team_space_properties.display_properties
         )
+        team_space_properties.last_used_filter = request.data.get("last_used_filter", 
+                                                                  team_space_properties.last_used_filter)
         team_space_properties.save()
 
         serializer = TeamspaceUserPropertySerializer(team_space_properties)

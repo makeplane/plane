@@ -78,6 +78,7 @@ export * from "./views";
 export * from "./waitlist";
 export * from "./webhook";
 export * from "./work-item-types";
+export * from "./work-item-filters";
 export * from "./workflow";
 export * from "./workspace";
 export * from "./workspace-draft-issues/base";

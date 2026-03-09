@@ -20,9 +20,10 @@ import useSWR from "swr";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Row, ERowVariant } from "@plane/ui";
-// hooks
+// components
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
+// hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
@@ -120,13 +121,13 @@ export const ModuleLayoutRoot = observer(function ModuleLayoutRoot() {
         entityId={moduleId}
         filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
         initialWorkItemFilters={workItemFilters}
-        updateFilters={issuesFilter?.updateFilterExpression.bind(issuesFilter, workspaceSlug, projectId, moduleId)}
+        updateFilters={issuesFilter?.updateAdvancedFilters.bind(issuesFilter, workspaceSlug, projectId, moduleId)}
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       >
-        {({ filter: moduleWorkItemsFilter }) => (
+        {({ filter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {moduleWorkItemsFilter && <WorkItemFiltersRow filter={moduleWorkItemsFilter} />}
+            <WorkItemFiltersRowWrapper filter={filter} />
             <Row variant={ERowVariant.HUGGING} className="h-full w-full overflow-auto">
               <ModuleIssueLayout activeLayout={activeLayout} moduleId={moduleId} />
             </Row>

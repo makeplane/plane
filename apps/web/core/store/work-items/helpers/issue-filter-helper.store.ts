@@ -11,16 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { isEmpty } from "lodash-es";
+import { cloneDeep, isEmpty, set } from "lodash-es";
+import { action, makeObservable, runInAction } from "mobx";
 // plane constants
 import type { EIssueFilterType } from "@plane/constants";
 import {
   EIssueGroupByToServerOptions,
   EServerGroupByToFilterOptions,
   ENABLE_ISSUE_DEPENDENCIES,
+  DEFAULT_PQL_FILTER_VALUE,
 } from "@plane/constants";
 import type {
   EIssuesStoreType,
+  AdvancedFilterType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
@@ -32,6 +35,7 @@ import type {
   TIssueParams,
   TStaticViewTypes,
   TWorkItemFilterExpression,
+  PQLFilterValue,
 } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
 // helpers
@@ -40,13 +44,13 @@ import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/
 import { storage } from "@/lib/local-storage";
 import { store } from "@/lib/store-context";
 
-interface ILocalStoreIssueFilters {
+type LocalStoreIssueFilters = Partial<{
+  filters: Partial<IIssueFiltersResponse & { kanban_filters: TIssueKanbanFilters }>;
   key: EIssuesStoreType;
   workspaceSlug: string;
-  viewId: string | undefined; // It can be projectId, moduleId, cycleId, projectViewId
-  userId: string | undefined;
-  filters: IIssueFilters;
-}
+  viewId: string;
+  userId: string;
+}>;
 
 export interface IBaseIssueFilterStore {
   // observables
@@ -56,11 +60,24 @@ export interface IBaseIssueFilterStore {
   issueFilters: IIssueFilters | undefined;
 }
 
+export type UpdateAdvancedFiltersParams =
+  | {
+      type: Extract<AdvancedFilterType, "rich_filters">;
+      expression: TWorkItemFilterExpression;
+    }
+  | {
+      type: Extract<AdvancedFilterType, "pql_filters">;
+      value: PQLFilterValue;
+    }
+  | {
+      type: "last_used";
+      value: AdvancedFilterType;
+    };
+
 export interface IIssueFilterHelperStore {
   computedIssueFilters(filters: IIssueFilters): IIssueFilters;
   computedFilteredParams(
-    richFilters: TWorkItemFilterExpression,
-    displayFilters: IIssueDisplayFilterOptions | undefined,
+    filters: IIssueFilters,
     acceptableParamsByLayout: TIssueParams[]
   ): Partial<Record<TIssueParams, string | boolean>>;
   computedFilters(filters: IIssueFilterOptions): IIssueFilterOptions;
@@ -76,7 +93,11 @@ export interface IIssueFilterHelperStore {
 }
 
 export class IssueFilterHelperStore implements IIssueFilterHelperStore {
-  constructor() {}
+  constructor() {
+    makeObservable<IssueFilterHelperStore, "handleAdvancedFiltersUpdate">(this, {
+      handleAdvancedFiltersUpdate: action,
+    });
+  }
 
   /**
    * @description This method is used to apply the display filters on the issues
@@ -84,6 +105,8 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @returns {IIssueFilters}
    */
   computedIssueFilters = (filters: IIssueFilters): IIssueFilters => ({
+    lastUsedFilterType: filters?.lastUsedFilterType,
+    pqlFilters: isEmpty(filters?.pqlFilters) ? DEFAULT_PQL_FILTER_VALUE : filters?.pqlFilters,
     richFilters: isEmpty(filters?.richFilters) ? {} : filters?.richFilters,
     displayFilters: isEmpty(filters?.displayFilters) ? undefined : filters?.displayFilters,
     displayProperties: isEmpty(filters?.displayProperties) ? undefined : filters?.displayProperties,
@@ -98,17 +121,18 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @returns {Partial<Record<TIssueParams, string | boolean>>}
    */
   computedFilteredParams = (
-    richFilters: TWorkItemFilterExpression,
-    displayFilters: IIssueDisplayFilterOptions | undefined,
+    filters: IIssueFilters,
     acceptableParamsByLayout: TIssueParams[]
   ): Partial<Record<TIssueParams, string | boolean>> => {
     const computedDisplayFilters: Partial<Record<TIssueParams, undefined | string[] | boolean | string>> = {
-      group_by: displayFilters?.group_by ? EIssueGroupByToServerOptions[displayFilters.group_by] : undefined,
-      sub_group_by: displayFilters?.sub_group_by
-        ? EIssueGroupByToServerOptions[displayFilters.sub_group_by]
+      group_by: filters.displayFilters?.group_by
+        ? EIssueGroupByToServerOptions[filters.displayFilters.group_by]
         : undefined,
-      order_by: displayFilters?.order_by || undefined,
-      sub_issue: displayFilters?.sub_issue ?? true,
+      sub_group_by: filters.displayFilters?.sub_group_by
+        ? EIssueGroupByToServerOptions[filters.displayFilters.sub_group_by]
+        : undefined,
+      order_by: filters.displayFilters?.order_by || undefined,
+      sub_issue: filters.displayFilters?.sub_issue ?? true,
     };
 
     const issueFiltersParams: Partial<Record<TIssueParams, boolean | string>> = {};
@@ -123,11 +147,15 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     });
 
     // work item filters
-    if (richFilters) issueFiltersParams.filters = JSON.stringify(richFilters);
+    if (filters.lastUsedFilterType === "pql_filters") {
+      issueFiltersParams.pql = filters.pqlFilters?.stripped?.toString() || "";
+    } else {
+      issueFiltersParams.filters = JSON.stringify(filters.richFilters);
+    }
 
-    if (displayFilters?.layout) issueFiltersParams.layout = displayFilters?.layout;
+    if (filters.displayFilters?.layout) issueFiltersParams.layout = filters.displayFilters?.layout;
 
-    if (ENABLE_ISSUE_DEPENDENCIES && displayFilters?.layout === EIssueLayoutTypes.GANTT)
+    if (ENABLE_ISSUE_DEPENDENCIES && filters.displayFilters?.layout === EIssueLayoutTypes.GANTT)
       issueFiltersParams["expand"] = "issue_relation,issue_related";
 
     return issueFiltersParams;
@@ -189,7 +217,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @returns {IIssueDisplayFilterOptions}
    */
   computedDisplayFilters = (
-    displayFilters: IIssueDisplayFilterOptions,
+    displayFilters: IIssueDisplayFilterOptions | undefined,
     defaultValues?: IIssueDisplayFilterOptions
   ): IIssueDisplayFilterOptions => {
     const computedFilters = getComputedDisplayFilters(displayFilters, defaultValues);
@@ -201,13 +229,15 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @param {IIssueDisplayProperties} displayProperties
    * @returns {IIssueDisplayProperties}
    */
-  computedDisplayProperties = (displayProperties: IIssueDisplayProperties): IIssueDisplayProperties =>
+  computedDisplayProperties = (displayProperties: IIssueDisplayProperties | undefined): IIssueDisplayProperties =>
     getComputedDisplayProperties(displayProperties);
 
   handleIssuesLocalFilters = {
-    fetchFiltersFromStorage: () => {
+    fetchFiltersFromStorage: (): LocalStoreIssueFilters[] => {
       const _filters = storage.get("issue_local_filters");
-      return _filters ? JSON.parse(_filters) : [];
+      const parsed = JSON.parse(_filters || "[]");
+      if (!Array.isArray(parsed)) return [];
+      return parsed;
     },
 
     get: (
@@ -218,13 +248,13 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     ) => {
       const storageFilters = this.handleIssuesLocalFilters.fetchFiltersFromStorage();
       const currentFilterIndex = storageFilters.findIndex(
-        (filter: ILocalStoreIssueFilters) =>
+        (filter: LocalStoreIssueFilters) =>
           filter.key === currentView &&
           filter.workspaceSlug === workspaceSlug &&
           filter.viewId === viewId &&
           filter.userId === userId
       );
-      if (!currentFilterIndex && currentFilterIndex.length < 0) return undefined;
+      if (currentFilterIndex === null || currentFilterIndex === undefined || currentFilterIndex < 0) return undefined;
 
       return storageFilters[currentFilterIndex]?.filters || {};
     },
@@ -239,7 +269,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     ) => {
       const storageFilters = this.handleIssuesLocalFilters.fetchFiltersFromStorage();
       const currentFilterIndex = storageFilters.findIndex(
-        (filter: ILocalStoreIssueFilters) =>
+        (filter: LocalStoreIssueFilters) =>
           filter.key === currentView &&
           filter.workspaceSlug === workspaceSlug &&
           filter.viewId === viewId &&
@@ -355,6 +385,50 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
 
     return paginationParams;
   }
+
+  protected handleAdvancedFiltersUpdate = async (args: {
+    data: IIssueFilters | undefined;
+    params: UpdateAdvancedFiltersParams;
+    updateCallback?: (payload: Partial<IIssueFiltersResponse>) => Promise<unknown> | void;
+    fetchWorkItemsCallback?: () => Promise<unknown>;
+  }) => {
+    const { data, params, updateCallback, fetchWorkItemsCallback } = args;
+    if (!data || isEmpty(data)) return;
+    const initialData = cloneDeep(data);
+
+    try {
+      const payload: Partial<IIssueFiltersResponse> = {};
+      runInAction(() => {
+        const mutationData: Partial<IIssueFilters> = {};
+        if (params.type === "last_used") {
+          mutationData.lastUsedFilterType = params.value;
+          payload.last_used_filter = params.value;
+        } else if (params.type === "rich_filters") {
+          mutationData.richFilters = params.expression;
+          payload.rich_filters = params.expression;
+        } else if (params.type === "pql_filters") {
+          mutationData.pqlFilters = params.value;
+          payload.pql_filters = params.value;
+        }
+        Object.keys(mutationData).forEach((key) => {
+          const _key = key as keyof IIssueFilters;
+          set(data, _key, mutationData[_key]);
+        });
+      });
+
+      await updateCallback?.(payload);
+      void fetchWorkItemsCallback?.();
+    } catch (error) {
+      runInAction(() => {
+        Object.keys(initialData).forEach((key) => {
+          const _key = key as keyof IIssueFilters;
+          set(data, _key, initialData[_key]);
+        });
+      });
+      console.error("error while updating advanced filters", error);
+      throw error;
+    }
+  };
 }
 
 const getEnabledDisplayFilters = (displayFilters: IIssueDisplayFilterOptions) => {

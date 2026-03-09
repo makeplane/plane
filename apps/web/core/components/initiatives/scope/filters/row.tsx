@@ -11,8 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { FiltersRow } from "@/components/rich-filters/filters-row";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { RichFiltersRow } from "@/components/rich-filters/filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row/basic";
 import type { IWorkItemFilterInstance } from "@plane/shared-state";
 import { INITIATIVE_SCOPE_TABS } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -36,7 +36,7 @@ export const InitiativeScopeProjectFiltersRow = observer(function InitiativeScop
   }
 
   return (
-    <FiltersRow
+    <RichFiltersRow
       filter={projectFilterInstance}
       buttonConfig={{
         variant: "secondary",
@@ -51,7 +51,7 @@ export const InitiativeScopeProjectFiltersRow = observer(function InitiativeScop
 export const InitiativeScopeEpicFiltersRow = observer(function InitiativeScopeEpicFiltersRow({
   epicFilterInstance,
 }: {
-  epicFilterInstance: IWorkItemFilterInstance;
+  epicFilterInstance: IWorkItemFilterInstance["richFiltersInstance"];
 }) {
   return <WorkItemFiltersRow filter={epicFilterInstance} />;
 });

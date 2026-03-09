@@ -96,7 +96,7 @@ export const SubWorkItemsActions = observer(function SubWorkItemsActions(props: 
         else newValues.push(value);
       }
 
-      updateSubWorkItemFilters(EIssueFilterType.FILTERS, { [key]: newValues }, workItemId);
+      updateSubWorkItemFilters(EIssueFilterType.RICH_FILTERS, { [key]: newValues }, workItemId);
     },
     [workspaceSlug, projectId, subIssueFilters?.filters, updateSubWorkItemFilters, workItemId]
   );

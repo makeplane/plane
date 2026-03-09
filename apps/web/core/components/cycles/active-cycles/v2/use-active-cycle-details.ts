@@ -22,6 +22,7 @@ import type {
   TCycleEstimateType,
   TCyclePlotType,
   TCycleEstimateSystemAdvanced,
+  TWorkItemFilterExpression,
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // hooks
@@ -44,7 +45,7 @@ export const useActiveCycleDetails = (props: useActiveCycleDetailsProps) => {
   const router = useRouter();
   // store hooks
   const {
-    issuesFilter: { updateFilterExpression },
+    issuesFilter: { updateAdvancedFilters },
   } = useIssues(EIssuesStoreType.CYCLE);
   const { updateFilterExpressionFromConditions } = useWorkItemFilters();
   const {
@@ -126,16 +127,18 @@ export const useActiveCycleDetails = (props: useActiveCycleDetailsProps) => {
     async (conditions: TWorkItemFilterCondition[]) => {
       if (!cycleId) return;
 
-      updateFilterExpressionFromConditions(
-        EIssuesStoreType.CYCLE,
-        cycleId,
-        conditions,
-        updateFilterExpression.bind(updateFilterExpression, workspaceSlug, projectId, cycleId)
-      );
+      const updatedFilterExpression = async (expression: TWorkItemFilterExpression) => {
+        await updateAdvancedFilters(workspaceSlug, projectId, cycleId, {
+          type: "rich_filters",
+          expression,
+        });
+      };
+
+      await updateFilterExpressionFromConditions(EIssuesStoreType.CYCLE, cycleId, conditions, updatedFilterExpression);
 
       router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`);
     },
-    [workspaceSlug, projectId, cycleId, updateFilterExpressionFromConditions, updateFilterExpression, router]
+    [workspaceSlug, projectId, cycleId, updateFilterExpressionFromConditions, updateAdvancedFilters, router]
   );
   return {
     projectId,

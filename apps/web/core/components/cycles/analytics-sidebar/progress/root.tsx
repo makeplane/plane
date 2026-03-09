@@ -76,7 +76,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
   const { getPlotTypeByCycleId, getEstimateTypeByCycleId, getCycleById } = useCycle();
   const { getFilter, updateFilterValueFromSidebar } = useWorkItemFilters();
   // derived values
-  const cycleFilter = getFilter(EIssuesStoreType.CYCLE, cycleId);
+  const cycleFilter = getFilter(EIssuesStoreType.CYCLE, cycleId)?.richFiltersInstance;
   const selectedAssignees = cycleFilter?.findFirstConditionByPropertyAndOperator("assignee_id", "in");
   const selectedLabels = cycleFilter?.findFirstConditionByPropertyAndOperator("label_id", "in");
   const selectedStateGroups = cycleFilter?.findFirstConditionByPropertyAndOperator("state_group", "in");

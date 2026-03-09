@@ -64,6 +64,7 @@ from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
 from plane.utils.filters import ComplexFilterBackend
+from plane.utils.pql import PQLFilterBackend
 from plane.utils.filters import IssueFilterSet
 from plane.utils.grouper import issue_on_results, issue_group_values
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
@@ -157,7 +158,10 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (
+        ComplexFilterBackend,
+        PQLFilterBackend,
+    )
     filterset_class = IssueFilterSet
 
     def _get_project_permission_filters(self):
@@ -538,7 +542,7 @@ class IssueViewViewSet(BaseViewSet):
         issue_view = self.get_queryset().filter(pk=pk, project_id=project_id).first()
         project = Project.objects.get(id=project_id)
         """
-        if the role is guest and guest_view_all_features is false and owned by is not 
+        if the role is guest and guest_view_all_features is false and owned by is not
         the requesting user then dont show the view
         """
 

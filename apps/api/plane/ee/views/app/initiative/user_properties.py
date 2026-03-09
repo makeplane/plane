@@ -45,6 +45,9 @@ class InitiativeUserPropertiesEndpoint(BaseAPIView):
         initiative_user_properties.rich_filters = request.data.get(
             "rich_filters", initiative_user_properties.rich_filters
         )
+        initiative_user_properties.pql_filters = request.data.get("pql_filters", initiative_user_properties.pql_filters)
+        initiative_user_properties.last_used_filter = request.data.get("last_used_filter", 
+                                                                       initiative_user_properties.last_used_filter)
         initiative_user_properties.save()
         serializer = InitiativeUserPropertySerializer(initiative_user_properties)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -23,9 +23,9 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { TransferIssues } from "@/components/cycles/transfer-issues";
 import { TransferIssuesModal } from "@/components/cycles/transfer-issues-modal";
-// hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
+// hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -137,11 +137,11 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
         entityId={cycleId}
         filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
         initialWorkItemFilters={workItemFilters}
-        updateFilters={issuesFilter?.updateFilterExpression.bind(issuesFilter, workspaceSlug, projectId, cycleId)}
+        updateFilters={issuesFilter?.updateAdvancedFilters.bind(issuesFilter, workspaceSlug, projectId, cycleId)}
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       >
-        {({ filter: cycleWorkItemsFilter }) => (
+        {({ filter }) => (
           <>
             <TransferIssuesModal
               handleClose={() => setTransferIssuesModal(false)}
@@ -156,7 +156,7 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
                   disabled={!isEmpty(cycleDetails?.progress_snapshot)}
                 />
               )}
-              {cycleWorkItemsFilter && <WorkItemFiltersRow filter={cycleWorkItemsFilter} />}
+              <WorkItemFiltersRowWrapper filter={filter} />
               <div className="h-full w-full overflow-auto">
                 <CycleIssueLayout activeLayout={activeLayout} cycleId={cycleId} isCompletedCycle={isCompletedCycle} />
               </div>

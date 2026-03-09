@@ -16,7 +16,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // base class
 import { computedFn } from "mobx-utils";
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
-import { EIssueFilterType } from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, EIssueFilterType } from "@plane/constants";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -24,13 +24,15 @@ import type {
   IIssueFilters,
   TIssueParams,
   IssuePaginationOptions,
-  TWorkItemFilterExpression,
   TSupportedFilterForUpdate,
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
 import { IssueFiltersService } from "@/services/issue_filter.service";
-import type { IBaseIssueFilterStore } from "@/store/work-items/helpers/issue-filter-helper.store";
+import type {
+  IBaseIssueFilterStore,
+  UpdateAdvancedFiltersParams,
+} from "@/store/work-items/helpers/issue-filter-helper.store";
 import { IssueFilterHelperStore } from "@/store/work-items/helpers/issue-filter-helper.store";
 import type { IIssueRootStore } from "@/store/work-items/root.store";
 
@@ -46,10 +48,10 @@ export interface IArchivedEpicsFilter extends IBaseIssueFilterStore {
   getIssueFilters(projectId: string): IIssueFilters | undefined;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
-  updateFilterExpression: (
+  updateAdvancedFilters: (
     workspaceSlug: string,
     projectId: string,
-    filters: TWorkItemFilterExpression
+    params: UpdateAdvancedFiltersParams
   ) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
@@ -77,6 +79,7 @@ export class ArchivedEpicsFilter extends IssueFilterHelperStore implements IArch
       appliedFilters: computed,
       // actions
       fetchFilters: action,
+      updateAdvancedFilters: action,
       updateFilters: action,
     });
     // root store
@@ -114,8 +117,7 @@ export class ArchivedEpicsFilter extends IssueFilterHelperStore implements IArch
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
-      userFilters?.richFilters,
-      userFilters?.displayFilters,
+      userFilters,
       filteredParams
     );
 
@@ -144,13 +146,12 @@ export class ArchivedEpicsFilter extends IssueFilterHelperStore implements IArch
       undefined
     );
 
-    const richFilters: TWorkItemFilterExpression = _filters?.richFilters;
     const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters({
       ..._filters?.display_filters,
       sub_issue: true,
     });
     const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
-    const kanbanFilters = {
+    const kanbanFilters: TIssueKanbanFilters = {
       group_by: [],
       sub_group_by: [],
     };
@@ -158,35 +159,36 @@ export class ArchivedEpicsFilter extends IssueFilterHelperStore implements IArch
     kanbanFilters.sub_group_by = _filters?.kanban_filters?.sub_group_by || [];
 
     runInAction(() => {
-      set(this.filters, [projectId, "richFilters"], richFilters);
-      set(this.filters, [projectId, "displayFilters"], displayFilters);
-      set(this.filters, [projectId, "displayProperties"], displayProperties);
-      set(this.filters, [projectId, "kanbanFilters"], kanbanFilters);
+      set(this.filters, [projectId], {
+        richFilters: _filters?.rich_filters || {},
+        pqlFilters: _filters?.pql_filters || DEFAULT_PQL_FILTER_VALUE,
+        lastUsedFilterType: _filters?.last_used_filter,
+        displayFilters,
+        displayProperties,
+        kanbanFilters,
+      } satisfies IIssueFilters);
     });
   };
 
-  updateFilterExpression: IArchivedEpicsFilter["updateFilterExpression"] = async (
-    workspaceSlug,
-    projectId,
-    filters
-  ) => {
-    try {
-      runInAction(() => {
-        set(this.filters, [projectId, "richFilters"], filters);
-      });
-      this.rootIssueStore.archivedEpics.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
-      this.handleIssuesLocalFilters.set(
+  updateAdvancedFilters: IArchivedEpicsFilter["updateAdvancedFilters"] = async (workspaceSlug, projectId, params) => {
+    await this.handleAdvancedFiltersUpdate({
+      data: this.filters[projectId],
+      params,
+      updateCallback: this.handleIssuesLocalFilters.set.bind(
+        this.handleIssuesLocalFilters,
         EIssuesStoreType.ARCHIVED_EPIC,
-        EIssueFilterType.FILTERS,
+        params.type === "rich_filters" ? EIssueFilterType.RICH_FILTERS : EIssueFilterType.PQL_FILTERS,
         workspaceSlug,
         projectId,
-        undefined,
-        { rich_filters: filters }
-      );
-    } catch (error) {
-      console.log("error while updating rich filters", error);
-      throw error;
-    }
+        undefined
+      ),
+      fetchWorkItemsCallback: this.rootIssueStore.archivedEpics.fetchIssuesWithExistingPagination.bind(
+        this.rootIssueStore.archivedEpics,
+        workspaceSlug,
+        projectId,
+        "mutation"
+      ),
+    });
   };
 
   updateFilters: IArchivedEpicsFilter["updateFilters"] = async (workspaceSlug, projectId, type, filters) => {

@@ -18,10 +18,12 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import type { IIssueFilters } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-// hooks
+// components
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
+// hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -100,12 +102,14 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
   const projectView = viewId ? getViewById(viewId) : undefined;
   const workItemFilters = viewId ? issuesFilter?.getIssueFilters(viewId) : undefined;
   const activeLayout = workItemFilters?.displayFilters?.layout;
-  const initialWorkItemFilters = projectView
+  const initialWorkItemFilters: IIssueFilters | undefined = projectView
     ? {
         displayFilters: workItemFilters?.displayFilters,
         displayProperties: workItemFilters?.displayProperties,
         kanbanFilters: workItemFilters?.kanbanFilters,
         richFilters: projectView.rich_filters,
+        pqlFilters: projectView.pql_filters,
+        lastUsedFilterType: projectView.last_used_filter,
       }
     : undefined;
 
@@ -140,13 +144,13 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
         entityType={EIssuesStoreType.PROJECT_VIEW}
         filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
         initialWorkItemFilters={initialWorkItemFilters}
-        updateFilters={issuesFilter?.updateFilterExpression.bind(issuesFilter, workspaceSlug, projectId, viewId)}
+        updateFilters={issuesFilter?.updateAdvancedFilters.bind(issuesFilter, workspaceSlug, projectId, viewId)}
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       >
-        {({ filter: projectViewWorkItemsFilter }) => (
+        {({ filter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {projectViewWorkItemsFilter && <WorkItemFiltersRow filter={projectViewWorkItemsFilter} />}
+            <WorkItemFiltersRowWrapper filter={filter} />
             <div className="relative h-full w-full overflow-auto">
               <ProjectViewIssueLayout activeLayout={activeLayout} viewId={viewId.toString()} />
             </div>

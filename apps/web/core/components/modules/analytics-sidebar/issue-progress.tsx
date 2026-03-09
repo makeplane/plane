@@ -61,7 +61,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   // state
   const [loader, setLoader] = useState(false);
   // derived values
-  const moduleFilter = getFilter(EIssuesStoreType.MODULE, moduleId);
+  const moduleFilter = getFilter(EIssuesStoreType.MODULE, moduleId)?.richFiltersInstance;
   const selectedAssignees = moduleFilter?.findFirstConditionByPropertyAndOperator("assignee_id", "in");
   const selectedLabels = moduleFilter?.findFirstConditionByPropertyAndOperator("label_id", "in");
   const selectedStateGroups = moduleFilter?.findFirstConditionByPropertyAndOperator("state_group", "in");

@@ -17,7 +17,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane constants
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
-import { EIssueFilterType } from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, EIssueFilterType } from "@plane/constants";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -27,7 +27,6 @@ import type {
   TIssueParams,
   TSupportedFilterForUpdate,
   TTeamspaceView,
-  TWorkItemFilterExpression,
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // helpers
@@ -35,7 +34,10 @@ import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // plane web services
 import { TeamspaceViewService } from "@/services/teamspace/teamspace-views.service";
 // store
-import type { IBaseIssueFilterStore } from "@/store/work-items/helpers/issue-filter-helper.store";
+import type {
+  IBaseIssueFilterStore,
+  UpdateAdvancedFiltersParams,
+} from "@/store/work-items/helpers/issue-filter-helper.store";
 import { IssueFilterHelperStore } from "@/store/work-items/helpers/issue-filter-helper.store";
 import type { IIssueRootStore } from "@/store/work-items/root.store";
 
@@ -53,11 +55,11 @@ export interface ITeamViewIssuesFilter extends IBaseIssueFilterStore {
   mutateFilters: (workspaceSlug: string, viewId: string, viewDetails: TTeamspaceView) => void;
   // action
   fetchFilters: (workspaceSlug: string, teamspaceId: string, viewId: string) => Promise<void>;
-  updateFilterExpression: (
+  updateAdvancedFilters: (
     workspaceSlug: string,
     teamspaceId: string,
     viewId: string,
-    filters: TWorkItemFilterExpression
+    params: UpdateAdvancedFiltersParams
   ) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
@@ -127,8 +129,7 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
-      userFilters?.richFilters,
-      userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      userFilters,
       filteredParams
     );
 
@@ -151,12 +152,11 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
   );
 
   mutateFilters: ITeamViewIssuesFilter["mutateFilters"] = action((workspaceSlug, viewId, viewDetails) => {
-    const richFilters = viewDetails?.rich_filters;
     const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(viewDetails?.display_filters);
     const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(viewDetails?.display_properties);
 
     // fetching the kanban toggle helpers in the local storage
-    const kanbanFilters = {
+    const kanbanFilters: TIssueKanbanFilters = {
       group_by: [],
       sub_group_by: [],
     };
@@ -173,10 +173,14 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
     }
 
     runInAction(() => {
-      set(this.filters, [viewId, "richFilters"], richFilters);
-      set(this.filters, [viewId, "displayFilters"], displayFilters);
-      set(this.filters, [viewId, "displayProperties"], displayProperties);
-      set(this.filters, [viewId, "kanbanFilters"], kanbanFilters);
+      set(this.filters, [viewId], {
+        richFilters: viewDetails?.rich_filters || {},
+        pqlFilters: viewDetails?.pql_filters || DEFAULT_PQL_FILTER_VALUE,
+        lastUsedFilterType: viewDetails?.last_used_filter,
+        displayFilters,
+        displayProperties,
+        kanbanFilters,
+      } satisfies IIssueFilters);
     });
   });
 
@@ -195,27 +199,23 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
    * Only use this method directly when initializing filter instances.
    * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
    */
-  updateFilterExpression: ITeamViewIssuesFilter["updateFilterExpression"] = async (
+  updateAdvancedFilters: ITeamViewIssuesFilter["updateAdvancedFilters"] = async (
     workspaceSlug,
     teamspaceId,
     viewId,
-    filters
+    params
   ) => {
-    try {
-      runInAction(() => {
-        set(this.filters, [viewId, "richFilters"], filters);
-      });
-
-      this.rootIssueStore.teamViewIssues.fetchIssuesWithExistingPagination(
+    await this.handleAdvancedFiltersUpdate({
+      data: this.filters[viewId],
+      params,
+      fetchWorkItemsCallback: this.rootIssueStore.teamViewIssues.fetchIssuesWithExistingPagination.bind(
+        this.rootIssueStore.teamViewIssues,
         workspaceSlug,
         teamspaceId,
         viewId,
         "mutation"
-      );
-    } catch (error) {
-      console.log("error while updating rich filters", error);
-      throw error;
-    }
+      ),
+    });
   };
 
   updateFilters: ITeamViewIssuesFilter["updateFilters"] = async (workspaceSlug, teamspaceId, type, filters, viewId) => {

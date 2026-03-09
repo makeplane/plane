@@ -42,6 +42,7 @@ export interface IFilterConfigManager<P extends TFilterProperty> {
   areConfigsReady: boolean;
   // computed
   allAvailableConfigs: IFilterConfig<P>[];
+  allEnabledConfigs: IFilterConfig<P>[];
   // computed functions
   getConfigByProperty: (property: P) => IFilterConfig<P> | undefined;
   // helpers
@@ -98,6 +99,7 @@ export class FilterConfigManager<
       areConfigsReady: observable,
       // computed
       allAvailableConfigs: computed,
+      allEnabledConfigs: computed,
       // helpers
       register: action,
       registerAll: action,
@@ -117,7 +119,7 @@ export class FilterConfigManager<
   get allAvailableConfigs(): IFilterConfigManager<P>["allAvailableConfigs"] {
     const appliedProperties = new Set(this._filterInstance.allConditions.map((condition) => condition.property));
     // Return all enabled configs that either allow multiple filters or are not currently applied
-    return this._allEnabledConfigs.filter((config) => config.allowMultipleFilters || !appliedProperties.has(config.id));
+    return this.allEnabledConfigs.filter((config) => config.allowMultipleFilters || !appliedProperties.has(config.id));
   }
 
   // ------------ computed functions ------------
@@ -186,7 +188,7 @@ export class FilterConfigManager<
    * Returns all enabled filterConfigs.
    * @returns All enabled filterConfigs.
    */
-  private get _allEnabledConfigs(): IFilterConfig<P>[] {
+  get allEnabledConfigs(): IFilterConfig<P>[] {
     return this._allConfigs.filter((config) => config.isEnabled);
   }
 

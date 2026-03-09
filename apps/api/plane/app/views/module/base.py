@@ -839,10 +839,12 @@ class ModuleUserPropertiesEndpoint(BaseAPIView):
 
         module_properties.filters = request.data.get("filters", module_properties.filters)
         module_properties.rich_filters = request.data.get("rich_filters", module_properties.rich_filters)
+        module_properties.pql_filters = request.data.get("pql_filters", module_properties.pql_filters)
         module_properties.display_filters = request.data.get("display_filters", module_properties.display_filters)
         module_properties.display_properties = request.data.get(
             "display_properties", module_properties.display_properties
         )
+        module_properties.last_used_filter = request.data.get("last_used_filter", module_properties.last_used_filter)
         module_properties.save()
 
         serializer = ModuleUserPropertiesSerializer(module_properties)

@@ -15,7 +15,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
@@ -32,7 +32,7 @@ import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -57,6 +57,8 @@ const DEFAULT_VALUES: Partial<IProjectView> = {
   access: EViewAccess.PUBLIC,
   display_properties: getComputedDisplayProperties(),
   display_filters: { ...getComputedDisplayFilters(), group_by: "state" },
+  pql_filters: DEFAULT_PQL_FILTER_VALUE,
+  last_used_filter: "rich_filters",
 };
 
 export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
@@ -90,6 +92,8 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
   const logoValue = watch("logo_props");
   const workItemFilters: IIssueFilters = {
     richFilters: getValues("rich_filters"),
+    pqlFilters: getValues("pql_filters"),
+    lastUsedFilterType: getValues("last_used_filter"),
     displayFilters: getValues("display_filters"),
     displayProperties: getValues("display_properties"),
     kanbanFilters: undefined,
@@ -104,6 +108,8 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
       rich_filters: formData.rich_filters,
       display_filters: formData.display_filters,
       display_properties: formData.display_properties,
+      pql_filters: formData.pql_filters,
+      last_used_filter: formData.last_used_filter,
       access: formData.access,
     } as IProjectView);
 
@@ -263,24 +269,40 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
             <Controller
               control={control}
               name="rich_filters"
-              render={({ field: { onChange: onFiltersChange } }) => (
-                <ProjectLevelWorkItemFiltersHOC
-                  entityId={data?.id}
-                  entityType={EIssuesStoreType.PROJECT_VIEW}
-                  filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
-                  initialWorkItemFilters={workItemFilters}
-                  isTemporary
-                  updateFilters={(updateFilters) => onFiltersChange(updateFilters)}
-                  projectId={projectId}
-                  showOnMount
-                  workspaceSlug={workspaceSlug}
-                >
-                  {({ filter: projectViewWorkItemsFilter }) =>
-                    projectViewWorkItemsFilter && (
-                      <WorkItemFiltersRow filter={projectViewWorkItemsFilter} variant="modal" />
-                    )
-                  }
-                </ProjectLevelWorkItemFiltersHOC>
+              render={({ field: { onChange: onRichFiltersChange } }) => (
+                <Controller
+                  control={control}
+                  name="pql_filters"
+                  render={({ field: { onChange: onPQLFiltersChange } }) => (
+                    <ProjectLevelWorkItemFiltersHOC
+                      entityId={data?.id}
+                      entityType={EIssuesStoreType.PROJECT_VIEW}
+                      filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
+                      initialWorkItemFilters={workItemFilters}
+                      isTemporary
+                      updateFilters={async (updatedFilters) => {
+                        switch (updatedFilters.type) {
+                          case "rich_filters":
+                            onRichFiltersChange(updatedFilters.expression);
+                            break;
+                          case "pql_filters":
+                            onPQLFiltersChange(updatedFilters.value);
+                            break;
+                          case "last_used":
+                            setValue("last_used_filter", updatedFilters.value);
+                            break;
+                          default:
+                            break;
+                        }
+                      }}
+                      projectId={projectId}
+                      showOnMount
+                      workspaceSlug={workspaceSlug}
+                    >
+                      {({ filter }) => <WorkItemFiltersRowWrapper filter={filter} variant="modal" />}
+                    </ProjectLevelWorkItemFiltersHOC>
+                  )}
+                />
               )}
             />
           </div>

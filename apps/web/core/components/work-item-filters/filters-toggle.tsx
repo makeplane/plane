@@ -31,5 +31,5 @@ export const WorkItemFiltersToggle = observer(function WorkItemFiltersToggle(pro
   // derived values
   const filter = getFilter(entityType, entityId);
 
-  return <FiltersToggle filter={filter} />;
+  return <FiltersToggle filter={filter?.richFiltersInstance} />;
 });

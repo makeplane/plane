@@ -409,10 +409,8 @@ class WorkspaceUserProperties(BaseModel, FiltersMixin):
         on_delete=models.CASCADE,
         related_name="workspace_user_properties",
     )
-    filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
-    rich_filters = models.JSONField(default=dict)
     navigation_project_limit = models.IntegerField(default=10)
     navigation_control_preference = models.CharField(
         max_length=25,

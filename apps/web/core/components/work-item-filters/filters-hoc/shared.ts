@@ -12,29 +12,41 @@
  */
 
 // plane imports
-import type { TSaveViewOptions, TUpdateViewOptions } from "@plane/constants";
-import type { IWorkItemFilterInstance } from "@plane/shared-state";
-import type { EIssuesStoreType, IIssueFilters, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+import type { WorkItemFilterInstance } from "@plane/shared-state";
+import type {
+  EIssuesStoreType,
+  IIssueFilters,
+  TWorkItemFilterExpression,
+  TWorkItemFilterProperty,
+  TWorkItemFiltersSaveViewOptions,
+  TWorkItemFiltersUpdateViewOptions,
+} from "@plane/types";
+// store
+import type { UpdateAdvancedFiltersParams } from "@/store/work-items/helpers/issue-filter-helper.store";
 
 export type TSharedWorkItemFiltersProps = {
   entityType: EIssuesStoreType; // entity type (project, cycle, workspace, teamspace, etc)
   filtersToShowByLayout: TWorkItemFilterProperty[];
-  updateFilters: (updatedFilters: TWorkItemFilterExpression) => void;
+  updateFilters: (params: UpdateAdvancedFiltersParams) => Promise<void>;
   isTemporary?: boolean;
   showOnMount?: boolean;
 } & ({ isTemporary: true; entityId?: string } | { isTemporary?: false; entityId: string }); // entity id (project_id, cycle_id, workspace_id, etc)
 
+export type TSharedWorkItemFiltersHOCChildrenProps = {
+  filter: WorkItemFilterInstance | undefined;
+};
+
 export type TSharedWorkItemFiltersHOCProps = TSharedWorkItemFiltersProps & {
-  children: React.ReactNode | ((props: { filter: IWorkItemFilterInstance | undefined }) => React.ReactNode);
+  children: React.ReactNode | ((props: TSharedWorkItemFiltersHOCChildrenProps) => React.ReactNode);
   initialWorkItemFilters: IIssueFilters | undefined;
 };
 
 export type TEnableSaveViewProps = {
   enableSaveView?: boolean;
-  saveViewOptions?: Omit<TSaveViewOptions<TWorkItemFilterExpression>, "onViewSave">;
+  saveViewOptions?: Omit<TWorkItemFiltersSaveViewOptions<TWorkItemFilterExpression>, "onViewSave">;
 };
 
 export type TEnableUpdateViewProps = {
   enableUpdateView?: boolean;
-  updateViewOptions?: Omit<TUpdateViewOptions<TWorkItemFilterExpression>, "onViewUpdate">;
+  updateViewOptions?: Omit<TWorkItemFiltersUpdateViewOptions<TWorkItemFilterExpression>, "onViewUpdate">;
 };

@@ -13,9 +13,11 @@
 
 import type { TLogoProps } from "./common";
 import type {
+  AdvancedFilterType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
+  PQLFilterValue,
   TWorkItemFilterExpression,
 } from "./view-props";
 
@@ -35,6 +37,8 @@ export interface IProjectView {
   name: string;
   description: string;
   rich_filters: TWorkItemFilterExpression;
+  pql_filters: PQLFilterValue;
+  last_used_filter: AdvancedFilterType;
   display_filters: IIssueDisplayFilterOptions;
   display_properties: IIssueDisplayProperties;
   query: IIssueFilterOptions;

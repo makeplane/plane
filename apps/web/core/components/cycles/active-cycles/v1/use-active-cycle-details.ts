@@ -16,6 +16,7 @@ import { useNavigate } from "react-router";
 import useSWR from "swr";
 // plane imports
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
+import type { TWorkItemFilterExpression } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // constants
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
@@ -37,7 +38,7 @@ export const useActiveCycleDetails = (props: TActiveCycleDetails) => {
   const navigate = useNavigate();
   // store hooks
   const {
-    issuesFilter: { updateFilterExpression },
+    issuesFilter: { updateAdvancedFilters },
     issues: { getActiveCycleById: getActiveCycleByIdFromIssue, fetchActiveCycleIssues },
   } = useIssues(EIssuesStoreType.CYCLE);
   const { updateFilterExpressionFromConditions } = useWorkItemFilters();
@@ -76,16 +77,18 @@ export const useActiveCycleDetails = (props: TActiveCycleDetails) => {
     async (conditions: TWorkItemFilterCondition[]) => {
       if (!cycleId) return;
 
-      await updateFilterExpressionFromConditions(
-        EIssuesStoreType.CYCLE,
-        cycleId,
-        conditions,
-        updateFilterExpression.bind(updateFilterExpression, workspaceSlug, projectId, cycleId)
-      );
+      const updatedFilterExpression = async (expression: TWorkItemFilterExpression) => {
+        await updateAdvancedFilters(workspaceSlug, projectId, cycleId, {
+          type: "rich_filters",
+          expression,
+        });
+      };
+
+      await updateFilterExpressionFromConditions(EIssuesStoreType.CYCLE, cycleId, conditions, updatedFilterExpression);
 
       void navigate(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`);
     },
-    [workspaceSlug, projectId, cycleId, updateFilterExpressionFromConditions, updateFilterExpression, navigate]
+    [workspaceSlug, projectId, cycleId, updateFilterExpressionFromConditions, updateAdvancedFilters, navigate]
   );
   return {
     cycle,

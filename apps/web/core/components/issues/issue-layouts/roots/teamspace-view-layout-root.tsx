@@ -18,11 +18,12 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import type { IIssueFilters } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { TeamspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/teamspace-level";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -87,12 +88,14 @@ export const TeamspaceViewLayoutRoot = observer(function TeamspaceViewLayoutRoot
   const teamspaceView = teamspaceId && viewId ? getViewById(teamspaceId, viewId) : undefined;
   const workItemFilters = viewId ? issuesFilter?.getIssueFilters(viewId) : undefined;
   const activeLayout = workItemFilters?.displayFilters?.layout;
-  const initialWorkItemFilters = teamspaceView
+  const initialWorkItemFilters: IIssueFilters | undefined = teamspaceView
     ? {
         displayFilters: workItemFilters?.displayFilters,
         displayProperties: workItemFilters?.displayProperties,
         kanbanFilters: workItemFilters?.kanbanFilters,
         richFilters: teamspaceView.rich_filters,
+        pqlFilters: teamspaceView.pql_filters,
+        lastUsedFilterType: teamspaceView.last_used_filter,
       }
     : undefined;
   // swr hook for fetching issue properties
@@ -131,17 +134,17 @@ export const TeamspaceViewLayoutRoot = observer(function TeamspaceViewLayoutRoot
         entityType={EIssuesStoreType.TEAM_VIEW}
         filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.filters}
         initialWorkItemFilters={initialWorkItemFilters}
-        updateFilters={issuesFilter?.updateFilterExpression.bind(issuesFilter, workspaceSlug, teamspaceId, viewId)}
+        updateFilters={issuesFilter?.updateAdvancedFilters.bind(issuesFilter, workspaceSlug, teamspaceId, viewId)}
         teamspaceId={teamspaceId}
         workspaceSlug={workspaceSlug}
       >
         {({ filter: teamspaceViewWorkItemsFilter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {teamspaceViewWorkItemsFilter && <WorkItemFiltersRow filter={teamspaceViewWorkItemsFilter} />}
+            <WorkItemFiltersRowWrapper filter={teamspaceViewWorkItemsFilter} />
             <div className="relative h-full w-full overflow-auto">
               {/* mutation loader */}
               {issues?.getIssueLoader() === "mutation" && (
-                <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-layer-1 shadow-sm rounded">
+                <div className="fixed size-10 z-50 right-5 top-[70px] flex justify-center items-center bg-layer-1 shadow-sm rounded">
                   <Spinner className="w-4 h-4" />
                 </div>
               )}

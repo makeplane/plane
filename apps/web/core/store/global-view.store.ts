@@ -180,11 +180,10 @@ export abstract class GlobalViewStore implements IGlobalViewStore {
 
       // applying the filters in the global view
       if (shouldSyncFilters && !isEqual(currentViewData?.rich_filters || {}, currentView?.rich_filters || {})) {
-        await this.rootStore.issue.workspaceIssuesFilter.updateFilterExpression(
-          workspaceSlug,
-          viewId,
-          currentView?.rich_filters || {}
-        );
+        await this.rootStore.issue.workspaceIssuesFilter.updateAdvancedFilters(workspaceSlug, viewId, {
+          type: "rich_filters",
+          expression: currentView?.rich_filters || {},
+        });
         this.rootStore.issue.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
       }
       return currentView;

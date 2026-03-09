@@ -44,14 +44,14 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         try:
             if filter_data is not None:
                 normalized = self._normalize_filter_data(filter_data, "filter_data")
-                return self._apply_json_filter(queryset, normalized, view)
+                return self._apply_json_filter(queryset, normalized, view, request=request)
 
             filter_string = request.query_params.get(self.filter_param, None)
             if not filter_string:
                 return queryset
 
             normalized = self._normalize_filter_data(filter_string, "filter")
-            return self._apply_json_filter(queryset, normalized, view)
+            return self._apply_json_filter(queryset, normalized, view, request=request)
         except DRFValidationError:
             # Propagate validation errors unchanged
             raise
@@ -84,7 +84,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                 }
             )
 
-    def _apply_json_filter(self, queryset, filter_data, view):
+    def _apply_json_filter(self, queryset, filter_data, view, request=None):
         """Process a JSON filter structure using Q object composition."""
         if not filter_data:
             return queryset
@@ -97,7 +97,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         self._validate_fields(filter_data, view)
 
         # Build combined Q object from the filter tree
-        combined_q = self._evaluate_node(filter_data, view, queryset)
+        combined_q = self._evaluate_node(filter_data, view, queryset, request=request)
         if combined_q is None:
             return queryset
 
@@ -161,6 +161,9 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                         # 'or' and 'and' have lists as their values
                         for item in value:
                             fields.extend(self._extract_field_names(item))
+                elif key == "fn":
+                    # fn nodes bypass FilterSet field validation
+                    continue
                 else:
                     # This is a field name - apply transformation hook
                     transformed_field = self._transform_field_name_for_validation(key)
@@ -168,12 +171,13 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             return fields
         return []
 
-    def _evaluate_node(self, node, view, queryset):
+    def _evaluate_node(self, node, view, queryset, request=None):
         """
         Recursively evaluate a JSON node into a combined Q object.
 
         Rules:
         - leaf dict → evaluated through FilterSet to produce a Q object
+        - {"fn": {...}} → dispatched to the function registry
         - {"or": [...]} → Q() | Q() | ... (OR of children)
         - {"and": [...]} → Q() & Q() & ... (AND of children)
         - {"not": {...}} → ~Q() (negation of child)
@@ -190,7 +194,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                 return None
             combined_q = Q()
             for child in children:
-                child_q = self._evaluate_node(child, view, queryset)
+                child_q = self._evaluate_node(child, view, queryset, request=request)
                 if child_q is None:
                     continue
                 combined_q |= child_q
@@ -203,7 +207,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                 return None
             combined_q = Q()
             for child in children:
-                child_q = self._evaluate_node(child, view, queryset)
+                child_q = self._evaluate_node(child, view, queryset, request=request)
                 if child_q is None:
                     continue
                 combined_q &= child_q
@@ -214,10 +218,14 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             child = node["not"]
             if not isinstance(child, dict):
                 return None
-            child_q = self._evaluate_node(child, view, queryset)
+            child_q = self._evaluate_node(child, view, queryset, request=request)
             if child_q is None:
                 return None
             return ~child_q
+
+        # 'fn' node: dispatch to function registry
+        if "fn" in node:
+            return self._evaluate_fn_leaf(node["fn"], view, request)
 
         # Leaf dict: evaluate via FilterSet to get a Q object
         return self._build_leaf_q(node, view, queryset)
@@ -301,6 +309,47 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             )
 
         return fs.build_combined_q()
+
+    def _evaluate_fn_leaf(self, fn_node, view, request):
+        """Dispatch an ``fn`` leaf node to the function registry.
+
+        Args:
+            fn_node: A dict with exactly one key (the function name) and
+                a value representing the arguments.
+            view: The DRF view instance.
+            request: The DRF request (may be ``None`` for non-PQL callers).
+
+        Returns:
+            A Django ``Q`` object produced by the registered function.
+        """
+        from plane.utils.filters.fn_registry import evaluate_fn
+
+        ctx = {
+            "request": request,
+            "workspace_slug": getattr(view, "kwargs", {}).get("slug", ""),
+        }
+        return evaluate_fn(fn_node, ctx)
+
+    def _validate_fn_leaf(self, fn_node):
+        """Validate the value of an ``fn`` key in the filter structure."""
+        from plane.utils.filters.fn_registry import FN_REGISTRY
+
+        if not isinstance(fn_node, dict) or len(fn_node) != 1:
+            raise DRFValidationError(
+                {
+                    "message": "'fn' value must be a dict with exactly one key",
+                    "code": "invalid_fn_node",
+                }
+            )
+
+        fn_name = next(iter(fn_node))
+        if fn_name not in FN_REGISTRY:
+            raise DRFValidationError(
+                {
+                    "message": f"Unknown filter function: '{fn_name}'",
+                    "code": "unknown_fn",
+                }
+            )
 
     def _get_max_depth(self, view):
         """Return the maximum allowed nesting depth for complex filters.
@@ -411,6 +460,18 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                     )
                 self._validate_structure(value, max_depth=max_depth, current_depth=current_depth + 1)
                 return
+
+        # fn node: validate function name and structure
+        if "fn" in node:
+            if len(node) != 1:
+                raise DRFValidationError(
+                    {
+                        "message": "Cannot mix 'fn' with other keys at the same level",
+                        "code": "mixed_fn_and_fields",
+                    }
+                )
+            self._validate_fn_leaf(node["fn"])
+            return
 
         # Leaf node: validate fields and values
         self._validate_leaf(node)

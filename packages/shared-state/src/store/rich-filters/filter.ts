@@ -16,13 +16,7 @@ import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import type {
-  TClearFilterOptions,
-  TExpressionOptions,
-  TFilterOptions,
-  TSaveViewOptions,
-  TUpdateViewOptions,
-} from "@plane/constants";
+import type { TClearFilterOptions, TExpressionOptions, TFilterOptions } from "@plane/constants";
 import { DEFAULT_FILTER_VISIBILITY_OPTIONS } from "@plane/constants";
 import type {
   IFilterAdapter,
@@ -92,8 +86,8 @@ export interface IFilterInstance<P extends TFilterProperty, E extends TExternalF
   allConditionsForDisplay: TFilterConditionNodeForDisplay<P, TFilterValue>[];
   // computed option helpers
   clearFilterOptions: TClearFilterOptions | undefined;
-  saveViewOptions: TSaveViewOptions<E> | undefined;
-  updateViewOptions: TUpdateViewOptions<E> | undefined;
+  saveViewOptions: TExpressionOptions<E>["saveViewOptions"];
+  updateViewOptions: TExpressionOptions<E>["updateViewOptions"];
   // computed permissions
   canClearFilters: boolean;
   canSaveView: boolean;
@@ -530,7 +524,10 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
    */
   saveView: IFilterInstance<P, E>["saveView"] = action(async () => {
     if (this.canSaveView && this.saveViewOptions) {
-      await this.saveViewOptions.onViewSave(this.getExternalExpression());
+      await this.saveViewOptions.onViewSave({
+        type: "rich_filters",
+        expression: this.getExternalExpression(),
+      });
     } else {
       console.warn("Cannot save view: invalid expression or missing options.");
     }
@@ -541,7 +538,10 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
    */
   updateView: IFilterInstance<P, E>["updateView"] = action(async () => {
     if (this.canUpdateView && this.updateViewOptions) {
-      await this.updateViewOptions.onViewUpdate(this.getExternalExpression());
+      await this.updateViewOptions.onViewUpdate({
+        type: "rich_filters",
+        expression: this.getExternalExpression(),
+      });
       this._resetInitialFilterExpression();
     } else {
       console.warn("Cannot update view: invalid expression or missing options.");

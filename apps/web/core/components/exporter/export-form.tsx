@@ -17,6 +17,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { InfoIcon } from "@plane/propel/icons";
 import {
+  DEFAULT_PQL_FILTER_VALUE,
   EUserPermissions,
   EUserPermissionsLevel,
   EXPORTERS_LIST,
@@ -27,11 +28,11 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
-import type { TWorkItemFilterExpression } from "@plane/types";
+import type { IIssueFilters, TWorkItemFilterExpression } from "@plane/types";
 import { CustomSearchSelect, CustomSelect } from "@plane/ui";
 // components
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row/basic";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
@@ -52,7 +53,7 @@ type FormData = {
   filters: TWorkItemFilterExpression;
 };
 
-const initialWorkItemFilters = {
+const initialWorkItemFilters: IIssueFilters = {
   richFilters: {},
   displayFilters: {},
   displayProperties: {},
@@ -60,6 +61,8 @@ const initialWorkItemFilters = {
     group_by: [],
     sub_group_by: [],
   },
+  pqlFilters: DEFAULT_PQL_FILTER_VALUE,
+  lastUsedFilterType: "rich_filters",
 };
 
 const projectExportService = new ProjectExportService();
@@ -99,7 +102,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="text-10 text-secondary flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="text-10 text-secondary shrink-0">{projectDetails?.identifier}</span>
           <span className="truncate">{projectDetails?.name}</span>
         </div>
       ),
@@ -253,15 +256,15 @@ export const ExportForm = observer(function ExportForm(props: Props) {
               filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
               initialWorkItemFilters={initialWorkItemFilters}
               isTemporary
-              updateFilters={(updatedFilters) => onChange(updatedFilters)}
+              updateFilters={async (updatedFilters) => {
+                if (updatedFilters.type === "rich_filters") {
+                  onChange(updatedFilters.expression);
+                }
+              }}
               showOnMount
               workspaceSlug={workspaceSlug}
             >
-              {({ filter: workspaceExportWorkItemsFilter }) =>
-                workspaceExportWorkItemsFilter && (
-                  <WorkItemFiltersRow filter={workspaceExportWorkItemsFilter} variant="modal" />
-                )
-              }
+              {({ filter }) => filter && <WorkItemFiltersRow filter={filter.richFiltersInstance} variant="modal" />}
             </WorkspaceLevelWorkItemFiltersHOC>
           )}
         />

@@ -1,0 +1,79 @@
+// PQL (Plane Query Language) Grammar — LALR(1) compatible
+//
+// Uses a single NAME terminal for both fields and function names.
+// The parser context (lookahead token) disambiguates:
+//   NAME followed by "(" → predicate_call or func_call
+//   NAME followed by operator → condition
+
+start: expr
+
+// Logical operators (lowest precedence)
+?expr: or_expr
+
+?or_expr: and_expr
+        | or_expr "OR"i and_expr        -> or_expr
+
+?and_expr: not_expr
+         | and_expr "AND"i not_expr     -> and_expr
+
+?not_expr: "NOT"i not_expr             -> not_expr
+         | atom
+
+?atom: condition
+     | predicate_call
+     | "(" expr ")"                    -> paren_expr
+
+// Custom property field reference: cf["<uuid>"]
+cf_field: "cf"i "[" ESCAPED_STRING "]"
+
+// Field: plain name or custom property reference
+?field: NAME       -> plain_field
+      | cf_field
+
+// Conditions: field <op> value
+condition: field "!=" value                             -> neq
+         | field ">=" value                             -> gte
+         | field "<=" value                             -> lte
+         | field "=" value                              -> eq
+         | field "NOT"i "IN"i in_values                 -> not_in
+         | field "IN"i in_values                        -> in_op
+         | field ">" value                              -> gt
+         | field "<" value                              -> lt
+         | field "~" value                              -> contains
+         | field "IS"i "NOT"i "NULL"i                   -> is_not_null
+         | field "IS"i "NULL"i                          -> is_null
+         | field "IS"i "NOT"i "EMPTY"i                  -> is_not_empty
+         | field "IS"i "EMPTY"i                         -> is_empty
+         | field "BETWEEN"i value "AND"i value          -> between
+
+// IN accepts either a parenthesised list or a bare function call:
+//   priority IN ("high", "urgent")   ← value_list
+//   stateGroup IN activeStates()     ← func_call returning a list
+?in_values: "(" value_list ")"
+          | func_call
+
+// Predicate / Q-producing functions used as standalone atoms
+predicate_call: NAME "(" func_args? ")"
+
+// Values
+?value: ESCAPED_STRING                  -> string_val
+      | SINGLE_QUOTED_STRING            -> string_val
+      | SIGNED_NUMBER                   -> number_val
+      | "true"i                         -> true_val
+      | "false"i                        -> false_val
+      | "null"i                         -> null_val
+      | func_call                       -> func_val
+      | cf_field                        -> cf_val
+
+func_call: NAME "(" func_args? ")"
+func_args: value ("," value)*
+
+value_list: value ("," value)*
+
+NAME: /[a-zA-Z_][a-zA-Z0-9_.]*/
+SINGLE_QUOTED_STRING: "'" /.*?/ "'"
+
+%import common.ESCAPED_STRING
+%import common.SIGNED_NUMBER
+%import common.WS
+%ignore WS

@@ -109,3 +109,6 @@ django-pgtrigger==4.15.3
 
 # Ldap
 python-ldap==3.4.5
+
+# PQL parser
+lark==1.3.1

@@ -14,13 +14,15 @@
 import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction, toJS } from "mobx";
 // plane constants
-import { EIssueFilterType } from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, EIssueFilterType } from "@plane/constants";
 // types
 import type {
+  AdvancedFilterType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
   IIssueFilters,
+  PQLFilterValue,
   TIssueParams,
   TWorkItemFilterExpression,
 } from "@plane/types";
@@ -46,7 +48,8 @@ export interface IInitiativeEpicsFilterStore extends IBaseIssueFilterStore {
       | Partial<IIssueFilterOptions>
       | Partial<IIssueDisplayFilterOptions>
       | Partial<IIssueDisplayProperties>
-      | TWorkItemFilterExpression,
+      | TWorkItemFilterExpression
+      | PQLFilterValue,
     initiativeId: string
   ) => void;
   resetFilters: (initiativeId: string) => void;
@@ -113,21 +116,36 @@ export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implement
   /**
    * Get stored rich filters from localStorage
    */
-  private getStoredRichFilters = (initiativeId: string): TWorkItemFilterExpression | undefined => {
+  private getStoredFilters = (
+    initiativeId: string
+  ):
+    | {
+        richFilters?: TWorkItemFilterExpression;
+        pqlFilters?: PQLFilterValue;
+        lastUsedFilterType?: AdvancedFilterType;
+      }
+    | undefined => {
     const stored = storage.get(EPIC_FILTERS_STORAGE_KEY);
     if (!stored) return undefined;
     try {
-      const parsed = JSON.parse(stored);
-      return parsed?.[initiativeId]?.richFilters ?? undefined;
+      const parsed = JSON.parse(stored)?.[initiativeId];
+      return {
+        richFilters: parsed?.richFilters,
+        pqlFilters: parsed?.pqlFilters,
+        lastUsedFilterType: parsed?.lastUsedFilterType,
+      };
     } catch {
       return undefined;
     }
   };
 
   /**
-   * Save rich filters to localStorage
+   * Save filters to localStorage
    */
-  private saveRichFiltersToStorage = (initiativeId: string, richFilters: TWorkItemFilterExpression): void => {
+  private saveFiltersToStorage = (
+    initiativeId: string,
+    filters: Partial<Pick<IIssueFilters, "richFilters" | "pqlFilters" | "lastUsedFilterType">>
+  ): void => {
     const stored = storage.get(EPIC_FILTERS_STORAGE_KEY);
     let all: Record<string, { richFilters: TWorkItemFilterExpression }> = {};
     if (stored) {
@@ -137,7 +155,10 @@ export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implement
         // ignore parse errors
       }
     }
-    all[initiativeId] = { richFilters };
+    all[initiativeId] = {
+      ...all[initiativeId],
+      ...filters,
+    };
     storage.set(EPIC_FILTERS_STORAGE_KEY, JSON.stringify(all));
   };
 
@@ -146,10 +167,15 @@ export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implement
    * @param initiativeId - The initiative id
    */
   initializeFilters = (initiativeId: string) => {
-    const storedRichFilters = this.getStoredRichFilters(initiativeId);
-    set(this.filters, [initiativeId, "displayProperties"], DEFAULT_DISPLAY_PROPERTIES);
-    set(this.filters, [initiativeId, "richFilters"], storedRichFilters ?? {});
-    set(this.filters, [initiativeId, "displayFilters"], {});
+    const storedFilters = this.getStoredFilters(initiativeId);
+    set(this.filters, [initiativeId], {
+      richFilters: storedFilters?.richFilters || {},
+      pqlFilters: storedFilters?.pqlFilters || DEFAULT_PQL_FILTER_VALUE,
+      lastUsedFilterType: storedFilters?.lastUsedFilterType,
+      displayFilters: {},
+      displayProperties: DEFAULT_DISPLAY_PROPERTIES,
+      kanbanFilters: { group_by: [], sub_group_by: [] },
+    } satisfies IIssueFilters);
   };
 
   /**
@@ -173,15 +199,11 @@ export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implement
    * @param filters - The filters to update
    * @param initiativeId - The initiative id
    */
-  updateEpicFilters = (
-    workspaceSlug: string,
-    filterType: EIssueFilterType,
-    filters:
-      | Partial<IIssueFilterOptions>
-      | Partial<IIssueDisplayFilterOptions>
-      | Partial<IIssueDisplayProperties>
-      | TWorkItemFilterExpression,
-    initiativeId: string
+  updateEpicFilters: IInitiativeEpicsFilterStore["updateEpicFilters"] = (
+    workspaceSlug,
+    filterType,
+    filters,
+    initiativeId
   ) => {
     runInAction(() => {
       if (!this.filters[initiativeId]) {
@@ -207,9 +229,15 @@ export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implement
           });
           break;
         }
-        case EIssueFilterType.FILTERS: {
+        case EIssueFilterType.RICH_FILTERS: {
           set(this.filters, [initiativeId, "richFilters"], filters);
-          this.saveRichFiltersToStorage(initiativeId, filters as TWorkItemFilterExpression);
+          this.saveFiltersToStorage(initiativeId, { richFilters: filters as TWorkItemFilterExpression });
+          this.rootStore.initiativeStore.scope.epics.fetchInitiativeEpics(workspaceSlug, initiativeId);
+          break;
+        }
+        case EIssueFilterType.PQL_FILTERS: {
+          set(this.filters, [initiativeId, "pqlFilters"], filters);
+          this.saveFiltersToStorage(initiativeId, { pqlFilters: filters as PQLFilterValue });
           this.rootStore.initiativeStore.scope.epics.fetchInitiativeEpics(workspaceSlug, initiativeId);
           break;
         }
@@ -224,7 +252,7 @@ export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implement
    * @param initiativeId
    */
   resetFilters = (initiativeId: string) => {
-    this.saveRichFiltersToStorage(initiativeId, {});
+    this.saveFiltersToStorage(initiativeId, {});
     this.initializeFilters(initiativeId);
   };
 }

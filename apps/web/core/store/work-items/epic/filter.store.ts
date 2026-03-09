@@ -16,17 +16,17 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane constants
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
-import { EIssueFilterType } from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, EIssueFilterType } from "@plane/constants";
 // types
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilters,
+  IIssueFiltersResponse,
   IssuePaginationOptions,
   TIssueKanbanFilters,
   TIssueParams,
   TSupportedFilterForUpdate,
-  TWorkItemFilterExpression,
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // helpers
@@ -34,7 +34,10 @@ import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // services
 import { IssueFiltersService } from "@/services/issue_filter.service";
 // store
-import type { IBaseIssueFilterStore } from "@/store/work-items/helpers/issue-filter-helper.store";
+import type {
+  IBaseIssueFilterStore,
+  UpdateAdvancedFiltersParams,
+} from "@/store/work-items/helpers/issue-filter-helper.store";
 import { IssueFilterHelperStore } from "@/store/work-items/helpers/issue-filter-helper.store";
 import type { IIssueRootStore } from "@/store/work-items/root.store";
 
@@ -50,10 +53,10 @@ export interface IProjectEpicsFilter extends IBaseIssueFilterStore {
   getIssueFilters(projectId: string): IIssueFilters | undefined;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
-  updateFilterExpression: (
+  updateAdvancedFilters: (
     workspaceSlug: string,
     projectId: string,
-    filters: TWorkItemFilterExpression
+    params: UpdateAdvancedFiltersParams
   ) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
@@ -118,8 +121,7 @@ export class ProjectEpicsFilter extends IssueFilterHelperStore implements IProje
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
-      userFilters?.richFilters,
-      userFilters?.displayFilters,
+      userFilters,
       filteredParams
     );
 
@@ -143,12 +145,11 @@ export class ProjectEpicsFilter extends IssueFilterHelperStore implements IProje
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
     const _filters = await this.issueFilterService.fetchProjectEpicFilters(workspaceSlug, projectId);
 
-    const richFilters = _filters?.rich_filters;
     const displayFilters = this.computedDisplayFilters(_filters?.display_filters);
     const displayProperties = this.computedDisplayProperties(_filters?.display_properties);
 
     // fetching the kanban toggle helpers in the local storage
-    const kanbanFilters = {
+    const kanbanFilters: TIssueKanbanFilters = {
       group_by: [],
       sub_group_by: [],
     };
@@ -165,10 +166,14 @@ export class ProjectEpicsFilter extends IssueFilterHelperStore implements IProje
     }
 
     runInAction(() => {
-      set(this.filters, [projectId, "richFilters"], richFilters);
-      set(this.filters, [projectId, "displayFilters"], displayFilters);
-      set(this.filters, [projectId, "displayProperties"], displayProperties);
-      set(this.filters, [projectId, "kanbanFilters"], kanbanFilters);
+      set(this.filters, [projectId], {
+        richFilters: _filters?.rich_filters || {},
+        pqlFilters: _filters?.pql_filters || DEFAULT_PQL_FILTER_VALUE,
+        lastUsedFilterType: _filters?.last_used_filter,
+        displayFilters,
+        displayProperties,
+        kanbanFilters,
+      } satisfies IIssueFilters);
     });
   };
 
@@ -177,20 +182,22 @@ export class ProjectEpicsFilter extends IssueFilterHelperStore implements IProje
    * Only use this method directly when initializing filter instances.
    * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
    */
-  updateFilterExpression: IProjectEpicsFilter["updateFilterExpression"] = async (workspaceSlug, projectId, filters) => {
-    try {
-      runInAction(() => {
-        set(this.filters, [projectId, "richFilters"], filters);
-      });
-
-      this.rootIssueStore.projectEpics.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
-      await this.issueFilterService.patchProjectEpicFilters(workspaceSlug, projectId, {
-        rich_filters: filters,
-      });
-    } catch (error) {
-      console.log("error while updating rich filters", error);
-      throw error;
-    }
+  updateAdvancedFilters: IProjectEpicsFilter["updateAdvancedFilters"] = async (workspaceSlug, projectId, params) => {
+    await this.handleAdvancedFiltersUpdate({
+      data: this.filters[projectId],
+      params,
+      updateCallback: this.issueFilterService.patchProjectEpicFilters.bind(
+        this.issueFilterService,
+        workspaceSlug,
+        projectId
+      ),
+      fetchWorkItemsCallback: this.rootIssueStore.projectEpics.fetchIssuesWithExistingPagination.bind(
+        this.rootIssueStore.projectEpics,
+        workspaceSlug,
+        projectId,
+        "mutation"
+      ),
+    });
   };
 
   updateFilters: IProjectEpicsFilter["updateFilters"] = async (workspaceSlug, projectId, type, filters) => {

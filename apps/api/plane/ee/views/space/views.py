@@ -46,6 +46,7 @@ from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import ErrorCodes
 from plane.utils.filters import ComplexFilterBackend
+from plane.utils.pql import PQLFilterBackend
 from plane.utils.filters import IssueFilterSet
 
 
@@ -102,7 +103,10 @@ class ViewsPublicEndpoint(BaseAPIView):
 
 class IssueViewsPublicEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (
+        ComplexFilterBackend,
+        PQLFilterBackend,
+    )
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, issue_queryset):

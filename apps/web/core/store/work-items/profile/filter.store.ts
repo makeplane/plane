@@ -16,7 +16,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // base class
 import { computedFn } from "mobx-utils";
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
-import { EIssueFilterType } from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, EIssueFilterType } from "@plane/constants";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -24,13 +24,12 @@ import type {
   IIssueFilters,
   TIssueParams,
   IssuePaginationOptions,
-  TWorkItemFilterExpression,
   TSupportedFilterForUpdate,
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
 import { IssueFiltersService } from "@/services/issue_filter.service";
-import type { IBaseIssueFilterStore } from "../helpers/issue-filter-helper.store";
+import type { IBaseIssueFilterStore, UpdateAdvancedFiltersParams } from "../helpers/issue-filter-helper.store";
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
@@ -51,7 +50,7 @@ export interface IProfileIssuesFilter extends IBaseIssueFilterStore {
   ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
   fetchFilters: (workspaceSlug: string, userId: string) => Promise<void>;
-  updateFilterExpression: (workspaceSlug: string, userId: string, filters: TWorkItemFilterExpression) => Promise<void>;
+  updateAdvancedFilters: (workspaceSlug: string, userId: string, params: UpdateAdvancedFiltersParams) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
     projectId: string | undefined,
@@ -120,8 +119,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
-      userFilters?.richFilters,
-      userFilters?.displayFilters,
+      userFilters,
       filteredParams
     );
 
@@ -147,19 +145,22 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
     this.userId = userId;
     const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.PROFILE, workspaceSlug, userId, undefined);
 
-    const richFilters: TWorkItemFilterExpression = _filters?.rich_filters;
-    const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
-    const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
+    const displayFilters = this.computedDisplayFilters(_filters?.display_filters);
+    const displayProperties = this.computedDisplayProperties(_filters?.display_properties);
     const kanbanFilters = {
       group_by: _filters?.kanban_filters?.group_by || [],
       sub_group_by: _filters?.kanban_filters?.sub_group_by || [],
     };
 
     runInAction(() => {
-      set(this.filters, [userId, "richFilters"], richFilters);
-      set(this.filters, [userId, "displayFilters"], displayFilters);
-      set(this.filters, [userId, "displayProperties"], displayProperties);
-      set(this.filters, [userId, "kanbanFilters"], kanbanFilters);
+      set(this.filters, [userId], {
+        richFilters: _filters?.rich_filters || {},
+        pqlFilters: _filters?.pql_filters || DEFAULT_PQL_FILTER_VALUE,
+        lastUsedFilterType: _filters?.last_used_filter,
+        displayFilters,
+        displayProperties,
+        kanbanFilters,
+      } satisfies IIssueFilters);
     });
   };
 
@@ -168,27 +169,25 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
    * Only use this method directly when initializing filter instances.
    * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
    */
-  updateFilterExpression: IProfileIssuesFilter["updateFilterExpression"] = async (workspaceSlug, userId, filters) => {
-    try {
-      runInAction(() => {
-        set(this.filters, [userId, "richFilters"], filters);
-      });
-
-      this.rootIssueStore.profileIssues.fetchIssuesWithExistingPagination(workspaceSlug, userId, "mutation");
-      this.handleIssuesLocalFilters.set(
+  updateAdvancedFilters: IProfileIssuesFilter["updateAdvancedFilters"] = async (workspaceSlug, userId, params) => {
+    await this.handleAdvancedFiltersUpdate({
+      data: this.filters[userId],
+      params,
+      updateCallback: this.handleIssuesLocalFilters.set.bind(
+        this.handleIssuesLocalFilters,
         EIssuesStoreType.PROFILE,
-        EIssueFilterType.FILTERS,
+        params.type === "rich_filters" ? EIssueFilterType.RICH_FILTERS : EIssueFilterType.PQL_FILTERS,
         workspaceSlug,
         userId,
-        undefined,
-        {
-          rich_filters: filters,
-        }
-      );
-    } catch (error) {
-      console.log("error while updating rich filters", error);
-      throw error;
-    }
+        undefined
+      ),
+      fetchWorkItemsCallback: this.rootIssueStore.profileIssues.fetchIssuesWithExistingPagination.bind(
+        this.rootIssueStore.profileIssues,
+        workspaceSlug,
+        userId,
+        "mutation"
+      ),
+    });
   };
 
   updateFilters: IProfileIssuesFilter["updateFilters"] = async (workspaceSlug, _projectId, type, filters, userId) => {

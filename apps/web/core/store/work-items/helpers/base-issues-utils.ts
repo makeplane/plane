@@ -379,7 +379,7 @@ export const updateSubWorkItemFilters = (
   };
 
   switch (filterType) {
-    case EIssueFilterType.FILTERS: {
+    case EIssueFilterType.RICH_FILTERS: {
       const updatedFilters = filters as IIssueFilterOptions;
       _filters.filters = { ..._filters.filters, ...updatedFilters };
       set(filtersMap, [workItemId, "filters"], { ..._filters.filters, ...updatedFilters });

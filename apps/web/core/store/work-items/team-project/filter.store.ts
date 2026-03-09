@@ -17,7 +17,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane constants
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
-import { EIssueFilterType } from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, EIssueFilterType } from "@plane/constants";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -26,7 +26,6 @@ import type {
   TIssueKanbanFilters,
   TIssueParams,
   TSupportedFilterForUpdate,
-  TWorkItemFilterExpression,
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // helpers
@@ -34,7 +33,10 @@ import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // services
 import { TeamspaceWorkItemsService } from "@/services/teamspace/teamspace-work-items.service";
 // store
-import type { IBaseIssueFilterStore } from "@/store/work-items/helpers/issue-filter-helper.store";
+import type {
+  IBaseIssueFilterStore,
+  UpdateAdvancedFiltersParams,
+} from "@/store/work-items/helpers/issue-filter-helper.store";
 import { IssueFilterHelperStore } from "@/store/work-items/helpers/issue-filter-helper.store";
 import type { IIssueRootStore } from "@/store/work-items/root.store";
 
@@ -50,11 +52,11 @@ export interface ITeamProjectWorkItemsFilter extends IBaseIssueFilterStore {
   getIssueFilters(projectId: string): IIssueFilters | undefined;
   // action
   fetchFilters: (workspaceSlug: string, teamspaceId: string, projectId: string) => Promise<void>;
-  updateFilterExpression: (
+  updateAdvancedFilters: (
     workspaceSlug: string,
     teamspaceId: string,
     projectId: string,
-    filters: TWorkItemFilterExpression
+    params: UpdateAdvancedFiltersParams
   ) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
@@ -125,8 +127,7 @@ export class TeamProjectWorkItemsFilter extends IssueFilterHelperStore implement
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
-      userFilters?.richFilters,
-      userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      userFilters,
       filteredParams
     );
 
@@ -162,7 +163,6 @@ export class TeamProjectWorkItemsFilter extends IssueFilterHelperStore implement
       );
 
       // computed filters
-      const richFilters = _filters?.rich_filters;
       const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
       const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
       const kanbanFilters = {
@@ -171,10 +171,14 @@ export class TeamProjectWorkItemsFilter extends IssueFilterHelperStore implement
       };
 
       runInAction(() => {
-        set(this.filters, [projectId, "richFilters"], richFilters);
-        set(this.filters, [projectId, "displayFilters"], displayFilters);
-        set(this.filters, [projectId, "displayProperties"], displayProperties);
-        set(this.filters, [projectId, "kanbanFilters"], kanbanFilters);
+        set(this.filters, [projectId], {
+          richFilters: _filters?.rich_filters || {},
+          pqlFilters: _filters?.pql_filters || DEFAULT_PQL_FILTER_VALUE,
+          lastUsedFilterType: _filters?.last_used_filter,
+          displayFilters,
+          displayProperties,
+          kanbanFilters,
+        } satisfies IIssueFilters);
       });
     } catch (error) {
       console.log("error while fetching teamspace project work items filters", error);
@@ -187,30 +191,28 @@ export class TeamProjectWorkItemsFilter extends IssueFilterHelperStore implement
    * Only use this method directly when initializing filter instances.
    * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
    */
-  updateFilterExpression: ITeamProjectWorkItemsFilter["updateFilterExpression"] = async (
+  updateAdvancedFilters: ITeamProjectWorkItemsFilter["updateAdvancedFilters"] = async (
     workspaceSlug,
     teamspaceId,
     projectId,
-    filters
+    params
   ) => {
-    try {
-      runInAction(() => {
-        set(this.filters, [projectId, "richFilters"], filters);
-      });
-
-      this.rootIssueStore.teamProjectWorkItems.fetchIssuesWithExistingPagination(
+    await this.handleAdvancedFiltersUpdate({
+      data: this.filters[projectId],
+      params,
+      updateCallback: this.teamspaceWorkItemFilterService.patchTeamspaceWorkItemFilters.bind(
+        this.teamspaceWorkItemFilterService,
+        workspaceSlug,
+        teamspaceId
+      ),
+      fetchWorkItemsCallback: this.rootIssueStore.teamProjectWorkItems.fetchIssuesWithExistingPagination.bind(
+        this.rootIssueStore.teamProjectWorkItems,
         workspaceSlug,
         teamspaceId,
         projectId,
         "mutation"
-      );
-      await this.teamspaceWorkItemFilterService.patchTeamspaceWorkItemFilters(workspaceSlug, teamspaceId, {
-        rich_filters: filters,
-      });
-    } catch (error) {
-      console.log("error while updating rich filters", error);
-      throw error;
-    }
+      ),
+    });
   };
 
   updateFilters: ITeamProjectWorkItemsFilter["updateFilters"] = async (

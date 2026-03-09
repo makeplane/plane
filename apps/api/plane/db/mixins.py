@@ -217,6 +217,30 @@ class FiltersMixin(models.Model):
     class Meta:
         abstract = True
 
+    def _validate_pql_filters(self) -> None:
+        from django.core.exceptions import ValidationError
+
+        from plane.utils.pql.parser import _parser
+
+        pql = getattr(self, "pql_filters", None)
+
+        pql_stripped = pql.get("stripped") if isinstance(pql, dict) else None
+
+        if not pql_stripped or not pql_stripped.strip():
+            return
+        try:
+            _parser.parse(pql_stripped.strip())
+        except Exception as exc:
+            raise ValidationError({"pql_filters": f"Invalid PQL syntax: {exc}"})
+
+    def clean(self) -> None:
+        super().clean()
+        self._validate_pql_filters()
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        self._validate_pql_filters()
+        super().save(*args, **kwargs)
+
 
 class ChangeTrackerMixin:
     """

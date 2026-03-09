@@ -778,10 +778,12 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
 
         cycle_properties.filters = request.data.get("filters", cycle_properties.filters)
         cycle_properties.rich_filters = request.data.get("rich_filters", cycle_properties.rich_filters)
+        cycle_properties.pql_filters = request.data.get("pql_filters", cycle_properties.pql_filters)
         cycle_properties.display_filters = request.data.get("display_filters", cycle_properties.display_filters)
         cycle_properties.display_properties = request.data.get(
             "display_properties", cycle_properties.display_properties
         )
+        cycle_properties.last_used_filter = request.data.get("last_used_filter", cycle_properties.last_used_filter)
         cycle_properties.save()
 
         serializer = CycleUserPropertiesSerializer(cycle_properties)
@@ -958,10 +960,10 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             )
 
         # this will tell whether the issues were transferred to the new cycle
-        """ 
+        """
         if the issues were transferred to the new cycle, then the progress_snapshot will be present
         return the progress_snapshot data in the analytics for each date
-            
+
         else issues were not transferred to the new cycle then generate the stats from the cycle issue bridge tables
         """
 

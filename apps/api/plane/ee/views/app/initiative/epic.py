@@ -46,10 +46,14 @@ from plane.utils.order_queryset import order_issue_queryset
 from plane.db.models import IssueRelation
 from plane.utils.filters import IssueFilterSet
 from plane.utils.filters import ComplexFilterBackend
+from plane.utils.pql import PQLFilterBackend
 
 
 class InitiativeEpicViewSet(BaseViewSet):
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (
+        ComplexFilterBackend,
+        PQLFilterBackend,
+    )
     filterset_class = IssueFilterSet
     serializer_class = InitiativeEpicSerializer
     model = InitiativeEpic

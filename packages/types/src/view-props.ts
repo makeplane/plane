@@ -16,6 +16,7 @@ import type { TIssue } from "./issues/issue";
 import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
 import type { CompleteOrEmpty } from "./utils";
 import type { TCustomPropertyFilterKey } from "./work-item-types/work-item-properties";
+import type { JSONContent } from "./editor";
 
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
@@ -102,7 +103,8 @@ export type TIssueParams =
   | "expand"
   | "filters"
   | "milestone"
-  | "epic";
+  | "epic"
+  | "pql";
 
 export type TCalendarLayouts = "month" | "week";
 
@@ -158,6 +160,11 @@ export type TWorkItemFilterGroup = TWorkItemFilterAndGroup | TWorkItemFilterOrGr
 export type TWorkItemFilterExpressionData = TWorkItemFilterConditionData | TWorkItemFilterGroup;
 
 export type TWorkItemFilterExpression = CompleteOrEmpty<TWorkItemFilterExpressionData>;
+
+export type PQLFilterValue = {
+  json: JSONContent;
+  stripped: string;
+};
 
 export interface IIssueFilterOptions {
   assignees?: string[] | null;
@@ -216,6 +223,8 @@ export type TIssueKanbanFilters = {
 };
 
 export interface IIssueFilters {
+  lastUsedFilterType: AdvancedFilterType | undefined;
+  pqlFilters: PQLFilterValue;
   richFilters: TWorkItemFilterExpression;
   displayFilters: IIssueDisplayFilterOptions | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
@@ -228,7 +237,11 @@ export interface ISubWorkItemFilters extends Omit<IIssueFilters, "richFilters"> 
   filters: IIssueFilterOptions;
 }
 
+export type AdvancedFilterType = "rich_filters" | "pql_filters";
+
 export interface IIssueFiltersResponse {
+  last_used_filter: AdvancedFilterType | undefined;
+  pql_filters: PQLFilterValue;
   rich_filters: TWorkItemFilterExpression;
   display_filters: IIssueDisplayFilterOptions;
   display_properties: IIssueDisplayProperties;

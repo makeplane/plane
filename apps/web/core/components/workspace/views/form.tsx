@@ -14,7 +14,7 @@
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IWorkspaceView, IIssueFilters } from "@plane/types";
@@ -24,9 +24,8 @@ import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
-// plane web imports
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { AccessController } from "@/components/views/access-controller";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
 
 type Props = {
   handleFormSubmit: (values: Partial<IWorkspaceView>) => Promise<void>;
@@ -45,6 +44,8 @@ const DEFAULT_VALUES: Partial<IWorkspaceView> = {
     layout: EIssueLayoutTypes.SPREADSHEET,
     order_by: "-created_at",
   }),
+  pql_filters: DEFAULT_PQL_FILTER_VALUE,
+  last_used_filter: "rich_filters",
 };
 
 export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Props) {
@@ -63,6 +64,7 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
     control,
     reset,
     getValues,
+    setValue,
   } = useForm<IWorkspaceView>({
     defaultValues,
   });
@@ -72,6 +74,8 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
     displayFilters: getValues("display_filters"),
     displayProperties: getValues("display_properties"),
     kanbanFilters: undefined,
+    pqlFilters: getValues("pql_filters"),
+    lastUsedFilterType: getValues("last_used_filter"),
   };
 
   const handleCreateUpdateView = async (formData: Partial<IWorkspaceView>) => {
@@ -170,23 +174,43 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
             <Controller
               control={control}
               name="rich_filters"
-              render={({ field: { onChange: onFiltersChange } }) => (
-                <WorkspaceLevelWorkItemFiltersHOC
-                  entityId={data?.id}
-                  entityType={EIssuesStoreType.GLOBAL}
-                  filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
-                  initialWorkItemFilters={workItemFilters}
-                  isTemporary
-                  updateFilters={(updateFilters) => onFiltersChange(updateFilters)}
-                  showOnMount
-                  workspaceSlug={workspaceSlug}
-                >
-                  {({ filter: workspaceViewWorkItemsFilter }) =>
-                    workspaceViewWorkItemsFilter && (
-                      <WorkItemFiltersRow filter={workspaceViewWorkItemsFilter} variant="modal" />
-                    )
-                  }
-                </WorkspaceLevelWorkItemFiltersHOC>
+              render={({ field: { onChange: onRichFiltersChange } }) => (
+                <Controller
+                  control={control}
+                  name="pql_filters"
+                  render={({ field: { onChange: onPQLFiltersChange } }) => (
+                    <WorkspaceLevelWorkItemFiltersHOC
+                      entityId={data?.id}
+                      entityType={EIssuesStoreType.GLOBAL}
+                      filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
+                      initialWorkItemFilters={workItemFilters}
+                      isTemporary
+                      updateFilters={async (updatedFilters) => {
+                        switch (updatedFilters.type) {
+                          case "rich_filters":
+                            onRichFiltersChange(updatedFilters.expression);
+                            break;
+                          case "pql_filters":
+                            onPQLFiltersChange(updatedFilters.value);
+                            break;
+                          case "last_used":
+                            setValue("last_used_filter", updatedFilters.value);
+                            break;
+                          default:
+                            break;
+                        }
+                      }}
+                      showOnMount
+                      workspaceSlug={workspaceSlug}
+                    >
+                      {({ filter: workspaceViewWorkItemsFilter }) =>
+                        workspaceViewWorkItemsFilter && (
+                          <WorkItemFiltersRowWrapper filter={workspaceViewWorkItemsFilter} variant="modal" />
+                        )
+                      }
+                    </WorkspaceLevelWorkItemFiltersHOC>
+                  )}
+                />
               )}
             />
           </div>

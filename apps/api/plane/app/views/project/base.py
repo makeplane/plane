@@ -531,6 +531,7 @@ class ProjectViewSet(BaseViewSet):
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
+            raise
         except Workspace.DoesNotExist:
             return Response({"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND)
 

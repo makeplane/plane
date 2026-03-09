@@ -15,9 +15,7 @@ import { useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import type { TSaveViewOptions, TUpdateViewOptions } from "@plane/constants";
-import type { IWorkItemFilterInstance } from "@plane/shared-state";
-import type { IIssueFilters, TWorkItemFilterExpression } from "@plane/types";
+import type { IIssueFilters, TWorkItemFilterExpression, TWorkItemFiltersViewOptions } from "@plane/types";
 // store hooks
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
 // plane web imports
@@ -27,8 +25,7 @@ import { useWorkItemFiltersConfig } from "@/plane-web/hooks/work-item-filters/us
 import type { TSharedWorkItemFiltersHOCProps, TSharedWorkItemFiltersProps } from "./shared";
 
 type TAdditionalWorkItemFiltersProps = {
-  saveViewOptions?: TSaveViewOptions<TWorkItemFilterExpression>;
-  updateViewOptions?: TUpdateViewOptions<TWorkItemFilterExpression>;
+  viewOptions?: TWorkItemFiltersViewOptions<TWorkItemFilterExpression>;
 } & TWorkItemFiltersEntityProps;
 
 type TWorkItemFiltersHOCProps = TSharedWorkItemFiltersHOCProps & TAdditionalWorkItemFiltersProps;
@@ -48,9 +45,9 @@ export const WorkItemFiltersHOC = observer(function WorkItemFiltersHOC(props: TW
 });
 
 type TWorkItemFilterProps = TSharedWorkItemFiltersProps &
-  TAdditionalWorkItemFiltersProps & {
+  TAdditionalWorkItemFiltersProps &
+  Pick<TSharedWorkItemFiltersHOCProps, "children"> & {
     initialWorkItemFilters: IIssueFilters;
-    children: React.ReactNode | ((props: { filter: IWorkItemFilterInstance }) => React.ReactNode);
   };
 
 const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItemFilterProps) {
@@ -61,10 +58,9 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
     filtersToShowByLayout,
     initialWorkItemFilters,
     isTemporary,
-    saveViewOptions,
     updateFilters,
-    updateViewOptions,
     showOnMount,
+    viewOptions,
     ...entityConfigProps
   } = props;
   // store hooks
@@ -75,27 +71,41 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
     [isTemporary, entityId]
   );
   // memoize initial values to prevent re-computations when reference changes
-  const initialUserFilters = useMemo(() => initialWorkItemFilters.richFilters, [initialWorkItemFilters]);
+  const initialRichTextFilters = useMemo(() => initialWorkItemFilters.richFilters, [initialWorkItemFilters]);
+  const initialPqlFilters = useMemo(() => initialWorkItemFilters.pqlFilters, [initialWorkItemFilters]);
+  const lastUsedFilterType = useMemo(
+    () => initialWorkItemFilters.lastUsedFilterType || "rich_filters",
+    [initialWorkItemFilters]
+  );
   const workItemFiltersConfig = useWorkItemFiltersConfig({
-    allowedFilters: filtersToShowByLayout ? filtersToShowByLayout : [],
+    allowedFilters: filtersToShowByLayout ?? [],
     ...entityConfigProps,
   });
   // get or create filter instance
-  const workItemLayoutFilter = useMemo(
+  const filterInstance = useMemo(
     () =>
       getOrCreateFilter({
         entityType,
         entityId: workItemEntityID,
-        initialExpression: initialUserFilters,
-        onExpressionChange: updateFilters,
-        expressionOptions: {
-          saveViewOptions,
-          updateViewOptions,
+        richFilters: {
+          initialExpression: initialRichTextFilters,
+          onExpressionChange: (expression) => updateFilters({ type: "rich_filters", expression }),
+          showOnMount,
         },
-        showOnMount,
+        pql: {
+          initialValue: initialPqlFilters,
+          onSubmit: async (value) => {
+            await updateFilters({ type: "pql_filters", value });
+          },
+        },
+        viewOptions,
+        lastUsedFilterType,
+        updateLastUsedFilterTypeCallback: async (filterType) => {
+          await updateFilters({ type: "last_used", value: filterType });
+        },
       }),
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [entityType, workItemEntityID, saveViewOptions, updateViewOptions, updateFilters]
+    [entityType, workItemEntityID, updateFilters, viewOptions]
   );
 
   // delete filter instance when component unmounts
@@ -107,13 +117,21 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
   );
 
   useEffect(() => {
-    workItemLayoutFilter.configManager.setAreConfigsReady(workItemFiltersConfig.areAllConfigsInitialized);
-    workItemLayoutFilter.configManager.registerAll(workItemFiltersConfig.configs);
+    filterInstance.richFiltersInstance.configManager.setAreConfigsReady(workItemFiltersConfig.areAllConfigsInitialized);
+    filterInstance.richFiltersInstance.configManager.registerAll(workItemFiltersConfig.configs);
   }, [
     workItemFiltersConfig.areAllConfigsInitialized,
     workItemFiltersConfig.configs,
-    workItemLayoutFilter.configManager,
+    filterInstance.richFiltersInstance.configManager,
   ]);
 
-  return <>{typeof children === "function" ? children({ filter: workItemLayoutFilter }) : children}</>;
+  return (
+    <>
+      {typeof children === "function"
+        ? children({
+            filter: filterInstance,
+          })
+        : children}
+    </>
+  );
 });

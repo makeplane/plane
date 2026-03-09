@@ -196,11 +196,11 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
                       })
                     }
                   >
-                    <span className="size-5 grid place-items-center flex-shrink-0">{item.icon}</span>
+                    <span className="size-5 grid place-items-center shrink-0">{item.icon}</span>
                     {item.subTitle && (
-                      <h5 className="whitespace-nowrap text-11 text-tertiary flex-shrink-0">{item.subTitle}</h5>
+                      <h5 className="whitespace-nowrap text-11 text-tertiary shrink-0">{item.subTitle}</h5>
                     )}
-                    <p className="flex-grow truncate">{item.title}</p>
+                    <p className="grow truncate">{item.title}</p>
                   </button>
                 );
               })}

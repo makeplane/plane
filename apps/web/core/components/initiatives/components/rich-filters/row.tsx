@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 import { Loader } from "@plane/ui";
-import { FiltersRow } from "@/components/rich-filters/filters-row";
+import { RichFiltersRow } from "@/components/rich-filters/filters-row";
 import { useInitiativesFilterContext } from "./context";
 
 const InitiativesFiltersRow = observer(function InitiativesFiltersRow() {
@@ -28,7 +28,7 @@ const InitiativesFiltersRow = observer(function InitiativesFiltersRow() {
   }
 
   return (
-    <FiltersRow
+    <RichFiltersRow
       filter={filterInstance}
       buttonConfig={{
         variant: "secondary",

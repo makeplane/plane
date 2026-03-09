@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -23,7 +23,7 @@ import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/boa
 import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/roots/profile-issues-root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row/basic";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -39,7 +39,7 @@ export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Prop
   // store hooks
   const {
     issues: { setViewId },
-    issuesFilter: { issueFilters, fetchFilters, updateFilterExpression },
+    issuesFilter: { issueFilters, fetchFilters, updateAdvancedFilters },
   } = useIssues(EIssuesStoreType.PROFILE);
   // derived values
   const activeLayout = issueFilters?.displayFilters?.layout || undefined;
@@ -67,13 +67,13 @@ export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Prop
         entityType={EIssuesStoreType.PROFILE}
         filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.profile_issues.filters}
         initialWorkItemFilters={issueFilters}
-        updateFilters={updateFilterExpression.bind(updateFilterExpression, workspaceSlug, userId)}
+        updateFilters={async (params) => await updateAdvancedFilters(workspaceSlug, userId, params)}
         workspaceSlug={workspaceSlug}
       >
         {({ filter: profileWorkItemsFilter }) => (
           <>
             <div className="flex flex-col h-full w-full">
-              {profileWorkItemsFilter && <WorkItemFiltersRow filter={profileWorkItemsFilter} />}
+              {profileWorkItemsFilter && <WorkItemFiltersRow filter={profileWorkItemsFilter.richFiltersInstance} />}
               <div className="relative h-full w-full overflow-auto">
                 {activeLayout === "list" ? (
                   <ProfileIssuesListLayout />

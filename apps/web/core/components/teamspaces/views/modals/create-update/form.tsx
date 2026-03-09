@@ -15,7 +15,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { ViewsIcon } from "@plane/propel/icons";
@@ -26,7 +26,7 @@ import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/
 // components
 import { LayoutDropDown } from "@/components/dropdowns/layout";
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
 // plane web imports
 import { TeamspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/teamspace-level";
 
@@ -47,6 +47,8 @@ const DEFAULT_VALUES: Partial<TTeamspaceView> = {
   display_filters: getComputedDisplayFilters({
     group_by: "state_detail.group",
   }),
+  pql_filters: DEFAULT_PQL_FILTER_VALUE,
+  last_used_filter: "rich_filters",
 };
 
 export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Props) {
@@ -77,6 +79,8 @@ export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Prop
     displayFilters: getValues("display_filters"),
     displayProperties: getValues("display_properties"),
     kanbanFilters: undefined,
+    pqlFilters: getValues("pql_filters"),
+    lastUsedFilterType: getValues("last_used_filter"),
   };
 
   const handleCreateUpdateView = async (formData: TTeamspaceView) => {
@@ -87,6 +91,8 @@ export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Prop
       rich_filters: formData.rich_filters,
       display_filters: formData.display_filters,
       display_properties: formData.display_properties,
+      pql_filters: formData.pql_filters,
+      last_used_filter: formData.last_used_filter,
       access: formData.access,
     } as TTeamspaceView);
 
@@ -243,24 +249,44 @@ export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Prop
             <Controller
               control={control}
               name="rich_filters"
-              render={({ field: { onChange: onFiltersChange } }) => (
-                <TeamspaceLevelWorkItemFiltersHOC
-                  entityId={data?.id}
-                  entityType={EIssuesStoreType.TEAM_VIEW}
-                  filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.filters}
-                  initialWorkItemFilters={workItemFilters}
-                  isTemporary
-                  updateFilters={(updatedFilters) => onFiltersChange(updatedFilters)}
-                  showOnMount
-                  teamspaceId={teamspaceId}
-                  workspaceSlug={workspaceSlug}
-                >
-                  {({ filter: teamspaceViewWorkItemsFilter }) =>
-                    teamspaceViewWorkItemsFilter && (
-                      <WorkItemFiltersRow filter={teamspaceViewWorkItemsFilter} variant="modal" />
-                    )
-                  }
-                </TeamspaceLevelWorkItemFiltersHOC>
+              render={({ field: { onChange: onRichFiltersChange } }) => (
+                <Controller
+                  control={control}
+                  name="pql_filters"
+                  render={({ field: { onChange: onPQLFiltersChange } }) => (
+                    <TeamspaceLevelWorkItemFiltersHOC
+                      entityId={data?.id}
+                      entityType={EIssuesStoreType.TEAM_VIEW}
+                      filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.filters}
+                      initialWorkItemFilters={workItemFilters}
+                      isTemporary
+                      updateFilters={async (updatedFilters) => {
+                        switch (updatedFilters.type) {
+                          case "rich_filters":
+                            onRichFiltersChange(updatedFilters.expression);
+                            break;
+                          case "pql_filters":
+                            onPQLFiltersChange(updatedFilters.value);
+                            break;
+                          case "last_used":
+                            setValue("last_used_filter", updatedFilters.value);
+                            break;
+                          default:
+                            break;
+                        }
+                      }}
+                      showOnMount
+                      teamspaceId={teamspaceId}
+                      workspaceSlug={workspaceSlug}
+                    >
+                      {({ filter: teamspaceViewWorkItemsFilter }) =>
+                        teamspaceViewWorkItemsFilter && (
+                          <WorkItemFiltersRowWrapper filter={teamspaceViewWorkItemsFilter} variant="modal" />
+                        )
+                      }
+                    </TeamspaceLevelWorkItemFiltersHOC>
+                  )}
+                />
               )}
             />
           </div>

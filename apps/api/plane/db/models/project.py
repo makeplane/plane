@@ -514,10 +514,8 @@ class ProjectUserProperty(ProjectBaseModel, FiltersMixin):
         on_delete=models.CASCADE,
         related_name="project_property_user",
     )
-    filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
-    rich_filters = models.JSONField(default=dict)
     preferences = models.JSONField(default=get_default_preferences)
     sort_order = models.FloatField(default=65535)
 

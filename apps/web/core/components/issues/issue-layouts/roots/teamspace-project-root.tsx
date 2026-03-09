@@ -22,7 +22,7 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -113,17 +113,17 @@ export const TeamspaceProjectWorkLayoutRoot = observer(function TeamspaceProject
         entityId={projectId}
         filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
         initialWorkItemFilters={workItemFilters}
-        updateFilters={issuesFilter?.updateFilterExpression.bind(issuesFilter, workspaceSlug, teamspaceId, projectId)}
+        updateFilters={issuesFilter?.updateAdvancedFilters.bind(issuesFilter, workspaceSlug, teamspaceId, projectId)}
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       >
-        {({ filter: teamspaceProjectWorkItemsFilter }) => (
+        {({ filter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {teamspaceProjectWorkItemsFilter && <WorkItemFiltersRow filter={teamspaceProjectWorkItemsFilter} />}
+            <WorkItemFiltersRowWrapper filter={filter} />
             <div className="relative h-full w-full overflow-auto">
               {/* mutation loader */}
               {issues?.getIssueLoader() === "mutation" && (
-                <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-layer-1 shadow-sm rounded">
+                <div className="fixed size-10 z-50 right-[20px] top-[70px] flex justify-center items-center bg-layer-1 shadow-sm rounded">
                   <Spinner className="w-4 h-4" />
                 </div>
               )}

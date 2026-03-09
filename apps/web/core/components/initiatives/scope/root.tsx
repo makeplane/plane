@@ -19,7 +19,7 @@ import { EIssueFilterType, EUserPermissionsLevel, ISSUE_DISPLAY_FILTERS_BY_PAGE 
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { PlusIcon } from "@plane/propel/icons";
-import type { TInitiativeScopeTab, TWorkItemFilterExpression } from "@plane/types";
+import type { IIssueFilters, TInitiativeScopeTab } from "@plane/types";
 import { EIssueLayoutTypes, EIssuesStoreType, EUserWorkspaceRoles, INITIATIVE_SCOPE_TABS } from "@plane/types";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
@@ -28,7 +28,7 @@ import { EpicPeekOverview } from "@/components/epics/peek-overview";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row/basic";
 import { cn } from "@plane/utils";
 import {
   InitiativeScopeFiltersToggle,
@@ -85,15 +85,17 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
   );
 
   // Prepare initial filters for HOC
-  const initialWorkItemFilters = useMemo(
-    () => ({
-      richFilters: epicFiltersData?.richFilters ?? {},
-      displayFilters: epicFiltersData?.displayFilters ?? {},
-      displayProperties: epicFiltersData?.displayProperties ?? {},
-      kanbanFilters: epicFiltersData?.kanbanFilters ?? undefined,
-    }),
-    [epicFiltersData]
-  );
+  const initialWorkItemFilters: IIssueFilters | undefined = useMemo(() => {
+    if (!epicFiltersData) return;
+    return {
+      richFilters: epicFiltersData.richFilters,
+      displayFilters: epicFiltersData.displayFilters,
+      displayProperties: epicFiltersData.displayProperties,
+      kanbanFilters: epicFiltersData.kanbanFilters,
+      pqlFilters: epicFiltersData.pqlFilters,
+      lastUsedFilterType: epicFiltersData.lastUsedFilterType,
+    };
+  }, [epicFiltersData]);
 
   // Handle tab change
   const handleTabChange = (tab: TInitiativeScopeTab) => {
@@ -184,13 +186,20 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
           entityId={initiativeId}
           filtersToShowByLayout={allowedFilters}
           initialWorkItemFilters={initialWorkItemFilters}
-          updateFilters={(expression: TWorkItemFilterExpression) => {
-            epicsFilterStore.updateEpicFilters(workspaceSlug, EIssueFilterType.FILTERS, expression, initiativeId);
+          updateFilters={async (updatedFilters) => {
+            if (updatedFilters.type === "rich_filters") {
+              await epicsFilterStore.updateEpicFilters(
+                workspaceSlug,
+                EIssueFilterType.RICH_FILTERS,
+                updatedFilters.expression,
+                initiativeId
+              );
+            }
           }}
           workspaceSlug={workspaceSlug}
         >
-          {({ filter: epicFilterInstance }) =>
-            epicFilterInstance ? (
+          {({ filter }) =>
+            filter ? (
               <>
                 <div className="h-11 border-b border-subtle px-4 flex items-center gap-1">
                   <div className="flex items-center gap-1 h-full">
@@ -237,7 +246,9 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
                 </div>
 
                 <InitiativeScopeProjectFiltersRow />
-                {activeTab === INITIATIVE_SCOPE_TABS.EPICS && <WorkItemFiltersRow filter={epicFilterInstance} />}
+                {activeTab === INITIATIVE_SCOPE_TABS.EPICS && (
+                  <WorkItemFiltersRow filter={filter.richFiltersInstance} />
+                )}
 
                 {INITIATIVE_SCOPE_ACTIVE_LAYOUTS[activeLayout]}
                 <EpicPeekOverview />

@@ -33,7 +33,11 @@ import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // local imports
-import type { IBaseIssueFilterStore, IIssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import type {
+  IBaseIssueFilterStore,
+  IIssueFilterHelperStore,
+  UpdateAdvancedFiltersParams,
+} from "../helpers/issue-filter-helper.store";
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 import type { IIssueRootStore } from "../root.store";
 
@@ -44,7 +48,7 @@ export type TBaseFilterStore = IBaseIssueFilterStore & IIssueFilterHelperStore;
 export interface IWorkspaceIssuesFilter extends TBaseFilterStore {
   // fetch action
   fetchFilters: (workspaceSlug: string, viewId: string) => Promise<void>;
-  updateFilterExpression: (workspaceSlug: string, viewId: string, filters: TWorkItemFilterExpression) => Promise<void>;
+  updateAdvancedFilters: (workspaceSlug: string, viewId: string, params: UpdateAdvancedFiltersParams) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
     projectId: string | undefined,
@@ -111,8 +115,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
-      userFilters?.richFilters,
-      userFilters?.displayFilters,
+      userFilters,
       filteredParams
     );
 
@@ -205,17 +208,17 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
    * Only use this method directly when initializing filter instances.
    * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
    */
-  updateFilterExpression: IWorkspaceIssuesFilter["updateFilterExpression"] = async (workspaceSlug, viewId, filters) => {
-    try {
-      runInAction(() => {
-        set(this.filters, [viewId, "richFilters"], filters);
-      });
-
-      this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
-    } catch (error) {
-      console.log("error while updating rich filters", error);
-      throw error;
-    }
+  updateAdvancedFilters: IWorkspaceIssuesFilter["updateAdvancedFilters"] = async (workspaceSlug, viewId, params) => {
+    await this.handleAdvancedFiltersUpdate({
+      data: this.filters[viewId],
+      params,
+      fetchWorkItemsCallback: this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination.bind(
+        this.rootIssueStore.workspaceIssues,
+        workspaceSlug,
+        viewId,
+        "mutation"
+      ),
+    });
   };
 
   updateFilters: IWorkspaceIssuesFilter["updateFilters"] = async (workspaceSlug, projectId, type, filters, viewId) => {

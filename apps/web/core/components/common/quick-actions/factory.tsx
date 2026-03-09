@@ -244,7 +244,7 @@ export const useQuickActionsFactory = () => {
     }): FeatureResult => {
       const [isOpen, setIsOpen] = useState(false);
       const { getFilter } = useWorkItemFilters();
-      const richFilters = getFilter(EIssuesStoreType.CYCLE, props.cycleId)?.getExternalExpression();
+      const richFilters = getFilter(EIssuesStoreType.CYCLE, props.cycleId)?.richFiltersInstance.getExternalExpression();
 
       const { issuesFilter: _issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
       const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissions;
@@ -314,7 +314,10 @@ export const useQuickActionsFactory = () => {
     }): FeatureResult => {
       const [isOpen, setIsOpen] = useState(false);
       const { getFilter } = useWorkItemFilters();
-      const richFilters = getFilter(EIssuesStoreType.MODULE, props.moduleId)?.getExternalExpression();
+      const richFilters = getFilter(
+        EIssuesStoreType.MODULE,
+        props.moduleId
+      )?.richFiltersInstance.getExternalExpression();
       const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissions;
 
       const handleExport = async (provider: TExportProvider) => {
@@ -428,7 +431,7 @@ export const useQuickActionsFactory = () => {
       const [isOpen, setIsOpen] = useState(false);
       const { getFilter } = useWorkItemFilters();
       const richFilterEntityType = props.projectId ? EIssuesStoreType.PROJECT_VIEW : EIssuesStoreType.GLOBAL;
-      const richFilters = getFilter(richFilterEntityType, props.viewId)?.getExternalExpression();
+      const richFilters = getFilter(richFilterEntityType, props.viewId)?.richFiltersInstance.getExternalExpression();
       const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissions;
 
       const handleExport = async (provider: TExportProvider) => {
@@ -499,7 +502,7 @@ export const useQuickActionsFactory = () => {
       const [isOpen, setIsOpen] = useState(false);
       const { getFilter } = useWorkItemFilters();
       const richFilterEntityType = props.storeType === "EPIC" ? EIssuesStoreType.EPIC : EIssuesStoreType.PROJECT;
-      const richFilters = getFilter(richFilterEntityType, props.projectId)?.getExternalExpression();
+      const richFilters = getFilter(richFilterEntityType, props.projectId)?.richFiltersInstance.getExternalExpression();
       const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissions;
 
       const handleExport = async (provider: TExportProvider) => {

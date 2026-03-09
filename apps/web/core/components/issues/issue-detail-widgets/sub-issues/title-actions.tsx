@@ -98,7 +98,7 @@ export const SubWorkItemTitleActions = observer(function SubWorkItemTitleActions
         if (subIssueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
-      updateSubWorkItemFilters(EIssueFilterType.FILTERS, { [key]: newValues }, parentId);
+      updateSubWorkItemFilters(EIssueFilterType.RICH_FILTERS, { [key]: newValues }, parentId);
     },
     [subIssueFilters?.filters, updateSubWorkItemFilters, parentId]
   );

@@ -20,8 +20,9 @@ import useSWR from "swr";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
+// components
+import { WorkItemFiltersRowWrapper } from "@/components/work-item-filters/filters-row/wrapper";
 // hooks
-import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
@@ -90,7 +91,7 @@ const TeamspaceWorkItemLayoutContent = observer(function TeamspaceWorkItemLayout
   return (
     <div className="relative h-full w-full overflow-auto bg-layer-2">
       {issueLoader === "mutation" && (
-        <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-layer-1 shadow-sm rounded">
+        <div className="fixed size-10 z-50 right-[20px] top-[70px] flex justify-center items-center bg-layer-1 shadow-sm rounded">
           <Spinner className="w-4 h-4" />
         </div>
       )}
@@ -131,13 +132,13 @@ export const TeamspaceLayoutRoot = observer(function TeamspaceLayoutRoot() {
         entityId={teamspaceId}
         filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.filters}
         initialWorkItemFilters={workItemFilters}
-        updateFilters={issuesFilter?.updateFilterExpression.bind(issuesFilter, workspaceSlug, teamspaceId)}
+        updateFilters={issuesFilter?.updateAdvancedFilters.bind(issuesFilter, workspaceSlug, teamspaceId)}
         teamspaceId={teamspaceId}
         workspaceSlug={workspaceSlug}
       >
         {({ filter: teamspaceWorkItemsFilter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {teamspaceWorkItemsFilter && <WorkItemFiltersRow filter={teamspaceWorkItemsFilter} />}
+            <WorkItemFiltersRowWrapper filter={teamspaceWorkItemsFilter} />
             <TeamspaceWorkItemLayoutContent issueLoader={issueLoader} teamspaceId={teamspaceId} />
             {/* peek overview */}
             <Suspense>

@@ -34,6 +34,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.utils.issue_filters import issue_filters
 from .base import TeamspaceBaseEndpoint
 from plane.utils.filters import ComplexFilterBackend
+from plane.utils.pql import PQLFilterBackend
 from plane.utils.filters import IssueFilterSet
 
 
@@ -377,7 +378,10 @@ class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
-    filter_backends = (ComplexFilterBackend,)
+    filter_backends = (
+        ComplexFilterBackend,
+        PQLFilterBackend,
+    )
     filterset_class = IssueFilterSet
 
     def project_tree(self, team_space_id, project_ids, filters):

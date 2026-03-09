@@ -12,5 +12,6 @@
  */
 
 export * from "./adapter";
+export * from "./filter";
 export * from "./filter.store";
 export * from "./shared";

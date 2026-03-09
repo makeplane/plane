@@ -349,7 +349,6 @@ class InitiativeUserProperty(BaseModel, FiltersMixin):
     filters = models.JSONField(default=dict)
     display_filters = models.JSONField(default=dict)
     display_properties = models.JSONField(default=dict)
-    rich_filters = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Initiative User Property"

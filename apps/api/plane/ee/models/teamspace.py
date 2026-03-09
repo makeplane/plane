@@ -17,7 +17,6 @@ from django.conf import settings
 from plane.db.models import BaseModel
 from plane.db.mixins import FiltersMixin
 
-
 def get_default_filters():
     return {
         "priority": None,
@@ -305,10 +304,8 @@ class TeamspaceUserProperty(BaseModel, FiltersMixin):
     )
     team_space = models.ForeignKey("ee.Teamspace", on_delete=models.CASCADE, related_name="user_properties")
     user = models.ForeignKey("db.User", on_delete=models.CASCADE, related_name="team_space_properties")
-    filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
-    rich_filters = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["team_space", "user", "deleted_at"]

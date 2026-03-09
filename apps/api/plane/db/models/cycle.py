@@ -141,10 +141,7 @@ class CycleUserProperties(ProjectBaseModel, FiltersMixin):
         on_delete=models.CASCADE,
         related_name="cycle_user_properties",
     )
-    filters = models.JSONField(default=get_default_filters)
-    display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
-    rich_filters = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["cycle", "user", "deleted_at"]

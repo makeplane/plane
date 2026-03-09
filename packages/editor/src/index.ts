@@ -24,6 +24,12 @@ export {
   YChangeTooltipContainer,
 } from "@/components/editors";
 export type { TVersionDiffEditorProps, TPrecomputedDiff, TUserInfo, UserColor } from "@/components/editors";
+
+// PQL editor
+export { PQLEditorWithRef } from "@/components/editors/pql/editor";
+export type { PQLEditorProps, PQLEditorHandle } from "@/components/editors/pql/editor";
+export type { FieldDef, ParseResult, ParseError } from "@/extensions/pql-editor/types";
+export { FIELD_ALIASES } from "@/extensions/pql-editor/plugins/grammar";
 export { PiChatEditorWithRef } from "./ee/components/editors/pi-chat-editor/editor";
 
 // constants

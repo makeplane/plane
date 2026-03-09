@@ -43,6 +43,10 @@ type TOperatorOptionForDisplay = {
 export interface IFilterConfig<P extends TFilterProperty> extends TFilterConfig<P> {
   // computed
   allEnabledSupportedOperators: TSupportedOperators[];
+  pqlSupportedOperators: Map<
+    TAllAvailableOperatorsForDisplay,
+    TOperatorSpecificConfigs[keyof TOperatorSpecificConfigs]
+  >;
   firstOperator: TSupportedOperators | undefined;
   // computed functions
   getOperatorConfig: (
@@ -85,6 +89,7 @@ export class FilterConfig<P extends TFilterProperty> implements IFilterConfig<P>
       allowMultipleFilters: observable,
       // computed
       allEnabledSupportedOperators: computed,
+      pqlSupportedOperators: computed,
       firstOperator: computed,
       // actions
       mutate: action,
@@ -101,6 +106,28 @@ export class FilterConfig<P extends TFilterProperty> implements IFilterConfig<P>
     return Array.from(this.supportedOperatorConfigsMap.entries())
       .filter(([, operatorConfig]) => operatorConfig.isOperatorEnabled)
       .map(([operator]) => operator);
+  }
+
+  get pqlSupportedOperators(): IFilterConfig<P>["pqlSupportedOperators"] {
+    const operators: IFilterConfig<P>["pqlSupportedOperators"] = new Map();
+    Array.from(this.supportedOperatorConfigsMap.entries())
+      .filter(([, operatorConfig]) => operatorConfig.isOperatorEnabled)
+      .forEach(([operator, operatorConfig]) => {
+        // set +ve and -ve multi-select operators
+        operators.set(operator, operatorConfig);
+        if (operatorConfig.allowNegative) {
+          operators.set(toNegativeOperator(operator), operatorConfig);
+        }
+        // set +ve and -ve single-select counter-parts
+        if (operatorConfig.type === "multi_select") {
+          operators.set(operatorConfig.singleValueOperator, operatorConfig);
+          if (operatorConfig.allowNegative) {
+            operators.set(toNegativeOperator(operatorConfig.singleValueOperator), operatorConfig);
+          }
+        }
+      });
+
+    return operators;
   }
 
   /**
