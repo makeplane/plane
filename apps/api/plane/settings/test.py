@@ -11,6 +11,9 @@ DEBUG = True
 # Send it in a dummy outbox
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
+# WhiteNoise checks STATIC_ROOT on middleware init; avoid static-dir warnings in tests.
+MIDDLEWARE = [mw for mw in MIDDLEWARE if mw != "whitenoise.middleware.WhiteNoiseMiddleware"]  # noqa
+
 INSTALLED_APPS.append(  # noqa
     "plane.tests"
 )

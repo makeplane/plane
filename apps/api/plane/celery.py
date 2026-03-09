@@ -8,7 +8,7 @@ import logging
 
 # Third party imports
 from celery import Celery
-from pythonjsonlogger.jsonlogger import JsonFormatter
+from pythonjsonlogger.json import JsonFormatter
 from celery.signals import after_setup_logger, after_setup_task_logger
 from celery.schedules import crontab
 

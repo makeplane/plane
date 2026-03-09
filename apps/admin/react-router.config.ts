@@ -1,7 +1,12 @@
 import type { Config } from "@react-router/dev/config";
-import { joinUrlPath } from "@plane/utils";
 
-const basePath = joinUrlPath(process.env.VITE_ADMIN_BASE_PATH ?? "", "/") ?? "/";
+const normalizeBasePath = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === "/") return "/";
+  return `/${trimmed.replace(/^\/+|\/+$/g, "")}/`;
+};
+
+const basePath = normalizeBasePath(process.env.VITE_ADMIN_BASE_PATH ?? "");
 
 export default {
   appDirectory: "app",

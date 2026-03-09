@@ -23,6 +23,7 @@ export type TPage = {
   name: string | undefined;
   owned_by: string | undefined;
   project_ids?: string[] | undefined;
+  sort_order: number | undefined;
   updated_at: Date | undefined;
   updated_by: string | undefined;
   workspace: string | undefined;
@@ -33,7 +34,7 @@ export type TPage = {
 // page filters
 export type TPageNavigationTabs = "public" | "private" | "archived";
 
-export type TPageFiltersSortKey = "name" | "created_at" | "updated_at" | "opened_at";
+export type TPageFiltersSortKey = "name" | "created_at" | "updated_at" | "opened_at" | "sort_order";
 
 export type TPageFiltersSortBy = "asc" | "desc";
 

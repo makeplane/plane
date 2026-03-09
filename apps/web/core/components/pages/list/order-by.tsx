@@ -4,11 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
 // types
-import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon } from "@plane/propel/icons";
 import type { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 
@@ -22,6 +22,7 @@ const PAGE_SORTING_KEY_OPTIONS: {
   key: TPageFiltersSortKey;
   label: string;
 }[] = [
+  { key: "sort_order", label: "Manual order" },
   { key: "name", label: "Name" },
   { key: "created_at", label: "Date created" },
   { key: "updated_at", label: "Date modified" },
