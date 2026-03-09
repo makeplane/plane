@@ -12,7 +12,6 @@ import { useProject } from "@/hooks/store/use-project";
 
 type TCreateIssueToastActionItems = {
   workspaceSlug: string;
-  projectId: string;
   issueId: string;
   isEpic?: boolean;
 };
