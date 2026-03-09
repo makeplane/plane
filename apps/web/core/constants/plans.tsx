@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Mail, MessageCircle } from "lucide-react";
-import { DiscordIcon } from "@plane/propel/icons";
+import { Mail, MessageCircle, MessageSquare } from "lucide-react";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { cn } from "@plane/utils";
@@ -58,8 +57,8 @@ type PlanePlans = {
   planComparison: TPlansComparisonDetails[];
 };
 
-function RiDiscordFill({ className }: { className?: string }) {
-  return <DiscordIcon className={cn(className, "size-5 text-secondary")} />;
+function RiForumFill({ className }: { className?: string }) {
+  return <MessageSquare className={cn(className, "size-5 text-secondary")} />;
 }
 
 export function ComingSoonBadge({ className }: { className?: string }) {

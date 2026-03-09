@@ -473,7 +473,7 @@ export default {
   docs: "Документация",
   full_changelog: "Полный журнал изменений",
   support: "Поддержка",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Работает на Plane Pages",
   please_select_at_least_one_invitation: "Пожалуйста, выберите хотя бы одно приглашение.",
   please_select_at_least_one_invitation_description:

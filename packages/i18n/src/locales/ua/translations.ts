@@ -472,7 +472,7 @@ export default {
   docs: "Документацію",
   full_changelog: "Повний журнал змін",
   support: "Підтримка",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Працює на Plane Pages",
   please_select_at_least_one_invitation: "Виберіть принаймні одне запрошення.",
   please_select_at_least_one_invitation_description:

@@ -12,8 +12,9 @@
  */
 
 import type { FC } from "react";
+import { MessageSquare } from "lucide-react";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CommandIcon, CommentReplyIcon, DiscordIcon, PageIcon, UserPropertyIcon } from "@plane/propel/icons";
+import { CommandIcon, CommentReplyIcon, PageIcon, UserPropertyIcon } from "@plane/propel/icons";
 
 export type TUsefulLink = {
   readonly title: string;
@@ -56,9 +57,9 @@ export function createUsefulLinks({
       action: () => toggleShortcutsListModal(true),
     },
     {
-      title: "Join Discord community",
-      icon: DiscordIcon,
-      action: () => window.open("https://go.plane.so/p-discord", "_blank", "noopener,noreferrer"),
+      title: "Join Forum community",
+      icon: MessageSquare,
+      action: () => window.open("https://forum.plane.so", "_blank", "noopener,noreferrer"),
     },
   ];
 }

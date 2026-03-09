@@ -8,15 +8,8 @@
 <p align="center"><b>Modern project management for all teams</b></p>
 
 <p align="center">
-<a href="https://discord.com/invite/A92xrEGCge">
-<img alt="Discord online members" src="https://img.shields.io/discord/1031547764020084846?color=5865F2&label=Discord&style=for-the-badge" />
-</a>
-<img alt="Commit activity per month" src="https://img.shields.io/github/commit-activity/m/makeplane/plane?style=for-the-badge" />
-</p>
-
-<p align="center">
     <a href="https://plane.so/"><b>Website</b></a> •
-    <a href="https://github.com/makeplane/plane/releases"><b>Releases</b></a> •
+    <a href="https://forum.plane.so"><b>Forum</b></a> •
     <a href="https://twitter.com/planepowers"><b>Twitter</b></a> •
     <a href="https://docs.plane.so/"><b>Documentation</b></a>
 </p>

@@ -34,7 +34,6 @@ import { CreateIcon } from "./create-icon";
 import { CustomerRequestIcon } from "./customer-request-icon";
 import { CustomersIcon } from "./customers-icon";
 import { DiceIcon } from "./dice-icon";
-import { DiscordIcon } from "./discord-icon";
 import { DisplayPropertiesIcon } from "./display-properties";
 import { DoneState } from "./done-icon";
 import { DropdownIcon } from "./dropdown-icon";
@@ -142,7 +141,6 @@ const standaloneIcons = [
   { name: "CustomerRequestIcon", Component: CustomerRequestIcon },
   { name: "CustomersIcon", Component: CustomersIcon },
   { name: "DiceIcon", Component: DiceIcon },
-  { name: "DiscordIcon", Component: DiscordIcon },
   { name: "DisplayPropertiesIcon", Component: DisplayPropertiesIcon },
   { name: "DoneState", Component: DoneState },
   { name: "DropdownIcon", Component: DropdownIcon },
