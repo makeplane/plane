@@ -102,7 +102,7 @@ class PageViewSet(BaseViewSet):
             .annotate(is_favorite=Exists(subquery))
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
-            .order_by("-is_favorite", "-created_at")
+            .order_by("-is_favorite", "-sort_order", "-created_at")
             .annotate(
                 project=Exists(
                     ProjectPage.objects.filter(page_id=OuterRef("id"), project_id=self.kwargs.get("project_id"))
@@ -160,7 +160,10 @@ class PageViewSet(BaseViewSet):
                 project_pages__deleted_at__isnull=True,
             )
 
-            if page.is_locked:
+            updatable_fields_when_locked = {"sort_order"}
+            is_sort_only_update = set(request.data.keys()).issubset(updatable_fields_when_locked)
+
+            if page.is_locked and not is_sort_only_update:
                 return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
             parent = request.data.get("parent", None)

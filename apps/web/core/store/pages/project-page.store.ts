@@ -63,6 +63,14 @@ export interface IProjectPageStore {
     options?: { trackVisit?: boolean }
   ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
+  reorderPage: (
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    destinationPageId: string,
+    edge: "reorder-above" | "reorder-below",
+    orderedPageIds: string[]
+  ) => Promise<void>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
   movePage: (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => Promise<void>;
 }
@@ -74,7 +82,7 @@ export class ProjectPageStore implements IProjectPageStore {
   error: TError | undefined = undefined;
   filters: TPageFilters = {
     searchQuery: "",
-    sortKey: "updated_at",
+    sortKey: "sort_order",
     sortBy: "desc",
   };
   // service
@@ -98,6 +106,7 @@ export class ProjectPageStore implements IProjectPageStore {
       fetchPagesList: action,
       fetchPageDetails: action,
       createPage: action,
+      reorderPage: action,
       removePage: action,
       movePage: action,
     });
@@ -324,11 +333,55 @@ export class ProjectPageStore implements IProjectPageStore {
     }
   };
 
+  reorderPage = async (
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    destinationPageId: string,
+    edge: "reorder-above" | "reorder-below",
+    orderedPageIds: string[]
+  ) => {
+    const page = this.getPageById(pageId);
+    const destinationPage = this.getPageById(destinationPageId);
+    if (!page || !destinationPage || orderedPageIds.length === 0) return;
+
+    const pageSortOrderBeforeUpdate = page.sort_order;
+    let resultSequence = 10000;
+
+    const destinationSequence = destinationPage.sort_order;
+    if (typeof destinationSequence === "number") {
+      const destinationIndex = orderedPageIds.findIndex((id) => id === destinationPageId);
+      if (destinationIndex >= 0) {
+        if (edge === "reorder-above") {
+          const prevPageId = orderedPageIds[destinationIndex - 1];
+          const prevSequence = prevPageId ? this.getPageById(prevPageId)?.sort_order : undefined;
+          if (typeof prevSequence === "number") resultSequence = (destinationSequence + prevSequence) / 2;
+          else resultSequence = destinationSequence + resultSequence;
+        } else {
+          resultSequence = destinationSequence - resultSequence;
+        }
+      }
+    }
+
+    runInAction(() => {
+      page.mutateProperties({ sort_order: resultSequence }, false);
+    });
+
+    try {
+      await this.service.update(workspaceSlug, projectId, pageId, { sort_order: resultSequence });
+    } catch (error) {
+      runInAction(() => {
+        page.mutateProperties({ sort_order: pageSortOrderBeforeUpdate }, false);
+      });
+      throw error;
+    }
+  };
+
   /**
    * @description delete a page
    * @param {string} pageId
    */
-  removePage = async ({ pageId, shouldSync = true }: { pageId: string; shouldSync?: boolean }) => {
+  removePage = async ({ pageId, shouldSync: _shouldSync = true }: { pageId: string; shouldSync?: boolean }) => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;
