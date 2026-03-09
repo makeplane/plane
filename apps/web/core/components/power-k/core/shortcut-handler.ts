@@ -25,7 +25,9 @@ export function formatModifierShortcut(e: KeyboardEvent): string {
   if (e.altKey) parts.push("alt");
   if (e.shiftKey) parts.push("shift");
 
-  const key = e.key.toLowerCase();
+  const rawKey = e.key;
+  if (!rawKey) return "";
+  const key = rawKey.toLowerCase();
   parts.push(key === " " ? "space" : key);
 
   return parts.join("+");
@@ -77,6 +79,7 @@ export class ShortcutHandler {
    */
   handleKeyDown = (e: KeyboardEvent): void => {
     if (!this.isEnabled) return;
+    if (!e.key) return;
 
     const key = e.key.toLowerCase();
     const hasModifier = e.metaKey || e.ctrlKey || e.altKey || e.shiftKey;
