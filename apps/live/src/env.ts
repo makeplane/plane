@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import * as dotenv from "@dotenvx/dotenvx";
+import * as dotenv from "dotenv";
 import { z } from "zod";
 
 dotenv.config();

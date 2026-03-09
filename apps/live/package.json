@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "catalog:",
-    "@dotenvx/dotenvx": "catalog:",
     "@effect/platform": "catalog:",
     "@effect/platform-node": "catalog:",
     "@fontsource/inter": "catalog:",
@@ -52,6 +51,7 @@
     "compression": "catalog:",
     "cookie-parser": "catalog:",
     "cors": "catalog:",
+    "dotenv": "catalog:",
     "effect": "catalog:",
     "express": "catalog:",
     "express-ws": "catalog:",

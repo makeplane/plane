@@ -26,7 +26,6 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@dotenvx/dotenvx": "catalog:",
     "@effect/opentelemetry": "catalog:",
     "@effect/platform": "catalog:",
     "@effect/platform-node": "catalog:",

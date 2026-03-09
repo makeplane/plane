@@ -11,10 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import * as dotenvx from "@dotenvx/dotenvx";
+import * as dotenv from "dotenv";
 import { z } from "zod";
 import { logger } from "@plane/logger";
-dotenvx.config();
+dotenv.config();
 
 const envSchema = z.object({
   // Sentry Env Variables

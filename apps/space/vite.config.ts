@@ -1,6 +1,6 @@
 import { createRequire } from "node:module";
 import path from "node:path";
-import * as dotenv from "@dotenvx/dotenvx";
+import * as dotenv from "dotenv";
 import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";

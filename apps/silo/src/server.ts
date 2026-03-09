@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import * as dotenvx from "@dotenvx/dotenvx";
+import * as dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import type { Application, Request, Response, NextFunction } from "express";
@@ -89,7 +89,7 @@ export default class Server {
 
   constructor() {
     // Initialize environment variables first
-    dotenvx.config();
+    dotenv.config();
 
     this.app = express();
     this.port = Number(env.PORT);

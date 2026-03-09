@@ -22,7 +22,6 @@
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "catalog:",
     "@blueprintjs/popover2": "catalog:",
     "@bprogress/core": "catalog:",
-    "@dotenvx/dotenvx": "catalog:",
     "@flatfile/api": "catalog:",
     "@flatfile/hooks": "catalog:",
     "@flatfile/react": "catalog:",
@@ -93,7 +92,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "catalog:",
     "@plane/tailwindcss": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@react-router/dev": "catalog:",
@@ -107,6 +105,7 @@
     "@types/react-color": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/react-grid-layout": "catalog:",
+    "dotenv": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

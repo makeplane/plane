@@ -39,9 +39,6 @@ catalogs:
     '@chevrotain/regexp-to-ast':
       specifier: ^11.1.2
       version: 11.1.2
-    '@dotenvx/dotenvx':
-      specifier: 1.52.0
-      version: 1.52.0
     '@effect/opentelemetry':
       specifier: 0.61.0
       version: 0.61.0
@@ -955,9 +952,6 @@ importers:
         specifier: 'catalog:'
         version: 13.0.0
     devDependencies:
-      '@dotenvx/dotenvx':
-        specifier: 'catalog:'
-        version: 1.52.0
       '@plane/tailwindcss':
         specifier: workspace:*
         version: link:../../packages/tailwindcss
@@ -985,6 +979,9 @@ importers:
       '@types/react-dom':
         specifier: 18.3.7
         version: 18.3.7(@types/react@18.3.27)
+      dotenv:
+        specifier: 'catalog:'
+        version: 16.6.1
       tailwindcss:
         specifier: 'catalog:'
         version: 4.1.18
@@ -1040,9 +1037,6 @@ importers:
 
   apps/flux:
     dependencies:
-      '@dotenvx/dotenvx':
-        specifier: 'catalog:'
-        version: 1.52.0
       '@effect/opentelemetry':
         specifier: 'catalog:'
         version: 0.61.0(@effect/platform@0.94.5(effect@3.19.19))(@opentelemetry/api@1.9.0)(@opentelemetry/resources@2.5.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-logs@0.211.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-metrics@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.5.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-node@2.5.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-web@2.5.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.39.0)(effect@3.19.19)
@@ -1131,9 +1125,6 @@ importers:
       '@aws-sdk/client-secrets-manager':
         specifier: 'catalog:'
         version: 3.1000.0
-      '@dotenvx/dotenvx':
-        specifier: 'catalog:'
-        version: 1.52.0
       '@effect/platform':
         specifier: 'catalog:'
         version: 0.94.5(effect@3.19.19)
@@ -1203,6 +1194,9 @@ importers:
       cors:
         specifier: 'catalog:'
         version: 2.8.6
+      dotenv:
+        specifier: 'catalog:'
+        version: 16.6.1
       effect:
         specifier: 'catalog:'
         version: 3.19.19
@@ -1385,9 +1379,6 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: 'catalog:'
         version: 3.996.0
-      '@dotenvx/dotenvx':
-        specifier: 'catalog:'
-        version: 1.52.0
       '@flatfile/api':
         specifier: 'catalog:'
         version: 1.23.0
@@ -1469,6 +1460,9 @@ importers:
       dd-trace:
         specifier: 'catalog:'
         version: 5.87.0
+      dotenv:
+        specifier: 'catalog:'
+        version: 16.6.1
       express:
         specifier: 'catalog:'
         version: 4.22.0
@@ -1675,9 +1669,6 @@ importers:
         specifier: 'catalog:'
         version: 13.0.0
     devDependencies:
-      '@dotenvx/dotenvx':
-        specifier: 'catalog:'
-        version: 1.52.0
       '@plane/tailwindcss':
         specifier: workspace:*
         version: link:../../packages/tailwindcss
@@ -1705,6 +1696,9 @@ importers:
       '@types/react-dom':
         specifier: 18.3.7
         version: 18.3.7(@types/react@18.3.27)
+      dotenv:
+        specifier: 'catalog:'
+        version: 16.6.1
       tailwindcss:
         specifier: 'catalog:'
         version: 4.1.18
@@ -1735,9 +1729,6 @@ importers:
       '@bprogress/core':
         specifier: 'catalog:'
         version: 1.3.4
-      '@dotenvx/dotenvx':
-        specifier: 'catalog:'
-        version: 1.52.0
       '@flatfile/api':
         specifier: 'catalog:'
         version: 1.23.0
@@ -1982,6 +1973,9 @@ importers:
       '@types/react-grid-layout':
         specifier: 'catalog:'
         version: 1.3.5
+      dotenv:
+        specifier: 'catalog:'
+        version: 16.6.1
       tailwindcss:
         specifier: 'catalog:'
         version: 4.1.18
@@ -3590,16 +3584,6 @@ packages:
   '@date-fns/tz@1.4.1':
     resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
 
-  '@dotenvx/dotenvx@1.52.0':
-    resolution: {integrity: sha512-CaQcc8JvtzQhUSm9877b6V4Tb7HCotkcyud9X2YwdqtQKwgljkMRwU96fVYKnzN3V0Hj74oP7Es+vZ0mS+Aa1w==}
-    hasBin: true
-
-  '@ecies/ciphers@0.2.5':
-    resolution: {integrity: sha512-GalEZH4JgOMHYYcYmVqnFirFsjZHeoGMDt9IxEnM9F7GRUUyUksJ7Ou53L83WHJq3RWKD3AcBpo0iQh0oMpf8A==}
-    engines: {bun: '>=1', deno: '>=2', node: '>=16'}
-    peerDependencies:
-      '@noble/ciphers': ^1.0.0
-
   '@effect/cluster@0.56.4':
     resolution: {integrity: sha512-7Je5/JlbZOlsSxsbKjr97dJed2cNGWsb+TLNgMcr5mRDbcWlFOTUGvsrisEJV6waosYLIg+2omPdvnvRoYKdhA==}
     peerDependencies:
@@ -4738,14 +4722,6 @@ packages:
 
   '@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.3':
     resolution: {integrity: sha512-s88O1aVtXftvp5bCPB7WnmXc5IwOZZ7YPuwNPt+GtOOXpPvad1LfbmjYv+qII7zP6RU2QGnqve27dnLycEnyEQ==}
-
-  '@noble/ciphers@1.3.0':
-    resolution: {integrity: sha512-2I0gnIVPtfnMw9ee9h1dJG7tp81+8Ob3OJb3Mv37rx5L40/b0i7djjCVvGOVqc9AEIQyvyu1i6ypKdFw8R8gQw==}
-    engines: {node: ^14.21.3 || >=16}
-
-  '@noble/curves@1.9.7':
-    resolution: {integrity: sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==}
-    engines: {node: ^14.21.3 || >=16}
 
   '@noble/hashes@1.8.0':
     resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
@@ -8583,10 +8559,6 @@ packages:
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
 
-  commander@11.1.0:
-    resolution: {integrity: sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==}
-    engines: {node: '>=16'}
-
   commander@14.0.3:
     resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
     engines: {node: '>=20'}
@@ -9230,10 +9202,6 @@ packages:
 
   ecdsa-sig-formatter@1.0.11:
     resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
-
-  eciesjs@0.4.17:
-    resolution: {integrity: sha512-TOOURki4G7sD1wDCjj7NfLaXZZ49dFOeEb5y39IXpb8p0hRzVvfvzZHOi5JcT+PpyAbi/Y+lxPb8eTag2WYH8w==}
-    engines: {bun: '>=1', deno: '>=2', node: '>=16'}
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
@@ -10551,10 +10519,6 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  isexe@3.1.5:
-    resolution: {integrity: sha512-6B3tLtFqtQS4ekarvLVMZ+X+VlvQekbe4taUkf/rhVO3d/h0M2rfARm/pXLcPEsjjMsFgrFgSrhQIxcSVrBz8w==}
-    engines: {node: '>=18'}
-
   isobject@3.0.1:
     resolution: {integrity: sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==}
     engines: {node: '>=0.10.0'}
@@ -11777,10 +11741,6 @@ packages:
   object-keys@1.1.1:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
     engines: {node: '>= 0.4'}
-
-  object-treeify@1.1.33:
-    resolution: {integrity: sha512-EFVjAYfzWqWsBMRHPMAXLCDIJnpMhdWAqR7xG6M6a2cs6PMFpl/+Z20w9zDW4vkxOFfddegBKq9Rehd0bxWE7A==}
-    engines: {node: '>= 10'}
 
   object.assign@4.1.7:
     resolution: {integrity: sha512-nK28WOo+QIjBkDduTINE4JkF/UJJKyf2EJxvJKfblDpyg0Q+pkOHNTL0Qwy6NP6FhE/EnzV73BxxqcJaXY9anw==}
@@ -14161,11 +14121,6 @@ packages:
     engines: {node: '>= 8'}
     hasBin: true
 
-  which@4.0.0:
-    resolution: {integrity: sha512-GlaYyEb07DPxYCKhKzplCWBJtvxZcZMrL+4UkrTSJHHPyZU4mYYTv3qaOe77H7EODLSSopAUFAc6W8U4yqvscg==}
-    engines: {node: ^16.13.0 || >=18.0.0}
-    hasBin: true
-
   why-is-node-running@2.3.0:
     resolution: {integrity: sha512-hUrmaWBdVDcxvYqnyh09zunKzROWjbZTiNy8dBEjkS7ehEDQibXJ7XvlmtbwuTclUiIyN+CyXQD4Vmko8fNm8w==}
     engines: {node: '>=8'}
@@ -15428,22 +15383,6 @@ snapshots:
     optional: true
 
   '@date-fns/tz@1.4.1': {}
-
-  '@dotenvx/dotenvx@1.52.0':
-    dependencies:
-      commander: 11.1.0
-      dotenv: 17.3.1
-      eciesjs: 0.4.17
-      execa: 5.1.1
-      fdir: 6.5.0(picomatch@4.0.3)
-      ignore: 5.3.2
-      object-treeify: 1.1.33
-      picomatch: 4.0.3
-      which: 4.0.0
-
-  '@ecies/ciphers@0.2.5(@noble/ciphers@1.3.0)':
-    dependencies:
-      '@noble/ciphers': 1.3.0
 
   '@effect/cluster@0.56.4(@effect/platform@0.94.5(effect@3.19.19))(@effect/rpc@0.73.2(@effect/platform@0.94.5(effect@3.19.19))(effect@3.19.19))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.94.5(effect@3.19.19))(effect@3.19.19)(ioredis@5.9.3))(@effect/platform@0.94.5(effect@3.19.19))(effect@3.19.19))(@effect/workflow@0.16.0(@effect/experimental@0.58.0(@effect/platform@0.94.5(effect@3.19.19))(effect@3.19.19)(ioredis@5.9.3))(@effect/platform@0.94.5(effect@3.19.19))(@effect/rpc@0.73.2(@effect/platform@0.94.5(effect@3.19.19))(effect@3.19.19))(effect@3.19.19))(effect@3.19.19)':
     dependencies:
@@ -16780,12 +16719,6 @@ snapshots:
 
   '@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.3':
     optional: true
-
-  '@noble/ciphers@1.3.0': {}
-
-  '@noble/curves@1.9.7':
-    dependencies:
-      '@noble/hashes': 1.8.0
 
   '@noble/hashes@1.8.0': {}
 
@@ -21068,8 +21001,6 @@ snapshots:
 
   comma-separated-tokens@2.0.3: {}
 
-  commander@11.1.0: {}
-
   commander@14.0.3: {}
 
   commander@6.2.1: {}
@@ -21740,13 +21671,6 @@ snapshots:
   ecdsa-sig-formatter@1.0.11:
     dependencies:
       safe-buffer: 5.2.1
-
-  eciesjs@0.4.17:
-    dependencies:
-      '@ecies/ciphers': 0.2.5(@noble/ciphers@1.3.0)
-      '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
 
   ee-first@1.1.1: {}
 
@@ -23467,8 +23391,6 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  isexe@3.1.5: {}
-
   isobject@3.0.1: {}
 
   isomorphic-timers-promises@1.0.1: {}
@@ -25082,8 +25004,6 @@ snapshots:
       define-properties: 1.2.1
 
   object-keys@1.1.1: {}
-
-  object-treeify@1.1.33: {}
 
   object.assign@4.1.7:
     dependencies:
@@ -28018,10 +27938,6 @@ snapshots:
   which@2.0.2:
     dependencies:
       isexe: 2.0.0
-
-  which@4.0.0:
-    dependencies:
-      isexe: 3.1.5
 
   why-is-node-running@2.3.0:
     dependencies:
