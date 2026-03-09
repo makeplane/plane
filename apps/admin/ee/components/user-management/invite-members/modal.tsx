@@ -132,6 +132,9 @@ export const InviteMembersModal: FC<TInviteMembersModalProps> = observer(functio
             subscriptionLevel="instance"
             updateSeatsService={(quantity) => instanceManagementService.modifyEnterpriseLicenseSeats(quantity)}
             updateSubscriptionDetail={updateInstanceSubscriptionDetail}
+            onSuccess={() => {
+              setCurrentStep("INVITE_ADMIN");
+            }}
             onPreviousStep={() => setCurrentStep("INVITE_ADMIN")}
           />
         )

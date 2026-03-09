@@ -28,7 +28,7 @@ from plane.db.models import User, Profile, WorkspaceMember, ProjectMember, Works
 from plane.ee.models import TeamspaceMember, PageUser
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.cache import invalidate_cache
-from plane.payment.bgtasks.member_sync_task import member_sync_task
+from plane.payment.bgtasks.member_sync_task import enterprise_member_sync_task, member_sync_task
 from plane.utils.host import base_host
 from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
 from plane.license.api.views.base import BaseAPIView
@@ -111,7 +111,6 @@ class InstanceUserManagementViewSet(BaseAPIView):
             on_results=lambda users: InstanceUserSerializer(users, many=True).data,
         )
 
-    @transaction.atomic
     @invalidate_cache(path="/api/instances/users/", user=False)
     @check_admin_feature_flag(AdminFeatureFlag.INSTANCE_USER_MANAGEMENT)
     def post(self, request):
@@ -143,9 +142,11 @@ class InstanceUserManagementViewSet(BaseAPIView):
         # Register as instance admin
         InstanceAdmin.objects.create(instance=instance, user=user)
 
+        # Let's run the member sync task to update the new user in all workspaces (he won't be added as a member but this will create the cache for the user)
+        enterprise_member_sync_task.delay()
+
         return Response({"message": "Instance admin created successfully"}, status=status.HTTP_201_CREATED)
 
-    @transaction.atomic
     @invalidate_cache(path="/api/instances/users/", user=False)
     @check_admin_feature_flag(AdminFeatureFlag.INSTANCE_USER_MANAGEMENT)
     def delete(self, request, pk):
@@ -180,10 +181,13 @@ class InstanceUserManagementViewSet(BaseAPIView):
                 )
 
             # Remove the instance admin
-            InstanceAdmin.objects.filter(instance=instance, user=user).delete()
+            InstanceAdmin.objects.filter(instance=instance, user=user).delete(soft=False)
 
         # Remove user from workspaces
         workspace_memberships_to_deactivate = WorkspaceMember.objects.filter(member=user, is_active=True)
+        # Capture workspace slugs before update, since the lazy queryset
+        # will re-evaluate against the updated rows and return no results.
+        workspace_slugs = list(workspace_memberships_to_deactivate.values_list("workspace__slug", flat=True))
         workspace_memberships_to_deactivate.update(is_active=False, updated_at=timezone.now())
 
         # Remove user from projects
@@ -196,10 +200,8 @@ class InstanceUserManagementViewSet(BaseAPIView):
         PageUser.objects.filter(user=user).delete()
 
         # Sync workspace members
-        [
-            member_sync_task.delay(workspace_membership.workspace.slug)
-            for workspace_membership in workspace_memberships_to_deactivate
-        ]
+        for slug in workspace_slugs:
+            member_sync_task.delay(slug)
 
         # Delete all workspace invites
         WorkspaceMemberInvite.objects.filter(email=user.email).delete()
@@ -233,3 +235,47 @@ class InstanceUserManagementViewSet(BaseAPIView):
         user_deactivation_email.delay(base_host(request=request, is_app=True), user.id)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @invalidate_cache(path="/api/instances/users/", user=False)
+    @check_admin_feature_flag(AdminFeatureFlag.INSTANCE_USER_MANAGEMENT)
+    def patch(self, request, pk):
+        """
+        Update the role of a user in the instance (admin or user)
+        """
+        try:
+            user = User.objects.get(pk=pk, is_active=True)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        instance = Instance.objects.first()
+
+        # Check if user is current user
+        if user.id == request.user.id:
+            return Response(
+                {"error": "You cannot change your own role"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        role = request.data.get("role")
+        if role not in ["admin", "user"]:
+            return Response(
+                {"error": "Invalid role. Must be 'admin' or 'user'."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        is_admin = InstanceAdmin.objects.filter(instance=instance, user=user).exists()
+
+        if role == "admin" and not is_admin:
+            # Promote to instance admin
+            InstanceAdmin.objects.create(instance=instance, user=user)
+        elif role == "user" and is_admin:
+            # Prevent demoting the last admin
+            admin_count = InstanceAdmin.objects.filter(instance=instance).count()
+            if admin_count <= 1:
+                return Response(
+                    {"error": "Cannot demote the last instance admin"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            InstanceAdmin.objects.filter(instance=instance, user=user).delete(soft=False)
+
+        return Response({"message": "Role updated successfully"}, status=status.HTTP_200_OK)

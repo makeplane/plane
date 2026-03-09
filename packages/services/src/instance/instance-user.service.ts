@@ -44,6 +44,14 @@ class InstanceUserService extends APIService {
       });
   }
 
+  async updateRole(userId: string, data: { role: "admin" | "user" }): Promise<{ message: string }> {
+    return this.patch(`/api/instances/users/${userId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async resetPassword(data: { new_password: string }): Promise<void> {
     return this.post("/api/instances/admins/reset-password/", data)
       .then((response) => response.data)

@@ -253,7 +253,68 @@ func RefreshEnterpriseLicense(ctx context.Context, api prime_api.IPrimeMonitorAp
 		return nil, nil, fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
 	}
 
-	return license, data, nil
+	updatedLicense, updateErr := RefreshEnterpriseLicenseFromResponse(license, data, tx)
+	if updateErr != nil {
+		return nil, nil, updateErr
+	}
+
+	return updatedLicense, data, nil
+}
+
+func RefreshEnterpriseLicenseFromResponse(license *db.License, data *prime_api.EnterpriseLicenseActivateResponse, tx *gorm.DB) (*db.License, error) {
+	// Check for the current period end date
+	var currentPeriodEndDate *time.Time
+	if data.CurrentPeriodEndDate.IsZero() {
+		currentPeriodEndDate = nil
+	} else {
+		currentPeriodEndDate = &data.CurrentPeriodEndDate
+	}
+
+	// Check for the trial end date
+	var trialEndDate *time.Time
+	if data.TrialEndDate.IsZero() {
+		trialEndDate = nil
+	} else {
+		trialEndDate = &data.TrialEndDate
+	}
+
+	instanceUUID, _ := uuid.Parse(data.InstanceID)
+	now := time.Now()
+
+	// Update the db for license with the new data from Prime
+	licenseNew := &db.License{
+		ID:                     license.ID,
+		LicenseKey:             data.LicenceKey,
+		InstanceID:             instanceUUID,
+		WorkspaceID:            license.WorkspaceID,
+		WorkspaceSlug:          license.WorkspaceSlug,
+		Product:                data.Product,
+		ProductType:            data.ProductType,
+		Seats:                  data.Seats,
+		FreeSeats:              data.FreeSeats,
+		Interval:               data.Interval,
+		IsOfflinePayment:       data.IsOfflinePayment,
+		IsCancelled:            data.IsCancelled,
+		Subscription:           data.Subscription,
+		CurrentPeriodEndDate:   currentPeriodEndDate,
+		TrialEndDate:           trialEndDate,
+		HasAddedPaymentMethod:  data.HasAddedPayment,
+		HasActivatedFreeTrial:  data.HasActivatedFree,
+		LastVerifiedAt:         &now,
+		LastPaymentFailedDate:  data.LastPaymentFailedDate,
+		LastPaymentFailedCount: data.LastPaymentFailedCount,
+	}
+
+	// Delete the old license and create the updated one
+	if err := tx.Delete(&license).Error; err != nil {
+		return nil, err
+	}
+
+	if err := tx.Create(licenseNew).Error; err != nil {
+		return nil, err
+	}
+
+	return licenseNew, nil
 }
 
 func RefreshLicenseUsers(ctx context.Context, license *db.License, activationReponse prime_api.WorkspaceActivationResponse, tx *gorm.DB) error {

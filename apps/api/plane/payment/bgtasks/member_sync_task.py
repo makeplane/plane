@@ -26,6 +26,7 @@ from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import resync_workspace_license
 
 
+@shared_task
 def enterprise_member_sync_task():
     """
     Sync all active users for enterprise license with the payment server (monitor).

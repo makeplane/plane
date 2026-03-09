@@ -52,7 +52,11 @@ class GitHubOauthInitiateAdminEndpoint(View):
 
         try:
             state = uuid.uuid4().hex
-            provider = GitHubOAuthProvider(request=request, state=state)
+            provider = GitHubOAuthProvider(
+                request=request,
+                state=state,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/api/instances/admin/github/callback/",
+            )
             request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
@@ -112,7 +116,11 @@ class GitHubCallbackAdminEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            provider = GitHubOAuthProvider(request=request, code=code)
+            provider = GitHubOAuthProvider(
+                request=request,
+                code=code,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/api/instances/admin/github/callback/",
+            )
             user = provider.authenticate()
             # Verify user is an instance admin
             if not InstanceAdmin.is_instance_admin(user):

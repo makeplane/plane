@@ -31,7 +31,7 @@ type TAddSeatsModalProps = {
 };
 
 export const AddSeatsModal = observer(function AddSeatsModal(props: TAddSeatsModalProps) {
-  const { isOpen } = props;
+  const { isOpen, onClose } = props;
 
   if (!isOpen) return null;
   return (
@@ -41,7 +41,7 @@ export const AddSeatsModal = observer(function AddSeatsModal(props: TAddSeatsMod
       width={EModalWidth.XXL}
       className="transition-all duration-300 ease-in-out"
     >
-      <AddSeatsForm {...props} />
+      <AddSeatsForm {...props} onSuccess={onClose} />
     </ModalCore>
   );
 });

@@ -16,6 +16,7 @@ import { instanceUserService } from "@plane/services";
 import type { TInstanceAdminCreatePayload, TInstanceUser, TInstanceUserListParams } from "@plane/types";
 import type { RootStore } from "@/plane-admin/store/root.store";
 import type { TInstanceUserOrderByOptions } from "@/plane-admin/constants/user-management";
+import { set } from "lodash-es";
 
 export interface IInstanceUserFilters {
   order_by?: TInstanceUserOrderByOptions;
@@ -43,6 +44,7 @@ export interface IInstanceUserStore {
   fetchUsers: (cursor?: string) => Promise<void>;
   createInstanceAdmin: (data: TInstanceAdminCreatePayload) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
+  toggleUserRole: (userId: string, role: "user" | "admin") => Promise<void>;
   nextPage: () => Promise<void>;
   prevPage: () => Promise<void>;
 }
@@ -78,6 +80,7 @@ export class InstanceUserStore implements IInstanceUserStore {
       fetchUsers: action,
       createInstanceAdmin: action,
       deleteUser: action,
+      toggleUserRole: action,
     });
   }
 
@@ -159,6 +162,18 @@ export class InstanceUserStore implements IInstanceUserStore {
       await this.fetchUsers(this.currentCursor || undefined);
     } catch (error) {
       console.error("Failed to delete user:", error);
+      throw error;
+    }
+  };
+
+  toggleUserRole = async (userId: string, role: "user" | "admin") => {
+    try {
+      await instanceUserService.updateRole(userId, { role });
+      const userDetails = this.users[userId];
+      const updatedDetails = { ...userDetails, is_instance_admin: role === "admin" };
+      set(this.users, userId, updatedDetails);
+    } catch (error) {
+      console.error("Failed to toggle user role:", error);
       throw error;
     }
   };
