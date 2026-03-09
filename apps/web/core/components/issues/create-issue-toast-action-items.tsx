@@ -44,6 +44,8 @@ export const CreateIssueToastActionItems = observer(
     const copyToClipboard = async (
       e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     ) => {
+      e.preventDefault();
+      e.stopPropagation();
       try {
         await copyUrlToClipboard(workItemLink);
         setCopiedLink(true);
@@ -51,8 +53,6 @@ export const CreateIssueToastActionItems = observer(
       } catch (_error) {
         setCopiedLink(false);
       }
-      e.preventDefault();
-      e.stopPropagation();
     };
 
     const workItemId = `${projectIdentifier}-${issue?.sequence_id}`;
@@ -60,6 +60,8 @@ export const CreateIssueToastActionItems = observer(
     const copyWorkItemId = async (
       e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     ) => {
+      e.preventDefault();
+      e.stopPropagation();
       try {
         await navigator.clipboard.writeText(workItemId);
         setCopiedId(true);
@@ -67,8 +69,6 @@ export const CreateIssueToastActionItems = observer(
       } catch (_error) {
         setCopiedId(false);
       }
-      e.preventDefault();
-      e.stopPropagation();
     };
 
     return (
