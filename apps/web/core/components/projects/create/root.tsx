@@ -115,7 +115,7 @@ const CreateProjectFormBase = observer(function CreateProjectFormBase(props: TCr
     if (data) {
       reset({ ...getProjectFormValues(), ...data });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [...dataResetProperties]);
   useEffect(() => {
     if (projectTemplateId) {
@@ -124,7 +124,7 @@ const CreateProjectFormBase = observer(function CreateProjectFormBase(props: TCr
         reset,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [projectTemplateId]);
 
   const handleAddToFavorites = (projectId: string) => {

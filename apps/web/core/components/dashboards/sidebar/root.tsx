@@ -116,7 +116,7 @@ export const DashboardsWidgetConfigSidebarRoot = observer(function DashboardsWid
     reset({
       ...asJSON,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [asJSON, isEditingWidget]);
 
   useEffect(() => {

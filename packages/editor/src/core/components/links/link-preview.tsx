@@ -31,7 +31,7 @@ export function LinkPreview({
   };
 
   const copyLinkToClipboard = () => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    // oxlint-disable-next-line @typescript-eslint/no-floating-promises
     navigator.clipboard.writeText(url);
     viewProps.closeLinkView();
   };

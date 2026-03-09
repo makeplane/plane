@@ -120,7 +120,7 @@ export const CreateUpdatePageTemplate = observer(function CreateUpdatePageTempla
       setIsApplyingTemplate(false);
       resetLocalStates();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [loader, templateId, workspaceSlug, getTemplateById]);
 
   const getDataForPreload = useCallback((): PartialDeep<TPageTemplateForm> | undefined => {
@@ -137,7 +137,7 @@ export const CreateUpdatePageTemplate = observer(function CreateUpdatePageTempla
     }
 
     return undefined;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [preloadedData, templateId, props]);
 
   // Handle preloaded invalid IDs change

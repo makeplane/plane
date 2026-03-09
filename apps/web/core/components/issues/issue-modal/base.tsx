@@ -140,7 +140,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
 
     // clearing up the description state when we leave the component
     return () => setDescription(undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.project_id, data?.id, data?.sourceIssueId, projectId, isOpen, activeProjectId]);
 
   const addIssueToCycle = async (issue: TIssue, cycleId: string) => {

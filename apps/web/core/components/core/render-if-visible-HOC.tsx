@@ -53,12 +53,13 @@ function RenderIfVisible(props: Props) {
   const isVisible = shouldVisible || forceRender;
 
   // Set visibility with intersection observer
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (intersectionRef.current) {
       const observer = new IntersectionObserver(
         (entries) => {
           //DO no remove comments for future
-          if (typeof window !== undefined && window.requestIdleCallback && useIdletime) {
+          if (typeof window !== "undefined" && window.requestIdleCallback && useIdletime) {
             window.requestIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
               timeout: 300,
             });
@@ -74,7 +75,6 @@ function RenderIfVisible(props: Props) {
       observer.observe(intersectionRef.current);
       return () => {
         if (intersectionRef.current) {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
           observer.unobserve(intersectionRef.current);
         }
       };

@@ -191,7 +191,7 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
     }
     if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug?.toString(), projectId);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   // Reset form when data prop changes
@@ -199,7 +199,7 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
     if (data) {
       reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId, ...data });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [...dataResetProperties]);
 
   // Update the issue type id when the project id changes
@@ -213,7 +213,7 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
     const issueTypeIdOnProjectChange = getIssueTypeIdOnProjectChange(projectId);
     if (issueTypeIdOnProjectChange) setValue("type_id", issueTypeIdOnProjectChange, { shouldValidate: true });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [data, projectId]);
 
   useEffect(() => {
@@ -224,7 +224,7 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
         editorRef,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [workItemTemplateId]);
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
@@ -361,7 +361,7 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
 
     if (isDirty && condition) onChange(watch());
     else onChange(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isDirty]);
 
   useEffect(() => {

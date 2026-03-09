@@ -135,7 +135,7 @@ export function OIDCRoot(props: TOIDCRoot) {
         setSubmitType(null);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [createProvider, updateProvider, oidcProvider, reset]
   );
 

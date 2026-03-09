@@ -58,7 +58,7 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
         const isInvited = teamspaceMemberIds?.find((u) => u === userId) || memberIdsToInvite?.find((u) => u === userId);
         return !isInvited;
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [memberIdsToInvite]
   );
   const isButtonDisabled = useMemo(

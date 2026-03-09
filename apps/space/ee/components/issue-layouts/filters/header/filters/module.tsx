@@ -50,7 +50,7 @@ export const FilterModule = observer(function FilterModule(props: Props) {
       (module) => !appliedFilters?.includes(module.id),
       (module) => module.name.toLowerCase(),
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const handleViewToggle = () => {

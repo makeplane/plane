@@ -11,12 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable @typescript-eslint/no-unsafe-call */
+/* oxlint-disable @typescript-eslint/no-unsafe-member-access */
+/* oxlint-disable @typescript-eslint/no-unsafe-assignment */
+/* oxlint-disable @typescript-eslint/no-unsafe-argument */
+/* oxlint-disable @typescript-eslint/no-unused-vars */
+/* oxlint-disable @typescript-eslint/no-explicit-any */
 import * as vm from "vm";
 import { promises as fs } from "fs";
 import { logger } from "@plane/logger";
@@ -52,7 +52,7 @@ function buildFunctionsLibrary(
       // 2. Defines the function from the code
       // 3. Returns the named function
       // The code defines functions like: async function httpRequest({ url, ... }) { ... }
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+      // oxlint-disable-next-line @typescript-eslint/no-implied-eval
       const factory = new Function("fetch", "Plane", "workspaceSlug", `${fn.code}\nreturn ${fn.name};`);
 
       // Call the factory with injected dependencies to get the actual function

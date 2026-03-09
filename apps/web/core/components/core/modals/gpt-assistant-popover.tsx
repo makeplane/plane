@@ -181,7 +181,7 @@ export function GptAssistantPopover(props: Props) {
       window.removeEventListener("keydown", handleEnterKeyPress);
       window.removeEventListener("keydown", handleEscapeKeyPress);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, handleSubmit, onClose]);
 
   const responseActionButton = response !== "" && (

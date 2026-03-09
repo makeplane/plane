@@ -36,7 +36,7 @@ export const HomePageHeader = observer(function HomePageHeader() {
   useEffect(() => {
     if (!isPiEnabled) return;
     void initPiChat();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isPiEnabled) return;

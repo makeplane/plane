@@ -58,7 +58,7 @@ export function FilterItemContainer(props: FilterItemContainerProps) {
     return () => {
       applyInitialStyles();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

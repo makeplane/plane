@@ -153,7 +153,7 @@ export const WorkspaceSelector = observer(function WorkspaceSelector(props: TWor
           break;
       }
       setIsSubmitting(false);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (feature) {
         case ESupportedFeatures.PROJECT_TEMPLATES:

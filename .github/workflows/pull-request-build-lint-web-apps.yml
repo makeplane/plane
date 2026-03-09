@@ -23,7 +23,7 @@ on:
       - "pnpm-workspace.yaml"
       - "turbo.json"
       - "tsconfig.json"
-      - "eslint.config.mjs"
+      - ".oxlintrc.json"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -61,7 +61,7 @@ export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssu
         navigationTab || EInboxIssueCurrentTab.OPEN
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [inboxAccessible, workspaceSlug, projectId]);
 
   // loader

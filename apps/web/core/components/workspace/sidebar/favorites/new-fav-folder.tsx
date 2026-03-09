@@ -139,7 +139,7 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
 
   useEffect(() => {
     setFocus("name");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useOutsideClickDetector(ref, () => {
     setCreateNewFolder(false);

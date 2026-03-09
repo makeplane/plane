@@ -44,7 +44,7 @@ export const TeamspaceProjectsWithGroupingRoot = observer(function TeamspaceProj
       updateScope(workspaceSlug.toString(), currentScope, false);
       updateLayout(workspaceSlug.toString(), currentLayout, false, false);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [updateScope, updateAttributes, updateLayout, workspaceSlug]);
 
   if (!currentWorkspaceId) return null;

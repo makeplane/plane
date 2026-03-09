@@ -513,7 +513,7 @@ export abstract class CycleStore implements ICycleStore {
    * @param cycleId
    *  @returns
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // oxlint-disable-next-line @typescript-eslint/no-unused-vars
   fetchActiveCycleProgressPro = action(async (workspaceSlug: string, projectId: string, cycleId: string) => {});
 
   /**

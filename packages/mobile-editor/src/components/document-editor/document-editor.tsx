@@ -169,7 +169,7 @@ export const MobileDocumentEditor = () => {
     };
     void fetchInitialParams();
     // It should only run once, to fetch the initial params
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [flaggedExtensions]);
 
   if (!realtimeConfig || !initialParams || !disabledExtensions) return null;

@@ -96,7 +96,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
 
   useEffect(() => {
     if (descriptionHtmlData) handleDescriptionHTMLDataChange(descriptionHtmlData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [descriptionHtmlData]);
 
   const handleKeyDown = (event: KeyboardEvent) => {

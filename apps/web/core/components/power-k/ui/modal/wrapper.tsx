@@ -120,7 +120,7 @@ export const ProjectsAppPowerKModalWrapper = observer(function ProjectsAppPowerK
         context.setShouldShowContextBasedActions(true);
       }, 200);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   return (

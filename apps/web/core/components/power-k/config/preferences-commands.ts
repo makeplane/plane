@@ -58,7 +58,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
           return;
         });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [setTheme, updateUserTheme]
   );
 
@@ -82,7 +82,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
           return;
         });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [updateCurrentUser]
   );
 
@@ -106,7 +106,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
           return;
         });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [updateUserProfile]
   );
 

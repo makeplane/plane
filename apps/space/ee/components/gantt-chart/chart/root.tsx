@@ -99,7 +99,7 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
   // handling the scroll positioning from left and right
   useEffect(() => {
     handleToday();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updatingCurrentLeftScrollPosition = (width: number) => {

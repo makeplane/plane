@@ -229,7 +229,7 @@ export class FlatfileStore extends ImporterBaseStore implements IFlatfileStore {
    * @param externalApiToken
    */
   saveCredentials = async (workspaceId: string, userId: string, externalApiToken: string): Promise<void> => {
-    // eslint-disable-next-line no-useless-catch
+    // oxlint-disable-next-line no-useless-catch
     try {
       await this.flatfileAuthService.saveCredentials(workspaceId, userId, externalApiToken);
       // After saving credentials, refresh auth status

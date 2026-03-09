@@ -12,7 +12,7 @@
  */
 
 import { lazy, Suspense, useRef } from "react";
-// eslint-disable-next-line import/default
+// oxlint-disable-next-line import/default
 import planeSDKTypes from "@makeplane/plane-node-sdk/dist/types.bundle.d.ts?raw";
 // components
 import { useTheme } from "next-themes";

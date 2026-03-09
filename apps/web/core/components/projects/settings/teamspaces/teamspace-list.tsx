@@ -102,7 +102,7 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
               className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular focus:outline-none placeholder:text-placeholder"
               placeholder={`${t("common.search.label")}`}
               value={searchQuery}
-              // eslint-disable-next-line jsx-a11y/no-autofocus
+              // oxlint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
               onChange={(e) => setSearchQuery(e.target.value)}
             />

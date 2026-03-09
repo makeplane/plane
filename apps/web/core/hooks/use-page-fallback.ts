@@ -95,7 +95,7 @@ export const usePageFallback = (args: TArgs) => {
       isSavingRef.current = false;
       setIsFetchingFallbackBinary(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- Intentionally stable: reads latest values on-demand
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- Intentionally stable: reads latest values on-demand
   }, [hasConnectionFailed, editorRef]);
 
   // Only trigger on connection state change, not on callback recreation

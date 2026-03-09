@@ -126,7 +126,7 @@ export const WidgetItem = observer(function WidgetItem(props: Props) {
         },
       })
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [elementRef?.current, isDragging, isLastChild, widget.key]);
 
   return (

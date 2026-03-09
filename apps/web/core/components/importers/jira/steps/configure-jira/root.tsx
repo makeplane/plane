@@ -87,7 +87,7 @@ export const ConfigureJiraRoot = observer(function ConfigureJiraRoot() {
     if (contextData && !isEqual(contextData, formData)) {
       setFormData(contextData);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
 
   return (

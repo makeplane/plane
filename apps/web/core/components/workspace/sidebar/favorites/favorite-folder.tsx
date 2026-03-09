@@ -141,7 +141,7 @@ export function FavoriteFolder(props: Props) {
         },
       })
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isDragging, favorite.id, isLastChild, favorite.id]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));

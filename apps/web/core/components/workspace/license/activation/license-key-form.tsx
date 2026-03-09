@@ -58,7 +58,7 @@ export const LicenseKeyForm = observer(function LicenseKeyForm(props: TLicenseKe
       setLoader(true);
       const subscriptionResponse = await activateUsingLicenseKey(workspaceSlug, activationKey);
       onSuccess?.(subscriptionResponse?.message || "Workspace subscription activated successfully.");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const errorMessage =
         error?.error ?? "Your license is invalid or already in use. For any queries contact support@plane.so";

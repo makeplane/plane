@@ -49,7 +49,7 @@ export const FilterState = observer(function FilterState(props: TFilterState) {
           (state?.group || "").includes(searchQuery.toLowerCase()) ||
           searchQuery === ""
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [searchQuery]
   );
 

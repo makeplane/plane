@@ -193,7 +193,7 @@ export const CreateUpdateWorkItemTemplate = observer(function CreateUpdateWorkIt
     } else {
       resetLocalStates();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [loader, templateId, workspaceSlug, getTemplateById]);
 
   const getDataForPreload = useCallback((): PartialDeep<TWorkItemTemplateForm> | undefined => {
@@ -215,7 +215,7 @@ export const CreateUpdateWorkItemTemplate = observer(function CreateUpdateWorkIt
     }
 
     return undefined;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [preloadedData, templateId, props]);
 
   // Handle preloaded invalid IDs change

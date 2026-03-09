@@ -167,7 +167,7 @@ export function LinkViewContainer({ editor, containerRef }: Props) {
         setCloseTimeout();
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [editor, isOpen, setCloseTimeout, refs.floating]
   );
 
@@ -185,7 +185,7 @@ export function LinkViewContainer({ editor, containerRef }: Props) {
       container.removeEventListener("mouseenter", handleContainerMouseEnter);
       container.removeEventListener("mouseleave", handleContainerMouseLeave);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [handleLinkHover, handleContainerMouseEnter, handleContainerMouseLeave]);
 
   // Cleanup timeout on unmount

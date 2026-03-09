@@ -136,7 +136,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
 
             // For other sources, we use the old way of pulling the data
             await this.update(headers.jobId, "PULLING", {});
-            // eslint-disable-next-line no-case-declarations
+            // oxlint-disable-next-line no-case-declarations
             const batches = await this.batches(job);
             await this.update(headers.jobId, "PULLED", {
               total_batch_count: batches.length,
@@ -165,9 +165,9 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
               page: data?.paginationContext?.page,
               isLastPage: data?.paginationContext?.isLastPage,
             });
-            // eslint-disable-next-line no-case-declarations
+            // oxlint-disable-next-line no-case-declarations
             const firstPagePushedCacheKey = IMPORT_JOB_FIRST_PAGE_PUSHED_CACHE_KEY(headers.jobId);
-            // eslint-disable-next-line no-case-declarations
+            // oxlint-disable-next-line no-case-declarations
             const cachedFirstPagePushed = await this.store.get(firstPagePushedCacheKey);
             if (!cachedFirstPagePushed && data?.paginationContext?.page !== 0) {
               // requeue this page, as we are not sure if the first page is pushed or not
@@ -179,7 +179,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
             if (data?.paginationContext?.page === 0) {
               await this.update(headers.jobId, "PULLING", {});
             }
-            // eslint-disable-next-line no-case-declarations
+            // oxlint-disable-next-line no-case-declarations
             const paginatedBatches = await this.batches(job, data.paginationContext, headers);
             // if the paginated batches are empty, we need to mark the job as finished
             if (paginatedBatches.length === 0) {
@@ -202,7 +202,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
               `[${headers.route.toUpperCase()}][${headers.jobId.slice(0, 7)}] Transforming data for batch 🧹 ------------------- [${data.meta.batchId}]`
             );
             this.update(headers.jobId, "TRANSFORMING", {});
-            // eslint-disable-next-line no-case-declarations
+            // oxlint-disable-next-line no-case-declarations
             const transformedData = await this.transform(job, data.data, data.meta);
             if (transformedData.length !== 0) {
               headers.type = "push";
@@ -221,7 +221,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
               `[${headers.route.toUpperCase()}][${headers.jobId.slice(0, 7)}] Pushing data for batch 🧹 ------------------- [${data.meta.batchId}]`
             );
             await this.update(headers.jobId, "PUSHING", {});
-            // eslint-disable-next-line no-case-declarations
+            // oxlint-disable-next-line no-case-declarations
             const jobData = await this.getJobData(headers.jobId);
             await migrateToPlane(jobData as TImportJob, data.data, data.meta);
             // Delete the workspace from the store, as we are done processing the

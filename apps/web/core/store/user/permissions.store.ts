@@ -343,7 +343,7 @@ export class UserPermissionStore implements IUserPermissionStore {
    */
   joinProject = async (workspaceSlug: string, projectId: string): Promise<void> => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const response = await userService.joinProject(workspaceSlug, [projectId]);
       const projectMemberRole = this.getWorkspaceRoleByWorkspaceSlug(workspaceSlug) ?? EUserPermissions.MEMBER;
       if (response) {

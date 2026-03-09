@@ -23,7 +23,7 @@ type RestMethod = "get" | "post" | "put" | "patch" | "delete";
  * @returns
  */
 export function Controller(baseRoute: string = ""): ClassDecorator {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  // oxlint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return function (target: Function) {
     Reflect.defineMetadata("baseRoute", baseRoute, target);
   };

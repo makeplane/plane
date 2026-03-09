@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-/* eslint-disable no-useless-catch */
+/* oxlint-disable no-useless-catch */
 
 // helpers
 import { API_BASE_URL } from "@plane/constants";

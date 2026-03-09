@@ -74,7 +74,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
         title: "Success!",
         message: "Webhook updated successfully.",
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,

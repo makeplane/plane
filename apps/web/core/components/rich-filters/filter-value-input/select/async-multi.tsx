@@ -87,7 +87,7 @@ export const AsyncMultiSelectFilterValueInput = observer(function AsyncMultiSele
       setOptions([]);
       setNextCursor("");
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadSearch = useCallback(
@@ -111,7 +111,7 @@ export const AsyncMultiSelectFilterValueInput = observer(function AsyncMultiSele
 
   useEffect(() => {
     void loadSearch(query.trim());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchTerm]);
 
   const handleSelectChange = (values: string[]) => {

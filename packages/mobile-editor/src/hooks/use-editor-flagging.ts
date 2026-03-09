@@ -38,7 +38,7 @@ export const useEditorFlagging = () => {
   // Get the feature flags from the native code
   useEffect(() => {
     void getFeatureFlags();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const editorConfig = useMemo(() => {

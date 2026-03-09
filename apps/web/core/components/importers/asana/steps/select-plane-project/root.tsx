@@ -86,7 +86,7 @@ export const SelectPlaneProjectRoot = observer(function SelectPlaneProjectRoot()
     if (contextData && !isEqual(contextData, formData)) {
       setFormData(contextData);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
 
   // fetching the plane projects

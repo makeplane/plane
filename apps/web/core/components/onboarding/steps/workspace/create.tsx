@@ -181,7 +181,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                       "border-danger-strong": errors.name,
                     }
                   )}
-                  // eslint-disable-next-line jsx-a11y/no-autofocus
+                  // oxlint-disable-next-line jsx-a11y/no-autofocus
                   autoFocus
                 />
               </div>

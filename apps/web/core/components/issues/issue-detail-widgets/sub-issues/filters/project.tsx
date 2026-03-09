@@ -47,7 +47,7 @@ export const FilterProjects = observer(function FilterProjects(props: Props) {
       (project) => !(appliedFilters ?? []).includes(project.id),
       (project) => project.name.toLowerCase(),
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const handleViewToggle = () => {

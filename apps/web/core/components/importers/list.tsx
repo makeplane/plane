@@ -30,7 +30,7 @@ export type ImporterProps = {
   key: string;
   title: string;
   i18n_description: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   logo: any;
   beta: boolean;
 };

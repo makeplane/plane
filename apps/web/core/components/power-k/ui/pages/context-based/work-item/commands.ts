@@ -142,7 +142,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
         message: t("common.error.message"),
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [createEntitySubscription, entityDetails, isSubscribed, removeEntitySubscription, workspaceSlug]);
 
   const handleDeleteWorkItem = useCallback(() => {
@@ -164,7 +164,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
           title: t("power_k.contextual_actions.work_item.copy_id_toast_error"),
         });
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [entityDetails?.sequence_id, projectDetails?.identifier]);
 
   const copyWorkItemTitleToClipboard = useCallback(() => {
@@ -181,7 +181,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
           title: t("power_k.contextual_actions.work_item.copy_title_toast_error"),
         });
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [entityDetails?.name]);
 
   const copyWorkItemUrlToClipboard = useCallback(() => {
@@ -199,7 +199,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
           title: t("power_k.contextual_actions.work_item.copy_url_toast_error"),
         });
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return [

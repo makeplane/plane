@@ -92,7 +92,7 @@ export const ProjectDetail = observer(function ProjectDetail(props: TProjectDeta
     };
 
     void updateCoverImageAndLogo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [data.artifact_id]);
   return (
     <>

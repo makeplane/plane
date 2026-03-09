@@ -70,7 +70,7 @@ export const TitleInput = observer(function TitleInput(props: TitleInputProps) {
         hasUnsavedChanges.current = false;
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
 
   useEffect(() => {
@@ -115,7 +115,7 @@ export const TitleInput = observer(function TitleInput(props: TitleInputProps) {
           });
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

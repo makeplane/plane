@@ -89,7 +89,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
       }
     }
     // DO NOT Add more dependencies here. It will cause multiple requests to be sent.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
 
   useEffect(() => {
@@ -135,7 +135,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
           });
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

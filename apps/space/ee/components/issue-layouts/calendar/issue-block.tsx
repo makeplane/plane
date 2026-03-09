@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-/* eslint-disable react/display-name */
+/* oxlint-disable react/display-name */
 import { useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";

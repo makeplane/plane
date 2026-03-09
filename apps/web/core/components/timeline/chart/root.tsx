@@ -151,7 +151,7 @@ export const TimelineChartViewRoot = observer(function TimelineChartViewRoot(pro
   // handling the scroll positioning from left and right
   useEffect(() => {
     handleToday();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateItemsContainerWidth = (width: number) => {

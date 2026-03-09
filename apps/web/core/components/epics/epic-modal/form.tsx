@@ -160,7 +160,7 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
       });
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   // Update the issue type id when the project id changes
@@ -174,7 +174,7 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
     const issueTypeIdOnProjectChange = getIssueTypeIdOnProjectChange(projectId);
     if (issueTypeIdOnProjectChange) setValue("type_id", issueTypeIdOnProjectChange, { shouldValidate: true });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [data, projectId]);
 
   const handleFormSubmit = async (formData: Partial<TIssue>) => {
@@ -270,7 +270,7 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
 
     if (isDirty && condition) onChange(watch());
     else onChange(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isDirty]);
 
   // Reset form when data prop changes
@@ -278,7 +278,7 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
     if (data) {
       reset({ ...defaultValues, project_id: projectId, ...data });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [...dataResetProperties]);
 
   return (

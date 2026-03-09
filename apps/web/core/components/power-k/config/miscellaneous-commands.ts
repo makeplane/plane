@@ -53,7 +53,7 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
           title: t("power_k.miscellaneous_actions.copy_current_page_url_toast_error"),
         });
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const focusTopNavSearch = useCallback(() => {

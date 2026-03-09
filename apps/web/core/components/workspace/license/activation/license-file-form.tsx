@@ -85,7 +85,7 @@ export const LicenseFileForm = observer(function LicenseFileForm(props: TLicense
       setLoader(true);
       const subscriptionResponse = await activateUsingLicenseFile(workspaceSlug, selectedFile);
       onSuccess?.(subscriptionResponse?.message || "Workspace subscription activated successfully.");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const errorMessage =
         error?.error ?? "Your license file is invalid or already in use. For any queries contact support@plane.so";

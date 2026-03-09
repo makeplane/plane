@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// oxlint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { IssueWorkObjectViewService } from "../issue-wo-view.service";
 import { EWorkObjectEntityType, EWorkObjectFieldType } from "@/apps/slack/types/workobjects";

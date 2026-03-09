@@ -27,10 +27,10 @@
     "build": "tsdown",
     "dev": "tsdown --watch",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=614",
+    "check:lint": "oxlint --type-aware -c ../../.oxlintrc.json .",
     "check:types": "tsc --noEmit",
     "check:format": "oxfmt . --check",
-    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=614 --fix",
+    "fix:lint": "oxlint --type-aware --fix -c ../../.oxlintrc.json .",
     "fix:format": "oxfmt . --write"
   },
   "dependencies": {

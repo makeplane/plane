@@ -153,9 +153,9 @@ export const TeamspaceStatisticsMap = observer(function TeamspaceStatisticsMap(p
       currentLegend,
       getProjectById,
       getProjectStateById,
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
       (id: string) => getProjectById(id)?.state_id,
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
       (id: string) => getProjectById(id)?.priority,
     ]
   );

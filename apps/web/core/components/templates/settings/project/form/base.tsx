@@ -232,7 +232,7 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
         }));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [getTemplateById, templateId]);
 
   /**
@@ -275,7 +275,7 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
     } else {
       resetLocalStates();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [loader, templateId, workspaceSlug, getTemplateById]);
 
   /**
@@ -309,7 +309,7 @@ export const ProjectTemplateFormRoot = observer(function ProjectTemplateFormRoot
     };
 
     updateDefaultFormData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [preloadedData]);
 
   /**

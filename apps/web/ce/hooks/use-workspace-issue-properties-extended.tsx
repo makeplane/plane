@@ -11,5 +11,5 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line @typescript-eslint/no-unused-vars
 export const useWorkspaceIssuePropertiesExtended = (workspaceSlug: string | string[] | undefined) => {};

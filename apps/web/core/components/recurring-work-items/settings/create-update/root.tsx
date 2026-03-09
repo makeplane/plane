@@ -167,7 +167,7 @@ export const CreateUpdateRecurringWorkItem = observer(function CreateUpdateRecur
     } else {
       resetLocalStates();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [getRecurringWorkItemById, recurringWorkItemId, isInitializingData, workspaceSlug]);
 
   const getDataForPreload = useCallback((): PartialDeep<TRecurringWorkItemForm> | undefined => {
@@ -184,7 +184,7 @@ export const CreateUpdateRecurringWorkItem = observer(function CreateUpdateRecur
         state_id: defaultStateId,
       },
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [preloadedData, projectId]);
 
   // Handle preloaded invalid IDs change

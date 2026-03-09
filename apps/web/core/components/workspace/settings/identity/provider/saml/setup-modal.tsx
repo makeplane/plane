@@ -58,7 +58,7 @@ export function SAMLSetupModal(props: TSAMLSetupModalProps) {
         description: t("sso.providers.saml.setup_modal.web_details.logout_url.description"),
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [workspaceId, baseURL]
   );
 
@@ -80,7 +80,7 @@ export function SAMLSetupModal(props: TSAMLSetupModalProps) {
         description: t("sso.providers.saml.setup_modal.mobile_details.logout_url.description"),
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [workspaceId, baseURL]
   );
 
@@ -119,7 +119,7 @@ export function SAMLSetupModal(props: TSAMLSetupModalProps) {
           ),
         },
       ] as const,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [webDetails, mobileDetails]
   );
 

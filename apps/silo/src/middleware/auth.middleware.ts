@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-/* eslint-disable @typescript-eslint/no-namespace */
+/* oxlint-disable @typescript-eslint/no-namespace */
 // file: /Users/saurabhkumar/work/plane-ee/silo/src/middleware/external-api-token.middleware.ts
 
 import axios from "axios";

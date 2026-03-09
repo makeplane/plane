@@ -65,7 +65,7 @@ export class CoreRootStore {
     this.publishList = new PublishListStore(this);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   hydrate = (data: any) => {
     if (!data) return;
     this.instance.hydrate(data?.instance || undefined);

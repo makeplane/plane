@@ -51,7 +51,7 @@ export const FilterAssignees = observer(function FilterAssignees(props: Props) {
       (member) => !(appliedFilters ?? []).includes(member.member),
       (member) => member?.member__display_name.toLowerCase(),
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const handleViewToggle = () => {

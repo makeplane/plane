@@ -60,7 +60,7 @@ export const WorkItemCustomPropertyValuesCreate = observer(function WorkItemCust
         ...issuePropertyValues,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProperties, arePropertyValuesInitializing, handleIssuePropertyValueUpdate, shouldLoadDefaultValues]);
 
   const handlePropertyValueChange = (propertyId: string, value: string[]) => {

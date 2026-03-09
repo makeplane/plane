@@ -1,17 +1,17 @@
 {
   "name": "@plane/mobile-editor",
-  "private": true,
   "version": "2.3.0",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint-mobile": "eslint .",
+    "lint-mobile": "oxlint --type-aware -c ../../.oxlintrc.json .",
     "preview": "vite preview",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=0",
+    "check:lint-mobile": "oxlint --type-aware -c ../../.oxlintrc.json .",
     "check:types-mobile": "tsc --noEmit",
     "check:format-mobile": "oxfmt . --check",
-    "fix:lint-mobile": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=0",
+    "fix:lint-mobile": "oxlint --type-aware --fix -c ../../.oxlintrc.json .",
     "fix:format-mobile": "oxfmt . --write"
   },
   "dependencies": {
@@ -21,10 +21,10 @@
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
     "lodash-es": "catalog:",
+    "lucide-react": "^0.454.0",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
     "mobx-utils": "catalog:",
-    "lucide-react": "^0.454.0",
     "next-themes": "0.4.6",
     "react": "catalog:",
     "react-dom": "catalog:"
@@ -37,8 +37,8 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "^5.1.4",
-    "vite": "catalog:",
     "typescript": "catalog:",
+    "vite": "catalog:",
     "vite-plugin-node-polyfills": "^0.25.0"
   }
 }

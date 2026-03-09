@@ -80,7 +80,7 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
     const html = `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><style>body{margin:0;overflow:hidden}</style></head>
 <body><div class="mxgraph" style="max-width:100%" data-mxgraph="${htmlSafeJson}"></div>
-<script src="https://viewer.diagrams.net/js/viewer-static.min.js"><\/script></body></html>`;
+<script src="https://viewer.diagrams.net/js/viewer-static.min.js"></script></body></html>`;
     const blob = new Blob([html], { type: "text/html" });
     viewerBlobUrl.current = URL.createObjectURL(blob);
     return viewerBlobUrl.current;
@@ -126,7 +126,7 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
     if (lastRemoteSave) {
       loadViewerXml();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [lastRemoteSave]);
 
   // Load XML content for editing modal

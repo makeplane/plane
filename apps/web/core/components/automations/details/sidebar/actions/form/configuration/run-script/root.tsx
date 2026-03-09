@@ -45,7 +45,7 @@ export const AutomationActionRunScriptConfiguration = observer(function Automati
       });
       setValue("config.execution_variables", initialVariables, { shouldDirty: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [scriptId]);
 
   const handleClose = () => {

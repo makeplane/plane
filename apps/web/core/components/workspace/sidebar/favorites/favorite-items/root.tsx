@@ -129,7 +129,7 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
         },
       })
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [elementRef?.current, isDragging, isLastChild, favorite.id]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));

@@ -22,7 +22,7 @@ import { PiChatService } from "@/services/pi-chat.service";
 import type { TFocus, TPiLoaders } from "@/types";
 import { Waveform } from "./voice-chart";
 
-// eslint-disable-next-line react-refresh/only-export-components
+// oxlint-disable-next-line react-refresh/only-export-components
 export const SPEECH_LOADERS = ["recording", "transcribing"];
 
 type TProps = {
@@ -102,7 +102,7 @@ function AudioRecorder(props: TProps) {
       setLoader("recording");
 
       // analyser for waveform
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, no-unsafe-optional-chaining
+      // oxlint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, no-unsafe-optional-chaining
       const audioCtx = new (window.AudioContext || (window as any)?.webkitAudioContext)();
       const source = audioCtx.createMediaStreamSource(stream);
       const analyser = audioCtx.createAnalyser();

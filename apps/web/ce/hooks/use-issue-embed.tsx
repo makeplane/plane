@@ -24,7 +24,7 @@ export type TIssueEmbedHookProps = {
   workspaceSlug?: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line @typescript-eslint/no-unused-vars
 export const useEditorEmbeds = (props: TIssueEmbedHookProps) => {
   const widgetCallback = () => <IssueEmbedUpgradeCard />;
 

@@ -82,7 +82,7 @@ export const getSlackContentParser = (config: TSlackContentParserConfig) => {
       mentionSymbol: "!",
       entityMap: new Map<string, string>(),
       fallbackOptions: {
-        // eslint-disable-next-line @typescript-eslint/require-await
+        // oxlint-disable-next-line @typescript-eslint/require-await
         async replaceWithLink(mention) {
           return [`Slack Broadcast: ${mention}`, `https://${config.teamDomain}.slack.com/team/${mention}`];
         },

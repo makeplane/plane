@@ -182,7 +182,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
         },
       })
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [elementRef.current, isDragging]);
 
   return (

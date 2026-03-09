@@ -97,7 +97,7 @@ export function CustomAttachmentUploader(props: CustomAttachmentUploaderProps) {
         }
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [attachmentBlockId, attachmentExtensionFileMap, updateAttributes, getPos]
   );
 

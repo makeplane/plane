@@ -132,7 +132,7 @@ export const EpicIssuesOverviewRoot = observer(function EpicIssuesOverviewRoot(p
   useEffect(() => {
     handleFetchSubIssues();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [epicId]);
 
   // render conditions

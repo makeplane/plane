@@ -97,7 +97,7 @@ const CreateUpdateWorkItemBlueprintModalBase = observer(function CreateUpdateWor
       methods.reset(defaultValueForReset);
       setIssuePropertyValues(customPropertyValuesForPreload ?? {});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   return (

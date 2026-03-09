@@ -104,7 +104,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   // Initialize module timeline chart
   useEffect(() => {
     initGantt();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // fetching project details

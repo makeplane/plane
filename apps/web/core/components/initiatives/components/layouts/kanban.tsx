@@ -99,7 +99,7 @@ export const InitiativeKanbanLayout = observer(function InitiativeKanbanLayout()
       name: name === "All Initiatives" ? t("initiatives.all_initiatives") : name || "",
       icon,
     }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGroupedFilteredInitiativeIds, groupBy, getUserDetails, workspaceSlug]);
 
   // Render each initiative card
@@ -134,7 +134,7 @@ export const InitiativeKanbanLayout = observer(function InitiativeKanbanLayout()
         });
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [workspaceSlug, groupBy, updateInitiative, filteredInitiativesMap]
   );
 

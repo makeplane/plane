@@ -97,13 +97,13 @@ export const Messages = observer(function Messages(props: TProps) {
       (el as HTMLElement).removeEventListener("scroll", checkIfHasMore);
       window.removeEventListener("resize", checkIfHasMore);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (!activeChat?.dialogue || activeChat?.dialogue.length === 0) return;
     void handleRegenerateIfTokenExists();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChat?.dialogue]);
 
   useEffect(() => {
@@ -111,7 +111,7 @@ export const Messages = observer(function Messages(props: TProps) {
     if (!activeChat?.dialogue) return;
     if (activeChat?.dialogue.length === 0) setHasMoreMessages(false);
     void scrollIntoViewHelper(`${activeChat?.dialogue?.length - 1}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChat?.dialogue?.length]);
 
   if (!activeChat?.dialogue || activeChat?.dialogue.length === 0) return;

@@ -98,9 +98,9 @@ const isItemVisible = (item: Y.Item, snapshot: Y.Snapshot): boolean => {
  * @description Walk up the parent chain to find the shared root type (e.g. XmlFragment "default" / "title")
  * This is needed to filter out items that don't belong to the editor's content tree
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any
 const getRootTypeForItem = (item: Y.Item): any | null => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   let parent: any = item.parent;
   while (parent && parent._item != null) {
     const parentItem = parent._item as Y.Item | null;
@@ -145,7 +145,7 @@ const extractEditorsFromSnapshots = (
     // "default" is the main body; "title" exists for the document editor
     // We only consider items under these roots - other shared types (like "versions" array,
     // "users" map for PermanentUserData, etc.) are NOT part of the rendered diff
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const rootFragments = new Set<any>([doc.getXmlFragment("default"), doc.getXmlFragment("title")]);
 
     // Iterate through all structs in the document

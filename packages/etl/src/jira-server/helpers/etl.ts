@@ -307,7 +307,7 @@ export const getPropertyValues = (
       break;
     case "com.atlassian.jira.plugin.system.customfieldtypes:datetime":
       // Handle datetime
-      // eslint-disable-next-line no-case-declarations
+      // oxlint-disable-next-line no-case-declarations
       const formattedDate = getFormattedDate(value); // Format it to datetime format
       if (formattedDate) {
         propertyValues.push({

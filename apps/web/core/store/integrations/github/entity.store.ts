@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-/* eslint-disable no-useless-catch */
+/* oxlint-disable no-useless-catch */
 
 import { unset, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";

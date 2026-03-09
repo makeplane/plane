@@ -70,7 +70,7 @@ export const TeamNameInput = observer(function TeamNameInput(props: TeamNameInpu
       }
     }
     // DO NOT Add more dependencies here. It will cause multiple requests to be sent.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
 
   useEffect(() => {

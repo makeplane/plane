@@ -102,7 +102,7 @@ export const MovePageModal = observer(function MovePageModal(props: TMovePageMod
           message: t("page_actions.move_page.toasts.error.message"),
         });
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [handleClose, id, movePage, projectId, selectedValue, teamspaceId, workspaceSlug]);
 
   const handleMove = useCallback(async () => {

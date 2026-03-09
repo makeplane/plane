@@ -79,7 +79,7 @@ export const usePowerKInitiativeContextBasedActions = (): TPowerKCommandConfig[]
           title: t("power_k.contextual_actions.initiative.copy_url_toast_error"),
         });
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return [

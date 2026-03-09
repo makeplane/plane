@@ -45,7 +45,7 @@ export function MovePageModalInput(props: Props) {
       return t("page_actions.move_page.placeholders.workspace_to_all");
     }
     return t("page_actions.move_page.placeholders.workspace_to_project");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [canPageBeMovedToTeamspace, projectId, teamspaceId]);
 
   return (

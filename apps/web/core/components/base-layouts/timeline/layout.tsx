@@ -81,7 +81,7 @@ export const BaseTimelineLayout = observer(function BaseTimelineLayout<T extends
 
   // Sidebar renderer - uses custom or default
   const sidebarToRender = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     (sidebarProps: any) => {
       if (renderSidebar) {
         // If custom sidebar renderer provided, use it

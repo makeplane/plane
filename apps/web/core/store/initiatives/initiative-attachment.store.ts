@@ -166,7 +166,7 @@ export class InitiativeAttachmentStore implements IInitiativeAttachmentStore {
   };
 
   removeAttachment = async (workspaceSlug: string, initiativeId: string, attachmentId: string) => {
-    // eslint-disable-next-line no-useless-catch
+    // oxlint-disable-next-line no-useless-catch
     try {
       const response = await this.initiativeAttachmentService.deleteInitiativeAttachment(
         workspaceSlug,

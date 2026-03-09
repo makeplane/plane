@@ -71,7 +71,7 @@ export const ReadonlyState = observer(function ReadonlyState(props: TReadonlySta
 
   useEffect(() => {
     void fetchStates();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, workspaceSlug]);
 
   if (stateLoader) {

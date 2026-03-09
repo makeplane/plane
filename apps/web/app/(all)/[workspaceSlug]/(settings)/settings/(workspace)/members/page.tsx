@@ -141,7 +141,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
                 className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular outline-none placeholder:text-placeholder"
                 placeholder={`${t("search")}...`}
                 value={searchQuery}
-                // eslint-disable-next-line jsx-a11y/no-autofocus
+                // oxlint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
                 onChange={(e) => setSearchQuery(e.target.value)}
               />

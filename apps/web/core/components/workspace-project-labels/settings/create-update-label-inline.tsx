@@ -77,7 +77,7 @@ export const CreateUpdateWorkspaceLabelInline = observer(
       if (onClose) onClose();
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const getErrorMessage = (error: any, operation: "create" | "update"): string => {
       const errorData = error ?? {};
 

@@ -111,7 +111,7 @@ export const CreateTemplatesButton = observer(function CreateTemplatesButton(pro
         : t("templates.settings.create_template.no_permission.workspace");
 
     return t(props.buttonI18nLabel || "templates.settings.create_template.label");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [hasAdminPermission, props.buttonI18nLabel, props.currentLevel]);
 
   if (!hasAdminPermission) return null;

@@ -115,7 +115,7 @@ export const EpicPeekOverview = observer(function EpicPeekOverview(props: IWorkI
         }
       },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [fetchIssue, updateIssue, removeIssue, fetchActivities, removeRoutePeekId, archiveIssue, restoreIssue]
   );
 

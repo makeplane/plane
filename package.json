@@ -1,10 +1,10 @@
 {
   "name": "plane",
-  "description": "Open-source project management that unlocks customer value",
-  "repository": "https://github.com/makeplane/plane.git",
   "version": "2.3.0",
-  "license": "AGPL-3.0",
   "private": true,
+  "description": "Open-source project management that unlocks customer value",
+  "license": "AGPL-3.0",
+  "repository": "https://github.com/makeplane/plane.git",
   "scripts": {
     "build": "turbo run build",
     "build:desktop": "turbo run build --filter=desktop && todesktop build",
@@ -22,37 +22,30 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@eslint/js": "9.39.1",
     "@todesktop/cli": "^1.20.2",
-    "@vitest/eslint-plugin": "1.6.7",
-    "eslint": "9.39.1",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-import-resolver-node": "0.3.9",
-    "eslint-import-resolver-typescript": "4.4.4",
-    "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsx-a11y": "6.10.2",
-    "eslint-plugin-n": "17.23.2",
-    "eslint-plugin-promise": "7.2.1",
-    "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.0.1",
-    "eslint-plugin-react-refresh": "0.5.0",
     "eslint-plugin-storybook": "10.2.8",
     "eslint-plugin-turbo": "2.8.7",
-    "globals": "16.5.0",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
     "oxfmt": "latest",
-    "turbo": "2.8.7",
-    "typescript-eslint": "8.55.0"
+    "oxlint": "^1.50.0",
+    "oxlint-tsgolint": "^0.16.0",
+    "turbo": "2.8.7"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [
       "pnpm exec oxfmt --write"
     ],
     "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts}": [
-      "pnpm exec eslint --fix --max-warnings=0 --no-warn-ignored"
+      "pnpm exec oxlint --type-aware --fix --deny-warnings -c .oxlintrc.json"
     ]
   },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "packageManager": "pnpm@10.29.3+sha512.498e1fb4cca5aa06c1dcf2611e6fafc50972ffe7189998c409e90de74566444298ffe43e6cd2acdc775ba1aa7cc5e092a8b7054c811ba8c5770f84693d33d2dc",
   "pnpm": {
     "overrides": {
       "react": "catalog:",
@@ -128,9 +121,5 @@
       "tldjs",
       "unrs-resolver"
     ]
-  },
-  "packageManager": "pnpm@10.29.3+sha512.498e1fb4cca5aa06c1dcf2611e6fafc50972ffe7189998c409e90de74566444298ffe43e6cd2acdc775ba1aa7cc5e092a8b7054c811ba8c5770f84693d33d2dc",
-  "engines": {
-    "node": ">=22.18.0"
   }
 }

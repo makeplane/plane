@@ -192,7 +192,7 @@ export function Calendar({
         setNavDate(dateToNavigateTo);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, ["selected" in props ? props.selected : undefined]);
 
   const handlePrevClick = () => {

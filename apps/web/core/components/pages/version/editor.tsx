@@ -114,7 +114,7 @@ export const PagesVersionEditor = observer(function PagesVersionEditor(props: TV
         email: userDetails.email,
       };
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

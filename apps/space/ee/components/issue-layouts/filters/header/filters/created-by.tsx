@@ -49,7 +49,7 @@ export const FilterCreatedBy = observer(function FilterCreatedBy(props: Props) {
       (member) => !(appliedFilters ?? []).includes(member.member),
       (member) => member?.member__display_name.toLowerCase(),
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;

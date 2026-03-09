@@ -52,7 +52,7 @@ export const FilterLabels = observer(function FilterLabels(props: Props) {
       (label) => !(appliedFilters ?? []).includes(label.id),
       (label) => label.name.toLowerCase(),
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const handleViewToggle = () => {

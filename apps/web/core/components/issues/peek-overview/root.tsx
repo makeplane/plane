@@ -227,7 +227,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
         void fetchActivities(workspaceSlug, projectId, workItemId);
       },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [fetchIssue, is_draft, issues, fetchActivities, pathname, removeRoutePeekId, restoreIssue]
   );
 

@@ -25,7 +25,7 @@ import type {
 } from "../types";
 import type { SlackAuthService } from "./auth.service";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable @typescript-eslint/no-explicit-any */
 
 export class SlackService {
   private client: AxiosInstance;

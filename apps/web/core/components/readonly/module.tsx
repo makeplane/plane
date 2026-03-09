@@ -53,7 +53,7 @@ export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyM
     if (moduleIds.length > 0 && projectId) {
       void fetchModules(workspaceSlug, projectId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [value, projectId, workspaceSlug, fetchModules]);
 
   if (modules.length === 0) {

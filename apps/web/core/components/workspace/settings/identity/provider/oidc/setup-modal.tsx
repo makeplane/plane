@@ -57,7 +57,7 @@ export function OIDCSetupModal(props: TOIDCSetupModalProps) {
         description: t("sso.providers.oidc.setup_modal.web_details.logout_url.description"),
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [workspaceId, baseURL]
   );
 
@@ -79,7 +79,7 @@ export function OIDCSetupModal(props: TOIDCSetupModalProps) {
         description: "We will generate this for you. Add this in the Logout redirect URL field of your IdP.",
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [workspaceId, baseURL]
   );
 
@@ -109,7 +109,7 @@ export function OIDCSetupModal(props: TOIDCSetupModalProps) {
         //   ),
         // },
       ] as const,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [webDetails, mobileDetails]
   );
 

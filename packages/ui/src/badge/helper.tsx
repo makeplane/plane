@@ -50,8 +50,8 @@ enum badgeSizeStyling {
 enum badgeIconStyling {
   sm = "h-3 w-3 flex justify-center items-center overflow-hidden flex-shrink-0",
   md = "h-3.5 w-3.5 flex justify-center items-center overflow-hidden flex-shrink-0",
+  // oxlint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   lg = "h-4 w-4 flex justify-center items-center overflow-hidden flex-shrink-0",
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   xl = "h-4 w-4 flex justify-center items-center overflow-hidden flex-shrink-0",
 }
 

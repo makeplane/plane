@@ -104,7 +104,7 @@ export const SearchResults = observer(function SearchResults(props: TProps) {
         setIsSearching(false);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [workspaceSlug, flattenSearchResults]
   );
 

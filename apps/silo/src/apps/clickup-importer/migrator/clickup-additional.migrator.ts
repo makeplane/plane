@@ -100,7 +100,7 @@ export class ClickUpAdditionalDataMigrator extends TaskHandler {
 
       switch (headers.type) {
         case E_CLICKUP_ADDITIONAL_DATA_MIGRATOR_STEPS.PULL:
-          // eslint-disable-next-line no-case-declarations
+          // oxlint-disable-next-line no-case-declarations
           const { clickUpEntity, page, isLastPage } = await this.pull(headers, job, clickUpClient, data);
           // Split the result into batches and dispatch them
           await this.dispatchBatches(headers, job, clickUpEntity, page, isLastPage);

@@ -35,11 +35,10 @@ export function PieChartGroupingConfig(props: Props) {
   // derived values
   const isGroupingEnabled = !!watch("config.group_thin_pieces");
 
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   const debouncedConfigUpdate = useCallback(
-    // eslint-disable-next-line react-hooks/use-memo
     debounce((updateData: Partial<TDashboardWidgetConfig>) => {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      handleConfigUpdate(updateData);
+      void handleConfigUpdate(updateData);
     }, 500),
     [handleConfigUpdate]
   );
@@ -66,7 +65,7 @@ export function PieChartGroupingConfig(props: Props) {
                   value={!!value}
                   onChange={(val) => {
                     onChange(val);
-                    handleConfigUpdate({ group_thin_pieces: val });
+                    void handleConfigUpdate({ group_thin_pieces: val });
                   }}
                 />
               </div>

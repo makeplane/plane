@@ -85,7 +85,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
   const loadMoreIssues = useCallback(() => {
     if (!cycleId) return;
     fetchNextActiveCycleIssues(workspaceSlug, projectId, cycleId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug, projectId, cycleId, issuesLoaderElement, cycleIssueDetails?.nextPageResults]);
 
   useIntersectionObserver(issuesContainerRef, issuesLoaderElement, loadMoreIssues, `0% 0% 100% 0%`);

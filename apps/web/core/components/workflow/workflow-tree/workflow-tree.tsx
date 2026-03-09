@@ -92,7 +92,7 @@ export const WorkflowTree = observer(function WorkflowTree(props: Props) {
         return `${approverIds.join(", ")} and ${lastApprover}`;
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [getOrderedApprovers, getUserName]
   );
 

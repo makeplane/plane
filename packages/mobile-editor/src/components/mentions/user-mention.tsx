@@ -42,7 +42,7 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
   }
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+    // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       className={cn(
         "not-prose inline px-1 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 no-underline",

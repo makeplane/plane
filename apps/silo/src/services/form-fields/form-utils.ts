@@ -84,7 +84,7 @@ export class FormUtils {
     } else {
       switch (typeIdentifier) {
         case OptionsEntity.LABEL:
-          // eslint-disable-next-line no-case-declarations
+          // oxlint-disable-next-line no-case-declarations
           const labels = await this.planeAPIClient.labels.list(slug, projectId);
           options = labels.results.map((label) => ({
             value: label.id ?? "",
@@ -92,7 +92,7 @@ export class FormUtils {
           }));
           break;
         case OptionsEntity.STATE:
-          // eslint-disable-next-line no-case-declarations
+          // oxlint-disable-next-line no-case-declarations
           const states = await this.planeAPIClient.states.list(slug, projectId);
           options = states.results.map((state) => ({
             value: state.id ?? "",
@@ -100,9 +100,9 @@ export class FormUtils {
           }));
           break;
         case OptionsEntity.PRIORITY:
-          // eslint-disable-next-line no-case-declarations
+          // oxlint-disable-next-line no-case-declarations
           const priorityValues: PriorityEnum[] = ["urgent", "high", "medium", "low", "none"];
-          // eslint-disable-next-line no-case-declarations
+          // oxlint-disable-next-line no-case-declarations
           const priorities = priorityValues.map((priority) => ({
             value: priority,
             label: priority.charAt(0).toUpperCase() + priority.slice(1),
@@ -110,7 +110,7 @@ export class FormUtils {
           options = priorities;
           break;
         case OptionsEntity.WORK_ITEM_TYPES:
-          // eslint-disable-next-line no-case-declarations
+          // oxlint-disable-next-line no-case-declarations
           const workItemTypes = await this.planeAPIClient.workItemTypes.list(slug, projectId);
           options = workItemTypes.map((workItemType) => ({
             value: workItemType.id ?? "",
@@ -118,7 +118,7 @@ export class FormUtils {
           }));
           break;
         case OptionsEntity.ASSIGNEE:
-          // eslint-disable-next-line no-case-declarations
+          // oxlint-disable-next-line no-case-declarations
           const assignees = await this.planeAPIClient.projects.getMembers(slug, projectId);
           options = assignees.map((assignee) => ({
             value: assignee.id ?? "",
@@ -127,12 +127,12 @@ export class FormUtils {
           break;
         default:
           // assuming this is for custom fields
-          // eslint-disable-next-line no-case-declarations
+          // oxlint-disable-next-line no-case-declarations
           const [issueTypeId, propertyId] = typeIdentifier.split(":");
           if (!issueTypeId || !propertyId) {
             throw new Error("Invalid type identifier");
           }
-          // eslint-disable-next-line no-case-declarations
+          // oxlint-disable-next-line no-case-declarations
           const workItemProperty = await this.planeAPIClient.workItemProperties.retrieve(
             slug,
             projectId,

@@ -62,7 +62,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
         inputRef.current && inputRef.current.focus();
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, isMobile]);
 
   // popper-js init

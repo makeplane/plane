@@ -19,7 +19,7 @@ import { getAccountConnectionBlocks } from "@/apps/slack/views/account-connectio
 import { env } from "@/env";
 import type { TAIInferenceResponse, AIResponse } from "./app-mention.types";
 import { AIResponseType } from "./app-mention.types";
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable @typescript-eslint/no-explicit-any */
 
 export const handleAppMentionEvent = async (data: SlackEventPayload) => {
   logger.info("Handling app mention event", { data });

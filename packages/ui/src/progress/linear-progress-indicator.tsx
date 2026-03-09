@@ -33,7 +33,7 @@ export function LinearProgressIndicator({
   barClassName = "",
 }: Props) {
   const total = data.reduce((acc: any, cur: any) => acc + cur.value, 0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // oxlint-disable-next-line @typescript-eslint/no-unused-vars
   let progress = 0;
 
   const bars = data.map((item: any) => {

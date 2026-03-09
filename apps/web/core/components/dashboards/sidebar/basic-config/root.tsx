@@ -109,7 +109,7 @@ export function WidgetConfigSidebarBasicConfig(props: Props) {
     [getUpdatedConfig, handleSubmit]
   );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   const debouncedHandleSubmit = useCallback(
     debounce((data: Partial<TDashboardWidget>) => {
       handleSubmit(data);

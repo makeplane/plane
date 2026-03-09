@@ -120,7 +120,7 @@ export const ProjectTeamspaceListItem = observer(function ProjectTeamspaceListIt
         tdRender: () => <div>{t("common.member")}</div>,
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [getTeamspaceMemberIds, getUserDetails, hasWorkspaceAdminPermission, isCurrentUserMemberOfTeamspace]
   );
 

@@ -57,7 +57,7 @@ export const CreateRecurringWorkItemsButton = observer(function CreateRecurringW
     if (!hasAdminPermission) return t("recurring_work_items.settings.create_button.no_permission");
 
     return t(buttonI18nLabel || "recurring_work_items.settings.create_button.label");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [hasAdminPermission, buttonI18nLabel]);
 
   if (!hasAdminPermission) return null;

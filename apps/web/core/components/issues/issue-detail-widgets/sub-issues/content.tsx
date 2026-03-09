@@ -107,7 +107,7 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
 
   useEffect(() => {
     handleFetchSubIssues();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [parentIssueId]);
 
   // render conditions

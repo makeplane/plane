@@ -194,7 +194,7 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
 
   // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
   // TODO: Verify the exhaustive-deps warning
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFormSave = useCallback(
     debounce(async () => {
       handleSubmit(handleDescriptionFormSubmit)()
@@ -224,7 +224,7 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
       }
     },
     // since we don't want to save on unmount if there are no unsaved changes, no deps are needed
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

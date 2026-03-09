@@ -11,11 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-/* eslint-disable @typescript-eslint/no-misused-promises */
- 
- 
- 
- 
+/* oxlint-disable @typescript-eslint/no-misused-promises */
 
 import * as walk from "acorn-walk";
 import express, { Request, Response } from "express";

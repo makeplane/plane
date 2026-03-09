@@ -93,7 +93,7 @@ export const useLinkOperations = (workspaceSlug: string, initiativeId: string) =
         }
       },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [workspaceSlug, initiativeId, createInitiativeLink, updateInitiativeLink, deleteInitiativeLink, setIsLinkModalOpen]
   );
 

@@ -41,7 +41,7 @@ export const usePowerKAccountCommands = (): TPowerKCommandConfig[] => {
         message: t("sign_out.toast.error.message"),
       })
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [signOut]);
 
   return [

@@ -50,7 +50,7 @@ export const FilterLead = observer(function FilterLead(props: Props) {
       (memberId) => memberId !== currentUser?.id,
       (memberId) => getUserDetails(memberId)?.display_name.toLowerCase(),
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;

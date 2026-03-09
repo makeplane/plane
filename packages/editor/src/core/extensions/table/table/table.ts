@@ -535,7 +535,7 @@ export const Table = Node.create<TableOptions>({
     };
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment
       tableRole: callOrReturn(getExtensionField(extension, "tableRole", context)),
     };
   },

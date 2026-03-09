@@ -94,7 +94,7 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
         },
         showOnMount,
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [entityType, workItemEntityID, saveViewOptions, updateViewOptions, updateFilters]
   );
 

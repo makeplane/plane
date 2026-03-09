@@ -48,7 +48,7 @@ export const getTextAttributeDisplayNameKey = (display_format: TTextAttributeDis
 };
 
 // Get the display name for the date attribute based on the display format
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line @typescript-eslint/no-unused-vars
 export const getDateAttributeDisplayName = (display_format: TDateAttributeDisplayOptions) =>
   renderFormattedDate(new Date()) ?? "Invalid date format";
 // TODO: enable this in next phase of issue types
@@ -82,7 +82,7 @@ export const getIssuePropertyTypeDetails = (
 };
 
 // Get the display name for the number attribute based on the default value
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line @typescript-eslint/no-unused-vars
 export const getNumberAttributeDisplayName = (default_value: string | undefined) => undefined;
 
 // Get the display name for multi select attribute based on the is_multi property
@@ -105,7 +105,7 @@ export const getMultiSelectAttributeDisplayName = (
 };
 
 // Get the display name for the boolean attribute based on the default value
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line @typescript-eslint/no-unused-vars
 export const getBooleanAttributeDisplayName = (default_value: string | undefined) =>
   "work_item_types.settings.properties.attributes.boolean.label";
 // default_value !== undefined ? `${default_value === "true" ? "True" : "False"}` : "True | False";

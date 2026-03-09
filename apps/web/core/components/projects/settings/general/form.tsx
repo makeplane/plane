@@ -83,7 +83,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         workspace: (project.workspace as IWorkspace).id,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [project, projectId]);
 
   // handlers

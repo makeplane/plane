@@ -200,7 +200,7 @@ class AsanaController {
 }
 
 export const createAsanaClient = async (workspaceId: string, userId: string) => {
-  // eslint-disable-next-line no-useless-catch
+  // oxlint-disable-next-line no-useless-catch
   try {
     const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, E_IMPORTER_KEYS.ASANA);
     if (!credentials || credentials.length <= 0) {

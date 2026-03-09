@@ -152,7 +152,7 @@ export class Worklog implements IWorklog {
       runInAction(() => {
         this.mutateWorklog(worklog);
         this.store.workspaceWorklogs.issueWorklogTotalMinutes[issueId] =
-          // eslint-disable-next-line no-self-assign
+          // oxlint-disable-next-line no-self-assign
           this.store.workspaceWorklogs.issueWorklogTotalMinutes[issueId];
       });
       throw error;

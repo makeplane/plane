@@ -82,7 +82,7 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
     };
 
     // TODO: fix the type error
-    // eslint-disable-next-line promise/always-return
+    // oxlint-disable-next-line promise/always-return
     const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload).then(() => {});
 
     let updatePromise = updateProjectPromise;

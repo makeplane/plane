@@ -131,7 +131,7 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
     };
 
     handleInitialStep();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

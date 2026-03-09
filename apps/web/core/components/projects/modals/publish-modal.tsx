@@ -134,9 +134,9 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
   };
 
   const selectedLayouts = Object.entries(watch("view_props") ?? {})
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // oxlint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([key, value]) => value)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // oxlint-disable-next-line @typescript-eslint/no-unused-vars
     .map(([key, value]) => key)
     .filter((l) => VIEW_OPTIONS.find((o) => o.key === l));
 

@@ -59,7 +59,7 @@ export const FilterIssueTypes = observer(function FilterIssueTypes(props: Props)
       (issueType) => issueType.id && !appliedFilters?.includes(issueType.id),
       (issueType) => issueType.name?.toLowerCase(),
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const handleViewToggle = () => {

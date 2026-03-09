@@ -115,7 +115,7 @@ export const SummaryRoot = observer(function SummaryRoot() {
         jiraLabels.filter((label) => label != undefined && label != null)
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [jiraLabels]);
 
   // fetching the jira labels and issue count

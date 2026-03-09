@@ -37,7 +37,7 @@ export const useEditorMentions = () => {
   useEffect(() => {
     void fetchMembers();
     // This is a one-time fetch to get the members list
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

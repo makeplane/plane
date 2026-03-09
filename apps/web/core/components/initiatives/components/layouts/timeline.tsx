@@ -93,7 +93,7 @@ export const InitiativeTimelineLayout = observer(function InitiativeTimelineLayo
       name: name === "All Initiatives" ? t("initiatives.all_initiatives") : name || "",
       icon,
     }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGroupedFilteredInitiativeIds, groupBy, getUserDetails, workspaceSlug]);
 
   const isEditable = allowPermissions(
