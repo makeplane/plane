@@ -11,7 +11,7 @@
 ## Overview
 
 - **Priority:** P2
-- **Status:** pending
+- **Status:** completed
 - **Effort:** 4h
 - Finalize and harden auto-membership logic after migration. Manager auto-join all descendant linked_workspaces. Staff auto-join workspace when assigned to dept. Transfer moves workspace memberships. Deactivation removes all memberships + deactivates User. Add Celery task for bulk retroactive join. Handle edge cases: circular parents, orphaned memberships, concurrent transfers. Integration testing.
 
@@ -194,17 +194,17 @@ def sync_department_workspace_members(self, department_id, workspace_id):
 
 ## Todo List
 
-- [ ] Create Celery task for bulk retroactive join
-- [ ] Harden link-workspace with confirm flow + Celery offload
-- [ ] Harden \_create_staff: auto-join linked_workspace + manager descendants
-- [ ] Harden transfer: old ws removal (safe), new ws addition, same-ws skip
-- [ ] Harden deactivation: remove ALL WorkspaceMember(s), deactivate User
-- [ ] Handle manager change: new manager joins descendant workspaces
-- [ ] Validate circular parent in API (not just model.clean)
-- [ ] Write integration tests for all auto-join scenarios
-- [ ] Test concurrent transfer handling
-- [ ] Run full test suite
-- [ ] Manual QA: end-to-end flow in browser
+- [x]Create Celery task for bulk retroactive join
+- [x]Harden link-workspace with confirm flow + Celery offload
+- [x]Harden \_create_staff: auto-join linked_workspace + manager descendants
+- [x]Harden transfer: old ws removal (safe), new ws addition, same-ws skip
+- [x]Harden deactivation: remove ALL WorkspaceMember(s), deactivate User
+- [x]Handle manager change: new manager joins descendant workspaces
+- [x]Validate circular parent in API (not just model.clean)
+- [x]Write integration tests for all auto-join scenarios
+- [x]Test concurrent transfer handling
+- [x]Run full test suite
+- [x]Manual QA: end-to-end flow in browser
 
 ## Success Criteria
 

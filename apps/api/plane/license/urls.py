@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
+from django.urls import path, include
 
 from plane.authentication.views import SwingSSOTestEndpoint
 from plane.license.api.views import (
@@ -100,4 +100,8 @@ urlpatterns = [
         InstanceUserWorkspaceEndpoint.as_view(),
         name="instance-user-workspaces",
     ),
+    # Department management
+    path("", include("plane.license.api.urls.department")),
+    # Staff management
+    path("", include("plane.license.api.urls.staff")),
 ]

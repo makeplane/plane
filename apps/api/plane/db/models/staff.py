@@ -15,13 +15,8 @@ class EmploymentStatus(models.TextChoices):
 
 
 class StaffProfile(BaseModel):
-    """Employee profile linked to User, scoped to workspace (one per workspace)."""
+    """Employee profile linked to User — instance-level (not workspace-scoped)."""
 
-    workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="staff_profiles",
-    )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -58,7 +53,7 @@ class StaffProfile(BaseModel):
         default=EmploymentStatus.ACTIVE,
     )
 
-    # Department manager flag - auto-join children projects
+    # Department manager flag - auto-join children workspaces
     is_department_manager = models.BooleanField(default=False)
 
     notes = models.TextField(blank=True, default="")
@@ -70,14 +65,14 @@ class StaffProfile(BaseModel):
         ordering = ["staff_id"]
         constraints = [
             models.UniqueConstraint(
-                fields=["workspace", "staff_id"],
+                fields=["staff_id"],
                 condition=models.Q(deleted_at__isnull=True),
-                name="staff_unique_workspace_staff_id",
+                name="staff_unique_staff_id",
             ),
             models.UniqueConstraint(
-                fields=["workspace", "user"],
+                fields=["user"],
                 condition=models.Q(deleted_at__isnull=True),
-                name="staff_unique_workspace_user",
+                name="staff_unique_user",
             ),
         ]
 

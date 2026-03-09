@@ -1,7 +1,7 @@
 # System Architecture
 
-**Last Updated**: 2026-03-02
-**Version**: 1.2.3
+**Last Updated**: 2026-03-09
+**Version**: 1.2.4
 **Scope**: Production deployment architecture, data flows, real-time collaboration, SSO integration
 
 ## High-Level System Overview
@@ -466,9 +466,21 @@ Option 2: Token-based from Swing Portal
 
 ## Organizational Structure: Department & Staff Management
 
+### Architecture Overview (Completed v1.2.3)
+
+Department and Staff management has been migrated from workspace-scoped user interfaces to a centralized instance-admin layer (God-mode). The data models remain workspace-scoped, but administrative CRUD operations are now available only via the admin panel.
+
+**Key Changes**:
+
+1. **Data Models**: Department and StaffProfile remain workspace-scoped (no change)
+2. **Admin Endpoints**: Moved to `/god-mode/` endpoints (managed via admin app)
+3. **Workspace UI**: Department/Staff management pages removed from workspace settings
+4. **Org Chart**: New read-only org chart page added at workspace level
+5. **Auto-join Logic**: Celery task `sync_department_workspace_members` for bulk retroactive joins
+
 ### Department Model
 
-**Hierarchical tree structure** supporting up to 5 levels:
+**Hierarchical tree structure** supporting up to 6 levels:
 
 | Field            | Type                     | Purpose                           |
 | ---------------- | ------------------------ | --------------------------------- |
@@ -478,25 +490,32 @@ Option 2: Token-based from Swing Portal
 | `short_name`     | CharField(10, uppercase) | Short code like "IT", "HR"        |
 | `dept_code`      | CharField(4, 4 digits)   | Numeric department ID             |
 | `parent`         | Self-FK (nullable)       | Parent department (null = root)   |
-| `level`          | SmallIntField (1-5)      | Depth in hierarchy                |
+| `level`          | PositiveSmallInt (1-6)   | Depth in hierarchy                |
 | `manager`        | FK → User (nullable)     | Department manager                |
 | `linked_project` | FK → Project (nullable)  | Team project for auto-sync        |
 | `is_active`      | Boolean                  | Department status                 |
+| `linked_workspace` | FK → Workspace (nullable) | *(Legacy field for gradual migration)* |
+| `description`    | TextField                | Department description            |
 
 **Key Constraints**:
 
 - Unique per workspace: `(workspace, code)`, `(workspace, short_name)`, `(workspace, dept_code)`
-- Circular parent prevention in `.clean()` method
+- Circular parent prevention via clean() method
 - Soft-delete support via `deleted_at` field
+- Max 6 levels deep in hierarchy
 
-**API Endpoints**:
+**Admin API Endpoints** (God-mode):
 
-- `GET /api/v1/workspaces/{slug}/departments/` - List (filters: parent, level, is_active)
-- `POST /api/v1/workspaces/{slug}/departments/` - Create
-- `GET /api/v1/workspaces/{slug}/departments/tree/` - Hierarchical tree (nested JSON)
-- `GET /api/v1/workspaces/{slug}/departments/{id}/` - Retrieve
-- `PUT /api/v1/workspaces/{slug}/departments/{id}/` - Update
-- `DELETE /api/v1/workspaces/{slug}/departments/{id}/` - Soft delete
+- `GET /god-mode/departments/` - List all departments (filters: workspace, parent, level, is_active)
+- `POST /god-mode/departments/` - Create department
+- `GET /god-mode/departments/{id}/` - Retrieve department
+- `PUT /god-mode/departments/{id}/` - Update department
+- `DELETE /god-mode/departments/{id}/` - Soft delete department
+- `GET /god-mode/departments/{id}/tree/` - Hierarchical tree view
+
+**Workspace Org-Chart Endpoint**:
+
+- `GET /api/v1/workspaces/{slug}/org-chart/` - Read-only organizational chart (nested JSON tree)
 
 ### StaffProfile Model
 
@@ -505,7 +524,7 @@ Option 2: Token-based from Swing Portal
 | Field                   | Type                 | Purpose                                         |
 | ----------------------- | -------------------- | ----------------------------------------------- |
 | `workspace`             | FK → Workspace       | Scope to single workspace                       |
-| `user`                  | OneToOne → User      | Linked user account                             |
+| `user`                  | ForeignKey → User    | Linked user account                             |
 | `staff_id`              | CharField(8, unique) | Employee ID (unique per workspace)              |
 | `department`            | FK → Department      | Current department (nullable)                   |
 | `position`              | CharField(255)       | Job title                                       |
@@ -513,8 +532,8 @@ Option 2: Token-based from Swing Portal
 | `phone`                 | CharField(20)        | Contact phone                                   |
 | `date_of_joining`       | DateField            | Hiring date                                     |
 | `date_of_leaving`       | DateField            | Exit date (if applicable)                       |
-| `employment_status`     | Choices              | active/probation/resigned/suspended/transferred |
-| `is_department_manager` | Boolean              | Auto-join children projects                     |
+| `employment_status`     | Choices (Enum)       | active/probation/resigned/suspended/transferred |
+| `is_department_manager` | Boolean              | Department manager flag                         |
 | `notes`                 | TextField            | Internal notes                                  |
 
 **Employment Status Choices**:
@@ -525,35 +544,61 @@ Option 2: Token-based from Swing Portal
 - `suspended` - Temporarily inactive
 - `transferred` - Moved to different workspace
 
-**Auto-Sync Feature**:
+**Admin API Endpoints** (God-mode):
 
-- When staff marked as department manager: automatically added to linked_project and child departments' projects
-- Reverse: when removed from department, auto-removed from project (if last department affiliation)
+- `GET /god-mode/staff/` - List all staff (filters: workspace, department, employment_status)
+- `POST /god-mode/staff/` - Create staff profile
+- `GET /god-mode/staff/{id}/` - Retrieve staff profile
+- `PUT /god-mode/staff/{id}/` - Update staff profile
+- `DELETE /god-mode/staff/{id}/` - Soft delete staff profile
+- `POST /god-mode/staff/{id}/transfer/` - Transfer to different department
+- `POST /god-mode/staff/{id}/deactivate/` - Deactivate staff (removes WorkspaceMember roles, sets User.is_active=False)
+- `POST /god-mode/staff/bulk-import/` - CSV/JSON bulk import
+- `GET /god-mode/staff/export/` - Export to CSV
+- `GET /god-mode/staff/stats/` - Count per department, status
 
-**API Endpoints**:
+**Auto-Join Logic**:
 
-- `GET /api/v1/workspaces/{slug}/staff/` - List (filters: department, employment_status)
-- `POST /api/v1/workspaces/{slug}/staff/` - Create
-- `GET /api/v1/workspaces/{slug}/staff/{id}/` - Retrieve
-- `PUT /api/v1/workspaces/{slug}/staff/{id}/` - Update
-- `DELETE /api/v1/workspaces/{slug}/staff/{id}/` - Soft delete
-- `POST /api/v1/workspaces/{slug}/staff/{id}/transfer/` - Transfer to different department
-- `POST /api/v1/workspaces/{slug}/staff/{id}/deactivate/` - Set employment_status to resigned
-- `POST /api/v1/workspaces/{slug}/staff/bulk-import/` - CSV/JSON bulk import
-- `GET /api/v1/workspaces/{slug}/staff/export/` - Export to CSV
-- `GET /api/v1/workspaces/{slug}/staff/stats/` - Count per department, status
+- **Trigger**: When department is first `linked_workspace=workspace_id`
+- **Action**: Celery task `sync_department_workspace_members` runs async
+  - Finds all staff in department and children departments
+  - Adds WorkspaceMember records with role=15 (Member) for each user
+  - Idempotent: skip if member already exists
+- **Deactivation Workflow**:
+  - Mark StaffProfile `employment_status="resigned"`
+  - Removes corresponding WorkspaceMembers (where role=15 from auto-join)
+  - Sets User.is_active=False across instance
+  - Prevents login; user can request reactivation
 
-**Frontend Components** (Workspace Settings):
+### Frontend Admin Pages (God-mode)
 
-- **Department Management** - Create, edit, delete, reorder, view hierarchy
-- **Staff Management** - CRUD staff, assign departments, manage status
-- **Bulk Import/Export** - Import employees from CSV, export staff list
-- **Dashboard** - Staff count, active/inactive ratio per department
+**Admin App Routes**:
 
-**Frontend Routes**:
+- `/god-mode/departments/` - List, create, edit, delete departments
+- `/god-mode/departments/{id}/` - Detailed view with hierarchy tree
+- `/god-mode/staff/` - List, create, edit, delete staff profiles
+- `/god-mode/staff/{id}/` - Detailed view with department assignment
 
-- `/[workspaceSlug]/(settings)/settings/departments/` - Department tree UI
-- `/[workspaceSlug]/(settings)/settings/staff/` - Staff table + management
+**Admin Stores**:
+
+- `instance-department.store.ts` - MobX store for department CRUD + hierarchy
+- `instance-staff.store.ts` - MobX store for staff CRUD + bulk import/export
+
+### Frontend Workspace Pages
+
+**Org-Chart Route** (Read-only):
+
+- `/[workspaceSlug]/org-chart/` - Interactive organizational chart
+  - Displays full department hierarchy
+  - Shows staff members per department
+  - Breadcrumb navigation
+  - Empty state when no departments linked
+  - No edit capabilities (admin-only via god-mode)
+
+**Removed Routes** (Workspace Settings):
+
+- `/[workspaceSlug]/(settings)/settings/departments/` - *(Moved to god-mode)*
+- `/[workspaceSlug]/(settings)/settings/staff/` - *(Moved to god-mode)*
 
 ## Time Tracking (Work Logs)
 

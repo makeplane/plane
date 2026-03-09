@@ -1,7 +1,7 @@
 ---
 title: "Department-Workspace Model Migration"
 description: "Migrate Department & Staff from workspace-scoped to instance-level, move admin UI to God-mode, add org chart"
-status: pending
+status: completed
 priority: P1
 effort: 32h
 branch: develop
@@ -19,12 +19,12 @@ Lift Department and StaffProfile models from workspace scope to instance level. 
 
 | #   | Phase                                                                  | Effort | Status  |
 | --- | ---------------------------------------------------------------------- | ------ | ------- |
-| 1   | [DB Model Migration](./phase-01-db-model-migration.md)                 | 4h     | pending |
-| 2   | [Backend API Migration](./phase-02-backend-api-migration.md)           | 8h     | pending |
-| 3   | [God-mode Frontend](./phase-03-godmode-frontend.md)                    | 8h     | pending |
-| 4   | [Cleanup Workspace Settings](./phase-04-cleanup-workspace-settings.md) | 3h     | pending |
-| 5   | [Org Chart Workspace Page](./phase-05-org-chart-workspace.md)          | 5h     | pending |
-| 6   | [Auto-join Logic & Polish](./phase-06-autojoin-logic-polish.md)        | 4h     | pending |
+| 1   | [DB Model Migration](./phase-01-db-model-migration.md)                 | 4h     | completed |
+| 2   | [Backend API Migration](./phase-02-backend-api-migration.md)           | 8h     | completed |
+| 3   | [God-mode Frontend](./phase-03-godmode-frontend.md)                    | 8h     | completed |
+| 4   | [Cleanup Workspace Settings](./phase-04-cleanup-workspace-settings.md) | 3h     | completed |
+| 5   | [Org Chart Workspace Page](./phase-05-org-chart-workspace.md)          | 5h     | completed |
+| 6   | [Auto-join Logic & Polish](./phase-06-autojoin-logic-polish.md)        | 4h     | completed |
 
 ## Key Dependencies
 
@@ -97,11 +97,11 @@ Feature branch from `develop`, squash merge when all phases pass.
 
 #### Action Items
 
-- [ ] Phase 1: Simplify RunPython migration -- all linked_workspace = null
-- [ ] Phase 2: Remove confirm flow from link-workspace endpoint, always auto-join
-- [ ] Phase 3: Remove confirm dialog component for link-workspace
-- [ ] Phase 5: Update org chart placement from settings to main sidebar
-- [ ] Phase 6: Simplify retroactive join -- remove confirm logic, always bulk add
+- [x]Phase 1: Simplify RunPython migration -- all linked_workspace = null
+- [x]Phase 2: Remove confirm flow from link-workspace endpoint, always auto-join
+- [x]Phase 3: Remove confirm dialog component for link-workspace
+- [x]Phase 5: Update org chart placement from settings to main sidebar
+- [x]Phase 6: Simplify retroactive join -- remove confirm logic, always bulk add
 
 #### Impact on Phases
 

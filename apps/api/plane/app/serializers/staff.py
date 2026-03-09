@@ -18,7 +18,6 @@ class StaffProfileSerializer(BaseSerializer):
         model = StaffProfile
         fields = [
             "id",
-            "workspace",
             "user",
             "staff_id",
             "department",
@@ -39,7 +38,6 @@ class StaffProfileSerializer(BaseSerializer):
         ]
         read_only_fields = [
             "id",
-            "workspace",
             "user",
             "created_at",
             "updated_at",

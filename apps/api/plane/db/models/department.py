@@ -9,19 +9,15 @@ from .base import BaseModel
 
 
 class Department(BaseModel):
-    """Hierarchical department model for organizational structure (max 6 levels)."""
-
-    workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="departments",
-    )
+    """Hierarchical department model for organizational structure (max 6 levels).
+    Instance-level: not scoped to any workspace.
+    """
 
     # Basic info
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=20)
-    short_name = models.CharField(max_length=10)
-    dept_code = models.CharField(max_length=4)
+    short_name = models.CharField(max_length=10, blank=True, null=True)
+    dept_code = models.CharField(max_length=4, blank=True, null=True)
     description = models.TextField(blank=True, default="")
 
     # Hierarchy (parent=NULL means top level)
@@ -46,9 +42,9 @@ class Department(BaseModel):
         related_name="managed_departments",
     )
 
-    # Link to team project
-    linked_project = models.ForeignKey(
-        "db.Project",
+    # Link to workspace (one workspace per department)
+    linked_workspace = models.OneToOneField(
+        "db.Workspace",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -66,26 +62,26 @@ class Department(BaseModel):
         ordering = ["sort_order", "name"]
         constraints = [
             models.UniqueConstraint(
-                fields=["workspace", "code"],
+                fields=["code"],
                 condition=models.Q(deleted_at__isnull=True),
-                name="department_unique_workspace_code",
+                name="department_unique_code",
             ),
             models.UniqueConstraint(
-                fields=["workspace", "short_name"],
+                fields=["short_name"],
                 condition=models.Q(deleted_at__isnull=True),
-                name="department_unique_workspace_short_name",
+                name="department_unique_short_name",
             ),
             models.UniqueConstraint(
-                fields=["workspace", "dept_code"],
+                fields=["dept_code"],
                 condition=models.Q(deleted_at__isnull=True),
-                name="department_unique_workspace_dept_code",
+                name="department_unique_dept_code",
             ),
         ]
 
     def clean(self):
-        if self.short_name and (len(self.short_name) < 2 or not self.short_name.isupper()):
+        if self.short_name is not None and self.short_name and (len(self.short_name) < 2 or not self.short_name.isupper()):
             raise ValidationError("short_name must be uppercase, minimum 2 characters")
-        if self.dept_code and (len(self.dept_code) != 4 or not self.dept_code.isdigit()):
+        if self.dept_code is not None and self.dept_code and (len(self.dept_code) != 4 or not self.dept_code.isdigit()):
             raise ValidationError("dept_code must be exactly 4 digits")
         # Prevent circular parent references
         if self.parent_id and self.pk:

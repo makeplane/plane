@@ -13,7 +13,7 @@
 ## Overview
 
 - **Priority:** P1
-- **Status:** pending
+- **Status:** completed
 - **Effort:** 8h
 - Create InstanceDepartmentService and InstanceStaffService in `packages/services/src/`. Create MobX stores in `apps/admin/store/`. Add sidebar menu items. Build department and staff management pages in admin app. Adapt existing workspace settings components (remove workspaceSlug deps, replace project selector with workspace selector).
 
@@ -157,25 +157,25 @@ apps/admin/app/(all)/(dashboard)/
 
 ## Todo List
 
-- [ ] Create InstanceDepartmentService with types
-- [ ] Create InstanceStaffService with types
-- [ ] Create barrel exports in packages/services/src/
-- [ ] Create InstanceDepartmentStore (MobX)
-- [ ] Create InstanceStaffStore (MobX)
-- [ ] Register stores in root.store.ts
-- [ ] Add sidebar menu items (departments, staff)
-- [ ] Build departments/page.tsx (tree view)
-- [ ] Build department-form-modal.tsx
-- [ ] Build department-tree-item.tsx
-- [ ] Build department-link-workspace.tsx (workspace selector + confirm)
-- [ ] Build staff/page.tsx (stats + table)
-- [ ] Build staff/create/page.tsx
-- [ ] Build staff-table.tsx
-- [ ] Build staff-form-fields.tsx + staff-form-modal.tsx
-- [ ] Build staff-import-modal.tsx
-- [ ] Build staff-status-badge.tsx + staff-action-buttons.tsx
-- [ ] Run `pnpm check:lint` and fix issues
-- [ ] Manual test in browser
+- [x]Create InstanceDepartmentService with types
+- [x]Create InstanceStaffService with types
+- [x]Create barrel exports in packages/services/src/
+- [x]Create InstanceDepartmentStore (MobX)
+- [x]Create InstanceStaffStore (MobX)
+- [x]Register stores in root.store.ts
+- [x]Add sidebar menu items (departments, staff)
+- [x]Build departments/page.tsx (tree view)
+- [x]Build department-form-modal.tsx
+- [x]Build department-tree-item.tsx
+- [x]Build department-link-workspace.tsx (workspace selector + confirm)
+- [x]Build staff/page.tsx (stats + table)
+- [x]Build staff/create/page.tsx
+- [x]Build staff-table.tsx
+- [x]Build staff-form-fields.tsx + staff-form-modal.tsx
+- [x]Build staff-import-modal.tsx
+- [x]Build staff-status-badge.tsx + staff-action-buttons.tsx
+- [x]Run `pnpm check:lint` and fix issues
+- [x]Manual test in browser
 
 ## Success Criteria
 

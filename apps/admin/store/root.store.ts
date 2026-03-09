@@ -16,6 +16,10 @@ import type { IUserStore } from "./user.store";
 import { UserStore } from "./user.store";
 import type { IWorkspaceStore } from "./workspace.store";
 import { WorkspaceStore } from "./workspace.store";
+import type { IInstanceDepartmentStore } from "./instance-department.store";
+import { InstanceDepartmentStore } from "./instance-department.store";
+import type { IInstanceStaffStore } from "./instance-staff.store";
+import { InstanceStaffStore } from "./instance-staff.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -25,6 +29,8 @@ export class RootStore {
   user: IUserStore;
   instanceUser: IInstanceUserStore;
   workspace: IWorkspaceStore;
+  instanceDepartment: IInstanceDepartmentStore;
+  instanceStaff: IInstanceStaffStore;
 
   constructor() {
     this.theme = new ThemeStore(this);
@@ -32,6 +38,8 @@ export class RootStore {
     this.user = new UserStore(this);
     this.instanceUser = new InstanceUserStore(this);
     this.workspace = new WorkspaceStore(this);
+    this.instanceDepartment = new InstanceDepartmentStore(this);
+    this.instanceStaff = new InstanceStaffStore(this);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- pre-existing hydrate pattern
@@ -49,5 +57,7 @@ export class RootStore {
     this.instanceUser = new InstanceUserStore(this);
     this.theme = new ThemeStore(this);
     this.workspace = new WorkspaceStore(this);
+    this.instanceDepartment = new InstanceDepartmentStore(this);
+    this.instanceStaff = new InstanceStaffStore(this);
   }
 }

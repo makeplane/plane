@@ -4,13 +4,22 @@
  * See the LICENSE file for details.
  */
 
-import { Image, BrainCog, Cog, Mail, Users } from "lucide-react";
+import { Image, BrainCog, Cog, Mail, Users, Network, UserCheck } from "lucide-react";
 // plane imports
 import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
 import type { TSidebarMenuItem } from "./types";
 
-export type TCoreSidebarMenuKey = "general" | "email" | "workspace" | "users" | "authentication" | "ai" | "image";
+export type TCoreSidebarMenuKey =
+  | "general"
+  | "email"
+  | "workspace"
+  | "users"
+  | "departments"
+  | "staff"
+  | "authentication"
+  | "ai"
+  | "image";
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
@@ -36,6 +45,18 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "Users",
     description: "Manage all users on this instance.",
     href: `/users/`,
+  },
+  departments: {
+    Icon: Network,
+    name: "Departments",
+    description: "Manage organizational departments.",
+    href: `/departments/`,
+  },
+  staff: {
+    Icon: UserCheck,
+    name: "Staff",
+    description: "Manage staff profiles across all departments.",
+    href: `/staff/`,
   },
   authentication: {
     Icon: LockIcon,
