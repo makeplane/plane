@@ -114,8 +114,9 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
         ref={dropElementRef}
       >
         <div className="flex items-center justify-between gap-2">
-          <div
-            className="flex w-full cursor-pointer items-center py-1"
+          <button
+            type="button"
+            className="flex w-full cursor-pointer items-center border-none bg-transparent py-1 text-left"
             onClick={() => (!currentStateExpanded ? handleExpand(groupKey) : handleGroupCollapse(groupKey))}
           >
             <div
@@ -133,7 +134,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
               <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} />
             </div>
             <div className="px-1 text-14 font-medium text-secondary capitalize">{groupKey}</div>
-          </div>
+          </button>
           <button
             type="button"
             data-ph-element={STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}

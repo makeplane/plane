@@ -311,10 +311,9 @@ export class StateStore implements IStateStore {
    */
   deleteState = async (workspaceSlug: string, projectId: string, stateId: string) => {
     if (!this.stateMap?.[stateId]) return;
-    await this.stateService.deleteState(workspaceSlug, projectId, stateId).then(() => {
-      runInAction(() => {
-        delete this.stateMap[stateId];
-      });
+    await this.stateService.deleteState(workspaceSlug, projectId, stateId);
+    runInAction(() => {
+      delete this.stateMap[stateId];
     });
   };
 
