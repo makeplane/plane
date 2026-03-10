@@ -4,12 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, Fragment } from "react";
 import { observer } from "mobx-react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 
 // plane imports
 import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { DropIndicator } from "@plane/ui";
 import { PlusIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -50,86 +54,138 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
   const { t } = useTranslation();
   // state
   const [createState, setCreateState] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggedOver, setIsDraggedOver] = useState(false);
+  const [closestEdge, setClosestEdge] = useState<string | null>(null);
+
   // derived values
   const currentStateExpanded = groupsExpanded.includes(groupKey);
   const shouldShowEmptyState = states.length === 0 && currentStateExpanded && !createState;
 
-  return (
-    <div
-      className={cn("space-y-1 rounded-sm border border-subtle bg-surface-2 p-2 transition-all", groupItemClassName)}
-      ref={dropElementRef}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <div
-          className="flex w-full cursor-pointer items-center py-1"
-          onClick={() => (!currentStateExpanded ? handleExpand(groupKey) : handleGroupCollapse(groupKey))}
-        >
-          <div
-            className={cn(
-              "flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm transition-all",
-              {
-                "rotate-0": currentStateExpanded,
-                "-rotate-90": !currentStateExpanded,
-              }
-            )}
-          >
-            <ChevronDownIcon className="h-4 w-4" />
-          </div>
-          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
-            <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} />
-          </div>
-          <div className="px-1 text-14 font-medium text-secondary capitalize">{groupKey}</div>
-        </div>
-        <button
-          type="button"
-          data-ph-element={STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
-          className={cn(
-            "flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm text-accent-primary/80 transition-colors hover:bg-layer-1 hover:text-accent-primary",
-            (!isEditable || createState) && "cursor-not-allowed text-placeholder hover:text-placeholder"
-          )}
-          onClick={() => {
-            if (!createState) {
-              handleExpand(groupKey);
-              setCreateState(true);
+  useEffect(() => {
+    const elementRef = dropElementRef.current;
+    if (!elementRef || !isEditable) return;
+
+    return combine(
+      draggable({
+        element: elementRef,
+        getInitialData: () => ({ type: "STATE_GROUP", id: groupKey }),
+        onDragStart: () => setIsDragging(true),
+        onDrop: () => setIsDragging(false),
+      }),
+      dropTargetForElements({
+        element: elementRef,
+        canDrop: ({ source }) => source.data.type === "STATE_GROUP" && source.data.id !== groupKey,
+        getData: ({ input, element }) =>
+          attachClosestEdge(
+            { type: "STATE_GROUP", id: groupKey },
+            {
+              input,
+              element,
+              allowedEdges: ["top", "bottom"],
             }
-          }}
-          disabled={!isEditable || createState}
-        >
-          <PlusIcon className="h-4 w-4" />
-        </button>
+          ),
+        onDragEnter: (args) => {
+          setIsDraggedOver(true);
+          setClosestEdge(extractClosestEdge(args.self.data));
+        },
+        onDragLeave: () => {
+          setIsDraggedOver(false);
+          setClosestEdge(null);
+        },
+        onDrop: () => {
+          setIsDraggedOver(false);
+          setClosestEdge(null);
+        },
+      })
+    );
+  }, [groupKey, isEditable]);
+
+  return (
+    <Fragment>
+      <DropIndicator isVisible={isDraggedOver && closestEdge === "top"} />
+      <div
+        className={cn(
+          "space-y-1 rounded-sm border border-subtle bg-surface-2 p-2 transition-all",
+          isDragging ? "opacity-50" : "opacity-100",
+          isEditable ? "cursor-grab" : "cursor-auto",
+          groupItemClassName
+        )}
+        ref={dropElementRef}
+      >
+        <div className="flex items-center justify-between gap-2">
+          <div
+            className="flex w-full cursor-pointer items-center py-1"
+            onClick={() => (!currentStateExpanded ? handleExpand(groupKey) : handleGroupCollapse(groupKey))}
+          >
+            <div
+              className={cn(
+                "flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm transition-all",
+                {
+                  "rotate-0": currentStateExpanded,
+                  "-rotate-90": !currentStateExpanded,
+                }
+              )}
+            >
+              <ChevronDownIcon className="h-4 w-4" />
+            </div>
+            <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
+              <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} />
+            </div>
+            <div className="px-1 text-14 font-medium text-secondary capitalize">{groupKey}</div>
+          </div>
+          <button
+            type="button"
+            data-ph-element={STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
+            className={cn(
+              "flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm text-accent-primary/80 transition-colors hover:bg-layer-1 hover:text-accent-primary",
+              (!isEditable || createState) && "cursor-not-allowed text-placeholder hover:text-placeholder"
+            )}
+            onClick={() => {
+              if (!createState) {
+                handleExpand(groupKey);
+                setCreateState(true);
+              }
+            }}
+            disabled={!isEditable || createState}
+          >
+            <PlusIcon className="h-4 w-4" />
+          </button>
+        </div>
+
+        {shouldShowEmptyState && (
+          <div className="flex h-full flex-col items-center justify-center py-4 text-13 text-tertiary">
+            <div>{t("project_settings.states.empty_state.title", { groupKey })}</div>
+            {isEditable && <div>{t("project_settings.states.empty_state.description")}</div>}
+          </div>
+        )}
+
+        {currentStateExpanded && (
+          <div id="group-droppable-container">
+            <StateList
+              groupKey={groupKey}
+              groupedStates={groupedStates}
+              states={states}
+              disabled={!isEditable}
+              stateOperationsCallbacks={stateOperationsCallbacks}
+              shouldTrackEvents={shouldTrackEvents}
+              stateItemClassName={stateItemClassName}
+            />
+          </div>
+        )}
+
+        {isEditable && createState && (
+          <div className="">
+            <StateCreate
+              groupKey={groupKey}
+              handleClose={() => setCreateState(false)}
+              createStateCallback={stateOperationsCallbacks.createState}
+              shouldTrackEvents={shouldTrackEvents}
+            />
+          </div>
+        )}
       </div>
-
-      {shouldShowEmptyState && (
-        <div className="flex h-full flex-col items-center justify-center py-4 text-13 text-tertiary">
-          <div>{t("project_settings.states.empty_state.title", { groupKey })}</div>
-          {isEditable && <div>{t("project_settings.states.empty_state.description")}</div>}
-        </div>
-      )}
-
-      {currentStateExpanded && (
-        <div id="group-droppable-container">
-          <StateList
-            groupKey={groupKey}
-            groupedStates={groupedStates}
-            states={states}
-            disabled={!isEditable}
-            stateOperationsCallbacks={stateOperationsCallbacks}
-            shouldTrackEvents={shouldTrackEvents}
-            stateItemClassName={stateItemClassName}
-          />
-        </div>
-      )}
-
-      {isEditable && createState && (
-        <div className="">
-          <StateCreate
-            groupKey={groupKey}
-            handleClose={() => setCreateState(false)}
-            createStateCallback={stateOperationsCallbacks.createState}
-            shouldTrackEvents={shouldTrackEvents}
-          />
-        </div>
-      )}
-    </div>
+      <DropIndicator isVisible={isDraggedOver && closestEdge === "bottom"} />
+    </Fragment>
   );
 });

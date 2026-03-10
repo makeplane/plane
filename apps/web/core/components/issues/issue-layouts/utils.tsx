@@ -212,8 +212,27 @@ const getStateColumns = ({ projectId }: TGetColumns): IGroupByColumn[] | undefin
   const { getProjectStates, projectStates } = store.state;
   const _states = projectId ? getProjectStates(projectId) : projectStates;
   if (!_states) return;
+
+  // Get the project's custom state group order if available
+  const currentProjectId = projectId || store.projectRoot.project.currentProjectDetails?.id;
+  const project = currentProjectId ? store.projectRoot.project.getProjectById(currentProjectId) : undefined;
+  const stateGroupOrder = project?.state_group_order;
+
+  // If there's a custom order, re-sort states by group order
+  let sortedStates = _states;
+  if (stateGroupOrder && stateGroupOrder.length > 0) {
+    sortedStates = [..._states].sort((a, b) => {
+      const aGroupIndex = stateGroupOrder.indexOf(a.group);
+      const bGroupIndex = stateGroupOrder.indexOf(b.group);
+      if (aGroupIndex !== bGroupIndex) {
+        return aGroupIndex - bGroupIndex;
+      }
+      return a.sequence - b.sequence;
+    });
+  }
+
   // map project states to group by columns
-  return _states.map((state) => ({
+  return sortedStates.map((state) => ({
     id: state.id,
     name: state.name,
     icon: (
