@@ -298,13 +298,11 @@ export class JiraV2Service {
 
   async getCustomFieldsWithContext(projectId?: string) {
     try {
-      return await fetchPaginatedData<JiraCustomFieldWithCtx>(async (startAt) => {
-        const result = await this.jiraClient.sendRequestFullResponse<Paginated<JiraCustomFieldWithCtx>>({
-          method: "GET",
-          url: `${this.hostname}/rest/api/2/customFields?startAt=${startAt}&projectIds=${projectId ?? ""}`,
-        });
-        return result.data;
+      const result = await this.jiraClient.sendRequestFullResponse<Paginated<JiraCustomFieldWithCtx>>({
+        method: "GET",
+        url: `${this.hostname}/rest/api/2/customFields?maxResults=10000`,
       });
+      return result.data.values;
     } catch (e) {
       console.error("error getCustomFieldsWithContext", e);
       throw e;

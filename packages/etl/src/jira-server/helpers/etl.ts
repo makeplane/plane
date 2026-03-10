@@ -109,7 +109,7 @@ export const fetchPaginatedData = async <T>(
       break;
     }
 
-    startAt += response.maxResults;
+    startAt += response.values?.length;
   }
 
   return results;

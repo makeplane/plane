@@ -11,6 +11,7 @@
 
 import logging
 from celery import shared_task
+from django.db.models import Exists, OuterRef
 
 from plane.ee.models import IssueProperty, IssueTypeProperty, IssuePropertyValue
 
@@ -29,54 +30,25 @@ def toggle_issue_property_by_usage(
         project_id: The ID of the project to process.
     """
     try:
-        logger.info(f"Starting toggle of unused issue properties for project {project_id}")
+        logger.info(f"Starting deletion of unused issue properties for project {project_id}")
 
-        # PHASE 1: IssueProperty (Global/Project Scope)
-        # Find all properties used by ANY issue in the project
+        # PHASE 1: Collect used property IDs (Project Scope)
         all_used_property_ids = (
             IssuePropertyValue.objects.filter(issue__project_id=project_id)
             .values_list("property_id", flat=True)
             .distinct()
         )
 
-        # Activate IssueProperty records that have values (Global check)
-        activated_props_count = (
-            IssueProperty.objects.filter(
-                project_id=project_id,
-                id__in=all_used_property_ids,
-                is_active=False,
-                external_id__isnull=False,
-                external_source__isnull=False,
-            )
-            .exclude(external_id="")
-            .exclude(external_source="")
-            .update(is_active=True)
-        )
-
-        if activated_props_count > 0:
-            logger.info(f"Activated {activated_props_count} IssueProperty records for project {project_id}")
-
-        # Deactivate IssueProperty records that have NO values anywhere in the project
-        deactivated_props_count = (
-            IssueProperty.objects.filter(
-                project_id=project_id,
-                is_active=True,
-                external_id__isnull=False,
-                external_source__isnull=False,
-            )
-            .exclude(external_id="")
-            .exclude(external_source="")
-            .exclude(id__in=all_used_property_ids)
-            .update(is_active=False)
-        )
-
-        if deactivated_props_count > 0:
-            logger.info(f"Deactivated {deactivated_props_count} IssueProperty records for project {project_id}")
-
         # PHASE 2: IssueTypeProperty (IssueType Scope)
-        # Iterate over all Issue Types that have properties in this project
-        # We look at IssueTypeProperty to find relevant types
-        issue_type_ids = (
+        # Optimized Bulk Delete: Delete associations that have no values for that specific type
+        # Subquery to check for usage of a property for a specific issue type
+        used_subquery = IssuePropertyValue.objects.filter(
+            issue__type_id=OuterRef("issue_type_id"),
+            property_id=OuterRef("property_id"),
+            issue__project_id=project_id,
+        )
+
+        deletion_result = (
             IssueTypeProperty.objects.filter(
                 property__project_id=project_id,
                 external_id__isnull=False,
@@ -84,60 +56,33 @@ def toggle_issue_property_by_usage(
             )
             .exclude(external_id="")
             .exclude(external_source="")
-            .values_list("issue_type_id", flat=True)
-            .distinct()
+            .annotate(has_values=Exists(used_subquery))
+            .filter(has_values=False)
+            .delete()
         )
+        deleted_type_count = deletion_result[0] if isinstance(deletion_result, (list, tuple)) else deletion_result
 
-        for issue_type_id in issue_type_ids:
-            # Find properties used by issues of THIS specific type
-            type_used_property_ids = (
-                IssuePropertyValue.objects.filter(issue__project_id=project_id, issue__type_id=issue_type_id)
-                .values_list("property_id", flat=True)
-                .distinct()
+        if deleted_type_count > 0:
+            logger.info(f"Deleted {deleted_type_count} unused IssueTypeProperty records for project {project_id}")
+
+        # PHASE 3: IssueProperty (Global/Project Scope)
+        # Delete IssueProperty records that have NO values anywhere in the project
+        deletion_result = (
+            IssueProperty.objects.filter(
+                project_id=project_id,
+                external_id__isnull=False,
+                external_source__isnull=False,
             )
+            .exclude(external_id="")
+            .exclude(external_source="")
+            .exclude(id__in=all_used_property_ids)
+            .delete()
+        )
+        deleted_props_count = deletion_result[0] if isinstance(deletion_result, (list, tuple)) else deletion_result
 
-            # Activate IssueTypeProperty records that have values for this type
-            activated_type_count = (
-                IssueTypeProperty.objects.filter(
-                    property__project_id=project_id,
-                    issue_type_id=issue_type_id,
-                    is_active=False,
-                    property_id__in=type_used_property_ids,
-                    external_id__isnull=False,
-                    external_source__isnull=False,
-                )
-                .exclude(external_id="")
-                .exclude(external_source="")
-                .update(is_active=True)
-            )
+        if deleted_props_count > 0:
+            logger.info(f"Deleted {deleted_props_count} unused IssueProperty records for project {project_id}")
 
-            if activated_type_count > 0:
-                logger.info(
-                    f"Activated {activated_type_count} IssueTypeProperty records for project {project_id} "
-                    f"and issue type {issue_type_id}"
-                )
-
-            # Deactivate IssueTypeProperty records that have NO values for this type
-            deactivated_type_count = (
-                IssueTypeProperty.objects.filter(
-                    property__project_id=project_id,
-                    issue_type_id=issue_type_id,
-                    is_active=True,
-                    external_id__isnull=False,
-                    external_source__isnull=False,
-                )
-                .exclude(external_id="")
-                .exclude(external_source="")
-                .exclude(property_id__in=type_used_property_ids)
-                .update(is_active=False)
-            )
-
-            if deactivated_type_count > 0:
-                logger.info(
-                    f"Deactivated {deactivated_type_count} IssueTypeProperty records for project {project_id} "
-                    f"and issue type {issue_type_id}"
-                )
-
-        logger.info(f"Completed toggle of unused issue properties for project {project_id}")
+        logger.info(f"Completed deletion of unused issue properties for project {project_id}")
     except Exception as e:
-        logger.error(f"Failed to toggle unused issue properties for project {project_id}: {str(e)}")
+        logger.error(f"Failed to delete unused issue properties for project {project_id}: {str(e)}")

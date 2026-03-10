@@ -359,7 +359,7 @@ export class JiraIssuePropertiesStep implements IStep {
    */
   protected removeKnownCustomFields(jiraFields: JiraIssueField[]): JiraIssueField[] {
     return jiraFields.filter((field) => {
-      return !field.name || ![KNOWN_CUSTOM_FIELDS.START_DATE].includes(field.name);
+      return !field.name || ![KNOWN_CUSTOM_FIELDS.START_DATE, "Sprint"].includes(field.name);
     });
   }
 

@@ -60,9 +60,9 @@ export const flushJobCache = async (store: Store, jobId: string): Promise<{ cach
   try {
     logger.info(`[${jobId}] Flushing cache`);
     const cacheKey = `JiraServerImporter:cache:${jobId}:*`;
-    const result = await store.getAndDelete(cacheKey);
-    logger.info(`[${jobId}] Flushed cache`, { result, cacheKey });
-    return { cache: result.deletedKeys };
+    await store.del(cacheKey);
+    logger.info(`[${jobId}] Flushed cache`, { cacheKey });
+    return { cache: new Map() };
   } catch (error) {
     logger.warn(`[${jobId}] Failed to flush cache, silent failure`, { error });
     return { cache: new Map() };
@@ -73,9 +73,9 @@ export const flushJobData = async (store: Store, jobId: string): Promise<{ data:
   try {
     logger.info(`[${jobId}] Flushing job data`);
     const dataKey = `job:${jobId}:*`;
-    const result = await store.getAndDelete(dataKey);
-    logger.info(`[${jobId}] Flushed job data`, { result, dataKey });
-    return { data: result.deletedKeys };
+    await store.del(dataKey);
+    logger.info(`[${jobId}] Flushed job data`, { dataKey });
+    return { data: new Map() };
   } catch (error) {
     logger.warn(`[${jobId}] Failed to flush job data, silent failure`, { error });
     return { data: new Map() };

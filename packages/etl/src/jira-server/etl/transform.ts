@@ -159,6 +159,7 @@ export const transformIssueV2 = (
       ((knownCustomFields.completionDate ? issue.fields[knownCustomFields.completionDate] : null) as string | null),
     start_date: (knownCustomFields.startDate ? issue.fields[knownCustomFields.startDate] : null) as string | null,
     created_at: issue.fields.created,
+    updated_at: issue.fields.updated,
     attachments: attachments,
     state: targetState?.id ?? "",
     external_source_state_id: targetState?.external_id ? `${projectId}_${resourceId}_${targetState.external_id}` : null,

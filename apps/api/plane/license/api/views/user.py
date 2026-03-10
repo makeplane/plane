@@ -12,7 +12,6 @@
 # Django imports
 from django.db.models import Case, When, BooleanField, Q, Count, Value, CharField
 from django.db.models.functions import Concat, Coalesce
-from django.db import transaction
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 
@@ -142,7 +141,9 @@ class InstanceUserManagementViewSet(BaseAPIView):
         # Register as instance admin
         InstanceAdmin.objects.create(instance=instance, user=user)
 
-        # Let's run the member sync task to update the new user in all workspaces (he won't be added as a member but this will create the cache for the user)
+        # Let's run the member sync task to update the new user in all 
+        # workspaces (he won't be added as a member but this will create 
+        # the cache for the user)
         enterprise_member_sync_task.delay()
 
         return Response({"message": "Instance admin created successfully"}, status=status.HTTP_201_CREATED)

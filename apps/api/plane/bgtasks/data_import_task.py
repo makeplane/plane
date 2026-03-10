@@ -292,15 +292,6 @@ def process_single_issue(slug, project, user_id, issue_data, report_id=None, job
 
         issue = serializer.save()
 
-        # Update the issue with the created_by_id
-        issue.created_by_id = issue_data.get("created_by")
-        issue.updated_by_id = issue_data.get("created_by")
-        issue.save(disable_auto_set_user=True)
-
-        # Preserve external sequence if preserve_sequence is True
-        if preserve_sequence:
-            preserve_external_sequence(slug, project, issue.id, issue_data)
-
         collect_execution_log(
             logs={
                 "report_id": report_id,
@@ -353,6 +344,17 @@ def process_single_issue(slug, project, user_id, issue_data, report_id=None, job
         # Process worklogs
         if issue_data.get("worklogs"):
             process_issue_worklogs(slug, issue, issue_data.get("worklogs"), report_id=report_id, job_id=job_id)
+
+        # Update the issue with the created_by_id
+        issue.created_by_id = issue_data.get("created_by")
+        issue.updated_by_id = issue_data.get("created_by")
+        issue.created_at = issue_data.get("created_at")
+        # issue.updated_at = issue_data.get("updated_at")
+        issue.save(disable_auto_set_user=True)
+
+        # Preserve external sequence if preserve_sequence is True
+        if preserve_sequence:
+            preserve_external_sequence(slug, project, issue.id, issue_data)
 
         return issue
     except Exception as e:

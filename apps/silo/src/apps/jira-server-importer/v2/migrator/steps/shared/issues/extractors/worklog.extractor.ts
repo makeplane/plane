@@ -31,7 +31,7 @@ export class JiraWorklogExtractor {
   });
 
   public async extract(jobId: string, client: JiraV2Service, issue: IJiraIssue): Promise<Partial<TWorklog>[]> {
-    const totalWorklogCount = issue.fields.worklog.total;
+    const totalWorklogCount = issue.fields.worklog?.total;
     const pulledWorklogsCount = issue.fields?.worklog?.worklogs?.length || 0;
 
     let worklogs: Worklog[] = [];
