@@ -2299,12 +2299,21 @@ importers:
       '@plane/constants':
         specifier: workspace:*
         version: link:../constants
+      '@plane/editor':
+        specifier: workspace:*
+        version: link:../editor
       '@plane/sdk':
         specifier: workspace:*
         version: link:../sdk
       '@plane/types':
         specifier: workspace:*
         version: link:../types
+      '@tiptap/core':
+        specifier: 'catalog:'
+        version: 2.27.2(@tiptap/pm@2.27.2)
+      '@tiptap/html':
+        specifier: 'catalog:'
+        version: 2.27.2(@tiptap/core@2.27.2(@tiptap/pm@2.27.2))(@tiptap/pm@2.27.2)
       asana:
         specifier: 'catalog:'
         version: 3.1.9(@babel/core@7.29.0)
@@ -2320,9 +2329,15 @@ importers:
       papaparse:
         specifier: 'catalog:'
         version: 5.5.3
+      react:
+        specifier: 18.3.1
+        version: 18.3.1
       uuid:
         specifier: 'catalog:'
         version: 13.0.0
+      zeed-dom:
+        specifier: ^0.15.1
+        version: 0.15.1
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -2345,6 +2360,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.19.11)(@vitest/browser-playwright@4.0.18)(jiti@2.6.1)(lightningcss@1.31.1)(yaml@2.8.2)
 
   packages/hooks:
     dependencies:
@@ -12869,6 +12887,7 @@ packages:
   rolldown-vite@7.3.1:
     resolution: {integrity: sha512-LYzdNAjRHhF2yA4JUQm/QyARyi216N2rpJ0lJZb8E9FU2y5v6Vk+xq/U4XBOxMefpWixT5H3TslmAHm1rqIq2w==}
     engines: {node: ^20.19.0 || >=22.12.0}
+    deprecated: Use this package to migrate from Vite 7 to Vite 8. For the most recent updates, migrate to Vite 8 once you're ready.
     hasBin: true
     peerDependencies:
       '@types/node': ^20.19.0 || >=22.12.0

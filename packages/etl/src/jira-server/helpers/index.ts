@@ -16,3 +16,5 @@ export * from "./date";
 export * from "./string";
 export * from "./constants";
 export * from "./custom-field-etl";
+export * from "./jira-html-normalizer";
+export * from "./html-sanitizer";

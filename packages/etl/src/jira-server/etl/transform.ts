@@ -35,6 +35,7 @@ import {
   getTargetAttachments,
   getTargetPriority,
   getTargetState,
+  normalizeJiraHTML,
   OPTION_CUSTOM_FIELD_TYPES,
   SUPPORTED_CUSTOM_FIELD_ATTRIBUTES,
   SUPPORTED_CUSTOM_FIELD_TYPES,
@@ -82,6 +83,8 @@ export const transformIssue = (
   if (description === "") {
     description = "<p></p>";
   }
+  // Normalize Jira HTML to Plane-compatible HTML; images kept as <img> for silo's asset pipeline
+  description = normalizeJiraHTML(description);
 
   issue.fields.labels.push("JIRA IMPORTED");
 
@@ -94,7 +97,7 @@ export const transformIssue = (
     name: issue.fields.summary ?? "Untitled",
     description_html: description,
     target_date: issue.fields.duedate,
-    start_date: issue.fields.customfield_10015,
+    start_date: issue.fields.customfield_10015 as string | null,
     created_at: issue.fields.created,
     attachments: attachments,
     state: targetState?.id ?? "",
@@ -134,6 +137,8 @@ export const transformIssueV2 = (
   if (description === "") {
     description = "<p></p>";
   }
+  // Normalize Jira HTML to Plane-compatible HTML; images kept as <img> for silo's asset pipeline
+  description = normalizeJiraHTML(description);
 
   issue.fields.labels.push("JIRA IMPORTED");
 
@@ -151,8 +156,8 @@ export const transformIssueV2 = (
     description_html: description,
     target_date:
       issue.fields.duedate ||
-      (knownCustomFields.completionDate ? issue.fields[knownCustomFields.completionDate] : null),
-    start_date: knownCustomFields.startDate ? issue.fields[knownCustomFields.startDate] : null,
+      ((knownCustomFields.completionDate ? issue.fields[knownCustomFields.completionDate] : null) as string | null),
+    start_date: (knownCustomFields.startDate ? issue.fields[knownCustomFields.startDate] : null) as string | null,
     created_at: issue.fields.created,
     attachments: attachments,
     state: targetState?.id ?? "",
@@ -171,15 +176,21 @@ export const transformLabel = (label: string): Partial<ExIssueLabel> => ({
 
 export const transformComment = (ctx: TTransformationContext, comment: JiraComment): Partial<ExIssueComment> => {
   const { resourceId, projectId, source } = ctx;
+  let commentHtml: string = comment.renderedBody
+    ? comment.renderedBody
+    : // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- body exists at runtime but not in type
+      ((comment as unknown as { body?: string }).body ?? "<p></p>");
+
+  if (commentHtml && commentHtml !== "<p></p>") {
+    commentHtml = normalizeJiraHTML(commentHtml);
+  }
+
   return {
     external_id: `${projectId}_${resourceId}_${comment.id}`,
     external_source: source,
     created_at: comment.created,
     created_by: comment.author?.emailAddress || comment.author?.displayName,
-    comment_html: comment.renderedBody
-      ? comment.renderedBody
-      : // @ts-expect-error - Ignoring ts error for possible undefined
-        (comment.body ?? "<p></p>"),
+    comment_html: commentHtml,
     actor: comment.author?.emailAddress || comment.author?.displayName,
     issue: `${projectId}_${resourceId}_${comment.issue_id}`,
   };
@@ -344,7 +355,7 @@ export const transformIssuePropertyValues = (
         jiraPropertyId ?? "",
         jiraFieldTypeMap.get(key) as string,
         issue.fields[key],
-        (issue.renderedFields as any)?.[key]
+        (issue.renderedFields as Record<string, unknown>)?.[key] as string | undefined
       );
     }
   });
@@ -362,7 +373,7 @@ export const transformDefaultPropertyValues = (
   // Fix Versions
   if (issue.fields.fixVersions && Array.isArray(issue.fields.fixVersions)) {
     const fixVersionExternalId = `${resourceId}-${projectId}-${issueTypeId}-fix-version`;
-    propertyValuesPayload[fixVersionExternalId] = issue.fields.fixVersions.map((version: any) => ({
+    propertyValuesPayload[fixVersionExternalId] = issue.fields.fixVersions.map((version) => ({
       external_source: source,
       external_id: version.id ? String(version.id) : undefined,
       value: version.name || "",
@@ -372,7 +383,8 @@ export const transformDefaultPropertyValues = (
   // Affected Versions
   if (issue.fields.versions && Array.isArray(issue.fields.versions)) {
     const affectedVersionExternalId = `${resourceId}-${projectId}-${issueTypeId}-affected-version`;
-    propertyValuesPayload[affectedVersionExternalId] = issue.fields.versions.map((version: any) => ({
+    const versions = issue.fields.versions as { id?: string; name?: string }[];
+    propertyValuesPayload[affectedVersionExternalId] = versions.map((version) => ({
       external_source: source,
       external_id: version.id ? String(version.id) : undefined,
       value: version.name || "",
@@ -394,13 +406,11 @@ export const transformDefaultPropertyValues = (
   // Original Estimate
   if (issue.fields.timeoriginalestimate) {
     const originalEstimateExternalId = `${resourceId}-${projectId}-${issueTypeId}-original_estimate`;
+    const estimate = Number(issue.fields.timeoriginalestimate);
     propertyValuesPayload[originalEstimateExternalId] = [
       {
         external_source: source,
-        value:
-          issue.fields.timeoriginalestimate && !isNaN(issue.fields.timeoriginalestimate)
-            ? Number(issue.fields.timeoriginalestimate) / 60
-            : 0,
+        value: !isNaN(estimate) ? estimate / 60 : 0,
       },
     ];
   }

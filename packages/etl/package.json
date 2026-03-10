@@ -31,7 +31,8 @@
     "check:types": "tsc --noEmit",
     "check:format": "oxfmt . --check",
     "fix:lint": "oxlint --type-aware --fix -c ../../.oxlintrc.json .",
-    "fix:format": "oxfmt . --write"
+    "fix:format": "oxfmt . --write",
+    "test": "vitest run"
   },
   "dependencies": {
     "@flatfile/api": "catalog:",
@@ -39,14 +40,18 @@
     "@octokit/auth-app": "catalog:",
     "@octokit/rest": "catalog:",
     "@plane/constants": "workspace:*",
+    "@plane/editor": "workspace:*",
     "@plane/sdk": "workspace:*",
     "@plane/types": "workspace:*",
+    "@tiptap/core": "catalog:",
+    "@tiptap/html": "catalog:",
     "asana": "catalog:",
     "axios": "catalog:",
     "jira.js": "catalog:",
     "node-html-parser": "catalog:",
     "papaparse": "catalog:",
     "uuid": "catalog:",
+    "zeed-dom": "^0.15.1",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -55,9 +60,11 @@
     "@types/node": "catalog:",
     "@types/papaparse": "catalog:",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@octokit/openapi-webhooks-types": ">=8"
+    "@octokit/openapi-webhooks-types": ">=8",
+    "react": ">=18"
   }
 }
