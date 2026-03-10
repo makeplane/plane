@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import tailwindcss from "@tailwindcss/vite";
 import { defineMain } from "@storybook/react-vite/node";
 
 export default defineMain({
@@ -24,6 +25,7 @@ export default defineMain({
     "@storybook/addon-a11y",
   ],
   viteFinal: (config) => {
+    config.plugins = [...(config.plugins ?? []), tailwindcss()];
     config.define = {
       ...config.define,
       "process.env": {},

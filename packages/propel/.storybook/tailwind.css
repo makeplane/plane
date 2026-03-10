@@ -1,2 +1,2 @@
 @import "@plane/tailwindcss";
-@import "@plane/propel";
+@import "../src/styles/index.css";

@@ -50,6 +50,7 @@
     "@plane/typescript-config": "workspace:*",
     "@storybook/addon-docs": "catalog:",
     "@storybook/react-vite": "catalog:",
+    "@tailwindcss/vite": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",

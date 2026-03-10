@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import tailwindcss from "@tailwindcss/vite";
 import type { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
@@ -21,6 +22,7 @@ const config: StorybookConfig = {
     options: {},
   },
   viteFinal: (config) => {
+    config.plugins = [...(config.plugins ?? []), tailwindcss()];
     config.define = {
       ...config.define,
       "process.env": {},
