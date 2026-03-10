@@ -65,6 +65,10 @@ def get_default_preferences():
     return {"pages": {"block_display": True}, "navigation": {"default_tab": "work_items", "hide_in_more_menu": []}}
 
 
+def get_default_state_group_order():
+    return ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+
 class Project(BaseModel):
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
     name = models.CharField(max_length=255, verbose_name="Project Name")
@@ -111,6 +115,7 @@ class Project(BaseModel):
     close_in = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
     logo_props = models.JSONField(default=dict)
     default_state = models.ForeignKey("db.State", on_delete=models.SET_NULL, null=True, related_name="default_state")
+    state_group_order = models.JSONField(default=get_default_state_group_order)
     archived_at = models.DateTimeField(null=True)
     # timezone
     TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
