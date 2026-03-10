@@ -10,11 +10,10 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
-import socket
-import ipaddress
 from urllib.parse import urlparse
 
 # Django imports
+from django.conf import settings
 from django.db import IntegrityError
 
 # Third party imports
@@ -25,6 +24,7 @@ from rest_framework.response import Response
 from plane.ee.permissions import WorkSpaceAdminPermission
 from plane.db.models import Workspace, Webhook
 from plane.ee.views.base import BaseAPIView
+from plane.utils.ip_address import validate_url
 
 
 class InternalWebhookEndpoint(BaseAPIView):
@@ -41,56 +41,27 @@ class InternalWebhookEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Extract the hostname from the URL
-        hostname = urlparse(url).hostname
-        if not hostname:
-            return Response(
-                {"url": "Invalid URL: No hostname found."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Resolve the hostname to IP addresses
+        # Validate URL against SSRF
         try:
-            ip_addresses = socket.getaddrinfo(hostname, None)
-        except socket.gaierror:
+            validate_url(url, block_private=not settings.IS_SELF_MANAGED)
+        except ValueError as e:
             return Response(
-                {"url": "Hostname could not be resolved."},
+                {"url": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if not ip_addresses:
-            return Response(
-                {"url": "No IP addresses found for the hostname."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        for addr in ip_addresses:
-            _ip = ipaddress.ip_address(addr[4][0])
-            # if ip.is_loopback:
-            #     return Response(
-            #         {"url": "URL resolves to a blocked IP address."},
-            #         status=status.HTTP_400_BAD_REQUEST,
-            #     )
-
-            # if in cloud environment, private IP addresses are also not allowed
-            # if not settings.IS_SELF_MANAGED and ip.is_private:
-            #     return Response(
-            #         {"url": "URL resolves to a blocked IP address."},
-            #         status=status.HTTP_400_BAD_REQUEST,
-            #     )
-
-        # Additional validation for multiple request domains and their subdomains
-        disallowed_domains = ["plane.so"]  # Add your disallowed domains here
+        # Additional validation for disallowed domains
+        hostname = urlparse(url).hostname
+        disallowed_domains = ["plane.so"]
         if request:
-            request_host = request.get_host().split(":")[0]  # Remove port if present
+            request_host = request.get_host().split(":")[0]
             disallowed_domains.append(request_host)
 
-        # Check if hostname is a subdomain or exact match of any disallowed domain
-        # if any(
-        #     hostname == domain or hostname.endswith("." + domain)
-        #     for domain in disallowed_domains
-        # ):
-        #     return Response({"url": "URL domain or its subdomain is not allowed."})
+        if any(hostname == domain or hostname.endswith("." + domain) for domain in disallowed_domains):
+            return Response(
+                {"url": "URL domain or its subdomain is not allowed."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
             existing_webhooks = Webhook.objects.filter(workspace_id=workspace.id, url=url).first()

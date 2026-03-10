@@ -11,9 +11,7 @@
 
 # Python imports
 import base64
-import ipaddress
 import logging
-import socket
 from typing import Any, Dict, Optional
 from urllib.parse import urljoin, urlparse
 
@@ -24,6 +22,7 @@ from celery import shared_task
 
 # Module imports
 from plane.utils.exception_logger import log_exception
+from plane.utils.ip_address import validate_url
 from plane.utils.link_crawler import LinkCrawlerEntity, LinkCrawlerInput
 
 logger = logging.getLogger("plane.worker")
@@ -31,40 +30,6 @@ logger = logging.getLogger("plane.worker")
 DEFAULT_FAVICON = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxpbmstaWNvbiBsdWNpZGUtbGluayI+PHBhdGggZD0iTTEwIDEzYTUgNSAwIDAgMCA3LjU0LjU0bDMtM2E1IDUgMCAwIDAtNy4wNy03LjA3bC0xLjcyIDEuNzEiLz48cGF0aCBkPSJNMTQgMTFhNSA1IDAgMCAwLTcuNTQtLjU0bC0zIDNhNSA1IDAgMCAwIDcuMDcgNy4wN2wxLjcxLTEuNzEiLz48L3N2Zz4="  # noqa: E501
 
 MAX_REDIRECTS = 5
-
-
-def validate_url_ip(url: str) -> None:
-    """
-    Validate that a URL doesn't point to a private/internal IP address.
-    Resolves hostnames to IPs before checking.
-
-    Args:
-        url: The URL to validate
-
-    Raises:
-        ValueError: If the URL points to a private/internal IP
-    """
-    parsed = urlparse(url)
-    hostname = parsed.hostname
-
-    if not hostname:
-        raise ValueError("Invalid URL: No hostname found")
-
-    if parsed.scheme not in ("http", "https"):
-        raise ValueError("Invalid URL scheme. Only HTTP and HTTPS are allowed")
-
-    try:
-        addr_info = socket.getaddrinfo(hostname, None)
-    except socket.gaierror:
-        raise ValueError("Hostname could not be resolved")
-
-    if not addr_info:
-        raise ValueError("No IP addresses found for the hostname")
-
-    for addr in addr_info:
-        ip = ipaddress.ip_address(addr[4][0])
-        if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
-            raise ValueError("Access to private/internal networks is not allowed")
 
 
 def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[str]:
@@ -91,7 +56,7 @@ def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[s
             if favicon_tag and favicon_tag.get("href"):
                 favicon_href = urljoin(base_url, favicon_tag["href"])
                 try:
-                    validate_url_ip(favicon_href)
+                    validate_url(favicon_href)
                 except ValueError:
                     continue
                 return favicon_href
@@ -100,7 +65,7 @@ def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[s
     fallback_url = f"{parsed_url.scheme}://{parsed_url.netloc}/favicon.ico"
 
     try:
-        validate_url_ip(fallback_url)
+        validate_url(fallback_url)
         response = requests.head(fallback_url, timeout=2, allow_redirects=False)
         if response.status_code == 200:
             return fallback_url
@@ -133,7 +98,7 @@ def fetch_and_encode_favicon(
                 "favicon_base64": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
             }
 
-        validate_url_ip(favicon_url)
+        validate_url(favicon_url)
         response = requests.get(favicon_url, headers=headers, timeout=1)
 
         content_type = response.headers.get("content-type", "image/x-icon")
@@ -172,7 +137,7 @@ def crawl_link_metadata(url: str) -> Dict[str, Any]:
         final_url = url
 
         try:
-            validate_url_ip(final_url)
+            validate_url(final_url)
         except ValueError as e:
             logger.warning(f"URL validation failed for {url}: {e}")
             return {
@@ -191,7 +156,7 @@ def crawl_link_metadata(url: str) -> Dict[str, Any]:
                 if not redirect_url:
                     break
                 final_url = urljoin(final_url, redirect_url)
-                validate_url_ip(final_url)
+                validate_url(final_url)
                 redirect_count += 1
                 response = requests.get(final_url, headers=headers, timeout=1, allow_redirects=False)
 

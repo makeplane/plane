@@ -10,8 +10,6 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
-import socket
-import ipaddress
 from urllib.parse import urlparse
 
 # Django imports
@@ -24,87 +22,38 @@ from rest_framework import serializers
 from .base import DynamicBaseSerializer
 from plane.db.models import Webhook, WebhookLog
 from plane.db.models.webhook import validate_domain, validate_schema
+from plane.utils.ip_address import validate_url
 
 
 class WebhookSerializer(DynamicBaseSerializer):
     url = serializers.URLField(validators=[validate_schema, validate_domain])
 
-    def create(self, validated_data):
-        url = validated_data.get("url", None)
-
-        # Extract the hostname from the URL
-        hostname = urlparse(url).hostname
-        if not hostname:
-            raise serializers.ValidationError({"url": "Invalid URL: No hostname found."})
-
-        # Resolve the hostname to IP addresses
+    def _validate_webhook_url(self, url):
+        """Validate a webhook URL against SSRF and disallowed domain rules."""
         try:
-            ip_addresses = socket.getaddrinfo(hostname, None)
-        except socket.gaierror:
-            raise serializers.ValidationError({"url": "Hostname could not be resolved."})
+            validate_url(url, block_private=not settings.IS_SELF_MANAGED)
+        except ValueError as e:
+            raise serializers.ValidationError({"url": str(e)})
 
-        if not ip_addresses:
-            raise serializers.ValidationError({"url": "No IP addresses found for the hostname."})
-
-        for addr in ip_addresses:
-            ip = ipaddress.ip_address(addr[4][0])
-            if ip.is_loopback:
-                raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
-
-            # if in cloud environment, private IP addresses are also not allowed
-            if not settings.IS_SELF_MANAGED and ip.is_private:
-                raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
-
-        # Additional validation for multiple request domains and their subdomains
+        hostname = urlparse(url).hostname
         request = self.context.get("request")
-        disallowed_domains = ["plane.so"]  # Add your disallowed domains here
+        disallowed_domains = ["plane.so"]
         if request:
-            request_host = request.get_host().split(":")[0]  # Remove port if present
+            request_host = request.get_host().split(":")[0]
             disallowed_domains.append(request_host)
 
-        # Check if hostname is a subdomain or exact match of any disallowed domain
         if any(hostname == domain or hostname.endswith("." + domain) for domain in disallowed_domains):
             raise serializers.ValidationError({"url": "URL domain or its subdomain is not allowed."})
 
+    def create(self, validated_data):
+        url = validated_data.get("url", None)
+        self._validate_webhook_url(url)
         return Webhook.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         url = validated_data.get("url", None)
         if url:
-            # Extract the hostname from the URL
-            hostname = urlparse(url).hostname
-            if not hostname:
-                raise serializers.ValidationError({"url": "Invalid URL: No hostname found."})
-
-            # Resolve the hostname to IP addresses
-            try:
-                ip_addresses = socket.getaddrinfo(hostname, None)
-            except socket.gaierror:
-                raise serializers.ValidationError({"url": "Hostname could not be resolved."})
-
-            if not ip_addresses:
-                raise serializers.ValidationError({"url": "No IP addresses found for the hostname."})
-
-            for addr in ip_addresses:
-                ip = ipaddress.ip_address(addr[4][0])
-                if ip.is_loopback:
-                    raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
-
-                # if in cloud environment, private IP addresses are also not allowed
-                if not settings.IS_SELF_MANAGED and ip.is_private:
-                    raise serializers.ValidationError({"url": "URL resolves to a blocked IP address."})
-
-            # Additional validation for multiple request domains and their subdomains
-            request = self.context.get("request")
-            disallowed_domains = ["plane.so"]  # Add your disallowed domains here
-            if request:
-                request_host = request.get_host().split(":")[0]  # Remove port if present
-                disallowed_domains.append(request_host)
-
-            # Check if hostname is a subdomain or exact match of any disallowed domain
-            if any(hostname == domain or hostname.endswith("." + domain) for domain in disallowed_domains):
-                raise serializers.ValidationError({"url": "URL domain or its subdomain is not allowed."})
-
+            self._validate_webhook_url(url)
         return super().update(instance, validated_data)
 
     class Meta:
