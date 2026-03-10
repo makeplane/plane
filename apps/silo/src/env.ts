@@ -255,7 +255,9 @@ export async function resolveSecrets(): Promise<void> {
   if (ttlMs > 0 && !refreshTimer) {
     refreshTimer = setInterval(() => {
       refreshSecrets().catch((err: unknown) => {
-        logger.error("AWS Secrets Manager: failed to refresh secrets", { error: err });
+        logger.error("AWS Secrets Manager: failed to refresh secrets", {
+          error: err,
+        });
       });
     }, ttlMs);
     // Allow the process to exit even if the timer is still running

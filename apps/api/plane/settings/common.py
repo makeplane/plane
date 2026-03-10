@@ -201,19 +201,14 @@ if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
 # True when either IRSA (AWS_ROLE_ARN) or EKS Pod Identity
 # (AWS_CONTAINER_CREDENTIALS_FULL_URI) is present.
 _has_aws_credentials = bool(
-    os.environ.get("AWS_ROLE_ARN", "")
-    or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
+    os.environ.get("AWS_ROLE_ARN", "") or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
 )
 
 # AWS Secrets Manager: When _has_aws_credentials and RDS_SECRET_ARN are both set,
 # IRSA or Pod Identity is used to fetch DB credentials from Secrets Manager.
 # Rotation is handled automatically by the custom backend (cache + retry).
 # DATABASE_URL (and DATABASE_READ_REPLICA_URL) take precedence when set.
-if (
-    _has_aws_credentials
-    and os.environ.get("RDS_SECRET_ARN")
-    and not os.environ.get("DATABASE_URL")
-):
+if _has_aws_credentials and os.environ.get("RDS_SECRET_ARN") and not os.environ.get("DATABASE_URL"):
     _aws_region = os.environ.get("AWS_REGION", "us-east-1")
     DATABASES["default"]["ENGINE"] = "plane.db.backends.secrets_manager"
     DATABASES["default"]["SECRET_ARN"] = os.environ.get("RDS_SECRET_ARN")
@@ -232,10 +227,7 @@ def _is_bare_redis_host_port(url: str) -> bool:
 
 REDIS_URL = os.environ.get("REDIS_URL")
 _aws_region = os.environ.get("AWS_REGION", "us-east-1")
-_has_elasticache = (
-    _has_aws_credentials
-    and os.environ.get("ELASTICACHE_SECRET_ARN")
-)
+_has_elasticache = _has_aws_credentials and os.environ.get("ELASTICACHE_SECRET_ARN")
 
 # ElastiCache case 3: REDIS_URL not set — fetch host, port, token from Secrets Manager.
 if not REDIS_URL and _has_elasticache:
@@ -345,10 +337,7 @@ def _is_bare_amqp_host_port(url: str) -> bool:
 
 AMQP_URL = os.environ.get("AMQP_URL")
 _aws_region_mq = os.environ.get("AWS_REGION", "us-east-1")
-_has_amazonmq = (
-    _has_aws_credentials
-    and os.environ.get("AMAZONMQ_SECRET_ARN")
-)
+_has_amazonmq = _has_aws_credentials and os.environ.get("AMAZONMQ_SECRET_ARN")
 
 # AmazonMQ: AMQP_URL not set — build URL from full secret (user, password, host, port, vhost) in Secrets Manager.
 if not AMQP_URL and _has_amazonmq:
@@ -852,5 +841,6 @@ AGENT_RUN_STALE_TIMEOUT_IN_MINS = int(os.environ.get("AGENT_RUN_STALE_TIMEOUT_IN
 
 # IDP sync rate limit delay
 IDP_SYNC_RATE_LIMIT_DELAY = os.environ.get("IDP_SYNC_RATE_LIMIT_DELAY", 0.5)
+
 # Chat Support Identity Verification
 CHAT_SUPPORT_IDENTITY_VERIFICATION_SECRET = os.environ.get("CHAT_SUPPORT_IDENTITY_VERIFICATION_SECRET", "")

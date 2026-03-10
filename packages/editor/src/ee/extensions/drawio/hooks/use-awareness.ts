@@ -32,6 +32,9 @@ type TDrawioUpdate = {
   savedAt: number;
 };
 
+/** Awareness extends Observable (has on/off); provider types may not expose these. */
+type AwarenessWithEvents = { on(event: string, cb: () => void): void; off(event: string, cb: () => void): void };
+
 export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => {
   const [awarenessUsers, setAwarenessUsers] = useState<
     Array<{
@@ -88,10 +91,10 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
       setAwarenessUsers(states);
     };
 
-    awarenessProvider.on("update", updateAwarenessUsers);
+    (awarenessProvider as unknown as AwarenessWithEvents).on("update", updateAwarenessUsers);
 
     return () => {
-      awarenessProvider.off("update", updateAwarenessUsers);
+      (awarenessProvider as unknown as AwarenessWithEvents).off("update", updateAwarenessUsers);
     };
   }, [editor, diagramId, awarenessProvider]);
 
