@@ -145,6 +145,7 @@ class Issue(ProjectBaseModel):
     sport = models.CharField(max_length=100, null=True, blank=True)
     year = models.CharField(max_length=20, null=True, blank=True)
     category = models.CharField(max_length=100, null=True, blank=True)
+    sg_event_id = models.BigIntegerField(null=True, blank=True, db_index=True)
 
     priority = models.CharField(
         max_length=30,
@@ -156,7 +157,7 @@ class Issue(ProjectBaseModel):
     target_date = models.DateField(null=True, blank=True)
     assignees = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        blank=True,
+        blank=True,  
         related_name="assignee",
         through="IssueAssignee",
         through_fields=("issue", "assignee"),

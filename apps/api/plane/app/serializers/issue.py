@@ -66,7 +66,8 @@ class IssueFlatSerializer(BaseSerializer):
             "sport",    # sport app Field
             "program",  # sport app Field
             "year",     # sport app Field
-            "category"  # sport app Field
+            "category", # sport app Field
+            "sg_event_id",
         ]
 
 class IssueProjectLiteSerializer(BaseSerializer):
@@ -111,6 +112,7 @@ class IssueCreateSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "sg_event_id",
         ]
 
     def to_representation(self, instance):
@@ -789,7 +791,8 @@ class IssueSerializer(DynamicBaseSerializer):
             "sport",    # sport app Field
             "program",  # sport app Field
             "year",     # sport app Field
-            "category"  # sport app Field
+            "category", # sport app Field
+            "sg_event_id",
         ]
         read_only_fields = fields
 
@@ -847,6 +850,7 @@ class IssueListDetailSerializer(serializers.Serializer):
             "program": instance.program,
             "year": instance.year,
             "category": instance.category,
+            "sg_event_id": instance.sg_event_id,
         }
 
         # Handle expanded fields only when requested - using direct field access

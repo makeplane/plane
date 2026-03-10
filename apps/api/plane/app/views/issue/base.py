@@ -39,7 +39,8 @@ from plane.app.serializers import (
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
 from plane.bgtasks.recent_visited_task import recent_visited_task
-from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.service_gateway_webhook_task import service_gateway_event_sync
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
     CycleIssue,
     FileAsset,
@@ -188,6 +189,7 @@ class IssueListEndpoint(BaseAPIView):
                 "program",
                 "year",
                 "category",
+                "sg_event_id",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
@@ -405,6 +407,27 @@ class IssueViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
+            service_gateway_event_sync(
+                event="issue",
+                verb="created",
+                event_data=Issue.issue_objects.filter(pk=serializer.data["id"])
+                .values(
+                    "id",
+                    "workspace_id",
+                    "project_id",
+                    "name",
+                    "start_time",
+                    "start_date",
+                    "target_date",
+                    "level",
+                    "sport",
+                    "program",
+                    "year",
+                    "category",
+                    "sg_event_id",
+                )
+                .first(),
+            )
 
             # Track the issue
             issue_activity.delay(
@@ -459,6 +482,7 @@ class IssueViewSet(BaseViewSet):
                     "program",
                     "year",
                     "category",
+                    "sg_event_id",
                 )
                 .first()
             )
@@ -671,6 +695,27 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
             serializer.save()
+            service_gateway_event_sync(
+                event="issue",
+                verb="updated",
+                event_data=Issue.issue_objects.filter(pk=serializer.data["id"])
+                .values(
+                    "id",
+                    "workspace_id",
+                    "project_id",
+                    "name",
+                    "start_time",
+                    "start_date",
+                    "target_date",
+                    "level",
+                    "sport",
+                    "program",
+                    "year",
+                    "category",
+                    "sg_event_id",
+                )
+                .first(),
+            )
             issue_activity.delay(
                 type="issue.activity.updated",
                 requested_data=requested_data,
@@ -703,8 +748,24 @@ class IssueViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+                # delete workitems using service gateway for proper cascade delete and webhook trigger
+
+        deleted_issue_id = issue.id
 
         issue.delete()
+        webhook_activity.delay(
+            event="issue",
+            verb="deleted",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=request.user.id,
+            slug=slug,
+            current_site=base_host(request=request, is_app=True),
+            event_id=deleted_issue_id,
+            old_identifier=None,
+            new_identifier=None,
+        )
         # delete the issue from recent visits
         UserRecentVisit.objects.filter(
             project_id=project_id,

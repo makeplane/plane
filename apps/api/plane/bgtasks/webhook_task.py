@@ -47,6 +47,7 @@ from plane.db.models import (
     IssueAssignee,
 )
 from plane.license.utils.instance_value import get_email_configuration
+from plane.bgtasks.service_gateway_webhook_task import service_gateway_event_sync
 from plane.utils.exception_logger import log_exception
 from plane.settings.mongo import MongoConnection
 
@@ -430,23 +431,28 @@ def webhook_activity(
         if event == "issue_comment":
             webhooks = webhooks.filter(issue_comment=True)
 
+        event_payload = {"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)
+        actor_payload = get_model_data(event="user", event_id=actor_id)
+
         for webhook in webhooks:
             webhook_send_task.delay(
                 webhook_id=webhook.id,
                 slug=slug,
                 event=event,
-                event_data=({"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)),
+                event_data=event_payload,
                 action=verb,
                 current_site=current_site,
                 activity={
                     "field": field,
                     "new_value": new_value,
                     "old_value": old_value,
-                    "actor": get_model_data(event="user", event_id=actor_id),
+                    "actor": actor_payload,
                     "old_identifier": old_identifier,
                     "new_identifier": new_identifier,
                 },
             )
+
+        service_gateway_event_sync(event=event, verb=verb, event_data=event_payload)
         return
     except Exception as e:
         # Return if a does not exist error occurs

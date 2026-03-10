@@ -57,6 +57,7 @@ from plane.app.permissions import (
     ProjectMemberPermission,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.service_gateway_webhook_task import service_gateway_event_sync
 from plane.db.models import (
     Issue,
     IssueActivity,
@@ -80,7 +81,7 @@ from plane.utils.media_library import (
     validate_segment,
     write_manifest_atomic,
 )
-from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
     work_item_docs,
@@ -577,6 +578,27 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             issue.created_at = request.data.get("created_at", timezone.now())
             issue.created_by_id = request.data.get("created_by", request.user.id)
             issue.save(update_fields=["created_at", "created_by"])
+            service_gateway_event_sync(
+                event="issue",
+                verb="created",
+                event_data=Issue.issue_objects.filter(pk=serializer.data["id"])
+                .values(
+                    "id",
+                    "workspace_id",
+                    "project_id",
+                    "name",
+                    "start_time",
+                    "start_date",
+                    "target_date",
+                    "level",
+                    "sport",
+                    "program",
+                    "year",
+                    "category",
+                    "sg_event_id",
+                )
+                .first(),
+            )
 
             # Track the issue
             issue_activity.delay(
@@ -599,7 +621,8 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            issue.refresh_from_db(fields=["sg_event_id"])
+            return Response(IssueSerializer(issue).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -738,6 +761,27 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                     # If the serializer is valid, save the issue and dispatch
                     # the update issue activity worker event.
                     serializer.save()
+                    service_gateway_event_sync(
+                        event="issue",
+                        verb="updated",
+                        event_data=Issue.issue_objects.filter(pk=issue.id)
+                        .values(
+                            "id",
+                            "workspace_id",
+                            "project_id",
+                            "name",
+                            "start_time",
+                            "start_date",
+                            "target_date",
+                            "level",
+                            "sport",
+                            "program",
+                            "year",
+                            "category",
+                            "sg_event_id",
+                        )
+                        .first(),
+                    )
                     issue_activity.delay(
                         type="issue.activity.updated",
                         requested_data=requested_data,
@@ -747,7 +791,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         current_instance=current_instance,
                         epoch=int(timezone.now().timestamp()),
                     )
-                    return Response(serializer.data, status=status.HTTP_200_OK)
+                    issue.refresh_from_db(fields=["sg_event_id"])
+                    return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
                 return Response(
                     # If the serializer is not valid, respond with 400 bad
                     # request
@@ -785,6 +830,27 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                     issue.created_at = request.data.get("created_at", timezone.now())
                     issue.created_by_id = request.data.get("created_by", request.user.id)
                     issue.save(update_fields=["created_at", "created_by"])
+                    service_gateway_event_sync(
+                        event="issue",
+                        verb="created",
+                        event_data=Issue.issue_objects.filter(pk=serializer.data["id"])
+                        .values(
+                            "id",
+                            "workspace_id",
+                            "project_id",
+                            "name",
+                            "start_time",
+                            "start_date",
+                            "target_date",
+                            "level",
+                            "sport",
+                            "program",
+                            "year",
+                            "category",
+                            "sg_event_id",
+                        )
+                        .first(),
+                    )
 
                     issue_activity.delay(
                         type="issue.activity.created",
@@ -795,7 +861,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         current_instance=None,
                         epoch=int(timezone.now().timestamp()),
                     )
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    issue.refresh_from_db(fields=["sg_event_id"])
+                    return Response(IssueSerializer(issue).data, status=status.HTTP_201_CREATED)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
@@ -861,6 +928,27 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 )
 
             serializer.save()
+            service_gateway_event_sync(
+                event="issue",
+                verb="updated",
+                event_data=Issue.issue_objects.filter(pk=pk)
+                .values(
+                    "id",
+                    "workspace_id",
+                    "project_id",
+                    "name",
+                    "start_time",
+                    "start_date",
+                    "target_date",
+                    "level",
+                    "sport",
+                    "program",
+                    "year",
+                    "category",
+                    "sg_event_id",
+                )
+                .first(),
+            )
             issue_activity.delay(
                 type="issue.activity.updated",
                 requested_data=requested_data,
@@ -870,7 +958,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            issue.refresh_from_db(fields=["sg_event_id"])
+            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @work_item_docs(
@@ -908,6 +997,20 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             )
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
         issue.delete()
+        # delete workitems using service gateway for proper cascade delete and webhook trigger
+        webhook_activity.delay(
+            event="issue",
+            verb="deleted",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=request.user.id,
+            slug=slug,
+            current_site=base_host(request=request, is_app=True),
+            event_id=issue.id,
+            old_identifier=None,
+            new_identifier=None,
+        )
         issue_activity.delay(
             type="issue.activity.deleted",
             requested_data=json.dumps({"issue_id": str(pk)}),
