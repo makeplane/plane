@@ -15,6 +15,7 @@ import preview from "#.storybook/preview";
 import { AnimatedCounter } from "./animated-counter";
 
 const meta = preview.meta({
+  title: "Feedback/Animated Counter",
   component: AnimatedCounter,
   parameters: {
     layout: "centered",

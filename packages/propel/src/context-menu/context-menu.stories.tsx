@@ -19,6 +19,7 @@ import { ContextMenu } from "./context-menu";
 
 // cannot use satisfies here because base-ui does not have portable types.
 const meta = preview.meta({
+  title: "Overlays/Context Menu",
   component: ContextMenu,
   subcomponents: {
     ContextMenuTrigger: ContextMenu.Trigger,

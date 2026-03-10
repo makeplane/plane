@@ -23,6 +23,7 @@ const sampleItems: TAttachmentPreviewItem[] = [
 ];
 
 const meta = preview.meta({
+  title: "Domain/Attachments",
   component: AttachmentPreviewList,
   parameters: {
     layout: "centered",

@@ -44,6 +44,7 @@ const targetLine = {
 } as const;
 
 const meta = preview.meta({
+  title: "Charts/Line Chart",
   component: LineChart,
   parameters: {
     layout: "padded",

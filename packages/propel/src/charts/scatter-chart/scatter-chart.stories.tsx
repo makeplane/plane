@@ -26,6 +26,7 @@ const sampleData = [
 ];
 
 const meta = preview.meta({
+  title: "Charts/Scatter Chart",
   component: ScatterChart,
   parameters: {
     layout: "padded",

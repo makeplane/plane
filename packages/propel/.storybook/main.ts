@@ -16,7 +16,13 @@ import { defineMain } from "@storybook/react-vite/node";
 export default defineMain({
   framework: "@storybook/react-vite",
   stories: ["../src/**/*.stories.@(ts|tsx)"],
-  addons: ["@storybook/addon-designs", "@storybook/addon-docs", "@storybook/addon-vitest", "@storybook/addon-a11y"],
+  addons: [
+    "@storybook/addon-designs",
+    "@storybook/addon-docs",
+    "@storybook/addon-themes",
+    "@storybook/addon-vitest",
+    "@storybook/addon-a11y",
+  ],
   viteFinal: (config) => {
     config.define = {
       ...config.define,

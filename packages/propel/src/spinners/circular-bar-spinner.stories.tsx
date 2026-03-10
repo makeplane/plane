@@ -16,6 +16,7 @@ import preview from "#.storybook/preview";
 import { CircularBarSpinner } from "./circular-bar-spinner";
 
 const meta = preview.meta({
+  title: "Feedback/Circular Bar Spinner",
   component: CircularBarSpinner,
   parameters: {
     layout: "centered",

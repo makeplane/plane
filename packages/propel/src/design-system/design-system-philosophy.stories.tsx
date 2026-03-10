@@ -14,6 +14,7 @@
 import preview from "#.storybook/preview";
 
 const meta = preview.meta({
+  title: "Introduction",
   parameters: {
     layout: "fullscreen",
     docs: {

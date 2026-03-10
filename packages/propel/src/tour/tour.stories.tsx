@@ -62,6 +62,7 @@ const tourStepsWithImages = [
 ];
 
 const meta = preview.meta({
+  title: "Navigation/Tour",
   component: Tour,
   parameters: {
     layout: "centered",

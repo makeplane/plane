@@ -19,6 +19,7 @@ import { EIssuePropertyType } from "@plane/types";
 import { DateSelect } from "./date-select";
 
 const meta = preview.type<{ parameters: { form: UseFormProps } }>().meta({
+  title: "Domain/Custom Properties/Date",
   component: DateSelect,
   parameters: {
     layout: "centered",

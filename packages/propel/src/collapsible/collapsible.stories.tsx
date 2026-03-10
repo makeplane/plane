@@ -17,6 +17,7 @@ import { ChevronDownIcon } from "../icons/arrows/chevron-down";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "./collapsible";
 
 const meta = preview.meta({
+  title: "Navigation/Collapsible",
   component: Collapsible,
   subcomponents: {
     CollapsibleTrigger,

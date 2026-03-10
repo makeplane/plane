@@ -67,6 +67,7 @@ const threeOptions: TIssuePropertyOption[] = [
 ];
 
 const meta = preview.type<{ parameters: { form: UseFormProps } }>().meta({
+  title: "Domain/Custom Properties/Option Select",
   component: OptionSelect,
   parameters: {
     layout: "centered",

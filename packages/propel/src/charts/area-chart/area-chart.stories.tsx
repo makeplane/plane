@@ -48,6 +48,7 @@ const expensesArea = {
 } as const;
 
 const meta = preview.meta({
+  title: "Charts/Area Chart",
   component: AreaChart,
   parameters: {
     layout: "padded",

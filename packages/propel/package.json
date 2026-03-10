@@ -109,6 +109,7 @@
     "@storybook/addon-a11y": "catalog:",
     "@storybook/addon-designs": "catalog:",
     "@storybook/addon-docs": "catalog:",
+    "@storybook/addon-themes": "catalog:",
     "@storybook/addon-vitest": "catalog:",
     "@storybook/react-vite": "catalog:",
     "@types/react": "catalog:",

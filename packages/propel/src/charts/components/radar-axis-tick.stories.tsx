@@ -15,6 +15,7 @@ import preview from "#.storybook/preview";
 import { CustomRadarAxisTick } from "./tick";
 
 const meta = preview.meta({
+  title: "Charts/Components/Radar Axis Tick",
   component: CustomRadarAxisTick,
   parameters: {
     layout: "padded",

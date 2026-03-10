@@ -16,6 +16,7 @@ import { fn } from "storybook/test";
 import { EmojiReactionButton } from "./emoji-reaction";
 
 const meta = preview.meta({
+  title: "Media/Emoji Reaction Button",
   component: EmojiReactionButton,
   parameters: {
     layout: "centered",

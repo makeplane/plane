@@ -15,6 +15,7 @@ import preview from "#.storybook/preview";
 import { NavigationTourArrow } from "./navigation-tour-arrow";
 
 const meta = preview.meta({
+  title: "Navigation/Navigation Tour Arrow",
   component: NavigationTourArrow,
   parameters: {
     layout: "centered",

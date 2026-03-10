@@ -17,6 +17,7 @@ import { expect, screen } from "storybook/test";
 import { Tooltip } from "./root";
 
 const meta = preview.meta({
+  title: "Overlays/Tooltip",
   component: Tooltip,
   parameters: {
     layout: "centered",

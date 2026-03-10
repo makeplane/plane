@@ -16,6 +16,7 @@ import { expect, fn, screen } from "storybook/test";
 import { Popover } from "./root";
 
 const meta = preview.meta({
+  title: "Overlays/Popover",
   component: Popover,
   subcomponents: {
     PopoverTrigger: Popover.Trigger,

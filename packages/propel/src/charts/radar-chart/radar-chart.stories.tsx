@@ -40,6 +40,7 @@ const teamBRadar = {
 } as const;
 
 const meta = preview.meta({
+  title: "Charts/Radar Chart",
   component: RadarChart,
   parameters: {
     layout: "padded",

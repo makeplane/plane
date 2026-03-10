@@ -15,6 +15,7 @@ import preview from "#.storybook/preview";
 import { CustomXAxisTick } from "./tick";
 
 const meta = preview.meta({
+  title: "Charts/Components/X Axis Tick",
   component: CustomXAxisTick,
   parameters: {
     layout: "padded",

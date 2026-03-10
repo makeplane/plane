@@ -31,6 +31,7 @@ import { ListLayoutIcon } from "../icons/layouts/list-icon";
 import { Toolbar } from "./toolbar";
 
 const meta = preview.meta({
+  title: "Media/Toolbar",
   component: Toolbar,
   parameters: {
     layout: "padded",

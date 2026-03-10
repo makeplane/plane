@@ -17,6 +17,7 @@ import { CloseIcon } from "../icons/actions/close-icon";
 import { Dialog, EDialogWidth } from "./root";
 
 const meta = preview.meta({
+  title: "Overlays/Dialog",
   component: Dialog,
   subcomponents: {
     DialogPanel: Dialog.Panel,

@@ -17,6 +17,7 @@ import { EmojiPicker } from "./emoji-picker";
 import { EmojiIconPickerTypes } from "./helper";
 
 const meta = preview.meta({
+  title: "Media/Emoji Icon Picker",
   component: EmojiPicker,
   parameters: {
     layout: "centered",

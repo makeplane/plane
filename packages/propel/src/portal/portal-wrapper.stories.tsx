@@ -16,6 +16,7 @@ import { fn } from "storybook/test";
 import { PortalWrapper } from "./";
 
 const meta = preview.meta({
+  title: "Overlays/Portal Wrapper",
   component: PortalWrapper,
   parameters: {
     layout: "centered",

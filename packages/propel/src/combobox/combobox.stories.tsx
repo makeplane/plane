@@ -30,6 +30,7 @@ const frameworks = [
 ];
 
 const meta = preview.meta({
+  title: "Overlays/Combobox",
   component: Combobox,
   subcomponents: {
     ComboboxButton: Combobox.Button,

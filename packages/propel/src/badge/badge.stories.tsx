@@ -16,6 +16,7 @@ import preview from "#.storybook/preview";
 import { Badge } from "./badge";
 
 const meta = preview.meta({
+  title: "Primitives/Badge",
   component: Badge,
   parameters: {
     layout: "centered",

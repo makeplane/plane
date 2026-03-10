@@ -16,6 +16,7 @@ import preview from "#.storybook/preview";
 import { Card, ECardVariant, ECardSpacing, ECardDirection } from "./card";
 
 const meta = preview.meta({
+  title: "Data Display/Card",
   component: Card,
   parameters: {
     layout: "centered",

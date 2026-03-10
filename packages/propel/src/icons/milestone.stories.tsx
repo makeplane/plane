@@ -24,6 +24,7 @@ const MILESTONE_COLORS = {
 } as const;
 
 const meta = preview.meta({
+  title: "Media/Icons/Milestone",
   component: MilestoneIcon,
   argTypes: {
     fill: {

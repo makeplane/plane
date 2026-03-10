@@ -16,6 +16,7 @@ import { fn } from "storybook/test";
 import { CodeEditor } from "./code-editor";
 
 const meta = preview.meta({
+  title: "Data Display/Code Editor",
   component: CodeEditor,
   args: {
     onChange: fn(),

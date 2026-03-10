@@ -77,6 +77,7 @@ catalog:
   '@socket.io/redis-emitter': 5.1.0
   '@storybook/addon-a11y': 10.2.8
   '@storybook/addon-designs': 11.1.2
+  '@storybook/addon-themes': 10.2.10
   '@storybook/addon-docs': 10.2.8
   '@storybook/addon-vitest': 10.2.8
   '@storybook/react-vite': 10.2.8

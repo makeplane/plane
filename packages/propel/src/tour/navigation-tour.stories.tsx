@@ -43,6 +43,7 @@ const navigationTourSteps: NavigationTourStep[] = [
 ];
 
 const meta = preview.meta({
+  title: "Navigation/Navigation Tour",
   component: NavigationTour,
   parameters: {
     layout: "centered",

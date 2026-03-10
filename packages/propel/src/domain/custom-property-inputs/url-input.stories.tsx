@@ -19,6 +19,7 @@ import { EIssuePropertyType } from "@plane/types";
 import { UrlInput } from "./url-input";
 
 const meta = preview.type<{ parameters: { form: UseFormProps } }>().meta({
+  title: "Domain/Custom Properties/URL",
   component: UrlInput,
   parameters: {
     layout: "centered",

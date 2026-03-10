@@ -12,17 +12,36 @@
  */
 
 import { definePreview } from "@storybook/react-vite";
+import addonThemes, { withThemeByDataAttribute } from "@storybook/addon-themes";
 import addonDocs from "@storybook/addon-docs";
 import addonA11y from "@storybook/addon-a11y";
 import addonDesigns from "@storybook/addon-designs";
 import addonVitest from "@storybook/addon-vitest";
 import "./tailwind.css";
+import { themes } from "storybook/theming";
 
+console.log(themes.dark);
 export default definePreview({
-  addons: [addonDocs(), addonA11y(), addonDesigns(), addonVitest()],
+  addons: [addonDocs(), addonA11y(), addonDesigns(), addonVitest(), addonThemes()],
+  decorators: [
+    withThemeByDataAttribute({
+      themes: {
+        Light: "light",
+        Dark: "dark",
+        "Light (High Contrast)": "light-contrast",
+        "Dark (High Contrast)": "dark-contrast",
+      },
+      defaultTheme: "Light",
+      attributeName: "data-theme",
+    }),
+  ],
   parameters: {
     controls: {
       matchers: {},
+      sort: "requiredFirst",
+    },
+    backgrounds: {
+      disable: true,
     },
   },
   tags: ["autodocs"],

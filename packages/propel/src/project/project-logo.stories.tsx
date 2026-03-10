@@ -15,6 +15,7 @@ import preview from "#.storybook/preview";
 import { ProjectLogo } from "./project-logo";
 
 const meta = preview.meta({
+  title: "Media/Project Logo",
   component: ProjectLogo,
   parameters: {
     layout: "centered",

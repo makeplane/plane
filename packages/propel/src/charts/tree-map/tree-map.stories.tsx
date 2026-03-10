@@ -23,6 +23,7 @@ const sampleData = [
 ];
 
 const meta = preview.meta({
+  title: "Charts/Tree Map",
   component: TreeMapChart,
   parameters: {
     layout: "padded",

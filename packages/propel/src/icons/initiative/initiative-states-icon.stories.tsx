@@ -17,6 +17,7 @@ import { InitiativeStateIcon } from "./initiative-states-icon";
 import { ClosedIcon } from "./closed-icon";
 
 const meta = preview.meta({
+  title: "Media/Icons/Initiative States",
   component: InitiativeStateIcon,
   parameters: {
     layout: "centered",

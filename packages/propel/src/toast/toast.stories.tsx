@@ -17,6 +17,7 @@ import { Toast, setToast, updateToast, setPromiseToast, dismissToast, TOAST_TYPE
 import type { ToastProps } from "./toast";
 
 const meta = preview.type<{ parameters: { toast: ToastProps } }>().meta({
+  title: "Feedback/Toast",
   component: Toast,
   parameters: {
     layout: "centered",

@@ -16,6 +16,7 @@ import preview from "#.storybook/preview";
 import { Logo } from "./logo";
 
 const meta = preview.meta({
+  title: "Media/Logo",
   component: Logo,
   parameters: {
     layout: "centered",
@@ -97,14 +98,6 @@ export const MaterialIconLargeSize = meta.story({
     },
     size: 48,
     type: "material",
-  },
-});
-
-export const NoInUse = meta.story({
-  args: {
-    // @ts-expect-error testing edge case with missing in_use
-    logo: { emoji: { value: "128640" } },
-    size: 16,
   },
 });
 

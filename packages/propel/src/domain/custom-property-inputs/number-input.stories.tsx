@@ -19,6 +19,7 @@ import { EIssuePropertyType } from "@plane/types";
 import { NumberInput } from "./number-input";
 
 const meta = preview.type<{ parameters: { form: UseFormProps } }>().meta({
+  title: "Domain/Custom Properties/Number",
   component: NumberInput,
   parameters: {
     layout: "centered",

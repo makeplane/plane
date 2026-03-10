@@ -17,6 +17,7 @@ import { ModalPortal } from "./";
 import { EPortalPosition, EPortalWidth } from "./constants";
 
 const meta = preview.meta({
+  title: "Overlays/Modal Portal",
   component: ModalPortal,
   parameters: {
     layout: "centered",

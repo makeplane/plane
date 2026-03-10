@@ -17,6 +17,7 @@ import { expect } from "storybook/test";
 import { Command } from "./command";
 
 const meta = preview.meta({
+  title: "Overlays/Command",
   component: Command,
   subcomponents: {
     CommandInput: Command.Input,

@@ -16,6 +16,7 @@ import preview from "#.storybook/preview";
 import { CustomActiveShape } from "./active-shape";
 
 const meta = preview.meta({
+  title: "Charts/Pie Chart Active Shape",
   component: CustomActiveShape,
   parameters: {
     layout: "padded",

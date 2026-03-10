@@ -29,6 +29,7 @@ const cells = [
 ];
 
 const meta = preview.meta({
+  title: "Charts/Pie Chart",
   component: PieChart,
   parameters: {
     layout: "padded",

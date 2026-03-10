@@ -23,6 +23,7 @@ const legendPayload = [
 ];
 
 const meta = preview.meta({
+  title: "Charts/Components/Legend",
   parameters: {
     layout: "padded",
   },

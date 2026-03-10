@@ -23,6 +23,7 @@ import { UnstartedGroupIcon } from "./unstarted-group-icon";
 import { TriageGroupIcon } from "./triage-group-icon";
 
 const meta = preview.meta({
+  title: "Media/Icons/State Icons",
   component: StateGroupIcon,
   parameters: {
     layout: "centered",

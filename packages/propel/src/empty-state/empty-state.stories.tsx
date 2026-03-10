@@ -15,6 +15,7 @@ import preview from "#.storybook/preview";
 import { EmptyState } from "./empty-state";
 
 const meta = preview.meta({
+  title: "Feedback/Empty State",
   component: EmptyState,
   parameters: {
     layout: "centered",

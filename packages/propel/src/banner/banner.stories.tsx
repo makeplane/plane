@@ -15,6 +15,7 @@ import preview from "#.storybook/preview";
 import { Banner } from "./banner";
 
 const meta = preview.meta({
+  title: "Feedback/Banner",
   component: Banner,
   parameters: {
     layout: "fullscreen",

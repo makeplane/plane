@@ -16,6 +16,7 @@ import { fn } from "storybook/test";
 import { EmojiReactionGroup } from "./emoji-reaction";
 
 const meta = preview.meta({
+  title: "Media/Emoji Reaction Group",
   component: EmojiReactionGroup,
   parameters: {
     layout: "centered",

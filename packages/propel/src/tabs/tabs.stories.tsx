@@ -24,6 +24,7 @@ const tabOptions = [
 ];
 
 const meta = preview.meta({
+  title: "Navigation/Tabs",
   component: Tabs,
   subcomponents: {
     TabsList: Tabs.List,

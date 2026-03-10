@@ -31,6 +31,7 @@ const icon = () => (
 );
 
 const meta = preview.meta({
+  title: "Primitives/Icon Button",
   component: IconButton,
   parameters: {
     layout: "centered",

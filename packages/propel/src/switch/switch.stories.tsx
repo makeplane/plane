@@ -17,6 +17,7 @@ import { fn } from "storybook/test";
 import { Switch } from "./root";
 
 const meta = preview.meta({
+  title: "Primitives/Switch",
   component: Switch,
   parameters: {
     layout: "centered",

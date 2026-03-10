@@ -19,6 +19,7 @@ import { EIssuePropertyType } from "@plane/types";
 import { BooleanInput } from "./boolean-input";
 
 const meta = preview.type<{ parameters: { form: UseFormProps } }>().meta({
+  title: "Domain/Custom Properties/Boolean",
   component: BooleanInput,
   parameters: {
     layout: "centered",

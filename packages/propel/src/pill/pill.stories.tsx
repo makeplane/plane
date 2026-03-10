@@ -16,6 +16,7 @@ import preview from "#.storybook/preview";
 import { Pill, EPillVariant, EPillSize } from "./pill";
 
 const meta = preview.meta({
+  title: "Primitives/Pill",
   component: Pill,
   parameters: {
     layout: "centered",

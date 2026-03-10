@@ -18,6 +18,7 @@ import { VideoPlayer } from "./video-player";
 const VIDEO_SRC = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
 const meta = preview.meta({
+  title: "Media/Video Player",
   component: VideoPlayer,
   parameters: {
     layout: "padded",

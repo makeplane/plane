@@ -16,6 +16,7 @@ import preview from "#.storybook/preview";
 import { Separator } from "./separator";
 
 const meta = preview.meta({
+  title: "Primitives/Separator",
   component: Separator,
   parameters: {
     layout: "centered",

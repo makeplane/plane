@@ -17,6 +17,7 @@ import { useArgs } from "storybook/preview-api";
 import { EmojiReaction } from "./emoji-reaction";
 
 const meta = preview.meta({
+  title: "Media/Emoji Reaction",
   component: EmojiReaction,
   parameters: {
     layout: "centered",

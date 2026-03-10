@@ -16,6 +16,7 @@ import { fn } from "storybook/test";
 import { EmojiReactionPicker } from "./emoji-reaction-picker";
 
 const meta = preview.meta({
+  title: "Media/Emoji Reaction Picker",
   component: EmojiReactionPicker,
   parameters: {
     layout: "centered",

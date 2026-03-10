@@ -16,6 +16,7 @@ import { ChevronRightIcon } from "../icons/arrows/chevron-right";
 import { CollapsibleButton } from "./collapsible-button";
 
 const meta = preview.meta({
+  title: "Navigation/Collapsible Button",
   component: CollapsibleButton,
   parameters: {
     layout: "centered",

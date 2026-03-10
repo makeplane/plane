@@ -15,6 +15,7 @@ import preview from "#.storybook/preview";
 import { CustomYAxisTick } from "./tick";
 
 const meta = preview.meta({
+  title: "Charts/Components/Y Axis Tick",
   component: CustomYAxisTick,
   parameters: {
     layout: "padded",

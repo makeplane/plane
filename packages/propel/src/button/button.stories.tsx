@@ -16,6 +16,7 @@ import { expect, fn } from "storybook/test";
 import { Button } from "./button";
 
 const meta = preview.meta({
+  title: "Primitives/Button",
   component: Button,
   parameters: {
     layout: "centered",

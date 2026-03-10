@@ -23,6 +23,7 @@ import { TabNavigationItem } from "./tab-navigation-item";
 import { TabNavigationList } from "./tab-navigation-list";
 
 const meta = preview.meta({
+  title: "Navigation/Tab Navigation",
   component: TabNavigationList,
   parameters: {
     layout: "centered",

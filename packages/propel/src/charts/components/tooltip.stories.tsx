@@ -15,6 +15,7 @@ import preview from "#.storybook/preview";
 import { CustomTooltip } from "./tooltip";
 
 const meta = preview.meta({
+  title: "Charts/Components/Tooltip",
   component: CustomTooltip,
   parameters: {
     layout: "padded",

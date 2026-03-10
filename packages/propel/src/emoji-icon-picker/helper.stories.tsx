@@ -46,6 +46,7 @@ function HelperShowcase({ fn, args, label }: { fn: (...args: never[]) => unknown
 }
 
 const meta = preview.meta({
+  title: "Media/Emoji Icon Picker Helper",
   component: HelperShowcase,
   parameters: {
     layout: "padded",

@@ -16,6 +16,7 @@ import { expect } from "storybook/test";
 import { Accordion } from "./accordion";
 
 const meta = preview.meta({
+  title: "Navigation/Accordion",
   component: Accordion.Root,
   parameters: {
     layout: "centered",

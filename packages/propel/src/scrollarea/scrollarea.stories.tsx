@@ -16,6 +16,7 @@ import preview from "#.storybook/preview";
 import { ScrollArea } from "./scrollarea";
 
 const meta = preview.meta({
+  title: "Data Display/Scroll Area",
   component: ScrollArea,
   parameters: {
     layout: "padded",

@@ -16,6 +16,7 @@ import preview from "#.storybook/preview";
 import { Avatar } from "./avatar";
 
 const meta = preview.meta({
+  title: "Primitives/Avatar",
   component: Avatar,
   parameters: {
     layout: "centered",

@@ -38,6 +38,7 @@ const stackedBars = [
 ] as const;
 
 const meta = preview.meta({
+  title: "Charts/Bar Chart",
   component: BarChart,
   parameters: {
     layout: "padded",

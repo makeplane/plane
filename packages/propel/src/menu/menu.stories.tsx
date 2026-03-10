@@ -17,6 +17,7 @@ import { expect, fn, screen } from "storybook/test";
 import { Menu } from "./menu";
 
 const meta = preview.type<{ args: { onMenuItemClick?: () => void } }>().meta({
+  title: "Overlays/Menu",
   component: Menu,
   parameters: {
     layout: "centered",

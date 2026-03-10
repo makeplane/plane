@@ -15,6 +15,7 @@ import preview from "#.storybook/preview";
 import { ToastStatic, TOAST_TYPE } from "./toast";
 
 const meta = preview.meta({
+  title: "Feedback/Toast Static",
   component: ToastStatic,
   parameters: {
     layout: "centered",

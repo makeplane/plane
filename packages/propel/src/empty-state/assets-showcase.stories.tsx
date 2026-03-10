@@ -18,6 +18,7 @@ import { VerticalStackAssetsMap } from "./assets/vertical-stack/constant";
 
 // Meta for asset showcase
 const meta = preview.meta({
+  title: "Feedback/Empty State Assets",
   parameters: {
     layout: "fullscreen",
     docs: {

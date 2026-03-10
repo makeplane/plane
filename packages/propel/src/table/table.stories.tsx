@@ -16,6 +16,7 @@ import { expect } from "storybook/test";
 import { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from "./core";
 
 const meta = preview.meta({
+  title: "Data Display/Table",
   component: Table,
   parameters: {
     layout: "centered",

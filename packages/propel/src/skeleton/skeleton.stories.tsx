@@ -16,6 +16,7 @@ import preview from "#.storybook/preview";
 import { Skeleton } from "./index";
 
 const meta = preview.meta({
+  title: "Feedback/Skeleton",
   component: Skeleton,
   parameters: {
     layout: "centered",

@@ -16,6 +16,7 @@ import { expect } from "storybook/test";
 import { Input } from "./index";
 
 const meta = preview.meta({
+  title: "Primitives/Input",
   component: Input,
   parameters: {
     layout: "centered",

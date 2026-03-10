@@ -312,6 +312,7 @@ const projectLogo: TLogoProps = { in_use: "emoji", emoji: { value: "128640" } };
 const emptyProperties: TIntakeFormProperty[] = [];
 
 const meta = preview.meta({
+  title: "Domain/Intake Form",
   component: IntakePublishForm,
   parameters: {
     layout: "centered",

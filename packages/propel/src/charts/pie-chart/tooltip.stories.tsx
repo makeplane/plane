@@ -16,6 +16,7 @@ import preview from "#.storybook/preview";
 import { CustomPieChartTooltip } from "./tooltip";
 
 const meta = preview.meta({
+  title: "Charts/Pie Chart Tooltip",
   component: CustomPieChartTooltip,
   parameters: {
     layout: "padded",

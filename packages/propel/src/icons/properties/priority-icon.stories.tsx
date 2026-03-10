@@ -15,6 +15,7 @@ import preview from "#.storybook/preview";
 import { PriorityPropertyIcon } from "./priority-icon";
 
 const meta = preview.meta({
+  title: "Media/Icons/Priority",
   component: PriorityPropertyIcon,
   parameters: {
     layout: "centered",

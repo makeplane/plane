@@ -16,6 +16,7 @@ import { ModuleStatusIcon } from "./module-status-icon";
 import type { TModuleStatus } from "./module-status-icon";
 
 const meta = preview.meta({
+  title: "Media/Icons/Module Status",
   component: ModuleStatusIcon,
   parameters: {
     layout: "centered",

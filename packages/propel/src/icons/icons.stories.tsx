@@ -235,6 +235,7 @@ const subdirectoryIcons = [
 ];
 
 const meta = preview.meta({
+  title: "Media/Icons",
   parameters: {
     layout: "padded",
   },

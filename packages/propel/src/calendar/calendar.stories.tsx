@@ -16,6 +16,7 @@ import { expect } from "storybook/test";
 import { Calendar } from "./root";
 
 const meta = preview.meta({
+  title: "Data Display/Calendar",
   component: Calendar,
   parameters: {
     layout: "centered",
