@@ -108,7 +108,9 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     });
 
     if (quickAddCallback) {
-      const quickAddPromise = quickAddCallback(projectId.toString(), { ...payload });
+      const quickAddPromise = quickAddCallback(projectId.toString(), {
+        ...payload,
+      });
       setPromiseToast<any>(quickAddPromise, {
         loading: isEpic ? t("epic.adding") : t("issue.adding"),
         success: {
@@ -116,12 +118,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
           message: () => `${isEpic ? t("epic.create.success") : t("issue.create.success")}`,
           actionItems: (data) => (
             // TODO: Translate here
-            <CreateIssueToastActionItems
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={projectId.toString()}
-              issueId={data.id}
-              isEpic={isEpic}
-            />
+            <CreateIssueToastActionItems workspaceSlug={workspaceSlug.toString()} issueId={data.id} isEpic={isEpic} />
           ),
         },
         error: {
