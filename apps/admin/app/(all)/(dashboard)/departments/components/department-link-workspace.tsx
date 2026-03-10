@@ -11,12 +11,32 @@ import type { IInstanceDepartment } from "@plane/services";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useInstanceDepartment, useWorkspace } from "@/hooks/store";
 
+/** Extract a readable string from DRF error responses (object, array, or string). */
+function parseApiError(error: unknown): string {
+  if (!error || typeof error !== "object") return String(error ?? "Unknown error");
+  const obj = error as Record<string, unknown>;
+  // DRF detail / error keys
+  if (typeof obj.detail === "string") return obj.detail;
+  if (typeof obj.error === "string") return obj.error;
+  // Field-level validation: { field: ["msg", ...] }
+  const entries = Object.entries(obj);
+  if (entries.length > 0) {
+    return entries
+      .map(([field, msgs]) => {
+        const msg = Array.isArray(msgs) ? msgs.join(", ") : String(msgs);
+        return `${field}: ${msg}`;
+      })
+      .join(" | ");
+  }
+  return "Unknown error";
+}
+
 type Props = {
   dept: IInstanceDepartment;
 };
 
 export const DepartmentLinkWorkspace = observer(function DepartmentLinkWorkspace({ dept }: Props) {
-  const { linkWorkspace, unlinkWorkspace } = useInstanceDepartment();
+  const { linkWorkspace, unlinkWorkspace, fetchTree } = useInstanceDepartment();
   const { workspaces, workspaceIds, fetchAllWorkspaces, loader } = useWorkspace();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,13 +63,14 @@ export const DepartmentLinkWorkspace = observer(function DepartmentLinkWorkspace
     setOpen(false);
     try {
       await linkWorkspace(dept.id, workspaceId);
+      await fetchTree();
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Workspace linked",
         message: dept.staff_count > 20 ? "Staff are being added to workspace in the background." : undefined,
       });
-    } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to link workspace" });
+    } catch (error) {
+      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to link workspace", message: parseApiError(error) });
     } finally {
       setIsSubmitting(false);
     }
@@ -59,9 +80,10 @@ export const DepartmentLinkWorkspace = observer(function DepartmentLinkWorkspace
     setIsSubmitting(true);
     try {
       await unlinkWorkspace(dept.id);
+      await fetchTree();
       setToast({ type: TOAST_TYPE.SUCCESS, title: "Workspace unlinked" });
-    } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to unlink workspace" });
+    } catch (error) {
+      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to unlink workspace", message: parseApiError(error) });
     } finally {
       setIsSubmitting(false);
     }
