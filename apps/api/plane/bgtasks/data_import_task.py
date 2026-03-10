@@ -17,15 +17,16 @@ import uuid
 # Third party imports
 from celery import shared_task
 import requests
-from django.db import transaction, connection
+from django.db import transaction, connection, models
 from django.conf import settings
 
 from plane.utils.exception_logger import log_exception
+from plane.utils.uuid import convert_uuid_to_integer
 from plane.utils.helpers import get_boolean_value
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.api.serializers.issue import IssueSerializer
-from plane.db.models.issue import Issue, IssueLink, IssueComment, IssueLabel
+from plane.db.models.issue import Issue, IssueLink, IssueComment, IssueLabel, IssueSequence
 from plane.db.models.label import Label
 from plane.db.models.project import Project
 from plane.db.models.cycle import CycleIssue
@@ -223,7 +224,7 @@ def sanitize_issue_data(issue_data):
     return issue_data
 
 
-def process_single_issue(slug, project, user_id, issue_data, report_id=None, job_id=None):
+def process_single_issue(slug, project, user_id, issue_data, report_id=None, job_id=None, preserve_sequence=False):
     try:
         with connection.cursor() as cur:
             cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
@@ -295,6 +296,10 @@ def process_single_issue(slug, project, user_id, issue_data, report_id=None, job
         issue.created_by_id = issue_data.get("created_by")
         issue.updated_by_id = issue_data.get("created_by")
         issue.save(disable_auto_set_user=True)
+
+        # Preserve external sequence if preserve_sequence is True
+        if preserve_sequence:
+            preserve_external_sequence(slug, project, issue.id, issue_data)
 
         collect_execution_log(
             logs={
@@ -369,6 +374,50 @@ def process_single_issue(slug, project, user_id, issue_data, report_id=None, job
             },
             workspace_slug=slug,
         )
+        return None
+
+
+# preserve the external sequence id for the issue if it is present in the issue data also handle duplicates if any
+def preserve_external_sequence(slug, project, issue_id, issue_data):
+    try:
+        # check if the issue_data has external_sequence_id
+        if not issue_data.get("external_sequence_id"):
+            return
+        with transaction.atomic():
+            issue = Issue.objects.get(id=issue_id, project_id=project.id, workspace__slug=slug)
+            issue.sequence_id = issue_data.get("external_sequence_id")
+            issue.save(disable_auto_set_user=True)
+
+            # Check for duplicate issues with the same sequence_id
+            duplicate_issues = Issue.objects.filter(
+                project_id=project.id, workspace__slug=slug, sequence_id=issue.sequence_id
+            ).exclude(id=issue.id)
+            if duplicate_issues.exists():
+                # Use advisory lock to avoid race when assigning new sequences
+                lock_key = convert_uuid_to_integer(project.id)
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+
+                last_sequence = IssueSequence.objects.filter(project=project).aggregate(largest=models.Max("sequence"))[
+                    "largest"
+                ]
+                next_sequence = last_sequence + 1 if last_sequence else 1
+
+                for duplicate in duplicate_issues:
+                    duplicate.sequence_id = next_sequence
+                    duplicate.save(disable_auto_set_user=True)
+
+                    issue_sequence, _ = IssueSequence.objects.get_or_create(
+                        issue=duplicate, project=project, defaults={"sequence": next_sequence}
+                    )
+                    if issue_sequence.sequence != next_sequence:
+                        issue_sequence.sequence = next_sequence
+                        issue_sequence.save(disable_auto_set_user=True)
+
+                    next_sequence += 1
+
+    except Exception as e:
+        logger.warning(f"Failed to preserve external sequence for issue {issue_id}: {str(e)}")
         return None
 
 
@@ -1187,7 +1236,7 @@ def process_issue_property_values(slug, issue, issue_property_values, report_id=
         )
 
 
-def process_issues(slug, project, user_id, issue_list, report_id=None, job_id=None):
+def process_issues(slug, project, user_id, issue_list, report_id=None, job_id=None, preserve_sequence=False):
     """
     Process issues for import
     Args:
@@ -1210,7 +1259,15 @@ def process_issues(slug, project, user_id, issue_list, report_id=None, job_id=No
     for issue_data in issue_list:
         try:
             if issue_data.get("parent") is None:
-                issue = process_single_issue(slug, project, user_id, issue_data, report_id=report_id, job_id=job_id)
+                issue = process_single_issue(
+                    slug,
+                    project,
+                    user_id,
+                    issue_data,
+                    report_id=report_id,
+                    job_id=job_id,
+                    preserve_sequence=preserve_sequence,
+                )
                 if issue:
                     imported_issues += 1
                     if issue_data.get("external_id"):
@@ -1234,7 +1291,15 @@ def process_issues(slug, project, user_id, issue_list, report_id=None, job_id=No
                     ).first()
                     issue_data["parent"] = str(parent_issue.id) if parent_issue else None
 
-                issue = process_single_issue(slug, project, user_id, issue_data, report_id=report_id, job_id=job_id)
+                issue = process_single_issue(
+                    slug,
+                    project,
+                    user_id,
+                    issue_data,
+                    report_id=report_id,
+                    job_id=job_id,
+                    preserve_sequence=preserve_sequence,
+                )
                 if issue:
                     imported_issues += 1
                     if issue_data.get("external_id"):
@@ -1406,6 +1471,7 @@ def import_data(slug, project_id, user_id, job_id, payload):
         issue_list = payload.get("issues")
         job_phase = payload.get("phase", "issues")
         is_last_batch = payload.get("isLastBatch", False)
+        preserve_sequence = payload.get("preserveSequence", False)
 
         logger.info(
             "inside import_data task",
@@ -1419,7 +1485,13 @@ def import_data(slug, project_id, user_id, job_id, payload):
 
         if issue_list:
             imported_issues, total_issues, external_id_map = process_issues(
-                slug, project, user_id, issue_list, report_id=report_id, job_id=job_id
+                slug,
+                project,
+                user_id,
+                issue_list,
+                report_id=report_id,
+                job_id=job_id,
+                preserve_sequence=preserve_sequence,
             )
             update_job_batch_completion(job_id, 1, total_issues, imported_issues, job_phase, is_last_batch)
 

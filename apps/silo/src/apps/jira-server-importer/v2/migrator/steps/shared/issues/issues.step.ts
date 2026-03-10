@@ -527,6 +527,7 @@ export class JiraIssuesStep implements IStep {
     const payload = {
       issues: bulkPayload,
       isLastBatch: false,
+      preserveSequence: true,
     };
 
     try {

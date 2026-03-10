@@ -166,6 +166,7 @@ export const transformIssueV2 = (
     labels: issue.fields.labels,
     parent: issue.fields.parent?.id ? `${projectId}_${resourceId}_${issue.fields.parent?.id}` : null,
     type_id: issue.fields.issuetype?.id ? `${projectId}_${resourceId}_${issue.fields.issuetype?.id}` : null,
+    external_sequence_id: issue.key.split("-")[1],
   } as unknown as PlaneIssue;
 };
 

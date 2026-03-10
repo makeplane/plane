@@ -13,3 +13,4 @@
 
 export * from "./summary.step";
 export * from "./toggle-issue-properties.step";
+export * from "./cleanup-issue-sequence.step";

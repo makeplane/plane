@@ -24,6 +24,7 @@ import {
   JiraToggleIssuePropertiesStep,
   JiraRelationsStep,
   JiraExecutionSummaryStep,
+  CleanupIssueSequenceStep,
 } from "../shared";
 import { JiraCloudUserStep, JiraCloudIssuePropertiesStep, JiraCloudIssueTypesStep } from "./entities";
 import { JiraCloudIssuesStep } from "./issues";
@@ -44,6 +45,7 @@ const JIRA_CLOUD_STEPS = [
   // Association steps
   new JiraRelationsStep(E_IMPORTER_KEYS.JIRA),
   // Post Run Steps
+  new CleanupIssueSequenceStep(),
   new JiraToggleIssuePropertiesStep(),
   new JiraExecutionSummaryStep(),
 ];

@@ -13,6 +13,7 @@
 
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import {
+  CleanupIssueSequenceStep,
   JiraBoardsStep,
   JiraCyclesStep,
   JiraExecutionSummaryStep,
@@ -43,6 +44,7 @@ const JIRA_SERVER_STEPS = [
   // Association steps
   new JiraRelationsStep(E_IMPORTER_KEYS.JIRA_SERVER),
   // Post Run Steps
+  new CleanupIssueSequenceStep(),
   new JiraToggleIssuePropertiesStep(),
   new JiraExecutionSummaryStep(),
 ];

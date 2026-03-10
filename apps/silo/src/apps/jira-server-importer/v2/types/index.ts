@@ -40,6 +40,7 @@ export enum EJiraStep {
 
   // Post Run
   TOGGLE_ISSUE_PROPERTIES = "toggle_issue_properties",
+  CLEANUP_ISSUE_SEQUENCE = "cleanup_issue_sequence",
   SUMMARY = "summary",
 }
 
