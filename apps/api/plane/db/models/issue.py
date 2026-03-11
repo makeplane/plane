@@ -175,6 +175,11 @@ class Issue(ProjectBaseModel):
         db_table = "issues"
         ordering = ("-created_at",)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Cache original state_id to detect transitions in save() without a DB query
+        self._original_state_id = self.state_id
+
     def save(self, *args, **kwargs):
         if self.state is None:
             try:
@@ -194,10 +199,20 @@ class Issue(ProjectBaseModel):
             try:
                 from plane.db.models import State
 
-                if self.state.group == "completed":
-                    self.completed_at = timezone.now()
+                if self._state.adding:
+                    # New issue: auto-set completed_at based on state group
+                    if self.state.group == "completed":
+                        self.completed_at = timezone.now()
+                    else:
+                        self.completed_at = None
                 else:
-                    self.completed_at = None
+                    # Existing issue: only auto-set completed_at on state transitions
+                    if self._original_state_id != self.state_id:
+                        if self.state.group == "completed":
+                            self.completed_at = timezone.now()
+                        else:
+                            self.completed_at = None
+                    # else: state unchanged — preserve existing completed_at (allows manual edits)
             except ImportError:
                 pass
 
@@ -230,6 +245,7 @@ class Issue(ProjectBaseModel):
                     self.sort_order = largest_sort_order + 10000
 
                 super(Issue, self).save(*args, **kwargs)
+                self._original_state_id = self.state_id
 
                 IssueSequence.objects.create(issue=self, sequence=self.sequence_id, project=self.project)
         else:
@@ -240,6 +256,7 @@ class Issue(ProjectBaseModel):
                 else strip_tags(self.description_html)
             )
             super(Issue, self).save(*args, **kwargs)
+            self._original_state_id = self.state_id
 
     def __str__(self):
         """Return name of the issue"""

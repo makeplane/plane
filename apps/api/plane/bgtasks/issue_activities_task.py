@@ -256,6 +256,38 @@ def track_target_date(
         )
 
 
+# Track changes in issue completed date (manual edits only)
+def track_completed_at(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    if current_instance.get("completed_at") != requested_data.get("completed_at"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=(
+                    current_instance.get("completed_at") if current_instance.get("completed_at") is not None else ""
+                ),
+                new_value=(
+                    requested_data.get("completed_at") if requested_data.get("completed_at") is not None else ""
+                ),
+                field="completed_at",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the completed date to",
+                epoch=epoch,
+            )
+        )
+
+
 # Track changes in issue start date
 def track_start_date(
     requested_data,
@@ -610,6 +642,7 @@ def update_issue_activity(
         "description_html": track_description,
         "target_date": track_target_date,
         "start_date": track_start_date,
+        "completed_at": track_completed_at,
         "label_ids": track_labels,
         "assignee_ids": track_assignees,
         "estimate_point": track_estimate_points,

@@ -5,16 +5,21 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // i18n
 import { useTranslation } from "@plane/i18n";
+// constants
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // ui
 import { DueDatePropertyIcon } from "@plane/propel/icons";
-import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
+// local components
+import { CompletedAtDateTimePicker } from "./completed-at-date-time-picker";
 
 type TCompletedAtPropertyProps = {
   issueId: string;
@@ -22,26 +27,35 @@ type TCompletedAtPropertyProps = {
 
 export const CompletedAtProperty = observer(function CompletedAtProperty({ issueId }: TCompletedAtPropertyProps) {
   const { t } = useTranslation();
+  const { workspaceSlug, projectId } = useParams();
   const {
     issue: { getIssueById },
+    updateIssue,
   } = useIssueDetail();
   const { getStateById } = useProjectState();
+  const { allowPermissions } = useUserPermissions();
 
   const issue = getIssueById(issueId);
   if (!issue) return null;
 
   const stateDetails = getStateById(issue.state_id);
-
   if (stateDetails?.group !== "completed") return null;
 
-  // Fall back to now if backend hasn't returned completed_at yet (optimistic state update)
+  const isEditable = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
+
   const completedAt = issue.completed_at ?? new Date().toISOString();
 
   return (
     <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.completed_at")} childrenClassName="h-7.5">
-      <span className="px-2 text-body-xs-regular text-secondary-200">
-        {renderFormattedDate(completedAt)} {renderFormattedTime(completedAt, "12-hour")}
-      </span>
+      <CompletedAtDateTimePicker
+        value={completedAt}
+        disabled={!isEditable}
+        onChange={(isoString) =>
+          void updateIssue(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", issueId, {
+            completed_at: isoString,
+          })
+        }
+      />
     </SidebarPropertyListItem>
   );
 });
