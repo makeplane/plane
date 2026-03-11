@@ -63,6 +63,7 @@ export type BulkIssuePayload = ExIssue & {
   comments: ExIssueComment[];
   activities?: Partial<ExIssueActivity>[];
   worklogs?: Partial<TWorklog>[];
+  subscribers?: string[];
   cycles: string[];
   modules: string[];
   file_assets: string[];

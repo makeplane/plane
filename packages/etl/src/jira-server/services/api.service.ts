@@ -165,6 +165,12 @@ export class JiraV2Service {
     });
   }
 
+  async getIssueWatchers(issueIdOrKey: string) {
+    return this.jiraClient.issueWatchers.getIssueWatchers({
+      issueIdOrKey,
+    });
+  }
+
   // Verified
   async getProjectComponentIssues(componentId: string, startAt?: number, maxResults?: number) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({

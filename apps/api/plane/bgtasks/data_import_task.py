@@ -26,7 +26,15 @@ from plane.utils.helpers import get_boolean_value
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.api.serializers.issue import IssueSerializer
-from plane.db.models.issue import Issue, IssueLink, IssueComment, IssueLabel, IssueSequence, IssueActivity
+from plane.db.models.issue import (
+    Issue,
+    IssueLink,
+    IssueComment,
+    IssueLabel,
+    IssueSubscriber,
+    IssueSequence,
+    IssueActivity,
+)
 from plane.db.models.label import Label
 from plane.db.models.project import Project
 from plane.db.models.cycle import CycleIssue
@@ -349,6 +357,10 @@ def process_single_issue(slug, project, user_id, issue_data, report_id=None, job
         if issue_data.get("worklogs"):
             process_issue_worklogs(slug, issue, issue_data.get("worklogs"), report_id=report_id, job_id=job_id)
 
+        # Process subscribers
+        if issue_data.get("subscribers"):
+            process_issue_subscribers(slug, issue, issue_data.get("subscribers"), report_id=report_id, job_id=job_id)
+
         # Update the issue with the created_by_id
         issue.created_by_id = issue_data.get("created_by")
         issue.updated_by_id = issue_data.get("created_by")
@@ -548,6 +560,8 @@ def process_issue_activities(slug, issue, activities, report_id=None, job_id=Non
             workspace_slug=slug,
         )
     return
+
+
 # preserve the external sequence id for the issue if it is present in the issue data also handle duplicates if any
 def preserve_external_sequence(slug, project, issue_id, issue_data):
     try:
@@ -782,6 +796,96 @@ def process_issue_links(slug, issue, links, report_id=None, job_id=None):
             },
             workspace_slug=slug,
         )
+    return
+
+
+def process_issue_subscribers(slug, issue, subscriber_ids, report_id=None, job_id=None):
+    """Process and assign subscribers to an issue.
+
+    Creates IssueSubscriber records for each subscriber user ID.
+    Skips subscribers that are already subscribed to the issue.
+
+    Args:
+        slug: The workspace slug
+        issue: The issue instance to add subscribers to
+        subscriber_ids: List of user IDs (strings) to subscribe
+        report_id: The report ID for execution logging
+        job_id: The job ID for execution logging
+    """
+    if not subscriber_ids:
+        return
+
+    try:
+        # Filter out empty strings or None values
+        valid_subscriber_ids = [sid for sid in subscriber_ids if sid]
+        if not valid_subscriber_ids:
+            return
+
+        # Get existing subscriber IDs for this issue
+        existing_subscriber_ids = set(
+            IssueSubscriber.objects.filter(
+                issue=issue,
+                project_id=issue.project_id,
+                workspace_id=issue.workspace_id,
+                subscriber_id__in=valid_subscriber_ids,
+            ).values_list("subscriber_id", flat=True)
+        )
+
+        # Build list of new subscribers to create
+        existing_subscriber_set = {str(eid) for eid in existing_subscriber_ids}
+        new_subscriber_ids = [sid for sid in valid_subscriber_ids if sid not in existing_subscriber_set]
+
+        if new_subscriber_ids:
+            IssueSubscriber.objects.bulk_create(
+                [
+                    IssueSubscriber(
+                        issue=issue,
+                        project_id=issue.project_id,
+                        workspace_id=issue.workspace_id,
+                        subscriber_id=subscriber_id,
+                        created_by_id=issue.created_by_id,
+                        updated_by_id=issue.created_by_id,
+                    )
+                    for subscriber_id in new_subscriber_ids
+                ],
+                batch_size=100,
+                ignore_conflicts=True,
+            )
+
+        # Log success summary
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_SUBSCRIBERS",
+                "level": "info",
+                "phase": "PROCESS_SUBSCRIBERS",
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "metrics": {
+                    "total": len(valid_subscriber_ids),
+                    "imported": len(new_subscriber_ids),
+                    "already_existed": len(existing_subscriber_ids),
+                },
+            },
+            workspace_slug=slug,
+        )
+
+    except Exception as e:
+        logger.warning(f"Failed to process subscribers for issue {issue.id}: {str(e)}")
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_SUBSCRIBER",
+                "level": "error",
+                "phase": "PROCESS_SUBSCRIBERS",
+                "error": {"message": str(e)},
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
+
     return
 
 

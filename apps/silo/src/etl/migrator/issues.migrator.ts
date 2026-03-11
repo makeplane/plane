@@ -445,6 +445,10 @@ export const generateIssuePayloadV2 = async (payload: {
       const associatedModuleIds = associatedModules.map((module) => moduleMap.get(module)) || [];
 
       const associatedWorklogs = processWorklogs(userMap, associations.worklogs.get(processedIssue.external_id) || []);
+      const associatedSubscribers = processSubscribers(
+        userMap,
+        associations.subscribers.get(processedIssue.external_id) || []
+      );
 
       const associatedIssueActivities = getAssociatedIssueActivities(
         jobId,
@@ -462,6 +466,7 @@ export const generateIssuePayloadV2 = async (payload: {
         cycles: associatedCycleIds.filter(Boolean) as string[],
         modules: associatedModuleIds.filter(Boolean) as string[],
         issue_property_values: associatedIssuePropertyValues,
+        subscribers: associatedSubscribers,
         activities: associatedIssueActivities,
       });
 
@@ -508,6 +513,9 @@ const processWorklogs = (userMap: Map<string, string>, worklogs: Partial<TWorklo
     ...worklog,
     logged_by: userMap.get(worklog.logged_by || ""),
   }));
+
+const processSubscribers = (userMap: Map<string, string>, subscribers: string[]): string[] =>
+  subscribers.map((subscriber) => userMap.get(subscriber)).filter((subscriber) => subscriber !== undefined);
 
 const processAttachments = async (
   jobId: string,

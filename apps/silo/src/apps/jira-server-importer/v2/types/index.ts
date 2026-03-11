@@ -64,6 +64,7 @@ export type TIssuesAssociationsData = {
   cycles: Map<string, string[]>;
   modules: Map<string, string[]>;
   worklogs: Map<string, Partial<TWorklog>[]>;
+  subscribers: Map<string, string[]>;
 };
 
 export type TKnownFieldMapping = {

@@ -37,6 +37,7 @@ import { JiraComponentExtractor } from "./component.extractor";
 import { JiraIssueLinkExtractor } from "./issue-link.extractor";
 import { JiraSprintExtractor } from "./sprint.extractor";
 import { JiraWorklogExtractor } from "./worklog.extractor";
+import { JiraSubscribersExtractor } from "./subscribers.extractor";
 import { JiraIssueActivityExtractor } from "./issue-activity.extractor";
 
 export type TExtractionProps = {
@@ -86,6 +87,7 @@ export class JiraIssueDataExtractor {
       additionalData.knownCustomFieldMapping,
       epicsAsWorkItems
     );
+    const subscribersExtractor = this.getSubscribersExtractor();
     const transformationMaps = {
       stateMap: {},
       userMap: {},
@@ -113,6 +115,7 @@ export class JiraIssueDataExtractor {
     const cycles = new Map<string, string[]>();
     const modules = new Map<string, string[]>();
     const worklogs = new Map<string, Partial<TWorklog>[]>();
+    const subscribers = new Map<string, string[]>();
     const relations: TIssueRelationsData[] = [];
 
     let totalCycleAssociations = 0;
@@ -126,10 +129,12 @@ export class JiraIssueDataExtractor {
       const sprintExternalIds = sprintExtractor.extract(issue);
       const componentExternalIds = componentExtractor.extract(issue);
       const issueWorklogs = await worklogExtractor.extract(job.id, sourceClient, issue);
+      const issueSubscribers = await subscribersExtractor.extract(job.id, sourceClient, issue);
 
       cycles.set(issueExternalId, sprintExternalIds);
       modules.set(issueExternalId, componentExternalIds);
       worklogs.set(issueExternalId, issueWorklogs);
+      subscribers.set(issueExternalId, issueSubscribers);
 
       totalCycleAssociations += sprintExternalIds.length;
       totalModuleAssociations += componentExternalIds.length;
@@ -174,7 +179,7 @@ export class JiraIssueDataExtractor {
       issues,
       comments,
       propertyValues,
-      associations: { cycles, modules, worklogs },
+      associations: { cycles, modules, worklogs, subscribers },
       relations,
       issueActivities,
     };
@@ -219,6 +224,10 @@ export class JiraIssueDataExtractor {
     transformationMaps: TTransformationMaps
   ): JiraIssueActivityExtractor {
     return new JiraIssueActivityExtractor(projectId, resourceId, source, transformationMaps);
+  }
+
+  protected getSubscribersExtractor(): JiraSubscribersExtractor {
+    return new JiraSubscribersExtractor();
   }
 
   private collectMetrics(props: {
