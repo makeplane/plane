@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { Building2 } from "lucide-react";
 import {
   AnalyticsIcon,
   ArchiveIcon,
@@ -43,5 +44,7 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <ArchiveIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "stickies":
       return <MultipleStickyIcon className={cn("size-4 flex-shrink-0", className)} />;
+    case "ho":
+      return <Building2 className={cn("size-4 flex-shrink-0", className)} />;
   }
 };

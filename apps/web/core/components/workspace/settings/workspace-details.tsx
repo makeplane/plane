@@ -64,6 +64,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
       name: formData.name,
       organization_size: formData.organization_size,
       timezone: formData.timezone,
+      is_board_of_director_workspace: formData.is_board_of_director_workspace,
     };
 
     try {
@@ -279,6 +280,28 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 )}
               />
             </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Controller
+              name="is_board_of_director_workspace"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <input
+                  type="checkbox"
+                  id="board_of_director_workspace"
+                  checked={!!value}
+                  onChange={(e) => onChange(e.target.checked)}
+                  disabled={!isAdmin}
+                  className="h-4 w-4 cursor-pointer accent-accent-primary disabled:cursor-not-allowed"
+                />
+              )}
+            />
+            <label
+              htmlFor="board_of_director_workspace"
+              className="text-body-sm-medium cursor-pointer"
+            >
+              Board Of Director Workspace
+            </label>
           </div>
         </div>
         {isAdmin && (
