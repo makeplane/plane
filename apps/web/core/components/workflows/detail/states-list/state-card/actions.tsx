@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { observer } from "mobx-react";
 import { Badge } from "@plane/propel/badge";
 import { ApproverIcon, TrashIcon, WorkflowIcon } from "@plane/propel/icons";
 import { Menu } from "@plane/propel/menu";
@@ -25,7 +26,7 @@ type Props = {
   workflowState: IWorkflowState;
 };
 
-export function WorkflowStateCardActions(props: Props) {
+export const WorkflowStateCardActions = observer(function WorkflowStateCardActions(props: Props) {
   //props
   const { handleDelete, handleToggle, workflowState } = props;
 
@@ -48,7 +49,12 @@ export function WorkflowStateCardActions(props: Props) {
       )}
       <div className="flex items-center gap-2">
         <span className="text-caption-md-regular">Allow new work items</span>
-        <Switch value={workflowState.allow_issue_creation} onChange={handleToggle} />
+        <Switch
+          value={workflowState.allow_issue_creation}
+          onChange={() => {
+            handleToggle();
+          }}
+        />
       </div>
       <Menu ellipsis>
         {MENU_ITEMS.map((item) => (
@@ -62,4 +68,4 @@ export function WorkflowStateCardActions(props: Props) {
       </Menu>
     </div>
   );
-}
+});

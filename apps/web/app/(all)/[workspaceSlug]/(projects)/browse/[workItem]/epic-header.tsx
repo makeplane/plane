@@ -38,6 +38,7 @@ import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/projec
 import { ConvertWorkItemAction } from "@/components/epics/conversions";
 import { ProjectEpicQuickActions } from "@/components/epics/quick-actions/epic-quick-action";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { WorkItemApproveRejectActions } from "@/components/issues/issue-detail/approve-reject-actions";
 
 type TEpicItemDetailsHeaderProps = {
   workspaceSlug: string;
@@ -139,6 +140,15 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader(pro
         </Breadcrumbs>
       </Header.LeftItem>
       <Header.RightItem>
+        {issueDetails?.state_id && epicId && projectId && (
+          <WorkItemApproveRejectActions
+            projectId={projectId}
+            workItemId={epicId}
+            typeId={issueDetails.type_id}
+            currentStateId={issueDetails.state_id}
+            workspaceSlug={workspaceSlug}
+          />
+        )}
         {epicId && projectId && !issueDetails?.archived_at && (
           <IssueSubscription
             workspaceSlug={workspaceSlug}

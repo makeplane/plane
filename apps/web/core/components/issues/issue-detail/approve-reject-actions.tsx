@@ -52,7 +52,7 @@ export const WorkItemApproveRejectActions = observer(function WorkItemApproveRej
     return isPending && currentUser?.id && workspaceSlug
       ? isCurrentUserApprover(workspaceSlug.toString(), projectId, typeId, currentStateId, currentUser.id)
       : false;
-  }, [currentStateId, typeId]);
+  }, [isPending, currentUser?.id, workspaceSlug, projectId, typeId, currentStateId]);
 
   const handleAction = useCallback(
     async (action: "approve" | "reject") => {

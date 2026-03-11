@@ -20,7 +20,7 @@ import { WorkflowDetailMainContent } from "@/components/workflows/detail/main-co
 import { PageHead } from "@/components/core/page-title";
 import { WorkflowConfigSidebarRoot } from "@/components/workflows/detail/sidebar/root";
 import { WorkflowsDetailHeader } from "./header";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useFlag } from "@/plane-web/hooks/store";
 import { useWorkflows } from "@/hooks/store/use-workflows";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
@@ -43,16 +43,16 @@ function WorkflowsDetailPage({ params }: Route.ComponentProps) {
   const hasProjectAdminPermissions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const isFeatureEnabled = useFlag(workspaceSlug, "WORKFLOWS");
 
-  if (workspaceUserInfo && !hasProjectAdminPermissions) {
-    return <NotAuthorizedView section="settings" isProjectView />;
-  }
-
   // redirect to list page if not enabled
   useEffect(() => {
     if (!isFeatureEnabled) {
       navigate(`/${workspaceSlug}/settings/projects/${projectId}/workflows`);
     }
   }, [isFeatureEnabled, navigate, workspaceSlug, projectId]);
+
+  if (workspaceUserInfo && !hasProjectAdminPermissions) {
+    return <NotAuthorizedView section="settings" isProjectView />;
+  }
 
   return (
     <>

@@ -54,7 +54,7 @@ export const WorkFlowListHeader = observer(function WorkFlowListHeader(props: Pr
   const sortOrder = filters.sortOrder;
   const sortBy = filters.sortBy;
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
-  const shouldShowWorkItemTypesBanner = showControls && disabled && !isWorkItemTypeEnabled;
+  const shouldShowWorkItemTypesBanner = !showControls && !isWorkItemTypeEnabled;
 
   useEffect(() => {
     if (!shouldShowWorkItemTypesBanner) {

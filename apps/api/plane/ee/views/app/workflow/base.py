@@ -35,9 +35,9 @@ from plane.ee.models import (
 )
 from plane.ee.serializers import WorkflowSerializer
 from plane.ee.permissions import allow_permission, ROLE
-from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.workflow_activity_task import workflow_activity
+from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 
 
 class WorkspaceWorkflowEndpoint(BaseAPIView):
@@ -207,11 +207,23 @@ class WorkflowEndpoint(BaseAPIView):
         workflows = self.get_queryset(slug, project_id)
         return Response(WorkflowSerializer(workflows, many=True).data, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.MULTIPLE_WORKFLOWS)
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
     def patch(self, request, slug, project_id, pk):
         workflow = self.get_queryset(slug, project_id).filter(id=pk).first()
         current_instance = json.dumps(WorkflowSerializer(workflow).data, cls=DjangoJSONEncoder)
+
+        # user cannot update multiple workflow if feature flag is disabled
+        if not workflow.is_default and not check_workspace_feature_flag(
+            feature_key=FeatureFlag.MULTIPLE_WORKFLOWS,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            return Response(
+                {"error": "Only default workflow can be updated"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = WorkflowSerializer(workflow, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

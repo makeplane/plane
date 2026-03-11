@@ -37,6 +37,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { ConvertWorkItemAction } from "../conversions";
 import { ProjectEpicQuickActions } from "../quick-actions/epic-quick-action";
+import { WorkItemApproveRejectActions } from "@/components/issues/issue-detail/approve-reject-actions";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -216,6 +217,15 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
       </div>
       <div className="flex items-center gap-x-4">
         <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
+        {issue?.state_id && (
+          <WorkItemApproveRejectActions
+            projectId={projectId}
+            workItemId={issueId}
+            typeId={issue.type_id}
+            currentStateId={issue.state_id}
+            workspaceSlug={workspaceSlug}
+          />
+        )}
         {!isArchived && (
           <IssueSubscription
             serviceType={EIssueServiceType.EPICS}
