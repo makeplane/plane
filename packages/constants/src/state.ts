@@ -119,3 +119,11 @@ export const PROGRESS_STATE_GROUPS_DETAILS = [
 ];
 
 export const DISPLAY_WORKFLOW_PRO_CTA = false;
+
+export const STATE_GROUP_ORDER: Record<TStateGroups, number> = {
+  backlog: 0,
+  unstarted: 1,
+  started: 2,
+  completed: 3,
+  cancelled: 4,
+};

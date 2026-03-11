@@ -307,6 +307,7 @@
     --txt-icon-success-secondary: var(--green-700);
     --txt-icon-warning-primary: var(--amber-900);
     --txt-icon-warning-secondary: var(--amber-700);
+    --txt-icon-warning-subtle: var(--amber-600);
     --txt-icon-accent-primary-inverse: var(--brand-900);
     --txt-icon-accent-secondary: var(--brand-1200);
     --txt-icon-secondary: var(--neutral-1100);
@@ -559,6 +560,7 @@
       --txt-icon-success-secondary: var(--green-700);
       --txt-icon-warning-primary: var(--amber-900);
       --txt-icon-warning-secondary: var(--amber-700);
+      --txt-icon-warning-subtle: var(--amber-600);
       --txt-icon-secondary: var(--neutral-1100);
       --txt-icon-tertiary: var(--neutral-1000);
       --txt-icon-placeholder: var(--neutral-800);
@@ -901,6 +903,7 @@
   --text-color-icon-success-secondary: var(--txt-icon-success-secondary);
   --text-color-icon-warning-primary: var(--txt-icon-warning-primary);
   --text-color-icon-warning-secondary: var(--txt-icon-warning-secondary);
+  --text-color-icon-warning-subtle: var(--txt-icon-warning-subtle);
   --text-color-icon-accent-primary-inverse: var(--txt-icon-accent-primary-inverse);
   --text-color-icon-accent-secondary: var(--txt-icon-accent-secondary);
   --text-color-icon-secondary: var(--txt-icon-secondary);
@@ -980,14 +983,12 @@
 @theme {
   /* ---------- Font family ---------- */
   --font-*: initial;
-  --font-heading:
-    "Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-    "Noto Color Emoji";
-  --font-body:
-    "Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-    "Noto Color Emoji";
-  --font-code:
-    "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-heading: "Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+  --font-body: "Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+  --font-code: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
 
   /* ---------- Font weight ---------- */
   --font-weight-*: initial;

@@ -50,6 +50,10 @@ export const ErrorFill = Default.extend({ args: { variant: "error-fill", childre
 
 export const ErrorOutline = Default.extend({ args: { variant: "error-outline", children: "Error Outline Button" } });
 
+export const SuccessOutline = Default.extend({
+  args: { variant: "success-outline", children: "Success Outline Button" },
+});
+
 export const Secondary = Default.extend({ args: { variant: "secondary", children: "Secondary Button" } });
 
 export const Tertiary = Default.extend({ args: { variant: "tertiary", children: "Tertiary Button" } });

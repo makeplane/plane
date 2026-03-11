@@ -14,19 +14,19 @@
 import useSWR from "swr";
 // store
 import { WORKSPACE_WORKFLOW_STATES } from "@/constants/fetch-keys";
-import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
 
 export const useWorkspaceIssuePropertiesExtended = (workspaceSlug: string | string[] | undefined) => {
-  const { fetchWorkflowStates } = useProjectState();
+  const { fetchAllWorkflows } = useWorkflows();
   // derived values
   const isWorkflowFeatureFlagEnabled = useFlag(workspaceSlug?.toString(), "WORKFLOWS");
 
   // fetch workspace workflow states
   useSWR(
     workspaceSlug && isWorkflowFeatureFlagEnabled ? WORKSPACE_WORKFLOW_STATES(workspaceSlug.toString()) : null,
-    workspaceSlug && isWorkflowFeatureFlagEnabled ? () => fetchWorkflowStates(workspaceSlug.toString()) : null,
+    workspaceSlug && isWorkflowFeatureFlagEnabled ? () => fetchAllWorkflows(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 };

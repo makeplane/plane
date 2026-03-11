@@ -19,7 +19,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 // Plane
 import type { TIssueGroupByOptions, TIssueKanbanFilters } from "@plane/types";
 // Plane-web
-import { WorkFlowGroupTree } from "@/components/workflow";
+import { WorkFlowGroupTree } from "@/components/workflows";
 // mobx
 
 interface IHeaderSubGroupByCard {
@@ -56,7 +56,7 @@ export const HeaderSubGroupByCard = observer(function HeaderSubGroupByCard(props
         <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
       </div>
 
-      <WorkFlowGroupTree groupBy={sub_group_by} groupId={column_id} />
+      {sub_group_by === "state" && <WorkFlowGroupTree groupId={column_id} />}
     </div>
   );
 });

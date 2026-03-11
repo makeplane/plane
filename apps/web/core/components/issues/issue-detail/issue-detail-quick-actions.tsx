@@ -31,6 +31,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { ConvertWorkItemAction } from "@/components/epics/conversions";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 // local imports
+import { WorkItemApproveRejectActions } from "./approve-reject-actions";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 import { IssueSubscription } from "./subscription";
 
@@ -130,6 +131,15 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
     <>
       <div className="flex items-center justify-end flex-shrink-0">
         <div className="flex flex-wrap items-center gap-2">
+          {issue?.state_id && (
+            <WorkItemApproveRejectActions
+              projectId={projectId}
+              workItemId={issueId}
+              typeId={issue.type_id}
+              currentStateId={issue.state_id}
+              workspaceSlug={workspaceSlug}
+            />
+          )}
           {currentUser && !issue?.archived_at && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}

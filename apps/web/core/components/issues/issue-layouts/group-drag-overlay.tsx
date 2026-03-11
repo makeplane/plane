@@ -16,15 +16,15 @@ import { AlertCircle } from "lucide-react";
 // plane imports
 import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import type { TIssueOrderByOptions } from "@plane/types";
+import type { TIssueOrderByOptions, TWorkflowDisabledContext } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // plane web imports
-import { WorkFlowDisabledOverlay } from "@/components/workflow";
+import { WorkFlowDisabledOverlay } from "@/components/workflows";
 
 type Props = {
   dragColumnOrientation: "justify-start" | "justify-center" | "justify-end";
-  workflowDisabledSource?: string;
+  workflowDisabledContext?: TWorkflowDisabledContext;
   canOverlayBeVisible: boolean;
   isDropDisabled: boolean;
   dropErrorMessage?: string;
@@ -37,7 +37,7 @@ export function GroupDragOverlay(props: Props) {
   const {
     dragColumnOrientation,
     canOverlayBeVisible,
-    workflowDisabledSource,
+    workflowDisabledContext,
     isDropDisabled,
     dropErrorMessage,
     orderBy,
@@ -61,16 +61,17 @@ export function GroupDragOverlay(props: Props) {
         `absolute top-0 left-0 h-full w-full items-center text-13 font-medium text-tertiary rounded-sm bg-layer-1/85 ${dragColumnOrientation}`,
         {
           "flex flex-col border-[1px] border-strong z-2": shouldOverlayBeVisible,
-          "bg-danger-subtle": workflowDisabledSource && isDropDisabled,
+          "bg-danger-subtle": workflowDisabledContext && isDropDisabled,
         },
         { hidden: !shouldOverlayBeVisible }
       )}
     >
-      {workflowDisabledSource ? (
+      {workflowDisabledContext ? (
         <WorkFlowDisabledOverlay
           messageContainerRef={messageContainerRef}
-          workflowDisabledSource={workflowDisabledSource}
+          workflowDisabledContext={workflowDisabledContext}
           shouldOverlayBeVisible={shouldOverlayBeVisible}
+          isEpic={isEpic}
         />
       ) : (
         <div

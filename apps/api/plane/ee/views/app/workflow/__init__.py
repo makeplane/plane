@@ -9,6 +9,7 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from .base import WorkflowTransitionEndpoint, WorkflowEndpoint
-from .approver import WorkflowTransitionApproverEndpoint
+from .base import WorkflowEndpoint, WorkspaceWorkflowEndpoint, DefaultWorkflowEndpoint
+from .states import WorkflowStatesEndpoint, WorkflowStateTransitionsEndpoint
+from .approver import WorkflowWorkItemApproverEndpoint
 from .activity import WorkflowActivityEndpoint

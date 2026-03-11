@@ -2441,9 +2441,92 @@ Create a new project instead`,
       },
     },
     workflows: {
+      toggle: {
+        title: "Enable workflows",
+        description: "Set workflows to control work item movement",
+        toast: {
+          loading: {
+            enabling: "Enabling workflows",
+            disabling: "Disabling workflows",
+          },
+          success: {
+            title: "Success!",
+            message: "Workflows enabled successfully.",
+          },
+          error: {
+            title: "Error!",
+            message: "Failed to enable workflows. Please try again.",
+          },
+        },
+      },
       heading: "Workflows",
       description:
         "Automate work item transitions and set rules to control how tasks move through your project pipeline.",
+      add_button: "Add new workflow",
+      search: "Search workflows",
+      detail: {
+        define: "Define workflow",
+        add_states: "Add states",
+      },
+      create: {
+        heading: "Create new workflow",
+        name: {
+          placeholder: "Add a unique name",
+          validation: {
+            max_length: "Name must be less than 255 characters",
+            required: "Name is required",
+            invalid: "Name can only contain letters, numbers, spaces, hyphens, and apostrophes",
+          },
+        },
+        description: {
+          placeholder: "Add a short description",
+          validation: {
+            invalid: "Description can only contain letters, numbers, spaces, hyphens, and apostrophes",
+          },
+        },
+        work_item_type: {
+          label: "Work item type",
+        },
+        success: {
+          title: "Success!",
+          message: "Workflow created successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: "Failed to create workflow. Please try again.",
+        },
+      },
+      update: {
+        success: {
+          title: "Success!",
+          message: "Workflow updated successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: "Failed to update workflow. Please try again.",
+        },
+      },
+      delete: {
+        loading: "Deleting workflow",
+        success: {
+          title: "Success!",
+          message: "Workflow deleted successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: "Failed to delete workflow. Please try again.",
+        },
+      },
+      add_states: {
+        success: {
+          title: "Success!",
+          message: "States added successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: "Failed to add states. Please try again.",
+        },
+      },
     },
     work_item_types: {
       heading: "Work item Types",

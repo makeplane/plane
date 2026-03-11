@@ -351,6 +351,10 @@ export const settingsRoutes: RouteConfigEntry[] = [
           ":workspaceSlug/settings/projects/:projectId/workflows",
           "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/workflows/page.tsx"
         ),
+        route(
+          ":workspaceSlug/settings/projects/:projectId/workflows/:workflowId",
+          "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/workflows/(detail)/[workflowId]/page.tsx"
+        ),
         // Project Worklogs
         route(
           ":workspaceSlug/settings/projects/:projectId/worklogs",

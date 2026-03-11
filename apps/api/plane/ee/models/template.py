@@ -588,7 +588,7 @@ class WorkflowTransition(PydanticBaseModel):
     approver: List[WorkflowTransitionApprover]
 
 
-class Workflow(PydanticBaseModel):
+class WorkflowState(PydanticBaseModel):
     state: UUID4
     allow_issue_creation: bool = False
     transitions: List[WorkflowTransition]

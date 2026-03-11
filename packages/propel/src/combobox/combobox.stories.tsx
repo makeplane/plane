@@ -13,9 +13,9 @@
 
 import preview from "#.storybook/preview";
 import { ChevronsUpDown } from "lucide-react";
-import { useArgs } from "storybook/preview-api";
+import { useArgs, useState } from "storybook/preview-api";
 import { expect, fn, screen, waitFor } from "storybook/test";
-import { CheckIcon } from "../icons";
+import { CheckIcon, StatePropertyIcon } from "../icons";
 import { Combobox } from "./combobox";
 
 const frameworks = [
@@ -174,6 +174,70 @@ export const MultiSelectWithLimit = meta.story({
   async play({ canvas, userEvent }) {
     await userEvent.click(canvas.getByRole("combobox"));
     await waitFor(() => expect(screen.getByText("React")).toBeVisible());
+  },
+});
+
+export const MultiSelectWithChips = meta.story({
+  render: function Render() {
+    const [value, setValue] = useState<string[]>([]);
+
+    return (
+      <Combobox multiSelect value={value} onValueChange={(v) => setValue(v as string[])}>
+        <Combobox.Chips
+          className="w-72 border-subtle bg-white rounded-md px-2 py-1 hover:bg-surface-1"
+          getLabel={(val) => frameworks.find((f) => f.value === val)?.label || val}
+        >
+          <span className="text-13 text-placeholder">Select frameworks...</span>
+        </Combobox.Chips>
+        <Combobox.Options showSearch searchPlaceholder="Search framework..." className="w-72">
+          {frameworks.map((framework) => (
+            <Combobox.Option
+              key={framework.value}
+              value={framework.value}
+              className="flex items-center gap-2 px-4 py-2"
+            >
+              {value.includes(framework.value) && <CheckIcon className="h-4 w-4" />}
+              <span>{framework.label}</span>
+            </Combobox.Option>
+          ))}
+        </Combobox.Options>
+      </Combobox>
+    );
+  },
+});
+
+export const MultiSelectWithCustomChips = meta.story({
+  render: function Render() {
+    const [value, setValue] = useState<string[]>([]);
+
+    return (
+      <Combobox multiSelect value={value} onValueChange={(v) => setValue(v as string[])}>
+        <Combobox.Chips
+          className="w-72 border-subtle bg-white rounded-md px-2 py-1 hover:bg-surface-1"
+          getLabel={(val) => frameworks.find((f) => f.value === val)?.label || val}
+          renderChip={(chipValue, label, Chip) => (
+            <Chip value={chipValue} className="bg-surface-1">
+              <StatePropertyIcon className="size-3 text-secondary" />
+              <span className="text-caption-md-regular">{label}</span>
+            </Chip>
+          )}
+        >
+          <span className="text-13 text-placeholder">Select frameworks...</span>
+        </Combobox.Chips>
+        <Combobox.Options showSearch searchPlaceholder="Search framework..." className="w-72">
+          {frameworks.map((framework) => (
+            <Combobox.Option
+              key={framework.value}
+              value={framework.value}
+              className="flex items-center gap-2 px-4 py-2"
+            >
+              {value.includes(framework.value) && <CheckIcon className="h-4 w-4" />}
+              <span>{framework.label}</span>
+            </Combobox.Option>
+          ))}
+        </Combobox.Options>
+      </Combobox>
+    );
   },
 });
 

@@ -29,6 +29,8 @@ import {
   PlusIcon,
   PreferencesIcon,
   SearchIcon,
+  SortByUpIcon,
+  SortByDownIcon,
   TrashIcon,
   UpgradeIcon,
 } from "./actions";
@@ -40,6 +42,9 @@ import {
   ChevronUpIcon,
   ExternalLinkIcon,
   ReplyIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  AccordionCloseIcon,
 } from "./arrows";
 // Default icon
 import { DefaultIcon } from "./default-icon";
@@ -54,7 +59,7 @@ import {
   TimelineLayoutIcon,
 } from "./layouts";
 // Misc icons
-import { InfoIcon } from "./misc";
+import { InfoIcon, AlertIcon, HistoryIcon } from "./misc";
 // Project icons
 import { CycleIcon, EpicIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "./project";
 // Property icons
@@ -188,18 +193,24 @@ export const ICON_REGISTRY = {
   "action.trash": TrashIcon,
   "action.copy-link": CopyLinkIcon,
   "action.upgrade": UpgradeIcon,
+  "action.sort-by-up": SortByUpIcon,
+  "action.sort-by-down": SortByDownIcon,
 
   // Arrow icons
   "arrow.chevron-down": ChevronDownIcon,
   "arrow.chevron-left": ChevronLeftIcon,
   "arrow.chevron-right": ChevronRightIcon,
   "arrow.chevron-up": ChevronUpIcon,
+  "arrow.arrow-left": ArrowLeftIcon,
+  "arrow.arrow-right": ArrowRightIcon,
 
   // Misc icons
   "misc.info": InfoIcon,
+  "misc.alert": AlertIcon,
+  "misc.history": HistoryIcon,
   "arrow.reply": ReplyIcon,
   "arrow.external-link": ExternalLinkIcon,
-
+  "arrow.accordion-close": AccordionCloseIcon,
   // Other products icons
   "other-products.jira": JiraIcon,
   "other-products.clickup": ClickupIcon,

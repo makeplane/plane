@@ -1,0 +1,268 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import type {
+  TWorkflow,
+  TWorkflowState,
+  TWorkflowStateType,
+  TWorkflowUpdatePayload,
+  IWorkflow,
+  TAddStatesToWorkflowPayload,
+  IWorkflowService,
+  IWorkflowState,
+  TWorkflowSidebarStep,
+  IWorkflowChangeHistoryStore,
+} from "@plane/types";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { set } from "lodash-es";
+import { WorkflowState } from "./state";
+import { computedFn } from "mobx-utils";
+import { WorkflowChangeHistoryStore } from "./change-history.store";
+
+export class Workflow implements IWorkflow {
+  id: string;
+  workspace_id: string;
+  project_id: string;
+  name: string;
+  description: string;
+  is_default: boolean;
+  is_active: boolean;
+  work_item_type_ids: string[];
+  states: TWorkflowState[] = [];
+  created_by: string;
+  created_at: string;
+  activeSidebarTransitionId: string | null = null;
+  activeSidebarStateId: string | null = null;
+  editingTransitionIds: string[] = [];
+  changeHistory: IWorkflowChangeHistoryStore;
+
+  statesMap: Map<string, IWorkflowState> = new Map();
+  workflowService: IWorkflowService;
+
+  constructor(data: TWorkflow, _workflowService: IWorkflowService) {
+    makeObservable(this, {
+      id: observable.ref,
+      workspace_id: observable.ref,
+      project_id: observable.ref,
+      name: observable.ref,
+      description: observable.ref,
+      is_default: observable.ref,
+      is_active: observable.ref,
+      work_item_type_ids: observable,
+      states: observable,
+      created_by: observable.ref,
+      created_at: observable.ref,
+      statesMap: observable,
+      activeSidebarTransitionId: observable.ref,
+      activeSidebarStateId: observable.ref,
+      editingTransitionIds: observable,
+      changeHistory: observable.ref,
+      asJSON: computed,
+      stateIds: computed,
+      isSidebarOpen: computed,
+      mutate: action,
+      openSidebar: action,
+      closeSidebar: action,
+      switchMode: action,
+      startEditing: action,
+      stopEditing: action,
+      update: action,
+      addStates: action,
+      deleteState: action,
+      clearDraftTransitions: action,
+    });
+    this.id = data.id;
+    this.workspace_id = data.workspace_id;
+    this.project_id = data.project_id;
+    this.name = data.name;
+    this.description = data.description;
+    this.is_default = data.is_default;
+    this.is_active = data.is_active;
+    this.work_item_type_ids = data.work_item_type_ids ?? [];
+    this.created_by = data.created_by;
+    this.created_at = data.created_at;
+    this.workflowService = _workflowService;
+    this.changeHistory = new WorkflowChangeHistoryStore({
+      workflowId: data.id,
+      projectId: data.project_id,
+      workflowService: _workflowService,
+    });
+    this.initStates(data.states ?? []);
+  }
+
+  /**
+   * @description Initialize states map
+   * @states TWorkflowState[]
+   */
+  initStates(states: TWorkflowState[]) {
+    this.states = states;
+    states.forEach((state) => {
+      this.statesMap.set(state.id, new WorkflowState(state, this.workflowService));
+    });
+  }
+
+  get asJSON(): TWorkflow {
+    return {
+      id: this.id,
+      workspace_id: this.workspace_id,
+      project_id: this.project_id,
+      name: this.name,
+      description: this.description,
+      is_default: this.is_default,
+      is_active: this.is_active,
+      work_item_type_ids: this.work_item_type_ids,
+      states: this.stateIds.map((id) => this.statesMap.get(id)?.asJSON).filter(Boolean) as TWorkflowState[],
+      created_by: this.created_by,
+      created_at: this.created_at,
+    };
+  }
+
+  get stateIds(): string[] {
+    return Array.from(this.statesMap.keys());
+  }
+
+  get isSidebarOpen(): boolean {
+    return this.activeSidebarTransitionId !== null;
+  }
+
+  getStateById = computedFn((stateId: string): IWorkflowState | undefined => {
+    return this.statesMap.get(stateId);
+  });
+
+  isEditing = (transitionId: string): boolean => {
+    return this.editingTransitionIds.includes(transitionId);
+  };
+
+  openSidebar = (stateId: string, transitionId: string, tab: TWorkflowSidebarStep) => {
+    if (this.activeSidebarStateId && this.activeSidebarStateId !== stateId) {
+      const prevState = this.statesMap.get(this.activeSidebarStateId);
+      prevState?.sidebarHelper.closeTab();
+    }
+    this.activeSidebarStateId = stateId;
+    this.activeSidebarTransitionId = transitionId;
+    const state = this.statesMap.get(stateId);
+    state?.sidebarHelper.selectTab(tab);
+  };
+
+  closeSidebar = () => {
+    if (this.activeSidebarStateId) {
+      const state = this.statesMap.get(this.activeSidebarStateId);
+      state?.sidebarHelper.closeTab();
+    }
+    this.activeSidebarStateId = null;
+    this.activeSidebarTransitionId = null;
+  };
+
+  /**
+   * @description All transitions will go to view mode if editing.
+   * @description New draft transitions will be removed
+   */
+  clearDraftTransitions = () => {
+    runInAction(() => {
+      this.editingTransitionIds = [];
+      this.statesMap.forEach((state) => state.clearAllDraftTransitions());
+    });
+  };
+
+  switchMode = async (stateId: string, newType: TWorkflowStateType, workspaceSlug: string, projectId: string) => {
+    const state = this.statesMap.get(stateId);
+    if (!state) return;
+
+    await state.update(workspaceSlug, projectId, this.id, { type: newType });
+
+    runInAction(() => {
+      const transitionIdsToRemove = new Set(state.transitionIds);
+      this.editingTransitionIds = this.editingTransitionIds.filter((id) => !transitionIdsToRemove.has(id));
+      state.clearTransitions();
+      if (this.activeSidebarStateId === stateId) {
+        this.closeSidebar();
+      }
+      // Create a draft transition and open the sidebar for that
+      const draftId = state.addDraftTransition();
+      this.openSidebar(stateId, draftId, "flow_type");
+      this.startEditing(draftId);
+    });
+  };
+
+  startEditing = (transitionId: string) => {
+    if (!this.editingTransitionIds.includes(transitionId)) {
+      this.editingTransitionIds = [...this.editingTransitionIds, transitionId];
+    }
+  };
+
+  stopEditing = (transitionId: string) => {
+    this.editingTransitionIds = this.editingTransitionIds.filter((id) => id !== transitionId);
+  };
+
+  mutate(data: Partial<TWorkflow>) {
+    runInAction(() => {
+      Object.keys(data).map((key) => {
+        const dataKey = key as keyof TWorkflow;
+        set(this, [dataKey], data[dataKey]);
+      });
+    });
+  }
+
+  update = async (workspaceSlug: string, projectId: string, data: Partial<TWorkflowUpdatePayload>) => {
+    const beforeUpdate = { ...this.asJSON };
+    try {
+      // optimistic update
+      this.mutate(data);
+      await this.workflowService.update(workspaceSlug, projectId, this.id, data);
+    } catch (error) {
+      // revert changes
+      this.mutate(beforeUpdate);
+      console.error("Error updating workflow", error);
+      throw error;
+    }
+  };
+
+  addStates = async (workspaceSlug: string, projectId: string, data: TAddStatesToWorkflowPayload) => {
+    try {
+      await this.workflowService.addStates(workspaceSlug, projectId, this.id, data);
+      runInAction(() => {
+        data.state_ids.forEach((stateId) => {
+          const stateData: TWorkflowState = {
+            id: stateId,
+            allow_issue_creation: true,
+            transitions: [],
+            type: "transition",
+          };
+          this.mutate({
+            states: [...this.states, stateData],
+          });
+          this.statesMap.set(stateId, new WorkflowState(stateData, this.workflowService));
+        });
+      });
+    } catch (error) {
+      console.error("Error adding states to workflow", error);
+      throw error;
+    }
+  };
+
+  deleteState = async (workspaceSlug: string, projectId: string, stateId: string) => {
+    try {
+      await this.workflowService.deleteState(workspaceSlug, projectId, this.id, stateId);
+      runInAction(() => {
+        this.mutate({
+          states: this.states.filter((state) => state.id !== stateId),
+        });
+        this.statesMap.delete(stateId);
+      });
+    } catch (error) {
+      // revert changes
+      console.error("Error deleting state from workflow", error);
+      throw error;
+    }
+  };
+}

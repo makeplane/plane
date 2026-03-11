@@ -25,6 +25,12 @@ export interface IIssueStoreActions {
   // actions
   fetchIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateStateViaWorkflow: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    action: "approve" | "reject"
+  ) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
@@ -221,6 +227,30 @@ export class IssueStore implements IIssueStore {
       currentStore.updateIssue(workspaceSlug, projectId, issueId, data),
       this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId),
     ]);
+  };
+
+  updateStateViaWorkflow = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    action: "approve" | "reject"
+  ) => {
+    try {
+      const currentStore =
+        this.serviceType === EIssueServiceType.EPICS
+          ? this.rootIssueDetailStore.rootIssueStore.projectEpics
+          : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+
+      const response = await this.issueService.updateStateViaWorkflow(workspaceSlug, projectId, issueId, action);
+
+      await Promise.all([
+        currentStore.updateIssue(workspaceSlug, projectId, issueId, { state_id: response.state_id }, false),
+        this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId),
+      ]);
+    } catch (error) {
+      console.error("Failed to approve or reject workflow work item", error);
+      throw error;
+    }
   };
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {

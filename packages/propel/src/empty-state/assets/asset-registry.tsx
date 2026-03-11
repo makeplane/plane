@@ -42,8 +42,10 @@ import {
   WebhookHorizontalStackIllustration,
   WorkItemHorizontalStackIllustration,
   WorklogHorizontalStackIllustration,
+  WorkflowHorizontalStackIllustration,
   RunnerScriptsHorizontalStackIllustration,
   RunnerFunctionsHorizontalStackIllustration,
+  ScriptHorizontalStackIllustration,
 } from "./horizontal-stack";
 import { InboxIllustration, SearchIllustration } from "./illustration";
 import {
@@ -68,6 +70,7 @@ import {
   TeamspaceVerticalStackIllustration,
   ViewVerticalStackIllustration,
   WorkItemVerticalStackIllustration,
+  WorkflowVerticalStackIllustration,
 } from "./vertical-stack";
 
 // Horizontal Stack Asset Registry
@@ -84,6 +87,7 @@ export const HORIZONTAL_STACK_ASSETS: Record<HorizontalStackAssetType, React.Com
   priority: PriorityHorizontalStackIllustration,
   project: ProjectHorizontalStackIllustration,
   settings: SettingsHorizontalStackIllustration,
+  script: ScriptHorizontalStackIllustration,
   state: StateHorizontalStackIllustration,
   "state-square": StateSquareHorizontalStackIllustration,
   template: TemplateHorizontalStackIllustration,
@@ -93,6 +97,7 @@ export const HORIZONTAL_STACK_ASSETS: Record<HorizontalStackAssetType, React.Com
   webhook: WebhookHorizontalStackIllustration,
   "work-item": WorkItemHorizontalStackIllustration,
   worklog: WorklogHorizontalStackIllustration,
+  workflow: WorkflowHorizontalStackIllustration,
   "group-syncing": GroupSyncingHorizontalStackIllustration,
   "runner-scripts": RunnerScriptsHorizontalStackIllustration,
   "runner-functions": RunnerFunctionsHorizontalStackIllustration,
@@ -121,6 +126,7 @@ export const VERTICAL_STACK_ASSETS: Record<VerticalStackAssetType, React.Compone
   teamspace: TeamspaceVerticalStackIllustration,
   view: ViewVerticalStackIllustration,
   "work-item": WorkItemVerticalStackIllustration,
+  workflow: WorkflowVerticalStackIllustration,
 };
 
 // Illustration Asset Registry

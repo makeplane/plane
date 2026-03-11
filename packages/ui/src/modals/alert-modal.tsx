@@ -60,7 +60,8 @@ const VARIANT_CLASSES: Record<TModalVariant, string> = {
   danger: "bg-danger-subtle text-danger-primary",
   primary: "bg-accent-primary/20 text-accent-primary",
 };
-
+// TODO: required variant these use cases
+// 1. apps/web/core/components/workflows/detail/sidebar/tabs/flow-type/warning-modal.tsx - FlowTypeChangeWarningModal
 export function AlertModalCore(props: Props) {
   const {
     content,

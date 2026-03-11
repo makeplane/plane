@@ -509,4 +509,29 @@ export class IssueService extends APIService {
     );
     return response.data;
   }
+
+  /**
+   * Approve or reject a workflow work item.
+   * @param workspaceSlug - Workspace slug
+   * @param projectId - Project ID (UUID)
+   * @param workItemId - Work item ID (UUID)
+   * @param action - "approve" or "reject"
+   */
+  async updateStateViaWorkflow(
+    workspaceSlug: string,
+    projectId: string,
+    workItemId: string,
+    action: "approve" | "reject"
+  ): Promise<{ state_id: string }> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/work-items/${workItemId}/workflow-approval/`,
+      {
+        type: action,
+      }
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

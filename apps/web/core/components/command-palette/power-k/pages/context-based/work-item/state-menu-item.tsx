@@ -18,13 +18,16 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { IState } from "@plane/types";
 // components
 import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";
-import { useProjectState } from "@/hooks/store/use-project-state";
-// plane web imports
-import { WorkFlowDisabledMessage } from "@/components/workflow/workflow-tree/workflow-disabled-message";
+// hooks
+import { useUser } from "@/hooks/store/user";
+import { useWorkflows } from "@/hooks/store/use-workflows";
+// components
+import { WorkFlowDisabledMessage } from "@/components/workflows";
 
 export type TPowerKProjectStatesMenuItemsProps = {
   handleSelect: (stateId: string) => void;
   projectId: string | undefined;
+  typeId?: string | null;
   selectedStateId: string | undefined;
   states: IState[];
   workspaceSlug: string;
@@ -33,12 +36,20 @@ export type TPowerKProjectStatesMenuItemsProps = {
 export const PowerKProjectStatesMenuItems = observer(function PowerKProjectStatesMenuItems(
   props: TPowerKProjectStatesMenuItemsProps
 ) {
-  const { handleSelect, projectId, selectedStateId, states, workspaceSlug } = props;
+  const { handleSelect, projectId, typeId, selectedStateId, states, workspaceSlug } = props;
   // store hooks
-  const { getIsWorkflowEnabled, getAvailableProjectStateIdMap } = useProjectState();
+  const { data: currentUser } = useUser();
+  const { isWorkflowsEnabled, getAllowedTransitionStateIds, isApprovalPending } = useWorkflows();
   // derived values
-  const isWorkflowEnabled = getIsWorkflowEnabled(workspaceSlug, projectId);
-  const availableStateIdMap = getAvailableProjectStateIdMap(projectId, selectedStateId);
+  const isWorkflowEnabled = workspaceSlug && projectId ? isWorkflowsEnabled(workspaceSlug, projectId) : false;
+  const availableStateIdMap =
+    isWorkflowEnabled && projectId
+      ? getAllowedTransitionStateIds(workspaceSlug, projectId, typeId, selectedStateId, currentUser?.id)
+      : {};
+  const isApproval =
+    isWorkflowEnabled && projectId && selectedStateId
+      ? isApprovalPending(workspaceSlug, projectId, typeId, selectedStateId)
+      : false;
 
   if (!isWorkflowEnabled) {
     return (
@@ -59,12 +70,14 @@ export const PowerKProjectStatesMenuItems = observer(function PowerKProjectState
   return (
     <>
       {states.map((state) => {
-        const isDisabled = state.id !== selectedStateId && !availableStateIdMap[state.id];
+        const isDisabled = isApproval || (state.id !== selectedStateId && !availableStateIdMap[state.id]);
         const isSelected = state.id === selectedStateId;
         return (
           <Tooltip
             key={state.id}
-            tooltipContent={selectedStateId ? <WorkFlowDisabledMessage parentStateId={selectedStateId} /> : undefined}
+            tooltipContent={
+              selectedStateId ? <WorkFlowDisabledMessage parentStateId={selectedStateId} typeId={typeId} /> : undefined
+            }
             position="right-start"
             className="border-[0.5px] border-subtle-1 mx-0.5 shadow-lg"
             disabled={!isDisabled}

@@ -286,6 +286,7 @@ class IntakeIssueViewSet(BaseViewSet):
         if workflow_state_manager.validate_issue_creation(
             state_id=request.data.get("issue", None).get("state_id", None),
             user_id=request.user.id,
+            type_id=request.data.get("type_id", None),
         ):
             return Response(
                 {"error": "You cannot create a intake issue in this state"},

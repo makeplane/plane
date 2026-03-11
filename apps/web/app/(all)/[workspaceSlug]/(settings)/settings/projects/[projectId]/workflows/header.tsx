@@ -22,7 +22,7 @@ import { SettingsPageHeader } from "@/components/settings/page-header";
 import { PROJECT_SETTINGS_ICONS } from "@/components/settings/project/sidebar/item-icon";
 
 export const WorkflowsProjectSettingsHeader = observer(function WorkflowsProjectSettingsHeader() {
-  // translation
+  // hooks
   const { t } = useTranslation();
   // derived values
   const settingsDetails = PROJECT_SETTINGS.workflows;

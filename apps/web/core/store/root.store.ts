@@ -25,8 +25,8 @@ import { CommandPaletteStore } from "@/plane-web/store/command-palette.store";
 import { PowerKStore } from "@/plane-web/store/power-k.store";
 import type { IPowerKStore } from "@/plane-web/store/power-k.store";
 import type { RootStore } from "@/plane-web/store/root.store";
-import type { IStateStore } from "@/plane-web/store/state.store";
-import { StateStore } from "@/plane-web/store/state.store";
+import type { IStateStore } from "@/store/state.store";
+import { StateStore } from "@/store/state.store";
 // cycle
 import { CycleStore } from "@/plane-web/store/cycle/cycle.store";
 import type { ICycleStore } from "@/plane-web/store/cycle/cycle.store";
@@ -208,6 +208,8 @@ import type { ISelfHostedSubscriptionStore } from "./subscription/self-hosted-su
 import { SelfHostedSubscriptionStore } from "./subscription/self-hosted-subscription.store";
 import type { IWorkspaceSubscriptionStore } from "./subscription/subscription.store";
 import { WorkspaceSubscriptionStore } from "./subscription/subscription.store";
+import type { IWorkflowsStore } from "./workflow/workflows.store";
+import { WorkflowsStore } from "./workflow/workflows.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -295,6 +297,8 @@ export class CoreRootStore {
   // subscriptions
   workspaceSubscription: IWorkspaceSubscriptionStore;
   selfHostedSubscription: ISelfHostedSubscriptionStore;
+  // workflows
+  workflowsStore: IWorkflowsStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -380,6 +384,8 @@ export class CoreRootStore {
     // subscriptions
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this as unknown as RootStore);
     this.selfHostedSubscription = new SelfHostedSubscriptionStore(this as unknown as RootStore);
+    // workflows
+    this.workflowsStore = new WorkflowsStore(this as unknown as RootStore);
   }
 
   resetOnSignOut() {
@@ -468,5 +474,7 @@ export class CoreRootStore {
     // subscriptions
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this as unknown as RootStore);
     this.selfHostedSubscription = new SelfHostedSubscriptionStore(this as unknown as RootStore);
+    // workflows
+    this.workflowsStore = new WorkflowsStore(this as unknown as RootStore);
   }
 }

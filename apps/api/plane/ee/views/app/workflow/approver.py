@@ -14,28 +14,41 @@ import json
 
 # Django imports
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
+from plane.utils.host import base_host
+from plane.db.models import Issue
 from plane.ee.views.base import BaseAPIView
-from plane.ee.models import WorkflowTransitionApprover, WorkflowTransition
+from plane.ee.models import (
+    Workflow,
+    WorkflowTransitionApprover,
+    WorkflowTransition,
+    WorkflowWorkItemType,
+    WorkflowState,
+    WorkflowStateType,
+)
 from plane.ee.serializers import WorkflowTransitionActorSerializer
 from plane.ee.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.workflow_activity_task import workflow_activity
+from plane.app.serializers.issue import IssueSerializer
+from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.webhook_task import model_activity
 
 
-class WorkflowTransitionApproverEndpoint(BaseAPIView):
+class WorkflowTransitionMemberEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.WORKFLOWS)
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
-    def post(self, request, slug, project_id, workflow_transition_id):
+    def post(self, request, slug, project_id, workflow_id, transition_id):
         requested_approver_ids = request.data.get("approver_ids", [])
         workflow_transition = WorkflowTransition.objects.filter(
-            id=workflow_transition_id, project_id=project_id, workspace__slug=slug
+            id=transition_id, project_id=project_id, workspace__slug=slug, workflow_state__workflow_id=workflow_id
         ).first()
         # Check if the workflow transition exists
         if not workflow_transition:
@@ -46,7 +59,8 @@ class WorkflowTransitionApproverEndpoint(BaseAPIView):
         existing_approver_ids = [
             str(actor_id)
             for actor_id in WorkflowTransitionApprover.objects.filter(
-                workflow_transition_id=workflow_transition_id,
+                workflow_transition_id=transition_id,
+                workflow_state__workflow_id=workflow_id,
                 project_id=project_id,
                 workspace__slug=slug,
             ).values_list("approver_id", flat=True)
@@ -56,7 +70,8 @@ class WorkflowTransitionApproverEndpoint(BaseAPIView):
         added_approver_ids = list(set(requested_approver_ids) - set(existing_approver_ids))
         # Remove the actors
         WorkflowTransitionApprover.objects.filter(
-            workflow_transition_id=workflow_transition_id,
+            workflow_transition_id=transition_id,
+            workflow_state__workflow_id=workflow_id,
             project_id=project_id,
             workspace__slug=slug,
             approver_id__in=removed_approver_ids,
@@ -66,8 +81,8 @@ class WorkflowTransitionApproverEndpoint(BaseAPIView):
             [
                 WorkflowTransitionApprover(
                     project_id=project_id,
-                    workflow_transition_id=workflow_transition_id,
-                    workflow_id=workflow_transition.workflow_id,
+                    workflow_transition_id=transition_id,
+                    workflow_state_id=workflow_transition.workflow_state_id,
                     approver_id=actor_id,
                     workspace_id=workflow_transition.workspace_id,
                     created_by_id=request.user.id,
@@ -82,10 +97,11 @@ class WorkflowTransitionApproverEndpoint(BaseAPIView):
         workflow_transition_actors = WorkflowTransitionApprover.objects.filter(
             project_id=project_id,
             workflow_transition_id=workflow_transition.id,
-            workflow_id=workflow_transition.workflow_id,
+            workflow_state_id=workflow_transition.workflow_state_id,
         )
         serializer = WorkflowTransitionActorSerializer(workflow_transition_actors, many=True)
         workflow_activity.delay(
+            workflow_id=str(workflow_id),
             type="workflow_approver.activity.updated",
             requested_data=json.dumps(
                 {
@@ -94,10 +110,133 @@ class WorkflowTransitionApproverEndpoint(BaseAPIView):
                 }
             ),
             actor_id=str(request.user.id),
-            workflow_id=str(workflow_transition.workflow_id),
+            workflow_state_id=str(workflow_transition.workflow_state_id),
             project_id=str(project_id),
             current_instance=None,
             slug=slug,
             epoch=int(timezone.now().timestamp()),
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WorkflowWorkItemApproverEndpoint(BaseAPIView):
+    @check_feature_flag(FeatureFlag.MULTIPLE_WORKFLOWS)
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    def post(self, request, slug, project_id, work_item_id):
+        action_type = request.data.get("type", None)
+        if action_type not in ["approve", "reject"]:
+            return Response(
+                {"error": "Type is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        issue = Issue.objects.filter(id=work_item_id, project_id=project_id, workspace__slug=slug).first()
+        if not issue:
+            return Response(
+                {"error": "Issue not found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # get the workflow associated with the issue's work item type
+        # if no type, fall back to the default workflow
+        workflow = None
+        if issue.type_id:
+            workflow_work_item_type = WorkflowWorkItemType.objects.filter(
+                project_id=project_id, workspace__slug=slug, work_item_type_id=issue.type_id
+            ).only("workflow_id").first()
+            if workflow_work_item_type:
+                workflow = Workflow.objects.filter(id=workflow_work_item_type.workflow_id).first()
+
+        if not workflow:
+            workflow = Workflow.objects.filter(
+                project_id=project_id, workspace__slug=slug, is_default=True
+            ).first()
+
+        if not workflow:
+            return Response(
+                {"error": "Workflow not found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # check if the workflow has the transition as approval state
+        workflow_state = WorkflowState.objects.filter(
+            workflow_id=workflow.id,
+            project_id=project_id,
+            workspace__slug=slug,
+            state_id=issue.state_id,
+        ).first()
+
+        if not workflow_state or workflow_state.type != WorkflowStateType.APPROVAL:
+            return Response(
+                {"error": "Issue is not in an approval state"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # get the workflow transition
+        workflow_transition = WorkflowTransition.objects.filter(
+            workflow_state_id=workflow_state.id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).first()
+        if not workflow_transition:
+            return Response(
+                {"error": "Workflow transition not found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # get the approvers for the workflow state
+        approvers = WorkflowTransitionApprover.objects.filter(
+            workflow_state_id=workflow_state.id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).values_list("approver_id", flat=True)
+
+        if not approvers:
+            return Response(
+                {"error": "No approvers found for the workflow state"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if request.user.id not in approvers:
+            return Response(
+                {"error": "You are not an approver for this workflow state"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # resolve the target state based on action type
+        new_state_id = (
+            workflow_transition.transition_state_id
+            if action_type == "approve"
+            else workflow_transition.rejection_state_id
+        )
+
+        current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
+
+        issue.state_id = new_state_id
+        issue.save()
+
+        issue_activity.delay(
+            type="issue.activity.updated",
+            requested_data=json.dumps({"state_id": str(new_state_id)}),
+            actor_id=str(request.user.id),
+            issue_id=str(work_item_id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+        model_activity.delay(
+            model_name="issue",
+            model_id=str(work_item_id),
+            requested_data=request.data,
+            current_instance=current_instance,
+            actor_id=request.user.id,
+            slug=slug,
+            origin=base_host(request=request, is_app=True),
+        )
+
+        return Response(
+            {"state_id": str(new_state_id)},
+            status=status.HTTP_200_OK,
+        )

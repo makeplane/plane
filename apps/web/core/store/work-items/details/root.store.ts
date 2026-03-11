@@ -67,7 +67,11 @@ export type TIssueRelationModal = {
   relationType: TIssueRelationTypes | null;
 };
 
-export type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; issue: TIssue | undefined };
+export type TIssueCrudState = {
+  toggle: boolean;
+  parentIssueId: string | undefined;
+  issue: TIssue | undefined;
+};
 
 export type TIssueCrudOperationState = {
   create: TIssueCrudState;
@@ -339,6 +343,12 @@ export class IssueDetail implements IIssueDetail {
     this.issue.fetchWorkItemWithIdentifier(workspaceSlug, identifier);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
+  updateStateViaWorkflow = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    action: "approve" | "reject"
+  ) => this.issue.updateStateViaWorkflow(workspaceSlug, projectId, issueId, action);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.issue.removeIssue(workspaceSlug, projectId, issueId);
   archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>

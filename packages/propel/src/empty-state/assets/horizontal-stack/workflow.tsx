@@ -1,0 +1,96 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import { ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
+import type { TIllustrationAssetProps } from "../helper";
+
+export function WorkflowHorizontalStackIllustration({ className }: TIllustrationAssetProps) {
+  return (
+    <svg
+      width="72"
+      height="81"
+      viewBox="0 0 72 81"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <g opacity="0.2">
+        <path
+          d="M42.2537 2.04548C41.4407 1.63199 40.3964 1.66722 39.2611 2.24191L7.9615 18.1929C5.38941 19.5034 3.30089 23.1059 3.30089 26.2317V64.3221C3.30089 66.0672 3.94566 67.2938 4.96188 67.8194L1.83616 66.2285C0.819941 65.7099 0.175171 64.4766 0.175171 62.7315V24.6407C0.175171 21.508 2.26369 17.9125 4.83578 16.602L36.1353 0.65099C37.2777 0.0692927 38.3219 0.0410674 39.1279 0.454563L42.2537 2.04548Z"
+          fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.secondary}
+          stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+          strokeWidth="0.35042"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M42.2543 2.04538C43.2705 2.56401 43.9153 3.79765 43.9153 5.54274V43.6335C43.9153 46.7663 41.8267 50.3614 39.2547 51.6719L7.9551 67.6233C6.81273 68.2049 5.76847 68.2328 4.9625 67.8193C3.94628 67.3007 3.30151 66.0671 3.30151 64.322V26.2316C3.30151 23.0988 5.39004 19.5033 7.96212 18.1928L39.2617 2.24181C40.404 1.66011 41.4483 1.63189 42.2543 2.04538Z"
+          fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.primary}
+          stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+          strokeWidth="0.35042"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <g opacity="0.6">
+        <path
+          d="M55.9132 8.08044C55.1002 7.66695 54.056 7.70218 52.9206 8.27687L21.621 24.2278C19.049 25.5384 16.9604 29.1409 16.9604 32.2666V70.3574C16.9604 72.1025 17.6053 73.3288 18.6215 73.8544L15.4957 72.2635C14.4795 71.7449 13.8347 70.5115 13.8347 68.7665V30.6757C13.8347 27.5429 15.9232 23.9475 18.4953 22.6369L49.7949 6.68595C50.9373 6.10425 51.9815 6.07637 52.7875 6.48986L55.9132 8.08044Z"
+          fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.secondary}
+          stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+          strokeWidth="0.35042"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M55.9125 8.08054C56.9287 8.59916 57.5735 9.83281 57.5735 11.5779V49.6687C57.5735 52.8014 55.485 56.3965 52.9129 57.7071L21.6133 73.6584C20.4709 74.2401 19.4268 74.268 18.6208 73.8545C17.6046 73.3359 16.9597 72.1026 16.9597 70.3575V32.2667C16.9597 29.134 19.0482 25.5385 21.6203 24.2279L52.9199 8.27697C54.0623 7.69527 55.1065 7.66704 55.9125 8.08054Z"
+          fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.primary}
+          stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+          strokeWidth="0.35042"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <path
+        d="M69.5728 14.1217C68.7598 13.7082 67.7155 13.7434 66.5802 14.3181L35.2806 30.269C32.7085 31.5796 30.6201 35.1821 30.6201 38.3078V76.3986C30.6201 78.1437 31.2648 79.37 32.2811 79.8956L29.1553 78.3047C28.139 77.7861 27.4943 76.5528 27.4943 74.8077V36.7169C27.4943 33.5842 29.5828 29.9887 32.1549 28.6781L63.4544 12.7272C64.5968 12.1455 65.6411 12.1172 66.447 12.5307L69.5728 14.1217Z"
+        fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.secondary}
+        stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+        strokeWidth="0.35042"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M69.5733 14.1206C70.5895 14.6392 71.2343 15.8728 71.2343 17.6179V55.7087C71.2343 58.8414 69.1458 62.4366 66.5737 63.7471L35.2741 79.6984C34.1317 80.2801 33.0876 80.308 32.2816 79.8945C31.2654 79.3759 30.6206 78.1426 30.6206 76.3975V38.3068C30.6206 35.174 32.709 31.5785 35.2811 30.268L66.5807 14.317C67.7231 13.7353 68.7673 13.7071 69.5733 14.1206Z"
+        fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.primary}
+        stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+        strokeWidth="0.35042"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <g clipPath="url(#clip0_338_21239)">
+        <path
+          d="M57.5409 39.7543C58.5451 39.1745 59.3592 37.7645 59.3592 36.605C59.3592 35.4455 58.5451 34.9755 57.5409 35.5553C56.5368 36.135 55.7227 37.545 55.7227 38.7045C55.7227 39.864 56.5368 40.334 57.5409 39.7543ZM46.9622 58.0771C47.9665 57.4973 48.7805 56.0874 48.7805 54.9279C48.7805 53.7683 47.9665 53.2983 46.9622 53.8781C45.958 54.4579 45.144 55.8678 45.144 57.0274C45.144 58.1869 45.958 58.6569 46.9622 58.0771ZM46.9622 59.9857C45.0451 61.0926 43.4911 60.1953 43.4911 57.9817C43.4911 55.768 45.0451 53.0763 46.9622 51.9695C48.5942 51.0273 49.959 51.5408 50.3301 53.0789L55.7783 49.9334C56.0265 49.7899 56.2652 49.5388 56.4407 49.2348C56.6163 48.9306 56.7144 48.5985 56.7145 48.3118L56.7145 45.258C56.7145 44.7309 57.0845 44.09 57.5409 43.8265C57.9974 43.563 58.3674 43.7766 58.3674 44.3037L58.3674 47.3575C58.3673 48.1504 58.0949 49.0685 57.6094 49.9095C57.1238 50.7505 56.4649 51.4454 55.7783 51.842L50.3301 54.9875C49.959 56.9541 48.5942 59.0435 46.9622 59.9857ZM57.5409 41.6629C55.9092 42.605 54.5456 42.0905 54.1744 40.5527L44.3176 46.2436C43.8611 46.5071 43.4911 46.2935 43.4911 45.7664C43.4911 45.2394 43.8611 44.5985 44.3176 44.335L54.1744 38.6441C54.5456 36.6777 55.9092 34.5888 57.5409 33.6466C59.458 32.5398 61.0121 33.4371 61.0121 35.6507C61.0121 37.8643 59.458 40.5561 57.5409 41.6629Z"
+          fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.quaternary}
+          stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.primary}
+          strokeWidth="0.70084"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_338_21239">
+          <rect width="22.4269" height="22.4269" fill="white" transform="matrix(0.866025 -0.5 0 1 42.5404 41.209)" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}

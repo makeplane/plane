@@ -31,7 +31,7 @@ from .. import BaseViewSet, BaseAPIView
 from plane.app.serializers import StateSerializer
 from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import State, Issue
-from plane.ee.models import Workflow
+from plane.ee.models import WorkflowState
 from plane.utils.cache import invalidate_cache
 from plane.ee.bgtasks.project_activites_task import project_activity
 from plane.payment.flags.flag import FeatureFlag
@@ -49,7 +49,9 @@ class StateViewSet(BaseViewSet):
             slug=slug,
             user_id=str(self.request.user.id),
         ):
-            workflow = Workflow.objects.filter(workspace__slug=slug, project_id=project_id, state_id=state_id).first()
+            workflow = WorkflowState.objects.filter(
+                workspace__slug=slug, project_id=project_id, state_id=state_id
+            ).first()
             if workflow:
                 workflow.allow_issue_creation = True
                 workflow.save()

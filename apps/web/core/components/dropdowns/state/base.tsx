@@ -30,7 +30,7 @@ import type { TDropdownProps } from "@/components/dropdowns/types";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports
-import { WorkItemStateOption } from "@/components/workflow";
+import { WorkItemStateOption } from "@/components/workflows";
 
 export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
   alwaysAllowStateChange?: boolean;
@@ -49,6 +49,7 @@ export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
   renderByDefault?: boolean;
   showDefaultState?: boolean;
   stateIds: string[];
+  typeId?: string | null;
   value: string | undefined | null;
 };
 

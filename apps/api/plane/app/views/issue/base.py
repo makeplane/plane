@@ -567,7 +567,9 @@ class IssueViewSet(BaseViewSet):
         if request.data.get("state_id"):
             workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
             if workflow_state_manager.validate_issue_creation(
-                state_id=request.data.get("state_id"), user_id=request.user.id
+                state_id=request.data.get("state_id"),
+                user_id=request.user.id,
+                type_id=request.data.get("type_id", None),
             ):
                 return Response(
                     {"error": "You cannot create a work item in this state"},

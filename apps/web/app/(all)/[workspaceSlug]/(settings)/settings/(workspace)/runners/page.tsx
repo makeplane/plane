@@ -74,7 +74,7 @@ const RunnersSettingsPage = observer(function RunnersSettingsPage() {
         />
         <WithFeatureFlagHOC flag="PLANE_RUNNER" fallback={<RunnersUpgrade />} workspaceSlug={workspaceSlug}>
           <EmptyStateCompact
-            assetKey="state"
+            assetKey="script"
             title="Scripts"
             description="Activate Scripts app to run scripts in features like automations."
             align="start"

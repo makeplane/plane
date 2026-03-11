@@ -75,6 +75,7 @@ export const WorkItemPropertiesLite = observer(function WorkItemPropertiesLite(p
         <StateDropdown
           value={workItem.state_id}
           projectId={workItem.project_id ?? undefined}
+          typeId={workItem.type_id}
           onChange={handleStateChange}
           disabled={disabled}
           buttonVariant="border-with-text"

@@ -32,3 +32,4 @@ export * from "./stickies";
 export * from "./teamspace";
 export * from "./view";
 export * from "./work-item";
+export * from "./workflow";

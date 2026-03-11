@@ -52,7 +52,7 @@ from plane.ee.models import (
     IssuePropertyOption,
     IssuePropertyValue,
     IssueWorkLog,
-    Workflow,
+    WorkflowState,
     WorkflowTransition,
     Automation,
     AutomationVersion,
@@ -65,6 +65,7 @@ from plane.ee.models import (
     Milestone,
     MilestoneIssue,
     WorkitemTemplate,
+    Workflow,
 )
 from plane.utils.exception_logger import log_exception
 
@@ -766,15 +767,25 @@ class ProjectDataCopier:
     def _copy_workflows(self):
         """Copy EE workflows"""
         print("Copying workflows")
-        for wf in Workflow.objects.filter(project=self.source_project).values():
+        for wf in WorkflowState.objects.filter(project=self.source_project).values():
             state_id = self.state_map.get(str(wf.get("state_id")))
             if not state_id:
                 continue
             try:
-                new_wf = Workflow.objects.create(
+                # get the default workflow for the project
+                workflow, created = Workflow.objects.get_or_create(
+                    workspace_id=self.target_workspace.id,
+                    project_id=self.new_project.id,
+                    is_default=True,
+                    name="Default Workflow",
+                    description="Default workflow for the project",
+                    is_active=True,
+                )
+                new_wf = WorkflowState.objects.create(
                     workspace=self.target_workspace,
                     project=self.new_project,
                     state_id=state_id,
+                    workflow_id=workflow.id,
                     allow_issue_creation=wf.get("allow_issue_creation", True),
                     created_by=self.workspace_owner,
                     updated_by=self.workspace_owner,
@@ -782,7 +793,7 @@ class ProjectDataCopier:
                 self.workflow_map[str(wf["id"])] = new_wf.id
 
                 # Copy workflow transitions
-                for wt in WorkflowTransition.objects.filter(workflow_id=wf["id"]).values():
+                for wt in WorkflowTransition.objects.filter(workflow_state_id=wf["id"]).values():
                     transition_state_id = self.state_map.get(str(wt.get("transition_state_id")))
                     rejection_state_id = (
                         self.state_map.get(str(wt.get("rejection_state_id"))) if wt.get("rejection_state_id") else None
@@ -791,7 +802,7 @@ class ProjectDataCopier:
                     new_wt = WorkflowTransition.objects.create(
                         workspace=self.target_workspace,
                         project=self.new_project,
-                        workflow=new_wf,
+                        workflow_state=new_wf,
                         transition_state_id=transition_state_id,
                         rejection_state_id=rejection_state_id,
                         required_approvals=wt.get("required_approvals"),

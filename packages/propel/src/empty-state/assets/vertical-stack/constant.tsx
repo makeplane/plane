@@ -33,7 +33,8 @@ import {
   TeamspaceVerticalStackIllustration,
   ViewVerticalStackIllustration,
   WorkItemVerticalStackIllustration,
-} from ".";
+  WorkflowVerticalStackIllustration,
+} from "./";
 
 export const VerticalStackAssetsMap = [
   {
@@ -119,5 +120,9 @@ export const VerticalStackAssetsMap = [
   {
     asset: <WorkItemVerticalStackIllustration />,
     title: "WorkItemVerticalStackIllustration",
+  },
+  {
+    asset: <WorkflowVerticalStackIllustration />,
+    title: "WorkflowVerticalStackIllustration",
   },
 ];

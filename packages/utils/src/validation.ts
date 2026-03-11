@@ -56,6 +56,14 @@ export const COMPANY_NAME_REGEX = /^[\p{L}\p{N}\s_-]+$/u;
  */
 export const SLUG_REGEX = /^[\p{L}\p{N}_-]+$/u;
 
+/**
+ * Text regex
+ * Allows: Unicode letters (\p{L}), numbers (\p{N}), spaces, hyphens, apostrophes
+ * Use case: International titles like "José-title", "李明-title"
+ * Blocks: Special characters and injection-risk chars
+ */
+export const TEXT_REGEX = /^[\p{L}\p{N}\s'-]+$/u;
+
 // =============================================================================
 // VALIDATION FUNCTIONS
 // =============================================================================

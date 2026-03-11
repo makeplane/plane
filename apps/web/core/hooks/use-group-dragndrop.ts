@@ -14,6 +14,7 @@
 import { useParams } from "next/navigation";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EIssuesStoreType, TIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
+import { getErrorMessage } from "@plane/utils";
 import type { GroupDropLocation } from "@/helpers/work-item-layout";
 import { handleGroupDragDrop } from "@/helpers/work-item-layout";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/work-items/helpers/base-issues.store";
@@ -70,11 +71,12 @@ export const useGroupIssuesDragNDrop = (
       };
     }
   ) => {
-    const errorToastProps = {
-      type: TOAST_TYPE.ERROR,
-      title: "Error!",
-      message: "Error while updating work item",
-    };
+    const showUpdateIssueErrorToast = (error?: unknown) =>
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: getErrorMessage(error, "Error while updating work item"),
+      });
     const moduleKey = ISSUE_FILTER_DEFAULT_DATA["module"];
     const cycleKey = ISSUE_FILTER_DEFAULT_DATA["cycle"];
 
@@ -83,11 +85,13 @@ export const useGroupIssuesDragNDrop = (
 
     if (isCycleChanged && workspaceSlug) {
       if (data[cycleKey]) {
-        addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey]?.toString() ?? "", issueId).catch(() =>
-          setToast(errorToastProps)
+        addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey]?.toString() ?? "", issueId).catch((error) =>
+          showUpdateIssueErrorToast(error)
         );
       } else {
-        removeCycleFromIssue(workspaceSlug.toString(), projectId, issueId).catch(() => setToast(errorToastProps));
+        removeCycleFromIssue(workspaceSlug.toString(), projectId, issueId).catch((error) =>
+          showUpdateIssueErrorToast(error)
+        );
       }
       delete data[cycleKey];
     }
@@ -99,11 +103,11 @@ export const useGroupIssuesDragNDrop = (
         issueId,
         issueUpdates[moduleKey].ADD,
         issueUpdates[moduleKey].REMOVE
-      ).catch(() => setToast(errorToastProps));
+      ).catch((error) => showUpdateIssueErrorToast(error));
       delete data[moduleKey];
     }
 
-    updateIssue && updateIssue(projectId, issueId, data).catch(() => setToast(errorToastProps));
+    updateIssue && updateIssue(projectId, issueId, data).catch((error) => showUpdateIssueErrorToast(error));
   };
 
   const handleOnDrop = async (source: GroupDropLocation, destination: GroupDropLocation) => {
@@ -128,7 +132,7 @@ export const useGroupIssuesDragNDrop = (
       setToast({
         title: "Error!",
         type: TOAST_TYPE.ERROR,
-        message: err?.detail ?? "Failed to perform this action",
+        message: getErrorMessage(err, "Failed to perform this action"),
       });
     });
   };

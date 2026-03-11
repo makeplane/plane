@@ -15,7 +15,7 @@ import uuid
 # Module imports
 from plane.db.models import State
 from plane.ee.models import (
-    Workflow,
+    WorkflowState,
     ProjectFeature,
     WorkflowTransition,
     WorkflowTransitionApprover,
@@ -38,7 +38,7 @@ class WorkflowStateManager:
 
         return list(
             WorkflowTransition.objects.filter(
-                workflow__state_id=current_state_id, project_id=self.project_id
+                workflow_state__state_id=current_state_id, project_id=self.project_id
             ).values_list("transition_state_id", flat=True)
         )
 
@@ -47,7 +47,7 @@ class WorkflowStateManager:
 
         return list(
             WorkflowTransitionApprover.objects.filter(
-                workflow__state_id=current_state_id,
+                workflow_state__state_id=current_state_id,
                 workflow_transition__transition_state_id=transition_state_id,
                 project_id=self.project_id,
             ).values_list("approver_id", flat=True)
@@ -121,7 +121,7 @@ class WorkflowStateManager:
             state_id = State.objects.get(project_id=self.project_id, default=True).id
 
         # check if the issue creation is allowed or not for the state
-        is_issue_creation_allowed = Workflow.objects.filter(
+        is_issue_creation_allowed = WorkflowState.objects.filter(
             state_id=state_id, project_id=self.project_id, allow_issue_creation=True
         ).exists()
 

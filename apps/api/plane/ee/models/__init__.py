@@ -93,8 +93,11 @@ from .teamspace import (
 )
 
 from .workflow import (
+    WorkflowStateType,
     Workflow,
+    WorkflowState,
     WorkflowTransition,
+    WorkflowWorkItemType,
     WorkflowTransitionApprover,
     WorkflowTransitionApproval,
     WorkflowTransitionActivity,

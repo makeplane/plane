@@ -24,13 +24,15 @@ from rest_framework.response import Response
 class WorkflowActivityEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.WORKFLOWS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    def get(self, request, slug, project_id):
+    def get(self, request, slug, project_id, workflow_id):
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:
             filters = {"created_at__gt": request.GET.get("created_at__gt")}
 
         issue_activities = (
-            WorkflowTransitionActivity.objects.filter(workspace__slug=slug, project_id=project_id)
+            WorkflowTransitionActivity.objects.filter(
+                workspace__slug=slug, project_id=project_id, workflow_id=workflow_id
+            )
             .filter(**filters)
             .select_related("actor", "workspace", "project")
         ).order_by("created_at")

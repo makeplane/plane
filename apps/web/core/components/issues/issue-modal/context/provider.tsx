@@ -41,6 +41,7 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useUser } from "@/hooks/store/user/user-user";
 // plane web imports
 import { useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
@@ -72,7 +73,8 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
   const { t } = useTranslation();
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
-  const { getProjectStateIds, getAvailableWorkItemCreationStateIds, fetchProjectStates } = useProjectState();
+  const { getProjectStateIds, fetchProjectStates } = useProjectState();
+  const { getCreationAllowedStateIds } = useWorkflows();
   const { getProjectLabelIds, fetchProjectLabels } = useLabel();
   const { getModulesFetchStatusByProjectId, getProjectModuleIds, fetchModules } = useModule();
   const {
@@ -129,6 +131,15 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
     const activeProperties = properties?.filter((property) => property.is_active);
     return activeProperties?.length || 0;
   };
+
+  const getAvailableWorkItemCreationStateIds = useCallback(
+    (projectId: string | null | undefined): string[] | undefined => {
+      if (!projectId) return undefined;
+      const map = getCreationAllowedStateIds(projectId, undefined);
+      return Object.keys(map).filter((stateId) => map[stateId]);
+    },
+    [getCreationAllowedStateIds]
+  );
 
   // handlers
   const handlePropertyValuesValidation = (props: TPropertyValuesValidationProps) => {

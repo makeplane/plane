@@ -150,7 +150,9 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
         if workitem_blueprint_first.state.get("id"):
             workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
             if workflow_state_manager.validate_issue_creation(
-                state_id=workitem_blueprint_first.state.get("id"), user_id=user_id
+                state_id=workitem_blueprint_first.state.get("id"),
+                user_id=user_id,
+                type_id=workitem_blueprint_first.type.get("id"),
             ):
                 error_msg = "Workflow validation failed: user cannot create issues in this state"
                 logger.warning(f"Recurring task {recurring_workitem_task_id}: {error_msg}")

@@ -100,6 +100,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             value={issue?.state_id}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
             projectId={projectId}
+            typeId={issue.type_id}
             disabled={disabled}
             buttonVariant="transparent-with-text"
             className="w-full grow group"

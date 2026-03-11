@@ -40,6 +40,7 @@ import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { IssueSubscription } from "../issue-detail/subscription";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 import { NameDescriptionUpdateStatus } from "../issue-update-status";
+import { WorkItemApproveRejectActions } from "../issue-detail/approve-reject-actions";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -200,6 +201,15 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
       <div className="flex items-center gap-x-4">
         <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
         <div className="flex items-center gap-2">
+          {issueDetails?.state_id && (
+            <WorkItemApproveRejectActions
+              projectId={projectId}
+              workItemId={issueId}
+              typeId={issueDetails?.type_id}
+              currentStateId={issueDetails?.state_id}
+              workspaceSlug={workspaceSlug}
+            />
+          )}
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}

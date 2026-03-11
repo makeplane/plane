@@ -62,6 +62,7 @@ import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { TFeatureFlagsResponse } from "@/services/feature-flag.service";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useRunners } from "@/plane-web/hooks/store";
 import { useAiFeatureFlags } from "@/plane-web/hooks/store/use-ai-feature-flags";
 
@@ -103,6 +104,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { initiative } = useInitiatives();
   const { getWorkspaceBySlug } = useWorkspace();
   const { getInstance } = usePiChat();
+  const { fetchAllWorkflows } = useWorkflows();
   const { fetchScripts } = useRunners();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
@@ -123,6 +125,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const isPageTemplatesEnabled = useFlag(workspaceSlug, "PAGE_TEMPLATES");
   const isInitiativesFeatureEnabled = initiative.isInitiativesFeatureEnabled;
   const isTemplatePublishEnabled = getIsTemplatePublishEnabled(workspaceSlug);
+  const isWorkflowsFeatureEnabled = useFlag(workspaceSlug, "WORKFLOWS");
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
 
   // fetching user workspace information
@@ -239,6 +242,14 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     isIssueTypesEnabled || isEpicsEnabled ? () => fetchAll(workspaceSlug) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
+  // fetching workflows
+  useSWR(
+    isWorkflowsFeatureEnabled ? ["workflows", workspaceSlug, isWorkflowsFeatureEnabled] : null,
+    isWorkflowsFeatureEnabled ? () => fetchAllWorkflows(workspaceSlug) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
   // fetching teamspaces
   useSWR(
     isTeamspacesFeatureEnabled ? `WORKSPACE_TEAMSPACES_${workspaceSlug}_${isTeamspacesFeatureEnabled}` : null,

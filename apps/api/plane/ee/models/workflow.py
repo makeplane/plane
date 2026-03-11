@@ -17,26 +17,75 @@ from django.conf import settings
 from plane.db.models import ProjectBaseModel
 
 
+class WorkflowStateType(models.TextChoices):
+    TRANSITION = "transition"
+    APPROVAL = "approval"
+
+
 class Workflow(ProjectBaseModel):
-    state = models.ForeignKey("db.State", on_delete=models.CASCADE, related_name="workflows")
-    allow_issue_creation = models.BooleanField(default=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    is_default = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ["project", "state", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["project", "state"],
-                condition=models.Q(deleted_at__isnull=True),
-                name="workflow_unique_project_state_when_deleted_at_null",
-            )
-        ]
         db_table = "workflows"
         verbose_name = "Workflow"
         verbose_name_plural = "Workflows"
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["workspace"]),
+            models.Index(fields=["project"]),
+            models.Index(fields=["created_by"]),
+            models.Index(fields=["updated_by"]),
+        ]
+
+
+class WorkflowWorkItemType(ProjectBaseModel):
+    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name="workflow_work_item_types")
+    work_item_type = models.ForeignKey(
+        "db.IssueType", on_delete=models.CASCADE, related_name="workflow_work_item_types", null=True, blank=True
+    )
+
+    class Meta:
+        unique_together = ["work_item_type", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["work_item_type", "project"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workflow_work_item_type_unique_work_item_type_project_when_deleted_at_null",
+            )
+        ]
+        db_table = "workflow_work_item_types"
+        verbose_name = "Workflow Work Item Type"
+        verbose_name_plural = "Workflow Work Item Types"
+        ordering = ("-created_at",)
+
+
+class WorkflowState(ProjectBaseModel):
+    state = models.ForeignKey("db.State", on_delete=models.CASCADE, related_name="workflows")
+    allow_issue_creation = models.BooleanField(default=True)
+    type = models.CharField(max_length=255, default=WorkflowStateType.TRANSITION)
+    workflow = models.ForeignKey(
+        "Workflow", on_delete=models.CASCADE, related_name="workflow_states", null=True, blank=True
+    )
+
+    class Meta:
+        unique_together = ["project", "state", "workflow", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "state", "workflow"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workflow_state_unique_project_state_when_deleted_at_null",
+            )
+        ]
+        db_table = "workflow_states"
+        verbose_name = "Workflow State"
+        verbose_name_plural = "Workflow States"
 
 
 class WorkflowTransition(ProjectBaseModel):
-    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name="workflow_transitions")
+    workflow_state = models.ForeignKey(WorkflowState, on_delete=models.CASCADE, related_name="workflow_transitions")
     transition_state = models.ForeignKey(
         "db.State",
         on_delete=models.CASCADE,
@@ -63,7 +112,7 @@ class WorkflowTransition(ProjectBaseModel):
 class WorkflowTransitionApprover(ProjectBaseModel):
     """Defines who can approve a particular workflow transition"""
 
-    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name="workflow_approvers")
+    workflow_state = models.ForeignKey(WorkflowState, on_delete=models.CASCADE, related_name="workflow_approvers")
     workflow_transition = models.ForeignKey(
         WorkflowTransition,
         on_delete=models.CASCADE,
@@ -92,7 +141,7 @@ class WorkflowTransitionApprover(ProjectBaseModel):
 class WorkflowTransitionApproval(ProjectBaseModel):
     """Records approvals/rejections for specific issues"""
 
-    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name="workflow_approvals")
+    workflow_state = models.ForeignKey(WorkflowState, on_delete=models.CASCADE, related_name="workflow_approvals")
     workflow_transition = models.ForeignKey(
         WorkflowTransition,
         on_delete=models.CASCADE,
@@ -123,7 +172,10 @@ class WorkflowTransitionApproval(ProjectBaseModel):
 
 class WorkflowTransitionActivity(ProjectBaseModel):
     workflow = models.ForeignKey(
-        Workflow,
+        Workflow, on_delete=models.CASCADE, related_name="workflow_activities", null=True, blank=True
+    )
+    workflow_state = models.ForeignKey(
+        WorkflowState,
         on_delete=models.SET_NULL,
         related_name="workflow_activities",
         blank=True,

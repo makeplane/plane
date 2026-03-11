@@ -18,11 +18,13 @@ import { lazy, Suspense, useEffect, useRef } from "react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { EIssueLayoutTypes } from "@plane/types";
 import type { TIssue } from "@plane/types";
+import { getMandatoryFields, resolveQuickAddCreationContext } from "@plane/utils";
 // components
 import type { TQuickAddIssueForm } from "@/components/issues/issue-layouts/quick-add";
 // hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { useProject } from "@/hooks/store/use-project";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 import useKeypress from "@/hooks/use-keypress";
 
 const CreateUpdateWorkItemModal = lazy(() =>
@@ -102,13 +104,24 @@ export const QuickAddIssueFormRoot = observer(function QuickAddIssueFormRoot(pro
   const ref = useRef<HTMLFormElement>(null);
   // store hooks
   const { getProjectById } = useProject();
-  const { getProjectDefaultIssueType, getProjectEpicDetails } = useIssueTypes();
+  const { getProjectDefaultIssueType, getProjectEpicDetails, getIssueTypeById } = useIssueTypes();
+  const { getCreationTypeForState } = useWorkflows();
   // derived values
   const projectDetail = getProjectById(projectId);
   const defaultIssueType = getProjectDefaultIssueType(projectId);
   const projectEpics = getProjectEpicDetails(projectId);
-  const activeProperties = isEpic ? projectEpics?.activeProperties : defaultIssueType?.activeProperties;
-  const mandatoryFields = activeProperties?.filter((property) => property.is_required) ?? [];
+  const defaultIssueTypeId = defaultIssueType?.id;
+  const { creationTypeId, modalData, shouldHideQuickAdd, shouldUseModalWithFallbackType } =
+    resolveQuickAddCreationContext({
+      isEpic,
+      prePopulatedData,
+      defaultIssueTypeId,
+      getCreationTypeForState,
+      projectId,
+    });
+  const selectedIssueType = !isEpic && creationTypeId ? getIssueTypeById(creationTypeId) : defaultIssueType;
+  const activeProperties = isEpic ? projectEpics?.activeProperties : selectedIssueType?.activeProperties;
+  const mandatoryFields = getMandatoryFields({ activeProperties });
   const CurrentLayoutQuickAddIssueForm = QUICK_ADD_ISSUE_FORMS[layout] ?? null;
 
   // click detection
@@ -120,13 +133,15 @@ export const QuickAddIssueFormRoot = observer(function QuickAddIssueFormRoot(pro
     setFocus("name");
   }, [setFocus]);
 
-  if (mandatoryFields.length > 0) {
+  if (shouldHideQuickAdd) return <></>;
+
+  if (shouldUseModalWithFallbackType || mandatoryFields.length > 0) {
     return (
       <>
         {isEpic ? (
-          <CreateUpdateEpicModal isOpen={isOpen} onClose={onClose} data={prePopulatedData} />
+          <CreateUpdateEpicModal isOpen={isOpen} onClose={onClose} data={modalData} />
         ) : (
-          <CreateUpdateWorkItemModal isOpen={isOpen} onClose={onClose} data={prePopulatedData} />
+          <CreateUpdateWorkItemModal isOpen={isOpen} onClose={onClose} data={modalData} />
         )}
       </>
     );

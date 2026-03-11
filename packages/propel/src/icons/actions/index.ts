@@ -32,3 +32,5 @@ export * from "./command-icon";
 export * from "./copy-link";
 export * from "./upgrade-icon";
 export * from "./trash-icon";
+export * from "./sort-by-up";
+export * from "./sort-by-down";

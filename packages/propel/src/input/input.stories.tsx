@@ -14,6 +14,7 @@
 import preview from "#.storybook/preview";
 import { expect } from "storybook/test";
 import { Input } from "./index";
+import { SearchIcon } from "../icons";
 
 const meta = preview.meta({
   title: "Primitives/Input",
@@ -113,4 +114,8 @@ export const Number = Default.extend({
 
 export const Search = Default.extend({
   args: { type: "search", placeholder: "Search..." },
+});
+
+export const SearchWithIcon = Default.extend({
+  args: { type: "search", placeholder: "Search...", prependIcon: <SearchIcon className="size-4 text-tertiary" /> },
 });

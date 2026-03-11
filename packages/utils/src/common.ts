@@ -14,7 +14,7 @@
 import { clsx } from "clsx";
 import type { ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
-import type { CompleteOrEmpty } from "@plane/types";
+import type { CompleteOrEmpty, TError } from "@plane/types";
 
 // Support email can be configured by the application
 export const getSupportEmail = (defaultEmail: string = ""): string => defaultEmail;
@@ -153,4 +153,10 @@ export const calculateSortOrder = (
   if (nextSortOrder === undefined) return prevSortOrder + DEFAULT_SORT_ORDER;
   // Item is moved to middle
   return (prevSortOrder + nextSortOrder) / 2;
+};
+
+export const getErrorMessage = (error: unknown, fallbackMessage: string) => {
+  // TODO: Handle Django serializer validation payloads that return arrays of field error records.
+  const errorObj = error as TError | undefined;
+  return errorObj?.error ?? errorObj?.detail ?? errorObj?.message ?? fallbackMessage;
 };

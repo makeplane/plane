@@ -31,6 +31,7 @@ import {
   UnknownHorizontalStackIllustration,
   UpdateHorizontalStackIllustration,
   WebhookHorizontalStackIllustration,
+  WorkflowHorizontalStackIllustration,
   WorkItemHorizontalStackIllustration,
   WorklogHorizontalStackIllustration,
   RunnerScriptsHorizontalStackIllustration,
@@ -121,6 +122,10 @@ export const HorizontalStackAssetsMap = [
   {
     asset: <WorklogHorizontalStackIllustration className="w-20 h-20" />,
     title: "Worklog",
+  },
+  {
+    asset: <WorkflowHorizontalStackIllustration className="w-20 h-20" />,
+    title: "Workflow",
   },
   {
     asset: <RunnerScriptsHorizontalStackIllustration className="w-20 h-20" />,

@@ -13,7 +13,7 @@
 
 import * as React from "react";
 import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
-import { SearchIcon } from "../icons";
+import { ChevronDownIcon, CloseIcon, SearchIcon } from "../icons";
 import { cn } from "../utils/classname";
 
 // Type definitions
@@ -60,6 +60,25 @@ export interface ComboboxOptionProps {
   disabled?: boolean;
   children?: React.ReactNode;
   className?: string;
+}
+
+export interface ComboboxChipsProps {
+  className?: string;
+  placeholder?: string;
+  renderChip?: (value: string, label: string, Chip: React.ComponentType<ComboboxChipProps>) => React.ReactNode;
+  getLabel?: (value: string) => string;
+  children?: React.ReactNode;
+}
+
+export interface ComboboxChipProps {
+  value: string;
+  className?: string;
+  children?: React.ReactNode;
+}
+
+export interface ComboboxChipRemoveProps {
+  className?: string;
+  "aria-label"?: string;
 }
 
 // Constants
@@ -188,9 +207,8 @@ function ComboboxOptions({
           <div className="flex flex-col gap-1">
             {showSearch && (
               <div className="relative">
-                <SearchIcon className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-placeholder" />
-                <input
-                  type="text"
+                <SearchIcon className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-placeholder pointer-events-none z-10" />
+                <BaseCombobox.Input
                   placeholder={searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -234,11 +252,85 @@ function ComboboxOption({ value, children, disabled, className }: ComboboxOption
   );
 }
 
+// Chips container component (used as Button replacement for multi-select)
+function ComboboxChips({ className, renderChip, getLabel, children }: ComboboxChipsProps) {
+  const getLabelForValue = React.useCallback(
+    (value: string) => {
+      if (getLabel) {
+        return getLabel(value);
+      }
+      return value;
+    },
+    [getLabel]
+  );
+
+  return (
+    <BaseCombobox.Chips className={cn("flex flex-wrap items-center gap-1  min-h-10 cursor-pointer", className)}>
+      <BaseCombobox.Value>
+        {(values: string[]) => (
+          <>
+            {values.map((value) => {
+              const label = getLabelForValue(value);
+              if (renderChip) {
+                return <React.Fragment key={value}>{renderChip(value, label, ComboboxChip)}</React.Fragment>;
+              }
+              return (
+                <ComboboxChip key={value} value={value}>
+                  {label}
+                </ComboboxChip>
+              );
+            })}
+            <Combobox.Button className="flex-1 flex items-center justify-between">
+              {children}
+              <ChevronDownIcon className="h-4 w-4 text-placeholder" />
+            </Combobox.Button>
+          </>
+        )}
+      </BaseCombobox.Value>
+    </BaseCombobox.Chips>
+  );
+}
+
+// Individual chip component
+function ComboboxChip({ value, className, children }: ComboboxChipProps) {
+  const chipLabel = React.useMemo(() => {
+    if (typeof children === "string") return children;
+    if (typeof children === "number") return String(children);
+    return value;
+  }, [children, value]);
+
+  return (
+    <BaseCombobox.Chip
+      {...({ value } as any)}
+      className={cn("inline-flex items-center gap-1 rounded-sm px-2 py-1 text-13 text-secondary", className)}
+      aria-label={chipLabel}
+    >
+      {children}
+      <ComboboxChipRemove aria-label={`Remove ${chipLabel}`} />
+    </BaseCombobox.Chip>
+  );
+}
+
+// Chip remove button component
+function ComboboxChipRemove({ className, "aria-label": ariaLabel }: ComboboxChipRemoveProps) {
+  return (
+    <BaseCombobox.ChipRemove
+      className={cn("ml-1 flex items-center justify-center rounded-sm hover:bg-surface-4", className)}
+      aria-label={ariaLabel || "Remove"}
+    >
+      <CloseIcon className="h-3 w-3" />
+    </BaseCombobox.ChipRemove>
+  );
+}
+
 // Compound component export
 const Combobox = Object.assign(ComboboxRoot, {
   Button: ComboboxButton,
   Options: ComboboxOptions,
   Option: ComboboxOption,
+  Chips: ComboboxChips,
+  Chip: ComboboxChip,
+  ChipRemove: ComboboxChipRemove,
 });
 
 export { Combobox };

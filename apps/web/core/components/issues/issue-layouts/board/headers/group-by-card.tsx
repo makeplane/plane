@@ -19,6 +19,7 @@ import { Minimize2, Maximize2, Circle } from "lucide-react";
 import { PlusIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
+import { resolveStateHeaderCreation } from "@plane/utils";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
@@ -27,9 +28,10 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 // constants
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 // types
 // Plane-web
-import { WorkFlowGroupTree } from "@/components/workflow";
+import { WorkFlowGroupTree } from "@/components/workflows";
 
 interface IHeaderGroupByCard {
   sub_group_by: TIssueGroupByOptions | undefined;
@@ -67,11 +69,21 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
   // hooks
   const storeType = useIssueStoreType();
+  const { canCreateInStateAcrossTypes, getCreationTypeForState } = useWorkflows();
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
 
   const renderExistingIssueModal = moduleId || cycleId;
   const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
+  const { isCreationDisabled, createModalData } = resolveStateHeaderCreation({
+    groupBy: group_by,
+    groupId: column_id,
+    workItemPayload: issuePayload,
+    disableIssueCreation,
+    projectId: projectId?.toString(),
+    canCreateInStateAcrossTypes,
+    getCreationTypeForState,
+  });
 
   const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
@@ -98,12 +110,12 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   return (
     <>
       {isEpic ? (
-        <CreateUpdateEpicModal isOpen={isOpen} onClose={() => setIsOpen(false)} data={issuePayload} />
+        <CreateUpdateEpicModal isOpen={isOpen} onClose={() => setIsOpen(false)} data={createModalData} />
       ) : (
         <CreateUpdateIssueModal
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
-          data={issuePayload}
+          data={createModalData}
           storeType={storeType}
         />
       )}
@@ -146,7 +158,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           </div>
         </div>
 
-        <WorkFlowGroupTree groupBy={group_by} groupId={column_id} />
+        {group_by === "state" && <WorkFlowGroupTree groupId={column_id} typeId={issuePayload.type_id} />}
 
         {sub_group_by === null && (
           <button
@@ -161,7 +173,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           </button>
         )}
 
-        {!disableIssueCreation &&
+        {!isCreationDisabled &&
           (renderExistingIssueModal ? (
             <CustomMenu
               customButton={

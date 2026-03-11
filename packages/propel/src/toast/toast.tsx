@@ -100,13 +100,13 @@ const TOAST_DATA = {
     borderColorClassName: "border-subtle",
   },
   [TOAST_TYPE.LOADING]: {
-    icon: <CircularBarSpinner className="text-on-color" />,
+    icon: <CircularBarSpinner className="text-primary" />,
     iconBgClassName: "bg-layer-2",
     backgroundColorClassName: "bg-surface-1",
     borderColorClassName: "border-subtle",
   },
   [TOAST_TYPE.LOADING_TOAST]: {
-    icon: <CircularBarSpinner className="text-on-color" />,
+    icon: <CircularBarSpinner className="text-primary" />,
     iconBgClassName: "bg-layer-2",
     backgroundColorClassName: "bg-surface-1",
     borderColorClassName: "border-subtle",

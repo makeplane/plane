@@ -32,6 +32,8 @@ export const ActionsIconsMap = [
   { icon: <Icon name="action.trash" />, title: "TrashIcon" },
   { icon: <Icon name="action.copy-link" />, title: "CopyLinkIcon" },
   { icon: <Icon name="action.upgrade" />, title: "UpgradeIcon" },
+  { icon: <Icon name="action.sort-by-up" />, title: "SortByUpIcon" },
+  { icon: <Icon name="action.sort-by-down" />, title: "SortByDownIcon" },
 ];
 
 export const ArrowsIconsMap = [
@@ -41,6 +43,9 @@ export const ArrowsIconsMap = [
   { icon: <Icon name="arrow.chevron-up" />, title: "ChevronUpIcon" },
   { icon: <Icon name="arrow.external-link" />, title: "ExternalLinkIcon" },
   { icon: <Icon name="arrow.reply" />, title: "ReplyIcon" },
+  { icon: <Icon name="arrow.arrow-left" />, title: "ArrowLeftIcon" },
+  { icon: <Icon name="arrow.arrow-right" />, title: "ArrowRightIcon" },
+  { icon: <Icon name="arrow.accordion-close" />, title: "AccordionCloseIcon" },
 ];
 
 export const WorkspaceIconsMap = [
@@ -115,4 +120,8 @@ export const OtherProductsIconsMap = [
   { icon: <Icon name="other-products.raycast" />, title: "RaycastIcon" },
   { icon: <Icon name="other-products.gitlab" />, title: "GitlabIcon" },
 ];
-export const MiscIconsMap = [{ icon: <Icon name="misc.info" />, title: "InfoIcon" }];
+export const MiscIconsMap = [
+  { icon: <Icon name="misc.info" />, title: "InfoIcon" },
+  { icon: <Icon name="misc.alert" />, title: "AlertIcon" },
+  { icon: <Icon name="misc.history" />, title: "HistoryIcon" },
+];

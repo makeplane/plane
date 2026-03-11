@@ -319,5 +319,14 @@ export default {
         "Reduce setup time by creating templates for projects, work items, and pages — and start new work in seconds.",
       cta_primary: "Create template",
     },
+    workflows: {
+      title: "No workflows yet",
+      description: "Create workflows to manage the progress of your work items.",
+      cta_primary: "Add new workflow",
+      states: {
+        title: "Add states",
+        description: "Select the states through which the work item progresses.",
+      },
+    },
   },
 } as const;

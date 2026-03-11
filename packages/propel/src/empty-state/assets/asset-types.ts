@@ -25,6 +25,7 @@ export type HorizontalStackAssetType =
   | "priority"
   | "project"
   | "settings"
+  | "script"
   | "state"
   | "state-square"
   | "template"
@@ -34,6 +35,7 @@ export type HorizontalStackAssetType =
   | "webhook"
   | "work-item"
   | "worklog"
+  | "workflow"
   | "group-syncing"
   | "runner-scripts"
   | "runner-functions";
@@ -60,7 +62,8 @@ export type VerticalStackAssetType =
   | "stickies"
   | "teamspace"
   | "view"
-  | "work-item";
+  | "work-item"
+  | "workflow";
 
 // Illustration Asset Types
 export type IllustrationAssetType = "inbox" | "search";

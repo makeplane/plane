@@ -11,9 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+export * from "./arrow-left";
+export * from "./arrow-right";
 export * from "./chevron-down";
 export * from "./chevron-left";
 export * from "./chevron-right";
 export * from "./chevron-up";
 export * from "./external-link";
 export * from "./reply-icon";
+export * from "./accordion-close";

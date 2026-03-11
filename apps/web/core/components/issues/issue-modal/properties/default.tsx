@@ -14,7 +14,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
-import { Controller } from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form";
 import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ParentPropertyIcon } from "@plane/propel/icons";
@@ -82,6 +82,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
   const { allowPermissions } = useUserPermissions();
   // derived values
   const projectDetails = getProjectById(projectId);
+  const typeId = useWatch({ control, name: "type_id" });
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
@@ -108,6 +109,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                 handleFormChange();
               }}
               projectId={projectId ?? undefined}
+              typeId={typeId}
               buttonVariant="border-with-text"
               tabIndex={getIndex("state_id")}
               isForWorkItemCreation={!id}

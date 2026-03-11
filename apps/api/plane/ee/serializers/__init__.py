@@ -97,6 +97,7 @@ from .app.epic import (
 
 from .app.workflow import (
     WorkflowSerializer,
+    WorkflowStateSerializer,
     WorkflowTransitionSerializer,
     WorkflowTransitionActorSerializer,
     WorkflowTransitionActivitySerializer,

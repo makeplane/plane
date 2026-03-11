@@ -29,7 +29,7 @@ export const bannerSizeStyling = {
 export const bannerStyling: IBannerStyling = {
   success: "bg-success-subtle",
   error: "bg-danger-subtle",
-  warning: "bg-yellow-500/10",
+  warning: "bg-warning-subtle",
   info: "bg-blue-500/10",
 };
 

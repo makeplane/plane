@@ -11,6 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+export * from "./alert-icon";
+export * from "./history-icon";
 export * from "./activity-icon";
 export * from "./info-icon";
 export * from "./updates-icon";

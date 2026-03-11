@@ -44,7 +44,8 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
         ends === "top" ? `pb-3` : ends === "bottom" ? `pt-3` : `py-3`
       }`}
     >
-      <div className="shrink-0  w-7 h-7 rounded-lg overflow-hidden flex justify-center items-center mt-0.5 z-[4] text-secondary border border-subtle shadow-raised-100">
+      <div className="absolute left-[13px] top-0 bottom-0 w-px bg-layer-3" aria-hidden />
+      <div className="shrink-0  w-7 h-7 rounded-lg overflow-hidden flex justify-center items-center mt-0.5 z-[4] bg-layer-2 text-secondary border border-subtle shadow-raised-100">
         {Icon ? <Icon className="h-3.5 w-3.5 shrink-0" /> : <Network className="h-3.5 w-3.5 shrink-0" />}
       </div>
       <div className="w-full text-secondary">

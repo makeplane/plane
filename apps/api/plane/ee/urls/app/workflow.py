@@ -15,45 +15,63 @@ from django.urls import path
 # Module imports
 from plane.ee.views.app.workflow import (
     WorkflowEndpoint,
+    WorkflowStatesEndpoint,
     WorkflowActivityEndpoint,
-    WorkflowTransitionEndpoint,
-    WorkflowTransitionApproverEndpoint,
+    WorkspaceWorkflowEndpoint,
+    DefaultWorkflowEndpoint,
+    WorkflowStateTransitionsEndpoint,
+    WorkflowWorkItemApproverEndpoint,
 )
 
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/workflow-states/",
+        "workspaces/<str:slug>/workflows/",
+        WorkspaceWorkflowEndpoint.as_view(),
+        name="workspace-workflows",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/",
         WorkflowEndpoint.as_view(),
         name="project-workflows",
     ),
     path(
-        "workspaces/<str:slug>/workflow-states/<uuid:state_id>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/default-workflow/",
+        DefaultWorkflowEndpoint.as_view(),
+        name="project-default-workflow",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:pk>/",
         WorkflowEndpoint.as_view(),
         name="project-workflows",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/workflow-reset/",
-        WorkflowEndpoint.as_view(),
-        name="project-workflows",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/states/",
+        WorkflowStatesEndpoint.as_view(),
+        name="project-workflow-states",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/workflow-transitions/",
-        WorkflowTransitionEndpoint.as_view(),
-        name="workflow-transitions",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/states/<uuid:state_id>/",
+        WorkflowStatesEndpoint.as_view(),
+        name="project-workflow-states",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/workflow-transitions/<uuid:pk>/",
-        WorkflowTransitionEndpoint.as_view(),
-        name="workflow-transitions",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/state-transitions/",
+        WorkflowStateTransitionsEndpoint.as_view(),
+        name="project-workflow-state-transitions",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/workflow-transitions/<uuid:workflow_transition_id>/approvers/",
-        WorkflowTransitionApproverEndpoint.as_view(),
-        name="workflow-transition-approver",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/state-transitions/<uuid:transition_id>/",
+        WorkflowStateTransitionsEndpoint.as_view(),
+        name="project-workflow-state-transition",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/workflow-activity/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/workflow-approval/",
+        WorkflowWorkItemApproverEndpoint.as_view(),
+        name="project-work-item-approvers",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/activities/",
         WorkflowActivityEndpoint.as_view(),
         name="workflow-activity",
     ),

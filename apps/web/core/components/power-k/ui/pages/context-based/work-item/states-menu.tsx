@@ -45,6 +45,7 @@ export const PowerKProjectStatesMenu = observer(function PowerKProjectStatesMenu
       <PowerKProjectStatesMenuItems
         {...props}
         projectId={workItemDetails.project_id ?? undefined}
+        typeId={workItemDetails.type_id}
         selectedStateId={workItemDetails.state_id ?? undefined}
         states={filteredProjectStates}
         workspaceSlug={workspaceSlug?.toString()}

@@ -18,21 +18,22 @@ import { CircleDashed } from "lucide-react";
 import { PlusIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { cn, resolveStateHeaderCreation } from "@plane/utils";
 import type { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
-import { cn } from "@plane/utils";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 // constants
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
+import { useWorkflows } from "@/hooks/store/use-workflows";
 // plane-web
 import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 // Plane-web
-import { WorkFlowGroupTree } from "@/components/workflow";
+import { WorkFlowGroupTree } from "@/components/workflows";
 
 interface IHeaderGroupByCard {
   groupID: string;
@@ -69,11 +70,21 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
+  const { canCreateInStateAcrossTypes, getCreationTypeForState } = useWorkflows();
   const storeType = useIssueStoreType();
   // derived values
   const renderExistingIssueModal = moduleId || cycleId;
   const existingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(groupID) === "empty";
+  const { isCreationDisabled, createModalData } = resolveStateHeaderCreation({
+    groupBy,
+    groupId: groupID,
+    workItemPayload: issuePayload,
+    disableIssueCreation,
+    projectId: projectId?.toString(),
+    canCreateInStateAcrossTypes,
+    getCreationTypeForState,
+  });
   // auth
   const canSelectIssues = canEditProperties(projectId?.toString()) && !selectionHelpers.isSelectionDisabled;
 
@@ -127,12 +138,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         >
           <div className="inline-block line-clamp-1 truncate font-medium text-primary">{title}</div>
           <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
-          <div className="px-2.5">
-            <WorkFlowGroupTree groupBy={groupBy} groupId={groupID} />
-          </div>
+          {groupBy === "state" && (
+            <div className="px-2.5">
+              <WorkFlowGroupTree groupId={groupID} typeId={issuePayload.type_id} />
+            </div>
+          )}
         </div>
 
-        {!disableIssueCreation &&
+        {!isCreationDisabled &&
           (renderExistingIssueModal ? (
             <CustomMenu
               customButton={
@@ -168,12 +181,12 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           ))}
 
         {isEpic ? (
-          <CreateUpdateEpicModal isOpen={isOpen} onClose={() => setIsOpen(false)} data={issuePayload} />
+          <CreateUpdateEpicModal isOpen={isOpen} onClose={() => setIsOpen(false)} data={createModalData} />
         ) : (
           <CreateUpdateIssueModal
             isOpen={isOpen}
             onClose={() => setIsOpen(false)}
-            data={issuePayload}
+            data={createModalData}
             storeType={storeType}
           />
         )}

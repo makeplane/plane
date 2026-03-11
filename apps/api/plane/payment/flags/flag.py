@@ -124,6 +124,8 @@ class FeatureFlag(Enum):
     WORKSPACE_API_TOKEN = "WORKSPACE_API_TOKEN"
     # Import summary
     IMPORT_SUMMARY = "IMPORT_SUMMARY"
+    # Multiple workflows
+    MULTIPLE_WORKFLOWS = "MULTIPLE_WORKFLOWS"
     # Formula properties
     WORKITEM_TYPE_FORMULA_FIELD = "WORKITEM_TYPE_FORMULA_FIELD"
 

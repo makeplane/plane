@@ -34,7 +34,6 @@ import {
   PROJECT_INTAKE_STATE,
   WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS,
   EPICS_PROPERTIES_AND_OPTIONS,
-  PROJECT_WORKFLOWS,
   PROJECT_MILESTONES,
   PROJECT_EPICS_META,
 } from "@/constants/fetch-keys";
@@ -53,7 +52,6 @@ import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 import { useEpicMeta } from "@/hooks/store/use-epic-meta";
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
-import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 interface IProjectAuthWrapper {
   workspaceSlug: string;
@@ -76,7 +74,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   const {
     project: { fetchProjectMembers, fetchProjectUserProperties },
   } = useMember();
-  const { fetchProjectStates, fetchProjectIntakeState, fetchWorkflowStates } = useProjectState();
+  const { fetchProjectStates, fetchProjectIntakeState } = useProjectState();
   const { data: currentUserData } = useUser();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
@@ -99,7 +97,6 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
   const isWorkItemTypeEnabled = projectId ? isWorkItemTypeEnabledForProject(workspaceSlug, projectId) : false;
   const isEpicEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;
-  const isWorkflowFeatureFlagEnabled = useFlag(workspaceSlug, "WORKFLOWS");
   const isMilestonesFeatureEnabled = projectId ? isMilestonesEnabled(workspaceSlug, projectId) : false;
   // Initialize module timeline chart
   useEffect(() => {
@@ -176,16 +173,6 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     isEpicEnabled ? EPICS_PROPERTIES_AND_OPTIONS(projectId, currentProjectRole) : null,
     isEpicEnabled ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-
-  // fetching project level workflow states
-  useSWR(
-    isWorkflowFeatureFlagEnabled ? PROJECT_WORKFLOWS(projectId, currentProjectRole) : null,
-    () => fetchWorkflowStates(workspaceSlug, projectId),
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-    }
   );
 
   // fetching project level milestones

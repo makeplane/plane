@@ -39,7 +39,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // Plane-web
-import { useWorkFlowFDragNDrop } from "@/components/workflow";
+import { useWorkFlowFDragNDrop } from "@/components/workflows";
 //
 import { GroupDragOverlay } from "../group-drag-overlay";
 import { ListQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
@@ -121,8 +121,12 @@ export const ListGroup = observer(function ListGroup(props: Props) {
 
   const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
 
-  const { workflowDisabledSource, isWorkflowDropDisabled, handleWorkFlowState, getIsWorkflowWorkItemCreationDisabled } =
-    useWorkFlowFDragNDrop(group_by);
+  const {
+    workflowDisabledContext,
+    isWorkflowDropDisabled,
+    handleWorkFlowState,
+    getIsWorkflowWorkItemCreationDisabled,
+  } = useWorkFlowFDragNDrop(group_by);
   const isWorkflowIssueCreationDisabled = getIsWorkflowWorkItemCreationDisabled(group.id);
 
   const groupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
@@ -207,9 +211,10 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         },
         onDrag: ({ source }) => {
           const sourceGroupId = source?.data?.groupId as string | undefined;
+          const sourceIssueId = source?.data?.id as string | undefined;
           const currentGroupId = group.id;
 
-          sourceGroupId && handleWorkFlowState(sourceGroupId, currentGroupId);
+          sourceGroupId && handleWorkFlowState(sourceGroupId, currentGroupId, undefined, undefined, sourceIssueId);
 
           const sourceIndex = getGroupIndex(sourceGroupId);
           const currentIndex = getGroupIndex(currentGroupId);
@@ -292,7 +297,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
             dragColumnOrientation={dragColumnOrientation}
             canOverlayBeVisible={canOverlayBeVisible}
             isDropDisabled={isDropDisabled}
-            workflowDisabledSource={workflowDisabledSource}
+            workflowDisabledContext={workflowDisabledContext}
             dropErrorMessage={group.dropErrorMessage}
             orderBy={orderBy}
             isDraggingOverColumn={isDraggingOverColumn}
