@@ -34,8 +34,7 @@ func GetInstanceLicenses(api prime_api.IPrimeMonitorApi, key string) func(*fiber
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"values": map[string]bool{
 				"OIDC_SAML_AUTH": oidc_saml_auth,
-				"LDAP_AUTH": hasEnterprise,
-				"INSTANCE_USER_MANAGEMENT": hasEnterprise,
+				"LDAP_AUTH":      hasEnterprise,
 			},
 		})
 		return nil

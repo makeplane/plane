@@ -12,13 +12,10 @@
  */
 
 // local imports
-import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
 import { coreSidebarMenuLinks } from "./core";
 import type { TSidebarMenuItem } from "./types";
 
 export function useSidebarMenu(): TSidebarMenuItem[] {
-  const isInstanceUserManagementEnabled = useInstanceFlag("INSTANCE_USER_MANAGEMENT");
-
   const sidebarMenu = [
     coreSidebarMenuLinks.general,
     coreSidebarMenuLinks.email,
@@ -29,10 +26,6 @@ export function useSidebarMenu(): TSidebarMenuItem[] {
     coreSidebarMenuLinks.ai,
     coreSidebarMenuLinks.image,
   ];
-
-  if (!isInstanceUserManagementEnabled) {
-    sidebarMenu.splice(sidebarMenu.indexOf(coreSidebarMenuLinks["user-management"]), 1);
-  }
 
   return sidebarMenu;
 }

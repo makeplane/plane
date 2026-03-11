@@ -54,7 +54,6 @@ class InstanceUserManagementViewSet(BaseAPIView):
             workspace_count=Count("member_workspace", filter=Q(member_workspace__is_active=True), distinct=True),
         )
 
-    @check_admin_feature_flag(AdminFeatureFlag.INSTANCE_USER_MANAGEMENT)
     def get(self, request):
         queryset = self.get_queryset()
 
@@ -112,7 +111,6 @@ class InstanceUserManagementViewSet(BaseAPIView):
         )
 
     @invalidate_cache(path="/api/instances/users/", user=False)
-    @check_admin_feature_flag(AdminFeatureFlag.INSTANCE_USER_MANAGEMENT)
     def post(self, request):
         serializer = InstanceAdminCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -148,7 +146,6 @@ class InstanceUserManagementViewSet(BaseAPIView):
         return Response({"message": "Instance admin created successfully"}, status=status.HTTP_201_CREATED)
 
     @invalidate_cache(path="/api/instances/users/", user=False)
-    @check_admin_feature_flag(AdminFeatureFlag.INSTANCE_USER_MANAGEMENT)
     def delete(self, request, pk):
         try:
             user = User.objects.get(pk=pk, is_active=True)
@@ -237,7 +234,6 @@ class InstanceUserManagementViewSet(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(path="/api/instances/users/", user=False)
-    @check_admin_feature_flag(AdminFeatureFlag.INSTANCE_USER_MANAGEMENT)
     def patch(self, request, pk):
         """
         Update the role of a user in the instance (admin or user)
