@@ -714,6 +714,7 @@ export default {
     state_group: "Nhóm trạng thái",
     priorities: "Ưu tiên",
     priority: "Ưu tiên",
+    frequency: "Tần suất",
     team_project: "Nhóm/Dự án nhóm",
     project: "Nhóm/Dự án",
     cycle: "Chu kỳ",

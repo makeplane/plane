@@ -700,6 +700,7 @@ export default {
     state_group: "상태 그룹",
     priorities: "우선순위",
     priority: "우선순위",
+    frequency: "빈도",
     team_project: "팀 팀/프로젝트",
     project: "팀/프로젝트",
     cycle: "주기",

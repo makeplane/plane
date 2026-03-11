@@ -707,6 +707,7 @@ export default {
     state_group: "State group",
     priorities: "Priorities",
     priority: "Priority",
+    frequency: "Frequency",
     team_project: "Team team/project",
     project: "Team/Project",
     cycle: "Cycle",

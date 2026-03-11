@@ -108,6 +108,16 @@ class Issue(ProjectBaseModel):
         ("medium", "Medium"),
         ("low", "Low"),
     )
+    FREQUENCY_CHOICES = (
+        ("daily", "Daily"),
+        ("weekly", "Weekly"),
+        ("bi_weekly", "Bi-weekly"),
+        ("monthly", "Monthly"),
+        ("quarterly", "Quarterly"),
+        ("half_year", "Half-year"),
+        ("yearly", "Yearly"),
+        ("ad_hoc", "Ad-hoc"),
+    )
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -162,6 +172,13 @@ class Issue(ProjectBaseModel):
         "db.IssueType",
         on_delete=models.SET_NULL,
         related_name="issue_type",
+        null=True,
+        blank=True,
+    )
+    frequency = models.CharField(
+        max_length=20,
+        choices=FREQUENCY_CHOICES,
+        verbose_name="Issue Frequency",
         null=True,
         blank=True,
     )
@@ -688,6 +705,16 @@ class IssueVersion(ProjectBaseModel):
         ("medium", "Medium"),
         ("low", "Low"),
     )
+    FREQUENCY_CHOICES = (
+        ("daily", "Daily"),
+        ("weekly", "Weekly"),
+        ("bi_weekly", "Bi-weekly"),
+        ("monthly", "Monthly"),
+        ("quarterly", "Quarterly"),
+        ("half_year", "Half-year"),
+        ("yearly", "Yearly"),
+        ("ad_hoc", "Ad-hoc"),
+    )
 
     parent = models.UUIDField(blank=True, null=True)
     state = models.UUIDField(blank=True, null=True)
@@ -711,6 +738,13 @@ class IssueVersion(ProjectBaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
     type = models.UUIDField(blank=True, null=True)
+    frequency = models.CharField(
+        max_length=20,
+        choices=FREQUENCY_CHOICES,
+        verbose_name="Issue Frequency",
+        null=True,
+        blank=True,
+    )
     cycle = models.UUIDField(null=True, blank=True)
     modules = ArrayField(models.UUIDField(), blank=True, default=list)
     properties = models.JSONField(default=dict)  # issue properties
@@ -772,6 +806,7 @@ class IssueVersion(ProjectBaseModel):
                 external_source=issue.external_source,
                 external_id=issue.external_id,
                 type=issue.type_id,
+                frequency=issue.frequency,
                 cycle=cycle_issue.cycle_id if cycle_issue else None,
                 modules=list(Module.objects.filter(issue=issue).values_list("id", flat=True)),
                 properties={},
