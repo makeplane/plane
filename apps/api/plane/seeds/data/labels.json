@@ -1,11 +1,16 @@
 [
-  { "id": 1, "name": "Bank-wide Project", "color": "#0E8A16", "sort_order": 65535, "project_id": 1 },
-  { "id": 2, "name": "Daily", "color": "#0075CA", "sort_order": 75535, "project_id": 1 },
-  { "id": 3, "name": "Weekly", "color": "#E4E669", "sort_order": 85535, "project_id": 1 },
-  { "id": 9, "name": "Bi-weekly", "color": "#7057FF", "sort_order": 90535, "project_id": 1 },
-  { "id": 4, "name": "Monthly", "color": "#D93F0B", "sort_order": 95535, "project_id": 1 },
-  { "id": 5, "name": "Quarterly", "color": "#0693E3", "sort_order": 105535, "project_id": 1 },
-  { "id": 6, "name": "Half-year", "color": "#FBCA04", "sort_order": 115535, "project_id": 1 },
-  { "id": 7, "name": "Yearly", "color": "#B60205", "sort_order": 125535, "project_id": 1 },
-  { "id": 8, "name": "Ad-hoc", "color": "#D876E3", "sort_order": 135535, "project_id": 1 }
+  {
+    "id": 1,
+    "name": "admin",
+    "color": "#0693e3",
+    "sort_order": 85535,
+    "project_id": 1
+  },
+  {
+    "id": 2,
+    "name": "concepts",
+    "color": "#9900ef",
+    "sort_order": 95535,
+    "project_id": 1
+  }
 ]

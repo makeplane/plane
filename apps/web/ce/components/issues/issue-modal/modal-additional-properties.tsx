@@ -4,7 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import type React from "react";
+import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
+import { Controller, useFormContext } from "react-hook-form";
+import type { TIssue } from "@plane/types";
+import { FrequencyDropdown } from "@/plane-web/components/dropdowns/frequency";
 
 export type TWorkItemModalAdditionalPropertiesProps = {
   isDraft?: boolean;
@@ -13,6 +17,30 @@ export type TWorkItemModalAdditionalPropertiesProps = {
   workspaceSlug: string;
 };
 
-export function WorkItemModalAdditionalProperties(_props: TWorkItemModalAdditionalPropertiesProps) {
-  return null;
+export function WorkItemModalAdditionalProperties(props: TWorkItemModalAdditionalPropertiesProps) {
+  const { projectId } = props;
+  const { t } = useTranslation();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<TIssue>();
+
+  if (!projectId) return null;
+
+  return (
+    <Controller
+      control={control}
+      name="frequency"
+      rules={{ required: t("frequency_is_required") }}
+      render={({ field: { value, onChange } }) => (
+        <div className={cn("h-7 rounded-sm", errors.frequency && "outline outline-1 outline-danger-strong")}>
+          <FrequencyDropdown
+            value={value}
+            onChange={onChange}
+            buttonVariant="border-with-text"
+          />
+        </div>
+      )}
+    />
+  );
 }

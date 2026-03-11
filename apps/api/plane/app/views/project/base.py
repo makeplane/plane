@@ -29,8 +29,6 @@ from plane.db.models import (
     UserFavorite,
     DeployBoard,
     Intake,
-    Label,
-    DEFAULT_LABELS,
     Project,
     ProjectIdentifier,
     ProjectMember,
@@ -288,21 +286,6 @@ class ProjectViewSet(BaseViewSet):
                         created_by=request.user,
                     )
                     for state in DEFAULT_STATES
-                ],
-                ignore_conflicts=True,
-            )
-
-            Label.objects.bulk_create(
-                [
-                    Label(
-                        name=label["name"],
-                        color=label["color"],
-                        sort_order=label["sort_order"],
-                        project=serializer.instance,
-                        workspace=serializer.instance.workspace,
-                        created_by=request.user,
-                    )
-                    for label in DEFAULT_LABELS
                 ],
                 ignore_conflicts=True,
             )

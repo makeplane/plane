@@ -11,6 +11,7 @@ import type {
   IIssueFilterOptions,
   TIssue,
   EIssuesStoreType,
+  TIssueFrequency,
 } from "@plane/types";
 
 export const ALL_ISSUES = "All Issues";
@@ -84,6 +85,21 @@ export const ISSUE_PRIORITIES: {
     key: "low",
     title: "Low",
   },
+];
+
+export const ISSUE_FREQUENCIES: {
+  key: TIssueFrequency;
+  title: string;
+  color: string;
+}[] = [
+  { key: "daily", title: "Daily", color: "#ef4444" },
+  { key: "weekly", title: "Weekly", color: "#f97316" },
+  { key: "bi_weekly", title: "Bi-weekly", color: "#eab308" },
+  { key: "monthly", title: "Monthly", color: "#22c55e" },
+  { key: "quarterly", title: "Quarterly", color: "#3b82f6" },
+  { key: "half_year", title: "Half-year", color: "#8b5cf6" },
+  { key: "yearly", title: "Yearly", color: "#6366f1" },
+  { key: "ad_hoc", title: "Ad-hoc", color: "#6b7280" },
 ];
 
 export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [

@@ -624,7 +624,7 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
+    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, assignee=True, model=Issue)
     def partial_update(self, request, slug, project_id, pk=None):
         queryset = self.get_queryset()
         queryset = self.apply_annotations(queryset)
