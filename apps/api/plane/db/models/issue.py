@@ -188,6 +188,12 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
     archived_at = models.DateField(null=True)
+    last_activity_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name="Last Activity At",
+    )
     is_draft = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
