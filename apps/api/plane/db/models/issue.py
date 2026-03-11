@@ -543,6 +543,8 @@ class IssueActivity(ProjectBaseModel):
     old_identifier = models.UUIDField(null=True)
     new_identifier = models.UUIDField(null=True)
     epoch = models.FloatField(null=True)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         verbose_name = "Issue Activity"
