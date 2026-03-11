@@ -11,6 +11,7 @@ class DepartmentSerializer(BaseSerializer):
 
     staff_count = serializers.IntegerField(read_only=True, default=0)
     linked_workspace_detail = serializers.SerializerMethodField()
+    code = serializers.CharField(max_length=20, required=False, allow_blank=True, default="")
     short_name = serializers.CharField(max_length=10, required=False, allow_blank=True, allow_null=True, default=None)
     dept_code = serializers.CharField(max_length=4, required=False, allow_blank=True, allow_null=True, default=None)
 
@@ -35,6 +36,12 @@ class DepartmentSerializer(BaseSerializer):
             "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
+
+    def validate_dept_code(self, value):
+        return value or None
+
+    def validate_short_name(self, value):
+        return value or None
 
     def get_linked_workspace_detail(self, obj):
         if not obj.linked_workspace:

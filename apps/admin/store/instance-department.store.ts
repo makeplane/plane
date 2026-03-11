@@ -85,6 +85,15 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
       const data = await this.service.getTree();
       runInAction(() => {
         set(this, "tree", data);
+        // Flatten tree into departments map so parent selects work
+        this.departments = {};
+        const flatten = (nodes: IInstanceDepartment[]) => {
+          nodes.forEach((node) => {
+            set(this.departments, [node.id], node);
+            if (node.children?.length) flatten(node.children);
+          });
+        };
+        flatten(data);
       });
       return data;
     } catch (error) {

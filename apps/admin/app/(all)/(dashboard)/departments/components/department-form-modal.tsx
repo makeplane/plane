@@ -109,9 +109,8 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
                 {errors.name && <p className="text-11 text-color-danger-primary">{errors.name.message}</p>}
               </div>
               <div className="space-y-1">
-                <label className="text-13 font-medium">Code *</label>
-                <Input {...register("code", { required: "Required" })} placeholder="e.g. IT" />
-                {errors.code && <p className="text-11 text-color-danger-primary">{errors.code.message}</p>}
+                <label className="text-13 font-medium">Code</label>
+                <Input {...register("code")} placeholder="e.g. IT" />
               </div>
               <div className="space-y-1">
                 <label className="text-13 font-medium">Short name</label>
