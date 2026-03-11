@@ -12,5 +12,5 @@ def rename_draft_to_backlog(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [("db", "0134_add_biweekly_default_label")]
+    dependencies = [("db", "0133_workflow_models")]
     operations = [migrations.RunPython(rename_backlog_to_draft, rename_draft_to_backlog)]
