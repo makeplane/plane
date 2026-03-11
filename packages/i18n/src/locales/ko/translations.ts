@@ -493,6 +493,7 @@ export default {
   label_is_required: "레이블이 필요합니다",
   start_date_is_required: "시작 날짜가 필요합니다",
   due_date_is_required: "마감 날짜가 필요합니다",
+  frequency_is_required: "빈도가 필요합니다",
   title: "제목",
   state: "상태",
   priority: "우선순위",

@@ -500,6 +500,7 @@ export default {
   label_is_required: "Label is required",
   start_date_is_required: "Start date is required",
   due_date_is_required: "Due date is required",
+  frequency_is_required: "Frequency is required",
   title: "Title",
   state: "State",
   priority: "Priority",

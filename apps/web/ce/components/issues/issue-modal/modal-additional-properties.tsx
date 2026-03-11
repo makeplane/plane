@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 import { Controller, useFormContext } from "react-hook-form";
 import type { TIssue } from "@plane/types";
 import { FrequencyDropdown } from "@/plane-web/components/dropdowns/frequency";
@@ -17,7 +19,11 @@ export type TWorkItemModalAdditionalPropertiesProps = {
 
 export function WorkItemModalAdditionalProperties(props: TWorkItemModalAdditionalPropertiesProps) {
   const { projectId } = props;
-  const { control } = useFormContext<TIssue>();
+  const { t } = useTranslation();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<TIssue>();
 
   if (!projectId) return null;
 
@@ -25,15 +31,15 @@ export function WorkItemModalAdditionalProperties(props: TWorkItemModalAdditiona
     <Controller
       control={control}
       name="frequency"
+      rules={{ required: t("frequency_is_required") }}
       render={({ field: { value, onChange } }) => (
-        <FrequencyDropdown
-          value={value}
-          onChange={onChange}
-          buttonVariant="border-with-text"
-          className="grow"
-          buttonContainerClassName="w-full text-left"
-          buttonClassName="text-body-xs-regular"
-        />
+        <div className={cn("h-7 rounded-sm", errors.frequency && "outline outline-1 outline-danger-strong")}>
+          <FrequencyDropdown
+            value={value}
+            onChange={onChange}
+            buttonVariant="border-with-text"
+          />
+        </div>
       )}
     />
   );

@@ -506,6 +506,7 @@ export default {
   label_is_required: "Nhãn là bắt buộc",
   start_date_is_required: "Ngày bắt đầu là bắt buộc",
   due_date_is_required: "Ngày hết hạn là bắt buộc",
+  frequency_is_required: "Tần suất là bắt buộc",
   title: "Tiêu đề",
   state: "Trạng thái",
   priority: "Ưu tiên",
