@@ -13,7 +13,6 @@
 
 # Django imports
 from django.db.models import Sum
-from django.utils import timezone
 
 # Third Party imports
 from rest_framework import status
@@ -21,7 +20,6 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.ee.permissions import ProjectEntityPermission
-from plane.db.models import Issue
 from plane.ee.models import IssueWorkLog
 from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag

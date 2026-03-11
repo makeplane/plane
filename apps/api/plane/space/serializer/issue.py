@@ -9,9 +9,6 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-# Django imports
-from django.utils import timezone
-
 # Third Party imports
 from rest_framework import serializers
 

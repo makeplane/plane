@@ -10,7 +10,6 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Django imports
-from django.utils import timezone
 from django.db.models import Sum
 
 # Third Party imports
@@ -20,7 +19,7 @@ from drf_spectacular.utils import OpenApiResponse
 
 # Module imports
 from plane.ee.permissions import ProjectEntityPermission
-from plane.db.models import Issue, Project
+from plane.db.models import Project
 from plane.ee.models import IssueWorkLog
 from plane.api.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag

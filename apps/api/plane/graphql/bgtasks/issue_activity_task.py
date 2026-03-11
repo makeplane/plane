@@ -855,7 +855,6 @@ def create_cycle_issue_activity(
     for updated_record in updated_records:
         old_cycle = Cycle.objects.filter(pk=updated_record.get("old_cycle_id", None)).first()
         new_cycle = Cycle.objects.filter(pk=updated_record.get("new_cycle_id", None)).first()
-        issue = Issue.objects.filter(pk=updated_record.get("issue_id")).first()
         issue_activities.append(
             IssueActivity(
                 issue_id=updated_record.get("issue_id"),
@@ -876,7 +875,6 @@ def create_cycle_issue_activity(
 
     for created_record in created_records:
         cycle = Cycle.objects.filter(pk=created_record.get("fields").get("cycle")).first()
-        issue = Issue.objects.filter(pk=created_record.get("fields").get("issue")).first()
         issue_activities.append(
             IssueActivity(
                 issue_id=created_record.get("fields").get("issue"),
@@ -912,7 +910,6 @@ def delete_cycle_issue_activity(
     cycle = Cycle.objects.filter(pk=cycle_id).first()
     issues = requested_data.get("issues")
     for issue in issues:
-        current_issue = Issue.objects.filter(pk=issue).first()
         issue_activities.append(
             IssueActivity(
                 issue_id=issue,
@@ -942,7 +939,6 @@ def create_module_issue_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     module = Module.objects.filter(pk=requested_data.get("module_id")).first()
-    issue = Issue.objects.filter(pk=issue_id).first()
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -973,7 +969,6 @@ def delete_module_issue_activity(
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = json.loads(current_instance) if current_instance is not None else None
     module_name = current_instance.get("module_name")
-    current_issue = Issue.objects.filter(pk=issue_id).first()
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -1003,7 +998,6 @@ def create_milestone_issue_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     milestone = Milestone.objects.filter(pk=requested_data.get("milestone_id")).first()
-    issue = Issue.objects.filter(pk=issue_id).first()
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -1034,7 +1028,6 @@ def update_milestone_issue_activity(
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = json.loads(current_instance) if current_instance is not None else None
     milestone = Milestone.objects.filter(pk=requested_data.get("milestone_id")).first()
-    issue = Issue.objects.filter(pk=issue_id).first()
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -1066,7 +1059,6 @@ def delete_milestone_issue_activity(
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = json.loads(current_instance) if current_instance is not None else None
     milestone_name = current_instance.get("milestone_name")
-    current_issue = Issue.objects.filter(pk=issue_id).first()
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,

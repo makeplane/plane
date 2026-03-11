@@ -1531,7 +1531,7 @@ class APITester:
                         v1_url=v1_create_url,
                         v2_url=v2_create_url,
                         status=TestStatus.PASS if error_match else TestStatus.FAIL,
-                        message=f"Negative test: Both rejected invalid file during upload (V1: 400,V2: 400) - Error match: {'✓' if error_match else '✗'}",
+                        message=f"Negative test: Both rejected invalid file during upload (V1: 400,V2: 400) - Error match: {'✓' if error_match else '✗'}",  # noqa: E501
                         differences=None if error_match else {"error_messages": {"v1": v1_error_msg, "v2": v2_error_msg}},
                         v1_response=v1_create_data,
                         v2_response=v2_create_data,

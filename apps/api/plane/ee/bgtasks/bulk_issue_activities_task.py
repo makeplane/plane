@@ -18,13 +18,11 @@ from celery import shared_task
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import timezone
 
 
 # Module imports
 from plane.app.serializers import IssueActivitySerializer
 from plane.db.models import (
-    Issue,
     IssueActivity,
     IssueSubscriber,
     Label,
@@ -32,7 +30,6 @@ from plane.db.models import (
     User,
     Cycle,
 )
-from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.bgtasks.webhook_task import webhook_activity
 from plane.bgtasks.notification_task import process_workitem_notifications
@@ -271,14 +268,6 @@ def bulk_issue_activity(
 
         project = Project.objects.get(pk=project_id)
         workspace_id = project.workspace_id
-
-        if issue_id is not None:
-            if origin:
-                ri = redis_instance()
-                # set the request origin in redis
-                ri.set(str(issue_id), origin, ex=600)
-            issue = Issue.objects.filter(pk=issue_id).first()
-            pass
 
         ACTIVITY_MAPPER = {
             "issue.activity.updated": update_issue_activity,

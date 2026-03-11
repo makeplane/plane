@@ -10,7 +10,6 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Django imports
-from django.utils import timezone
 from lxml import html
 from django.db import IntegrityError
 
