@@ -144,7 +144,11 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug, user_id):
-        filters = issue_filters(request.query_params, "GET")
+        query_params = request.query_params.copy()
+        sub_issue = query_params.get("sub_issue", None)
+        query_params.pop("sub_issue", None)
+
+        filters = issue_filters(query_params, "GET")
 
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = Issue.issue_objects.filter(
@@ -160,6 +164,10 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
 
         # Apply legacy filters
         issue_queryset = issue_queryset.filter(**filters)
+
+        if sub_issue is not None and sub_issue == "false":
+            # If sub_issue is false, show the issues which are attached to epic as well.
+            issue_queryset = issue_queryset.filter(Q(parent__isnull=True) | Q(parent__type__is_epic=True))
 
         # Total count queryset
         total_issue_queryset = copy.deepcopy(issue_queryset)
