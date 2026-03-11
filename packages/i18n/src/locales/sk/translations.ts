@@ -4601,6 +4601,11 @@ Vytvorte nový.`,
       title_summary: "Súhrn",
       description_summary: "Tu je súhrn dát, ktoré budú migrované z Jira do Plane.",
     },
+    import_epics: {
+      title: "Importovať epiky ako pracovné položky",
+      description:
+        "S touto aktivovanou funkciou budú vaše epiky importované jako pracovné položky s typom pracovnej položky epika.",
+    },
   },
   flatfile_importer: {
     flatfile_importer_description: "Importujte vaše CSV dáta do projektov Plane.",

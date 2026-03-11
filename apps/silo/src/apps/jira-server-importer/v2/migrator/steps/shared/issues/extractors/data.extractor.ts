@@ -46,6 +46,7 @@ export type TExtractionProps = {
     rawFields: JiraIssueField[];
     knownCustomFieldMapping: TKnownFieldMapping[];
   };
+  epicsAsWorkItems: boolean;
 };
 
 export type TUnifiedExtractionResult = {
@@ -62,7 +63,7 @@ export type TUnifiedExtractionResult = {
  */
 export class JiraIssueDataExtractor {
   public async extractAll(props: TExtractionProps): Promise<TUnifiedExtractionResult> {
-    const { job, sourceClient, source, issues, propertyData, additionalData } = props;
+    const { job, sourceClient, source, issues, propertyData, additionalData, epicsAsWorkItems } = props;
     const { projectId, resourceId } = extractJobData(job);
 
     // 1. Instantiate sub-extractors
@@ -74,7 +75,8 @@ export class JiraIssueDataExtractor {
       sourceClient,
       projectId,
       resourceId,
-      additionalData.knownCustomFieldMapping
+      additionalData.knownCustomFieldMapping,
+      epicsAsWorkItems
     );
 
     // 2. Batch Extraction: Comments
@@ -181,9 +183,10 @@ export class JiraIssueDataExtractor {
     sourceClient: JiraV2Service,
     projectId: string,
     resourceId: string,
-    knownCustomFieldMapping: TKnownFieldMapping[]
+    knownCustomFieldMapping: TKnownFieldMapping[],
+    epicsAsWorkItems: boolean
   ): JiraIssueLinkExtractor {
-    return new JiraIssueLinkExtractor(sourceClient, projectId, resourceId, knownCustomFieldMapping);
+    return new JiraIssueLinkExtractor(sourceClient, projectId, resourceId, knownCustomFieldMapping, epicsAsWorkItems);
   }
 
   private collectMetrics(props: {

@@ -4642,6 +4642,10 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
       title_summary: "Tóm tắt",
       description_summary: "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Jira sang Plane.",
     },
+    import_epics: {
+      title: "Nhập Epic dưới dạng Công việc",
+      description: "Khi bật tính năng này, các epic của bạn sẽ được nhập dưới dạng công việc với loại công việc epic.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Nhập dữ liệu Notion của bạn vào các dự án Plane.",

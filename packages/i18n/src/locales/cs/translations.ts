@@ -4625,6 +4625,11 @@ Vytvořte nový.`,
       title_summary: "Shrnutí",
       description_summary: "Zde je shrnutí dat, která budou migrována z Jira do Plane.",
     },
+    import_epics: {
+      title: "Importovat epiky jako pracovní položky",
+      description:
+        "S touto aktivovanou funkcí budou vaše epiky importovány jako pracovní položky s typem pracovní položky epika.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Importujte svá data z Notion do projektů Plane.",

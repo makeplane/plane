@@ -4727,6 +4727,11 @@ si vous êtes sûr que votre recherche est correcte.`,
       title_summary: "Résumé",
       description_summary: "Voici un résumé des données qui seront migrées de Jira vers Plane.",
     },
+    import_epics: {
+      title: "Importer les épopées en tant qu'éléments de travail",
+      description:
+        "Si cette option est activée, vos épopées seront importées en tant qu'éléments de travail avec le type d'élément de travail épopée.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Importez vos données Notion dans les projets Plane.",

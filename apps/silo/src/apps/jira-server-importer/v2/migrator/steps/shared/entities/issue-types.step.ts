@@ -110,6 +110,10 @@ export class JiraIssueTypesStep implements IStep {
         throw new Error("Project ID not found in job config");
       }
 
+      // Fetch what already exists in Plane
+      const config = job.config as JiraConfig;
+      const epicsAsWorkItems = config.importEpicsAsWorkItems;
+
       // Get pagination state
       const startAt = previousContext?.pageCtx.startAt ?? 0;
       const totalProcessed = previousContext?.pageCtx.totalProcessed ?? 0;
@@ -129,10 +133,10 @@ export class JiraIssueTypesStep implements IStep {
       }
 
       // Transform to Plane issue types
-      const transformed = this.transform(job, pulled.items);
+      const transformed = this.transform(job, pulled.items, epicsAsWorkItems || false);
 
       // Push to Plane (handles epics, conflicts, create/update)
-      const pushedCount = await this.push(jobContext, transformed, storage);
+      const pushedCount = await this.push(jobContext, transformed, storage, epicsAsWorkItems || false);
 
       return createPaginationContext({
         hasMore: pulled.hasMore,
@@ -201,11 +205,15 @@ export class JiraIssueTypesStep implements IStep {
   /**
    * Transform Jira issue types to Plane issue types
    */
-  private transform(job: TImportJob<JiraConfig>, jiraIssueTypes: IssueTypeDetails[]): Partial<ExIssueType>[] {
+  private transform(
+    job: TImportJob<JiraConfig>,
+    jiraIssueTypes: IssueTypeDetails[],
+    epicsAsWorkItems: boolean
+  ): Partial<ExIssueType>[] {
     const resourceId = job.config.resource ? job.config.resource.id : uuid();
 
     return jiraIssueTypes.map((issueType) =>
-      transformIssueType({ resourceId, projectId: job.project_id, source: this.source }, issueType)
+      transformIssueType({ resourceId, projectId: job.project_id, source: this.source }, issueType, epicsAsWorkItems)
     );
   }
 
@@ -216,16 +224,20 @@ export class JiraIssueTypesStep implements IStep {
   private async push(
     jobContext: TJobContext,
     issueTypes: Partial<ExIssueType>[],
-    storage: IStorageService
+    storage: IStorageService,
+    epicsAsWorkItems: boolean
   ): Promise<number> {
     const { job } = jobContext;
 
-    // Fetch what already exists in Plane
     const existingIssueTypes = await this.fetchExistingIssueTypes(jobContext);
     const defaultIssueType = existingIssueTypes.find((type) => type.is_default);
 
     // Decide what to create vs update
-    const { toCreate, toUpdate, epicIssueType } = this.separateCreateAndUpdate(issueTypes, existingIssueTypes);
+    const { toCreate, toUpdate, epicIssueType } = this.separateCreateAndUpdate(
+      issueTypes,
+      existingIssueTypes,
+      epicsAsWorkItems || false
+    );
 
     // Create/update issue types
     const [created, updated] = await Promise.all([
@@ -242,7 +254,7 @@ export class JiraIssueTypesStep implements IStep {
     }
 
     // Include epic type if present (with mutated external_id/source)
-    if (epicIssueType) {
+    if (epicIssueType && !epicsAsWorkItems) {
       allIssueTypes.push(epicIssueType);
     }
 
@@ -302,21 +314,24 @@ export class JiraIssueTypesStep implements IStep {
    */
   private separateCreateAndUpdate(
     issueTypes: Partial<ExIssueType>[],
-    existingIssueTypes: ExIssueType[]
+    existingIssueTypes: ExIssueType[],
+    shouldCreateEpicType: boolean
   ): { toCreate: Partial<ExIssueType>[]; toUpdate: Partial<ExIssueType>[]; epicIssueType: ExIssueType | null } {
     const epicIssueType = existingIssueTypes.find((type) => type.is_epic);
 
     const toCreate = issueTypes.filter((issueType) => {
-      const isEpic = issueType.is_epic;
+      if (!shouldCreateEpicType) {
+        const isEpic = issueType.is_epic;
 
-      if (isEpic) {
-        // We need to update the existing epic issue type in order to add the external_id and external_source
-        if (epicIssueType) {
-          epicIssueType.external_id = issueType.external_id || "";
-          epicIssueType.external_source = issueType.external_source || "";
+        if (isEpic) {
+          // We need to update the existing epic issue type in order to add the external_id and external_source
+          if (epicIssueType) {
+            epicIssueType.external_id = issueType.external_id || "";
+            epicIssueType.external_source = issueType.external_source || "";
+          }
+
+          return false;
         }
-
-        return false;
       }
 
       // Check if already exists by external_id
@@ -327,7 +342,7 @@ export class JiraIssueTypesStep implements IStep {
     const toUpdate = issueTypes
       .filter((issueType) => {
         // Epic: don't include in update flow
-        if (issueType.is_epic) {
+        if (!shouldCreateEpicType && issueType.is_epic) {
           return false;
         }
 

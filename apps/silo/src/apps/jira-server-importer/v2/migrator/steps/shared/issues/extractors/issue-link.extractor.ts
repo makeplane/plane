@@ -16,7 +16,6 @@ import { buildExternalId } from "@/apps/jira-server-importer/v2/helpers/job";
 import type { TIssueRelationsData, TKnownFieldMapping } from "@/apps/jira-server-importer/v2/types";
 import { logger } from "@plane/logger";
 import { isAxiosError } from "axios";
-import { KNOWN_CUSTOM_FIELDS } from "@/apps/jira-server-importer/v2/helpers/constants";
 
 export type TIssueRelationMapping = TIssueRelationsData["relationships"];
 
@@ -31,7 +30,8 @@ export class JiraIssueLinkExtractor {
     private readonly jiraClient: JiraV2Service,
     private readonly projectId: string,
     private readonly resourceId: string,
-    private readonly knownCustomFieldMapping: TKnownFieldMapping[]
+    private readonly knownCustomFieldMapping: TKnownFieldMapping[],
+    private readonly epicsAsWorkItems: boolean
   ) {}
 
   /**
@@ -52,22 +52,56 @@ export class JiraIssueLinkExtractor {
       : undefined;
 
     // 3. Epic Link handling (Nuanced)
-    const epicField = this.knownCustomFieldMapping.find((f) => f.data.name === KNOWN_CUSTOM_FIELDS.EPIC_LINK);
+    const epicField = this.knownCustomFieldMapping.find((f) => f.name === "EPIC_LINK");
     if (epicField && epicField.data.id) {
       const epicLinkKey = issue.fields[epicField.data.id as keyof typeof issue.fields] as string;
 
       if (epicLinkKey) {
-        const epicId = await this.resolveEpicId(epicLinkKey, issue.key);
+        const epicId = await this.resolveIssueId(epicLinkKey, issue.key);
 
         if (epicId) {
           const epicExternalId = buildExternalId(this.projectId, this.resourceId, epicId);
           if (!parent) {
             parent = epicExternalId;
           } else {
+            logger.warn(
+              `[Jira] Issue ${issue.key} has both a standard parent and an Epic Link. Treating Epic Link as a relation.`,
+              { parent, epicLinkKey }
+            );
             relates_to.push(epicExternalId);
           }
         }
       }
+    }
+
+    // 4. JPO Parent handling (Parent Link)
+    const jpoParentField = this.knownCustomFieldMapping.find((f) => f.name === "PARENT");
+    if (jpoParentField && jpoParentField.data.id) {
+      const jpoParentKey = issue.fields[jpoParentField.data.id as keyof typeof issue.fields] as string;
+
+      if (jpoParentKey) {
+        const jpoParentId = await this.resolveIssueId(jpoParentKey, issue.key);
+
+        if (jpoParentId) {
+          const jpoParentExternalId = buildExternalId(this.projectId, this.resourceId, jpoParentId);
+          if (!parent) {
+            parent = jpoParentExternalId;
+          } else {
+            logger.warn(
+              `[Jira] Issue ${issue.key} already has a parent (${parent}). Treating JPO parent (${jpoParentKey}) as a relation.`,
+              { parent, jpoParentKey }
+            );
+            relates_to.push(jpoParentExternalId);
+          }
+        }
+      }
+    }
+
+    // Epic are not visible in UI if set parent
+    const shouldNotSetParent = !this.epicsAsWorkItems && issue.fields.issuetype?.name === "Epic";
+
+    if (shouldNotSetParent) {
+      parent = undefined;
     }
 
     // 4. Issue Links extraction (Categorized or Catch-all)
@@ -110,45 +144,45 @@ export class JiraIssueLinkExtractor {
   }
 
   /**
-   * Resolves the internal Jira ID for an epic given its key (e.g., PROJ-123)
+   * Resolves the internal Jira ID for an issue given its key (e.g., PROJ-123)
    * Uses a cache to avoid redundant API calls
-   * @param epicLinkKey string
+   * @param issueKeyToResolve string
    * @param issueKey string (for logging purposes)
    * @returns Promise<string | undefined>
    */
-  private async resolveEpicId(epicLinkKey: string, issueKey: string): Promise<string | undefined> {
+  private async resolveIssueId(issueKeyToResolve: string, issueKey: string): Promise<string | undefined> {
     // 1. Check if the ID is already in our cache
-    if (this.issueKeyCache.has(epicLinkKey)) {
-      return this.issueKeyCache.get(epicLinkKey);
+    if (this.issueKeyCache.has(issueKeyToResolve)) {
+      return this.issueKeyCache.get(issueKeyToResolve);
     }
 
     // 2. Not in cache, so fetch from Jira
     try {
-      const epicSearchResult = await this.jiraClient.getProjectIssues(
+      const searchResult = await this.jiraClient.getProjectIssues(
         this.projectId,
         undefined,
         undefined,
         undefined,
-        `KEY = ${epicLinkKey}`
+        `KEY = ${issueKeyToResolve}`
       );
 
-      if (epicSearchResult?.issues?.length) {
-        const epicId = epicSearchResult.issues[0].id;
-        this.issueKeyCache.set(epicLinkKey, epicId);
-        return epicId;
+      if (searchResult?.issues?.length) {
+        const id = searchResult.issues[0].id;
+        this.issueKeyCache.set(issueKeyToResolve, id);
+        return id;
       }
 
       logger.warn(
-        `Could not resolve epic key ${epicLinkKey} for issue ${issueKey}: No issues found matching that key.`
+        `Could not resolve issue key ${issueKeyToResolve} for issue ${issueKey}: No issues found matching that key.`
       );
     } catch (error) {
       if (isAxiosError(error)) {
-        logger.warn(`Error resolving epic key ${epicLinkKey} for issue ${issueKey}`, {
+        logger.warn(`Error resolving issue key ${issueKeyToResolve} for issue ${issueKey}`, {
           status: error.response?.status,
           data: error.response?.data,
         });
       } else {
-        logger.error(`Unexpected error resolving epic key ${epicLinkKey} for issue ${issueKey}`, error);
+        logger.error(`Unexpected error resolving issue key ${issueKeyToResolve} for issue ${issueKey}`, error);
       }
     }
 

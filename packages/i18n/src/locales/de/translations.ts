@@ -4683,6 +4683,11 @@ Erstellen Sie ein neues.`,
       title_summary: "Zusammenfassung",
       description_summary: "Hier ist eine Zusammenfassung der Daten, die von Jira zu Plane migriert werden.",
     },
+    import_epics: {
+      title: "Epics als Arbeitselemente importieren",
+      description:
+        "Wenn dies aktiviert ist, werden Ihre Epics als Arbeitselement mit dem Arbeitselementtyp 'Epic' importiert.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Importieren Sie Ihre Notion-Daten in Plane-Projekte.",

@@ -4631,6 +4631,11 @@ export default {
       title_summary: "Підсумок",
       description_summary: "Ось підсумок даних, які будуть мігровані з Jira до Плейн.",
     },
+    import_epics: {
+      title: "Імпортувати епіки як робочі елементи",
+      description:
+        "Якщо цей параметр увімкнено, ваші епіки будуть імпортовані як робочі елементи з типом робочого елемента 'епік'.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Імпортуйте ваші дані Notion у проекти Plane.",

@@ -4636,6 +4636,10 @@ Utwórz nowy.`,
       title_summary: "Podsumowanie",
       description_summary: "Oto podsumowanie danych, które zostaną zmigrowane z Jira do Plane.",
     },
+    import_epics: {
+      title: "Importuj epiki jako elementy pracy",
+      description: "Po włączeniu tej opcji epiki zostaną zaimportowane jako elementy pracy o typie epika.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Importuj swoje dane Notion do projektów Plane.",

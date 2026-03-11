@@ -4700,6 +4700,11 @@ se você tem certeza de que sua pesquisa está correta.`,
       title_summary: "Resumo",
       description_summary: "Aqui está um resumo dos dados que serão migrados do Jira para o Plane.",
     },
+    import_epics: {
+      title: "Importar Épicos como Itens de Trabalho",
+      description:
+        "Com isso habilitado, seus épicos serão importados como um item de trabalho com o tipo de item de trabalho épico.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Importe seus dados do Notion para projetos do Plane.",

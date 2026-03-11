@@ -147,7 +147,8 @@ export const getTransformedIssueTypes = (job: TImportJob<JiraConfig>, entities: 
         projectId: job.project_id,
         source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
       },
-      issueType
+      issueType,
+      false
     )
   );
 };

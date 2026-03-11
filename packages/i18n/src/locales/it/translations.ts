@@ -4688,6 +4688,11 @@ Crea un nuovo progetto invece`,
       title_summary: "Sommario",
       description_summary: "Questo è un sommario dei dati che verranno migrati da Jira a Plane.",
     },
+    import_epics: {
+      title: "Importa epic come elementi di lavoro",
+      description:
+        "Con questa opzione abilitata, i tuoi epic verranno importati come elementi di lavoro con il tipo di elemento di lavoro epic.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Importa i tuoi dati Notion nei progetti Plane.",

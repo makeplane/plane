@@ -4607,6 +4607,10 @@ export default {
       title_summary: "요약",
       description_summary: "지라에서 플레인으로 마이그레이션될 데이터의 요약입니다.",
     },
+    import_epics: {
+      title: "에픽을 작업 항목으로 가져오기",
+      description: "이 옵션을 활성화하면 에픽이 에픽 작업 항목 유형을 가진 작업 항목으로 가져와집니다.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Notion 데이터를 Plane 프로젝트로 가져옵니다.",

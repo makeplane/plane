@@ -75,6 +75,8 @@ export class JiraIssuesStep implements IStep {
     const { job } = jobContext;
 
     try {
+      const config = job.config as JiraConfig;
+      const epicsAsWorkItems = config.importEpicsAsWorkItems;
       const projectKey = this.getProjectKey(job);
       const jql = this.getJQL(job);
       const paginationCtx = this.getPaginationContext(previousContext);
@@ -113,6 +115,7 @@ export class JiraIssuesStep implements IStep {
         issues: issuesResult.items,
         propertyData,
         additionalData,
+        epicsAsWorkItems: epicsAsWorkItems || false,
       });
 
       const { processedIssues, comments, propertyValues, associations, relations } = {
@@ -455,10 +458,11 @@ export class JiraIssuesStep implements IStep {
     const resourceUrl = job.config?.resource?.url || "";
     const stateMapping = job.config?.state || [];
     const priorityMapping = job.config?.priority || [];
-    const startDateField = knownCustomFieldMapping?.find((field) => field.data.name === KNOWN_CUSTOM_FIELDS.START_DATE)
-      ?.data?.id;
+    const startDateField = knownCustomFieldMapping?.find(
+      (field) => field.data.name && KNOWN_CUSTOM_FIELDS.START_DATE.names.includes(field.data.name as any)
+    )?.data?.id;
     const completionDateField = knownCustomFieldMapping?.find(
-      (field) => field.data.name === KNOWN_CUSTOM_FIELDS.COMPLETION_DATE
+      (field) => field.data.name && KNOWN_CUSTOM_FIELDS.COMPLETION_DATE.names.includes(field.data.name as any)
     )?.data?.id;
 
     const transformed = issues.map((issue) =>

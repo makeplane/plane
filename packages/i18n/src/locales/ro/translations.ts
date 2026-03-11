@@ -4694,6 +4694,11 @@ văzute aici`,
       title_summary: "Sumar",
       description_summary: "Iată un sumar al datelor care vor fi migrate de la Jira la Plane.",
     },
+    import_epics: {
+      title: "Importă Epic-urile ca elemente de lucru",
+      description:
+        "Cu această opțiune activată, epic-urile tale vor fi importate ca un element de lucru cu tipul de element de lucru epic.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Importați datele dvs. Notion în proiectele Plane.",

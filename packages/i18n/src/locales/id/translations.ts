@@ -4665,6 +4665,10 @@ jika Anda yakin pencarian Anda benar. `,
       title_summary: "Ringkasan",
       description_summary: "Berikut adalah ringkasan data yang akan dimigrasikan dari Jira ke Plane.",
     },
+    import_epics: {
+      title: "Impor Epik sebagai Item Kerja",
+      description: "Dengan ini diaktifkan, epik Anda akan diimpor sebagai item kerja dengan tipe item kerja epik.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Impor data Notion Anda ke proyek Plane.",

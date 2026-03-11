@@ -5159,6 +5159,10 @@ if you are sure your search is right. `,
       title_summary: "Summary",
       description_summary: "Here is a summary of the data that will be migrated from Jira to Plane.",
     },
+    import_epics: {
+      title: "Import Epics as Work Items",
+      description: "With this enabled, your epics will be imported as a work item with epic work item type.",
+    },
   },
   flatfile_importer: {
     flatfile_importer_description: "Import your CSV data into Plane projects.",

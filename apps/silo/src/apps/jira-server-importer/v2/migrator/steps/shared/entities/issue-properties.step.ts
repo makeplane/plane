@@ -36,7 +36,8 @@ import { getAPIClientInternal } from "@/services/client";
 import { extractErrorMetadata } from "@/helpers/errors";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
-import { KNOWN_CUSTOM_FIELDS, KNOWN_CUSTOM_FIELDS_REVERSE_MAP } from "@/apps/jira-server-importer/v2/helpers/constants";
+import { KNOWN_CUSTOM_FIELDS } from "@/apps/jira-server-importer/v2/helpers/constants";
+import type { IKnownCustomFieldMatcher } from "@/apps/jira-server-importer/v2/helpers/constants";
 
 /**
  * Jira Server Issue Properties Step
@@ -329,6 +330,21 @@ export class JiraIssuePropertiesStep implements IStep {
         errorCount: allErrors.length,
         errors: allErrors,
       });
+      // Generate execution log for each error
+      allErrors.forEach((error) => {
+        executionLog.collect(job.id, {
+          entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
+          phase: "CREATE_PROPERTIES",
+          level: EExecutionLogLevel.ERROR,
+          error: {
+            message: error.error,
+            payload: error.payload,
+          },
+          additional_data: {
+            propertyNames: [error.payload.display_name],
+          },
+        });
+      });
     }
 
     return allProperties;
@@ -339,15 +355,24 @@ export class JiraIssuePropertiesStep implements IStep {
    * @returns knownCustomFieldMapping
    */
   protected extractKnownCustomFields(jiraFields: JiraIssueField[]): TKnownFieldMapping[] {
-    const extractedKnownCustomFields = jiraFields.reduce((acc, field) => {
-      if (field.name && field.name in KNOWN_CUSTOM_FIELDS_REVERSE_MAP) {
-        acc.push({
-          name: KNOWN_CUSTOM_FIELDS_REVERSE_MAP[field.name],
-          data: field,
-        });
+    const extractedKnownCustomFields: TKnownFieldMapping[] = [];
+
+    for (const field of jiraFields) {
+      if (!field.name) continue;
+
+      for (const [key, m] of Object.entries(KNOWN_CUSTOM_FIELDS)) {
+        const matcher = m as IKnownCustomFieldMatcher;
+        const isNameMatch = matcher.names?.some((name: string) => name.toLowerCase() === field.name?.toLowerCase());
+        const isTypeMatch = matcher.customTypes?.some((type: string) => type === field.schema?.custom);
+
+        if (isNameMatch || isTypeMatch) {
+          extractedKnownCustomFields.push({
+            name: key as keyof typeof KNOWN_CUSTOM_FIELDS,
+            data: field,
+          });
+        }
       }
-      return acc;
-    }, [] as TKnownFieldMapping[]);
+    }
     logger.info("[Jira] Extracted known custom fields", extractedKnownCustomFields);
 
     return extractedKnownCustomFields;
@@ -359,7 +384,12 @@ export class JiraIssuePropertiesStep implements IStep {
    */
   protected removeKnownCustomFields(jiraFields: JiraIssueField[]): JiraIssueField[] {
     return jiraFields.filter((field) => {
-      return !field.name || ![KNOWN_CUSTOM_FIELDS.START_DATE, "Sprint"].includes(field.name);
+      return (
+        !field.name ||
+        !([...KNOWN_CUSTOM_FIELDS.START_DATE.names, ...KNOWN_CUSTOM_FIELDS.SPRINT.names] as string[])?.includes(
+          field.name
+        )
+      );
     });
   }
 

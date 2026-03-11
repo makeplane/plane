@@ -4538,6 +4538,10 @@ export default {
       title_summary: "摘要",
       description_summary: "以下是將從 Jira 遷移到 Plane 的數據摘要。",
     },
+    import_epics: {
+      title: "將史詩匯入為工作項",
+      description: "啟用此選項後，您的史詩將作為具有史詩工作項類型的工作項匯入。",
+    },
   },
   notion_importer: {
     notion_importer_description: "將您的 Notion 資料匯入到 Plane 專案中。",

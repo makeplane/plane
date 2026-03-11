@@ -4648,6 +4648,11 @@ modüller arşivlenebilir.`,
       title_summary: "Özet",
       description_summary: "İşte Jira'dan Plane'e taşınacak verilerin bir özeti.",
     },
+    import_epics: {
+      title: "Epikleri İş Öğesi Olarak İçe Aktar",
+      description:
+        "Bu özellik etkinleştirildiğinde, epikleriniz epik iş öğesi türünde bir iş öğesi olarak içe aktarılacaktır.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Notion verilerinizi Plane projelerine aktarın.",

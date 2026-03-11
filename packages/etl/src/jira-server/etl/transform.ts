@@ -249,10 +249,11 @@ export const transformComponentV2 = (
 
 export const transformIssueType = (
   ctx: TTransformationContext,
-  issueType: JiraIssueTypeDetails
+  issueType: JiraIssueTypeDetails,
+  epicsAsWorkItems: boolean
 ): Partial<ExIssueType> => {
   const { resourceId, projectId, source } = ctx;
-  const isEpic = issueType.name?.toLowerCase() === "epic";
+  const isEpic = !epicsAsWorkItems && issueType.name?.toLowerCase() === "epic";
 
   return {
     name: issueType.name,

@@ -4646,6 +4646,11 @@ export default {
       title_summary: "サマリー",
       description_summary: "JiraからPlaneに移行されるデータのサマリーです。",
     },
+    import_epics: {
+      title: "エピックを作業アイテムとしてインポートする",
+      description:
+        "これを有効にすると、エピックはエピック作業アイテムタイプを持つ作業アイテムとしてインポートされます。",
+    },
   },
   notion_importer: {
     notion_importer_description: "NotionデータをPlaneプロジェクトにインポートします。",

@@ -4722,6 +4722,11 @@ si estás seguro de que tu búsqueda es correcta.`,
       title_summary: "Resumen",
       description_summary: "Aquí hay un resumen de los datos que serán migrados de Jira a Plane.",
     },
+    import_epics: {
+      title: "Importar épicas como elementos de trabajo",
+      description:
+        "Con esto habilitado, tus épicas se importarán como un elemento de trabajo con el tipo de elemento de trabajo épica.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Importa tus datos de Notion a proyectos de Plane.",

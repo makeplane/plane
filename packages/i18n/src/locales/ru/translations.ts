@@ -4696,6 +4696,11 @@ export default {
       title_summary: "Резюме",
       description_summary: "Вот резюме данных, которые будут мигрированы из Jira Server/Data Center в Plane.",
     },
+    import_epics: {
+      title: "Импортировать эпики как рабочие элементы",
+      description:
+        "Если эта опция включена, ваши эпики будут импортированы как рабочие элементы с типом рабочего элемента 'эпик'.",
+    },
   },
   notion_importer: {
     notion_importer_description: "Импортируйте ваши данные Notion в проекты Plane.",
