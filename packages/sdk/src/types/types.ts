@@ -510,3 +510,17 @@ export interface AssetUploadResponse {
   asset_id: string;
   asset_url: string;
 }
+
+export type ExIssueActivity = ExBase & {
+  issue: string;
+  verb: string;
+  field: string | null;
+  old_value: string | null;
+  new_value: string | null;
+  comment: string | null;
+  attachments: string[];
+  issue_comment: string | null;
+  actor: string | null;
+  old_identifier: string | null;
+  new_identifier: string | null;
+};

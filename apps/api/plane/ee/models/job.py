@@ -49,6 +49,7 @@ class ImportExecutionLog(BaseModel):
         ISSUE_DEFAULT_PROPERTY = "ISSUE_DEFAULT_PROPERTY", "issue_default_property"
         ISSUE_PROPERTY_OPTION = "ISSUE_PROPERTY_OPTION", "issue_property_option"
         ISSUE_PROPERTY_VALUE = "ISSUE_PROPERTY_VALUE", "issue_property_value"
+        ISSUE_ACTIVITY = "ISSUE_ACTIVITY", "issue_activity"
 
     # Relationships
     report = models.ForeignKey(

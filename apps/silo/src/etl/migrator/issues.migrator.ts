@@ -20,6 +20,7 @@ import { logger } from "@plane/logger";
 import type {
   AttachmentResponse,
   ExIssue,
+  ExIssueActivity,
   ExIssueComment,
   ExIssueLabel,
   ExIssueProperty,
@@ -171,6 +172,37 @@ export const getAssociatedComments = async (
   return processedComments.filter(Boolean) as ExIssueComment[];
 };
 
+export const getAssociatedIssueActivities = (
+  jobId: string,
+  issueActivities: Partial<ExIssueActivity>[],
+  users: PlaneUser[],
+  issueId: string
+): Partial<ExIssueActivity>[] => {
+  const issueActivitiesToProcess = issueActivities.filter((activity) => activity.issue === issueId);
+
+  const processedIssueActivities = issueActivitiesToProcess
+    .map((activity: Partial<ExIssueActivity>) => {
+      try {
+        const actor = users.find((user) => user.email === activity.actor);
+        const createdBy = users.find((user) => user.email === activity.created_by);
+
+        const finalActivity = {
+          ...activity,
+          actor: actor?.id || null,
+          created_by: createdBy?.id || null,
+        };
+
+        return finalActivity;
+      } catch (error) {
+        logger.error(`[${jobId.slice(0, 7)}] Error processing activity for issue ${issueId}:`, error);
+        return null;
+      }
+    })
+    .filter(Boolean) as Partial<ExIssueActivity>[];
+
+  return processedIssueActivities;
+};
+
 export const getAssociatedCommentsV2 = async (
   jobId: string,
   credentials: TWorkspaceCredential,
@@ -309,6 +341,7 @@ export const generateIssuePayloadV2 = async (payload: {
   jobId: string;
   issues: ExIssue[];
   issueComments: ExIssueComment[];
+  issueActivities: ExIssueActivity[];
   credentials: TWorkspaceCredential;
   planeClient: PlaneClient;
   workspaceSlug: string;
@@ -330,6 +363,7 @@ export const generateIssuePayloadV2 = async (payload: {
     jobId,
     issues,
     issueComments,
+    issueActivities,
     credentials,
     associations,
     planeClient,
@@ -412,6 +446,13 @@ export const generateIssuePayloadV2 = async (payload: {
 
       const associatedWorklogs = processWorklogs(userMap, associations.worklogs.get(processedIssue.external_id) || []);
 
+      const associatedIssueActivities = getAssociatedIssueActivities(
+        jobId,
+        issueActivities,
+        planeUsers,
+        processedIssue.external_id || ""
+      );
+
       // Build BulkIssuePayload
       bulkIssuePayload.push({
         ...processedIssue,
@@ -421,6 +462,7 @@ export const generateIssuePayloadV2 = async (payload: {
         cycles: associatedCycleIds.filter(Boolean) as string[],
         modules: associatedModuleIds.filter(Boolean) as string[],
         issue_property_values: associatedIssuePropertyValues,
+        activities: associatedIssueActivities,
       });
 
       successfulIssues++;

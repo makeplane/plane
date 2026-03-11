@@ -22,8 +22,9 @@ import type {
   IssueTypeWithStatus as JiraStates,
   IssueTypeDetails as JiraIssueTypeDetails,
   CustomFieldContextOption,
+  ChangeDetails as JiraChangeDetails,
 } from "jira.js/out/version2/models/index.js";
-import type { ExProject, ExState } from "@plane/sdk";
+import type { ExProject, ExState, ExModule, ExCycle, ExIssueType, PlaneUser, ExIssueAttachment } from "@plane/sdk";
 
 export type JiraProps = {
   hostname: string;
@@ -202,3 +203,20 @@ export type IJiraIssue = Issue;
 export type { JiraProject, JiraStates, JiraStatus, JiraPriority };
 
 export type { JiraCustomFieldKeys } from "./custom-fields";
+
+export type JiraIssueActivity = {
+  id: string;
+  author: JiraApiUser;
+  created: string;
+  items: JiraChangeDetails[];
+};
+
+export type TTransformationMaps = {
+  moduleMap: Record<string, ExModule>;
+  cycleMap: Record<string, ExCycle>;
+  stateMap: Record<string, ExState>;
+  priorityMap: Record<string, string>;
+  issueTypeMap: Record<string, ExIssueType>;
+  userMap: Record<string, PlaneUser>;
+  attachmentMap: Record<string, ExIssueAttachment>;
+};

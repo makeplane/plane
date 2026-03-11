@@ -356,7 +356,7 @@ export class JiraV2Service {
         : createdAfter
           ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}") ORDER BY created ASC`
           : `project = "${projectKey}" ORDER BY created ASC`,
-      expand: "renderedFields",
+      expand: "renderedFields,changelog",
       fields: ["*all", "sprints", "closedSprints"],
       startAt,
       maxResults: maxResults,

@@ -16,7 +16,7 @@ import type { E_IMPORTER_KEYS, TIssuePropertyValuesPayload } from "@plane/etl/co
 import type { IJiraIssue, JiraConfig, JiraIssueField } from "@plane/etl/jira-server";
 import { pullIssuesV2, transformIssueV2 } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
-import type { ExIssue, ExIssueComment, ExIssueProperty, ExIssuePropertyOption } from "@plane/sdk";
+import type { ExIssue, ExIssueActivity, ExIssueComment, ExIssueProperty, ExIssuePropertyOption } from "@plane/sdk";
 import type { TImportJob } from "@plane/types";
 import { createEmptyContext, createPaginationContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
 import type {
@@ -118,12 +118,13 @@ export class JiraIssuesStep implements IStep {
         epicsAsWorkItems: epicsAsWorkItems || false,
       });
 
-      const { processedIssues, comments, propertyValues, associations, relations } = {
+      const { processedIssues, comments, propertyValues, associations, relations, issueActivities } = {
         processedIssues: extractedData.issues,
         comments: extractedData.comments,
         propertyValues: extractedData.propertyValues,
         associations: extractedData.associations,
         relations: extractedData.relations,
+        issueActivities: extractedData.issueActivities,
       };
 
       // Load entity mappings from storage
@@ -136,6 +137,7 @@ export class JiraIssuesStep implements IStep {
       const pushed = await this.push(
         transformed,
         comments,
+        issueActivities,
         propertyValues,
         mappings,
         associations,
@@ -494,6 +496,7 @@ export class JiraIssuesStep implements IStep {
   private async push(
     issues: Partial<ExIssue>[],
     comments: Partial<ExIssueComment>[],
+    issueActivities: Partial<ExIssueActivity>[],
     propertyValues: TIssuePropertyValuesPayload,
     mappings: {
       userMap: Map<string, string>;
@@ -515,6 +518,7 @@ export class JiraIssuesStep implements IStep {
       jobId: job.id,
       issues: issues as ExIssue[],
       issueComments: comments as ExIssueComment[],
+      issueActivities: issueActivities as ExIssueActivity[],
       credentials,
       planeClient,
       workspaceSlug: job.workspace_slug,
@@ -547,6 +551,7 @@ export class JiraIssuesStep implements IStep {
 
       const totalComments = bulkPayload.reduce((sum, i) => sum + i.comments.length, 0);
       const totalPropertyValues = bulkPayload.reduce((sum, i) => sum + i.issue_property_values.length, 0);
+      const totalIssueActivities = bulkPayload.reduce((sum, i) => sum + (i.activities?.length || 0), 0);
       const issuesWithAttachments = bulkPayload.filter((i) => i.attachments && i.attachments.length > 0).length;
       const totalAttachments = bulkPayload.reduce((sum, i) => sum + (i.attachments?.length || 0), 0);
 
@@ -559,6 +564,7 @@ export class JiraIssuesStep implements IStep {
           issuesSent: bulkPayload.length,
           totalComments,
           totalPropertyValues,
+          totalIssueActivities,
           issuesWithAttachments,
           totalAttachments,
         },
@@ -569,6 +575,7 @@ export class JiraIssuesStep implements IStep {
         issues: bulkPayload.length,
         totalComments,
         totalPropertyValues,
+        totalIssueActivities,
       });
 
       return bulkPayload;

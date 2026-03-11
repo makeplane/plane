@@ -26,7 +26,7 @@ from plane.utils.helpers import get_boolean_value
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.api.serializers.issue import IssueSerializer
-from plane.db.models.issue import Issue, IssueLink, IssueComment, IssueLabel, IssueSequence
+from plane.db.models.issue import Issue, IssueLink, IssueComment, IssueLabel, IssueSequence, IssueActivity
 from plane.db.models.label import Label
 from plane.db.models.project import Project
 from plane.db.models.cycle import CycleIssue
@@ -341,6 +341,10 @@ def process_single_issue(slug, project, user_id, issue_data, report_id=None, job
         # Process labels
         process_issue_labels(slug, issue, labels, user_id, report_id=report_id, job_id=job_id)
 
+        # Process activities
+        if issue_data.get("activities"):
+            process_issue_activities(slug, issue, issue_data.get("activities"), report_id=report_id, job_id=job_id)
+
         # Process worklogs
         if issue_data.get("worklogs"):
             process_issue_worklogs(slug, issue, issue_data.get("worklogs"), report_id=report_id, job_id=job_id)
@@ -379,6 +383,171 @@ def process_single_issue(slug, project, user_id, issue_data, report_id=None, job
         return None
 
 
+def process_issue_activities(slug, issue, activities, report_id=None, job_id=None):
+    if not activities:
+        return
+
+    try:
+        bulk_create_activities = []
+        bulk_update_activities = []
+        activity_timestamp_map = {}
+
+        existing_activities_map = {
+            str(activity.external_id): activity
+            for activity in IssueActivity.objects.filter(
+                issue=issue,
+                project_id=issue.project_id,
+                workspace_id=issue.workspace_id,
+                external_id__in=[str(a.get("external_id")) for a in activities if a.get("external_id")],
+            )
+        }
+
+        for activity_data in activities:
+            external_id = str(activity_data.get("external_id")) if activity_data.get("external_id") else None
+
+            if not external_id:
+                continue
+
+            actor_id = activity_data.get("actor") or issue.created_by_id
+
+            if external_id in existing_activities_map:
+                existing_activity = existing_activities_map[external_id]
+                existing_activity.verb = activity_data.get("verb", "created")
+                existing_activity.field = activity_data.get("field")
+                existing_activity.old_value = activity_data.get("old_value")
+                existing_activity.new_value = activity_data.get("new_value")
+                existing_activity.comment = activity_data.get("comment", "")
+                existing_activity.actor_id = actor_id
+                existing_activity.old_identifier = activity_data.get("old_identifier")
+                existing_activity.new_identifier = activity_data.get("new_identifier")
+                existing_activity.epoch = activity_data.get("epoch")
+                existing_activity.updated_by_id = issue.created_by_id
+                if activity_data.get("updated_at"):
+                    existing_activity.updated_at = activity_data["updated_at"]
+                elif activity_data.get("created_at"):
+                    existing_activity.updated_at = activity_data["created_at"]
+                bulk_update_activities.append(existing_activity)
+            else:
+                activity = IssueActivity(
+                    issue=issue,
+                    project_id=issue.project_id,
+                    workspace_id=issue.workspace_id,
+                    verb=activity_data.get("verb", "created"),
+                    field=activity_data.get("field"),
+                    old_value=activity_data.get("old_value"),
+                    new_value=activity_data.get("new_value"),
+                    comment=activity_data.get("comment", ""),
+                    actor_id=actor_id,
+                    old_identifier=activity_data.get("old_identifier"),
+                    new_identifier=activity_data.get("new_identifier"),
+                    epoch=activity_data.get("epoch"),
+                    external_id=external_id,
+                    external_source=activity_data.get("external_source"),
+                    created_by_id=issue.created_by_id,
+                    updated_by_id=issue.created_by_id,
+                )
+                bulk_create_activities.append(activity)
+                activity_timestamp_map[id(activity)] = {
+                    "created_at": activity_data.get("created_at"),
+                    "updated_at": activity_data.get("updated_at", activity_data.get("created_at")),
+                }
+
+        created_activities = IssueActivity.objects.bulk_create(
+            bulk_create_activities, batch_size=100, ignore_conflicts=True
+        )
+
+        if created_activities:
+            activities_to_update_timestamps = []
+            for activity in created_activities:
+                timestamps = activity_timestamp_map.get(id(activity))
+                if timestamps and timestamps["created_at"]:
+                    activity.created_at = timestamps["created_at"]
+                    activity.updated_at = timestamps["updated_at"] or timestamps["created_at"]
+                    activities_to_update_timestamps.append(activity)
+
+            collect_execution_log(
+                logs=[
+                    {
+                        "report_id": report_id,
+                        "job_id": job_id,
+                        "entity_type": "WORK_ITEM_ACTIVITY",
+                        "level": "info",
+                        "phase": "PROCESS_ACTIVITIES",
+                        "entity_plane_id": str(activity.id),
+                        "entity_external_id": activity.external_id,
+                        "related_entity": str(issue.external_id) if issue.external_id else None,
+                        "metrics": {
+                            "imported": 1,
+                        },
+                    }
+                    for activity in created_activities
+                ],
+                workspace_slug=slug,
+            )
+
+            if activities_to_update_timestamps:
+                IssueActivity.objects.bulk_update(
+                    activities_to_update_timestamps,
+                    ["created_at", "updated_at"],
+                    batch_size=100,
+                )
+
+        if bulk_update_activities:
+            IssueActivity.objects.bulk_update(
+                bulk_update_activities,
+                [
+                    "verb",
+                    "field",
+                    "old_value",
+                    "new_value",
+                    "comment",
+                    "actor_id",
+                    "old_identifier",
+                    "new_identifier",
+                    "epoch",
+                    "updated_by_id",
+                    "updated_at",
+                ],
+                batch_size=100,
+            )
+
+            collect_execution_log(
+                logs=[
+                    {
+                        "report_id": report_id,
+                        "job_id": job_id,
+                        "entity_type": "WORK_ITEM_ACTIVITY",
+                        "level": "info",
+                        "phase": "PROCESS_ACTIVITIES",
+                        "entity_plane_id": str(activity.id),
+                        "entity_external_id": activity.external_id,
+                        "related_entity": str(issue.external_id) if issue.external_id else None,
+                        "already_exists": True,
+                        "metrics": {
+                            "already_existed": 1,
+                        },
+                    }
+                    for activity in bulk_update_activities
+                ],
+                workspace_slug=slug,
+            )
+
+    except Exception as e:
+        logger.warning(f"Failed to process activities for issue {issue.id}: {str(e)}")
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "WORK_ITEM_ACTIVITY",
+                "level": "error",
+                "phase": "PROCESS_ACTIVITIES",
+                "error": {"message": str(e)},
+                "related_entity": str(issue.external_id) if issue.external_id else None,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
+    return
 # preserve the external sequence id for the issue if it is present in the issue data also handle duplicates if any
 def preserve_external_sequence(slug, project, issue_id, issue_data):
     try:

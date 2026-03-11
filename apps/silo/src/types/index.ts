@@ -13,7 +13,7 @@
 
 // import { Simplify } from "type-fest";
 import { z } from "zod";
-import type { ExIssue, ExIssueComment, ExIssuePropertyValue, TWorklog } from "@plane/sdk";
+import type { ExIssue, ExIssueActivity, ExIssueComment, ExIssuePropertyValue, TWorklog } from "@plane/sdk";
 import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 
 export const taskSchema = z.object({
@@ -61,6 +61,7 @@ export function verifyEntityConnections<T extends z.ZodType>(schema: T, dataArra
 
 export type BulkIssuePayload = ExIssue & {
   comments: ExIssueComment[];
+  activities?: Partial<ExIssueActivity>[];
   worklogs?: Partial<TWorklog>[];
   cycles: string[];
   modules: string[];

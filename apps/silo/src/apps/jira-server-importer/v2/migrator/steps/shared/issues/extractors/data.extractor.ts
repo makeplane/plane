@@ -14,9 +14,15 @@
 import type { E_IMPORTER_KEYS, TIssuePropertyValuesPayload } from "@plane/etl/core";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
-import type { IJiraIssue, JiraConfig, JiraIssueField, JiraV2Service } from "@plane/etl/jira-server";
+import type {
+  IJiraIssue,
+  JiraConfig,
+  JiraIssueField,
+  JiraV2Service,
+  TTransformationMaps,
+} from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
-import type { ExIssueComment, ExIssueProperty, ExIssuePropertyOption, TWorklog } from "@plane/sdk";
+import type { ExIssueActivity, ExIssueComment, ExIssueProperty, ExIssuePropertyOption, TWorklog } from "@plane/sdk";
 import type { TImportJob } from "@plane/types";
 import { getTransformedIssuePropertyValuesV2 } from "@/apps/jira-server-importer/migrator/transformers";
 import { buildExternalId, extractJobData } from "@/apps/jira-server-importer/v2/helpers/job";
@@ -31,6 +37,7 @@ import { JiraComponentExtractor } from "./component.extractor";
 import { JiraIssueLinkExtractor } from "./issue-link.extractor";
 import { JiraSprintExtractor } from "./sprint.extractor";
 import { JiraWorklogExtractor } from "./worklog.extractor";
+import { JiraIssueActivityExtractor } from "./issue-activity.extractor";
 
 export type TExtractionProps = {
   job: TImportJob<JiraConfig>;
@@ -55,6 +62,7 @@ export type TUnifiedExtractionResult = {
   propertyValues: TIssuePropertyValuesPayload;
   associations: TIssuesAssociationsData;
   relations: TIssueRelationsData[];
+  issueActivities: Partial<ExIssueActivity>[];
 };
 
 /**
@@ -78,6 +86,16 @@ export class JiraIssueDataExtractor {
       additionalData.knownCustomFieldMapping,
       epicsAsWorkItems
     );
+    const transformationMaps = {
+      stateMap: {},
+      userMap: {},
+      cycleMap: {},
+      moduleMap: {},
+      issueTypeMap: {},
+      priorityMap: {},
+      attachmentMap: {},
+    };
+    const issueActivityExtractor = this.getIssueActivityExtractor(projectId, resourceId, source, transformationMaps);
 
     // 2. Batch Extraction: Comments
     const comments = await commentExtractor.extract(job.id, sourceClient, issues);
@@ -133,7 +151,10 @@ export class JiraIssueDataExtractor {
       }
     }
 
-    // 5. Metrics Collection
+    // 5. Per-Issue Extraction: Issue Activities
+    const issueActivities = issues.flatMap((issue) => issueActivityExtractor.extract(issue));
+
+    // 6. Metrics Collection
     this.collectMetrics({
       job,
       issues,
@@ -146,6 +167,7 @@ export class JiraIssueDataExtractor {
       cycles,
       modules,
       worklogs,
+      issueActivities,
     });
 
     return {
@@ -154,6 +176,7 @@ export class JiraIssueDataExtractor {
       propertyValues,
       associations: { cycles, modules, worklogs },
       relations,
+      issueActivities,
     };
   }
 
@@ -189,6 +212,15 @@ export class JiraIssueDataExtractor {
     return new JiraIssueLinkExtractor(sourceClient, projectId, resourceId, knownCustomFieldMapping, epicsAsWorkItems);
   }
 
+  protected getIssueActivityExtractor(
+    projectId: string,
+    resourceId: string,
+    source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+    transformationMaps: TTransformationMaps
+  ): JiraIssueActivityExtractor {
+    return new JiraIssueActivityExtractor(projectId, resourceId, source, transformationMaps);
+  }
+
   private collectMetrics(props: {
     job: TImportJob<JiraConfig>;
     issues: IJiraIssue[];
@@ -201,8 +233,9 @@ export class JiraIssueDataExtractor {
     cycles: Map<string, string[]>;
     modules: Map<string, string[]>;
     worklogs: Map<string, Partial<TWorklog>[]>;
+    issueActivities: Partial<ExIssueActivity>[];
   }) {
-    const { job, issues, comments, propertyValues, relations } = props;
+    const { job, issues, comments, propertyValues, relations, issueActivities } = props;
 
     // Property Values Metrics
     const totalPropertyValues = Object.values(propertyValues).reduce(
@@ -266,12 +299,14 @@ export class JiraIssueDataExtractor {
         totalCycleAssociations: props.totalCycleAssociations,
         totalModuleAssociations: props.totalModuleAssociations,
         totalWorklogs: props.totalWorklogs,
+        issueActivities: props.issueActivities.length,
       },
     });
 
     logger.info(`[${job.id}] [JiraIssueDataExtractor] Extraction completed`, {
       issues: issues.length,
       comments: comments.length,
+      issueActivities: issueActivities.length,
       relations: relations.length,
     });
   }
