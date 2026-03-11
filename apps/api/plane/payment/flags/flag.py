@@ -135,5 +135,3 @@ class AdminFeatureFlag(Enum):
     OIDC_SAML_AUTH = "OIDC_SAML_AUTH"
     # LDAP Auth
     LDAP_AUTH = "LDAP_AUTH"
-    # Instance user management
-    INSTANCE_USER_MANAGEMENT = "INSTANCE_USER_MANAGEMENT"

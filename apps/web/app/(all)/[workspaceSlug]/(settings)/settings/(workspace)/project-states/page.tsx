@@ -121,7 +121,7 @@ function ProjectsSettingsPage({ params }: Route.ComponentProps) {
         <div className="flex flex-col gap-12 w-full">
           <PageHead title={pageTitle} />
           <SettingsHeading
-            title={t("workspace_settings.settings.project_states.title")}
+            title={t("workspace_settings.settings.projects.title")}
             description={t("workspace_settings.settings.project_states.description")}
             control={
               isProjectGroupingEnabled && (

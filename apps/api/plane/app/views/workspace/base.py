@@ -22,11 +22,10 @@ from dateutil.relativedelta import relativedelta
 # Django imports
 from django.db import IntegrityError
 from django.db.models import Exists
-
-# Django imports
 from django.db.models import Count, F, Func, OuterRef, Prefetch, Q, Subquery
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractDay, ExtractWeek
+from django.conf import settings
 from django.http import HttpResponse
 from django.utils import timezone
 
@@ -65,8 +64,7 @@ from plane.utils.csv_utils import sanitize_csv_row
 from plane.utils.url import contains_url
 from plane.utils.analytics_events import WORKSPACE_CREATED, WORKSPACE_DELETED
 from plane.payment.bgtasks.member_sync_task import member_sync_task
-from django.conf import settings
-
+from plane.payment.utils.workspace_license_request import resync_workspace_license
 
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
@@ -151,6 +149,10 @@ class WorkSpaceViewSet(BaseViewSet):
                 data = serializer.data
                 data["total_members"] = total_members
                 data["role"] = 20
+
+                # Resync workspace license if self-hosted to reflect the new workspace in the payment server
+                if settings.IS_SELF_MANAGED:
+                    resync_workspace_license(serializer.instance.slug, force=True)
 
                 # seed the workspace
                 workspace_seed.delay(serializer.data["id"])
