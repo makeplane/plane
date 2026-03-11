@@ -14,3 +14,4 @@ from .user import (
     InstanceUserWorkspaceSerializer,
     InstanceUserAddToWorkspaceSerializer,
 )
+from .monitoring import EmailNotificationLogSerializer

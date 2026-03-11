@@ -9,3 +9,4 @@ export * from "./use-instance";
 export * from "./use-user";
 export * from "./use-workspace";
 export * from "./use-instance-user";
+export * from "./use-monitoring";

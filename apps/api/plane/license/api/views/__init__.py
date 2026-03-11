@@ -35,3 +35,9 @@ from .user import (
 from .user_bulk_import import InstanceUserBulkImportEndpoint
 from .workspace_bulk_create import InstanceWorkspaceBulkCreateEndpoint
 from .workspace_member_bulk_assign import InstanceWorkspaceBulkAssignMembersEndpoint
+
+from .monitoring import (
+    EmailLogMonitoringEndpoint,
+    ScheduledJobMonitoringEndpoint,
+    WorkerHealthMonitoringEndpoint,
+)
