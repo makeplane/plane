@@ -18,10 +18,12 @@ import type { KNOWN_CUSTOM_FIELDS } from "../helpers/constants";
 
 export enum EJiraStep {
   // Pre-run
+  PLANE_PROJECT_CREATION = "plane_project_creation",
   PLANE_PROJECT_CONFIGURATION = "plane_project_configuration",
 
   // Entities
   USERS = "users",
+  STATES = "states",
   BOARDS = "boards",
   MODULES = "modules",
   CYCLES = "cycles",

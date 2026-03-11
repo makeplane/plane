@@ -11,4 +11,5 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+export * from "./create-project.step";
 export * from "./project-config.step";

@@ -4597,6 +4597,12 @@ văzute aici`,
   },
   jira_importer: {
     jira_importer_description: "Importă datele tale Jira în proiectele Plane.",
+    create_project_automatically: "Creează proiect automat",
+    create_project_automatically_description:
+      "Vom crea un proiect nou pentru tine pe baza detaliilor proiectului Jira.",
+    import_to_existing_project: "Importă într-un proiect existent",
+    import_to_existing_project_description: "Alege un proiect existent din meniul derulant de mai jos.",
+    state_mapping_automatic_creation: "Toate stările Jira vor fi create automat în Plane.",
     personal_access_token: "Token de Acces Personal",
     user_email: "Email Utilizator",
     atlassian_security_settings: "Setări de Securitate Atlassian",

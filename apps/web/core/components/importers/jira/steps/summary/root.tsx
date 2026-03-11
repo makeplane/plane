@@ -73,38 +73,35 @@ export const SummaryRoot = observer(function SummaryRoot() {
   const jql = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.jql;
 
   const handleOnClickNext = async () => {
-    if (planeProjectId) {
-      setCreateConfigLoader(true);
-      // create a new config and the sync job
-      try {
-        const tokenVerification = await apiTokenVerification();
-        if (tokenVerification?.message) {
-          const syncJobPayload: Partial<TImportJob<JiraConfig>> = {
-            workspace_slug: workspaceSlug,
-            workspace_id: workspaceId,
-            project_id: planeProjectId,
-            initiator_id: userId,
-            config: configData as JiraConfig,
-            source: E_IMPORTER_KEYS.JIRA,
-            status: E_JOB_STATUS.CREATED as TJobStatus,
-          };
-          const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
+    setCreateConfigLoader(true);
+    // create a new config and the sync job
+    try {
+      const tokenVerification = await apiTokenVerification();
+      if (tokenVerification?.message) {
+        const syncJobPayload: Partial<TImportJob<JiraConfig>> = {
+          workspace_slug: workspaceSlug,
+          workspace_id: workspaceId,
+          project_id: planeProjectId,
+          initiator_id: userId,
+          config: configData as JiraConfig,
+          source: E_IMPORTER_KEYS.JIRA,
+          status: E_JOB_STATUS.CREATED as TJobStatus,
+        };
+        const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
 
-          console.log(importerCreateJob);
-          if (importerCreateJob && importerCreateJob?.id) {
-            await startJob(importerCreateJob?.id);
-            handleDashboardView();
-            // clearing the existing data in the context
-            resetImporterData();
-            // moving to the next state
-            handleStepper("next");
-          }
+        if (importerCreateJob && importerCreateJob?.id) {
+          await startJob(importerCreateJob?.id);
+          handleDashboardView();
+          // clearing the existing data in the context
+          resetImporterData();
+          // moving to the next state
+          handleStepper("next");
         }
-      } catch (error) {
-        console.error("error", error);
-      } finally {
-        setCreateConfigLoader(false);
       }
+    } catch (error) {
+      console.error("error", error);
+    } finally {
+      setCreateConfigLoader(false);
     }
   };
 

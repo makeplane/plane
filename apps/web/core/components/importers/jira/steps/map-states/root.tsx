@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import { isEqual } from "lodash-es";
@@ -20,8 +19,8 @@ import useSWR from "swr";
 import type { IStateConfig, JiraStatus } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { InfoFillIcon } from "@plane/propel/icons";
 import type { ExState } from "@plane/sdk";
-import type { IState } from "@plane/types";
 // silo components
 import { MapStatesSelection } from "@/components/importers/jira";
 import { StepperNavigation } from "@/components/importers/ui";
@@ -71,7 +70,12 @@ export const MapStatesRoot = observer(function MapStatesRoot() {
     .map((id) => (planeProjectId && getStateById(planeProjectId, id)) || undefined)
     .filter((jiraState) => jiraState != undefined && jiraState != null);
 
-  const isNextButtonDisabled = jiraProjectStates?.length === Object.keys(formData).length ? false : true;
+  const isNextButtonDisabled = !planeProjectId
+    ? false
+    : jiraProjectStates?.length === Object.keys(formData).length
+      ? false
+      : true;
+
   // handlers
   const handleFormData = <T extends keyof TFormData>(key: T, value: TFormData[T]) => {
     setFormData((prevData) => ({ ...prevData, [key]: value }));
@@ -96,6 +100,11 @@ export const MapStatesRoot = observer(function MapStatesRoot() {
   };
 
   const handleOnClickNext = () => {
+    if (!planeProjectId) {
+      handleStepper("next");
+      return;
+    }
+
     // validate the sync job config
     if (jiraProjectStates?.length === Object.keys(formData).length) {
       // update the data in the context
@@ -117,7 +126,7 @@ export const MapStatesRoot = observer(function MapStatesRoot() {
   }, [importerData]);
 
   useEffect(() => {
-    if (!jiraProjectStates.length || !planeProjectStates.length || fuzzySearchDone) {
+    if (!planeProjectId || !jiraProjectStates.length || !planeProjectStates.length || fuzzySearchDone) {
       return;
     }
 
@@ -143,7 +152,7 @@ export const MapStatesRoot = observer(function MapStatesRoot() {
     });
     // mark the fuzzy search as done
     setFuzzySearchDone(true);
-  }, [jiraProjectStates, planeProjectStates, fuzzySearchDone, handleFormData]);
+  }, [jiraProjectStates, planeProjectStates, fuzzySearchDone, planeProjectId, handleFormData]);
 
   // fetching the jira project states
   const { isLoading: isJiraProjectStatesLoading } = useSWR(
@@ -158,41 +167,54 @@ export const MapStatesRoot = observer(function MapStatesRoot() {
 
   // fetching the plane project states
   const { isLoading: isPlaneProjectStatesLoading } = useSWR(
-    workspaceSlug && planeProjectId ? `IMPORTER_PLANE_STATES_${workspaceSlug}_${planeProjectId}` : null,
-    workspaceSlug && planeProjectId ? async () => fetchStates(workspaceSlug, planeProjectId) : null,
+    workspaceSlug && planeProjectId && planeProjectId !== "create-automatically"
+      ? `IMPORTER_PLANE_STATES_${workspaceSlug}_${planeProjectId}`
+      : null,
+    workspaceSlug && planeProjectId && planeProjectId !== "create-automatically"
+      ? async () => fetchStates(workspaceSlug, planeProjectId)
+      : null,
     { errorRetryCount: 0 }
   );
 
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
-      <ImporterTable
-        isLoading={
-          (isJiraProjectStatesLoading && (!jiraProjectStates || jiraProjectStates.length === 0)) ||
-          (isPlaneProjectStatesLoading && (!planeProjectStates || planeProjectStates.length === 0))
-        }
-        headerLeft={`Jira ${t("common.states")}`}
-        headerRight={`Plane ${t("common.states")}`}
-        iterator={
-          jiraProjectStates &&
-          planeProjectStates &&
-          jiraProjectStates.map(
-            (jiraState: JiraStatus) =>
-              jiraState.id && {
-                id: jiraState.id,
-                name: jiraState.name,
-                value: (
-                  <MapStatesSelection
-                    key={jiraState.id}
-                    value={formData[jiraState?.id]}
-                    handleValue={(value: string | undefined) => jiraState.id && handleFormData(jiraState.id, value)}
-                    planeStates={planeProjectStates}
-                  />
-                ),
-              }
-          )
-        }
-      />
+      {!planeProjectId ? (
+        <div className="flex flex-col min-h-44 max-h-full w-full">
+          <div className="flex gap-2 items-center p-3 w-full rounded-lg border border-accent-subtle bg-accent-subtle text-accent-primary text-body-sm-regular">
+            <InfoFillIcon height={8} width={8} className="text-accent-primary text-body-sm-regular" />
+            {t("jira_importer.state_mapping_automatic_creation")}
+          </div>
+        </div>
+      ) : (
+        <ImporterTable
+          isLoading={
+            (isJiraProjectStatesLoading && (!jiraProjectStates || jiraProjectStates.length === 0)) ||
+            (isPlaneProjectStatesLoading && (!planeProjectStates || planeProjectStates.length === 0))
+          }
+          headerLeft={`Jira ${t("common.states")}`}
+          headerRight={`Plane ${t("common.states")}`}
+          iterator={
+            jiraProjectStates &&
+            planeProjectStates &&
+            jiraProjectStates.map(
+              (jiraState: JiraStatus) =>
+                jiraState.id && {
+                  id: jiraState.id,
+                  name: jiraState.name,
+                  value: (
+                    <MapStatesSelection
+                      key={jiraState.id}
+                      value={formData[jiraState?.id]}
+                      handleValue={(value: string | undefined) => jiraState.id && handleFormData(jiraState.id, value)}
+                      planeStates={planeProjectStates}
+                    />
+                  ),
+                }
+            )
+          }
+        />
+      )}
       {/* stepper button */}
       <div className="shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>

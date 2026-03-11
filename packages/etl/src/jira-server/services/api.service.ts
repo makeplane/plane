@@ -24,6 +24,7 @@ import type {
   JiraStatus,
   Project,
   IssueTypeDetails,
+  StatusDetails,
 } from "jira.js/out/version2/models/index.js";
 import type { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
 import type { JiraApiUser, JiraProps } from "..";
@@ -137,14 +138,14 @@ export class JiraV2Service {
   // Verified
   async getProjectStatuses(projectId: string) {
     try {
-      return await fetchPaginatedData<JiraStatus>((startAt) =>
+      return await fetchPaginatedData<StatusDetails>((startAt) =>
         axios
           .get(`${this.hostname}/rest/api/2/status/page?projectIds=${projectId}&startAt=${startAt}`, {
             headers: {
               Authorization: `Bearer ${this.patToken}`,
             },
           })
-          .then((res) => res.data as Paginated<JiraStatus>)
+          .then((res) => res.data as Paginated<StatusDetails>)
       );
     } catch (e) {
       console.error("error getProjectStatuses", e);

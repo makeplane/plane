@@ -4593,6 +4593,12 @@ Crea un nuovo progetto invece`,
   },
   jira_importer: {
     jira_importer_description: "Importa i tuoi dati Jira nel progetto Plane.",
+    create_project_automatically: "Crea progetto automaticamente",
+    create_project_automatically_description:
+      "Creeremo un nuovo progetto per te basato sui dettagli del progetto Jira.",
+    import_to_existing_project: "Importa in un progetto esistente",
+    import_to_existing_project_description: "Scegli un progetto esistente dal menu a discesa qui sotto.",
+    state_mapping_automatic_creation: "Tutti gli stati Jira verranno creati automaticamente in Plane.",
     personal_access_token: "Token di accesso personale",
     user_email: "Email utente",
     atlassian_security_settings: "Impostazioni di sicurezza Atlassian",

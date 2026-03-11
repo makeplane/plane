@@ -458,6 +458,7 @@ class IntegrationConnectionHelper {
   // import job
   async updateImportJob({
     job_id,
+    project_id,
     status,
     success_metadata,
     error_metadata,
@@ -467,6 +468,7 @@ class IntegrationConnectionHelper {
   }: {
     job_id: string;
     status?: string;
+    project_id?: string;
     success_metadata?: object;
     error_metadata?: object;
     config?: object;
@@ -476,6 +478,7 @@ class IntegrationConnectionHelper {
     return this.apiClient.importJob.updateImportJob(job_id, {
       status,
       config,
+      project_id,
       success_metadata,
       error_metadata,
       cancelled_at,

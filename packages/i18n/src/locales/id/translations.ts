@@ -4573,6 +4573,12 @@ jika Anda yakin pencarian Anda benar. `,
   },
   jira_importer: {
     jira_importer_description: "Impor data Jira Anda ke dalam projek Plane.",
+    create_project_automatically: "Buat proyek secara otomatis",
+    create_project_automatically_description:
+      "Kami akan membuat proyek baru untuk Anda berdasarkan detail proyek Jira.",
+    import_to_existing_project: "Impor ke proyek yang sudah ada",
+    import_to_existing_project_description: "Pilih proyek yang ada dari menu dropdown di bawah ini.",
+    state_mapping_automatic_creation: "Semua status Jira akan dibuat secara otomatis di Plane.",
     personal_access_token: "Token Akses Personal",
     user_email: "Email Pengguna",
     atlassian_security_settings: "Pengaturan Keamanan Atlassian",

@@ -4603,6 +4603,12 @@ se você tem certeza de que sua pesquisa está correta.`,
   },
   jira_importer: {
     jira_importer_description: "Importe seus dados do Jira para projetos do Plane.",
+    create_project_automatically: "Criar projeto automaticamente",
+    create_project_automatically_description:
+      "Criaremos um novo projeto para você com base nos detalhes do projeto Jira.",
+    import_to_existing_project: "Importar para um projeto existente",
+    import_to_existing_project_description: "Escolha um projeto existente no menu suspenso abaixo.",
+    state_mapping_automatic_creation: "Todos os status do Jira serão criados automaticamente no Plane.",
     personal_access_token: "Token de Acesso Pessoal",
     user_email: "Email do Usuário",
     atlassian_security_settings: "Configurações de Segurança do Atlassian",

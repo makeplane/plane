@@ -14,6 +14,7 @@
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import {
   // Pre-run steps
+  PlaneProjectCreateStep,
   PlaneProjectConfigurationStep,
   // Entity steps
   JiraBoardsStep,
@@ -26,14 +27,21 @@ import {
   JiraExecutionSummaryStep,
   CleanupIssueSequenceStep,
 } from "../shared";
-import { JiraCloudUserStep, JiraCloudIssuePropertiesStep, JiraCloudIssueTypesStep } from "./entities";
+import {
+  JiraCloudUserStep,
+  JiraCloudIssuePropertiesStep,
+  JiraCloudIssueTypesStep,
+  JiraCloudStatesStep,
+} from "./entities";
 import { JiraCloudIssuesStep } from "./issues";
 
 const JIRA_CLOUD_STEPS = [
   // Pre-run steps
+  new PlaneProjectCreateStep(),
   new PlaneProjectConfigurationStep(),
   // Entity steps
   new JiraCloudUserStep(),
+  new JiraCloudStatesStep(),
   new JiraModulesStep(E_IMPORTER_KEYS.JIRA),
   new JiraBoardsStep(),
   new JiraCyclesStep(E_IMPORTER_KEYS.JIRA),

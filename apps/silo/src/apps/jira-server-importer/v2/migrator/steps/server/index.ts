@@ -26,13 +26,17 @@ import {
   JiraUsersStep,
   PlaneProjectConfigurationStep,
   WaitForCeleryStep,
+  JiraStatesStep,
+  PlaneProjectCreateStep,
 } from "../shared";
 
 const JIRA_SERVER_STEPS = [
   // Pre-run steps
+  new PlaneProjectCreateStep(),
   new PlaneProjectConfigurationStep(),
   // Entity steps
   new JiraUsersStep(),
+  new JiraStatesStep(),
   new JiraModulesStep(E_IMPORTER_KEYS.JIRA_SERVER),
   new JiraBoardsStep(),
   new JiraCyclesStep(E_IMPORTER_KEYS.JIRA_SERVER),

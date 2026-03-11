@@ -4517,6 +4517,11 @@ export default {
   },
   jira_importer: {
     jira_importer_description: "지라 데이터를 플레인 프로젝트로 임포트하세요.",
+    create_project_automatically: "프로젝트 자동 생성",
+    create_project_automatically_description: "지라 프로젝트 세부 정보를 기반으로 새 프로젝트를 생성합니다.",
+    import_to_existing_project: "기존 프로젝트로 가져오기",
+    import_to_existing_project_description: "아래 드롭다운 메뉴에서 기존 프로젝트를 선택하세요.",
+    state_mapping_automatic_creation: "모든 지라 상태가 플레인에서 자동으로 생성됩니다.",
     personal_access_token: "퍼스널 액세스 토큰",
     user_email: "사용자 이메일",
     atlassian_security_settings: "아틀라시안 보안 설정",

@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./issue-properties.step";
 export * from "./users.step";
+export * from "./states.step";
+export * from "./issue-properties.step";
 export * from "./issue-types.step";

@@ -4597,6 +4597,11 @@ export default {
   },
   jira_importer: {
     jira_importer_description: "Импортируйте ваши данные Jira в проекты Plane.",
+    create_project_automatically: "Создать проект автоматически",
+    create_project_automatically_description: "Мы создадим для вас новый проект на основе данных проекта Jira.",
+    import_to_existing_project: "Импортировать в существующий проект",
+    import_to_existing_project_description: "Выберите существующий проект из раскрывающегося списка ниже.",
+    state_mapping_automatic_creation: "Все статусы Jira будут созданы в Plane автоматически.",
     personal_access_token: "Личный токен доступа",
     user_email: "Электронная почта пользователя",
     atlassian_security_settings: "Настройки безопасности Atlassian",

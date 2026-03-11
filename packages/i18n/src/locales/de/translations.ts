@@ -4587,6 +4587,12 @@ Erstellen Sie ein neues.`,
   },
   jira_importer: {
     jira_importer_description: "Importieren Sie Ihre Jira-Daten in Plane-Projekte.",
+    create_project_automatically: "Projekt automatisch erstellen",
+    create_project_automatically_description:
+      "Wir erstellen für Sie ein neues Projekt basierend auf den Jira-Projektdetails.",
+    import_to_existing_project: "In bestehendes Projekt importieren",
+    import_to_existing_project_description: "Wählen Sie ein bestehendes Projekt aus dem folgenden Dropdown-Menü aus.",
+    state_mapping_automatic_creation: "Alle Jira-Status werden automatisch in Plane erstellt.",
     personal_access_token: "Persönlicher Zugriffstoken",
     user_email: "Benutzer-E-Mail",
     atlassian_security_settings: "Atlassian-Sicherheitseinstellungen",

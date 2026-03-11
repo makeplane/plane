@@ -453,8 +453,8 @@ export class JiraIssuesStep implements IStep {
   ): Promise<Partial<ExIssue>[]> {
     const resourceId = job.config?.resource?.id || "";
     const resourceUrl = job.config?.resource?.url || "";
-    const stateMapping = job.config?.state || {};
-    const priorityMapping = job.config?.priority || {};
+    const stateMapping = job.config?.state || [];
+    const priorityMapping = job.config?.priority || [];
     const startDateField = knownCustomFieldMapping?.find((field) => field.data.name === KNOWN_CUSTOM_FIELDS.START_DATE)
       ?.data?.id;
     const completionDateField = knownCustomFieldMapping?.find(

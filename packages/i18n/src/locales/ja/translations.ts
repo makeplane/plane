@@ -4556,6 +4556,11 @@ export default {
   },
   jira_importer: {
     jira_importer_description: "JiraのデータをPlaneプロジェクトにインポートします。",
+    create_project_automatically: "プロジェクトを自動的に作成する",
+    create_project_automatically_description: "Jiraのプロジェクト詳細に基づいて、新しいプロジェクトを作成します。",
+    import_to_existing_project: "既存のプロジェクトにインポートする",
+    import_to_existing_project_description: "下のドロップダウンメニューから既存のプロジェクトを選択してください。",
+    state_mapping_automatic_creation: "すべてのJiraステータスがPlaneで自動的に作成されます。",
     personal_access_token: "個人アクセストークン",
     user_email: "ユーザーメール",
     atlassian_security_settings: "Atlassianセキュリティ設定",

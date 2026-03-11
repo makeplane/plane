@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
@@ -27,6 +26,7 @@ import { Loader } from "@plane/ui";
 // components
 // plane web components
 import { StepperNavigation, Dropdown } from "@/components/importers/ui";
+import { RadioInput } from "@/components/estimates/radio-select";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web types
@@ -55,6 +55,7 @@ export const SelectPlaneProjectRoot = observer(function SelectPlaneProjectRoot()
 
   // states
   const [formData, setFormData] = useState<TFormData>({ projectId: undefined });
+  const [importType, setImportType] = useState<"create" | "existing">("create");
 
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
@@ -63,15 +64,26 @@ export const SelectPlaneProjectRoot = observer(function SelectPlaneProjectRoot()
     ((projectIdsByWorkspaceSlug(workspaceSlug) || [])
       .map((id) => getProjectById(id))
       .filter((project) => project != undefined && !!project.member_role) as IProject[]);
-  const isNextButtonDisabled = !formData.projectId;
+  const isNextButtonDisabled = importType === "existing" && !formData.projectId;
 
   // handlers
   const handleFormData = (value: string | undefined) => {
     setFormData({ projectId: value });
     // updating the config data
-    if (value) {
+    if (value && value !== "create-automatically") {
       const currentProject = getProjectById(value);
       if (currentProject) handleSyncJobConfig("planeProject", currentProject as ExProject);
+    }
+  };
+
+  const handleImportTypeChange = (type: "create" | "existing") => {
+    setImportType(type);
+    if (type === "create") {
+      handleFormData(undefined);
+    } else {
+      if (!formData.projectId) {
+        handleFormData(undefined);
+      }
     }
   };
 
@@ -87,6 +99,11 @@ export const SelectPlaneProjectRoot = observer(function SelectPlaneProjectRoot()
     const contextData = importerData[currentStepKey];
     if (contextData && !isEqual(contextData, formData)) {
       setFormData(contextData);
+      if (!contextData.projectId) {
+        setImportType("create");
+      } else if (contextData.projectId) {
+        setImportType("existing");
+      }
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
@@ -99,47 +116,97 @@ export const SelectPlaneProjectRoot = observer(function SelectPlaneProjectRoot()
   );
 
   return (
-    <>
+    <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
-      <div className="w-full overflow-y-auto space-y-2">
-        <div className="text-13 text-secondary">{t("importers.select_service_project", { serviceName: "Plane" })}</div>
-        {isLoading && (!projects || projects.length === 0) ? (
-          <Loader>
-            <Loader.Item height="28px" width="100%" />
-          </Loader>
-        ) : (
-          <Dropdown
-            dropdownOptions={(projects || []).map((project) => ({
-              key: project.id,
-              label: project.name,
-              value: project.id,
-              data: project,
-            }))}
-            value={formData.projectId}
-            placeHolder={t("importers.select_service_project", { serviceName: "Plane" })}
-            onChange={(value: string | undefined) => handleFormData(value)}
-            iconExtractor={(option) => (
-              <div className="w-4.5 h-4.5 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
-                {option && option?.logo_props ? (
-                  <Logo logo={option?.logo_props} size={14} />
-                ) : (
-                  <ProjectIcon className="w-4 h-4" />
-                )}
-              </div>
-            )}
-            queryExtractor={(option) => option.name || ""}
-          />
-        )}
+      <div className="w-full flex-1 max-h-full min-h-44 overflow-y-auto">
+        <RadioInput
+          name="import-type"
+          options={[
+            {
+              value: "create",
+              label: (
+                <div className="flex flex-col gap-1">
+                  <div className="text-body-xs-medium">{t("jira_importer.create_project_automatically")}</div>
+                  {/* Subtle description for selected state */}
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${importType === "create" ? "max-h-20 opacity-100 mb-2" : "max-h-0 opacity-0 mt-0"}`}
+                  >
+                    <p className="text-caption-sm-regular text-tertiary">
+                      {t("jira_importer.create_project_automatically_description", {
+                        defaultValue: "We will create a new project for you based on the Jira project details.",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              value: "existing",
+              label: (
+                <div className="flex flex-col gap-1">
+                  <div className="text-body-xs-medium">{t("jira_importer.import_to_existing_project")}</div>
+                  {/* Subtle description and dropdown for selected state */}
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${importType === "existing" ? "max-h-52 opacity-100 mb-2" : "max-h-0 opacity-0 mt-0"}`}
+                  >
+                    <div className="space-y-3 pb-2">
+                      <p className="text-caption-sm-regular text-tertiary">
+                        {t("jira_importer.import_to_existing_project_description", {
+                          defaultValue: "Choose an existing project from the dropdown below.",
+                        })}
+                      </p>
+                      {/* Dropdown */}
+                      <div onClick={(e) => e.stopPropagation()}>
+                        {isLoading && (!projects || projects.length === 0) ? (
+                          <Loader>
+                            <Loader.Item height="28px" width="100%" />
+                          </Loader>
+                        ) : (
+                          <Dropdown
+                            dropdownOptions={(projects || []).map((project) => ({
+                              key: project.id,
+                              label: project.name,
+                              value: project.id,
+                              data: project,
+                            }))}
+                            value={formData.projectId}
+                            placeHolder={t("importers.select_service_project", { serviceName: "Plane" })}
+                            onChange={(value: string | undefined) => handleFormData(value)}
+                            iconExtractor={(option) => (
+                              <div className="w-4.5 h-4.5 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
+                                {option && option?.logo_props ? (
+                                  <Logo logo={option?.logo_props} size={14} />
+                                ) : (
+                                  <ProjectIcon className="w-4 h-4" />
+                                )}
+                              </div>
+                            )}
+                            queryExtractor={(option) => option.name || ""}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ),
+            },
+          ]}
+          selected={importType}
+          onChange={(value: string) => handleImportTypeChange(value as "create" | "existing")}
+          fieldClassName="items-start !gap-3"
+          buttonClassName="!size-3.5 mt-0.5"
+          vertical
+        />
       </div>
 
       {/* stepper button */}
-      <div className="flex-shrink-0 relative flex items-center gap-2 justify-between">
+      <div className="flex-shrink-0 relative flex items-center gap-2 justify-between pt-4">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
             {t("common.next")}
           </Button>
         </StepperNavigation>
       </div>
-    </>
+    </div>
   );
 });
