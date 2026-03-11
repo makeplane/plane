@@ -44,18 +44,11 @@ def backfill_issue_last_activity_at():
             )
             if not batch_ids:
                 break
-            updated = Issue.objects.filter(id__in=batch_ids).update(
-                last_activity_at=F("updated_at")
-            )
+            updated = Issue.objects.filter(id__in=batch_ids).update(last_activity_at=F("updated_at"))
             total_updated += updated
-            logger.info(
-                f"Backfilled last_activity_at for {updated} issues "
-                f"(total: {total_updated}/{total_count})"
-            )
+            logger.info(f"Backfilled last_activity_at for {updated} issues (total: {total_updated}/{total_count})")
     except Exception as e:
-        logger.error(
-            f"Failed backfilling last_activity_at after {total_updated} issues: {e}"
-        )
+        logger.error(f"Failed backfilling last_activity_at after {total_updated} issues: {e}")
         log_exception(e)
         raise
 

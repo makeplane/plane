@@ -15,7 +15,7 @@ from django.conf import settings
 
 # Module imports
 from plane.db.models import ProjectBaseModel, Issue, BaseModel, Page
-from plane.db.mixins import FiltersMixin
+from plane.db.mixins import FiltersMixin, IssueActivityMixin
 
 
 def get_default_properties():
@@ -81,7 +81,7 @@ def get_default_display_properties():
     }
 
 
-class IssueWorkLog(ProjectBaseModel):
+class IssueWorkLog(IssueActivityMixin, ProjectBaseModel):
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="worklogs")
     description = models.TextField(blank=True)
     logged_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="worklogs")
@@ -343,7 +343,7 @@ class EpicUserProperties(ProjectBaseModel, FiltersMixin):
         return str(self.user)
 
 
-class WorkItemPage(ProjectBaseModel):
+class WorkItemPage(IssueActivityMixin, ProjectBaseModel):
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="workitem_pages")
     page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name="workitem_pages")
 

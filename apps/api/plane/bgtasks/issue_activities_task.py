@@ -857,10 +857,6 @@ def create_cycle_issue_activity(
         old_cycle = Cycle.objects.filter(pk=updated_record.get("old_cycle_id", None)).first()
         new_cycle = Cycle.objects.filter(pk=updated_record.get("new_cycle_id", None)).first()
         issue = Issue.objects.filter(pk=updated_record.get("issue_id")).first()
-        if issue:
-            issue.updated_at = timezone.now()
-            issue.save(update_fields=["updated_at"])
-
         issue_activities.append(
             IssueActivity(
                 issue_id=updated_record.get("issue_id"),
@@ -882,10 +878,6 @@ def create_cycle_issue_activity(
     for created_record in created_records:
         cycle = Cycle.objects.filter(pk=created_record.get("fields").get("cycle")).first()
         issue = Issue.objects.filter(pk=created_record.get("fields").get("issue")).first()
-        if issue:
-            issue.updated_at = timezone.now()
-            issue.save(update_fields=["updated_at"])
-
         issue_activities.append(
             IssueActivity(
                 issue_id=created_record.get("fields").get("issue"),
@@ -922,9 +914,6 @@ def delete_cycle_issue_activity(
     issues = requested_data.get("issues")
     for issue in issues:
         current_issue = Issue.objects.filter(pk=issue).first()
-        if current_issue:
-            current_issue.updated_at = timezone.now()
-            current_issue.save(update_fields=["updated_at"])
         issue_activities.append(
             IssueActivity(
                 issue_id=issue,
@@ -955,9 +944,6 @@ def create_module_issue_activity(
     requested_data = json.loads(requested_data) if requested_data is not None else None
     module = Module.objects.filter(pk=requested_data.get("module_id")).first()
     issue = Issue.objects.filter(pk=issue_id).first()
-    if issue:
-        issue.updated_at = timezone.now()
-        issue.save(update_fields=["updated_at"])
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -989,9 +975,6 @@ def delete_module_issue_activity(
     current_instance = json.loads(current_instance) if current_instance is not None else None
     module_name = current_instance.get("module_name")
     current_issue = Issue.objects.filter(pk=issue_id).first()
-    if current_issue:
-        current_issue.updated_at = timezone.now()
-        current_issue.save(update_fields=["updated_at"])
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -1022,9 +1005,6 @@ def create_milestone_issue_activity(
     requested_data = json.loads(requested_data) if requested_data is not None else None
     milestone = Milestone.objects.filter(pk=requested_data.get("milestone_id")).first()
     issue = Issue.objects.filter(pk=issue_id).first()
-    if issue:
-        issue.updated_at = timezone.now()
-        issue.save(update_fields=["updated_at"])
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -1063,9 +1043,6 @@ def update_milestone_issue_activity(
         else None
     )
     issue = Issue.objects.filter(pk=issue_id).first()
-    if issue:
-        issue.updated_at = timezone.now()
-        issue.save(update_fields=["updated_at"])
 
     old_milestone_title = old_milestone.title if old_milestone else ""
     new_milestone_title = milestone.title if milestone else ""
@@ -1102,9 +1079,6 @@ def delete_milestone_issue_activity(
     current_instance = json.loads(current_instance) if current_instance is not None else None
     milestone_name = current_instance.get("milestone_name")
     current_issue = Issue.objects.filter(pk=issue_id).first()
-    if current_issue:
-        current_issue.updated_at = timezone.now()
-        current_issue.save(update_fields=["updated_at"])
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -1979,12 +1953,7 @@ def issue_activity(
                 ri = redis_instance()
                 # set the request origin in redis
                 ri.set(str(issue_id), origin, ex=600)
-            if issue:
-                try:
-                    issue.updated_at = timezone.now()
-                    issue.save(update_fields=["updated_at"])
-                except Exception:
-                    pass
+            pass
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,
             "issue.activity.updated": update_issue_activity,

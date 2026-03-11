@@ -315,9 +315,9 @@ class IssueSerializer(BaseSerializer):
             except IntegrityError:
                 pass
 
-        # Time updation occues even when other related models are updated
-        instance.updated_at = timezone.now()
-        return super().update(instance, validated_data)
+        if validated_data:
+            return super().update(instance, validated_data)
+        return instance
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

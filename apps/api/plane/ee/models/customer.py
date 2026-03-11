@@ -18,7 +18,7 @@ from django.contrib.postgres.fields import ArrayField
 # Module imports
 from plane.utils.html_processor import strip_tags
 from plane.db.models import BaseModel
-from plane.db.mixins import ChangeTrackerMixin
+from plane.db.mixins import ChangeTrackerMixin, IssueActivityMixin
 
 
 class PropertyTypeEnum(models.TextChoices):
@@ -257,7 +257,7 @@ class CustomerRequest(BaseModel):
         return f"{self.name}"
 
 
-class CustomerRequestIssue(BaseModel):
+class CustomerRequestIssue(IssueActivityMixin, BaseModel):
     customer_request = models.ForeignKey(
         "ee.CustomerRequest",
         on_delete=models.CASCADE,

@@ -316,9 +316,9 @@ class DraftIssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        # Time updation occurs even when other related models are updated
-        instance.updated_at = timezone.now()
-        return super().update(instance, validated_data)
+        if validated_data:
+            return super().update(instance, validated_data)
+        return instance
 
 
 class DraftIssueSerializer(BaseSerializer):

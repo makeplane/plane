@@ -382,10 +382,6 @@ def issue_property_activity(existing_values, requested_values, issue_id, user_id
     # Get the issue
     issue = Issue.objects.get(id=issue_id)
 
-    # update the issue
-    issue.updated_at = timezone.now()
-    issue.save(update_fields=["updated_at"])
-
     # Get the issue type
     properties = IssueProperty.objects.filter(
         workspace_id=issue.workspace_id,

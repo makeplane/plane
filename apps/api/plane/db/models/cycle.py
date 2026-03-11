@@ -18,7 +18,7 @@ from django.db import models
 
 # Module imports
 from .project import ProjectBaseModel
-from plane.db.mixins import FiltersMixin
+from plane.db.mixins import FiltersMixin, IssueActivityMixin
 
 def get_default_filters():
     return {
@@ -108,7 +108,7 @@ class Cycle(ProjectBaseModel):
         return f"{self.name} <{self.project.name}>"
 
 
-class CycleIssue(ProjectBaseModel):
+class CycleIssue(IssueActivityMixin, ProjectBaseModel):
     """
     Cycle Issues
     """

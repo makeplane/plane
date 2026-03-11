@@ -448,9 +448,12 @@ class IssueCreateSerializer(BaseSerializer):
             except IntegrityError:
                 pass
 
-        # Time related updates occurs even when other related models are updated
-        instance.updated_at = timezone.now()
-        return super().update(instance, validated_data)
+        # Only save the instance if there are actual field changes.
+        # M2M fields (assignees, labels) are handled above via through tables
+        # and should not trigger a save on the Issue row itself.
+        if validated_data:
+            return super().update(instance, validated_data)
+        return instance
 
 
 class IssueActivitySerializer(BaseSerializer):

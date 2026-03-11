@@ -20,7 +20,7 @@ from django.db.models import Q
 from django.template.defaultfilters import slugify
 
 # Module imports
-from plane.db.mixins import ChangeTrackerMixin
+from plane.db.mixins import ChangeTrackerMixin, IssueActivityMixin
 from plane.db.models import ProjectOptionalBaseModel
 
 
@@ -212,7 +212,7 @@ class IssuePropertyOption(ProjectOptionalBaseModel):
         super(IssuePropertyOption, self).save(*args, **kwargs)
 
 
-class IssuePropertyValue(ProjectOptionalBaseModel):
+class IssuePropertyValue(IssueActivityMixin, ProjectOptionalBaseModel):
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="properties")
     property = models.ForeignKey(IssueProperty, on_delete=models.CASCADE, related_name="values")
     value_text = models.TextField(blank=True)
@@ -280,7 +280,7 @@ class IssuePropertyValue(ProjectOptionalBaseModel):
         cls.cleanup_orphaned_for_issues(issue_ids, new_type_id)
 
 
-class IssuePropertyActivity(ProjectOptionalBaseModel):
+class IssuePropertyActivity(IssueActivityMixin, ProjectOptionalBaseModel):
     old_value = models.TextField(blank=True)
     new_value = models.TextField(blank=True)
     old_identifier = models.UUIDField(blank=True, null=True)

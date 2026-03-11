@@ -278,12 +278,7 @@ def bulk_issue_activity(
                 # set the request origin in redis
                 ri.set(str(issue_id), origin, ex=600)
             issue = Issue.objects.filter(pk=issue_id).first()
-            if issue:
-                try:
-                    issue.updated_at = timezone.now()
-                    issue.save(update_fields=["updated_at"])
-                except Exception:
-                    pass
+            pass
 
         ACTIVITY_MAPPER = {
             "issue.activity.updated": update_issue_activity,

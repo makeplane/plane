@@ -23,9 +23,9 @@ from django.db import connection, models, transaction
 from django.db.models import Q
 from django.utils import timezone
 
-from plane.db.mixins import ChangeTrackerMixin
+from plane.db.mixins import ChangeTrackerMixin, IssueActivityMixin, update_issue_last_activity_at
 from plane.db.models.project import ProjectManager
-from plane.db.signals import post_bulk_update
+from plane.db.signals import post_bulk_create, post_bulk_update
 from plane.utils.exception_logger import log_exception
 
 # Third party imports
@@ -227,21 +227,16 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
     def save(self, *args, **kwargs):
         self._ensure_default_state()
         kwargs = self._sync_completed_at(kwargs)
+        kwargs = self._sync_last_activity_at(kwargs)
 
         if self._state.adding:
             with transaction.atomic():
                 self._assign_sequence_and_sort_order()
                 self._set_description_stripped()
                 super(Issue, self).save(*args, **kwargs)
-                IssueSequence.objects.create(
-                    issue=self, sequence=self.sequence_id, project=self.project
-                )
+                IssueSequence.objects.create(issue=self, sequence=self.sequence_id, project=self.project)
         else:
-            old_type_id = (
-                self.old_values.get("type_id")
-                if self.has_changed("type_id")
-                else None
-            )
+            old_type_id = self.old_values.get("type_id") if self.has_changed("type_id") else None
             if old_type_id:
                 kwargs = self._archive_type_change_properties(old_type_id, kwargs)
             self._set_description_stripped()
@@ -256,12 +251,8 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
         try:
             from plane.db.models import State
 
-            default_state = State.objects.filter(
-                ~models.Q(is_triage=True), project=self.project, default=True
-            ).first()
-            self.state = default_state or State.objects.filter(
-                ~models.Q(is_triage=True), project=self.project
-            ).first()
+            default_state = State.objects.filter(~models.Q(is_triage=True), project=self.project, default=True).first()
+            self.state = default_state or State.objects.filter(~models.Q(is_triage=True), project=self.project).first()
         except ImportError:
             pass
 
@@ -282,6 +273,14 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
             kwargs["update_fields"] = list(set(update_fields) | {"completed_at"})
         return kwargs
 
+    def _sync_last_activity_at(self, kwargs):
+        """Set last_activity_at to now on every save. Returns kwargs."""
+        self.last_activity_at = timezone.now()
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = list(set(update_fields) | {"last_activity_at"})
+        return kwargs
+
     def _set_description_stripped(self):
         """Recompute description_stripped from description_html."""
         self.description_stripped = (
@@ -296,9 +295,9 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
         with connection.cursor() as cursor:
             cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
 
-        last_sequence = IssueSequence.objects.filter(project=self.project).aggregate(
-            largest=models.Max("sequence")
-        )["largest"]
+        last_sequence = IssueSequence.objects.filter(project=self.project).aggregate(largest=models.Max("sequence"))[
+            "largest"
+        ]
         self.sequence_id = last_sequence + 1 if last_sequence else 1
 
         largest_sort_order = Issue.objects.filter(project=self.project, state=self.state).aggregate(
@@ -327,9 +326,7 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
         # Extend update_fields if caller provided them
         update_fields = kwargs.get("update_fields")
         if update_fields is not None:
-            kwargs["update_fields"] = list(
-                set(update_fields) | {"description_html", "description_stripped"}
-            )
+            kwargs["update_fields"] = list(set(update_fields) | {"description_html", "description_stripped"})
         return kwargs
 
     def _cleanup_orphaned_property_values(self, old_type_id):
@@ -411,11 +408,14 @@ class IssueRelation(ProjectBaseModel):
         db_table = "issue_relations"
         ordering = ("-created_at",)
 
+    def _update_issue_last_activity(self):
+        update_issue_last_activity_at(self.issue_id, self.related_issue_id)
+
     def __str__(self):
         return f"{self.issue.name} {self.related_issue.name}"
 
 
-class IssueMention(ProjectBaseModel):
+class IssueMention(IssueActivityMixin, ProjectBaseModel):
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_mention")
     mention = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="issue_mention")
 
@@ -437,7 +437,7 @@ class IssueMention(ProjectBaseModel):
         return f"{self.issue.name} {self.mention.email}"
 
 
-class IssueAssignee(ProjectBaseModel):
+class IssueAssignee(IssueActivityMixin, ProjectBaseModel):
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_assignee")
     assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -463,7 +463,7 @@ class IssueAssignee(ProjectBaseModel):
         return f"{self.issue.name} {self.assignee.email}"
 
 
-class IssueLink(ChangeTrackerMixin, ProjectBaseModel):
+class IssueLink(IssueActivityMixin, ChangeTrackerMixin, ProjectBaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField()
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_link")
@@ -502,7 +502,7 @@ def file_size(value):
         raise ValidationError("File too large. Size should not exceed 5 MB.")
 
 
-class IssueAttachment(ProjectBaseModel):
+class IssueAttachment(IssueActivityMixin, ProjectBaseModel):
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, validators=[file_size])
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_attachment")
@@ -555,7 +555,7 @@ class IssueActivity(ProjectBaseModel):
         return str(self.issue)
 
 
-class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
+class IssueComment(IssueActivityMixin, ChangeTrackerMixin, ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
@@ -690,7 +690,7 @@ class WorkItemCommentSource(ProjectBaseModel):
         return f"{self.issue_comment.id} {self.source_type}"
 
 
-class IssueLabel(ProjectBaseModel):
+class IssueLabel(IssueActivityMixin, ProjectBaseModel):
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="label_issue")
     label = models.ForeignKey("db.Label", on_delete=models.CASCADE, related_name="label_issue")
 
@@ -797,8 +797,13 @@ class CommentReaction(ProjectBaseModel):
         db_table = "comment_reactions"
         ordering = ("-created_at",)
 
+    def get_issue_id_for_activity(self):
+        if not self.comment_id:
+            return None
+        return IssueComment.objects.filter(pk=self.comment_id).values_list("issue_id", flat=True).first()
+
     def __str__(self):
-        return f"{self.issue.name} {self.actor.email}"
+        return f"{self.comment.issue.name} {self.actor.email}"
 
 
 class IssueVote(ProjectBaseModel):
@@ -929,7 +934,7 @@ class IssueVersion(ProjectBaseModel):
             return False
 
 
-class IssueDescriptionVersion(ProjectBaseModel):
+class IssueDescriptionVersion(IssueActivityMixin, ProjectBaseModel):
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="description_versions")
     description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")
@@ -997,3 +1002,23 @@ def _handle_issue_type_change_on_bulk_update(sender, model, objs, updated_fields
 
 
 post_bulk_update.connect(_handle_issue_type_change_on_bulk_update, sender=Issue)
+
+
+def _update_issue_last_activity_on_m2m_change(sender, model, objs, **kwargs):
+    """Update last_activity_at on parent issues when related M2M records change."""
+    issue_ids = {obj.issue_id for obj in objs if getattr(obj, "issue_id", None)}
+    if issue_ids:
+        update_issue_last_activity_at(*issue_ids)
+
+
+# Assignees and labels are M2M through tables modified via bulk_create and
+# queryset.delete (soft-delete). Both operations bypass the model's save()/delete()
+# methods, so IssueActivityMixin never fires. These signal connections ensure
+# Issue.last_activity_at is still updated when assignees or labels change.
+# - post_bulk_create: triggered when new assignees/labels are added via bulk_create
+# - post_bulk_update: triggered when assignees/labels are removed via soft-delete
+#   (queryset.delete(soft=True) internally calls queryset.update(deleted_at=...))
+post_bulk_create.connect(_update_issue_last_activity_on_m2m_change, sender=IssueAssignee)
+post_bulk_update.connect(_update_issue_last_activity_on_m2m_change, sender=IssueAssignee)
+post_bulk_create.connect(_update_issue_last_activity_on_m2m_change, sender=IssueLabel)
+post_bulk_update.connect(_update_issue_last_activity_on_m2m_change, sender=IssueLabel)

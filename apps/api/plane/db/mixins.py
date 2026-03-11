@@ -242,6 +242,56 @@ class FiltersMixin(models.Model):
         super().save(*args, **kwargs)
 
 
+def update_issue_last_activity_at(*issue_ids):
+    """Update last_activity_at on the given issue(s)."""
+    from django.apps import apps
+
+    valid_ids = [i for i in issue_ids if i is not None]
+    if valid_ids:
+        Issue = apps.get_model("db", "Issue")
+        Issue.objects.filter(pk__in=valid_ids).update(
+            last_activity_at=timezone.now()
+        )
+
+
+class IssueActivityMixin:
+    """
+    Mixin that updates Issue.last_activity_at when a related entity is
+    saved or deleted.
+
+    Add this mixin to any model that has a FK to Issue and should trigger
+    last_activity_at updates. Place it leftmost in the class bases (before
+    ChangeTrackerMixin and the base model).
+
+    Class attributes:
+        ISSUE_ACTIVITY_FK: Name of the FK field pointing to Issue
+                           (default: "issue").
+    """
+
+    ISSUE_ACTIVITY_FK = "issue"
+
+    def get_issue_id_for_activity(self):
+        """Return the issue ID whose last_activity_at should be updated."""
+        return getattr(self, f"{self.ISSUE_ACTIVITY_FK}_id", None)
+
+    def _update_issue_last_activity(self):
+        issue_id = self.get_issue_id_for_activity()
+        if issue_id:
+            update_issue_last_activity_at(issue_id)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self._update_issue_last_activity()
+
+    def delete(self, using=None, soft=True, *args, **kwargs):
+        # For hard delete, save() won't be called so capture issue_id now
+        issue_id = self.get_issue_id_for_activity() if not soft else None
+        result = super().delete(using=using, soft=soft, *args, **kwargs)
+        if issue_id:
+            update_issue_last_activity_at(issue_id)
+        return result
+
+
 class ChangeTrackerMixin:
     """
     A mixin to track changes in model fields between initialization and save.

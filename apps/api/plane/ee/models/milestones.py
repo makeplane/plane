@@ -13,6 +13,7 @@
 from django.db import models
 
 # Module imports
+from plane.db.mixins import IssueActivityMixin
 from plane.db.models import ProjectBaseModel
 
 
@@ -56,7 +57,7 @@ class Milestone(ProjectBaseModel):
         return f"{self.title} <{self.project.name}>"
 
 
-class MilestoneIssue(ProjectBaseModel):
+class MilestoneIssue(IssueActivityMixin, ProjectBaseModel):
     """
     Milestone Issues Junction Table
     """

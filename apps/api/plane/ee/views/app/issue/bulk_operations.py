@@ -199,8 +199,8 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 )
 
         for issue in issues:
-            # Update the updated_at and updated_by_id
-            issue.updated_at = timezone.now()
+            # Update the last_activity_at and updated_by_id
+            issue.last_activity_at = timezone.now()
             issue.updated_by_id = request.user.id
 
             # Priority
@@ -497,6 +497,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 "type_id",
                 "updated_at",
                 "updated_by_id",
+                "last_activity_at",
             ],
             batch_size=100,
         )

@@ -83,10 +83,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         serializer = IssueWorkLogAPISerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id, logged_by=request.user)
-            # Get the issue to update
-            issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-            issue.updated_at = timezone.now()
-            issue.save(update_fields=["updated_at"])
+            # last_activity_at is updated automatically via IssueActivityMixin on IssueWorkLog
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -161,10 +158,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         if serializer.is_valid():
             serializer.save()
 
-            # Get the issue to update
-            issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-            issue.updated_at = timezone.now()
-            issue.save(update_fields=["updated_at"])
+            # last_activity_at is updated automatically via IssueActivityMixin on IssueWorkLog
 
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -195,10 +189,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         worklog = IssueWorkLog.objects.get(pk=pk, issue_id=issue_id, project_id=project_id, workspace__slug=slug)
         worklog.delete()
 
-        # Get the issue to update
-        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        issue.updated_at = timezone.now()
-        issue.save(update_fields=["updated_at"])
+        # last_activity_at is updated automatically via IssueActivityMixin on IssueWorkLog
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

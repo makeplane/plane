@@ -14,6 +14,7 @@ from django.db import models
 from django.db.models import Q
 
 # Module imports
+from plane.db.mixins import IssueActivityMixin
 from .workspace import WorkspaceBaseModel
 
 
@@ -144,7 +145,9 @@ class ReleaseCommentReaction(WorkspaceBaseModel):
         ordering = ("-created_at",)
 
 
-class ReleaseWorkItem(WorkspaceBaseModel):
+class ReleaseWorkItem(IssueActivityMixin, WorkspaceBaseModel):
+    ISSUE_ACTIVITY_FK = "work_item"
+
     release = models.ForeignKey("db.Release", on_delete=models.CASCADE, related_name="release_work_items")
     work_item = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="release_work_items")
 

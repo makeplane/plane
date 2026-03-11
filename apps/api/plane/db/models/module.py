@@ -16,7 +16,7 @@ from django.db.models import Q
 
 # Module imports
 from .project import ProjectBaseModel
-from plane.db.mixins import ChangeTrackerMixin, FiltersMixin
+from plane.db.mixins import ChangeTrackerMixin, FiltersMixin, IssueActivityMixin
 
 
 def get_default_filters():
@@ -157,7 +157,7 @@ class ModuleMember(ProjectBaseModel):
         return f"{self.module.name} {self.member}"
 
 
-class ModuleIssue(ProjectBaseModel):
+class ModuleIssue(IssueActivityMixin, ProjectBaseModel):
     module = models.ForeignKey("db.Module", on_delete=models.CASCADE, related_name="issue_module")
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_module")
 
