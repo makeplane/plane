@@ -112,7 +112,7 @@ def validate_block_type(block_type: str) -> Optional[JSONResponse]:
             status_code=400,
             content={
                 "success": False,
-                "error": f"Invalid block_type '{block_type}'. Must be one of: {", ".join(valid_block_types)}",
+                "error": f"Invalid block_type '{block_type}'. Must be one of: {', '.join(valid_block_types)}",
             },
         )
     return None
@@ -134,7 +134,7 @@ def validate_revision_type(revision_type: str) -> Optional[JSONResponse]:
             status_code=400,
             content={
                 "success": False,
-                "error": f"Invalid revision_type '{revision_type}'. Must be one of: {", ".join(valid_revision_types)}",
+                "error": f"Invalid revision_type '{revision_type}'. Must be one of: {', '.join(valid_revision_types)}",
             },
         )
     return None

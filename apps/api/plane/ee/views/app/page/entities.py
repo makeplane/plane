@@ -19,7 +19,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-
 class PageEmbedEndpoint(BaseAPIView):
     def get_permissions(self):
         """

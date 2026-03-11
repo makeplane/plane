@@ -58,12 +58,12 @@ async def _project_pre_handler(
         if "identifier" not in kwargs or not kwargs["identifier"]:
             name = kwargs.get("name", "")
             kwargs["identifier"] = PlaneToolBase.generate_project_identifier(name)
-            log.debug(f"Generated project identifier: {kwargs["identifier"]}")
+            log.debug(f"Generated project identifier: {kwargs['identifier']}")
 
         # Auto-generate description_html from description if needed
         if "description" in kwargs and kwargs["description"]:
             if "description_html" not in kwargs or not kwargs["description_html"]:
-                kwargs["description_html"] = f"<p>{kwargs["description"]}</p>"
+                kwargs["description_html"] = f"<p>{kwargs['description']}</p>"
 
         # Remove icon_prop and logo_props - SDK auto-generates these and ignores user input
         kwargs.pop("icon_prop", None)
@@ -73,7 +73,7 @@ async def _project_pre_handler(
         # Auto-generate description_html from description if needed
         if "description" in kwargs and kwargs["description"]:
             if "description_html" not in kwargs or not kwargs["description_html"]:
-                kwargs["description_html"] = f"<p>{kwargs["description"]}</p>"
+                kwargs["description_html"] = f"<p>{kwargs['description']}</p>"
 
         # Remove icon_prop and logo_props - SDK auto-generates these and ignores user input
         kwargs.pop("icon_prop", None)
@@ -124,7 +124,7 @@ async def _project_post_handler(
         if "already taken" in error_msg or "409" in error_msg or "conflict" in error_msg:
             if "name" in error_msg and "identifier" not in error_msg:
                 # Name conflict - can't retry
-                log.info(f"Project name '{name}' already exists. Error: {result["error"]}")
+                log.info(f"Project name '{name}' already exists. Error: {result['error']}")
                 result["error"] = f"Failed to create project: A project with the name '{name}' already exists. Please choose a different name."
             else:
                 # Identifier conflict - retry with new identifier
@@ -136,7 +136,7 @@ async def _project_post_handler(
                     log.info(f"Successfully created project with fallback identifier '{new_identifier}'")
                     result = retry_result
                 else:
-                    log.info(f"Failed to create project even with alternative identifier. Error: {retry_result["error"]}")
+                    log.info(f"Failed to create project even with alternative identifier. Error: {retry_result['error']}")
                     result = retry_result
         else:
             # Check if project was created despite error (timeout recovery)

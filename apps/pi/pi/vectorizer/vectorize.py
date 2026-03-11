@@ -149,7 +149,7 @@ async def _batched_predict(
                 raise ValueError(f"Slice {slice_id}: Missing 'inference_results' in response: {list(resp.keys())}")
 
             if "output" not in resp["inference_results"][0]:
-                raise ValueError(f"Slice {slice_id}: Missing 'output' in inference_results[0]: {list(resp["inference_results"][0].keys())}")
+                raise ValueError(f"Slice {slice_id}: Missing 'output' in inference_results[0]: {list(resp['inference_results'][0].keys())}")
 
             # Extract vectors
             outputs = resp["inference_results"][0]["output"]
@@ -301,7 +301,7 @@ async def _create_bulk_flush_helper(
                     upd = item.get("update") or item.get("index")
                     if upd and upd.get("status", 200) >= 400:
                         failed_ids.append(upd["_id"])
-                        error_msg = f"Bulk operation failed for doc {upd["_id"]}: {upd.get("error", "unknown error")}"
+                        error_msg = f"Bulk operation failed for doc {upd['_id']}: {upd.get('error', 'unknown error')}"
                         if slice_id is not None:
                             log.error("Slice %d: %s", slice_id, error_msg)
                         else:

@@ -678,7 +678,7 @@ async def stream_response_by_token(
         if marked:
             log.info(f"Marked old assistant response(s) as replaced for message {token}")
         else:
-            log.info(f"No existing assistant response found for message {token} " "(first generation or already replaced)")
+            log.info(f"No existing assistant response found for message {token} (first generation or already replaced)")
 
         # 4. Reconstruct ChatRequest from user message
         try:

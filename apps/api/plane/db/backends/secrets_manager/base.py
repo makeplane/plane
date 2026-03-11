@@ -76,9 +76,7 @@ class DatabaseWrapper(PostgresDatabaseWrapper):
             err_msg = str(e).lower()
             if cache_key and "password authentication failed" in err_msg:
                 # Force a fresh fetch from Secrets Manager regardless of cache state
-                _get_credentials(
-                    secret_arn, region, force_refresh=True, replica_uri_key=replica_uri_key
-                )
+                _get_credentials(secret_arn, region, force_refresh=True, replica_uri_key=replica_uri_key)
                 self.close()
                 super().ensure_connection()
             else:

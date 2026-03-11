@@ -107,13 +107,13 @@ async def validate_and_resolve_ids(tool_args: Dict[str, Any], workspace_slug: Op
 
                 workitem_info = await search_workitem_by_identifier(str(issue_id), workspace_slug)
                 if workitem_info and workitem_info.get("id"):
-                    log.info(f"Resolved issue_id identifier '{issue_id}' to UUID: {workitem_info["id"]}")
+                    log.info(f"Resolved issue_id identifier '{issue_id}' to UUID: {workitem_info['id']}")
                     resolved_args["issue_id"] = str(workitem_info["id"])  # Convert to string
 
                     # Also resolve project_id from workitem if not already set
                     if not project_id and workitem_info.get("project_id"):
                         resolved_args["project_id"] = str(workitem_info["project_id"])  # Convert to string
-                        log.info(f"Auto-resolved project_id from workitem: {workitem_info["project_id"]}")
+                        log.info(f"Auto-resolved project_id from workitem: {workitem_info['project_id']}")
 
             except Exception as e:
                 log.warning(f"Failed to resolve issue_id '{issue_id}' from identifier: {e}")
@@ -133,7 +133,7 @@ async def validate_and_resolve_ids(tool_args: Dict[str, Any], workspace_slug: Op
 
                     issue_info = await get_issue_identifier_for_artifact(str(resolved_args["issue_id"]))
                     if issue_info and issue_info.get("project_id"):
-                        log.info(f"Resolved invalid project_id '{project_id}' to UUID: {issue_info["project_id"]}")
+                        log.info(f"Resolved invalid project_id '{project_id}' to UUID: {issue_info['project_id']}")
                         resolved_args["project_id"] = str(issue_info["project_id"])  # Convert to string
                 except Exception as e:
                     log.warning(f"Failed to resolve project_id from issue_id: {e}")
@@ -145,7 +145,7 @@ async def validate_and_resolve_ids(tool_args: Dict[str, Any], workspace_slug: Op
 
                 issue_info = await get_issue_identifier_for_artifact(str(resolved_args["issue_id"]))
                 if issue_info and issue_info.get("project_id"):
-                    log.info(f"Resolved missing project_id from issue_id: {issue_info["project_id"]}")
+                    log.info(f"Resolved missing project_id from issue_id: {issue_info['project_id']}")
                     resolved_args["project_id"] = str(issue_info["project_id"])  # Convert to string
             except Exception as e:
                 log.warning(f"Failed to resolve missing project_id from issue_id: {e}")
@@ -300,11 +300,11 @@ async def load_artifacts(
             # workspace_slug and project_id are context, not user-editable fields
             if "workspace_slug" in original_tool_args and "workspace_slug" not in tool_args:
                 tool_args["workspace_slug"] = original_tool_args["workspace_slug"]
-                log.debug(f"Preserved workspace_slug={original_tool_args["workspace_slug"]} for {entity_type} {action}")
+                log.debug(f"Preserved workspace_slug={original_tool_args['workspace_slug']} for {entity_type} {action}")
 
             if "project_id" in original_tool_args and "project_id" not in tool_args:
                 tool_args["project_id"] = original_tool_args["project_id"]
-                log.debug(f"Preserved project_id={original_tool_args["project_id"]} for {entity_type} {action}")
+                log.debug(f"Preserved project_id={original_tool_args['project_id']} for {entity_type} {action}")
 
             # PRESERVE NON-EDITABLE PLANNING PARAMETERS
             # These are planning-time decisions that aren't exposed in the edit UI but are critical for execution
@@ -448,7 +448,7 @@ async def update_flow_steps(results, message_id, chat_id, db: AsyncSession):
                         success=r.get("success", False),
                         entity_info=entity_info,
                     )
-                    log.info(f"Updated ActionArtifactVersion {version_id} execution status: success={r.get("success", False)}")
+                    log.info(f"Updated ActionArtifactVersion {version_id} execution status: success={r.get('success', False)}")
                 except (ValueError, TypeError) as e:
                     log.warning(f"Invalid version_id format: {version_id}, error: {e}")
 

@@ -44,7 +44,11 @@ class OIDCAuthInitiateAdminEndpoint(View):
                 )
 
             state = uuid.uuid4().hex
-            provider = OIDCOAuthProvider(request=request, state=state, redirect_uri=f"{request.scheme}://{request.get_host()}/api/instances/admin/oidc/callback/")
+            provider = OIDCOAuthProvider(
+                request=request,
+                state=state,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/api/instances/admin/oidc/callback/",
+            )
             request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
@@ -89,7 +93,11 @@ class OIDCCallbackAdminEndpoint(View):
                     error_message=AUTHENTICATION_ERROR_CODES["OIDC_PROVIDER_ERROR"],
                 )
 
-            provider = OIDCOAuthProvider(request=request, code=code, redirect_uri=f"{request.scheme}://{request.get_host()}/api/instances/admin/oidc/callback/")
+            provider = OIDCOAuthProvider(
+                request=request,
+                code=code,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/api/instances/admin/oidc/callback/",
+            )
             user = provider.authenticate()
             # Verify user is an instance admin
             if not InstanceAdmin.is_instance_admin(user):

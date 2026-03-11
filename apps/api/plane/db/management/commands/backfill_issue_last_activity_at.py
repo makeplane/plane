@@ -23,6 +23,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         backfill_issue_last_activity_at.delay()
-        self.stdout.write(
-            self.style.SUCCESS("Successfully triggered backfill_issue_last_activity_at task")
-        )
+        self.stdout.write(self.style.SUCCESS("Successfully triggered backfill_issue_last_activity_at task"))

@@ -252,7 +252,7 @@ class BuildModeToolExecutor:
 
                 # If dependent is NOT strictly before prerequisite, we assume dependency exists
                 # (Even if dependent is before, parallel execution is dangerous, so we should serialize)
-                log.info(f"Detected implicit dependency: {dependent} depends on {prerequisite}, " f"forcing sequential execution")
+                log.info(f"Detected implicit dependency: {dependent} depends on {prerequisite}, forcing sequential execution")
                 return True
 
         return False

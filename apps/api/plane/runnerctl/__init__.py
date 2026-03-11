@@ -9,4 +9,4 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-default_app_config = 'plane.runnerctl.apps.RunnerCtlConfig'
+default_app_config = "plane.runnerctl.apps.RunnerCtlConfig"

@@ -20,6 +20,7 @@ from django.db import models
 from .project import ProjectBaseModel
 from plane.db.mixins import FiltersMixin, IssueActivityMixin
 
+
 def get_default_filters():
     return {
         "priority": None,

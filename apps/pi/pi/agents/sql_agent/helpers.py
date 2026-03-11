@@ -95,10 +95,10 @@ async def format_as_bullet_points(results, sql_query: str | None = None) -> str:
             lines = []
             for key, value in d.items():
                 if isinstance(value, dict):
-                    lines.append(f"{"  " * indent}- **{key}**:")
+                    lines.append(f"{'  ' * indent}- **{key}**:")
                     lines.extend(recurse_dict(value, indent + 1))
                 else:
-                    lines.append(f"{"  " * indent}- **{key}**: {value}")
+                    lines.append(f"{'  ' * indent}- **{key}**: {value}")
             return lines
 
         formatted_dict = "\n".join(recurse_dict(results))
@@ -155,7 +155,7 @@ def format_column_context(column_context: Dict[str, Any]) -> str:
             formatted_lines.append(f"- **Column `{column_name}`:** {description}")
             if "enumerations" in column:
                 enumerations = column["enumerations"]
-                enum_desc = ", ".join(f"`{enum["identifier"]}` for **{enum["description"]}**" for enum in enumerations)
+                enum_desc = ", ".join(f"`{enum['identifier']}` for **{enum['description']}**" for enum in enumerations)
                 formatted_lines.append(f"  - **Enumerations:** {enum_desc}")
             elif "distinct_values_in_column" in column:
                 distinct_values = column["distinct_values_in_column"]
@@ -179,7 +179,7 @@ def format_table_details(tables: Dict[str, Dict[str, Any]]) -> str:
     output = ""
     for table_name, details in tables.items():
         output += f"### `{table_name}`\n\n"
-        output += f"**About:** {details.get("about", "No description provided.")}\n\n"
+        output += f"**About:** {details.get('about', 'No description provided.')}\n\n"
 
         if "contains" in details:
             output += "**Contains:**\n"
@@ -536,7 +536,7 @@ def generate_cte_query(
 
             if is_valid_uuid(project_id):
                 # When project_id is provided, apply only project_id filtering
-                cte += f"{mapping["project_id_column"]} = '{project_id}'"
+                cte += f"{mapping['project_id_column']} = '{project_id}'"
             else:
                 # When project_id is not provided, filter based on member's projects
                 cte += f"""{mapping["project_id_column"]} IN (
@@ -725,9 +725,7 @@ async def get_refs_from_chat(db: AsyncSession, chat_id: str) -> List[str]:
             continue
 
         for ent in entity_urls:
-            extracted_entities.append(
-                f"{ent.get("type", "unknown").lower()} : " f"{ent.get("name", "-")} : " f"{ent.get("id", "-")} : " f"{ent.get("url", "-")}"
-            )
+            extracted_entities.append(f"{ent.get('type', 'unknown').lower()} : {ent.get('name', '-')} : {ent.get('id', '-')} : {ent.get('url', '-')}")
 
     return extracted_entities
 
@@ -766,7 +764,7 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
                 sequence_id = row["sequence_id"]
                 if project_identifier and sequence_id:
                     issue_identifier = f"{project_identifier}-{sequence_id}"
-                    url = f"{api_base_url}/{row["workspace_slug"]}/browse/{issue_identifier}/"
+                    url = f"{api_base_url}/{row['workspace_slug']}/browse/{issue_identifier}/"
                     entity_link = {"name": row["name"], "id": str(row["id"]), "issue_identifier": issue_identifier, "url": url, "type": "issue"}
                     entity_links.append(entity_link)
                     log.info(f"construct_entity_urls_from_db: Entity (workitem) Link: {entity_link}")
@@ -788,7 +786,7 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
             rows = await PlaneDBPool.fetch(query, (project_ids,))
 
             for row in rows:
-                url = f"{api_base_url}/{row["workspace_slug"]}/projects/{row["id"]}/overview/"
+                url = f"{api_base_url}/{row['workspace_slug']}/projects/{row['id']}/overview/"
                 entity_link = {"name": row["name"], "id": str(row["id"]), "identifier": row["identifier"], "url": url, "type": "project"}
                 entity_links.append(entity_link)
                 log.info(f"construct_entity_urls_from_db: Entity (project) Link: {entity_link}")
@@ -815,12 +813,12 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
             for row in rows:
                 if row["is_global"]:
                     # Global page: /workspace_slug/wiki/page_id/
-                    url = f"{api_base_url}/{row["workspace_slug"]}/wiki/{row["id"]}/"
+                    url = f"{api_base_url}/{row['workspace_slug']}/wiki/{row['id']}/"
                 else:
                     # Project page: /workspace_slug/projects/project_id/pages/page_id/
                     if row["project_ids"] and len(row["project_ids"]) > 0:
                         project_id = row["project_ids"][0]  # Take first project if multiple
-                        url = f"{api_base_url}/{row["workspace_slug"]}/projects/{project_id}/pages/{row["id"]}/"
+                        url = f"{api_base_url}/{row['workspace_slug']}/projects/{project_id}/pages/{row['id']}/"
                     else:
                         continue  # Skip if no project_id for project page
 
@@ -846,7 +844,7 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
             rows = await PlaneDBPool.fetch(query, (module_ids,))
 
             for row in rows:
-                url = f"{api_base_url}/{row["workspace_slug"]}/projects/{row["project_id"]}/modules/{row["id"]}/"
+                url = f"{api_base_url}/{row['workspace_slug']}/projects/{row['project_id']}/modules/{row['id']}/"
                 entity_link = {"name": row["name"], "id": str(row["id"]), "url": url, "type": "module"}
                 entity_links.append(entity_link)
                 log.info(f"construct_entity_urls_from_db: Entity (module) Link: {entity_link}")
@@ -869,7 +867,7 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
             rows = await PlaneDBPool.fetch(query, (cycle_ids,))
 
             for row in rows:
-                url = f"{api_base_url}/{row["workspace_slug"]}/projects/{row["project_id"]}/cycles/{row["id"]}/"
+                url = f"{api_base_url}/{row['workspace_slug']}/projects/{row['project_id']}/cycles/{row['id']}/"
                 entity_link = {"name": row["name"], "id": str(row["id"]), "url": url, "type": "cycle"}
                 entity_links.append(entity_link)
                 log.info(f"construct_entity_urls_from_db: Entity (cycle) Link: {entity_link}")

@@ -342,16 +342,16 @@ async def stream_llm_with_delimiter(
                     answer_part = full_content[delimiter_pos + len(ANSWER_DELIMITER) :]
                     log.info(
                         f"stream_llm_with_delimiter - DELIMITER ANALYSIS:\n"
-                        f"{"=" * 80}\n"
+                        f"{'=' * 80}\n"
                         f"REASONING SECTION (before delimiter, {len(reasoning_part)} chars):\n"
                         f"{reasoning_part}\n"
-                        f"{"=" * 80}\n"
+                        f"{'=' * 80}\n"
                         f"ANSWER SECTION (after delimiter, {len(answer_part)} chars):\n"
                         f"{answer_part}\n"
-                        f"{"=" * 80}"
+                        f"{'=' * 80}"
                     )
                 else:
-                    log.info(f"stream_llm_with_delimiter - NO DELIMITER FOUND in content:\n" f"{"=" * 80}\n" f"{full_content}\n" f"{"=" * 80}")
+                    log.info(f"stream_llm_with_delimiter - NO DELIMITER FOUND in content:\n{'=' * 80}\n{full_content}\n{'=' * 80}")
         except Exception as log_err:
             log.debug(f"stream_llm_with_delimiter - Failed to log response: {log_err}")
 
@@ -1584,9 +1584,9 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
             if reason:
                 method_prompt += f"Clarification reason: {reason}\n"
             if missing_fields:
-                method_prompt += f"Missing fields resolved: {", ".join([str(x) for x in missing_fields])}\n"
+                method_prompt += f"Missing fields resolved: {', '.join([str(x) for x in missing_fields])}\n"
             if category_hints:
-                method_prompt += f"Category hints: {", ".join([str(x) for x in category_hints])}\n"
+                method_prompt += f"Category hints: {', '.join([str(x) for x in category_hints])}\n"
             if disambig:
                 method_prompt += "The user was shown these options:\n"
                 for idx, opt in enumerate(disambig, 1):
@@ -1970,7 +1970,7 @@ def format_clarification_as_text(clarification_data: Dict[str, Any]) -> str:
                         # Handle case where LLM combines name and email in single field like "John Doe (john@example.com)"
                         name_part = display_name.split("(")[0].strip()
                         if url:
-                            text_parts.append(f"{i}. [**{name_part}**]({url}) ({display_name.split("(")[1]}\n")
+                            text_parts.append(f"{i}. [**{name_part}**]({url}) ({display_name.split('(')[1]}\n")
                         else:
                             text_parts.append(f"{i}. **{display_name}**\n")
                     elif display_name and identifier:
@@ -1998,7 +1998,7 @@ def format_clarification_as_text(clarification_data: Dict[str, Any]) -> str:
                                 formatted_parts.append(f"{nice_key}: {value}")
 
                         if formatted_parts:
-                            text_parts.append(f"{i}. **{" | ".join(formatted_parts)}**\n")
+                            text_parts.append(f"{i}. **{' | '.join(formatted_parts)}**\n")
                         else:
                             # Final fallback if dict has no useful data
                             text_parts.append(f"{i}. {str(option)}\n")
@@ -2468,7 +2468,7 @@ async def handle_missing_required_fields(
         # Log clarification payload synthesized during preflight
         with contextlib.suppress(Exception):
             log.info(
-                f"{"*" * 100}\nChatID: {chat_id} - ASK_FOR_CLARIFICATION payload (preflight): {json.dumps(clarification_payload, default=str)}\n{"*" * 100}"  # noqa: E501
+                f"{'*' * 100}\nChatID: {chat_id} - ASK_FOR_CLARIFICATION payload (preflight): {json.dumps(clarification_payload, default=str)}\n{'*' * 100}"  # noqa: E501
             )
 
         # Track flow step for clarification

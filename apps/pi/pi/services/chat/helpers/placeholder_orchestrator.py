@@ -78,7 +78,7 @@ def _format_validation_error(error_str: str) -> str:
         if missing_fields:
             # Remove duplicates while preserving order
             unique_fields = list(dict.fromkeys(missing_fields))
-            return f"Missing required fields: {", ".join(unique_fields)}"
+            return f"Missing required fields: {', '.join(unique_fields)}"
 
     # For other validation errors, try to extract a meaningful summary
     if "validation error" in error_str.lower():
@@ -185,13 +185,13 @@ class PlaceholderOrchestrator:
                     if result.get("success"):
                         self._update_context(action, result)
                     else:
-                        log.warning(f"Action {action.get("tool_name")} failed, not updating context")
+                        log.warning(f"Action {action.get('tool_name')} failed, not updating context")
                         # Track failed entity to fail dependent actions early
                         self._track_failed_entity(action)
 
                     remaining.remove(action)
                 except Exception as e:
-                    log.error(f"Failed to execute action {action.get("tool_name")}: {e}", exc_info=True)
+                    log.error(f"Failed to execute action {action.get('tool_name')}: {e}", exc_info=True)
                     # Format error message for user-friendly display
                     formatted_error = _format_validation_error(str(e))
                     # Create failure result
@@ -217,7 +217,7 @@ class PlaceholderOrchestrator:
                 try:
                     await self._resolve_placeholders_in_action(action)
                 except Exception as e:
-                    log.warning(f"Failed to resolve placeholders for {action.get("tool_name")}: {e}")
+                    log.warning(f"Failed to resolve placeholders for {action.get('tool_name')}: {e}")
 
         if iteration >= max_iterations:
             log.warning(f"Reached max iterations ({max_iterations}), stopping")
@@ -379,7 +379,7 @@ class PlaceholderOrchestrator:
         entity_info = context_entry.get("entity_info", {})
 
         if not entity_info:
-            raise ValueError(f"No entity_info found for '{entity_name}'. " f"Stored context entry: {context_entry}")
+            raise ValueError(f"No entity_info found for '{entity_name}'. Stored context entry: {context_entry}")
 
         # Programmatically select the appropriate field
         # LOGIC: Almost all fields are entity references (UUID) except slugs/identifiers
@@ -399,12 +399,12 @@ class PlaceholderOrchestrator:
                 raise ValueError(f"No entity_id found for '{entity_name}' in entity_info: {entity_info}")
 
         if not resolved_value:
-            raise ValueError(f"Could not extract value for field '{field_name}' from entity '{entity_name}'. " f"Entity info: {entity_info}")
+            raise ValueError(f"Could not extract value for field '{field_name}' from entity '{entity_name}'. Entity info: {entity_info}")
 
         # Validate the resolved value
         self._validate_extracted_value(field_name, resolved_value)
 
-        log.info(f"✅ Resolved {field_name}='{placeholder}' → '{resolved_value}' " f"(from {entity_type}:{entity_name})")
+        log.info(f"✅ Resolved {field_name}='{placeholder}' → '{resolved_value}' (from {entity_type}:{entity_name})")
 
         return resolved_value
 
@@ -480,9 +480,7 @@ IMPORTANT:
         # Validate UUID fields
         if field_name.endswith("_id"):
             if not self._is_valid_uuid(value):
-                raise ValueError(
-                    f"Field '{field_name}' requires UUID format, but got: '{value}'. " f"This looks like an identifier/slug, not a UUID."
-                )
+                raise ValueError(f"Field '{field_name}' requires UUID format, but got: '{value}'. This looks like an identifier/slug, not a UUID.")
 
         # Basic presence check
         if not value or value.strip() == "":
@@ -611,7 +609,7 @@ IMPORTANT:
             keys.append(f"{entity_type}:{planned_name.lower()}")  # e.g., "property:severity"
             keys.append(planned_name.lower())  # Allow lookup by planned name
             if planned_name.lower() != actual_name.lower():
-                log.info(f"⚠️ Name mismatch: planned='{planned_name}' vs actual='{actual_name}'. " f"Storing under both names for lookup.")
+                log.info(f"⚠️ Name mismatch: planned='{planned_name}' vs actual='{actual_name}'. Storing under both names for lookup.")
 
         # Store under all keys
         for key in keys:
@@ -637,7 +635,7 @@ IMPORTANT:
                 for key in workitem_keys:
                     self.execution_context[key] = workitem_result
 
-                log.info(f"✅ Also stored secondary entity: {workitem_type}:{workitem_name} (ID: {workitem_entity.get("entity_id")})")
+                log.info(f"✅ Also stored secondary entity: {workitem_type}:{workitem_name} (ID: {workitem_entity.get('entity_id')})")
 
     def _can_resolve_from_context(self, entity_type: Optional[str], entity_name: Optional[str]) -> bool:
         """
@@ -699,7 +697,7 @@ IMPORTANT:
                 if entity_type and entity_name:
                     failed_key = f"{entity_type}:{entity_name.lower()}"
                     if failed_key in self.failed_entities:
-                        log.error(f"Action {action.get("tool_name")} depends on failed entity: {failed_key}")
+                        log.error(f"Action {action.get('tool_name')} depends on failed entity: {failed_key}")
                         # Create immediate failure result
                         failure_result = {
                             "tool_name": action.get("tool_name"),

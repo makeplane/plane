@@ -24,53 +24,37 @@ from ..views.app import (
 
 urlpatterns = [
     # Test endpoint (no script_id required)
-    path(
-        "workspaces/<str:slug>/runnerctl/test/",
-        ScriptTestView.as_view(),
-        name="script-test"
-    ),
+    path("workspaces/<str:slug>/runnerctl/test/", ScriptTestView.as_view(), name="script-test"),
     # Script endpoints
-    path(
-        "workspaces/<str:slug>/runnerctl/scripts/",
-        ScriptListCreateView.as_view(),
-        name="script-list-create"
-    ),
+    path("workspaces/<str:slug>/runnerctl/scripts/", ScriptListCreateView.as_view(), name="script-list-create"),
     path(
         "workspaces/<str:slug>/runnerctl/scripts/<uuid:script_id>/",
         ScriptRetrieveUpdateDestroyView.as_view(),
-        name="script-retrieve-update-destroy"
+        name="script-retrieve-update-destroy",
     ),
     path(
         "workspaces/<str:slug>/runnerctl/scripts/<uuid:script_id>/stats/",
         ScriptStatsView.as_view(),
-        name="script-stats"
+        name="script-stats",
     ),
     # Script-specific executions list
     path(
         "workspaces/<str:slug>/runnerctl/scripts/<uuid:script_id>/executions/",
         ScriptExecutionListView.as_view(),
-        name="script-execution-list"
+        name="script-execution-list",
     ),
     # All executions endpoints (works for both test and script runs)
-    path(
-        "workspaces/<str:slug>/runnerctl/executions/",
-        ExecutionListView.as_view(),
-        name="execution-list"
-    ),
+    path("workspaces/<str:slug>/runnerctl/executions/", ExecutionListView.as_view(), name="execution-list"),
     path(
         "workspaces/<str:slug>/runnerctl/executions/<uuid:execution_id>/",
         ExecutionRetrieveView.as_view(),
-        name="execution-retrieve"
+        name="execution-retrieve",
     ),
     # Function endpoints
-    path(
-        "workspaces/<str:slug>/runnerctl/functions/",
-        FunctionListCreateView.as_view(),
-        name="function-list-create"
-    ),
+    path("workspaces/<str:slug>/runnerctl/functions/", FunctionListCreateView.as_view(), name="function-list-create"),
     path(
         "workspaces/<str:slug>/runnerctl/functions/<uuid:function_id>/",
         FunctionRetrieveUpdateDestroyView.as_view(),
-        name="function-retrieve-update-destroy"
+        name="function-retrieve-update-destroy",
     ),
 ]

@@ -89,7 +89,7 @@ class TestSanitizeCsvValue:
 
     def test_multiline_payload(self):
         """Real-world multi-line injection payload."""
-        payload = "=HYPERLINK(\"http://evil.com\",\"Click\")"
+        payload = '=HYPERLINK("http://evil.com","Click")'
         assert sanitize_csv_value(payload) == "'" + payload
 
 

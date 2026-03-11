@@ -904,7 +904,7 @@ async def execute_tools_for_build_mode(
                     stage = "planner_tool_selection_final"
                     user_friendly_tool_name = TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {}).get("front_facing_name", tool_name)
                     if "name" in tool_args or "title" in tool_args:
-                        tq = f"{tool_args.get("name", tool_args.get("title", ""))}"
+                        tq = f"{tool_args.get('name', tool_args.get('title', ''))}"
                     else:
                         tq = ""
                     reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name=user_friendly_tool_name, tool_query=tq, content="")
@@ -1162,14 +1162,13 @@ async def execute_tools_for_build_mode(
             else:
                 # Max iterations reached WITH planned actions - partial completion
                 log.warning(
-                    f"ChatID: {chat_id} - Max iterations reached with {len(planned_actions)} planned action(s). "
-                    f"Proceeding with partial completion."
+                    f"ChatID: {chat_id} - Max iterations reached with {len(planned_actions)} planned action(s). Proceeding with partial completion."
                 )
 
                 # Build user-facing message explaining the situation
                 action_count = len(planned_actions)
                 msg = (
-                    f"I've planned {action_count} action{"s" if action_count != 1 else ""} for your request. "
+                    f"I've planned {action_count} action{'s' if action_count != 1 else ''} for your request. "
                     f"Due to planning complexity, I've reached the iteration limit. "
                     f"Please review and execute the planned actions below."
                 )

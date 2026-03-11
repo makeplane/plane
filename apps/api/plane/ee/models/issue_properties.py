@@ -259,15 +259,13 @@ class IssuePropertyValue(IssueActivityMixin, ProjectOptionalBaseModel):
 
         # Get valid property IDs for the new type
         valid_property_ids = set(
-            IssueTypeProperty.objects.filter(
-                issue_type_id=new_type_id, deleted_at__isnull=True
-            ).values_list("property_id", flat=True)
+            IssueTypeProperty.objects.filter(issue_type_id=new_type_id, deleted_at__isnull=True).values_list(
+                "property_id", flat=True
+            )
         )
 
         # Delete values for properties not valid on new type (preserves shared properties)
-        cls.objects.filter(issue_id__in=issue_ids).exclude(
-            property_id__in=valid_property_ids
-        ).delete()
+        cls.objects.filter(issue_id__in=issue_ids).exclude(property_id__in=valid_property_ids).delete()
 
     @classmethod
     def archive_and_cleanup_orphaned_for_issues(cls, issue_ids, new_type_id, old_type_id=None):

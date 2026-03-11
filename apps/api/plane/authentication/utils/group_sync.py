@@ -171,9 +171,7 @@ def _sync_for_all_workspaces(
     for config in configs:
         try:
             # Extract groups using the workspace's configured attribute key
-            groups = provider.extract_groups(
-                userinfo_response, config.group_attribute_key
-            )
+            groups = provider.extract_groups(userinfo_response, config.group_attribute_key)
 
             if not groups:
                 continue

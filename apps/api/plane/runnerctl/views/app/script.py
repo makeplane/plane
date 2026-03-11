@@ -45,9 +45,7 @@ class ScriptListCreateView(ListCreateAPIView):
         workspace = get_object_or_404(Workspace, slug=self.workspace_slug)
 
         # Include both workspace scripts AND system scripts
-        queryset = Script.objects.filter(
-            Q(workspace=workspace) | Q(is_system=True)
-        )
+        queryset = Script.objects.filter(Q(workspace=workspace) | Q(is_system=True))
 
         # Optional query parameters for filtering
         project_id = self.request.query_params.get("project_id")
@@ -119,9 +117,7 @@ class ScriptRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         workspace = get_object_or_404(Workspace, slug=self.workspace_slug)
         # Include both workspace scripts AND system scripts for retrieval
-        return Script.objects.filter(
-            Q(workspace=workspace) | Q(is_system=True)
-        )
+        return Script.objects.filter(Q(workspace=workspace) | Q(is_system=True))
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()

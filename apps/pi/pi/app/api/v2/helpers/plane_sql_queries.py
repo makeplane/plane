@@ -1156,7 +1156,7 @@ async def search_workitem_by_identifier(identifier: str, workspace_slug: Optiona
         result = await PlaneDBPool.fetchrow(query, tuple(params))
 
         if result:
-            log.info(f"Found work item with identifier '{identifier}': {result["name"]}")
+            log.info(f"Found work item with identifier '{identifier}': {result['name']}")
             return dict(result)
         else:
             log.info(f"No work item found with identifier '{identifier}'")
@@ -1749,7 +1749,7 @@ async def list_scope_added_issues(cycle_id: str, limit: int = 50) -> List[Dict[s
         for r in rows:
             identifier = None
             if r.get("project_identifier") and r.get("sequence_id"):
-                identifier = f"{r["project_identifier"]}-{r["sequence_id"]}"
+                identifier = f"{r['project_identifier']}-{r['sequence_id']}"
             results.append({
                 "id": str(r["id"]),
                 "name": r["name"],
@@ -1796,7 +1796,7 @@ async def list_scope_removed_issues(cycle_id: str, limit: int = 50) -> List[Dict
         for r in rows:
             identifier = None
             if r.get("project_identifier") and r.get("sequence_id"):
-                identifier = f"{r["project_identifier"]}-{r["sequence_id"]}"
+                identifier = f"{r['project_identifier']}-{r['sequence_id']}"
             results.append({
                 "id": str(r["id"]),
                 "name": r["name"],
@@ -1930,7 +1930,7 @@ async def list_cycle_issues_filtered(
             # Build unique identifier (e.g., SOLO-123)
             identifier = None
             if r.get("project_identifier") and r.get("sequence_id"):
-                identifier = f"{r["project_identifier"]}-{r["sequence_id"]}"
+                identifier = f"{r['project_identifier']}-{r['sequence_id']}"
             results.append({
                 "id": str(r["id"]),
                 "name": r["name"],

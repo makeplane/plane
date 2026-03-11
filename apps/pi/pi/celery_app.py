@@ -202,7 +202,7 @@ def _get_worker_engine():
 
     # Check circuit breaker first
     if not _db_circuit_breaker.can_attempt():
-        raise RuntimeError(f"Database circuit breaker is open. Too many connection failures. " f"Will retry after timeout. {_db_circuit_breaker}")
+        raise RuntimeError(f"Database circuit breaker is open. Too many connection failures. Will retry after timeout. {_db_circuit_breaker}")
 
     if _worker_engine is None:
         log.info("Creating worker-level database engine")
@@ -1193,7 +1193,7 @@ async def validate_vectorization_completion(
                     continue
                 # Final attempt failed
                 error_msg = (
-                    f"Validation failed after {max_retries + 1} attempts: {total_missing} missing vectors remaining - {", ".join(missing_details)}"  # noqa: E501
+                    f"Validation failed after {max_retries + 1} attempts: {total_missing} missing vectors remaining - {', '.join(missing_details)}"  # noqa: E501
                 )
                 log.warning("Final validation failed for workspace %s: %s", workspace_id, error_msg)
                 return False, error_msg
@@ -2000,7 +2000,7 @@ def sync_docs_periodic_task(self):
 
                             # Update webhook record
                             processed_successfully = len(failed_files) == 0
-                            error_message = None if processed_successfully else f"Failed files: {", ".join(failed_files)}"
+                            error_message = None if processed_successfully else f"Failed files: {', '.join(failed_files)}"
 
                             await update_webhook_record(
                                 db,

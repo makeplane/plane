@@ -161,19 +161,19 @@ def validate_llm_key(provider: str = typer.Option(..., "--provider", "-p", help=
 
     if provider not in provider_map:
         typer.echo(f"❌ Error: Unknown provider '{provider}'")
-        typer.echo(f"   Supported providers: {", ".join(provider_map.keys())}")
+        typer.echo(f"   Supported providers: {', '.join(provider_map.keys())}")
         raise typer.Exit(code=1)
 
     config = provider_map[provider]
 
     typer.echo(f"Validating {provider.upper()} API key...")
-    typer.echo(f"Environment variable: {config["env_var"]}")
+    typer.echo(f"Environment variable: {config['env_var']}")
 
     # Check if API key is configured (skip for custom provider — key is optional)
     api_key = str(config["api_key"]) if config["api_key"] else ""
     if provider != "custom" and (not api_key or not api_key.strip()):
         typer.echo(f"❌ {provider.upper()} API key not configured")
-        typer.echo(f"   Please set {config["env_var"]} environment variable")
+        typer.echo(f"   Please set {config['env_var']} environment variable")
         raise typer.Exit(code=1)
 
     # Show base URL if configured

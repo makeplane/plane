@@ -694,7 +694,7 @@ async def plan_action_and_prepare_outputs(
                 action_summary["parameters"] = merged_parameters
                 # Also update the artifact_data with the new action_summary
                 artifact_data["planning_data"] = action_summary
-                log.debug(f"[Planning] Merge completed - parameters now have {len(merged_parameters.get("properties", {}))} properties")
+                log.debug(f"[Planning] Merge completed - parameters now have {len(merged_parameters.get('properties', {}))} properties")
             except Exception as e:
                 log.warning(f"[Planning] Failed to merge with existing {artifact_type} data: {e} - using LLM updates only")
 
@@ -1412,7 +1412,7 @@ def selected_action_categories_display(selections_list: List[Union["ActionCatego
     # Structured, multi-line block to show in thinking bubble
     # Build display list for selected areas
     cats_display = [category_display_name(c) for c in cats]
-    sub = f"{", ".join(cats_display)}" if cats_display else " -"
+    sub = f"{', '.join(cats_display)}" if cats_display else " -"
     details = "\n".join(bullets) if bullets else ""
 
     if details:

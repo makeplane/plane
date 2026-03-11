@@ -45,9 +45,7 @@ class FunctionListCreateView(ListCreateAPIView):
         workspace = get_object_or_404(Workspace, slug=self.workspace_slug)
 
         # Get both system functions and workspace-specific functions
-        queryset = ScriptFunction.objects.filter(
-            Q(is_system=True) | Q(workspace=workspace)
-        )
+        queryset = ScriptFunction.objects.filter(Q(is_system=True) | Q(workspace=workspace))
 
         # Optional query parameters for filtering
         category = self.request.query_params.get("category")
@@ -59,9 +57,7 @@ class FunctionListCreateView(ListCreateAPIView):
         if is_system is not None:
             queryset = queryset.filter(is_system=is_system.lower() == "true")
         if search:
-            queryset = queryset.filter(
-                Q(name__icontains=search) | Q(description__icontains=search)
-            )
+            queryset = queryset.filter(Q(name__icontains=search) | Q(description__icontains=search))
 
         return queryset.order_by("is_system", "category", "name")
 
@@ -76,9 +72,7 @@ class FunctionListCreateView(ListCreateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class FunctionRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
@@ -102,9 +96,7 @@ class FunctionRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         workspace = get_object_or_404(Workspace, slug=self.workspace_slug)
         # For retrieve, include both system and workspace functions
         # For update/delete, only workspace functions (handled in update/destroy methods)
-        return ScriptFunction.objects.filter(
-            Q(is_system=True) | Q(workspace=workspace)
-        )
+        return ScriptFunction.objects.filter(Q(is_system=True) | Q(workspace=workspace))
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()

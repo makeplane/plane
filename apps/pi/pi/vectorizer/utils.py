@@ -113,14 +113,14 @@ progress_bar = SimpleProgressTracker()
 def _print_start_banner() -> None:
     """Display a banner with feeder settings using standard logger."""
     log.info("🧠 Vector Feeder Settings 🧠")
-    log.info(f"Feed issues: {FEED_FLAGS["issues"]}")
-    log.info(f"Feed pages: {FEED_FLAGS["pages"]}")
-    log.info(f"Feed documentation: {FEED_FLAGS["docs"]}")
+    log.info(f"Feed issues: {FEED_FLAGS['issues']}")
+    log.info(f"Feed pages: {FEED_FLAGS['pages']}")
+    log.info(f"Feed documentation: {FEED_FLAGS['docs']}")
     log.info(f"Bulk size: {BULK_SIZE}")
     log.info(f"Scroll timeout: {SCROLL_TIMEOUT}")
     log.info(f"Embedding dim: {EMBED_DIM}")
-    log.info(f"ML model ID: {ML_MODEL_ID or "<NONE>"}")
-    log.info(f"Workspace ID: {WORKSPACE_ID or "<NONE>"}")
+    log.info(f"ML model ID: {ML_MODEL_ID or '<NONE>'}")
+    log.info(f"Workspace ID: {WORKSPACE_ID or '<NONE>'}")
 
 
 # ---------------------------------------------------------------------------

@@ -59,8 +59,7 @@ class Command(BaseCommand):
                 reader = csv.DictReader(f)
                 if column not in (reader.fieldnames or []):
                     raise CommandError(
-                        f'Column "{column}" not found in CSV. '
-                        f"Available columns: {', '.join(reader.fieldnames or [])}"
+                        f'Column "{column}" not found in CSV. Available columns: {", ".join(reader.fieldnames or [])}'
                     )
                 emails = set()
                 for row in reader:

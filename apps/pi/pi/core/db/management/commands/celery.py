@@ -43,7 +43,7 @@ def run_celery_worker(
         "--without-gossip",
     ]
 
-    typer.echo(f'Starting Celery worker with command: {" ".join(cmd)}')
+    typer.echo(f"Starting Celery worker with command: {' '.join(cmd)}")
     subprocess.run(cmd)
 
 
@@ -66,7 +66,7 @@ def run_celery_beat(
         schedule_file,
     ]
 
-    typer.echo(f'Starting Celery Beat with command: {" ".join(cmd)}')
+    typer.echo(f"Starting Celery Beat with command: {' '.join(cmd)}")
     subprocess.run(cmd)
 
 
@@ -89,7 +89,7 @@ def run_celery_flower(
         address,
     ]
 
-    typer.echo(f'Starting Celery Flower with command: {" ".join(cmd)}')
+    typer.echo(f"Starting Celery Flower with command: {' '.join(cmd)}")
     typer.echo(f"Flower will be available at http://{address}:{port}")
     subprocess.run(cmd)
 

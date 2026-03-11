@@ -233,7 +233,7 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
                     },
                 )
                 return Response(
-                    {"error": "The required object does not exist.", "e" :str(e)},
+                    {"error": "The required object does not exist.", "e": str(e)},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 

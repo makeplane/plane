@@ -43,9 +43,7 @@ class ScriptFunctionSerializer(serializers.ModelSerializer):
     def validate_category(self, value):
         valid_categories = [choice[0] for choice in ScriptFunction.CATEGORY_CHOICES]
         if value not in valid_categories:
-            raise serializers.ValidationError(
-                f"Category must be one of: {', '.join(valid_categories)}"
-            )
+            raise serializers.ValidationError(f"Category must be one of: {', '.join(valid_categories)}")
         return value
 
     def validate_parameters(self, value):
@@ -58,13 +56,9 @@ class ScriptFunctionSerializer(serializers.ModelSerializer):
         for i, param in enumerate(value):
             # Validate required fields
             if not param.get("name"):
-                raise serializers.ValidationError(
-                    f"Parameter at index {i} is missing 'name'"
-                )
+                raise serializers.ValidationError(f"Parameter at index {i} is missing 'name'")
             if not param.get("type"):
-                raise serializers.ValidationError(
-                    f"Parameter at index {i} is missing 'type'"
-                )
+                raise serializers.ValidationError(f"Parameter at index {i} is missing 'type'")
 
             # Check for duplicate names
             name = param.get("name")
@@ -75,9 +69,7 @@ class ScriptFunctionSerializer(serializers.ModelSerializer):
             # Validate structure
             param_serializer = FunctionParameterSerializer(data=param)
             if not param_serializer.is_valid():
-                raise serializers.ValidationError(
-                    f"Invalid parameter at index {i}: {param_serializer.errors}"
-                )
+                raise serializers.ValidationError(f"Invalid parameter at index {i}: {param_serializer.errors}")
 
         return value
 

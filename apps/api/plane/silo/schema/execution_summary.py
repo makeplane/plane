@@ -11,6 +11,7 @@
 
 from pydantic import BaseModel
 
+
 class ExecutionSummaryRecord(BaseModel):
     total: int = 0
     pulled: int = 0

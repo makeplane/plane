@@ -65,17 +65,17 @@ class PlaneActionsTestSuite:
             # Get current user
             user_result = self.executor.sdk_adapter.get_current_user()
             self.test_context["user_id"] = user_result.get("id")
-            log.info(f"✅ Got user ID: {self.test_context["user_id"]}")
+            log.info(f"✅ Got user ID: {self.test_context['user_id']}")
 
             # Create test project
-            project_name = f"Test Project {datetime.now().strftime("%Y%m%d_%H%M%S")}"
-            project_identifier = f"TEST{datetime.now().strftime("%H%M%S")}"
+            project_name = f"Test Project {datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            project_identifier = f"TEST{datetime.now().strftime('%H%M%S')}"
 
             project_result = self.executor.sdk_adapter.create_project(
                 workspace_slug=self.workspace_slug, name=project_name, identifier=project_identifier, description="Automated test project"
             )
             self.test_context["project_id"] = project_result.get("id")
-            log.info(f"✅ Created test project: {self.test_context["project_id"]}")
+            log.info(f"✅ Created test project: {self.test_context['project_id']}")
 
         except Exception as e:
             log.error(f"❌ Failed to setup test context: {e}")
@@ -274,7 +274,7 @@ class PlaneActionsTestSuite:
                 overall_results["total_passed"] += category_result["passed"]
                 overall_results["total_failed"] += category_result["failed"]
 
-                log.info(f"📊 {category_name}: {category_result["passed"]} passed, {category_result["failed"]} failed")
+                log.info(f"📊 {category_name}: {category_result['passed']} passed, {category_result['failed']} failed")
 
             except Exception as e:
                 log.error(f"❌ Failed to test category {category_name}: {e}")
@@ -306,17 +306,17 @@ class PlaneActionsTestSuite:
 
         for category, result in results["category_results"].items():
             if "error" in result:
-                report += f"❌ {category}: ERROR - {result["error"]}\n"
+                report += f"❌ {category}: ERROR - {result['error']}\n"
             else:
-                report += f"{"✅" if result["failed"] == 0 else "⚠️"} {category}: {result["passed"]} passed, {result["failed"]} failed\n"
+                report += f"{'✅' if result['failed'] == 0 else '⚠️'} {category}: {result['passed']} passed, {result['failed']} failed\n"
 
                 # Show failed tests
                 if result["failed"] > 0:
                     failed_tests = [t for t in result.get("tests", []) if t["status"] == "failed"]
                     for test in failed_tests:
-                        report += f"    ❌ {test["method"]}: {test.get("error", "Unknown error")}\n"
+                        report += f"    ❌ {test['method']}: {test.get('error', 'Unknown error')}\n"
 
-        report += f"\n⏰ Test completed at: {results["timestamp"]}\n"
+        report += f"\n⏰ Test completed at: {results['timestamp']}\n"
 
         return report
 

@@ -118,10 +118,7 @@ class IssueRelationViewSet(BaseViewSet):
                         ArrayAgg(
                             "labels__id",
                             distinct=True,
-                            filter=Q(
-                                ~Q(labels__id__isnull=True)
-                                & Q(label_issue__deleted_at__isnull=True)
-                            ),
+                            filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                         ),
                         Value([], output_field=ArrayField(UUIDField())),
                     ),
@@ -147,14 +144,11 @@ class IssueRelationViewSet(BaseViewSet):
 
         def build_relation_list(ids, relation_type_value):
             return [
-                {**issue, "relation_type": relation_type_value}
-                for uid in ids
-                if (issue := issues_by_id.get(str(uid)))
+                {**issue, "relation_type": relation_type_value} for uid in ids if (issue := issues_by_id.get(str(uid)))
             ]
 
         response_data = {
-            relation_type: build_relation_list(ids, relation_type)
-            for relation_type, ids in ids_by_relation.items()
+            relation_type: build_relation_list(ids, relation_type) for relation_type, ids in ids_by_relation.items()
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
@@ -222,8 +216,10 @@ class IssueRelationViewSet(BaseViewSet):
             refetch_filter,
             workspace__slug=slug,
         ).select_related(
-            "issue__type", "issue__state",
-            "related_issue__type", "related_issue__state",
+            "issue__type",
+            "issue__state",
+            "related_issue__type",
+            "related_issue__state",
         )
 
         serializer_class = RelatedIssueSerializer if is_reverse else IssueRelationSerializer
@@ -242,8 +238,10 @@ class IssueRelationViewSet(BaseViewSet):
                 | Q(issue_id=issue_id, related_issue_id=related_issue)
             )
             .select_related(
-                "issue__type", "issue__state",
-                "related_issue__type", "related_issue__state",
+                "issue__type",
+                "issue__state",
+                "related_issue__type",
+                "related_issue__state",
             )
             .first()
         )

@@ -436,7 +436,7 @@ async def execute_tools_for_ask_mode(
         assert ai_message is not None
 
         # Log LLM's initial response for debugging
-        log.info(f"ChatID: {chat_id} - Has Tool Calls: {hasattr(ai_message, "tool_calls") and bool(getattr(ai_message, "tool_calls", None))}")
+        log.info(f"ChatID: {chat_id} - Has Tool Calls: {hasattr(ai_message, 'tool_calls') and bool(getattr(ai_message, 'tool_calls', None))}")
 
         # Check if LLM made any tool calls
         if not ai_message.tool_calls:
@@ -498,7 +498,7 @@ async def execute_tools_for_ask_mode(
 
                 # Intercept clarification requests and short-circuit
                 if tool_name == "ask_for_clarification":
-                    log.info(f"ChatID: {chat_id} - Clarification requested by LLM: {tool_args.get("reason", "No reason provided")}")
+                    log.info(f"ChatID: {chat_id} - Clarification requested by LLM: {tool_args.get('reason', 'No reason provided')}")
                     clarification_payload, result = await check_and_build_clarification(tools=tools, tool_name=tool_name, tool_args=tool_args)
                     formatted_text, current_step = await store_and_format_clarification(
                         query_id=query_id,
@@ -578,7 +578,7 @@ async def execute_tools_for_ask_mode(
                                 message = tool_result.get("message", "")
                                 # If there's a 'data' field, use it; otherwise omit the Result section (simpler format)
                                 if "data" in tool_result and tool_result["data"]:
-                                    tool_content = f"{message}\n\nResult: {json.dumps(tool_result["data"], ensure_ascii=False)}"
+                                    tool_content = f"{message}\n\nResult: {json.dumps(tool_result['data'], ensure_ascii=False)}"
                                 else:
                                     # No data field, just use the message
                                     tool_content = message

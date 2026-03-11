@@ -132,9 +132,7 @@ def get_file_changes_between_commits(repo_owner: str, repo_name: str, base_sha: 
                     removed.append(previous_filename)
                 added.append(filename)
 
-        log.info(
-            f"Changes for {repo_name} ({base_sha[:7]}..{head_sha[:7]}): " f"Added: {len(added)}, Modified: {len(modified)}, Removed: {len(removed)}"
-        )
+        log.info(f"Changes for {repo_name} ({base_sha[:7]}..{head_sha[:7]}): Added: {len(added)}, Modified: {len(modified)}, Removed: {len(removed)}")
 
         return {"added": added, "modified": modified, "removed": removed}
 

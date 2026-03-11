@@ -21,9 +21,17 @@ class ScriptExecutionSerializer(serializers.ModelSerializer):
         model = ScriptExecution
         fields = "__all__"
         read_only_fields = [
-            "id", "project", "workspace", "output_data", "error_data",
-            "started_at", "completed_at", "created_at", "updated_at",
-            "created_by", "updated_by"
+            "id",
+            "project",
+            "workspace",
+            "output_data",
+            "error_data",
+            "started_at",
+            "completed_at",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
         ]
 
     def validate_status(self, value):
@@ -53,15 +61,14 @@ class ScriptExecutionSerializer(serializers.ModelSerializer):
             if not isinstance(key, str):
                 raise serializers.ValidationError(f"Variable key must be a string, got {type(key).__name__}")
             if not isinstance(val, str):
-                raise serializers.ValidationError(
-                    f"Variable '{key}' value must be a string, got {type(val).__name__}"
-                )
+                raise serializers.ValidationError(f"Variable '{key}' value must be a string, got {type(val).__name__}")
 
         return value
 
 
 class ScriptExecutionWithScriptSerializer(ScriptExecutionSerializer):
     """Serializer that includes full script details"""
+
     script = ScriptSerializer(read_only=True)
 
     class Meta(ScriptExecutionSerializer.Meta):
@@ -70,10 +77,18 @@ class ScriptExecutionWithScriptSerializer(ScriptExecutionSerializer):
 
 class ScriptExecutionListSerializer(ScriptExecutionSerializer):
     """Lightweight serializer for listing executions"""
+
     script = ScriptLiteSerializer(read_only=True)
 
     class Meta(ScriptExecutionSerializer.Meta):
         fields = [
-            "id", "script", "trigger_type", "trigger_id", "status",
-            "started_at", "completed_at", "created_at", "updated_at"
+            "id",
+            "script",
+            "trigger_type",
+            "trigger_id",
+            "status",
+            "started_at",
+            "completed_at",
+            "created_at",
+            "updated_at",
         ]

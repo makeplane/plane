@@ -188,15 +188,12 @@ class BaseConsumer:
                 sys.exit(1)
             except ProbableAuthenticationError:
                 if os.environ.get("AMAZONMQ_SECRET_ARN") and (
-                    os.environ.get("AWS_ROLE_ARN")
-                    or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI")
+                    os.environ.get("AWS_ROLE_ARN") or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI")
                 ):
                     logger.warning("Auth failure — refreshing AMQP secret")
                     from plane.utils.amqp import get_amqp_connection_params
 
-                    self.connection_params = get_amqp_connection_params(
-                        force_refresh=True
-                    )
+                    self.connection_params = get_amqp_connection_params(force_refresh=True)
                     retry_count += 1
                 else:
                     raise

@@ -49,7 +49,7 @@ class Command(BaseCommand):
             instance_admin = InstanceAdmin.objects.filter(instance=instance, user=user).first()
             if instance_admin:
                 raise CommandError("The provided email is already an instance admin.")
-            
+
             _ = InstanceAdmin.objects.create(instance=instance, user=user)
             self.stdout.write(self.style.SUCCESS("Successfully created the admin"))
         except Exception as e:

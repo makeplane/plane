@@ -66,10 +66,7 @@ class RequestLoggerMiddleware:
             params = parse_qs(body_str, keep_blank_values=True)
             for field in RequestLoggerMiddleware._SENSITIVE_FIELDS:
                 if field in params:
-                    params[field] = [
-                        f"****{v[-4:]}" if len(v) > 4 else "****"
-                        for v in params[field]
-                    ]
+                    params[field] = [f"****{v[-4:]}" if len(v) > 4 else "****" for v in params[field]]
             return urlencode(params, doseq=True)
         except Exception:
             return body_str

@@ -463,37 +463,47 @@ class MobileAPITester:
             import struct
 
             # RIFF header
-            riff_header = b'RIFF'
+            riff_header = b"RIFF"
             # File size (will be updated)
-            file_size = struct.pack('<I', 0)
-            wave_header = b'WAVE'
+            file_size = struct.pack("<I", 0)
+            wave_header = b"WAVE"
 
             # fmt chunk
-            fmt_chunk = b'fmt '
-            fmt_size = struct.pack('<I', 16)  # PCM format chunk size
-            audio_format = struct.pack('<H', 1)  # PCM = 1
-            num_channels = struct.pack('<H', 1)  # Mono
-            sample_rate = struct.pack('<I', 8000)  # 8kHz
-            byte_rate = struct.pack('<I', 16000)  # sample_rate * num_channels * bits_per_sample / 8
-            block_align = struct.pack('<H', 2)  # num_channels * bits_per_sample / 8
-            bits_per_sample = struct.pack('<H', 16)  # 16 bits
+            fmt_chunk = b"fmt "
+            fmt_size = struct.pack("<I", 16)  # PCM format chunk size
+            audio_format = struct.pack("<H", 1)  # PCM = 1
+            num_channels = struct.pack("<H", 1)  # Mono
+            sample_rate = struct.pack("<I", 8000)  # 8kHz
+            byte_rate = struct.pack("<I", 16000)  # sample_rate * num_channels * bits_per_sample / 8
+            block_align = struct.pack("<H", 2)  # num_channels * bits_per_sample / 8
+            bits_per_sample = struct.pack("<H", 16)  # 16 bits
 
             # data chunk (1 second of silence = 8000 samples * 2 bytes = 16000 bytes)
-            data_chunk = b'data'
-            data_size = struct.pack('<I', 16000)
-            audio_data = b'\x00' * 16000  # Silence
+            data_chunk = b"data"
+            data_size = struct.pack("<I", 16000)
+            audio_data = b"\x00" * 16000  # Silence
 
             # Combine all parts
             wav_content = (
-                riff_header + file_size + wave_header +
-                fmt_chunk + fmt_size + audio_format + num_channels + sample_rate +
-                byte_rate + block_align + bits_per_sample +
-                data_chunk + data_size + audio_data
+                riff_header
+                + file_size
+                + wave_header
+                + fmt_chunk
+                + fmt_size
+                + audio_format
+                + num_channels
+                + sample_rate
+                + byte_rate
+                + block_align
+                + bits_per_sample
+                + data_chunk
+                + data_size
+                + audio_data
             )
 
             # Update file size in header
             total_size = len(wav_content) - 8
-            wav_content = riff_header + struct.pack('<I', total_size) + wav_content[8:]
+            wav_content = riff_header + struct.pack("<I", total_size) + wav_content[8:]
 
             # Test V1 endpoint
             v1_url = f"{self.config.base_url}/api/v1/mobile/transcription/transcribe"
@@ -1059,17 +1069,15 @@ class MobileAPITester:
                 except Exception:
                     differences_serializable = str(result.differences)
 
-            results_data.append(
-                {
-                    "endpoint_name": result.endpoint_name,
-                    "v1_url": result.v1_url,
-                    "v2_url": result.v2_url,
-                    "status": result.status.value,
-                    "message": result.message,
-                    "differences": differences_serializable,
-                    "error": result.error,
-                }
-            )
+            results_data.append({
+                "endpoint_name": result.endpoint_name,
+                "v1_url": result.v1_url,
+                "v2_url": result.v2_url,
+                "status": result.status.value,
+                "message": result.message,
+                "differences": differences_serializable,
+                "error": result.error,
+            })
 
         with open(output_file, "w") as f:
             json.dump(results_data, f, indent=2)

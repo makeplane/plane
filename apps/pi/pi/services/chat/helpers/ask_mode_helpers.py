@@ -389,7 +389,7 @@ async def record_preset_routing_step(*, query_id: UUID4, chat_id: UUID4, step_or
             timeout=2.0,
         )
         if flow_step_result["message"] != "success":
-            log.warning(f"Failed to record RAG routing flow step: {flow_step_result.get("error", "Unknown error")}")
+            log.warning(f"Failed to record RAG routing flow step: {flow_step_result.get('error', 'Unknown error')}")
     except asyncio.TimeoutError:
         log.warning("Timed out recording RAG routing flow step; continuing")
     except Exception as e:
@@ -536,13 +536,13 @@ def log_ask_mode_request_details(data: Any, context: Dict[str, Any]) -> None:
     """
     chat_id = data.chat_id
     log.info(f"ChatID: {chat_id} - Input query: {data.query}")
-    log.info(f"ChatID: {chat_id} - Enhanced query: {context.get("enhanced_query_for_processing")}")
-    log.info(f"ChatID: {chat_id} - Attachment context: {context.get("attachment_context")}")
+    log.info(f"ChatID: {chat_id} - Enhanced query: {context.get('enhanced_query_for_processing')}")
+    log.info(f"ChatID: {chat_id} - Attachment context: {context.get('attachment_context')}")
     log.info(f"ChatID: {chat_id} - User meta: {data.context}")
-    log.info(f"ChatID: {chat_id} - Workspace in context: {context.get("workspace_in_context", data.workspace_in_context)}")
-    log.info(f"ChatID: {chat_id} - Workspace slug: {context.get("workspace_slug", data.workspace_slug)}")
-    log.info(f"ChatID: {chat_id} - Workspace ID: {context.get("workspace_id", str(data.workspace_id) if data.workspace_id else None)}")
-    log.info(f"ChatID: {chat_id} - Web search enabled: {context.get("websearch_enabled", getattr(data, "is_websearch_enabled", False))}")
+    log.info(f"ChatID: {chat_id} - Workspace in context: {context.get('workspace_in_context', data.workspace_in_context)}")
+    log.info(f"ChatID: {chat_id} - Workspace slug: {context.get('workspace_slug', data.workspace_slug)}")
+    log.info(f"ChatID: {chat_id} - Workspace ID: {context.get('workspace_id', str(data.workspace_id) if data.workspace_id else None)}")
+    log.info(f"ChatID: {chat_id} - Web search enabled: {context.get('websearch_enabled', getattr(data, 'is_websearch_enabled', False))}")
     log.info(f"ChatID: {chat_id} - Is New Chat: {data.is_new}")
     log.info(f"ChatID: {chat_id} - Source: {data.source}")
     log.info(f"ChatID: {chat_id} - Is Project Chat: {data.is_project_chat}")

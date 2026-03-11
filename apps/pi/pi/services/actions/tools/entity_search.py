@@ -335,7 +335,7 @@ def get_entity_search_tools(method_executor, context):
                     if api_base_url:
                         ws_slug = result.get("workspace_slug") or workspace_slug
                         if ws_slug and result.get("project_id") and result.get("id"):
-                            cycle_url = f"{api_base_url}/{ws_slug}/projects/{result["project_id"]}/cycles/{result["id"]}/"
+                            cycle_url = f"{api_base_url}/{ws_slug}/projects/{result['project_id']}/cycles/{result['id']}/"
                             cycle_data["url"] = cycle_url
 
                     cycles_data.append(cycle_data)
@@ -345,7 +345,7 @@ def get_entity_search_tools(method_executor, context):
                 if len(results) == 1:
                     message = f"Found current active cycle: '{cycle_names[0]}'"
                     if cycles_data[0].get("url"):
-                        message += f"\nCycle URL: {cycles_data[0]["url"]}"
+                        message += f"\nCycle URL: {cycles_data[0]['url']}"
                     response_data = cycles_data[0]
                 else:
                     cycle_names_str = ", ".join([f"'{name}'" for name in cycle_names])

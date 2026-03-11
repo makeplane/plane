@@ -138,4 +138,4 @@ else:
     print("\n⚠️  Categories needing attention:")
     for r in all_results:
         if r["status"] == "❌":
-            print(f"  - {r["category"]}: {len(r["missing"])} missing, {len(r["phantom"])} phantom")
+            print(f"  - {r['category']}: {len(r['missing'])} missing, {len(r['phantom'])} phantom")

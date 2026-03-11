@@ -133,12 +133,9 @@ class EventStreamPublisher:
 
             except ProbableAuthenticationError as e:
                 if os.environ.get("AMAZONMQ_SECRET_ARN") and (
-                    os.environ.get("AWS_ROLE_ARN")
-                    or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI")
+                    os.environ.get("AWS_ROLE_ARN") or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI")
                 ):
-                    logger.warning(
-                        f"[{self.instance_id}] Auth failure — refreshing secret and retrying"
-                    )
+                    logger.warning(f"[{self.instance_id}] Auth failure — refreshing secret and retrying")
                     from plane.utils.amqp import get_amqp_connection_params
 
                     self._connection_params = get_amqp_connection_params(
@@ -147,9 +144,7 @@ class EventStreamPublisher:
                     self._connection = pika.BlockingConnection(self._connection_params)
                     self._channel = self._connection.channel()
                     self._setup_exchange()
-                    logger.info(
-                        f"[{self.instance_id}] Successfully connected after secret refresh"
-                    )
+                    logger.info(f"[{self.instance_id}] Successfully connected after secret refresh")
                 else:
                     logger.error(f"[{self.instance_id}] Failed to connect to RabbitMQ: {e}")
                     self._disconnect_unsafe()

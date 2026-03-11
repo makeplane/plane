@@ -212,7 +212,7 @@ async def sync_llms():
                 else:
                     new_llm_model = LlmModel(**llm_data)
                     session.add(new_llm_model)
-                    typer.echo(f"Created LLM: {llm_data["name"]}")
+                    typer.echo(f"Created LLM: {llm_data['name']}")
 
             await session.commit()
             typer.echo("LLMs synced successfully.")

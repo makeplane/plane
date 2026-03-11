@@ -194,10 +194,7 @@ class DatabaseConnectionPool:
         self._secret_arn = db.get("SECRET_ARN") or os.environ.get("RDS_SECRET_ARN", "")
         self._use_secrets_manager = bool(
             self._secret_arn
-            and (
-                os.environ.get("AWS_ROLE_ARN", "")
-                or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
-            )
+            and (os.environ.get("AWS_ROLE_ARN", "") or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", ""))
         )
         self.pool_size = pool_size
         self.min_size = min_size
@@ -219,8 +216,7 @@ class DatabaseConnectionPool:
             db = settings.DATABASES["default"]
             secret_arn = db.get("SECRET_ARN") or os.environ.get("RDS_SECRET_ARN", "")
             has_aws_creds = bool(
-                os.environ.get("AWS_ROLE_ARN", "")
-                or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
+                os.environ.get("AWS_ROLE_ARN", "") or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
             )
             if secret_arn and has_aws_creds:
                 dsn = self._dsn_from_secrets_manager(db, secret_arn)
@@ -238,21 +234,11 @@ class DatabaseConnectionPool:
 
         region = db.get("AWS_REGION") or os.environ.get("AWS_REGION", "us-east-1")
         secret = get_secret(secret_arn, region, force_refresh=force_refresh)
-        host = secret.get(
-            os.environ.get("RDS_DB_HOST_KEY"), db.get("HOST", "")
-        )
-        port = secret.get(
-            os.environ.get("RDS_DB_PORT_KEY"), db.get("PORT", 5432)
-        )
-        user = secret.get(
-            os.environ.get("RDS_DB_USERNAME_KEY"), db.get("USER", "")
-        )
-        password = secret.get(
-            os.environ.get("RDS_DB_PASSWORD_KEY"), db.get("PASSWORD", "")
-        )
-        name = secret.get(
-            os.environ.get("RDS_DB_NAME_KEY"), db.get("NAME", "")
-        )
+        host = secret.get(os.environ.get("RDS_DB_HOST_KEY"), db.get("HOST", ""))
+        port = secret.get(os.environ.get("RDS_DB_PORT_KEY"), db.get("PORT", 5432))
+        user = secret.get(os.environ.get("RDS_DB_USERNAME_KEY"), db.get("USER", ""))
+        password = secret.get(os.environ.get("RDS_DB_PASSWORD_KEY"), db.get("PASSWORD", ""))
+        name = secret.get(os.environ.get("RDS_DB_NAME_KEY"), db.get("NAME", ""))
         return f"postgresql://{quote(str(user))}:{quote(str(password))}@{host}:{port}/{name}"
 
     async def connect(self):
@@ -283,20 +269,13 @@ class DatabaseConnectionPool:
                 async with self.pool.connection() as conn:
                     await conn.execute("SELECT 1")
             except psycopg.OperationalError as e:
-                if (
-                    self._use_secrets_manager
-                    and "password authentication failed" in str(e).lower()
-                ):
-                    log.warning(
-                        "Auth failure on pool open — refreshing secret and retrying"
-                    )
+                if self._use_secrets_manager and "password authentication failed" in str(e).lower():
+                    log.warning("Auth failure on pool open — refreshing secret and retrying")
                     if self.pool:
                         await self.pool.close()
                         self.pool = None
                     db = settings.DATABASES["default"]
-                    self.dsn = self._dsn_from_secrets_manager(
-                        db, self._secret_arn, force_refresh=True
-                    )
+                    self.dsn = self._dsn_from_secrets_manager(db, self._secret_arn, force_refresh=True)
                     self.pool = psycopg_pool.AsyncConnectionPool(
                         conninfo=self.dsn,
                         min_size=self.min_size,

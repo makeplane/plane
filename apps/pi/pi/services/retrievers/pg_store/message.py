@@ -421,7 +421,7 @@ async def get_tool_results_from_chat_history(
         return steps
 
     except Exception as e:
-        log.error(f"Error retrieving tool results for chat {chat_id} " f"with tool {tool_name}: {e}")
+        log.error(f"Error retrieving tool results for chat {chat_id} with tool {tool_name}: {e}")
         return []
 
 

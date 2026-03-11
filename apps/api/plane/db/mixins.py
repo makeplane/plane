@@ -160,6 +160,7 @@ def get_default_pql_filter_state() -> dict:
         "stripped": "",
     }
 
+
 def get_default_filters():
     return {
         "priority": None,
@@ -178,6 +179,7 @@ class FilterMethod(models.TextChoices):
     """
     Filter methods for cycle user properties.
     """
+
     RICH_FILTERS = "rich_filters", "Rich Filters"
     PQL_FILTERS = "pql_filters", "PQL Filters"
     AI_FILTERS = "ai_filters", "AI Filters"
@@ -193,6 +195,7 @@ def get_default_display_filters():
         "layout": "list",
         "calendar_date_range": "",
     }
+
 
 class FiltersMixin(models.Model):
     """
@@ -249,9 +252,7 @@ def update_issue_last_activity_at(*issue_ids):
     valid_ids = [i for i in issue_ids if i is not None]
     if valid_ids:
         Issue = apps.get_model("db", "Issue")
-        Issue.objects.filter(pk__in=valid_ids).update(
-            last_activity_at=timezone.now()
-        )
+        Issue.objects.filter(pk__in=valid_ids).update(last_activity_at=timezone.now())
 
 
 class IssueActivityMixin:

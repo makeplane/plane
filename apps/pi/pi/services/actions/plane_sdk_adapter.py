@@ -215,7 +215,7 @@ class PlaneSDKAdapter:
                 return {"data": result}
 
         except HttpError as e:
-            log.error(f"Failed to create work item: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create work item: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create work item: {str(e)}")
@@ -261,7 +261,7 @@ class PlaneSDKAdapter:
                 return {"data": result}
 
         except HttpError as e:
-            log.error(f"Failed to update work item: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update work item: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update work item: {str(e)}")
@@ -288,7 +288,7 @@ class PlaneSDKAdapter:
             )
             return self._model_to_dict(wi)  # type: ignore[return-value]
         except HttpError as e:
-            log.error(f"Failed to retrieve work item: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve work item: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             # Handle Pydantic validation errors when using selective fields with expand
@@ -361,7 +361,7 @@ class PlaneSDKAdapter:
             }
 
         except HttpError as e:
-            log.error(f"Failed to list work items (HTTP error): {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list work items (HTTP error): {e} ({getattr(e, 'status_code', None)})")
             raise
 
         except Exception as e:
@@ -432,7 +432,7 @@ class PlaneSDKAdapter:
             self.client.work_items.delete(workspace_slug=workspace_slug, project_id=project_id, work_item_id=issue_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete work item: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete work item: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete work item: {str(e)}")
@@ -455,7 +455,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.relations.create(workspace_slug, project_id, issue_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create work item relation: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create work item relation: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create work item relation: {str(e)}")
@@ -498,7 +498,7 @@ class PlaneSDKAdapter:
                 "total_results": getattr(response, "total_count", len(results)),
             }
         except HttpError as e:
-            log.error(f"Failed to search work items: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to search work items: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to search work items: {str(e)}")
@@ -519,7 +519,7 @@ class PlaneSDKAdapter:
                 # Fallback if conversion didn't return a dict
                 return {"data": result}
         except HttpError as e:
-            log.error(f"Failed to get current user: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to get current user: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to get current user: {str(e)}")
@@ -567,7 +567,7 @@ class PlaneSDKAdapter:
                 return {"data": result}
 
         except HttpError as e:
-            log.error(f"Failed to create project: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create project: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create project: {str(e)}")
@@ -622,7 +622,7 @@ class PlaneSDKAdapter:
             return result
 
         except HttpError as e:
-            log.error(f"Failed to list projects: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list projects: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list projects: {str(e)}")
@@ -638,7 +638,7 @@ class PlaneSDKAdapter:
                 # Fallback if conversion didn't return a dict
                 return {"data": result}
         except HttpError as e:
-            log.error(f"Failed to retrieve project: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve project: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve project: {str(e)}")
@@ -655,7 +655,7 @@ class PlaneSDKAdapter:
                 # Fallback if conversion didn't return a dict
                 return {"data": result}
         except HttpError as e:
-            log.error(f"Failed to update project: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update project: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update project: {str(e)}")
@@ -666,7 +666,7 @@ class PlaneSDKAdapter:
             self.client.projects.delete(workspace_slug=workspace_slug, project_id=project_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete project: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete project: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete project: {str(e)}")
@@ -682,7 +682,7 @@ class PlaneSDKAdapter:
             else:
                 return {"data": result}
         except HttpError as e:
-            log.error(f"Failed to get project features: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to get project features: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to get project features: {str(e)}")
@@ -710,7 +710,7 @@ class PlaneSDKAdapter:
             else:
                 return {"data": result_dict}
         except HttpError as e:
-            log.error(f"Failed to update project features: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update project features: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update project features: {str(e)}")
@@ -799,7 +799,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(resp, "prev_page_number", "")) if getattr(resp, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list labels: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list labels: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list labels: {str(e)}")
@@ -824,7 +824,7 @@ class PlaneSDKAdapter:
             resp = self.client.labels.create(workspace_slug, project_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create label: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create label: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create label: {str(e)}")
@@ -838,7 +838,7 @@ class PlaneSDKAdapter:
             resp = self.client.labels.update(workspace_slug, project_id, label_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to update label: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update label: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update label: {str(e)}")
@@ -850,7 +850,7 @@ class PlaneSDKAdapter:
             self.client.labels.delete(workspace_slug, project_id, label_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete label: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete label: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete label: {str(e)}")
@@ -862,7 +862,7 @@ class PlaneSDKAdapter:
             resp = self.client.labels.retrieve(workspace_slug, project_id, label_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve label: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve label: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve label: {str(e)}")
@@ -887,7 +887,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(resp, "prev_page_number", "")) if getattr(resp, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list states: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list states: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list states: {str(e)}")
@@ -903,7 +903,7 @@ class PlaneSDKAdapter:
             resp = self.client.states.create(workspace_slug, project_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create state: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create state: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create state: {str(e)}")
@@ -916,7 +916,7 @@ class PlaneSDKAdapter:
             resp = self.client.states.update(workspace_slug, project_id, state_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to update state: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update state: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update state: {str(e)}")
@@ -928,7 +928,7 @@ class PlaneSDKAdapter:
             resp = self.client.states.retrieve(workspace_slug, project_id, state_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve state: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve state: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve state: {str(e)}")
@@ -940,7 +940,7 @@ class PlaneSDKAdapter:
             self.client.states.delete(workspace_slug, project_id, state_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete state: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete state: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete state: {str(e)}")
@@ -965,7 +965,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list modules: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list modules: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list modules: {str(e)}")
@@ -1010,7 +1010,7 @@ class PlaneSDKAdapter:
             except Exception:
                 pass
 
-            log.error(f"Failed to create module: {e} " f"(status_code={getattr(e, "status_code", None)}" f"{error_details})")
+            log.error(f"Failed to create module: {e} (status_code={getattr(e, 'status_code', None)}{error_details})")
             raise
         except Exception as e:
             log.error(f"Failed to create module: {str(e)}")
@@ -1024,7 +1024,7 @@ class PlaneSDKAdapter:
             resp = self.client.modules.update(workspace_slug, project_id, module_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to update module: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update module: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update module: {str(e)}")
@@ -1036,7 +1036,7 @@ class PlaneSDKAdapter:
             self.client.modules.delete(workspace_slug, project_id, module_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete module: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete module: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete module: {str(e)}")
@@ -1051,7 +1051,7 @@ class PlaneSDKAdapter:
             # SDK method returns None, so return success response
             return {"success": True, "issues_added": len(issues)}
         except HttpError as e:
-            log.error(f"Failed to add module work items: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to add module work items: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to add module work items: {str(e)}")
@@ -1063,7 +1063,7 @@ class PlaneSDKAdapter:
             resp = self.client.modules.retrieve(workspace_slug, project_id, module_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve module: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve module: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve module: {str(e)}")
@@ -1075,7 +1075,7 @@ class PlaneSDKAdapter:
             self.client.modules.archive(workspace_slug, project_id, module_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to archive module: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to archive module: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to archive module: {str(e)}")
@@ -1087,7 +1087,7 @@ class PlaneSDKAdapter:
             self.client.modules.unarchive(workspace_slug, project_id, module_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to unarchive module: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to unarchive module: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to unarchive module: {str(e)}")
@@ -1108,7 +1108,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list archived modules: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list archived modules: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list archived modules: {str(e)}")
@@ -1129,7 +1129,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list module work items: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list module work items: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list module work items: {str(e)}")
@@ -1141,7 +1141,7 @@ class PlaneSDKAdapter:
             self.client.modules.remove_work_item(workspace_slug, project_id, module_id, issue_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to remove work item from module: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to remove work item from module: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to remove work item from module: {str(e)}")
@@ -1211,7 +1211,7 @@ class PlaneSDKAdapter:
             resp = self.client.pages.create_project_page(effective_slug, project_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create project page: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create project page: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create project page: {str(e)}")
@@ -1274,7 +1274,7 @@ class PlaneSDKAdapter:
             resp = self.client.pages.create_workspace_page(effective_slug, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create workspace page: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create workspace page: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create workspace page: {str(e)}")
@@ -1286,7 +1286,7 @@ class PlaneSDKAdapter:
             resp = self.client.pages.retrieve_workspace_page(workspace_slug, page_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve workspace page: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve workspace page: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve workspace page: {str(e)}")
@@ -1298,7 +1298,7 @@ class PlaneSDKAdapter:
             resp = self.client.pages.retrieve_project_page(workspace_slug, project_id, page_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve project page: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve project page: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve project page: {str(e)}")
@@ -1364,7 +1364,7 @@ class PlaneSDKAdapter:
             except Exception as extract_err:
                 log.error(f"Failed to extract error detail: {extract_err}")
 
-            log.error(f"Failed to create cycle: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create cycle: {e} ({getattr(e, 'status_code', None)})")
             log.error(f"Cycle creation data: {data}")
             log.error(f"API error detail: {error_detail}")
             raise
@@ -1408,7 +1408,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list cycles: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list cycles: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list cycles: {str(e)}")
@@ -1420,7 +1420,7 @@ class PlaneSDKAdapter:
             response = self.client.cycles.retrieve(workspace_slug, project_id, cycle_id)
             return cast(Dict[str, Any], self._model_to_dict(response))
         except HttpError as e:
-            log.error(f"Failed to retrieve cycle: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve cycle: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve cycle: {str(e)}")
@@ -1442,7 +1442,7 @@ class PlaneSDKAdapter:
             cycle = self.client.cycles.update(workspace_slug, project_id, cycle_id, data=model)
             return cast(Dict[str, Any], self._model_to_dict(cycle))
         except HttpError as e:
-            log.error(f"Failed to update cycle: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update cycle: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update cycle: {str(e)}")
@@ -1454,7 +1454,7 @@ class PlaneSDKAdapter:
             self.client.cycles.archive(workspace_slug, project_id, cycle_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to archive cycle: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to archive cycle: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to archive cycle: {str(e)}")
@@ -1466,7 +1466,7 @@ class PlaneSDKAdapter:
             self.client.cycles.unarchive(workspace_slug, project_id, cycle_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to unarchive cycle: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to unarchive cycle: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to unarchive cycle: {str(e)}")
@@ -1487,7 +1487,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list archived cycles: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list archived cycles: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list archived cycles: {str(e)}")
@@ -1502,7 +1502,7 @@ class PlaneSDKAdapter:
             response = self.client.cycles.add_work_items(workspace_slug, project_id, cycle_id, issue_ids=issues)
             return cast(Dict[str, Any], self._model_to_dict(response))
         except HttpError as e:
-            log.error(f"Failed to add work items to cycle: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to add work items to cycle: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to add work items to cycle: {str(e)}")
@@ -1523,7 +1523,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list cycle work items: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list cycle work items: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list cycle work items: {str(e)}")
@@ -1535,7 +1535,7 @@ class PlaneSDKAdapter:
             self.client.cycles.remove_work_item(workspace_slug, project_id, cycle_id, work_item_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to remove work item from cycle: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to remove work item from cycle: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to remove work item from cycle: {str(e)}")
@@ -1550,7 +1550,7 @@ class PlaneSDKAdapter:
             resp = self.client.cycles.transfer_work_items(workspace_slug, project_id, cycle_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to transfer cycle work items: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to transfer cycle work items: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to transfer cycle work items: {str(e)}")
@@ -1562,7 +1562,7 @@ class PlaneSDKAdapter:
             self.client.cycles.delete(workspace_slug, project_id, cycle_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete cycle: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete cycle: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete cycle: {str(e)}")
@@ -1597,7 +1597,7 @@ class PlaneSDKAdapter:
             resp = self.client.intake.create(workspace_slug, project_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create intake work item: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create intake work item: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create intake work item: {str(e)}")
@@ -1645,7 +1645,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(prev_cursor) if prev_cursor else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list intake work items: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list intake work items: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list intake work items: {str(e)}")
@@ -1661,7 +1661,7 @@ class PlaneSDKAdapter:
             resp = self.client.intake.retrieve(workspace_slug, project_id, intake_issue_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve intake work item: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve intake work item: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve intake work item: {str(e)}")
@@ -1714,7 +1714,7 @@ class PlaneSDKAdapter:
             resp = self.client.intake.update(workspace_slug, project_id, intake_issue_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to update intake work item: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update intake work item: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update intake work item: {str(e)}")
@@ -1730,7 +1730,7 @@ class PlaneSDKAdapter:
             self.client.intake.delete(workspace_slug, project_id, intake_issue_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete intake work item: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete intake work item: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete intake work item: {str(e)}")
@@ -1758,7 +1758,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": None,
             }
         except HttpError as e:
-            log.error(f"Failed to get workspace members: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to get workspace members: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to get workspace members: {str(e)}")
@@ -1782,7 +1782,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": None,
             }
         except HttpError as e:
-            log.error(f"Failed to get project members: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to get project members: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to get project members: {str(e)}")
@@ -1807,7 +1807,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list work item activities: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list work item activities: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list work item activities: {str(e)}")
@@ -1819,7 +1819,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.activities.retrieve(workspace_slug, project_id, issue_id, activity_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve work item activity: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve work item activity: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve work item activity: {str(e)}")
@@ -1837,7 +1837,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.attachments.create(workspace_slug, project_id, issue_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create work item attachment: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create work item attachment: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create work item attachment: {str(e)}")
@@ -1862,7 +1862,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list work item attachments: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list work item attachments: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list work item attachments: {str(e)}")
@@ -1874,7 +1874,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.attachments.retrieve(workspace_slug, project_id, issue_id, attachment_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve work item attachment: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve work item attachment: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve work item attachment: {str(e)}")
@@ -1888,7 +1888,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.attachments.update(workspace_slug, project_id, issue_id, attachment_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to update work item attachment: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update work item attachment: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update work item attachment: {str(e)}")
@@ -1900,7 +1900,7 @@ class PlaneSDKAdapter:
             self.client.work_items.attachments.delete(workspace_slug, project_id, issue_id, attachment_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete work item attachment: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete work item attachment: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete work item attachment: {str(e)}")
@@ -1918,7 +1918,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.comments.create(workspace_slug, project_id, issue_id, data=data_obj)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create work item comment: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create work item comment: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create work item comment: {str(e)}")
@@ -1943,7 +1943,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list work item comments: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list work item comments: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list work item comments: {str(e)}")
@@ -1955,7 +1955,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.comments.retrieve(workspace_slug, project_id, issue_id, comment_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve work item comment: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve work item comment: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve work item comment: {str(e)}")
@@ -1969,7 +1969,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.comments.update(workspace_slug, project_id, issue_id, comment_id, data=data_obj)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to update work item comment: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update work item comment: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update work item comment: {str(e)}")
@@ -1981,7 +1981,7 @@ class PlaneSDKAdapter:
             self.client.work_items.comments.delete(workspace_slug, project_id, issue_id, comment_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete work item comment: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete work item comment: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete work item comment: {str(e)}")
@@ -2013,7 +2013,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.links.create(workspace_slug, project_id, issue_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create work item link: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create work item link: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create work item link: {str(e)}")
@@ -2038,7 +2038,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list work item links: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list work item links: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list work item links: {str(e)}")
@@ -2050,7 +2050,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.links.retrieve(workspace_slug, project_id, issue_id, link_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve work item link: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve work item link: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve work item link: {str(e)}")
@@ -2064,7 +2064,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.links.update(workspace_slug, project_id, issue_id, link_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to update work item link: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update work item link: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update work item link: {str(e)}")
@@ -2076,7 +2076,7 @@ class PlaneSDKAdapter:
             self.client.work_items.links.delete(workspace_slug, project_id, issue_id, link_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete work item link: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete work item link: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete work item link: {str(e)}")
@@ -2108,7 +2108,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_item_properties.create(workspace_slug, project_id, type_id, data=property_data)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create issue property: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create issue property: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create issue property: {str(e)}")
@@ -2130,7 +2130,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": None,
             }
         except HttpError as e:
-            log.error(f"Failed to list issue properties: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list issue properties: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list issue properties: {str(e)}")
@@ -2142,7 +2142,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_item_properties.retrieve(workspace_slug, project_id, type_id, property_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve issue property: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve issue property: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve issue property: {str(e)}")
@@ -2156,7 +2156,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_item_properties.update(workspace_slug, project_id, type_id, property_id, data=property_data)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to update issue property: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update issue property: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update issue property: {str(e)}")
@@ -2168,7 +2168,7 @@ class PlaneSDKAdapter:
             self.client.work_item_properties.delete(workspace_slug, project_id, type_id, property_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete issue property: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete issue property: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete issue property: {str(e)}")
@@ -2186,7 +2186,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_item_properties.options.create(workspace_slug, project_id, property_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create issue property option: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create issue property option: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create issue property option: {str(e)}")
@@ -2268,7 +2268,7 @@ class PlaneSDKAdapter:
             return {"result": results, "success": True}
 
         except HttpError as e:
-            log.error(f"Failed to create issue property value: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create issue property value: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create issue property value: {str(e)}")
@@ -2288,7 +2288,7 @@ class PlaneSDKAdapter:
                 "total_results": len(results),
             }
         except HttpError as e:
-            log.error(f"Failed to list issue property options: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list issue property options: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list issue property options: {str(e)}")
@@ -2305,7 +2305,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_item_properties.options.retrieve(workspace_slug, project_id, property_id, option_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve issue property option: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve issue property option: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve issue property option: {str(e)}")
@@ -2323,7 +2323,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_item_properties.options.update(workspace_slug, project_id, property_id, option_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to update issue property option: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update issue property option: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update issue property option: {str(e)}")
@@ -2335,7 +2335,7 @@ class PlaneSDKAdapter:
             self.client.work_item_properties.options.delete(workspace_slug, project_id, property_id, option_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete issue property option: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete issue property option: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete issue property option: {str(e)}")
@@ -2352,7 +2352,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_item_types.create(workspace_slug, project_id, data=CreateWorkItemType(**payload))
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create issue type: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create issue type: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create issue type: {str(e)}")
@@ -2373,7 +2373,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": None,
             }
         except HttpError as e:
-            log.error(f"Failed to list issue types: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list issue types: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list issue types: {str(e)}")
@@ -2385,7 +2385,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_item_types.retrieve(workspace_slug, project_id, type_id)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to retrieve issue type: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve issue type: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve issue type: {str(e)}")
@@ -2398,7 +2398,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_item_types.update(workspace_slug, project_id, type_id, data=UpdateWorkItemType(**payload))
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to update issue type: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update issue type: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update issue type: {str(e)}")
@@ -2410,7 +2410,7 @@ class PlaneSDKAdapter:
             self.client.work_item_types.delete(workspace_slug, project_id, type_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete issue type: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete issue type: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete issue type: {str(e)}")
@@ -2428,7 +2428,7 @@ class PlaneSDKAdapter:
             result = cast(Dict[str, Any], self._model_to_dict(resp))
             return result
         except HttpError as e:
-            log.error(f"Failed to create issue worklog: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create issue worklog: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create issue worklog: {str(e)}")
@@ -2464,7 +2464,7 @@ class PlaneSDKAdapter:
             }
             return final_result
         except HttpError as e:
-            log.error(f"Failed to list issue worklogs: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list issue worklogs: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list issue worklogs: {str(e)}")
@@ -2486,7 +2486,7 @@ class PlaneSDKAdapter:
             resp = self.client.work_items.work_logs.update(workspace_slug, project_id, work_item_id=issue_id, work_log_id=worklog_id, data=payload)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to update issue worklog: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update issue worklog: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update issue worklog: {str(e)}")
@@ -2498,7 +2498,7 @@ class PlaneSDKAdapter:
             self.client.work_items.work_logs.delete(workspace_slug, project_id, work_item_id=issue_id, work_log_id=worklog_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete issue worklog: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete issue worklog: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete issue worklog: {str(e)}")
@@ -2518,7 +2518,7 @@ class PlaneSDKAdapter:
             else:
                 return {"data": result}
         except HttpError as e:
-            log.error(f"Failed to get workspace features: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to get workspace features: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to get workspace features: {str(e)}")
@@ -2546,7 +2546,7 @@ class PlaneSDKAdapter:
             else:
                 return {"data": result_dict}
         except HttpError as e:
-            log.error(f"Failed to update workspace features: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update workspace features: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update workspace features: {str(e)}")
@@ -2574,7 +2574,7 @@ class PlaneSDKAdapter:
             initiative = self.client.initiatives.create(workspace_slug=workspace_slug, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(initiative))
         except HttpError as e:
-            log.error(f"Failed to create initiative: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create initiative: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create initiative: {str(e)}")
@@ -2595,7 +2595,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list initiatives: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list initiatives: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list initiatives: {str(e)}")
@@ -2607,7 +2607,7 @@ class PlaneSDKAdapter:
             initiative = self.client.initiatives.retrieve(workspace_slug=workspace_slug, initiative_id=initiative_id)
             return cast(Dict[str, Any], self._model_to_dict(initiative))
         except HttpError as e:
-            log.error(f"Failed to retrieve initiative: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve initiative: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve initiative: {str(e)}")
@@ -2629,7 +2629,7 @@ class PlaneSDKAdapter:
             initiative = self.client.initiatives.update(workspace_slug=workspace_slug, initiative_id=initiative_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(initiative))
         except HttpError as e:
-            log.error(f"Failed to update initiative: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update initiative: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update initiative: {str(e)}")
@@ -2641,7 +2641,7 @@ class PlaneSDKAdapter:
             self.client.initiatives.delete(workspace_slug=workspace_slug, initiative_id=initiative_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete initiative: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete initiative: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete initiative: {str(e)}")
@@ -2662,7 +2662,7 @@ class PlaneSDKAdapter:
             label = self.client.initiatives.labels.create(workspace_slug=workspace_slug, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(label))
         except HttpError as e:
-            log.error(f"Failed to create initiative label: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create initiative label: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create initiative label: {str(e)}")
@@ -2681,7 +2681,7 @@ class PlaneSDKAdapter:
                 "total_results": getattr(response, "total_count", len(results)),
             }
         except HttpError as e:
-            log.error(f"Failed to list initiative labels: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list initiative labels: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list initiative labels: {str(e)}")
@@ -2693,7 +2693,7 @@ class PlaneSDKAdapter:
             label = self.client.initiatives.labels.retrieve(workspace_slug=workspace_slug, label_id=label_id)
             return cast(Dict[str, Any], self._model_to_dict(label))
         except HttpError as e:
-            log.error(f"Failed to retrieve initiative label: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve initiative label: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve initiative label: {str(e)}")
@@ -2709,7 +2709,7 @@ class PlaneSDKAdapter:
             label = self.client.initiatives.labels.update(workspace_slug=workspace_slug, label_id=label_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(label))
         except HttpError as e:
-            log.error(f"Failed to update initiative label: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update initiative label: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update initiative label: {str(e)}")
@@ -2721,7 +2721,7 @@ class PlaneSDKAdapter:
             self.client.initiatives.labels.delete(workspace_slug=workspace_slug, label_id=label_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete initiative label: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete initiative label: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete initiative label: {str(e)}")
@@ -2733,7 +2733,7 @@ class PlaneSDKAdapter:
             labels = self.client.initiatives.labels.add_labels(workspace_slug=workspace_slug, initiative_id=initiative_id, label_ids=label_ids)
             return cast(Dict[str, Any], {"success": True, "labels_added": len(label_ids), "labels": self._model_to_dict(labels)})
         except HttpError as e:
-            log.error(f"Failed to add initiative labels: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to add initiative labels: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to add initiative labels: {str(e)}")
@@ -2745,7 +2745,7 @@ class PlaneSDKAdapter:
             self.client.initiatives.labels.remove_labels(workspace_slug=workspace_slug, initiative_id=initiative_id, label_ids=label_ids)
             return {"success": True, "labels_removed": len(label_ids)}
         except HttpError as e:
-            log.error(f"Failed to remove initiative labels: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to remove initiative labels: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to remove initiative labels: {str(e)}")
@@ -2758,7 +2758,7 @@ class PlaneSDKAdapter:
             self.client.initiatives.projects.add(workspace_slug=workspace_slug, initiative_id=initiative_id, project_ids=project_ids)
             return {"success": True, "projects_added": len(project_ids)}
         except HttpError as e:
-            log.error(f"Failed to add initiative projects: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to add initiative projects: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to add initiative projects: {str(e)}")
@@ -2777,7 +2777,7 @@ class PlaneSDKAdapter:
                 "total_results": getattr(response, "total_count", len(results)),
             }
         except HttpError as e:
-            log.error(f"Failed to list initiative projects: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list initiative projects: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list initiative projects: {str(e)}")
@@ -2789,7 +2789,7 @@ class PlaneSDKAdapter:
             self.client.initiatives.projects.remove(workspace_slug=workspace_slug, initiative_id=initiative_id, project_ids=project_ids)
             return {"success": True, "projects_removed": len(project_ids)}
         except HttpError as e:
-            log.error(f"Failed to remove initiative projects: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to remove initiative projects: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to remove initiative projects: {str(e)}")
@@ -2802,7 +2802,7 @@ class PlaneSDKAdapter:
             self.client.initiatives.epics.add(workspace_slug=workspace_slug, initiative_id=initiative_id, epic_ids=epic_ids)
             return {"success": True, "epics_added": len(epic_ids)}
         except HttpError as e:
-            log.error(f"Failed to add initiative epics: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to add initiative epics: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to add initiative epics: {str(e)}")
@@ -2821,7 +2821,7 @@ class PlaneSDKAdapter:
                 "total_results": getattr(response, "total_count", len(results)),
             }
         except HttpError as e:
-            log.error(f"Failed to list initiative epics: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list initiative epics: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list initiative epics: {str(e)}")
@@ -2833,7 +2833,7 @@ class PlaneSDKAdapter:
             self.client.initiatives.epics.remove(workspace_slug=workspace_slug, initiative_id=initiative_id, epic_ids=epic_ids)
             return {"success": True, "epics_removed": len(epic_ids)}
         except HttpError as e:
-            log.error(f"Failed to remove initiative epics: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to remove initiative epics: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to remove initiative epics: {str(e)}")
@@ -2857,7 +2857,7 @@ class PlaneSDKAdapter:
             teamspace = self.client.teamspaces.create(workspace_slug=workspace_slug, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(teamspace))
         except HttpError as e:
-            log.error(f"Failed to create teamspace: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create teamspace: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create teamspace: {str(e)}")
@@ -2878,7 +2878,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list teamspaces: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list teamspaces: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list teamspaces: {str(e)}")
@@ -2890,7 +2890,7 @@ class PlaneSDKAdapter:
             teamspace = self.client.teamspaces.retrieve(workspace_slug=workspace_slug, teamspace_id=teamspace_id)
             return cast(Dict[str, Any], self._model_to_dict(teamspace))
         except HttpError as e:
-            log.error(f"Failed to retrieve teamspace: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve teamspace: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve teamspace: {str(e)}")
@@ -2906,7 +2906,7 @@ class PlaneSDKAdapter:
             teamspace = self.client.teamspaces.update(workspace_slug=workspace_slug, teamspace_id=teamspace_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(teamspace))
         except HttpError as e:
-            log.error(f"Failed to update teamspace: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update teamspace: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update teamspace: {str(e)}")
@@ -2918,7 +2918,7 @@ class PlaneSDKAdapter:
             self.client.teamspaces.delete(workspace_slug=workspace_slug, teamspace_id=teamspace_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete teamspace: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete teamspace: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete teamspace: {str(e)}")
@@ -2931,7 +2931,7 @@ class PlaneSDKAdapter:
             self.client.teamspaces.members.add(workspace_slug=workspace_slug, teamspace_id=teamspace_id, member_ids=member_ids)
             return {"success": True, "members_added": len(member_ids)}
         except HttpError as e:
-            log.error(f"Failed to add teamspace members: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to add teamspace members: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to add teamspace members: {str(e)}")
@@ -2950,7 +2950,7 @@ class PlaneSDKAdapter:
                 "total_results": getattr(response, "total_count", len(results)),
             }
         except HttpError as e:
-            log.error(f"Failed to list teamspace members: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list teamspace members: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list teamspace members: {str(e)}")
@@ -2962,7 +2962,7 @@ class PlaneSDKAdapter:
             self.client.teamspaces.members.remove(workspace_slug=workspace_slug, teamspace_id=teamspace_id, member_ids=member_ids)
             return {"success": True, "members_removed": len(member_ids)}
         except HttpError as e:
-            log.error(f"Failed to remove teamspace members: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to remove teamspace members: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to remove teamspace members: {str(e)}")
@@ -2977,7 +2977,7 @@ class PlaneSDKAdapter:
             result: Dict[str, Any] = {"success": True, "projects_added": len(project_ids), "id": teamspace_id}
             return result
         except HttpError as e:
-            log.error(f"Failed to add teamspace projects: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to add teamspace projects: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to add teamspace projects: {str(e)}")
@@ -2996,7 +2996,7 @@ class PlaneSDKAdapter:
                 "total_results": getattr(response, "total_count", len(results)),
             }
         except HttpError as e:
-            log.error(f"Failed to list teamspace projects: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list teamspace projects: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list teamspace projects: {str(e)}")
@@ -3008,7 +3008,7 @@ class PlaneSDKAdapter:
             self.client.teamspaces.projects.remove(workspace_slug=workspace_slug, teamspace_id=teamspace_id, project_ids=project_ids)
             return {"success": True, "projects_removed": len(project_ids)}
         except HttpError as e:
-            log.error(f"Failed to remove teamspace projects: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to remove teamspace projects: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to remove teamspace projects: {str(e)}")
@@ -3028,7 +3028,7 @@ class PlaneSDKAdapter:
             sticky = self.client.stickies.create(workspace_slug=workspace_slug, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(sticky))
         except HttpError as e:
-            log.error(f"Failed to create sticky: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create sticky: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create sticky: {str(e)}")
@@ -3049,7 +3049,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list stickies: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list stickies: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list stickies: {str(e)}")
@@ -3061,7 +3061,7 @@ class PlaneSDKAdapter:
             sticky = self.client.stickies.retrieve(workspace_slug=workspace_slug, sticky_id=sticky_id)
             return cast(Dict[str, Any], self._model_to_dict(sticky))
         except HttpError as e:
-            log.error(f"Failed to retrieve sticky: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve sticky: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve sticky: {str(e)}")
@@ -3077,7 +3077,7 @@ class PlaneSDKAdapter:
             sticky = self.client.stickies.update(workspace_slug=workspace_slug, sticky_id=sticky_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(sticky))
         except HttpError as e:
-            log.error(f"Failed to update sticky: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update sticky: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update sticky: {str(e)}")
@@ -3089,7 +3089,7 @@ class PlaneSDKAdapter:
             self.client.stickies.delete(workspace_slug=workspace_slug, sticky_id=sticky_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete sticky: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete sticky: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete sticky: {str(e)}")
@@ -3114,7 +3114,7 @@ class PlaneSDKAdapter:
             customer = self.client.customers.create(workspace_slug=workspace_slug, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(customer))
         except HttpError as e:
-            log.error(f"Failed to create customer: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create customer: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create customer: {str(e)}")
@@ -3135,7 +3135,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list customers: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list customers: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list customers: {str(e)}")
@@ -3147,7 +3147,7 @@ class PlaneSDKAdapter:
             customer = self.client.customers.retrieve(workspace_slug=workspace_slug, customer_id=customer_id)
             return cast(Dict[str, Any], self._model_to_dict(customer))
         except HttpError as e:
-            log.error(f"Failed to retrieve customer: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve customer: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve customer: {str(e)}")
@@ -3168,7 +3168,7 @@ class PlaneSDKAdapter:
             customer = self.client.customers.update(workspace_slug=workspace_slug, customer_id=customer_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(customer))
         except HttpError as e:
-            log.error(f"Failed to update customer: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update customer: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update customer: {str(e)}")
@@ -3180,7 +3180,7 @@ class PlaneSDKAdapter:
             self.client.customers.delete(workspace_slug=workspace_slug, customer_id=customer_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete customer: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete customer: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete customer: {str(e)}")
@@ -3197,7 +3197,7 @@ class PlaneSDKAdapter:
             prop = self.client.customers.properties.create(workspace_slug=workspace_slug, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(prop))
         except HttpError as e:
-            log.error(f"Failed to create customer property: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create customer property: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create customer property: {str(e)}")
@@ -3218,7 +3218,7 @@ class PlaneSDKAdapter:
                 "prev_cursor": str(getattr(response, "prev_page_number", "")) if getattr(response, "prev_page_number", None) else None,
             }
         except HttpError as e:
-            log.error(f"Failed to list customer properties: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list customer properties: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list customer properties: {str(e)}")
@@ -3230,7 +3230,7 @@ class PlaneSDKAdapter:
             prop = self.client.customers.properties.retrieve(workspace_slug=workspace_slug, property_id=property_id)
             return cast(Dict[str, Any], self._model_to_dict(prop))
         except HttpError as e:
-            log.error(f"Failed to retrieve customer property: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve customer property: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve customer property: {str(e)}")
@@ -3246,7 +3246,7 @@ class PlaneSDKAdapter:
             prop = self.client.customers.properties.update(workspace_slug=workspace_slug, property_id=property_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(prop))
         except HttpError as e:
-            log.error(f"Failed to update customer property: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update customer property: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update customer property: {str(e)}")
@@ -3258,7 +3258,7 @@ class PlaneSDKAdapter:
             self.client.customers.properties.delete(workspace_slug=workspace_slug, property_id=property_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete customer property: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete customer property: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete customer property: {str(e)}")
@@ -3278,7 +3278,7 @@ class PlaneSDKAdapter:
             result["customer_id"] = customer_id
             return result
         except HttpError as e:
-            log.error(f"Failed to create customer request: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to create customer request: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to create customer request: {str(e)}")
@@ -3308,7 +3308,7 @@ class PlaneSDKAdapter:
                 "count": len(results),
             }
         except HttpError as e:
-            log.error(f"Failed to list customer requests: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to list customer requests: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to list customer requests: {str(e)}")
@@ -3323,7 +3323,7 @@ class PlaneSDKAdapter:
             result["customer_id"] = customer_id
             return result
         except HttpError as e:
-            log.error(f"Failed to retrieve customer request: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to retrieve customer request: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to retrieve customer request: {str(e)}")
@@ -3344,7 +3344,7 @@ class PlaneSDKAdapter:
             result["customer_id"] = customer_id
             return result
         except HttpError as e:
-            log.error(f"Failed to update customer request: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to update customer request: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to update customer request: {str(e)}")
@@ -3356,7 +3356,7 @@ class PlaneSDKAdapter:
             self.client.customers.requests.delete(workspace_slug=workspace_slug, customer_id=customer_id, request_id=request_id)
             return {"success": True}
         except HttpError as e:
-            log.error(f"Failed to delete customer request: {e} ({getattr(e, "status_code", None)})")
+            log.error(f"Failed to delete customer request: {e} ({getattr(e, 'status_code', None)})")
             raise
         except Exception as e:
             log.error(f"Failed to delete customer request: {str(e)}")

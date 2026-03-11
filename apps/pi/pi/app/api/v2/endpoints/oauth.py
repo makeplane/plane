@@ -125,7 +125,7 @@ async def initiate_oauth(
     )
     await oauth_service.save_oauth_state(db, state, user_id, workspace_id, workspace_slug)
 
-    log.info(f"Initiating OAuth for user {user_id}, workspace {workspace_id or "none"}")
+    log.info(f"Initiating OAuth for user {user_id}, workspace {workspace_id or 'none'}")
 
     # Redirect browser to OAuth provider
     return RedirectResponse(url=auth_url, status_code=302)

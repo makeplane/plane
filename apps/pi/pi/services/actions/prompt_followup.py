@@ -374,11 +374,11 @@ class ArtifactFollowupService:
         """Format context for LLM prompt."""
 
         parts = [
-            f"Current artifact JSON:\n{json.dumps(context["current_json"], indent=2)}",
-            f"\nUser request: {context["user_query"]}",
-            f"\nEntity type: {context["entity_type"]}",
+            f"Current artifact JSON:\n{json.dumps(context['current_json'], indent=2)}",
+            f"\nUser request: {context['user_query']}",
+            f"\nEntity type: {context['entity_type']}",
             f"\nToday's date: {date.today().isoformat()}",
-            f"\nWorkspace: {context["workspace_slug"]}",
+            f"\nWorkspace: {context['workspace_slug']}",
         ]
 
         # Add current user context for "me" references
@@ -387,13 +387,13 @@ class ArtifactFollowupService:
             entity_config = ENTITY_FIELD_CONFIG.get(entity_type, {})
             user_field = entity_config.get("user_assignment_field", "assignee_ids")
 
-            parts.append(f"\nCurrent user ID: {context["user_id"]}")
-            parts.append(f"**CRITICAL**: When user says 'me', 'add me', 'assign me', 'assign it to me', use this user ID: {context["user_id"]}")
-            parts.append(f"For self-assignment: add '{context["user_id"]}' to {user_field} field")
-            parts.append(f"User assignment field for {context.get("entity_type", "entity")}: {user_field}")
+            parts.append(f"\nCurrent user ID: {context['user_id']}")
+            parts.append(f"**CRITICAL**: When user says 'me', 'add me', 'assign me', 'assign it to me', use this user ID: {context['user_id']}")
+            parts.append(f"For self-assignment: add '{context['user_id']}' to {user_field} field")
+            parts.append(f"User assignment field for {context.get('entity_type', 'entity')}: {user_field}")
             parts.append(
                 f"**MANDATORY**: If query contains 'assign it to me' or similar, "
-                f"your JSON MUST include: {{\"{user_field}\": [\"{context["user_id"]}\"]}}"
+                f'your JSON MUST include: {{"{user_field}": ["{context["user_id"]}"]}}'
             )
             parts.append(
                 f"**WARNING**: In mixed queries, do NOT skip self-assignment - always include {user_field} with current user ID when requested"
@@ -405,11 +405,11 @@ class ArtifactFollowupService:
         if entity_config:
             direct_fields = entity_config.get("direct_fields", [])
             relation_fields = entity_config.get("relation_fields", [])
-            parts.append(f"\nDirect modification fields: {", ".join(direct_fields)}")
-            parts.append(f"Relation fields (need entity resolution): {", ".join(relation_fields)}")
+            parts.append(f"\nDirect modification fields: {', '.join(direct_fields)}")
+            parts.append(f"Relation fields (need entity resolution): {', '.join(relation_fields)}")
 
         if context.get("project_id"):
-            parts.append(f"Project ID: {context["project_id"]}")
+            parts.append(f"Project ID: {context['project_id']}")
 
         if context.get("previous_queries"):
             prev_queries = "\n".join([f"- {q}" for q in context["previous_queries"]])

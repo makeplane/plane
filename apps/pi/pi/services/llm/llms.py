@@ -196,7 +196,7 @@ class TrackedLLM(Runnable):
 
         async for chunk in self._llm.astream(input, config, **(kwargs or {})):
             if not chunk:  # covers None or falsy chunks
-                log.warning(f"{chat_prefix}TrackedLLM[{self._model_key}]: Received an empty chunk " f"for input={getattr(input, "messages", input)}")
+                log.warning(f"{chat_prefix}TrackedLLM[{self._model_key}]: Received an empty chunk for input={getattr(input, 'messages', input)}")
             else:
                 if first_chunk_time is None:
                     first_chunk_time = time.time()
@@ -206,9 +206,7 @@ class TrackedLLM(Runnable):
                 yield chunk
 
         if not chunks:
-            log.error(
-                f"{chat_prefix}TrackedLLM[{self._model_key}]: Stream completed with no chunks " f"for input={getattr(input, "messages", input)}"
-            )
+            log.error(f"{chat_prefix}TrackedLLM[{self._model_key}]: Stream completed with no chunks for input={getattr(input, 'messages', input)}")
 
         elapsed = time.time() - start_time
         log.info(f"{chat_prefix}LLM[{self._model_key}] astream total took {elapsed:.2f}s{step_suffix}")

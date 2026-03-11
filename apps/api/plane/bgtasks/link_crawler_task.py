@@ -218,9 +218,7 @@ def link_crawler(id: str, url: str, entity: str) -> None:
     """
     validated = LinkCrawlerInput(id=id, url=url, entity=entity)
 
-    model_class, field_name = _get_model_and_field(
-        LinkCrawlerEntity(validated.entity)
-    )
+    model_class, field_name = _get_model_and_field(LinkCrawlerEntity(validated.entity))
     meta_data = crawl_link_metadata(validated.url)
 
     instance = model_class.objects.get(id=validated.id)

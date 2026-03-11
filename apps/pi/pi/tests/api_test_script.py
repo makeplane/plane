@@ -190,7 +190,7 @@ class PlaneAPITester:
         test_cases = [
             "Create a cycle 'second cycle' in Solo project with today as start and two weeks from now as end",
             # Project operations
-            f"Create a project called 'API Test Project {datetime.now().strftime("%H%M%S")}' with identifier 'ATP{datetime.now().strftime("%H%M%S")}'",  # noqa: E501
+            f"Create a project called 'API Test Project {datetime.now().strftime('%H%M%S')}' with identifier 'ATP{datetime.now().strftime('%H%M%S')}'",  # noqa: E501
             "List all projects in the workspace",
             # Work item operations
             f"Create a work item called 'API Test Work Item {uuid.uuid4().hex[:8]}' with high priority",  # noqa: E501
@@ -221,11 +221,11 @@ class PlaneAPITester:
                             if exec_result.get("result"):
                                 res = exec_result["result"]
                                 if isinstance(res, dict) and "id" in res:
-                                    print(f"    🆔 Created resource ID: {res["id"]}")
+                                    print(f"    🆔 Created resource ID: {res['id']}")
                         else:
-                            print(f"    ⚠️ Action failed: {exec_result.get("error", "Unknown error")}")
+                            print(f"    ⚠️ Action failed: {exec_result.get('error', 'Unknown error')}")
                 else:
-                    print(f"  ❌ FAILED: {result.get("error", "Unknown error")}")
+                    print(f"  ❌ FAILED: {result.get('error', 'Unknown error')}")
 
                 results.append({"test_case": test_case, "status": "SUCCESS" if result.get("success") else "FAILED", "result": result})
 
@@ -252,7 +252,7 @@ class PlaneAPITester:
         print(f"Success Rate: {(successful / len(results) * 100):.1f}%")
 
         # Save detailed results
-        with open(f'pi/tests/api_test_results_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json', "w") as f:
+        with open(f"pi/tests/api_test_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json", "w") as f:
             json.dump(results, f, indent=2, default=str)
 
         print("\n📁 Detailed results saved to pi/tests/api_test_results_*.json")

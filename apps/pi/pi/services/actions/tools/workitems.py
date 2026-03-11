@@ -456,7 +456,7 @@ async def _workitems_post_handler(
                     if identifier_info:
                         data["project_identifier"] = identifier_info.get("project_identifier")
                         data["sequence_id"] = identifier_info.get("sequence_id")
-                        log.info(f"Enriched workitem data with identifier info: {identifier_info.get("identifier")}")
+                        log.info(f"Enriched workitem data with identifier info: {identifier_info.get('identifier')}")
                 except Exception as e:
                     log.warning(f"Could not enrich workitem data with identifier info: {e}")
 
@@ -491,11 +491,11 @@ async def _workitems_post_handler(
 
                                         # Construct URL using the identifier (PROJECT-123 format)
                                         if workspace_slug and identifier_info.get("identifier"):
-                                            item["url"] = f"{frontend_url}/{workspace_slug}/browse/{identifier_info["identifier"]}/"
+                                            item["url"] = f"{frontend_url}/{workspace_slug}/browse/{identifier_info['identifier']}/"
 
-                                        log.debug(f"Enriched workitem {item["id"]} with identifier: {identifier_info.get("identifier")}")
+                                        log.debug(f"Enriched workitem {item['id']} with identifier: {identifier_info.get('identifier')}")
                                 except Exception as e:
-                                    log.warning(f"Could not enrich workitem {item.get("id")} with identifier info: {e}")
+                                    log.warning(f"Could not enrich workitem {item.get('id')} with identifier info: {e}")
 
                         log.info(f"Enriched {len(results)} workitems with identifiers and URLs")
                     except Exception as e:

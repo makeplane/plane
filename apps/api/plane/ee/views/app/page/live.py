@@ -82,11 +82,7 @@ class PagesLiveServerDescriptionViewSet(BaseViewSet):
     permission_classes = [AllowAny]
 
     def retrieve(self, request, page_id):
-        page = (
-            Page.objects.filter(pk=page_id)
-            .only("description_binary")
-            .first()
-        )
+        page = Page.objects.filter(pk=page_id).only("description_binary").first()
         if page is None:
             return Response({"error": "Page not found"}, status=404)
         binary_data = page.description_binary

@@ -124,9 +124,9 @@ class StandardAgentResponse:
             if entity_urls:
                 url_info = "\n\n**Entity URLs Available:**\n"
                 for url in entity_urls:
-                    url_info += f"- {url.get("type", "").title()}: {url.get("name")} - URL: {url.get("url")}\n"
+                    url_info += f"- {url.get('type', '').title()}: {url.get('name')} - URL: {url.get('url')}\n"
                     if url.get("type") == "issue":
-                        url_info += f"Issue Unique Key: {url.get("issue_identifier")}\n"
+                        url_info += f"Issue Unique Key: {url.get('issue_identifier')}\n"
             formatted_response = response.get("results", "") + url_info
             return formatted_response
         return str(response)
@@ -167,10 +167,10 @@ class StandardAgentResponse:
             url_info = "\n\n**Entity URLs Available:**\n"
             for url in extracted_urls:
                 if url.get("name") and url.get("url"):
-                    url_info += f"- {url.get("type", "").title()}: {url.get("name")} - URL: {url.get("url")}\n"
+                    url_info += f"- {url.get('type', '').title()}: {url.get('name')} - URL: {url.get('url')}\n"
                     # check if type is 'issue' in the extracted_urls. if yes, then add issue_identifier to url_info string
                     if url.get("type") == "issue":
-                        url_info += f"Issue Unique Key: {url.get("issue_identifier")}\n"
+                        url_info += f"Issue Unique Key: {url.get('issue_identifier')}\n"
             formatted_responses_str += url_info
 
         # Mark if responses contain errors (used by caller to skip LLM rewriting)
@@ -320,7 +320,7 @@ async def process_conv_history(conv_history: list[dict[str, Any]], db: AsyncSess
         attachment_info = ""
         if attachments:
             filenames = [att.get("filename", "Unknown") for att in attachments]
-            attachment_info = f" [Attachments: {", ".join(filenames)}]"
+            attachment_info = f" [Attachments: {', '.join(filenames)}]"
 
         # Extract and include action context if available
         action_context = ""
@@ -367,7 +367,7 @@ async def process_conv_history(conv_history: list[dict[str, Any]], db: AsyncSess
         if skip_in_enhanced:
             continue
 
-        conv_history_enhanced += f"{"=" * 60}\n"
+        conv_history_enhanced += f"{'=' * 60}\n"
 
         # Add user query first
         conv_history_enhanced += f"User Query{attachment_info}: {user_content}\n\n"
@@ -386,7 +386,7 @@ async def process_conv_history(conv_history: list[dict[str, Any]], db: AsyncSess
                 conv_history_enhanced += f"{internal_selected}\n"
 
             # Then the assistant's planned message
-            conv_history_enhanced += f"Plane AI (formerly, Plane Intelligence (Pi)) Response: {qa_pair.get("answer", "")}\n"
+            conv_history_enhanced += f"Plane AI (formerly, Plane Intelligence (Pi)) Response: {qa_pair.get('answer', '')}\n"
 
             # Finally, the executed summaries with entity info
             if internal_executed:
@@ -395,13 +395,13 @@ async def process_conv_history(conv_history: list[dict[str, Any]], db: AsyncSess
             # Retrieval-only or no split sections available → keep original order
             if internal_reasoning:
                 conv_history_enhanced += f"{internal_reasoning}\n"
-            conv_history_enhanced += f"Plane AI (formerly, Plane Intelligence (Pi)) Response: {qa_pair.get("answer", "")}\n"
+            conv_history_enhanced += f"Plane AI (formerly, Plane Intelligence (Pi)) Response: {qa_pair.get('answer', '')}\n"
 
         # Add action context if present
         if action_context:
             conv_history_enhanced += f"{action_context}\n"
 
-        conv_history_enhanced += f"{"=" * 60}\n\n"
+        conv_history_enhanced += f"{'=' * 60}\n\n"
 
     return {"langchain_conv_history": conv_history_lc, "enhanced_conv_history": conv_history_enhanced}
 

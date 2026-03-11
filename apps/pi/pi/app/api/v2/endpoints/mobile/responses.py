@@ -266,11 +266,11 @@ async def create_response(
                                     # Check if dict already has proper reasoning structure to avoid double-wrapping
                                     if "reasoning" in chunk and isinstance(chunk.get("reasoning"), str):
                                         # Already has {"reasoning": "text"} structure, send directly
-                                        bwc_chunk = f"{chunk["header"]}{chunk["content"]}"
+                                        bwc_chunk = f"{chunk['header']}{chunk['content']}"
                                         yield f"event: reasoning\ndata: {bwc_chunk}\n\n"
                                     else:
                                         # Till the mobile team updates the app to support json format, we need to yield the chunk as a string
-                                        bwc_payload = f"{chunk["header"]}{chunk["content"]}"
+                                        bwc_payload = f"{chunk['header']}{chunk['content']}"
                                         # payload = {'header': chunk.get('header', ''), 'content': chunk.get('content', '')}
                                         # yield f"event: reasoning\ndata: {json.dumps(payload)}\n\n"
                                         yield f"event: reasoning\ndata: {bwc_payload}\n\n"
@@ -278,7 +278,7 @@ async def create_response(
                                     # Check if dict already has proper chunk structure to avoid double-wrapping
                                     if "chunk" in chunk and isinstance(chunk.get("chunk"), str):
                                         # Already has {"chunk": "text"} structure, send directly
-                                        yield f"event: delta\ndata: {chunk["chunk"]}\n\n"
+                                        yield f"event: delta\ndata: {chunk['chunk']}\n\n"
                                     else:
                                         # Wrap the dict in chunk envelope
                                         payload: Dict[str, Any] = {"chunk": chunk}

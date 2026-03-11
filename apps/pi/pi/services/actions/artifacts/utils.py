@@ -705,7 +705,7 @@ async def prepare_edited_cycle_artifact_data(artifact_data: dict) -> dict:
         project_obj = clean_data.pop("project")
         if "id" in project_obj:
             clean_data["project_id"] = str(project_obj["id"])
-            log.info(f"Converted project object to project_id: {clean_data["project_id"]}")
+            log.info(f"Converted project object to project_id: {clean_data['project_id']}")
 
     # Add properties if any
     if properties:

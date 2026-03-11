@@ -49,24 +49,24 @@ async def quick_test_key_actions():
         print("1️⃣ Testing get_current_user...")
         user = executor.sdk_adapter.get_current_user()
         user_id = user.get("id")
-        print(f"   ✅ User: {user.get("display_name")} ({user_id})")
+        print(f"   ✅ User: {user.get('display_name')} ({user_id})")
 
         # Test 2: List projects
         print("\n2️⃣ Testing list_projects...")
         projects = executor.sdk_adapter.list_projects(workspace_slug=WORKSPACE_SLUG, per_page=3)
-        print(f"   ✅ Found {len(projects.get("results", []))} projects")
+        print(f"   ✅ Found {len(projects.get('results', []))} projects")
 
         # Get a project ID for further tests
         project_id = None
         if projects.get("results"):
             project_id = projects["results"][0]["id"]
-            print(f"   📝 Using project: {projects["results"][0]["name"]} ({project_id})")
+            print(f"   📝 Using project: {projects['results'][0]['name']} ({project_id})")
 
         if not project_id:
             # Test 3: Create project
             print("\n3️⃣ Testing create_project...")
-            project_name = f"Quick Test {datetime.now().strftime("%H%M%S")}"
-            project_identifier = f"QT{datetime.now().strftime("%H%M%S")}"
+            project_name = f"Quick Test {datetime.now().strftime('%H%M%S')}"
+            project_identifier = f"QT{datetime.now().strftime('%H%M%S')}"
 
             project = executor.sdk_adapter.create_project(
                 workspace_slug=WORKSPACE_SLUG, name=project_name, identifier=project_identifier, description="Quick test project"
@@ -88,7 +88,7 @@ async def quick_test_key_actions():
             priority="medium",
         )
         work_item_id = work_item.get("id")
-        print(f"   ✅ Created work item: {work_item.get("name")} ({work_item_id})")
+        print(f"   ✅ Created work item: {work_item.get('name')} ({work_item_id})")
 
         # Test 5: Create cycle (simple)
         print("\n5️⃣ Testing create_cycle (simple)...")
@@ -100,7 +100,7 @@ async def quick_test_key_actions():
             user_id=user_id,
         )
         cycle_id = cycle.get("id")
-        print(f"   ✅ Created cycle: {cycle.get("name")} ({cycle_id})")
+        print(f"   ✅ Created cycle: {cycle.get('name')} ({cycle_id})")
 
         # Test 5b: Create cycle with dates (should reproduce the issue)
         print("\n5️⃣b Testing create_cycle with dates...")
@@ -115,14 +115,14 @@ async def quick_test_key_actions():
                 user_id=user_id,
             )
             cycle_with_dates_id = cycle_with_dates.get("id")
-            print(f"   ✅ Created cycle with dates: {cycle_with_dates.get("name")} ({cycle_with_dates_id})")
+            print(f"   ✅ Created cycle with dates: {cycle_with_dates.get('name')} ({cycle_with_dates_id})")
         except Exception as e:
             print(f"   ❌ Cycle with dates failed: {e}")
 
         # Test 6: List cycles
         print("\n6️⃣ Testing list_cycles...")
         cycles = executor.sdk_adapter.list_cycles(workspace_slug=WORKSPACE_SLUG, project_id=project_id, per_page=5)
-        print(f"   ✅ Found {len(cycles.get("results", []))} cycles")
+        print(f"   ✅ Found {len(cycles.get('results', []))} cycles")
 
         # Test 7: Create label
         print("\n7️⃣ Testing create_label...")
@@ -146,7 +146,7 @@ async def quick_test_key_actions():
         updated_item = executor.sdk_adapter.update_work_item(
             workspace_slug=WORKSPACE_SLUG, project_id=project_id, issue_id=work_item_id, description_html="<p>Updated by quick test automation</p>"
         )
-        print(f"   ✅ Updated work item: {updated_item.get("name")}")
+        print(f"   ✅ Updated work item: {updated_item.get('name')}")
 
         print("\n🎉 All tests passed! Key actions are working correctly.")
         print("📊 Test Summary:")

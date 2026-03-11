@@ -51,7 +51,7 @@ async def _activity_pre_handler(
             work_item = await get_issue_identifier_for_artifact(issue_id)
             if work_item and work_item.get("project_id"):
                 kwargs["project_id"] = work_item["project_id"]
-                log.debug(f"Auto-filled project_id={kwargs["project_id"]} from work item lookup")
+                log.debug(f"Auto-filled project_id={kwargs['project_id']} from work item lookup")
             else:
                 log.warning(f"Could not find project_id for issue_id={issue_id}")
         except Exception as e:

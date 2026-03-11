@@ -406,10 +406,10 @@ Provide concise, relevant context from the attachment(s):"""
                         intermediate_results["urls"] = entity_urls
                         query_flow_store["tool_response"] += f"Entity URLs: {len(entity_urls)} URLs constructed\n"
                         for url_info in entity_urls:
-                            query_flow_store["tool_response"] += f"  - {url_info["type"]}: {url_info["name"]} - URL: {url_info["url"]}\n"
+                            query_flow_store["tool_response"] += f"  - {url_info['type']}: {url_info['name']} - URL: {url_info['url']}\n"
 
         except Exception as e:
-            log.error(f"Error extracting entity IDs for chat {chat_id or "unknown chat_id"}: {e}")
+            log.error(f"Error extracting entity IDs for chat {chat_id or 'unknown chat_id'}: {e}")
 
         return entity_urls
 
@@ -634,32 +634,32 @@ Provide concise, relevant context from the attachment(s):"""
                     # Explicit handling based on known types first
                     if opt.get("email") and opt.get("id"):
                         # User-like entity by presence of email
-                        opt2["url"] = f"{base_url}/{ws_slug}/profile/{opt.get("id")}/"
+                        opt2["url"] = f"{base_url}/{ws_slug}/profile/{opt.get('id')}/"
                         opt2["type"] = opt_type or "user"
                     elif opt_type == "user" and opt.get("id"):
-                        opt2["url"] = f"{base_url}/{ws_slug}/profile/{opt.get("id")}/"
+                        opt2["url"] = f"{base_url}/{ws_slug}/profile/{opt.get('id')}/"
                         opt2["type"] = "user"
                     elif opt_type == "project" and opt.get("id"):
                         # Project overview URL
-                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get("id")}/overview/"
+                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get('id')}/overview/"
                         opt2["type"] = "project"
                     elif opt_type == "cycle" and opt.get("id") and opt.get("project_id"):
                         # Cycle URL requires project_id
-                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get("project_id")}/cycles/{opt.get("id")}/"
+                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get('project_id')}/cycles/{opt.get('id')}/"
                         opt2["type"] = "cycle"
                     elif opt_type == "module" and opt.get("id") and opt.get("project_id"):
                         # Module URL requires project_id
-                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get("project_id")}/modules/{opt.get("id")}/"
+                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get('project_id')}/modules/{opt.get('id')}/"
                         opt2["type"] = "module"
                     elif (opt_type == "workitem" and opt.get("identifier")) or (
                         not opt_type and opt.get("identifier") and "-" in str(opt.get("identifier"))
                     ):
                         # Work-item browse URL when identifier is of the form PROJ-SEQ
-                        opt2["url"] = f"{base_url}/{ws_slug}/browse/{opt.get("identifier")}/"
+                        opt2["url"] = f"{base_url}/{ws_slug}/browse/{opt.get('identifier')}/"
                         opt2["type"] = "workitem"
                     elif opt.get("id") and (opt2.get("type") != "scope"):
                         # Fallback: if we have an id but no stronger signal, assume project overview
-                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get("id")}/overview/"
+                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get('id')}/overview/"
                         opt2["type"] = opt_type or "project"
                 enhanced_options.append(opt2)
 
@@ -837,8 +837,8 @@ Provide concise, relevant context from the attachment(s):"""
                 try:
                     _s = data.get("summary") or {}
                     log.info(
-                        f"ChatID: {chat_id} - fetch_cycle_details: summary totals: total={_s.get("total_issues")}, "
-                        f"completed={_s.get("completed_issues")}, open={_s.get("open_issues")}"
+                        f"ChatID: {chat_id} - fetch_cycle_details: summary totals: total={_s.get('total_issues')}, "
+                        f"completed={_s.get('completed_issues')}, open={_s.get('open_issues')}"
                     )
                 except Exception:
                     pass
@@ -882,7 +882,7 @@ Provide concise, relevant context from the attachment(s):"""
                 if "issues" in facets:
                     data["issues"] = await list_cycle_issues_filtered(cycle_id=cycle_id, filters=filters, limit=limit or 50, offset=offset or 0)
                     log.info(
-                        f"ChatID: {chat_id} - fetch_cycle_details: Retrieved {len(data.get("issues", []))} issues "
+                        f"ChatID: {chat_id} - fetch_cycle_details: Retrieved {len(data.get('issues', []))} issues "
                         f"with filters={filters}, limit={limit or 50}"
                     )
 
@@ -899,12 +899,12 @@ Provide concise, relevant context from the attachment(s):"""
                 def _format_summary_text(d: Dict[str, Any]) -> str:
                     s = d.get("summary") or {}
                     parts: List[str] = []
-                    parts.append(f"Cycle: {core.get("name")} ({core.get("id")})")
+                    parts.append(f"Cycle: {core.get('name')} ({core.get('id')})")
                     if s:
                         parts.append(
-                            f"Issues: total={s.get("total_issues", 0)}, completed={s.get("completed_issues", 0)}, open={s.get("open_issues", 0)}"
+                            f"Issues: total={s.get('total_issues', 0)}, completed={s.get('completed_issues', 0)}, open={s.get('open_issues', 0)}"
                         )
-                        points = f"Points: total={s.get("total_points", 0)}, completed={s.get("completed_points", 0)}"
+                        points = f"Points: total={s.get('total_points', 0)}, completed={s.get('completed_points', 0)}"
                         parts.append(points)
                     return "\n".join(parts)
 
@@ -914,37 +914,37 @@ Provide concise, relevant context from the attachment(s):"""
                     if br.get("by_state"):
                         lines.append("State breakdown:")
                         for row in br["by_state"]:
-                            lines.append(f"- {row.get("state_group")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)")
+                            lines.append(f"- {row.get('state_group')}: {row.get('issues', 0)} issues ({row.get('points', 0)} pts)")
                     if br.get("by_priority"):
                         lines.append("Priority breakdown:")
                         for row in br["by_priority"]:
-                            lines.append(f"- {row.get("priority")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)")
+                            lines.append(f"- {row.get('priority')}: {row.get('issues', 0)} issues ({row.get('points', 0)} pts)")
                     if br.get("by_assignee"):
                         lines.append("Assignee breakdown:")
                         for row in br["by_assignee"]:
                             lines.append(
-                                f"- {row.get("assignee_name") or row.get("assignee_id")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)"
+                                f"- {row.get('assignee_name') or row.get('assignee_id')}: {row.get('issues', 0)} issues ({row.get('points', 0)} pts)"
                             )
                     if br.get("by_label"):
                         lines.append("Label breakdown:")
                         for row in br["by_label"]:
                             lines.append(
-                                f"- {row.get("label_name") or row.get("label_id")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)"
+                                f"- {row.get('label_name') or row.get('label_id')}: {row.get('issues', 0)} issues ({row.get('points', 0)} pts)"
                             )
                     if br.get("by_type"):
                         lines.append("Type breakdown:")
                         for row in br["by_type"]:
                             lines.append(
-                                f"- {row.get("type_name") or row.get("type_id")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)"
+                                f"- {row.get('type_name') or row.get('type_id')}: {row.get('issues', 0)} issues ({row.get('points', 0)} pts)"
                             )
                     # Include scope change metrics if present
                     scope = d.get("scope_change")
                     if scope:
                         lines.append("Scope change:")
-                        lines.append(f"- Baseline (at start): {scope.get("baseline_issues", 0)} issues")
-                        lines.append(f"- Added during cycle: {scope.get("added_during_cycle", 0)} issues")
-                        lines.append(f"- Removed during cycle: {scope.get("removed_during_cycle", 0)} issues")
-                        lines.append(f"- Net change: {scope.get("net_scope_change", 0)} issues")
+                        lines.append(f"- Baseline (at start): {scope.get('baseline_issues', 0)} issues")
+                        lines.append(f"- Added during cycle: {scope.get('added_during_cycle', 0)} issues")
+                        lines.append(f"- Removed during cycle: {scope.get('removed_during_cycle', 0)} issues")
+                        lines.append(f"- Net change: {scope.get('net_scope_change', 0)} issues")
                     return "\n".join(lines)
 
                 if (detail_level or "summary") == "summary":
@@ -1100,7 +1100,7 @@ Provide concise, relevant context from the attachment(s):"""
                                     "type": "cycle",
                                     "id": str(core.get("id")),
                                     "name": core.get("name", ""),
-                                    "url": f"{api_base_url}/{ws_slug}/projects/{pid}/cycles/{core.get("id")}/",
+                                    "url": f"{api_base_url}/{ws_slug}/projects/{pid}/cycles/{core.get('id')}/",
                                 }
                             ]
                     except Exception as _e:  # noqa: F841
@@ -1752,7 +1752,7 @@ Provide concise, relevant context from the attachment(s):"""
 
                 page_content = (doc.page_content or "").strip()
 
-                formatted_results.append(f"**Page: {page_name}** (ID: {page_id})\n" f"Project: {project_name}\n" f"Content: {page_content}\n")
+                formatted_results.append(f"**Page: {page_name}** (ID: {page_id})\nProject: {project_name}\nContent: {page_content}\n")
 
             elif doc_type == "docs":
                 section = doc.metadata.get("section", "Unknown Section")
@@ -1761,6 +1761,6 @@ Provide concise, relevant context from the attachment(s):"""
 
                 doc_content = doc.page_content.strip()
 
-                formatted_results.append(f"**Doc: {section}/{subsection}** (ID: {doc_id})\n" f"Content: {doc_content}\n")
+                formatted_results.append(f"**Doc: {section}/{subsection}** (ID: {doc_id})\nContent: {doc_content}\n")
 
         return "\n".join(formatted_results)

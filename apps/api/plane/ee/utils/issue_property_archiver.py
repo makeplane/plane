@@ -35,15 +35,13 @@ def _compute_archive_html_blocks(issue_ids, new_type_id, old_type_id=None):
         return {}
 
     # Build the same orphan filter as cleanup_orphaned_for_issues
-    orphan_qs = IssuePropertyValue.objects.filter(
-        issue_id__in=issue_ids
-    ).select_related("property")
+    orphan_qs = IssuePropertyValue.objects.filter(issue_id__in=issue_ids).select_related("property")
 
     if new_type_id:
         valid_property_ids = set(
-            IssueTypeProperty.objects.filter(
-                issue_type_id=new_type_id, deleted_at__isnull=True
-            ).values_list("property_id", flat=True)
+            IssueTypeProperty.objects.filter(issue_type_id=new_type_id, deleted_at__isnull=True).values_list(
+                "property_id", flat=True
+            )
         )
         orphan_qs = orphan_qs.exclude(property_id__in=valid_property_ids)
 
@@ -78,17 +76,13 @@ def _compute_archive_html_blocks(issue_ids, new_type_id, old_type_id=None):
     # Batch-resolve display values
     option_names = {}
     if option_ids:
-        option_names = dict(
-            IssuePropertyOption.objects.filter(id__in=option_ids).values_list(
-                "id", "name"
-            )
-        )
+        option_names = dict(IssuePropertyOption.objects.filter(id__in=option_ids).values_list("id", "name"))
 
     issue_identifiers = {}
     if relation_issue_ids:
-        related_issues = Issue.objects.filter(
-            id__in=relation_issue_ids
-        ).values_list("id", "project__identifier", "sequence_id")
+        related_issues = Issue.objects.filter(id__in=relation_issue_ids).values_list(
+            "id", "project__identifier", "sequence_id"
+        )
         for issue_id, proj_identifier, seq_id in related_issues:
             issue_identifiers[issue_id] = f"{proj_identifier}-{seq_id}"
 
@@ -97,9 +91,7 @@ def _compute_archive_html_blocks(issue_ids, new_type_id, old_type_id=None):
         from django.contrib.auth import get_user_model
 
         User = get_user_model()
-        users = User.objects.filter(id__in=relation_user_ids).values_list(
-            "id", "display_name", "email"
-        )
+        users = User.objects.filter(id__in=relation_user_ids).values_list("id", "display_name", "email")
         for uid, display_name, email in users:
             user_display_names[uid] = display_name or email
 
@@ -110,9 +102,7 @@ def _compute_archive_html_blocks(issue_ids, new_type_id, old_type_id=None):
     for val in orphan_values:
         prop = val.property
         property_map[prop.id] = prop
-        display_val = _resolve_display_value(
-            val, prop, option_names, issue_identifiers, user_display_names
-        )
+        display_val = _resolve_display_value(val, prop, option_names, issue_identifiers, user_display_names)
         if display_val is not None:
             grouped[val.issue_id][prop.id].append(display_val)
 
@@ -133,9 +123,7 @@ def compute_archive_html_for_issue(issue_id, new_type_id, old_type_id):
     return blocks.get(issue_id, "")
 
 
-def archive_orphaned_property_values_to_description(
-    issue_ids, new_type_id, old_type_id=None
-):
+def archive_orphaned_property_values_to_description(issue_ids, new_type_id, old_type_id=None):
     """
     Archive orphaned property values into issue descriptions before they are deleted.
 
@@ -158,9 +146,7 @@ def archive_orphaned_property_values_to_description(
         return
 
     # Fetch issues that need description updates
-    issues_to_update = Issue.objects.filter(id__in=blocks.keys()).only(
-        "id", "description_html"
-    )
+    issues_to_update = Issue.objects.filter(id__in=blocks.keys()).only("id", "description_html")
 
     updated_issues = []
     for issue in issues_to_update:
@@ -179,14 +165,10 @@ def archive_orphaned_property_values_to_description(
         updated_issues.append(issue)
 
     if updated_issues:
-        Issue.objects.bulk_update(
-            updated_issues, ["description_html", "description_stripped"]
-        )
+        Issue.objects.bulk_update(updated_issues, ["description_html", "description_stripped"])
 
 
-def _resolve_display_value(
-    val, prop, option_names, issue_identifiers, user_display_names
-):
+def _resolve_display_value(val, prop, option_names, issue_identifiers, user_display_names):
     """Resolve a single IssuePropertyValue to a human-readable string."""
     from plane.ee.models.issue_properties import PropertyTypeEnum, RelationTypeEnum
 
@@ -242,9 +224,7 @@ def _build_archive_html(props_for_issue, property_map, old_type_name):
 
     li_items = []
     # Sort by property sort_order for consistent ordering
-    for prop_id in sorted(
-        props_for_issue.keys(), key=lambda pid: property_map[pid].sort_order
-    ):
+    for prop_id in sorted(props_for_issue.keys(), key=lambda pid: property_map[pid].sort_order):
         prop = property_map[prop_id]
         values = props_for_issue[prop_id]
         display_name = html.escape(prop.display_name)
@@ -255,7 +235,4 @@ def _build_archive_html(props_for_issue, property_map, old_type_name):
         return ""
 
     items_html = "".join(li_items)
-    return (
-        f"<hr><blockquote><p><strong>{heading}</strong></p>"
-        f"<ul>{items_html}</ul></blockquote>"
-    )
+    return f"<hr><blockquote><p><strong>{heading}</strong></p><ul>{items_html}</ul></blockquote>"

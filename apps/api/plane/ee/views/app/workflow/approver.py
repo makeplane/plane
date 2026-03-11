@@ -141,16 +141,18 @@ class WorkflowWorkItemApproverEndpoint(BaseAPIView):
         # if no type, fall back to the default workflow
         workflow = None
         if issue.type_id:
-            workflow_work_item_type = WorkflowWorkItemType.objects.filter(
-                project_id=project_id, workspace__slug=slug, work_item_type_id=issue.type_id
-            ).only("workflow_id").first()
+            workflow_work_item_type = (
+                WorkflowWorkItemType.objects.filter(
+                    project_id=project_id, workspace__slug=slug, work_item_type_id=issue.type_id
+                )
+                .only("workflow_id")
+                .first()
+            )
             if workflow_work_item_type:
                 workflow = Workflow.objects.filter(id=workflow_work_item_type.workflow_id).first()
 
         if not workflow:
-            workflow = Workflow.objects.filter(
-                project_id=project_id, workspace__slug=slug, is_default=True
-            ).first()
+            workflow = Workflow.objects.filter(project_id=project_id, workspace__slug=slug, is_default=True).first()
 
         if not workflow:
             return Response(

@@ -17,6 +17,7 @@ from django.conf import settings
 from plane.db.models import BaseModel
 from plane.db.mixins import FiltersMixin
 
+
 def get_default_filters():
     return {
         "priority": None,

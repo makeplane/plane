@@ -32,8 +32,7 @@ def get_amqp_connection_params(retry_delay: float = 1.0, force_refresh: bool = F
         return pika.URLParameters(settings.AMQP_URL)
 
     _has_aws_credentials = bool(
-        os.environ.get("AWS_ROLE_ARN", "")
-        or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
+        os.environ.get("AWS_ROLE_ARN", "") or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
     )
     secret_arn = os.environ.get("AMAZONMQ_SECRET_ARN", "")
 
@@ -43,14 +42,10 @@ def get_amqp_connection_params(retry_delay: float = 1.0, force_refresh: bool = F
         region = os.environ.get("AWS_REGION", "us-east-1")
         secret = get_secret(secret_arn, region, force_refresh=force_refresh)
         user = quote(str(secret.get(os.environ.get("RABBITMQ_USER_KEY"), "")), safe="")
-        password = quote(
-            str(secret.get(os.environ.get("RABBITMQ_PASSWORD_KEY"), "")), safe=""
-        )
+        password = quote(str(secret.get(os.environ.get("RABBITMQ_PASSWORD_KEY"), "")), safe="")
         host = secret.get(os.environ.get("RABBITMQ_HOST_KEY"), "")
         port = secret.get(os.environ.get("RABBITMQ_PORT_KEY"), 5671)
-        vhost = quote(
-            str(secret.get(os.environ.get("RABBITMQ_VHOST_KEY"), "/")), safe=""
-        )
+        vhost = quote(str(secret.get(os.environ.get("RABBITMQ_VHOST_KEY"), "/")), safe="")
         url = f"amqps://{user}:{password}@{host}:{port}/{vhost}"
         return pika.URLParameters(url)
 
@@ -65,9 +60,7 @@ def get_amqp_connection_params(retry_delay: float = 1.0, force_refresh: bool = F
         virtual_host=vhost,
         credentials=pika.PlainCredentials(user, password),
         heartbeat=int(os.environ.get("RABBITMQ_HEARTBEAT", 600)),
-        blocked_connection_timeout=int(
-            os.environ.get("RABBITMQ_BLOCKED_CONNECTION_TIMEOUT", 300)
-        ),
+        blocked_connection_timeout=int(os.environ.get("RABBITMQ_BLOCKED_CONNECTION_TIMEOUT", 300)),
         connection_attempts=int(os.environ.get("RABBITMQ_CONNECTION_ATTEMPTS", 3)),
         retry_delay=retry_delay,
     )

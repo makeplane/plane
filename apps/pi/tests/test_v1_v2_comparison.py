@@ -39,6 +39,7 @@ init(autoreset=True)
 
 class TestStatus(Enum):
     """Test result status"""
+
     PASS = "✅ PASS"
     FAIL = "❌ FAIL"
     SKIP = "⏭️  SKIP"
@@ -48,6 +49,7 @@ class TestStatus(Enum):
 @dataclass
 class TestResult:
     """Result of a single endpoint comparison test"""
+
     endpoint_name: str
     v1_url: str
     v2_url: str
@@ -62,6 +64,7 @@ class TestResult:
 @dataclass
 class TestConfig:
     """Configuration for test execution"""
+
     base_url: str = "http://localhost:8002"
     session_token: Optional[str] = None
     workspace_id: Optional[str] = None
@@ -83,7 +86,7 @@ class APITester:
 
         # Set default headers
         if config.session_token:
-            self.session.cookies.set('plane-session-id', config.session_token)
+            self.session.cookies.set("plane-session-id", config.session_token)
 
     def _make_request(
         self,
@@ -150,10 +153,10 @@ class APITester:
 
         # Add common keys to ignore (timestamps, IDs that might differ)
         default_ignore = [
-            'created_at',
-            'updated_at',
-            'timestamp',
-            'request_id',
+            "created_at",
+            "updated_at",
+            "timestamp",
+            "request_id",
         ]
         ignore_keys.extend(default_ignore)
 
@@ -213,13 +216,15 @@ class APITester:
         v2_resp, v2_err = self._make_request("GET", v2_url)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Health Check",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Health Check",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -227,27 +232,31 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="Health Check",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Health Check",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_list_models(self):
         """Test list AI models endpoint"""
         if not self.config.session_token:
-            self._add_result(TestResult(
-                endpoint_name="List AI Models",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="List AI Models",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/chat/get-models/"
@@ -257,13 +266,15 @@ class APITester:
         v2_resp, v2_err = self._make_request("GET", v2_url)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="List AI Models",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="List AI Models",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -271,27 +282,31 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="List AI Models",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="List AI Models",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_get_templates(self):
         """Test get chat templates endpoint"""
         if not self.config.session_token:
-            self._add_result(TestResult(
-                endpoint_name="Get Chat Templates",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Get Chat Templates",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/chat/get-templates/"
@@ -301,13 +316,15 @@ class APITester:
         v2_resp, v2_err = self._make_request("GET", v2_url)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Get Chat Templates",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Get Chat Templates",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -315,27 +332,31 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="Get Chat Templates",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Get Chat Templates",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_create_chat(self):
         """Test create chat endpoint"""
         if not self.config.session_token:
-            self._add_result(TestResult(
-                endpoint_name="Create Chat",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Create Chat",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/chat/initialize-chat/"
@@ -354,73 +375,81 @@ class APITester:
         v2_resp, v2_err = self._make_request("POST", v2_url, json_data=payload)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Create Chat",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Create Chat",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
         v2_data = v2_resp.json() if v2_resp else {}
 
         # Store created chat IDs for cleanup
-        if v1_data.get('chat_id'):
-            self.config.created_resources['v1_chat_id'] = v1_data['chat_id']
-        if v2_data.get('chat_id'):
-            self.config.created_resources['v2_chat_id'] = v2_data['chat_id']
+        if v1_data.get("chat_id"):
+            self.config.created_resources["v1_chat_id"] = v1_data["chat_id"]
+        if v2_data.get("chat_id"):
+            self.config.created_resources["v2_chat_id"] = v2_data["chat_id"]
             # Use V2 chat for subsequent tests
-            self.config.chat_id = v2_data['chat_id']
+            self.config.chat_id = v2_data["chat_id"]
 
         # Compare responses, ignoring chat_id (will be different)
         are_equal, differences = self._compare_responses(
             v1_data,
             v2_data,
-            ignore_keys=['chat_id', 'id'],
+            ignore_keys=["chat_id", "id"],
         )
 
         # Check status codes
         status_ok = v1_resp.status_code == 200 and v2_resp.status_code == 201
 
-        self._add_result(TestResult(
-            endpoint_name="Create Chat",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if (are_equal and status_ok) else TestStatus.FAIL,
-            message=f"V1: {v1_resp.status_code}, V2: {v2_resp.status_code} (expected 200 → 201)",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Create Chat",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if (are_equal and status_ok) else TestStatus.FAIL,
+                message=f"V1: {v1_resp.status_code}, V2: {v2_resp.status_code} (expected 200 → 201)",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_get_chat_history(self):
         """Test get chat history endpoint"""
         if not self.config.session_token or not self.config.chat_id:
-            self._add_result(TestResult(
-                endpoint_name="Get Chat History",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token or chat ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Get Chat History",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token or chat ID provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/chat/get-chat-history/"
         v2_url = f"{self.config.base_url}/api/v2/chats/{self.config.chat_id}"
 
-        v1_resp, v1_err = self._make_request("GET", v1_url, params={'chat_id': self.config.chat_id})
+        v1_resp, v1_err = self._make_request("GET", v1_url, params={"chat_id": self.config.chat_id})
         v2_resp, v2_err = self._make_request("GET", v2_url)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Get Chat History",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Get Chat History",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -428,27 +457,31 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="Get Chat History",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Get Chat History",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_rename_chat(self):
         """Test rename chat endpoint"""
         if not self.config.session_token:
-            self._add_result(TestResult(
-                endpoint_name="Rename Chat",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Rename Chat",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token provided",
+                )
+            )
             return
 
         # Create two chats for this test
@@ -463,17 +496,19 @@ class APITester:
         v2_create_resp, _ = self._make_request("POST", create_url_v2, json_data=payload)
 
         if not v1_create_resp or not v2_create_resp:
-            self._add_result(TestResult(
-                endpoint_name="Rename Chat",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="Could not create test chats",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Rename Chat",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="Could not create test chats",
+                )
+            )
             return
 
-        v1_chat_id = v1_create_resp.json().get('chat_id')
-        v2_chat_id = v2_create_resp.json().get('chat_id')
+        v1_chat_id = v1_create_resp.json().get("chat_id")
+        v2_chat_id = v2_create_resp.json().get("chat_id")
 
         # Test rename
         v1_url = f"{self.config.base_url}/api/v1/chat/rename-chat/"
@@ -484,16 +519,18 @@ class APITester:
         v1_payload = {"chat_id": v1_chat_id, "title": new_title}
         v1_resp, v1_err = self._make_request("POST", v1_url, json_data=v1_payload)
 
-        v2_resp, v2_err = self._make_request("PATCH", v2_url, params={'title': new_title})
+        v2_resp, v2_err = self._make_request("PATCH", v2_url, params={"title": new_title})
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Rename Chat",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Rename Chat",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -502,19 +539,21 @@ class APITester:
         are_equal, differences = self._compare_responses(
             v1_data,
             v2_data,
-            ignore_keys=['chat_id', 'id'],
+            ignore_keys=["chat_id", "id"],
         )
 
-        self._add_result(TestResult(
-            endpoint_name="Rename Chat",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Rename Chat",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
         # Cleanup
         self._make_request("DELETE", f"{self.config.base_url}/api/v2/chats/{v1_chat_id}")
@@ -523,13 +562,15 @@ class APITester:
     def test_favorite_chat(self):
         """Test favorite/unfavorite chat endpoints"""
         if not self.config.session_token:
-            self._add_result(TestResult(
-                endpoint_name="Favorite Chat",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Favorite Chat",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token provided",
+                )
+            )
             return
 
         # Create two chats
@@ -544,17 +585,19 @@ class APITester:
         v2_create_resp, _ = self._make_request("POST", create_url_v2, json_data=payload)
 
         if not v1_create_resp or not v2_create_resp:
-            self._add_result(TestResult(
-                endpoint_name="Favorite Chat",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="Could not create test chats",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Favorite Chat",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="Could not create test chats",
+                )
+            )
             return
 
-        v1_chat_id = v1_create_resp.json().get('chat_id')
-        v2_chat_id = v2_create_resp.json().get('chat_id')
+        v1_chat_id = v1_create_resp.json().get("chat_id")
+        v2_chat_id = v2_create_resp.json().get("chat_id")
 
         # Test favorite
         v1_url = f"{self.config.base_url}/api/v1/chat/favorite-chat/"
@@ -565,13 +608,15 @@ class APITester:
         v2_resp, v2_err = self._make_request("POST", v2_url)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Favorite Chat",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Favorite Chat",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -580,19 +625,21 @@ class APITester:
         are_equal, differences = self._compare_responses(
             v1_data,
             v2_data,
-            ignore_keys=['chat_id', 'id'],
+            ignore_keys=["chat_id", "id"],
         )
 
-        self._add_result(TestResult(
-            endpoint_name="Favorite Chat",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Favorite Chat",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
         # Cleanup
         self._make_request("DELETE", f"{self.config.base_url}/api/v2/chats/{v1_chat_id}")
@@ -601,31 +648,35 @@ class APITester:
     def test_list_conversations(self):
         """Test list conversations endpoint"""
         if not self.config.session_token or not self.config.workspace_id:
-            self._add_result(TestResult(
-                endpoint_name="List Conversations",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token or workspace ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="List Conversations",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token or workspace ID provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/chat/get-recent-user-threads/"
         v2_url = f"{self.config.base_url}/api/v2/conversations/"
 
-        params = {'workspace_id': self.config.workspace_id}
+        params = {"workspace_id": self.config.workspace_id}
 
         v1_resp, v1_err = self._make_request("GET", v1_url, params=params)
         v2_resp, v2_err = self._make_request("GET", v2_url, params=params)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="List Conversations",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="List Conversations",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -633,27 +684,31 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="List Conversations",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="List Conversations",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_delete_chat(self):
         """Test delete chat endpoint"""
         if not self.config.session_token:
-            self._add_result(TestResult(
-                endpoint_name="Delete Chat",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Delete Chat",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token provided",
+                )
+            )
             return
 
         # Create two chats to delete
@@ -668,17 +723,19 @@ class APITester:
         v2_create_resp, _ = self._make_request("POST", create_url_v2, json_data=payload)
 
         if not v1_create_resp or not v2_create_resp:
-            self._add_result(TestResult(
-                endpoint_name="Delete Chat",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="Could not create test chats",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Delete Chat",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="Could not create test chats",
+                )
+            )
             return
 
-        v1_chat_id = v1_create_resp.json().get('chat_id')
-        v2_chat_id = v2_create_resp.json().get('chat_id')
+        v1_chat_id = v1_create_resp.json().get("chat_id")
+        v2_chat_id = v2_create_resp.json().get("chat_id")
 
         # Test delete
         v1_url = f"{self.config.base_url}/api/v1/chat/delete-chat/"
@@ -688,40 +745,46 @@ class APITester:
         v1_resp, v1_err = self._make_request("DELETE", v1_url, json_data=v1_payload)
         v2_resp, v2_err = self._make_request("DELETE", v2_url)
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Delete Chat",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Delete Chat",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
         v2_data = v2_resp.json() if v2_resp else {}
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="Delete Chat",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Delete Chat",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_unfavorite_chat(self):
         """Test unfavorite chat endpoint"""
         if not self.config.session_token:
-            self._add_result(TestResult(
-                endpoint_name="Unfavorite Chat",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Unfavorite Chat",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token provided",
+                )
+            )
             return
 
         # Create and favorite a chat first
@@ -739,13 +802,15 @@ class APITester:
         v2_create_resp, _ = self._make_request("POST", v2_create_url, json_data=create_payload)
 
         if not v1_create_resp or not v2_create_resp:
-            self._add_result(TestResult(
-                endpoint_name="Unfavorite Chat",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="Could not create test chats",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Unfavorite Chat",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="Could not create test chats",
+                )
+            )
             return
 
         v1_chat_id = v1_create_resp.json().get("chat_id")
@@ -766,18 +831,19 @@ class APITester:
         v2_resp, v2_err = self._make_request("DELETE", v2_url)
 
         # Cleanup
-        self._make_request("DELETE", f"{self.config.base_url}/api/v1/chat/delete-chat/",
-                          json_data={"chat_id": v1_chat_id})
+        self._make_request("DELETE", f"{self.config.base_url}/api/v1/chat/delete-chat/", json_data={"chat_id": v1_chat_id})
         self._make_request("DELETE", f"{self.config.base_url}/api/v2/chats/{v2_chat_id}")
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Unfavorite Chat",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Unfavorite Chat",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -785,27 +851,31 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="Unfavorite Chat",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Unfavorite Chat",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_list_favorite_chats(self):
         """Test list favorite chats endpoint"""
         if not self.config.session_token:
-            self._add_result(TestResult(
-                endpoint_name="List Favorite Chats",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="List Favorite Chats",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/chat/get-favorite-chats/"
@@ -815,13 +885,15 @@ class APITester:
         v2_resp, v2_err = self._make_request("GET", v2_url)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="List Favorite Chats",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="List Favorite Chats",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -829,27 +901,31 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="List Favorite Chats",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="List Favorite Chats",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_search_chats(self):
         """Test search chats endpoint"""
         if not self.config.session_token or not self.config.workspace_id:
-            self._add_result(TestResult(
-                endpoint_name="Search Chats",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token or workspace ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Search Chats",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token or workspace ID provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/chat/search/"
@@ -862,13 +938,15 @@ class APITester:
         v2_resp, v2_err = self._make_request("GET", v2_url, params=v2_params)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Search Chats",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Search Chats",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -876,27 +954,31 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="Search Chats",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Search Chats",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_paginated_conversations(self):
         """Test paginated conversations endpoint"""
         if not self.config.session_token or not self.config.workspace_id:
-            self._add_result(TestResult(
-                endpoint_name="Paginated Conversations",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token or workspace ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Paginated Conversations",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token or workspace ID provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/chat/get-user-threads/"
@@ -908,13 +990,15 @@ class APITester:
         v2_resp, v2_err = self._make_request("GET", v2_url, params=params)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Paginated Conversations",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Paginated Conversations",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -922,49 +1006,51 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="Paginated Conversations",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Paginated Conversations",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_submit_feedback(self):
         """Test submit feedback endpoint"""
         if not self.config.session_token or not self.config.chat_id:
-            self._add_result(TestResult(
-                endpoint_name="Submit Feedback",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token or chat ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Submit Feedback",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token or chat ID provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/chat/feedback/"
         v2_url = f"{self.config.base_url}/api/v2/feedback/"
 
-        payload = {
-            "chat_id": self.config.chat_id,
-            "message_index": 0,
-            "feedback": {"value": 1}
-        }
+        payload = {"chat_id": self.config.chat_id, "message_index": 0, "feedback": {"value": 1}}
 
         v1_resp, v1_err = self._make_request("POST", v1_url, json_data=payload)
         v2_resp, v2_err = self._make_request("POST", v2_url, json_data=payload)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Submit Feedback",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Submit Feedback",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -972,27 +1058,31 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="Submit Feedback",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Submit Feedback",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_generate_title(self):
         """Test generate title endpoint"""
         if not self.config.session_token or not self.config.chat_id:
-            self._add_result(TestResult(
-                endpoint_name="Generate Title",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token or chat ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Generate Title",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token or chat ID provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/chat/generate-title/"
@@ -1004,13 +1094,15 @@ class APITester:
         v2_resp, v2_err = self._make_request("POST", v2_url, json_data=payload)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Generate Title",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Generate Title",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -1018,50 +1110,51 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="Generate Title",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Generate Title",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_search_duplicate_issues(self):
         """Test search duplicate issues endpoint"""
         if not self.config.session_token or not self.config.workspace_id:
-            self._add_result(TestResult(
-                endpoint_name="Search Duplicate Issues",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token or workspace ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Search Duplicate Issues",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token or workspace ID provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/dupes/issues/"
         v2_url = f"{self.config.base_url}/api/v2/dupes/"
 
-        payload = {
-            "issue_title": "Test bug",
-            "issue_description": "This is a test",
-            "workspace_id": self.config.workspace_id,
-            "top_k": 5
-        }
+        payload = {"issue_title": "Test bug", "issue_description": "This is a test", "workspace_id": self.config.workspace_id, "top_k": 5}
 
         v1_resp, v1_err = self._make_request("POST", v1_url, json_data=payload)
         v2_resp, v2_err = self._make_request("POST", v2_url, json_data=payload)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Search Duplicate Issues",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Search Duplicate Issues",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -1069,27 +1162,31 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="Search Duplicate Issues",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Search Duplicate Issues",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_duplicate_issue_feedback(self):
         """Test duplicate issue feedback endpoint"""
         if not self.config.session_token or not self.config.workspace_id:
-            self._add_result(TestResult(
-                endpoint_name="Duplicate Issue Feedback",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token or workspace ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Duplicate Issue Feedback",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token or workspace ID provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/dupes/issues/feedback/"
@@ -1097,35 +1194,40 @@ class APITester:
 
         try:
             import uuid
+
             payload = {
                 "workspace_id": self.config.workspace_id,
                 "issue_id": str(uuid.uuid4()),  # Test with dummy issue ID
                 "duplicate_issue_id": str(uuid.uuid4()),  # Test with dummy duplicate ID
                 "feedback_type": "helpful",
-                "relevance_score": 0.8
+                "relevance_score": 0.8,
             }
 
             v1_resp, v1_err = self._make_request("POST", v1_url, json_data=payload)
             v2_resp, v2_err = self._make_request("POST", v2_url, json_data=payload)
 
             if v1_err or v2_err:
-                self._add_result(TestResult(
-                    endpoint_name="Duplicate Issue Feedback",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.ERROR,
-                    error=v1_err or v2_err,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Duplicate Issue Feedback",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.ERROR,
+                        error=v1_err or v2_err,
+                    )
+                )
                 return
 
             if not v1_resp or not v2_resp:
-                self._add_result(TestResult(
-                    endpoint_name="Duplicate Issue Feedback",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.ERROR,
-                    error="Missing response from one or both endpoints",
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Duplicate Issue Feedback",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.ERROR,
+                        error="Missing response from one or both endpoints",
+                    )
+                )
                 return
 
             v1_data = v1_resp.json()
@@ -1148,78 +1250,85 @@ class APITester:
                 # Both succeeded - compare responses
                 are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-                self._add_result(TestResult(
-                    endpoint_name="Duplicate Issue Feedback",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-                    message=f"V1: {v1_status}, V2: {v2_status} (expected 200 → 201)",
-                    differences=differences,
-                    v1_response=v1_data,
-                    v2_response=v2_data,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Duplicate Issue Feedback",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                        message=f"V1: {v1_status}, V2: {v2_status} (expected 200 → 201)",
+                        differences=differences,
+                        v1_response=v1_data,
+                        v2_response=v2_data,
+                    )
+                )
             elif v1_error and v2_error and status_match:
                 # Both failed with same error code - consistent error handling (PASS)
                 _, differences = self._compare_responses(v1_data, v2_data)
-                has_detail = 'detail' in v1_data and 'detail' in v2_data
-                detail_match = v1_data.get('detail') == v2_data.get('detail')
+                has_detail = "detail" in v1_data and "detail" in v2_data
+                detail_match = v1_data.get("detail") == v2_data.get("detail")
 
-                self._add_result(TestResult(
-                    endpoint_name="Duplicate Issue Feedback",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.PASS if (has_detail and detail_match) else TestStatus.FAIL,
-                    message=(
-                        f"V1: {v1_status}, V2: {v2_status} - "
-                        f"Consistent error handling: {'✓' if detail_match else '✗'}"
-                    ),
-                    differences=differences,
-                    v1_response=v1_data,
-                    v2_response=v2_data,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Duplicate Issue Feedback",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.PASS if (has_detail and detail_match) else TestStatus.FAIL,
+                        message=(f"V1: {v1_status}, V2: {v2_status} - Consistent error handling: {'✓' if detail_match else '✗'}"),
+                        differences=differences,
+                        v1_response=v1_data,
+                        v2_response=v2_data,
+                    )
+                )
             else:
                 # Inconsistent behavior
-                self._add_result(TestResult(
-                    endpoint_name="Duplicate Issue Feedback",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.FAIL,
-                    message=f"Inconsistent behavior: V1: {v1_status}, V2: {v2_status}",
-                    differences={"status_mismatch": {"v1": v1_status, "v2": v2_status}},
-                    v1_response=v1_data,
-                    v2_response=v2_data,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Duplicate Issue Feedback",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.FAIL,
+                        message=f"Inconsistent behavior: V1: {v1_status}, V2: {v2_status}",
+                        differences={"status_mismatch": {"v1": v1_status, "v2": v2_status}},
+                        v1_response=v1_data,
+                        v2_response=v2_data,
+                    )
+                )
 
         except Exception as e:
-            self._add_result(TestResult(
-                endpoint_name="Duplicate Issue Feedback",
-                v1_url=v1_url if 'v1_url' in locals() else "",
-                v2_url=v2_url if 'v2_url' in locals() else "",
-                status=TestStatus.ERROR,
-                error=f"Test exception: {str(e)}",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Duplicate Issue Feedback",
+                    v1_url=v1_url if "v1_url" in locals() else "",
+                    v2_url=v2_url if "v2_url" in locals() else "",
+                    status=TestStatus.ERROR,
+                    error=f"Test exception: {str(e)}",
+                )
+            )
 
     def test_create_attachment(self):
         """Test create attachment endpoint (negative test - validates security scan)"""
         if not self.config.session_token or not self.config.workspace_id or not self.config.chat_id:
-            self._add_result(TestResult(
-                endpoint_name="Create Attachment",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token, workspace ID, or chat ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Create Attachment",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token, workspace ID, or chat ID provided",
+                )
+            )
             return
 
         try:
             # Create test file content (minimal PNG - will be rejected by security scan)
             # This serves as a negative test to verify both endpoints reject invalid files consistently
             test_content = (
-                b'\x89PNG\r\n\x1a\n'  # PNG signature
-                b'\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01'
-                b'\x08\x02\x00\x00\x00\x90wS\xde'
-                b'\x00\x00\x00\x0cIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4'
-                b'\x00\x00\x00\x00IEND\xaeB`\x82'
+                b"\x89PNG\r\n\x1a\n"  # PNG signature
+                b"\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
+                b"\x08\x02\x00\x00\x00\x90wS\xde"
+                b"\x00\x00\x00\x0cIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4"
+                b"\x00\x00\x00\x00IEND\xaeB`\x82"
             )
             test_filename = "test-attachment.png"
             test_content_type = "image/png"
@@ -1228,29 +1337,31 @@ class APITester:
             v2_url = f"{self.config.base_url}/api/v2/attachments/"
 
             # Both V1 and V2 now accept file uploads with form data
-            v1_files = {'file': (test_filename, io.BytesIO(test_content), test_content_type)}
+            v1_files = {"file": (test_filename, io.BytesIO(test_content), test_content_type)}
             v1_data_fields = {
-                'workspace_id': self.config.workspace_id,
-                'chat_id': self.config.chat_id,
+                "workspace_id": self.config.workspace_id,
+                "chat_id": self.config.chat_id,
             }
 
-            v2_files = {'file': (test_filename, io.BytesIO(test_content), test_content_type)}
+            v2_files = {"file": (test_filename, io.BytesIO(test_content), test_content_type)}
             v2_data_fields = {
-                'workspace_id': self.config.workspace_id,
-                'chat_id': self.config.chat_id,
+                "workspace_id": self.config.workspace_id,
+                "chat_id": self.config.chat_id,
             }
 
             v1_resp, v1_err = self._make_request("POST", v1_url, data=v1_data_fields, files=v1_files)
             v2_resp, v2_err = self._make_request("POST", v2_url, data=v2_data_fields, files=v2_files)
 
             if v1_err or v2_err:
-                self._add_result(TestResult(
-                    endpoint_name="Create Attachment",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.ERROR,
-                    error=v1_err or v2_err,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Create Attachment",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.ERROR,
+                        error=v1_err or v2_err,
+                    )
+                )
                 return
 
             v1_data = v1_resp.json() if v1_resp else {}
@@ -1262,128 +1373,140 @@ class APITester:
 
             if v1_rejected and v2_rejected:
                 # Both rejected the invalid file - this is PASS (consistent error handling)
-                v1_error_msg = v1_data.get('detail', '')
-                v2_error_msg = v2_data.get('detail', '')
+                v1_error_msg = v1_data.get("detail", "")
+                v2_error_msg = v2_data.get("detail", "")
 
                 # Check if error messages are similar (both should mention file rejection)
                 error_match = v1_error_msg == v2_error_msg
 
-                self._add_result(TestResult(
-                    endpoint_name="Create Attachment",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.PASS if error_match else TestStatus.FAIL,
-                    message=f"Negative test: Both rejected invalid file(V1: 400, V2: 400) - Error match: {'✓' if error_match else '✗'}",
-                    differences=None if error_match else {"error_messages": {"v1": v1_error_msg, "v2": v2_error_msg}},
-                    v1_response=v1_data,
-                    v2_response=v2_data,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Create Attachment",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.PASS if error_match else TestStatus.FAIL,
+                        message=f"Negative test: Both rejected invalid file(V1: 400, V2: 400) - Error match: {'✓' if error_match else '✗'}",
+                        differences=None if error_match else {"error_messages": {"v1": v1_error_msg, "v2": v2_error_msg}},
+                        v1_response=v1_data,
+                        v2_response=v2_data,
+                    )
+                )
                 return
 
             # If one accepted and one rejected, that's inconsistent - FAIL
             if v1_rejected != v2_rejected:
-                self._add_result(TestResult(
-                    endpoint_name="Create Attachment",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.FAIL,
-                    message=f"Inconsistent behavior: V1: {v1_resp.status_code}, V2: {v2_resp.status_code}",
-                    differences={"status_mismatch": {"v1": v1_resp.status_code, "v2": v2_resp.status_code}},
-                    v1_response=v1_data,
-                    v2_response=v2_data,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Create Attachment",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.FAIL,
+                        message=f"Inconsistent behavior: V1: {v1_resp.status_code}, V2: {v2_resp.status_code}",
+                        differences={"status_mismatch": {"v1": v1_resp.status_code, "v2": v2_resp.status_code}},
+                        v1_response=v1_data,
+                        v2_response=v2_data,
+                    )
+                )
                 return
 
             # Both accepted - this is unexpected but we'll validate the responses
             # Store attachment IDs for cleanup
-            if v1_data.get('id'):
-                self.config.created_resources['v1_attachment_id'] = v1_data['id']
-            if v2_data.get('id'):
-                self.config.created_resources['v2_attachment_id'] = v2_data['id']
+            if v1_data.get("id"):
+                self.config.created_resources["v1_attachment_id"] = v1_data["id"]
+            if v2_data.get("id"):
+                self.config.created_resources["v2_attachment_id"] = v2_data["id"]
 
             # Compare responses, ignoring id and attachment_url (will differ due to signatures)
             are_equal, differences = self._compare_responses(
                 v1_data,
                 v2_data,
-                ignore_keys=['id', 'attachment_url'],
+                ignore_keys=["id", "attachment_url"],
             )
 
             # Check status codes (V1: 200, V2: 201)
             status_ok = v1_resp.status_code == 200 and v2_resp.status_code == 201
 
             # Check that both have attachment_url field
-            has_url = 'attachment_url' in v1_data and 'attachment_url' in v2_data
+            has_url = "attachment_url" in v1_data and "attachment_url" in v2_data
 
-            self._add_result(TestResult(
-                endpoint_name="Create Attachment",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.PASS if (are_equal and status_ok and has_url) else TestStatus.FAIL,
-                message=f"V1: {v1_resp.status_code}, V2: {v2_resp.status_code} (expected 200 → 201), URLs: {'✓' if has_url else '✗'}",
-                differences=differences,
-                v1_response=v1_data,
-                v2_response=v2_data,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Create Attachment",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.PASS if (are_equal and status_ok and has_url) else TestStatus.FAIL,
+                    message=f"V1: {v1_resp.status_code}, V2: {v2_resp.status_code} (expected 200 → 201), URLs: {'✓' if has_url else '✗'}",
+                    differences=differences,
+                    v1_response=v1_data,
+                    v2_response=v2_data,
+                )
+            )
 
         except Exception as e:
-            self._add_result(TestResult(
-                endpoint_name="Create Attachment",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.ERROR,
-                error=f"Test exception: {str(e)}",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Create Attachment",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.ERROR,
+                    error=f"Test exception: {str(e)}",
+                )
+            )
 
     def test_get_attachment(self):
         """Test get attachment URLs endpoint"""
         if not self.config.session_token or not self.config.workspace_id or not self.config.chat_id:
-            self._add_result(TestResult(
-                endpoint_name="Get Attachment URLs",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token, workspace ID, or chat ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Get Attachment URLs",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token, workspace ID, or chat ID provided",
+                )
+            )
             return
 
         try:
             # Create test file content (minimal PNG - may be rejected by security scan)
             test_content = (
-                b'\x89PNG\r\n\x1a\n'  # PNG signature
-                b'\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01'
-                b'\x08\x02\x00\x00\x00\x90wS\xde'
-                b'\x00\x00\x00\x0cIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4'
-                b'\x00\x00\x00\x00IEND\xaeB`\x82'
+                b"\x89PNG\r\n\x1a\n"  # PNG signature
+                b"\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
+                b"\x08\x02\x00\x00\x00\x90wS\xde"
+                b"\x00\x00\x00\x0cIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4"
+                b"\x00\x00\x00\x00IEND\xaeB`\x82"
             )
             test_filename = "get-url-test.png"
             test_content_type = "image/png"
 
             # ===== Upload files using V1 and V2 =====
             v1_create_url = f"{self.config.base_url}/api/v1/attachments/upload-attachment/"
-            v1_files = {'file': (test_filename, io.BytesIO(test_content), test_content_type)}
+            v1_files = {"file": (test_filename, io.BytesIO(test_content), test_content_type)}
             v1_data_fields = {
-                'workspace_id': self.config.workspace_id,
-                'chat_id': self.config.chat_id,
+                "workspace_id": self.config.workspace_id,
+                "chat_id": self.config.chat_id,
             }
             v1_create_resp, v1_create_err = self._make_request("POST", v1_create_url, data=v1_data_fields, files=v1_files)
 
             v2_create_url = f"{self.config.base_url}/api/v2/attachments/"
-            v2_files = {'file': (test_filename, io.BytesIO(test_content), test_content_type)}
+            v2_files = {"file": (test_filename, io.BytesIO(test_content), test_content_type)}
             v2_data_fields = {
-                'workspace_id': self.config.workspace_id,
-                'chat_id': self.config.chat_id,
+                "workspace_id": self.config.workspace_id,
+                "chat_id": self.config.chat_id,
             }
             v2_create_resp, v2_create_err = self._make_request("POST", v2_create_url, data=v2_data_fields, files=v2_files)
 
             # Check for request errors (network issues, timeouts, etc.)
             if v1_create_err or v2_create_err:
-                self._add_result(TestResult(
-                    endpoint_name="Get Attachment URLs",
-                    v1_url=v1_create_url,
-                    v2_url=v2_create_url,
-                    status=TestStatus.ERROR,
-                    error=f"Request error: {v1_create_err or v2_create_err}",
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Get Attachment URLs",
+                        v1_url=v1_create_url,
+                        v2_url=v2_create_url,
+                        status=TestStatus.ERROR,
+                        error=f"Request error: {v1_create_err or v2_create_err}",
+                    )
+                )
                 return
 
             # At this point, both responses exist (no request errors)
@@ -1396,22 +1519,24 @@ class APITester:
                 v1_create_data = v1_create_resp.json()
                 v2_create_data = v2_create_resp.json()
 
-                v1_error_msg = v1_create_data.get('detail', '')
-                v2_error_msg = v2_create_data.get('detail', '')
+                v1_error_msg = v1_create_data.get("detail", "")
+                v2_error_msg = v2_create_data.get("detail", "")
 
                 # Check if error messages are similar (both should mention file rejection)
                 error_match = v1_error_msg == v2_error_msg
 
-                self._add_result(TestResult(
-                    endpoint_name="Get Attachment URLs",
-                    v1_url=v1_create_url,
-                    v2_url=v2_create_url,
-                    status=TestStatus.PASS if error_match else TestStatus.FAIL,
-                    message=f"Negative test: Both rejected invalid file during upload (V1: 400,V2: 400) - Error match: {'✓' if error_match else '✗'}",
-                    differences=None if error_match else {"error_messages": {"v1": v1_error_msg, "v2": v2_error_msg}},
-                    v1_response=v1_create_data,
-                    v2_response=v2_create_data,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Get Attachment URLs",
+                        v1_url=v1_create_url,
+                        v2_url=v2_create_url,
+                        status=TestStatus.PASS if error_match else TestStatus.FAIL,
+                        message=f"Negative test: Both rejected invalid file during upload (V1: 400,V2: 400) - Error match: {'✓' if error_match else '✗'}",
+                        differences=None if error_match else {"error_messages": {"v1": v1_error_msg, "v2": v2_error_msg}},
+                        v1_response=v1_create_data,
+                        v2_response=v2_create_data,
+                    )
+                )
                 return
 
             # If one accepted and one rejected, that's inconsistent - FAIL
@@ -1419,16 +1544,18 @@ class APITester:
                 v1_create_data = v1_create_resp.json()
                 v2_create_data = v2_create_resp.json()
 
-                self._add_result(TestResult(
-                    endpoint_name="Get Attachment URLs",
-                    v1_url=v1_create_url,
-                    v2_url=v2_create_url,
-                    status=TestStatus.FAIL,
-                    message=f"Inconsistent behavior during upload: V1: {v1_create_resp.status_code}, V2: {v2_create_resp.status_code}", #noqa: E501
-                    differences={"status_mismatch": {"v1": v1_create_resp.status_code, "v2": v2_create_resp.status_code}},
-                    v1_response=v1_create_data,
-                    v2_response=v2_create_data,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Get Attachment URLs",
+                        v1_url=v1_create_url,
+                        v2_url=v2_create_url,
+                        status=TestStatus.FAIL,
+                        message=f"Inconsistent behavior during upload: V1: {v1_create_resp.status_code}, V2: {v2_create_resp.status_code}",  # noqa: E501
+                        differences={"status_mismatch": {"v1": v1_create_resp.status_code, "v2": v2_create_resp.status_code}},
+                        v1_response=v1_create_data,
+                        v2_response=v2_create_data,
+                    )
+                )
                 return
 
             v1_create_data = v1_create_resp.json()
@@ -1438,13 +1565,15 @@ class APITester:
             v2_attachment_id = v2_create_data.get("id")
 
             if not v1_attachment_id or not v2_attachment_id:
-                self._add_result(TestResult(
-                    endpoint_name="Get Attachment URLs",
-                    v1_url=v1_create_url,
-                    v2_url=v2_create_url,
-                    status=TestStatus.SKIP,
-                    message="No attachment IDs returned - cannot test get URLs",
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Get Attachment URLs",
+                        v1_url=v1_create_url,
+                        v2_url=v2_create_url,
+                        status=TestStatus.SKIP,
+                        message="No attachment IDs returned - cannot test get URLs",
+                    )
+                )
                 return
 
             # ===== Now Test Get URLs =====
@@ -1457,13 +1586,15 @@ class APITester:
             # Note: Delete endpoint is commented out in both V1 and V2, so we skip cleanup
 
             if v1_err or v2_err:
-                self._add_result(TestResult(
-                    endpoint_name="Get Attachment URLs",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.ERROR,
-                    error=v1_err or v2_err,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Get Attachment URLs",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.ERROR,
+                        error=v1_err or v2_err,
+                    )
+                )
                 return
 
             v1_data = v1_resp.json() if v1_resp else {}
@@ -1473,58 +1604,66 @@ class APITester:
             are_equal, differences = self._compare_responses(
                 v1_data,
                 v2_data,
-                ignore_keys=['download_url', 'preview_url'],
+                ignore_keys=["download_url", "preview_url"],
             )
 
             # Check that both returned download and preview URLs
-            v1_has_urls = bool(v1_data.get('download_url')) and bool(v1_data.get('preview_url'))
-            v2_has_urls = bool(v2_data.get('download_url')) and bool(v2_data.get('preview_url'))
+            v1_has_urls = bool(v1_data.get("download_url")) and bool(v1_data.get("preview_url"))
+            v2_has_urls = bool(v2_data.get("download_url")) and bool(v2_data.get("preview_url"))
 
             if not (v1_has_urls and v2_has_urls):
                 are_equal = False
                 differences = {"error": "Missing download or preview URLs in response"}
 
-            self._add_result(TestResult(
-                endpoint_name="Get Attachment URLs",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.PASS if (are_equal and v1_has_urls and v2_has_urls) else TestStatus.FAIL,
-                message="URLs generated successfully" if are_equal else "Responses differ",
-                differences=differences,
-                v1_response=v1_data,
-                v2_response=v2_data,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Get Attachment URLs",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.PASS if (are_equal and v1_has_urls and v2_has_urls) else TestStatus.FAIL,
+                    message="URLs generated successfully" if are_equal else "Responses differ",
+                    differences=differences,
+                    v1_response=v1_data,
+                    v2_response=v2_data,
+                )
+            )
 
         except Exception as e:
-            self._add_result(TestResult(
-                endpoint_name="Get Attachment URLs",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.ERROR,
-                error=f"Test exception: {str(e)}",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Get Attachment URLs",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.ERROR,
+                    error=f"Test exception: {str(e)}",
+                )
+            )
 
     def test_delete_attachment(self):
         """Test delete attachment endpoint"""
         # Note: Delete endpoint is commented out in both V1 and V2
-        self._add_result(TestResult(
-            endpoint_name="Delete Attachment",
-            v1_url="",
-            v2_url="",
-            status=TestStatus.SKIP,
-            message="Delete endpoint is commented out in both V1 and V2",
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Delete Attachment",
+                v1_url="",
+                v2_url="",
+                status=TestStatus.SKIP,
+                message="Delete endpoint is commented out in both V1 and V2",
+            )
+        )
 
     def test_list_artifacts(self):
         """Test list artifacts endpoint"""
         if not self.config.session_token or not self.config.chat_id:
-            self._add_result(TestResult(
-                endpoint_name="List Artifacts",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token or chat ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="List Artifacts",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token or chat ID provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/artifacts/chat/{self.config.chat_id}/"
@@ -1536,13 +1675,15 @@ class APITester:
         v2_resp, v2_err = self._make_request("GET", v2_url, params=v2_params)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="List Artifacts",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="List Artifacts",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         v1_data = v1_resp.json() if v1_resp else {}
@@ -1550,27 +1691,31 @@ class APITester:
 
         are_equal, differences = self._compare_responses(v1_data, v2_data)
 
-        self._add_result(TestResult(
-            endpoint_name="List Artifacts",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-            message="Responses match" if are_equal else "Responses differ",
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="List Artifacts",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                message="Responses match" if are_equal else "Responses differ",
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_transcription(self):
         """Test audio transcription endpoint"""
         if not self.config.session_token or not self.config.workspace_id or not self.config.chat_id:
-            self._add_result(TestResult(
-                endpoint_name="Transcription",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token, workspace ID, or chat ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Transcription",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token, workspace ID, or chat ID provided",
+                )
+            )
             return
 
         try:
@@ -1579,48 +1724,56 @@ class APITester:
             import struct
 
             # RIFF header
-            riff_header = b'RIFF'
+            riff_header = b"RIFF"
             # File size (will be updated)
-            file_size = struct.pack('<I', 0)
-            wave_header = b'WAVE'
+            file_size = struct.pack("<I", 0)
+            wave_header = b"WAVE"
 
             # fmt chunk
-            fmt_chunk = b'fmt '
-            fmt_size = struct.pack('<I', 16)  # PCM format chunk size
-            audio_format = struct.pack('<H', 1)  # PCM = 1
-            num_channels = struct.pack('<H', 1)  # Mono
-            sample_rate = struct.pack('<I', 8000)  # 8kHz
-            byte_rate = struct.pack('<I', 16000)  # sample_rate * num_channels * bits_per_sample / 8
-            block_align = struct.pack('<H', 2)  # num_channels * bits_per_sample / 8
-            bits_per_sample = struct.pack('<H', 16)  # 16 bits
+            fmt_chunk = b"fmt "
+            fmt_size = struct.pack("<I", 16)  # PCM format chunk size
+            audio_format = struct.pack("<H", 1)  # PCM = 1
+            num_channels = struct.pack("<H", 1)  # Mono
+            sample_rate = struct.pack("<I", 8000)  # 8kHz
+            byte_rate = struct.pack("<I", 16000)  # sample_rate * num_channels * bits_per_sample / 8
+            block_align = struct.pack("<H", 2)  # num_channels * bits_per_sample / 8
+            bits_per_sample = struct.pack("<H", 16)  # 16 bits
 
             # data chunk (1 second of silence = 8000 samples * 2 bytes = 16000 bytes)
-            data_chunk = b'data'
-            data_size = struct.pack('<I', 16000)
-            audio_data = b'\x00' * 16000  # Silence
+            data_chunk = b"data"
+            data_size = struct.pack("<I", 16000)
+            audio_data = b"\x00" * 16000  # Silence
 
             # Combine all parts
             wav_content = (
-                riff_header + file_size + wave_header +
-                fmt_chunk + fmt_size + audio_format + num_channels + sample_rate +
-                byte_rate + block_align + bits_per_sample +
-                data_chunk + data_size + audio_data
+                riff_header
+                + file_size
+                + wave_header
+                + fmt_chunk
+                + fmt_size
+                + audio_format
+                + num_channels
+                + sample_rate
+                + byte_rate
+                + block_align
+                + bits_per_sample
+                + data_chunk
+                + data_size
+                + audio_data
             )
 
             # Update file size in header
             total_size = len(wav_content) - 8
-            wav_content = riff_header + struct.pack('<I', total_size) + wav_content[8:]
+            wav_content = riff_header + struct.pack("<I", total_size) + wav_content[8:]
 
             # Test V1 endpoint
             v1_url = f"{self.config.base_url}/api/v1/transcription/transcribe"
 
             # V1 uses query parameters for workspace_id and chat_id
-            v1_files = {
-                'file': ('test_audio.wav', io.BytesIO(wav_content), 'audio/wav')
-            }
+            v1_files = {"file": ("test_audio.wav", io.BytesIO(wav_content), "audio/wav")}
             v1_params = {
-                'workspace_id': self.config.workspace_id,
-                'chat_id': self.config.chat_id,
+                "workspace_id": self.config.workspace_id,
+                "chat_id": self.config.chat_id,
             }
 
             v1_resp, v1_err = self._make_request("POST", v1_url, params=v1_params, files=v1_files)
@@ -1629,35 +1782,37 @@ class APITester:
             v2_url = f"{self.config.base_url}/api/v2/transcriptions/"
 
             # V2 uses Form() for all fields including file
-            v2_files = {
-                'file': ('test_audio.wav', io.BytesIO(wav_content), 'audio/wav')
-            }
+            v2_files = {"file": ("test_audio.wav", io.BytesIO(wav_content), "audio/wav")}
             v2_data_fields = {
-                'workspace_id': self.config.workspace_id,
-                'chat_id': self.config.chat_id,
+                "workspace_id": self.config.workspace_id,
+                "chat_id": self.config.chat_id,
             }
 
             v2_resp, v2_err = self._make_request("POST", v2_url, data=v2_data_fields, files=v2_files)
 
             # Handle errors
             if v1_err or v2_err:
-                self._add_result(TestResult(
-                    endpoint_name="Transcription",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.ERROR,
-                    error=v1_err or v2_err,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Transcription",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.ERROR,
+                        error=v1_err or v2_err,
+                    )
+                )
                 return
 
             if not v1_resp or not v2_resp:
-                self._add_result(TestResult(
-                    endpoint_name="Transcription",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.ERROR,
-                    error="Missing response from one or both endpoints",
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Transcription",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.ERROR,
+                        error="Missing response from one or both endpoints",
+                    )
+                )
                 return
 
             v1_data = v1_resp.json()
@@ -1671,15 +1826,17 @@ class APITester:
             if v1_failed and v2_failed:
                 # Both failed (likely transcription service not configured)
                 # This is acceptable - they handle errors consistently
-                self._add_result(TestResult(
-                    endpoint_name="Transcription",
-                    v1_url=v1_url,
-                    v2_url=v2_url,
-                    status=TestStatus.PASS,
-                    message="Both endpoints handle transcription service unavailability consistently",
-                    v1_response=v1_data,
-                    v2_response=v2_data,
-                ))
+                self._add_result(
+                    TestResult(
+                        endpoint_name="Transcription",
+                        v1_url=v1_url,
+                        v2_url=v2_url,
+                        status=TestStatus.PASS,
+                        message="Both endpoints handle transcription service unavailability consistently",
+                        v1_response=v1_data,
+                        v2_response=v2_data,
+                    )
+                )
                 return
 
             # Check status codes (V1: 200, V2: 201)
@@ -1690,11 +1847,11 @@ class APITester:
             are_equal, differences = self._compare_responses(
                 v1_data,
                 v2_data,
-                ignore_keys=['status'],  # V2 has "status" field, V1 doesn't
+                ignore_keys=["status"],  # V2 has "status" field, V1 doesn't
             )
 
             # Both should have "detail" field
-            has_detail = 'detail' in v1_data and 'detail' in v2_data
+            has_detail = "detail" in v1_data and "detail" in v2_data
 
             status_ok = (v1_success and v2_success) or (v1_failed and v2_failed)
 
@@ -1702,39 +1859,42 @@ class APITester:
             v1_status = v1_resp.status_code
             v2_status = v2_resp.status_code
 
-            self._add_result(TestResult(
-                endpoint_name="Transcription",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.PASS if (are_equal and status_ok and has_detail) else TestStatus.FAIL,
-                message=(
-                    f"V1: {v1_status}, V2: {v2_status} "
-                    f"(expected 200 → 201 on success)"
-                ),
-                differences=differences,
-                v1_response=v1_data,
-                v2_response=v2_data,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Transcription",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.PASS if (are_equal and status_ok and has_detail) else TestStatus.FAIL,
+                    message=(f"V1: {v1_status}, V2: {v2_status} (expected 200 → 201 on success)"),
+                    differences=differences,
+                    v1_response=v1_data,
+                    v2_response=v2_data,
+                )
+            )
 
         except Exception as e:
-            self._add_result(TestResult(
-                endpoint_name="Transcription",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.ERROR,
-                error=f"Test exception: {str(e)}",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Transcription",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.ERROR,
+                    error=f"Test exception: {str(e)}",
+                )
+            )
 
     def test_execute_actions(self):
         """Test execute actions endpoint"""
         if not self.config.session_token or not self.config.workspace_id or not self.config.chat_id:
-            self._add_result(TestResult(
-                endpoint_name="Execute Actions",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token, workspace ID, or chat ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Execute Actions",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token, workspace ID, or chat ID provided",
+                )
+            )
             return
 
         # Note: This test will likely return 404 since we don't have a message with planned actions
@@ -1746,6 +1906,7 @@ class APITester:
         # Create a test request payload
         # This will fail with 404 "No planned actions found" which is expected
         import uuid
+
         test_message_id = str(uuid.uuid4())
 
         payload = {
@@ -1759,23 +1920,27 @@ class APITester:
         v2_resp, v2_err = self._make_request("POST", v2_url, json_data=payload)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Execute Actions",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Execute Actions",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         if not v1_resp or not v2_resp:
-            self._add_result(TestResult(
-                endpoint_name="Execute Actions",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error="Missing response from one or both endpoints",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Execute Actions",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error="Missing response from one or both endpoints",
+                )
+            )
             return
 
         v1_data = v1_resp.json()
@@ -1793,39 +1958,41 @@ class APITester:
         _, differences = self._compare_responses(v1_data, v2_data)
 
         # Check if both have "detail" field with error message
-        has_detail = 'detail' in v1_data and 'detail' in v2_data
-        detail_match = v1_data.get('detail') == v2_data.get('detail')
+        has_detail = "detail" in v1_data and "detail" in v2_data
+        detail_match = v1_data.get("detail") == v2_data.get("detail")
 
-        self._add_result(TestResult(
-            endpoint_name="Execute Actions",
-            v1_url=v1_url,
-            v2_url=v2_url,
-            status=TestStatus.PASS if (status_match and has_detail and detail_match) else TestStatus.FAIL,
-            message=(
-                f"V1: {v1_status}, V2: {v2_status} - "
-                f"Error handling: {'consistent' if detail_match else 'differs'}"
-            ),
-            differences=differences,
-            v1_response=v1_data,
-            v2_response=v2_data,
-        ))
+        self._add_result(
+            TestResult(
+                endpoint_name="Execute Actions",
+                v1_url=v1_url,
+                v2_url=v2_url,
+                status=TestStatus.PASS if (status_match and has_detail and detail_match) else TestStatus.FAIL,
+                message=(f"V1: {v1_status}, V2: {v2_status} - Error handling: {'consistent' if detail_match else 'differs'}"),
+                differences=differences,
+                v1_response=v1_data,
+                v2_response=v2_data,
+            )
+        )
 
     def test_save_as_page(self):
         """Test save as page endpoint"""
         if not self.config.session_token or not self.config.workspace_id or not self.config.chat_id:
-            self._add_result(TestResult(
-                endpoint_name="Save as Page",
-                v1_url="",
-                v2_url="",
-                status=TestStatus.SKIP,
-                message="No session token, workspace ID, or chat ID provided",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Save as Page",
+                    v1_url="",
+                    v2_url="",
+                    status=TestStatus.SKIP,
+                    message="No session token, workspace ID, or chat ID provided",
+                )
+            )
             return
 
         v1_url = f"{self.config.base_url}/api/v1/chat_ctas/save-as-page/"
         v2_url = f"{self.config.base_url}/api/v2/pages/"
 
         import uuid
+
         payload = {
             "workspace_id": self.config.workspace_id,
             "chat_id": self.config.chat_id,
@@ -1839,36 +2006,42 @@ class APITester:
         v2_resp, v2_err = self._make_request("POST", v2_url, json_data=payload)
 
         if v1_err or v2_err:
-            self._add_result(TestResult(
-                endpoint_name="Save as Page",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=v1_err or v2_err,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Save as Page",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=v1_err or v2_err,
+                )
+            )
             return
 
         if not v1_resp or not v2_resp:
-            self._add_result(TestResult(
-                endpoint_name="Save as Page",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error="Missing response from one or both endpoints",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Save as Page",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error="Missing response from one or both endpoints",
+                )
+            )
             return
 
         try:
             v1_data = v1_resp.json()
             v2_data = v2_resp.json()
         except Exception as e:
-            self._add_result(TestResult(
-                endpoint_name="Save as Page",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.ERROR,
-                error=f"Failed to parse JSON response: {str(e)}",
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Save as Page",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.ERROR,
+                    error=f"Failed to parse JSON response: {str(e)}",
+                )
+            )
             return
 
         # Both endpoints might fail with 404/422 if message doesn't exist
@@ -1888,67 +2061,72 @@ class APITester:
             are_equal, differences = self._compare_responses(
                 v1_data,
                 v2_data,
-                ignore_keys=['id', 'page_id', 'created_at', 'updated_at'],
+                ignore_keys=["id", "page_id", "created_at", "updated_at"],
             )
 
-            self._add_result(TestResult(
-                endpoint_name="Save as Page",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.PASS if are_equal else TestStatus.FAIL,
-                message=f"V1: {v1_status}, V2: {v2_status} (both succeeded)",
-                differences=differences,
-                v1_response=v1_data,
-                v2_response=v2_data,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Save as Page",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.PASS if are_equal else TestStatus.FAIL,
+                    message=f"V1: {v1_status}, V2: {v2_status} (both succeeded)",
+                    differences=differences,
+                    v1_response=v1_data,
+                    v2_response=v2_data,
+                )
+            )
         elif v1_failed and v2_failed and status_match:
             # Both failed with same error code - consistent error handling (PASS)
             _, differences = self._compare_responses(v1_data, v2_data)
-            has_detail = 'detail' in v1_data and 'detail' in v2_data
-            detail_match = v1_data.get('detail') == v2_data.get('detail')
+            has_detail = "detail" in v1_data and "detail" in v2_data
+            detail_match = v1_data.get("detail") == v2_data.get("detail")
 
-            self._add_result(TestResult(
-                endpoint_name="Save as Page",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.PASS if (has_detail and detail_match) else TestStatus.FAIL,
-                message=(
-                    f"V1: {v1_status}, V2: {v2_status} - "
-                    f"Consistent error handling: {'✓' if detail_match else '✗'}"
-                ),
-                differences=differences,
-                v1_response=v1_data,
-                v2_response=v2_data,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Save as Page",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.PASS if (has_detail and detail_match) else TestStatus.FAIL,
+                    message=(f"V1: {v1_status}, V2: {v2_status} - Consistent error handling: {'✓' if detail_match else '✗'}"),
+                    differences=differences,
+                    v1_response=v1_data,
+                    v2_response=v2_data,
+                )
+            )
         elif v1_failed and v2_failed:
             # Both failed but with different error codes - document the difference
             _, differences = self._compare_responses(v1_data, v2_data)
 
-            self._add_result(TestResult(
-                endpoint_name="Save as Page",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.FAIL,
-                message=(
-                    f"Different error codes: V1: {v1_status}, V2: {v2_status} "
-                    f"(V1: {v1_data.get('detail', 'N/A')}, V2: {v2_data.get('detail', 'N/A')})"
-                ),
-                differences={"status_mismatch": {"v1": v1_status, "v2": v2_status}, "response_diff": differences},
-                v1_response=v1_data,
-                v2_response=v2_data,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Save as Page",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.FAIL,
+                    message=(
+                        f"Different error codes: V1: {v1_status}, V2: {v2_status} "
+                        f"(V1: {v1_data.get('detail', 'N/A')}, V2: {v2_data.get('detail', 'N/A')})"
+                    ),
+                    differences={"status_mismatch": {"v1": v1_status, "v2": v2_status}, "response_diff": differences},
+                    v1_response=v1_data,
+                    v2_response=v2_data,
+                )
+            )
         else:
             # One succeeded, one failed - inconsistent behavior
-            self._add_result(TestResult(
-                endpoint_name="Save as Page",
-                v1_url=v1_url,
-                v2_url=v2_url,
-                status=TestStatus.FAIL,
-                message=f"Inconsistent behavior: V1: {v1_status}, V2: {v2_status}",
-                differences={"status_mismatch": {"v1": v1_status, "v2": v2_status}},
-                v1_response=v1_data,
-                v2_response=v2_data,
-            ))
+            self._add_result(
+                TestResult(
+                    endpoint_name="Save as Page",
+                    v1_url=v1_url,
+                    v2_url=v2_url,
+                    status=TestStatus.FAIL,
+                    message=f"Inconsistent behavior: V1: {v1_status}, V2: {v2_status}",
+                    differences={"status_mismatch": {"v1": v1_status, "v2": v2_status}},
+                    v1_response=v1_data,
+                    v2_response=v2_data,
+                )
+            )
 
     # def test_list_artifacts_by_ids(self):
     #     """Test list artifacts by IDs endpoint"""
@@ -2123,42 +2301,42 @@ class APITester:
     def get_available_tests(self) -> Dict[str, callable]:
         """Get dictionary of available test methods"""
         return {
-            'health': self.test_health_check,
-            'models': self.test_list_models,
-            'templates': self.test_get_templates,
-            'create_chat': self.test_create_chat,
-            'chat_history': self.test_get_chat_history,
-            'rename_chat': self.test_rename_chat,
-            'favorite_chat': self.test_favorite_chat,
-            'unfavorite_chat': self.test_unfavorite_chat,
-            'list_favorites': self.test_list_favorite_chats,
-            'search_chats': self.test_search_chats,
-            'conversations': self.test_list_conversations,
-            'paginated_conversations': self.test_paginated_conversations,
-            'submit_feedback': self.test_submit_feedback,
-            'generate_title': self.test_generate_title,
-            'search_dupes': self.test_search_duplicate_issues,
-            'dupes_feedback': self.test_duplicate_issue_feedback,
-            'create_attachment': self.test_create_attachment,
-            'get_attachment': self.test_get_attachment,
-            'delete_attachment': self.test_delete_attachment,
-            'list_artifacts': self.test_list_artifacts,
-            'transcription': self.test_transcription,
-            'execute_actions': self.test_execute_actions,
-            'save_as_page': self.test_save_as_page,
+            "health": self.test_health_check,
+            "models": self.test_list_models,
+            "templates": self.test_get_templates,
+            "create_chat": self.test_create_chat,
+            "chat_history": self.test_get_chat_history,
+            "rename_chat": self.test_rename_chat,
+            "favorite_chat": self.test_favorite_chat,
+            "unfavorite_chat": self.test_unfavorite_chat,
+            "list_favorites": self.test_list_favorite_chats,
+            "search_chats": self.test_search_chats,
+            "conversations": self.test_list_conversations,
+            "paginated_conversations": self.test_paginated_conversations,
+            "submit_feedback": self.test_submit_feedback,
+            "generate_title": self.test_generate_title,
+            "search_dupes": self.test_search_duplicate_issues,
+            "dupes_feedback": self.test_duplicate_issue_feedback,
+            "create_attachment": self.test_create_attachment,
+            "get_attachment": self.test_get_attachment,
+            "delete_attachment": self.test_delete_attachment,
+            "list_artifacts": self.test_list_artifacts,
+            "transcription": self.test_transcription,
+            "execute_actions": self.test_execute_actions,
+            "save_as_page": self.test_save_as_page,
             # 'list_artifacts_by_ids': self.test_list_artifacts_by_ids,
             # 'artifact_followup': self.test_artifact_followup,
             # 'docs_webhook': self.test_docs_webhook_validation,
-            'delete_chat': self.test_delete_chat,
+            "delete_chat": self.test_delete_chat,
         }
 
     def list_available_tests(self):
         """Print list of available tests"""
         tests = self.get_available_tests()
 
-        print(f"\n{Fore.CYAN}{'='*70}")
+        print(f"\n{Fore.CYAN}{'=' * 70}")
         print("Available Tests")
-        print(f"{'='*70}{Style.RESET_ALL}\n")
+        print(f"{'=' * 70}{Style.RESET_ALL}\n")
 
         for test_name, test_func in tests.items():
             doc = test_func.__doc__ or "No description"
@@ -2180,9 +2358,9 @@ class APITester:
         Args:
             specific_tests: List of specific test names to run. If None, runs all tests.
         """
-        print(f"\n{Fore.CYAN}{'='*70}")
+        print(f"\n{Fore.CYAN}{'=' * 70}")
         print("V1 vs V2 API Comparison Test Suite")
-        print(f"{'='*70}{Style.RESET_ALL}\n")
+        print(f"{'=' * 70}{Style.RESET_ALL}\n")
 
         print(f"{Fore.YELLOW}Configuration:")
         print(f"  Base URL: {self.config.base_url}")
@@ -2220,9 +2398,9 @@ class APITester:
 
     def _print_summary(self):
         """Print test results summary"""
-        print(f"\n{Fore.CYAN}{'='*70}")
+        print(f"\n{Fore.CYAN}{'=' * 70}")
         print("Test Summary")
-        print(f"{'='*70}{Style.RESET_ALL}\n")
+        print(f"{'=' * 70}{Style.RESET_ALL}\n")
 
         total = len(self.results)
         passed = sum(1 for r in self.results if r.status == TestStatus.PASS)
@@ -2273,7 +2451,7 @@ class APITester:
                 "error": result.error,
             })
 
-        with open(output_file, 'w') as f:
+        with open(output_file, "w") as f:
             json.dump(results_data, f, indent=2)
 
         print(f"{Fore.CYAN}Detailed results saved to: {output_file}{Style.RESET_ALL}")
@@ -2312,52 +2490,52 @@ Examples:
     )
 
     parser.add_argument(
-        '--token',
+        "--token",
         type=str,
-        help='Session token (session_id cookie value)',
+        help="Session token (session_id cookie value)",
     )
     parser.add_argument(
-        '--workspace-id',
+        "--workspace-id",
         type=str,
-        help='Workspace UUID for tests that require it',
+        help="Workspace UUID for tests that require it",
     )
     parser.add_argument(
-        '--chat-id',
+        "--chat-id",
         type=str,
-        help='Existing chat ID to use for tests (optional)',
+        help="Existing chat ID to use for tests (optional)",
     )
     parser.add_argument(
-        '--base-url',
+        "--base-url",
         type=str,
-        default='http://localhost:8001',
-        help='Base URL for API (default: http://localhost:8002)',
+        default="http://localhost:8001",
+        help="Base URL for API (default: http://localhost:8002)",
     )
     parser.add_argument(
-        '--test',
+        "--test",
         type=str,
-        nargs='+',
-        metavar='TEST_NAME',
-        help='Run specific test(s). Use --list-tests to see available tests.',
+        nargs="+",
+        metavar="TEST_NAME",
+        help="Run specific test(s). Use --list-tests to see available tests.",
     )
     parser.add_argument(
-        '--list-tests',
-        action='store_true',
-        help='List all available tests and exit',
+        "--list-tests",
+        action="store_true",
+        help="List all available tests and exit",
     )
     parser.add_argument(
-        '--verbose',
-        action='store_true',
-        help='Print detailed response differences',
+        "--verbose",
+        action="store_true",
+        help="Print detailed response differences",
     )
     parser.add_argument(
-        '--skip-streaming',
-        action='store_true',
-        help='Skip streaming endpoint tests',
+        "--skip-streaming",
+        action="store_true",
+        help="Skip streaming endpoint tests",
     )
     parser.add_argument(
-        '--skip-oauth',
-        action='store_true',
-        help='Skip OAuth endpoint tests',
+        "--skip-oauth",
+        action="store_true",
+        help="Skip OAuth endpoint tests",
     )
 
     args = parser.parse_args()
@@ -2400,4 +2578,3 @@ Examples:
 
 if __name__ == "__main__":
     main()
-

@@ -488,7 +488,7 @@ def _is_cf_field(field):
 
 def _cf_property_id(field):
     """Extract the property UUID from a cf:uuid marker string."""
-    return field[len(_CF_PREFIX):]
+    return field[len(_CF_PREFIX) :]
 
 
 def _q_cf_activity(

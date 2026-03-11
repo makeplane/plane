@@ -61,7 +61,7 @@ def feed_docs_command():
             raise typer.Exit(code=1)
 
         typer.echo(f"Starting documentation feed for {len(repos)} repository(ies)...")
-        typer.echo(f"Repositories: {", ".join(repos)}")
+        typer.echo(f"Repositories: {', '.join(repos)}")
         typer.echo(f"Branch: {branch}")
         typer.echo("")
 
@@ -173,7 +173,7 @@ def trigger_chat_search_index(
         log.info("Queued chat search index population task: %s", task.id)
 
         typer.echo("Chat search index population task queued successfully")
-        typer.echo(f"  Workspace ID: {workspace_id or "all workspaces"}")
+        typer.echo(f"  Workspace ID: {workspace_id or 'all workspaces'}")
         typer.echo(f"  Batch size: {batch_size}")
         typer.echo("  Task is running in background. Check logs for progress.")
 
@@ -226,8 +226,8 @@ def remove_vector_data(
         log.info("Queued vector data removal task %s for %d workspaces", task.id, len(workspace_list))
 
         typer.echo("Vector data removal task queued successfully")
-        typer.echo(f"  Workspace IDs: {", ".join(workspace_list)}")
-        typer.echo(f"  Entities: {", ".join(entity_list) if entity_list else "issues, pages"}")
+        typer.echo(f"  Workspace IDs: {', '.join(workspace_list)}")
+        typer.echo(f"  Entities: {', '.join(entity_list) if entity_list else 'issues, pages'}")
         typer.echo("  Task is running in background. Check logs for progress.")
 
     except Exception as exc:

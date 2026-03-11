@@ -314,7 +314,7 @@ def update_chat_title_and_propagate(chat_id: str, title: str) -> dict:
         result = asyncio.run(update_chat_title_all_documents(chat_id, title))
 
         if result["status"] == "success":
-            log.info(f"Updated title for {result.get("updated_count", 0)} documents for chat {chat_id}")
+            log.info(f"Updated title for {result.get('updated_count', 0)} documents for chat {chat_id}")
 
         return result
 
@@ -349,7 +349,7 @@ async def bulk_populate_chat_and_messages(chat_obj, messages_list: List) -> dict
         )
 
         if chat_result["status"] != "success":
-            return {"status": "error", "message": f"Failed to index chat: {chat_result.get("message")}"}
+            return {"status": "error", "message": f"Failed to index chat: {chat_result.get('message')}"}
 
         # Process all messages for this chat
         processed_messages = 0
@@ -379,7 +379,7 @@ async def bulk_populate_chat_and_messages(chat_obj, messages_list: List) -> dict
                     processed_messages += 1
                 else:
                     failed_messages += 1
-                    log.warning(f"Failed to index message {message.id}: {message_result.get("message")}")
+                    log.warning(f"Failed to index message {message.id}: {message_result.get('message')}")
 
             except Exception as e:
                 failed_messages += 1

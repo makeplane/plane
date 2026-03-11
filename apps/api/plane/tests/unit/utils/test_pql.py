@@ -889,7 +889,7 @@ class TestComplexQueries:
         }
 
     def test_multiple_conditions(self):
-        rf = _rf('assignee IS EMPTY AND priority IN ("high", "urgent") ' 'AND stateGroup IN ("started", "unstarted")')
+        rf = _rf('assignee IS EMPTY AND priority IN ("high", "urgent") AND stateGroup IN ("started", "unstarted")')
         assert rf == {
             "and": [
                 {
@@ -931,7 +931,7 @@ class TestComplexQueries:
         }
 
     def test_mixed_not_in_and_in(self):
-        rf = _rf('stateGroup NOT IN ("completed", "cancelled") ' 'AND priority IN ("high", "urgent")')
+        rf = _rf('stateGroup NOT IN ("completed", "cancelled") AND priority IN ("high", "urgent")')
         assert rf == {
             "and": [
                 {"not": {"state_group__in": "completed,cancelled"}},
@@ -952,7 +952,7 @@ class TestComplexQueries:
         }
 
     def test_between_and_in_combined(self):
-        rf = _rf('startDate BETWEEN "2025-01-01" AND "2025-06-30" ' 'AND priority IN ("high", "urgent")')
+        rf = _rf('startDate BETWEEN "2025-01-01" AND "2025-06-30" AND priority IN ("high", "urgent")')
         assert rf == {
             "and": [
                 {"start_date__range": "2025-01-01,2025-06-30"},
@@ -1095,10 +1095,7 @@ class TestCustomPropertyPQL:
         assert rf == {"not": {f"customproperty_{_CF_UUID1}__exact": "red"}}
 
     def test_parenthesised_cf(self):
-        rf = _rf(
-            f'(cf["{_CF_UUID1}"] = "a" OR cf["{_CF_UUID2}"] = "b") '
-            f'AND priority = "high"'
-        )
+        rf = _rf(f'(cf["{_CF_UUID1}"] = "a" OR cf["{_CF_UUID2}"] = "b") AND priority = "high"')
         assert rf == {
             "and": [
                 {

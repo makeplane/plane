@@ -31,25 +31,17 @@ class ScriptFunction(BaseModel):
 
     name = models.CharField(max_length=100, verbose_name="Function Name")
     description = models.TextField(verbose_name="Function Description")
-    category = models.CharField(
-        max_length=50, choices=CATEGORY_CHOICES, default="custom"
-    )
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default="custom")
 
     # Input/Output schema stored as JSON
-    parameters = models.JSONField(
-        default=list, help_text="Array of parameter definitions"
-    )
-    return_type = models.CharField(
-        max_length=255, default="void", verbose_name="Return Type"
-    )
+    parameters = models.JSONField(default=list, help_text="Array of parameter definitions")
+    return_type = models.CharField(max_length=255, default="void", verbose_name="Return Type")
 
     # Implementation
     code = models.TextField(verbose_name="Function Code")
 
     # Usage
-    usage_example = models.TextField(
-        null=True, blank=True, verbose_name="Usage Example"
-    )
+    usage_example = models.TextField(null=True, blank=True, verbose_name="Usage Example")
 
     # System vs Workspace function
     is_system = models.BooleanField(
@@ -99,20 +91,12 @@ class ScriptFunction(BaseModel):
     def generate_usage_example(self):
         """Auto-generate a usage example based on function definition."""
         params_str = ", ".join(
-            [
-                f'{p["name"]}: {p.get("type", "unknown")}'
-                for p in self.parameters
-                if p.get("required", True)
-            ]
+            [f"{p['name']}: {p.get('type', 'unknown')}" for p in self.parameters if p.get("required", True)]
         )
 
-        optional_params = [
-            p for p in self.parameters if not p.get("required", True)
-        ]
+        optional_params = [p for p in self.parameters if not p.get("required", True)]
         if optional_params:
-            optional_str = ", ".join(
-                [f'{p["name"]}?: {p.get("type", "unknown")}' for p in optional_params]
-            )
+            optional_str = ", ".join([f"{p['name']}?: {p.get('type', 'unknown')}" for p in optional_params])
             params_str = f"{params_str}, {optional_str}" if params_str else optional_str
 
         return f"""const result = await Functions.{self.name}({{

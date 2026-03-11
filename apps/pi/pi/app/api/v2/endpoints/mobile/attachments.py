@@ -207,7 +207,7 @@ async def create_attachment(
         if data.content_type not in allowed_attachment_types:
             return JSONResponse(
                 status_code=415,
-                content={"detail": f"Unsupported file type: {data.content_type}. " f"Allowed types: {", ".join(allowed_attachment_types)}"},
+                content={"detail": f"Unsupported file type: {data.content_type}. Allowed types: {', '.join(allowed_attachment_types)}"},
             )
 
         sanitized_filename = sanitize_filename(data.filename)

@@ -22,7 +22,6 @@ from plane.silo.serializers import ImportReportAPISerializer, ImportExecutionLog
 from plane.silo.bgtasks.generate_job_summary import generate_job_summary
 
 
-
 class ImportReportAPIView(BaseServiceAPIView):
     def get(self, request, pk=None):
         if not pk:

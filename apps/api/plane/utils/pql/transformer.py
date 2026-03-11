@@ -276,7 +276,7 @@ class PQLTransformer(Transformer):
         # Q-producing functions must be used as standalone predicates
         if func_name in ALL_Q_FUNCTIONS or func_name in PREDICATE_FUNCTIONS:
             raise ValueError(
-                f"Function '{func_name}' must be used as a standalone " f"condition, not as a value in a comparison"
+                f"Function '{func_name}' must be used as a standalone condition, not as a value in a comparison"
             )
 
         raise ValueError(f"Unknown function: {func_name}")

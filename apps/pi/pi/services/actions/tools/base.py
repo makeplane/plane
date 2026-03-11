@@ -114,10 +114,10 @@ class PlaneToolBase:
 
                     if url_info:
                         # Include URL information in the response
-                        url_section = f"\n\nEntity URL: {url_info["entity_url"]}"
-                        url_section += f"\nEntity Name: {url_info["entity_name"]}"
-                        url_section += f"\nEntity Type: {url_info["entity_type"]}"
-                        url_section += f"\nEntity ID: {url_info["entity_id"]}"
+                        url_section = f"\n\nEntity URL: {url_info['entity_url']}"
+                        url_section += f"\nEntity Name: {url_info['entity_name']}"
+                        url_section += f"\nEntity Type: {url_info['entity_type']}"
+                        url_section += f"\nEntity ID: {url_info['entity_id']}"
 
                         # Add human-friendly identifier when available
                         try:
@@ -140,16 +140,16 @@ class PlaneToolBase:
                     log.error(f"Error constructing entity URL: {e}")
                     # Still provide entity info even if URL construction fails
                     if entity_data and entity_data.get("id"):
-                        fallback_section = f"\n\nEntity ID: {entity_data["id"]}"
-                        fallback_section += f"\nEntity Name: {entity_data.get("name", "")}"
+                        fallback_section = f"\n\nEntity ID: {entity_data['id']}"
+                        fallback_section += f"\nEntity Name: {entity_data.get('name', '')}"
                         fallback_section += f"\nEntity Type: {entity_type}"
                         return f"✅ {message}\n\nResult: {data}{fallback_section}"
             else:
                 log.warning(f"No workspace_slug found in context: {context}")
                 # Still provide entity info even without workspace_slug
                 if entity_data and entity_data.get("id"):
-                    fallback_section = f"\n\nEntity ID: {entity_data["id"]}"
-                    fallback_section += f"\nEntity Name: {entity_data.get("name", "")}"
+                    fallback_section = f"\n\nEntity ID: {entity_data['id']}"
+                    fallback_section += f"\nEntity Name: {entity_data.get('name', '')}"
                     fallback_section += f"\nEntity Type: {entity_type}"
                     return f"✅ {message}\n\nResult: {data}{fallback_section}"
         else:

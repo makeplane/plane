@@ -135,9 +135,7 @@ class WorkflowStateSerializer(BaseSerializer):
 
 
 class WorkflowTransitionSerializer(BaseSerializer):
-    member_ids = serializers.ListField(
-        child=serializers.UUIDField(), read_only=True, default=[]
-    )
+    member_ids = serializers.ListField(child=serializers.UUIDField(), read_only=True, default=[])
 
     class Meta:
         model = WorkflowTransition

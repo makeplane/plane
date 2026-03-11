@@ -25,6 +25,7 @@ from ...serializers import (
 
 class ExecutionListView(ListAPIView):
     """List all executions in a workspace"""
+
     serializer_class = ScriptExecutionListSerializer
     authentication_classes = [BaseSessionAuthentication]
     permission_classes = [WorkSpaceAdminPermission]
@@ -36,9 +37,7 @@ class ExecutionListView(ListAPIView):
     def get_queryset(self):
         workspace = get_object_or_404(Workspace, slug=self.workspace_slug)
 
-        queryset = ScriptExecution.objects.filter(
-            workspace=workspace
-        ).select_related("script").order_by("-created_at")
+        queryset = ScriptExecution.objects.filter(workspace=workspace).select_related("script").order_by("-created_at")
 
         # Optional query parameters for filtering
         trigger_type = self.request.query_params.get("trigger_type")
@@ -57,6 +56,7 @@ class ExecutionListView(ListAPIView):
 
 class ExecutionRetrieveView(RetrieveAPIView):
     """Get details of a specific execution (works for both test and script runs)"""
+
     serializer_class = ScriptExecutionWithScriptSerializer
     authentication_classes = [BaseSessionAuthentication]
     permission_classes = [WorkSpaceAdminPermission]
@@ -71,13 +71,12 @@ class ExecutionRetrieveView(RetrieveAPIView):
     def get_queryset(self):
         workspace = get_object_or_404(Workspace, slug=self.workspace_slug)
 
-        return ScriptExecution.objects.filter(
-            workspace=workspace
-        ).select_related("script", "project", "workspace")
+        return ScriptExecution.objects.filter(workspace=workspace).select_related("script", "project", "workspace")
 
 
 class ScriptExecutionListView(ListAPIView):
     """List executions for a specific script"""
+
     serializer_class = ScriptExecutionListSerializer
     authentication_classes = [BaseSessionAuthentication]
     permission_classes = [WorkSpaceAdminPermission]

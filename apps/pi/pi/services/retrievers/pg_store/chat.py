@@ -688,7 +688,7 @@ async def retrieve_chat_history(
                                                 cleaned_blocks.append(mask_uuids_in_text(block))
                                         except Exception:
                                             # Fail-safe: fall back to generic formatting
-                                            prelude = f"{(tool_name or "Tool")} execution completed"
+                                            prelude = f"{(tool_name or 'Tool')} execution completed"
                                             formatted = format_tool_message_for_display(f"{prelude}\n\nResult: {raw_str}")
                                             if formatted and formatted.strip():
                                                 cleaned_blocks.append(mask_uuids_in_text(formatted))
@@ -714,14 +714,14 @@ async def retrieve_chat_history(
 
                                         from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
 
-                                        prelude = f"{tool_name_shown_to_user(tool_name or "Tool")} execution completed"
+                                        prelude = f"{tool_name_shown_to_user(tool_name or 'Tool')} execution completed"
                                         formatted = f"{prelude}\n\nResult: {truncated}"
                                         cleaned_blocks.append(mask_uuids_in_text(formatted.strip()))
 
                                     else:
                                         from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
 
-                                        prelude = f"{tool_name_shown_to_user(tool_name or "Tool")} execution completed"
+                                        prelude = f"{tool_name_shown_to_user(tool_name or 'Tool')} execution completed"
                                         # Include query context when available (helps external readers)
                                         if isinstance(exec_data, dict) and exec_data.get("tool_query"):
                                             try:
@@ -878,7 +878,7 @@ async def retrieve_chat_history(
                                                         facts_lines = []
                                                         if isinstance(facts, dict):
                                                             if facts.get("entity_url"):
-                                                                facts_lines.append(f"URL: {facts.get("entity_url")}")
+                                                                facts_lines.append(f"URL: {facts.get('entity_url')}")
                                                             # Prefer identifier/name/id in that order
                                                             ent = facts.get("entity_identifier") or facts.get("entity_name") or facts.get("entity_id")
                                                             if ent:
@@ -898,7 +898,7 @@ async def retrieve_chat_history(
                                                             for key in ("projects_ids_preview", "cycles_ids_preview", "ids_preview"):
                                                                 ids_val = facts.get(key)
                                                                 if isinstance(ids_val, list) and ids_val:
-                                                                    facts_lines.append(f"IDs: {", ".join([str(x) for x in ids_val][:3])}")
+                                                                    facts_lines.append(f"IDs: {', '.join([str(x) for x in ids_val][:3])}")
                                                                     break
                                                         if facts_lines:
                                                             execution_info += "\n" + "\n".join(facts_lines)
@@ -922,7 +922,7 @@ async def retrieve_chat_history(
                                         if message_flow_step.is_executed and message_flow_step.execution_data:
                                             exec_data = message_flow_step.execution_data
                                             if exec_data.get("executed_at"):
-                                                execution_info = f"{execution_info} (Executed at: {exec_data.get("executed_at")})"
+                                                execution_info = f"{execution_info} (Executed at: {exec_data.get('executed_at')})"
                                             if exec_data.get("entity_info") or exec_data.get("entities"):
                                                 try:
                                                     # Single entity details
@@ -1012,12 +1012,12 @@ async def retrieve_chat_history(
                                                 if entity_urls:
                                                     internal_reasoning_parts.append("Entity URLs:")
                                                     for idx, url_dict in enumerate(entity_urls, 1):
-                                                        internal_reasoning_parts.append(f"{idx}. url: {url_dict.get("url", "N/A")}")
-                                                        internal_reasoning_parts.append(f"    id: {url_dict.get("id", "N/A")}")
-                                                        internal_reasoning_parts.append(f"    item type: {url_dict.get("type", "N/A")}")
+                                                        internal_reasoning_parts.append(f"{idx}. url: {url_dict.get('url', 'N/A')}")
+                                                        internal_reasoning_parts.append(f"    id: {url_dict.get('id', 'N/A')}")
+                                                        internal_reasoning_parts.append(f"    item type: {url_dict.get('type', 'N/A')}")
                                                         if url_dict.get("type") == "issue" and url_dict.get("issue_identifier"):
                                                             internal_reasoning_parts.append(
-                                                                f"    issue unique key: {url_dict.get("issue_identifier")}"
+                                                                f"    issue unique key: {url_dict.get('issue_identifier')}"
                                                             )
                                             else:
                                                 # Skip adding additional raw results for other tools to avoid duplication
@@ -1190,11 +1190,11 @@ async def retrieve_chat_history(
                                         if message_flow_step.is_executed and message_flow_step.execution_data:
                                             exec_data = message_flow_step.execution_data
                                             if exec_data.get("executed_at"):
-                                                execution_info = f"{execution_info} (Executed at: {exec_data.get("executed_at")})"
+                                                execution_info = f"{execution_info} (Executed at: {exec_data.get('executed_at')})"
                                             if exec_data.get("entity_info"):
                                                 entity_info = exec_data.get("entity_info", {})
                                                 if entity_info.get("id"):
-                                                    execution_info = f"{execution_info} - Created/Updated Entity ID: {entity_info.get("id")}"
+                                                    execution_info = f"{execution_info} - Created/Updated Entity ID: {entity_info.get('id')}"
 
                                         # Add to internal reasoning
                                         standalone_internal_reasoning_parts.append(execution_info)
@@ -1242,12 +1242,12 @@ async def retrieve_chat_history(
                                                 if entity_urls:
                                                     standalone_internal_reasoning_parts.append("Entity URLs:")
                                                     for idx, url_dict in enumerate(entity_urls, 1):
-                                                        standalone_internal_reasoning_parts.append(f"{idx}. url: {url_dict.get("url", "N/A")}")
-                                                        standalone_internal_reasoning_parts.append(f"    id: {url_dict.get("id", "N/A")}")
-                                                        standalone_internal_reasoning_parts.append(f"    item type: {url_dict.get("type", "N/A")}")
+                                                        standalone_internal_reasoning_parts.append(f"{idx}. url: {url_dict.get('url', 'N/A')}")
+                                                        standalone_internal_reasoning_parts.append(f"    id: {url_dict.get('id', 'N/A')}")
+                                                        standalone_internal_reasoning_parts.append(f"    item type: {url_dict.get('type', 'N/A')}")
                                                         if url_dict.get("type") == "issue" and url_dict.get("issue_identifier"):
                                                             standalone_internal_reasoning_parts.append(
-                                                                f"    issue unique key: {url_dict.get("issue_identifier")}"
+                                                                f"    issue unique key: {url_dict.get('issue_identifier')}"
                                                             )
 
                                             # Handle vector search tool
@@ -1264,12 +1264,12 @@ async def retrieve_chat_history(
                                                 if entity_urls:
                                                     standalone_internal_reasoning_parts.append("Entity URLs:")
                                                     for idx, url_dict in enumerate(entity_urls, 1):
-                                                        standalone_internal_reasoning_parts.append(f"{idx}. url: {url_dict.get("url", "N/A")}")
-                                                        standalone_internal_reasoning_parts.append(f"    id: {url_dict.get("id", "N/A")}")
-                                                        standalone_internal_reasoning_parts.append(f"    item type: {url_dict.get("type", "N/A")}")
+                                                        standalone_internal_reasoning_parts.append(f"{idx}. url: {url_dict.get('url', 'N/A')}")
+                                                        standalone_internal_reasoning_parts.append(f"    id: {url_dict.get('id', 'N/A')}")
+                                                        standalone_internal_reasoning_parts.append(f"    item type: {url_dict.get('type', 'N/A')}")
                                                         if url_dict.get("type") == "issue" and url_dict.get("issue_identifier"):
                                                             standalone_internal_reasoning_parts.append(
-                                                                f"    issue unique key: {url_dict.get("issue_identifier")}"
+                                                                f"    issue unique key: {url_dict.get('issue_identifier')}"
                                                             )
                                             # Handle pages search tool
                                             elif tool_name_key == "pages_search_tool":

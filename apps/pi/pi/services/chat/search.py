@@ -179,7 +179,7 @@ class ChatSearchService:
                 workspace_id=UUID(source["workspace_id"]) if source.get("workspace_id") else None,
             )
         except (ValueError, TypeError) as e:
-            log.warning(f"Error creating ChatSearchResult from hit {source.get("chat_id")}: {e}")
+            log.warning(f"Error creating ChatSearchResult from hit {source.get('chat_id')}: {e}")
             return None
 
     def _get_offset_from_cursor(self, cursor: Optional[str], per_page: int) -> int:

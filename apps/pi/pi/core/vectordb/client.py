@@ -247,19 +247,19 @@ class VectorStore:
                 except ConnectionTimeout as e:
                     retry_count += 1
                     if retry_count >= max_retries:
-                        log.error(f"Connection timeout while indexing {doc["id"]}: {str(e)}")
+                        log.error(f"Connection timeout while indexing {doc['id']}: {str(e)}")
                         failed_docs.append(doc)
                     else:
-                        log.warning(f"Connection timeout while indexing {doc["id"]}, retrying ({retry_count}/{max_retries})...")
+                        log.warning(f"Connection timeout while indexing {doc['id']}, retrying ({retry_count}/{max_retries})...")
                         await asyncio.sleep(2)  # Wait before retrying
 
                 except RequestError as e:
-                    log.error(f"Error indexing {doc["id"]}: {str(e)}")
+                    log.error(f"Error indexing {doc['id']}: {str(e)}")
                     failed_docs.append(doc)
                     break
 
                 except Exception as e:
-                    log.error(f"Error indexing {doc["id"]}: {str(e)}")
+                    log.error(f"Error indexing {doc['id']}: {str(e)}")
                     failed_docs.append(doc)
                     break
 

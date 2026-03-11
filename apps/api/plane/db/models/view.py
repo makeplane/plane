@@ -18,6 +18,7 @@ from .project import ProjectOptionalBaseModel
 from plane.utils.issue_filters import issue_filters
 from plane.db.mixins import FiltersMixin
 
+
 def get_default_filters():
     return {
         "priority": None,

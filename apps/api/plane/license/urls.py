@@ -30,11 +30,11 @@ from plane.license.api.views import (
     InstanceWorkSpaceEndpoint,
     AdminFeatureFlagEndpoint,
     CheckUpdateEndpoint,
-    InstanceAdminPasswordResetEndpoint
+    InstanceAdminPasswordResetEndpoint,
 )
 
 from plane.authentication.views import (
-        # Admin authentication
+    # Admin authentication
     GoogleOauthInitiateAdminEndpoint,
     GoogleCallbackAdminEndpoint,
     GitHubOauthInitiateAdminEndpoint,
@@ -117,7 +117,8 @@ urlpatterns = [
         "admins/feature-flags/",
         AdminFeatureFlagEndpoint.as_view(),
         name="admin-feature-flags",
-    ),    path(
+    ),
+    path(
         "admin/google/",
         GoogleOauthInitiateAdminEndpoint.as_view(),
         name="admin-google-initiate",

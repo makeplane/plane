@@ -853,9 +853,9 @@ class Command(BaseCommand):
             issue_lookup.update(extra_seq)
             issue_ext_lookup.update(extra_ext)
 
-        for iid, rid, rtype in relation_qs.values_list(
-            "issue_id", "related_issue_id", "relation_type"
-        ).iterator(chunk_size=1000):
+        for iid, rid, rtype in relation_qs.values_list("issue_id", "related_issue_id", "relation_type").iterator(
+            chunk_size=1000
+        ):
             ws.append(
                 [
                     issue_lookup.get(iid, ""),
@@ -1017,12 +1017,14 @@ class Command(BaseCommand):
         grand_count = 0
         grand_duration = 0
         for row in user_stats:
-            ws.append([
-                row["logged_by__email"],
-                row["logged_by__display_name"] or "",
-                row["cnt"],
-                row["total_duration"],
-            ])
+            ws.append(
+                [
+                    row["logged_by__email"],
+                    row["logged_by__display_name"] or "",
+                    row["cnt"],
+                    row["total_duration"],
+                ]
+            )
             grand_count += row["cnt"]
             grand_duration += row["total_duration"]
 
@@ -1049,34 +1051,34 @@ class Command(BaseCommand):
         ws.append(headers)
         style_header_row(ws, len(headers))
 
-        issue_seq_lookup = dict(
-            Issue.objects.filter(id__in=issue_ids)
-            .values_list("id", "sequence_id")
-        )
-        issue_ext_lookup = dict(
-            Issue.objects.filter(id__in=issue_ids)
-            .values_list("id", "external_id")
-        )
+        issue_seq_lookup = dict(Issue.objects.filter(id__in=issue_ids).values_list("id", "sequence_id"))
+        issue_ext_lookup = dict(Issue.objects.filter(id__in=issue_ids).values_list("id", "external_id"))
 
         worklogs = (
             IssueWorkLog.objects.filter(issue_id__in=issue_ids)
             .select_related("logged_by")
             .only(
-                "issue_id", "logged_by__email", "logged_by__display_name",
-                "duration", "description", "created_at",
+                "issue_id",
+                "logged_by__email",
+                "logged_by__display_name",
+                "duration",
+                "description",
+                "created_at",
             )
             .order_by("issue_id", "created_at")
         )
         for wl in worklogs.iterator(chunk_size=500):
             issue_ext = issue_ext_lookup.get(wl.issue_id)
-            ws.append([
-                issue_seq_lookup.get(wl.issue_id, ""),
-                jira_id(issue_ext),
-                wl.logged_by.email if wl.logged_by else "",
-                wl.logged_by.display_name if wl.logged_by else "",
-                wl.duration,
-                (wl.description or "")[:200],
-                str(wl.created_at) if wl.created_at else "",
-            ])
+            ws.append(
+                [
+                    issue_seq_lookup.get(wl.issue_id, ""),
+                    jira_id(issue_ext),
+                    wl.logged_by.email if wl.logged_by else "",
+                    wl.logged_by.display_name if wl.logged_by else "",
+                    wl.duration,
+                    (wl.description or "")[:200],
+                    str(wl.created_at) if wl.created_at else "",
+                ]
+            )
 
         auto_width(ws)

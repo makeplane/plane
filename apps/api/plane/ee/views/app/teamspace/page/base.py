@@ -690,11 +690,7 @@ class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
             )
 
         # Fetch only the binary description
-        page = (
-            Page.objects.filter(pk=pk, workspace__slug=slug)
-            .only("description_binary")
-            .first()
-        )
+        page = Page.objects.filter(pk=pk, workspace__slug=slug).only("description_binary").first()
         if page is None:
             return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         binary_data = page.description_binary

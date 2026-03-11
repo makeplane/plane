@@ -99,10 +99,10 @@ async def identify_duplicates_with_llm(query_title: str, query_description: str,
     # Format candidates for LLM input as a clean numbered list
     candidates_text = ""
     for i, candidate in enumerate(candidates, 1):
-        candidates_text += f"{i}. {candidate["name"]}\n"
-        candidates_text += f"   ID: {candidate["id"]}\n"
+        candidates_text += f"{i}. {candidate['name']}\n"
+        candidates_text += f"   ID: {candidate['id']}\n"
         if candidate.get("description"):
-            candidates_text += f"   {candidate["description"][:2000]}...\n"
+            candidates_text += f"   {candidate['description'][:2000]}...\n"
         candidates_text += "\n"
 
     # Create the system prompt for duplicate identification

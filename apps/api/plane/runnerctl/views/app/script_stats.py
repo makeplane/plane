@@ -22,6 +22,7 @@ from ...models import Script, ScriptExecution
 
 class ScriptStatsView(APIView):
     """Get execution statistics for a script"""
+
     authentication_classes = [BaseSessionAuthentication]
     permission_classes = [WorkSpaceAdminPermission]
 
@@ -57,15 +58,17 @@ class ScriptStatsView(APIView):
                 "executed_at": last_execution.created_at.isoformat() if last_execution.created_at else None,
             }
 
-        return Response({
-            "total_executions": total_executions,
-            "success_count": success_count,
-            "failure_count": failure_count,
-            "success_rate": round(success_rate, 1),
-            "by_trigger_type": {
-                "test": test_count,
-                "manual": manual_count,
-                "automation": automation_count,
-            },
-            "last_execution": last_execution_data,
-        })
+        return Response(
+            {
+                "total_executions": total_executions,
+                "success_count": success_count,
+                "failure_count": failure_count,
+                "success_rate": round(success_rate, 1),
+                "by_trigger_type": {
+                    "test": test_count,
+                    "manual": manual_count,
+                    "automation": automation_count,
+                },
+                "last_execution": last_execution_data,
+            }
+        )

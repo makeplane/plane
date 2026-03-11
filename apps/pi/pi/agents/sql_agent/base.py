@@ -87,7 +87,7 @@ def log_table_info(title: str, column_title: str, rows: list[str], column_style:
 
 
 def log_relevant_tables_info(chat_id: str, relevant_tables: list[str], iteration: int):
-    content = f"{", ".join(relevant_tables)}"
+    content = f"{', '.join(relevant_tables)}"
     log_panel_info(f"Relevant Tables {iteration} - ChatID: {chat_id}", content)
 
 
@@ -571,9 +571,9 @@ async def text2sql(
                 if table in table_descriptions:
                     desc = table_descriptions[table]
                     MODIFIED_SQL_GENERATOR += f"\n## Table `{table}` Description:\n"
-                    MODIFIED_SQL_GENERATOR += f"**About**: {desc["about"]}\n"
-                    MODIFIED_SQL_GENERATOR += f"**Contains**: {", ".join(desc["contains"])}\n"
-                    MODIFIED_SQL_GENERATOR += f"**Does NOT contain**: {", ".join(desc["does_not_contain"])}\n"
+                    MODIFIED_SQL_GENERATOR += f"**About**: {desc['about']}\n"
+                    MODIFIED_SQL_GENERATOR += f"**Contains**: {', '.join(desc['contains'])}\n"
+                    MODIFIED_SQL_GENERATOR += f"**Does NOT contain**: {', '.join(desc['does_not_contain'])}\n"
         except Exception as e:
             intermediate_results["column_context_error"] = e
             log.error(f"Error preparing SQL generation prompt for chat ID {chat_id}: {e}")

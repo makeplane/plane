@@ -141,8 +141,8 @@ class InstanceUserManagementViewSet(BaseAPIView):
         # Register as instance admin
         InstanceAdmin.objects.create(instance=instance, user=user)
 
-        # Let's run the member sync task to update the new user in all 
-        # workspaces (he won't be added as a member but this will create 
+        # Let's run the member sync task to update the new user in all
+        # workspaces (he won't be added as a member but this will create
         # the cache for the user)
         enterprise_member_sync_task.delay()
 

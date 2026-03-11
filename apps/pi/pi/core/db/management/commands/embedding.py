@@ -54,7 +54,7 @@ def _build_connector_config(model_key: str, custom_base_url: str = "") -> dict:
     # Get API key from environment
     api_key = os.getenv(config["api_key_env"], "")
     if not api_key and config["provider"] != "bedrock":
-        raise ValueError(f"{config["api_key_env"]} environment variable not set")
+        raise ValueError(f"{config['api_key_env']} environment variable not set")
 
     # Build credentials based on provider
     if config["provider"] == "bedrock":
@@ -73,8 +73,8 @@ def _build_connector_config(model_key: str, custom_base_url: str = "") -> dict:
     embed_url = custom_base_url.rstrip("/") if custom_base_url else config["base_url"]
 
     return {
-        "name": f"{config["provider"].title()} {config["model_name"]} Embed Model",
-        "description": f"Connector to {config["provider"]} {config["model_name"]} embedding API",
+        "name": f"{config['provider'].title()} {config['model_name']} Embed Model",
+        "description": f"Connector to {config['provider']} {config['model_name']} embedding API",
         "version": "1",
         "protocol": config["protocol"],
         "credential": credential,
@@ -111,7 +111,7 @@ def _build_model_registration_config(connector_id: str, model_key: str) -> dict:
         "name": safe_name,
         "function_name": "remote",
         "connector_id": connector_id,
-        "description": f"{config["provider"].title()} {config["model_name"]} embedding model",
+        "description": f"{config['provider'].title()} {config['model_name']} embedding model",
     }
 
 
@@ -309,7 +309,7 @@ def init_embedding_model(
                 config = get_embedding_model_config(model_key)
             except ValueError as e:
                 typer.echo(f"Error: {e}")
-                typer.echo(f"Available models: {", ".join(get_available_embedding_models())}")
+                typer.echo(f"Available models: {', '.join(get_available_embedding_models())}")
                 sys.exit(1)
 
             # Step 4: Check if we can auto-create a model (check API key based on provider)
@@ -319,11 +319,11 @@ def init_embedding_model(
                 typer.echo("Error: No embedding model configured")
                 typer.echo("OPENSEARCH_ML_MODEL_ID is not set")
                 typer.echo("No active embedding model found in database")
-                typer.echo(f"{config["api_key_env"]} is not set (needed to auto-create model)")
+                typer.echo(f"{config['api_key_env']} is not set (needed to auto-create model)")
                 typer.echo("")
                 typer.echo("Please either:")
                 typer.echo("  1. Set OPENSEARCH_ML_MODEL_ID environment variable, OR")
-                typer.echo(f"  2. Set {config["api_key_env"]} and run: python -m pi.manage create-embedding-model --model {model_key}")
+                typer.echo(f"  2. Set {config['api_key_env']} and run: python -m pi.manage create-embedding-model --model {model_key}")
                 sys.exit(1)
 
             # Step 5: Auto-create the model
@@ -492,9 +492,9 @@ def create_embedding_model(
         for model_key in get_available_embedding_models():
             config = get_embedding_model_config(model_key)
             typer.echo(f"  {model_key}")
-            typer.echo(f"    Provider: {config["provider"]}")
-            typer.echo(f"    Dimension: {config["dimension"]}")
-            typer.echo(f"    API Key Env: {config["api_key_env"]}")
+            typer.echo(f"    Provider: {config['provider']}")
+            typer.echo(f"    Dimension: {config['dimension']}")
+            typer.echo(f"    API Key Env: {config['api_key_env']}")
             typer.echo("")
         return
 
@@ -521,8 +521,8 @@ def create_embedding_model(
             api_key = os.getenv(config["api_key_env"], "")
             if not api_key or not api_key.strip():
                 log.error("%s not configured", config["api_key_env"])
-                typer.echo(f"Error: {config["api_key_env"]} not configured")
-                typer.echo(f"  Please set {config["api_key_env"]} environment variable")
+                typer.echo(f"Error: {config['api_key_env']} not configured")
+                typer.echo(f"  Please set {config['api_key_env']} environment variable")
                 sys.exit(1)
             log.info("%s found (length: %s)", config["api_key_env"], len(api_key.strip()))
 

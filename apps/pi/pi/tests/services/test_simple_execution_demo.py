@@ -74,9 +74,9 @@ class TestSimpleExecutionDemo:
             assert result["data"]["last_name"] == "Doe"
 
             print("✅ Successfully executed get_current_user method!")
-            print(f"   User ID: {result["data"]["id"]}")
-            print(f"   Email: {result["data"]["email"]}")
-            print(f"   Name: {result["data"]["first_name"]} {result["data"]["last_name"]}")
+            print(f"   User ID: {result['data']['id']}")
+            print(f"   Email: {result['data']['email']}")
+            print(f"   Name: {result['data']['first_name']} {result['data']['last_name']}")
 
     @pytest.mark.asyncio
     async def test_list_projects_demo(self):
@@ -118,9 +118,9 @@ class TestSimpleExecutionDemo:
             assert result["data"]["results"][1]["name"] == "My Second Project"
 
             print("✅ Successfully executed list_projects method!")
-            print(f"   Found {len(result["data"]["results"])} projects")
+            print(f"   Found {len(result['data']['results'])} projects")
             for project in result["data"]["results"]:
-                print(f"   - {project["name"]} (ID: {project["id"]})")
+                print(f"   - {project['name']} (ID: {project['id']})")
 
     @pytest.mark.asyncio
     async def test_error_handling_demo(self):
@@ -147,7 +147,7 @@ class TestSimpleExecutionDemo:
             assert "API Error" in result["error"]
 
             print("✅ Successfully handled API error!")
-            print(f"   Error: {result["error"]}")
+            print(f"   Error: {result['error']}")
 
     def test_available_methods_demo(self):
         """Demonstrate how to see available methods."""
