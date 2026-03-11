@@ -66,6 +66,7 @@ from plane.utils.analytics_events import WORKSPACE_CREATED, WORKSPACE_DELETED
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from plane.payment.utils.workspace_license_request import resync_workspace_license
 
+
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
     serializer_class = WorkSpaceSerializer
