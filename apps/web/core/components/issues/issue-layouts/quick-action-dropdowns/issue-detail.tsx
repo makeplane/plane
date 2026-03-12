@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Ellipsis } from "lucide-react";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -60,7 +60,6 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
   } = props;
   // router
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);

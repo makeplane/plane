@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { FC, MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 // components
 import type { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
 // hooks

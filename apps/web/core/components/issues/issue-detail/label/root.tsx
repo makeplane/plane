@@ -62,7 +62,7 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
         try {
           if (onLabelUpdate) onLabelUpdate(data.label_ids || []);
           else await updateIssue(workspaceSlug, projectId, issueId, data);
-        } catch (error) {
+        } catch (_error) {
           setToast({
             title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
