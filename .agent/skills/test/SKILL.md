@@ -53,3 +53,4 @@ Run test suites and produce analysis reports.
 - Always fix root cause, not symptoms
 - Report must include actionable fix suggestions
 - Backend tests: use `session_client` fixture, `@pytest.mark.django_db`
+- For backend tests, follow `.agent/rules/backend-testing.md` for runner commands and markers

@@ -1,7 +1,4 @@
----
-paths:
-  - packages/types/**
----
+<!-- Scope: packages/types/** -->
 
 # TypeScript Types & Interfaces
 

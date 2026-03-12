@@ -1,8 +1,4 @@
----
-paths:
-  - apps/web/ce/**
-  - apps/admin/ce/**
----
+<!-- Scope: apps/web/ce/**, apps/admin/ce/** -->
 
 # CE (Community Edition) Override Pattern
 

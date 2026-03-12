@@ -1,9 +1,4 @@
----
-paths:
-  - apps/api/**
-  - packages/types/**
-  - packages/services/**
----
+<!-- Scope: apps/api/**, packages/types/**, packages/services/** -->
 
 # Plane Backend Architecture — Quick Reference
 
@@ -56,6 +51,7 @@ apps/api/plane/
 | `backend-serializers.md`  | Base classes, write/read split              |
 | `backend-urls-celery.md`  | URL conventions, Celery, activity tracking  |
 | `backend-testing-i18n.md` | Test fixtures, i18n, frontend integration   |
+| `backend-testing.md`      | Test runner commands, markers, options      |
 
 ## New Feature Checklist
 
@@ -67,3 +63,11 @@ apps/api/plane/
 6. Activity → `issue_activity.delay()`/`model_activity.delay()`
 7. Tasks → `plane/bgtasks/` if needed
 8. Frontend: Types → Service → Store → Components
+
+## Rule Maintenance
+
+If you encounter code that contradicts these rules:
+
+1. **Grep to verify** which pattern is dominant (count occurrences)
+2. **Follow the majority** pattern (the rule may be outdated)
+3. **Flag the discrepancy** in your output so rules can be updated

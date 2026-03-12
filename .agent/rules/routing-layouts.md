@@ -1,8 +1,4 @@
----
-paths:
-  - apps/web/app/**
-  - apps/web/app/routes/**
----
+<!-- Scope: apps/web/app/**, apps/web/app/routes/** -->
 
 # Routing & Layout Patterns (React Router v7)
 

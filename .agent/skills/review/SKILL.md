@@ -13,6 +13,11 @@ Review code against Plane's architecture rules and design system.
    - `.agent/rules/plane-design-system.md` (frontend)
    - `.agent/rules/plane-backend-architecture.md` (backend)
    - `.agent/rules/frontend-implementation-checklist.md` (checklist)
+   - `.agent/rules/development-rules.md` -- verification gates, ESLint, testing integrity
+   - `.agent/rules/backend-testing.md` -- test runner commands and markers
+   - `.agent/rules/prettier-formatting.md` -- formatting standards
+   - `.agent/rules/frontend-canonical-imports.md` -- verified frontend import paths
+   - `.agent/rules/backend-canonical-imports.md` -- verified backend import paths
 
 2. **Identify changed files** — `git diff --name-only` or read plan phases
 
@@ -23,7 +28,7 @@ Review code against Plane's architecture rules and design system.
 ## Frontend Checklist
 
 - [ ] ALL text uses `t()` from `@plane/i18n` (zero hardcoded English)
-- [ ] Color tokens: `text-color-*` (NOT `text-tertiary`), `border-color-*` (NOT `border-subtle`)
+- [ ] Color tokens: `text-*` (NOT `text-color-tertiary`), `border-*` (NOT `border-color-subtle`)
 - [ ] Input backgrounds: `bg-layer-2` (NOT `bg-surface-1`)
 - [ ] Components from `@plane/propel` (subpath imports, not @plane/ui when overlap)
 - [ ] Menus: `CustomMenu`/`Menu` (no custom hover dropdowns)

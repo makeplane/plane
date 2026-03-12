@@ -1,8 +1,4 @@
----
-paths:
-  - apps/web/**/components/**
-  - apps/admin/**/components/**
----
+<!-- Scope: apps/web/**/components/**, apps/admin/**/components/** -->
 
 # Dialog / Modal Patterns
 

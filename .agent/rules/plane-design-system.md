@@ -1,12 +1,4 @@
----
-paths:
-  - apps/web/**
-  - apps/admin/**
-  - apps/space/**
-  - packages/propel/**
-  - packages/ui/**
-  - packages/i18n/**
----
+<!-- Scope: apps/web/**, apps/admin/**, apps/space/**, packages/propel/**, packages/ui/**, packages/i18n/** -->
 
 # Plane Frontend Design System — Quick Reference
 
@@ -31,7 +23,7 @@ React 18 + Router v7 + Vite | MobX (33+ stores) | Tailwind v4 (semantic tokens) 
 
 1. **Search before build** — ALWAYS grep existing components (→ `component-libraries.md`)
 2. **Semantic tokens only** — NEVER hardcode colors (→ `color-tokens.md`)
-3. **`text-color-*` infix** — `text-tertiary` WRONG → `text-color-tertiary` (→ `color-tokens.md`)
+3. **`text-*` short form** — `text-color-tertiary` LEGACY → use `text-tertiary` (→ `color-tokens.md`)
 4. **`bg-layer-2` for inputs** — NOT `bg-surface-1` (→ `forms-inputs.md`)
 5. **`observer()` always** — wrap MobX-reading components (→ `mobx-stores.md`)
 6. **`t()` for all strings** — never hardcode text (→ `i18n-rules.md`)
@@ -60,3 +52,11 @@ React 18 + Router v7 + Vite | MobX (33+ stores) | Tailwind v4 (semantic tokens) 
 - Types in `@plane/types`, Import order: React → type → @plane → @/ → relative
 - Components: PascalCase.tsx | Hooks: use-_.ts | Stores: _.store.ts
 - Files <200L, components <150L, hooks <100L
+
+## Rule Maintenance
+
+If you encounter code that contradicts these rules:
+
+1. **Grep to verify** which pattern is dominant (count occurrences)
+2. **Follow the majority** pattern (the rule may be outdated)
+3. **Flag the discrepancy** in your output so rules can be updated

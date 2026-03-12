@@ -1,9 +1,4 @@
----
-paths:
-  - apps/web/**/components/**
-  - apps/web/ce/components/**
-  - apps/admin/**/components/**
----
+<!-- Scope: apps/web/**/components/**, apps/web/ce/components/**, apps/admin/**/components/** -->
 
 # Component Libraries & Search-Before-Build
 

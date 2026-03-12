@@ -1,9 +1,4 @@
----
-paths:
-  - plane/app/urls/**
-  - plane/api/urls/**
-  - plane/bgtasks/**
----
+<!-- Scope: plane/app/urls/**, plane/api/urls/**, plane/bgtasks/** -->
 
 # Backend URLs & Background Tasks
 

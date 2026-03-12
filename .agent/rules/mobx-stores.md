@@ -1,9 +1,4 @@
----
-paths:
-  - apps/web/**/store/**
-  - apps/web/ce/store/**
-  - apps/web/core/store/**
----
+<!-- Scope: apps/web/**/store/**, apps/web/ce/store/**, apps/web/core/store/** -->
 
 # MobX Store Pattern
 
@@ -20,7 +15,7 @@ CoreRootStore (core/store/root.store.ts)
 ```typescript
 import { makeObservable, observable, action, computed, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { set } from "mobx";
+import { set } from "lodash-es";
 
 export interface IMyStore {
   dataMap: Record<string, IMyModel>;
@@ -71,8 +66,9 @@ export class MyStore implements IMyStore {
 
 - **ALWAYS** `makeObservable` with explicit fields (NEVER `makeAutoObservable`)
 - **ALWAYS** `runInAction` for async observable updates
-- **ALWAYS** `set()` from MobX for dynamic record keys (NOT `this.map[id] = x`)
-- **ALWAYS** `observer()` wrapper on components reading stores
+- **ALWAYS** `set()` from `lodash-es` for dynamic record keys (NOT `this.map[id] = x`, NOT from `mobx`)
+- **ALWAYS** `observer()` from `mobx-react` (NOT `mobx-react-lite`) on components reading stores
+- **SWR (`useSWR`) is deprecated** in this codebase. Use MobX stores for all data fetching.
 
 ## Hook Wrapper Pattern
 
