@@ -51,12 +51,8 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
   const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
 
   const isEstimatePointValid = isEmpty(cycleDetails?.progress_snapshot || {})
-    ? estimateType && estimateType?.type == EEstimateSystem.POINTS
-      ? true
-      : false
-    : isEmpty(cycleDetails?.progress_snapshot?.estimate_distribution || {})
-      ? false
-      : true;
+    ? !!(estimateType && estimateType?.type == EEstimateSystem.POINTS)
+    : !isEmpty(cycleDetails?.progress_snapshot?.estimate_distribution || {});
 
   const issueEstimatePointCount =
     isCompleted && !isEmpty(cycleDetails?.progress_snapshot)

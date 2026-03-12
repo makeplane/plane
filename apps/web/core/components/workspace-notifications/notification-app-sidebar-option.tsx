@@ -31,7 +31,7 @@ export const NotificationAppSidebarOption = observer(function NotificationAppSid
   );
 
   // derived values
-  const isMentionsEnabled = unreadNotificationsCount.mention_unread_notifications_count > 0 ? true : false;
+  const isMentionsEnabled = unreadNotificationsCount.mention_unread_notifications_count > 0;
   const totalNotifications = isMentionsEnabled
     ? unreadNotificationsCount.mention_unread_notifications_count
     : unreadNotificationsCount.total_unread_notifications_count;

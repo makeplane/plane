@@ -86,10 +86,9 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
     () =>
       WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.map((item) => {
         const preference = workspacePreferences.items[item.key];
-        return {
-          ...item,
+        return Object.assign({}, item, {
           sort_order: preference ? preference.sort_order : 0,
-        };
+        });
       }).sort((a, b) => a.sort_order - b.sort_order),
     [workspacePreferences]
   );

@@ -43,7 +43,7 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
     workspace: { workspaceMemberIds },
   } = useMember();
   // states
-  const [isSearchOpen, setIsSearchOpen] = useState(archivedModulesSearchQuery !== "" ? true : false);
+  const [isSearchOpen, setIsSearchOpen] = useState(archivedModulesSearchQuery !== "");
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && archivedModulesSearchQuery.trim() === "") setIsSearchOpen(false);

@@ -240,8 +240,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
 
   // Check for all available fields validation and if password field is available, then checks for password validation (strength + confirmation).
   // Also handles the condition for optional password i.e if password field is optional it only checks for above validation if it's not empty.
-  const isButtonDisabled =
-    !isSubmitting && isValid ? (isPasswordAlreadySetup ? false : isValidPassword ? false : true) : true;
+  const isButtonDisabled = !(!isSubmitting && isValid) || (!isPasswordAlreadySetup && !isValidPassword);
 
   return (
     <div className="flex h-full w-full">
@@ -418,7 +417,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       control={control}
                       name="confirm_password"
                       rules={{
-                        required: watch("password") ? true : false,
+                        required: !!watch("password"),
                         validate: (value) =>
                           watch("password") ? (value === watch("password") ? true : "Passwords don't match") : true,
                       }}

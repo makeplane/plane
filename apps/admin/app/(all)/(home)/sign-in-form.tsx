@@ -95,7 +95,7 @@ export function InstanceSignInForm() {
   }, [errorCode, errorMessage]);
 
   const isButtonDisabled = useMemo(
-    () => (!isSubmitting && formData.email && formData.password ? false : true),
+    () => !(!isSubmitting && formData.email && formData.password),
     [formData.email, formData.password, isSubmitting]
   );
 

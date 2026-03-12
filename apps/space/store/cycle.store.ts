@@ -9,7 +9,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { SitesCycleService } from "@plane/services";
 import type { TPublicCycle } from "@/types/cycle";
 // store
-import type { CoreRootStore } from "./root.store";
+import type { RootStore } from "./root.store";
 
 export interface ICycleStore {
   // observables
@@ -23,9 +23,9 @@ export interface ICycleStore {
 export class CycleStore implements ICycleStore {
   cycles: TPublicCycle[] | undefined = undefined;
   cycleService: SitesCycleService;
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
       cycles: observable,

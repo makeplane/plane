@@ -55,7 +55,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
   const { t } = useTranslation();
 
   // states
-  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
+  const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "");
 
   // handlers
   const handleFilters = useCallback(
