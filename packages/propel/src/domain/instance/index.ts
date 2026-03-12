@@ -11,8 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-// Domain components
-export * from "./intake-form";
-export * from "./custom-property-inputs";
-export * from "./work-items";
-export * from "./instance";
+export { InstanceNotReady } from "./instance-not-ready";
