@@ -302,7 +302,7 @@ export async function pullIssueFieldsV2(
       const fieldOptions: JiraIssueFieldOptions[] = OPTION_CUSTOM_FIELD_TYPES.includes(
         fieldInfo?.schema?.custom as JiraCustomFieldKeys
       )
-        ? await getFieldOptionsV2(client, field.numericId.toString())
+        ? await getFieldOptionsV2(client, field.numericId.toString(), projectId)
         : [];
 
       associatedIssueTypes.forEach((issueType) => {
