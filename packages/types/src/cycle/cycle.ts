@@ -9,6 +9,8 @@ import type { IIssueFilterOptions } from "../view-props";
 
 export type TCycleGroups = "current" | "upcoming" | "completed" | "draft";
 
+export type TCycleManualStatus = "started" | "completed" | null;
+
 export type TCycleCompletionChartDistribution = {
   [key: string]: number | null;
 };
@@ -111,6 +113,10 @@ export interface ICycle extends TProgressSnapshot {
   project_detail: IProjectDetails;
   progress: any[];
   version: number;
+  // Manual sprint control fields
+  manual_status?: TCycleManualStatus;
+  started_at?: string | null;
+  completed_at?: string | null;
 }
 
 export interface CycleIssueResponse {
@@ -156,3 +162,32 @@ export type TProgressChartData = {
   ideal: number;
   actual: number;
 }[];
+
+// Manual sprint control types
+export interface ICycleStartResponse {
+  id: string;
+  manual_status: TCycleManualStatus;
+  started_at: string;
+  message: string;
+}
+
+export interface ICycleCompleteResponse {
+  id: string;
+  manual_status: TCycleManualStatus;
+  completed_at: string;
+  message: string;
+  incomplete_issues_count: number;
+  issues_transferred?: boolean;
+  new_cycle_id?: string;
+}
+
+export interface ICycleIncompleteIssuesResponse {
+  incomplete_issues_count: number;
+  available_cycles: {
+    id: string;
+    name: string;
+    start_date: string | null;
+    end_date: string | null;
+    manual_status: TCycleManualStatus;
+  }[];
+}

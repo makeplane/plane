@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Pencil, ExternalLink, Link, Trash2, ArchiveRestoreIcon } from "lucide-react";
+import { Pencil, ExternalLink, Link, Trash2, ArchiveRestoreIcon, PlayCircle, CheckCircle2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
@@ -83,6 +83,37 @@ export const useQuickActionsFactory = () => {
       title: "Copy link",
       icon: Link,
       action: handler,
+    }),
+
+    // Cycle-specific actions
+    createStartCycleMenuItem: (
+      handler: () => void,
+      opts: { shouldRender?: boolean; disabled?: boolean; description?: string }
+    ): TContextMenuItem => ({
+      key: "start-cycle",
+      title: t("project_cycles.action.start.menu_item") || "Start Cycle",
+      icon: PlayCircle,
+      action: handler,
+      className: "items-start",
+      iconClassName: "mt-1",
+      description: opts.description,
+      disabled: opts.disabled,
+      shouldRender: opts.shouldRender,
+    }),
+
+    createCompleteCycleMenuItem: (
+      handler: () => void,
+      opts: { shouldRender?: boolean; disabled?: boolean; description?: string }
+    ): TContextMenuItem => ({
+      key: "complete-cycle",
+      title: t("project_cycles.action.complete.menu_item") || "Complete Cycle",
+      icon: CheckCircle2,
+      action: handler,
+      className: "items-start",
+      iconClassName: "mt-1",
+      description: opts.description,
+      disabled: opts.disabled,
+      shouldRender: opts.shouldRender,
     }),
   };
 };

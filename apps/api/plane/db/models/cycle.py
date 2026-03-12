@@ -58,6 +58,11 @@ def get_default_display_properties():
 
 
 class Cycle(ProjectBaseModel):
+    MANUAL_STATUS_CHOICES = [
+        ("started", "Started"),
+        ("completed", "Completed"),
+    ]
+
     name = models.CharField(max_length=255, verbose_name="Cycle Name")
     description = models.TextField(verbose_name="Cycle Description", blank=True)
     start_date = models.DateTimeField(verbose_name="Start Date", blank=True, null=True)
@@ -74,6 +79,16 @@ class Cycle(ProjectBaseModel):
     progress_snapshot = models.JSONField(default=dict)
     archived_at = models.DateTimeField(null=True)
     logo_props = models.JSONField(default=dict)
+    # Manual sprint control fields
+    manual_status = models.CharField(
+        max_length=20,
+        choices=MANUAL_STATUS_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name="Manual Status",
+    )
+    started_at = models.DateTimeField(null=True, blank=True, verbose_name="Started At")
+    completed_at = models.DateTimeField(null=True, blank=True, verbose_name="Completed At")
     # timezone
     TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)

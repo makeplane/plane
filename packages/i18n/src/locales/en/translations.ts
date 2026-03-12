@@ -1976,6 +1976,44 @@ export default {
             "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",
         },
       },
+      start: {
+        menu_item: "Start Cycle",
+        title: "Start Cycle",
+        description: "Are you sure you want to start this cycle?",
+        info: "Once started, this cycle will become the active cycle for the project.",
+        active_cycle_warning: "There is already an active cycle in this project. Starting this cycle will make it the new active cycle.",
+        button: "Start Cycle",
+        loading: "Starting...",
+        success: {
+          title: "Cycle started",
+          description: "The cycle has been started successfully.",
+        },
+        failed: {
+          title: "Failed to start cycle",
+          description: "Could not start the cycle. Please try again.",
+        },
+      },
+      complete: {
+        menu_item: "Complete Cycle",
+        title: "Complete Cycle",
+        description: "Are you sure you want to complete this cycle?",
+        incomplete_issues_warning: "incomplete issues found",
+        incomplete_issues_description: "You can transfer these issues to another cycle or complete without transferring.",
+        transfer_to: "Transfer issues to",
+        select_cycle: "Select a cycle (optional)",
+        no_transfer: "Don't transfer issues",
+        button: "Complete Cycle",
+        button_transfer: "Complete & Transfer",
+        loading: "Completing...",
+        success: {
+          title: "Cycle completed",
+          description: "The cycle has been completed successfully.",
+        },
+        failed: {
+          title: "Failed to complete cycle",
+          description: "Could not complete the cycle. Please try again.",
+        },
+      },
     },
     empty_state: {
       general: {

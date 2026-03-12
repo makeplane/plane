@@ -15,6 +15,9 @@ from plane.app.views import (
     TransferCycleIssueEndpoint,
     CycleUserPropertiesEndpoint,
     CycleArchiveUnarchiveEndpoint,
+    CycleStartEndpoint,
+    CycleCompleteEndpoint,
+    CycleIncompleteIssuesEndpoint,
 )
 
 
@@ -102,5 +105,20 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/analytics/",
         CycleAnalyticsEndpoint.as_view(),
         name="project-cycle",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/start/",
+        CycleStartEndpoint.as_view(),
+        name="cycle-start",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/complete/",
+        CycleCompleteEndpoint.as_view(),
+        name="cycle-complete",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/incomplete-issues/",
+        CycleIncompleteIssuesEndpoint.as_view(),
+        name="cycle-incomplete-issues",
     ),
 ]

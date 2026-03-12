@@ -24,6 +24,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { ArchiveCycleModal } from "./archived-cycles/modal";
 import { CycleDeleteModal } from "./delete-modal";
 import { CycleCreateUpdateModal } from "./modal";
+import { StartCycleModal } from "./start-cycle-modal";
+import { EndCycleModal } from "@/plane-web/components/cycles/end-cycle/modal";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
@@ -41,6 +43,8 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
   const [updateModal, setUpdateModal] = useState(false);
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [startCycleModal, setStartCycleModal] = useState(false);
+  const [endCycleModal, setEndCycleModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { getCycleById, restoreCycle } = useCycle();
@@ -96,6 +100,8 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
     handleDelete: () => setDeleteModal(true),
     handleCopyLink: handleCopyText,
     handleOpenInNewTab,
+    handleStartCycle: () => setStartCycleModal(true),
+    handleCompleteCycle: () => setEndCycleModal(true),
   });
 
   const MENU_ITEMS: TContextMenuItem[] = Array.isArray(menuResult) ? menuResult : menuResult.items;
@@ -134,6 +140,23 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
             handleClose={() => setDeleteModal(false)}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
+          />
+          <StartCycleModal
+            isOpen={startCycleModal}
+            handleClose={() => setStartCycleModal(false)}
+            cycleId={cycleId}
+            projectId={projectId}
+            workspaceSlug={workspaceSlug}
+            cycleName={cycleDetails?.name ?? ""}
+          />
+          <EndCycleModal
+            isOpen={endCycleModal}
+            handleClose={() => setEndCycleModal(false)}
+            cycleId={cycleId}
+            projectId={projectId}
+            workspaceSlug={workspaceSlug}
+            cycleName={cycleDetails?.name ?? ""}
+            transferrableIssuesCount={0}
           />
           {additionalModals}
         </div>

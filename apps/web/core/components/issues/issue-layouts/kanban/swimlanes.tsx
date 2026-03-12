@@ -83,7 +83,7 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
           if (subGroupByVisibilityToggle === false) return <></>;
 
           return (
-            <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
+            <div key={`${sub_group_by}_${_list.id}`} className="flex w-[280px] flex-shrink-0 flex-col">
               <HeaderGroupByCard
                 sub_group_by={sub_group_by}
                 group_by={group_by}

@@ -23,6 +23,8 @@ interface UseCycleMenuItemsProps {
   handleDelete: () => void;
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
+  handleStartCycle?: () => void;
+  handleCompleteCycle?: () => void;
 }
 
 interface UseModuleMenuItemsProps {
@@ -70,9 +72,35 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
 
   const isArchived = !!cycleDetails?.archived_at;
   const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
+  const isCurrent = cycleDetails?.status?.toLowerCase() === "current";
+  const isManuallyStarted = cycleDetails?.manual_status === "started";
+  const isManuallyCompleted = cycleDetails?.manual_status === "completed";
+
+  // Can start if: not archived, not completed (manual or date), not already started
+  const canStart = !isArchived && !isCompleted && !isManuallyStarted && !isManuallyCompleted && !isCurrent;
+  // Can complete if: current cycle (manually started or date-based) and not already completed
+  const canComplete = !isArchived && isCurrent && !isManuallyCompleted;
+
 
   // Assemble final menu items - order defined here
   const items = [
+    // Start/Complete cycle actions at the top
+    ...(handlers.handleStartCycle
+      ? [
+          factory.createStartCycleMenuItem(handlers.handleStartCycle, {
+            shouldRender: isEditingAllowed && !isArchived && canStart,
+            disabled: false,
+          }),
+        ]
+      : []),
+    ...(handlers.handleCompleteCycle
+      ? [
+          factory.createCompleteCycleMenuItem(handlers.handleCompleteCycle, {
+            shouldRender: isEditingAllowed && !isArchived && canComplete,
+            disabled: false,
+          }),
+        ]
+      : []),
     factory.createEditMenuItem(handlers.handleEdit, isEditingAllowed && !isCompleted && !isArchived),
     factory.createOpenInNewTabMenuItem(handlers.handleOpenInNewTab),
     factory.createCopyLinkMenuItem(handlers.handleCopyLink),

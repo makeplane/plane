@@ -8,7 +8,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ChartNoAxesColumn, PanelRight, SlidersHorizontal } from "lucide-react";
+import { CheckCircle2, ChartNoAxesColumn, PanelRight, PlayCircle, SlidersHorizontal } from "lucide-react";
 // plane imports
 import {
   EIssueFilterType,
@@ -32,6 +32,8 @@ import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import { CycleQuickActions } from "@/components/cycles/quick-actions";
+import { StartCycleModal } from "@/components/cycles/start-cycle-modal";
+import { EndCycleModal } from "@/plane-web/components/cycles/end-cycle/modal";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,
@@ -55,6 +57,8 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   const parentRef = useRef<HTMLDivElement>(null);
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
+  const [startCycleModal, setStartCycleModal] = useState(false);
+  const [endCycleModal, setEndCycleModal] = useState(false);
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, cycleId } = useParams();
@@ -107,6 +111,12 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   // derived values
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const isCompletedCycle = cycleDetails?.status?.toLocaleLowerCase() === "completed";
+  const isCurrentCycle = cycleDetails?.status?.toLocaleLowerCase() === "current";
+  const isManuallyStarted = cycleDetails?.manual_status === "started";
+  const isManuallyCompleted = cycleDetails?.manual_status === "completed";
+  const isArchived = !!cycleDetails?.archived_at;
+  const canStartCycle = !isArchived && !isCompletedCycle && !isManuallyStarted && !isManuallyCompleted && !isCurrentCycle;
+  const canCompleteCycle = isCurrentCycle && !isManuallyCompleted;
   const canUserCreateIssue = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
@@ -134,6 +144,27 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
+      {cycleDetails && (
+        <>
+          <StartCycleModal
+            isOpen={startCycleModal}
+            handleClose={() => setStartCycleModal(false)}
+            cycleId={cycleId?.toString() ?? ""}
+            projectId={projectId?.toString() ?? ""}
+            workspaceSlug={workspaceSlug?.toString() ?? ""}
+            cycleName={cycleDetails.name}
+          />
+          <EndCycleModal
+            isOpen={endCycleModal}
+            handleClose={() => setEndCycleModal(false)}
+            cycleId={cycleId?.toString() ?? ""}
+            projectId={projectId?.toString() ?? ""}
+            workspaceSlug={workspaceSlug?.toString() ?? ""}
+            cycleName={cycleDetails.name}
+            transferrableIssuesCount={0}
+          />
+        </>
+      )}
       <Header>
         <Header.LeftItem>
           <div className="flex items-center gap-2">
@@ -239,6 +270,28 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                     <ChartNoAxesColumn className="size-3.5" />
                   </span>
                 </Button>
+                {canStartCycle && (
+                  <Button
+                    onClick={() => setStartCycleModal(true)}
+                    variant="primary"
+                    size="lg"
+                    className="flex items-center gap-1.5"
+                  >
+                    <PlayCircle className="size-3.5" />
+                    <span className="hidden @4xl:flex">{t("project_cycles.action.start.menu_item")}</span>
+                  </Button>
+                )}
+                {canCompleteCycle && (
+                  <Button
+                    onClick={() => setEndCycleModal(true)}
+                    variant="secondary"
+                    size="lg"
+                    className="flex items-center gap-1.5"
+                  >
+                    <CheckCircle2 className="size-3.5" />
+                    <span className="hidden @4xl:flex">{t("project_cycles.action.complete.menu_item")}</span>
+                  </Button>
+                )}
                 {!isCompletedCycle && (
                   <Button
                     variant="primary"

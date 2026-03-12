@@ -16,6 +16,7 @@ import type {
   TCycleEstimateDistribution,
   TCycleDistribution,
   TCycleEstimateType,
+  ICycleIncompleteIssuesResponse,
 } from "@plane/types";
 import type { DistributionUpdates } from "@plane/utils";
 import { orderCycles, shouldFilterCycle, getDate, updateDistribution } from "@plane/utils";
@@ -93,6 +94,14 @@ export interface ICycleStore {
   // archive
   archiveCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
   restoreCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
+  // manual sprint control
+  startCycle: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
+  completeCycle: (workspaceSlug: string, projectId: string, cycleId: string, newCycleId?: string) => Promise<void>;
+  getIncompleteIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ) => Promise<ICycleIncompleteIssuesResponse>;
 }
 
 export class CycleStore implements ICycleStore {
@@ -147,6 +156,9 @@ export class CycleStore implements ICycleStore {
       removeCycleFromFavorites: action,
       archiveCycle: action,
       restoreCycle: action,
+      startCycle: action,
+      completeCycle: action,
+      getIncompleteIssues: action,
     });
 
     this.rootStore = _rootStore;
@@ -178,6 +190,11 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let completedCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
+      // Check manual_status first (highest priority)
+      if (c.manual_status === "completed") return c.project_id === projectId;
+      // If manually started, it's not completed
+      if (c.manual_status === "started") return false;
+      // Fall back to date-based logic
       const endDate = getDate(c.end_date);
       const hasEndDatePassed = endDate && isPast(endDate);
       const isEndDateToday = endDate && isToday(endDate);
@@ -197,6 +214,11 @@ export class CycleStore implements ICycleStore {
     const projectId = this.rootStore.router.projectId;
     if (!projectId || !this.fetchedMap[projectId]) return null;
     let incompleteCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
+      // Exclude if manually completed
+      if (c.manual_status === "completed") return false;
+      // Include if manually started (it's active/incomplete)
+      if (c.manual_status === "started") return c.project_id === projectId && !c?.archived_at;
+      // Fall back to date-based logic
       const endDate = getDate(c.end_date);
       const hasEndDatePassed = endDate && isPast(endDate);
       return (
@@ -214,10 +236,19 @@ export class CycleStore implements ICycleStore {
   get currentProjectActiveCycleId() {
     const projectId = this.rootStore.router.projectId;
     if (!projectId) return null;
+    // First check for manually started cycles
+    const manuallyStartedCycle = Object.keys(this.cycleMap ?? {}).find(
+      (cycleId) =>
+        this.cycleMap?.[cycleId]?.project_id === projectId &&
+        this.cycleMap?.[cycleId]?.manual_status === "started"
+    );
+    if (manuallyStartedCycle) return manuallyStartedCycle;
+    // Fall back to status-based (includes both manual and date-based)
     const activeCycle = Object.keys(this.cycleMap ?? {}).find(
       (cycleId) =>
         this.cycleMap?.[cycleId]?.project_id === projectId &&
-        this.cycleMap?.[cycleId]?.status?.toLowerCase() === "current"
+        this.cycleMap?.[cycleId]?.status?.toLowerCase() === "current" &&
+        this.cycleMap?.[cycleId]?.manual_status !== "completed"
     );
     return activeCycle || null;
   }
@@ -721,5 +752,77 @@ export class CycleStore implements ICycleStore {
       .catch((error) => {
         console.error("Failed to restore cycle in cycle store", error);
       });
+  };
+
+  /**
+   * @description starts a cycle manually
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @returns
+   */
+  startCycle = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    const cycleDetails = this.getCycleById(cycleId);
+    if (!cycleDetails) return;
+    // Don't start if already started or completed
+    if (cycleDetails.manual_status === "started" || cycleDetails.manual_status === "completed") return;
+
+    await this.cycleService
+      .startCycle(workspaceSlug, projectId, cycleId)
+      .then((response) => {
+        runInAction(() => {
+          set(this.cycleMap, [cycleId, "manual_status"], "started");
+          set(this.cycleMap, [cycleId, "started_at"], response.started_at);
+          set(this.cycleMap, [cycleId, "status"], "current");
+          set(this.activeCycleIdMap, [cycleId], true);
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to start cycle in cycle store", error);
+        throw error;
+      });
+  };
+
+  /**
+   * @description completes a cycle manually
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @param newCycleId - optional cycle to transfer incomplete issues to
+   * @returns
+   */
+  completeCycle = async (workspaceSlug: string, projectId: string, cycleId: string, newCycleId?: string) => {
+    const cycleDetails = this.getCycleById(cycleId);
+    if (!cycleDetails) return;
+    // Don't complete if already completed
+    if (cycleDetails.manual_status === "completed") return;
+
+    await this.cycleService
+      .completeCycle(workspaceSlug, projectId, cycleId, newCycleId ? { new_cycle_id: newCycleId } : undefined)
+      .then((response) => {
+        runInAction(() => {
+          set(this.cycleMap, [cycleId, "manual_status"], "completed");
+          set(this.cycleMap, [cycleId, "completed_at"], response.completed_at);
+          set(this.cycleMap, [cycleId, "status"], "completed");
+          delete this.activeCycleIdMap[cycleId];
+        });
+        // Refresh cycles to get updated data
+        this.fetchAllCycles(workspaceSlug, projectId);
+      })
+      .catch((error) => {
+        console.error("Failed to complete cycle in cycle store", error);
+        throw error;
+      });
+  };
+
+  /**
+   * @description gets incomplete issues count for a cycle
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @returns
+   */
+  getIncompleteIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    return await this.cycleService.getIncompleteIssues(workspaceSlug, projectId, cycleId);
   };
 }

@@ -207,6 +207,10 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             )
             .annotate(
                 status=Case(
+                    # Priority 1: Manual status overrides date-based logic
+                    When(manual_status="completed", then=Value("COMPLETED")),
+                    When(manual_status="started", then=Value("CURRENT")),
+                    # Priority 2: Date-based (existing logic)
                     When(
                         Q(start_date__lte=timezone.now()) & Q(end_date__gte=timezone.now()),
                         then=Value("CURRENT"),
@@ -587,7 +591,11 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
     def post(self, request, slug, project_id, cycle_id):
         cycle = Cycle.objects.get(pk=cycle_id, project_id=project_id, workspace__slug=slug)
 
-        if cycle.end_date >= timezone.now():
+        # Check if cycle is completed (either manually or by date)
+        is_manually_completed = cycle.manual_status == "completed"
+        is_date_completed = cycle.end_date is not None and cycle.end_date < timezone.now()
+
+        if not is_manually_completed and not is_date_completed:
             return Response(
                 {"error": "Only completed cycles can be archived"},
                 status=status.HTTP_400_BAD_REQUEST,

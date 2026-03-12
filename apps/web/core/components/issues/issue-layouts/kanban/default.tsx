@@ -165,7 +165,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
             <div
               key={subList.id}
               className={`group relative flex flex-shrink-0 flex-col ${
-                groupByVisibilityToggle.showIssues ? `w-[350px]` : ``
+                groupByVisibilityToggle.showIssues ? `w-[280px]` : ``
               } `}
             >
               {sub_group_by === null && (

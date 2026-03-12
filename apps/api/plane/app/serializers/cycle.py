@@ -40,7 +40,7 @@ class CycleWriteSerializer(BaseSerializer):
     class Meta:
         model = Cycle
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "owned_by", "archived_at"]
+        read_only_fields = ["workspace", "project", "owned_by", "archived_at", "manual_status", "started_at", "completed_at"]
 
 
 class CycleSerializer(BaseSerializer):
@@ -76,6 +76,10 @@ class CycleSerializer(BaseSerializer):
             "external_id",
             "progress_snapshot",
             "logo_props",
+            # manual sprint control fields
+            "manual_status",
+            "started_at",
+            "completed_at",
             # meta fields
             "is_favorite",
             "total_issues",

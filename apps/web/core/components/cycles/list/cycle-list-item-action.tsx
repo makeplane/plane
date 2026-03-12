@@ -9,7 +9,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Eye, ArrowRight, CalendarDays } from "lucide-react";
+import { Eye, ArrowRight, CalendarDays, PlayCircle, CheckCircle2 } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
@@ -35,7 +35,9 @@ import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
 import { CycleAdditionalActions } from "@/plane-web/components/cycles";
 // local imports
 import { CycleQuickActions } from "../quick-actions";
+import { StartCycleModal } from "../start-cycle-modal";
 import { TransferIssuesModal } from "../transfer-issues-modal";
+import { EndCycleModal } from "@/plane-web/components/cycles/end-cycle/modal";
 
 type Props = {
   workspaceSlug: string;
@@ -57,6 +59,8 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
   const { projectId: routerProjectId } = useParams();
   //states
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
+  const [startCycleModal, setStartCycleModal] = useState(false);
+  const [endCycleModal, setEndCycleModal] = useState(false);
   // hooks
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -85,6 +89,13 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
 
   // derived values
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
+  const isArchived = !!cycleDetails.archived_at;
+  const isCompleted = cycleStatus === "completed";
+  const isCurrent = cycleStatus === "current";
+  const isManuallyStarted = cycleDetails.manual_status === "started";
+  const isManuallyCompleted = cycleDetails.manual_status === "completed";
+  const canStartCycle = !isArchived && !isCompleted && !isManuallyStarted && !isManuallyCompleted && !isCurrent;
+  const canCompleteCycle = isCurrent && !isManuallyCompleted;
 
   const showIssueCount = useMemo(() => cycleStatus === "draft" || cycleStatus === "upcoming", [cycleStatus]);
 
@@ -179,6 +190,23 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
         isOpen={transferIssuesModal}
         cycleId={cycleId.toString()}
       />
+      <StartCycleModal
+        isOpen={startCycleModal}
+        handleClose={() => setStartCycleModal(false)}
+        cycleId={cycleId}
+        projectId={projectId}
+        workspaceSlug={workspaceSlug}
+        cycleName={cycleDetails.name}
+      />
+      <EndCycleModal
+        isOpen={endCycleModal}
+        handleClose={() => setEndCycleModal(false)}
+        cycleId={cycleId}
+        projectId={projectId}
+        workspaceSlug={workspaceSlug}
+        cycleName={cycleDetails.name}
+        transferrableIssuesCount={transferableIssuesCount}
+      />
       <button
         onClick={openCycleOverview}
         className={`z-[1] flex flex-shrink-0 gap-1 text-11 text-accent-secondary ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
@@ -186,6 +214,32 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
         <Eye className="my-auto h-4 w-4 text-accent-secondary" />
         <span>{t("project_cycles.more_details")}</span>
       </button>
+      {isEditingAllowed && canStartCycle && (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setStartCycleModal(true);
+          }}
+          className="z-[1] flex flex-shrink-0 items-center gap-1 rounded bg-green-500/10 px-2 py-1 text-11 font-medium text-green-600 hover:bg-green-500/20"
+        >
+          <PlayCircle className="h-3.5 w-3.5" />
+          <span>{t("project_cycles.action.start.menu_item")}</span>
+        </button>
+      )}
+      {isEditingAllowed && canCompleteCycle && (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setEndCycleModal(true);
+          }}
+          className="z-[1] flex flex-shrink-0 items-center gap-1 rounded bg-blue-500/10 px-2 py-1 text-11 font-medium text-blue-600 hover:bg-blue-500/20"
+        >
+          <CheckCircle2 className="h-3.5 w-3.5" />
+          <span>{t("project_cycles.action.complete.menu_item")}</span>
+        </button>
+      )}
       {showIssueCount && (
         <div className="flex items-center gap-1">
           <WorkItemsIcon className="h-4 w-4 text-tertiary" />

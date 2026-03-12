@@ -629,16 +629,16 @@ export const isIssueNew = (issue: TIssue) => {
  * @returns
  */
 export function getApproximateCardHeight(displayProperties: IIssueDisplayProperties | undefined) {
-  if (!displayProperties) return 100;
+  if (!displayProperties) return 80;
 
   // default card height
-  let cardHeight = 46;
+  let cardHeight = 38;
 
   const clonedProperties = clone(displayProperties);
 
   // key adds the height for key
   if (clonedProperties.key) {
-    cardHeight += 24;
+    cardHeight += 20;
   }
 
   // Ignore smaller dimension properties
@@ -666,9 +666,9 @@ export function getApproximateCardHeight(displayProperties: IIssueDisplayPropert
 
   // based on property count, approximate the height of each card
   if (propertyCount > 3) {
-    cardHeight += 60;
+    cardHeight += 48;
   } else if (propertyCount > 0) {
-    cardHeight += 32;
+    cardHeight += 24;
   }
 
   return cardHeight;

@@ -14,6 +14,9 @@ import type {
   TCycleDistribution,
   TProgressSnapshot,
   TCycleEstimateDistribution,
+  ICycleStartResponse,
+  ICycleCompleteResponse,
+  ICycleIncompleteIssuesResponse,
 } from "@plane/types";
 import { APIService } from "@/services/api.service";
 
@@ -189,6 +192,40 @@ export class CycleService extends APIService {
 
   async removeCycleFromFavorites(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/${cycleId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Manual sprint control methods
+  async startCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<ICycleStartResponse> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/start/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async completeCycle(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    data?: { new_cycle_id?: string }
+  ): Promise<ICycleCompleteResponse> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/complete/`, data || {})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getIncompleteIssues(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ): Promise<ICycleIncompleteIssuesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/incomplete-issues/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
