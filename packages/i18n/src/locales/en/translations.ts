@@ -3131,6 +3131,21 @@ export default {
     reminder_toggle: "Worklog reminder",
     reminder_toggle_description: "Daily reminder at 5PM to log your time",
   },
+  // Issue Opinion
+  opinion: {
+    approve: "Approve",
+    neutral: "Neutral",
+    reject: "Reject",
+    your_opinion: "Your opinion",
+    add_opinion: "Add opinion",
+    content_placeholder: "Add a note (optional)",
+    saved: "Opinion saved",
+    saved_successfully: "Your opinion has been saved successfully.",
+    save_failed: "Failed to save opinion.",
+    deleted: "Opinion deleted",
+    deleted_successfully: "Your opinion has been deleted successfully.",
+    delete_failed: "Failed to delete opinion.",
+  },
   department: {
     label: "Department",
     add: "Add department",

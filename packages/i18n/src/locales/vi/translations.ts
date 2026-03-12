@@ -3144,6 +3144,21 @@ export default {
     reminder_toggle: "Nhắc nhở ghi nhận giờ",
     reminder_toggle_description: "Nhắc nhở hàng ngày lúc 5 giờ chiều để ghi nhận giờ làm việc",
   },
+  // Issue Opinion
+  opinion: {
+    approve: "Đồng ý",
+    neutral: "Trung lập",
+    reject: "Từ chối",
+    your_opinion: "Ý kiến của bạn",
+    add_opinion: "Thêm ý kiến",
+    content_placeholder: "Thêm ghi chú (tùy chọn)",
+    saved: "Đã lưu ý kiến",
+    saved_successfully: "Ý kiến của bạn đã được lưu thành công.",
+    save_failed: "Lưu ý kiến thất bại.",
+    deleted: "Đã xóa ý kiến",
+    deleted_successfully: "Ý kiến của bạn đã được xóa thành công.",
+    delete_failed: "Xóa ý kiến thất bại.",
+  },
   department: {
     label: "Phòng ban",
     add: "Thêm phòng ban",

@@ -3113,6 +3113,21 @@ export default {
     reminder_toggle: "작업 로그 알림",
     reminder_toggle_description: "매일 오후 5시에 시간 기록 알림 받기",
   },
+  // Issue Opinion
+  opinion: {
+    approve: "승인",
+    neutral: "중립",
+    reject: "반대",
+    your_opinion: "의견 남기기",
+    add_opinion: "의견 추가",
+    content_placeholder: "메모 추가 (선택사항)",
+    saved: "의견 저장됨",
+    saved_successfully: "의견이 성공적으로 저장되었습니다.",
+    save_failed: "의견 저장에 실패했습니다.",
+    deleted: "의견 삭제됨",
+    deleted_successfully: "의견이 성공적으로 삭제되었습니다.",
+    delete_failed: "의견 삭제에 실패했습니다.",
+  },
   department: {
     label: "부서",
     add: "부서 추가",

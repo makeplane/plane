@@ -9,6 +9,7 @@ import { cn } from "@plane/utils";
 import { Controller, useFormContext } from "react-hook-form";
 import type { TIssue } from "@plane/types";
 import { FrequencyDropdown } from "@/plane-web/components/dropdowns/frequency";
+import { useIssueFormValidation } from "@/hooks/store/use-issue-form-validation";
 
 export type TWorkItemModalAdditionalPropertiesProps = {
   isDraft?: boolean;
@@ -24,6 +25,7 @@ export function WorkItemModalAdditionalProperties(props: TWorkItemModalAdditiona
     control,
     formState: { errors },
   } = useFormContext<TIssue>();
+  const { getFieldRules } = useIssueFormValidation();
 
   if (!projectId) return null;
 
@@ -31,14 +33,10 @@ export function WorkItemModalAdditionalProperties(props: TWorkItemModalAdditiona
     <Controller
       control={control}
       name="frequency"
-      rules={{ required: t("frequency_is_required") }}
+      rules={getFieldRules({ required: t("frequency_is_required") })}
       render={({ field: { value, onChange } }) => (
         <div className={cn("h-7 rounded-sm", errors.frequency && "outline outline-1 outline-danger-strong")}>
-          <FrequencyDropdown
-            value={value}
-            onChange={onChange}
-            buttonVariant="border-with-text"
-          />
+          <FrequencyDropdown value={value} onChange={onChange} buttonVariant="border-with-text" />
         </div>
       )}
     />

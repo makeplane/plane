@@ -138,6 +138,7 @@ from .dashboard import DashboardSerializer, DashboardWidgetSerializer
 from .department import DepartmentSerializer, DepartmentTreeSerializer
 from .staff import StaffProfileSerializer, StaffProfileCreateSerializer
 from .worklog import IssueWorkLogSerializer, TimesheetBulkEntrySerializer
+from .opinion import IssueOpinionSerializer
 
 from .workflow import (
     ProjectWorkflowSerializer,
