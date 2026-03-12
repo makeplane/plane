@@ -18,11 +18,18 @@
  */
 import { logger } from "@plane/logger";
 import { createEmptyContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
-import type { IStep, TStepExecutionContext, TStepExecutionInput } from "@/apps/jira-server-importer/v2/types";
+import type {
+  IStep,
+  TJobContext,
+  TStepExecutionContext,
+  TStepExecutionInput,
+} from "@/apps/jira-server-importer/v2/types";
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import type { JiraConfig } from "@plane/etl/jira-server";
 import type { ExProject } from "@plane/sdk";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
+
+const PROJECT_ALREADY_EXIST_ERRORS = ["The project name is already taken", "The project identifier is already taken"];
 
 export class PlaneProjectCreateStep implements IStep {
   name = EJiraStep.PLANE_PROJECT_CREATION;
@@ -48,8 +55,7 @@ export class PlaneProjectCreateStep implements IStep {
 
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
     const { jobContext } = input;
-    const { job, planeClient } = jobContext;
-    const { workspace_slug } = job;
+    const { job } = jobContext;
 
     if (!this.shouldExecute(input)) {
       return createEmptyContext();
@@ -61,31 +67,72 @@ export class PlaneProjectCreateStep implements IStep {
     logger.info(`[${job.id}][${this.name}] Creating project ${project.name}`);
 
     try {
-      const randomSuffix = this.createRandomProjectKey().substring(0, 4);
-      const projectName = project.name ?? "Untitled Project";
-      const projectIdentifier = `${(project.key ?? "PRJ").substring(0, 3)}${randomSuffix.substring(0, 2)}`;
+      try {
+        await this.createProjectAndUpdateJob(jobContext, {
+          name: project.name ?? "Untitled Project",
+          description: project.description ?? "",
+          identifier: project.key ?? "PRJ",
+        });
+      } catch (error: unknown) {
+        if (this.isProjectAlreadyExistError(error)) {
+          const randomSuffix = this.createRandomProjectKey().substring(0, 4);
+          const projectName = `${project.name ?? "Untitled Project"} ${randomSuffix}`;
+          const projectIdentifier = `${(project.key ?? "PRJ").substring(0, 3)}${randomSuffix.substring(0, 2)}`;
 
-      const projectPayload: Partial<ExProject> = {
-        name: `${projectName} ${randomSuffix}`,
-        description: project.description ?? "",
-        identifier: projectIdentifier,
-      };
-
-      const createdProject = await planeClient.project.create(workspace_slug, projectPayload);
-
-      await integrationConnectionHelper.updateImportJob({
-        job_id: job.id,
-        project_id: createdProject.id,
-        config: {
-          ...job.config,
-          planeProject: createdProject,
-        },
-      });
+          await this.createProjectAndUpdateJob(jobContext, {
+            name: projectName,
+            description: project.description ?? "",
+            identifier: projectIdentifier,
+          });
+        } else {
+          throw error;
+        }
+      }
 
       return createEmptyContext();
     } catch (error) {
       logger.error(`[${job.id}][${this.name}] Failed to configure project`, error);
       throw error;
     }
+  }
+
+  /**
+   * Creates a new project in Plane
+   * @param jobContext
+   * @param projectPayload
+   */
+  async createProjectAndUpdateJob(jobContext: TJobContext, projectPayload: Partial<ExProject>) {
+    const { job, planeClient } = jobContext;
+    const { workspace_slug } = job;
+    const createdProject = await planeClient.project.create(workspace_slug, projectPayload);
+    await integrationConnectionHelper.updateImportJob({
+      job_id: job.id,
+      project_id: createdProject.id,
+      config: {
+        ...job.config,
+        planeProject: createdProject,
+      },
+    });
+
+    return createdProject;
+  }
+
+  /**
+   * Checks if the error is related to the project already existing
+   * @param error unknown error
+   */
+  private isProjectAlreadyExistError(error: unknown): boolean {
+    if (typeof error === "object" && error !== null) {
+      for (const field of ["name", "identifier"] as const) {
+        if (!(field in error)) continue;
+        const fieldError = (error as Record<string, unknown>)[field];
+        if (typeof fieldError === "string") {
+          if (PROJECT_ALREADY_EXIST_ERRORS.includes(fieldError)) return true;
+        } else if (Array.isArray(fieldError)) {
+          if (PROJECT_ALREADY_EXIST_ERRORS.some((e) => fieldError.includes(e))) return true;
+        }
+      }
+    }
+    return false;
   }
 }

@@ -363,14 +363,6 @@ def process_single_issue(slug, project, user_id, issue_data, report_id=None, job
         if issue_data.get("subscribers"):
             process_issue_subscribers(slug, issue, issue_data.get("subscribers"), report_id=report_id, job_id=job_id)
 
-        # Process estimates
-        process_issue_estimates(slug, project, issue, issue_data, report_id=report_id, job_id=job_id)
-
-        # Update the issue with the created_by_id
-        issue.created_by_id = issue_data.get("created_by")
-        issue.updated_by_id = issue_data.get("created_by")
-        issue.created_at = issue_data.get("created_at")
-        # issue.updated_at = issue_data.get("updated_at")
         issue.save(disable_auto_set_user=True)
 
         # Preserve external sequence if preserve_sequence is True
@@ -1617,6 +1609,7 @@ def process_issues(slug, project, user_id, issue_list, report_id=None, job_id=No
         return imported_issues, total_issues, external_id_map
 
     # First pass: Create/Update parent issues
+    processed_issues = []
     for issue_data in issue_list:
         try:
             if issue_data.get("parent") is None:
@@ -1631,6 +1624,7 @@ def process_issues(slug, project, user_id, issue_list, report_id=None, job_id=No
                 )
                 if issue:
                     imported_issues += 1
+                    processed_issues.append((issue.id, issue_data))
                     if issue_data.get("external_id"):
                         external_id_map[issue_data["external_id"]] = str(issue.id)
         except Exception as e:
@@ -1663,10 +1657,38 @@ def process_issues(slug, project, user_id, issue_list, report_id=None, job_id=No
                 )
                 if issue:
                     imported_issues += 1
+                    processed_issues.append((issue.id, issue_data))
                     if issue_data.get("external_id"):
                         external_id_map[issue_data["external_id"]] = str(issue.id)
         except Exception as e:
             logger.warning(f"Failed to process child issue: {str(e)}")
+
+    # Final pass: Batch update timestamps and authors for all processed issues
+    # We use .update() to bypass custom save signals and auto_now/auto_now_add fields.
+    # Group issues by their unique field-value combination so we can issue a single
+    # UPDATE … WHERE id IN (…) per group instead of one query per issue.
+    update_groups: dict[str, dict] = {}  # signature -> {"ids": [...], "fields": {...}}
+    for issue_id, issue_data in processed_issues:
+        update_fields = {}
+        if issue_data.get("created_at"):
+            update_fields["created_at"] = issue_data["created_at"]
+        if issue_data.get("updated_at"):
+            update_fields["updated_at"] = issue_data["updated_at"]
+        if issue_data.get("created_by"):
+            update_fields["created_by_id"] = issue_data["created_by"]
+            update_fields["updated_by_id"] = issue_data["created_by"]
+
+        if not update_fields:
+            continue
+
+        # Build a hashable signature from the sorted field items
+        signature = str(sorted(update_fields.items()))
+        if signature not in update_groups:
+            update_groups[signature] = {"ids": [], "fields": update_fields}
+        update_groups[signature]["ids"].append(issue_id)
+
+    for group in update_groups.values():
+        Issue.objects.filter(id__in=group["ids"]).update(**group["fields"])
 
     return imported_issues, total_issues, external_id_map
 
