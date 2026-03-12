@@ -35,16 +35,19 @@ FIELD_ALIASES = {
     "createdBy": "created_by_id",
     "type": "type_id",
     "milestone": "milestone_id",
-    "teamProject": "team_project_id",
+    "teamspaceProject": "team_project_id",
     # State group
     "stateGroup": "state_group",
     # Date fields
     "startDate": "start_date",
-    "targetDate": "target_date",
+    # "dueDate" is a common alias for "target_date"
+    "dueDate": "target_date",
+    # timestamps
     "createdAt": "created_at",
     "updatedAt": "updated_at",
     # Text search fields
-    "name": "name",
+    "title": "name",
+    # for searching both name and description stripped
     "text": "text",
 }
 
@@ -125,8 +128,8 @@ PREDICATE_FUNCTIONS = {
         issue_assignee__isnull=False,
     ),
     "hasNoLabel": lambda ctx: ~Q(
-        issue_label__deleted_at__isnull=True,
-        issue_label__isnull=False,
+        label_issue__deleted_at__isnull=True,
+        label_issue__isnull=False,
     ),
     "isTopLevel": lambda ctx: Q(parent__isnull=True),
     "isSubIssue": lambda ctx: Q(parent__isnull=False),

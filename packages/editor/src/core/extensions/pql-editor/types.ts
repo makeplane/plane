@@ -259,9 +259,10 @@ export type SuggestionKind = "field" | "operator" | "value" | "function" | "keyw
  *
  * - `"none"`       → nothing is appended (cursor stays right after the text)
  * - `"whitespace"` → a single space is appended
- * - `"bracket"`    → ` (` is appended (used by IN / NOT IN to open the value list)
+ * - `"double-quotes"` → opening and closing double quotes are appended
+ * - `"brackets"`    → opening and closing brackets are appended (used by IN / NOT IN to open the value list)
  */
-export type AppendCharacter = "none" | "whitespace" | "bracket";
+export type AppendCharacter = "none" | "whitespace" | "double-quotes" | "brackets";
 
 export type Suggestion = {
   kind: SuggestionKind;
@@ -308,9 +309,10 @@ export type SuggestionContextKind =
   | "START"
   | "AFTER_FIELD"
   | "AFTER_OPERATOR"
-  | "AFTER_IN"
-  | "AFTER_IN_NO_BRACKET" // cursor is after IN/NOT IN with no '(' yet — same suggestions as AFTER_IN but auto-inserts '(' on value select
-  | "AFTER_IN_COMMA"
+  | "AFTER_IN" // cursor is right after '(' — first value position, no comma needed
+  | "AFTER_IN_NO_BRACKET" // cursor is after IN/NOT IN with no '(' yet — auto-inserts '(' on value select
+  | "AFTER_IN_VALUE" // cursor is right after a value (chip, quoted string, or function result) with no trailing comma
+  | "AFTER_IN_COMMA" // cursor is right after a ',' — comma already present, just insert value
   | "AFTER_IS"
   | "AFTER_BETWEEN"
   | "AFTER_BETWEEN_AND"

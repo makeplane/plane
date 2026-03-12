@@ -35,16 +35,15 @@ export const FIELD_ALIASES: Record<string, string> = {
   created_by_id: "createdBy",
   type_id: "type",
   milestone_id: "milestone",
-  team_project_id: "teamProject",
-  // State group
+  team_project_id: "teamspaceProject",
   state_group: "stateGroup",
   // Date fields
   start_date: "startDate",
-  target_date: "targetDate",
+  target_date: "dueDate",
   created_at: "createdAt",
   updated_at: "updatedAt",
   // Text search fields
-  name: "name",
+  name: "title",
   text: "text",
 };
 

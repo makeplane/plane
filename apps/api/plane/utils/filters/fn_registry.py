@@ -74,6 +74,82 @@ def _dispatch_activity(
 
 
 # ---------------------------------------------------------------------------
+# Work item identifier helper
+# ---------------------------------------------------------------------------
+
+
+def _parse_identifier(identifier: str) -> tuple[str, int]:
+    """Parse a work item identifier like 'WEB-11' into (project_identifier, sequence_id)."""
+    parts = str(identifier).rsplit("-", 1)
+    if len(parts) != 2:
+        raise DRFValidationError(
+            {
+                "message": f"Invalid work item identifier: '{identifier}'. Expected format: 'PREFIX-NUMBER'",
+                "code": "invalid_identifier",
+            }
+        )
+    project_identifier, seq_str = parts
+    try:
+        sequence_id = int(seq_str)
+    except ValueError:
+        raise DRFValidationError(
+            {
+                "message": f"Invalid sequence number in identifier: '{identifier}'",
+                "code": "invalid_identifier",
+            }
+        )
+    return project_identifier, sequence_id
+
+
+def _build_work_item_identifier_q(ctx, op, value) -> Q:
+    """Build a Q object for work item identifier(s) like 'WEB-11'.
+
+    Args:
+        ctx: Context dict.
+        op: The PQL operator ('eq', 'neq', 'in_op', 'not_in', 'contains').
+        value: A single identifier string or a list of identifiers.
+    """
+    from django.db.models import CharField, Value
+    from django.db.models.functions import Cast, Concat
+
+    from plane.db.models import Issue
+
+    # Handle contains (~) — partial match on the full identifier
+    if op == "contains":
+        return Q(
+            pk__in=Issue.objects.annotate(
+                full_identifier=Concat(
+                    "project__identifier",
+                    Value("-"),
+                    Cast("sequence_id", output_field=CharField()),
+                )
+            )
+            .filter(full_identifier__icontains=str(value), workspace__slug=ctx["workspace_slug"])
+            .values_list("pk", flat=True)
+        )
+
+    # Exact / IN matching
+    identifiers = value if isinstance(value, list) else [value]
+
+    # Group by project identifier for efficient querying
+    # e.g., {"WEB": [11, 12], "APP": [5]} → fewer Q objects
+    grouped: dict[str, list[int]] = {}
+    for ident in identifiers:
+        project_identifier, sequence_id = _parse_identifier(ident)
+        grouped.setdefault(project_identifier, []).append(sequence_id)
+
+    # Build combined Q: OR across projects
+    combined = Q()
+    for proj_ident, seq_ids in grouped.items():
+        if len(seq_ids) == 1:
+            combined |= Q(project__identifier=proj_ident, sequence_id=seq_ids[0])
+        else:
+            combined |= Q(project__identifier=proj_ident, sequence_id__in=seq_ids)
+
+    return combined
+
+
+# ---------------------------------------------------------------------------
 # Registry: snake_case name → callable(ctx, *args) -> Q
 # ---------------------------------------------------------------------------
 
@@ -88,8 +164,8 @@ FN_REGISTRY: dict[str, callable] = {
         issue_assignee__isnull=False,
     ),
     "has_no_label": lambda ctx: ~Q(
-        issue_label__deleted_at__isnull=True,
-        issue_label__isnull=False,
+        label_issue__deleted_at__isnull=True,
+        label_issue__isnull=False,
     ),
     "is_top_level": lambda ctx: Q(parent__isnull=True),
     "is_sub_workitem": lambda ctx: Q(parent__isnull=False),
@@ -147,6 +223,8 @@ FN_REGISTRY: dict[str, callable] = {
     "field_changed_between": lambda ctx, field, date_from, date_to: _dispatch_activity(
         ctx, field, created_at__gte=date_from, created_at__lte=date_to, action="updated"
     ),
+    # -- Work item identifier ------------------------------------------------
+    "work_item_identifier": _build_work_item_identifier_q,
 }
 
 

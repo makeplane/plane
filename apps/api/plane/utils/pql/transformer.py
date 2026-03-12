@@ -137,6 +137,14 @@ class PQLTransformer(Transformer):
                 }
             )
 
+        # Handle "id" pseudo-field: dispatches to fn node
+        if field_name == "id" and op in ("eq", "neq", "in_op", "not_in", "contains"):
+            fn_value = value if isinstance(value, list) else value
+            condition = {"fn": {"work_item_identifier": [op, fn_value]}}
+            if op in NEGATED_OPERATORS:
+                condition = {"not": {"fn": {"work_item_identifier": [op, fn_value]}}}
+            return PQLResult(rich_filter=condition)
+
         lookup = OPERATOR_LOOKUP.get(op, "")
         filter_key = f"{rich_key}{lookup}"
 

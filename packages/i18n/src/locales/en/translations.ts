@@ -7183,18 +7183,18 @@ the way you want to from the sources you specify.`,
       },
       user: {
         current_user: {
-          description: "Current user's UUID",
+          description: "Current signed in user",
         },
         members_of: {
           description: 'Members of "project:<id>" or "teamspace:<id>"',
         },
         workspace_members: {
-          description: "Workspace members' UUIDs",
+          description: "All workspace members",
         },
       },
       cycle: {
         active_cycle: {
-          description: "Cycles active today",
+          description: "Cycle active today",
         },
         completed_cycles: {
           description: "Cycles whose end date has passed",
@@ -7246,7 +7246,7 @@ the way you want to from the sources you specify.`,
           description: "Has at least one sub-work item",
         },
         has_start_and_due_dates: {
-          description: "Has both start date and due dates",
+          description: "Has both start and due dates",
         },
       },
       relation: {

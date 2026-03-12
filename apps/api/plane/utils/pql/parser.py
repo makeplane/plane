@@ -25,12 +25,15 @@ Usage::
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 from lark import Lark
 from rest_framework.exceptions import ValidationError
 
 from .transformer import PQLResult, PQLTransformer
+
+logger = logging.getLogger("plane.api")
 
 # Build the Lark parser once at module level (thread-safe, reusable).
 _GRAMMAR_PATH = Path(__file__).parent / "grammar.lark"
@@ -57,20 +60,32 @@ def pql_parse(pql_string: str, ctx: dict) -> PQLResult:
     if not pql_string or not pql_string.strip():
         return PQLResult()
 
-    try:
-        tree = _parser.parse(pql_string.strip())
-    except Exception as exc:
-        raise ValidationError({"pql": f"Invalid PQL syntax: {exc}"}) from exc
+    # Log the raw PQL string for debugging (but not the transformed result, which may contain sensitive info).
+    logger.debug("Parsing PQL query: %r", pql_string)
 
     try:
+        # Parse the PQL string into a parse tree. This may raise exceptions for syntax errors.
+        tree = _parser.parse(pql_string.strip())
+        logger.debug("PQL parse tree for query %r: %s", pql_string, tree.pretty())
+    except Exception as exc:
+        logger.warning("PQL syntax error for query %r: %s", pql_string, exc)
+        raise ValidationError({"pql": "Invalid PQL query."}) from exc
+
+    try:
+        # Log the parse tree for debugging (may be verbose, but useful for diagnosing parsing issues).
         transformer = PQLTransformer(ctx)
         result = transformer.transform(tree)
+        logger.debug("PQL transformation result for query %r: %s", pql_string, result)
+        # Transform the parse tree into a PQLResult. 
+        # This may raise ValidationError if the query references unknown fields/functions.
     except ValidationError:
         raise
     except Exception as exc:
-        raise ValidationError({"pql": f"PQL evaluation error: {exc}"}) from exc
+        logger.warning("PQL evaluation error for query %r: %s", pql_string, exc)
+        raise ValidationError({"pql": "Invalid PQL query."}) from exc
 
     if not isinstance(result, PQLResult):
-        raise ValidationError({"pql": "PQL transformation produced an unexpected result."})
+        logger.warning("PQL transformation produced unexpected result for query %r", pql_string)
+        raise ValidationError({"pql": "Invalid PQL query."})
 
     return result

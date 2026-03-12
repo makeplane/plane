@@ -96,8 +96,8 @@ const OP_INSERT_TEXTS: Partial<Record<TAllAvailableOperatorsForDisplay, string>>
  * via cursorShift and therefore append nothing).
  */
 const OP_APPEND_CHARS: Partial<Record<TAllAvailableOperatorsForDisplay, AppendCharacter>> = {
-  in: "bracket",
-  "-in": "bracket",
+  in: "brackets",
+  "-in": "brackets",
 };
 
 // ─── Static suggestion builders ───────────────────────────────────────────────
@@ -152,20 +152,19 @@ function buildOperatorSuggestions(field: string, fieldMap: Map<string, FieldDef>
   const ops: Suggestion[] = [];
   let i = 0;
   for (const [operator] of def.allowedOps.entries()) {
-    const baseInsertText = OP_INSERT_TEXTS[operator];
-    if (!baseInsertText) continue; // no PQL representation for this operator
+    const insertText = OP_INSERT_TEXTS[operator];
+    if (!insertText) continue; // no PQL representation for this operator
 
     // For text-type operators auto-insert an empty string literal so the cursor
     // lands between the quotes (e.g. `~ ""` → cursor before closing `"`).
     const opConfig = def.allowedOps.get(operator);
     const isTextOp = opConfig?.type === "text";
-    const insertText = isTextOp ? `${baseInsertText} ""` : baseInsertText;
-    const cursorShift: number | undefined = isTextOp ? 1 : undefined;
+    const oneLevelCursorShift = isTextOp || ["in", "-in"].includes(operator);
+    const cursorShift: number | undefined = oneLevelCursorShift ? 1 : undefined;
 
-    // Text-type operators use cursorShift to land the cursor inside quotes, so
-    // no extra character is appended.  IN / NOT IN append a bracket to open the
-    // value list.  Everything else appends whitespace.
-    const appendCharacter: AppendCharacter = isTextOp ? "none" : (OP_APPEND_CHARS[operator] ?? "whitespace");
+    // Text-type operators and IN / NOT IN use cursorShift to land the cursor inside quotes or brackets, so
+    // no extra character is appended. Everything else appends whitespace.
+    const appendCharacter: AppendCharacter = isTextOp ? "double-quotes" : (OP_APPEND_CHARS[operator] ?? "whitespace");
 
     ops.push({
       kind: "operator",
@@ -290,6 +289,7 @@ export async function computeAllSuggestions(
 
     case "AFTER_IN":
     case "AFTER_IN_NO_BRACKET":
+    case "AFTER_IN_VALUE":
     case "AFTER_IN_COMMA": {
       const field = context.field ?? "";
       const options = await resolveOptionsFromConfig(field, "in", fieldMap);
@@ -383,8 +383,11 @@ export function applyInsertSuggestion(editor: Editor, suggestion: Suggestion): v
       case "whitespace":
         editor.chain().focus().insertContent(" ").run();
         break;
-      case "bracket":
-        editor.chain().focus().insertContent(" (").run();
+      case "brackets":
+        editor.chain().focus().insertContent(" ()").run();
+        break;
+      case "double-quotes":
+        editor.chain().focus().insertContent(' ""').run();
         break;
       case "none":
         break;
@@ -396,7 +399,7 @@ export function applyInsertSuggestion(editor: Editor, suggestion: Suggestion): v
   } else {
     if (suggestion.insertNode.type === "value") {
       editor.chain().focus().deleteRange({ from, to }).insertPQLValue({ option: suggestion.insertNode.option }).run();
-    } else {
+    } else if (suggestion.insertNode.type === "customPropertyField") {
       editor
         .chain()
         .focus()

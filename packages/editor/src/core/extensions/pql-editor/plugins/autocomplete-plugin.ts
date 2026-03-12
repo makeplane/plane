@@ -259,24 +259,32 @@ export function determineSuggestionContext(tokens: Token[], cursorChar: number):
   // ── After a pqlValue chip ────────────────────────────────────────────────────
   // When the chip is the last token and the cursor is right after it, the right
   // context depends on where the chip lives in the expression:
-  //   • Inside an IN / NOT IN list   → suggest more values (AFTER_IN_COMMA)
+  //   • Inside an IN / NOT IN list   → AFTER_IN_VALUE (no comma typed yet)
   //   • Anywhere else (=, !=, …)     → suggest logical connectors (AFTER_CONDITION)
   if (last.kind === TokenKind.PQL_VALUE_NODE) {
     const inListField = findFieldForInList(before);
     if (inListField !== undefined) {
-      return { kind: "AFTER_IN_COMMA", field: inListField, tokenStart: cursorChar };
+      return { kind: "AFTER_IN_VALUE", field: inListField, tokenStart: cursorChar };
     }
     return { kind: "AFTER_CONDITION", tokenStart: cursorChar };
   }
 
   // ── After a complete value, RPAREN, or closed function call → AND / OR ───────
-  // Exception: a RPAREN that closes a 0-arity function call (e.g. workspaceMembers())
-  // which is itself an argument inside an IN list should keep suggesting list values.
+  // Exceptions for items inside an IN list — those still need more values:
+  //   • RPAREN closing a function call (e.g. workspaceMembers()) inside an IN list
+  //   • A manually typed string/number literal (e.g. "uuid") inside an IN list
+  // Both cases produce AFTER_IN_VALUE because no comma has been typed yet.
   if (isConditionEnd(last.kind)) {
     if (last.kind === TokenKind.RPAREN) {
       const inListField = findFieldForInList(before);
       if (inListField !== undefined) {
-        return { kind: "AFTER_IN_COMMA", field: inListField, tokenStart: cursorChar };
+        return { kind: "AFTER_IN_VALUE", field: inListField, tokenStart: cursorChar };
+      }
+    }
+    if (last.kind === TokenKind.STRING || last.kind === TokenKind.INTEGER || last.kind === TokenKind.FLOAT) {
+      const inListField = findFieldForInList(before);
+      if (inListField !== undefined) {
+        return { kind: "AFTER_IN_VALUE", field: inListField, tokenStart: cursorChar };
       }
     }
     return { kind: "AFTER_CONDITION", tokenStart: cursorChar };
@@ -364,19 +372,25 @@ function contextFromPrecedingTokens(preceding: Token[], tokenStart: number): Sug
   if (last.kind === TokenKind.PQL_VALUE_NODE) {
     const inListField = findFieldForInList(preceding);
     if (inListField !== undefined) {
-      return { kind: "AFTER_IN_COMMA", field: inListField, tokenStart };
+      return { kind: "AFTER_IN_VALUE", field: inListField, tokenStart };
     }
     return { kind: "AFTER_CONDITION", tokenStart };
   }
 
   // After a complete condition or a function call → partial is a logical op.
-  // Exception: a RPAREN closing a function call that is itself inside an IN list
-  // should still suggest list values, not logical operators.
+  // Exceptions for items inside an IN list (RPAREN, STRING, INTEGER, FLOAT):
+  // those have no trailing comma yet so they get AFTER_IN_VALUE.
   if (isConditionEnd(last.kind) || isFunctionToken(last.kind)) {
     if (last.kind === TokenKind.RPAREN) {
       const inListField = findFieldForInList(preceding);
       if (inListField !== undefined) {
-        return { kind: "AFTER_IN_COMMA", field: inListField, tokenStart };
+        return { kind: "AFTER_IN_VALUE", field: inListField, tokenStart };
+      }
+    }
+    if (last.kind === TokenKind.STRING || last.kind === TokenKind.INTEGER || last.kind === TokenKind.FLOAT) {
+      const inListField = findFieldForInList(preceding);
+      if (inListField !== undefined) {
+        return { kind: "AFTER_IN_VALUE", field: inListField, tokenStart };
       }
     }
     return { kind: "AFTER_CONDITION", tokenStart };

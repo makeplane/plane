@@ -177,31 +177,33 @@ export const usePQLEditor = ({
       const contextKind = currentContextRef.current?.kind;
 
       // Special path: value chip selected after IN / NOT IN with no '(' yet.
-      // Auto-insert '(' before the chip, then append ', ' to leave an open list.
-      // Functions (workspaceMembers() etc.) don't need a bracket — they fall
-      // through to the normal path below.
+      // Auto-insert '(' before the chip. Functions (workspaceMembers() etc.)
+      // don't need a bracket — they fall through to the normal path below.
       if (
         contextKind === "AFTER_IN_NO_BRACKET" &&
         "insertNode" in suggestion &&
         suggestion.insertNode.type === "value"
       ) {
-        ed.chain().focus().insertContent("(").run();
+        ed.commands.insertContent("(");
         applyInsertSuggestion(ed, suggestion);
-        // ed.chain().focus().insertContent(", ").run();
+        ed.commands.insertContent(")");
+        const newPos = ed.state.selection.from - 1;
+        ed.chain().focus().setTextSelection(newPos).run();
         handleDropdownClose();
         return;
       }
 
-      applyInsertSuggestion(ed, suggestion);
-      // Append ", " after value chips AND after complete 0-arity list-returning
-      // functions (e.g. workspaceMembers()) when inside an IN list.
-      // n-arity functions (insertCursorInsideParens === true) still need
-      // arguments filled in, so they are excluded.
+      // When the cursor is right after a value with no comma yet (AFTER_IN_VALUE),
+      // prepend ", " before inserting the next value so the list stays well-formed.
+      // AFTER_IN (cursor after '(') and AFTER_IN_COMMA (cursor after ',') already
+      // have the right separator in place, so they just insert directly.
       const isCompleteInListValue =
         "insertNode" in suggestion || (suggestion.kind === "function" && !suggestion.insertCursorInsideParens);
-      if (isCompleteInListValue && (contextKind === "AFTER_IN" || contextKind === "AFTER_IN_COMMA")) {
-        // ed.chain().focus().insertContent(", ").run();
+      if (isCompleteInListValue && contextKind === "AFTER_IN_VALUE") {
+        ed.chain().focus().insertContent(", ").run();
       }
+
+      applyInsertSuggestion(ed, suggestion);
       handleDropdownClose();
     },
     [handleDropdownClose]

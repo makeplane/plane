@@ -12,16 +12,22 @@
  */
 
 import { useCallback, useState } from "react";
-import { CircleDot } from "lucide-react";
+import { AlignLeft, CircleDot } from "lucide-react";
 import { observer } from "mobx-react";
+import { useParams } from "react-router";
 // plane imports
 import type { FieldDef, PQLEditorHandle } from "@plane/editor";
 import { FIELD_ALIASES } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import type { FilterInstance, WorkItemFilterInstance } from "@plane/shared-state";
+import type { FilterInstance, IFilterConfig, WorkItemFilterInstance } from "@plane/shared-state";
+import { getTextPropertyFilterConfig, toNegativeOperator } from "@plane/utils";
 import type { PQLFilterValue, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+import { EXTENDED_EQUALITY_OPERATOR } from "@plane/types";
 // components
 import { PQLEditor } from "@/components/pql/editor";
+// plane web imports
+import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
+import type { TFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
 
 type Props = {
   layoutFilters: WorkItemFilterInstance;
@@ -29,8 +35,23 @@ type Props = {
 };
 
 function constructFieldDefsFromConfigs(
-  configManager: FilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression>["configManager"]
+  configManager: FilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression>["configManager"],
+  operatorConfigs: TFiltersOperatorConfigs
 ): FieldDef[] {
+  // TODO: refactor this logic and implement searchable select for ID
+  const operatorConfigsWithoutIsNull = {
+    allowedOperators: new Set(
+      [...operatorConfigs.allowedOperators].filter((op) => op !== EXTENDED_EQUALITY_OPERATOR.ISNULL)
+    ),
+    allowNegative: operatorConfigs.allowNegative,
+  };
+  const idField = getTextPropertyFilterConfig<TWorkItemFilterProperty>("id")({
+    isEnabled: true,
+    filterIcon: AlignLeft,
+    propertyDisplayName: "ID",
+    ...operatorConfigsWithoutIsNull,
+  });
+
   const fieldDefs: FieldDef[] = configManager.allEnabledConfigs
     .filter((c) => !(["id", "epic_id", "parent_id"] as TWorkItemFilterProperty[]).includes(c.id))
     .map((config) => {
@@ -46,6 +67,30 @@ function constructFieldDefsFromConfigs(
       };
     })
     .filter((def): def is FieldDef => !!def); // Filter out undefined values
+  const idFieldOperators: IFilterConfig<TWorkItemFilterProperty>["pqlSupportedOperators"] = new Map();
+  Array.from(idField.supportedOperatorConfigsMap.entries())
+    .filter(([, operatorConfig]) => operatorConfig.isOperatorEnabled)
+    .forEach(([operator, operatorConfig]) => {
+      // set +ve and -ve multi-select operators
+      idFieldOperators.set(operator, operatorConfig);
+      if (operatorConfig.allowNegative) {
+        idFieldOperators.set(toNegativeOperator(operator), operatorConfig);
+      }
+      // set +ve and -ve single-select counter-parts
+      if (operatorConfig.type === "multi_select") {
+        idFieldOperators.set(operatorConfig.singleValueOperator, operatorConfig);
+        if (operatorConfig.allowNegative) {
+          idFieldOperators.set(toNegativeOperator(operatorConfig.singleValueOperator), operatorConfig);
+        }
+      }
+    });
+  fieldDefs.unshift({
+    name: idField.label,
+    value: idField.id,
+    icon: idField.icon || CircleDot,
+    description: idField.label,
+    allowedOps: idFieldOperators,
+  });
 
   return fieldDefs;
 }
@@ -54,9 +99,13 @@ export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({ lay
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasError, setHasError] = useState(false);
+  // params
+  const { workspaceSlug } = useParams();
+  // filter config
+  const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug: workspaceSlug ?? "" });
   // derived values
   const { pqlFiltersInstance, richFiltersInstance } = layoutFilters;
-  const fieldDefs = constructFieldDefsFromConfigs(layoutFilters.richFiltersInstance.configManager);
+  const fieldDefs = constructFieldDefsFromConfigs(layoutFilters.richFiltersInstance.configManager, operatorConfigs);
   // translation
   const { t } = useTranslation();
 

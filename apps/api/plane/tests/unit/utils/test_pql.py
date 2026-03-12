@@ -1227,3 +1227,42 @@ class TestCustomPropertyHistoryPQL:
     def test_not_cf_history(self):
         rf = _rf(f'NOT changed(cf["{_CF_UUID1}"])')
         assert rf == {"not": {"fn": {"changed": f"cf:{_CF_UUID1}"}}}
+
+
+# =========================================================================
+# 20. Work item identifier pseudo-field
+# =========================================================================
+
+
+@pytest.mark.unit
+class TestWorkItemIdentifier:
+    """Tests for id pseudo-field: WEB-11, APP-5, etc."""
+
+    def test_single_eq(self):
+        rf = _rf('id = "WEB-11"')
+        assert rf == {"fn": {"work_item_identifier": ["eq", "WEB-11"]}}
+
+    def test_single_neq(self):
+        rf = _rf('id != "WEB-11"')
+        assert rf == {"not": {"fn": {"work_item_identifier": ["neq", "WEB-11"]}}}
+
+    def test_in_multiple(self):
+        rf = _rf('id IN ("WEB-11", "WEB-12", "APP-5")')
+        assert rf == {"fn": {"work_item_identifier": ["in_op", ["WEB-11", "WEB-12", "APP-5"]]}}
+
+    def test_not_in_multiple(self):
+        rf = _rf('id NOT IN ("WEB-11", "WEB-12")')
+        assert rf == {"not": {"fn": {"work_item_identifier": ["not_in", ["WEB-11", "WEB-12"]]}}}
+
+    def test_contains(self):
+        rf = _rf('id ~ "WEB-1"')
+        assert rf == {"fn": {"work_item_identifier": ["contains", "WEB-1"]}}
+
+    def test_combined_with_other_conditions(self):
+        rf = _rf('id = "WEB-11" AND priority = "high"')
+        assert rf == {
+            "and": [
+                {"fn": {"work_item_identifier": ["eq", "WEB-11"]}},
+                {"priority": "high"},
+            ]
+        }
