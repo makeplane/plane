@@ -74,7 +74,7 @@ const getExportColumns = () => [
     key: "status",
     content: "Status",
     tdRender: (row: IExporterHistory) => (
-      <span className={`text-sm ${STATUS_STYLES[row.status] ?? "text-color-tertiary"}`}>
+      <span className={`text-sm ${STATUS_STYLES[row.status] ?? "text-tertiary"}`}>
         {STATUS_LABELS[row.status] ?? row.status}
       </span>
     ),
@@ -94,7 +94,7 @@ const getExportColumns = () => [
           Download
         </a>
       ) : (
-        <span className="text-color-tertiary text-sm">—</span>
+        <span className="text-tertiary text-sm">—</span>
       ),
   },
 ];
@@ -162,11 +162,11 @@ function PreviousDownloadsComponent({ workspaceSlug, projectId, isOpen, onToggle
 
   const triggerTitle = (
     <div className="flex w-full items-center justify-between px-5 py-3">
-      <span className="text-sm font-medium text-color-primary">Previous Downloads</span>
+      <span className="text-sm font-medium text-primary">Previous Downloads</span>
       <div className="flex items-center gap-2">
         <button
           type="button"
-          className="p-1 rounded hover:bg-layer-2 text-color-secondary"
+          className="p-1 rounded hover:bg-layer-2 text-secondary"
           onClick={(e) => {
             e.stopPropagation();
             void fetchHistory();
@@ -175,7 +175,7 @@ function PreviousDownloadsComponent({ workspaceSlug, projectId, isOpen, onToggle
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
         </button>
-        <ChevronDown className={`h-4 w-4 text-color-secondary transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown className={`h-4 w-4 text-secondary transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </div>
     </div>
   );
@@ -194,9 +194,9 @@ function PreviousDownloadsComponent({ workspaceSlug, projectId, isOpen, onToggle
             data={history}
             columns={columns}
             keyExtractor={(row: IExporterHistory) => row.id}
-            tableClassName="w-full border-t border-color-subtle"
-            tHeadTrClassName="!divide-x-0 border-b border-color-subtle !bg-transparent"
-            tBodyTrClassName="!divide-x-0 border-b border-color-subtle py-2 hover:bg-layer-1-hover"
+            tableClassName="w-full border-t border-subtle"
+            tHeadTrClassName="!divide-x-0 border-b border-subtle !bg-transparent"
+            tBodyTrClassName="!divide-x-0 border-b border-subtle py-2 hover:bg-layer-1-hover"
             thClassName="text-left py-3 px-5 font-normal"
             tdClassName="py-3 px-5"
           />
@@ -214,7 +214,7 @@ function PreviousDownloadsComponent({ workspaceSlug, projectId, isOpen, onToggle
           )}
         </>
       ) : (
-        <div className="flex items-center justify-center py-8 text-sm text-color-tertiary">
+        <div className="flex items-center justify-center py-8 text-sm text-tertiary">
           {isLoading ? "Loading..." : "No previous downloads"}
         </div>
       )}

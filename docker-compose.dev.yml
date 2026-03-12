@@ -1,0 +1,23 @@
+# Dev overlay: hot-reload backend (Docker) + frontend (host pnpm dev)
+# Usage: docker compose -f docker-compose-local.yml -f docker-compose.dev.yml up -d
+#
+# Then run on host: pnpm dev
+# Access: http://localhost (port 80 via Caddy proxy)
+
+services:
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    networks:
+      - dev_env
+    ports:
+      - "80:80"
+    volumes:
+      - ./apps/proxy/Caddyfile.dev:/etc/caddy/Caddyfile
+    environment:
+      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - api

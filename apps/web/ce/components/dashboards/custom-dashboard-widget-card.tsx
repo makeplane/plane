@@ -49,15 +49,15 @@ export const CustomDashboardWidgetCard = observer(function CustomDashboardWidget
   }, [workspaceSlug, widget.dashboard, widget.id, dashboardStore]);
 
   return (
-    <div className="relative h-full rounded-lg border border-color-subtle bg-surface-1 p-4">
+    <div className="relative h-full rounded-lg border border-subtle bg-surface-1 p-4">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           {isEditMode && (
             <div className="drag-handle cursor-grab active:cursor-grabbing">
-              <GripVertical className="h-4 w-4 text-color-placeholder" />
+              <GripVertical className="h-4 w-4 text-placeholder" />
             </div>
           )}
-          <h3 className="text-sm font-medium text-color-secondary">{widget.name}</h3>
+          <h3 className="text-sm font-medium text-secondary">{widget.name}</h3>
         </div>
         <WidgetContextMenu
           widget={widget}
@@ -69,7 +69,7 @@ export const CustomDashboardWidgetCard = observer(function CustomDashboardWidget
 
       <div className="h-[calc(100%-3rem)]">
         {isLoading ? (
-          <div className="flex items-center justify-center h-full text-color-tertiary text-xs">
+          <div className="flex items-center justify-center h-full text-tertiary text-xs">
             {t("analytics_dashboard.loading")}
           </div>
         ) : (

@@ -34,8 +34,8 @@ export const WorkspaceBulkAssignPreview = observer(function WorkspaceBulkAssignP
             {rows.map((row, idx) => (
               <tr key={idx} className="border-t border-border-subtle">
                 <td className="px-3 py-2 text-tertiary">{idx + 1}</td>
-                <td className="px-3 py-2">{row.email || <span className="text-color-danger-primary">—</span>}</td>
-                <td className="px-3 py-2">{row.workspace_slug || <span className="text-color-danger-primary">—</span>}</td>
+                <td className="px-3 py-2">{row.email || <span className="text-danger-primary">—</span>}</td>
+                <td className="px-3 py-2">{row.workspace_slug || <span className="text-danger-primary">—</span>}</td>
                 <td className="px-3 py-2">{String(row.role ?? 15)}</td>
               </tr>
             ))}

@@ -156,7 +156,10 @@ Embedding rules at point-of-use increases attention 2-3x vs separate rule files.
 - Address security and performance concerns
 - Make plans detailed enough for junior developers
 - Validate against existing codebase patterns
-- **MUST include embedded rules in every phase file**
-- **MUST include post-phase checklist in every phase file**
+- **MUST read `plans/templates/phase-template.md` BEFORE writing any phase file**
+- **MUST follow strict 14-section order in every phase file (see plan-organization.md)**
+- **MUST include embedded rules (≥3 rules) in every phase file**
+- **MUST include post-phase checklist (≥4 checkboxes) in every phase file**
+- **MUST self-validate after writing: all 14 sections present, correct order, no extra top-level sections**
 
 **Remember:** Plan quality determines implementation success. Embedded rules prevent the #1 cause of implementation errors: attention dilution.

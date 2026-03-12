@@ -141,7 +141,7 @@ export const WorkspaceBulkImportForm = observer(function WorkspaceBulkImportForm
           <Upload className="h-5 w-5 text-tertiary" />
           <span className="text-sm">{selectedFile ? selectedFile.name : "Click to select an Excel file (.xlsx, .xls)"}</span>
         </button>
-        {parseError && <p className="text-sm text-color-danger-primary">{parseError}</p>}
+        {parseError && <p className="text-sm text-danger-primary">{parseError}</p>}
       </div>
 
       {parsedRows.length > 0 && <WorkspaceBulkImportPreview rows={parsedRows} />}

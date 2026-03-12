@@ -33,7 +33,7 @@ export const StaffStatsCards = ({ stats }: StaffStatsCardsProps) => (
     </div>
     <div className="rounded-lg border border-custom-border-200 bg-custom-background-100 p-4">
       <p className="text-xs text-custom-text-400">Resigned</p>
-      <p className="mt-1 text-2xl font-semibold text-color-secondary">{stats.resigned}</p>
+      <p className="mt-1 text-2xl font-semibold text-secondary">{stats.resigned}</p>
     </div>
     <div className="rounded-lg border border-custom-border-200 bg-custom-background-100 p-4">
       <p className="text-xs text-custom-text-400">Suspended</p>

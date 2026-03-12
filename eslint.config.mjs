@@ -12,6 +12,7 @@ import reactHooksPlugin from "eslint-plugin-react-hooks";
 import reactRefreshPlugin from "eslint-plugin-react-refresh";
 import turboPlugin from "eslint-plugin-turbo";
 import vitestPlugin from "@vitest/eslint-plugin";
+import planePlugin from "eslint-plugin-plane";
 // import storybookPlugin from "eslint-plugin-storybook";
 
 import prettierConfig from "eslint-config-prettier/flat";
@@ -179,6 +180,17 @@ export default defineConfig([
     },
     rules: {
       "@typescript-eslint/no-require-imports": "off",
+    },
+  },
+  {
+    // Enforce short-form Tailwind tokens; exclude the package that defines the legacy names
+    files: ["apps/**/*.{ts,tsx}", "packages/**/*.{ts,tsx}"],
+    ignores: ["packages/tailwind-config/**"],
+    plugins: {
+      plane: planePlugin,
+    },
+    rules: {
+      "plane/no-legacy-tokens": "warn",
     },
   },
   prettierConfig,

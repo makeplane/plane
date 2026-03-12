@@ -34,11 +34,11 @@ export const getWorklogColumns = (projectName?: string) => [
       <div className="text-13 line-clamp-1 max-w-[200px]" title={log.issue_detail?.name || ""}>
         {log.issue_detail ? (
           <span className="flex items-center gap-1.5 font-medium">
-            <span className="text-color-tertiary font-normal">{log.issue_detail.identifier}</span>
+            <span className="text-tertiary font-normal">{log.issue_detail.identifier}</span>
             {log.issue_detail.name}
           </span>
         ) : (
-          <span className="text-color-tertiary">-</span>
+          <span className="text-tertiary">-</span>
         )}
       </div>
     ),
@@ -54,7 +54,7 @@ export const getWorklogColumns = (projectName?: string) => [
           size="sm"
           shape="circle"
         />
-        <span className="text-color-secondary">
+        <span className="text-secondary">
           {log.logged_by_detail?.display_name || "Unknown"} on{" "}
           {log.logged_at ? formatDateTime(new Date(log.logged_at), "MMM dd, yyyy") : "-"}
         </span>
@@ -65,7 +65,7 @@ export const getWorklogColumns = (projectName?: string) => [
     key: "time",
     content: "Time",
     tdRender: (log: IWorkLog) => (
-      <span className="text-13 font-medium text-color-primary">{formatMinutesToHours(log.duration_minutes)}</span>
+      <span className="text-13 font-medium text-primary">{formatMinutesToHours(log.duration_minutes)}</span>
     ),
   },
 ];

@@ -117,107 +117,90 @@ Brief description of what this plan accomplishes.
 
 ### Phase Files (phase-XX-name.md)
 
-Fully respect the `./docs/development-rules.md` file.
-Each phase file should contain:
+**MANDATORY:** Read `plans/templates/phase-template.md` BEFORE writing any phase file.
 
-**Context Links**
+Fully respect `./docs/development-rules.md`.
 
-- Links to related reports, files, documentation
+**Strict section order (1-14, MUST follow exactly, NO reordering, NO skipping):**
 
-**Overview**
+| # | Section | Required | Notes |
+|---|---------|----------|-------|
+| 1 | Context Links | ✓ | Links to plan, reports, related files |
+| 2 | Overview | ✓ | Priority, Status, Effort, Description |
+| 3 | Key Insights | ✓ | Research findings, critical considerations |
+| 4 | Requirements | ✓ | Functional + Non-functional |
+| 5 | Architecture | ✓ | ALL design content here (wireframes, diagrams, component trees, data flow as sub-headings) |
+| 6 | Related Code Files | ✓ | Modify / Create / Delete tables |
+| 7 | **Embedded Rules** | **MANDATORY** | Extract relevant rules from `.claude/rules/` for this phase |
+| 8 | Implementation Steps | ✓ | Reference embedded rules inline |
+| 9 | **Post-Phase Checklist** | **MANDATORY** | Concrete verification steps from embedded rules |
+| 10 | Todo List | ✓ | Checkbox tracking |
+| 11 | Success Criteria | ✓ | Definition of done |
+| 12 | Risk Assessment | ✓ | Issues + mitigation |
+| 13 | Security Considerations | ✓ | Auth, data protection |
+| 14 | Next Steps | ✓ | Dependencies, follow-up tasks |
 
-- Priority
-- Current status
-- Brief description
+**Prohibitions:**
+- ❌ NO top-level `##` sections outside this list
+- ❌ Extra content (wireframes, store design, component trees) → sub-headings under `## Architecture`
+- ❌ NO phase file without sections 7 + 9
 
-**Key Insights**
+**Embedded Rules examples:**
 
-- Important findings from research
-- Critical considerations
-
-**Requirements**
-
-- Functional requirements
-- Non-functional requirements
-
-**Architecture**
-
-- System design
-- Component interactions
-- Data flow
-
-**Related Code Files**
-
-- List of files to modify
-- List of files to create
-- List of files to delete
-
-**Embedded Rules (MANDATORY — prevents attention dilution)**
-
-- Extract ONLY rules relevant to THIS phase from `.claude/rules/`
-- Embed inline so AI sees rules at point-of-use, not in separate files
-- Frontend phases: embed color tokens, i18n, component, layout rules
-- Backend phases: embed ViewSet, permission, activity tracking, manager rules
-- Keep concise — only rules that prevent actual mistakes in this phase
-
-Example for frontend phase:
-
+Frontend phase (apps/web):
 ```markdown
 ## Embedded Rules
-
-1. **i18n**: ALL visible text must use `t()` — buttons, toasts, empty states, errors
-2. **Color tokens**: Use `text-color-*` (NOT `text-tertiary`), `border-color-*` (NOT `border-subtle`)
-3. **Input backgrounds**: `bg-layer-2` for all inputs/selects/date-pickers (NOT `bg-surface-1`)
-4. **Layout**: Feature pages MUST use `AppHeader` + `ContentWrapper` + `Outlet` in layout.tsx
-5. **Menus**: Use `CustomMenu` from `@plane/ui` — NEVER build custom hover dropdowns
-6. **Components**: `observer()` on all store-reading components, `void` before `handleSubmit()`
+1. **i18n**: ALL visible text must use `t()` from `@plane/i18n`
+2. **Color tokens**: `text-primary` (NOT text-color-primary), `border-subtle` (NOT border-color-subtle), `bg-surface-1`
+3. **Components**: `observer()` from `mobx-react` on all store-reading components
+4. **Imports**: `@plane/propel/*` subpath imports for new code; `@plane/ui` still used for unmigrated components
+5. **MobX**: `makeObservable` (explicit), `set()` from `lodash-es` for nested updates, `runInAction()` for async
 ```
 
-**Implementation Steps**
+Frontend phase (apps/admin — no i18n):
+```markdown
+## Embedded Rules
+1. **Color tokens**: `text-primary`, `text-secondary`, `border-subtle`, `bg-surface-1` (short form, no prefix)
+2. **Components**: `observer()` from `mobx-react` on all store-reading components
+3. **Imports**: `@plane/propel/*` subpath imports; `@plane/ui` still used
+4. **MobX**: `makeObservable` (explicit), `set()` from `lodash-es`, `runInAction()` for async
+```
 
-- Detailed, numbered steps
-- Reference embedded rules inline (e.g., "apply Rule 1: use t() for button label")
+Backend phase (app views — workspace/project context):
+```markdown
+## Embedded Rules
+1. **Views**: Inherit `BaseViewSet`, use `@allow_permission` decorator
+2. **Activity**: `issue_activity.delay()` / `model_activity.delay()` after mutations
+3. **ORM**: `select_related()` to prevent N+1, never raw SQL
+4. **Exports**: Register in `__init__.py` after creating new modules
+```
 
-**Post-Phase Checklist (MANDATORY — verify before marking complete)**
+Backend phase (license views — God Mode/admin context):
+```markdown
+## Embedded Rules
+1. **Views**: Inherit `BaseAPIView`, use `InstanceAdminPermission` (role ≥ 15)
+2. **ORM**: `select_related()` to prevent N+1, never raw SQL
+3. **Error handling**: try/except with graceful fallback responses
+4. **Exports**: Register in `__init__.py` after creating new modules
+```
 
-- Phase-specific quality checks from embedded rules
-- Must pass ALL checks before moving to next phase
-- Example:
-
+**Post-Phase Checklist example:**
 ```markdown
 ## Post-Phase Checklist
-
-- [ ] All strings use `t()` from `@plane/i18n` (zero hardcoded English)
-- [ ] Color tokens use full `text-color-*` / `border-color-*` prefix
-- [ ] Input backgrounds use `bg-layer-2`
-- [ ] `observer()` on all MobX store-reading components
-- [ ] File sizes under 200 lines (components under 150)
-- [ ] Build passes: `pnpm --filter web build`
+- [ ] All 14 sections present in correct order
+- [ ] Embedded rules followed in implementation
+- [ ] File sizes <200 lines, components <150 lines
+- [ ] Code compiles without errors
+- [ ] No hardcoded colors, strings, or secrets
 ```
 
-**Todo List**
-
-- Checkbox list for tracking
-
-**Success Criteria**
-
-- Definition of done
-- Validation methods
-
-**Risk Assessment**
-
-- Potential issues
-- Mitigation strategies
-
-**Security Considerations**
-
-- Auth/authorization
-- Data protection
-
-**Next Steps**
-
-- Dependencies
-- Follow-up tasks
+**Self-Validation (run after writing each phase file):**
+```
+CHECK: Sections 1-14 present in order? → If missing, add before proceeding
+CHECK: ## Embedded Rules has ≥3 concrete rules? → If not, extract from .claude/rules/
+CHECK: ## Post-Phase Checklist has ≥4 checkboxes? → If not, derive from embedded rules
+CHECK: No extra top-level ## sections? → If found, move under ## Architecture
+```
 
 ### Phase Workflow (Attention Dilution Prevention)
 

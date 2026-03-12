@@ -46,7 +46,7 @@ export const WidgetContextMenu = observer(({ widget, workspaceSlug, onEdit, onDe
     <CustomMenu
       placement="bottom-end"
       customButton={
-        <button className="p-1 rounded hover:bg-layer-2 transition-colors text-color-tertiary hover:text-color-primary">
+        <button className="p-1 rounded hover:bg-layer-2 transition-colors text-tertiary hover:text-primary">
           <MoreHorizontal className="w-4 h-4" />
         </button>
       }
@@ -75,7 +75,7 @@ export const WidgetContextMenu = observer(({ widget, workspaceSlug, onEdit, onDe
       <div className="h-px bg-border-subtle my-1" />
 
       <CustomMenu.MenuItem onClick={onDelete}>
-        <div className="flex items-center gap-2 text-color-danger-primary">
+        <div className="flex items-center gap-2 text-danger-primary">
           <Trash2 className="w-4 h-4" />
           <span>{t("analytics_dashboard.context_delete")}</span>
         </div>

@@ -83,7 +83,7 @@ export function SendTestEmailModal(props: Props) {
               />
             )}
             {sendEmailStep === ESendEmailSteps.SUCCESS && (
-              <div className="flex flex-col gap-y-4 text-13 text-color-secondary">
+              <div className="flex flex-col gap-y-4 text-13 text-secondary">
                 <p>
                   We have sent the test email to {receiverEmail}. Please check your spam folder if you cannot find it.
                 </p>
@@ -91,7 +91,7 @@ export function SendTestEmailModal(props: Props) {
               </div>
             )}
             {sendEmailStep === ESendEmailSteps.FAILED && (
-              <div className="text-13 text-color-danger-primary">{error}</div>
+              <div className="text-13 text-danger-primary">{error}</div>
             )}
           </div>
           <div className="mt-6 flex items-center gap-2 justify-end">

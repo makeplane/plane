@@ -122,8 +122,8 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <div className="flex flex-col">
-        <div className="flex items-center justify-between border-b border-color-subtle px-5 py-4">
-          <h3 className="text-16 font-semibold text-color-primary">
+        <div className="flex items-center justify-between border-b border-subtle px-5 py-4">
+          <h3 className="text-16 font-semibold text-primary">
             {widget ? t("analytics_dashboard.configure_widget") : t("analytics_dashboard.add_widget")}
           </h3>
           <button
@@ -131,7 +131,7 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
             onClick={handleClose}
             className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2"
           >
-            <X className="h-4 w-4 text-color-tertiary" />
+            <X className="h-4 w-4 text-tertiary" />
           </button>
         </div>
 
@@ -170,7 +170,7 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2 border-t border-color-subtle px-5 py-4">
+          <div className="flex items-center justify-end gap-2 border-t border-subtle px-5 py-4">
             <Button type="button" variant="secondary" size="sm" onClick={handleClose} disabled={isSubmitting}>
               {t("cancel")}
             </Button>

@@ -75,26 +75,26 @@ export const TransitionRow = observer(function TransitionRow(props: Props) {
   });
 
   return (
-    <div className="rounded-md border border-color-subtle bg-surface-1 p-3">
+    <div className="rounded-md border border-subtle bg-surface-1 p-3">
       {/* Top row */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <span className="text-12 text-color-secondary whitespace-nowrap">
+          <span className="text-12 text-secondary whitespace-nowrap">
             {t("project_settings.workflows.change_state_to")}
           </span>
-          <span className="text-12 text-color-secondary">→</span>
+          <span className="text-12 text-secondary">→</span>
           {targetState ? (
-            <div className="flex items-center gap-1.5 text-12 font-medium text-color-primary">
+            <div className="flex items-center gap-1.5 text-12 font-medium text-primary">
               <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: targetState.color }} />
               {targetState.name}
             </div>
           ) : (
-            <span className="text-color-tertiary italic text-12">Unknown state</span>
+            <span className="text-tertiary italic text-12">Unknown state</span>
           )}
 
           {/* Reviewer count */}
           {approvers.length > 0 && (
-            <span className="flex items-center gap-1 text-12 text-color-secondary ml-2">
+            <span className="flex items-center gap-1 text-12 text-secondary ml-2">
               <Users className="h-3 w-3" />
               {t("project_settings.workflows.n_listed_reviewers", { count: approvers.length })}
             </span>
@@ -109,7 +109,7 @@ export const TransitionRow = observer(function TransitionRow(props: Props) {
               options={memberOptions}
               onChange={(val: string) => void handleAddReviewer(val)}
               customButton={
-                <div className="flex items-center gap-1 rounded border border-color-subtle bg-surface-1 hover:bg-layer-2 px-2.5 py-1 text-12 font-medium text-color-primary transition-colors shadow-sm cursor-pointer">
+                <div className="flex items-center gap-1 rounded border border-subtle bg-surface-1 hover:bg-layer-2 px-2.5 py-1 text-12 font-medium text-primary transition-colors shadow-sm cursor-pointer">
                   {t("project_settings.workflows.add_reviewers")}
                 </div>
               }
@@ -121,7 +121,7 @@ export const TransitionRow = observer(function TransitionRow(props: Props) {
           <button
             type="button"
             onClick={() => onDeleteTransition(transitionId)}
-            className="flex-shrink-0 text-color-tertiary hover:text-color-error transition-colors"
+            className="flex-shrink-0 text-tertiary hover:text-error transition-colors"
             aria-label="Delete transition"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -130,17 +130,17 @@ export const TransitionRow = observer(function TransitionRow(props: Props) {
       </div>
 
       {/* Dashed separator */}
-      <div className="my-3 border-t border-dashed border-color-subtle w-full" />
+      <div className="my-3 border-t border-dashed border-subtle w-full" />
 
       {/* Expanded reviewer list */}
       <div>
-        <p className="flex items-center gap-1 text-12 text-color-secondary mb-2">
+        <p className="flex items-center gap-1 text-12 text-secondary mb-2">
           {t("project_settings.workflows.when_reviewed_by")}
           <Info className="h-3 w-3" />
         </p>
         <div className="flex flex-wrap gap-1.5">
           {approvers.length === 0 ? (
-            <div className="flex items-center gap-1.5 rounded-md border border-color-subtle bg-surface-1 px-2.5 py-1 text-12 text-color-primary">
+            <div className="flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1 text-12 text-primary">
               <Avatar name="All Members" size="sm" />
               <span>{t("project_settings.workflows.blocker_all_members")}</span>
             </div>
@@ -150,7 +150,7 @@ export const TransitionRow = observer(function TransitionRow(props: Props) {
               return (
                 <div
                   key={userId}
-                  className="flex items-center gap-1.5 rounded-md border border-color-subtle bg-surface-1 px-2 py-1 text-12 text-color-primary"
+                  className="flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2 py-1 text-12 text-primary"
                 >
                   <Avatar
                     name={user?.display_name}
@@ -161,7 +161,7 @@ export const TransitionRow = observer(function TransitionRow(props: Props) {
                   <button
                     type="button"
                     onClick={() => void handleRemoveApprover(userId)}
-                    className="flex-shrink-0 ml-0.5 text-color-tertiary hover:text-color-error transition-colors"
+                    className="flex-shrink-0 ml-0.5 text-tertiary hover:text-error transition-colors"
                     aria-label="Remove approver"
                   >
                     ×

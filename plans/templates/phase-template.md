@@ -40,23 +40,41 @@
 Extract ONLY rules relevant to THIS phase from `.claude/rules/` (or `.agent/rules/`).
 Embed inline so AI sees rules at point-of-use.
 
-**Frontend phase example:**
+**Frontend phase example (apps/web):**
 
 ```
-- Semantic tokens: text-color-*, border-color-*, bg-* (no color- for bg)
-- observer() on all MobX-reading components
-- t() for all user-facing strings (en, ko, vi)
-- Propel subpath imports: @plane/propel/button
-- AppHeader + ContentWrapper + Outlet in layout.tsx
+- Semantic tokens: text-primary (NOT text-color-primary), border-subtle (NOT border-color-subtle), bg-surface-1
+- observer() from mobx-react on all MobX-reading components
+- t() from @plane/i18n for all user-facing strings
+- @plane/propel/* subpath imports for new code; @plane/ui still used for unmigrated
+- makeObservable (explicit), set() from lodash-es, runInAction() for async
+- AppHeader + ContentWrapper + Outlet in layout.tsx (apps/web only)
 ```
 
-**Backend phase example:**
+**Frontend phase example (apps/admin — no i18n):**
 
 ```
-- BaseViewSet / BaseAPIView inheritance
-- @allow_permission decorator
+- Semantic tokens: text-primary, text-secondary, border-subtle, bg-surface-1 (short form)
+- observer() from mobx-react on all MobX-reading components
+- @plane/propel/* subpath imports; @plane/ui still used
+- makeObservable (explicit), set() from lodash-es, runInAction() for async
+```
+
+**Backend phase example (app views — workspace/project context):**
+
+```
+- BaseViewSet inheritance, @allow_permission decorator
 - issue_activity.delay() / model_activity.delay() after mutations
 - current_instance capture BEFORE update
+- Register in __init__.py
+```
+
+**Backend phase example (license views — God Mode/admin context):**
+
+```
+- BaseAPIView inheritance, InstanceAdminPermission (role ≥ 15)
+- select_related() to prevent N+1, never raw SQL
+- try/except with graceful fallback responses
 - Register in __init__.py
 ```
 

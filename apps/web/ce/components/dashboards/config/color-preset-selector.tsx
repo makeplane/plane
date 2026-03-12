@@ -22,8 +22,8 @@ export const ColorPresetSelector = ({ selectedPreset, onChange }: ColorPresetSel
         className={cn(
           "group flex w-full items-center gap-3 rounded-lg border-[1.5px] p-3 text-left transition-all",
           selectedPreset === preset.id
-            ? "border-color-accent-strong bg-accent-subtle"
-            : "border-color-subtle hover:border-color-accent-strong hover:bg-layer-1-hover bg-surface-1"
+            ? "border-accent-strong bg-accent-subtle"
+            : "border-subtle hover:border-accent-strong hover:bg-layer-1-hover bg-surface-1"
         )}
       >
         <div className="flex gap-1">
@@ -32,8 +32,8 @@ export const ColorPresetSelector = ({ selectedPreset, onChange }: ColorPresetSel
           ))}
         </div>
         <div className="flex-1">
-          <div className={cn("font-medium transition-colors", selectedPreset === preset.id ? "text-color-accent-primary" : "text-color-primary")}>{preset.name}</div>
-          <div className="text-xs text-color-tertiary">{preset.description}</div>
+          <div className={cn("font-medium transition-colors", selectedPreset === preset.id ? "text-accent-primary" : "text-primary")}>{preset.name}</div>
+          <div className="text-xs text-tertiary">{preset.description}</div>
         </div>
       </button>
     ))}

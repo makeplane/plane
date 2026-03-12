@@ -150,6 +150,9 @@ importers:
       eslint-plugin-n:
         specifier: 17.23.1
         version: 17.23.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.8.3)
+      eslint-plugin-plane:
+        specifier: workspace:*
+        version: link:packages/eslint-plugin-plane
       eslint-plugin-promise:
         specifier: 7.2.1
         version: 7.2.1(eslint@9.39.1(jiti@2.6.1))
@@ -1077,6 +1080,8 @@ importers:
       typescript:
         specifier: 5.8.3
         version: 5.8.3
+
+  packages/eslint-plugin-plane: {}
 
   packages/hooks:
     dependencies:

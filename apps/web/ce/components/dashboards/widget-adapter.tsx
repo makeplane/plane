@@ -52,7 +52,7 @@ export const WidgetAdapter = observer(({ widget, workspaceSlug }: WidgetAdapterP
 
   if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full text-color-tertiary text-xs">
+      <div className="flex items-center justify-center h-full text-tertiary text-xs">
         {t("analytics_dashboard.no_data_filters")}
       </div>
     );
@@ -117,7 +117,7 @@ export const WidgetAdapter = observer(({ widget, workspaceSlug }: WidgetAdapterP
 
     default:
       return (
-        <div className="flex items-center justify-center h-full text-color-tertiary text-xs text-center p-4">
+        <div className="flex items-center justify-center h-full text-tertiary text-xs text-center p-4">
           {t("analytics_dashboard.chart_type_unsupported", { type: widget.chart_type })}
         </div>
       );

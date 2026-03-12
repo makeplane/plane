@@ -28,11 +28,18 @@ Task(subagent_type="scout", prompt="Find files related to [feature] in codebase"
 ## Planning Phase
 
 ```
-Task(subagent_type="planner", prompt="Create implementation plan based on reports: [reports]. Save to [path]. MANDATORY: Every phase file MUST include Embedded Rules section (extract relevant rules from .claude/rules/ for that phase) and Post-Phase Checklist section (concrete verification steps). See planning skill references for template.", description="Plan [feature]")
+Task(subagent_type="planner", prompt="Create implementation plan based on reports: [reports]. Save to [path].
+
+BEFORE writing any phase file, MUST read: plans/templates/phase-template.md
+
+Phase files MUST follow strict 14-section order (NO reordering, NO skipping, NO extra top-level sections):
+1. Context Links → 2. Overview → 3. Key Insights → 4. Requirements → 5. Architecture (all design content as sub-headings) → 6. Related Code Files → 7. Embedded Rules (MANDATORY: ≥3 rules from .claude/rules/) → 8. Implementation Steps → 9. Post-Phase Checklist (MANDATORY: ≥4 checkboxes) → 10. Todo List → 11. Success Criteria → 12. Risk Assessment → 13. Security Considerations → 14. Next Steps
+
+After writing, self-validate: all 14 sections present? Embedded Rules ≥3? Post-Phase Checklist ≥4? No extra ## sections?", description="Plan [feature]")
 ```
 
 - Input: researcher and scout reports
-- Output: `plan.md` + `phase-XX-*.md` files (each with embedded rules + checklist)
+- Output: `plan.md` + `phase-XX-*.md` files (each validated: 14 sections + embedded rules + checklist)
 
 ## UI Implementation
 

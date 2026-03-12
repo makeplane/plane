@@ -74,9 +74,9 @@ function WorkflowsSettingsPage() {
 
   const headerControl = (
     <div className="flex items-center gap-3">
-      <span className="text-sm text-color-secondary">{t("project_settings.workflows.live_toggle_label")}</span>
+      <span className="text-sm text-secondary">{t("project_settings.workflows.live_toggle_label")}</span>
       <ToggleSwitch value={isLive} onChange={(v) => void handleToggleLive(v)} size="sm" />
-      <CustomMenu ellipsis customButtonClassName="flex items-center text-color-secondary hover:text-color-primary">
+      <CustomMenu ellipsis customButtonClassName="flex items-center text-secondary hover:text-primary">
         <CustomMenu.MenuItem onClick={() => void handleReset()}>
           <div className="flex items-center gap-2 text-sm">
             <RotateCcw className="h-4 w-4" />

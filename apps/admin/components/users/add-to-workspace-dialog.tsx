@@ -137,29 +137,29 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
             {/* Workspace multi-select with search */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <label htmlFor="workspace-search" className="block text-13 font-medium text-color-primary">
+                <label htmlFor="workspace-search" className="block text-13 font-medium text-primary">
                   Workspace
                 </label>
-                {selectedIds.size > 0 && <span className="text-11 text-color-accent">{selectedIds.size} selected</span>}
+                {selectedIds.size > 0 && <span className="text-11 text-accent">{selectedIds.size} selected</span>}
               </div>
               {isLoading ? (
                 <Loader className="space-y-2">
                   <Loader.Item height="36px" width="100%" />
                 </Loader>
               ) : availableWorkspaces.length === 0 ? (
-                <p className="text-11 text-color-tertiary">User is already a member of all workspaces.</p>
+                <p className="text-11 text-tertiary">User is already a member of all workspaces.</p>
               ) : (
-                <div className="rounded-md border border-color-subtle">
+                <div className="rounded-md border border-subtle">
                   {/* Search input */}
                   <div className="relative">
-                    <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-color-tertiary" />
+                    <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-tertiary" />
                     <input
                       id="workspace-search"
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search workspace..."
-                      className="w-full rounded-t-md border-b border-color-subtle bg-layer-2 py-2 pl-8 pr-3 text-13 outline-none placeholder:text-color-tertiary"
+                      className="w-full rounded-t-md border-b border-subtle bg-layer-2 py-2 pl-8 pr-3 text-13 outline-none placeholder:text-tertiary"
                     />
                   </div>
                   {/* Select all toggle */}
@@ -167,11 +167,11 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
                     <button
                       type="button"
                       onClick={toggleSelectAll}
-                      className="flex w-full items-center gap-2 border-b border-color-subtle px-3 py-1.5 text-left text-11 font-medium text-color-accent hover:bg-layer-3"
+                      className="flex w-full items-center gap-2 border-b border-subtle px-3 py-1.5 text-left text-11 font-medium text-accent hover:bg-layer-3"
                     >
                       <span
                         className={`flex h-3.5 w-3.5 items-center justify-center rounded border ${
-                          allFilteredSelected ? "border-color-accent bg-color-accent text-white" : "border-color-subtle"
+                          allFilteredSelected ? "border-accent bg-accent text-white" : "border-subtle"
                         }`}
                       >
                         {allFilteredSelected && <Check className="h-2.5 w-2.5" />}
@@ -182,7 +182,7 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
                   {/* Workspace list */}
                   <div className="max-h-48 overflow-auto">
                     {filteredWorkspaces.length === 0 ? (
-                      <p className="px-3 py-2 text-13 text-color-tertiary">No workspace found</p>
+                      <p className="px-3 py-2 text-13 text-tertiary">No workspace found</p>
                     ) : (
                       filteredWorkspaces.map((ws) => {
                         const isSelected = selectedIds.has(ws.id);
@@ -192,18 +192,18 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
                             type="button"
                             onClick={() => toggleWorkspace(ws.id)}
                             className={`flex w-full items-center gap-2 px-3 py-2 text-left text-13 transition-colors hover:bg-layer-3 ${
-                              isSelected ? "bg-layer-3 text-color-primary" : "text-color-secondary"
+                              isSelected ? "bg-layer-3 text-primary" : "text-secondary"
                             }`}
                           >
                             <span
                               className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded border ${
-                                isSelected ? "border-color-accent bg-color-accent text-white" : "border-color-subtle"
+                                isSelected ? "border-accent bg-accent text-white" : "border-subtle"
                               }`}
                             >
                               {isSelected && <Check className="h-2.5 w-2.5" />}
                             </span>
                             <span className="flex-1 truncate">
-                              {ws.name} <span className="text-color-tertiary">({ws.slug})</span>
+                              {ws.name} <span className="text-tertiary">({ws.slug})</span>
                             </span>
                           </button>
                         );
@@ -215,14 +215,14 @@ export const AddToWorkspaceDialog = observer(function AddToWorkspaceDialog({
             </div>
             {/* Role selector (applies to all selected workspaces) */}
             <div className="space-y-1">
-              <label htmlFor="role-select" className="block text-13 font-medium text-color-primary">
-                Role <span className="text-color-tertiary font-normal">(applies to all selected)</span>
+              <label htmlFor="role-select" className="block text-13 font-medium text-primary">
+                Role <span className="text-tertiary font-normal">(applies to all selected)</span>
               </label>
               <select
                 id="role-select"
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(Number(e.target.value))}
-                className="w-full rounded-md border border-color-subtle bg-layer-2 px-3 py-2 text-13"
+                className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13"
               >
                 {ROLES.map((role) => (
                   <option key={role.value} value={role.value}>

@@ -47,21 +47,21 @@ export const WorkflowDragBlockerCard = observer(function WorkflowDragBlockerCard
       <div className="flex items-start gap-2">
         <ShieldX className="h-4 w-4 flex-shrink-0 text-red-500 mt-0.5" />
         <div className="space-y-1">
-          <p className="text-xs font-medium text-color-primary">{t("project_settings.workflows.drag_blocked_title")}</p>
-          <p className="text-xs text-color-secondary">
+          <p className="text-xs font-medium text-primary">{t("project_settings.workflows.drag_blocked_title")}</p>
+          <p className="text-xs text-secondary">
             {t("project_settings.workflows.indicator_popup_for")}{" "}
             {fromState && (
-              <span className="inline-flex items-center gap-1 font-medium text-color-primary">
+              <span className="inline-flex items-center gap-1 font-medium text-primary">
                 <span className="h-2 w-2 rounded-full" style={{ backgroundColor: fromState.color }} />
                 {fromState.name}
               </span>
             )}
           </p>
-          <p className="text-xs text-color-secondary">
-            <span className="font-medium text-color-primary">{reviewerDisplay}</span>{" "}
+          <p className="text-xs text-secondary">
+            <span className="font-medium text-primary">{reviewerDisplay}</span>{" "}
             {t("project_settings.workflows.indicator_popup_can_move")}{" "}
             {toState && (
-              <span className="inline-flex items-center gap-1 font-medium text-color-primary">
+              <span className="inline-flex items-center gap-1 font-medium text-primary">
                 <span className="h-2 w-2 rounded-full" style={{ backgroundColor: toState.color }} />
                 {toState.name}
               </span>

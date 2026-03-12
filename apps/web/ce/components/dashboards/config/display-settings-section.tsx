@@ -30,7 +30,7 @@ export const DisplaySettingsSection = observer(({ control, chartType }: DisplayS
     <div className="space-y-4">
       {showLegend && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.show_legend")}</span>
+          <span className="text-sm font-medium text-secondary">{t("analytics_dashboard.show_legend")}</span>
           <Controller
             name="config.show_legend"
             control={control}
@@ -46,7 +46,7 @@ export const DisplaySettingsSection = observer(({ control, chartType }: DisplayS
 
       {showTooltip && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.show_tooltip")}</span>
+          <span className="text-sm font-medium text-secondary">{t("analytics_dashboard.show_tooltip")}</span>
           <Controller
             name="config.show_tooltip"
             control={control}
@@ -62,7 +62,7 @@ export const DisplaySettingsSection = observer(({ control, chartType }: DisplayS
 
       {showCenterValue && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.show_center_value")}</span>
+          <span className="text-sm font-medium text-secondary">{t("analytics_dashboard.show_center_value")}</span>
           <Controller
             name="config.center_value"
             control={control}
@@ -78,7 +78,7 @@ export const DisplaySettingsSection = observer(({ control, chartType }: DisplayS
 
       {showMarkers && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.show_data_points")}</span>
+          <span className="text-sm font-medium text-secondary">{t("analytics_dashboard.show_data_points")}</span>
           <Controller
             name="config.show_markers"
             control={control}

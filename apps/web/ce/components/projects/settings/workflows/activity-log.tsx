@@ -29,11 +29,11 @@ export const WorkflowActivityLog = observer(function WorkflowActivityLog({ works
   }, [workspaceSlug, projectId, workflowStore]);
 
   if (isLoading) {
-    return <div className="py-6 text-center text-sm text-color-tertiary">{t("project_settings.workflows.activity_loading")}</div>;
+    return <div className="py-6 text-center text-sm text-tertiary">{t("project_settings.workflows.activity_loading")}</div>;
   }
 
   if (activities.length === 0) {
-    return <div className="py-6 text-center text-sm text-color-tertiary">{t("project_settings.workflows.activity_empty")}</div>;
+    return <div className="py-6 text-center text-sm text-tertiary">{t("project_settings.workflows.activity_empty")}</div>;
   }
 
   return (
@@ -41,11 +41,11 @@ export const WorkflowActivityLog = observer(function WorkflowActivityLog({ works
       {activities.map((activity) => (
         <li key={activity.id} className="flex justify-between gap-4 px-0 py-4">
           <div className="flex-1">
-            <p className="text-sm font-medium text-color-primary">{activity.triggered_by?.display_name ?? "Unknown"}</p>
-            <p className="text-xs text-color-secondary mt-1">{activity.action}</p>
+            <p className="text-sm font-medium text-primary">{activity.triggered_by?.display_name ?? "Unknown"}</p>
+            <p className="text-xs text-secondary mt-1">{activity.action}</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-color-tertiary">{format(new Date(activity.created_at), "MMM d, yyyy HH:mm")}</p>
+            <p className="text-xs text-tertiary">{format(new Date(activity.created_at), "MMM d, yyyy HH:mm")}</p>
           </div>
         </li>
       ))}

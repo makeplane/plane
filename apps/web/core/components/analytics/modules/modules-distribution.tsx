@@ -106,7 +106,7 @@ const ModulesDistribution = observer(function ModulesDistribution() {
                 <EmptyStateCompact
                     assetKey="unknown"
                     assetClassName="size-20"
-                    rootClassName="border border-color-subtle px-5 py-10 md:py-20 md:px-20"
+                    rootClassName="border border-subtle px-5 py-10 md:py-20 md:px-20"
                     title={t("workspace_analytics.empty_state.general.title")}
                 />
             )}

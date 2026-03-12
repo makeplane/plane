@@ -39,19 +39,19 @@ const sizeConfig = {
 
 const variants: Record<NonNullable<Props["variant"]>, Record<"ontrack" | "offtrack" | "atrisk", string>> = {
   simple: {
-    ontrack: "text-color-success-primary",
-    offtrack: "text-color-warning-primary",
-    atrisk: "text-color-danger-primary",
+    ontrack: "text-success-primary",
+    offtrack: "text-warning-primary",
+    atrisk: "text-danger-primary",
   },
   outlined: {
-    ontrack: "text-color-success-primary border border-color-success-strong",
-    offtrack: "text-color-warning-primary border border-color-warning-strong",
-    atrisk: "text-color-danger-primary border border-color-danger-strong",
+    ontrack: "text-success-primary border border-success-strong",
+    offtrack: "text-warning-primary border border-warning-strong",
+    atrisk: "text-danger-primary border border-danger-strong",
   },
   tinted: {
-    ontrack: "text-color-success-primary bg-success-subtle",
-    offtrack: "text-color-warning-primary bg-warning-subtle",
-    atrisk: "text-color-danger-primary bg-danger-subtle",
+    ontrack: "text-success-primary bg-success-subtle",
+    offtrack: "text-warning-primary bg-warning-subtle",
+    atrisk: "text-danger-primary bg-danger-subtle",
   },
 } as const;
 

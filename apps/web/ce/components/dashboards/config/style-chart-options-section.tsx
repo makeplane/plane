@@ -39,7 +39,7 @@ export function StyleChartOptionsSection({
     <>
       {showBorder && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.show_border")}</span>
+          <span className="text-sm font-medium text-secondary">{t("analytics_dashboard.show_border")}</span>
           <Controller
             name="config.show_border"
             control={control}
@@ -55,7 +55,7 @@ export function StyleChartOptionsSection({
 
       {showSmoothing && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.smooth_lines")}</span>
+          <span className="text-sm font-medium text-secondary">{t("analytics_dashboard.smooth_lines")}</span>
           <Controller
             name="config.smoothing"
             control={control}
@@ -72,7 +72,7 @@ export function StyleChartOptionsSection({
       {/* Line type selector for LINE_CHART */}
       {showLineType && (
         <div>
-          <span className="mb-2 block text-sm font-medium text-color-secondary">
+          <span className="mb-2 block text-sm font-medium text-secondary">
             {t("analytics_dashboard.line_type")}
           </span>
           <Controller
@@ -87,8 +87,8 @@ export function StyleChartOptionsSection({
                     onClick={() => field.onChange(opt.value)}
                     className={`flex-1 rounded border px-3 py-1.5 text-sm transition-colors ${
                       (field.value || "solid") === opt.value
-                        ? "border-color-accent-strong bg-accent-subtle text-color-accent-primary"
-                        : "border-color-subtle bg-surface-1 text-color-secondary hover:bg-layer-1"
+                        ? "border-accent-strong bg-accent-subtle text-accent-primary"
+                        : "border-subtle bg-surface-1 text-secondary hover:bg-layer-1"
                     }`}
                   >
                     {t(opt.labelKey)}
@@ -103,7 +103,7 @@ export function StyleChartOptionsSection({
       {/* Orientation toggle for BAR_CHART */}
       {showOrientation && (
         <div>
-          <span className="mb-2 block text-sm font-medium text-color-secondary">
+          <span className="mb-2 block text-sm font-medium text-secondary">
             {t("analytics_dashboard.orientation")}
           </span>
           <Controller
@@ -118,8 +118,8 @@ export function StyleChartOptionsSection({
                     onClick={() => field.onChange(opt)}
                     className={`flex-1 rounded border px-3 py-1.5 text-sm capitalize transition-colors ${
                       (field.value || "vertical") === opt
-                        ? "border-color-accent-strong bg-accent-subtle text-color-accent-primary"
-                        : "border-color-subtle bg-surface-1 text-color-secondary hover:bg-layer-1"
+                        ? "border-accent-strong bg-accent-subtle text-accent-primary"
+                        : "border-subtle bg-surface-1 text-secondary hover:bg-layer-1"
                     }`}
                   >
                     {t(`analytics_dashboard.orientation_${opt}`)}

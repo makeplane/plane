@@ -90,7 +90,7 @@ const DashboardListPage = observer(function DashboardListPage() {
           {isLoading ? (
             <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
-                <Loader key={i} className="rounded-lg border border-color-subtle p-4">
+                <Loader key={i} className="rounded-lg border border-subtle p-4">
                   <Loader.Item height="20px" width="60%" />
                   <Loader.Item height="14px" width="80%" className="mt-3" />
                   <Loader.Item height="12px" width="40%" className="mt-4" />
@@ -100,11 +100,11 @@ const DashboardListPage = observer(function DashboardListPage() {
           ) : dashboards.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-subtle">
-                <LayoutDashboard className="h-8 w-8 text-color-accent-primary" />
+                <LayoutDashboard className="h-8 w-8 text-accent-primary" />
               </div>
               <div className="text-center">
-                <h3 className="text-lg font-medium text-color-primary">{t("analytics_dashboard.empty")}</h3>
-                <p className="mt-1 text-sm text-color-secondary">{t("analytics_dashboard.empty_description")}</p>
+                <h3 className="text-lg font-medium text-primary">{t("analytics_dashboard.empty")}</h3>
+                <p className="mt-1 text-sm text-secondary">{t("analytics_dashboard.empty_description")}</p>
               </div>
               <Button variant="primary" size="sm" onClick={() => setIsCreateOpen(true)}>
                 {t("analytics_dashboard.create")}

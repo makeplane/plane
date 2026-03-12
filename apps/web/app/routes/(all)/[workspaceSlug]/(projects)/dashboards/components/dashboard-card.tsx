@@ -28,7 +28,7 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
 
   return (
     <div
-      className="group relative flex cursor-pointer flex-col rounded-lg border border-color-subtle bg-surface-1 p-4 transition-shadow hover:shadow-sm"
+      className="group relative flex cursor-pointer flex-col rounded-lg border border-subtle bg-surface-1 p-4 transition-shadow hover:shadow-sm"
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
@@ -40,12 +40,12 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
       <div className="mb-3 flex items-start justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-accent-subtle">
-            <LayoutDashboard className="h-5 w-5 text-color-accent-primary" />
+            <LayoutDashboard className="h-5 w-5 text-accent-primary" />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="truncate font-medium text-color-primary">{dashboard.name}</h3>
+            <h3 className="truncate font-medium text-primary">{dashboard.name}</h3>
             {/* Access badge */}
-            <span className="inline-flex items-center gap-1 text-xs text-color-secondary mt-0.5">
+            <span className="inline-flex items-center gap-1 text-xs text-secondary mt-0.5">
               {isPublic ? (
                 <>
                   <Globe className="h-3 w-3" />
@@ -67,11 +67,11 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
             className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-1"
             onClick={(e) => e.stopPropagation()}
           >
-            <MoreHorizontal className="h-4 w-4 text-color-secondary" />
+            <MoreHorizontal className="h-4 w-4 text-secondary" />
           </button>
-          <div className="absolute right-0 top-full z-10 mt-1 hidden w-36 rounded-md border border-color-subtle bg-surface-1 py-1 shadow-sm group-hover:block">
+          <div className="absolute right-0 top-full z-10 mt-1 hidden w-36 rounded-md border border-subtle bg-surface-1 py-1 shadow-sm group-hover:block">
             <button
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-color-secondary hover:bg-layer-1"
+              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-secondary hover:bg-layer-1"
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit(dashboard);
@@ -81,7 +81,7 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
               Edit
             </button>
             <button
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-color-danger-primary hover:bg-layer-1"
+              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-danger-primary hover:bg-layer-1"
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(dashboard);
@@ -96,12 +96,12 @@ export const DashboardCard = observer(function DashboardCard({ dashboard, worksp
 
       {/* Description */}
       {dashboard.description && (
-        <p className="mb-3 line-clamp-2 text-sm text-color-secondary">{dashboard.description}</p>
+        <p className="mb-3 line-clamp-2 text-sm text-secondary">{dashboard.description}</p>
       )}
 
       {/* Footer: widget count */}
       {Array.isArray(dashboard.widgets) && (
-        <div className="mt-auto text-xs text-color-tertiary">
+        <div className="mt-auto text-xs text-tertiary">
           {dashboard.widgets.length} {dashboard.widgets.length === 1 ? "widget" : "widgets"}
         </div>
       )}

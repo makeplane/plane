@@ -121,11 +121,11 @@ const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
                       {row.original.display_name ? (
                         row.original.display_name?.[0]
                       ) : (
-                        <UserRound className="text-color-secondary " size={12} />
+                        <UserRound className="text-secondary " size={12} />
                       )}
                     </div>
                   )}
-                  <span className="break-words text-color-secondary">
+                  <span className="break-words text-secondary">
                     {row.original.display_name ?? t("common.unassigned")}
                   </span>
                 </div>

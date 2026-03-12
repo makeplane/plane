@@ -60,7 +60,7 @@ export const DrillDownPieChart = ({ widget, data, isDonut = false, onDrillDown }
       {/* M3: Center value overlay for donut charts */}
       {showCenterValue && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <span className="text-2xl font-bold text-color-primary">{total}</span>
+          <span className="text-2xl font-bold text-primary">{total}</span>
         </div>
       )}
     </div>

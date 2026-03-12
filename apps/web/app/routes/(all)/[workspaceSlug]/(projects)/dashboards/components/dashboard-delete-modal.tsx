@@ -51,7 +51,7 @@ export const DashboardDeleteModal = observer(function DashboardDeleteModal({
       content={
         <>
           {t("analytics_dashboard.delete_confirm_prefix")}{" "}
-          <span className="font-medium text-color-primary">&quot;{dashboardName}&quot;</span>
+          <span className="font-medium text-primary">&quot;{dashboardName}&quot;</span>
           {t("analytics_dashboard.delete_confirm_suffix")}
         </>
       }

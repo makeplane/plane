@@ -30,19 +30,19 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
   const getDailyCellInfo = (minutes: number = 0) => {
     if (minutes > 480) {
       return {
-        className: "bg-color-error/10 text-color-error border-color-error",
+        className: "bg-error/10 text-error border-error",
         tooltipKey: "capacity_overloaded",
       };
     }
     if (minutes >= 420 && minutes <= 480) {
       return {
-        className: "bg-color-success/10 text-color-success border-color-success",
+        className: "bg-success/10 text-success border-success",
         tooltipKey: "capacity_normal",
       };
     }
     if (minutes > 0 && minutes < 420) {
       return {
-        className: "bg-color-warning/10 text-color-warning border-color-warning",
+        className: "bg-warning/10 text-warning border-warning",
         tooltipKey: "capacity_under_capacity",
       };
     }

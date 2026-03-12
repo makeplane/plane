@@ -51,8 +51,8 @@ export const UserDetailInfo = observer(function UserDetailInfo({ user, userId }:
             className={cn(
               "text-11 px-1.5 py-0.5 rounded-sm font-medium",
               user.is_active
-                ? "bg-success-subtle text-color-success-primary"
-                : "bg-danger-subtle text-color-danger-primary"
+                ? "bg-success-subtle text-success-primary"
+                : "bg-danger-subtle text-danger-primary"
             )}
           >
             {user.is_active ? "Active" : "Inactive"}

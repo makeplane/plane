@@ -1,0 +1,34 @@
+{
+	auto_https off
+	servers {
+		max_header_size 25MB
+		client_ip_headers X-Forwarded-For X-Real-IP
+		trusted_proxies static 0.0.0.0/0
+	}
+}
+
+:80 {
+	request_body {
+		max_size {$FILE_SIZE_LIMIT}
+	}
+
+	# Frontend dev servers on host machine
+	redir /spaces /spaces/ permanent
+	reverse_proxy /spaces/* host.docker.internal:3002
+
+	redir /god-mode /god-mode/ permanent
+	reverse_proxy /god-mode/* host.docker.internal:3001
+
+	reverse_proxy /live/* host.docker.internal:3003
+
+	# Backend in Docker
+	reverse_proxy /api/* api:8000
+	reverse_proxy /auth/* api:8000
+	reverse_proxy /static/* api:8000
+
+	reverse_proxy /{$BUCKET_NAME}/* plane-minio:9000
+	reverse_proxy /{$BUCKET_NAME} plane-minio:9000
+
+	# Web app on host
+	reverse_proxy /* host.docker.internal:3000
+}
