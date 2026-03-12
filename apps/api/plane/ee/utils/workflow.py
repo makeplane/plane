@@ -65,18 +65,18 @@ class WorkflowStateManager:
                 workspace__slug=self.slug, project_id=self.project_id, work_item_type_id=type_id
             ).first()
             if workflow_work_item_type:
-                return Workflow.objects.get(
+                return Workflow.objects.filter(
                     id=workflow_work_item_type.workflow_id,
                     project_id=self.project_id,
                     workspace__slug=self.slug,
-                )
+                ).first()
 
         # Fallback to the default workflow
-        return Workflow.objects.get(
+        return Workflow.objects.filter(
             project_id=self.project_id,
             workspace__slug=self.slug,
             is_default=True,
-        )
+        ).first()
 
     def validate_state_transition(self, issue: Issue, new_state_id: int, user_id: int) -> bool:
         """
@@ -182,7 +182,7 @@ class WorkflowStateManager:
         # get the workflow attached with work item type
         workflow = self._get_workflow(type_id=type_id)
 
-        if not workflow.is_active:
+        if not workflow or not workflow.is_active:
             return False
 
         # check if the issue creation is allowed
