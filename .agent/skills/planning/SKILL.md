@@ -17,7 +17,7 @@ Create detailed implementation plans with phases following Plane's architecture.
 
 2. **Analyze requirements** — break feature into backend + frontend phases
 
-3. **Create plan directory**: `plans/{date}-{slug}/`
+3. **Create plan directory**: `plans/{date}-{time}-{slug}/` example: `plans/260214-2203-dashboard-pro-feature/`
 
 4. **Write `plan.md`** — overview ≤80 lines with phase table
 

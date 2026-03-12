@@ -1,10 +1,5 @@
-/**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
- * SPDX-License-Identifier: AGPL-3.0-only
- * See the LICENSE file for details.
- */
-
-import type { FC, ReactNode } from "react";
+import { useContext  } from "react";
+import type {ReactNode} from "react";
 import { Network } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -15,6 +10,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueCreatorDisplay } from "@/plane-web/components/issues/issue-details/issue-creator";
 // local imports
 import { IssueUser } from "../";
+import { ActivitySlotContext } from "../../activity-slot-context";
 
 type TIssueActivityBlockComponent = {
   icon?: ReactNode;
@@ -22,10 +18,14 @@ type TIssueActivityBlockComponent = {
   ends: "top" | "bottom" | undefined;
   children: ReactNode;
   customUserName?: string;
+  actionSlot?: ReactNode;
 };
 
 export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent) {
-  const { icon, activityId, ends, children, customUserName } = props;
+  const { icon, activityId, ends, children, customUserName, actionSlot: actionSlotProp } = props;
+  // Read actionSlot from context as fallback (set by IssueActivityItem)
+  const contextSlot = useContext(ActivitySlotContext);
+  const actionSlot = actionSlotProp ?? contextSlot;
   // hooks
   const {
     activity: { getActivityById },
@@ -36,7 +36,7 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
   if (!activity) return <></>;
   return (
     <div
-      className={`relative flex items-center gap-3 text-caption-sm-regular ${
+      className={`group relative flex items-center gap-3 text-caption-sm-regular ${
         ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`
       }`}
     >
@@ -60,6 +60,7 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
           </Tooltip>
         </span>
       </div>
+      {actionSlot}
     </div>
   );
 }

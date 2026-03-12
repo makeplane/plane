@@ -503,6 +503,7 @@ export default {
   state_is_required: "Trạng thái là bắt buộc",
   priority_is_required: "Độ ưu tiên là bắt buộc",
   assignee_is_required: "Người được phân công là bắt buộc",
+  module_is_required: "Module là bắt buộc",
   label_is_required: "Nhãn là bắt buộc",
   start_date_is_required: "Ngày bắt đầu là bắt buộc",
   due_date_is_required: "Ngày hết hạn là bắt buộc",
@@ -590,6 +591,21 @@ export default {
       created_at: "Thời gian tạo",
       updated_at: "Thời gian cập nhật",
       name: "Tên",
+    },
+  },
+  bank_wide_project: {
+    label: "Dự án toàn ngân hàng",
+    settings: {
+      title: "Dự án toàn ngân hàng",
+      label: "Đánh dấu là Dự án toàn ngân hàng",
+      description:
+        "Đánh dấu dự án này là dự án toàn ngân hàng, hiển thị và liên quan đến tất cả thành viên trong tổ chức.",
+      header_description: "Cấu hình cài đặt Dự án toàn ngân hàng cho dự án này.",
+      updated_success: "Cài đặt dự án toàn ngân hàng đã được cập nhật.",
+      updated_error: "Cập nhật cài đặt dự án toàn ngân hàng thất bại. Vui lòng thử lại.",
+    },
+    filter: {
+      label: "Chỉ dự án toàn ngân hàng",
     },
   },
   toast: {
@@ -3143,6 +3159,21 @@ export default {
       "Hey bạn ơi! 👋 Một ngày làm việc sắp kết thúc rồi — đừng quên ghi nhận giờ làm việc cho hôm nay nhé. Việc cập nhật timesheet đều đặn giúp cả team nắm bắt tiến độ tốt hơn đấy. Chỉ mất một phút thôi, bạn tương lai sẽ cảm ơn bạn hiện tại! Ghé vào project và log time trước khi hết ngày nha.",
     reminder_toggle: "Nhắc nhở ghi nhận giờ",
     reminder_toggle_description: "Nhắc nhở hàng ngày lúc 5 giờ chiều để ghi nhận giờ làm việc",
+  },
+  // Issue Opinion
+  opinion: {
+    approve: "Đồng ý",
+    neutral: "Trung lập",
+    reject: "Từ chối",
+    your_opinion: "Ý kiến của bạn",
+    add_opinion: "Thêm ý kiến",
+    content_placeholder: "Thêm ghi chú (tùy chọn)",
+    saved: "Đã lưu ý kiến",
+    saved_successfully: "Ý kiến của bạn đã được lưu thành công.",
+    save_failed: "Lưu ý kiến thất bại.",
+    deleted: "Đã xóa ý kiến",
+    deleted_successfully: "Ý kiến của bạn đã được xóa thành công.",
+    delete_failed: "Xóa ý kiến thất bại.",
   },
   department: {
     label: "Phòng ban",

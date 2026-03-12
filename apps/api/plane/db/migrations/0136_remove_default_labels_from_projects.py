@@ -18,12 +18,6 @@ class Migration(migrations.Migration):
         ("db", "0135_rename_backlog_state_display"),
     ]
     operations = [
-        # Hard delete via raw SQL to bypass SoftDeletionManager.
-        # Using ORM .delete() on Label would only soft-delete (sets deleted_at).
-        migrations.RunSQL(
-            sql=f"DELETE FROM labels WHERE name IN ({_SEEDED_NAMES_SQL})",
-            reverse_sql=migrations.RunSQL.noop,
-        ),
         # Remove ghost records left by deleted migration files 0128 and 0134.
         migrations.RunSQL(
             sql=(

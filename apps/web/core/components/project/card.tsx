@@ -8,9 +8,10 @@ import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, Settings, UserPlus } from "lucide-react";
+import { ArchiveRestoreIcon, Building2, Settings, UserPlus } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -55,6 +56,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   const { allowPermissions } = useUserPermissions();
   // hooks
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   // derived values
   const projectMembersIds = project.members;
   const shouldRenderFavorite = allowPermissions(
@@ -333,7 +335,12 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 </div>
               )
             ) : (
-              <>
+              <div className="flex items-center gap-2">
+                {(project as IProject & { is_bank_wide?: boolean }).is_bank_wide && (
+                  <span className="rounded px-1.5 py-0.5 text-11 font-medium bg-layer-1 text-secondary">
+                    Bank-wide
+                  </span>
+                )}
                 {isMemberOfProject &&
                   (hasAdminRole || hasMemberRole ? (
                     <Link
@@ -366,7 +373,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </Button>
                   </div>
                 )}
-              </>
+              </div>
             )}
           </div>
         </div>

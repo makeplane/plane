@@ -497,6 +497,7 @@ export default {
   state_is_required: "State is required",
   priority_is_required: "Priority is required",
   assignee_is_required: "Assignee is required",
+  module_is_required: "Module is required",
   label_is_required: "Label is required",
   start_date_is_required: "Start date is required",
   due_date_is_required: "Due date is required",
@@ -584,6 +585,21 @@ export default {
       created_at: "Created at",
       updated_at: "Updated at",
       name: "Name",
+    },
+  },
+  bank_wide_project: {
+    label: "Bank-wide Project",
+    settings: {
+      title: "Bank-wide",
+      label: "Mark as Bank-wide Project",
+      description:
+        "Designate this project as a bank-wide project, making it visible and relevant to all members across the organization.",
+      header_description: "Configure Bank-wide Project settings for this project.",
+      updated_success: "Bank-wide project setting has been updated.",
+      updated_error: "Failed to update bank-wide project setting. Please try again.",
+    },
+    filter: {
+      label: "Bank-wide only",
     },
   },
   toast: {
@@ -3130,6 +3146,21 @@ export default {
       "Hey there! 👋 Just a friendly nudge — don't forget to log your working hours for today. Keeping your timesheet up to date helps the whole team stay on track. It only takes a minute, and your future self will thank you! Head over to your team/project and log your time before the day wraps up.",
     reminder_toggle: "Worklog reminder",
     reminder_toggle_description: "Daily reminder at 5PM to log your time",
+  },
+  // Issue Opinion
+  opinion: {
+    approve: "Approve",
+    neutral: "Neutral",
+    reject: "Reject",
+    your_opinion: "Your opinion",
+    add_opinion: "Add opinion",
+    content_placeholder: "Add a note (optional)",
+    saved: "Opinion saved",
+    saved_successfully: "Your opinion has been saved successfully.",
+    save_failed: "Failed to save opinion.",
+    deleted: "Opinion deleted",
+    deleted_successfully: "Your opinion has been deleted successfully.",
+    delete_failed: "Failed to delete opinion.",
   },
   department: {
     label: "Department",

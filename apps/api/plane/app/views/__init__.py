@@ -148,6 +148,11 @@ from .issue.attachment import (
 
 from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
 from .issue.worklog import IssueWorkLogViewSet
+from .issue.opinion import (
+    IssueOpinionEndpoint,
+    IssueOpinionDetailEndpoint,
+    IssueOpinionListEndpoint,
+)
 
 from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 

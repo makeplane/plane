@@ -22,6 +22,7 @@ class StateSerializer(BaseSerializer):
             "color",
             "group",
             "default",
+            "is_system",
             "description",
             "sequence",
             "order",
