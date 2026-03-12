@@ -35,11 +35,11 @@ class WebhookSerializer(DynamicBaseSerializer):
         except ValueError as e:
             raise serializers.ValidationError({"url": str(e)})
 
-        hostname = urlparse(url).hostname
+        hostname = (urlparse(url).hostname or "").rstrip(".").lower()
         request = self.context.get("request")
         disallowed_domains = ["plane.so"]
         if request:
-            request_host = request.get_host().split(":")[0]
+            request_host = request.get_host().split(":")[0].rstrip(".").lower()
             disallowed_domains.append(request_host)
 
         if any(hostname == domain or hostname.endswith("." + domain) for domain in disallowed_domains):

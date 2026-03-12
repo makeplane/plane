@@ -41,27 +41,37 @@ class InternalWebhookEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Validate URL against SSRF
-        try:
-            validate_url(url, block_private=not settings.IS_SELF_MANAGED)
-        except ValueError as e:
-            return Response(
-                {"url": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # Allow the configured SILO_BASE_URL through without SSRF or domain
+        # checks — it's a trusted, system-configured target that may be a
+        # private/loopback address in self-hosted deployments.
+        hostname = (urlparse(url).hostname or "").rstrip(".").lower()
+        silo_hostname = (
+            (urlparse(settings.SILO_BASE_URL).hostname or "").rstrip(".").lower()
+            if settings.SILO_BASE_URL
+            else None
+        )
 
-        # Additional validation for disallowed domains
-        hostname = urlparse(url).hostname
-        disallowed_domains = ["plane.so"]
-        if request:
-            request_host = request.get_host().split(":")[0]
-            disallowed_domains.append(request_host)
+        if not silo_hostname or hostname != silo_hostname:
+            # Validate URL against SSRF
+            try:
+                validate_url(url, block_private=not settings.IS_SELF_MANAGED)
+            except ValueError as e:
+                return Response(
+                    {"url": str(e)},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-        if any(hostname == domain or hostname.endswith("." + domain) for domain in disallowed_domains):
-            return Response(
-                {"url": "URL domain or its subdomain is not allowed."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            # Block disallowed domains
+            disallowed_domains = ["plane.so"]
+            if request:
+                request_host = request.get_host().split(":")[0].rstrip(".").lower()
+                disallowed_domains.append(request_host)
+
+            if any(hostname == domain or hostname.endswith("." + domain) for domain in disallowed_domains):
+                return Response(
+                    {"url": "URL domain or its subdomain is not allowed."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         try:
             existing_webhooks = Webhook.objects.filter(workspace_id=workspace.id, url=url).first()
