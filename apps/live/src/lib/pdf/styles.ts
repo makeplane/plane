@@ -12,7 +12,7 @@ import {
   CODE_COLORS,
   LINK_COLORS,
   MENTION_COLORS,
-    TEXT_COLORS,
+  TEXT_COLORS,
 } from "./colors";
 
 export const pdfStyles = StyleSheet.create({
