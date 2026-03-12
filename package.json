@@ -78,8 +78,13 @@
       "lodash": "4.17.23"
     },
     "onlyBuiltDependencies": [
-      "@sentry/cli",
-      "turbo"
+      "@parcel/watcher",
+      "@sentry-internal/node-cpu-profiler",
+      "@swc/core",
+      "esbuild",
+      "msgpackr-extract",
+      "turbo",
+      "unrs-resolver"
     ],
     "ignoredBuiltDependencies": [
       "sharp"
