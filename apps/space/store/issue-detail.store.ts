@@ -13,7 +13,7 @@ import { SitesFileService, SitesIssueService } from "@plane/services";
 import type { TFileSignedURLResponse, TIssuePublicComment } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 // store
-import type { CoreRootStore } from "@/store/root.store";
+import type { RootStore } from "@/store/root.store";
 // types
 import type { IIssue, IPeekMode, IVote } from "@/types/issue";
 
@@ -60,12 +60,12 @@ export class IssueDetailStore implements IIssueDetailStore {
     [key: string]: IIssue;
   } = {};
   // root store
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
   // services
   issueService: SitesIssueService;
   fileService: SitesFileService;
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       loader: observable.ref,
       error: observable.ref,
