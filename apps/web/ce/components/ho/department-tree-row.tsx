@@ -30,23 +30,24 @@ export function HoDepartmentTreeRow({ dept, depth = 0 }: Props) {
         </td>
         <td className="px-4 py-2.5 text-sm">
           {dept.linked_workspace_detail ? (
-            <a
-              href={`/${dept.linked_workspace_detail.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
               className={cn("inline-flex items-center", getButtonStyling("secondary", "sm"))}
+              onClick={() => {
+                if (window.confirm(`Would you like to move to "${dept.linked_workspace_detail!.name}" workspace?`))
+                  window.open(`/${dept.linked_workspace_detail!.slug}`, "_blank");
+              }}
             >
               {dept.linked_workspace_detail.name}
-            </a>
+            </button>
           ) : (
             <span className="text-custom-text-400">—</span>
           )}
         </td>
       </tr>
-      {hasChildren && expanded &&
-        dept.children!.map((child) => (
-          <HoDepartmentTreeRow key={child.id} dept={child} depth={depth + 1} />
-        ))}
+      {hasChildren &&
+        expanded &&
+        dept.children!.map((child) => <HoDepartmentTreeRow key={child.id} dept={child} depth={depth + 1} />)}
     </>
   );
 }
