@@ -283,6 +283,7 @@ class ProjectViewSet(BaseViewSet):
                         workspace=serializer.instance.workspace,
                         group=state["group"],
                         default=state.get("default", False),
+                        is_system=state.get("is_system", False),
                         created_by=request.user,
                     )
                     for state in DEFAULT_STATES

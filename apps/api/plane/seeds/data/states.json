@@ -2,46 +2,71 @@
   {
     "id": 1,
     "name": "Draft",
-    "color": "#A3A3A3",
-    "sequence": 15000,
+    "color": "#60646C",
+    "sequence": 10000,
     "group": "backlog",
-    "default": true,
+    "default": false,
+    "is_system": true,
     "project_id": 1
   },
   {
     "id": 2,
-    "name": "Todo",
-    "color": "#3A3A3A",
-    "sequence": 25000,
+    "name": "Scheduled",
+    "color": "#60646C",
+    "sequence": 20000,
     "group": "unstarted",
-    "default": false,
+    "default": true,
+    "is_system": true,
     "project_id": 1
   },
   {
     "id": 3,
     "name": "In Progress",
     "color": "#F59E0B",
-    "sequence": 35000,
+    "sequence": 30000,
     "group": "started",
     "default": false,
+    "is_system": true,
     "project_id": 1
   },
   {
     "id": 4,
-    "name": "Done",
-    "color": "#16A34A",
-    "sequence": 45000,
-    "group": "completed",
+    "name": "Internal Review",
+    "color": "#8B5CF6",
+    "sequence": 35000,
+    "group": "started",
     "default": false,
+    "is_system": true,
     "project_id": 1
   },
   {
     "id": 5,
+    "name": "Postponed",
+    "color": "#9AA4BC",
+    "sequence": 40000,
+    "group": "started",
+    "default": false,
+    "is_system": true,
+    "project_id": 1
+  },
+  {
+    "id": 6,
+    "name": "Done",
+    "color": "#46A758",
+    "sequence": 50000,
+    "group": "completed",
+    "default": false,
+    "is_system": true,
+    "project_id": 1
+  },
+  {
+    "id": 7,
     "name": "Cancelled",
-    "color": "#EF4444",
-    "sequence": 55000,
+    "color": "#9AA4BC",
+    "sequence": 60000,
     "group": "cancelled",
     "default": false,
+    "is_system": true,
     "project_id": 1
   }
 ]
