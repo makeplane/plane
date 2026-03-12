@@ -5,6 +5,9 @@ on:
   pull_request:
     branches:
       - "preview"
+      - "phoenix-releases"
+      - "master"
+      - "release/**"
     types:
       - "opened"
       - "synchronize"
