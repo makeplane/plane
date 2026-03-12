@@ -34,6 +34,40 @@ apps/api/plane/
 
 **NEVER** mix serializers between layers.
 
+### When to Use Which API Layer
+
+**Use `plane/app/` (v0)** when:
+
+- Endpoint is called by Plane's own frontend (apps/web, apps/admin)
+- Uses session authentication (cookie-based)
+- No need for public API documentation
+
+**Use `plane/api/` (v1)** when:
+
+- Endpoint is for external integrations, third-party tools
+- Needs API key or OAuth authentication
+- Must appear in OpenAPI/Swagger docs (`@extend_schema` required)
+
+**Use `plane/license/api/` (instance admin)** when:
+
+- Endpoint is for God Mode / instance-level admin panel
+- Uses `InstanceAdminPermission`
+- No workspace/project scoping
+
+❌ WRONG — Adding frontend-only endpoint to v1:
+
+```python
+# plane/api/views/my_view.py  ← Wrong layer
+class DashboardView(BaseAPIView):  # Frontend calls this
+```
+
+✅ CORRECT — Frontend endpoint in v0:
+
+```python
+# plane/app/views/my_view.py  ← Correct layer
+class DashboardViewSet(BaseViewSet):
+```
+
 ## Top 10 Critical Rules
 
 1. **`Issue.issue_objects`** — NEVER `Issue.objects` for user queries (→ `backend-models.md`)
@@ -56,6 +90,30 @@ apps/api/plane/
 | `backend-serializers.md`  | Base classes, write/read split              |
 | `backend-urls-celery.md`  | URL conventions, Celery, activity tracking  |
 | `backend-testing-i18n.md` | Test fixtures, i18n, frontend integration   |
+| `backend-testing.md`      | Test runner commands, markers, options      |
+
+## Canonical Imports — Prevent Hallucination
+
+| Package                         | Import                     | Usage                         |
+| ------------------------------- | -------------------------- | ----------------------------- |
+| `plane.app.views.base`          | `BaseViewSet, BaseAPIView` | App-level views               |
+| `plane.license.api.views`       | `BaseAPIView`              | Instance/God Mode views       |
+| `plane.app.permissions`         | `ROLE, allow_permission`   | Workspace/project permissions |
+| `plane.license.api.permissions` | `InstanceAdminPermission`  | Instance admin permission     |
+| `plane.bgtasks.*`               | `@shared_task`             | Background tasks              |
+| `plane.utils.exception_logger`  | `log_exception`            | Error logging                 |
+| `celery`                        | `shared_task`              | Task decorator                |
+
+❌ NEVER use `from rest_framework.views import APIView` directly — use Plane's `BaseAPIView`
+❌ NEVER use `from rest_framework.viewsets import ModelViewSet` directly — use `BaseViewSet`
+
+## Rule Maintenance
+
+If you encounter code that contradicts these rules:
+
+1. **Grep to verify** which pattern is dominant (count occurrences)
+2. **Follow the majority** pattern (the rule may be outdated)
+3. **Flag the discrepancy** in your output so rules can be updated
 
 ## New Feature Checklist
 

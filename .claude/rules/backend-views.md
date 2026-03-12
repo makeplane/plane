@@ -2,6 +2,7 @@
 paths:
   - plane/app/views/**
   - plane/api/views/**
+  - plane/license/api/views/**
 ---
 
 # Backend Views & Permissions
@@ -96,6 +97,44 @@ from plane.app.permissions import ROLE, allow_permission
 | `ProjectLitePermission`     | Read-only project access                                    |
 
 ### Role Values: ADMIN=20, MEMBER=15, GUEST=5
+
+## Instance Admin Views (God Mode / License Context)
+
+For admin-panel/God Mode endpoints (instance configuration, monitoring, user management):
+
+```python
+from plane.license.api.views import BaseAPIView
+from plane.license.api.permissions import InstanceAdminPermission
+
+class MyInstanceView(BaseAPIView):
+    permission_classes = [InstanceAdminPermission]
+
+    def get(self, request):
+        # Instance-level data, NOT workspace-scoped
+        return Response(data)
+```
+
+**Key differences from workspace views:**
+
+- Inherit `BaseAPIView` from `plane.license.api.views` (NOT `plane.app.views`)
+- Use `InstanceAdminPermission` (NOT `@allow_permission`)
+- No `workspace_slug` or `project_id` in kwargs
+- URLs under `plane/license/api/urls/`
+- No activity tracking (`issue_activity.delay()` not applicable)
+
+❌ WRONG — Using workspace patterns for God Mode:
+
+```python
+class MonitoringViewSet(BaseViewSet):  # Wrong base
+    @allow_permission([ROLE.ADMIN])     # Wrong permission
+```
+
+✅ CORRECT — Instance admin pattern:
+
+```python
+class MonitoringView(BaseAPIView):
+    permission_classes = [InstanceAdminPermission]
+```
 
 ## Guest Access Pattern
 

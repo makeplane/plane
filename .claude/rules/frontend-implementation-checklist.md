@@ -44,8 +44,8 @@ paths:
 
 ### 2. Color Tokens — Correct Naming
 
-- [ ] Text: `text-color-*` (NOT `text-tertiary` → `text-color-tertiary`)
-- [ ] Border: `border-color-*` (NOT `border-subtle` → `border-color-subtle`)
+- [ ] Text: `text-*` (NOT `text-color-tertiary` → use `text-tertiary`)
+- [ ] Border: `border-*` (NOT `border-color-subtle` → use `border-subtle`)
 - [ ] Background: `bg-*` WITHOUT `color-` (`bg-surface-1`, `bg-layer-2`)
 - [ ] Zero hardcoded colors (`bg-white`, `bg-gray-*`, `#hex`)
 
@@ -77,7 +77,7 @@ Before marking ANY page/component complete:
 2. Run grep for common violations:
    ```bash
    grep -n '"[A-Z][a-z].*"' <file>.tsx | grep -v 'import\|className\|//\|console'
-   grep -n 'text-tertiary\|text-secondary\|border-subtle\|bg-surface-1' <file>.tsx
+   grep -n 'text-color-tertiary\|text-color-secondary\|border-color-subtle\|bg-surface-1' <file>.tsx
    ```
 
 ## Common Traps
@@ -86,7 +86,7 @@ Before marking ANY page/component complete:
 | --------------------- | --------------------------------------------------- |
 | Recreating components | ALWAYS grep before creating new                     |
 | Hardcoded strings     | Every quoted string in JSX needs `t()`              |
-| Wrong token prefix    | Always `text-color-tertiary`, never `text-tertiary` |
+| Wrong token prefix    | Always `text-tertiary`, never `text-color-tertiary` |
 | `bg-surface-1` inputs | Always `bg-layer-2` for input-like elements         |
 | Custom dropdown       | Always use `CustomMenu` or `Menu`                   |
 | Inline page headers   | Always use layout.tsx with `AppHeader`              |

@@ -1,6 +1,6 @@
 # System Architecture
 
-**Last Updated**: 2026-03-02
+**Last Updated**: 2026-03-12
 **Version**: 1.2.3
 **Scope**: Production deployment architecture, data flows, real-time collaboration, SSO integration
 
@@ -696,6 +696,63 @@ Instance administrators can manage users and workspace assignments via admin app
 **Backend** (`plane/license/api`): InstanceUserViewSet with CRUD + password reset + workspace assignment endpoints
 
 **Workflows**: Create user (auto-generate password), reset password, add user to workspace, manage workspace roles
+
+### Instance Admin Pattern
+
+**Authorization Pattern** for instance-level admin features:
+
+**Backend (Django)**:
+
+```python
+# Base pattern: BaseAPIView + InstanceAdminPermission
+from rest_framework.views import APIView
+from plane.license.permissions import InstanceAdminPermission
+
+class InstanceAdminEndpoint(BaseAPIView):
+    """Instance admin only endpoint"""
+    permission_classes = [InstanceAdminPermission]  # role >= 15
+
+    def get(self, request):
+        # Instance-level data access
+        return Response({...})
+```
+
+**Key Components**:
+
+- **BaseAPIView** - Base class for all instance endpoints (handles auth, logging)
+- **InstanceAdminPermission** - Permission class checking `user.role >= 15`
+- **Location**: `plane/license/permissions.py`
+
+**Applied to**:
+
+- User management endpoints
+- Monitoring dashboard endpoints
+- Instance configuration endpoints
+
+## Admin Monitoring Dashboard (Phase 1)
+
+Instance administrators can monitor system health, email delivery, and background jobs.
+
+**Frontend** (`apps/admin/app/(all)/(dashboard)/monitoring/`): 3-tab dashboard
+
+- Tab 1: Issue Email Logs - Paginated list of issue notification emails (50 items/page), filterable by date range and entity type
+- Tab 2: Scheduled Jobs - Read-only list of Celery periodic tasks with schedule display, last run time, and run count
+- Tab 3: Worker Health - Live Celery worker stats (active task count, pool info, uptime), cached 30s, auto-refresh every 30s
+
+**Backend** (`plane/license/api/monitoring.py`): 3 read-only monitoring endpoints
+
+- `EmailLogMonitoringEndpoint` - Returns paginated EmailNotificationLog records with receiver/triggered_by details
+- `ScheduledJobMonitoringEndpoint` - Lists PeriodicTask with human-readable schedule and execution metadata
+- `WorkerHealthMonitoringEndpoint` - Queries Celery Inspect API, returns active tasks and pool info per worker
+
+**Data Flow**:
+
+- Admin accesses `/monitoring` route → React component fetches from 3 endpoints → Displays tabbed dashboard
+- Email logs: Filters optional (date_from, date_to, entity_name), 50 items per page
+- Scheduled jobs: No filtering, displays all enabled/disabled tasks
+- Worker health: Cached 30s server-side, frontend auto-refreshes every 30s (tolerance for 60s max staleness)
+
+**Permissions**: Instance admin only (role >= 15, via `InstanceAdminPermission`)
 
 ## Real-Time Collaboration System
 

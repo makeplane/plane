@@ -20,7 +20,7 @@ CoreRootStore (core/store/root.store.ts)
 ```typescript
 import { makeObservable, observable, action, computed, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { set } from "mobx";
+import { set } from "lodash-es";
 
 export interface IMyStore {
   dataMap: Record<string, IMyModel>;
@@ -71,7 +71,7 @@ export class MyStore implements IMyStore {
 
 - **ALWAYS** `makeObservable` with explicit fields (NEVER `makeAutoObservable`)
 - **ALWAYS** `runInAction` for async observable updates
-- **ALWAYS** `set()` from MobX for dynamic record keys (NOT `this.map[id] = x`)
+- **ALWAYS** `set()` from `lodash-es` for dynamic record keys (NOT `this.map[id] = x`, NOT from `mobx`)
 - **ALWAYS** `observer()` wrapper on components reading stores
 
 ## Hook Wrapper Pattern
@@ -103,6 +103,36 @@ export class RootStore extends CoreRootStore {
 ```
 
 **Rule**: CE stores go in `ce/store/`, NEVER modify `core/store/root.store.ts`.
+
+## Data Fetching: SWR vs Store
+
+Two patterns coexist — use the right one:
+
+### `useSWR` — Read-Only with Cache
+
+```typescript
+import useSWR from "swr";
+
+const { data, isLoading, mutate } = useSWR(
+  workspaceSlug ? `WORKSPACE_DETAILS_${workspaceSlug}` : null,
+  workspaceSlug ? () => workspaceService.getDetails(workspaceSlug) : null
+);
+```
+
+Use when: read-only display, benefit from SWR cache/revalidation, component-local data.
+
+### `store.fetchX()` — Mutations & Shared State
+
+```typescript
+// In component
+useEffect(() => {
+  store.fetchItems(slug);
+}, [slug]);
+```
+
+Use when: data feeds MobX observables shared across components, or involves mutations (create/update/delete).
+
+**Rule**: Never mix — don't put SWR data into MobX stores. Choose one pattern per data domain.
 
 ## Optimistic Update Pattern
 

@@ -1,11 +1,12 @@
 ---
 paths:
   - apps/web/**/*.tsx
-  - apps/admin/**/*.tsx
   - packages/i18n/**
 ---
 
 # i18n (Internationalization) — MANDATORY
+
+**Scope**: `apps/web` and `packages/i18n` only. NOT for `apps/admin` — admin app has no i18n.
 
 **NEVER hardcode user-facing strings.** Every visible text must use `t()` from `@plane/i18n`.
 

@@ -14,7 +14,7 @@ import { Input } from "@plane/propel/input";
 // Props: mode ("primary"|"transparent"|"true-transparent"), inputSize ("xs"|"sm"|"md"), hasError
 // Input has NO width — always add className="w-full"
 <div className="space-y-1">
-  <label htmlFor="my-input" className="block text-13 font-medium text-color-primary">
+  <label htmlFor="my-input" className="block text-13 font-medium text-primary">
     Label
   </label>
   <Input id="my-input" value={value} onChange={(e) => setValue(e.target.value)} className="w-full" />

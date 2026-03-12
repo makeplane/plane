@@ -75,6 +75,34 @@ def my_task(model_id):
         raise
 ```
 
+### Task Discovery — CRITICAL
+
+Tasks are auto-discovered via `app.autodiscover_tasks()` in `plane/celery.py`. New tasks are found automatically **IF** they are in a Django app listed in `INSTALLED_APPS`.
+
+For scheduled tasks, register in `plane/celery.py` `app.conf.beat_schedule`:
+
+```python
+"my-scheduled-task": {
+    "task": "plane.bgtasks.my_task.my_task_func",
+    "schedule": crontab(hour=0, minute=0),
+}
+```
+
+### Task Error Handling
+
+```python
+@shared_task(bind=True, max_retries=3, default_retry_delay=60)
+def my_task(self, model_id):
+    try:
+        obj = MyModel.objects.get(id=model_id)
+        # process...
+    except MyModel.DoesNotExist:
+        return  # Object deleted, skip silently
+    except Exception as e:
+        log_exception(e)
+        self.retry(exc=e)  # Retry with backoff
+```
+
 ### Trigger from views:
 
 ```python
