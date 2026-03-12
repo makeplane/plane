@@ -44,6 +44,7 @@ export default defineConfig({
     "src/icons/index.ts",
     "src/domain/work-item-types/property-inputs/index.ts",
     "src/domain/intake-form/index.ts",
+    "src/domain/instance/index.ts",
   ],
   format: ["esm"],
   dts: true,
