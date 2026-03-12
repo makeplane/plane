@@ -40,7 +40,7 @@ import { extractErrorMetadata } from "@/helpers/errors";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 import { JiraIssueDataExtractor } from "./extractors/data.extractor";
-import { KNOWN_CUSTOM_FIELDS } from "@/apps/jira-server-importer/v2/helpers/constants";
+import { getKnownFieldIds } from "@/apps/jira-server-importer/v2/helpers/known-fields";
 
 /**
  * Jira Server Issues Step
@@ -442,6 +442,8 @@ export class JiraIssuesStep implements IStep {
       jobId,
       users: userMap.size,
       issueTypes: issueTypeMap.size,
+      cycles: cycleMap.size,
+      modules: moduleMap.size,
     });
 
     return { userMap, issueTypeMap, cycleMap, moduleMap };
@@ -460,12 +462,9 @@ export class JiraIssuesStep implements IStep {
     const resourceUrl = job.config?.resource?.url || "";
     const stateMapping = job.config?.state || [];
     const priorityMapping = job.config?.priority || [];
-    const startDateField = knownCustomFieldMapping?.find(
-      (field) => field.data.name && KNOWN_CUSTOM_FIELDS.START_DATE.names.includes(field.data.name as any)
-    )?.data?.id;
-    const completionDateField = knownCustomFieldMapping?.find(
-      (field) => field.data.name && KNOWN_CUSTOM_FIELDS.COMPLETION_DATE.names.includes(field.data.name as any)
-    )?.data?.id;
+    const startDateFields = getKnownFieldIds(knownCustomFieldMapping, "START_DATE");
+    const storyPointsFields = getKnownFieldIds(knownCustomFieldMapping, "STORY_POINTS");
+    const completionDateFields = getKnownFieldIds(knownCustomFieldMapping, "COMPLETION_DATE");
 
     const transformed = issues.map((issue) =>
       transformIssueV2(
@@ -475,8 +474,9 @@ export class JiraIssuesStep implements IStep {
         stateMapping,
         priorityMapping,
         {
-          startDate: startDateField,
-          completionDate: completionDateField,
+          startDateFields,
+          completionDateFields,
+          storyPointsFields,
         }
       )
     );

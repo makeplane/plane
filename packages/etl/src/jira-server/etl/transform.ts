@@ -116,8 +116,9 @@ export const transformIssueV2 = (
   stateMap: IStateConfig[],
   priorityMap: IPriorityConfig[],
   knownCustomFields: {
-    startDate?: string;
-    completionDate?: string;
+    startDateFields?: string[];
+    completionDateFields?: string[];
+    storyPointsFields?: string[];
   }
 ): Partial<PlaneIssue> => {
   const { resourceId, projectId, source } = ctx;
@@ -156,8 +157,14 @@ export const transformIssueV2 = (
     description_html: description,
     target_date:
       issue.fields.duedate ||
-      ((knownCustomFields.completionDate ? issue.fields[knownCustomFields.completionDate] : null) as string | null),
-    start_date: (knownCustomFields.startDate ? issue.fields[knownCustomFields.startDate] : null) as string | null,
+      knownCustomFields.completionDateFields?.reduce((val: string | null, id: string) => {
+        return val || (issue.fields[id] as string | null);
+      }, null) ||
+      null,
+    start_date:
+      knownCustomFields.startDateFields?.reduce((val: string | null, id: string) => {
+        return val || (issue.fields[id] as string | null);
+      }, null) || null,
     created_at: issue.fields.created,
     updated_at: issue.fields.updated,
     attachments: attachments,
@@ -168,6 +175,10 @@ export const transformIssueV2 = (
     parent: issue.fields.parent?.id ? `${projectId}_${resourceId}_${issue.fields.parent?.id}` : null,
     type_id: issue.fields.issuetype?.id ? `${projectId}_${resourceId}_${issue.fields.issuetype?.id}` : null,
     external_sequence_id: issue.key.split("-")[1],
+    story_points:
+      knownCustomFields.storyPointsFields?.reduce((val: number | null, id: string) => {
+        return val ?? (issue.fields[id] as number | null);
+      }, null) ?? null,
   } as unknown as PlaneIssue;
 };
 

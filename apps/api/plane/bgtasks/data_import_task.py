@@ -26,7 +26,7 @@ from plane.utils.helpers import get_boolean_value
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.api.serializers.issue import IssueSerializer
-from plane.db.models.issue import (
+from plane.db.models import (
     Issue,
     IssueLink,
     IssueComment,
@@ -34,6 +34,8 @@ from plane.db.models.issue import (
     IssueSubscriber,
     IssueSequence,
     IssueActivity,
+    Estimate,
+    EstimatePoint,
 )
 from plane.db.models.label import Label
 from plane.db.models.project import Project
@@ -360,6 +362,9 @@ def process_single_issue(slug, project, user_id, issue_data, report_id=None, job
         # Process subscribers
         if issue_data.get("subscribers"):
             process_issue_subscribers(slug, issue, issue_data.get("subscribers"), report_id=report_id, job_id=job_id)
+
+        # Process estimates
+        process_issue_estimates(slug, project, issue, issue_data, report_id=report_id, job_id=job_id)
 
         # Update the issue with the created_by_id
         issue.created_by_id = issue_data.get("created_by")
@@ -792,6 +797,87 @@ def process_issue_links(slug, issue, links, report_id=None, job_id=None):
                 "phase": "PROCESS_LINKS",
                 "error": {"message": str(e)},
                 "related_entity": str(issue.external_id) if issue.external_id else None,
+                "is_fatal": False,
+            },
+            workspace_slug=slug,
+        )
+    return
+
+
+def process_issue_estimates(slug, project, issue, issue_data, report_id=None, job_id=None):
+    try:
+        story_points = issue_data.get("story_points")
+        if story_points is None:
+            return
+
+        try:
+            val = float(story_points)
+            # Normalize value: "3.0" -> "3", "3.5" -> "3.5"
+            normalized_value = str(int(val)) if val.is_integer() else str(val)
+            # stable integer key
+            stable_key = max(0, int(val))
+        except (ValueError, TypeError):
+            return
+
+        # Ensure Estimate exists for the project
+        estimate, created = Estimate.objects.get_or_create(
+            project=project,
+            name="Points",
+            defaults={
+                "workspace": project.workspace,
+                "type": "points",
+                "last_used": True,
+            },
+        )
+
+        if created:
+            # Update project default estimate if it's not set
+            if not project.estimate:
+                project.estimate = estimate
+                project.save(update_fields=["estimate"])
+
+        # Ensure EstimatePoint exists
+        estimate_point, _ = EstimatePoint.objects.get_or_create(
+            estimate=estimate,
+            project=project,
+            value=normalized_value,
+            defaults={
+                "workspace": project.workspace,
+                "key": stable_key,
+            },
+        )
+
+        # Assign estimate point to issue
+        issue.estimate_point = estimate_point
+        issue.save(update_fields=["estimate_point"])
+
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "ESTIMATE",
+                "level": "info",
+                "phase": "PROCESS_ESTIMATES",
+                "entity_plane_id": str(estimate_point.id),
+                "related_entity": str(issue.id),
+                "metrics": {
+                    "imported": 1,
+                },
+            },
+            workspace_slug=slug,
+        )
+
+    except Exception as e:
+        logger.warning(f"Failed to process estimates for issue {issue.id}: {str(e)}")
+        collect_execution_log(
+            logs={
+                "report_id": report_id,
+                "job_id": job_id,
+                "entity_type": "ESTIMATE",
+                "level": "error",
+                "phase": "PROCESS_ESTIMATES",
+                "error": {"message": str(e)},
+                "related_entity": str(issue.id),
                 "is_fatal": False,
             },
             workspace_slug=slug,

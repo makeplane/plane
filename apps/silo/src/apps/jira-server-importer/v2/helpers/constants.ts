@@ -35,4 +35,7 @@ export const KNOWN_CUSTOM_FIELDS = {
     names: ["Parent Link"],
     customTypes: ["com.atlassian.jpo:jpo-custom-field-parent"],
   },
+  STORY_POINTS: {
+    names: ["Story Points"],
+  },
 } as const satisfies Record<string, IKnownCustomFieldMatcher>;

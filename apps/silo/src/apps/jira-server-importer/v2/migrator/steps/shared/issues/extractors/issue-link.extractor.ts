@@ -14,6 +14,7 @@
 import type { IJiraIssue, JiraV2Service } from "@plane/etl/jira-server";
 import { buildExternalId } from "@/apps/jira-server-importer/v2/helpers/job";
 import type { TIssueRelationsData, TKnownFieldMapping } from "@/apps/jira-server-importer/v2/types";
+import { getKnownFieldIds } from "@/apps/jira-server-importer/v2/helpers/known-fields";
 import { logger } from "@plane/logger";
 import { isAxiosError } from "axios";
 
@@ -52,9 +53,9 @@ export class JiraIssueLinkExtractor {
       : undefined;
 
     // 3. Epic Link handling (Nuanced)
-    const epicField = this.knownCustomFieldMapping.find((f) => f.name === "EPIC_LINK");
-    if (epicField && epicField.data.id) {
-      const epicLinkKey = issue.fields[epicField.data.id as keyof typeof issue.fields] as string;
+    const epicFieldIds = getKnownFieldIds(this.knownCustomFieldMapping, "EPIC_LINK");
+    for (const epicFieldId of epicFieldIds) {
+      const epicLinkKey = issue.fields[epicFieldId as keyof typeof issue.fields] as string;
 
       if (epicLinkKey) {
         const epicId = await this.resolveIssueId(epicLinkKey, issue.key);
@@ -70,14 +71,15 @@ export class JiraIssueLinkExtractor {
             );
             relates_to.push(epicExternalId);
           }
+          break; // Found a value, skip other possible Epic Link fields
         }
       }
     }
 
     // 4. JPO Parent handling (Parent Link)
-    const jpoParentField = this.knownCustomFieldMapping.find((f) => f.name === "PARENT");
-    if (jpoParentField && jpoParentField.data.id) {
-      const jpoParentKey = issue.fields[jpoParentField.data.id as keyof typeof issue.fields] as string;
+    const jpoParentFieldIds = getKnownFieldIds(this.knownCustomFieldMapping, "PARENT");
+    for (const jpoParentFieldId of jpoParentFieldIds) {
+      const jpoParentKey = issue.fields[jpoParentFieldId as keyof typeof issue.fields] as string;
 
       if (jpoParentKey) {
         const jpoParentId = await this.resolveIssueId(jpoParentKey, issue.key);
@@ -93,6 +95,7 @@ export class JiraIssueLinkExtractor {
             );
             relates_to.push(jpoParentExternalId);
           }
+          break; // Found a value, skip other possible Parent Link fields
         }
       }
     }

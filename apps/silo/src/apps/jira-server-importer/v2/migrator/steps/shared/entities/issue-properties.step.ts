@@ -39,6 +39,12 @@ import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log
 import { KNOWN_CUSTOM_FIELDS } from "@/apps/jira-server-importer/v2/helpers/constants";
 import type { IKnownCustomFieldMatcher } from "@/apps/jira-server-importer/v2/helpers/constants";
 
+const EXCLUDED_CUSTOM_FIELDS = [
+  ...KNOWN_CUSTOM_FIELDS.START_DATE.names,
+  ...KNOWN_CUSTOM_FIELDS.SPRINT.names,
+  ...KNOWN_CUSTOM_FIELDS.STORY_POINTS.names,
+] as string[];
+
 /**
  * Jira Server Issue Properties Step
  * Pulls custom fields from Jira Server, transforms to Plane properties, and pushes
@@ -384,12 +390,7 @@ export class JiraIssuePropertiesStep implements IStep {
    */
   protected removeKnownCustomFields(jiraFields: JiraIssueField[]): JiraIssueField[] {
     return jiraFields.filter((field) => {
-      return (
-        !field.name ||
-        !([...KNOWN_CUSTOM_FIELDS.START_DATE.names, ...KNOWN_CUSTOM_FIELDS.SPRINT.names] as string[])?.includes(
-          field.name
-        )
-      );
+      return !field.name || !EXCLUDED_CUSTOM_FIELDS.includes(field.name);
     });
   }
 
@@ -484,7 +485,7 @@ export class JiraIssuePropertiesStep implements IStep {
       job.id,
       E_ADDITIONAL_STORAGE_KEYS.JIRA_KNOWN_FIELD_MAPPING,
       additionalData.knownCustomFieldMapping,
-      ["name"]
+      ["name", "data.id"]
     );
   }
 }

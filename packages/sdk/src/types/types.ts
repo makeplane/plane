@@ -331,6 +331,7 @@ export type ExIssue = IIsssue &
     attachments?: ExIssueAttachment[];
     external_source_state_id?: string;
     external_sequence_id?: string;
+    story_points?: number;
   };
 export type ExIssueComment = IIssueComment & ExBase;
 export type ExModule = IModule &
