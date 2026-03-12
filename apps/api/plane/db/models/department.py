@@ -15,7 +15,7 @@ class Department(BaseModel):
 
     # Basic info
     name = models.CharField(max_length=255)
-    code = models.CharField(max_length=20, blank=True, default="")
+    code = models.CharField(max_length=20, blank=True, null=True, default=None)
     short_name = models.CharField(max_length=10, blank=True, null=True)
     dept_code = models.CharField(max_length=4, blank=True, null=True)
     description = models.TextField(blank=True, default="")
@@ -64,19 +64,9 @@ class Department(BaseModel):
         ordering = ["sort_order", "name"]
         constraints = [
             models.UniqueConstraint(
-                fields=["code"],
-                condition=models.Q(deleted_at__isnull=True, code__gt=""),
-                name="department_unique_code",
-            ),
-            models.UniqueConstraint(
                 fields=["short_name"],
                 condition=models.Q(deleted_at__isnull=True),
                 name="department_unique_short_name",
-            ),
-            models.UniqueConstraint(
-                fields=["dept_code"],
-                condition=models.Q(deleted_at__isnull=True),
-                name="department_unique_dept_code",
             ),
         ]
 
