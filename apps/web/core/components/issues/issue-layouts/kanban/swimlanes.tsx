@@ -13,6 +13,7 @@ import type {
   TGroupedIssues,
   TIssue,
   IIssueDisplayProperties,
+  IIssueDisplayFilterOptions,
   IIssueMap,
   TSubGroupedIssues,
   TIssueKanbanFilters,
@@ -109,6 +110,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   canEditProperties: (projectId: string | undefined) => boolean;
   collapsedGroups: TIssueKanbanFilters;
   disableIssueCreation?: boolean;
+  displayFilters?: IIssueDisplayFilterOptions;
   displayProperties: IIssueDisplayProperties | undefined;
   enableQuickIssueCreate: boolean;
   getGroupIssueCount: (
@@ -136,6 +138,7 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
     canEditProperties,
     collapsedGroups,
     disableIssueCreation,
+    displayFilters,
     displayProperties,
     enableQuickIssueCreate,
     getGroupIssueCount,
@@ -204,6 +207,7 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
                     groupedIssueIds={groupedIssueIds}
                     getGroupIssueCount={getGroupIssueCount}
                     displayProperties={displayProperties}
+                    displayFilters={displayFilters}
                     sub_group_by={sub_group_by}
                     group_by={group_by}
                     sub_group_id={_list.id}
@@ -240,6 +244,7 @@ export interface IKanBanSwimLanes {
   canEditProperties: (projectId: string | undefined) => boolean;
   collapsedGroups: TIssueKanbanFilters;
   disableIssueCreation?: boolean;
+  displayFilters?: IIssueDisplayFilterOptions;
   displayProperties: IIssueDisplayProperties | undefined;
   enableQuickIssueCreate: boolean;
   getGroupIssueCount: (
@@ -268,6 +273,7 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
     issuesMap,
     groupedIssueIds,
     getGroupIssueCount,
+    displayFilters,
     displayProperties,
     sub_group_by,
     group_by,
@@ -295,12 +301,14 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    displayFilters,
   });
   const subGroupByList = getGroupByColumns({
     groupBy: sub_group_by as GroupByColumnTypes,
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    displayFilters,
   });
 
   if (!groupByList || !subGroupByList) return null;
@@ -326,6 +334,7 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
           list={subGroupByList}
           groupedIssueIds={groupedIssueIds}
           getGroupIssueCount={getGroupIssueCount}
+          displayFilters={displayFilters}
           displayProperties={displayProperties}
           group_by={group_by}
           sub_group_by={sub_group_by}

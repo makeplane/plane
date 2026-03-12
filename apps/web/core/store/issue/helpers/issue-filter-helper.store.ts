@@ -24,6 +24,7 @@ import type {
   TIssueParams,
   TStaticViewTypes,
   TWorkItemFilterExpression,
+  TCycleStatusFilter,
 } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
 // helpers
@@ -31,6 +32,8 @@ import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/
 // lib
 import { storage } from "@/lib/local-storage";
 import { getEnabledDisplayFilters } from "@/plane-web/store/issue/helpers/filter-utils";
+// store types
+import type { IIssueRootStore } from "../root.store";
 
 interface ILocalStoreIssueFilters {
   key: EIssuesStoreType;
@@ -68,6 +71,9 @@ export interface IIssueFilterHelperStore {
 }
 
 export class IssueFilterHelperStore implements IIssueFilterHelperStore {
+  // Protected property to be set by child classes
+  protected rootIssueStore: IIssueRootStore | undefined;
+
   constructor() {}
 
   /**
@@ -122,7 +128,49 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     if (ENABLE_ISSUE_DEPENDENCIES && displayFilters?.layout === EIssueLayoutTypes.GANTT)
       issueFiltersParams["expand"] = "issue_relation,issue_related";
 
+    // Apply cycle status filter
+    if (displayFilters?.cycle_status && displayFilters.cycle_status.length > 0) {
+      const cycleIds = this.getCycleIdsByStatus(displayFilters.cycle_status);
+      if (cycleIds.length > 0) {
+        // Append cycle_id filter to the rich filters
+        const cycleFilter = `cycle_id__in=${cycleIds.join(",")}`;
+        if (issueFiltersParams.filters) {
+          // If there are existing filters, we need to merge them
+          // The cycle_id filter will be handled by the backend as part of the query params
+        }
+        // Add as a query parameter
+        issueFiltersParams["cycle"] = cycleIds.join(",");
+      } else {
+        // No cycles match the selected status - use a non-existent ID to show empty results
+        issueFiltersParams["cycle"] = "00000000-0000-0000-0000-000000000000";
+      }
+    }
+
     return issueFiltersParams;
+  };
+
+  /**
+   * @description Get cycle IDs by their status
+   * @param {TCycleStatusFilter[]} statuses
+   * @returns {string[]}
+   */
+  getCycleIdsByStatus = (statuses: TCycleStatusFilter[]): string[] => {
+    if (!this.rootIssueStore) return [];
+
+    const projectId = this.rootIssueStore.projectId;
+    if (!projectId) return [];
+
+    const cycleStore = this.rootIssueStore.rootStore.cycle;
+    const cycles = cycleStore.getProjectCycleDetails(projectId);
+
+    if (!cycles) return [];
+
+    return cycles
+      .filter((cycle) => {
+        const cycleStatus = cycle.status?.toLowerCase() as TCycleStatusFilter | undefined;
+        return cycleStatus && statuses.includes(cycleStatus);
+      })
+      .map((cycle) => cycle.id);
   };
 
   /**

@@ -158,6 +158,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
         <List
           issuesMap={issueMap}
           displayProperties={displayProperties}
+          displayFilters={displayFilters}
           group_by={group_by}
           orderBy={orderBy}
           updateIssue={updateIssue}

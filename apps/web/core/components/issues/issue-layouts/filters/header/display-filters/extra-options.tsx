@@ -7,7 +7,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import type { IIssueDisplayFilterOptions, TIssueExtraOptions } from "@plane/types";
+import type { IIssueDisplayFilterOptions, TIssueExtraOptions, TIssueGroupByOptions } from "@plane/types";
 // components
 import { FilterOption } from "@/components/issues/issue-layouts/filters";
 
@@ -24,22 +24,32 @@ const ISSUE_EXTRA_OPTIONS: {
     key: "show_empty_groups",
     titleTranslationKey: "issue.display.extra.show_empty_groups",
   }, // filter on front-end
+  {
+    key: "hide_completed_cycles",
+    titleTranslationKey: "issue.display.extra.hide_completed_cycles",
+  }, // only shown when group_by is cycle
 ];
 
 type Props = {
   selectedExtraOptions: {
     sub_issue: boolean;
     show_empty_groups: boolean;
+    hide_completed_cycles?: boolean;
   };
   handleUpdate: (key: keyof IIssueDisplayFilterOptions, val: boolean) => void;
   enabledExtraOptions: TIssueExtraOptions[];
+  groupBy?: TIssueGroupByOptions;
 };
 
 export const FilterExtraOptions = observer(function FilterExtraOptions(props: Props) {
-  const { selectedExtraOptions, handleUpdate, enabledExtraOptions } = props;
+  const { selectedExtraOptions, handleUpdate, enabledExtraOptions, groupBy } = props;
   // hooks
   const { t } = useTranslation();
-  const isExtraOptionEnabled = (option: TIssueExtraOptions) => enabledExtraOptions.includes(option);
+  const isExtraOptionEnabled = (option: TIssueExtraOptions) => {
+    // Show hide_completed_cycles only when group_by is cycle
+    if (option === "hide_completed_cycles" && groupBy !== "cycle") return false;
+    return enabledExtraOptions.includes(option);
+  };
 
   return (
     <div>

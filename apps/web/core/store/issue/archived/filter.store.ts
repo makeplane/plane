@@ -78,6 +78,8 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
     });
     // root store
     this.rootIssueStore = _rootStore;
+    // set root store for parent class (for cycle status filter)
+    super.rootIssueStore = _rootStore;
     // services
     this.issueFilterService = new IssueFiltersService();
   }

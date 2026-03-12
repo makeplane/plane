@@ -271,6 +271,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
                 groupedIssueIds={groupedIssueIds ?? {}}
                 getGroupIssueCount={issues.getGroupIssueCount}
                 displayProperties={displayProperties}
+                displayFilters={displayFilters}
                 sub_group_by={sub_group_by}
                 group_by={group_by}
                 orderBy={orderBy}

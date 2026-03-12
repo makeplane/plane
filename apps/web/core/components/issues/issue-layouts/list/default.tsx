@@ -16,6 +16,7 @@ import type {
   TGroupedIssues,
   TIssue,
   IIssueDisplayProperties,
+  IIssueDisplayFilterOptions,
   TIssueMap,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -44,6 +45,7 @@ export interface IList {
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
+  displayFilters?: IIssueDisplayFilterOptions;
   enableIssueQuickAdd: boolean;
   showEmptyGroup?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
@@ -67,6 +69,7 @@ export const List = observer(function List(props: IList) {
     updateIssue,
     quickActions,
     displayProperties,
+    displayFilters,
     enableIssueQuickAdd,
     showEmptyGroup,
     canEditProperties,
@@ -92,6 +95,7 @@ export const List = observer(function List(props: IList) {
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    displayFilters,
   });
 
   // Enable Auto Scroll for Main Kanban

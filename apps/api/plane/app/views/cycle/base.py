@@ -17,9 +17,11 @@ from django.db.models import (
     Exists,
     F,
     Func,
+    IntegerField,
     OuterRef,
     Prefetch,
     Q,
+    Subquery,
     UUIDField,
     Value,
     When,
@@ -87,6 +89,73 @@ class CycleViewSet(BaseViewSet):
         # Convert project local time back to UTC for comparison (start_date is stored in UTC)
         current_time_in_utc = current_time_in_project_tz.astimezone(pytz.utc)
 
+        # Subqueries for estimate points by state group
+        backlog_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="backlog",
+                issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(points=Sum(Cast("estimate_point__value", FloatField())))
+            .values("points")[:1]
+        )
+        unstarted_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="unstarted",
+                issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(points=Sum(Cast("estimate_point__value", FloatField())))
+            .values("points")[:1]
+        )
+        started_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="started",
+                issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(points=Sum(Cast("estimate_point__value", FloatField())))
+            .values("points")[:1]
+        )
+        completed_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="completed",
+                issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(points=Sum(Cast("estimate_point__value", FloatField())))
+            .values("points")[:1]
+        )
+        cancelled_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="cancelled",
+                issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(points=Sum(Cast("estimate_point__value", FloatField())))
+            .values("points")[:1]
+        )
+        total_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
+            )
+            .values("issue_cycle__cycle_id")
+            .annotate(points=Sum(Cast("estimate_point__value", FloatField())))
+            .values("points")[:1]
+        )
+
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -147,6 +216,82 @@ class CycleViewSet(BaseViewSet):
                         issue_cycle__deleted_at__isnull=True,
                         issue_cycle__issue__deleted_at__isnull=True,
                     ),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_cycle__issue__id",
+                    distinct=True,
+                    filter=Q(
+                        issue_cycle__issue__state__group="started",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_cycle__issue__id",
+                    distinct=True,
+                    filter=Q(
+                        issue_cycle__issue__state__group="unstarted",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_cycle__issue__id",
+                    distinct=True,
+                    filter=Q(
+                        issue_cycle__issue__state__group="backlog",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            # Estimate points annotations
+            .annotate(
+                backlog_estimate_points=Coalesce(
+                    Subquery(backlog_estimate_point),
+                    Value(0, output_field=FloatField()),
+                )
+            )
+            .annotate(
+                unstarted_estimate_points=Coalesce(
+                    Subquery(unstarted_estimate_point),
+                    Value(0, output_field=FloatField()),
+                )
+            )
+            .annotate(
+                started_estimate_points=Coalesce(
+                    Subquery(started_estimate_point),
+                    Value(0, output_field=FloatField()),
+                )
+            )
+            .annotate(
+                completed_estimate_points=Coalesce(
+                    Subquery(completed_estimate_point),
+                    Value(0, output_field=FloatField()),
+                )
+            )
+            .annotate(
+                cancelled_estimate_points=Coalesce(
+                    Subquery(cancelled_estimate_point),
+                    Value(0, output_field=FloatField()),
+                )
+            )
+            .annotate(
+                total_estimate_points=Coalesce(
+                    Subquery(total_estimate_point),
+                    Value(0, output_field=FloatField()),
                 )
             )
             .annotate(
@@ -236,6 +381,16 @@ class CycleViewSet(BaseViewSet):
                 "total_issues",
                 "completed_issues",
                 "cancelled_issues",
+                "started_issues",
+                "unstarted_issues",
+                "backlog_issues",
+                # estimate points
+                "backlog_estimate_points",
+                "unstarted_estimate_points",
+                "started_estimate_points",
+                "completed_estimate_points",
+                "cancelled_estimate_points",
+                "total_estimate_points",
                 "assignee_ids",
                 "status",
                 "version",
@@ -273,6 +428,16 @@ class CycleViewSet(BaseViewSet):
             "total_issues",
             "cancelled_issues",
             "completed_issues",
+            "started_issues",
+            "unstarted_issues",
+            "backlog_issues",
+            # estimate points
+            "backlog_estimate_points",
+            "unstarted_estimate_points",
+            "started_estimate_points",
+            "completed_estimate_points",
+            "cancelled_estimate_points",
+            "total_estimate_points",
             "assignee_ids",
             "status",
             "version",
@@ -319,6 +484,17 @@ class CycleViewSet(BaseViewSet):
                         "is_favorite",
                         "total_issues",
                         "completed_issues",
+                        "cancelled_issues",
+                        "started_issues",
+                        "unstarted_issues",
+                        "backlog_issues",
+                        # estimate points
+                        "backlog_estimate_points",
+                        "unstarted_estimate_points",
+                        "started_estimate_points",
+                        "completed_estimate_points",
+                        "cancelled_estimate_points",
+                        "total_estimate_points",
                         "assignee_ids",
                         "status",
                         "created_by",
@@ -408,6 +584,17 @@ class CycleViewSet(BaseViewSet):
                 "is_favorite",
                 "total_issues",
                 "completed_issues",
+                "cancelled_issues",
+                "started_issues",
+                "unstarted_issues",
+                "backlog_issues",
+                # estimate points
+                "backlog_estimate_points",
+                "unstarted_estimate_points",
+                "started_estimate_points",
+                "completed_estimate_points",
+                "cancelled_estimate_points",
+                "total_estimate_points",
                 "assignee_ids",
                 "status",
                 "created_by",
@@ -479,6 +666,17 @@ class CycleViewSet(BaseViewSet):
                 "is_favorite",
                 "total_issues",
                 "completed_issues",
+                "cancelled_issues",
+                "started_issues",
+                "unstarted_issues",
+                "backlog_issues",
+                # estimate points
+                "backlog_estimate_points",
+                "unstarted_estimate_points",
+                "started_estimate_points",
+                "completed_estimate_points",
+                "cancelled_estimate_points",
+                "total_estimate_points",
                 "assignee_ids",
                 "status",
                 "created_by",

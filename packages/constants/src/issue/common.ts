@@ -11,6 +11,8 @@ import type {
   IIssueFilterOptions,
   TIssue,
   EIssuesStoreType,
+  TCycleGroupOrderByOptions,
+  TCycleStatusFilter,
 } from "@plane/types";
 
 export const ALL_ISSUES = "All Issues";
@@ -364,3 +366,24 @@ export const FILTER_TO_ISSUE_MAP: Partial<Record<keyof IIssueFilterOptions, keyo
   issue_type: "type_id",
   state_group: "state__group",
 } as const;
+
+export const CYCLE_GROUP_ORDER_BY_OPTIONS: {
+  key: TCycleGroupOrderByOptions;
+  titleTranslationKey: string;
+}[] = [
+  { key: "sort_order", titleTranslationKey: "common.order_by.manual" },
+  { key: "start_date", titleTranslationKey: "common.order_by.start_date" },
+  { key: "-start_date", titleTranslationKey: "common.order_by.start_date_desc" },
+  { key: "end_date", titleTranslationKey: "common.order_by.due_date" },
+  { key: "-end_date", titleTranslationKey: "common.order_by.due_date_desc" },
+];
+
+export const CYCLE_STATUS_FILTER_OPTIONS: {
+  key: TCycleStatusFilter;
+  titleTranslationKey: string;
+}[] = [
+  { key: "current", titleTranslationKey: "project_cycles.status.in_progress" },
+  { key: "upcoming", titleTranslationKey: "project_cycles.status.yet_to_start" },
+  { key: "completed", titleTranslationKey: "project_cycles.status.completed" },
+  { key: "draft", titleTranslationKey: "project_cycles.status.draft" },
+];

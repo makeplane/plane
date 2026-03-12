@@ -75,6 +75,8 @@ export class WorkspaceDraftIssuesFilter extends IssueFilterHelperStore implement
     });
     // root store
     this.rootIssueStore = _rootStore;
+    // set root store for parent class (for cycle status filter)
+    super.rootIssueStore = _rootStore;
     // services
     this.issueFilterService = new IssueFiltersService();
   }

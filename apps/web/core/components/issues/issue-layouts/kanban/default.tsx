@@ -14,6 +14,7 @@ import type {
   TGroupedIssues,
   TIssue,
   IIssueDisplayProperties,
+  IIssueDisplayFilterOptions,
   IIssueMap,
   TSubGroupedIssues,
   TIssueKanbanFilters,
@@ -47,6 +48,7 @@ export interface IKanBan {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
+  displayFilters?: IIssueDisplayFilterOptions;
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
   orderBy: TIssueOrderByOptions | undefined;
@@ -77,6 +79,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     groupedIssueIds,
     getGroupIssueCount,
     displayProperties,
+    displayFilters,
     sub_group_by,
     group_by,
     sub_group_id = "null",
@@ -114,6 +117,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    displayFilters,
   });
 
   if (!list) return null;

@@ -6,7 +6,7 @@
 
 import type { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
-import { clone, isNil, pull, uniq, concat } from "lodash-es";
+import { clone, isNil, pull, uniq, concat, sortBy } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 // plane types
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
@@ -26,6 +26,8 @@ import type {
   TGroupedIssues,
   IIssueDisplayFilterOptions,
   TGetColumns,
+  ICycle,
+  TCycleGroupOrderByOptions,
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // plane ui
@@ -80,6 +82,7 @@ type TGetGroupByColumns = {
   isWorkspaceLevel: boolean;
   isEpic?: boolean;
   projectId?: string;
+  displayFilters?: IIssueDisplayFilterOptions;
 };
 
 // NOTE: Type of groupBy is different compared to what's being passed from the components.
@@ -91,6 +94,7 @@ export const getGroupByColumns = ({
   isWorkspaceLevel,
   isEpic = false,
   projectId,
+  displayFilters,
 }: TGetGroupByColumns): IGroupByColumn[] | undefined => {
   // If no groupBy is specified and includeNone is true, return "All Issues" group
   if (!groupBy && includeNone) {
@@ -110,7 +114,7 @@ export const getGroupByColumns = ({
   // Map of group by options to their corresponding column getter functions
   const groupByColumnMap: Record<
     GroupByColumnTypes,
-    ({ isWorkspaceLevel, projectId }: TGetColumns) => IGroupByColumn[] | undefined
+    ({ isWorkspaceLevel, projectId, displayFilters }: TGetColumns & { displayFilters?: IIssueDisplayFilterOptions }) => IGroupByColumn[] | undefined
   > = {
     project: getProjectColumns,
     cycle: getCycleColumns,
@@ -125,7 +129,7 @@ export const getGroupByColumns = ({
   };
 
   // Get and return the columns for the specified group by option
-  return groupByColumnMap[groupBy]?.({ isWorkspaceLevel, projectId });
+  return groupByColumnMap[groupBy]?.({ isWorkspaceLevel, projectId, displayFilters });
 };
 
 const getProjectColumns = (): IGroupByColumn[] | undefined => {
@@ -151,33 +155,74 @@ const getProjectColumns = (): IGroupByColumn[] | undefined => {
     .filter((column) => column !== undefined) as IGroupByColumn[];
 };
 
-const getCycleColumns = (): IGroupByColumn[] | undefined => {
+/**
+ * Orders cycles by the specified field
+ * @param cycles Array of cycles to sort
+ * @param orderBy Sort field with optional "-" prefix for descending
+ * @returns Sorted array of cycles
+ */
+const orderCyclesByField = (cycles: ICycle[], orderBy: TCycleGroupOrderByOptions): ICycle[] => {
+  if (orderBy === "sort_order") {
+    return sortBy(cycles, [(c) => c.sort_order]);
+  }
+
+  const isDescending = orderBy.startsWith("-");
+  const field = isDescending ? orderBy.slice(1) : orderBy;
+
+  const sorted = sortBy(cycles, [(c) => {
+    const value = c[field as keyof ICycle];
+    if (!value) return isDescending ? "" : "9999-99-99";
+    return value;
+  }]);
+
+  if (isDescending) return sorted.reverse();
+  return sorted;
+};
+
+const getCycleColumns = ({ displayFilters }: { displayFilters?: IIssueDisplayFilterOptions } = {}): IGroupByColumn[] | undefined => {
   const { currentProjectDetails } = store.projectRoot.project;
   // Check for the current project details
   if (!currentProjectDetails || !currentProjectDetails?.id) return;
   const { getProjectCycleDetails } = store.cycle;
   // Get the cycle details for the current project
-  const cycleDetails = currentProjectDetails?.id ? getProjectCycleDetails(currentProjectDetails?.id) : undefined;
+  let cycleDetails = currentProjectDetails?.id ? getProjectCycleDetails(currentProjectDetails?.id) : undefined;
+
+  if (!cycleDetails) return undefined;
+
+  // Filter out completed cycles if hide_completed_cycles is enabled
+  if (displayFilters?.hide_completed_cycles) {
+    cycleDetails = cycleDetails.filter((cycle) => {
+      const cycleStatus = cycle.status?.toLocaleLowerCase() as TCycleGroups;
+      return cycleStatus !== "completed";
+    });
+  }
+
+  // Sort cycles by the specified order
+  const orderBy = displayFilters?.cycle_group_order_by || "sort_order";
+  cycleDetails = orderCyclesByField(cycleDetails, orderBy);
+
   // Map the cycle details to the group by columns
-  const cycles: IGroupByColumn[] = [];
-  cycleDetails?.map((cycle) => {
+  const cycles: IGroupByColumn[] = cycleDetails.map((cycle) => {
     const cycleStatus = cycle.status ? (cycle.status.toLocaleLowerCase() as TCycleGroups) : "draft";
     const isDropDisabled = cycleStatus === "completed";
-    cycles.push({
+    return {
       id: cycle.id,
       name: cycle.name,
       icon: <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />,
       payload: { cycle_id: cycle.id },
       isDropDisabled,
       dropErrorMessage: isDropDisabled ? "Work item cannot be moved to completed cycles" : undefined,
-    });
+    };
   });
+
+  // "None" always at the bottom
   cycles.push({
     id: "None",
     name: "None",
     icon: <CycleIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
+
   return cycles;
 };
 

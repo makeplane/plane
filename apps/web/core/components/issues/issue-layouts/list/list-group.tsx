@@ -281,6 +281,8 @@ export const ListGroup = observer(function ListGroup(props: Props) {
           selectionHelpers={selectionHelpers}
           handleCollapsedGroups={handleCollapsedGroups}
           isEpic={isEpic}
+          groupIssueIds={groupIssueIds}
+          issuesMap={issuesMap}
         />
       </Row>
       {shouldExpand && (
