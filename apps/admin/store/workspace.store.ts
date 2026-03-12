@@ -33,6 +33,7 @@ export interface IWorkspaceStore {
   createWorkspace: (data: IWorkspace) => Promise<IWorkspace>;
   bulkCreateWorkspaces: (workspaces: Array<{ name: string; organization_size?: string }>) => Promise<IWorkspaceBulkCreateResponse>;
   bulkAssignMembers: (members: Array<{ email: string; workspace_slug: string; role: number }>) => Promise<IWorkspaceBulkAssignResponse>;
+  deleteWorkspace: (workspaceId: string, workspaceSlug: string) => Promise<void>;
 }
 
 export class WorkspaceStore implements IWorkspaceStore {
@@ -62,6 +63,7 @@ export class WorkspaceStore implements IWorkspaceStore {
       createWorkspace: action,
       bulkCreateWorkspaces: action,
       bulkAssignMembers: action,
+      deleteWorkspace: action,
     });
     this.instanceWorkspaceService = new InstanceWorkspaceService();
   }
@@ -200,6 +202,18 @@ export class WorkspaceStore implements IWorkspaceStore {
     try {
       return await this.instanceWorkspaceService.bulkAssignMembers(members);
     } catch (error) {
+      throw error;
+    }
+  };
+
+  deleteWorkspace = async (workspaceId: string, workspaceSlug: string): Promise<void> => {
+    try {
+      await this.instanceWorkspaceService.destroy(workspaceSlug);
+      runInAction(() => {
+        delete this.workspaces[workspaceId];
+      });
+    } catch (error) {
+      console.error("Error deleting workspace", error);
       throw error;
     }
   };

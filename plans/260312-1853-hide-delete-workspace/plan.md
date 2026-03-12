@@ -1,7 +1,7 @@
 ---
 title: "Hide Delete Workspace Function"
 description: "Remove 'Delete this workspace' section from workspace settings UI"
-status: pending
+status: complete
 priority: P2
 effort: 15m
 branch: triho
@@ -31,7 +31,7 @@ WorkspaceDetails (core/) → renders <DeleteWorkspaceSection>
 
 | # | Phase | Status | File |
 |---|-------|--------|------|
-| 1 | [Hide CE component](./phase-01-hide-ce-component.md) | ⏳ pending | phase-01-hide-ce-component.md |
+| 1 | [Hide CE component](./phase-01-hide-ce-component.md) | ✅ complete | phase-01-hide-ce-component.md |
 
 ## Validation Log
 

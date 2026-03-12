@@ -125,8 +125,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                   )}
                 </div>
                 <div className={cn("font-regular leading-5 text-tertiary text-11")}>
-                  You can&apos;t yet delete workspaces and you can only go to the workspace if you are an Admin or a
-                  Member.
+                  You can only go to a workspace if you are an Admin or a Member.
                 </div>
               </div>
               <div className="flex items-center gap-2">
