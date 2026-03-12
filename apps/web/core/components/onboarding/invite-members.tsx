@@ -262,7 +262,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
 });
 
 export function InviteMembers(props: Props) {
-  const { finishOnboarding, totalSteps, workspace } = props;
+  const { finishOnboarding, workspace } = props;
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
 

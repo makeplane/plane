@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import type { EditorRefApi, TDocumentEventsServer } from "@plane/editor";
+import type { TDocumentEventsServer } from "@plane/editor";
 import type { TDocumentEventsClient } from "@plane/editor/lib";
 import { DocumentCollaborativeEvents, getServerEventName } from "@plane/editor/lib";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";

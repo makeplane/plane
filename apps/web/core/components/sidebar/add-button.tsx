@@ -5,7 +5,6 @@
  */
 
 import { Button } from "@plane/propel/button";
-import { cn } from "@plane/utils";
 
 type Props = React.ComponentProps<"button"> & {
   label: React.ReactNode;

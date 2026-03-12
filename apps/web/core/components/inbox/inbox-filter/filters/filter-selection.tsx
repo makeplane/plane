@@ -4,21 +4,18 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
-import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { FilterDate } from "./date";
 import { FilterLabels } from "./labels";
 import { FilterMember } from "./members";
 import { FilterPriority } from "./priority";
-import { FilterState } from "./state";
 import { FilterStatus } from "./status";
 
 export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelection() {
@@ -28,7 +25,6 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
     project: { projectMemberIds },
   } = useMember();
   const { projectLabels } = useLabel();
-  const { projectStates } = useProjectState();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 

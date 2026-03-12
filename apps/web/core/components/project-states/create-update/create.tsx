@@ -34,7 +34,7 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
     if (!groupKey) return { status: "error" };
 
     try {
-      const response = await createStateCallback({ ...formData, group: groupKey });
+      await createStateCallback({ ...formData, group: groupKey });
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
