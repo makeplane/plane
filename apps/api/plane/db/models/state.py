@@ -25,39 +25,53 @@ DEFAULT_STATES = [
     {
         "name": "Draft",
         "color": "#60646C",
-        "sequence": 15000,
+        "sequence": 10000,
         "group": StateGroup.BACKLOG.value,
-        "default": True,
+        "default": False,
+        "is_system": True,
     },
     {
-        "name": "Todo",
+        "name": "Scheduled",
         "color": "#60646C",
-        "sequence": 25000,
+        "sequence": 20000,
         "group": StateGroup.UNSTARTED.value,
+        "default": True,
+        "is_system": True,
     },
     {
         "name": "In Progress",
         "color": "#F59E0B",
+        "sequence": 30000,
+        "group": StateGroup.STARTED.value,
+        "is_system": True,
+    },
+    {
+        "name": "Internal Review",
+        "color": "#8B5CF6",
         "sequence": 35000,
         "group": StateGroup.STARTED.value,
+        "is_system": True,
+    },
+    {
+        "name": "Postponed",
+        "color": "#9AA4BC",
+        "sequence": 40000,
+        "group": StateGroup.STARTED.value,
+        "is_system": True,
     },
     {
         "name": "Done",
         "color": "#46A758",
-        "sequence": 45000,
+        "sequence": 50000,
         "group": StateGroup.COMPLETED.value,
+        "is_system": True,
     },
     {
         "name": "Cancelled",
         "color": "#9AA4BC",
-        "sequence": 55000,
+        "sequence": 60000,
         "group": StateGroup.CANCELLED.value,
-    },
-    {
-        "name": "Triage",
-        "color": "#4E5355",
-        "sequence": 65000,
-        "group": StateGroup.TRIAGE.value,
+        "is_system": True,
     },
 ]
 
@@ -88,6 +102,7 @@ class State(ProjectBaseModel):
         max_length=20,
     )
     is_triage = models.BooleanField(default=False)
+    is_system = models.BooleanField(default=False)
     default = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)

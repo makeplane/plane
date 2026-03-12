@@ -169,3 +169,5 @@ export interface ILayoutDisplayFiltersOptions {
     values: TIssueExtraOptions[];
   };
 }
+
+export * from "./issues/opinion";

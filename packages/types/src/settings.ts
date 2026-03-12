@@ -40,7 +40,8 @@ export type TProjectSettingsTabs =
   | "automations"
   | "worklogs"
   | "features_time_tracking"
-  | "workflows";
+  | "workflows"
+  | "bank_wide";
 export type TProjectSettingsItem = {
   key: TProjectSettingsTabs;
   i18n_label: string;

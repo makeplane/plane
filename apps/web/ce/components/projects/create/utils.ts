@@ -5,10 +5,10 @@
  */
 
 import { RANDOM_EMOJI_CODES } from "@plane/constants";
-import type { IProject } from "@plane/types";
 import { getRandomCoverImage } from "@/helpers/cover-image.helper";
+import type { TProject } from "@/plane-web/types/projects";
 
-export const getProjectFormValues = (): Partial<IProject> => ({
+export const getProjectFormValues = (): Partial<TProject> => ({
   cover_image_url: getRandomCoverImage(),
   description: "",
   logo_props: {
@@ -21,4 +21,5 @@ export const getProjectFormValues = (): Partial<IProject> => ({
   name: "",
   network: 2,
   project_lead: null,
+  is_bank_wide: false,
 });

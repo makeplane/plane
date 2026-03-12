@@ -490,6 +490,7 @@ export default {
   state_is_required: "상태가 필요합니다",
   priority_is_required: "우선순위가 필요합니다",
   assignee_is_required: "담당자가 필요합니다",
+  module_is_required: "모듈이 필요합니다",
   label_is_required: "레이블이 필요합니다",
   start_date_is_required: "시작 날짜가 필요합니다",
   due_date_is_required: "마감 날짜가 필요합니다",
@@ -577,6 +578,20 @@ export default {
       created_at: "생성일",
       updated_at: "업데이트일",
       name: "이름",
+    },
+  },
+  bank_wide_project: {
+    label: "전행 프로젝트",
+    settings: {
+      title: "전행 프로젝트",
+      label: "전행 프로젝트로 지정",
+      description: "이 프로젝트를 전행 프로젝트로 지정하여 조직 전체의 모든 멤버에게 표시하고 관련성을 높입니다.",
+      header_description: "이 프로젝트의 전행 프로젝트 설정을 구성합니다.",
+      updated_success: "전행 프로젝트 설정이 업데이트되었습니다.",
+      updated_error: "전행 프로젝트 설정 업데이트에 실패했습니다. 다시 시도해주세요.",
+    },
+    filter: {
+      label: "전행 프로젝트만",
     },
   },
   toast: {
@@ -3112,6 +3127,21 @@ export default {
       "안녕하세요! 👋 오늘 하루도 수고 많으셨습니다. 혹시 오늘의 근무 시간을 아직 기록하지 않으셨나요? 타임시트를 꾸준히 업데이트하면 팀 전체가 더 효율적으로 협업할 수 있어요. 잠깐이면 되니까, 퇴근 전에 팀/프로젝트에서 시간을 기록해 주세요!",
     reminder_toggle: "작업 로그 알림",
     reminder_toggle_description: "매일 오후 5시에 시간 기록 알림 받기",
+  },
+  // Issue Opinion
+  opinion: {
+    approve: "승인",
+    neutral: "중립",
+    reject: "반대",
+    your_opinion: "의견 남기기",
+    add_opinion: "의견 추가",
+    content_placeholder: "메모 추가 (선택사항)",
+    saved: "의견 저장됨",
+    saved_successfully: "의견이 성공적으로 저장되었습니다.",
+    save_failed: "의견 저장에 실패했습니다.",
+    deleted: "의견 삭제됨",
+    deleted_successfully: "의견이 성공적으로 삭제되었습니다.",
+    delete_failed: "의견 삭제에 실패했습니다.",
   },
   department: {
     label: "부서",

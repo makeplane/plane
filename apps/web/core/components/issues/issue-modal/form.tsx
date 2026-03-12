@@ -481,12 +481,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   onClose={onClose}
                 />
               </div>
-              <WorkItemModalAdditionalProperties
-                isDraft={isDraft}
-                workItemId={data?.id ?? data?.sourceIssueId}
-                projectId={projectId}
-                workspaceSlug={workspaceSlug?.toString()}
-              />
             </div>
             <div
               className={cn(
@@ -507,7 +501,14 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   isDraft={isDraft}
                   handleFormChange={handleFormChange}
                   setSelectedParentIssue={setSelectedParentIssue}
-                />
+                >
+                  <WorkItemModalAdditionalProperties
+                    isDraft={isDraft}
+                    workItemId={data?.id ?? data?.sourceIssueId}
+                    projectId={projectId}
+                    workspaceSlug={workspaceSlug?.toString()}
+                  />
+                </IssueDefaultProperties>
               </div>
               {showActionButtons && (
                 <div
