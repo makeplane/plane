@@ -212,11 +212,11 @@ export type JiraIssueActivity = {
 };
 
 export type TTransformationMaps = {
-  moduleMap: Record<string, ExModule>;
-  cycleMap: Record<string, ExCycle>;
-  stateMap: Record<string, ExState>;
-  priorityMap: Record<string, string>;
-  issueTypeMap: Record<string, ExIssueType>;
-  userMap: Record<string, PlaneUser>;
-  attachmentMap: Record<string, ExIssueAttachment>;
+  moduleMap: Map<string, string>;
+  cycleMap: Map<string, string>;
+  stateMap: Map<string, string>;
+  priorityMap: Map<string, string>;
+  issueTypeMap: Map<string, string>;
+  userMap: Map<string, string>;
+  attachmentMap: Map<string, string>;
 };

@@ -116,6 +116,7 @@ export class JiraIssuesStep implements IStep {
         propertyData,
         additionalData,
         epicsAsWorkItems: epicsAsWorkItems || false,
+        storage,
       });
 
       const { processedIssues, comments, propertyValues, associations, relations, issueActivities } = {

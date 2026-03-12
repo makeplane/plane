@@ -43,6 +43,8 @@ export const mapJiraFieldToPlaneField = (jiraField: string): string | undefined 
 
 export const transformActivityItem = (
   item: JiraChangeDetails,
+  resourceId: string,
+  projectId: string,
   transformationMaps: TTransformationMaps
 ): Partial<TActivityItemResult>[] => {
   const fieldName = (item.field ?? "").toLowerCase();
@@ -59,23 +61,29 @@ export const transformActivityItem = (
 
   switch (planeField) {
     case "state": {
-      const oldState = oldIdentifier ? transformationMaps.stateMap[oldIdentifier] : null;
-      const newState = newIdentifier ? transformationMaps.stateMap[newIdentifier] : null;
+      // handle identifiers - done
+      const oldStateExternalId = `${projectId}_${resourceId}_${oldIdentifier}`;
+      const newStateExternalId = `${projectId}_${resourceId}_${newIdentifier}`;
+      const oldStatePlaneId = oldIdentifier ? transformationMaps.stateMap.get(oldStateExternalId) : null;
+      const newStatePlaneId = newIdentifier ? transformationMaps.stateMap.get(newStateExternalId) : null;
       return [
         {
           field: "state",
           verb: "updated",
           old_value: oldValue,
           new_value: newValue,
-          old_identifier: oldState?.id,
-          new_identifier: newState?.id,
+          old_identifier: oldStatePlaneId,
+          new_identifier: newStatePlaneId,
           comment: "updated the state to",
         },
       ];
     }
     case "assignees": {
-      const oldAssignee = oldIdentifier ? transformationMaps.userMap[oldIdentifier] : null;
-      const newAssignee = newIdentifier ? transformationMaps.userMap[newIdentifier] : null;
+      // handle identifiers
+      const oldAssigneeExternalId = `${projectId}_${resourceId}_${oldIdentifier}`;
+      const newAssigneeExternalId = `${projectId}_${resourceId}_${newIdentifier}`;
+      const oldAssigneePlaneId = oldIdentifier ? transformationMaps.userMap.get(oldAssigneeExternalId) : null;
+      const newAssigneePlaneId = newIdentifier ? transformationMaps.userMap.get(newAssigneeExternalId) : null;
       const activities: Partial<TActivityItemResult>[] = [];
       // since jira has single assignee field and sends removal and addition in same activity,
       // we need to handle 2 events separately for Plane issue activities
@@ -84,8 +92,8 @@ export const transformActivityItem = (
           field: "assignees",
           verb: "updated",
           old_value: oldValue,
-          new_value: null,
-          old_identifier: oldAssignee?.id,
+          new_value: "",
+          old_identifier: oldAssigneePlaneId,
           comment: "removed assignee",
         });
       }
@@ -93,9 +101,9 @@ export const transformActivityItem = (
         activities.push({
           field: "assignees",
           verb: "updated",
-          old_value: null,
+          old_value: "",
           new_value: newValue,
-          new_identifier: newAssignee?.id,
+          new_identifier: newAssigneePlaneId,
           comment: "added assignee",
         });
       }
@@ -124,8 +132,10 @@ export const transformActivityItem = (
       ];
 
     case "priority": {
-      const oldPriority = oldValue ? transformationMaps.priorityMap[oldValue] : null;
-      const newPriority = newValue ? transformationMaps.priorityMap[newValue] : null;
+      const oldPriorityExternalId = `${projectId}_${resourceId}_${oldIdentifier}`;
+      const newPriorityExternalId = `${projectId}_${resourceId}_${newIdentifier}`;
+      const oldPriority = oldValue ? transformationMaps.priorityMap.get(oldPriorityExternalId) : "";
+      const newPriority = newValue ? transformationMaps.priorityMap.get(newPriorityExternalId) : "";
       return [
         {
           field: "priority",
@@ -137,8 +147,7 @@ export const transformActivityItem = (
       ];
     }
     case "labels": {
-      // skipping identifiers as label map won't be available yet
-      // can improve by importing labels in a prev step and using identifiers
+      // handle identifiers
       const newLabels = newValue ? newValue.split(" ") : [];
       const oldLabels = oldValue ? oldValue.split(" ") : [];
       const labelsAdded = newLabels.filter((label) => !oldLabels.includes(label));
@@ -149,7 +158,7 @@ export const transformActivityItem = (
           labelActivities.push({
             field: "labels",
             verb: "updated",
-            old_value: null,
+            old_value: "",
             new_value: label,
             comment: "added label",
           });
@@ -161,7 +170,7 @@ export const transformActivityItem = (
             field: "labels",
             verb: "updated",
             old_value: label,
-            new_value: null,
+            new_value: "",
             comment: "removed label",
           });
         });
@@ -169,46 +178,58 @@ export const transformActivityItem = (
       return labelActivities;
     }
     case "cycles": {
-      const oldCycles = oldValue ? oldValue.split(",").map((cy) => cy.trim()) : [];
-      const newCycles = newValue ? newValue.split(",").map((cy) => cy.trim()) : [];
-      const cyclesAdded = newCycles.filter((cycle) => !oldCycles.includes(cycle));
-      const cyclesRemoved = oldCycles.filter((cycle) => !newCycles.includes(cycle));
+      // handle identifiers
+      const { valuesAdded, valuesRemoved, externalIdsAdded, externalIdsRemoved } = getIdAndValueDifferences(
+        oldValue,
+        newValue,
+        oldIdentifier,
+        newIdentifier,
+        projectId,
+        resourceId
+      );
       const cycleActivities: Partial<TActivityItemResult>[] = [];
-      if (cyclesAdded.length > 0) {
-        cyclesAdded.forEach((cycle) => {
+      if (valuesAdded.length > 0) {
+        valuesAdded.forEach((cycle, index) => {
           cycleActivities.push({
             field: "cycles",
             verb: "created",
-            old_value: null,
+            old_value: "",
             new_value: cycle,
             comment: `added cycle ${cycle}`,
+            old_identifier: null,
+            new_identifier: newIdentifier ? transformationMaps.cycleMap.get(externalIdsAdded[index]) : null,
           });
         });
       }
-      if (cyclesRemoved.length > 0) {
-        cyclesRemoved.forEach((cycle) => {
+      if (valuesRemoved.length > 0) {
+        valuesRemoved.forEach((cycle, index) => {
           cycleActivities.push({
             field: "cycles",
             verb: "deleted",
             old_value: cycle,
-            new_value: null,
+            new_value: "",
             comment: `removed this issue from cycle ${cycle}`,
+            old_identifier: oldIdentifier ? transformationMaps.cycleMap.get(externalIdsRemoved[index]) : null,
+            new_identifier: null,
           });
         });
       }
       return cycleActivities;
     }
     case "type": {
-      const oldIssueType = oldIdentifier ? transformationMaps.issueTypeMap[oldIdentifier] : null;
-      const newIssueType = newIdentifier ? transformationMaps.issueTypeMap[newIdentifier] : null;
+      // handle identifiers
+      const oldIssueTypeExternalId = `${projectId}_${resourceId}_${oldIdentifier}`;
+      const newIssueTypeExternalId = `${projectId}_${resourceId}_${newIdentifier}`;
+      const oldIssueTypePlaneId = oldIdentifier ? transformationMaps.issueTypeMap.get(oldIssueTypeExternalId) : null;
+      const newIssueTypePlaneId = newIdentifier ? transformationMaps.issueTypeMap.get(newIssueTypeExternalId) : null;
       return [
         {
           field: "type",
           verb: "updated",
           old_value: oldValue,
           new_value: newValue,
-          old_identifier: oldIssueType?.id,
-          new_identifier: newIssueType?.id,
+          old_identifier: oldIssueTypePlaneId,
+          new_identifier: newIssueTypePlaneId,
           comment: `updated the issue type from ${oldValue ?? ""} to ${newValue ?? ""}`,
         },
       ];
@@ -240,16 +261,18 @@ export const transformActivityItem = (
         {
           field: "link",
           verb: newValue ? "created" : "deleted",
-          old_value: null,
-          new_value: null,
+          old_value: "",
+          new_value: "",
           comment: newValue ? "created a link" : "deleted the link",
         },
       ];
 
     case "attachment": {
       // handle identifiers
-      const oldAttachment = oldIdentifier ? transformationMaps.attachmentMap[oldIdentifier] : null;
-      const newAttachment = newIdentifier ? transformationMaps.attachmentMap[newIdentifier] : null;
+      const oldAttachmentExternalId = `${projectId}_${resourceId}_${oldIdentifier}`;
+      const newAttachmentExternalId = `${projectId}_${resourceId}_${newIdentifier}`;
+      const oldAttachmentPlaneId = oldIdentifier ? transformationMaps.attachmentMap.get(oldAttachmentExternalId) : null;
+      const newAttachmentPlaneId = newIdentifier ? transformationMaps.attachmentMap.get(newAttachmentExternalId) : null;
       return [
         {
           field: "attachment",
@@ -257,36 +280,45 @@ export const transformActivityItem = (
           old_value: oldValue,
           new_value: newValue,
           comment: newValue ? "created an attachment" : "deleted the attachment",
-          old_identifier: oldAttachment?.id,
-          new_identifier: newAttachment?.id,
+          old_identifier: oldAttachmentPlaneId,
+          new_identifier: newAttachmentPlaneId,
         },
       ];
     }
     case "modules": {
-      const oldModules = oldValue ? oldValue.split(",").map((md) => md.trim()) : [];
-      const newModules = newValue ? newValue.split(",").map((md) => md.trim()) : [];
-      const modulesAdded = newModules.filter((module) => !oldModules.includes(module));
-      const modulesRemoved = oldModules.filter((module) => !newModules.includes(module));
+      // handle identifiers
+      const { valuesAdded, valuesRemoved, externalIdsAdded, externalIdsRemoved } = getIdAndValueDifferences(
+        oldValue,
+        newValue,
+        oldIdentifier,
+        newIdentifier,
+        projectId,
+        resourceId
+      );
       const moduleActivities: Partial<TActivityItemResult>[] = [];
-      if (modulesAdded.length > 0) {
-        modulesAdded.forEach((module) => {
+      if (valuesAdded.length > 0) {
+        valuesAdded.forEach((module, index) => {
           moduleActivities.push({
             field: "modules",
             verb: "created",
-            old_value: null,
+            old_value: "",
             new_value: module,
             comment: `added module ${module}`,
+            old_identifier: null,
+            new_identifier: newIdentifier ? transformationMaps.moduleMap.get(externalIdsAdded[index]) : null,
           });
         });
       }
-      if (modulesRemoved.length > 0) {
-        modulesRemoved.forEach((module) => {
+      if (valuesRemoved.length > 0) {
+        valuesRemoved.forEach((module, index) => {
           moduleActivities.push({
             field: "modules",
             verb: "deleted",
             old_value: module,
-            new_value: null,
+            new_value: "",
             comment: `removed this issue from module ${module}`,
+            old_identifier: oldIdentifier ? transformationMaps.moduleMap.get(externalIdsRemoved[index]) : null,
+            new_identifier: null,
           });
         });
       }
@@ -310,8 +342,8 @@ export const transformActivityItem = (
         {
           field: "relates_to",
           verb: newValue ? "created" : "deleted",
-          old_value: oldValue,
-          new_value: newValue,
+          old_value: oldIdentifier ?? "",
+          new_value: newIdentifier ?? "",
           comment: newValue ? "added relates_to relation" : "deleted relates_to relation",
         },
       ];
@@ -319,4 +351,29 @@ export const transformActivityItem = (
     default:
       return [];
   }
+};
+
+const getIdAndValueDifferences = (
+  oldValue: string | null,
+  newValue: string | null,
+  oldIdentifier: string | null,
+  newIdentifier: string | null,
+  projectId: string,
+  resourceId: string
+): { valuesAdded: string[]; valuesRemoved: string[]; externalIdsAdded: string[]; externalIdsRemoved: string[] } => {
+  const oldValueArray = oldValue ? oldValue.split(",").map((id) => id.trim()) : [];
+  const newValueArray = newValue ? newValue.split(",").map((id) => id.trim()) : [];
+
+  const valuesAdded = newValueArray.filter((id) => !oldValueArray.includes(id));
+  const valuesRemoved = oldValueArray.filter((id) => !newValueArray.includes(id));
+
+  const oldIds = oldIdentifier ? oldIdentifier.split(",").map((id) => id.trim()) : [];
+  const newIds = newIdentifier ? newIdentifier.split(",").map((id) => id.trim()) : [];
+  const idsAdded = newIds.filter((id) => !oldIds.includes(id));
+  const idsRemoved = oldIds.filter((id) => !newIds.includes(id));
+
+  const externalIdsAdded = idsAdded.map((id) => `${projectId}_${resourceId}_${id}`);
+  const externalIdsRemoved = idsRemoved.map((id) => `${projectId}_${resourceId}_${id}`);
+
+  return { valuesAdded, valuesRemoved, externalIdsAdded, externalIdsRemoved };
 };

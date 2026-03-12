@@ -37,7 +37,19 @@ export class JiraIssueActivityExtractor {
       results.push(...this.transformActivity(issue.id, history));
     }
 
-    return results;
+    const defaultIssueCreatedActivity: Partial<ExIssueActivity> = {
+      issue: `${this.projectId}_${this.resourceId}_${issue.id}`,
+      external_source: this.source,
+      external_id: `${this.projectId}_${this.resourceId}_${issue.id}_created`,
+      verb: "created",
+      old_value: "",
+      new_value: "",
+      comment: "created the issue",
+      actor: issue?.fields?.creator?.emailAddress || issue?.fields?.creator?.displayName,
+      created_at: issue?.fields?.created,
+    };
+
+    return [defaultIssueCreatedActivity, ...results];
   }
 
   private transformActivity(jiraIssueId: string, history: Changelog): Partial<ExIssueActivity>[] {
@@ -45,13 +57,13 @@ export class JiraIssueActivityExtractor {
       issue: `${this.projectId}_${this.resourceId}_${jiraIssueId}`,
       external_source: this.source,
       actor: history.author?.emailAddress || history.author?.displayName,
-      created_at: getFormattedDate(history.created),
+      created_at: history.created,
     };
 
     const results: Partial<ExIssueActivity>[] = [];
 
     for (const item of history.items ?? []) {
-      const mapped = transformActivityItem(item, this.transformationMaps);
+      const mapped = transformActivityItem(item, this.resourceId, this.projectId, this.transformationMaps);
       if (!mapped) continue;
 
       mapped.forEach((activityItem) => {

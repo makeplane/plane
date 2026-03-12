@@ -31,6 +31,7 @@ import type {
   TIssuesAssociationsData,
   TIssueTypesData,
   TKnownFieldMapping,
+  IStorageService,
 } from "@/apps/jira-server-importer/v2/types";
 import { JiraCommentExtractor } from "./comment.extractor";
 import { JiraComponentExtractor } from "./component.extractor";
@@ -39,6 +40,7 @@ import { JiraSprintExtractor } from "./sprint.extractor";
 import { JiraWorklogExtractor } from "./worklog.extractor";
 import { JiraSubscribersExtractor } from "./subscribers.extractor";
 import { JiraIssueActivityExtractor } from "./issue-activity.extractor";
+import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 
 export type TExtractionProps = {
   job: TImportJob<JiraConfig>;
@@ -55,6 +57,7 @@ export type TExtractionProps = {
     knownCustomFieldMapping: TKnownFieldMapping[];
   };
   epicsAsWorkItems: boolean;
+  storage: IStorageService;
 };
 
 export type TUnifiedExtractionResult = {
@@ -72,7 +75,7 @@ export type TUnifiedExtractionResult = {
  */
 export class JiraIssueDataExtractor {
   public async extractAll(props: TExtractionProps): Promise<TUnifiedExtractionResult> {
-    const { job, sourceClient, source, issues, propertyData, additionalData, epicsAsWorkItems } = props;
+    const { job, sourceClient, source, issues, propertyData, additionalData, epicsAsWorkItems, storage } = props;
     const { projectId, resourceId } = extractJobData(job);
 
     // 1. Instantiate sub-extractors
@@ -88,15 +91,8 @@ export class JiraIssueDataExtractor {
       epicsAsWorkItems
     );
     const subscribersExtractor = this.getSubscribersExtractor();
-    const transformationMaps = {
-      stateMap: {},
-      userMap: {},
-      cycleMap: {},
-      moduleMap: {},
-      issueTypeMap: {},
-      priorityMap: {},
-      attachmentMap: {},
-    };
+
+    const transformationMaps = await this.getIssueActivityTransformationMaps(job, storage);
     const issueActivityExtractor = this.getIssueActivityExtractor(projectId, resourceId, source, transformationMaps);
 
     // 2. Batch Extraction: Comments
@@ -228,6 +224,43 @@ export class JiraIssueDataExtractor {
 
   protected getSubscribersExtractor(): JiraSubscribersExtractor {
     return new JiraSubscribersExtractor();
+  }
+
+  private async getIssueActivityTransformationMaps(
+    job: TImportJob<JiraConfig>,
+    storage: IStorageService
+  ): Promise<TTransformationMaps> {
+    const { projectId, resourceId } = extractJobData(job);
+    const [userMap, issueTypeMap, cycleMap, moduleMap] = await Promise.all([
+      storage.retrieveMapping(job.id, EJiraStep.USERS),
+      storage.retrieveMapping(job.id, EJiraStep.ISSUE_TYPES),
+      storage.retrieveMapping(job.id, EJiraStep.CYCLES),
+      storage.retrieveMapping(job.id, EJiraStep.MODULES),
+    ]);
+
+    const priorityMap = new Map<string, string>();
+    // external id -> plane priority map
+    job.config.priority.forEach((priority) => {
+      if (!priority.source_priority.id) return;
+      priorityMap.set(buildExternalId(projectId, resourceId, priority.source_priority.id), priority.target_priority);
+    });
+
+    const stateMap = new Map<string, string>();
+    // external id -> plane state id map
+    job.config.state.forEach((state) => {
+      if (!state.source_state.id) return;
+      stateMap.set(buildExternalId(projectId, resourceId, state.source_state.id), state.target_state.id);
+    });
+
+    return {
+      stateMap: stateMap,
+      userMap: userMap,
+      cycleMap: cycleMap,
+      moduleMap: moduleMap,
+      issueTypeMap: issueTypeMap,
+      priorityMap: priorityMap,
+      attachmentMap: new Map<string, string>(),
+    };
   }
 
   private collectMetrics(props: {
