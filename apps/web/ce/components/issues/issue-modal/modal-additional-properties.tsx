@@ -4,8 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type React from "react";
-
 export type TWorkItemModalAdditionalPropertiesProps = {
   isDraft?: boolean;
   projectId: string | null;

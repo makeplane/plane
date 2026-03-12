@@ -4,8 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
-
 type TIssueAdditionalPropertiesActivity = {
   activityId: string;
   ends: "top" | "bottom" | undefined;

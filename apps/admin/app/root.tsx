@@ -88,7 +88,7 @@ export function HydrateFallback() {
   );
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+export function ErrorBoundary({ error: _error }: Route.ErrorBoundaryProps) {
   return (
     <div>
       <p>Something went wrong.</p>

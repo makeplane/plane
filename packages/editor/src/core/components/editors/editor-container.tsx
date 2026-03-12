@@ -6,7 +6,7 @@
 
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/react";
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useCallback, useEffect, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
