@@ -133,7 +133,7 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
                     user_id=workspace_member["member_id"],
                     workspace_id=workspace.id,
                     display_filters={
-                        "layout": "list",
+                        "layout": "kanban",
                         "calendar": {"layout": "month", "show_weekends": False},
                         "group_by": "state",
                         "order_by": "sort_order",

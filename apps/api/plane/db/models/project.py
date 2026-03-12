@@ -55,7 +55,7 @@ def get_default_props():
             "type": None,
             "sub_issue": True,
             "show_empty_groups": True,
-            "layout": "list",
+            "layout": "kanban",
             "calendar_date_range": "",
         },
     }
