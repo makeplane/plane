@@ -74,7 +74,7 @@ export const FilterCreatedBy = observer(function FilterCreatedBy(props: Props) {
                   return (
                     <FilterOption
                       key={`member-${member.id}`}
-                      isChecked={appliedFilters?.includes(member.id)}
+                      isChecked={appliedFilters?.includes(member.id) ?? false}
                       onClick={() => handleUpdate(member.id)}
                       icon={
                         <Avatar

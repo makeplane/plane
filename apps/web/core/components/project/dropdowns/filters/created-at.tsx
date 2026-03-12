@@ -65,7 +65,7 @@ export const FilterCreatedDate = observer(function FilterCreatedDate(props: Prop
               {filteredOptions.map((option) => (
                 <FilterOption
                   key={option.value}
-                  isChecked={appliedFilters?.includes(option.value)}
+                  isChecked={appliedFilters?.includes(option.value) ?? false}
                   onClick={() => handleUpdate(option.value)}
                   title={option.name}
                   multiple={false}
