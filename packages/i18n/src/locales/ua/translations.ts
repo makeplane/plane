@@ -752,6 +752,7 @@ export default {
     estimates: "Оцінки",
     estimate: "Оцінка",
     created_at: "Створено",
+    updated_at: "Оновлено",
     completed_at: "Завершено",
     layout: "Розташування",
     filters: "Фільтри",

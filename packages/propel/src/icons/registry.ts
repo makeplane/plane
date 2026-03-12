@@ -65,6 +65,8 @@ import { CycleIcon, EpicIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkI
 // Property icons
 import {
   BooleanPropertyIcon,
+  CompletedAtPropertyIcon,
+  CreatedAtPropertyIcon,
   DropdownPropertyIcon,
   DueDatePropertyIcon,
   DuplicatePropertyIcon,
@@ -80,6 +82,7 @@ import {
   ScopePropertyIcon,
   StartDatePropertyIcon,
   StatePropertyIcon,
+  UpdatedAtPropertyIcon,
   UserCirclePropertyIcon,
   UserPropertyIcon,
   UserSquarePropertyIcon,
@@ -152,6 +155,8 @@ export const ICON_REGISTRY = {
 
   // Property icons
   "property.boolean": BooleanPropertyIcon,
+  "property.completed-at": CompletedAtPropertyIcon,
+  "property.created-at": CreatedAtPropertyIcon,
   "property.dropdown": DropdownPropertyIcon,
   "property.due-date": DueDatePropertyIcon,
   "property.duplicate": DuplicatePropertyIcon,
@@ -167,6 +172,7 @@ export const ICON_REGISTRY = {
   "property.scope": ScopePropertyIcon,
   "property.start-date": StartDatePropertyIcon,
   "property.state": StatePropertyIcon,
+  "property.updated-at": UpdatedAtPropertyIcon,
   "property.user-circle": UserCirclePropertyIcon,
   "property.user": UserPropertyIcon,
   "property.user-square": UserSquarePropertyIcon,

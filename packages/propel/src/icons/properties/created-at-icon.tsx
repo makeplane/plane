@@ -1,0 +1,29 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import React from "react";
+import { IconWrapper } from "../icon-wrapper";
+import type { ISvgIcons } from "../type";
+
+export function CreatedAtPropertyIcon({ color = "currentColor", ...rest }: ISvgIcons) {
+  const clipPathId = React.useId();
+
+  return (
+    <IconWrapper color={color} clipPathId={clipPathId} {...rest}>
+      <path
+        d="M12.0413 14.666V13.291H10.6663C10.3212 13.2908 10.0413 13.0111 10.0413 12.666C10.0414 12.3211 10.3213 12.0412 10.6663 12.041H12.0413V10.666C12.0414 10.3211 12.3213 10.0412 12.6663 10.041C13.0113 10.041 13.2911 10.321 13.2913 10.666V12.041H14.6663C15.0113 12.041 15.2911 12.321 15.2913 12.666C15.2913 13.0112 15.0114 13.291 14.6663 13.291H13.2913V14.666C13.2913 15.0112 13.0114 15.291 12.6663 15.291C12.3212 15.2908 12.0413 15.0111 12.0413 14.666ZM7.37524 4C7.37524 3.65482 7.65507 3.375 8.00024 3.375C8.34527 3.37518 8.62524 3.65493 8.62524 4V7.61328L10.7717 8.68652C11.0805 8.84089 11.2054 9.21665 11.051 9.52539C10.8967 9.83392 10.5218 9.95878 10.2131 9.80469L7.71997 8.55859C7.50855 8.4527 7.37537 8.23646 7.37524 8V4ZM14.0413 8C14.0413 4.66339 11.3368 1.95818 8.00024 1.95801C4.66352 1.95801 1.95825 4.66328 1.95825 8C1.95843 11.3366 4.66363 14.041 8.00024 14.041C8.26357 14.041 8.5227 14.0247 8.77661 13.9922C9.11898 13.9483 9.43288 14.1899 9.47681 14.5322C9.52073 14.8746 9.27816 15.1875 8.93579 15.2314C8.6292 15.2708 8.31696 15.291 8.00024 15.291C3.97328 15.291 0.708428 12.0269 0.708252 8C0.708252 3.97292 3.97317 0.708008 8.00024 0.708008C12.0272 0.708184 15.2913 3.97303 15.2913 8C15.2912 8.31166 15.2717 8.61902 15.2336 8.9209C15.1904 9.26336 14.8779 9.50612 14.5354 9.46289C14.193 9.41961 13.9502 9.10707 13.9934 8.76465C14.025 8.51447 14.0412 8.2593 14.0413 8Z"
+        fill={color}
+      />
+    </IconWrapper>
+  );
+}

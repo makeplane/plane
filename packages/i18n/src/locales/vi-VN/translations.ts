@@ -757,6 +757,7 @@ export default {
     estimates: "Ước tính",
     estimate: "Ước tính",
     created_at: "Được tạo vào",
+    updated_at: "Thời gian cập nhật",
     completed_at: "Hoàn thành vào",
     layout: "Bố cục",
     filters: "Bộ lọc",

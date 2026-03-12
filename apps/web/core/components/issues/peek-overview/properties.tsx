@@ -15,7 +15,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import {
+  CreatedAtPropertyIcon,
   CycleIcon,
+  CompletedAtPropertyIcon,
   StatePropertyIcon,
   ModuleIcon,
   MembersPropertyIcon,
@@ -26,8 +28,15 @@ import {
   UserCirclePropertyIcon,
   EstimatePropertyIcon,
   ParentPropertyIcon,
+  UpdatedAtPropertyIcon,
 } from "@plane/propel/icons";
-import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import {
+  cn,
+  getDate,
+  renderFormattedDate,
+  renderFormattedPayloadDate,
+  shouldHighlightIssueDueDate,
+} from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
@@ -176,6 +185,38 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
         </SidebarPropertyListItem>
+
+        {issue.created_at && (
+          <SidebarPropertyListItem
+            icon={CreatedAtPropertyIcon}
+            label={t("common.created_at")}
+            childrenClassName="px-1.5 h-7.5"
+          >
+            <span className="truncate text-body-xs-medium text-secondary">{renderFormattedDate(issue.created_at)}</span>
+          </SidebarPropertyListItem>
+        )}
+
+        {issue.updated_at && (
+          <SidebarPropertyListItem
+            icon={UpdatedAtPropertyIcon}
+            label={t("common.updated_at")}
+            childrenClassName="px-1.5 h-7.5"
+          >
+            <span className="truncate text-body-xs-medium text-secondary">{renderFormattedDate(issue.updated_at)}</span>
+          </SidebarPropertyListItem>
+        )}
+
+        {issue.completed_at && (
+          <SidebarPropertyListItem
+            icon={CompletedAtPropertyIcon}
+            label={t("common.completed_at")}
+            childrenClassName="px-1.5 h-7.5"
+          >
+            <span className="truncate text-body-xs-medium text-secondary">
+              {renderFormattedDate(issue.completed_at)}
+            </span>
+          </SidebarPropertyListItem>
+        )}
 
         <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
           <div className="flex items-center gap-2 w-full">

@@ -15,6 +15,8 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
 import {
+  CompletedAtPropertyIcon,
+  CreatedAtPropertyIcon,
   DueDatePropertyIcon,
   EstimatePropertyIcon,
   InitiativeIcon,
@@ -23,12 +25,19 @@ import {
   PriorityPropertyIcon,
   StartDatePropertyIcon,
   StatePropertyIcon,
+  UpdatedAtPropertyIcon,
   UserCirclePropertyIcon,
 } from "@plane/propel/icons";
 // types
 import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // components
-import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import {
+  cn,
+  getDate,
+  renderFormattedDate,
+  renderFormattedPayloadDate,
+  shouldHighlightIssueDueDate,
+} from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
@@ -193,6 +202,42 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
         </SidebarPropertyListItem>
+
+        {epicDetails.created_at && (
+          <SidebarPropertyListItem
+            icon={CreatedAtPropertyIcon}
+            label={t("common.created_at")}
+            childrenClassName="px-1.5 h-7.5"
+          >
+            <span className="truncate text-body-xs-medium text-secondary">
+              {renderFormattedDate(epicDetails.created_at)}
+            </span>
+          </SidebarPropertyListItem>
+        )}
+
+        {epicDetails.updated_at && (
+          <SidebarPropertyListItem
+            icon={UpdatedAtPropertyIcon}
+            label={t("common.updated_at")}
+            childrenClassName="px-1.5 h-7.5"
+          >
+            <span className="truncate text-body-xs-medium text-secondary">
+              {renderFormattedDate(epicDetails.updated_at)}
+            </span>
+          </SidebarPropertyListItem>
+        )}
+
+        {epicDetails.completed_at && (
+          <SidebarPropertyListItem
+            icon={CompletedAtPropertyIcon}
+            label={t("common.completed_at")}
+            childrenClassName="px-1.5 h-7.5"
+          >
+            <span className="truncate text-body-xs-medium text-secondary">
+              {renderFormattedDate(epicDetails.completed_at)}
+            </span>
+          </SidebarPropertyListItem>
+        )}
 
         <SidebarPropertyListItem icon={DueDatePropertyIcon} label="Due date">
           <div className="flex items-center gap-2 w-full">

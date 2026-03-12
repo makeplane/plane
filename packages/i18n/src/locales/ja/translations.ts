@@ -749,6 +749,7 @@ export default {
     estimates: "見積もり",
     estimate: "見積もり",
     created_at: "クリエイテッド アット",
+    updated_at: "更新日時",
     completed_at: "コンプリーテッド アット",
     layout: "レイアウト",
     filters: "フィルター",

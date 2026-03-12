@@ -27,6 +27,7 @@ export type IIssueStore = {
   addIssue(issues: TIssue[]): void;
   addIssueIdentifier(issueIdentifier: string, issueId: string): void;
   updateIssue(issueId: string, issue: Partial<TIssue>): void;
+  applyWorkItemFallbackUpdate(issueId: string, issue: Partial<TIssue>): void;
   removeIssue(issueId: string): void;
   // helper methods
   getIssueById(issueId: string): undefined | TIssue;
@@ -52,6 +53,7 @@ export class IssueStore implements IIssueStore {
       addIssue: action,
       addIssueIdentifier: action,
       updateIssue: action,
+      applyWorkItemFallbackUpdate: action,
       removeIssue: action,
     });
     this.issueService = new IssueService();
@@ -116,12 +118,43 @@ export class IssueStore implements IIssueStore {
     runInAction(() => {
       const existingWorkItem = this.workItemsMap.get(issueId);
       if (!existingWorkItem) return;
+
+      const completedAtUpdate =
+        issue.state_id && existingWorkItem.state_id !== issue.state_id
+          ? {
+              completed_at:
+                rootStore.state.getStateById(issue.state_id)?.group === "completed" ? getCurrentDateTimeInISO() : null,
+            }
+          : {};
       const updatedIssue: TIssue = {
         ...existingWorkItem,
         ...issue,
+        ...completedAtUpdate,
         updated_at: getCurrentDateTimeInISO(),
       };
+
       this.workItemsMap.set(issueId, updatedIssue);
+    });
+  };
+
+  /**
+   * @description This method restores work item values without applying side-effects.
+   * Used for rollback/fallback paths where caller payload is the source of truth.
+   * @param {string} workItemId
+   * @param {Partial<TIssue>} workItem
+   * @returns {void}
+   */
+  applyWorkItemFallbackUpdate = (workItemId: string, workItem: Partial<TIssue>): void => {
+    runInAction(() => {
+      const existingWorkItem = this.workItemsMap.get(workItemId);
+      if (!existingWorkItem) return;
+
+      const updatedWorkItem: TIssue = {
+        ...existingWorkItem,
+        ...workItem,
+      };
+
+      this.workItemsMap.set(workItemId, updatedWorkItem);
     });
   };
 

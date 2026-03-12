@@ -763,6 +763,7 @@ export default {
     estimates: "Schätzungen",
     estimate: "Schätzung",
     created_at: "Erstellt am",
+    updated_at: "Aktualisiert am",
     completed_at: "Abgeschlossen am",
     layout: "Layout",
     filters: "Filter",

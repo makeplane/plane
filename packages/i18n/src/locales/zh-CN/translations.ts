@@ -736,6 +736,7 @@ export default {
     estimates: "估算",
     estimate: "估算",
     created_at: "创建于",
+    updated_at: "更新时间",
     completed_at: "完成于",
     layout: "布局",
     filters: "筛选",

@@ -88,6 +88,8 @@ export const LayoutIconsMap = [
 
 export const PropertyIconsMap = [
   { icon: <Icon name="property.boolean" />, title: "BooleanPropertyIcon" },
+  { icon: <Icon name="property.completed-at" />, title: "CompletedAtPropertyIcon" },
+  { icon: <Icon name="property.created-at" />, title: "CreatedAtPropertyIcon" },
   { icon: <Icon name="property.dropdown" />, title: "DropdownPropertyIcon" },
   { icon: <Icon name="property.due-date" />, title: "DueDatePropertyIcon" },
   { icon: <Icon name="property.duplicate" />, title: "DuplicatePropertyIcon" },
@@ -103,6 +105,7 @@ export const PropertyIconsMap = [
   { icon: <Icon name="property.scope" />, title: "ScopePropertyIcon" },
   { icon: <Icon name="property.start-date" />, title: "StartDatePropertyIcon" },
   { icon: <Icon name="property.state" />, title: "StatePropertyIcon" },
+  { icon: <Icon name="property.updated-at" />, title: "UpdatedAtPropertyIcon" },
   { icon: <Icon name="property.user-circle" />, title: "UserCirclePropertyIcon" },
   { icon: <Icon name="property.user" />, title: "UserPropertyIcon" },
   { icon: <Icon name="property.user-square" />, title: "UserSquarePropertyIcon" },

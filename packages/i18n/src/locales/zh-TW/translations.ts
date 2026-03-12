@@ -735,6 +735,7 @@ export default {
     estimates: "評估",
     estimate: "評估",
     created_at: "建立於",
+    updated_at: "更新時間",
     completed_at: "完成於",
     layout: "版面配置",
     filters: "篩選器",

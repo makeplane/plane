@@ -753,6 +753,7 @@ export default {
     estimates: "Оценки",
     estimate: "Оценка",
     created_at: "Создано в",
+    updated_at: "Дата обновления",
     completed_at: "Завершено в",
     layout: "Макет",
     filters: "Фильтры",

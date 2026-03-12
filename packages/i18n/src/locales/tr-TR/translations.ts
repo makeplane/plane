@@ -750,6 +750,7 @@ export default {
     estimates: "Tahminler",
     estimate: "Tahmin",
     created_at: "Oluşturulma tarihi",
+    updated_at: "Güncelleme tarihi",
     completed_at: "Tamamlanma tarihi",
     layout: "Düzen",
     filters: "Filtreler",

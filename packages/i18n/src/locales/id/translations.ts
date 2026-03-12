@@ -753,6 +753,7 @@ export default {
     estimates: "Perkiraan",
     estimate: "Perkiraan",
     created_at: "Dibuat pada",
+    updated_at: "Diperbarui pada",
     completed_at: "Selesai pada",
     layout: "Tata letak",
     filters: "Filter",

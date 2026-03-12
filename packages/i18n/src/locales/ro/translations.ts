@@ -755,6 +755,7 @@ export default {
     estimates: "Estimări",
     estimate: "Estimare",
     created_at: "Creat la",
+    updated_at: "Actualizat la",
     completed_at: "Finalizat la",
     layout: "Aspect",
     filters: "Filtre",

@@ -741,6 +741,7 @@ export default {
     estimates: "추정",
     estimate: "추정",
     created_at: "생성일",
+    updated_at: "업데이트일",
     completed_at: "완료일",
     layout: "레이아웃",
     filters: "필터",

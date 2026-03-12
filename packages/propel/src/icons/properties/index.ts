@@ -13,6 +13,8 @@
 
 export * from "./boolean-icon";
 export * from "./comment-reply-icon";
+export * from "./completed-at-icon";
+export * from "./created-at-icon";
 export * from "./dropdown-icon";
 export * from "./due-date-icon";
 export * from "./duplicate-icon";
@@ -28,6 +30,7 @@ export * from "./relation-icon";
 export * from "./scope-icon";
 export * from "./start-date-icon";
 export * from "./state-icon";
+export * from "./updated-at-icon";
 export * from "./user-circle-icon";
 export * from "./user-icon";
 export * from "./user-square-icon";
