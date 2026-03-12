@@ -29,6 +29,12 @@ export interface IDepartment {
     name: string;
     identifier: string;
   } | null;
+  linked_workspace?: string | null;
+  linked_workspace_detail?: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
   staff_count: number;
   children?: IDepartment[];
   created_at: string;

@@ -176,13 +176,13 @@ class DepartmentTreeEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         # Get only root departments (no parent)
+        # Department is instance-level (no workspace FK) — return all root departments
         root_departments = (
             Department.objects.filter(
-                workspace__slug=slug,
                 parent__isnull=True,
                 deleted_at__isnull=True,
             )
-            .select_related("manager", "linked_project")
+            .select_related("manager", "linked_workspace")
             .annotate(
                 staff_count=Count(
                     "staff_members",

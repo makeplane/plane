@@ -2,10 +2,10 @@ import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@plane/utils";
 import { getButtonStyling } from "@plane/propel/button";
-import type { IInstanceDepartment } from "@plane/services";
+import type { IDepartment } from "@/plane-web/services/department.service";
 
 type Props = {
-  dept: IInstanceDepartment;
+  dept: IDepartment;
   depth?: number;
 };
 

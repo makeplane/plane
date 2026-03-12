@@ -81,4 +81,4 @@ class StaffProfile(BaseModel):
         return f"sh{self.staff_id}@swing.shinhan.com"
 
     def __str__(self):
-        return f"{self.staff_id} - {self.user.get_full_name()}"
+        return f"{self.staff_id} - {self.user.full_name}"

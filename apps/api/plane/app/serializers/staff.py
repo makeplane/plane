@@ -71,8 +71,8 @@ class MyStaffProfileSerializer(BaseSerializer):
 
     class Meta:
         model = StaffProfile
-        fields = ["id", "staff_id", "position", "department", "department_detail"]
-        read_only_fields = ["id", "staff_id", "position", "department", "department_detail"]
+        fields = ["id", "staff_id", "position", "department", "department_detail", "is_department_manager"]
+        read_only_fields = ["id", "staff_id", "position", "department", "department_detail", "is_department_manager"]
 
     def get_department_detail(self, obj):
         if not obj.department:

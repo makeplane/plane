@@ -122,9 +122,22 @@ class InstanceStaffDetailEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, pk):
-        staff = StaffProfile.objects.filter(pk=pk, deleted_at__isnull=True).first()
+        staff = StaffProfile.objects.select_related("user").filter(pk=pk, deleted_at__isnull=True).first()
         if not staff:
             return Response({"error": "Staff not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update user-level fields that are read-only on the serializer
+        user_fields = {}
+        if "display_name" in request.data:
+            user_fields["display_name"] = request.data["display_name"]
+        if "first_name" in request.data:
+            user_fields["first_name"] = request.data["first_name"]
+        if "last_name" in request.data:
+            user_fields["last_name"] = request.data["last_name"]
+        if user_fields:
+            for field, value in user_fields.items():
+                setattr(staff.user, field, value)
+            staff.user.save(update_fields=list(user_fields.keys()))
 
         serializer = StaffProfileSerializer(staff, data=request.data, partial=True)
         if serializer.is_valid():

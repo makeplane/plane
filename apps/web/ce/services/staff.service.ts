@@ -92,6 +92,7 @@ export interface IMyStaffProfile {
     name: string;
     code: string;
   } | null;
+  is_department_manager: boolean;
 }
 
 export class StaffService extends APIService {
