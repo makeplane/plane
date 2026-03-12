@@ -11,7 +11,7 @@ import { computedFn } from "mobx-utils";
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@plane/constants";
 import type { IssuePaginationOptions, TIssueParams } from "@plane/types";
 // store
-import type { CoreRootStore } from "@/store/root.store";
+import type { RootStore } from "@/store/root.store";
 // types
 import type {
   TIssueLayoutOptions,
@@ -60,7 +60,7 @@ export class IssueFilterStore implements IIssueFilterStore {
   };
   filters: { [anchor: string]: TIssueFilters } | undefined = undefined;
 
-  constructor(private store: CoreRootStore) {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // observables
       layoutOptions: observable,
