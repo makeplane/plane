@@ -32,7 +32,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   // derived values
-  const isDeleteDisabled = state.default ? true : totalStates === 1 ? true : false;
+  const isDeleteDisabled = state.default ? true : totalStates === 1;
 
   const handleDeleteState = async () => {
     if (isDeleteDisabled) return;

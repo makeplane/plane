@@ -51,7 +51,7 @@ export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
             return (
               <FilterOption
                 key={groupBy?.key}
-                isChecked={selectedGroupBy === groupBy?.key ? true : false}
+                isChecked={selectedGroupBy === groupBy?.key}
                 onClick={() => handleUpdate(groupBy.key)}
                 title={t(groupBy.titleTranslationKey)}
                 multiple={false}

@@ -87,10 +87,7 @@ export const parseChartData = (
       }
     }
 
-    return {
-      ...datum,
-      ...missingValues,
-    };
+    return Object.assign({}, datum, missingValues);
   });
 
   // capitalize first letter if groupByProperty is in TO_CAPITALIZE_PROPERTIES

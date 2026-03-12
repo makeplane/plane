@@ -60,7 +60,7 @@ export const FilterState = observer(function FilterState(props: Props) {
                 {sortedOptions.slice(0, itemsToRender).map((state) => (
                   <FilterOption
                     key={state.id}
-                    isChecked={appliedFilters?.includes(state.id) ? true : false}
+                    isChecked={appliedFilters?.includes(state.id)}
                     onClick={() => handleUpdate(state.id)}
                     icon={
                       <StateGroupIcon

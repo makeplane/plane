@@ -42,11 +42,10 @@ export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
     })
       .map((item) => {
         const preference = currentWorkspaceNavigationPreferences?.[item.key];
-        return {
-          ...item,
+        return Object.assign({}, item, {
           sort_order: preference?.sort_order ?? 0,
           is_pinned: preference?.is_pinned ?? false,
-        };
+        });
       })
       .sort((a, b) => {
         // First sort by pinned status (pinned items first)

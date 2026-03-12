@@ -60,7 +60,7 @@ export const FilterState = observer(function FilterState(props: Props) {
                 {filteredOptions.slice(0, itemsToRender).map((state) => (
                   <FilterOption
                     key={state?.id}
-                    isChecked={filterValue?.includes(state?.id) ? true : false}
+                    isChecked={filterValue?.includes(state?.id)}
                     onClick={() => handleInboxIssueFilters("state", handleFilterValue(state.id))}
                     icon={
                       <StateGroupIcon
