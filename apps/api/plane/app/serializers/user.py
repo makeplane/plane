@@ -154,6 +154,12 @@ class UserLiteSerializer(BaseSerializer):
 
 
 class UserAdminLiteSerializer(BaseSerializer):
+    department_name = serializers.SerializerMethodField()
+
+    def get_department_name(self, obj):
+        profile = next(iter(obj.staff_profiles.all()), None)
+        return profile.department.name if profile and profile.department_id else None
+
     class Meta:
         model = User
         fields = [
@@ -166,6 +172,7 @@ class UserAdminLiteSerializer(BaseSerializer):
             "display_name",
             "email",
             "last_login_medium",
+            "department_name",
         ]
         read_only_fields = ["id", "is_bot"]
 

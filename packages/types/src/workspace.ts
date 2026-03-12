@@ -61,7 +61,7 @@ export interface IWorkspaceMemberInvitation {
 }
 
 export interface IWorkspaceBulkInviteFormData {
-  emails: { email: string; role: TUserPermissions }[];
+  emails: { email: string; role: TUserPermissions; auto_join?: boolean }[];
 }
 
 export type Properties = {
