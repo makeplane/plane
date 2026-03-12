@@ -363,6 +363,8 @@ def process_single_issue(slug, project, user_id, issue_data, report_id=None, job
         if issue_data.get("subscribers"):
             process_issue_subscribers(slug, issue, issue_data.get("subscribers"), report_id=report_id, job_id=job_id)
 
+        process_issue_estimates(slug, project, issue, issue_data, report_id=report_id, job_id=job_id)
+
         issue.save(disable_auto_set_user=True)
 
         # Preserve external sequence if preserve_sequence is True
@@ -1674,6 +1676,7 @@ def process_issues(slug, project, user_id, issue_list, report_id=None, job_id=No
             update_fields["created_at"] = issue_data["created_at"]
         if issue_data.get("updated_at"):
             update_fields["updated_at"] = issue_data["updated_at"]
+            update_fields["last_activity_at"] = issue_data["updated_at"]
         if issue_data.get("created_by"):
             update_fields["created_by_id"] = issue_data["created_by"]
             update_fields["updated_by_id"] = issue_data["created_by"]
