@@ -78,7 +78,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
   const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
-  const { getFieldRules } = useIssueFormValidation();
+  const { getFieldRules, getModuleFieldRules } = useIssueFormValidation(projectId);
   // derived values
   const projectDetails = getProjectById(projectId);
 
@@ -236,8 +236,9 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
         <Controller
           control={control}
           name="module_ids"
+          rules={!id ? getModuleFieldRules({ validate: (v: string[] | undefined) => (v && v.length > 0) || t("module_is_required") }) : {}}
           render={({ field: { value, onChange } }) => (
-            <div className="h-7">
+            <div className={cn("h-7 rounded-sm", errors.module_ids && "outline outline-1 outline-danger-strong")}>
               <ModuleDropdown
                 projectId={projectId ?? undefined}
                 value={value ?? []}

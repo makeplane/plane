@@ -490,6 +490,7 @@ export default {
   state_is_required: "상태가 필요합니다",
   priority_is_required: "우선순위가 필요합니다",
   assignee_is_required: "담당자가 필요합니다",
+  module_is_required: "모듈이 필요합니다",
   label_is_required: "레이블이 필요합니다",
   start_date_is_required: "시작 날짜가 필요합니다",
   due_date_is_required: "마감 날짜가 필요합니다",
@@ -577,6 +578,20 @@ export default {
       created_at: "생성일",
       updated_at: "업데이트일",
       name: "이름",
+    },
+  },
+  bank_wide_project: {
+    label: "전행 프로젝트",
+    settings: {
+      title: "전행 프로젝트",
+      label: "전행 프로젝트로 지정",
+      description: "이 프로젝트를 전행 프로젝트로 지정하여 조직 전체의 모든 멤버에게 표시하고 관련성을 높입니다.",
+      header_description: "이 프로젝트의 전행 프로젝트 설정을 구성합니다.",
+      updated_success: "전행 프로젝트 설정이 업데이트되었습니다.",
+      updated_error: "전행 프로젝트 설정 업데이트에 실패했습니다. 다시 시도해주세요.",
+    },
+    filter: {
+      label: "전행 프로젝트만",
     },
   },
   toast: {

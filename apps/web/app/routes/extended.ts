@@ -25,6 +25,10 @@ export const extendedRoutes: RouteConfigEntry[] = [
               ":workspaceSlug/settings/projects/:projectId/features/time-tracking",
               "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/time-tracking/page.tsx"
             ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/bank-wide",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/bank-wide/page.tsx"
+            ),
           ]),
         ]),
       ]),

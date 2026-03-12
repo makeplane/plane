@@ -121,6 +121,13 @@ export const PROJECT_SETTINGS: Record<TProjectSettingsTabs, TProjectSettingsItem
     access: [EUserProjectRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/features/time-tracking/`,
   },
+  bank_wide: {
+    key: "bank_wide",
+    i18n_label: "bank_wide_project.settings.title",
+    href: `/bank-wide`,
+    access: [EUserProjectRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/bank-wide/`,
+  },
 };
 
 export const PROJECT_SETTINGS_FLAT_MAP: TProjectSettingsItem[] = Object.values(PROJECT_SETTINGS);
@@ -130,6 +137,7 @@ export const GROUPED_PROJECT_SETTINGS: Record<PROJECT_SETTINGS_CATEGORY, TProjec
     PROJECT_SETTINGS["general"],
     PROJECT_SETTINGS["members"],
     PROJECT_SETTINGS["worklogs"],
+    PROJECT_SETTINGS["bank_wide"],
   ],
   [PROJECT_SETTINGS_CATEGORY.FEATURES]: [
     PROJECT_SETTINGS["features_cycles"],

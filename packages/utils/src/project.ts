@@ -84,6 +84,8 @@ export const shouldFilterProject = (
   if (displayFilters.my_projects && !project.member_role) fallsInFilters = false;
   if (displayFilters.archived_projects && !project.archived_at) fallsInFilters = false;
   if (project.archived_at) fallsInFilters = displayFilters.archived_projects ? fallsInFilters : false;
+  if (displayFilters.is_bank_wide && !(project as TProject & { is_bank_wide?: boolean }).is_bank_wide)
+    fallsInFilters = false;
 
   return fallsInFilters;
 };

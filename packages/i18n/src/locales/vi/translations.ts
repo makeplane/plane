@@ -503,6 +503,7 @@ export default {
   state_is_required: "Trạng thái là bắt buộc",
   priority_is_required: "Độ ưu tiên là bắt buộc",
   assignee_is_required: "Người được phân công là bắt buộc",
+  module_is_required: "Module là bắt buộc",
   label_is_required: "Nhãn là bắt buộc",
   start_date_is_required: "Ngày bắt đầu là bắt buộc",
   due_date_is_required: "Ngày hết hạn là bắt buộc",
@@ -590,6 +591,21 @@ export default {
       created_at: "Thời gian tạo",
       updated_at: "Thời gian cập nhật",
       name: "Tên",
+    },
+  },
+  bank_wide_project: {
+    label: "Dự án toàn ngân hàng",
+    settings: {
+      title: "Dự án toàn ngân hàng",
+      label: "Đánh dấu là Dự án toàn ngân hàng",
+      description:
+        "Đánh dấu dự án này là dự án toàn ngân hàng, hiển thị và liên quan đến tất cả thành viên trong tổ chức.",
+      header_description: "Cấu hình cài đặt Dự án toàn ngân hàng cho dự án này.",
+      updated_success: "Cài đặt dự án toàn ngân hàng đã được cập nhật.",
+      updated_error: "Cập nhật cài đặt dự án toàn ngân hàng thất bại. Vui lòng thử lại.",
+    },
+    filter: {
+      label: "Chỉ dự án toàn ngân hàng",
     },
   },
   toast: {

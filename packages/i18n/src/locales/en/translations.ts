@@ -497,6 +497,7 @@ export default {
   state_is_required: "State is required",
   priority_is_required: "Priority is required",
   assignee_is_required: "Assignee is required",
+  module_is_required: "Module is required",
   label_is_required: "Label is required",
   start_date_is_required: "Start date is required",
   due_date_is_required: "Due date is required",
@@ -584,6 +585,21 @@ export default {
       created_at: "Created at",
       updated_at: "Updated at",
       name: "Name",
+    },
+  },
+  bank_wide_project: {
+    label: "Bank-wide Project",
+    settings: {
+      title: "Bank-wide",
+      label: "Mark as Bank-wide Project",
+      description:
+        "Designate this project as a bank-wide project, making it visible and relevant to all members across the organization.",
+      header_description: "Configure Bank-wide Project settings for this project.",
+      updated_success: "Bank-wide project setting has been updated.",
+      updated_error: "Failed to update bank-wide project setting. Please try again.",
+    },
+    filter: {
+      label: "Bank-wide only",
     },
   },
   toast: {
