@@ -29,6 +29,7 @@ import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useIssueFormValidation } from "@/hooks/store/use-issue-form-validation";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -77,6 +78,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
   const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
+  const { getFieldRules } = useIssueFormValidation();
   // derived values
   const projectDetails = getProjectById(projectId);
 
@@ -132,7 +134,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
       <Controller
         control={control}
         name="assignee_ids"
-        rules={{ validate: (v) => (v && v.length > 0) || (t("assignee_is_required")) }}
+        rules={getFieldRules({ validate: (v) => (v && v.length > 0) || t("assignee_is_required") })}
         render={({ field: { value, onChange } }) => (
           <div className={cn("h-7 rounded-sm", errors.assignee_ids && "outline outline-1 outline-danger-strong")}>
             <MemberDropdown
@@ -172,7 +174,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
       <Controller
         control={control}
         name="start_date"
-        rules={{ required: t("start_date_is_required") }}
+        rules={getFieldRules({ required: t("start_date_is_required") })}
         render={({ field: { value, onChange } }) => (
           <div className={cn("h-7 rounded-sm", errors.start_date && "outline outline-1 outline-danger-strong")}>
             <DateDropdown
@@ -192,7 +194,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
       <Controller
         control={control}
         name="target_date"
-        rules={{ required: t("due_date_is_required") }}
+        rules={getFieldRules({ required: t("due_date_is_required") })}
         render={({ field: { value, onChange } }) => (
           <div className={cn("h-7 rounded-sm", errors.target_date && "outline outline-1 outline-danger-strong")}>
             <DateDropdown
