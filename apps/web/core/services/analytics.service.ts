@@ -88,7 +88,7 @@ export class AnalyticsService extends APIService {
       });
   }
 
-  processUrl<T extends string>(
+  processUrl<_T extends string>(
     endpoint: string,
     workspaceSlug: string,
     tab: TAnalyticsGraphsBase | TAnalyticsTabsBase,

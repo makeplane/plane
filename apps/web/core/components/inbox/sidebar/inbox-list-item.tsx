@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { FC, MouseEvent } from "react";
+import type { MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";

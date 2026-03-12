@@ -11,7 +11,7 @@ import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
-import { getRandomLabelColor, LABEL_COLOR_OPTIONS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -91,7 +91,7 @@ export const CreateUpdateLabelInline = observer(
 
       await labelOperationsCallbacks
         .createLabel(formData)
-        .then((res) => {
+        .then((_res) => {
           handleClose();
           reset(defaultValues);
         })
@@ -111,7 +111,7 @@ export const CreateUpdateLabelInline = observer(
 
       await labelOperationsCallbacks
         .updateLabel(labelToUpdate.id, formData)
-        .then((res) => {
+        .then((_res) => {
           reset(defaultValues);
           handleClose();
         })
