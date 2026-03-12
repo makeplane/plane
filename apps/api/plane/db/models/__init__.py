@@ -83,7 +83,7 @@ from .issue_type import IssueType
 
 from .recent_visit import UserRecentVisit
 
-from .label import Label, DEFAULT_LABELS
+from .label import Label
 
 from .device import Device, DeviceSession
 

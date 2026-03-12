@@ -108,6 +108,16 @@ class Issue(ProjectBaseModel):
         ("medium", "Medium"),
         ("low", "Low"),
     )
+    FREQUENCY_CHOICES = (
+        ("daily", "Daily"),
+        ("weekly", "Weekly"),
+        ("bi_weekly", "Bi-weekly"),
+        ("monthly", "Monthly"),
+        ("quarterly", "Quarterly"),
+        ("half_year", "Half-year"),
+        ("yearly", "Yearly"),
+        ("ad_hoc", "Ad-hoc"),
+    )
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -165,6 +175,13 @@ class Issue(ProjectBaseModel):
         null=True,
         blank=True,
     )
+    frequency = models.CharField(
+        max_length=20,
+        choices=FREQUENCY_CHOICES,
+        verbose_name="Issue Frequency",
+        null=True,
+        blank=True,
+    )
     # Total time spent in minutes (aggregated from worklogs)
     time_spent = models.PositiveIntegerField(default=0)
     issue_objects = IssueManager()
@@ -174,6 +191,11 @@ class Issue(ProjectBaseModel):
         verbose_name_plural = "Issues"
         db_table = "issues"
         ordering = ("-created_at",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Cache original state_id to detect transitions in save() without a DB query
+        self._original_state_id = self.state_id
 
     def save(self, *args, **kwargs):
         if self.state is None:
@@ -194,10 +216,20 @@ class Issue(ProjectBaseModel):
             try:
                 from plane.db.models import State
 
-                if self.state.group == "completed":
-                    self.completed_at = timezone.now()
+                if self._state.adding:
+                    # New issue: auto-set completed_at based on state group
+                    if self.state.group == "completed":
+                        self.completed_at = timezone.now()
+                    else:
+                        self.completed_at = None
                 else:
-                    self.completed_at = None
+                    # Existing issue: only auto-set completed_at on state transitions
+                    if self._original_state_id != self.state_id:
+                        if self.state.group == "completed":
+                            self.completed_at = timezone.now()
+                        else:
+                            self.completed_at = None
+                    # else: state unchanged — preserve existing completed_at (allows manual edits)
             except ImportError:
                 pass
 
@@ -230,6 +262,7 @@ class Issue(ProjectBaseModel):
                     self.sort_order = largest_sort_order + 10000
 
                 super(Issue, self).save(*args, **kwargs)
+                self._original_state_id = self.state_id
 
                 IssueSequence.objects.create(issue=self, sequence=self.sequence_id, project=self.project)
         else:
@@ -240,6 +273,7 @@ class Issue(ProjectBaseModel):
                 else strip_tags(self.description_html)
             )
             super(Issue, self).save(*args, **kwargs)
+            self._original_state_id = self.state_id
 
     def __str__(self):
         """Return name of the issue"""
@@ -671,6 +705,16 @@ class IssueVersion(ProjectBaseModel):
         ("medium", "Medium"),
         ("low", "Low"),
     )
+    FREQUENCY_CHOICES = (
+        ("daily", "Daily"),
+        ("weekly", "Weekly"),
+        ("bi_weekly", "Bi-weekly"),
+        ("monthly", "Monthly"),
+        ("quarterly", "Quarterly"),
+        ("half_year", "Half-year"),
+        ("yearly", "Yearly"),
+        ("ad_hoc", "Ad-hoc"),
+    )
 
     parent = models.UUIDField(blank=True, null=True)
     state = models.UUIDField(blank=True, null=True)
@@ -694,6 +738,13 @@ class IssueVersion(ProjectBaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
     type = models.UUIDField(blank=True, null=True)
+    frequency = models.CharField(
+        max_length=20,
+        choices=FREQUENCY_CHOICES,
+        verbose_name="Issue Frequency",
+        null=True,
+        blank=True,
+    )
     cycle = models.UUIDField(null=True, blank=True)
     modules = ArrayField(models.UUIDField(), blank=True, default=list)
     properties = models.JSONField(default=dict)  # issue properties
@@ -755,6 +806,7 @@ class IssueVersion(ProjectBaseModel):
                 external_source=issue.external_source,
                 external_id=issue.external_id,
                 type=issue.type_id,
+                frequency=issue.frequency,
                 cycle=cycle_issue.cycle_id if cycle_issue else None,
                 modules=list(Module.objects.filter(issue=issue).values_list("id", flat=True)),
                 properties={},

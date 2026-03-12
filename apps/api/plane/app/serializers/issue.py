@@ -60,6 +60,7 @@ class IssueFlatSerializer(BaseSerializer):
             "description_json",
             "description_html",
             "priority",
+            "frequency",
             "start_date",
             "target_date",
             "sequence_id",
@@ -124,6 +125,13 @@ class IssueCreateSerializer(BaseSerializer):
         allow_triage = self.context.get("allow_triage_state", False)
         state_manager = State.triage_objects if allow_triage else State.objects
 
+        # Validate frequency against allowed choices
+        frequency = attrs.get("frequency")
+        if frequency is not None:
+            valid_frequencies = {choice[0] for choice in Issue.FREQUENCY_CHOICES}
+            if frequency not in valid_frequencies:
+                raise serializers.ValidationError({"frequency": f"Invalid frequency value '{frequency}'"})
+
         if (
             attrs.get("start_date", None) is not None
             and attrs.get("target_date", None) is not None
@@ -163,6 +171,14 @@ class IssueCreateSerializer(BaseSerializer):
                     id__in=label_ids,
                 ).values_list("id", flat=True)
             )
+
+        # completed_at may only be set when the issue state is in the "completed" group
+        if attrs.get("completed_at") is not None:
+            state = attrs.get("state") or (self.instance.state if self.instance else None)
+            if state and state.group != "completed":
+                raise serializers.ValidationError(
+                    {"completed_at": "completed_at can only be set on issues in a completed state"}
+                )
 
         # Check state is from the project only else raise validation error
         if (
@@ -781,6 +797,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "completed_at",
             "estimate_point",
             "priority",
+            "frequency",
             "start_date",
             "target_date",
             "sequence_id",
@@ -838,6 +855,7 @@ class IssueListDetailSerializer(serializers.Serializer):
             "completed_at": instance.completed_at,
             "estimate_point": instance.estimate_point_id,
             "priority": instance.priority,
+            "frequency": instance.frequency,
             "start_date": instance.start_date,
             "target_date": instance.target_date,
             "sequence_id": instance.sequence_id,
@@ -993,10 +1011,10 @@ class IssueVersionDetailSerializer(BaseSerializer):
             "external_source",
             "external_id",
             "type",
+            "frequency",
             "cycle",
             "modules",
             "meta",
-            "name",
             "last_saved_at",
             "owned_by",
             "created_at",

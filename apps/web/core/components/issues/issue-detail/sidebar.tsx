@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { RefreshCw } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -29,6 +30,7 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { FrequencyDropdown } from "@/plane-web/components/dropdowns/frequency";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -132,6 +134,20 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 className="w-full h-7.5 grow rounded-sm"
                 buttonContainerClassName="size-full text-left"
                 buttonClassName="size-full px-2 py-0.5 whitespace-nowrap [&_svg]:size-3.5"
+              />
+            </SidebarPropertyListItem>
+
+            <SidebarPropertyListItem icon={RefreshCw} label={t("common.frequency")}>
+              <FrequencyDropdown
+                value={issue?.frequency}
+                onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { frequency: val })}
+                disabled={!isEditable}
+                buttonVariant="transparent-with-text"
+                className="group w-full grow"
+                buttonContainerClassName="w-full text-left h-7.5"
+                buttonClassName="text-body-xs-regular"
+                dropdownArrow
+                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
               />
             </SidebarPropertyListItem>
 

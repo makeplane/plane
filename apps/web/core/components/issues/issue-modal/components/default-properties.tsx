@@ -47,6 +47,7 @@ type TIssueDefaultPropertiesProps = {
   isDraft: boolean;
   handleFormChange: () => void;
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
+  children?: React.ReactNode;
 };
 
 export const IssueDefaultProperties = observer(function IssueDefaultProperties(props: TIssueDefaultPropertiesProps) {
@@ -62,6 +63,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
     isDraft,
     handleFormChange,
     setSelectedParentIssue,
+    children,
   } = props;
   // states
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
@@ -152,9 +154,8 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
       <Controller
         control={control}
         name="label_ids"
-        rules={{ validate: (v) => (v && v.length > 0) || (t("label_is_required")) }}
         render={({ field: { value, onChange } }) => (
-          <div className={cn("h-7 rounded-sm", errors.label_ids && "outline outline-1 outline-danger-strong")}>
+          <div className="h-7">
             <IssueLabelSelect
               value={value}
               onChange={(labelIds) => {
@@ -329,6 +330,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           </button>
         )}
       </div>
+      {children}
       <Controller
         control={control}
         name="parent_id"

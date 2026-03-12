@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TIssuePriorities } from "../issues";
+import type { TIssuePriorities, TIssueFrequency } from "../issues";
 import type { TStateGroups } from "../state";
 import type { TIssuePublicComment } from "./activity/issue_comment";
 import type { TIssueAttachment } from "./issue_attachment";
@@ -50,6 +50,7 @@ export type TBaseIssue = {
 
   state_id: string | null;
   priority: TIssuePriorities | null;
+  frequency: TIssueFrequency | null;
   label_ids: string[];
   assignee_ids: string[];
   estimate_point: string | null;
