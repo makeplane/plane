@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -25,14 +24,7 @@ type Props = {
 };
 
 export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleTitle(props: Props) {
-  const {
-    isOpen,
-    parentIssueId,
-    disabled,
-    issueServiceType = EIssueServiceType.ISSUES,
-    projectId,
-    workspaceSlug,
-  } = props;
+  const { isOpen, parentIssueId, disabled, issueServiceType = EIssueServiceType.ISSUES, projectId } = props;
   // translation
   const { t } = useTranslation();
   // store hooks

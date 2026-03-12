@@ -83,7 +83,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         title: "Success!",
         message: "Work items added to the cycle successfully.",
       });
-    } catch (error) {
+    } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
