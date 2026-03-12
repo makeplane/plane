@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 
 export type TEstimateTimeInputProps = {
   value?: number;

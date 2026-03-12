@@ -23,10 +23,11 @@ export const NotificationFilter = observer(function NotificationFilter() {
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
 
-  const translatedFilterTypeOptions = FILTER_TYPE_OPTIONS.map((filter) => ({
-    ...filter,
-    label: t(filter.i18n_label),
-  }));
+  const translatedFilterTypeOptions = FILTER_TYPE_OPTIONS.map((filter) =>
+    Object.assign(filter, {
+      label: t(filter.i18n_label),
+    })
+  );
 
   return (
     <PopoverMenu

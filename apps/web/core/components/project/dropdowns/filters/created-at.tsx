@@ -34,7 +34,7 @@ export const FilterCreatedDate = observer(function FilterCreatedDate(props: Prop
 
   const isCustomDateSelected = () => {
     const isValidDateSelected = appliedFilters?.filter((f) => isInDateFormat(f.split(";")[0])) || [];
-    return isValidDateSelected.length > 0 ? true : false;
+    return isValidDateSelected.length > 0;
   };
   const handleCustomDate = () => {
     if (isCustomDateSelected()) {
@@ -65,7 +65,7 @@ export const FilterCreatedDate = observer(function FilterCreatedDate(props: Prop
               {filteredOptions.map((option) => (
                 <FilterOption
                   key={option.value}
-                  isChecked={appliedFilters?.includes(option.value) ? true : false}
+                  isChecked={!!appliedFilters?.includes(option.value)}
                   onClick={() => handleUpdate(option.value)}
                   title={option.name}
                   multiple={false}

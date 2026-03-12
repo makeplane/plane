@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { GOD_MODE_URL } from "@plane/constants";

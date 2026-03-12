@@ -77,7 +77,7 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
   const cycleIds = (getProjectCycleIds(projectId) ?? [])?.filter((cycleId) => {
     const cycleDetails = getCycleById(cycleId);
     if (currentCycleId && currentCycleId === cycleId) return false;
-    return cycleDetails?.status ? (cycleDetails?.status.toLowerCase() != "completed" ? true : false) : true;
+    return cycleDetails?.status ? (cycleDetails?.status.toLowerCase() != "completed") : true;
   });
 
   const onOpen = () => {

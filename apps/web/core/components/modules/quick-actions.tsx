@@ -44,7 +44,7 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
 
   const { getModuleById, restoreModule } = useModule();
 
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   // derived values
   const moduleDetails = getModuleById(moduleId);
   // auth

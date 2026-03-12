@@ -12,7 +12,6 @@ import type { IWorkspaceSearchResults } from "@plane/types";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // helpers
-import { openProjectAndScrollToSidebar } from "../../actions/helper";
 import { PowerKModalCommandItem } from "./command-item";
 import { POWER_K_SEARCH_RESULTS_GROUPS_MAP } from "./search-results-map";
 

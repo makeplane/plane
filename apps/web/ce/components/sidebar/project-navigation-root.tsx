@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 // components
 import { ProjectNavigation } from "@/components/workspace/sidebar/project-navigation";
 

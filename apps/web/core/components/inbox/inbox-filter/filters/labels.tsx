@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import type { IIssueLabel } from "@plane/types";
@@ -62,7 +61,7 @@ export const FilterLabels = observer(function FilterLabels(props: Props) {
                 {filteredOptions.slice(0, itemsToRender).map((label) => (
                   <FilterOption
                     key={label?.id}
-                    isChecked={filterValue?.includes(label?.id) ? true : false}
+                    isChecked={!!filterValue?.includes(label?.id)}
                     onClick={() => handleInboxIssueFilters("labels", handleFilterValue(label.id))}
                     icon={<LabelIcons color={label.color} />}
                     title={label.name}

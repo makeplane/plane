@@ -141,9 +141,9 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
           }
         } else {
           if (this.filters.snoozed) {
-            return n.snoozed_till ? true : false;
+            return n.snoozed_till;
           } else if (this.filters.archived) {
-            return n.archived_at ? true : false;
+            return n.archived_at;
           } else {
             return true;
           }

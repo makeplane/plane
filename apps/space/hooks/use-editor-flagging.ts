@@ -25,7 +25,7 @@ export type TEditorFlaggingHookReturnType = {
 /**
  * @description extensions disabled in various editors
  */
-export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType => ({
+export const useEditorFlagging = (_anchor: string): TEditorFlaggingHookReturnType => ({
   document: {
     disabled: [],
     flagged: [],

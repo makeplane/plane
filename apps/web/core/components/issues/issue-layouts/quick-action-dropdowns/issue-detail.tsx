@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Ellipsis } from "lucide-react";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -60,7 +60,6 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
   } = props;
   // router
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
@@ -156,23 +155,11 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     .map((item) => {
       // Customize edit action for work item
       if (item.key === "edit") {
-        return {
-          ...item,
-          shouldRender: isEditingAllowed && !isPeekMode,
-        };
-      }
-      // Customize delete action for work item
-      if (item.key === "delete") {
-        return {
-          ...item,
-        };
+        item.shouldRender = isEditingAllowed && !isPeekMode;
       }
       // Hide copy link in peek mode
       if (item.key === "copy-link") {
-        return {
-          ...item,
-          shouldRender: !isPeekMode,
-        };
+        item.shouldRender = !isPeekMode;
       }
       return item;
     })
@@ -181,13 +168,11 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     });
 
   const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
-    return {
-      ...item,
-
-      onClick: () => {
-        item.action();
-      },
+    const contextItem = Object.assign({}, item);
+    contextItem.onClick = () => {
+      item.action();
     };
+    return contextItem;
   });
 
   return (

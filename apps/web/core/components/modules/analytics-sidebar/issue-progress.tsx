@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { Fragment, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
@@ -60,7 +59,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   const selectedStateGroups = moduleFilter?.findFirstConditionByPropertyAndOperator("state_group", "in");
   const moduleDetails = getModuleById(moduleId);
   const plotType: TModulePlotType = getPlotTypeByModuleId(moduleId);
-  const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
+  const isCurrentProjectEstimateEnabled = projectId && !!areEstimateEnabledByProjectId(projectId);
   const estimateDetails =
     isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
@@ -112,7 +111,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
         await fetchModuleDetails(workspaceSlug, projectId, moduleId);
       }
       setLoader(false);
-    } catch (error) {
+    } catch (_error) {
       setLoader(false);
       setPlotType(moduleId, plotType);
     }
@@ -121,7 +120,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   if (!moduleDetails) return <></>;
   return (
     <div className="space-y-4 border-t border-subtle px-3 py-4">
-      <Disclosure defaultOpen={isModuleDateValid ? true : false}>
+      <Disclosure defaultOpen={isModuleDateValid}>
         {({ open }) => (
           <div className="space-y-6">
             {/* progress bar header */}

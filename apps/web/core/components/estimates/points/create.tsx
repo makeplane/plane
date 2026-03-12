@@ -167,7 +167,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
   };
 
   // derived values
-  const inputProps = {
+  const _inputProps = {
     type: "text",
     maxlength: MAX_ESTIMATE_POINT_INPUT_LENGTH,
   };

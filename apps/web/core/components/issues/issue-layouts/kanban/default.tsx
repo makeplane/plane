@@ -100,7 +100,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     isEpic = false,
   } = props;
   // i18n
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   // store hooks
   const storeType = useIssueStoreType();
   const issueKanBanView = useKanbanView();

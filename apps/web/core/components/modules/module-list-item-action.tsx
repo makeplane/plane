@@ -14,9 +14,7 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
-  MODULE_TRACKER_EVENTS,
-  MODULE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+    } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";

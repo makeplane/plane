@@ -28,7 +28,7 @@ export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSele
     keyExtractor,
     options,
     handleClose,
-    value,
+    _value,
     renderItem,
     loader,
     isMobile = false,

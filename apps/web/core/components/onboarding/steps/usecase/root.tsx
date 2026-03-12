@@ -81,7 +81,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
   };
 
   // derived values
-  const isButtonDisabled = !isSubmitting && isValid ? false : true;
+  const isButtonDisabled = !(!isSubmitting && isValid);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">

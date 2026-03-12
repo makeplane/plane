@@ -6,7 +6,7 @@
 
 // types
 import { API_BASE_URL } from "@plane/constants";
-import type { IInstanceInfo, TPage } from "@plane/types";
+import type { IInstanceInfo } from "@plane/types";
 // helpers
 // services
 import { APIService } from "@/services/api.service";

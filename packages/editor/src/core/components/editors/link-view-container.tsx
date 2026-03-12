@@ -7,7 +7,6 @@
 import { autoUpdate, flip, hide, shift, useDismiss, useFloating, useInteractions } from "@floating-ui/react";
 import type { Editor } from "@tiptap/react";
 import { useEditorState } from "@tiptap/react";
-import type { FC } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // components

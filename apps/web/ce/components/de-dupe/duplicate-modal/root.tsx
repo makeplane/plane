@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 // types
 import type { TDeDupeIssue } from "@plane/types";
 
@@ -15,6 +14,6 @@ type TDuplicateModalRootProps = {
 };
 
 export function DuplicateModalRoot(props: TDuplicateModalRootProps) {
-  const { workspaceSlug, issues, handleDuplicateIssueModal } = props;
+  const { _workspaceSlug, _issues, _handleDuplicateIssueModal } = props;
   return <></>;
 }

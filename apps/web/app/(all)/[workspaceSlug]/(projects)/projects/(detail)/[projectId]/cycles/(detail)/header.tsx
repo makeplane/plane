@@ -75,7 +75,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", false);
 
-  const isSidebarCollapsed = storedValue ? (storedValue === true ? true : false) : false;
+  const isSidebarCollapsed = storedValue ? storedValue === true : false;
   const toggleSidebar = () => {
     setValue(!isSidebarCollapsed);
   };

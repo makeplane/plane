@@ -38,11 +38,12 @@ export const PowerKOpenProjectSettingsMenu = observer(function PowerKOpenProject
         context.params.projectId?.toString()
       )
   );
-  const settingsListWithIcons = settingsList.map((setting) => ({
-    ...setting,
-    label: t(setting.i18n_label),
-    icon: PROJECT_SETTINGS_ICONS[setting.key],
-  }));
+  const settingsListWithIcons = settingsList.map((setting) =>
+    Object.assign(setting, {
+      label: t(setting.i18n_label),
+      icon: PROJECT_SETTINGS_ICONS[setting.key],
+    })
+  );
 
   return <PowerKSettingsMenu settings={settingsListWithIcons} onSelect={(setting) => handleSelect(setting.href)} />;
 });

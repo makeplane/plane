@@ -6,7 +6,6 @@
 
 import type { Editor } from "@tiptap/react";
 
-import type { FC } from "react";
 import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 // plane utils
 import { cn } from "@plane/utils";

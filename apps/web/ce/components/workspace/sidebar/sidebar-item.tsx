@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { SidebarItemBase } from "@/components/workspace/sidebar/sidebar-item";
 

@@ -25,7 +25,7 @@ export function PasswordStrengthIndicator({
   const criteria = getPasswordCriteria(password);
   const strengthInfo = getStrengthInfo(strength);
 
-  const isPasswordMeterVisible = isFocused ? true : strength === E_PASSWORD_STRENGTH.STRENGTH_VALID ? false : true;
+  const isPasswordMeterVisible = isFocused || strength !== E_PASSWORD_STRENGTH.STRENGTH_VALID;
 
   if ((!password && !showCriteria) || !isPasswordMeterVisible) {
     return null;

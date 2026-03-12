@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { concat, uniq } from "lodash-es";
 import { observer } from "mobx-react";
@@ -46,7 +45,7 @@ export const FilterDate = observer(function FilterDate(props: Props) {
 
   const isCustomDateSelected = () => {
     const isValidDateSelected = filterValue?.filter((f) => isDate(f.split(";")[0])) || [];
-    return isValidDateSelected.length > 0 ? true : false;
+    return isValidDateSelected.length > 0;
   };
 
   const handleCustomDate = () => {
@@ -80,7 +79,7 @@ export const FilterDate = observer(function FilterDate(props: Props) {
               {filteredOptions.map((option) => (
                 <FilterOption
                   key={option.value}
-                  isChecked={filterValue?.includes(option.value) ? true : false}
+                  isChecked={!!filterValue?.includes(option.value)}
                   onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(option.value))}
                   title={option.name}
                   multiple={false}

@@ -65,7 +65,7 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
     titleRef,
     updatePageProperties,
     user,
-    actions,
+    _actions,
   } = props;
 
   const { mainNavigationExtension, titleNavigationExtension, setMainEditor, setTitleEditor } = useEditorNavigation();

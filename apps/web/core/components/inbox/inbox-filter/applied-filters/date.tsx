@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { CloseIcon } from "@plane/propel/icons";

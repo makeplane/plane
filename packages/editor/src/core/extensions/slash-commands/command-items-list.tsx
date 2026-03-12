@@ -319,19 +319,20 @@ export const getSlashCommandFilteredSections =
       }
     });
 
-    const filteredSlashSections = SLASH_COMMAND_SECTIONS.map((section) => ({
-      ...section,
-      items: section.items.filter((item) => {
-        if (typeof query !== "string") return;
+    const filteredSlashSections = SLASH_COMMAND_SECTIONS.map((section) =>
+      Object.assign(section, {
+        items: section.items.filter((item) => {
+          if (typeof query !== "string") return;
 
-        const lowercaseQuery = query.toLowerCase();
-        return (
-          item.title.toLowerCase().includes(lowercaseQuery) ||
-          item.description.toLowerCase().includes(lowercaseQuery) ||
-          item.searchTerms.some((t) => t.includes(lowercaseQuery))
-        );
-      }),
-    }));
+          const lowercaseQuery = query.toLowerCase();
+          return (
+            item.title.toLowerCase().includes(lowercaseQuery) ||
+            item.description.toLowerCase().includes(lowercaseQuery) ||
+            item.searchTerms.some((t) => t.includes(lowercaseQuery))
+          );
+        }),
+      })
+    );
 
     return filteredSlashSections.filter((s) => s.items.length !== 0);
   };

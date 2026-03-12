@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -31,7 +30,7 @@ export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleT
     disabled,
     issueServiceType = EIssueServiceType.ISSUES,
     projectId,
-    workspaceSlug,
+    _workspaceSlug,
   } = props;
   // translation
   const { t } = useTranslation();
