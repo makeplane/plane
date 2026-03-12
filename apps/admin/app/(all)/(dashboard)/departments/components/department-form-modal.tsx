@@ -7,7 +7,7 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
-import type { IInstanceDepartment, IInstanceDepartmentCreate } from "@plane/services";
+import type { DeptType, IInstanceDepartment, IInstanceDepartmentCreate } from "@plane/services";
 import { Button } from "@plane/propel/button";
 import { Input } from "@plane/propel/input";
 import { Dialog, EDialogWidth } from "@plane/propel/dialog";
@@ -19,6 +19,7 @@ type FormValues = {
   code: string;
   short_name: string;
   dept_code: string;
+  dept_type: DeptType;
   description: string;
   parent: string;
   level: number;
@@ -33,12 +34,14 @@ type Props = {
   editDept?: IInstanceDepartment | null;
 };
 
+const DEPT_TYPE_OPTIONS: DeptType[] = ["HO", "BRX", "OSR"];
+
 export const DepartmentFormModal = observer(function DepartmentFormModal({ open, onClose, editDept }: Props) {
   const { departments, departmentIds, createDepartment, updateDepartment } = useInstanceDepartment();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<FormValues>({
-    defaultValues: { name: "", code: "", short_name: "", dept_code: "", description: "", parent: "", level: 0, manager: "", sort_order: 0, is_active: true },
+    defaultValues: { name: "", code: "", short_name: "", dept_code: "", dept_type: "" as DeptType, description: "", parent: "", level: 0, manager: "", sort_order: 0, is_active: true },
   });
 
   const parentId = watch("parent");
@@ -59,6 +62,7 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
         code: editDept.code,
         short_name: editDept.short_name,
         dept_code: editDept.dept_code,
+        dept_type: editDept.dept_type,
         description: editDept.description,
         parent: editDept.parent ?? "",
         level: editDept.level,
@@ -67,7 +71,7 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
         is_active: editDept.is_active,
       });
     } else {
-      reset({ name: "", code: "", short_name: "", dept_code: "", description: "", parent: "", level: 0, manager: "", sort_order: 0, is_active: true });
+      reset({ name: "", code: "", short_name: "", dept_code: "", dept_type: "" as DeptType, description: "", parent: "", level: 0, manager: "", sort_order: 0, is_active: true });
     }
   }, [editDept, reset]);
 
@@ -120,6 +124,13 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
                 <label className="text-13 font-medium">Dept code (4 digits)</label>
                 <Input {...register("dept_code", { pattern: { value: /^\d{4}$/, message: "Must be 4 digits" } })} placeholder="0001" />
                 {errors.dept_code && <p className="text-11 text-color-danger-primary">{errors.dept_code.message}</p>}
+              </div>
+              <div className="space-y-1">
+                <label className="text-13 font-medium">Dept Type</label>
+                <select {...register("dept_type")} className="w-full rounded-md border border-subtle bg-layer-2 px-3 py-2 text-13">
+                  <option value="">— Select type —</option>
+                  {DEPT_TYPE_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                </select>
               </div>
             </div>
             <div className="space-y-1">

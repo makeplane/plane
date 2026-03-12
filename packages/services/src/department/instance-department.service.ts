@@ -7,12 +7,15 @@
 import { API_BASE_URL } from "@plane/constants";
 import { APIService } from "../api.service";
 
+export type DeptType = "" | "HO" | "BRX" | "OSR";
+
 export interface IInstanceDepartment {
   id: string;
   name: string;
   code: string;
   short_name: string;
   dept_code: string;
+  dept_type: DeptType;
   description: string;
   parent: string | null;
   level: number;

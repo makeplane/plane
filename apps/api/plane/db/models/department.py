@@ -19,6 +19,8 @@ class Department(BaseModel):
     short_name = models.CharField(max_length=10, blank=True, null=True)
     dept_code = models.CharField(max_length=4, blank=True, null=True)
     description = models.TextField(blank=True, default="")
+    DEPT_TYPE_CHOICES = [("HO", "HO"), ("BRX", "BRX"), ("OSR", "OSR")]
+    dept_type = models.CharField(max_length=3, choices=DEPT_TYPE_CHOICES, blank=True, default="")
 
     # Hierarchy (parent=NULL means top level)
     parent = models.ForeignKey(
