@@ -15,12 +15,9 @@ from django.db import migrations
 
 
 def trigger_backfill_task(apps, schema_editor):
-    """Trigger the backfill as a Celery background task instead of running inline.
-    Skipped when IS_MANAGED=0 (cloud), where the backfill is run manually.
     """
-    if os.environ.get("IS_MANAGED", "1") == "0":
-        return
-
+    Trigger the backfill as a Celery background task instead of running inline.
+    """
     from plane.bgtasks.backfill_issue_last_activity_at_task import (
         backfill_issue_last_activity_at,
     )

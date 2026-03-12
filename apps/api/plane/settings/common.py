@@ -447,6 +447,8 @@ CELERY_IMPORTS = (
     "plane.agents.bgtasks.agent_run_webhook",
     # authentication tasks
     "plane.authentication.bgtasks.group_sync_task",
+    # backfill tasks
+    "plane.bgtasks.backfill_issue_last_activity_at_task",
 )
 
 # Application Envs
