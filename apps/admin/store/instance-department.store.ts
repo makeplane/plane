@@ -7,7 +7,7 @@
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import type { IInstanceDepartment, IInstanceDepartmentCreate, IInstanceDepartmentUpdate } from "@plane/services";
+import type { IInstanceDepartment, IInstanceDepartmentCreate, IInstanceDepartmentUpdate, ILinkWorkspaceResult } from "@plane/services";
 import { InstanceDepartmentService } from "@plane/services";
 import type { TLoader } from "@plane/types";
 // root store
@@ -26,7 +26,7 @@ export interface IInstanceDepartmentStore {
   createDepartment: (data: IInstanceDepartmentCreate) => Promise<IInstanceDepartment>;
   updateDepartment: (id: string, data: IInstanceDepartmentUpdate) => Promise<IInstanceDepartment>;
   deleteDepartment: (id: string) => Promise<void>;
-  linkWorkspace: (id: string, workspaceId: string) => Promise<void>;
+  linkWorkspace: (id: string, workspaceId: string) => Promise<ILinkWorkspaceResult>;
   unlinkWorkspace: (id: string) => Promise<void>;
 }
 
@@ -149,14 +149,15 @@ export class InstanceDepartmentStore implements IInstanceDepartmentStore {
     }
   };
 
-  linkWorkspace = async (id: string, workspaceId: string): Promise<void> => {
+  linkWorkspace = async (id: string, workspaceId: string): Promise<ILinkWorkspaceResult> => {
     try {
-      await this.service.linkWorkspace(id, workspaceId);
+      const result = await this.service.linkWorkspace(id, workspaceId);
       // Refresh department detail to get updated linked_workspace_detail
       const dept = await this.service.detail(id);
       runInAction(() => {
         set(this.departments, [dept.id], dept);
       });
+      return result;
     } catch (error) {
       console.error("Error linking workspace", error);
       throw error;

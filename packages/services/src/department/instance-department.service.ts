@@ -38,6 +38,18 @@ export type IInstanceDepartmentCreate = Omit<
 
 export type IInstanceDepartmentUpdate = Partial<IInstanceDepartmentCreate>;
 
+export interface IManagerAdded {
+  id: string;
+  display_name: string;
+  email: string;
+}
+
+export interface ILinkWorkspaceResult {
+  managers_added: IManagerAdded[];
+  async?: boolean;
+  staff_count?: number;
+}
+
 export class InstanceDepartmentService extends APIService {
   constructor(BASE_URL?: string) {
     super(BASE_URL || API_BASE_URL);
@@ -99,9 +111,9 @@ export class InstanceDepartmentService extends APIService {
       });
   }
 
-  async linkWorkspace(id: string, workspaceId: string): Promise<void> {
+  async linkWorkspace(id: string, workspaceId: string): Promise<ILinkWorkspaceResult> {
     return this.post(`/api/instances/departments/${id}/link-workspace/`, { workspace_id: workspaceId })
-      .then(() => undefined)
+      .then((res) => res?.data as ILinkWorkspaceResult)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });
