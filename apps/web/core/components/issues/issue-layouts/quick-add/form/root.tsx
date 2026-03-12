@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useParams } from "next/navigation";
 import { observer } from "mobx-react";
 import type { UseFormRegister, UseFormSetFocus } from "react-hook-form";
 import { lazy, Suspense, useEffect, useRef } from "react";
@@ -102,11 +103,14 @@ export const QuickAddIssueFormRoot = observer(function QuickAddIssueFormRoot(pro
   } = props;
   // refs
   const ref = useRef<HTMLFormElement>(null);
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getProjectById } = useProject();
-  const { getProjectDefaultIssueType, getProjectEpicDetails, getIssueTypeById } = useIssueTypes();
+  const { getProjectDefaultIssueType, getProjectEpicDetails, getIssueTypeById, isWorkItemTypeEnabledForProject } =
+    useIssueTypes();
   const { getCreationTypeForState } = useWorkflows();
   // derived values
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug.toString(), projectId);
   const projectDetail = getProjectById(projectId);
   const defaultIssueType = getProjectDefaultIssueType(projectId);
   const projectEpics = getProjectEpicDetails(projectId);
@@ -118,8 +122,9 @@ export const QuickAddIssueFormRoot = observer(function QuickAddIssueFormRoot(pro
       defaultIssueTypeId,
       getCreationTypeForState,
       projectId,
+      isWorkItemTypeEnabled,
     });
-  const selectedIssueType = !isEpic && creationTypeId ? getIssueTypeById(creationTypeId) : defaultIssueType;
+  const selectedIssueType = creationTypeId ? getIssueTypeById(creationTypeId) : defaultIssueType;
   const activeProperties = isEpic ? projectEpics?.activeProperties : selectedIssueType?.activeProperties;
   const mandatoryFields = getMandatoryFields({ activeProperties });
   const CurrentLayoutQuickAddIssueForm = QUICK_ADD_ISSUE_FORMS[layout] ?? null;

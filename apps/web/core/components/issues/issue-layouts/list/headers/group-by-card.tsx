@@ -33,6 +33,7 @@ import { useWorkflows } from "@/hooks/store/use-workflows";
 // plane-web
 import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 // Plane-web
+import { useIssueTypes } from "@/plane-web/hooks/store";
 import { WorkFlowGroupTree } from "@/components/workflows";
 
 interface IHeaderGroupByCard {
@@ -71,8 +72,10 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
   const { canCreateInStateAcrossTypes, getCreationTypeForState } = useWorkflows();
+  const { isWorkItemTypeEnabledForProject } = useIssueTypes();
   const storeType = useIssueStoreType();
   // derived values
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug.toString(), projectId);
   const renderExistingIssueModal = moduleId || cycleId;
   const existingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(groupID) === "empty";
@@ -84,6 +87,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     projectId: projectId?.toString(),
     canCreateInStateAcrossTypes,
     getCreationTypeForState,
+    isWorkItemTypeEnabled,
   });
   // auth
   const canSelectIssues = canEditProperties(projectId?.toString()) && !selectionHelpers.isSelectionDisabled;

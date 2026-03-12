@@ -31,6 +31,7 @@ import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 import { useWorkflows } from "@/hooks/store/use-workflows";
 // types
 // Plane-web
+import { useIssueTypes } from "@/plane-web/hooks/store";
 import { WorkFlowGroupTree } from "@/components/workflows";
 
 interface IHeaderGroupByCard {
@@ -68,10 +69,13 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   const [isOpen, setIsOpen] = React.useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
   // hooks
+  const { isWorkItemTypeEnabledForProject } = useIssueTypes();
   const storeType = useIssueStoreType();
   const { canCreateInStateAcrossTypes, getCreationTypeForState } = useWorkflows();
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
+
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug.toString(), projectId);
 
   const renderExistingIssueModal = moduleId || cycleId;
   const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
@@ -83,6 +87,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     projectId: projectId?.toString(),
     canCreateInStateAcrossTypes,
     getCreationTypeForState,
+    isWorkItemTypeEnabled,
   });
 
   const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {

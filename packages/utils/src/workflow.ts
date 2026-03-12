@@ -77,6 +77,7 @@ type TResolveStateHeaderCreationArgs = {
   projectId?: string;
   canCreateInStateAcrossTypes: (projectId: string, stateId: string) => boolean;
   getCreationTypeForState: (projectId: string, stateId: string) => string | undefined;
+  isWorkItemTypeEnabled: boolean;
 };
 
 type TResolveStateHeaderCreationResult = {
@@ -99,10 +100,10 @@ type TResolveQuickAddCreationContextArgs = {
   defaultIssueTypeId?: string;
   getCreationTypeForState: (projectId: string, stateId: string) => string | undefined;
   projectId: string;
+  isWorkItemTypeEnabled: boolean;
 };
 
 type TResolveQuickAddCreationContextResult = {
-  targetStateId?: string;
   creationTypeId?: string;
   modalData?: Partial<TIssue>;
   shouldHideQuickAdd: boolean;
@@ -117,13 +118,14 @@ export const resolveStateHeaderCreation = ({
   projectId,
   canCreateInStateAcrossTypes,
   getCreationTypeForState,
+  isWorkItemTypeEnabled,
 }: TResolveStateHeaderCreationArgs): TResolveStateHeaderCreationResult => {
   const defaultResult: TResolveStateHeaderCreationResult = {
     isCreationDisabled: Boolean(disableIssueCreation),
     createModalData: workItemPayload,
   };
 
-  if (groupBy !== "state" || !projectId) return defaultResult;
+  if (groupBy !== "state" || !projectId || !isWorkItemTypeEnabled) return defaultResult;
 
   const workflowCreationTypeId = getCreationTypeForState(projectId, groupId);
   const isWorkflowStateCreationDisabled = !canCreateInStateAcrossTypes(projectId, groupId);
@@ -142,7 +144,16 @@ export const resolveQuickAddCreationContext = ({
   defaultIssueTypeId,
   getCreationTypeForState,
   projectId,
+  isWorkItemTypeEnabled,
 }: TResolveQuickAddCreationContextArgs): TResolveQuickAddCreationContextResult => {
+  if (!isWorkItemTypeEnabled)
+    return {
+      creationTypeId: defaultIssueTypeId,
+      modalData: prePopulatedData,
+      shouldHideQuickAdd: false,
+      shouldUseModalWithFallbackType: false,
+    };
+
   const targetStateId = prePopulatedData?.state_id ?? undefined;
   const creationTypeId =
     !isEpic && targetStateId ? getCreationTypeForState(projectId, targetStateId) : defaultIssueTypeId;
@@ -155,7 +166,6 @@ export const resolveQuickAddCreationContext = ({
     creationTypeId !== defaultIssueTypeId;
 
   return {
-    targetStateId,
     creationTypeId,
     modalData: !isEpic && creationTypeId ? { ...prePopulatedData, type_id: creationTypeId } : prePopulatedData,
     shouldHideQuickAdd,
