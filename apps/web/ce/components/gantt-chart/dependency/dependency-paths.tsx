@@ -4,12 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
-
 type Props = {
   isEpic?: boolean;
 };
-export function TimelineDependencyPaths(props: Props) {
-  const { isEpic = false } = props;
+export function TimelineDependencyPaths(_props: Props) {
   return <></>;
 }

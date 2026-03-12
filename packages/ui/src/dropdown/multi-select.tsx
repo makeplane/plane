@@ -6,7 +6,6 @@
 
 import { Combobox } from "@headlessui/react";
 import { sortBy } from "lodash-es";
-import type { FC } from "react";
 import React, { useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 // plane imports

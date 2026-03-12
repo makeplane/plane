@@ -8,7 +8,6 @@ import { isNodeSelection } from "@tiptap/core";
 import type { Editor } from "@tiptap/core";
 import { BubbleMenu, useEditorState } from "@tiptap/react";
 import type { BubbleMenuProps } from "@tiptap/react";
-import type { FC } from "react";
 import { useEffect, useState, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";

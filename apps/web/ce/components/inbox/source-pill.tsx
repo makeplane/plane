@@ -10,6 +10,6 @@ export type TInboxSourcePill = {
   source: EInboxIssueSource;
 };
 
-export function InboxSourcePill(props: TInboxSourcePill) {
+export function InboxSourcePill(_props: TInboxSourcePill) {
   return <></>;
 }
