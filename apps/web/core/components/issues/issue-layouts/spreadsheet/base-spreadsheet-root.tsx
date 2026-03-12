@@ -35,11 +35,9 @@ interface IBaseSpreadsheetRoot {
 
 export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: IBaseSpreadsheetRoot) {
   const { QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId, isEpic = false } = props;
-  // router
-  const { projectId } = useParams();
-  // store hooks
+  const { workspaceSlug, projectId } = useParams();
   const storeType = useIssueStoreType() as SpreadsheetStoreType;
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { issues, issuesFilter } = useIssues(storeType);
   const {
     fetchIssues,
@@ -59,6 +57,13 @@ export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: 
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
+
+  const currentProjectRole = workspaceSlug && projectId ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    projectId.toString()
+  ) : undefined;
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const isCreatingAllowed = isEditingAllowed && roleNumber !== undefined && roleNumber >= 15;
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);
@@ -119,7 +124,7 @@ export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: 
         canEditProperties={canEditProperties}
         quickAddCallback={quickAddIssue}
         enableQuickCreateIssue={enableQuickAdd}
-        disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
+        disableIssueCreation={!enableIssueCreation || !isCreatingAllowed || isCompletedCycle}
         canLoadMoreIssues={!!nextPageResults}
         loadMoreIssues={fetchNextIssues}
         isEpic={isEpic}

@@ -15,6 +15,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
+import { useUserPermissions } from "@/hooks/store/user";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
@@ -45,11 +46,18 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
   const { workspaceSlug } = useParams();
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
+  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   // derived values
   const stateDetails = getStateById(issue.state_id);
   const isEditingAllowed = !readOnly;
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
+  const currentProjectRole = workspaceSlug && issue?.project_id ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    issue.project_id
+  ) : undefined;
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const isCreatingAllowed = isEditingAllowed && roleNumber !== undefined && roleNumber >= 15;
   const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
 
@@ -69,6 +77,7 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
     projectIdentifier,
     activeLayout: "Global issues",
     isEditingAllowed,
+    isCreatingAllowed,
     isArchivingAllowed,
     isDeletingAllowed: isEditingAllowed,
     isInArchivableGroup,

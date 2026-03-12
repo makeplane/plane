@@ -51,7 +51,7 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
@@ -70,6 +70,12 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
   const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
   const isDeletingAllowed = isEditingAllowed;
+  const currentProjectRole = workspaceSlug && issue?.project_id ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    issue.project_id
+  ) : undefined;
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const isCreatingAllowed = isEditingAllowed && roleNumber !== undefined && roleNumber >= 15;
 
   const duplicateIssuePayload = omit(
     {
@@ -87,6 +93,7 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
     projectIdentifier,
     activeLayout,
     isEditingAllowed,
+    isCreatingAllowed,
     isArchivingAllowed,
     isDeletingAllowed,
     isInArchivableGroup,

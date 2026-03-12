@@ -65,7 +65,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
     restoreIssue,
   } = useIssuesActions(storeType);
   // mobx store
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { issueMap } = useIssues();
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
@@ -90,6 +90,13 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
+  
+  const currentProjectRole = workspaceSlug && projectId ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    projectId.toString()
+  ) : undefined;
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const isCreatingAllowed = isEditingAllowed && roleNumber !== undefined && roleNumber >= 15;
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
 
   const canEditProperties = useCallback(
@@ -162,7 +169,7 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
           quickAddCallback={quickAddIssue}
           enableIssueQuickAdd={!!enableQuickAdd}
           canEditProperties={canEditProperties}
-          disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+          disableIssueCreation={!enableIssueCreation || !isCreatingAllowed}
           addIssuesToView={addIssuesToView}
           isCompletedCycle={isCompletedCycle}
           handleOnDrop={handleOnDrop}

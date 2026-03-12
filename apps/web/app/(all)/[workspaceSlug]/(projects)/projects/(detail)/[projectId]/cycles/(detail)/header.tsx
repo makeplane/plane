@@ -62,7 +62,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   const { toggleCreateIssueModal } = useCommandPalette();
   const { currentProjectDetails, loader } = useProject();
   const { isMobile } = usePlatformOS();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -104,6 +104,14 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
+  
+  const currentProjectRole = workspaceSlug && projectId ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    projectId.toString()
+  ) : undefined;
+
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const canUserCreateWorkItem = canUserCreateIssue && roleNumber !== undefined && roleNumber >= 15;
 
   const switcherOptions = currentProjectCycleIds
     ?.map((id) => {
@@ -224,7 +232,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               />
             </FiltersDropdown>
 
-            {canUserCreateIssue && (
+            {canUserCreateWorkItem && (
               <>
                 <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
                   <span className="hidden @4xl:flex">Analytics</span>

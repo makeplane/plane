@@ -106,7 +106,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   ) : undefined;
 
   const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
-  const canUserCreateWorkItem = canUserCreateIssue;
+  const canUserCreateWorkItem = canUserCreateIssue && roleNumber !== undefined && roleNumber >= 15;
 
   if (!viewDetails) return;
 

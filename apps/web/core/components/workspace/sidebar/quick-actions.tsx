@@ -39,7 +39,7 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
 
   const workspaceRole = workspaceSlug ? getWorkspaceRoleByWorkspaceSlug(workspaceSlug) : undefined;
   const roleNumber = workspaceRole ? Number(workspaceRole) : undefined;
-  const canUserCreateWorkItem = isCreatingIssueAllowed;
+  const canUserCreateWorkItem = isCreatingIssueAllowed && roleNumber !== undefined && roleNumber >= 15;
 
   const disabled = joinedProjectIds.length === 0 || !canUserCreateWorkItem;
   const workspaceDraftIssue = workspaceSlug ? (storedValue?.[workspaceSlug] ?? undefined) : undefined;

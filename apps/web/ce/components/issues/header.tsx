@@ -64,7 +64,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
   ) : undefined;
 
   const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
-  const canUserCreateWorkItem = canUserCreateIssue;
+  const canUserCreateWorkItem = canUserCreateIssue && roleNumber !== undefined && roleNumber >= 15;
 
   return (
     <Header>

@@ -49,7 +49,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
   const { fetchIssues, fetchNextIssues, updateIssue, quickAddIssue } = useIssuesActions(storeType);
   const { initGantt } = useTimeLineChart(GANTT_TIMELINE_TYPE.ISSUE);
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
 
   const appliedDisplayFilters = issuesFilter.issueFilters?.displayFilters;
   // plane web hooks
@@ -85,6 +85,13 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
   };
 
   const isAllowed = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
+  
+  const currentProjectRole = workspaceSlug && projectId ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    projectId.toString()
+  ) : undefined;
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const isCreatingAllowed = isAllowed && roleNumber !== undefined && roleNumber >= 15;
   const updateBlockDates = useCallback(
     (
       updates: {
@@ -104,7 +111,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
   );
 
   const quickAdd =
-    enableIssueCreation && isAllowed && !isCompletedCycle ? (
+    enableIssueCreation && isCreatingAllowed && !isCompletedCycle ? (
       <QuickAddIssueRoot
         layout={EIssueLayoutTypes.GANTT}
         QuickAddButton={GanttQuickAddIssueButton}

@@ -69,7 +69,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
@@ -89,6 +89,13 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
   const isArchivingAllowed = !issue.archived_at && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
   const isRestoringAllowed = !!issue.archived_at && isEditingAllowed;
+
+  const currentProjectRole = workspaceSlug && issue?.project_id ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    issue.project_id
+  ) : undefined;
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const isCreatingAllowed = isEditingAllowed && roleNumber !== undefined && roleNumber >= 15;
 
   const isDeletingAllowed = isEditingAllowed;
 
@@ -134,6 +141,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     projectIdentifier,
     activeLayout,
     isEditingAllowed,
+    isCreatingAllowed,
     isArchivingAllowed,
     isRestoringAllowed,
     isDeletingAllowed,

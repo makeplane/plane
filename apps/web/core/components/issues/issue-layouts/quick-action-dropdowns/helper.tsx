@@ -51,6 +51,7 @@ export interface MenuItemFactoryProps {
   projectIdentifier?: string;
   activeLayout?: string;
   isEditingAllowed: boolean;
+  isCreatingAllowed: boolean;
   isArchivingAllowed?: boolean;
   isDeletingAllowed: boolean;
   isRestoringAllowed?: boolean;
@@ -139,6 +140,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     issue,
     activeLayout = "",
     isEditingAllowed,
+    isCreatingAllowed,
     isArchivingAllowed = false,
     isDeletingAllowed,
     isRestoringAllowed = false,
@@ -173,7 +175,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
       action: () => {
         setCreateUpdateIssueModal(true);
       },
-      shouldRender: isEditingAllowed && (issueTypeDetail?.is_active ?? true),
+      shouldRender: isCreatingAllowed && (issueTypeDetail?.is_active ?? true),
     };
 
     return createCopyMenuWithDuplication({

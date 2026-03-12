@@ -53,7 +53,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
   // router
   const { workspaceSlug, cycleId } = useParams();
   const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
   // derived values
@@ -65,6 +65,12 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
   const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
   const isDeletingAllowed = isEditingAllowed;
+  const currentProjectRole = workspaceSlug && issue?.project_id ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    issue.project_id
+  ) : undefined;
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const isCreatingAllowed = isEditingAllowed && roleNumber !== undefined && roleNumber >= 15;
 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
@@ -84,6 +90,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
     projectIdentifier,
     activeLayout,
     isEditingAllowed,
+    isCreatingAllowed,
     isArchivingAllowed,
     isDeletingAllowed,
     isInArchivableGroup,

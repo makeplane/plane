@@ -80,7 +80,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   ) : undefined;
 
   const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
-  const canUserCreateWorkItem = canUserCreateIssue;
+  const canUserCreateWorkItem = canUserCreateIssue && roleNumber !== undefined && roleNumber >= 15;
   const workItemsCount = getGroupIssueCount(undefined, undefined, false);
 
   const toggleSidebar = () => {

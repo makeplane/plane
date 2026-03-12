@@ -61,7 +61,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const storeType = useIssueStoreType() as KanbanStoreType;
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { issueMap, issuesFilter, issues } = useIssues(storeType);
   const {
     issue: { getIssueById },
@@ -122,6 +122,13 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
+
+  const currentProjectRole = workspaceSlug && projectId ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    projectId.toString()
+  ) : undefined;
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const isCreatingAllowed = isEditingAllowed && roleNumber !== undefined && roleNumber >= 15;
 
   const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by, sub_group_by);
 
@@ -249,17 +256,14 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
       />
       {/* drag and delete component */}
       <div
-        className={`fixed left-1/2 -translate-x-1/2 ${
-          isDragging ? "z-40" : ""
-        } top-3 mx-3 flex w-72 items-center justify-center`}
+        className={`fixed left-1/2 -translate-x-1/2 ${isDragging ? "z-40" : ""
+          } top-3 mx-3 flex w-72 items-center justify-center`}
         ref={deleteAreaRef}
       >
         <div
-          className={`${
-            isDragging ? `opacity-100` : `opacity-0`
-          } flex w-full items-center justify-center rounded-sm border-2 border-red-500/20 bg-surface-1 px-3 py-5 text-11 font-medium italic text-red-500 ${
-            isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
-          } transition duration-300`}
+          className={`${isDragging ? `opacity-100` : `opacity-0`
+            } flex w-full items-center justify-center rounded-sm border-2 border-red-500/20 bg-surface-1 px-3 py-5 text-11 font-medium italic text-red-500 ${isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
+            } transition duration-300`}
         >
           Drop here to delete the work item.
         </div>
@@ -286,7 +290,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
                 enableQuickIssueCreate={enableQuickAdd}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
                 quickAddCallback={quickAddIssue}
-                disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
+                disableIssueCreation={!enableIssueCreation || !isCreatingAllowed || isCompletedCycle}
                 canEditProperties={canEditProperties}
                 addIssuesToView={addIssuesToView}
                 scrollableContainerRef={scrollableContainerRef}

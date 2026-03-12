@@ -47,12 +47,12 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
   } = props;
 
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
 
   // hooks
   const fallbackStoreType = useIssueStoreType() as CalendarStoreType;
   const storeType = isEpic ? EIssuesStoreType.EPIC : fallbackStoreType;
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { issues, issuesFilter, issueMap } = useIssues(storeType);
   const {
     fetchIssues,
@@ -72,6 +72,13 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
+
+  const currentProjectRole = workspaceSlug && projectId ? getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug.toString(),
+    projectId.toString()
+  ) : undefined;
+  const roleNumber = currentProjectRole ? Number(currentProjectRole) : undefined;
+  const isCreatingAllowed = isEditingAllowed && roleNumber !== undefined && roleNumber >= 15;
 
   const { enableInlineEditing } = issues?.viewFlags || {};
 
@@ -178,7 +185,7 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
           getGroupIssueCount={getGroupIssueCount}
           addIssuesToView={addIssuesToView}
           quickAddCallback={quickAddIssue}
-          readOnly={isCompletedCycle}
+          readOnly={isCompletedCycle || !isCreatingAllowed}
           updateFilters={updateFilters}
           handleDragAndDrop={handleDragAndDrop}
           canEditProperties={canEditProperties}
