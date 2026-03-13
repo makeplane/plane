@@ -121,7 +121,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
           {isLoading ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Loader key={i} className="rounded-lg border border-color-subtle p-4">
+                <Loader key={i} className="rounded-lg border border-subtle p-4">
                   <Loader.Item height="16px" width="40%" />
                   <Loader.Item height="200px" width="100%" className="mt-3" />
                 </Loader>
@@ -129,7 +129,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage() {
             </div>
           ) : widgets.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
-              <p className="text-sm text-color-tertiary">{t("analytics_dashboard.empty_widgets")}</p>
+              <p className="text-sm text-tertiary">{t("analytics_dashboard.empty_widgets")}</p>
               <Button onClick={handleAddWidget} className="gap-2">
                 {t("analytics_dashboard.add_widget")}
               </Button>

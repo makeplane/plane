@@ -43,7 +43,7 @@ description: Plan a new feature with research, design, and implementation steps
    - [ ] Permissions use `@allow_permission`
    - [ ] URLs follow `workspaces/<slug>/` pattern
    - [ ] Frontend uses propel components + semantic tokens
-   - [ ] No hardcoded colors — correct token naming (`text-color-*`, `border-color-*`)
+   - [ ] No hardcoded colors — correct token naming (`text-*`, `border-*`, NOT legacy `text-color-*`)
    - [ ] Input backgrounds use `bg-layer-2` (NOT `bg-surface-1`)
    - [ ] CE code in `ce/` directory
    - [ ] All `__init__.py` files updated

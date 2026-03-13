@@ -41,8 +41,8 @@ export const BasicSettingsSection = observer(({ control, errors, chartType }: Ba
     <div className="space-y-4">
       {/* Widget Name */}
       <div>
-        <label htmlFor="name" className="mb-1 block text-sm font-medium text-color-secondary">
-          {t("analytics_dashboard.widget_name")} <span className="text-color-danger-primary">*</span>
+        <label htmlFor="name" className="mb-1 block text-sm font-medium text-secondary">
+          {t("analytics_dashboard.widget_name")} <span className="text-danger-primary">*</span>
         </label>
         <Controller
           name="name"
@@ -58,13 +58,13 @@ export const BasicSettingsSection = observer(({ control, errors, chartType }: Ba
             />
           )}
         />
-        {errors.name && <p className="mt-1 text-xs text-color-danger-primary">{errors.name.message as string}</p>}
+        {errors.name && <p className="mt-1 text-xs text-danger-primary">{errors.name.message as string}</p>}
       </div>
 
       {/* X-Axis Property */}
       <div>
-        <label className="mb-1 block text-sm font-medium text-color-secondary">
-          {t("analytics_dashboard.property_x_axis")} <span className="text-color-danger-primary">*</span>
+        <label className="mb-1 block text-sm font-medium text-secondary">
+          {t("analytics_dashboard.property_x_axis")} <span className="text-danger-primary">*</span>
         </label>
         <Controller
           name="x_axis_property"
@@ -92,8 +92,8 @@ export const BasicSettingsSection = observer(({ control, errors, chartType }: Ba
 
       {/* Y-Axis Metric */}
       <div>
-        <label className="mb-1 block text-sm font-medium text-color-secondary">
-          {t("analytics_dashboard.metric_y_axis")} <span className="text-color-danger-primary">*</span>
+        <label className="mb-1 block text-sm font-medium text-secondary">
+          {t("analytics_dashboard.metric_y_axis")} <span className="text-danger-primary">*</span>
         </label>
         <Controller
           name="y_axis_metric"
@@ -118,7 +118,7 @@ export const BasicSettingsSection = observer(({ control, errors, chartType }: Ba
 
       {/* Chart Model */}
       <div>
-        <label className="mb-1 block text-sm font-medium text-color-secondary">
+        <label className="mb-1 block text-sm font-medium text-secondary">
           {t("analytics_dashboard.chart_model")}
         </label>
         <Controller
@@ -146,7 +146,7 @@ export const BasicSettingsSection = observer(({ control, errors, chartType }: Ba
 
       {/* Group By (optional, only relevant for GROUPED model) */}
       <div>
-        <label className="mb-1 block text-sm font-medium text-color-secondary">
+        <label className="mb-1 block text-sm font-medium text-secondary">
           {t("analytics_dashboard.group_by_optional")}
         </label>
         <Controller

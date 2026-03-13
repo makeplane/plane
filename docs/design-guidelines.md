@@ -122,21 +122,22 @@ bg - surface - 1; // Primary surface (cards, panels)
 bg - surface - 2; // Secondary surface
 bg - layer - 1; // Layer 1 (rows, list items)
 bg - layer - 1 - hover; // Layer 1 hover state
+bg - layer - 2; // Layer 2 (inputs, selects)
 bg - accent - primary; // Primary accent (buttons, active states)
 bg - success - primary; // Success states
 bg - warning - primary; // Warning states
 bg - danger - primary; // Danger/error states
 
-// Text
-text - color - primary; // Primary text
-text - color - secondary; // Secondary/muted text
-text - color - tertiary; // Tertiary/hint text
-text - color - disabled; // Disabled text
-text - color - on - color; // Text on colored backgrounds
+// Text (short form — DO NOT use text-color-* prefix)
+text - primary; // Primary text
+text - secondary; // Secondary/muted text
+text - tertiary; // Tertiary/hint text
+text - disabled; // Disabled text
+text - on - color; // Text on colored backgrounds
 
-// Borders
-border - color - subtle; // Default subtle border
-border - color - strong; // Prominent border
+// Borders (short form — DO NOT use border-color-* prefix)
+border - subtle; // Default subtle border
+border - strong; // Prominent border
 ```
 
 **Usage in Components**:
@@ -144,9 +145,9 @@ border - color - strong; // Prominent border
 ```tsx
 // CORRECT — semantic tokens (auto-adapt to dark mode)
 export const Card = ({ children }: { children: React.ReactNode }) => (
-  <div className="bg-surface-1 border border-color-subtle rounded-lg p-4">
-    <h3 className="text-color-primary text-base font-medium">Title</h3>
-    <p className="text-color-secondary text-sm">Description</p>
+  <div className="bg-surface-1 border border-subtle rounded-lg p-4">
+    <h3 className="text-primary text-base font-medium">Title</h3>
+    <p className="text-secondary text-sm">Description</p>
   </div>
 );
 
@@ -170,9 +171,7 @@ export const Card = ({ children }: { children: React.ReactNode }) => (
 // 7. Transforms & animations
 // 8. Responsive variants
 
-<div className="flex gap-4 p-4 border border-color-subtle rounded-lg bg-surface-1 shadow-md hover:shadow-lg">
-  Content
-</div>
+<div className="flex gap-4 p-4 border border-subtle rounded-lg bg-surface-1 shadow-md hover:shadow-lg">Content</div>
 ```
 
 ### Responsive Design
@@ -192,7 +191,7 @@ Semantic tokens auto-adapt to themes via `data-theme`. **Do NOT use manual `dark
 ```typescript
 // CORRECT — semantic tokens handle dark mode automatically
 export const Card = () => (
-  <div className="bg-surface-1 text-color-primary border-color-subtle">Content adapts to theme automatically</div>
+  <div className="bg-surface-1 text-primary border-subtle">Content adapts to theme automatically</div>
 );
 
 // WRONG — manual dark mode variants

@@ -76,13 +76,13 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
       >
         {/* icon */}
         <span className="flex-shrink-0 mt-0.5 rounded-full bg-layer-2 p-1">
-          <Timer className="h-3 w-3 text-color-tertiary" />
+          <Timer className="h-3 w-3 text-tertiary" />
         </span>
 
         {/* message — clickable for admin to open edit modal */}
         <div
-          className={cn("flex-1 text-xs text-color-tertiary leading-5", {
-            "cursor-pointer hover:text-color-secondary": isEditable,
+          className={cn("flex-1 text-xs text-tertiary leading-5", {
+            "cursor-pointer hover:text-secondary": isEditable,
           })}
           {...(isEditable
             ? {
@@ -95,13 +95,13 @@ export const IssueActivityWorklog = observer(function IssueActivityWorklog(props
               }
             : {})}
         >
-          {displayName && <span className="font-medium text-color-primary">{displayName}</span>}
+          {displayName && <span className="font-medium text-primary">{displayName}</span>}
           {displayName ? ` ${t("worklog.activity_logged")}` : t("worklog.activity_logged")}
-          {duration && <span className="font-medium text-color-primary"> {duration}</span>}
+          {duration && <span className="font-medium text-primary"> {duration}</span>}
           {worklog?.description && <span className="ml-1">— {worklog.description}</span>}
           {createdAt && <span className="ml-1">{createdAt}</span>}
           {isEditable && (
-            <Pencil className="ml-1 inline h-3 w-3 text-color-tertiary opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Pencil className="ml-1 inline h-3 w-3 text-tertiary opacity-0 group-hover:opacity-100 transition-opacity" />
           )}
         </div>
 

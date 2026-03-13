@@ -25,7 +25,7 @@ Read `.agent/rules/plane-design-system.md` and `.agent/rules/frontend-implementa
 Key rules (always verify):
 
 - ALL text uses `t()` from `@plane/i18n` — zero hardcoded English
-- Color tokens: `text-color-*` (NOT `text-tertiary`), `border-color-*` (NOT `border-subtle`)
+- Color tokens: `text-*` (NOT `text-color-tertiary`), `border-*` (NOT `border-color-subtle`)
 - Input backgrounds: `bg-layer-2` (NOT `bg-surface-1`)
 - Components from `@plane/propel` (subpath imports)
 - Menus: `CustomMenu` from `@plane/ui` — NEVER custom hover dropdowns
@@ -50,8 +50,9 @@ Key rules (always verify):
 
 ## Post-Implementation
 
-After completing ALL steps, run the full checklist from the phase file.
-If any check fails → fix immediately before proceeding.
+After implementing, follow verification gates in `.agent/rules/development-rules.md`.
+Verify imports against `.agent/rules/frontend-canonical-imports.md` and `.agent/rules/backend-canonical-imports.md`.
+Run the full checklist from the phase file. If any check fails → fix immediately before proceeding.
 
 ## Examples
 

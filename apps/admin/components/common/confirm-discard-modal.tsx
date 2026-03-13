@@ -24,7 +24,7 @@ export function ConfirmDiscardModal(props: Props) {
         <div className="p-6">
           <Dialog.Title>You have unsaved changes</Dialog.Title>
           <div className="mt-4">
-            <p className="text-13 text-color-tertiary">
+            <p className="text-13 text-tertiary">
               Changes you made will be lost if you go back. Do you wish to go back?
             </p>
           </div>

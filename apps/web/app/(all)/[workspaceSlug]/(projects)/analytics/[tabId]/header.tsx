@@ -22,7 +22,7 @@ export const WorkspaceAnalyticsHeader = observer(function WorkspaceAnalyticsHead
             component={
               <BreadcrumbLink
                 label={t("workspace_analytics.label")}
-                icon={<AnalyticsIcon className="h-4 w-4 text-color-tertiary" />}
+                icon={<AnalyticsIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />

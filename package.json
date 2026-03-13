@@ -27,6 +27,7 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-node": "0.3.9",
     "eslint-import-resolver-typescript": "4.4.4",
+    "eslint-plugin-plane": "workspace:*",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-n": "17.23.1",

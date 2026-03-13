@@ -44,6 +44,10 @@ Since Antigravity runs as a single agent, this skill executes the pipeline **seq
 ### Step 5: Review
 
 - Review ALL changed files against `.agent/rules/frontend-implementation-checklist.md`
+- Check: `.agent/rules/development-rules.md` for post-implementation verification gates
+- Check: `.agent/rules/prettier-formatting.md` for formatting standards (120-char width)
+- Check: `.agent/rules/frontend-canonical-imports.md` for verified frontend import paths
+- Check: `.agent/rules/backend-canonical-imports.md` for verified backend import paths
 - Check: i18n, color tokens, input backgrounds, components, layout, file quality
 - Backend: check permissions, managers, activity tracking, N+1 queries
 - Save review to `plans/reports/review-{date}-{slug}.md`

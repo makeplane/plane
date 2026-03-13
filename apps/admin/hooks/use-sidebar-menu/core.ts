@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Image, BrainCog, Cog, Mail, Users, Network, UserCheck } from "lucide-react";
+import { Activity, Image, BrainCog, Cog, Mail, Users, Network, UserCheck } from "lucide-react";
 // plane imports
 import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
@@ -19,7 +19,8 @@ export type TCoreSidebarMenuKey =
   | "staff"
   | "authentication"
   | "ai"
-  | "image";
+  | "image"
+  | "monitoring";
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
@@ -75,5 +76,11 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "Images in Plane",
     description: "Allow third-party image libraries.",
     href: `/image/`,
+  },
+  monitoring: {
+    Icon: Activity,
+    name: "Monitoring",
+    description: "System health and email metrics.",
+    href: `/monitoring/`,
   },
 };

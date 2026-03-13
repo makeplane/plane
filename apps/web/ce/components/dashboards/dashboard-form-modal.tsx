@@ -113,14 +113,14 @@ export const DashboardFormModal = observer(function DashboardFormModal({
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <form onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-color-primary">
+          <h3 className="text-xl font-medium text-primary">
             {isEditing ? t("analytics_dashboard.modal_title_update") : t("analytics_dashboard.modal_title_create")}
           </h3>
 
           {/* Name */}
           <div className="space-y-1">
-            <label htmlFor="dashboard-name" className="text-sm font-medium text-color-secondary">
-              {t("analytics_dashboard.name.label")} <span className="text-color-danger-primary">*</span>
+            <label htmlFor="dashboard-name" className="text-sm font-medium text-secondary">
+              {t("analytics_dashboard.name.label")} <span className="text-danger-primary">*</span>
             </label>
             <Controller
               name="name"
@@ -141,12 +141,12 @@ export const DashboardFormModal = observer(function DashboardFormModal({
                 />
               )}
             />
-            {errors.name && <p className="text-xs text-color-danger-primary">{errors.name.message}</p>}
+            {errors.name && <p className="text-xs text-danger-primary">{errors.name.message}</p>}
           </div>
 
           {/* Description */}
           <div className="space-y-1">
-            <label htmlFor="dashboard-description" className="text-sm font-medium text-color-secondary">
+            <label htmlFor="dashboard-description" className="text-sm font-medium text-secondary">
               {t("analytics_dashboard.description.label")}
             </label>
             <Controller
@@ -167,16 +167,16 @@ export const DashboardFormModal = observer(function DashboardFormModal({
           {/* Project selector */}
           <div className="space-y-2">
             <div>
-              <p className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.projects_label")}</p>
-              <p className="text-xs text-color-tertiary">{t("analytics_dashboard.projects_hint")}</p>
+              <p className="text-sm font-medium text-secondary">{t("analytics_dashboard.projects_label")}</p>
+              <p className="text-xs text-tertiary">{t("analytics_dashboard.projects_hint")}</p>
             </div>
             <Controller
               name="project_ids"
               control={control}
               render={() => (
-                <div className="max-h-40 overflow-y-auto rounded-md border border-color-subtle bg-layer-2">
+                <div className="max-h-40 overflow-y-auto rounded-md border border-subtle bg-layer-2">
                   {projects.length === 0 ? (
-                    <p className="p-3 text-sm text-color-tertiary">{t("analytics_dashboard.no_projects")}</p>
+                    <p className="p-3 text-sm text-tertiary">{t("analytics_dashboard.no_projects")}</p>
                   ) : (
                     projects.map((project) => {
                       if (!project) return null;
@@ -195,13 +195,13 @@ export const DashboardFormModal = observer(function DashboardFormModal({
                           <span
                             className={cn(
                               "flex h-4 w-4 shrink-0 items-center justify-center rounded border",
-                              isSelected ? "border-accent-primary bg-accent-primary" : "border-color-strong bg-layer-2"
+                              isSelected ? "border-accent-primary bg-accent-primary" : "border-strong bg-layer-2"
                             )}
                           >
-                            {isSelected && <Check className="h-3 w-3 text-color-on-color" />}
+                            {isSelected && <Check className="h-3 w-3 text-on-color" />}
                           </span>
-                          <span className="truncate text-color-primary">{project.name}</span>
-                          <span className="ml-auto shrink-0 text-xs text-color-tertiary">{project.identifier}</span>
+                          <span className="truncate text-primary">{project.name}</span>
+                          <span className="ml-auto shrink-0 text-xs text-tertiary">{project.identifier}</span>
                         </button>
                       );
                     })
@@ -210,7 +210,7 @@ export const DashboardFormModal = observer(function DashboardFormModal({
               )}
             />
             {(selectedProjectIds ?? []).length > 0 && (
-              <p className="text-xs text-color-accent-primary">
+              <p className="text-xs text-accent-primary">
                 {(selectedProjectIds ?? []).length} {t("analytics_dashboard.projects_selected")}
               </p>
             )}
@@ -219,8 +219,8 @@ export const DashboardFormModal = observer(function DashboardFormModal({
           {/* Access toggle */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-color-secondary">{t("analytics_dashboard.public_access")}</p>
-              <p className="text-xs text-color-tertiary">{t("analytics_dashboard.public_access_description")}</p>
+              <p className="text-sm font-medium text-secondary">{t("analytics_dashboard.public_access")}</p>
+              <p className="text-xs text-tertiary">{t("analytics_dashboard.public_access_description")}</p>
             </div>
             <Controller
               name="access"
@@ -233,7 +233,7 @@ export const DashboardFormModal = observer(function DashboardFormModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-2 border-t border-color-subtle px-5 py-4">
+        <div className="flex items-center justify-end gap-2 border-t border-subtle px-5 py-4">
           <Button variant="secondary" size="sm" onClick={handleClose} type="button" disabled={isSubmitting}>
             {t("cancel")}
           </Button>

@@ -32,6 +32,7 @@ export default [
     route("staff/create", "./(all)/(dashboard)/staff/create/page.tsx"),
     route("ai", "./(all)/(dashboard)/ai/page.tsx"),
     route("image", "./(all)/(dashboard)/image/page.tsx"),
+    route("monitoring", "./(all)/(dashboard)/monitoring/page.tsx"),
   ]),
   // Catch-all route for 404 handling - must be last
   route("*", "./components/404.tsx"),

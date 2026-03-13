@@ -29,7 +29,7 @@ description: Implement a planned feature following Plane architecture
    - Create hook in `apps/web/ce/hooks/store/`
    - Build components in `apps/web/ce/components/`:
      - Use `@plane/propel` (subpath imports)
-     - Use semantic color tokens (`bg-surface-1`, `text-color-primary`, etc.)
+     - Use semantic color tokens (`bg-surface-1`, `text-primary`, etc.)
      - Wrap with `observer` for MobX reactivity
      - Use `useTranslation()` for all user-facing text
      - Use `cn()` from `@plane/utils` for conditional classes
@@ -40,7 +40,7 @@ description: Implement a planned feature following Plane architecture
    - If phase file has embedded rules + checklist, verify ALL checklist items
    - Frontend phases:
      - [ ] ALL strings use `t()` from `@plane/i18n` (zero hardcoded English)
-     - [ ] Color tokens use full `text-color-*` / `border-color-*` prefix
+     - [ ] Color tokens use short-form `text-*` / `border-*` (NOT legacy `text-color-*` / `border-color-*`)
      - [ ] Input backgrounds use `bg-layer-2` (NOT `bg-surface-1`)
      - [ ] `observer()` on all MobX store-reading components
      - [ ] Menus use `CustomMenu`/`Menu` (no custom dropdowns)
@@ -53,6 +53,8 @@ description: Implement a planned feature following Plane architecture
      - [ ] `select_related`/`prefetch_related` used
 
 5. **Verification**
+   - After implementing, follow verification gates in `.agent/rules/development-rules.md`
+   - Check `.agent/rules/prettier-formatting.md` for formatting standards (120-char width)
    - Run linting: `pnpm check:lint`
    - Run type check: `pnpm check:types`
    - Test dark mode works (semantic tokens)

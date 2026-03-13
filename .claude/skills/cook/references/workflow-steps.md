@@ -58,7 +58,17 @@ All modes share core steps with mode-specific variations.
 - Parse existing plan for phases
 - If phase files lack embedded rules/checklist, extract from `.claude/rules/` before implementing
 
-**Output:** `✓ Step 2: Plan created - [N] phases (with embedded rules)`
+**Post-Plan Validation (MANDATORY before review gate):**
+```
+For each phase-XX-*.md file:
+  CHECK: Sections 1-14 present in strict order? (Context Links → Next Steps)
+  CHECK: ## Embedded Rules exists with ≥3 rules?
+  CHECK: ## Post-Phase Checklist exists with ≥4 checkboxes?
+  CHECK: No extra top-level ## sections outside the 14?
+  → If ANY check fails: fix the phase file before proceeding
+```
+
+**Output:** `✓ Step 2: Plan created - [N] phases (validated: embedded rules + checklist)`
 
 ### [Review Gate 2] Post-Plan (skip if auto mode)
 

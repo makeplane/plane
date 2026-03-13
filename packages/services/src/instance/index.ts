@@ -5,3 +5,4 @@
  */
 
 export * from "./instance.service";
+export * from "./monitoring.service";

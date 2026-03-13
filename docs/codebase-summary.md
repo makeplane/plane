@@ -63,7 +63,7 @@ plane.so/
 | **State Management** | MobX (6 stores)                            |
 | **Styling**          | Tailwind CSS v4                            |
 
-**Features**: Instance config, OAuth setup, email settings, AI config, image settings, user management, department/staff management
+**Features**: Instance config, OAuth setup, email settings, AI config, image settings, user management, department/staff management, monitoring
 
 **Key Stores**: `instance`, `root`, `theme`, `user`, `workspace`, `instance-user`, `instance-department`, `instance-staff`
 
@@ -84,6 +84,15 @@ plane.so/
   - `packages/services/src/department/` - Department API integration
   - `packages/services/src/staff/` - Staff API integration
 - Components: Department tree, staff table, bulk import modal, deactivation workflows
+
+**Monitoring Feature** (Phase 1):
+
+- Route: `/monitoring` - Dashboard with 3 tabs
+- Store: Instance monitoring state (admin-only)
+- Service: `instance/monitoring.service.ts` (packages/services)
+- Tabs: Issue Email Logs (paginated, ~50/page), Scheduled Jobs (read-only list), Worker Health (live Celery worker stats, cached 30s)
+- Backend: 3 read-only endpoints at `/god-mode/instances/monitoring/{email-logs,scheduled-jobs,worker-health}/`
+- Data sources: EmailNotificationLog, django-celery-beat PeriodicTask, Celery Inspect API
 
 ### 3. Space App (`apps/space/`)
 
@@ -175,13 +184,23 @@ plane.so/
 - Permissions: Instance admin only
 - Features: User CRUD, password reset, workspace assignment
 
+**Admin Monitoring Backend** (`plane/license/api/monitoring.*`):
+
+- Endpoints: 3 read-only monitoring endpoints (GET-only, paginated/cached, admin-only)
+  - `EmailLogMonitoringEndpoint` - Issue email notification logs (paginated, 50/page, filters: date_from, date_to, entity_name)
+  - `ScheduledJobMonitoringEndpoint` - Celery scheduled tasks (read-only, displays schedule, last_run, run_count)
+  - `WorkerHealthMonitoringEndpoint` - Live Celery worker stats (cached 30s, shows active tasks, pool info, uptime)
+- Serializers: Email logs with receiver/triggered_by details, scheduled job display metadata, worker stats
+- Permissions: `InstanceAdminPermission` (role >= 15)
+- Data sources: `EmailNotificationLog` model, `django-celery-beat.PeriodicTask`, Celery Inspect API
+
 **API Versions**:
 
 - `/api/` and `/api/v0/` - Legacy endpoints (under `plane.app`)
 - `/api/v1/` - New endpoints (under `plane.api`) + analytics dashboard endpoints
 - `/api/public/` - Public/shared space APIs
 - `/auth/` - Authentication endpoints
-- `/god-mode/` - Admin API endpoints
+- `/god-mode/instances/` - Admin instance endpoints (user management, monitoring, configuration)
 
 ### 6. Proxy App (`apps/proxy/`)
 

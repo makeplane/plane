@@ -36,7 +36,7 @@ export const WorklogFiltersToolbar = ({
         multiple
         onChange={(val: string[]) => onSelectedUsersChange(val)}
         placeholder="Users"
-        buttonClassName="border border-color-subtle shadow-none text-13 h-8 px-2"
+        buttonClassName="border border-subtle shadow-none text-13 h-8 px-2"
         buttonVariant="border-with-text"
         renderByDefault
         projectId={projectId}
@@ -45,7 +45,7 @@ export const WorklogFiltersToolbar = ({
         value={dateRange}
         onSelect={(val) => onDateRangeChange(val ? { from: val.from, to: val.to } : { from: undefined, to: undefined })}
         placeholder={{ from: "Start date", to: "End date" }}
-        buttonClassName="border border-color-subtle shadow-none text-13 h-8 px-2"
+        buttonClassName="border border-subtle shadow-none text-13 h-8 px-2"
         buttonVariant="border-with-text"
       />
     </div>

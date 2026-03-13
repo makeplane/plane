@@ -66,16 +66,16 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
       <PageHead title={pageTitle} />
       <div className="flex h-full flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-color-subtle px-4 py-3">
+        <div className="flex items-center justify-between border-b border-subtle px-4 py-3">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push(`/${workspaceSlug}/dashboards`)}
-              className="text-color-secondary hover:text-color-primary text-sm"
+              className="text-secondary hover:text-primary text-sm"
             >
               {t("analytics_dashboard.breadcrumb_dashboards")}
             </button>
-            <span className="text-color-tertiary">/</span>
-            <h1 className="text-base font-medium text-color-primary">{pageTitle}</h1>
+            <span className="text-tertiary">/</span>
+            <h1 className="text-base font-medium text-primary">{pageTitle}</h1>
           </div>
           <Button variant="primary" size="sm" onClick={() => setIsConfigOpen(true)}>
             <Plus className="h-4 w-4 mr-1" />
@@ -88,7 +88,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
           {store.isLoading ? (
             <div className="grid grid-cols-2 gap-4">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Loader key={i} className="rounded-lg border border-color-subtle p-4">
+                <Loader key={i} className="rounded-lg border border-subtle p-4">
                   <Loader.Item height="16px" width="40%" />
                   <Loader.Item height="200px" width="100%" className="mt-3" />
                 </Loader>
@@ -96,7 +96,7 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
             </div>
           ) : widgets.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
-              <p className="text-sm text-color-tertiary">{t("analytics_dashboard.empty_widgets")}</p>
+              <p className="text-sm text-tertiary">{t("analytics_dashboard.empty_widgets")}</p>
               <Button onClick={() => setIsConfigOpen(true)}>{t("analytics_dashboard.add_widget")}</Button>
             </div>
           ) : (
@@ -104,11 +104,11 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
               {widgets.map((w) => (
                 <div
                   key={w.id}
-                  className="rounded-lg border border-color-subtle bg-surface-1 overflow-hidden"
+                  className="rounded-lg border border-subtle bg-surface-1 overflow-hidden"
                   style={{ gridColumn: `span ${w.width ?? 6}`, gridRow: `span ${w.height ?? 2}` }}
                 >
-                  <div className="flex items-center justify-between px-3 py-2 border-b border-color-subtle">
-                    <span className="text-sm font-medium text-color-primary truncate">{w.name ?? "Widget"}</span>
+                  <div className="flex items-center justify-between px-3 py-2 border-b border-subtle">
+                    <span className="text-sm font-medium text-primary truncate">{w.name ?? "Widget"}</span>
                     <WidgetContextMenu
                       widget={w}
                       workspaceSlug={workspaceSlug}

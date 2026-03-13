@@ -1,9 +1,4 @@
----
-paths:
-  - plane/tests/**
-  - packages/i18n/**
-  - packages/types/**
----
+<!-- Scope: plane/tests/**, packages/i18n/**, packages/types/** -->
 
 # Backend Testing & i18n
 

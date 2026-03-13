@@ -1,8 +1,4 @@
----
-paths:
-  - plane/app/views/**
-  - plane/api/views/**
----
+<!-- Scope: plane/app/views/**, plane/api/views/** -->
 
 # Backend Views & Permissions
 

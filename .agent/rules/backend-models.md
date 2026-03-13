@@ -1,7 +1,4 @@
----
-paths:
-  - plane/db/**
----
+<!-- Scope: plane/db/** -->
 
 # Backend Models & Custom Managers
 

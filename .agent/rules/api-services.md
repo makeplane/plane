@@ -1,8 +1,4 @@
----
-paths:
-  - apps/web/**/services/**
-  - apps/web/ce/services/**
----
+<!-- Scope: apps/web/**/services/**, apps/web/ce/services/** -->
 
 # API Service Pattern
 

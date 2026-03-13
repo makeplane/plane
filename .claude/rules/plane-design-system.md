@@ -31,7 +31,7 @@ React 18 + Router v7 + Vite | MobX (33+ stores) | Tailwind v4 (semantic tokens) 
 
 1. **Search before build** — ALWAYS grep existing components (→ `component-libraries.md`)
 2. **Semantic tokens only** — NEVER hardcode colors (→ `color-tokens.md`)
-3. **`text-color-*` infix** — `text-tertiary` WRONG → `text-color-tertiary` (→ `color-tokens.md`)
+3. **`text-*` short form** — `text-color-tertiary` LEGACY → use `text-tertiary` (→ `color-tokens.md`)
 4. **`bg-layer-2` for inputs** — NOT `bg-surface-1` (→ `forms-inputs.md`)
 5. **`observer()` always** — wrap MobX-reading components (→ `mobx-stores.md`)
 6. **`t()` for all strings** — never hardcode text (→ `i18n-rules.md`)
@@ -53,6 +53,35 @@ React 18 + Router v7 + Vite | MobX (33+ stores) | Tailwind v4 (semantic tokens) 
 | `i18n-rules.md`                        | Translation files, t() usage             |
 | `api-services.md`                      | Service class pattern, URL convention    |
 | `frontend-implementation-checklist.md` | Pre/post implementation checklist        |
+
+## Canonical Imports — Prevent Hallucination
+
+Always verify imports exist. These are the CORRECT sources:
+
+| Package           | Import                                                      | Usage                                   |
+| ----------------- | ----------------------------------------------------------- | --------------------------------------- |
+| `mobx`            | `makeObservable, observable, action, computed, runInAction` | Store definitions                       |
+| `mobx-react`      | `observer`                                                  | Component wrapper (NOT mobx-react-lite) |
+| `mobx-utils`      | `computedFn`                                                | Parameterized computed                  |
+| `lodash-es`       | `set`                                                       | Dynamic record key updates in stores    |
+| `swr`             | `useSWR`                                                    | Read-only data fetching                 |
+| `@plane/i18n`     | `useTranslation`                                            | i18n (apps/web ONLY, not admin)         |
+| `@plane/propel/*` | Subpath imports                                             | New UI components                       |
+| `@plane/ui`       | Named imports                                               | Legacy components (don't add new usage) |
+| `react-router`    | `Outlet, useParams, useNavigate`                            | Routing                                 |
+| `./+types/page`   | `Route` type                                                | Type-safe route params                  |
+
+❌ NEVER import `set` from `mobx` — always `lodash-es`
+❌ NEVER import `observer` from `mobx-react-lite` — always `mobx-react`
+❌ NEVER import from barrel `@plane/propel` — always subpath `@plane/propel/button`
+
+## Rule Maintenance
+
+If you encounter code that contradicts these rules:
+
+1. **Grep to verify** which pattern is dominant (count occurrences)
+2. **Follow the majority** pattern (the rule may be outdated)
+3. **Flag the discrepancy** in your output so rules can be updated
 
 ## Standards
 

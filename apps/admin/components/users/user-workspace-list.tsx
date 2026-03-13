@@ -8,9 +8,9 @@ import type { IInstanceUserWorkspace } from "@plane/services";
 import { cn } from "@plane/utils";
 
 const ROLE_LABELS: Record<number, { label: string; className: string }> = {
-  20: { label: "Admin", className: "bg-accent-subtle text-color-accent-primary" },
-  15: { label: "Member", className: "bg-surface-2 text-color-secondary" },
-  5: { label: "Guest", className: "bg-layer-2 text-color-tertiary" },
+  20: { label: "Admin", className: "bg-accent-subtle text-accent-primary" },
+  15: { label: "Member", className: "bg-surface-2 text-secondary" },
+  5: { label: "Guest", className: "bg-layer-2 text-tertiary" },
 };
 
 type Props = {

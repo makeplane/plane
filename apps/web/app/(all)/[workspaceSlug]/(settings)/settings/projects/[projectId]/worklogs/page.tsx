@@ -137,16 +137,16 @@ function WorklogSettingsPage() {
         />
         <div className="mt-6 flex flex-col w-full">
           {projectWorklogs.isLoading && worklogs.length === 0 ? (
-            <div className="flex h-40 w-full items-center justify-center text-color-tertiary">Loading...</div>
+            <div className="flex h-40 w-full items-center justify-center text-tertiary">Loading...</div>
           ) : worklogs.length > 0 ? (
             <div className="w-full overflow-hidden flex flex-col">
               <Table
                 data={worklogs}
                 columns={columns}
                 keyExtractor={(log: IWorkLog) => log.id}
-                tableClassName="w-full border-t border-color-subtle"
-                tHeadTrClassName="!divide-x-0 border-b border-color-subtle !bg-transparent"
-                tBodyTrClassName="!divide-x-0 border-b border-color-subtle py-2 hover:bg-layer-1-hover"
+                tableClassName="w-full border-t border-subtle"
+                tHeadTrClassName="!divide-x-0 border-b border-subtle !bg-transparent"
+                tBodyTrClassName="!divide-x-0 border-b border-subtle py-2 hover:bg-layer-1-hover"
                 thClassName="text-left py-3 px-5 font-normal"
                 tdClassName="py-3 px-5"
               />

@@ -23,7 +23,7 @@ function AnalyticsSectionWrapper(props: Props) {
         {title && (
           <div className="flex  items-center gap-2 ">
             <h1 className={"text-16 font-medium"}>{title}</h1>
-            {/* {subtitle && <p className="text-16 text-color-tertiary"> • {subtitle}</p>} */}
+            {/* {subtitle && <p className="text-16 text-tertiary"> • {subtitle}</p>} */}
           </div>
         )}
         {actions}

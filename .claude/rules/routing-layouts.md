@@ -82,6 +82,44 @@ function MyFeaturePage({ params }: Route.ComponentProps) {
 export default observer(MyFeaturePage);
 ```
 
+## React Router v7 — Advanced Patterns
+
+### Route Groups (Parenthesized Directories)
+
+Directories wrapped in `()` are layout groups — they affect nesting but NOT the URL:
+
+```
+(all)/                    ← Not in URL, just a layout wrapper
+  [workspaceSlug]/        ← URL segment: /:workspaceSlug
+    (projects)/           ← Not in URL, provides sidebar layout
+      issues/page.tsx     ← URL: /:workspaceSlug/issues
+    (settings)/           ← Not in URL, provides settings layout
+      profile/page.tsx    ← URL: /:workspaceSlug/profile
+```
+
+### SSR vs CSR Apps
+
+| App          | Rendering    | Notes                              |
+| ------------ | ------------ | ---------------------------------- |
+| `apps/web`   | CSR (client) | SPA, no server loaders             |
+| `apps/admin` | CSR (client) | SPA, no server loaders             |
+| `apps/space` | SSR (server) | Has loaders, use `useLoaderData()` |
+
+❌ WRONG — Using SSR loader in apps/web:
+
+```typescript
+export async function loader() { ... }  // Only for apps/space
+```
+
+✅ CORRECT — CSR data fetching in apps/web:
+
+```typescript
+// Use SWR or store.fetchX() in useEffect, not loaders
+useEffect(() => {
+  store.fetchItems(slug);
+}, [slug]);
+```
+
 ## Breadcrumbs
 
 ```typescript

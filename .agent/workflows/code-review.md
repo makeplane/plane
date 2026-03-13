@@ -9,6 +9,9 @@ description: Review code changes against Plane design system and architecture st
 1. **Read Standards**
    - Read `./docs/code-standards.md`
    - Read `./docs/design-guidelines.md`
+   - Read `.agent/rules/development-rules.md` -- verification gates, ESLint, testing integrity
+   - Read `.agent/rules/backend-testing.md` -- test runner commands and markers
+   - Read `.agent/rules/prettier-formatting.md` -- formatting standards
 
 2. **Backend Review Checklist**
    - [ ] Models inherit `BaseModel` or `ProjectBaseModel`
@@ -27,7 +30,7 @@ description: Review code changes against Plane design system and architecture st
 3. **Frontend Review Checklist**
    - [ ] Components use `@plane/propel` (not `@plane/ui` when overlap exists)
    - [ ] Propel imports use subpath: `@plane/propel/button`
-   - [ ] Semantic color tokens: `text-color-*` (NOT `text-tertiary`), `border-color-*` (NOT `border-subtle`)
+   - [ ] Semantic color tokens: `text-*` (NOT `text-color-tertiary`), `border-*` (NOT `border-color-subtle`)
    - [ ] No hardcoded colors (`bg-white`, `text-gray-*`, `#hex`)
    - [ ] Input/form backgrounds use `bg-layer-2` (NOT `bg-surface-1`)
    - [ ] Menus use `CustomMenu`/`Menu` (no custom hover dropdowns)

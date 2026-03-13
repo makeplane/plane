@@ -27,7 +27,7 @@ export function StyleNumberWidgetSection({ control }: StyleNumberWidgetSectionPr
   return (
     <>
       <div>
-        <span className="mb-2 block text-sm font-medium text-color-secondary">
+        <span className="mb-2 block text-sm font-medium text-secondary">
           {t("analytics_dashboard.text_align")}
         </span>
         <Controller
@@ -42,8 +42,8 @@ export function StyleNumberWidgetSection({ control }: StyleNumberWidgetSectionPr
                   onClick={() => field.onChange(opt.value)}
                   className={`flex-1 rounded border px-3 py-1.5 text-sm font-medium transition-colors ${
                     (field.value || "center") === opt.value
-                      ? "border-color-accent-strong bg-accent-subtle text-color-accent-primary"
-                      : "border-color-subtle bg-surface-1 text-color-secondary hover:bg-layer-1"
+                      ? "border-accent-strong bg-accent-subtle text-accent-primary"
+                      : "border-subtle bg-surface-1 text-secondary hover:bg-layer-1"
                   }`}
                 >
                   {opt.label}
@@ -55,7 +55,7 @@ export function StyleNumberWidgetSection({ control }: StyleNumberWidgetSectionPr
       </div>
 
       <div>
-        <span className="mb-2 block text-sm font-medium text-color-secondary">
+        <span className="mb-2 block text-sm font-medium text-secondary">
           {t("analytics_dashboard.text_color")}
         </span>
         <Controller
@@ -67,16 +67,16 @@ export function StyleNumberWidgetSection({ control }: StyleNumberWidgetSectionPr
                 type="color"
                 value={(field.value as string) || "#ffffff"}
                 onChange={(e) => field.onChange(e.target.value)}
-                className="h-8 w-10 cursor-pointer rounded border border-color-subtle bg-transparent p-0.5"
+                className="h-8 w-10 cursor-pointer rounded border border-subtle bg-transparent p-0.5"
               />
-              <span className="text-sm text-color-tertiary">
+              <span className="text-sm text-tertiary">
                 {(field.value as string) || t("analytics_dashboard.text_color_default")}
               </span>
               {field.value && (
                 <button
                   type="button"
                   onClick={() => field.onChange(undefined)}
-                  className="text-xs text-color-tertiary hover:text-color-secondary"
+                  className="text-xs text-tertiary hover:text-secondary"
                 >
                   {t("common.reset")}
                 </button>

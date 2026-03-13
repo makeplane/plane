@@ -34,25 +34,25 @@ export const WidgetTypeSelector = ({ selectedType, onChange }: WidgetTypeSelecto
         className={cn(
           "group flex flex-col items-start rounded-lg border-[1.5px] p-3 text-left transition-all",
           selectedType === type
-            ? "border-color-accent-strong bg-accent-subtle"
-            : "border-color-subtle hover:border-color-accent-strong hover:bg-layer-1-hover bg-surface-1"
+            ? "border-accent-strong bg-accent-subtle"
+            : "border-subtle hover:border-accent-strong hover:bg-layer-1-hover bg-surface-1"
         )}
       >
         <Icon
           className={cn("mb-2 h-6 w-6 transition-colors", {
-            "text-color-accent-primary": selectedType === type,
-            "text-color-tertiary group-hover:text-color-accent-primary": selectedType !== type,
+            "text-accent-primary": selectedType === type,
+            "text-tertiary group-hover:text-accent-primary": selectedType !== type,
           })}
         />
         <div
           className={cn(
             "font-medium transition-colors",
-            selectedType === type ? "text-color-accent-primary" : "text-color-primary"
+            selectedType === type ? "text-accent-primary" : "text-primary"
           )}
         >
           {label}
         </div>
-        <div className="text-xs text-color-tertiary">{description}</div>
+        <div className="text-xs text-tertiary">{description}</div>
       </button>
     ))}
   </div>

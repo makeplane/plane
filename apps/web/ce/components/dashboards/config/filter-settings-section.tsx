@@ -45,8 +45,8 @@ function MultiSelectChips({
             onClick={() => toggle(opt.key)}
             className={`rounded-md border px-2 py-1 text-xs transition-colors ${
               selected
-                ? "border-color-accent-strong bg-accent-subtle text-color-accent-primary"
-                : "border-color-subtle text-color-tertiary hover:bg-layer-2"
+                ? "border-accent-strong bg-accent-subtle text-accent-primary"
+                : "border-subtle text-tertiary hover:bg-layer-2"
             }`}
           >
             {opt.label}
@@ -68,20 +68,20 @@ function DateRangeRow({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-xs font-medium text-color-tertiary">{label}</span>
+      <span className="text-xs font-medium text-tertiary">{label}</span>
       <div className="flex items-center gap-2">
         <input
           type="date"
           value={value?.after ?? ""}
           onChange={(e) => onChange({ ...value, after: e.target.value || undefined })}
-          className="w-full rounded-md border border-color-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-color-secondary outline-none focus:border-color-accent-strong"
+          className="w-full rounded-md border border-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
         />
-        <span className="text-xs text-color-tertiary">to</span>
+        <span className="text-xs text-tertiary">to</span>
         <input
           type="date"
           value={value?.before ?? ""}
           onChange={(e) => onChange({ ...value, before: e.target.value || undefined })}
-          className="w-full rounded-md border border-color-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-color-secondary outline-none focus:border-color-accent-strong"
+          className="w-full rounded-md border border-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
         />
       </div>
     </div>
@@ -92,10 +92,10 @@ export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
   const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-5">
-      <p className="text-xs text-color-tertiary">{t("analytics_dashboard.filter_description")}</p>
+      <p className="text-xs text-tertiary">{t("analytics_dashboard.filter_description")}</p>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-color-tertiary">{t("analytics_dashboard.filter_priority")}</span>
+        <span className="text-xs font-medium text-tertiary">{t("analytics_dashboard.filter_priority")}</span>
         <Controller
           name="filters.priority"
           control={control}
@@ -111,7 +111,7 @@ export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-color-tertiary">{t("analytics_dashboard.filter_state_group")}</span>
+        <span className="text-xs font-medium text-tertiary">{t("analytics_dashboard.filter_state_group")}</span>
         <Controller
           name="filters.state_group"
           control={control}
@@ -127,7 +127,7 @@ export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
       </div>
 
       <div className="flex flex-col gap-3">
-        <span className="text-xs font-medium text-color-secondary">{t("analytics_dashboard.filter_date_ranges")}</span>
+        <span className="text-xs font-medium text-secondary">{t("analytics_dashboard.filter_date_ranges")}</span>
         {ANALYTICS_DATE_FILTER_OPTIONS.map((opt) => (
           <Controller
             key={opt.key}

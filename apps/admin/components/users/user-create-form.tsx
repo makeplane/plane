@@ -62,7 +62,7 @@ export function UserCreateForm() {
           {...register("first_name", { required: "First name is required" })}
           placeholder="First name"
         />
-        {errors.first_name && <p className="text-11 text-color-danger-primary">{errors.first_name.message}</p>}
+        {errors.first_name && <p className="text-11 text-danger-primary">{errors.first_name.message}</p>}
       </div>
 
       <div className="space-y-1">
@@ -82,7 +82,7 @@ export function UserCreateForm() {
           {...register("email", { required: "Email is required" })}
           placeholder="user@example.com"
         />
-        {errors.email && <p className="text-11 text-color-danger-primary">{errors.email.message}</p>}
+        {errors.email && <p className="text-11 text-danger-primary">{errors.email.message}</p>}
       </div>
 
       <div className="space-y-1">
@@ -98,7 +98,7 @@ export function UserCreateForm() {
           })}
           placeholder="Minimum 8 characters"
         />
-        {errors.password && <p className="text-11 text-color-danger-primary">{errors.password.message}</p>}
+        {errors.password && <p className="text-11 text-danger-primary">{errors.password.message}</p>}
       </div>
 
       <div className="flex items-center gap-4 pt-4">

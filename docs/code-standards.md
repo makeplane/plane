@@ -1,6 +1,6 @@
 # Code Standards & Conventions
 
-**Last Updated**: 2026-03-01
+**Last Updated**: 2026-03-12
 **Scope**: TypeScript, Python, configuration files across monorepo
 **Enforced By**: ESLint, Prettier, pre-commit hooks
 
@@ -173,6 +173,19 @@ class ValidationError extends Error {
 
 ### State Management (MobX)
 
+**Pattern - Use `set()` from lodash-es for nested updates**:
+
+```typescript
+// Good: set() from lodash-es
+import { set } from "lodash-es";
+
+const updated = set(state, "workspace.name", "New Name");
+
+// Avoid: MobX set() for nested updates
+import { set } from "mobx";
+// MobX set() is for observable objects, not plain data updates
+```
+
 **Pattern - Store structure** (always use explicit `makeObservable`, NOT `makeAutoObservable`):
 
 ```typescript
@@ -233,6 +246,31 @@ export const WorkspaceList = observer(() => {
     </div>
   );
 });
+```
+
+### Internationalization (i18n)
+
+**Scope**: `apps/web` only
+
+**Rules**:
+
+- Use `useTranslation` + `t()` in Web app for all user-facing text
+- Do NOT use i18n in Admin app (`apps/admin`)
+- Import from `@plane/i18n` for type definitions
+
+**Pattern**:
+
+```typescript
+// apps/web - Good
+import { useTranslation } from "@plane/i18n";
+
+export const Component = () => {
+  const { t } = useTranslation();
+  return <p>{t("issue.title")}</p>;
+};
+
+// apps/admin - Wrong
+// Do NOT add i18n strings here; keep admin app English-only
 ```
 
 ### Performance Optimization
@@ -381,14 +419,24 @@ def update_issue_activity(issue_id: str, activity_type: str):
 
 ### Key Rules Enforced
 
-| Rule                                      | Level | Purpose                  |
-| ----------------------------------------- | ----- | ------------------------ |
-| `@typescript-eslint/no-explicit-any`      | warn  | Prevent `any` types      |
-| `@typescript-eslint/no-floating-promises` | warn  | Catch unhandled promises |
-| `react-hooks/rules-of-hooks`              | error | Enforce hooks rules      |
-| `react/display-name`                      | warn  | Identify components      |
-| `import/prefer-type-imports`              | warn  | Use type imports         |
-| `@typescript-eslint/no-unused-vars`       | warn  | Remove unused imports    |
+| Rule                                      | Level | Purpose                    |
+| ----------------------------------------- | ----- | -------------------------- |
+| `@typescript-eslint/no-explicit-any`      | warn  | Prevent `any` types        |
+| `@typescript-eslint/no-floating-promises` | warn  | Catch unhandled promises   |
+| `react-hooks/rules-of-hooks`              | error | Enforce hooks rules        |
+| `react/display-name`                      | warn  | Identify components        |
+| `import/prefer-type-imports`              | warn  | Use type imports           |
+| `@typescript-eslint/no-unused-vars`       | warn  | Remove unused imports      |
+| `@plane/no-legacy-tokens`                 | error | Prevent legacy token usage |
+
+### Custom ESLint Plugin
+
+**Plugin**: `eslint-plugin-plane` (in-repo plugin)
+
+- **Rule**: `no-legacy-tokens` - Enforces short-form color tokens only
+  - Blocks: `text-color-*`, `border-color-*` (legacy naming)
+  - Requires: `text-*`, `border-*` (modern naming)
+  - Applied to: TSX/JSX className attributes, Tailwind utilities
 
 ### Running ESLint
 
@@ -670,12 +718,7 @@ type IIssuePriority = "urgent" | "high" | "medium" | "low";
 const PRIORITY_OPTIONS = ["urgent", "high", "medium", "low"];
 
 // Backend choices (models)
-PRIORITY_CHOICES = [
-  ("urgent", "Urgent"),
-  ("high", "High"),
-  ("medium", "Medium"),
-  ("low", "Low"),
-];
+PRIORITY_CHOICES = [("urgent", "Urgent"), ("high", "High"), ("medium", "Medium"), ("low", "Low")];
 ```
 
 **Default Priority**:

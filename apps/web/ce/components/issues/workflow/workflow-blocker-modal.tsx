@@ -15,7 +15,7 @@ type Props = {
 
 /** State label badge — colored dot + name inside a rounded border. */
 const StateBadge = ({ name, color }: { name: string; color: string }) => (
-  <span className="inline-flex items-center gap-1.5 rounded bg-surface-2 px-2 py-1 text-[12px] font-medium text-color-primary leading-none border border-color-subtle">
+  <span className="inline-flex items-center gap-1.5 rounded bg-surface-2 px-2 py-1 text-[12px] font-medium text-primary leading-none border border-subtle">
     <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
     {name}
   </span>
@@ -103,14 +103,14 @@ export const WorkflowBlockerModal = observer(function WorkflowBlockerModal({ pro
       {/* Modal card */}
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
       <div
-        className="relative w-full max-w-[320px] rounded-lg border border-color-subtle bg-surface-1 p-5 shadow-xl"
+        className="relative w-full max-w-[320px] rounded-lg border border-subtle bg-surface-1 p-5 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close */}
         <button
           type="button"
           onClick={workflowStore.closeBlockerModal}
-          className="absolute right-3 top-3 text-color-tertiary hover:text-color-primary transition-colors"
+          className="absolute right-3 top-3 text-tertiary hover:text-primary transition-colors"
           aria-label="Close"
         >
           <X className="h-3.5 w-3.5" />
@@ -118,13 +118,13 @@ export const WorkflowBlockerModal = observer(function WorkflowBlockerModal({ pro
 
         {/* Icon + title */}
         <div className="flex flex-col items-center gap-3 text-center">
-          <ShieldX className="h-6 w-6 text-color-primary" strokeWidth={1.5} />
+          <ShieldX className="h-6 w-6 text-primary" strokeWidth={1.5} />
 
-          <h3 className="text-[14px] font-semibold text-color-primary">
+          <h3 className="text-[14px] font-semibold text-primary">
             {t("project_settings.workflows.blocker_title")}
           </h3>
 
-          <div className="space-y-2 mt-1 text-[12px] text-color-secondary w-full">
+          <div className="space-y-2 mt-1 text-[12px] text-secondary w-full">
             {/* Source state */}
             <div className="flex items-center gap-1.5 flex-wrap justify-center">
               {t("project_settings.workflows.indicator_popup_for")}{" "}
@@ -137,16 +137,16 @@ export const WorkflowBlockerModal = observer(function WorkflowBlockerModal({ pro
                 {allowedTransitions.map(({ targetStateName, targetStateColor, approvers }) => (
                   <div
                     key={targetStateName}
-                    className="flex items-center gap-1.5 flex-wrap justify-center rounded border border-color-subtle px-2 py-1.5"
+                    className="flex items-center gap-1.5 flex-wrap justify-center rounded border border-subtle px-2 py-1.5"
                   >
-                    <span className="font-medium text-color-primary">{formatReviewerNames(approvers)}</span>{" "}
+                    <span className="font-medium text-primary">{formatReviewerNames(approvers)}</span>{" "}
                     {t("project_settings.workflows.indicator_popup_can_move")}{" "}
                     <StateBadge name={targetStateName} color={targetStateColor} />
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-color-tertiary mt-2">{t("project_settings.workflows.no_transitions_into_state")}</p>
+              <p className="text-tertiary mt-2">{t("project_settings.workflows.no_transitions_into_state")}</p>
             )}
           </div>
         </div>

@@ -57,13 +57,13 @@ export function ResetPasswordDialog({ open, onClose, userId }: Props) {
           <Dialog.Title>Reset Password</Dialog.Title>
           <div className="mt-4 space-y-4">
             {!generatedPassword ? (
-              <p className="text-13 text-color-secondary">
+              <p className="text-13 text-secondary">
                 This will generate a new random password for this user. The current password will be invalidated.
               </p>
             ) : (
               <div className="space-y-2">
-                <p className="text-13 text-color-success-primary font-medium">Password reset successfully!</p>
-                <div className="flex items-center gap-2 rounded-md border border-color-subtle bg-layer-1 p-3">
+                <p className="text-13 text-success-primary font-medium">Password reset successfully!</p>
+                <div className="flex items-center gap-2 rounded-md border border-subtle bg-layer-1 p-3">
                   <code className="flex-1 text-13 font-mono">{generatedPassword}</code>
                   <button
                     onClick={() => void handleCopy()}
@@ -71,13 +71,13 @@ export function ResetPasswordDialog({ open, onClose, userId }: Props) {
                     aria-label="Copy password"
                   >
                     {copied ? (
-                      <Check className="h-4 w-4 text-color-success-primary" />
+                      <Check className="h-4 w-4 text-success-primary" />
                     ) : (
-                      <Copy className="h-4 w-4 text-color-secondary" />
+                      <Copy className="h-4 w-4 text-secondary" />
                     )}
                   </button>
                 </div>
-                <p className="text-11 text-color-tertiary">
+                <p className="text-11 text-tertiary">
                   Copy and share this password securely. It won&apos;t be shown again.
                 </p>
               </div>

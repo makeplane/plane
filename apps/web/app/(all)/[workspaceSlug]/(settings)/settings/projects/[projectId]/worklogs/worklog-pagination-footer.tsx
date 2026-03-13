@@ -28,7 +28,7 @@ export const WorklogPaginationFooter = ({
   onNext,
   onPrev,
 }: Props) => (
-  <div className="flex items-center justify-between px-5 py-3 text-sm text-color-secondary">
+  <div className="flex items-center justify-between px-5 py-3 text-sm text-secondary">
     <span>
       {rangeStart}-{rangeEnd} of {totalCount}
     </span>

@@ -26,6 +26,9 @@ from plane.license.api.views import (
     InstanceWorkspaceBulkCreateEndpoint,
     InstanceWorkspaceBulkAssignMembersEndpoint,
     InstanceWorkSpaceDetailEndpoint,
+    EmailLogMonitoringEndpoint,
+    ScheduledJobMonitoringEndpoint,
+    WorkerHealthMonitoringEndpoint,
 )
 
 urlpatterns = [
@@ -106,4 +109,20 @@ urlpatterns = [
     path("", include("plane.license.api.urls.department")),
     # Staff management
     path("", include("plane.license.api.urls.staff")),
+    # Monitoring
+    path(
+        "monitoring/email-logs/",
+        EmailLogMonitoringEndpoint.as_view(),
+        name="monitoring-email-logs",
+    ),
+    path(
+        "monitoring/scheduled-jobs/",
+        ScheduledJobMonitoringEndpoint.as_view(),
+        name="monitoring-scheduled-jobs",
+    ),
+    path(
+        "monitoring/worker-health/",
+        WorkerHealthMonitoringEndpoint.as_view(),
+        name="monitoring-worker-health",
+    ),
 ]

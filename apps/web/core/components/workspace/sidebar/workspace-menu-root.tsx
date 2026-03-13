@@ -194,7 +194,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                             }
                           }}
                           placeholder={t("search_workspace") || "Search workspace..."}
-                          className="w-full bg-layer-2 border border-color-subtle rounded-md pl-8 pr-8 py-1.5 text-13 text-secondary focus:outline-none focus:border-color-brand-base"
+                          className="w-full bg-layer-2 border border-subtle rounded-md pl-8 pr-8 py-1.5 text-13 text-secondary focus:outline-none focus:border-brand-base"
                         />
                         {searchQuery && (
                           <button

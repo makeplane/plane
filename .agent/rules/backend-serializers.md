@@ -1,8 +1,4 @@
----
-paths:
-  - plane/app/serializers/**
-  - plane/api/serializers/**
----
+<!-- Scope: plane/app/serializers/**, plane/api/serializers/** -->
 
 # Backend Serializer Patterns
 

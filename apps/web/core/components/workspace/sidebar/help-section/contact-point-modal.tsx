@@ -40,21 +40,21 @@ export const ContactPointModal = observer(function ContactPointModal({ isOpen, h
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.MD}>
       <div className="p-6">
-        <h3 className="text-base font-semibold text-color-primary mb-4">{t("contact_point")}</h3>
+        <h3 className="text-base font-semibold text-primary mb-4">{t("contact_point")}</h3>
         <div className="space-y-3">
           {rows.map(({ key, label, value }) => (
             <div
               key={key}
-              className="flex items-center justify-between rounded-md border border-color-subtle bg-surface-1 px-3 py-2"
+              className="flex items-center justify-between rounded-md border border-subtle bg-surface-1 px-3 py-2"
             >
               <div>
-                <p className="text-xs text-color-secondary">{label}</p>
-                <p className="text-sm text-color-primary">{value}</p>
+                <p className="text-xs text-secondary">{label}</p>
+                <p className="text-sm text-primary">{value}</p>
               </div>
               <button
                 type="button"
                 onClick={() => handleCopy(key, key)}
-                className="ml-3 rounded p-1 text-color-secondary hover:bg-layer-1 hover:text-color-primary transition-colors"
+                className="ml-3 rounded p-1 text-secondary hover:bg-layer-1 hover:text-primary transition-colors"
                 title={copiedField === key ? t("contact_point_copied") : t("contact_point_copy")}
               >
                 {copiedField === key ? (

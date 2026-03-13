@@ -101,11 +101,11 @@ function BulkImportResults({ result }: { result: IInstanceUserBulkImportResponse
     <div className="space-y-4">
       {/* Summary */}
       <div className="flex gap-4">
-        <div className="rounded-md bg-color-success-primary/10 px-4 py-2 text-sm">
+        <div className="rounded-md bg-success-primary/10 px-4 py-2 text-sm">
           Created: <strong>{result.total_created}</strong>
         </div>
         {result.total_skipped > 0 && (
-          <div className="rounded-md bg-color-danger-primary/10 px-4 py-2 text-sm">
+          <div className="rounded-md bg-danger-primary/10 px-4 py-2 text-sm">
             Skipped: <strong>{result.total_skipped}</strong>
           </div>
         )}
@@ -129,7 +129,7 @@ function BulkImportResults({ result }: { result: IInstanceUserBulkImportResponse
                   <tr key={idx} className="border-t border-border-subtle">
                     <td className="px-3 py-2">{item.row_number}</td>
                     <td className="px-3 py-2">{item.email || "—"}</td>
-                    <td className="px-3 py-2 text-color-danger-primary">{item.reason}</td>
+                    <td className="px-3 py-2 text-danger-primary">{item.reason}</td>
                   </tr>
                 ))}
               </tbody>

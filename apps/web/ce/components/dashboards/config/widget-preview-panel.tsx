@@ -49,7 +49,7 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
                   key: "count",
                   label: chartMetric,
                   fill: colors[0],
-                  textClassName: "text-color-secondary",
+                  textClassName: "text-secondary",
                   stackId: "s",
                 },
               ]}
@@ -137,20 +137,20 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
       case "NUMBER":
         return (
           <div className="flex flex-col items-center justify-center h-full gap-1">
-            <span className="text-4xl font-bold text-color-primary">{sampleNumberData.value}</span>
-            <span className="text-xs text-color-tertiary">{chartMetric}</span>
+            <span className="text-4xl font-bold text-primary">{sampleNumberData.value}</span>
+            <span className="text-xs text-tertiary">{chartMetric}</span>
           </div>
         );
 
       default:
-        return <p className="text-sm text-color-tertiary">Select a widget type to see preview</p>;
+        return <p className="text-sm text-tertiary">Select a widget type to see preview</p>;
     }
   };
 
   return (
-    <div className="flex h-full flex-col rounded-lg border border-color-subtle bg-layer-1-hover">
-      <div className="border-b border-color-subtle px-3 py-2">
-        <span className="text-xs font-medium text-color-tertiary">Preview</span>
+    <div className="flex h-full flex-col rounded-lg border border-subtle bg-layer-1-hover">
+      <div className="border-b border-subtle px-3 py-2">
+        <span className="text-xs font-medium text-tertiary">Preview</span>
       </div>
       <div className="flex-1 p-3">
         <div className="h-full min-h-[200px]">{renderPreview()}</div>

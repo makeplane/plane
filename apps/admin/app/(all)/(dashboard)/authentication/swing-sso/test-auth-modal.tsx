@@ -72,7 +72,7 @@ export function SwingSSOTestAuthModal({ isOpen, onClose }: Props) {
             {!result ? (
               <>
                 <div className="space-y-1">
-                  <label htmlFor="test-employee-no" className="block text-13 font-medium text-color-primary">
+                  <label htmlFor="test-employee-no" className="block text-13 font-medium text-primary">
                     Employee No (8 digits)
                   </label>
                   <Input
@@ -85,7 +85,7 @@ export function SwingSSOTestAuthModal({ isOpen, onClose }: Props) {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="test-password" className="block text-13 font-medium text-color-primary">
+                  <label htmlFor="test-password" className="block text-13 font-medium text-primary">
                     Password
                   </label>
                   <Input
@@ -103,13 +103,13 @@ export function SwingSSOTestAuthModal({ isOpen, onClose }: Props) {
                 <div
                   className={`inline-flex items-center gap-2 rounded-md px-2.5 py-1 text-13 font-medium ${
                     result.success
-                      ? "bg-success-subtle text-color-success-primary"
-                      : "bg-danger-subtle text-color-danger-primary"
+                      ? "bg-success-subtle text-success-primary"
+                      : "bg-danger-subtle text-danger-primary"
                   }`}
                 >
                   {result.success ? "Authentication Successful" : "Authentication Failed"}
                 </div>
-                <div className="rounded-md border border-color-subtle bg-layer-1 p-3 space-y-2 text-13">
+                <div className="rounded-md border border-subtle bg-layer-1 p-3 space-y-2 text-13">
                   {result.success ? (
                     <>
                       <Row label="Result Code" value={result.result_code} />
@@ -160,8 +160,8 @@ export function SwingSSOTestAuthModal({ isOpen, onClose }: Props) {
 function Row({ label, value }: { label: string; value?: string }) {
   return (
     <div className="flex justify-between">
-      <span className="text-color-secondary">{label}</span>
-      <span className="text-color-primary font-medium">{value || "—"}</span>
+      <span className="text-secondary">{label}</span>
+      <span className="text-primary font-medium">{value || "—"}</span>
     </div>
   );
 }
