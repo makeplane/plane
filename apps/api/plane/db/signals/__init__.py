@@ -1,0 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+from plane.db.signals.workspace import create_default_view_on_workspace_creation
+
+__all__ = ["create_default_view_on_workspace_creation"]

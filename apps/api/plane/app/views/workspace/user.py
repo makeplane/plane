@@ -298,6 +298,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                         "project_issue",
                         filter=Q(
                             project_issue__created_by_id=user_id,
+                            project_issue__deleted_at__isnull=True,
                             project_issue__archived_at__isnull=True,
                             project_issue__is_draft=False,
                         ),
@@ -310,6 +311,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                             project_issue__assignees__in=[user_id],
                             #[2026/03/06][Tri Ho] - Bug fix for counting assigned issues in dashboard, we need to filter parent__isnull=True to avoid counting sub-tasks as assigned issues
                             project_issue__parent__isnull=True,
+                            project_issue__deleted_at__isnull=True,
                             project_issue__archived_at__isnull=True,
                             project_issue__is_draft=False,
                         ),
@@ -319,8 +321,9 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                     completed_issues=Count(
                         "project_issue",
                         filter=Q(
-                            project_issue__completed_at__isnull=False,
+                            project_issue__state__group="completed",
                             project_issue__assignees__in=[user_id],
+                            project_issue__deleted_at__isnull=True,
                             project_issue__archived_at__isnull=True,
                             project_issue__is_draft=False,
                         ),
@@ -336,6 +339,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                                 "started",
                             ],
                             project_issue__assignees__in=[user_id],
+                            project_issue__deleted_at__isnull=True,
                             project_issue__archived_at__isnull=True,
                             project_issue__is_draft=False,
                         ),

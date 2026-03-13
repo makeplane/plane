@@ -99,6 +99,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             "backlog_work_items": self.get_filtered_counts(base_queryset.filter(state__group="backlog")),
             "un_started_work_items": self.get_filtered_counts(base_queryset.filter(state__group="unstarted")),
             "completed_work_items": self.get_filtered_counts(base_queryset.filter(state__group="completed")),
+            "cancelled_work_items": self.get_filtered_counts(base_queryset.filter(state__group="cancelled")),
         }
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
