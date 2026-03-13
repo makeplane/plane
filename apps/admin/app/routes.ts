@@ -16,6 +16,7 @@ export default [
     route("workspace/bulk-import", "./(all)/(dashboard)/workspace/bulk-import/page.tsx"),
     route("workspace/bulk-assign", "./(all)/(dashboard)/workspace/bulk-assign/page.tsx"),
     route("workspace/bulk-import-projects", "./(all)/(dashboard)/workspace/bulk-import-projects/page.tsx"),
+    route("workspace/bulk-import-modules", "./(all)/(dashboard)/workspace/bulk-import-modules/page.tsx"),
     route("email", "./(all)/(dashboard)/email/page.tsx"),
     route("authentication", "./(all)/(dashboard)/authentication/page.tsx"),
     route("authentication/github", "./(all)/(dashboard)/authentication/github/page.tsx"),

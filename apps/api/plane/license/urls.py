@@ -26,6 +26,7 @@ from plane.license.api.views import (
     InstanceWorkspaceBulkCreateEndpoint,
     InstanceWorkspaceBulkAssignMembersEndpoint,
     InstanceWorkspaceProjectBulkImportEndpoint,
+    InstanceWorkspaceModuleBulkImportEndpoint,
     InstanceWorkSpaceDetailEndpoint,
     EmailLogMonitoringEndpoint,
     ScheduledJobMonitoringEndpoint,
@@ -86,6 +87,7 @@ urlpatterns = [
     path("workspaces/bulk-create/", InstanceWorkspaceBulkCreateEndpoint.as_view(), name="instance-workspace-bulk-create"),
     path("workspaces/bulk-assign-members/", InstanceWorkspaceBulkAssignMembersEndpoint.as_view(), name="instance-workspace-bulk-assign-members"),
     path("bulk-import-projects/", InstanceWorkspaceProjectBulkImportEndpoint.as_view(), name="instance-bulk-import-projects"),
+    path("bulk-import-modules/", InstanceWorkspaceModuleBulkImportEndpoint.as_view(), name="instance-bulk-import-modules"),
     path("workspaces/<str:slug>/", InstanceWorkSpaceDetailEndpoint.as_view(), name="instance-workspace-detail"),
     # Swing SSO test (admin-only, needs instances path for admin session cookie)
     path("swing-sso/test/", SwingSSOTestEndpoint.as_view(), name="swing-sso-test"),

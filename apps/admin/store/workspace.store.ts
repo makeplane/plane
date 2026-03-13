@@ -61,7 +61,7 @@ export interface IWorkspaceStore {
   bulkImportModules: (
     modules: Array<{
       workspace_slug: string;
-      project_identifier: string;
+      project_name: string;
       name: string;
       description?: string;
       status?: string;
@@ -255,7 +255,7 @@ export class WorkspaceStore implements IWorkspaceStore {
   bulkImportModules = (
     modules: Array<{
       workspace_slug: string;
-      project_identifier: string;
+      project_name: string;
       name: string;
       description?: string;
       status?: string;

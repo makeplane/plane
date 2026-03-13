@@ -111,7 +111,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
         )}
         {workspaceLoader !== "init-loader" ? (
           <>
-            <div className="pt-6 flex items-center justify-between gap-2">
+            <div className="pt-6 flex flex-col gap-3">
               <div className="flex flex-col items-start gap-x-2">
                 <div className="flex items-center gap-2 text-16 font-medium">
                   All workspaces on this instance <span className="text-tertiary">• {workspaceIds.length}</span>
@@ -132,6 +132,9 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                 </Link>
                 <Link href="/workspace/bulk-import-projects" className={getButtonStyling("secondary", "base")}>
                   Bulk Import Projects
+                </Link>
+                <Link href="/workspace/bulk-import-modules" className={getButtonStyling("secondary", "base")}>
+                  Bulk Import Modules
                 </Link>
                 <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
                   Create workspace

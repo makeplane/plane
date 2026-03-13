@@ -9,17 +9,19 @@ import type { IWorkspace, TWorkspacePaginationInfo } from "@plane/types";
 
 export interface IWorkspaceProjectBulkImportResponse {
   created: Array<{ workspace_slug: string; name: string; identifier: string; skipped_members: string[] }>;
+  updated?: Array<{ workspace_slug: string; name: string; identifier: string; skipped_members: string[] }>;
   skipped: Array<{ row_number: number; workspace_slug: string; name: string; reason: string }>;
   total_created: number;
+  total_updated?: number;
   total_skipped: number;
 }
 
 export interface IWorkspaceModuleBulkImportResponse {
-  created: Array<{ workspace_slug: string; project_identifier: string; name: string }>;
+  created: Array<{ workspace_slug: string; project_name: string; name: string }>;
   skipped: Array<{
     row_number: number;
     workspace_slug: string;
-    project_identifier: string;
+    project_name: string;
     name: string;
     reason: string;
   }>;
@@ -173,7 +175,7 @@ export class InstanceWorkspaceService extends APIService {
   async bulkImportModules(
     modules: Array<{
       workspace_slug: string;
-      project_identifier: string;
+      project_name: string;
       name: string;
       description?: string;
       status?: string;

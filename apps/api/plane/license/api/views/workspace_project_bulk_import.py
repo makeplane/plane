@@ -123,6 +123,7 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
         identifier_cache = {}  # workspace_id → set of existing identifiers (uppercase)
 
         created = []
+        updated = []
         skipped = []
 
         for row_number, item in enumerate(projects_data, start=1):
@@ -159,23 +160,13 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
                 skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "name": name, "reason": "Name exceeds 255 characters"})
                 continue
 
-            # Check duplicate name in workspace
-            if Project.objects.filter(name=name, workspace=workspace).exists():
-                skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "name": name, "reason": "Project name already exists in this workspace"})
-                continue
-
-            # Validate network
-            network = int(network_raw) if network_raw is not None and str(network_raw).isdigit() else 2
-            if network not in VALID_NETWORKS:
-                network = 2
-
             # Resolve project_leader (silent skip if not found in workspace)
             project_leader_id = None
             if project_leader_email:
                 leader = User.objects.filter(
                     email=project_leader_email,
-                    workspacemember__workspace=workspace,
-                    workspacemember__is_active=True,
+                    member_workspace__workspace=workspace,
+                    member_workspace__is_active=True,
                 ).first()
                 if leader:
                     project_leader_id = leader.id
@@ -187,13 +178,43 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
                 email_lower = email.lower()
                 member_user = User.objects.filter(
                     email=email_lower,
-                    workspacemember__workspace=workspace,
-                    workspacemember__is_active=True,
+                    member_workspace__workspace=workspace,
+                    member_workspace__is_active=True,
                 ).first()
                 if member_user:
                     valid_members.append((member_user, role))
                 else:
                     skipped_members.append(f"{email} not found in workspace")
+
+            # If project already exists → update leader + members, skip creation
+            existing_project = Project.objects.filter(name=name, workspace=workspace).first()
+            if existing_project:
+                try:
+                    if project_leader_id:
+                        existing_project.project_lead_id = project_leader_id
+                        existing_project.updated_by = request.user
+                        existing_project.save(update_fields=["project_lead_id", "updated_by"])
+                    for member_user, role in valid_members:
+                        ProjectMember.objects.get_or_create(
+                            project=existing_project,
+                            member=member_user,
+                            defaults={"role": role},
+                        )
+                    updated.append({
+                        "workspace_slug": workspace_slug,
+                        "name": name,
+                        "identifier": existing_project.identifier,
+                        "skipped_members": skipped_members,
+                    })
+                except Exception:
+                    logger.exception("Project bulk import update failed for row %s (name=%r, workspace=%r)", row_number, name, workspace_slug)
+                    skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "name": name, "reason": "Unexpected error during update — see server logs"})
+                continue
+
+            # Validate network
+            network = int(network_raw) if network_raw is not None and str(network_raw).isdigit() else 2
+            if network not in VALID_NETWORKS:
+                network = 2
 
             # Build per-workspace identifier set
             if workspace.id not in identifier_cache:
@@ -215,6 +236,7 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
                         network=network,
                         workspace=workspace,
                         project_lead_id=project_leader_id,
+                        module_view=True,
                         created_by=request.user,
                         updated_by=request.user,
                     )
@@ -294,8 +316,10 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
         return Response(
             {
                 "created": created,
+                "updated": updated,
                 "skipped": skipped,
                 "total_created": len(created),
+                "total_updated": len(updated),
                 "total_skipped": len(skipped),
             },
             status=status.HTTP_200_OK,
