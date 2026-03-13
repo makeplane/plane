@@ -8,8 +8,10 @@
 import { STATE_GROUPS } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { IUserStateDistribution } from "@plane/types";
 import { Card, ECardDirection, ECardSpacing } from "@plane/ui";
+import { Info } from "lucide-react";
 // constants
 
 type Props = {
@@ -21,11 +23,16 @@ export function ProfileWorkload({ stateDistribution }: Props) {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-16 font-medium">{t("profile.stats.workload")}</h3>
+      <h3 className="flex items-center gap-1.5 text-16 font-medium">
+        {t("profile.stats.workload")}
+        <Tooltip tooltipContent={t("profile.stats.workload_assigned_only")}>
+          <Info className="size-3.5 text-custom-text-300 cursor-help" />
+        </Tooltip>
+      </h3>
       <div className="grid grid-cols-1 justify-stretch gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {stateDistribution.map((group) => (
           <div key={group.state_group}>
-            <a>
+            <div>
               <Card direction={ECardDirection.ROW} spacing={ECardSpacing.SM}>
                 <div
                   className="h-3 w-3 rounded-xs my-2"
@@ -44,7 +51,7 @@ export function ProfileWorkload({ stateDistribution }: Props) {
                   <p className="text-18 font-semibold">{group.state_count}</p>
                 </div>
               </Card>
-            </a>
+            </div>
           </div>
         ))}
       </div>
