@@ -32,12 +32,16 @@ export type TAddFilterButtonProps<P extends TFilterProperty, E extends TExternal
   };
   filter: IFilterInstance<P, E>;
   onFilterSelect?: (id: string) => void;
+  /**
+   * Properties to exclude from the dropdown options
+   */
+  excludeProperties?: P[];
 };
 
 export const AddFilterButton = observer(function AddFilterButton<P extends TFilterProperty, E extends TExternalFilter>(
   props: TAddFilterButtonProps<P, E>
 ) {
-  const { filter, buttonConfig, onFilterSelect } = props;
+  const { filter, buttonConfig, onFilterSelect, excludeProperties } = props;
   const {
     variant = "secondary",
     size = "base",
@@ -66,6 +70,7 @@ export const AddFilterButton = observer(function AddFilterButton<P extends TFilt
   return (
     <AddFilterDropdown
       {...props}
+      excludeProperties={excludeProperties}
       buttonConfig={{
         ...buttonConfig,
         className: cn(getButtonStyling(variant, size), "py-[5px]", className),

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { IWorkItemFilterInstance } from "@plane/shared-state";
@@ -14,6 +15,7 @@ import { FiltersRow } from "@/components/rich-filters/filters-row";
 
 type TWorkItemFiltersRowProps = TFiltersRowProps<TWorkItemFilterProperty, TWorkItemFilterExpression> & {
   filter: IWorkItemFilterInstance;
+  leftSlot?: ReactNode;
 };
 
 export const WorkItemFiltersRow = observer(function WorkItemFiltersRow(props: TWorkItemFiltersRowProps) {

@@ -22,17 +22,26 @@ export type TAddFilterDropdownProps<P extends TFilterProperty, E extends TExtern
   };
   filter: IFilterInstance<P, E>;
   handleFilterSelect: (property: P, operator: TSupportedOperators, isNegation: boolean) => void;
+  /**
+   * Properties to exclude from the dropdown options
+   */
+  excludeProperties?: P[];
 };
 
 export const AddFilterDropdown = observer(function AddFilterDropdown<
   P extends TFilterProperty,
   E extends TExternalFilter,
 >(props: TAddFilterDropdownProps<P, E>) {
-  const { filter, customButton, buttonConfig } = props;
+  const { filter, customButton, buttonConfig, excludeProperties } = props;
   const { className, defaultOpen = false, isDisabled = false } = buttonConfig || {};
 
+  // Filter out excluded properties from available configs
+  const availableConfigs = excludeProperties?.length
+    ? filter.configManager.allAvailableConfigs.filter((config) => !excludeProperties.includes(config.id as P))
+    : filter.configManager.allAvailableConfigs;
+
   // Transform available filter configs to CustomSearchSelect options format
-  const filterOptions = filter.configManager.allAvailableConfigs.map((config) => ({
+  const filterOptions = availableConfigs.map((config) => ({
     value: config.id,
     content: (
       <div className="flex items-center justify-between gap-2 text-secondary transition-all duration-200 ease-in-out">

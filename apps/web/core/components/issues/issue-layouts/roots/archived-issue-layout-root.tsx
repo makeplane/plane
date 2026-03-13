@@ -13,8 +13,9 @@ import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 // components
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
-// hooks
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { QuickFiltersBar } from "@/components/work-item-filters/quick-filters";
+// hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // local imports
@@ -55,7 +56,13 @@ export const ArchivedIssueLayoutRoot = observer(function ArchivedIssueLayoutRoot
       >
         {({ filter: archivedWorkItemsFilter }) => (
           <>
-            {archivedWorkItemsFilter && <WorkItemFiltersRow filter={archivedWorkItemsFilter} />}
+            {archivedWorkItemsFilter && (
+              <WorkItemFiltersRow
+                filter={archivedWorkItemsFilter}
+                leftSlot={<QuickFiltersBar filter={archivedWorkItemsFilter} projectId={projectId} />}
+                excludeProperties={["assignee_id"]}
+              />
+            )}
             <div className="relative h-full w-full overflow-auto">
               <ArchivedIssueListLayout />
             </div>

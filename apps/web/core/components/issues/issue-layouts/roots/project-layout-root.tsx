@@ -14,6 +14,7 @@ import { Spinner } from "@plane/ui";
 // components
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { QuickFiltersBar } from "@/components/work-item-filters/quick-filters";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -84,6 +85,8 @@ export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
                 trackerElements={{
                   saveView: PROJECT_VIEW_TRACKER_ELEMENTS.PROJECT_HEADER_SAVE_AS_VIEW_BUTTON,
                 }}
+                leftSlot={<QuickFiltersBar filter={projectWorkItemsFilter} projectId={projectId} />}
+                excludeProperties={["assignee_id"]}
               />
             )}
             <div className="relative h-full w-full overflow-auto bg-surface-1">

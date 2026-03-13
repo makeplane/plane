@@ -28,6 +28,14 @@ export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilte
     saveView?: string;
     updateView?: string;
   };
+  /**
+   * Optional content to render at the start of the filters row (before filter conditions)
+   */
+  leftSlot?: React.ReactNode;
+  /**
+   * Properties to exclude from the add filter dropdown (e.g., ["assignee_id"] when using quick filters)
+   */
+  excludeProperties?: K[];
 };
 
 export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty, E extends TExternalFilter>(
@@ -39,6 +47,8 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     filter,
     variant = "header",
     trackerElements,
+    leftSlot,
+    excludeProperties,
   } = props;
   // states
   const [isUpdating, setIsUpdating] = useState(false);
@@ -65,13 +75,20 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     }
   }, [filter]);
 
+  // Filter out excluded properties from conditions display
+  const conditionsToDisplay = excludeProperties?.length
+    ? filter.allConditionsForDisplay.filter((condition) => !excludeProperties.includes(condition.property as K))
+    : filter.allConditionsForDisplay;
+
   const leftContent = (
     <>
-      {filter.allConditionsForDisplay.map((condition) => (
+      {leftSlot}
+      {conditionsToDisplay.map((condition) => (
         <FilterItem key={condition.id} filter={filter} condition={condition} isDisabled={disabledAllOperations} />
       ))}
       <AddFilterButton
         filter={filter}
+        excludeProperties={excludeProperties}
         buttonConfig={{
           label: null,
           ...(variant === "modal" ? modalButtonConfig : headerButtonConfig),
@@ -147,9 +164,12 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     </Header>
   );
 
+  // Show row if filter is visible OR if leftSlot is provided (e.g., quick filters)
+  const shouldShowRow = filter.isVisible || !!leftSlot;
+
   if (!filter.configManager.areConfigsReady && !hasAnyConditions) {
     return (
-      <RowTransition show={filter.isVisible}>
+      <RowTransition show={shouldShowRow}>
         <Loader>
           <Loader.Item height="44px" width="100%" className={cn({ "rounded-none": variant === "header" })} />
         </Loader>
@@ -157,7 +177,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     );
   }
 
-  return <RowTransition show={filter.isVisible}>{variant === "modal" ? ModalVariant : HeaderVariant}</RowTransition>;
+  return <RowTransition show={shouldShowRow}>{variant === "modal" ? ModalVariant : HeaderVariant}</RowTransition>;
 });
 
 const COMMON_OPERATION_BUTTON_CLASSNAME = "py-1";

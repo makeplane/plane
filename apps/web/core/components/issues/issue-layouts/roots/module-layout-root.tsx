@@ -15,6 +15,7 @@ import { Row, ERowVariant } from "@plane/ui";
 // hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { QuickFiltersBar } from "@/components/work-item-filters/quick-filters";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // local imports
@@ -87,6 +88,8 @@ export const ModuleLayoutRoot = observer(function ModuleLayoutRoot() {
                 trackerElements={{
                   saveView: PROJECT_VIEW_TRACKER_ELEMENTS.MODULE_HEADER_SAVE_AS_VIEW_BUTTON,
                 }}
+                leftSlot={<QuickFiltersBar filter={moduleWorkItemsFilter} projectId={projectId} />}
+                excludeProperties={["assignee_id"]}
               />
             )}
             <Row variant={ERowVariant.HUGGING} className="h-full w-full overflow-auto">

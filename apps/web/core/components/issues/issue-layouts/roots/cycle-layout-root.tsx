@@ -18,6 +18,7 @@ import { TransferIssuesModal } from "@/components/cycles/transfer-issues-modal";
 // hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { QuickFiltersBar } from "@/components/work-item-filters/quick-filters";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -117,6 +118,8 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
                   trackerElements={{
                     saveView: PROJECT_VIEW_TRACKER_ELEMENTS.CYCLE_HEADER_SAVE_AS_VIEW_BUTTON,
                   }}
+                  leftSlot={<QuickFiltersBar filter={cycleWorkItemsFilter} projectId={projectId} />}
+                  excludeProperties={["assignee_id"]}
                 />
               )}
               <div className="h-full w-full overflow-auto">
