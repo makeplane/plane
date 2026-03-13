@@ -12,12 +12,10 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { getValidKeysFromObject } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
-import { useTimeLineRelationOptions } from "@/components/relations";
+import { useRelationFieldNames } from "@/components/relations/use-relation-activity";
 // local components
 import {
   CustomerActivity,
@@ -60,8 +58,7 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
     activity: { getActivityById },
     comment: {},
   } = useIssueDetail();
-  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
-  const activityRelations = getValidKeysFromObject(ISSUE_RELATION_OPTIONS);
+  const relationFieldNames = useRelationFieldNames();
 
   const componentDefaultProps = { activityId, ends };
 
@@ -85,7 +82,7 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
       return <IssueEstimateActivity {...componentDefaultProps} showIssue={false} />;
     case "parent":
       return <IssueParentActivity {...componentDefaultProps} showIssue={false} />;
-    case activityRelations.find((field) => field === activityField):
+    case relationFieldNames.has(activityField ?? "") ? activityField : undefined:
       return <IssueRelationActivity {...componentDefaultProps} />;
     case "start_date":
       return <IssueStartDateActivity {...componentDefaultProps} showIssue={false} />;

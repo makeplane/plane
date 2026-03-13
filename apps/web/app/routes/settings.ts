@@ -97,6 +97,12 @@ export const settingsRoutes: RouteConfigEntry[] = [
         "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/teamspaces/page.tsx"
       ),
 
+      // Relations
+      route(
+        ":workspaceSlug/settings/relations",
+        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/relations/page.tsx"
+      ),
+
       // Worklogs
       route(
         ":workspaceSlug/settings/worklogs",

@@ -11,261 +11,513 @@
 
 # Python imports
 import json
+from typing import Any, Optional, Union
 
 # Django imports
-from django.utils import timezone
-from django.db.models import Q, F, UUIDField, Value
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
+from django.db.models import F, Q, UUIDField, Value
+from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 # Third Party imports
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 # Module imports
-from .. import BaseViewSet
-from plane.app.serializers import IssueRelationSerializer, RelatedIssueSerializer
 from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import (
-    Project,
-    IssueRelation,
-    Issue,
-)
+from plane.app.serializers import RelatedWorkItemRelationSerializer, WorkItemRelationSerializer
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.utils.issue_relation_mapper import get_actual_relation
+from plane.db.models import DefaultDependencyKeys, Issue, IssueRelation, RelationCategory, WorkItemRelationDefinition
 from plane.utils.host import base_host
 
+# Local imports
+from ..base import BaseViewSet
 
-class IssueRelationViewSet(BaseViewSet):
-    serializer_class = IssueRelationSerializer
-    model = IssueRelation
-    permission_classes = [ProjectEntityPermission]
+# **************** Constants ****************
+WORK_ITEM_LIST_FIELDS = [
+    "id",
+    "name",
+    "state_id",
+    "sort_order",
+    "priority",
+    "sequence_id",
+    "project_id",
+    "label_ids",
+    "assignee_ids",
+    "created_at",
+    "updated_at",
+    "created_by",
+    "updated_by",
+    "type_id",
+    "is_epic",
+]
 
-    ISSUE_FIELDS = [
-        "id",
-        "name",
-        "state_id",
-        "sort_order",
-        "priority",
-        "sequence_id",
-        "project_id",
-        "label_ids",
-        "assignee_ids",
-        "created_at",
-        "updated_at",
-        "created_by",
-        "updated_by",
-        "type_id",
-        "is_epic",
+
+# **************** Helpers ****************
+def _aggregate_ids(field: str, **filter_kwargs: Any) -> Any:
+    return Coalesce(
+        ArrayAgg(field, filter=Q(**filter_kwargs), distinct=True),
+        Value([], output_field=ArrayField(UUIDField())),
+    )
+
+
+def _fetch_work_item_by_ids(
+    workspace_slug: str, work_item_ids: Optional[list[Union[str, UUIDField]]] = None
+) -> dict[str, dict]:
+    if not work_item_ids:
+        return {}
+
+    work_items = (
+        Issue.objects.filter(
+            workspace__slug=workspace_slug,
+            project__deleted_at__isnull=True,
+            pk__in=work_item_ids,
+            deleted_at__isnull=True,
+        )
+        .annotate(
+            label_ids=Coalesce(
+                ArrayAgg(
+                    "labels__id",
+                    distinct=True,
+                    filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            assignee_ids=Coalesce(
+                ArrayAgg(
+                    "assignees__id",
+                    distinct=True,
+                    filter=Q(
+                        ~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
+                    ),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
+        .annotate(is_epic=F("type__is_epic"))
+        .values(*WORK_ITEM_LIST_FIELDS)
+    )
+    return {str(wi["id"]): wi for wi in work_items}
+
+
+def _work_item_relations_list(
+    work_items: dict[str, dict],
+    relation_type_value: str,
+    work_item_ids: list[str],
+) -> list[dict]:
+    return [
+        {**work_item, "relation_type": relation_type_value}
+        for uid in work_item_ids
+        if (work_item := work_items.get(str(uid)))
     ]
 
-    def list(self, request, slug, project_id, issue_id):
-        empty_uuid_array = Value([], output_field=ArrayField(UUIDField()))
 
-        def _agg_ids(field, **filter_kwargs):
-            return Coalesce(
-                ArrayAgg(field, filter=Q(**filter_kwargs), distinct=True),
-                empty_uuid_array,
-            )
+def _emit_work_item_relation_activity(
+    request: Request,
+    type: str,
+    actor_id: str,
+    work_item_id: str,
+    project_id: str,
+    current_instance: Optional[dict] = None,
+    requested_data: Optional[dict] = None,
+) -> None:
+    issue_activity.delay(
+        type=type,
+        actor_id=str(actor_id),
+        issue_id=str(work_item_id),
+        project_id=str(project_id),
+        current_instance=current_instance,
+        requested_data=json.dumps(requested_data),
+        epoch=int(timezone.now().timestamp()),
+        notification=True,
+        origin=base_host(request=request, is_app=True),
+    )
 
-        issue_relation_qs = IssueRelation.objects.filter(
-            Q(issue_id=issue_id) | Q(related_issue_id=issue_id),
-            workspace__slug=slug,
-        )
 
-        relation_ids = issue_relation_qs.aggregate(
-            blocking_ids=_agg_ids("issue_id", relation_type="blocked_by", related_issue_id=issue_id),
-            blocked_by_ids=_agg_ids("related_issue_id", relation_type="blocked_by", issue_id=issue_id),
-            duplicate_ids=_agg_ids("related_issue_id", relation_type="duplicate", issue_id=issue_id),
-            duplicate_ids_related=_agg_ids("issue_id", relation_type="duplicate", related_issue_id=issue_id),
-            relates_to_ids=_agg_ids("related_issue_id", relation_type="relates_to", issue_id=issue_id),
-            relates_to_ids_related=_agg_ids("issue_id", relation_type="relates_to", related_issue_id=issue_id),
-            start_after_ids=_agg_ids("issue_id", relation_type="start_before", related_issue_id=issue_id),
-            start_before_ids=_agg_ids("related_issue_id", relation_type="start_before", issue_id=issue_id),
-            finish_after_ids=_agg_ids("issue_id", relation_type="finish_before", related_issue_id=issue_id),
-            finish_before_ids=_agg_ids("related_issue_id", relation_type="finish_before", issue_id=issue_id),
-            implements_ids=_agg_ids("related_issue_id", relation_type="implemented_by", issue_id=issue_id),
-            implemented_by_ids=_agg_ids("issue_id", relation_type="implemented_by", related_issue_id=issue_id),
+# **************** ViewSets ****************
+class IssueRelationViewSet(BaseViewSet):
+    """
+    Deprecated: Use WorkItemRelationDependencyViewSet and WorkItemRelationRelationViewSet instead.
+    """
+
+    message = "Deprecated this endpoint."
+
+    def list(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": self.message})
+
+    def create(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
+        return Response(status=status.HTTP_200_OK, data={"message": self.message})
+
+    def remove_relation(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
+        return Response(status=status.HTTP_200_OK, data={"message": self.message})
+
+
+class WorkItemRelationDependencyViewSet(BaseViewSet):
+    relation_model = IssueRelation
+    relation_definition_model = WorkItemRelationDefinition
+    serializer_class = WorkItemRelationSerializer
+    permission_classes = [ProjectEntityPermission]
+
+    def list(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
+        work_item_relation_query_set = IssueRelation.objects.filter(
+            category=RelationCategory.DEPENDENCY, workspace__slug=slug, project_id=project_id
+        ).filter(Q(issue_id=work_item_id) | Q(related_issue_id=work_item_id))
+
+        relation_work_item_ids = work_item_relation_query_set.aggregate(
+            blocking_ids=_aggregate_ids("issue_id", relation_type="blocked_by", related_issue_id=work_item_id),
+            blocked_by_ids=_aggregate_ids("related_issue_id", relation_type="blocked_by", issue_id=work_item_id),
+            start_after_ids=_aggregate_ids("issue_id", relation_type="start_before", related_issue_id=work_item_id),
+            start_before_ids=_aggregate_ids("related_issue_id", relation_type="start_before", issue_id=work_item_id),
+            finish_after_ids=_aggregate_ids("issue_id", relation_type="finish_before", related_issue_id=work_item_id),
+            finish_before_ids=_aggregate_ids("related_issue_id", relation_type="finish_before", issue_id=work_item_id),
         )
 
         # Merge bidirectional relations (duplicate and relates_to are symmetric)
-        ids_by_relation = {
-            "blocking": relation_ids["blocking_ids"],
-            "blocked_by": relation_ids["blocked_by_ids"],
-            "duplicate": list(set(relation_ids["duplicate_ids"] + relation_ids["duplicate_ids_related"])),
-            "relates_to": list(set(relation_ids["relates_to_ids"] + relation_ids["relates_to_ids_related"])),
-            "start_after": relation_ids["start_after_ids"],
-            "start_before": relation_ids["start_before_ids"],
-            "finish_after": relation_ids["finish_after_ids"],
-            "finish_before": relation_ids["finish_before_ids"],
-            "implements": relation_ids["implements_ids"],
-            "implemented_by": relation_ids["implemented_by_ids"],
+        work_item_ids_by_relation = {
+            "blocking": relation_work_item_ids["blocking_ids"],
+            "blocked_by": relation_work_item_ids["blocked_by_ids"],
+            "start_after": relation_work_item_ids["start_after_ids"],
+            "start_before": relation_work_item_ids["start_before_ids"],
+            "finish_after": relation_work_item_ids["finish_after_ids"],
+            "finish_before": relation_work_item_ids["finish_before_ids"],
         }
 
-        all_issue_ids = {uid for ids in ids_by_relation.values() for uid in ids}
+        # fetch all work items in a single query
+        all_work_item_ids = {uid for ids in work_item_ids_by_relation.values() for uid in ids}
 
-        if all_issue_ids:
-            issues_qs = (
-                Issue.objects.filter(
-                    pk__in=all_issue_ids,
-                    workspace__slug=slug,
-                    project__deleted_at__isnull=True,
-                )
-                .annotate(
-                    label_ids=Coalesce(
-                        ArrayAgg(
-                            "labels__id",
-                            distinct=True,
-                            filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
-                        ),
-                        Value([], output_field=ArrayField(UUIDField())),
-                    ),
-                    assignee_ids=Coalesce(
-                        ArrayAgg(
-                            "assignees__id",
-                            distinct=True,
-                            filter=Q(
-                                ~Q(assignees__id__isnull=True)
-                                & Q(assignees__member_project__is_active=True)
-                                & Q(issue_assignee__deleted_at__isnull=True)
-                            ),
-                        ),
-                        Value([], output_field=ArrayField(UUIDField())),
-                    ),
-                )
-                .annotate(is_epic=F("type__is_epic"))
-                .values(*self.ISSUE_FIELDS)
-            )
-            issues_by_id = {str(issue["id"]): issue for issue in issues_qs}
-        else:
-            issues_by_id = {}
+        # fetch all work items by IDs
+        work_items = _fetch_work_item_by_ids(workspace_slug=slug, work_item_ids=list(all_work_item_ids))
 
-        def build_relation_list(ids, relation_type_value):
-            return [
-                {**issue, "relation_type": relation_type_value} for uid in ids if (issue := issues_by_id.get(str(uid)))
-            ]
-
+        # build all relation lists from fetched work items
         response_data = {
-            relation_type: build_relation_list(ids, relation_type) for relation_type, ids in ids_by_relation.items()
+            relation_type: _work_item_relations_list(work_items, relation_type, ids)
+            for relation_type, ids in work_item_ids_by_relation.items()
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
 
-    def create(self, request, slug, project_id, issue_id):
-        relation_type = request.data.get("relation_type", None)
+    def create_relation(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
+        user_id = request.user.id
+
+        relation_type = request.data.get("relation_type")
         if relation_type is None:
             return Response(
-                {"message": "Issue relation type is required"},
+                {"message": "Work item relation type is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        valid_types = [k.value for k in DefaultDependencyKeys]
+        if relation_type not in valid_types:
+            return Response(
+                {"message": "Invalid work item relation type"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        issues = request.data.get("issues", [])
-        project = Project.objects.get(pk=project_id)
+        request_work_item_ids = request.data.get("work_item_ids", [])
+        if not request_work_item_ids:
+            return Response(
+                {"message": "Work items are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        actual_relation = get_actual_relation(relation_type)
-        is_reverse = relation_type in ["blocking", "start_after", "finish_after", "implemented_by"]
+        work_item = Issue.objects.filter(pk=work_item_id, workspace__slug=slug, project_id=project_id).first()
+        if work_item is None:
+            return Response(
+                {"message": "Work item not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
-        IssueRelation.objects.bulk_create(
+        workspace_id = work_item.workspace_id
+        project_id = work_item.project_id
+
+        request_work_items = _fetch_work_item_by_ids(workspace_slug=slug, work_item_ids=list(request_work_item_ids))
+        if len(request_work_items) != len(request_work_item_ids):
+            return Response(
+                {"message": "Request work items not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        actual_relation = {
+            DefaultDependencyKeys.BLOCKED_BY.value: DefaultDependencyKeys.BLOCKED_BY.value,
+            DefaultDependencyKeys.BLOCKING.value: DefaultDependencyKeys.BLOCKED_BY.value,
+            DefaultDependencyKeys.START_BEFORE.value: DefaultDependencyKeys.START_BEFORE.value,
+            DefaultDependencyKeys.START_AFTER.value: DefaultDependencyKeys.START_BEFORE.value,
+            DefaultDependencyKeys.FINISH_BEFORE.value: DefaultDependencyKeys.FINISH_BEFORE.value,
+            DefaultDependencyKeys.FINISH_AFTER.value: DefaultDependencyKeys.FINISH_BEFORE.value,
+        }.get(relation_type, relation_type)
+        is_reverse = relation_type in [
+            DefaultDependencyKeys.BLOCKING.value,
+            DefaultDependencyKeys.START_AFTER.value,
+            DefaultDependencyKeys.FINISH_AFTER.value,
+        ]
+
+        self.relation_model.objects.bulk_create(
             [
-                IssueRelation(
-                    issue_id=issue if is_reverse else issue_id,
-                    related_issue_id=issue_id if is_reverse else issue,
-                    relation_type=actual_relation,
+                self.relation_model(
+                    workspace_id=workspace_id,
                     project_id=project_id,
-                    workspace_id=project.workspace_id,
-                    created_by=request.user,
-                    updated_by=request.user,
+                    category=RelationCategory.DEPENDENCY,
+                    relation_type=actual_relation,
+                    issue_id=other_id if is_reverse else work_item_id,
+                    related_issue_id=work_item_id if is_reverse else other_id,
+                    created_by_id=user_id,
+                    updated_by_id=user_id,
                 )
-                for issue in issues
+                for other_id in request_work_item_ids
             ],
             batch_size=10,
             ignore_conflicts=True,
         )
 
-        issue_activity.delay(
+        _emit_work_item_relation_activity(
+            request=request,
             type="issue_relation.activity.created",
-            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-            actor_id=str(request.user.id),
-            issue_id=str(issue_id),
+            actor_id=str(user_id),
+            work_item_id=str(work_item_id),
             project_id=str(project_id),
             current_instance=None,
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=base_host(request=request, is_app=True),
+            requested_data={"issues": request_work_item_ids, "relation_type": relation_type},
         )
 
-        # Re-fetch with select_related to avoid N+1 queries in serializers.
-        # bulk_create with ignore_conflicts=True may not return PKs,
-        # so query by the issue/related_issue pairs and relation type.
-        if is_reverse:
-            refetch_filter = Q(
-                issue_id__in=issues,
-                related_issue_id=issue_id,
-                relation_type=actual_relation,
+        response_data = [
+            {**item, "id": item_id, "relation_type": relation_type} for item_id, item in request_work_items.items()
+        ]
+        return Response(response_data, status=status.HTTP_201_CREATED)
+
+    def remove_relation(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
+        user_id = request.user.id
+        related_work_item_id = request.data.get("work_item_id")
+        if related_work_item_id is None:
+            return Response({"message": "Related work item id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        work_item_relation = (
+            self.relation_model.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                category=RelationCategory.DEPENDENCY,
+                relation_type__in=[
+                    DefaultDependencyKeys.BLOCKED_BY.value,
+                    DefaultDependencyKeys.START_BEFORE.value,
+                    DefaultDependencyKeys.FINISH_BEFORE.value,
+                ],
             )
-        else:
-            refetch_filter = Q(
-                issue_id=issue_id,
-                related_issue_id__in=issues,
-                relation_type=actual_relation,
-            )
-
-        refetched_relations = IssueRelation.objects.filter(
-            refetch_filter,
-            workspace__slug=slug,
-        ).select_related(
-            "issue__type",
-            "issue__state",
-            "related_issue__type",
-            "related_issue__state",
-        )
-
-        serializer_class = RelatedIssueSerializer if is_reverse else IssueRelationSerializer
-        return Response(
-            serializer_class(refetched_relations, many=True).data,
-            status=status.HTTP_201_CREATED,
-        )
-
-    def remove_relation(self, request, slug, project_id, issue_id):
-        related_issue = request.data.get("related_issue", None)
-
-        issue_relation = (
-            IssueRelation.objects.filter(workspace__slug=slug)
             .filter(
-                Q(issue_id=related_issue, related_issue_id=issue_id)
-                | Q(issue_id=issue_id, related_issue_id=related_issue)
-            )
-            .select_related(
-                "issue__type",
-                "issue__state",
-                "related_issue__type",
-                "related_issue__state",
+                Q(issue_id=related_work_item_id, related_issue_id=work_item_id)
+                | Q(issue_id=work_item_id, related_issue_id=related_work_item_id)
             )
             .first()
         )
-
-        if issue_relation is None:
+        if work_item_relation is None:
             return Response(
-                {"message": "Issue relation not found"},
+                {"message": "Work item relation not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        current_instance = json.dumps(
-            IssueRelationSerializer(issue_relation).data,
-            cls=DjangoJSONEncoder,
-        )
-        issue_relation.delete()
-        issue_activity.delay(
+        work_item_relation.delete()
+
+        _emit_work_item_relation_activity(
+            request=request,
             type="issue_relation.activity.deleted",
-            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-            actor_id=str(request.user.id),
-            issue_id=str(issue_id),
+            actor_id=str(user_id),
+            work_item_id=str(work_item_id),
             project_id=str(project_id),
-            current_instance=current_instance,
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=base_host(request=request, is_app=True),
+            current_instance=None,
+            requested_data={"related_issue": related_work_item_id, "relation_type": work_item_relation.relation_type},
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkItemRelationRelationViewSet(BaseViewSet):
+    """
+    List, create, and remove custom work item relations (relates to, duplicates, etc.).
+
+    Relation types are defined per workspace via WorkItemRelationDefinition (outward/inward labels).
+    """
+
+    relation_model = IssueRelation
+    relation_definition_model = WorkItemRelationDefinition
+    serializer_class = RelatedWorkItemRelationSerializer
+    permission_classes = [ProjectEntityPermission]
+
+    def list(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
+        """Return all custom relations for the work item, grouped by relation label (outward/inward)."""
+        relation_definitions = list(
+            self.relation_definition_model.objects.filter(workspace__slug=slug, is_active=True).values(
+                "id", "outward", "inward"
+            )
+        )
+        relation_definition_ids = [d["id"] for d in relation_definitions]
+        relation_definition_by_id = {d["id"]: d for d in relation_definitions}
+
+        # Work item relations with category=relation use definition_id (not relation_type)
+        work_item_relations = (
+            self.relation_model.objects.filter(
+                category=RelationCategory.RELATION,
+                definition_id__in=relation_definition_ids,
+            )
+            .filter(
+                Q(issue_id=work_item_id) | Q(related_issue_id=work_item_id),
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            .values("definition_id", "issue_id", "related_issue_id")
+        )
+
+        # Group related work item IDs by relation label (outward / inward from current item's perspective)
+        work_item_ids_by_relation = {}
+        for relation_definition in relation_definitions:
+            work_item_ids_by_relation[relation_definition["outward"]] = []
+            work_item_ids_by_relation[relation_definition["inward"]] = []
+
+        for rel in work_item_relations:
+            relation_definition = relation_definition_by_id.get(rel["definition_id"])
+            if not relation_definition:
+                continue
+
+            if rel["issue_id"] == work_item_id:
+                work_item_ids_by_relation[relation_definition["outward"]].append(rel["related_issue_id"])
+            else:
+                work_item_ids_by_relation[relation_definition["inward"]].append(rel["issue_id"])
+
+        all_work_item_ids = {uid for ids in work_item_ids_by_relation.values() for uid in ids}
+        work_items = _fetch_work_item_by_ids(workspace_slug=slug, work_item_ids=list(all_work_item_ids))
+
+        response_data = {
+            relation_type: _work_item_relations_list(work_items, relation_type, ids)
+            for relation_type, ids in work_item_ids_by_relation.items()
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    def create_relation(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
+        """Create custom relations between the work item and the given work_item_ids."""
+        user_id = request.user.id
+
+        relation_definition_id = request.data.get("relation_definition_id")
+        if relation_definition_id is None:
+            return Response(
+                {"message": "Definition id is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        relation_definition_type = request.data.get("relation_definition_type")
+        if relation_definition_type is None:
+            return Response(
+                {"message": "Work item relation type is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        request_work_item_ids = request.data.get("work_item_ids", [])
+        if not request_work_item_ids:
+            return Response(
+                {"message": "Work items are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        work_item = Issue.objects.filter(pk=work_item_id, workspace__slug=slug, project_id=project_id).first()
+        if work_item is None:
+            return Response(
+                {"message": "Work item not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        workspace_id = work_item.workspace_id
+        project_id = work_item.project_id
+
+        definition = (
+            self.relation_definition_model.objects.filter(
+                workspace__slug=slug, id=relation_definition_id, is_active=True
+            )
+            .filter(Q(outward=relation_definition_type) | Q(inward=relation_definition_type))
+            .first()
+        )
+        if definition is None:
+            return Response({"message": "Relation definition not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        request_work_items = _fetch_work_item_by_ids(workspace_slug=slug, work_item_ids=list(request_work_item_ids))
+        if len(request_work_items) != len(request_work_item_ids):
+            return Response(
+                {"message": "Request work items not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        is_outward = definition.outward == relation_definition_type
+
+        self.relation_model.objects.bulk_create(
+            [
+                self.relation_model(
+                    workspace_id=workspace_id,
+                    project_id=project_id,
+                    category=RelationCategory.RELATION,
+                    relation_type=None,
+                    definition_id=relation_definition_id,
+                    issue_id=work_item_id if is_outward else other_id,
+                    related_issue_id=other_id if is_outward else work_item_id,
+                    created_by_id=user_id,
+                    updated_by_id=user_id,
+                )
+                for other_id in request_work_item_ids
+            ],
+            batch_size=10,
+            ignore_conflicts=True,
+        )
+
+        _emit_work_item_relation_activity(
+            request=request,
+            type="issue_relation.activity.created",
+            actor_id=str(user_id),
+            work_item_id=str(work_item_id),
+            project_id=str(project_id),
+            current_instance=None,
+            requested_data={"issues": request_work_item_ids, "relation_type": relation_definition_type},
+        )
+
+        response_data = [
+            {**item, "id": item_id, "relation_type": relation_definition_type}
+            for item_id, item in request_work_items.items()
+        ]
+        return Response(response_data, status=status.HTTP_201_CREATED)
+
+    def remove_relation(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
+        """Remove the custom relation between the work item and the given related work_item_id."""
+        user_id = request.user.id
+        related_work_item_id = request.data.get("work_item_id")
+        if related_work_item_id is None:
+            return Response(
+                {"message": "Related work item id is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        work_item_relation = (
+            self.relation_model.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                category=RelationCategory.RELATION,
+            )
+            .filter(
+                Q(issue_id=related_work_item_id, related_issue_id=work_item_id)
+                | Q(issue_id=work_item_id, related_issue_id=related_work_item_id)
+            )
+            .select_related("definition")
+            .first()
+        )
+        if work_item_relation is None:
+            return Response(
+                {"message": "Work item relation not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        work_item_relation.delete()
+
+        _emit_work_item_relation_activity(
+            request=request,
+            type="issue_relation.activity.deleted",
+            actor_id=str(user_id),
+            work_item_id=str(work_item_id),
+            project_id=str(project_id),
+            current_instance=None,
+            requested_data={"related_issue": related_work_item_id, "relation_type": work_item_relation.relation_type},
         )
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -21,7 +21,7 @@ import { CollapsibleButton } from "@plane/propel/collapsible";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
-import { useTimeLineRelationOptions } from "@/components/relations";
+import { useCustomRelationOptions } from "@/components/relations";
 // local imports
 import { RelationActionButton } from "./quick-action-button";
 
@@ -40,9 +40,9 @@ export const RelationsCollapsibleTitle = observer(function RelationsCollapsibleT
     relation: { getRelationCountByIssueId },
   } = useIssueDetail(issueServiceType);
 
-  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
+  const RELATION_OPTIONS = useCustomRelationOptions();
   // derived values
-  const relationsCount = getRelationCountByIssueId(issueId, ISSUE_RELATION_OPTIONS);
+  const relationsCount = getRelationCountByIssueId(issueId, RELATION_OPTIONS);
 
   // indicator element
   const indicatorElement = useMemo(

@@ -13,45 +13,45 @@
 
 import { API_BASE_URL } from "@plane/constants";
 import type { TIssueRelation, TIssue } from "@plane/types";
-// helpers
-// Plane-web
-import type { TIssueRelationTypes } from "@/types";
 // services
 import { APIService } from "@/services/api.service";
 
-export class IssueRelationService extends APIService {
+export class WorkItemRelationService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async listIssueRelations(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueRelation> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/`)
+  async list(workspaceSlug: string, projectId: string, workItemId: string): Promise<TIssueRelation> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/work-items/${workItemId}/relations/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async createIssueRelations(
+  async create(
     workspaceSlug: string,
     projectId: string,
-    issueId: string,
-    data: { relation_type: TIssueRelationTypes; issues: string[] }
+    workItemId: string,
+    data: { relation_definition_id: string; relation_definition_type: string; work_item_ids: string[] }
   ): Promise<TIssue[]> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/`, data)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/work-items/${workItemId}/relations/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteIssueRelation(
+  async remove(
     workspaceSlug: string,
     projectId: string,
-    issueId: string,
-    data: { relation_type: TIssueRelationTypes; related_issue: string }
-  ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/remove-relation/`, data)
+    workItemId: string,
+    data: { work_item_id: string }
+  ): Promise<void> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/work-items/${workItemId}/relations/`,
+      data
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

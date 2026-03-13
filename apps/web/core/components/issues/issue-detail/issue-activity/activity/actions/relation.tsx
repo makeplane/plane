@@ -16,8 +16,7 @@ import { observer } from "mobx-react";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { getRelationActivityContent } from "@/components/relations/activity";
-import { useTimeLineRelationOptions } from "@/components/relations";
-import type { TIssueRelationTypes } from "@/types";
+import { useRelationOptionByFieldName } from "@/components/relations/use-relation-activity";
 //
 import { IssueActivityBlockComponent } from "./";
 
@@ -31,13 +30,13 @@ export const IssueRelationActivity = observer(function IssueRelationActivity(pro
   } = useIssueDetail();
 
   const activity = getActivityById(activityId);
-  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
+  const getRelationOption = useRelationOptionByFieldName();
   const activityContent = getRelationActivityContent(activity);
 
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={activity.field ? ISSUE_RELATION_OPTIONS[activity.field as TIssueRelationTypes]?.icon(14) : <></>}
+      icon={activity.field ? (getRelationOption(activity.field)?.icon(14) ?? <></>) : <></>}
       activityId={activityId}
       ends={ends}
     >

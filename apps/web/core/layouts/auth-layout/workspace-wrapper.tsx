@@ -63,6 +63,7 @@ import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { TFeatureFlagsResponse } from "@/services/feature-flag.service";
 import { useWorkflows } from "@/hooks/store/use-workflows";
+import { useRelationDefinition } from "@/hooks/store/use-relation-definition";
 import { useRunners } from "@/plane-web/hooks/store";
 import { useAiFeatureFlags } from "@/plane-web/hooks/store/use-ai-feature-flags";
 
@@ -105,6 +106,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { getWorkspaceBySlug } = useWorkspace();
   const { getInstance } = usePiChat();
   const { fetchAllWorkflows } = useWorkflows();
+  const { fetchRelationDefinitions } = useRelationDefinition();
   const { fetchScripts } = useRunners();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
@@ -163,6 +165,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
+  // fetch relation definitions
+  useSWR(
+    currentWorkspace ? `RELATION_DEFINITIONS_${workspaceSlug}` : null,
+    currentWorkspace ? () => fetchRelationDefinitions(workspaceSlug) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   // fetch workspace sidebar preferences
   useSWR(WORKSPACE_SIDEBAR_PREFERENCES(workspaceSlug), () => fetchSidebarNavigationPreferences(workspaceSlug), {

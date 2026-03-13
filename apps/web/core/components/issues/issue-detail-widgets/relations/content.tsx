@@ -25,8 +25,9 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
-import { useTimeLineRelationOptions } from "@/components/relations";
-import type { TIssueRelationTypes } from "@/types";
+import { useCustomRelationOptions } from "@/components/relations";
+// types
+export type TRelationOptionsMap = Record<string, TRelationObject | undefined>;
 // helper
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { RelationIssueList } from "../../relations/issue-list";
@@ -42,11 +43,13 @@ type Props = {
 type TIssueCrudState = { toggle: boolean; issueId: string | undefined; issue: TIssue | undefined };
 
 export type TRelationObject = {
-  key: TIssueRelationTypes;
+  key: string;
   i18n_label: string;
+  rawLabel?: string;
   className: string;
   icon: (size: number) => React.ReactElement;
   placeholder: string;
+  isDefault?: boolean;
 };
 
 export const RelationsCollapsibleContent = observer(function RelationsCollapsibleContent(props: Props) {
@@ -91,13 +94,13 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
 
   // derived values
   const relations = getRelationsByIssueId(issueId);
-  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
+  const ISSUE_RELATION_OPTIONS = useCustomRelationOptions();
 
   const handleIssueCrudState = (
     key: "update" | "delete" | "removeRelation",
     _issueId: string | null,
     issue: TIssue | null = null,
-    relationKey?: TIssueRelationTypes | null,
+    relationKey?: string | null,
     relationIssueId?: string | null
   ) => {
     setIssueCrudState((prevState) => ({
@@ -116,16 +119,17 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
   if (!relations) return null;
 
   // map relations to array
-  const relationsArray = (Object.keys(relations) as TIssueRelationTypes[])
+  const relationsArray = Object.keys(relations)
     .filter((relationKey) => !!ISSUE_RELATION_OPTIONS[relationKey])
     .map((relationKey) => {
-      const issueIds = relations[relationKey];
+      const issueIds = relations[relationKey] ?? [];
       const issueRelationOption = ISSUE_RELATION_OPTIONS[relationKey];
       return {
-        relationKey: relationKey,
+        relationKey,
         issueIds: issueIds,
         icon: issueRelationOption?.icon,
-        label: issueRelationOption?.i18n_label ? t(issueRelationOption?.i18n_label) : "",
+        label:
+          issueRelationOption?.rawLabel ?? (issueRelationOption?.i18n_label ? t(issueRelationOption.i18n_label) : ""),
         className: issueRelationOption?.className,
       };
     });
@@ -143,7 +147,7 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
 
   return (
     <>
-      <div className="flex flex-col gap-">
+      <div className="flex flex-col">
         {filteredRelationsArray.map((relation) => (
           <div key={relation.relationKey}>
             <Collapsible defaultOpen>
@@ -188,7 +192,7 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
                 workspaceSlug,
                 issueCrudState.removeRelation.issue.project_id,
                 issueCrudState.removeRelation.issueId,
-                issueCrudState.removeRelation.relationKey as TIssueRelationTypes,
+                issueCrudState.removeRelation.relationKey,
                 issueCrudState.removeRelation.relationIssueId,
                 true
               );

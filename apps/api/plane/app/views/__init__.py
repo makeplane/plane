@@ -165,8 +165,6 @@ from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 
 from .issue.link import IssueLinkViewSet
 
-from .issue.relation import IssueRelationViewSet
-
 from .issue.reaction import IssueReactionViewSet
 
 from .issue.sub_issue import SubIssuesEndpoint
@@ -289,3 +287,10 @@ from .timezone.base import TimezoneEndpoint
 from .asset.proxy import ProxyUploadEndpoint, ProxyDownloadEndpoint
 
 from .exporter.base import ExportIssuesEndpoint
+
+
+# work item relation definition
+from .issue.relation_definition import WorkItemRelationDefinitionViewSet
+
+# work item relation
+from .issue.relation import IssueRelationViewSet, WorkItemRelationDependencyViewSet, WorkItemRelationRelationViewSet

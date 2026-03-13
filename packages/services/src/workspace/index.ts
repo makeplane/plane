@@ -14,6 +14,7 @@
 export * from "./invitation.service";
 export * from "./member.service";
 export * from "./notification.service";
+export * from "./relation-definition.service";
 export * from "./view.service";
 export * from "./workspace.service";
 export * from "./entity-connection.service";

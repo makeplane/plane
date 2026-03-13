@@ -14,12 +14,12 @@
 import type { TIssue } from "./issue";
 import type { TIssueRelationTypesExtended } from "./issue_relation_extended";
 
-export type TIssueRelation = Record<TIssueRelationTypes, TIssue[]>;
+export type TIssueRelation = Record<string, TIssue[]>;
 
 export type TIssueRelationMap = {
-  [issue_id: string]: Record<TIssueRelationTypes, string[]>;
+  [issue_id: string]: Record<string, string[]>;
 };
 
-export type TIssueRelationIdMap = Record<TIssueRelationTypes, string[]>;
+export type TIssueRelationIdMap = Record<string, string[]>;
 
 export type TIssueRelationTypes = "blocking" | "blocked_by" | "duplicate" | "relates_to" | TIssueRelationTypesExtended;

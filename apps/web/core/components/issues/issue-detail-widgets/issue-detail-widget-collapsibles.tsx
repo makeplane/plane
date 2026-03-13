@@ -19,10 +19,11 @@ import type { TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useTimeLineRelationOptions } from "@/components/relations";
+import { useDependencyOptions, useCustomRelationOptions } from "@/components/relations";
 import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 // local imports
 import { AttachmentsCollapsible } from "./attachments";
+import { DependenciesCollapsible } from "./dependencies";
 import { LinksCollapsible } from "./links";
 import { RelationsCollapsible } from "./relations";
 import { SubIssuesCollapsible } from "./sub-issues";
@@ -66,11 +67,14 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
   // derived values
   const issue = getIssueById(issueId);
   const subIssues = subIssuesByIssueId(issueId);
-  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
-  const issueRelationsCount = getRelationCountByIssueId(issueId, ISSUE_RELATION_OPTIONS);
+  const DEPENDENCY_OPTIONS = useDependencyOptions();
+  const RELATION_OPTIONS = useCustomRelationOptions();
+  const dependenciesCount = getRelationCountByIssueId(issueId, DEPENDENCY_OPTIONS);
+  const relationsCount = getRelationCountByIssueId(issueId, RELATION_OPTIONS);
   // render conditions
   const shouldRenderSubIssues = !!subIssues && subIssues.length > 0 && !hideWidgets?.includes("sub-work-items");
-  const shouldRenderRelations = issueRelationsCount > 0 && !hideWidgets?.includes("relations");
+  const shouldRenderDependencies = dependenciesCount > 0 && !hideWidgets?.includes("dependencies");
+  const shouldRenderRelations = relationsCount > 0 && !hideWidgets?.includes("relations");
   const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0 && !hideWidgets?.includes("links");
   const shouldRenderCustomerRequest = Boolean(issue?.customer_request_ids?.length) && !issue?.is_epic;
   const shouldRenderPages = !hideWidgets?.includes("pages");
@@ -88,6 +92,14 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
           projectId={projectId}
           issueId={issueId}
           permissions={permissions.sub_work_items}
+          issueServiceType={issueServiceType}
+        />
+      )}
+      {shouldRenderDependencies && (
+        <DependenciesCollapsible
+          workspaceSlug={workspaceSlug}
+          issueId={issueId}
+          disabled={disabled}
           issueServiceType={issueServiceType}
         />
       )}

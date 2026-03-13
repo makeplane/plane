@@ -184,6 +184,17 @@ class Workspace(BaseModel):
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
     background_color = models.CharField(max_length=255, default=get_random_color)
 
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        super().save(*args, **kwargs)
+        if is_new:
+            from plane.db.models import DEFAULT_RELATION_DEFINITIONS, WorkItemRelationDefinition
+
+            WorkItemRelationDefinition.objects.bulk_create(
+                [WorkItemRelationDefinition(workspace=self, **d) for d in DEFAULT_RELATION_DEFINITIONS],
+                ignore_conflicts=True,
+            )
+
     def __str__(self):
         """Return name of the Workspace"""
         return self.name

@@ -29,7 +29,6 @@ import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-red
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
-import type { TIssueRelationTypes } from "@/types";
 // local imports
 import { useRelationOperations } from "../issue-detail-widgets/relations/helper";
 import { RelationIssueProperty } from "./properties";
@@ -37,14 +36,14 @@ import { RelationIssueProperty } from "./properties";
 type Props = {
   workspaceSlug: string;
   issueId: string;
-  relationKey: TIssueRelationTypes;
+  relationKey: string;
   relationIssueId: string;
   disabled: boolean;
   handleIssueCrudState: (
     key: "update" | "delete" | "removeRelation",
     issueId: string,
     issue?: TIssue | null,
-    relationKey?: TIssueRelationTypes | null,
+    relationKey?: string | null,
     relationIssueId?: string | null
   ) => void;
   issueServiceType?: TIssueServiceType;

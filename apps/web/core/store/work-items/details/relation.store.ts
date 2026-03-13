@@ -18,11 +18,13 @@ import { computedFn } from "mobx-utils";
 import type { TIssueRelationIdMap, TIssueRelationMap, TIssueRelation, TIssue } from "@plane/types";
 // components
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
+import { parseRelationKey } from "@/components/relations";
 // Plane-web
-import { REVERSE_RELATIONS } from "@/constants/timeline";
+import { DEPENDENCY_RELATION_KEYS, REVERSE_RELATIONS } from "@/constants/timeline";
 import type { TIssueRelationTypes } from "@/types";
 // services
-import { IssueRelationService } from "@/services/issue";
+import { WorkItemDependencyService } from "@/services/issue/work-item-dependency.service";
+import { WorkItemRelationService } from "@/services/issue/work-item-relation.service";
 // types
 import type { IIssueDetail } from "./root.store";
 export interface IIssueRelationStoreActions {
@@ -32,14 +34,14 @@ export interface IIssueRelationStoreActions {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    relationType: TIssueRelationTypes,
+    relationType: string,
     issues: string[]
   ) => Promise<TIssue[]>;
   removeRelation: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    relationType: TIssueRelationTypes,
+    relationType: string,
     related_issue: string,
     updateLocally?: boolean
   ) => Promise<void>;
@@ -54,7 +56,7 @@ export interface IIssueRelationStore extends IIssueRelationStoreActions {
   getRelationsByIssueId: (issueId: string) => TIssueRelationIdMap | undefined;
   getRelationCountByIssueId: (
     issueId: string,
-    ISSUE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject }
+    ISSUE_RELATION_OPTIONS: Record<string, TRelationObject | undefined>
   ) => number;
   getRelationByIssueIdRelationType: (issueId: string, relationType: TIssueRelationTypes) => string[] | undefined;
   extractRelationsFromIssues: (issues: TIssue[]) => void;
@@ -67,7 +69,8 @@ export class IssueRelationStore implements IIssueRelationStore {
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services
-  issueRelationService;
+  dependencyService;
+  relationService;
 
   constructor(rootStore: IIssueDetail) {
     makeObservable(this, {
@@ -85,7 +88,8 @@ export class IssueRelationStore implements IIssueRelationStore {
     // root store
     this.rootIssueDetailStore = rootStore;
     // services
-    this.issueRelationService = new IssueRelationService();
+    this.dependencyService = new WorkItemDependencyService();
+    this.relationService = new WorkItemRelationService();
   }
 
   // computed
@@ -102,7 +106,7 @@ export class IssueRelationStore implements IIssueRelationStore {
   };
 
   getRelationCountByIssueId = computedFn(
-    (issueId: string, ISSUE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject }) => {
+    (issueId: string, ISSUE_RELATION_OPTIONS: Record<string, TRelationObject | undefined>) => {
       const issueRelations = this.getRelationsByIssueId(issueId);
 
       const issueRelationKeys = (Object.keys(issueRelations ?? {}) as TIssueRelationTypes[]).filter(
@@ -118,54 +122,101 @@ export class IssueRelationStore implements IIssueRelationStore {
     return this.relationMap?.[issueId]?.[relationType] ?? undefined;
   };
 
+  /**
+   * Build a lookup map: directionName → compositeKey
+   * e.g., "relates to" → "abc123::relates to"
+   */
+  private buildNameToCompositeKeyMap(): Record<string, string> {
+    const definitions = this.rootIssueDetailStore.rootIssueStore.rootStore.relationDefinition.sortedRelationDefinitions;
+    const nameMap: Record<string, string> = {};
+    for (const def of definitions) {
+      // Guard against name collisions — first definition wins
+      if (!nameMap[def.outward]) nameMap[def.outward] = `${def.id}::${def.outward}`;
+      if (!nameMap[def.inward]) nameMap[def.inward] = `${def.id}::${def.inward}`;
+    }
+    return nameMap;
+  }
+
   // actions
   fetchRelations = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    const response = await this.issueRelationService.listIssueRelations(workspaceSlug, projectId, issueId);
+    const [depResult, relResult] = await Promise.allSettled([
+      this.dependencyService.list(workspaceSlug, projectId, issueId),
+      this.relationService.list(workspaceSlug, projectId, issueId),
+    ]);
+
+    const dependencyResponse: TIssueRelation = depResult.status === "fulfilled" ? depResult.value : {};
+    const relationResponse: TIssueRelation = relResult.status === "fulfilled" ? relResult.value : {};
+
+    // Transform relation response keys from plain names to composite "uuid::name" keys
+    const nameToKey = this.buildNameToCompositeKeyMap();
+    const transformedRelations: TIssueRelation = {};
+    for (const [apiKey, issues] of Object.entries(relationResponse)) {
+      const compositeKey = nameToKey[apiKey];
+      if (compositeKey) {
+        transformedRelations[compositeKey] = issues;
+      }
+      // Keys not found in definitions are skipped (e.g., dependency types
+      // returned by the relations endpoint — already covered by dependency endpoint)
+    }
+
+    const merged = { ...dependencyResponse, ...transformedRelations };
 
     runInAction(() => {
-      Object.keys(response).forEach((key) => {
-        const relation_key = key as TIssueRelationTypes;
-        const relation_issues = response[relation_key];
+      Object.keys(merged).forEach((key) => {
+        const relation_issues = merged[key];
         const issues = relation_issues.flat().map((issue) => issue);
         if (issues && issues.length > 0) this.rootIssueDetailStore.rootIssueStore.issues.addIssue(issues);
-        set(
-          this.relationMap,
-          [issueId, relation_key],
-          issues && issues.length > 0 ? issues.map((issue) => issue.id) : []
-        );
+        set(this.relationMap, [issueId, key], issues && issues.length > 0 ? issues.map((issue) => issue.id) : []);
       });
     });
 
-    return response;
+    return merged;
   };
 
   createRelation = async (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    relationType: TIssueRelationTypes,
+    relationType: string,
     issues: string[]
   ) => {
-    const response = await this.issueRelationService.createIssueRelations(workspaceSlug, projectId, issueId, {
-      relation_type: relationType,
-      issues,
-    });
+    let response: TIssue[];
 
-    const reverseRelatedType = REVERSE_RELATIONS[relationType];
+    if (DEPENDENCY_RELATION_KEYS.has(relationType)) {
+      // Dependency — use dependency service
+      response = await this.dependencyService.create(workspaceSlug, projectId, issueId, {
+        relation_type: relationType,
+        work_item_ids: issues,
+      });
+    } else {
+      // Custom relation — relationType is "definitionId::directionName"
+      const parsed = parseRelationKey(relationType);
+      if (!parsed) throw { error: `Invalid relation key: ${relationType}` };
+
+      response = await this.relationService.create(workspaceSlug, projectId, issueId, {
+        relation_definition_id: parsed.definitionId,
+        relation_definition_type: parsed.directionName,
+        work_item_ids: issues,
+      });
+    }
 
     const issuesOfRelation = get(this.relationMap, [issueId, relationType]) ?? [];
 
     if (response && response.length > 0)
       runInAction(() => {
         response.forEach((issue) => {
-          const issuesOfRelated = get(this.relationMap, [issue.id, reverseRelatedType]);
           this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue]);
           issuesOfRelation.push(issue.id);
 
-          if (!issuesOfRelated) {
-            set(this.relationMap, [issue.id, reverseRelatedType], [issueId]);
-          } else {
-            set(this.relationMap, [issue.id, reverseRelatedType], uniq([...issuesOfRelated, issueId]));
+          // For dependencies, manage reverse relation client-side
+          if (DEPENDENCY_RELATION_KEYS.has(relationType)) {
+            const reverseRelatedType = REVERSE_RELATIONS[relationType as TIssueRelationTypes];
+            const issuesOfRelated = get(this.relationMap, [issue.id, reverseRelatedType]);
+            if (!issuesOfRelated) {
+              set(this.relationMap, [issue.id, reverseRelatedType], [issueId]);
+            } else {
+              set(this.relationMap, [issue.id, reverseRelatedType], uniq([...issuesOfRelated, issueId]));
+            }
           }
         });
         set(this.relationMap, [issueId, relationType], uniq(issuesOfRelation));
@@ -210,10 +261,10 @@ export class IssueRelationStore implements IIssueRelationStore {
         }
       });
 
-      // perform API call
-      await this.issueRelationService.createIssueRelations(workspaceSlug, projectId, issueId, {
+      // perform API call — timeline drag always creates dependencies
+      await this.dependencyService.create(workspaceSlug, projectId, issueId, {
         relation_type: relationType,
-        issues: [relatedIssueId],
+        work_item_ids: [relatedIssueId],
       });
     } catch (e) {
       // Revert back store changes if API fails
@@ -235,35 +286,47 @@ export class IssueRelationStore implements IIssueRelationStore {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    relationType: TIssueRelationTypes,
+    relationType: string,
     related_issue: string,
     updateLocally = false
   ) => {
     try {
+      // Optimistic local removal
       const relationIndex = this.relationMap[issueId]?.[relationType]?.findIndex(
-        (_issueId) => _issueId === related_issue
+        (_issueId: string) => _issueId === related_issue
       );
-      if (relationIndex >= 0)
+      if (relationIndex !== undefined && relationIndex >= 0)
         runInAction(() => {
           this.relationMap[issueId]?.[relationType]?.splice(relationIndex, 1);
         });
 
+      // API call — route to correct service
       if (!updateLocally) {
-        await this.issueRelationService.deleteIssueRelation(workspaceSlug, projectId, issueId, {
-          relation_type: relationType,
-          related_issue,
-        });
+        if (DEPENDENCY_RELATION_KEYS.has(relationType)) {
+          await this.dependencyService.remove(workspaceSlug, projectId, issueId, {
+            work_item_id: related_issue,
+          });
+        } else {
+          await this.relationService.remove(workspaceSlug, projectId, issueId, {
+            work_item_id: related_issue,
+          });
+        }
       }
 
-      // While removing one relation, reverse of the relation should also be removed
-      const reverseRelatedType = REVERSE_RELATIONS[relationType];
-      const relatedIndex = this.relationMap[related_issue]?.[reverseRelatedType]?.findIndex(
-        (_issueId) => _issueId === related_issue
-      );
-      if (relationIndex >= 0)
-        runInAction(() => {
-          this.relationMap[related_issue]?.[reverseRelatedType]?.splice(relatedIndex, 1);
-        });
+      // For dependencies, also remove reverse relation client-side.
+      // Custom relations don't need client-side reverse management —
+      // the backend handles bidirectionality. Error recovery via
+      // fetchRelations refreshes the current issue's full relation state.
+      if (DEPENDENCY_RELATION_KEYS.has(relationType)) {
+        const reverseRelatedType = REVERSE_RELATIONS[relationType as TIssueRelationTypes];
+        const relatedIndex = this.relationMap[related_issue]?.[reverseRelatedType]?.findIndex(
+          (_issueId) => _issueId === issueId
+        );
+        if (relatedIndex !== undefined && relatedIndex >= 0)
+          runInAction(() => {
+            this.relationMap[related_issue]?.[reverseRelatedType]?.splice(relatedIndex, 1);
+          });
+      }
 
       // fetching activity
       this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
@@ -290,6 +353,9 @@ export class IssueRelationStore implements IIssueRelationStore {
               const { relation_type, id } = relation;
 
               if (!relation_type) continue;
+              // Skip custom relation types — they use composite keys
+              // and will be properly loaded via fetchRelations
+              if (!REVERSE_RELATIONS[relation_type as TIssueRelationTypes]) continue;
 
               if (issueRelations[relation_type]) issueRelations[relation_type]?.push(id);
               else issueRelations[relation_type] = [id];
@@ -303,6 +369,9 @@ export class IssueRelationStore implements IIssueRelationStore {
               if (!relation_type) continue;
 
               const reverseRelatedType = REVERSE_RELATIONS[relation_type as TIssueRelationTypes];
+              // Skip custom relation types — they aren't in REVERSE_RELATIONS
+              // and will be properly loaded via fetchRelations
+              if (!reverseRelatedType) continue;
 
               if (issueRelations[reverseRelatedType]) issueRelations[reverseRelatedType]?.push(id);
               else issueRelations[reverseRelatedType] = [id];

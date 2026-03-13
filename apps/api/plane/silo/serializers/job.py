@@ -13,7 +13,7 @@
 from plane.ee.serializers import BaseSerializer
 from plane.ee.models import ImportJob, ImportReport, ImportExecutionLog
 from plane.db.models import User, Project, Workspace
-from plane.db.models.issue import IssueRelationChoices
+from plane.db.models import IssueRelationChoices
 
 # Serializers
 from rest_framework import serializers

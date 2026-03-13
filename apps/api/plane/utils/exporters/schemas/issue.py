@@ -198,14 +198,17 @@ class IssueExportSchema(ExportSchema):
 
     def prepare_relations(self, i):
         # Should show reverse relation as well
-        from plane.db.models.issue import IssueRelationChoices
+        from plane.db.models import IssueRelationChoices
 
         relations = {
             r.relation_type: f"{r.related_issue.project.identifier}-{r.related_issue.sequence_id}"
             for r in i.issue_relation.all()
+            if r.relation_type is not None
         }
         reverse_relations = {}
         for relation in i.issue_related.all():
+            if relation.relation_type is None:
+                continue
             reverse_relations[IssueRelationChoices._REVERSE_MAPPING[relation.relation_type]] = (
                 f"{relation.issue.project.identifier}-{relation.issue.sequence_id}"
             )

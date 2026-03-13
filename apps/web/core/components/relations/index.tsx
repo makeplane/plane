@@ -11,31 +11,22 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import { CircleDot, XCircle, ArrowRightToLine, ArrowRightFromLine } from "lucide-react";
 // Plane
 import { DuplicatePropertyIcon, RelatedIcon } from "@plane/propel/icons";
 // components
-import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
+import type { TRelationObject, TRelationOptionsMap } from "@/components/issues/issue-detail-widgets/relations";
+// hooks
+import { useRelationDefinition } from "@/hooks/store/use-relation-definition";
 // Plane-web
 import { useFlag } from "@/plane-web/hooks/store";
 import type { TIssueRelationTypes } from "@/types";
 
-const COMMON_WORK_ITEM_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject } = {
-  relates_to: {
-    key: "relates_to",
-    i18n_label: "issue.relation.relates_to",
-    className: "bg-layer-1 text-secondary",
-    icon: (size) => <RelatedIcon height={size} width={size} className="text-secondary" />,
-    placeholder: "Add related work items",
-  },
-  duplicate: {
-    key: "duplicate",
-    i18n_label: "issue.relation.duplicate",
-    className: "bg-layer-1 text-secondary",
-    icon: (size) => <DuplicatePropertyIcon height={size} width={size} className="text-secondary" />,
-    placeholder: "None",
-  },
+// --- Dependency options (hardcoded types) ---
+
+const CORE_DEPENDENCY_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject } = {
   blocked_by: {
     key: "blocked_by",
     i18n_label: "issue.relation.blocked_by",
@@ -52,8 +43,7 @@ const COMMON_WORK_ITEM_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelat
   },
 };
 
-export const WORK_ITEM_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject } = {
-  ...COMMON_WORK_ITEM_RELATION_OPTIONS,
+const EXTENDED_DEPENDENCY_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject } = {
   start_before: {
     key: "start_before",
     i18n_label: "issue.relation.start_before",
@@ -82,6 +72,28 @@ export const WORK_ITEM_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelat
     className: "bg-yellow-500/20 text-yellow-700",
     placeholder: "None",
   },
+};
+
+// --- Relation options (custom / built-in) ---
+
+const CORE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject } = {
+  relates_to: {
+    key: "relates_to",
+    i18n_label: "issue.relation.relates_to",
+    className: "bg-layer-1 text-secondary",
+    icon: (size) => <RelatedIcon height={size} width={size} className="text-secondary" />,
+    placeholder: "Add related work items",
+  },
+  duplicate: {
+    key: "duplicate",
+    i18n_label: "issue.relation.duplicate",
+    className: "bg-layer-1 text-secondary",
+    icon: (size) => <DuplicatePropertyIcon height={size} width={size} className="text-secondary" />,
+    placeholder: "None",
+  },
+};
+
+const EXTENDED_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject } = {
   implements: {
     key: "implements",
     i18n_label: "issue.relation.implements",
@@ -98,20 +110,82 @@ export const WORK_ITEM_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelat
   },
 };
 
-export const useTimeLineRelationOptions = () => {
-  const { workspaceSlug } = useParams();
+// --- Combined maps (kept for backward compatibility) ---
 
+const COMMON_WORK_ITEM_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject } = {
+  ...CORE_RELATION_OPTIONS,
+  ...CORE_DEPENDENCY_OPTIONS,
+};
+
+export const WORK_ITEM_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject } = {
+  ...COMMON_WORK_ITEM_RELATION_OPTIONS,
+  ...EXTENDED_DEPENDENCY_OPTIONS,
+  ...EXTENDED_RELATION_OPTIONS,
+};
+
+// --- Dependency keys set (re-exported from constants for convenience) ---
+
+export { DEPENDENCY_RELATION_KEYS } from "@/constants/timeline";
+
+// --- Hooks ---
+
+export const useDependencyOptions = () => {
+  const { workspaceSlug } = useParams();
   const isDependencyEnabled = useFlag(workspaceSlug.toString(), "TIMELINE_DEPENDENCY");
 
-  return isDependencyEnabled
-    ? WORK_ITEM_RELATION_OPTIONS
-    : {
-        ...COMMON_WORK_ITEM_RELATION_OPTIONS,
-        start_before: undefined,
-        start_after: undefined,
-        finish_before: undefined,
-        finish_after: undefined,
-        implements: undefined,
-        implemented_by: undefined,
+  return isDependencyEnabled ? { ...CORE_DEPENDENCY_OPTIONS, ...EXTENDED_DEPENDENCY_OPTIONS } : CORE_DEPENDENCY_OPTIONS;
+};
+
+export const useCustomRelationOptions = (): TRelationOptionsMap => {
+  const { sortedRelationDefinitions } = useRelationDefinition();
+
+  return useMemo(() => {
+    const options: TRelationOptionsMap = {};
+    for (const definition of sortedRelationDefinitions) {
+      // Outward direction entry
+      options[`${definition.id}::${definition.outward}`] = {
+        key: `${definition.id}::${definition.outward}`,
+        i18n_label: definition.outward,
+        rawLabel: definition.outward,
+        className: "bg-layer-1 text-secondary",
+        icon: (size: number) => <RelatedIcon height={size} width={size} className="text-secondary" />,
+        placeholder: "None",
+        isDefault: definition.is_default,
       };
+      // Inward direction entry
+      options[`${definition.id}::${definition.inward}`] = {
+        key: `${definition.id}::${definition.inward}`,
+        i18n_label: definition.inward,
+        rawLabel: definition.inward,
+        className: "bg-layer-1 text-secondary",
+        icon: (size: number) => <RelatedIcon height={size} width={size} className="text-secondary" />,
+        placeholder: "None",
+        isDefault: definition.is_default,
+      };
+    }
+    return options;
+  }, [sortedRelationDefinitions]);
+};
+
+/**
+ * Parse a composite relation key of the format "definitionId::directionName".
+ * Returns null if the key is not a composite key (i.e., it's a dependency type).
+ */
+export const parseRelationKey = (key: string): { definitionId: string; directionName: string } | null => {
+  const separatorIndex = key.indexOf("::");
+  if (separatorIndex === -1) return null;
+  return {
+    definitionId: key.substring(0, separatorIndex),
+    directionName: key.substring(separatorIndex + 2),
+  };
+};
+
+export const useTimeLineRelationOptions = () => {
+  const { workspaceSlug } = useParams();
+  const isDependencyEnabled = useFlag(workspaceSlug.toString(), "TIMELINE_DEPENDENCY");
+  const customRelationOptions = useCustomRelationOptions();
+
+  const baseOptions = isDependencyEnabled ? WORK_ITEM_RELATION_OPTIONS : { ...COMMON_WORK_ITEM_RELATION_OPTIONS };
+
+  return { ...baseOptions, ...customRelationOptions };
 };

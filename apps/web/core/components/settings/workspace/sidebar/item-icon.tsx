@@ -34,6 +34,7 @@ import {
   InitiativeIcon,
   PiIcon,
   ProjectStatesIcon,
+  RelationPropertyIcon,
   TeamsIcon,
 } from "@plane/propel/icons";
 import type { TWorkspaceSettingsTabs } from "@plane/types";
@@ -55,6 +56,7 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   integrations: Cable,
   connections: Blocks,
   project_states: ProjectStatesIcon,
+  relations: RelationPropertyIcon,
   "plane-intelligence": PiIcon,
   "access-tokens": KeyRound,
   scripts: FileCode,

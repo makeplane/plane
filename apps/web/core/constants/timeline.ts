@@ -26,6 +26,15 @@ export const REVERSE_RELATIONS: { [key in TIssueRelationTypes]: TIssueRelationTy
   implemented_by: "implements",
 };
 
+export const DEPENDENCY_RELATION_KEYS: Set<string> = new Set([
+  "blocked_by",
+  "blocking",
+  "start_before",
+  "start_after",
+  "finish_before",
+  "finish_after",
+]);
+
 export enum ETimelineRelation {
   FS = "FINISH_TO_START",
   SS = "START_TO_START",

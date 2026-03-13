@@ -18,7 +18,6 @@ import { observer } from "mobx-react";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // Plane-web imports
-import type { TIssueRelationTypes } from "@/types";
 // local imports
 import { RelationIssueListItem } from "./issue-list-item";
 
@@ -26,12 +25,12 @@ type Props = {
   workspaceSlug: string;
   issueId: string;
   issueIds: string[];
-  relationKey: TIssueRelationTypes;
+  relationKey: string;
   handleIssueCrudState: (
     key: "update" | "delete" | "removeRelation",
     issueId: string,
     issue?: TIssue | null,
-    relationKey?: TIssueRelationTypes | null,
+    relationKey?: string | null,
     relationIssueId?: string | null
   ) => void;
   disabled?: boolean;

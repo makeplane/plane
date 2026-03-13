@@ -19,12 +19,14 @@ import { Tabs } from "@plane/propel/tabs";
 import { EIssueServiceType } from "@plane/types";
 import type { TIssue } from "@plane/types";
 // components
+import { DependencyActionButton } from "@/components/issues/issue-detail-widgets/dependencies";
 import { RelationActionButton } from "@/components/issues/issue-detail-widgets/relations";
 // plane web
 import { OverviewSection } from "@/components/common/layout/main/sections/overview-root";
 // local components
 import { useCustomers } from "@/plane-web/hooks/store";
 import { EpicCustomersRoot } from "./overview-section/customers-root";
+import { EpicDependenciesOverviewRoot } from "./overview-section/dependency-root";
 import { EpicIssuesOverviewRoot } from "./overview-section/issues-root";
 import { EpicOverviewWidgetModals } from "./overview-section/modals-root";
 import { EpicRelationsOverviewRoot } from "./overview-section/relation-root";
@@ -75,6 +77,11 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
         ),
       },
       {
+        key: "dependencies",
+        label: "Dependencies",
+        content: <EpicDependenciesOverviewRoot workspaceSlug={workspaceSlug} epicId={epicId} disabled={disabled} />,
+      },
+      {
         key: "relations",
         label: "Relations",
         content: <EpicRelationsOverviewRoot workspaceSlug={workspaceSlug} epicId={epicId} disabled={disabled} />,
@@ -102,6 +109,9 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
           workspaceSlug={workspaceSlug}
           canAdd={subWorkItemPermissions.getCanAdd(projectId, epicId)}
         />
+      ),
+      dependencies: (
+        <DependencyActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={disabled} />
       ),
       relations: (
         <RelationActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={disabled} />

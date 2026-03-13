@@ -9,26 +9,32 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Python imports
 import copy
 
+# Django imports
+from rest_framework import status
+from rest_framework.response import Response
+
+# Module imports
+from plane.app.serializers.issue import IssueDuplicateSerializer
 from plane.app.views.base import BaseAPIView
+from plane.bgtasks.copy_s3_object import (
+    copy_s3_objects_of_description_and_assets,
+    copy_s3_objects_of_issue_attachment,
+)
 from plane.db.models import (
-    IssueRelation,
+    DEFAULT_DUPLICATE_DEFINITION,
     Issue,
+    IssueLink,
+    IssueRelation,
     IssueType,
-    State,
     Project,
     ProjectMember,
-    IssueLink,
+    RelationCategory,
+    State,
+    WorkItemRelationDefinition,
 )
-from rest_framework.response import Response
-from rest_framework import status
-from plane.app.serializers.issue import IssueDuplicateSerializer
-from plane.bgtasks.copy_s3_object import (
-    copy_s3_objects_of_issue_attachment,
-    copy_s3_objects_of_description_and_assets,
-)
-from django.db.models import Q
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 
@@ -124,16 +130,32 @@ class IssueDuplicateEndpoint(BaseAPIView):
             copy_to_entity_project=True,
         )
 
+        # ********** append the duplicate relation **********
         # Duplicating the issue relation
-
         related_issues = list(
-            original_issue.issue_relation.filter(~Q(relation_type="duplicate"))
-            .values("related_issue_id", "relation_type")
+            original_issue.issue_relation.filter()
+            .values("related_issue_id", "category", "relation_type", "definition_id")
             .distinct()
         )
+        # fetching the duplicate definition
+        duplicate_definition = WorkItemRelationDefinition.objects.get(
+            inward=DEFAULT_DUPLICATE_DEFINITION["inward"],
+            outward=DEFAULT_DUPLICATE_DEFINITION["outward"],
+            is_default=True,
+            is_active=True,
+        )
 
-        related_issues.append({"related_issue_id": original_issue.id, "relation_type": "duplicate"})
+        # append the duplicate relation
+        related_issues.append(
+            {
+                "related_issue_id": original_issue.id,
+                "category": RelationCategory.RELATION,
+                "relation_type": None,
+                "definition_id": duplicate_definition.id,
+            }
+        )
 
+        # create the issue relations
         IssueRelation.objects.bulk_create(
             [
                 IssueRelation(
@@ -141,6 +163,8 @@ class IssueDuplicateEndpoint(BaseAPIView):
                     related_issue_id=duplicated_issue.id,
                     relation_type=related_issue["relation_type"],
                     project_id=duplicated_issue.project_id,
+                    category=related_issue["category"],
+                    definition_id=related_issue["definition_id"],
                     workspace_id=duplicated_issue.workspace_id,
                     created_by=request.user,
                     updated_by=request.user,
@@ -150,9 +174,9 @@ class IssueDuplicateEndpoint(BaseAPIView):
             batch_size=10,
             ignore_conflicts=True,
         )
+        # **********
 
         # Duplicating the issue links
-
         links = original_issue.issue_link.all()
 
         IssueLink.objects.bulk_create(

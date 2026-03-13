@@ -210,6 +210,9 @@ class IssueSearchEndpoint(BaseAPIView):
         ).exists():
             issues = issues.filter(created_by=self.request.user)
 
+        issues = issues.exclude(id=issue_id)
+        issues_and_epics = issues_and_epics.exclude(id=issue_id)
+
         return Response(
             issues.values(
                 "name",

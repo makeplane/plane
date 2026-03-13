@@ -17,14 +17,14 @@ import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
 import { PlusIcon } from "@plane/propel/icons";
+import { cn } from "@plane/propel/utils";
 // plane imports
 import type { TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
-import { useTimeLineRelationOptions } from "@/components/relations";
-import type { TIssueRelationTypes } from "@/types";
+import { useCustomRelationOptions } from "@/components/relations";
 
 type Props = {
   issueId: string;
@@ -39,10 +39,10 @@ export const RelationActionButton = observer(function RelationActionButton(props
   // store hooks
   const { toggleRelationModal, setRelationKey } = useIssueDetail(issueServiceType);
 
-  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
+  const ISSUE_RELATION_OPTIONS = useCustomRelationOptions();
 
   // handlers
-  const handleOnClick = (relationKey: TIssueRelationTypes) => {
+  const handleOnClick = (relationKey: string) => {
     setRelationKey(relationKey);
     toggleRelationModal(issueId, relationKey);
   };
@@ -70,7 +70,7 @@ export const RelationActionButton = observer(function RelationActionButton(props
           >
             <div className="flex items-center gap-2">
               {item.icon(12)}
-              <span>{t(item.i18n_label)}</span>
+              <span className={cn(item.isDefault && "capitalize")}>{item.rawLabel ?? t(item.i18n_label)}</span>
             </div>
           </CustomMenu.MenuItem>
         );

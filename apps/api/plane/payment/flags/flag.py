@@ -128,6 +128,8 @@ class FeatureFlag(Enum):
     MULTIPLE_WORKFLOWS = "MULTIPLE_WORKFLOWS"
     # Formula properties
     WORKITEM_TYPE_FORMULA_FIELD = "WORKITEM_TYPE_FORMULA_FIELD"
+    # Custom relations
+    CUSTOM_RELATIONS = "CUSTOM_RELATIONS"
 
 
 class AdminFeatureFlag(Enum):

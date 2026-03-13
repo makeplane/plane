@@ -11,19 +11,18 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import React from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import { WorkItemsIcon } from "@plane/propel/icons";
 import { EIssueServiceType } from "@plane/types";
-import { cn } from "@plane/utils";
 // components
 import { RelationActionButton, RelationsCollapsibleContent } from "@/components/issues/issue-detail-widgets/relations";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web
+import { useCustomRelationOptions } from "@/components/relations";
 import { SectionEmptyState } from "@/components/common/layout/main/common/empty-state";
 
 type Props = {
@@ -41,7 +40,10 @@ export const EpicRelationsOverviewRoot = observer(function EpicRelationsOverview
 
   // derived values
   const relations = getRelationsByIssueId(epicId);
-  const isRelationsEmpty = Object.values(relations || {}).every((relation) => isEmpty(relation));
+  const RELATION_OPTIONS = useCustomRelationOptions();
+  const isRelationsEmpty = Object.keys(relations || {})
+    .filter((key) => !!RELATION_OPTIONS[key])
+    .every((key) => isEmpty(relations?.[key as keyof typeof relations]));
 
   return (
     <>

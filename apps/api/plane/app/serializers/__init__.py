@@ -82,8 +82,6 @@ from .issue import (
     IssueReactionSerializer,
     CommentReactionSerializer,
     IssueVoteSerializer,
-    IssueRelationSerializer,
-    RelatedIssueSerializer,
     IssuePublicSerializer,
     IssueDetailSerializer,
     IssueReactionLiteSerializer,
@@ -93,6 +91,12 @@ from .issue import (
     IssueDescriptionVersionDetailSerializer,
     IssueListDetailSerializer,
     IssueDuplicateSerializer,
+    # work item relation definition
+    WorkItemRelationDefinitionInputSerializer,
+    WorkItemRelationDefinitionSerializer,
+    # work item relation
+    WorkItemRelationSerializer,
+    RelatedWorkItemRelationSerializer,
 )
 
 from .module import (
@@ -163,7 +167,6 @@ from .deploy_board import DeployBoardSerializer
 
 # Extended serializers
 from .extended.issue import ExtendedIssueCreateSerializer as IssueCreateSerializer  # noqa: F811
-
 
 __all__ = [
     # Base serializers
@@ -237,8 +240,6 @@ __all__ = [
     "IssueReactionSerializer",
     "CommentReactionSerializer",
     "IssueVoteSerializer",
-    "IssueRelationSerializer",
-    "RelatedIssueSerializer",
     "IssuePublicSerializer",
     "IssueDetailSerializer",
     "IssueReactionLiteSerializer",
@@ -249,6 +250,12 @@ __all__ = [
     "IssueListDetailSerializer",
     "IssueDuplicateSerializer",
     "IssueAttachmentSerializer",
+    # work item relation definition
+    "WorkItemRelationDefinitionInputSerializer",
+    "WorkItemRelationDefinitionSerializer",
+    # work item relation
+    "WorkItemRelationSerializer",
+    "RelatedWorkItemRelationSerializer",
     # Module serializers
     "ModuleDetailSerializer",
     "ModuleWriteSerializer",

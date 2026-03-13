@@ -186,39 +186,6 @@ export class IssueService extends APIService {
         throw error?.response?.data;
       });
   }
-
-  async createIssueRelation(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: {
-      related_list: Array<{
-        relation_type: "duplicate" | "relates_to" | "blocked_by";
-        related_issue: string;
-      }>;
-      relation?: "blocking" | null;
-    }
-  ) {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/issue-relation/`,
-      data
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
-  async deleteIssueRelation(workspaceSlug: string, projectId: string, issueId: string, relationId: string) {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/issue-relation/${relationId}/`
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
   async getIssueDisplayProperties(workspaceSlug: string, projectId: string): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-display-properties/`)
       .then((response) => response?.data)

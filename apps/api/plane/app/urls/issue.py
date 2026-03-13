@@ -23,7 +23,6 @@ from plane.app.views import (
     IssueCommentViewSet,
     IssueListEndpoint,
     IssueReactionViewSet,
-    IssueRelationViewSet,
     IssueSubscriberViewSet,
     ProjectUserDisplayPropertyEndpoint,
     IssueViewSet,
@@ -39,6 +38,12 @@ from plane.app.views import (
     IssueDetailIdentifierEndpoint,
     IssueCommentRepliesEndpoint,
     IssueListMetaEndpoint,
+    # relation definitions
+    WorkItemRelationDefinitionViewSet,
+    # relations
+    IssueRelationViewSet,  # deprecated
+    WorkItemRelationDependencyViewSet,
+    WorkItemRelationRelationViewSet,
 )
 
 urlpatterns = [
@@ -297,5 +302,31 @@ urlpatterns = [
         "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
         IssueDetailIdentifierEndpoint.as_view(),
         name="issue-detail-identifier",
+    ),
+    # work item relation definitions
+    path(
+        "workspaces/<str:slug>/work-item-relation-definitions/",
+        WorkItemRelationDefinitionViewSet.as_view({"get": "list", "post": "create"}),
+        name="work-item-relation-definition-list",
+    ),
+    path(
+        "workspaces/<str:slug>/work-item-relation-definitions/<uuid:pk>/",
+        WorkItemRelationDefinitionViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+        name="work-item-relation-definition-detail",
+    ),
+    # work item relations
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/relation-dependencies/",
+        WorkItemRelationDependencyViewSet.as_view(
+            {"get": "list", "post": "create_relation", "delete": "remove_relation"}
+        ),
+        name="work-item-relation-dependency",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/relations/",
+        WorkItemRelationRelationViewSet.as_view(
+            {"get": "list", "post": "create_relation", "delete": "remove_relation"}
+        ),
+        name="work-item-relation-relation",
     ),
 ]

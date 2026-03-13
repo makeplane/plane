@@ -361,60 +361,6 @@ class IssueBlocker(ProjectBaseModel):
         return f"{self.block.name} {self.blocked_by.name}"
 
 
-class IssueRelationChoices(models.TextChoices):
-    DUPLICATE = "duplicate", "Duplicate"
-    RELATES_TO = "relates_to", "Relates To"
-    BLOCKED_BY = "blocked_by", "Blocked By"
-    START_BEFORE = "start_before", "Start Before"
-    FINISH_BEFORE = "finish_before", "Finish Before"
-    IMPLEMENTED_BY = "implemented_by", "Implemented By"
-
-
-# Bidirectional relation pairs: (forward, reverse)
-# Defined after class to avoid enum metaclass conflicts
-IssueRelationChoices._RELATION_PAIRS = (
-    ("blocked_by", "blocking"),
-    ("relates_to", "relates_to"),  # symmetric
-    ("duplicate", "duplicate"),  # symmetric
-    ("start_before", "start_after"),
-    ("finish_before", "finish_after"),
-    ("implemented_by", "implements"),
-)
-
-# Generate reverse mapping from pairs
-IssueRelationChoices._REVERSE_MAPPING = {forward: reverse for forward, reverse in IssueRelationChoices._RELATION_PAIRS}
-
-
-class IssueRelation(ProjectBaseModel):
-    issue = models.ForeignKey(Issue, related_name="issue_relation", on_delete=models.CASCADE)
-    related_issue = models.ForeignKey(Issue, related_name="issue_related", on_delete=models.CASCADE)
-    relation_type = models.CharField(
-        max_length=20,
-        verbose_name="Issue Relation Type",
-        default=IssueRelationChoices.BLOCKED_BY,
-    )
-
-    class Meta:
-        unique_together = ["issue", "related_issue", "relation_type", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["issue", "related_issue", "relation_type"],
-                condition=Q(deleted_at__isnull=True),
-                name="issue_relation_unique_issue_related_issue_relation_type_when_deleted_at_null",
-            )
-        ]
-        verbose_name = "Issue Relation"
-        verbose_name_plural = "Issue Relations"
-        db_table = "issue_relations"
-        ordering = ("-created_at",)
-
-    def _update_issue_last_activity(self):
-        update_issue_last_activity_at(self.issue_id, self.related_issue_id)
-
-    def __str__(self):
-        return f"{self.issue.name} {self.related_issue.name}"
-
-
 class IssueMention(IssueActivityMixin, ProjectBaseModel):
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_mention")
     mention = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="issue_mention")

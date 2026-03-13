@@ -1,0 +1,68 @@
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+
+import React, { useMemo } from "react";
+import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
+import { CollapsibleButton } from "@plane/propel/collapsible";
+// hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// Plane-web
+import { useDependencyOptions } from "@/components/relations";
+// local imports
+import { DependencyActionButton } from "./quick-action-button";
+
+type Props = {
+  isOpen: boolean;
+  issueId: string;
+  disabled: boolean;
+  issueServiceType?: TIssueServiceType;
+};
+
+export const DependenciesCollapsibleTitle = observer(function DependenciesCollapsibleTitle(props: Props) {
+  const { isOpen, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { t } = useTranslation();
+  // store hook
+  const {
+    relation: { getRelationCountByIssueId },
+  } = useIssueDetail(issueServiceType);
+
+  const DEPENDENCY_OPTIONS = useDependencyOptions();
+  // derived values
+  const dependenciesCount = getRelationCountByIssueId(issueId, DEPENDENCY_OPTIONS);
+
+  // indicator element
+  const indicatorElement = useMemo(
+    () => (
+      <span className="flex items-center justify-center ">
+        <p className="text-14 text-tertiary !leading-3">{dependenciesCount}</p>
+      </span>
+    ),
+    [dependenciesCount]
+  );
+
+  return (
+    <CollapsibleButton
+      isOpen={isOpen}
+      title={t("common.dependencies")}
+      indicatorElement={indicatorElement}
+      actionItemElement={
+        !disabled && (
+          <DependencyActionButton issueId={issueId} disabled={disabled} issueServiceType={issueServiceType} />
+        )
+      }
+    />
+  );
+});

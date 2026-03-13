@@ -71,11 +71,11 @@ class DynamicBaseSerializer(BaseSerializer):
                     LabelSerializer,
                     CycleIssueSerializer,
                     IssueLiteSerializer,
-                    IssueRelationSerializer,
+                    WorkItemRelationSerializer,
                     IntakeIssueLiteSerializer,
                     IssueReactionLiteSerializer,
                     IssueLinkLiteSerializer,
-                    RelatedIssueSerializer,
+                    RelatedWorkItemRelationSerializer,
                 )
 
                 # Expansion mapper
@@ -95,9 +95,9 @@ class DynamicBaseSerializer(BaseSerializer):
                     "labels": LabelSerializer,
                     "issue_cycle": CycleIssueSerializer,
                     "parent": IssueLiteSerializer,
-                    "issue_relation": IssueRelationSerializer,
+                    "issue_relation": WorkItemRelationSerializer,
                     "issue_intake": IntakeIssueLiteSerializer,
-                    "issue_related": RelatedIssueSerializer,
+                    "issue_related": RelatedWorkItemRelationSerializer,
                     "issue_reactions": IssueReactionLiteSerializer,
                     "issue_link": IssueLinkLiteSerializer,
                     "sub_issues": IssueLiteSerializer,
@@ -143,13 +143,13 @@ class DynamicBaseSerializer(BaseSerializer):
                         IssueSerializer,
                         LabelSerializer,
                         CycleIssueSerializer,
-                        IssueRelationSerializer,
+                        WorkItemRelationSerializer,
                         IntakeIssueLiteSerializer,
                         IssueLiteSerializer,
                         IssueReactionLiteSerializer,
                         IssueAttachmentLiteSerializer,
                         IssueLinkLiteSerializer,
-                        RelatedIssueSerializer,
+                        RelatedWorkItemRelationSerializer,
                     )
 
                     # Expansion mapper
@@ -169,9 +169,9 @@ class DynamicBaseSerializer(BaseSerializer):
                         "labels": LabelSerializer,
                         "issue_cycle": CycleIssueSerializer,
                         "parent": IssueLiteSerializer,
-                        "issue_relation": IssueRelationSerializer,
+                        "issue_relation": WorkItemRelationSerializer,
                         "issue_intake": IntakeIssueLiteSerializer,
-                        "issue_related": RelatedIssueSerializer,
+                        "issue_related": RelatedWorkItemRelationSerializer,
                         "issue_reactions": IssueReactionLiteSerializer,
                         "issue_attachment": IssueAttachmentLiteSerializer,
                         "issue_link": IssueLinkLiteSerializer,

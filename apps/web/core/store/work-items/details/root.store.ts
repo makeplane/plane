@@ -30,7 +30,6 @@ import type {
   IIssueActivityStoreActions,
   TActivityLoader,
 } from "@/store/work-items/details/activity.store";
-import type { TIssueRelationTypes } from "@/types";
 import type { IIssueRootStore } from "../root.store";
 import { IssueAttachmentStore } from "./attachment.store";
 import type { IIssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
@@ -64,7 +63,7 @@ export type TPeekIssue = {
 
 export type TIssueRelationModal = {
   issueId: string | null;
-  relationType: TIssueRelationTypes | null;
+  relationType: string | null;
 };
 
 export type TIssueCrudState = {
@@ -92,7 +91,7 @@ export interface IIssueDetail
     IIssueCommentReactionStoreActions {
   // observables
   peekIssue: TPeekIssue | undefined;
-  relationKey: TIssueRelationTypes | null;
+  relationKey: string | null;
   issueLinkData: TIssueLink | null;
   issueCrudOperationState: TIssueCrudOperationState;
   openWidgets: TWorkItemWidgets[];
@@ -122,13 +121,13 @@ export interface IIssueDetail
   toggleParentIssueModal: (issueId: string | null) => void;
   toggleDeleteIssueModal: (issueId: string | null) => void;
   toggleArchiveIssueModal: (value: string | null) => void;
-  toggleRelationModal: (issueId: string | null, relationType: TIssueRelationTypes | null) => void;
+  toggleRelationModal: (issueId: string | null, relationType: string | null) => void;
   toggleSubIssuesModal: (value: string | null) => void;
   toggleDeleteAttachmentModal: (attachmentId: string | null) => void;
   setOpenWidgets: (state: TWorkItemWidgets[]) => void;
   setLastWidgetAction: (action: TWorkItemWidgets) => void;
   toggleOpenWidget: (state: TWorkItemWidgets) => void;
-  setRelationKey: (relationKey: TIssueRelationTypes | null) => void;
+  setRelationKey: (relationKey: string | null) => void;
   setIssueCrudOperationState: (state: TIssueCrudOperationState) => void;
   toggleWorkItemToEpicModal: (value: string | null) => void;
   toggleEpicToWorkItemModal: (value: string | null) => void;
@@ -157,7 +156,7 @@ export interface IIssueDetail
 export class IssueDetail implements IIssueDetail {
   // observables
   peekIssue: TPeekIssue | undefined = undefined;
-  relationKey: TIssueRelationTypes | null = null;
+  relationKey: string | null = null;
   issueLinkData: TIssueLink | null = null;
   issueCrudOperationState: TIssueCrudOperationState = {
     create: {
@@ -171,7 +170,7 @@ export class IssueDetail implements IIssueDetail {
       issue: undefined,
     },
   };
-  openWidgets: TWorkItemWidgets[] = ["sub-work-items", "links", "attachments"];
+  openWidgets: TWorkItemWidgets[] = ["sub-work-items", "dependencies", "links", "attachments"];
   lastWidgetAction: TWorkItemWidgets | null = null;
   isCreateIssueModalOpen: boolean = false;
   isIssueLinkModalOpen: boolean = false;
@@ -294,7 +293,7 @@ export class IssueDetail implements IIssueDetail {
   getIsIssuePeeked = (issueId: string) => this.peekIssue?.issueId === issueId;
 
   // actions
-  setRelationKey = (relationKey: TIssueRelationTypes | null) => (this.relationKey = relationKey);
+  setRelationKey = (relationKey: string | null) => (this.relationKey = relationKey);
   setIssueCrudOperationState = (state: TIssueCrudOperationState) => (this.issueCrudOperationState = state);
   setPeekIssue = (peekIssue: TPeekIssue | undefined) => (this.peekIssue = peekIssue);
   toggleCreateIssueModal = (value: boolean) => (this.isCreateIssueModalOpen = value);
@@ -302,7 +301,7 @@ export class IssueDetail implements IIssueDetail {
   toggleParentIssueModal = (issueId: string | null) => (this.isParentIssueModalOpen = issueId);
   toggleDeleteIssueModal = (issueId: string | null) => (this.isDeleteIssueModalOpen = issueId);
   toggleArchiveIssueModal = (issueId: string | null) => (this.isArchiveIssueModalOpen = issueId);
-  toggleRelationModal = (issueId: string | null, relationType: TIssueRelationTypes | null) =>
+  toggleRelationModal = (issueId: string | null, relationType: string | null) =>
     (this.isRelationModalOpen = { issueId, relationType });
   toggleSubIssuesModal = (issueId: string | null) => (this.isSubIssuesModalOpen = issueId);
   toggleDeleteAttachmentModal = (attachmentId: string | null) => (this.attachmentDeleteModalId = attachmentId);
@@ -445,14 +444,14 @@ export class IssueDetail implements IIssueDetail {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    relationType: TIssueRelationTypes,
+    relationType: string,
     issues: string[]
   ) => this.relation.createRelation(workspaceSlug, projectId, issueId, relationType, issues);
   removeRelation = async (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    relationType: TIssueRelationTypes,
+    relationType: string,
     relatedIssue: string,
     updateLocally?: boolean
   ) => this.relation.removeRelation(workspaceSlug, projectId, issueId, relationType, relatedIssue, updateLocally);

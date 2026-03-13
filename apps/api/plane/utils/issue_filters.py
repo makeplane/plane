@@ -15,7 +15,7 @@ from datetime import timedelta
 
 from django.utils import timezone
 
-from plane.db.models.issue import IssueRelation
+from plane.db.models.work_item_relation import IssueRelation
 
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")

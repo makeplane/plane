@@ -210,6 +210,9 @@ import type { IWorkspaceSubscriptionStore } from "./subscription/subscription.st
 import { WorkspaceSubscriptionStore } from "./subscription/subscription.store";
 import type { IWorkflowsStore } from "./workflow/workflows.store";
 import { WorkflowsStore } from "./workflow/workflows.store";
+// relation definitions
+import type { IRelationDefinitionStore } from "./relation-definition.store";
+import { RelationDefinitionStore } from "./relation-definition.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -299,6 +302,8 @@ export class CoreRootStore {
   selfHostedSubscription: ISelfHostedSubscriptionStore;
   // workflows
   workflowsStore: IWorkflowsStore;
+  // relation definitions
+  relationDefinition: IRelationDefinitionStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -386,6 +391,8 @@ export class CoreRootStore {
     this.selfHostedSubscription = new SelfHostedSubscriptionStore(this as unknown as RootStore);
     // workflows
     this.workflowsStore = new WorkflowsStore(this as unknown as RootStore);
+    // relation definitions
+    this.relationDefinition = new RelationDefinitionStore();
   }
 
   resetOnSignOut() {
@@ -476,5 +483,7 @@ export class CoreRootStore {
     this.selfHostedSubscription = new SelfHostedSubscriptionStore(this as unknown as RootStore);
     // workflows
     this.workflowsStore = new WorkflowsStore(this as unknown as RootStore);
+    // relation definitions
+    this.relationDefinition = new RelationDefinitionStore();
   }
 }

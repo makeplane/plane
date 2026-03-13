@@ -31,19 +31,11 @@ import {
 import { Tooltip } from "@plane/propel/tooltip";
 import { Avatar } from "@plane/propel/avatar";
 import type { IUserLite } from "@plane/types";
-import {
-  calculateTimeAgo,
-  getFileURL,
-  getValidKeysFromObject,
-  renderFormattedDate,
-  renderFormattedTime,
-  cn,
-} from "@plane/utils";
+import { calculateTimeAgo, getFileURL, renderFormattedDate, renderFormattedTime, cn } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { useTimeLineRelationOptions } from "@/components/relations";
-import type { TIssueRelationTypes } from "@/types";
+import { useRelationFieldNames, useRelationOptionByFieldName } from "@/components/relations/use-relation-activity";
 
 type TIssueActivityBlock = {
   createdAt: string | undefined;
@@ -78,8 +70,8 @@ export const activityIconMap: Record<string, ReactElement> = {
 
 export function IssueActivityBlock(props: TIssueActivityBlock) {
   const { ends, children, createdAt, notificationField, triggeredBy } = props;
-  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
-  const activityRelations = getValidKeysFromObject(ISSUE_RELATION_OPTIONS);
+  const relationFieldNames = useRelationFieldNames();
+  const getRelationOption = useRelationOptionByFieldName();
 
   const { isMobile } = usePlatformOS();
   return (
@@ -94,8 +86,8 @@ export function IssueActivityBlock(props: TIssueActivityBlock) {
       <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-layer-3 text-secondary">
         {notificationField === "comment"
           ? triggeredBy && <Avatar src={getFileURL(triggeredBy.avatar_url)} name={triggeredBy.display_name} size={28} />
-          : activityRelations.find((field) => field === notificationField)
-            ? ISSUE_RELATION_OPTIONS[notificationField as TIssueRelationTypes]?.icon(14)
+          : relationFieldNames.has(notificationField)
+            ? getRelationOption(notificationField)?.icon(14)
             : activityIconMap[notificationField]}
       </div>
       <div className="w-full text-secondary flex gap-2">

@@ -10,53 +10,56 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Django imports
-from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.db import IntegrityError
 
 # Third Party imports
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer, DynamicBaseSerializer
-from .user import UserLiteSerializer
-from .state import StateLiteSerializer
-from .project import ProjectLiteSerializer
-from .workspace import WorkspaceLiteSerializer
 from plane.db.models import (
-    User,
+    CommentReaction,
+    Cycle,
+    CycleIssue,
+    EstimatePoint,
+    FileAsset,
     Issue,
     IssueActivity,
-    IssueComment,
-    ProjectUserProperty,
     IssueAssignee,
-    IssueSubscriber,
+    IssueComment,
+    IssueDescriptionVersion,
     IssueLabel,
+    IssueLink,
+    IssueReaction,
+    IssueRelation,
+    IssueSubscriber,
+    IssueType,
+    IssueVersion,
+    IssueVote,
     Label,
-    CycleIssue,
-    Cycle,
     Module,
     ModuleIssue,
-    IssueLink,
-    FileAsset,
-    IssueReaction,
-    CommentReaction,
-    IssueVote,
-    IssueRelation,
-    State,
-    IssueVersion,
-    IssueDescriptionVersion,
     ProjectMember,
-    EstimatePoint,
-    IssueType,
+    ProjectUserProperty,
+    State,
+    User,
+    WorkItemRelationDefinition,
 )
-from plane.utils.content_validator import (
-    validate_html_content,
-    validate_binary_data,
-)
-from plane.ee.models import Customer, TeamspaceProject, TeamspaceMember
-from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.ee.models import Customer, TeamspaceMember, TeamspaceProject
 from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.utils.content_validator import (
+    validate_binary_data,
+    validate_html_content,
+)
+
+# Local imports
+from .base import BaseSerializer, DynamicBaseSerializer
+from .project import ProjectLiteSerializer
+from .state import StateLiteSerializer
+from .user import UserLiteSerializer
+from .workspace import WorkspaceLiteSerializer
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -522,103 +525,6 @@ class IssueLabelSerializer(BaseSerializer):
         model = IssueLabel
         fields = "__all__"
         read_only_fields = ["workspace", "project"]
-
-
-class IssueRelationSerializer(BaseSerializer):
-    id = serializers.UUIDField(source="related_issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
-    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
-    name = serializers.CharField(source="related_issue.name", read_only=True)
-    type_id = serializers.UUIDField(source="related_issue.type.id", read_only=True)
-    relation_type = serializers.CharField(read_only=True)
-    is_epic = serializers.BooleanField(source="related_issue.type.is_epic", read_only=True)
-    state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
-    priority = serializers.CharField(source="related_issue.priority", read_only=True)
-    assignee_ids = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
-        write_only=True,
-        required=False,
-    )
-
-    class Meta:
-        model = IssueRelation
-        fields = [
-            "id",
-            "project_id",
-            "sequence_id",
-            "relation_type",
-            "name",
-            "type_id",
-            "is_epic",
-            "state_id",
-            "priority",
-            "assignee_ids",
-            "created_by",
-            "created_at",
-            "updated_at",
-            "updated_by",
-        ]
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "created_at",
-            "updated_by",
-            "updated_at",
-        ]
-
-
-class RelatedIssueSerializer(BaseSerializer):
-    id = serializers.UUIDField(source="issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
-    sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
-    name = serializers.CharField(source="issue.name", read_only=True)
-    type_id = serializers.UUIDField(source="issue.type.id", read_only=True)
-    relation_type = serializers.CharField(read_only=True)
-    is_epic = serializers.BooleanField(source="issue.type.is_epic", read_only=True)
-    state_id = serializers.UUIDField(source="issue.state.id", read_only=True)
-    priority = serializers.CharField(source="issue.priority", read_only=True)
-    assignee_ids = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
-        write_only=True,
-        required=False,
-    )
-
-    class Meta:
-        model = IssueRelation
-        fields = [
-            "id",
-            "project_id",
-            "sequence_id",
-            "relation_type",
-            "name",
-            "type_id",
-            "is_epic",
-            "state_id",
-            "priority",
-            "assignee_ids",
-            "created_by",
-            "created_at",
-            "updated_by",
-            "updated_at",
-        ]
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "created_at",
-            "updated_by",
-            "updated_at",
-        ]
-
-
-class IssueDuplicateSerializer(BaseSerializer):
-    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
-    project_identifier = serializers.CharField(source="related_issue.project.identifier", read_only=True)
-
-    class Meta:
-        model = IssueRelation
-        fields = ["id", "project_id", "sequence_id", "project_identifier"]
 
 
 class IssueAssigneeSerializer(BaseSerializer):
@@ -1306,3 +1212,156 @@ class IssueDescriptionVersionDetailSerializer(BaseSerializer):
             "updated_by",
         ]
         read_only_fields = ["workspace", "project", "issue"]
+
+
+# work item relation definition
+class WorkItemRelationDefinitionInputSerializer(BaseSerializer):
+    """Input serializer for create/update; aligns with writable fields on WorkItemRelationDefinition."""
+
+    class Meta:
+        model = WorkItemRelationDefinition
+        fields = [
+            "name",
+            "description",
+            "outward",
+            "inward",
+            "is_active",
+            "color",
+            "logo_props",
+            "sort_order",
+        ]
+
+
+class WorkItemRelationDefinitionSerializer(BaseSerializer):
+    """Full serializer for read responses; includes all model fields with appropriate read-only fields."""
+
+    class Meta:
+        model = WorkItemRelationDefinition
+        fields = [
+            "id",
+            "workspace",
+            "name",
+            "description",
+            "outward",
+            "inward",
+            "is_default",
+            "is_active",
+            "color",
+            "logo_props",
+            "sort_order",
+            "external_source",
+            "external_id",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "deleted_at",
+        ]
+        read_only_fields = [
+            "workspace",
+            "external_source",
+            "external_id",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "deleted_at",
+        ]
+
+
+# work item relations
+class IssueDuplicateSerializer(BaseSerializer):
+    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
+    project_identifier = serializers.CharField(source="related_issue.project.identifier", read_only=True)
+
+    class Meta:
+        model = IssueRelation
+        fields = ["id", "project_id", "sequence_id", "project_identifier"]
+
+
+class WorkItemRelationSerializer(BaseSerializer):
+    id = serializers.UUIDField(source="related_issue.id", read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
+    name = serializers.CharField(source="related_issue.name", read_only=True)
+    type_id = serializers.UUIDField(source="related_issue.type.id", read_only=True)
+    relation_type = serializers.CharField(read_only=True)
+    is_epic = serializers.BooleanField(source="related_issue.type.is_epic", read_only=True)
+    state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
+    priority = serializers.CharField(source="related_issue.priority", read_only=True)
+    assignee_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        write_only=True,
+        required=False,
+    )
+
+    class Meta:
+        model = IssueRelation
+        fields = [
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
+            "name",
+            "type_id",
+            "is_epic",
+            "state_id",
+            "priority",
+            "assignee_ids",
+            "created_by",
+            "created_at",
+            "updated_at",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
+
+
+class RelatedWorkItemRelationSerializer(BaseSerializer):
+    id = serializers.UUIDField(source="issue.id", read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
+    name = serializers.CharField(source="issue.name", read_only=True)
+    type_id = serializers.UUIDField(source="issue.type.id", read_only=True)
+    relation_type = serializers.CharField(read_only=True)
+    is_epic = serializers.BooleanField(source="issue.type.is_epic", read_only=True)
+    state_id = serializers.UUIDField(source="issue.state.id", read_only=True)
+    priority = serializers.CharField(source="issue.priority", read_only=True)
+    assignee_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        write_only=True,
+        required=False,
+    )
+
+    class Meta:
+        model = IssueRelation
+        fields = [
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
+            "name",
+            "type_id",
+            "is_epic",
+            "state_id",
+            "priority",
+            "assignee_ids",
+            "created_by",
+            "created_at",
+            "updated_at",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]

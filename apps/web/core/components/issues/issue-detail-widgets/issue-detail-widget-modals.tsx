@@ -16,6 +16,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
+import { DEPENDENCY_RELATION_KEYS } from "@/components/relations";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
@@ -118,9 +119,10 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
   };
 
   const handleRelationOnClose = () => {
+    const isDependency = relationKey ? DEPENDENCY_RELATION_KEYS.has(relationKey) : false;
     setRelationKey(null);
     toggleRelationModal(null, null);
-    setLastWidgetAction("relations");
+    setLastWidgetAction(isDependency ? "dependencies" : "relations");
   };
 
   const handleExistingIssueModalOnSubmit = async (data: ISearchIssueResponse[]) => {
@@ -201,17 +203,20 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
         />
       )}
 
-      {!hideWidgets?.includes("relations") && (
+      {!hideWidgets?.includes("relations") || !hideWidgets?.includes("dependencies") ? (
         <ExistingIssuesListModal
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           isOpen={isRelationModalOpen?.issueId === issueId && isRelationModalOpen?.relationType === relationKey}
           handleClose={handleRelationOnClose}
-          searchParams={{ issue_relation: true, issue_id: issueId }}
+          searchParams={{
+            issue_id: issueId,
+            ...(relationKey && DEPENDENCY_RELATION_KEYS.has(relationKey) ? { issue_relation: true } : {}),
+          }}
           handleOnSubmit={handleExistingIssueModalOnSubmit}
           workspaceLevelToggle
         />
-      )}
+      ) : null}
 
       <PagesMultiSelectModal
         issueServiceType={issueServiceType}

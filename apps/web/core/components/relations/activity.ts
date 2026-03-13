@@ -55,7 +55,11 @@ export const getRelationActivityContent = (activity: TIssueActivity | undefined)
       return activity.old_value === ""
         ? `marked this work item as implemented by `
         : `removed the implemented by relation from work item `;
+    default:
+      // Custom relation types — use the raw field name as the relation label
+      if (activity.field) {
+        return activity.old_value === "" ? `added ${activity.field} relation ` : `removed ${activity.field} relation `;
+      }
+      return;
   }
-
-  return;
 };

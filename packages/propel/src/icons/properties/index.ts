@@ -40,3 +40,4 @@ export * from "./pencil-left-icon";
 export * from "./transfer-hop";
 export * from "./comment-icon";
 export * from "./label-filled-icon";
+export * from "./relations-icon";

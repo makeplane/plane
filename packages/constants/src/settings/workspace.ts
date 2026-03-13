@@ -147,6 +147,13 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/templates/`),
   },
+  relations: {
+    key: "relations",
+    i18n_label: "workspace_settings.settings.relations.title",
+    href: `/settings/relations`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/relations/`,
+  },
   "plane-intelligence": {
     key: "plane-intelligence",
     i18n_label: "workspace_settings.settings.plane-intelligence.title",
@@ -188,6 +195,7 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
     WORKSPACE_SETTINGS["initiatives"],
     WORKSPACE_SETTINGS["customers"],
     WORKSPACE_SETTINGS["templates"],
+    WORKSPACE_SETTINGS["relations"],
     WORKSPACE_SETTINGS["plane-intelligence"],
   ],
   [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: [WORKSPACE_SETTINGS["webhooks"], WORKSPACE_SETTINGS["access-tokens"]],

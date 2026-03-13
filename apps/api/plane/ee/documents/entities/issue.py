@@ -9,19 +9,16 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Django imports
 from django.conf import settings as django_settings
 from django.db.models import Prefetch
 from django_opensearch_dsl import fields
 from django_opensearch_dsl.registries import registry
-from plane.db.models import (
-    Issue,
-    ProjectMember,
-    Project,
-    IssueComment,
-    IssueRelation,
-)
-from plane.db.models.issue import IssueRelationChoices
 
+# Module imports
+from plane.db.models import DEFAULT_DUPLICATE_DEFINITION, Issue, IssueComment, IssueRelation, Project, ProjectMember
+
+# Local imports
 from ..core import BaseDocument, edge_ngram_analyzer
 from ..core.fields import KnnVectorField
 
@@ -118,7 +115,9 @@ class IssueDocument(BaseDocument):
             Prefetch(
                 "issue_relation",
                 queryset=IssueRelation.objects.filter(
-                    relation_type=IssueRelationChoices.DUPLICATE.value,
+                    definition__inward=DEFAULT_DUPLICATE_DEFINITION["inward"],
+                    definition__is_default=True,
+                    definition__is_active=True,
                     deleted_at__isnull=True,
                 ).only("related_issue_id"),
                 to_attr="duplicate_relations",
@@ -126,7 +125,9 @@ class IssueDocument(BaseDocument):
             Prefetch(
                 "issue_related",
                 queryset=IssueRelation.objects.filter(
-                    relation_type=IssueRelationChoices.DUPLICATE.value,
+                    definition__outward=DEFAULT_DUPLICATE_DEFINITION["outward"],
+                    definition__is_default=True,
+                    definition__is_active=True,
                     deleted_at__isnull=True,
                 ).only("issue_id"),
                 to_attr="duplicate_relations_reverse",
@@ -204,7 +205,9 @@ class IssueDocument(BaseDocument):
             # Fallback to database query if prefetch not available
             duplicate_of_ids.extend(
                 instance.issue_relation.filter(
-                    relation_type=IssueRelationChoices.DUPLICATE.value,
+                    definition__inward=DEFAULT_DUPLICATE_DEFINITION["inward"],
+                    definition__is_default=True,
+                    definition__is_active=True,
                     deleted_at__isnull=True,
                 ).values_list("related_issue_id", flat=True)
             )
@@ -216,7 +219,9 @@ class IssueDocument(BaseDocument):
             # Fallback to database query if prefetch not available
             duplicate_of_ids.extend(
                 instance.issue_related.filter(
-                    relation_type=IssueRelationChoices.DUPLICATE.value,
+                    definition__outward=DEFAULT_DUPLICATE_DEFINITION["outward"],
+                    definition__is_default=True,
+                    definition__is_active=True,
                     deleted_at__isnull=True,
                 ).values_list("issue_id", flat=True)
             )

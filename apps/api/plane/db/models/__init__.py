@@ -47,7 +47,6 @@ from .issue import (
     IssueLink,
     IssueMention,
     IssueReaction,
-    IssueRelation,
     IssueSequence,
     IssueSubscriber,
     IssueVote,
@@ -89,6 +88,18 @@ from .workspace import (
 from .favorite import UserFavorite
 
 from .issue_type import IssueType, ProjectIssueType
+
+from .work_item_relation import (
+    DEFAULT_RELATES_TO_DEFINITION,
+    DEFAULT_DUPLICATE_DEFINITION,
+    DEFAULT_IMPLEMENTS_DEFINITION,
+    DEFAULT_RELATION_DEFINITIONS,
+    WorkItemRelationDefinition,
+    IssueRelation,
+    DefaultDependencyKeys,
+    IssueRelationChoices,
+    RelationCategory,
+)
 
 from .recent_visit import UserRecentVisit
 

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Paperclip } from "lucide-react";
+import { CircleDot, Paperclip } from "lucide-react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -21,6 +21,7 @@ import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
 // local imports
 import { IssueAttachmentActionButton } from "./attachments";
+import { DependencyActionButton } from "./dependencies";
 import { IssueLinksActionButton } from "./links";
 import { RelationActionButton } from "./relations";
 import { SubIssuesActionButton } from "./sub-issues";
@@ -50,6 +51,20 @@ export function IssueDetailWidgetActionButtons(props: Props) {
             <IssueDetailWidgetButton
               title={t("issue.add.sub_issue")}
               icon={<ViewsIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              disabled={disabled}
+            />
+          }
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
+      )}
+      {!hideWidgets?.includes("dependencies") && (
+        <DependencyActionButton
+          issueId={issueId}
+          customButton={
+            <IssueDetailWidgetButton
+              title={t("issue.add.dependency")}
+              icon={<CircleDot className="h-3.5 w-3.5 flex-shrink-0" />}
               disabled={disabled}
             />
           }
