@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   meta: {
     type: "suggestion",
     docs: {
@@ -31,8 +31,8 @@ module.exports = {
       // Reset lastIndex after test()
       LEGACY_RE.lastIndex = 0;
 
-      // Find first legacy token for reporting
-      const match = LEGACY_RE.exec(node.value);
+      // Reset lastIndex after exec
+      LEGACY_RE.exec(node.value);
       LEGACY_RE.lastIndex = 0;
 
       // Reconstruct original token name from the value for the message
