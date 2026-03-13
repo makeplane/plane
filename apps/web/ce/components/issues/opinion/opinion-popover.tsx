@@ -38,7 +38,7 @@ const SENTIMENTS: {
     value: "neutral",
     labelKey: "opinion.neutral",
     Icon: Minus,
-    activeClass: "bg-surface-2 text-color-secondary border-color-primary",
+    activeClass: "bg-surface-2 text-secondary border-primary",
   },
   {
     value: "reject",
@@ -85,7 +85,7 @@ export const OpinionPopover = observer(function OpinionPopover(props: Props) {
   };
 
   return (
-    <div className="absolute right-0 top-full z-10 mt-1 w-64 rounded-lg border border-color-primary bg-surface-1 p-3 shadow-xl">
+    <div className="absolute right-0 top-full z-10 mt-1 w-64 rounded-lg border border-primary bg-surface-1 p-3 shadow-xl">
       {/* Sentiment buttons */}
       <div className="flex items-center gap-1.5 mb-2">
         {SENTIMENTS.map(({ value, labelKey, Icon, activeClass }) => (
@@ -95,7 +95,7 @@ export const OpinionPopover = observer(function OpinionPopover(props: Props) {
             onClick={() => setSentiment(value)}
             className={cn(
               "flex flex-1 flex-col items-center gap-1 rounded-md border px-2 py-1.5 text-xs transition-colors",
-              "border-color-subtle text-color-tertiary hover:bg-surface-2",
+              "border-subtle text-tertiary hover:bg-surface-2",
               sentiment === value && activeClass
             )}
           >
@@ -111,7 +111,7 @@ export const OpinionPopover = observer(function OpinionPopover(props: Props) {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder={t("opinion.content_placeholder")}
-        className="w-full rounded-md border border-color-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-color-primary placeholder:text-color-tertiary outline-none focus:border-color-primary mb-2"
+        className="w-full rounded-md border border-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-primary placeholder:text-tertiary outline-none focus:border-primary mb-2"
       />
 
       {/* Actions */}
@@ -121,7 +121,7 @@ export const OpinionPopover = observer(function OpinionPopover(props: Props) {
             type="button"
             disabled={submitting}
             onClick={() => void handleSubmit()}
-            className="rounded-md bg-surface-2 px-3 py-1 text-xs font-medium text-color-primary hover:bg-layer-3 disabled:opacity-50"
+            className="rounded-md bg-surface-2 px-3 py-1 text-xs font-medium text-primary hover:bg-layer-3 disabled:opacity-50"
           >
             {submitting ? t("common.saving") : t("common.save")}
           </button>
@@ -136,7 +136,7 @@ export const OpinionPopover = observer(function OpinionPopover(props: Props) {
             </button>
           )}
         </div>
-        <button type="button" onClick={onClose} className="text-color-tertiary hover:text-color-secondary">
+        <button type="button" onClick={onClose} className="text-tertiary hover:text-secondary">
           <X className="h-3.5 w-3.5" />
         </button>
       </div>

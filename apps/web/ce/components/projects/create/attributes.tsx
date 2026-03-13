@@ -102,17 +102,29 @@ const ProjectAttributes = observer(function ProjectAttributes(props: Props) {
         <Controller
           name="is_bank_wide"
           control={control}
-          render={({ field: { value, onChange } }) => (
-            <div
-              className="flex-shrink-0 h-7 flex items-center gap-2 rounded border border-color-subtle px-2 cursor-pointer"
-              onClick={() => onChange(!value)}
-            >
-              <span className="flex-grow truncate leading-5 text-left text-body-xs-medium">
-                {t("bank_wide_project.label")}
-              </span>
-              <ToggleSwitch value={value ?? false} onChange={() => onChange(!value)} size="sm" />
-            </div>
-          )}
+          render={({ field: { value, onChange } }) => {
+            const handleClick = () => onChange(!value);
+            const handleKeyDown = (e: React.KeyboardEvent) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onChange(!value);
+              }
+            };
+            return (
+              <div
+                role="button"
+                tabIndex={0}
+                className="flex-shrink-0 h-7 flex items-center gap-2 rounded border border-subtle px-2 cursor-pointer"
+                onClick={handleClick}
+                onKeyDown={handleKeyDown}
+              >
+                <span className="flex-grow truncate leading-5 text-left text-body-xs-medium">
+                  {t("bank_wide_project.label")}
+                </span>
+                <ToggleSwitch value={value ?? false} onChange={handleClick} size="sm" />
+              </div>
+            );
+          }}
         />
       )}
     </div>
@@ -122,4 +134,3 @@ const ProjectAttributes = observer(function ProjectAttributes(props: Props) {
 export default ProjectAttributes;
 
 export { ProjectAttributes };
-

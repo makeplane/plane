@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { IFilterInstance } from "@plane/shared-state";
@@ -15,7 +14,6 @@ import type {
   TFilterValue,
   TFilterConditionNodeForDisplay,
   TAllAvailableOperatorsForDisplay,
-  TSupportedOperators,
 } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -62,7 +60,7 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
     if (operator) {
       // Pass the display operator directly to the store.
       // Conversion to base operators (for negation/today) happens at serialization time in the adapter.
-      filter.updateConditionOperator(condition.id, operator as TSupportedOperators, false);
+      filter.updateConditionOperator(condition.id, operator, false);
     }
   };
 

@@ -106,7 +106,7 @@ export const CompletedAtDateTimePicker = observer(function CompletedAtDateTimePi
                 type="time"
                 value={timeValue}
                 onChange={(e): void => setTimeValue(e.target.value)}
-                className="flex-1 rounded border border-strong bg-surface-1 px-2 py-1 text-body-xs-regular text-color-primary focus:outline-none"
+                className="flex-1 rounded border border-strong bg-surface-1 px-2 py-1 text-body-xs-regular text-primary focus:outline-none"
               />
             </div>
             <div className="mt-3 flex justify-end gap-2">

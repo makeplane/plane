@@ -4,8 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
-
 import { observer } from "mobx-react";
 // plane imports
 import type {
@@ -36,11 +34,7 @@ export const FilterValueInput = observer(function FilterValueInput<P extends TFi
   // "today" operator — show today's actual date for double-checking
   if (condition.operator === EXTENDED_COMPARISON_OPERATOR.TODAY) {
     const todayDate = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-    return (
-      <div className="flex items-center h-full px-2 text-13 text-color-secondary font-medium">
-        {todayDate}
-      </div>
-    );
+    return <div className="flex items-center h-full px-2 text-13 text-secondary font-medium">{todayDate}</div>;
   }
 
   // Single select input
@@ -93,4 +87,3 @@ export const FilterValueInput = observer(function FilterValueInput<P extends TFi
 
   return <AdditionalFilterValueInput {...props} />;
 });
-
