@@ -94,6 +94,13 @@ def backfill_category_and_relations(apps, schema_editor):
         relation_type__in=DEPENDENCY_TYPES,
         deleted_at__isnull=True,
     ).update(category="dependency")
+
+    # if the dependency type is "blocks", then set the category to "dependency" and relation_type to "blocked_by"
+    IssueRelation.objects.filter(
+        relation_type="blocks",
+        deleted_at__isnull=True,
+    ).update(category="dependency", relation_type='blocked_by')
+    
     print(f"  [backfill] dependency category set on {dep_count} rows in {time.time() - t_dep:.2f}s")
 
     # Build lookup: {workspace_id: {type_name: fk_id}}
