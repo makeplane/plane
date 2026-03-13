@@ -655,6 +655,14 @@ app.on("will-quit", () => {
 // Handle deep links (plane:// protocol)
 app.setAsDefaultProtocolClient("plane");
 
+// On Linux/Windows, a cold-launch deep link arrives as a command-line argument
+// (macOS uses the 'open-url' event instead). Check process.argv so the first
+// launch from a plane:// URL in the browser is not silently lost.
+const argDeepLink = process.argv.find((arg) => arg.startsWith("plane://"));
+if (argDeepLink) {
+  pendingDeepLinkUrl = argDeepLink;
+}
+
 const handleDeepLink = (url: string): void => {
   if (!app.isReady()) {
     pendingDeepLinkUrl = url;
