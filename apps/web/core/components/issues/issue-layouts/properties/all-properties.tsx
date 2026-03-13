@@ -34,11 +34,13 @@ import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useLabel } from "@/hooks/store/use-label";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useDraftStateTransition } from "@/hooks/store/use-draft-state-transition";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -74,6 +76,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   } = useIssues(storeType);
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getStateById } = useProjectState();
+  const { validateTransition } = useDraftStateTransition();
   const { isMobile } = usePlatformOS();
   const projectDetails = getProjectById(issue.project_id);
 
@@ -108,6 +111,15 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   );
 
   const handleState = async (stateId: string) => {
+    const { missingFieldLabels } = validateTransition(issue, stateId, stateDetails?.group);
+    if (missingFieldLabels.length > 0) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("issue.required_fields_missing"),
+        message: missingFieldLabels.join(", "),
+      });
+      return;
+    }
     if (updateIssue) await updateIssue(issue.project_id, issue.id, { state_id: stateId });
   };
 

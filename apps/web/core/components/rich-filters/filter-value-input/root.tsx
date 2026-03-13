@@ -4,8 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
-
 import { observer } from "mobx-react";
 // plane imports
 import type {
@@ -19,7 +17,7 @@ import type {
   TDateRangeFilterFieldConfig,
   TFilterConditionNodeForDisplay,
 } from "@plane/types";
-import { FILTER_FIELD_TYPE } from "@plane/types";
+import { EXTENDED_COMPARISON_OPERATOR, FILTER_FIELD_TYPE } from "@plane/types";
 // local imports
 import { AdditionalFilterValueInput } from "@/plane-web/components/rich-filters/filter-value-input/root";
 import type { TFilterValueInputProps } from "../shared";
@@ -32,6 +30,12 @@ export const FilterValueInput = observer(function FilterValueInput<P extends TFi
   props: TFilterValueInputProps<P, V>
 ) {
   const { condition, filterFieldConfig, isDisabled = false, onChange } = props;
+
+  // "today" operator — show today's actual date for double-checking
+  if (condition.operator === EXTENDED_COMPARISON_OPERATOR.TODAY) {
+    const todayDate = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    return <div className="flex items-center h-full px-2 text-13 text-secondary font-medium">{todayDate}</div>;
+  }
 
   // Single select input
   if (filterFieldConfig?.type === FILTER_FIELD_TYPE.SINGLE_SELECT) {

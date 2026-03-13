@@ -15,7 +15,7 @@ import { PageHead } from "@/components/core/page-title";
 import { ProfileActivity } from "@/components/profile/overview/activity";
 import { ProfilePriorityDistribution } from "@/components/profile/overview/priority-distribution";
 import { ProfileStateDistribution } from "@/components/profile/overview/state-distribution";
-import { ProfileStats } from "@/components/profile/overview/stats";
+// import { ProfileStats } from "@/components/profile/overview/stats";
 import { ProfileWorkload } from "@/components/profile/overview/workload";
 // constants
 import { USER_PROFILE_DATA } from "@/constants/fetch-keys";
@@ -43,7 +43,7 @@ export default function ProfileOverviewPage({ params }: Route.ComponentProps) {
     <>
       <PageHead title={t("profile.page_label")} />
       <ContentWrapper className="space-y-7">
-        <ProfileStats userProfile={userProfile} />
+        {/* <ProfileStats userProfile={userProfile} /> */}
         <ProfileWorkload stateDistribution={stateDistribution} />
         <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2">
           <ProfilePriorityDistribution userProfile={userProfile} />

@@ -45,6 +45,15 @@ import {
   SpreadsheetSubIssueColumn,
   SpreadsheetUpdatedOnColumn,
 } from "@/components/issues/issue-layouts/spreadsheet/columns";
+import {
+  SpreadsheetDepartmentNameColumn,
+  SpreadsheetProjectNameColumn,
+  SpreadsheetBankWideProjectColumn,
+  SpreadsheetProgressTrackingColumn,
+  SpreadsheetCompletedDateColumn,
+  SpreadsheetReferenceLinkColumn,
+  SpreadsheetTotalLogTimeColumn,
+} from "@/plane-web/components/issues/spreadsheet/columns";
 // store
 import { store } from "@/lib/store-context";
 
@@ -109,6 +118,14 @@ export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpr
   sub_issue_count: SpreadsheetSubIssueColumn,
   updated_on: SpreadsheetUpdatedOnColumn,
   attachment_count: SpreadsheetAttachmentColumn,
+  // CE extended columns
+  department_name: SpreadsheetDepartmentNameColumn,
+  project_name: SpreadsheetProjectNameColumn,
+  bank_wide_project: SpreadsheetBankWideProjectColumn,
+  progress_tracking: SpreadsheetProgressTrackingColumn,
+  completed_date: SpreadsheetCompletedDateColumn,
+  reference_link: SpreadsheetReferenceLinkColumn,
+  total_log_time: SpreadsheetTotalLogTimeColumn,
 };
 
 export const useGroupByOptions = (

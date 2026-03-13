@@ -1,7 +1,7 @@
 ---
 title: "Draft State — Optional Fields on Workitem Creation"
 description: "Skip required-field validation when draft state selected; only title required"
-status: pending
+status: completed
 priority: P2
 effort: 3h
 branch: ngoc-feat/workspaces
@@ -205,6 +205,126 @@ When the selected state's group is `"backlog"`, disable required-field validatio
 #### Impact on Phases
 
 - Phase 1: Edit form scope **removed** — sidebar.tsx has no FormProvider or validation rules; no changes needed there. Session 2 expansion is resolved as a no-op.
+
+---
+
+## Phases
+
+| #   | Phase                         | Effort | Details                                                              |
+| --- | ----------------------------- | ------ | -------------------------------------------------------------------- |
+| 1   | Frontend validation bypass    | 2h     | [phase-01-frontend-validation.md](./phase-01-frontend-validation.md) |
+| 2   | Backend tolerance check       | —      | Skipped — already verified in Phase 1 Key Insights                  |
+| 3   | Edit form draft→non-draft     | 1h     | [phase-03-edit-draft-transition.md](./phase-03-edit-draft-transition.md) |
+
+---
+
+### Session 5 — 2026-03-13
+
+**Trigger:** New requirement — enforce required fields when editing a draft workitem and switching to a non-draft state
+
+#### New Requirement
+
+When a workitem is in draft (backlog group) state and the user changes the state to non-draft via the **edit form (sidebar)**, all required fields (`assignee_ids`, `start_date`, `target_date`) must be filled before the state change is applied. If not filled, the transition is blocked with a user-visible error.
+
+#### Key Decisions
+
+- **Edit form uses MobX** (confirmed Session 4) — no RHF FormProvider, so can't use `getFieldRules`; need imperative validation before `issueOperations.update()` call
+- **Block the update** if required fields missing — don't proceed to API call
+- **Show error feedback** via toast notification listing missing fields
+- **Same 3 required fields** as creation form: `assignee_ids`, `start_date`, `target_date`
+- **CE hook pattern** — validation logic in `ce/hooks/use-draft-state-transition.ts`; minimal change to `sidebar.tsx` (core shim pattern)
+- **One-direction only** — only draft → non-draft triggers validation; non-draft → draft is free (no new restrictions)
+
+#### Confirmed Decisions
+
+- Validation scope: `assignee_ids`, `start_date`, `target_date` (same as creation form)
+- Feedback mechanism: toast notification listing missing required fields + abort state update
+- Architecture: CE hook `useDraftStateTransition` with `validateTransition(issue, newStateId)` → string[] of missing field names
+- Core change: `sidebar.tsx` state onChange — add CE hook call before `issueOperations.update`
+
+#### Action Items
+
+- [ ] Create `apps/web/ce/hooks/use-draft-state-transition.ts`
+- [ ] Create core shim `apps/web/core/hooks/store/use-draft-state-transition.ts`
+- [ ] Update `sidebar.tsx` state dropdown onChange to validate before update
+
+---
+
+### Session 6 — 2026-03-13
+
+**Trigger:** Validation of Phase 3 implementation decisions before coding
+**Questions asked:** 3
+
+#### Questions & Answers
+
+1. **[UX Feedback]** Khi thiếu required fields và state change bị block, cách thông báo lỗi nào phù hợp nhất?
+   - Options: Toast + highlight fields (Recommended) | Toast only | Inline error dưới state dropdown
+   - **Answer:** Toast + highlight fields (Recommended)
+   - **Rationale:** Toast lists missing fields; fields in sidebar get red border indicator so user knows exactly what to fill without hunting.
+
+2. **[Dropdown Revert]** StateDropdown trong sidebar có thể tự reset về giá trị cũ khi validation fail không? Hay cần xử lý riêng?
+   - Options: Dropdown tự revert (Recommended) | Cần xử lý thủ công
+   - **Answer:** Dropdown tự revert (Recommended)
+   - **Rationale:** `StateDropdown` is controlled via `value={issue.state_id}`. When update is aborted, `state_id` stays unchanged → dropdown reverts automatically. No manual reset needed.
+
+3. **[Field Config]** Required fields nên được hardcode (assignee_ids, start_date, target_date) hay lấy từ project configuration?
+   - Options: Hardcode 3 fields (Recommended) | Lấy từ project config
+   - **Answer:** Hardcode 3 fields (Recommended)
+   - **Rationale:** Matches creation form behavior. YAGNI — project-level config is a future concern.
+
+#### Confirmed Decisions
+
+- Error feedback: toast + red border highlight on empty required fields in sidebar
+- Dropdown revert: automatic (controlled component, no extra handling)
+- Required fields: hardcoded `assignee_ids`, `start_date`, `target_date`
+
+#### Action Items
+
+- [ ] Update phase-03 to include field highlight logic: CE hook returns `missingFields: string[]`; sidebar applies error CSS class to empty fields
+
+#### Impact on Phases
+
+- Phase 3: Add field highlight — CE hook returns `{ missingFields }` (array of field keys); sidebar applies `error` or `border-danger` class to fields in `missingFields`
+
+---
+
+### Session 7 — 2026-03-13
+
+**Trigger:** Validation of Phase 3 remaining implementation details (error clearing, i18n, toast API)
+**Questions asked:** 3
+
+#### Questions & Answers
+
+1. **[UX]** When should the red border highlights on missing fields clear? The plan mentions 'clear fieldErrors when user fills a field' but the implementation diff only clears them on a successful state change.
+   - Options: Clear on successful transition | Clear individually per field | Clear all on any field change
+   - **Answer:** Clear on successful transition
+   - **Rationale:** Simple implementation — `setFieldErrors([])` only on successful state change. No extra onChange watchers on MemberDropdown/DateDropdown needed.
+
+2. **[i18n]** The i18n key `issue.required_fields_missing` likely doesn't exist yet. What strategy?
+   - Options: Add new key to i18n files | Hardcode English fallback | Reuse existing key
+   - **Answer:** Add new key to i18n files
+   - **Rationale:** Proper i18n support; add the key during Phase 3 implementation alongside the code change.
+
+3. **[Architecture]** The exact toast API in sidebar.tsx is unconfirmed. Use `setToastAlert` assumption or `@plane/propel` toast?
+   - Options: Check at implementation time | Use @plane/propel toast
+   - **Answer:** Use @plane/propel toast
+   - **Rationale:** Matches CLAUDE.md preference for `@plane/propel` over legacy patterns.
+
+#### Confirmed Decisions
+
+- `fieldErrors` clearing: successful transition only — no per-field onChange watchers
+- i18n: add `issue.required_fields_missing` key to i18n JSON files during implementation
+- Toast: use `toast` from `@plane/propel` (not `setToastAlert`)
+
+#### Action Items
+
+- [ ] Update phase-03 toast import to use `@plane/propel` toast
+- [ ] Add `issue.required_fields_missing` i18n key during implementation
+- [ ] Remove "clear when user fills a field" from phase-03 todo — clear on transition only
+
+#### Impact on Phases
+
+- Phase 3: Toast pattern → use `toast` from `@plane/propel`; add i18n key step; remove per-field clear logic
 
 ---
 

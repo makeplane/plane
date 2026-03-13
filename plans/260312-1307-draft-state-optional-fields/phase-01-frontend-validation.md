@@ -167,12 +167,12 @@ pnpm check:lint
 <!-- Updated: Validation Session 1 - CE hook architecture -->
 <!-- Updated: Validation Session 2 - Edit form scope, directory check -->
 
-- [ ] Step 0: Verify `apps/web/ce/hooks/` exists; create dir if not
-- [ ] Step 1: Create `apps/web/ce/hooks/use-issue-form-validation.ts`
-- [ ] Step 2: Create `apps/web/core/hooks/store/use-issue-form-validation.ts` (shim)
-- [ ] Step 3: Update `default-properties.tsx` (create form) — import hook, wrap rules with `getFieldRules`
+- [x] Step 0: Verify `apps/web/ce/hooks/` exists; create dir if not
+- [x] Step 1: Create `apps/web/ce/hooks/use-issue-form-validation.ts`
+- [x] Step 2: Create `apps/web/core/hooks/store/use-issue-form-validation.ts` (shim)
+- [x] Step 3: Update `default-properties.tsx` (create form) — import hook, wrap rules with `getFieldRules`
 - [x] Step 4: Edit form (`sidebar.tsx`) confirmed — no FormProvider/RHF, no validation rules → no changes needed
-- [ ] Step 5: Run `pnpm check:lint`
+- [x] Step 5: Run `pnpm check:lint`
 - [ ] Manual test: create workitem with Draft state, leave all fields empty (except title) — should succeed
 - [x] Manual test: edit workitem with Draft state — edit form uses MobX (no validation), already works
 - [ ] Manual test: switch from Draft to non-Draft state — validation re-enables, errors clear

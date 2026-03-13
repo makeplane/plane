@@ -99,6 +99,10 @@ export const ANALYTICS_INSIGHTS_FIELDS: Record<TAnalyticsTabsBase, IInsightField
       key: "completed_work_items",
       i18nKey: "workspace_analytics.completed_work_items",
     },
+    {
+      key: "cancelled_work_items",
+      i18nKey: "workspace_analytics.cancelled_work_items",
+    },
   ],
   projects: [
     {

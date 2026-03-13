@@ -1052,6 +1052,7 @@ export default {
     label: "{count, plural, one {Work item} other {Work items}}",
     all: "All Work items",
     edit: "Edit work item",
+    required_fields_missing: "Required fields missing",
     title: {
       label: "Work item title",
       required: "Work item title is required.",
@@ -1476,6 +1477,7 @@ export default {
     backlog_work_items: "Draft {entity}",
     un_started_work_items: "Unstarted {entity}",
     completed_work_items: "Completed {entity}",
+    cancelled_work_items: "Cancelled {entity}",
     completed: "Completed",
     pending: "Pending",
     started: "Started",
@@ -1916,6 +1918,7 @@ export default {
     },
     stats: {
       workload: "Workload",
+      workload_assigned_only: "Assigned issues only",
       overview: "Overview",
       created: "Work items created",
       assigned: "Work items assigned",
@@ -3396,5 +3399,16 @@ export default {
     no_data_filters: "No data available for these filters.",
     chart_type_unsupported: 'Chart type "{type}" is not supported yet.',
     loading: "Loading...",
+  },
+  spreadsheet: {
+    columns: {
+      department_name: "Department",
+      project_name: "Project",
+      bank_wide_project: "Bank-wide Project",
+      progress_tracking: "Progress Tracking",
+      completed_date: "Completed Date",
+      reference_link: "Reference Links",
+      total_log_time: "Total Log Time",
+    },
   },
 } as const;

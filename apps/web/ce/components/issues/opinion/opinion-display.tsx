@@ -21,7 +21,7 @@ const CONFIG: Record<
   { Icon: React.FC<{ className?: string }>; colorClass: string; labelKey: string }
 > = {
   approve: { Icon: ThumbsUp, colorClass: "text-green-600 bg-green-500/10", labelKey: "opinion.approve" },
-  neutral: { Icon: Minus, colorClass: "text-color-secondary bg-surface-2", labelKey: "opinion.neutral" },
+  neutral: { Icon: Minus, colorClass: "text-secondary bg-surface-2", labelKey: "opinion.neutral" },
   reject: { Icon: ThumbsDown, colorClass: "text-red-600 bg-red-500/10", labelKey: "opinion.reject" },
 };
 
@@ -31,7 +31,7 @@ export const OpinionDisplay = observer(function OpinionDisplay({ sentiment, cont
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium border border-color-subtle",
+        "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium border border-subtle",
         colorClass,
         className
       )}

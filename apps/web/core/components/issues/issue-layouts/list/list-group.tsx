@@ -29,6 +29,7 @@ import { cn } from "@plane/utils";
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useDraftStateTransition } from "@/hooks/store/use-draft-state-transition";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
@@ -116,6 +117,9 @@ export const ListGroup = observer(function ListGroup(props: Props) {
 
   const { workflowDisabledSource, isWorkflowDropDisabled, handleWorkFlowState, getIsWorkflowWorkItemCreationDisabled } =
     useWorkFlowFDragNDrop(group_by);
+  const { validateTransition } = useDraftStateTransition();
+  const validateTransitionRef = useRef(validateTransition);
+  validateTransitionRef.current = validateTransition;
   const isWorkflowIssueCreationDisabled = getIsWorkflowWorkItemCreationDisabled(group.id);
 
   const groupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
@@ -224,6 +228,23 @@ export const ListGroup = observer(function ListGroup(props: Props) {
                 message: group.dropErrorMessage,
               });
             return;
+          }
+
+          // Validate draft → non-draft transitions when grouped by state
+          if (group_by === "state" && source.id) {
+            const issue = issuesMap[source.id];
+            if (issue) {
+              const currentStateGroup = projectState.getStateById(source.groupId)?.group;
+              const { missingFieldLabels } = validateTransitionRef.current(issue, destination.groupId, currentStateGroup);
+              if (missingFieldLabels.length > 0) {
+                setToast({
+                  type: TOAST_TYPE.ERROR,
+                  title: t("issue.required_fields_missing"),
+                  message: missingFieldLabels.join(", "),
+                });
+                return;
+              }
+            }
           }
 
           handleOnDrop(source, destination);

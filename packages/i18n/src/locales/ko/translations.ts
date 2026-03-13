@@ -1044,6 +1044,7 @@ export default {
     label: "{count, plural, one {작업 항목} other {작업 항목}}",
     all: "모든 작업 항목",
     edit: "작업 항목 편집",
+    required_fields_missing: "필수 필드가 누락되었습니다",
     title: {
       label: "작업 항목 제목",
       required: "작업 항목 제목이 필요합니다.",
@@ -1516,6 +1517,7 @@ export default {
     total_intake: "총 수입",
     un_started_work_items: "시작되지 않은 {entity}",
     completed_work_items: "완료된 {entity}",
+    cancelled_work_items: "취소된 {entity}",
     total: "총 {entity}",
   },
   workspace_projects: {
@@ -1905,6 +1907,7 @@ export default {
     },
     stats: {
       workload: "작업량",
+      workload_assigned_only: "할당된 이슈만",
       overview: "개요",
       created: "생성된 작업 항목",
       assigned: "할당된 작업 항목",
@@ -3360,5 +3363,16 @@ export default {
     text_align: "텍스트 정렬",
     text_color: "텍스트 색상",
     text_color_default: "기본값",
+  },
+  spreadsheet: {
+    columns: {
+      department_name: "부서",
+      project_name: "프로젝트",
+      bank_wide_project: "전행 프로젝트",
+      progress_tracking: "진행 추적",
+      completed_date: "완료일",
+      reference_link: "참조 링크",
+      total_log_time: "총 기록 시간",
+    },
   },
 } as const;

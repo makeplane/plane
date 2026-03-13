@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { RefreshCw } from "lucide-react";
 // i18n
@@ -22,6 +23,7 @@ import {
   EstimatePropertyIcon,
   ParentPropertyIcon,
 } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -37,6 +39,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useDraftStateTransition } from "@/hooks/store/use-draft-state-transition";
 // plane web components
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
 import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
@@ -59,6 +62,8 @@ interface IPeekOverviewProperties {
 export const PeekOverviewProperties = observer(function PeekOverviewProperties(props: IPeekOverviewProperties) {
   const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
   const { t } = useTranslation();
+  // states
+  const [fieldErrors, setFieldErrors] = useState<string[]>([]);
   // store hooks
   const { getProjectById } = useProject();
   const {
@@ -66,6 +71,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   } = useIssueDetail();
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
+  const { validateTransition } = useDraftStateTransition();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
@@ -87,7 +93,20 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
           <StateDropdown
             value={issue?.state_id}
-            onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+            onChange={(val) => {
+              const { missingFieldKeys, missingFieldLabels } = validateTransition(issue, val, stateDetails?.group);
+              if (missingFieldKeys.length > 0) {
+                setFieldErrors(missingFieldKeys);
+                setToast({
+                  type: TOAST_TYPE.ERROR,
+                  title: t("issue.required_fields_missing"),
+                  message: missingFieldLabels.join(", "),
+                });
+                return;
+              }
+              setFieldErrors([]);
+              void issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val });
+            }}
             projectId={projectId}
             disabled={disabled}
             buttonVariant="transparent-with-text"
@@ -100,6 +119,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         </SidebarPropertyListItem>
 
         <SidebarPropertyListItem icon={MembersPropertyIcon} label={t("common.assignees")}>
+          <div className={cn("w-full", fieldErrors.includes("assignee_ids") && "rounded border border-red-500")}>
           <MemberDropdown
             value={issue?.assignee_ids ?? undefined}
             onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
@@ -115,6 +135,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
           />
+          </div>
         </SidebarPropertyListItem>
 
         <SidebarPropertyListItem icon={PriorityPropertyIcon} label={t("common.priority")}>
@@ -130,17 +151,19 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         </SidebarPropertyListItem>
 
         <SidebarPropertyListItem icon={RefreshCw} label={t("common.frequency")}>
-          <FrequencyDropdown
-            value={issue?.frequency}
-            onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { frequency: val })}
-            disabled={disabled}
-            buttonVariant="transparent-with-text"
-            className="group w-full grow"
-            buttonContainerClassName="w-full text-left h-7.5"
-            buttonClassName="text-body-xs-medium"
-            dropdownArrow
-            dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-          />
+          <div className={cn("w-full", fieldErrors.includes("frequency") && "rounded border border-red-500")}>
+            <FrequencyDropdown
+              value={issue?.frequency}
+              onChange={(val) => void issueOperations.update(workspaceSlug, projectId, issueId, { frequency: val })}
+              disabled={disabled}
+              buttonVariant="transparent-with-text"
+              className="group w-full grow"
+              buttonContainerClassName="w-full text-left h-7.5"
+              buttonClassName="text-body-xs-medium"
+              dropdownArrow
+              dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+            />
+          </div>
         </SidebarPropertyListItem>
 
         {createdByDetails && (
@@ -160,6 +183,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         )}
 
         <SidebarPropertyListItem icon={StartDatePropertyIcon} label={t("common.order_by.start_date")}>
+          <div className={cn("w-full", fieldErrors.includes("start_date") && "rounded border border-red-500")}>
           <DateDropdown
             value={issue.start_date}
             onChange={(val) =>
@@ -177,10 +201,11 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
+          </div>
         </SidebarPropertyListItem>
 
         <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
-          <div className="flex items-center gap-2 w-full">
+          <div className={cn("flex items-center gap-2 w-full", fieldErrors.includes("target_date") && "rounded border border-red-500")}>
             <DateDropdown
               value={issue.target_date}
               onChange={(val) =>
@@ -230,14 +255,16 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         {projectDetails?.module_view && (
           <SidebarPropertyListItem icon={ModuleIcon} label={t("common.modules")}>
-            <IssueModuleSelect
-              className="w-full grow"
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              issueOperations={issueOperations}
-              disabled={disabled}
-            />
+            <div className={cn("w-full", fieldErrors.includes("module_ids") && "rounded border border-red-500")}>
+              <IssueModuleSelect
+                className="w-full grow"
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                issueOperations={issueOperations}
+                disabled={disabled}
+              />
+            </div>
           </SidebarPropertyListItem>
         )}
 

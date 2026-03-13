@@ -53,8 +53,8 @@ export const OpinionButton = observer(function OpinionButton(props: Props) {
             className={cn(
               "opacity-0 group-hover:opacity-100 transition-opacity",
               "flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs",
-              "text-color-tertiary hover:text-color-secondary hover:bg-surface-2",
-              "border border-transparent hover:border-color-subtle"
+              "text-tertiary hover:text-secondary hover:bg-surface-2",
+              "border border-transparent hover:border-subtle"
             )}
           >
             <MessageSquarePlus className="h-3 w-3" />

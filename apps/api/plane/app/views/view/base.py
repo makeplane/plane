@@ -13,6 +13,7 @@ from django.db.models import (
     Q,
     Subquery,
     Prefetch,
+    Sum,
 )
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -30,6 +31,7 @@ from plane.db.models import (
     FileAsset,
     IssueLink,
     IssueView,
+    IssueWorkLog,
     Workspace,
     WorkspaceMember,
     ProjectMember,
@@ -114,6 +116,12 @@ class WorkspaceViewViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView)
     def destroy(self, request, slug, pk):
         workspace_view = IssueView.objects.get(pk=pk, workspace__slug=slug)
+
+        if workspace_view.is_default:
+            return Response(
+                {"error": "Default views cannot be deleted"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         workspace_member = WorkspaceMember.objects.filter(
             workspace__slug=slug, member=request.user, role=20, is_active=True
@@ -205,6 +213,14 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 Prefetch(
                     "issue_module",
                     queryset=ModuleIssue.objects.all(),
+                )
+            )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
                 )
             )
         )
@@ -365,6 +381,13 @@ class IssueViewViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
     def destroy(self, request, slug, project_id, pk):
         project_view = IssueView.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
+
+        if project_view.is_default:
+            return Response(
+                {"error": "Default views cannot be deleted"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,

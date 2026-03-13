@@ -1059,6 +1059,7 @@ export default {
     label: "{count, plural, one {mục công việc} other {mục công việc}}",
     all: "Tất cả mục công việc",
     edit: "Chỉnh sửa mục công việc",
+    required_fields_missing: "Thiếu các trường bắt buộc",
     title: {
       label: "Tiêu đề mục công việc",
       required: "Tiêu đề mục công việc là bắt buộc",
@@ -1534,6 +1535,7 @@ export default {
     total_intake: "Tổng thu",
     un_started_work_items: "{entity} chưa bắt đầu",
     completed_work_items: "{entity} đã hoàn thành",
+    cancelled_work_items: "{entity} đã huỷ",
     total: "Tổng số {entity}",
   },
   workspace_projects: {
@@ -1925,6 +1927,7 @@ export default {
     },
     stats: {
       workload: "Khối lượng công việc",
+      workload_assigned_only: "Chỉ hiển thị vấn đề được giao",
       overview: "Tổng quan",
       created: "Mục công việc đã tạo",
       assigned: "Mục công việc đã giao",
@@ -3392,5 +3395,16 @@ export default {
     text_align: "Căn chỉnh văn bản",
     text_color: "Màu văn bản",
     text_color_default: "Mặc định",
+  },
+  spreadsheet: {
+    columns: {
+      department_name: "Phòng ban",
+      project_name: "Dự án",
+      bank_wide_project: "Dự án toàn hàng",
+      progress_tracking: "Theo dõi tiến độ",
+      completed_date: "Ngày hoàn thành",
+      reference_link: "Liên kết tham chiếu",
+      total_log_time: "Tổng thời gian ghi",
+    },
   },
 } as const;

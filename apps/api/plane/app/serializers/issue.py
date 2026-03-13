@@ -875,6 +875,7 @@ class IssueListDetailSerializer(serializers.Serializer):
             "sub_issues_count": instance.sub_issues_count,
             "attachment_count": instance.attachment_count,
             "link_count": instance.link_count,
+            "total_logged_minutes": getattr(instance, "total_logged_minutes", None),
         }
 
         # Handle expanded fields only when requested - using direct field access

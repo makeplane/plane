@@ -175,6 +175,14 @@ export interface IIssueDisplayProperties {
   modules?: boolean;
   cycle?: boolean;
   issue_type?: boolean;
+  // CE extended columns
+  department_name?: boolean;
+  project_name?: boolean;
+  bank_wide_project?: boolean;
+  progress_tracking?: boolean;
+  completed_date?: boolean;
+  reference_link?: boolean;
+  total_log_time?: boolean;
 }
 
 export type TIssueKanbanFilters = {

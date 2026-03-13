@@ -7,7 +7,7 @@
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
 import type { IState, TFilterProperty, TStateGroups, TSupportedOperators } from "@plane/types";
-import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
+import { COLLECTION_OPERATOR, EQUALITY_OPERATOR, EXTENDED_COLLECTION_OPERATOR, EXTENDED_EQUALITY_OPERATOR } from "@plane/types";
 // local imports
 import type { IFilterIconConfig, TCreateFilterConfig, TCreateFilterConfigParams } from "../../../rich-filters";
 import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
@@ -63,6 +63,9 @@ export const getStateGroupFilterConfig =
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getStateGroupMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
+        createOperatorConfigEntry(EXTENDED_COLLECTION_OPERATOR.NOT_IN, params, (updatedParams) =>
+          getStateGroupMultiSelectConfig(updatedParams, EXTENDED_EQUALITY_OPERATOR.NOT_EXACT)
+        ),
       ]),
     });
 
@@ -116,6 +119,9 @@ export const getStateFilterConfig =
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getStateMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
+        ),
+        createOperatorConfigEntry(EXTENDED_COLLECTION_OPERATOR.NOT_IN, params, (updatedParams) =>
+          getStateMultiSelectConfig(updatedParams, EXTENDED_EQUALITY_OPERATOR.NOT_EXACT)
         ),
       ]),
     });

@@ -41,20 +41,22 @@ export const BankWideSettingsRoot = observer(function BankWideSettingsRoot(props
     }
   };
 
+  const handleChange = (value: boolean) => {
+    if (value !== currentProjectDetails?.is_bank_wide) {
+      void handleToggle();
+    }
+  };
+
   return (
     <div className={`w-full ${!isAdmin ? "opacity-60" : ""}`}>
-      <div className="flex items-center justify-between gap-4 py-4 border-b border-color-subtle">
+      <div className="flex items-center justify-between gap-4 py-4 border-b border-subtle">
         <div>
-          <h4 className="text-sm font-medium text-color-primary">
-            {t("bank_wide_project.settings.label")}
-          </h4>
-          <p className="text-sm text-color-secondary mt-1">
-            {t("bank_wide_project.settings.description")}
-          </p>
+          <h4 className="text-sm font-medium text-primary">{t("bank_wide_project.settings.label")}</h4>
+          <p className="text-sm text-secondary mt-1">{t("bank_wide_project.settings.description")}</p>
         </div>
         <ToggleSwitch
           value={currentProjectDetails?.is_bank_wide ?? false}
-          onChange={handleToggle}
+          onChange={handleChange}
           disabled={!isAdmin}
           size="sm"
         />
