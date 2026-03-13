@@ -6,7 +6,6 @@
 
 import { set, cloneDeep, isEqual } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
 // plane imports
 import type { IWorkspaceView } from "@plane/types";
 // services
@@ -50,8 +49,6 @@ export class GlobalViewStore implements IGlobalViewStore {
       globalViewMap: observable,
       // computed values
       currentWorkspaceViews: computed,
-      getSearchedViews: computedFn,
-      getViewDetailsById: computedFn,
       // actions
       fetchAllGlobalViews: action,
       fetchGlobalViewDetails: action,
@@ -67,11 +64,11 @@ export class GlobalViewStore implements IGlobalViewStore {
    * @description computed value to get workspace views from the global store
    */
   get currentWorkspaceViews() {
-    const workspaceSlug = this.rootStore.workspace.currentWorkspaceSlug;
-    if (!workspaceSlug) return null;
+    const currentWorkspace = this.rootStore.workspaceRoot.currentWorkspace;
+    if (!currentWorkspace) return null;
     const workspaceViewsList = Object.keys(this.globalViewMap).filter((viewId) => {
       const view = this.globalViewMap[viewId];
-      return view && view.workspace_id === this.rootStore.workspace.currentWorkspace?.id;
+      return view && view.workspace === currentWorkspace.id;
     });
     return workspaceViewsList;
   }
@@ -101,9 +98,9 @@ export class GlobalViewStore implements IGlobalViewStore {
    */
   fetchAllGlobalViews = async (workspaceSlug: string): Promise<IWorkspaceView[]> => {
     try {
-      const response = await this.workspaceService.fetchAllViews(workspaceSlug);
+      const response = await this.workspaceService.getAllViews(workspaceSlug);
       runInAction(() => {
-        response.forEach((view) => {
+        response.forEach((view: IWorkspaceView) => {
           set(this.globalViewMap, [view.id], view);
         });
       });
@@ -121,7 +118,7 @@ export class GlobalViewStore implements IGlobalViewStore {
    */
   fetchGlobalViewDetails = async (workspaceSlug: string, viewId: string): Promise<IWorkspaceView> => {
     try {
-      const response = await this.workspaceService.fetchViewDetails(workspaceSlug, viewId);
+      const response = await this.workspaceService.getViewDetails(workspaceSlug, viewId);
       runInAction(() => {
         set(this.globalViewMap, [viewId], response);
       });
@@ -191,7 +188,7 @@ export class GlobalViewStore implements IGlobalViewStore {
         if (currentViewData) set(this.globalViewMap, [viewId, currentKey], currentViewData[currentKey]);
       });
     }
-  }
+  };
 
   /**
    * @description delete global view
@@ -203,10 +200,9 @@ export class GlobalViewStore implements IGlobalViewStore {
     if (view?.is_default) {
       throw new Error("Default views cannot be deleted");
     }
-    return this.workspaceService.deleteView(workspaceSlug, viewId).then(() => {
-      runInAction(() => {
-        delete this.globalViewMap[viewId];
-      });
+    await this.workspaceService.deleteView(workspaceSlug, viewId);
+    runInAction(() => {
+      delete this.globalViewMap[viewId];
     });
   };
 }
