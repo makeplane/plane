@@ -17,8 +17,8 @@ import type {
   TWorkItemFilterExpressionData,
   TWorkItemFilterProperty,
 } from "@plane/types";
-import { LOGICAL_OPERATOR, MULTI_VALUE_OPERATORS, WORK_ITEM_FILTER_PROPERTY_KEYS } from "@plane/types";
-import { createConditionNode, createAndGroupNode, isAndGroupNode, isConditionNode } from "@plane/utils";
+import { LOGICAL_OPERATOR, MULTI_VALUE_OPERATORS, WORK_ITEM_FILTER_PROPERTY_KEYS, EXTENDED_COMPARISON_OPERATOR } from "@plane/types";
+import { createConditionNode, createAndGroupNode, isAndGroupNode, isConditionNode, getOperatorForPayload } from "@plane/utils";
 // local imports
 import { FilterAdapter } from "../rich-filters/adapter";
 
@@ -81,7 +81,42 @@ class WorkItemFiltersAdapter extends FilterAdapter<TWorkItemFilterProperty, TWor
       return createAndGroupNode(convertedConditions);
     }
 
+    // Handle NOT wrapper: {not: {field__exact: value}} → condition with not_exact operator
+    if ("not" in expression) {
+      const notExpression = expression as { not: TWorkItemFilterExpressionData };
+      const notChild = notExpression.not;
+      if (notChild && typeof notChild === "object") {
+        return this._convertNotExpressionToInternal(notChild);
+      }
+    }
+
     throw new Error(`Invalid expression: unknown structure with keys [${expressionKeys.join(", ")}]`);
+  }
+
+  /**
+   * Handles a 'not' wrapper from backend format.
+   * Converts {not: {field__exact: value}} → condition with not_exact operator.
+   * @param notChild - The child expression inside the NOT wrapper
+   * @returns Internal filter expression with negated operator
+   */
+  private _convertNotExpressionToInternal(
+    notChild: TWorkItemFilterExpressionData
+  ): TFilterExpression<TWorkItemFilterProperty> {
+    if (!this._isWorkItemFilterConditionData(notChild)) {
+      throw new Error("NOT wrapper must contain a simple condition");
+    }
+    const conditionResult = this._extractWorkItemFilterConditionData(notChild);
+    if (!conditionResult) {
+      throw new Error("Failed to extract condition data from NOT wrapper");
+    }
+    const [property, operator, value] = conditionResult;
+    // Map the base operator to its negated display operator
+    const negatedOperator = operator === "exact" ? "not_exact" : operator === "in" ? "not_in" : operator;
+    return createConditionNode({
+      property,
+      operator: negatedOperator as TSupportedOperators,
+      value,
+    });
   }
 
   /**
@@ -111,7 +146,26 @@ class WorkItemFiltersAdapter extends FilterAdapter<TWorkItemFilterProperty, TWor
     expression: TFilterExpression<TWorkItemFilterProperty>
   ): TWorkItemFilterExpressionData {
     if (isConditionNode(expression)) {
-      return this._createWorkItemFilterConditionData(expression.property, expression.operator, expression.value);
+      // Handle "today" operator — preserve as `field__today` for persistence
+      // Backend resolves to current date at query time
+      if (expression.operator === EXTENDED_COMPARISON_OPERATOR.TODAY) {
+        return this._createWorkItemFilterConditionData(
+          expression.property,
+          EXTENDED_COMPARISON_OPERATOR.TODAY as TSupportedOperators,
+          "true"
+        );
+      }
+
+      // Check if operator needs negation wrapping
+      const { operator, isNegation } = getOperatorForPayload(expression.operator);
+      const conditionData = this._createWorkItemFilterConditionData(expression.property, operator, expression.value);
+
+      if (isNegation) {
+        // Wrap in {not: {...}} for backend
+        return { not: conditionData } as unknown as TWorkItemFilterExpressionData;
+      }
+
+      return conditionData;
     }
 
     // It's a group node

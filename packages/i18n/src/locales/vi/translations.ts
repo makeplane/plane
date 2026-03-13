@@ -1059,6 +1059,7 @@ export default {
     label: "{count, plural, one {mục công việc} other {mục công việc}}",
     all: "Tất cả mục công việc",
     edit: "Chỉnh sửa mục công việc",
+    required_fields_missing: "Thiếu các trường bắt buộc",
     title: {
       label: "Tiêu đề mục công việc",
       required: "Tiêu đề mục công việc là bắt buộc",

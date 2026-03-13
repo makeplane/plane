@@ -6,7 +6,7 @@
 
 // plane imports
 import type { IProject, IUserLite, TOperatorConfigMap, TSupportedOperators } from "@plane/types";
-import { COMPARISON_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
+import { COMPARISON_OPERATOR, EQUALITY_OPERATOR, EXTENDED_COMPARISON_OPERATOR, EXTENDED_EQUALITY_OPERATOR } from "@plane/types";
 // local imports
 import { getDatePickerConfig, getDateRangePickerConfig, getMultiSelectConfig } from "../core";
 import type { IFilterIconConfig, TCreateDateFilterParams, TCreateFilterConfigParams, TFilterIconType } from "../shared";
@@ -52,6 +52,21 @@ export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOpe
     createOperatorConfigEntry(EQUALITY_OPERATOR.EXACT, params, (updatedParams) => getDatePickerConfig(updatedParams)),
     createOperatorConfigEntry(COMPARISON_OPERATOR.RANGE, params, (updatedParams) =>
       getDateRangePickerConfig(updatedParams)
+    ),
+    // New: greater than / less than (single date picker)
+    createOperatorConfigEntry(EXTENDED_COMPARISON_OPERATOR.GT, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
+    ),
+    createOperatorConfigEntry(EXTENDED_COMPARISON_OPERATOR.LT, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
+    ),
+    // New: "is not" for date (single date picker)
+    createOperatorConfigEntry(EXTENDED_EQUALITY_OPERATOR.NOT_EXACT, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
+    ),
+    // New: "today" — auto-fills with current date, no date picker needed
+    createOperatorConfigEntry(EXTENDED_COMPARISON_OPERATOR.TODAY, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
     ),
   ]);
 

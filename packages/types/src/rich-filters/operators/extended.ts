@@ -12,22 +12,31 @@ export const EXTENDED_LOGICAL_OPERATOR = {} as const;
 /**
  * Extended equality operators
  */
-export const EXTENDED_EQUALITY_OPERATOR = {} as const;
+export const EXTENDED_EQUALITY_OPERATOR = {
+  NOT_EXACT: "not_exact",
+} as const;
 
 /**
  * Extended collection operators
  */
-export const EXTENDED_COLLECTION_OPERATOR = {} as const;
+export const EXTENDED_COLLECTION_OPERATOR = {
+  NOT_IN: "not_in",
+} as const;
 
 /**
  * Extended comparison operators
  */
-export const EXTENDED_COMPARISON_OPERATOR = {} as const;
+export const EXTENDED_COMPARISON_OPERATOR = {
+  GT: "gt",
+  LT: "lt",
+  TODAY: "today",
+} as const;
 
 /**
  * Extended operators that support multiple values
+ * NOT_IN accepts an array of values (similar to IN)
  */
-export const EXTENDED_MULTI_VALUE_OPERATORS = [] as const;
+export const EXTENDED_MULTI_VALUE_OPERATORS = [EXTENDED_COLLECTION_OPERATOR.NOT_IN] as const;
 
 /**
  * All extended operators

@@ -1044,6 +1044,7 @@ export default {
     label: "{count, plural, one {작업 항목} other {작업 항목}}",
     all: "모든 작업 항목",
     edit: "작업 항목 편집",
+    required_fields_missing: "필수 필드가 누락되었습니다",
     title: {
       label: "작업 항목 제목",
       required: "작업 항목 제목이 필요합니다.",
