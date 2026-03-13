@@ -310,7 +310,16 @@ export const getComputedDisplayProperties = (
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
   issue_type: displayProperties?.issue_type ?? true,
+  // CE extended display properties (Shinhan Bank custom columns)
+  department_name: displayProperties?.department_name ?? false,
+  project_name: displayProperties?.project_name ?? false,
+  bank_wide_project: displayProperties?.bank_wide_project ?? false,
+  progress_tracking: displayProperties?.progress_tracking ?? false,
+  completed_date: displayProperties?.completed_date ?? false,
+  reference_link: displayProperties?.reference_link ?? false,
+  total_log_time: displayProperties?.total_log_time ?? false,
 });
+
 
 export const generateWorkItemLink = ({
   workspaceSlug,

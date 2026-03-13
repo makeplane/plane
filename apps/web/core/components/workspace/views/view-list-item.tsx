@@ -1,14 +1,9 @@
-/**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
- * SPDX-License-Identifier: AGPL-3.0-only
- * See the LICENSE file for details.
- */
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // plane imports
+import { LockIcon } from "lucide-react";
 import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 import { truncateText } from "@plane/utils";
@@ -34,6 +29,8 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
 
   if (!view) return null;
 
+  const isDefault = view.is_default;
+
   return (
     <>
       <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
@@ -44,36 +41,46 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex flex-col">
-                  <p className="truncate text-13 font-medium leading-4">{truncateText(view.name, 75)}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="truncate text-13 font-medium leading-4">{truncateText(view.name, 75)}</p>
+                    {isDefault && (
+                      <span className="flex items-center gap-1 rounded bg-accent-primary/10 px-1.5 py-0.5 text-10 font-medium text-accent-primary">
+                        <LockIcon className="h-3 w-3" />
+                        Default
+                      </span>
+                    )}
+                  </div>
                   {view?.description && <p className="text-11 text-secondary">{view.description}</p>}
                 </div>
               </div>
-              <div className="ml-2 flex flex-shrink-0">
-                <div className="flex items-center gap-4">
-                  <CustomMenu ellipsis>
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        setUpdateViewModal(true);
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <EditIcon width={14} height={14} strokeWidth={2} />
-                        <span>Edit View</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        setDeleteViewModal(true);
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <TrashIcon width={14} height={14} strokeWidth={2} />
-                        <span>Delete View</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
+              {!isDefault && (
+                <div className="ml-2 flex flex-shrink-0">
+                  <div className="flex items-center gap-4">
+                    <CustomMenu ellipsis>
+                      <CustomMenu.MenuItem
+                        onClick={() => {
+                          setUpdateViewModal(true);
+                        }}
+                      >
+                        <span className="flex items-center justify-start gap-2">
+                          <EditIcon width={14} height={14} strokeWidth={2} />
+                          <span>Edit View</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                      <CustomMenu.MenuItem
+                        onClick={() => {
+                          setDeleteViewModal(true);
+                        }}
+                      >
+                        <span className="flex items-center justify-start gap-2">
+                          <TrashIcon width={14} height={14} strokeWidth={2} />
+                          <span>Delete View</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                    </CustomMenu>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </Link>
@@ -81,3 +88,4 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
     </>
   );
 });
+

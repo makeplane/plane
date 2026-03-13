@@ -4,8 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -16,15 +17,36 @@ import { PageHead } from "@/components/core/page-title";
 import { GlobalDefaultViewListItem } from "@/components/workspace/views/default-view-list-item";
 import { GlobalViewsList } from "@/components/workspace/views/views-list";
 // hooks
+import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
-function WorkspaceViewsPage() {
+const WorkspaceViewsPage = observer(function WorkspaceViewsPage() {
   const [query, setQuery] = useState("");
+  // router
+  const navigate = useNavigate();
+  const { workspaceSlug } = useParams();
+  const [searchParams] = useSearchParams();
   // store
   const { currentWorkspace } = useWorkspace();
+  const { globalViewMap, currentWorkspaceViews } = useGlobalView();
   const { t } = useTranslation();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - All Views` : undefined;
+
+  // Auto-navigate to the default view on page load
+  useEffect(() => {
+    const viewId = searchParams.get("viewId");
+    if (viewId || !workspaceSlug) return;
+    if (!currentWorkspaceViews) return;
+
+    const defaultViewId = currentWorkspaceViews.find(
+      (id) => globalViewMap[id]?.is_default === true
+    );
+
+    if (defaultViewId) {
+      void navigate(`/${workspaceSlug}/workspace-views/${defaultViewId}`, { replace: true });
+    }
+  }, [workspaceSlug, currentWorkspaceViews, globalViewMap, searchParams, navigate]);
 
   return (
     <>
@@ -51,6 +73,6 @@ function WorkspaceViewsPage() {
       </div>
     </>
   );
-}
+});
 
-export default observer(WorkspaceViewsPage);
+export default WorkspaceViewsPage;

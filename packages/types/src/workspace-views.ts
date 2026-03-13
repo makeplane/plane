@@ -30,6 +30,8 @@ export interface IWorkspaceView {
   project: string;
   workspace: string;
   is_locked: boolean;
+  is_default: boolean;
+  filters: Record<string, string[]>;
   owned_by: string;
   workspace_detail?: {
     id: string;

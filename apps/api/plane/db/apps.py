@@ -7,3 +7,7 @@ from django.apps import AppConfig
 
 class DbConfig(AppConfig):
     name = "plane.db"
+
+    def ready(self):
+        # Connect workspace signals
+        import plane.db.signals  # noqa: F401

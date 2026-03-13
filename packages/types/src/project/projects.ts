@@ -46,6 +46,7 @@ export interface IPartialProject {
 export interface IProject extends IPartialProject {
   archive_in?: number;
   close_in?: number;
+  is_bank_wide?: boolean;
   // only for uploading the cover image
   cover_image_asset?: null;
   cover_image?: string;

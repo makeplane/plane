@@ -33,7 +33,7 @@ export interface IGlobalViewStore {
     data: Partial<IWorkspaceView>,
     shouldSyncFilters?: boolean
   ) => Promise<IWorkspaceView | undefined>;
-  deleteGlobalView: (workspaceSlug: string, viewId: string) => Promise<any>;
+  deleteGlobalView: (workspaceSlug: string, viewId: string) => Promise<void>;
 }
 
 export class GlobalViewStore implements IGlobalViewStore {
@@ -48,125 +48,129 @@ export class GlobalViewStore implements IGlobalViewStore {
     makeObservable(this, {
       // observables
       globalViewMap: observable,
-      // computed
+      // computed values
       currentWorkspaceViews: computed,
+      getSearchedViews: computedFn,
+      getViewDetailsById: computedFn,
       // actions
       fetchAllGlobalViews: action,
       fetchGlobalViewDetails: action,
-      deleteGlobalView: action,
-      updateGlobalView: action,
       createGlobalView: action,
+      updateGlobalView: action,
+      deleteGlobalView: action,
     });
-
-    // root store
     this.rootStore = _rootStore;
-    // services
     this.workspaceService = new WorkspaceService();
-
-    this.createGlobalView = this.createGlobalView.bind(this);
-    this.updateGlobalView = this.updateGlobalView.bind(this);
   }
 
   /**
-   * @description returns list of views for current workspace
+   * @description computed value to get workspace views from the global store
    */
   get currentWorkspaceViews() {
-    const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
-    if (!currentWorkspaceDetails) return null;
-
-    return (
-      Object.keys(this.globalViewMap ?? {})?.filter(
-        (viewId) => this.globalViewMap[viewId]?.workspace === currentWorkspaceDetails.id
-      ) ?? null
-    );
+    const workspaceSlug = this.rootStore.workspace.currentWorkspaceSlug;
+    if (!workspaceSlug) return null;
+    const workspaceViewsList = Object.keys(this.globalViewMap).filter((viewId) => {
+      const view = this.globalViewMap[viewId];
+      return view && view.workspace_id === this.rootStore.workspace.currentWorkspace?.id;
+    });
+    return workspaceViewsList;
   }
 
   /**
-   * @description returns list of views for current workspace based on search query
+   * @description search views by query
    * @param searchQuery
-   * @returns
    */
-  getSearchedViews = computedFn((searchQuery: string) => {
-    const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
-    if (!currentWorkspaceDetails) return null;
-
-    return (
-      Object.keys(this.globalViewMap ?? {})?.filter(
-        (viewId) =>
-          this.globalViewMap[viewId]?.workspace === currentWorkspaceDetails.id &&
-          this.globalViewMap[viewId]?.name?.toLowerCase().includes(searchQuery.toLowerCase())
-      ) ?? null
-    );
-  });
+  getSearchedViews = (searchQuery: string) => {
+    if (!searchQuery) return this.currentWorkspaceViews;
+    if (!this.currentWorkspaceViews) return null;
+    return this.currentWorkspaceViews.filter((viewId) => {
+      const view = this.globalViewMap[viewId];
+      return view && view.name.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+  };
 
   /**
-   * @description returns view details for given viewId
+   * @description get view details by view id
    * @param viewId
    */
-  getViewDetailsById = computedFn((viewId: string): IWorkspaceView | null => this.globalViewMap[viewId] ?? null);
+  getViewDetailsById = (viewId: string) => this.globalViewMap?.[viewId] ?? null;
 
   /**
-   * @description fetch all global views for given workspace
+   * @description fetch all global views
    * @param workspaceSlug
    */
-  fetchAllGlobalViews = async (workspaceSlug: string): Promise<IWorkspaceView[]> =>
-    await this.workspaceService.getAllViews(workspaceSlug).then((response) => {
+  fetchAllGlobalViews = async (workspaceSlug: string): Promise<IWorkspaceView[]> => {
+    try {
+      const response = await this.workspaceService.fetchAllViews(workspaceSlug);
       runInAction(() => {
         response.forEach((view) => {
-          set(this.globalViewMap, view.id, view);
+          set(this.globalViewMap, [view.id], view);
         });
       });
       return response;
-    });
+    } catch (error) {
+      console.error("Error fetching global views:", error);
+      throw error;
+    }
+  };
 
   /**
-   * @description fetch view details for given viewId
+   * @description fetch global view details
+   * @param workspaceSlug
    * @param viewId
    */
-  fetchGlobalViewDetails = async (workspaceSlug: string, viewId: string): Promise<IWorkspaceView> =>
-    await this.workspaceService.getViewDetails(workspaceSlug, viewId).then((response) => {
+  fetchGlobalViewDetails = async (workspaceSlug: string, viewId: string): Promise<IWorkspaceView> => {
+    try {
+      const response = await this.workspaceService.fetchViewDetails(workspaceSlug, viewId);
       runInAction(() => {
-        set(this.globalViewMap, viewId, response);
+        set(this.globalViewMap, [viewId], response);
       });
       return response;
-    });
+    } catch (error) {
+      console.error("Error fetching global view details:", error);
+      throw error;
+    }
+  };
 
   /**
-   * @description create new global view
+   * @description create global view
    * @param workspaceSlug
    * @param data
    */
-  async createGlobalView(workspaceSlug: string, data: Partial<IWorkspaceView>) {
+  createGlobalView = async (workspaceSlug: string, data: Partial<IWorkspaceView>): Promise<IWorkspaceView> => {
     try {
       const response = await this.workspaceService.createView(workspaceSlug, data);
       runInAction(() => {
-        set(this.globalViewMap, response.id, response);
+        set(this.globalViewMap, [response.id], response);
       });
-
       return response;
     } catch (error) {
-      console.error(error);
+      console.error("Error creating global view:", error);
       throw error;
     }
-  }
+  };
 
   /**
    * @description update global view
    * @param workspaceSlug
    * @param viewId
    * @param data
+   * @param shouldSyncFilters whether to sync filters to workspace issues
    */
-  async updateGlobalView(
+  updateGlobalView = async (
     workspaceSlug: string,
     viewId: string,
     data: Partial<IWorkspaceView>,
-    shouldSyncFilters: boolean = true
-  ): Promise<IWorkspaceView | undefined> {
-    const currentViewData = this.getViewDetailsById(viewId) ? cloneDeep(this.getViewDetailsById(viewId)) : undefined;
+    shouldSyncFilters?: boolean
+  ): Promise<IWorkspaceView | undefined> => {
+    const currentViewData = cloneDeep(this.globalViewMap[viewId]);
+
     try {
-      Object.keys(data).forEach((key) => {
-        const currentKey = key as keyof IWorkspaceView;
-        set(this.globalViewMap, [viewId, currentKey], data[currentKey]);
+      runInAction(() => {
+        Object.keys(data).forEach((key) => {
+          const currentKey = key as keyof IWorkspaceView;
+          set(this.globalViewMap, [viewId, currentKey], data[currentKey]);
+        });
       });
 
       const currentView = await this.workspaceService.updateView(workspaceSlug, viewId, data);
@@ -178,7 +182,7 @@ export class GlobalViewStore implements IGlobalViewStore {
           viewId,
           currentView?.rich_filters || {}
         );
-        this.rootStore.issue.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+        void this.rootStore.issue.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
       }
       return currentView;
     } catch {
@@ -194,10 +198,15 @@ export class GlobalViewStore implements IGlobalViewStore {
    * @param workspaceSlug
    * @param viewId
    */
-  deleteGlobalView = async (workspaceSlug: string, viewId: string): Promise<any> =>
-    await this.workspaceService.deleteView(workspaceSlug, viewId).then(() => {
+  deleteGlobalView = async (workspaceSlug: string, viewId: string): Promise<void> => {
+    const view = this.getViewDetailsById(viewId);
+    if (view?.is_default) {
+      throw new Error("Default views cannot be deleted");
+    }
+    return this.workspaceService.deleteView(workspaceSlug, viewId).then(() => {
       runInAction(() => {
         delete this.globalViewMap[viewId];
       });
     });
+  };
 }

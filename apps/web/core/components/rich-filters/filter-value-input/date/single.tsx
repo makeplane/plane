@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { TDateFilterFieldConfig, TFilterConditionNodeForDisplay, TFilterProperty } from "@plane/types";
@@ -45,7 +44,7 @@ export const SingleDateFilterValueInput = observer(function SingleDateFilterValu
       buttonVariant="transparent-with-text"
       isClearable={false}
       closeOnSelect
-      defaultOpen={!conditionValue}
+      defaultOpen={false}
       disabled={isDisabled}
     />
   );
