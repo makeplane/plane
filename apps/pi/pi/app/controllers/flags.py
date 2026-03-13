@@ -192,7 +192,7 @@ async def get_workspace_feature_availability(
     combined = _combine_env_and_remote(env_ready, remote_enabled)
     combined = _apply_dependencies(combined)
 
-    log.info(
+    log.debug(
         "Flags computed (workspace_slug=%s) env_ready=%s remote_enabled=%s combined=%s",
         workspace_slug,
         env_ready,

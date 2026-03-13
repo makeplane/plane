@@ -11,7 +11,6 @@
 
 """Base service class for page content generation using LLMs."""
 
-import asyncio
 from abc import ABC
 from abc import abstractmethod
 from typing import Any
@@ -25,8 +24,7 @@ from langchain_core.messages import SystemMessage
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
-from pi.services.llm.llms import get_chat_llm
-from pi.services.llm.llms import get_fallback_model_name
+from pi.services.llm.llms import LLMFactory
 from pi.services.llm.token_tracker import TokenTracker
 from pi.services.pages.utils import get_entity_context
 
@@ -60,7 +58,7 @@ class PageContentService(ABC):
             model_key: LLM model to use
         """
         self.db = db
-        self.model_key = get_fallback_model_name()
+        self.model_key = LLMFactory.get_fallback_model_name()
 
     @abstractmethod
     def build_system_prompt(self) -> str:
@@ -129,7 +127,7 @@ class PageContentService(ABC):
         """
         try:
             # Initialize LLM
-            llm = await asyncio.to_thread(get_chat_llm, self.model_key)
+            llm = LLMFactory.get_chat_llm(self.model_key)
 
             # Construct messages
             messages = [
@@ -283,7 +281,7 @@ class PageContentService(ABC):
             user_prompt = self.build_user_prompt(context_text, **kwargs)
 
             # 3. Get streaming LLM
-            llm = await asyncio.to_thread(get_chat_llm, self.model_key)
+            llm = LLMFactory.get_chat_llm(self.model_key)
 
             # Construct messages
             messages = [

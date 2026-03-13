@@ -621,7 +621,7 @@ async def orchestrate_llm_step_with_streaming(llm_with_tools, messages, **kwargs
                     flow_steps=steps,
                     db=_db,
                 )
-                log.info(f"orchestrate_llm_step: Persistence result: {result.get('message') if isinstance(result, dict) else result}")
+                log.debug(f"orchestrate_llm_step: Persistence result: {result.get("message") if isinstance(result, dict) else result}")
         else:
             log.warning(
                 f"orchestrate_llm_step: Skipping persistence - steps={len(steps)}, has_query_id={query_id is not None}, has_chat_id={chat_id is not None}, has_db={db is not None}"  # noqa: E501
@@ -734,7 +734,7 @@ async def orchestrate_llm_step(llm_with_tools, messages, **kwargs):
                     flow_steps=steps,
                     db=_db,
                 )
-                log.info(f"orchestrate_llm_step: Persistence result: {result.get('message') if isinstance(result, dict) else result}")
+                log.debug(f"orchestrate_llm_step: Persistence result: {result.get("message") if isinstance(result, dict) else result}")
         else:
             log.warning(
                 f"orchestrate_llm_step: Skipping persistence - steps={len(steps)}, has_query_id={query_id is not None}, has_chat_id={chat_id is not None}, has_db={db is not None}"  # noqa: E501

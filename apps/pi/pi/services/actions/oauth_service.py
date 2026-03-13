@@ -50,8 +50,10 @@ class PlaneOAuthService:
             client_id, client_secret = get_oauth_credentials_sync()
             if not client_id or not client_secret:
                 raise ValueError(
-                    "OAuth credentials not found. Please set PLANE_OAUTH_CLIENT_ID and PLANE_OAUTH_CLIENT_SECRET "
-                    "environment variables or configure them in the database."
+                    "Failed to retrieve OAuth credentials. Please ensure the FOLLOWER_POSTGRES_URI env variable is configured correctly. "
+                    "If it is, then you need to run the following command inside the API container: "
+                    "python manage.py reset_marketplace_app_secrets. "
+                    "After running the command, restart the PI container to apply the changes."
                 )
             self.client_id = client_id
             self.client_secret = client_secret
