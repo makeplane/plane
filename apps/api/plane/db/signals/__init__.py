@@ -3,5 +3,6 @@
 # See the LICENSE file for details.
 
 from plane.db.signals.workspace import create_default_view_on_workspace_creation
+from plane.db.signals.project import create_default_view_on_project_creation
 
-__all__ = ["create_default_view_on_workspace_creation"]
+__all__ = ["create_default_view_on_workspace_creation", "create_default_view_on_project_creation"]

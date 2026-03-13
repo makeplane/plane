@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
@@ -39,10 +39,20 @@ function ProjectViewsPage({ params }: Route.ComponentProps) {
   const { t } = useTranslation();
   // store
   const { getProjectById, currentProjectDetails } = useProject();
-  const { filters, updateFilters, clearAllFilters } = useProjectView();
+  const { filters, updateFilters, clearAllFilters, getProjectViews } = useProjectView();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const project = getProjectById(projectId);
+  const projectViews = getProjectViews(projectId);
+
+  // Auto-navigate to the default view on page load
+  useEffect(() => {
+    if (!workspaceSlug || !projectId || !projectViews) return;
+    const defaultView = projectViews.find((v) => v.is_default === true);
+    if (defaultView) {
+      router.replace(`/${workspaceSlug}/projects/${projectId}/views/${defaultView.id}`);
+    }
+  }, [workspaceSlug, projectId, projectViews, router]);
   const pageTitle = project?.name ? `${project?.name} - Views` : undefined;
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = resolvedTheme === "light" ? lightViewsAsset : darkViewsAsset;
@@ -103,4 +113,5 @@ function ProjectViewsPage({ params }: Route.ComponentProps) {
   );
 }
 
-export default observer(ProjectViewsPage);
+export const ProjectViewsPageComponent = observer(ProjectViewsPage);
+export default ProjectViewsPageComponent;

@@ -19,6 +19,7 @@ from django.db.models import (
     Prefetch,
     Q,
     Subquery,
+    Sum,
     UUIDField,
     Value,
 )
@@ -56,6 +57,7 @@ from plane.db.models import (
     IssueReaction,
     IssueRelation,
     IssueSubscriber,
+    IssueWorkLog,
     ProjectUserProperty,
     ModuleIssue,
     Project,
@@ -243,6 +245,14 @@ class IssueViewSet(BaseViewSet):
                     .values("parent")
                     .annotate(count=Count("id"))
                     .values("count")
+                )
+            )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
                 )
             )
         )

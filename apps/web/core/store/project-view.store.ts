@@ -14,6 +14,7 @@ import type { IProjectView, TViewFilters } from "@plane/types";
 import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } from "@plane/utils";
 // services
 import { ViewService } from "@/services/view.service";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // store
 import type { CoreRootStore } from "./root.store";
 
@@ -41,12 +42,12 @@ export interface IProjectViewStore {
     viewId: string,
     data: Partial<IProjectView>
   ) => Promise<IProjectView>;
-  deleteView: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
+  deleteView: (workspaceSlug: string, projectId: string, viewId: string) => Promise<void>;
   updateFilters: <T extends keyof TViewFilters>(filterKey: T, filterValue: TViewFilters[T]) => void;
   clearAllFilters: () => void;
   // favorites actions
-  addViewToFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
-  removeViewFromFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
+  addViewToFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<void>;
+  removeViewFromFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<void>;
 }
 
 export class ProjectViewStore implements IProjectViewStore {
@@ -145,6 +146,7 @@ export class ProjectViewStore implements IProjectViewStore {
   updateFilters = <T extends keyof TViewFilters>(filterKey: T, filterValue: TViewFilters[T]) => {
     runInAction(() => {
       set(this.filters, [filterKey], filterValue);
+      return undefined;
     });
   };
 
@@ -204,7 +206,11 @@ export class ProjectViewStore implements IProjectViewStore {
    * @returns Promise<IProjectView>
    */
   async createView(workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> {
-    const response = await this.viewService.createView(workspaceSlug, projectId, getValidatedViewFilters(data));
+    const response = (await this.viewService.createView(
+      workspaceSlug,
+      projectId,
+      getValidatedViewFilters(data)
+    )) as IProjectView;
 
     runInAction(() => {
       set(this.viewMap, [response.id], response);
@@ -233,7 +239,7 @@ export class ProjectViewStore implements IProjectViewStore {
       set(this.viewMap, [viewId], { ...currentView, ...data });
     });
 
-    const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
+    const response = (await this.viewService.patchView(workspaceSlug, projectId, viewId, data)) as IProjectView;
 
     return response;
   }
@@ -245,12 +251,18 @@ export class ProjectViewStore implements IProjectViewStore {
    * @param viewId
    * @returns
    */
-  deleteView = async (workspaceSlug: string, projectId: string, viewId: string): Promise<any> => {
-    await this.viewService.deleteView(workspaceSlug, projectId, viewId).then(() => {
+  deleteView = async (workspaceSlug: string, projectId: string, viewId: string): Promise<void> => {
+    const view = this.getViewById(viewId);
+    if (view?.is_default) {
+      setToast({ type: TOAST_TYPE.ERROR, title: "Default views cannot be deleted" });
+      return;
+    }
+    return this.viewService.deleteView(workspaceSlug, projectId, viewId).then(() => {
       runInAction(() => {
         delete this.viewMap[viewId];
         if (this.rootStore.favorite.entityMap[viewId]) this.rootStore.favorite.removeFavoriteFromStore(viewId);
       });
+      return undefined;
     });
   };
 
@@ -289,7 +301,7 @@ export class ProjectViewStore implements IProjectViewStore {
    * @param viewId
    * @returns
    */
-  removeViewFromFavorites = async (workspaceSlug: string, projectId: string, viewId: string) => {
+  removeViewFromFavorites = async (workspaceSlug: string, _projectId: string, viewId: string) => {
     try {
       const currentView = this.getViewById(viewId);
       if (!currentView?.is_favorite) return;
