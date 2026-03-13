@@ -64,14 +64,9 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
       },
     });
 
-    await updateConfigPromise
-      .then(() => {
-        setIsSubmitting(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setIsSubmitting(false);
-      });
+    await updateConfigPromise.finally(() => {
+      setIsSubmitting(false);
+    });
   };
 
   return (
@@ -98,9 +93,9 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                   value={Boolean(parseInt(disableWorkspaceCreation))}
                   onChange={() => {
                     if (Boolean(parseInt(disableWorkspaceCreation)) === true) {
-                      updateConfig("DISABLE_WORKSPACE_CREATION", "0");
+                      void updateConfig("DISABLE_WORKSPACE_CREATION", "0");
                     } else {
-                      updateConfig("DISABLE_WORKSPACE_CREATION", "1");
+                      void updateConfig("DISABLE_WORKSPACE_CREATION", "1");
                     }
                   }}
                   size="sm"
@@ -135,6 +130,9 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                 <Link href="/workspace/bulk-assign" className={getButtonStyling("secondary", "base")}>
                   Bulk Assign Workspace
                 </Link>
+                <Link href="/workspace/bulk-import-projects" className={getButtonStyling("secondary", "base")}>
+                  Bulk Import Projects
+                </Link>
                 <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
                   Create workspace
                 </Link>
@@ -150,7 +148,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                 <Button
                   variant="link"
                   size="lg"
-                  onClick={() => fetchNextWorkspaces()}
+                  onClick={() => void fetchNextWorkspaces()}
                   disabled={workspaceLoader === "pagination"}
                 >
                   Load more
@@ -172,6 +170,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
   );
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const meta: Route.MetaFunction = () => [{ title: "Workspace Management - God Mode" }];
 
 export default WorkspaceManagementPage;
