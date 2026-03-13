@@ -293,8 +293,6 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
         serializer.save(
             project_id=project_id,
             workflow_state_id=workflow_state.id,
-            transition_state_id=transition_state_id,
-            rejection_state_id=rejection_state_id,
         )
         if member_ids:
             WorkflowTransitionApprover.objects.bulk_create(

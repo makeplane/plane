@@ -11,6 +11,7 @@
 
 # Module imports
 from plane.app.serializers.base import BaseSerializer
+from plane.db.models import State
 from plane.ee.models import (
     Workflow,
     WorkflowState,
@@ -136,6 +137,12 @@ class WorkflowStateSerializer(BaseSerializer):
 
 class WorkflowTransitionSerializer(BaseSerializer):
     member_ids = serializers.ListField(child=serializers.UUIDField(), read_only=True, default=[])
+    transition_state_id = serializers.PrimaryKeyRelatedField(
+        queryset=State.objects.all(), source="transition_state", required=False, allow_null=True
+    )
+    rejection_state_id = serializers.PrimaryKeyRelatedField(
+        queryset=State.objects.all(), source="rejection_state", required=False, allow_null=True
+    )
 
     class Meta:
         model = WorkflowTransition
@@ -144,6 +151,8 @@ class WorkflowTransitionSerializer(BaseSerializer):
             "workspace",
             "project",
             "workflow_state",
+            "transition_state",
+            "rejection_state",
             "created_by",
             "updated_by",
             "created_at",
@@ -151,11 +160,7 @@ class WorkflowTransitionSerializer(BaseSerializer):
             "deleted_at",
         ]
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["transition_state_id"] = data.pop("transition_state", None)
-        data["rejection_state_id"] = data.pop("rejection_state", None)
-        return data
+
 
 
 class WorkflowTransitionActorSerializer(BaseSerializer):

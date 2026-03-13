@@ -210,17 +210,16 @@ class EpicViewSet(BaseViewSet):
         ).first()
 
         # EE start
-        if request.data.get("state_id"):
-            workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
-            if workflow_state_manager.validate_issue_creation(
-                state_id=request.data.get("state_id"),
-                user_id=request.user.id,
-                type_id=request.data.get("type_id", None),
-            ):
-                return Response(
-                    {"error": "You cannot create a epic in this state"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
+        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        if workflow_state_manager.validate_issue_creation(
+            state_id=request.data.get("state_id"),
+            user_id=request.user.id,
+            type_id=request.data.get("type_id", None),
+        ):
+            return Response(
+                {"error": "You cannot create a epic in this state"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # EE end
 
         if not epic:
