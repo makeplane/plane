@@ -11,13 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon } from "@plane/propel/icons";
 import { useLocalStorage } from "@plane/hooks";
 import { Tabs } from "@plane/propel/tabs";
 import { EIssueServiceType } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // components
 import { RelationActionButton } from "@/components/issues/issue-detail-widgets/relations";
 // plane web
@@ -33,14 +33,31 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   epicId: string;
+  permissions: {
+    sub_work_items: {
+      getCanView: (projectId: string, workItemId: string) => boolean;
+      getCanEdit: (projectId: string, workItemId: string) => boolean;
+      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanDelete: (projectId: string, workItemId: string) => boolean;
+      getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
+      getCanRemove: (
+        parentWorkItemProjectId: string,
+        parentWorkItemId: string,
+        projectId: string,
+        workItemId: string
+      ) => boolean;
+    };
+  };
   disabled?: boolean;
 };
 
 export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props) {
-  const { workspaceSlug, projectId, epicId, disabled = false } = props;
+  const { workspaceSlug, projectId, epicId, permissions, disabled = false } = props;
   // store hooks
   const { storedValue, setValue } = useLocalStorage(`tab-epic-detail-overview-${epicId}`, "issues");
   const { toggleCreateUpdateRequestModal, isCustomersFeatureEnabled } = useCustomers();
+  // derived values
+  const subWorkItemPermissions = permissions.sub_work_items;
 
   // Tabs
   const OVERVIEW_TABS = useMemo(() => {
@@ -53,7 +70,7 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             epicId={epicId}
-            disabled={disabled}
+            permissions={subWorkItemPermissions}
           />
         ),
       },
@@ -72,7 +89,7 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
       });
     }
     return _tabs;
-  }, [workspaceSlug, projectId, epicId, disabled, isCustomersFeatureEnabled]);
+  }, [workspaceSlug, projectId, epicId, disabled, isCustomersFeatureEnabled, subWorkItemPermissions]);
 
   // Actions
   const OVERVIEW_ACTIONS: Record<string, React.ReactNode> = useMemo(
@@ -83,7 +100,7 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
           workItemServiceType={EIssueServiceType.EPICS}
           projectId={projectId}
           workspaceSlug={workspaceSlug}
-          disabled={disabled}
+          canAdd={subWorkItemPermissions.getCanAdd(projectId, epicId)}
         />
       ),
       relations: (
@@ -95,7 +112,7 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
         </button>
       ),
     }),
-    [epicId, projectId, workspaceSlug, disabled, toggleCreateUpdateRequestModal]
+    [epicId, projectId, workspaceSlug, disabled, toggleCreateUpdateRequestModal, subWorkItemPermissions]
   );
 
   return (

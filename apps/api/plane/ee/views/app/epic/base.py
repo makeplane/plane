@@ -637,7 +637,7 @@ class EpicAnalyticsEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
         # Annotate the counts for different states in one query
-        issues = Issue.issue_objects.filter(id__in=issue_ids, project_id=project_id, workspace__slug=slug).aggregate(
+        issues = Issue.issue_objects.filter(id__in=issue_ids, workspace__slug=slug).aggregate(
             backlog_issues=Count("id", filter=Q(state__group="backlog")),
             unstarted_issues=Count("id", filter=Q(state__group="unstarted")),
             started_issues=Count("id", filter=Q(state__group="started")),
@@ -807,7 +807,7 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
         )
 
         # fetch all the issues in which user is part of
-        issues = Issue.objects.filter(workspace__slug=slug, project_id=project_id, archived_at__isnull=True)
+        issues = Issue.objects.filter(workspace__slug=slug, archived_at__isnull=True)
 
         result = []
         for epic_id in epics:
@@ -815,18 +815,18 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
             issue_ids = get_all_related_issues(epic_id)
 
             completed_issues = (
-                issues.filter(id__in=issue_ids, project_id=project_id, workspace__slug=slug)
+                issues.filter(id__in=issue_ids)
                 .filter(state__group="completed")
                 .count()
             )
 
             cancelled_issues = (
-                issues.filter(id__in=issue_ids, project_id=project_id, workspace__slug=slug)
+                issues.filter(id__in=issue_ids)
                 .filter(state__group="cancelled")
                 .count()
             )
 
-            total_issues = issues.filter(id__in=issue_ids, project_id=project_id, workspace__slug=slug).count()
+            total_issues = issues.filter(id__in=issue_ids).count()
 
             result.append(
                 {

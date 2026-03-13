@@ -11,6 +11,7 @@
 
 # Python imports
 import json
+from typing import Any
 
 # Django imports
 from django.utils import timezone
@@ -125,6 +126,7 @@ class EpicIssuesEndpoint(BaseAPIView):
             "id",
             "name",
             "state_id",
+            "state__group",
             "sort_order",
             "completed_at",
             "estimate_point",
@@ -180,20 +182,20 @@ class EpicIssuesEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id, epic_id):
         parent_issue = Issue.objects.get(pk=epic_id)
-        issue_ids = request.data.get("sub_issue_ids", [])
+        sub_work_item_ids = request.data.get("sub_issue_ids", [])
 
-        if not len(issue_ids):
-            return Response({"error": "Issue IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
+        if not len(sub_work_item_ids):
+            return Response({"error": "Sub Work Item IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        issue_ids = Issue.issue_objects.filter(id__in=issue_ids)
+        work_items = Issue.issue_objects.filter(id__in=sub_work_item_ids, workspace__slug=slug)
 
-        for issue in issue_ids:
-            issue.parent = parent_issue
+        for work_item in work_items:
+            work_item.parent = parent_issue
 
-        _ = Issue.objects.bulk_update(issue_ids, ["parent"], batch_size=10)
+        _ = Issue.objects.bulk_update(work_items, ["parent"], batch_size=10)
 
-        updated_issue_ids = (
-            Issue.issue_objects.filter(id__in=issue_ids)
+        updated_work_items = (
+            Issue.issue_objects.filter(id__in=work_items)
             .annotate(state_group=F("state__group"))
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
@@ -209,23 +211,30 @@ class EpicIssuesEndpoint(BaseAPIView):
                 type="issue.activity.updated",
                 requested_data=json.dumps({"parent_id": str(epic_id)}),
                 actor_id=str(request.user.id),
-                issue_id=str(issue.id),
+                issue_id=str(work_item.id),
                 project_id=str(project_id),
-                current_instance=json.dumps({"parent_id": str(issue.id)}),
+                current_instance=json.dumps({"parent_id": str(work_item.id)}),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            for issue in issue_ids
+            for work_item in work_items
         ]
 
         # create's a dict with state group name with their respective issue id's
-        result = defaultdict(list)
-        for sub_issue in updated_issue_ids:
-            result[sub_issue.state_group].append(str(sub_issue.id))
+        result = defaultdict[Any, list](list)
+        for work_item in updated_work_items:
+            result[work_item.state_group].append(str(work_item.id))
 
-        serializer = IssueSerializer(updated_issue_ids, many=True)
+        # build reverse map: issue_id -> state_group for annotating serialized data
+        work_item_state_group_map = {work_item_id: group for group, ids in result.items() for work_item_id in ids}
+
+        serializer = IssueSerializer(updated_work_items, many=True)
+        sub_work_item_data = serializer.data
+        for data in sub_work_item_data:
+            data["state__group"] = work_item_state_group_map.get(str(data["id"]))
+
         return Response(
-            {"sub_issues": serializer.data, "state_distribution": result},
+            {"sub_issues": sub_work_item_data, "state_distribution": result},
             status=status.HTTP_200_OK,
         )

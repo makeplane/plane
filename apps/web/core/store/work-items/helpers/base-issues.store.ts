@@ -1304,8 +1304,13 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
         //if update is delete, remove it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.DELETE) {
-          // remove issue Id from the path
-          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) => pull(issueIds, issueId));
+          // Only remove and accumulate count if the issue actually exists at this path.
+          // Without this guard, deleting an issue not in the current layout (e.g., a
+          // cross-project sub-work-item) creates phantom empty groups in groupedIssueIds
+          // and corrupts groupedIssueCount with a -1 value.
+          const existingIssueIds: string[] | undefined = get(this, ["groupedIssueIds", ...issueUpdate.path]);
+          if (!existingIssueIds?.includes(issueId)) continue;
+          update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[]) => pull(issueIds, issueId));
         }
 
         // accumulate the updates so that we don't end up updating the count twice for the same issue

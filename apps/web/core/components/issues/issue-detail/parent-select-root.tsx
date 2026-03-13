@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -66,7 +65,11 @@ export const IssueParentSelectRoot = observer(function IssueParentSelectRoot(pro
 
       await issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: _issueId });
       await issueOperations.fetch(workspaceSlug, projectId, issueId, false);
-      if (_issueId) await fetchSubIssues(workspaceSlug, projectId, _issueId);
+      if (_issueId) {
+        const newParentDetails = getIssueById(_issueId);
+        const newParentProjectId = newParentDetails?.project_id;
+        if (newParentProjectId) await fetchSubIssues(workspaceSlug, newParentProjectId, _issueId);
+      }
       toggleParentIssueModal(null);
     } catch {
       console.error("something went wrong while fetching the issue");
@@ -81,13 +84,14 @@ export const IssueParentSelectRoot = observer(function IssueParentSelectRoot(pro
   ) => {
     try {
       const parentDetails = parentIssueId ? getIssueById(parentIssueId) : undefined;
+      const parentProjectId = parentDetails?.project_id;
       const isParentEpic = getIssueTypeById(parentDetails?.type_id || "")?.is_epic;
       setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
 
       if (isParentEpic) await epicSubIssueOperations.removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
       else await subIssueOperations.removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
 
-      await fetchSubIssues(workspaceSlug, projectId, parentIssueId);
+      if (parentProjectId) await fetchSubIssues(workspaceSlug, parentProjectId, parentIssueId);
       setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
     } catch {
       setToast({

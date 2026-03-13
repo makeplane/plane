@@ -29,7 +29,6 @@ import { EIssueServiceType } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useMember } from "@/hooks/store/use-member";
-import { useProjectState } from "@/hooks/store/use-project-state";
 import { SubIssueDisplayFilters } from "./display-filters";
 import { SubIssueFilters } from "./filters/root";
 import { SubIssuesActionButton } from "./quick-action-button";
@@ -50,14 +49,12 @@ export const SubWorkItemTitleActions = observer(function SubWorkItemTitleActions
       filters: { getSubIssueFilters, updateSubWorkItemFilters },
     },
   } = useIssueDetail(issueServiceType);
-  const { getProjectStates } = useProjectState();
   const {
     project: { getProjectMemberIds },
   } = useMember();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
 
   // derived values
-  const projectStates = getProjectStates(projectId);
   const projectMemberIds = getProjectMemberIds(projectId, false);
   const subIssueFilters = getSubIssueFilters(parentId);
   const layoutDisplayFiltersOptions = useMemo(() => {
@@ -124,7 +121,6 @@ export const SubWorkItemTitleActions = observer(function SubWorkItemTitleActions
         handleFiltersUpdate={handleFiltersUpdate}
         filters={subIssueFilters?.filters ?? {}}
         memberIds={projectMemberIds ?? undefined}
-        states={projectStates}
         availableFilters={SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE}
       />
       {!disabled && (

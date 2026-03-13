@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import type { TNameDescriptionLoader } from "@plane/types";
+import type { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType, EIssueServiceType } from "@plane/types";
 import { getTextContent } from "@plane/utils";
 // components
@@ -53,10 +53,25 @@ type Props = {
   issueOperations: TIssueOperations;
   isEditable: boolean;
   isArchived: boolean;
+  permissions: {
+    sub_work_items: {
+      getCanView: (projectId: string, workItemId: string) => boolean;
+      getCanEdit: (projectId: string, workItemId: string) => boolean;
+      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanDelete: (projectId: string, workItemId: string) => boolean;
+      getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
+      getCanRemove: (
+        parentWorkItemProjectId: string,
+        parentWorkItemId: string,
+        projectId: string,
+        workItemId: string
+      ) => boolean;
+    };
+  };
 };
 
 export const IssueMainContent = observer(function IssueMainContent(props: Props) {
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived, permissions } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // states
@@ -201,6 +216,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
         disabled={!isEditable || isArchived}
         renderWidgetModals={!isPeekModeActive}
         issueServiceType={EIssueServiceType.ISSUES}
+        permissions={permissions}
       />
 
       {windowSize[0] < 768 && (

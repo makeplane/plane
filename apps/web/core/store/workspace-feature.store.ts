@@ -21,13 +21,8 @@ import workspaceFeatureService from "@/services/workspace-feature.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import type {
-  TWorkspaceFeatures,
-  TWorkspaceFeature,
-  EWorkspaceFeatures,
-  TWorkspaceFeatureLoader,
-} from "@/types/workspace-feature";
-import { EWorkspaceFeatureLoader } from "@/types/workspace-feature";
+import type { TWorkspaceFeatures, TWorkspaceFeature, TWorkspaceFeatureLoader } from "@/types/workspace-feature";
+import { EWorkspaceFeatures, EWorkspaceFeatureLoader } from "@/types/workspace-feature";
 
 export interface IWorkspaceFeatureStore {
   // observables
@@ -76,6 +71,9 @@ export class WorkspaceFeatureStore implements IWorkspaceFeatureStore {
    * @returns { TWorkspaceFeatures | undefined }
    */
   isWorkspaceFeatureEnabled = computedFn((feature: EWorkspaceFeatures) => {
+    // TODO: remove this once backend feature flag is added
+    if (feature === EWorkspaceFeatures.IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED) return true;
+
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug) return false;
 

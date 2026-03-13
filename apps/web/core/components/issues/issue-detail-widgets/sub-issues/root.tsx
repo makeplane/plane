@@ -11,11 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import type { TIssueServiceType } from "@plane/types";
+import type { TIssue, TIssueServiceType } from "@plane/types";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -27,12 +26,24 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  disabled?: boolean;
+  permissions: {
+    getCanView: (projectId: string, workItemId: string) => boolean;
+    getCanEdit: (projectId: string, workItemId: string) => boolean;
+    getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+    getCanDelete: (projectId: string, workItemId: string) => boolean;
+    getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
+    getCanRemove: (
+      parentWorkItemProjectId: string,
+      parentWorkItemId: string,
+      projectId: string,
+      workItemId: string
+    ) => boolean;
+  };
   issueServiceType: TIssueServiceType;
 };
 
 export const SubIssuesCollapsible = observer(function SubIssuesCollapsible(props: Props) {
-  const { workspaceSlug, projectId, issueId, disabled = false, issueServiceType } = props;
+  const { workspaceSlug, projectId, issueId, permissions, issueServiceType } = props;
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);
   // derived values
@@ -51,9 +62,8 @@ export const SubIssuesCollapsible = observer(function SubIssuesCollapsible(props
         <SubIssuesCollapsibleTitle
           isOpen={isCollapsibleOpen}
           parentIssueId={issueId}
-          disabled={disabled}
+          canAdd={permissions.getCanAdd(projectId, issueId)}
           projectId={projectId}
-          workspaceSlug={workspaceSlug}
         />
       </CollapsibleTrigger>
       <CollapsibleContent>
@@ -61,7 +71,7 @@ export const SubIssuesCollapsible = observer(function SubIssuesCollapsible(props
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           parentIssueId={issueId}
-          disabled={disabled}
+          permissions={permissions}
           issueServiceType={issueServiceType}
         />
       </CollapsibleContent>

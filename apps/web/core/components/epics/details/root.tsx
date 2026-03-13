@@ -17,6 +17,7 @@ import useSWR from "swr";
 import { EUserPermissionsLevel } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
@@ -46,6 +47,37 @@ export const EpicDetailRoot = observer(function EpicDetailRoot(props: TIssueDeta
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
   const { allowPermissions } = useUserPermissions();
+  // derived values
+  const hasPermissionForSubWorkItems = (workspaceSlug: string, projectId: string) => {
+    return (
+      !isArchived &&
+      allowPermissions(
+        [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+        EUserPermissionsLevel.PROJECT,
+        workspaceSlug,
+        projectId
+      )
+    );
+  };
+  const permissions = {
+    sub_work_items: {
+      getCanView: (projectId: string, _workItemId: string) => hasPermissionForSubWorkItems(workspaceSlug, projectId),
+      getCanEdit: (projectId: string, _workItemId: string) => hasPermissionForSubWorkItems(workspaceSlug, projectId),
+      getCanEditProperty: (projectId: string, _workItemId: string, _property: keyof TIssue) =>
+        hasPermissionForSubWorkItems(workspaceSlug, projectId),
+      getCanDelete: (projectId: string, _workItemId: string) => hasPermissionForSubWorkItems(workspaceSlug, projectId),
+      getCanAdd: (parentWorkItemProjectId: string, _parentWorkItemId: string) =>
+        hasPermissionForSubWorkItems(workspaceSlug, parentWorkItemProjectId),
+      getCanRemove: (
+        parentWorkItemProjectId: string,
+        _parentWorkItemId: string,
+        projectId: string,
+        _workItemId: string
+      ) =>
+        hasPermissionForSubWorkItems(workspaceSlug, parentWorkItemProjectId) &&
+        hasPermissionForSubWorkItems(workspaceSlug, projectId),
+    },
+  };
 
   useSWR(
     workspaceSlug && projectId && epicId ? `EPIC_ANALYTICS_${workspaceSlug}_${projectId}_${epicId}` : null,
@@ -79,6 +111,7 @@ export const EpicDetailRoot = observer(function EpicDetailRoot(props: TIssueDeta
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           epicId={epicId}
+          permissions={permissions}
           disabled={!isEditable || isArchived}
         />
 

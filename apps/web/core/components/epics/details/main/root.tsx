@@ -15,6 +15,7 @@ import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // components
 import { IssueDetailWidgets } from "@/components/issues/issue-detail-widgets/root";
 // hooks
@@ -31,11 +32,26 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   epicId: string;
+  permissions: {
+    sub_work_items: {
+      getCanView: (projectId: string, workItemId: string) => boolean;
+      getCanEdit: (projectId: string, workItemId: string) => boolean;
+      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanDelete: (projectId: string, workItemId: string) => boolean;
+      getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
+      getCanRemove: (
+        parentWorkItemProjectId: string,
+        parentWorkItemId: string,
+        projectId: string,
+        workItemId: string
+      ) => boolean;
+    };
+  };
   disabled?: boolean;
 };
 
 export const EpicMainContentRoot = observer(function EpicMainContentRoot(props: Props) {
-  const { editorRef, workspaceSlug, projectId, epicId, disabled = false } = props;
+  const { editorRef, workspaceSlug, projectId, epicId, permissions, disabled = false } = props;
   // store hooks
   const { epicDetailSidebarCollapsed } = useAppTheme();
 
@@ -57,9 +73,16 @@ export const EpicMainContentRoot = observer(function EpicMainContentRoot(props: 
           disabled={disabled}
           issueServiceType={EIssueServiceType.EPICS}
           hideWidgets={["sub-work-items", "relations"]}
+          permissions={permissions}
         />
       </div>
-      <EpicOverviewRoot workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} disabled={disabled} />
+      <EpicOverviewRoot
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        epicId={epicId}
+        permissions={permissions}
+        disabled={disabled}
+      />
     </MainWrapper>
   );
 });

@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import type { TNameDescriptionLoader } from "@plane/types";
+import type { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -47,6 +47,21 @@ interface IIssueView {
   embedIssue?: boolean;
   embedRemoveCurrentNotification?: () => void;
   issueOperations: TIssueOperations;
+  permissions: {
+    sub_work_items: {
+      getCanView: (projectId: string, workItemId: string) => boolean;
+      getCanEdit: (projectId: string, workItemId: string) => boolean;
+      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanDelete: (projectId: string, workItemId: string) => boolean;
+      getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
+      getCanRemove: (
+        parentWorkItemProjectId: string,
+        parentWorkItemId: string,
+        projectId: string,
+        workItemId: string
+      ) => boolean;
+    };
+  };
 }
 
 export const IssueView = observer(function IssueView(props: IIssueView) {
@@ -61,6 +76,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
     embedIssue = false,
     embedRemoveCurrentNotification,
     issueOperations,
+    permissions,
   } = props;
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
@@ -210,6 +226,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                         issueId={issueId}
                         disabled={disabled || is_archived}
                         issueServiceType={EIssueServiceType.ISSUES}
+                        permissions={permissions}
                       />
                     </div>
 
@@ -251,6 +268,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                             issueId={issueId}
                             disabled={disabled}
                             issueServiceType={EIssueServiceType.ISSUES}
+                            permissions={permissions}
                           />
                         </div>
 

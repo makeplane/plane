@@ -250,6 +250,39 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
     peekIssue?.workspaceSlug,
     peekIssue?.projectId
   );
+  const hasPermissionForSubWorkItems = (workspaceSlug: string, projectId: string) => {
+    return (
+      !peekIssue?.isArchived &&
+      allowPermissions(
+        [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        EUserPermissionsLevel.PROJECT,
+        workspaceSlug,
+        projectId
+      )
+    );
+  };
+  const permissions = {
+    sub_work_items: {
+      getCanView: (projectId: string, _workItemId: string) =>
+        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, projectId),
+      getCanEdit: (projectId: string, _workItemId: string) =>
+        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, projectId),
+      getCanEditProperty: (projectId: string, _workItemId: string, _property: keyof TIssue) =>
+        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, projectId),
+      getCanDelete: (projectId: string, _workItemId: string) =>
+        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, projectId),
+      getCanAdd: (parentWorkItemProjectId: string, _parentWorkItemId: string) =>
+        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, parentWorkItemProjectId),
+      getCanRemove: (
+        parentWorkItemProjectId: string,
+        _parentWorkItemId: string,
+        projectId: string,
+        _workItemId: string
+      ) =>
+        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, parentWorkItemProjectId) &&
+        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, projectId),
+    },
+  };
 
   return (
     <IssueView
@@ -263,6 +296,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
       embedIssue={embedIssue}
       embedRemoveCurrentNotification={embedRemoveCurrentNotification}
       issueOperations={issueOperations}
+      permissions={permissions}
     />
   );
 });

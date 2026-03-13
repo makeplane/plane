@@ -18,6 +18,8 @@ import type { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets 
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // helpers
 import { useLinkOperations } from "./links/helper";
 // local imports
@@ -61,6 +63,10 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
   // helper hooks
   const subIssueOperations = useSubIssueOperations(issueServiceType);
   const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, issueId, issueServiceType);
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const isCrossProjectSubWorkItemsEnabled = isWorkspaceFeatureEnabled(
+    EWorkspaceFeatures.IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED
+  );
   const issue = getIssueById(issueId);
 
   // handlers
@@ -180,7 +186,6 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
           data={createUpdateModalData}
           onClose={handleCreateUpdateModalClose}
           onSubmit={handleCreateUpdateModalOnSubmit}
-          isProjectSelectionDisabled
         />
       )}
 
@@ -192,6 +197,7 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
           handleClose={handleExistingIssuesModalClose}
           searchParams={existingIssuesModalSearchParams}
           handleOnSubmit={handleExistingIssuesModalOnSubmit}
+          workspaceLevelToggle={isCrossProjectSubWorkItemsEnabled}
         />
       )}
 

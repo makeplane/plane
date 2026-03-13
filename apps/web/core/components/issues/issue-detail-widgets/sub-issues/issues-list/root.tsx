@@ -31,7 +31,18 @@ type Props = {
   parentIssueId: string;
   rootIssueId: string;
   spacingLeft: number;
-  canEdit: boolean;
+  permissions: {
+    getCanView: (projectId: string, workItemId: string) => boolean;
+    getCanEdit: (projectId: string, workItemId: string) => boolean;
+    getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+    getCanDelete: (projectId: string, workItemId: string) => boolean;
+    getCanRemove: (
+      parentWorkItemProjectId: string,
+      parentWorkItemId: string,
+      projectId: string,
+      workItemId: string
+    ) => boolean;
+  };
   handleIssueCrudState: (
     key: "create" | "existing" | "update" | "delete",
     issueId: string,
@@ -48,7 +59,7 @@ export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Prop
     projectId,
     parentIssueId,
     rootIssueId,
-    canEdit,
+    permissions,
     handleIssueCrudState,
     subIssueOperations,
     issueServiceType = EIssueServiceType.ISSUES,
@@ -123,7 +134,7 @@ export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Prop
             workspaceSlug={workspaceSlug}
             group={group}
             serviceType={issueServiceType}
-            canEdit={canEdit}
+            permissions={permissions}
             parentIssueId={parentIssueId}
             rootIssueId={rootIssueId}
             handleIssueCrudState={handleIssueCrudState}

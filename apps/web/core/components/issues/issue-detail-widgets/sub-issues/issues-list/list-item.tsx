@@ -24,16 +24,14 @@ import { cn, generateWorkItemLink } from "@plane/utils";
 // helpers
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
-// local components
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
-// import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
+// local components
 import { SubIssuesListItemProperties } from "./properties";
 import { SubIssuesListRoot } from "./root";
 
@@ -43,7 +41,18 @@ type Props = {
   parentIssueId: string;
   rootIssueId: string;
   spacingLeft: number;
-  canEdit: boolean;
+  permissions: {
+    getCanView: (projectId: string, workItemId: string) => boolean;
+    getCanEdit: (projectId: string, workItemId: string) => boolean;
+    getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+    getCanDelete: (projectId: string, workItemId: string) => boolean;
+    getCanRemove: (
+      parentWorkItemProjectId: string,
+      parentWorkItemId: string,
+      projectId: string,
+      workItemId: string
+    ) => boolean;
+  };
   handleIssueCrudState: (
     key: "create" | "existing" | "update" | "delete",
     issueId: string,
@@ -63,7 +72,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
     rootIssueId,
     issueId,
     spacingLeft = 10,
-    canEdit,
+    permissions,
     handleIssueCrudState,
     subIssueOperations,
     issueServiceType = EIssueServiceType.ISSUES,
@@ -98,14 +107,25 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
   const subIssueFilters = getSubIssueFilters(parentIssueId);
   const displayProperties = subIssueFilters?.displayProperties ?? {};
 
-  //
-  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
+  if (!issue || !issue.project_id) return <></>;
 
-  if (!issue) return <></>;
+  const handleIssuePeekOverview = (issue: TIssue) => {
+    if (canView) {
+      handleRedirection(workspaceSlug, issue, isMobile);
+    }
+  };
 
   // check if current issue is the root issue
   const isCurrentIssueRoot = issueId === rootIssueId;
 
+  // permissions
+  const canView = permissions.getCanView(issue.project_id, issueId);
+  const canEditProperty = permissions.getCanEditProperty.bind(permissions, issue.project_id, issueId);
+  const canEdit = permissions.getCanEdit(issue.project_id, issueId);
+  const canDelete = permissions.getCanDelete(issue.project_id, issueId);
+  const canRemove = permissions.getCanRemove(projectId, parentIssueId, issue.project_id, issueId);
+
+  // generate work item link
   const workItemLink = generateWorkItemLink({
     workspaceSlug,
     projectId: issue?.project_id,
@@ -121,10 +141,16 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
         href={workItemLink}
         onClick={() => handleIssuePeekOverview(issue)}
         className="w-full cursor-pointer"
+        disabled={!canView}
       >
         {issue && (
           <div
-            className="group relative flex min-h-11 h-full w-full items-center pr-2 py-1 transition-all hover:bg-surface-2"
+            className={cn(
+              "group relative flex min-h-11 h-full w-full items-center pr-2 py-1 transition-all hover:bg-surface-2",
+              {
+                "hover:cursor-not-allowed": !canView,
+              }
+            )}
             style={{ paddingLeft: `${spacingLeft}px` }}
           >
             <div className="flex size-5 items-center justify-center flex-shrink-0">
@@ -137,7 +163,12 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     </div>
                   ) : (
                     <div
-                      className="flex h-full w-full cursor-pointer items-center justify-center text-placeholder hover:text-tertiary"
+                      className={cn(
+                        "flex h-full w-full cursor-pointer items-center justify-center text-placeholder hover:text-tertiary",
+                        {
+                          "cursor-not-allowed": !canView,
+                        }
+                      )}
                       onClick={async (e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -161,7 +192,11 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
               )}
             </div>
 
-            <div className="flex w-full truncate cursor-pointer items-center gap-3">
+            <div
+              className={cn("flex w-full truncate cursor-pointer items-center gap-3", {
+                "cursor-not-allowed": !canView,
+              })}
+            >
               <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
                 <div className="flex-shrink-0">
                   {projectDetail && (
@@ -192,7 +227,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                 workspaceSlug={workspaceSlug}
                 parentIssueId={parentIssueId}
                 issueId={issueId}
-                canEdit={canEdit}
+                canEditProperty={canEditProperty}
                 updateSubIssue={subIssueOperations.updateSubIssue}
                 displayProperties={displayProperties}
                 issue={issue}
@@ -226,7 +261,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                   </div>
                 </CustomMenu.MenuItem>
 
-                {canEdit && (
+                {canRemove && (
                   <CustomMenu.MenuItem
                     onClick={async () => {
                       if (issue.project_id)
@@ -246,7 +281,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                   </CustomMenu.MenuItem>
                 )}
 
-                {canEdit && (
+                {canDelete && (
                   <CustomMenu.MenuItem
                     onClick={() => {
                       handleIssueCrudState("delete", parentIssueId, issue);
@@ -277,7 +312,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
             parentIssueId={issue.id}
             rootIssueId={rootIssueId}
             spacingLeft={spacingLeft + 22}
-            canEdit={canEdit}
+            permissions={permissions}
             handleIssueCrudState={handleIssueCrudState}
             subIssueOperations={subIssueOperations}
           />

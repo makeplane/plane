@@ -23,7 +23,9 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
-import { useIssueTypes, useEpicAnalytics } from "@/plane-web/hooks/store";
+import { useIssueTypes, useEpicAnalytics, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+// types
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 
 type Props = {
   workspaceSlug: string;
@@ -50,9 +52,14 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
     createSubIssues: createEpicSubIssues,
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { createSubIssues } = useIssueDetail();
   const { getIssueTypeById } = useIssueTypes();
   const { fetchEpicAnalytics } = useEpicAnalytics();
+  // derived values
+  const isCrossProjectSubWorkItemsEnabled = isWorkspaceFeatureEnabled(
+    EWorkspaceFeatures.IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED
+  );
 
   const handleAddSubIssueResponse = (successMessage: string) => {
     setToast({
@@ -201,7 +208,6 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
           data={createUpdateModalData}
           onClose={handleCreateUpdateModalClose}
           onSubmit={handleCreateUpdateModalOnSubmit}
-          isProjectSelectionDisabled
           storeType={EIssuesStoreType.PROJECT}
         />
       )}
@@ -214,6 +220,7 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
           handleClose={handleExistingIssuesModalClose}
           searchParams={existingIssuesModalSearchParams}
           handleOnSubmit={handleExistingIssuesModalOnSubmit}
+          workspaceLevelToggle={isCrossProjectSubWorkItemsEnabled}
         />
       )}
 

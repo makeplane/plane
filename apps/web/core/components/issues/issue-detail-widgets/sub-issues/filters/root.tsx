@@ -17,7 +17,7 @@ import { ListFilter } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
-import type { IIssueFilterOptions, IState } from "@plane/types";
+import type { IIssueFilterOptions } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters/header/helpers/dropdown";
@@ -25,7 +25,6 @@ import { isFiltersApplied } from "@/helpers/work-item-layout";
 // local imports
 import { FilterPriority } from "./priority";
 import { FilterStateGroup } from "./state-group";
-import { FilterState } from "./state";
 import { FilterProjects } from "./project";
 import { FilterIssueTypes } from "./issue-types";
 import { FilterAssignees } from "./assignee";
@@ -36,12 +35,11 @@ type TSubIssueFiltersProps = {
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   filters: IIssueFilterOptions;
   memberIds: string[] | undefined;
-  states?: IState[];
   availableFilters: (keyof IIssueFilterOptions)[];
 };
 
 export const SubIssueFilters = observer(function SubIssueFilters(props: TSubIssueFiltersProps) {
-  const { handleFiltersUpdate, filters, memberIds, states, availableFilters } = props;
+  const { handleFiltersUpdate, filters, memberIds, availableFilters } = props;
   // plane hooks
   const { t } = useTranslation();
   // states
@@ -104,18 +102,6 @@ export const SubIssueFilters = observer(function SubIssueFilters(props: TSubIssu
                   appliedFilters={filters.state_group ?? null}
                   handleUpdate={(val) => handleFiltersUpdate("state_group", val)}
                   searchQuery={filtersSearchQuery}
-                />
-              </div>
-            )}
-
-            {/* State */}
-            {isFilterEnabled("state") && (
-              <div className="py-2">
-                <FilterState
-                  appliedFilters={filters.state ?? null}
-                  handleUpdate={(val) => handleFiltersUpdate("state", val)}
-                  searchQuery={filtersSearchQuery}
-                  states={states}
                 />
               </div>
             )}

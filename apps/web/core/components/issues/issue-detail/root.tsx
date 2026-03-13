@@ -109,6 +109,36 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
     workspaceSlug,
     projectId
   );
+  const hasPermissionForSubWorkItems = (workspaceSlug: string, projectId: string) => {
+    return (
+      !is_archived &&
+      allowPermissions(
+        [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        EUserPermissionsLevel.PROJECT,
+        workspaceSlug,
+        projectId
+      )
+    );
+  };
+  const permissions = {
+    sub_work_items: {
+      getCanView: (projectId: string, _workItemId: string) => hasPermissionForSubWorkItems(workspaceSlug, projectId),
+      getCanEdit: (projectId: string, _workItemId: string) => hasPermissionForSubWorkItems(workspaceSlug, projectId),
+      getCanEditProperty: (projectId: string, _workItemId: string, _property: keyof TIssue) =>
+        hasPermissionForSubWorkItems(workspaceSlug, projectId),
+      getCanDelete: (projectId: string, _workItemId: string) => hasPermissionForSubWorkItems(workspaceSlug, projectId),
+      getCanAdd: (parentWorkItemProjectId: string, _parentWorkItemId: string) =>
+        hasPermissionForSubWorkItems(workspaceSlug, parentWorkItemProjectId),
+      getCanRemove: (
+        parentWorkItemProjectId: string,
+        _parentWorkItemId: string,
+        projectId: string,
+        _workItemId: string
+      ) =>
+        hasPermissionForSubWorkItems(workspaceSlug, parentWorkItemProjectId) &&
+        hasPermissionForSubWorkItems(workspaceSlug, projectId),
+    },
+  };
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -277,6 +307,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
               issueOperations={issueOperations}
               isEditable={isEditable}
               isArchived={is_archived}
+              permissions={permissions}
             />
           </div>
           <div

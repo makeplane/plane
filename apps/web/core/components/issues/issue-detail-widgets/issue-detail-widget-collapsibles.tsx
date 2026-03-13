@@ -14,7 +14,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+import type { TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // components
 import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
 // hooks
@@ -36,10 +36,25 @@ type Props = {
   disabled: boolean;
   issueServiceType: TIssueServiceType;
   hideWidgets?: TWorkItemWidgets[];
+  permissions: {
+    sub_work_items: {
+      getCanView: (projectId: string, workItemId: string) => boolean;
+      getCanEdit: (projectId: string, workItemId: string) => boolean;
+      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanDelete: (projectId: string, workItemId: string) => boolean;
+      getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
+      getCanRemove: (
+        parentWorkItemProjectId: string,
+        parentWorkItemId: string,
+        projectId: string,
+        workItemId: string
+      ) => boolean;
+    };
+  };
 };
 
 export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidgetCollapsibles(props: Props) {
-  const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
+  const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets, permissions } = props;
   // store hooks
   const {
     issue: { getIssueById },
@@ -72,7 +87,7 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
-          disabled={disabled}
+          permissions={permissions.sub_work_items}
           issueServiceType={issueServiceType}
         />
       )}

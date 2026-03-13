@@ -36,7 +36,7 @@ type Props = {
   workspaceSlug: string;
   parentIssueId: string;
   issueId: string;
-  canEdit: boolean;
+  canEditProperty: (property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
   updateSubIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -50,7 +50,7 @@ type Props = {
 };
 
 export const SubIssuesListItemProperties = observer(function SubIssuesListItemProperties(props: Props) {
-  const { workspaceSlug, parentIssueId, issueId, canEdit, updateSubIssue, displayProperties, issue } = props;
+  const { workspaceSlug, parentIssueId, issueId, canEditProperty, updateSubIssue, displayProperties, issue } = props;
   const { t } = useTranslation();
   const { getStateById } = useProjectState();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
@@ -122,7 +122,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
                 { ...issue }
               )
             }
-            disabled={!canEdit}
+            disabled={!canEditProperty("state_id")}
             buttonVariant="transparent-without-text"
             buttonClassName="hover:bg-transparent px-0"
             iconSize="size-5"
@@ -142,7 +142,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
                 priority: val,
               })
             }
-            disabled={!canEdit}
+            disabled={!canEditProperty("priority")}
             buttonVariant="border-without-text"
             showTooltip
           />
@@ -172,7 +172,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlight ? "text-danger-primary" : ""}
-            disabled={!canEdit}
+            disabled={!canEditProperty("start_date") || !canEditProperty("target_date")}
             showTooltip
             customTooltipHeading="Date Range"
             renderPlaceholder={false}
@@ -197,7 +197,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-30"
-            disabled={!canEdit}
+            disabled={!canEditProperty("start_date")}
             showTooltip
           />
         </div>
@@ -221,7 +221,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             buttonClassName={shouldHighlight ? "text-danger-primary" : ""}
             clearIconClassName="text-primary"
             optionsClassName="z-30"
-            disabled={!canEdit}
+            disabled={!canEditProperty("target_date")}
             showTooltip
           />
         </div>
@@ -239,7 +239,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
                 assignee_ids: val,
               })
             }
-            disabled={!canEdit}
+            disabled={!canEditProperty("assignee_ids")}
             multiple
             buttonVariant={(issue?.assignee_ids || []).length > 0 ? "transparent-without-text" : "border-without-text"}
             buttonClassName={(issue?.assignee_ids || []).length > 0 ? "hover:bg-transparent px-0" : ""}
@@ -260,7 +260,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
                 })
               }
               projectId={issue.project_id}
-              disabled={!canEdit}
+              disabled={!canEditProperty("estimate_point")}
               buttonVariant="border-with-text"
               showTooltip
             />

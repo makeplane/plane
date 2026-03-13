@@ -219,11 +219,11 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("State is not valid please pass a valid state_id")
 
-        # Check parent issue is from workspace as it can be cross workspace
+        # Check parent issue is from the same workspace (cross-project sub-issues are allowed)
         if (
             attrs.get("parent")
             and not Issue.objects.filter(
-                project_id=self.context.get("project_id"),
+                workspace__slug=self.context.get("slug"),
                 pk=attrs.get("parent").id,
             ).exists()
         ):

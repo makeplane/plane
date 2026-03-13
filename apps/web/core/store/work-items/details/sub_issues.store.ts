@@ -271,64 +271,87 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     return;
   };
 
-  removeSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => {
-    await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, {
-      parent_id: null,
-    });
+  removeSubIssue = async (
+    workspaceSlug: string,
+    _currentProjectId: string,
+    parentWorkItemId: string,
+    subWorkItemId: string
+  ) => {
+    const subWorkItem = this.rootIssueDetailStore.issue.getIssueById(subWorkItemId);
+    const subWorkItemProjectId = subWorkItem?.project_id;
+    if (!subWorkItemProjectId) return;
 
-    const issue = this.rootIssueDetailStore.issue.getIssueById(issueId);
-    if (issue && issue.state_id) {
+    await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(
+      workspaceSlug,
+      subWorkItemProjectId,
+      subWorkItemId,
+      {
+        parent_id: null,
+      }
+    );
+    if (subWorkItem && subWorkItem.state_id) {
       let issueStateGroup: string | undefined = undefined;
-      const state = this.rootIssueDetailStore.rootIssueStore.rootStore.state.getStateById(issue.state_id);
+      const state = this.rootIssueDetailStore.rootIssueStore.rootStore.state.getStateById(subWorkItem.state_id);
       if (state?.group) issueStateGroup = state.group;
 
       if (issueStateGroup) {
         runInAction(() => {
           if (issueStateGroup)
-            update(this.subIssuesStateDistribution, [parentIssueId, issueStateGroup], (stateDistribution) => {
+            update(this.subIssuesStateDistribution, [parentWorkItemId, issueStateGroup], (stateDistribution) => {
               if (!stateDistribution) return;
-              return pull(stateDistribution, issueId);
+              return pull(stateDistribution, subWorkItemId);
             });
         });
       }
     }
 
     runInAction(() => {
-      pull(this.subIssues[parentIssueId], issueId);
+      pull(this.subIssues[parentWorkItemId], subWorkItemId);
       // update sub-issues_count of the parent issue
-      this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(parentIssueId, {
-        sub_issues_count: this.subIssues[parentIssueId]?.length,
+      this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(parentWorkItemId, {
+        sub_issues_count: this.subIssues[parentWorkItemId]?.length,
       });
     });
 
     return;
   };
 
-  deleteSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) => {
-    await this.rootIssueDetailStore.rootIssueStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+  deleteSubIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    parentWorkItemId: string,
+    subWorkItemId: string
+  ) => {
+    const subWorkItem = this.rootIssueDetailStore.issue.getIssueById(subWorkItemId);
+    const subWorkItemProjectId = subWorkItem?.project_id;
+    if (!subWorkItemProjectId) return;
 
-    const issue = this.rootIssueDetailStore.issue.getIssueById(issueId);
-    if (issue && issue.state_id) {
+    await this.rootIssueDetailStore.rootIssueStore.projectIssues.removeIssue(
+      workspaceSlug,
+      subWorkItemProjectId,
+      subWorkItemId
+    );
+    if (subWorkItem && subWorkItem.state_id) {
       let issueStateGroup: string | undefined = undefined;
-      const state = this.rootIssueDetailStore.rootIssueStore.rootStore.state.getStateById(issue.state_id);
+      const state = this.rootIssueDetailStore.rootIssueStore.rootStore.state.getStateById(subWorkItem.state_id);
       if (state?.group) issueStateGroup = state.group;
 
       if (issueStateGroup) {
         runInAction(() => {
           if (issueStateGroup)
-            update(this.subIssuesStateDistribution, [parentIssueId, issueStateGroup], (stateDistribution) => {
+            update(this.subIssuesStateDistribution, [parentWorkItemId, issueStateGroup], (stateDistribution) => {
               if (!stateDistribution) return;
-              return pull(stateDistribution, issueId);
+              return pull(stateDistribution, subWorkItemId);
             });
         });
       }
     }
 
     runInAction(() => {
-      pull(this.subIssues[parentIssueId], issueId);
+      pull(this.subIssues[parentWorkItemId], subWorkItemId);
       // update sub-issues_count of the parent issue
-      this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(parentIssueId, {
-        sub_issues_count: this.subIssues[parentIssueId]?.length,
+      this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(parentWorkItemId, {
+        sub_issues_count: this.subIssues[parentWorkItemId]?.length,
       });
     });
 

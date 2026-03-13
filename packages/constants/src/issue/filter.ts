@@ -599,7 +599,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         display_properties: SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
           order_by: ["-created_at", "-updated_at", "start_date", "-priority"],
-          group_by: ["state", "priority", "assignees", null],
+          group_by: ["state_detail.group", "priority", "assignees", null],
         },
         extra_options: {
           access: true,
@@ -634,7 +634,7 @@ export const ISSUE_STORE_TO_FILTERS_MAP: Partial<Record<EIssuesStoreType, TFilte
 
 export const SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE: (keyof IIssueFilterOptions)[] = [
   "priority",
-  "state",
+  "state_group",
   "issue_type",
   "assignees",
   "start_date",

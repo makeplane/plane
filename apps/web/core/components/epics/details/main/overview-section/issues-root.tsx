@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import React, { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -36,13 +35,24 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   epicId: string;
-  disabled?: boolean;
+  permissions: {
+    getCanView: (projectId: string, workItemId: string) => boolean;
+    getCanEdit: (projectId: string, workItemId: string) => boolean;
+    getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+    getCanDelete: (projectId: string, workItemId: string) => boolean;
+    getCanRemove: (
+      parentWorkItemProjectId: string,
+      parentWorkItemId: string,
+      projectId: string,
+      workItemId: string
+    ) => boolean;
+  };
 };
 
 type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; issue: TIssue | undefined };
 
 export const EpicIssuesOverviewRoot = observer(function EpicIssuesOverviewRoot(props: Props) {
-  const { workspaceSlug, projectId, epicId, disabled = false } = props;
+  const { workspaceSlug, projectId, epicId, permissions } = props;
   // state
   const [issueCrudState, setIssueCrudState] = useState<{
     create: TIssueCrudState;
@@ -192,7 +202,7 @@ export const EpicIssuesOverviewRoot = observer(function EpicIssuesOverviewRoot(p
         parentIssueId={epicId}
         rootIssueId={epicId}
         spacingLeft={6}
-        canEdit={!disabled}
+        permissions={permissions}
         handleIssueCrudState={handleIssueCrudState}
         subIssueOperations={epicSubIssuesOperation}
         issueServiceType={EIssueServiceType.EPICS}

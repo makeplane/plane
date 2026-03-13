@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -26,21 +25,13 @@ import { SubWorkItemTitleActions } from "./title-actions";
 type Props = {
   isOpen: boolean;
   parentIssueId: string;
-  disabled: boolean;
+  canAdd: boolean;
   issueServiceType?: TIssueServiceType;
   projectId: string;
-  workspaceSlug: string;
 };
 
 export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleTitle(props: Props) {
-  const {
-    isOpen,
-    parentIssueId,
-    disabled,
-    issueServiceType = EIssueServiceType.ISSUES,
-    projectId,
-    workspaceSlug,
-  } = props;
+  const { isOpen, parentIssueId, canAdd, issueServiceType = EIssueServiceType.ISSUES, projectId } = props;
   // translation
   const { t } = useTranslation();
   // store hooks
@@ -74,7 +65,7 @@ export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleT
         <SubWorkItemTitleActions
           projectId={projectId}
           parentId={parentIssueId}
-          disabled={disabled}
+          disabled={!canAdd}
           issueServiceType={issueServiceType}
         />
       }

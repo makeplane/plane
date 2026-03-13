@@ -126,6 +126,7 @@ class SubIssuesEndpoint(BaseAPIView):
             "id",
             "name",
             "state_id",
+            "state__group",
             "sort_order",
             "completed_at",
             "estimate_point",
@@ -218,8 +219,15 @@ class SubIssuesEndpoint(BaseAPIView):
         for sub_issue in updated_sub_issues:
             result[sub_issue.state_group].append(str(sub_issue.id))
 
+        # build reverse map: issue_id -> state_group for annotating serialized data
+        work_item_state_group_map = {issue_id: group for group, ids in result.items() for issue_id in ids}
+
         serializer = IssueSerializer(updated_sub_issues, many=True)
+        sub_work_item_data = serializer.data
+        for issue_data in sub_work_item_data:
+            issue_data["state__group"] = work_item_state_group_map.get(str(issue_data["id"]))
+
         return Response(
-            {"sub_issues": serializer.data, "state_distribution": result},
+            {"sub_issues": sub_work_item_data, "state_distribution": result},
             status=status.HTTP_200_OK,
         )

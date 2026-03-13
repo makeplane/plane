@@ -28,14 +28,25 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   parentIssueId: string;
-  disabled: boolean;
+  permissions: {
+    getCanView: (projectId: string, workItemId: string) => boolean;
+    getCanEdit: (projectId: string, workItemId: string) => boolean;
+    getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+    getCanDelete: (projectId: string, workItemId: string) => boolean;
+    getCanRemove: (
+      parentWorkItemProjectId: string,
+      parentWorkItemId: string,
+      projectId: string,
+      workItemId: string
+    ) => boolean;
+  };
   issueServiceType?: TIssueServiceType;
 };
 
 type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; issue: TIssue | undefined };
 
 export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibleContent(props: Props) {
-  const { workspaceSlug, projectId, parentIssueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { workspaceSlug, projectId, parentIssueId, permissions, issueServiceType = EIssueServiceType.ISSUES } = props;
   // state
   const [issueCrudState, setIssueCrudState] = useState<{
     create: TIssueCrudState;
@@ -119,6 +130,10 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
 
   const shouldRenderUpdateIssueModal = issueCrudState?.update?.toggle && issueCrudState?.update?.issue;
 
+  const subWorkItemProjectId = issueCrudState?.delete?.issue?.project_id;
+  const parentWorkItemId = issueCrudState?.delete?.parentIssueId;
+  const subWorkItemId = issueCrudState?.delete?.issue?.id;
+
   return (
     <>
       {subIssueHelpers.issue_visibility.includes(parentIssueId) && (
@@ -129,7 +144,7 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
           parentIssueId={parentIssueId}
           rootIssueId={parentIssueId}
           spacingLeft={6}
-          canEdit={!disabled}
+          permissions={permissions}
           handleIssueCrudState={handleIssueCrudState}
           subIssueOperations={subIssueOperations}
           issueServiceType={issueServiceType}
@@ -144,14 +159,16 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
             toggleDeleteIssueModal(null);
           }}
           data={issueCrudState?.delete?.issue as TIssue}
-          onSubmit={async () =>
-            await subIssueOperations.deleteSubIssue(
-              workspaceSlug,
-              projectId,
-              issueCrudState?.delete?.parentIssueId as string,
-              issueCrudState?.delete?.issue?.id as string
-            )
-          }
+          onSubmit={async () => {
+            if (subWorkItemProjectId && parentWorkItemId && subWorkItemId) {
+              await subIssueOperations.deleteSubIssue(
+                workspaceSlug,
+                subWorkItemProjectId,
+                parentWorkItemId,
+                subWorkItemId
+              );
+            }
+          }}
           isSubIssue
         />
       )}
@@ -165,15 +182,17 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
           }}
           data={issueCrudState?.update?.issue ?? undefined}
           onSubmit={async (_issue: TIssue) => {
-            await subIssueOperations.updateSubIssue(
-              workspaceSlug,
-              projectId,
-              parentIssueId,
-              _issue.id,
-              _issue,
-              issueCrudState?.update?.issue,
-              true
-            );
+            if (subWorkItemProjectId) {
+              await subIssueOperations.updateSubIssue(
+                workspaceSlug,
+                subWorkItemProjectId,
+                parentIssueId,
+                _issue.id,
+                _issue,
+                issueCrudState?.update?.issue,
+                true
+              );
+            }
           }}
         />
       )}

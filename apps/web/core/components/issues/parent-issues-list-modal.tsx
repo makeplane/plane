@@ -29,7 +29,10 @@ import { IssueSearchModalEmptyState } from "@/components/core/modals/issue-searc
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
+// plane web hooks
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+// plane web types
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // services
 import { ProjectService } from "@/services/project";
 import { ParentIssuesListItem } from "./parent-issues-list-item";
@@ -70,6 +73,9 @@ export function ParentIssuesListModal({
 
   const { workspaceSlug } = useParams();
 
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const isCrossProjectEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED);
+
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
 
   const handleClose = () => {
@@ -88,7 +94,7 @@ export function ParentIssuesListModal({
         search: debouncedSearchTerm,
         parent: searchEpic ? undefined : true,
         issue_id: issueId,
-        workspace_search: false,
+        workspace_search: isCrossProjectEnabled,
         epic: searchEpic && !convertToWorkItem ? true : undefined,
         convert: convertToWorkItem ? true : undefined,
       })
@@ -131,7 +137,7 @@ export function ParentIssuesListModal({
                 {searchTerm}
                 {'"'}
               </span>{" "}
-              in project:
+              {isCrossProjectEnabled ? "in workspace:" : "in project:"}
             </h5>
           )}
 

@@ -11,10 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 // plane imports
-import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+import type { TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // local imports
 import { IssueDetailWidgetActionButtons } from "./action-buttons";
 import { IssueDetailWidgetCollapsibles } from "./issue-detail-widget-collapsibles";
@@ -28,6 +26,21 @@ type Props = {
   renderWidgetModals?: boolean;
   issueServiceType: TIssueServiceType;
   hideWidgets?: TWorkItemWidgets[];
+  permissions: {
+    sub_work_items: {
+      getCanView: (projectId: string, workItemId: string) => boolean;
+      getCanEdit: (projectId: string, workItemId: string) => boolean;
+      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanDelete: (projectId: string, workItemId: string) => boolean;
+      getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
+      getCanRemove: (
+        parentWorkItemProjectId: string,
+        parentWorkItemId: string,
+        projectId: string,
+        workItemId: string
+      ) => boolean;
+    };
+  };
 };
 
 export function IssueDetailWidgets(props: Props) {
@@ -39,6 +52,7 @@ export function IssueDetailWidgets(props: Props) {
     renderWidgetModals = true,
     issueServiceType,
     hideWidgets,
+    permissions,
   } = props;
 
   return (
@@ -59,6 +73,7 @@ export function IssueDetailWidgets(props: Props) {
           disabled={disabled}
           issueServiceType={issueServiceType}
           hideWidgets={hideWidgets}
+          permissions={permissions}
         />
       </div>
       {renderWidgetModals && (

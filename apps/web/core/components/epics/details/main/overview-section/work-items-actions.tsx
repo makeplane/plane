@@ -33,18 +33,17 @@ import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-is
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useMember } from "@/hooks/store/use-member";
-import { useProjectState } from "@/hooks/store/use-project-state";
 
 type TSubWorkItemsActionsProps = {
   workItemId: string;
   workItemServiceType: TIssueServiceType;
-  disabled?: boolean;
+  canAdd: boolean;
   projectId: string;
   workspaceSlug: string;
 };
 
 export const SubWorkItemsActions = observer(function SubWorkItemsActions(props: TSubWorkItemsActionsProps) {
-  const { workItemId, workItemServiceType, disabled, projectId, workspaceSlug } = props;
+  const { workItemId, workItemServiceType, canAdd, projectId, workspaceSlug } = props;
 
   // store hooks
   const {
@@ -53,7 +52,6 @@ export const SubWorkItemsActions = observer(function SubWorkItemsActions(props: 
     },
   } = useIssueDetail(workItemServiceType);
 
-  const { getProjectStates } = useProjectState();
   const {
     project: { getProjectMemberIds },
   } = useMember();
@@ -61,7 +59,6 @@ export const SubWorkItemsActions = observer(function SubWorkItemsActions(props: 
 
   // derived values
   const projectMemberIds = getProjectMemberIds(projectId, false);
-  const projectStates = getProjectStates(projectId);
   const subIssueFilters = getSubIssueFilters(workItemId);
   // handlers
   const handleDisplayFilters = useCallback(
@@ -126,10 +123,9 @@ export const SubWorkItemsActions = observer(function SubWorkItemsActions(props: 
         handleFiltersUpdate={handleFiltersUpdate}
         filters={subIssueFilters?.filters ?? {}}
         memberIds={projectMemberIds ?? undefined}
-        states={projectStates}
         availableFilters={SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE}
       />
-      <SubIssuesActionButton issueId={workItemId} issueServiceType={workItemServiceType} disabled={disabled} />
+      <SubIssuesActionButton issueId={workItemId} issueServiceType={workItemServiceType} disabled={!canAdd} />
     </div>
   );
 });

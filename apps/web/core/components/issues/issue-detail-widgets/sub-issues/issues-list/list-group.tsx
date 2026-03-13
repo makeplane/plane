@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { CircleDashed } from "lucide-react";
@@ -29,7 +28,18 @@ interface TSubIssuesListGroupProps {
   workspaceSlug: string;
   group: IGroupByColumn;
   serviceType: TIssueServiceType;
-  canEdit: boolean;
+  permissions: {
+    getCanView: (projectId: string, workItemId: string) => boolean;
+    getCanEdit: (projectId: string, workItemId: string) => boolean;
+    getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+    getCanDelete: (projectId: string, workItemId: string) => boolean;
+    getCanRemove: (
+      parentWorkItemProjectId: string,
+      parentWorkItemId: string,
+      projectId: string,
+      workItemId: string
+    ) => boolean;
+  };
   parentIssueId: string;
   rootIssueId: string;
   handleIssueCrudState: (
@@ -46,7 +56,7 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
   const {
     group,
     serviceType,
-    canEdit,
+    permissions,
     parentIssueId,
     rootIssueId,
     projectId,
@@ -93,7 +103,7 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
               parentIssueId={parentIssueId}
               rootIssueId={rootIssueId}
               issueId={workItemId}
-              canEdit={canEdit}
+              permissions={permissions}
               handleIssueCrudState={handleIssueCrudState}
               subIssueOperations={subIssueOperations}
               issueServiceType={serviceType}
