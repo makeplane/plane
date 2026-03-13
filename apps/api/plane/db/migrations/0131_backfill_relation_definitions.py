@@ -14,6 +14,7 @@ from collections import defaultdict
 
 from django.db import migrations, models
 import django.db.models.functions.comparison
+from django.utils import timezone
 
 from plane.db.models import DEFAULT_RELATION_DEFINITIONS
 
@@ -95,13 +96,17 @@ def backfill_category_and_relations(apps, schema_editor):
         deleted_at__isnull=True,
     ).update(category="dependency")
 
-    # if the dependency type is "blocks", then set the category to "dependency" and relation_type to "blocked_by"
-    IssueRelation.objects.filter(
+    print(f"  [backfill] dependency category set on {dep_count} rows in {time.time() - t_dep:.2f}s")
+
+    # if the dependency type is "blocks", then soft delete it as this is not visible in the UI anyway
+    t_blocks = time.time()
+    now = timezone.now()
+    blocks_count = IssueRelation.objects.filter(
         relation_type="blocks",
         deleted_at__isnull=True,
-    ).update(category="dependency", relation_type='blocked_by')
-    
-    print(f"  [backfill] dependency category set on {dep_count} rows in {time.time() - t_dep:.2f}s")
+    ).update(deleted_at=now)
+
+    print(f"  [backfill] 'blocks' type soft-deleted on {blocks_count} rows in {time.time() - t_blocks:.2f}s")
 
     # Build lookup: {workspace_id: {type_name: fk_id}}
     t_lookup = time.time()
