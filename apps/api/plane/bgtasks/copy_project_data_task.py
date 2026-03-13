@@ -1079,7 +1079,7 @@ class ProjectDataCopier:
             new_page = Page.objects.create(
                 workspace=self.target_workspace,
                 name=page.get("name", ""),
-                description=page.get("description", {}),
+                description_json=page.get("description_json", {}),
                 description_binary=page.get("description_binary"),
                 description_html=page.get("description_html", "<p></p>"),
                 description_stripped=page.get("description_stripped"),
