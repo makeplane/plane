@@ -260,19 +260,3 @@ class InstanceEndpoint(BaseAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class SignUpScreenVisitedEndpoint(BaseAPIView):
-    permission_classes = [AllowAny]
-
-    @invalidate_cache(path="/api/instances/", user=False)
-    def post(self, request):
-        instance = Instance.objects.first()
-        if instance is None:
-            return Response(
-                {"error": "Instance is not configured"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        instance.is_signup_screen_visited = True
-        instance.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)

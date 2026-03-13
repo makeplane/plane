@@ -22,7 +22,6 @@ from plane.license.api.views import (
     InstanceConfigurationEndpoint,
     DisableEmailFeatureEndpoint,
     InstanceEndpoint,
-    SignUpScreenVisitedEndpoint,
     InstanceAdminUserMeEndpoint,
     InstanceAdminSignOutEndpoint,
     InstanceAdminUserSessionEndpoint,
@@ -96,11 +95,6 @@ urlpatterns = [
         "admins/reset-password/",
         InstanceAdminPasswordResetEndpoint.as_view(),
         name="instance-admin-password-reset",
-    ),
-    path(
-        "admins/sign-up-screen-visited/",
-        SignUpScreenVisitedEndpoint.as_view(),
-        name="instance-sign-up",
     ),
     path(
         "email-credentials-check/",
