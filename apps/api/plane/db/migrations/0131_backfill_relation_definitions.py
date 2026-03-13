@@ -12,9 +12,11 @@
 import time
 from collections import defaultdict
 
+from django.db.models import Exists, OuterRef
+from django.db.models.functions import Greatest, Least
+from django.utils import timezone
 from django.db import migrations, models
 import django.db.models.functions.comparison
-from django.utils import timezone
 
 from plane.db.models import DEFAULT_RELATION_DEFINITIONS
 
@@ -87,6 +89,45 @@ def backfill_category_and_relations(apps, schema_editor):
     )
 
     t0 = time.time()
+    
+    # Soft-delete duplicate relations, keeping the earliest row per
+    # unordered pair + relation_type.
+    t_dedup = time.time()
+    now = timezone.now()
+    
+    # A row is a duplicate if an earlier row exists with the same
+    # unordered pair and relation_type — soft-delete all but the first.
+    earlier_exists = (
+        IssueRelation.objects.filter(
+            deleted_at__isnull=True,
+            relation_type__isnull=False,
+            relation_type=OuterRef("relation_type"),
+            created_at__lt=OuterRef("created_at"),
+        )
+        .annotate(
+            inner_min=Least("issue_id", "related_issue_id"),
+            inner_max=Greatest("issue_id", "related_issue_id"),
+        )
+        .filter(
+            inner_min=Least(
+                OuterRef("issue_id"), OuterRef("related_issue_id")
+            ),
+            inner_max=Greatest(
+                OuterRef("issue_id"), OuterRef("related_issue_id")
+            ),
+        )
+    )
+
+    dedup_count = (
+        IssueRelation.objects.filter(
+            deleted_at__isnull=True,
+            relation_type__isnull=False,
+        )
+        .filter(Exists(earlier_exists))
+        .update(deleted_at=now)
+    )
+    
+    print(f"  [backfill] deduplicated {dedup_count} duplicate relations in {time.time() - t_dedup:.2f}s")
 
     # Dependency rows already have category="dependency" from the default,
     # but set it explicitly for any edge cases.
