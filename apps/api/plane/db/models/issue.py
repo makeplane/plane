@@ -109,6 +109,19 @@ class Issue(ProjectBaseModel):
         ("low", "Low"),
         ("none", "None"),
     )
+    PRODUCT_CHOICES = (
+        ("internal-properties", "Internal Properties"),
+        ("aruhi-id", "ARUHI ID"),
+        ("corp-site", "Corp Site"),
+        ("btc", "BTC"),
+        ("home-search", "Home Search"),
+        ("housing-loan", "Housing Loan"),
+        ("living-service", "Living Service"),
+        ("shared-service", "Shared Service"),
+        ("credit-guarantee", "Credit Guarantee"),
+        ("flat35", "Flat35"),
+        ("aruhi-magazine", "ARUHI Magazine"),
+    )
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -141,6 +154,13 @@ class Issue(ProjectBaseModel):
         choices=PRIORITY_CHOICES,
         verbose_name="Issue Priority",
         default="none",
+    )
+    product = models.CharField(
+        max_length=30,
+        choices=PRODUCT_CHOICES,
+        verbose_name="Product",
+        null=True,
+        blank=True,
     )
     start_date = models.DateField(null=True, blank=True)
     target_date = models.DateField(null=True, blank=True)

@@ -20,8 +20,10 @@ import {
   UserCirclePropertyIcon,
   EstimatePropertyIcon,
   ParentPropertyIcon,
+  DropdownPropertyIcon,
 } from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import { CustomSelect } from "@plane/ui";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
@@ -47,6 +49,20 @@ import { IssueCycleSelect } from "./cycle-select";
 import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
+
+const PRODUCT_OPTIONS = [
+  { value: "internal-properties", label: "Internal Properties" },
+  { value: "aruhi-id", label: "ARUHI ID" },
+  { value: "corp-site", label: "Corp Site" },
+  { value: "btc", label: "BTC" },
+  { value: "home-search", label: "Home Search" },
+  { value: "housing-loan", label: "Housing Loan" },
+  { value: "living-service", label: "Living Service" },
+  { value: "shared-service", label: "Shared Service" },
+  { value: "credit-guarantee", label: "Credit Guarantee" },
+  { value: "flat35", label: "Flat35" },
+  { value: "aruhi-magazine", label: "ARUHI Magazine" },
+];
 
 type Props = {
   workspaceSlug: string;
@@ -119,6 +135,51 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 dropdownArrow
                 dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
               />
+            </SidebarPropertyListItem>
+
+            <SidebarPropertyListItem icon={MembersPropertyIcon} label={t("common.reviewers")}>
+              <MemberDropdown
+                value={issue?.reviewer_ids ?? undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { reviewer_ids: val })}
+                disabled={!isEditable}
+                projectId={projectId?.toString() ?? ""}
+                placeholder={t("issue.add.reviewer")}
+                multiple
+                buttonVariant={issue?.reviewer_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
+                className="group w-full grow"
+                buttonContainerClassName="w-full text-left h-7.5"
+                buttonClassName={`text-body-xs-regular justify-between ${issue?.reviewer_ids?.length > 0 ? "" : "text-placeholder"}`}
+                hideIcon={issue.reviewer_ids?.length === 0}
+                dropdownArrow
+                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              />
+            </SidebarPropertyListItem>
+
+            <SidebarPropertyListItem icon={DropdownPropertyIcon} label={t("common.product")}>
+              <CustomSelect
+                value={issue?.product ?? null}
+                label={
+                  <span className={`text-body-xs-regular ${issue?.product ? "" : "text-placeholder"}`}>
+                    {PRODUCT_OPTIONS.find((o) => o.value === issue?.product)?.label ?? t("issue.add.product")}
+                  </span>
+                }
+                onChange={(val: string | null) =>
+                  issueOperations.update(workspaceSlug, projectId, issueId, { product: val })
+                }
+                disabled={!isEditable}
+                className="group w-full grow"
+                buttonClassName="w-full text-left h-7.5 px-2 py-0.5 hover:bg-custom-background-80 rounded-sm border-none"
+                noChevron={!isEditable}
+              >
+                <CustomSelect.Option value={null}>
+                  <span className="text-secondary">{t("common.none")}</span>
+                </CustomSelect.Option>
+                {PRODUCT_OPTIONS.map((option) => (
+                  <CustomSelect.Option key={option.value} value={option.value}>
+                    {option.label}
+                  </CustomSelect.Option>
+                ))}
+              </CustomSelect>
             </SidebarPropertyListItem>
 
             <SidebarPropertyListItem icon={PriorityPropertyIcon} label={t("common.priority")}>
