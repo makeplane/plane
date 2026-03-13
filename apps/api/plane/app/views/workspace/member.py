@@ -65,9 +65,10 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             Q(email__icontains=search)
             | Q(display_name__icontains=search)
             | Q(first_name__icontains=search)
-            | Q(last_name__icontains=search),
+            | Q(last_name__icontains=search)
+            | Q(staff_profiles__staff_id__icontains=search),
             is_active=True,
-        ).prefetch_related("staff_profiles__department").order_by("display_name")[:10]
+        ).prefetch_related("staff_profiles__department").order_by("display_name").distinct()[:10]
         serializer = UserAdminLiteSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

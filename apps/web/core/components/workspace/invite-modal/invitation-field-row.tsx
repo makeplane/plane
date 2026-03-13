@@ -22,6 +22,7 @@ import type { InvitationFormValues } from "@/hooks/use-workspace-invitation";
 import { WorkspaceService } from "@/services/workspace.service";
 // local imports
 import { EmailAutocompleteDropdown } from "./email-autocomplete-dropdown";
+import { SelectedUserDisplay } from "./selected-user-display";
 
 const workspaceService = new WorkspaceService();
 
@@ -42,6 +43,8 @@ export const InvitationFieldRow = observer(function InvitationFieldRow(props: TI
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   // raw suggestions from API (before duplicate exclusion)
   const [rawSuggestions, setRawSuggestions] = useState<IUserLite[]>([]);
+  // selected user from dropdown — shows rich chip instead of raw email
+  const [selectedUser, setSelectedUser] = useState<IUserLite | null>(null);
   const fieldRef = useRef<HTMLDivElement>(null);
   // hooks
   const { t } = useTranslation();
@@ -51,6 +54,11 @@ export const InvitationFieldRow = observer(function InvitationFieldRow(props: TI
   const debouncedEmail = useDebounce(emailValue, 300);
   // close dropdown when clicking outside the field wrapper
   useOutsideClickDetector(fieldRef, () => setShowDropdown(false));
+
+  // clear selected user when email is cleared (e.g., form reset)
+  useEffect(() => {
+    if (!emailValue) setSelectedUser(null);
+  }, [emailValue]);
 
   // search platform users when debounced query changes
   useEffect(() => {
@@ -64,18 +72,26 @@ export const InvitationFieldRow = observer(function InvitationFieldRow(props: TI
       .catch(() => setRawSuggestions([]));
   }, [debouncedEmail, workspaceSlug]);
 
+  // memoize other rows' emails to avoid re-creating on every render
+  const otherEmails = useMemo(() => {
+    const emails = (allEmailFields ?? [])
+      .filter((_, i) => i !== index)
+      .map((f) => f?.email)
+      .filter(Boolean);
+    return new Set(emails);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- allEmailFields reference changes per render; stringify for stable comparison
+  }, [JSON.stringify(allEmailFields), index]);
+
   // filter out emails already entered in other invitation rows
-  const suggestions = useMemo(() => {
-    const otherEmails = new Set(
-      allEmailFields.filter((_, i) => i !== index).map((f) => f?.email).filter(Boolean)
-    );
-    return rawSuggestions.filter((user) => user.email && !otherEmails.has(user.email)).slice(0, 5);
-  }, [rawSuggestions, allEmailFields, index]);
+  const suggestions = useMemo(
+    () => rawSuggestions.filter((user) => user.email && !otherEmails.has(user.email)).slice(0, 5),
+    [rawSuggestions, otherEmails]
+  );
 
   return (
     <div className="relative group mb-1 flex items-start justify-between gap-x-4 text-body-xs-regular w-full">
       {/* email input with autocomplete */}
-      <div ref={fieldRef} className="relative w-full">
+      <div ref={fieldRef} className="relative min-w-0 flex-1">
         <Controller
           control={control}
           name={`emails.${index}.email`}
@@ -88,54 +104,69 @@ export const InvitationFieldRow = observer(function InvitationFieldRow(props: TI
           }}
           render={({ field: { value, onChange, ref } }) => (
             <>
-              <Input
-                id={`emails.${index}.email`}
-                name={`emails.${index}.email`}
-                type="text"
-                value={value}
-                onChange={(e) => {
-                  onChange(e);
-                  setShowDropdown(true);
-                  setActiveSuggestion(-1);
-                }}
-                onKeyDown={(e) => {
-                  if (!showDropdown || debouncedEmail.length < 2) return;
-                  if (e.key === "ArrowDown") {
-                    e.preventDefault();
-                    setActiveSuggestion((i) => Math.min(i + 1, suggestions.length - 1));
-                  } else if (e.key === "ArrowUp") {
-                    e.preventDefault();
-                    setActiveSuggestion((i) => Math.max(i - 1, -1));
-                  } else if (e.key === "Enter" && activeSuggestion >= 0) {
-                    e.preventDefault();
-                    onChange(suggestions[activeSuggestion].email ?? "");
-                    setShowDropdown(false);
-                    setActiveSuggestion(-1);
-                  } else if (e.key === "Escape") {
-                    setShowDropdown(false);
-                  }
-                }}
-                ref={ref}
-                hasError={Boolean(errors.emails?.[index]?.email)}
-                placeholder={t("workspace_settings.settings.members.modal.placeholder")}
-                className="w-full text-caption-sm-regular sm:text-body-xs-regular"
-              />
-              {errors.emails?.[index]?.email && (
-                <span className="ml-1 text-caption-sm-regular text-danger-primary">
-                  {errors.emails?.[index]?.email?.message}
-                </span>
-              )}
-              {showDropdown && debouncedEmail.length >= 2 && (
-                <EmailAutocompleteDropdown
-                  suggestions={suggestions}
-                  activeIndex={activeSuggestion}
-                  onSelect={(email) => {
-                    onChange(email);
-                    setShowDropdown(false);
-                    setActiveSuggestion(-1);
+              {selectedUser ? (
+                <SelectedUserDisplay
+                  user={selectedUser}
+                  onClear={() => {
+                    setSelectedUser(null);
+                    onChange("");
                   }}
-                  onHover={setActiveSuggestion}
                 />
+              ) : (
+                <>
+                  <Input
+                    id={`emails.${index}.email`}
+                    name={`emails.${index}.email`}
+                    type="text"
+                    value={value}
+                    onChange={(e) => {
+                      onChange(e);
+                      setShowDropdown(true);
+                      setActiveSuggestion(-1);
+                    }}
+                    onKeyDown={(e) => {
+                      if (!showDropdown || debouncedEmail.length < 2) return;
+                      if (e.key === "ArrowDown") {
+                        e.preventDefault();
+                        setActiveSuggestion((i) => Math.min(i + 1, suggestions.length - 1));
+                      } else if (e.key === "ArrowUp") {
+                        e.preventDefault();
+                        setActiveSuggestion((i) => Math.max(i - 1, -1));
+                      } else if (e.key === "Enter" && activeSuggestion >= 0) {
+                        e.preventDefault();
+                        const user = suggestions[activeSuggestion];
+                        onChange(user.email ?? "");
+                        setSelectedUser(user);
+                        setShowDropdown(false);
+                        setActiveSuggestion(-1);
+                      } else if (e.key === "Escape") {
+                        setShowDropdown(false);
+                      }
+                    }}
+                    ref={ref}
+                    hasError={Boolean(errors.emails?.[index]?.email)}
+                    placeholder={t("workspace_settings.settings.members.modal.placeholder")}
+                    className="w-full text-caption-sm-regular sm:text-body-xs-regular"
+                  />
+                  {errors.emails?.[index]?.email && (
+                    <span className="ml-1 text-caption-sm-regular text-danger-primary">
+                      {errors.emails?.[index]?.email?.message}
+                    </span>
+                  )}
+                  {showDropdown && debouncedEmail.length >= 2 && (
+                    <EmailAutocompleteDropdown
+                      suggestions={suggestions}
+                      activeIndex={activeSuggestion}
+                      onSelect={(user) => {
+                        onChange(user.email ?? "");
+                        setSelectedUser(user);
+                        setShowDropdown(false);
+                        setActiveSuggestion(-1);
+                      }}
+                      onHover={setActiveSuggestion}
+                    />
+                  )}
+                </>
               )}
             </>
           )}
@@ -186,11 +217,7 @@ export const InvitationFieldRow = observer(function InvitationFieldRow(props: TI
         />
         {showRemoveButton && (
           <div className="flex-item flex w-6">
-            <button
-              type="button"
-              className="place-items-center self-center rounded-sm"
-              onClick={() => remove(index)}
-            >
+            <button type="button" className="place-items-center self-center rounded-sm" onClick={() => remove(index)}>
               <CloseIcon className="h-4 w-4 text-secondary" />
             </button>
           </div>

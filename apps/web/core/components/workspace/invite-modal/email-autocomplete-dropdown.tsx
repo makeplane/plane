@@ -13,7 +13,7 @@ import { cn, getFileURL } from "@plane/utils";
 type TEmailAutocompleteDropdownProps = {
   suggestions: IUserLite[];
   activeIndex: number;
-  onSelect: (email: string) => void;
+  onSelect: (user: IUserLite) => void;
   onHover: (index: number) => void;
 };
 
@@ -33,8 +33,14 @@ export const EmailAutocompleteDropdown = ({
         </div>
       ) : (
         suggestions.map((user, i) => {
-          const fullName =
-            [user.first_name, user.last_name].filter(Boolean).join(" ").trim() || user.display_name || "";
+          const fullName = (
+            [user.first_name, user.last_name].filter(Boolean).join(" ").trim() ||
+            user.display_name ||
+            ""
+          ).toUpperCase();
+          // Line 2: "Position - Department" with email fallback
+          const subtitle = [user.position, user.department_name].filter(Boolean).join(" - ") || user.email || "";
+
           return (
             <button
               key={user.id}
@@ -45,18 +51,17 @@ export const EmailAutocompleteDropdown = ({
               )}
               onMouseEnter={() => onHover(i)}
               onMouseDown={(e) => {
-                // prevent input blur before selection
                 e.preventDefault();
-                onSelect(user.email ?? "");
+                onSelect(user);
               }}
             >
               <Avatar name={fullName} src={getFileURL(user.avatar_url ?? "")} size="sm" />
               <div className="flex flex-col min-w-0">
-                <span className="truncate font-medium">{fullName}</span>
-                <span className="truncate text-custom-text-300 text-caption-sm-regular">{user.email}</span>
-                {user.department_name && (
-                  <span className="truncate text-custom-text-400 text-caption-sm-regular">{user.department_name}</span>
-                )}
+                <span className="truncate font-medium">
+                  {fullName}
+                  {user.staff_id && <span className="ml-1 font-normal text-custom-primary-100">({user.staff_id})</span>}
+                </span>
+                <span className="truncate text-custom-text-300 text-caption-sm-regular">{subtitle}</span>
               </div>
             </button>
           );

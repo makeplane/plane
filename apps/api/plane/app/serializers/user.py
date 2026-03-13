@@ -155,10 +155,23 @@ class UserLiteSerializer(BaseSerializer):
 
 class UserAdminLiteSerializer(BaseSerializer):
     department_name = serializers.SerializerMethodField()
+    staff_id = serializers.SerializerMethodField()
+    position = serializers.SerializerMethodField()
+
+    def _get_staff_profile(self, obj):
+        return next(iter(obj.staff_profiles.all()), None)
 
     def get_department_name(self, obj):
-        profile = next(iter(obj.staff_profiles.all()), None)
+        profile = self._get_staff_profile(obj)
         return profile.department.name if profile and profile.department_id else None
+
+    def get_staff_id(self, obj):
+        profile = self._get_staff_profile(obj)
+        return profile.staff_id if profile else None
+
+    def get_position(self, obj):
+        profile = self._get_staff_profile(obj)
+        return profile.position or None if profile else None
 
     class Meta:
         model = User
@@ -173,6 +186,8 @@ class UserAdminLiteSerializer(BaseSerializer):
             "email",
             "last_login_medium",
             "department_name",
+            "staff_id",
+            "position",
         ]
         read_only_fields = ["id", "is_bot"]
 
