@@ -192,6 +192,16 @@ function createMainWindow(windowId: string = randomUUID(), windowState?: Persist
 
   viewManager.initialize(window);
 
+  // Ensure menu bar is visible after leaving fullscreen.
+  // On Linux with tiling WMs (e.g., Hyprland), the WM may exit fullscreen
+  // externally, leaving Electron's menu bar in a hidden state.
+  if (process.platform === "linux") {
+    window.on("leave-full-screen", () => {
+      window.setMenuBarVisibility(true);
+      window.autoHideMenuBar = false;
+    });
+  }
+
   // Handle window close - destroy views BEFORE the window closes
   window.on("close", () => {
     tabStore.captureClosedWindow(windowId);
@@ -244,37 +254,10 @@ function buildMenu(): void {
             createMainWindow();
           },
         },
-        {
-          label: "New Tab",
-          accelerator: "CommandOrControl+T",
-          click: () => {
-            withFocusedViewManager((manager) => {
-              manager.createTab("/");
-            });
-          },
-        },
-        {
-          label: "Close Tab",
-          accelerator: "CommandOrControl+W",
-          click: () => {
-            const context = getFocusedWindowContext();
-            if (!context) {
-              return;
-            }
-
-            const activeTabId = tabStore.getActiveTabId(context.windowId);
-            if (!activeTabId) {
-              return;
-            }
-
-            context.viewManager.closeTab(activeTabId);
-          },
-        },
         { type: "separator" },
         {
           label: "Change Instance...",
           click: () => {
-            // Clear the instance URL to trigger the setup flow in the web app
             instanceStore.setInstanceUrl(undefined);
             handleInstanceUrlChanged();
           },
@@ -306,49 +289,6 @@ function buildMenu(): void {
     {
       label: "View",
       submenu: [
-        {
-          label: "Reload",
-          accelerator: "CommandOrControl+R",
-          click: () => {
-            withFocusedViewManager((manager) => {
-              const view = manager.getActiveView();
-              if (!view) {
-                return;
-              }
-
-              view.webContents.reload();
-            });
-          },
-        },
-        {
-          label: "Force Reload",
-          accelerator: "CommandOrControl+Shift+R",
-          click: () => {
-            withFocusedViewManager((manager) => {
-              const view = manager.getActiveView();
-              if (!view) {
-                return;
-              }
-
-              view.webContents.reloadIgnoringCache();
-            });
-          },
-        },
-        {
-          label: "Toggle Developer Tools",
-          accelerator: isMac ? "Alt+Command+I" : "Ctrl+Shift+I",
-          click: () => {
-            withFocusedViewManager((manager) => {
-              const view = manager.getActiveView();
-              if (!view) {
-                return;
-              }
-
-              view.webContents.toggleDevTools();
-            });
-          },
-        },
-        { type: "separator" },
         {
           label: "Actual Size",
           accelerator: "CommandOrControl+0",
@@ -395,11 +335,134 @@ function buildMenu(): void {
         },
         { type: "separator" },
         { role: "togglefullscreen" },
+        { type: "separator" },
+        {
+          label: "Toggle Developer Tools",
+          accelerator: isMac ? "Alt+Command+I" : "Ctrl+Shift+I",
+          click: () => {
+            withFocusedViewManager((manager) => {
+              const view = manager.getActiveView();
+              if (!view) {
+                return;
+              }
+
+              view.webContents.toggleDevTools();
+            });
+          },
+        },
       ],
     },
     {
       label: "Tab",
       submenu: [
+        {
+          label: "New Tab",
+          accelerator: "CommandOrControl+T",
+          click: () => {
+            withFocusedViewManager((manager) => {
+              manager.createTab("/");
+            });
+          },
+        },
+        {
+          label: "Close Tab",
+          accelerator: "CommandOrControl+W",
+          click: () => {
+            const context = getFocusedWindowContext();
+            if (!context) {
+              return;
+            }
+
+            const activeTabId = tabStore.getActiveTabId(context.windowId);
+            if (!activeTabId) {
+              return;
+            }
+
+            context.viewManager.closeTab(activeTabId);
+          },
+        },
+        {
+          label: "Close Other Tabs",
+          click: () => {
+            const context = getFocusedWindowContext();
+            if (!context) {
+              return;
+            }
+
+            const activeTabId = tabStore.getActiveTabId(context.windowId);
+            if (!activeTabId) {
+              return;
+            }
+
+            context.viewManager.closeOtherTabs(activeTabId);
+          },
+        },
+        {
+          label: "Close All Tabs",
+          click: () => {
+            withFocusedViewManager((manager) => {
+              manager.closeAllTabs();
+            });
+          },
+        },
+        {
+          label: "Reopen Closed Tab",
+          accelerator: "CommandOrControl+Shift+T",
+          click: () => {
+            withFocusedViewManager((manager) => {
+              manager.restoreLastClosedTab();
+            });
+          },
+        },
+        { type: "separator" },
+        {
+          label: "Reload Tab",
+          accelerator: "CommandOrControl+R",
+          click: () => {
+            const context = getFocusedWindowContext();
+            if (!context) {
+              return;
+            }
+
+            const activeTabId = tabStore.getActiveTabId(context.windowId);
+            if (!activeTabId) {
+              return;
+            }
+
+            context.viewManager.reloadTab(activeTabId);
+          },
+        },
+        {
+          label: "Force Reload Tab",
+          accelerator: "CommandOrControl+Shift+R",
+          click: () => {
+            withFocusedViewManager((manager) => {
+              const view = manager.getActiveView();
+              if (!view) {
+                return;
+              }
+
+              view.webContents.reloadIgnoringCache();
+            });
+          },
+        },
+        {
+          label: "Copy Link",
+          click: () => {
+            const context = getFocusedWindowContext();
+            if (!context) {
+              return;
+            }
+
+            const activeTabId = tabStore.getActiveTabId(context.windowId);
+            if (!activeTabId) {
+              return;
+            }
+
+            context.viewManager.copyTabLink(activeTabId);
+          },
+        },
+        { type: "separator" },
         {
           label: "Next Tab",
           accelerator: "Control+Tab",

@@ -290,6 +290,50 @@ export class TabStore extends Store<TabState> {
     );
   }
 
+  removeOtherTabs(windowId: string, keepId: string): Tab[] {
+    const windowState = this.state.windows.get(windowId);
+    if (!windowState) {
+      return [];
+    }
+
+    const { tabs, favicons } = windowState;
+    const keepTab = tabs.find((t) => t.id === keepId);
+    if (!keepTab) {
+      return [];
+    }
+
+    const removedTabs = tabs.filter((t) => t.id !== keepId);
+    const newFavicons = new Map<string, string>();
+    const keepFavicon = favicons.get(keepId);
+    if (keepFavicon) {
+      newFavicons.set(keepId, keepFavicon);
+    }
+
+    this.#updateWindowState(windowId, {
+      tabs: [keepTab],
+      activeTabId: keepId,
+      favicons: newFavicons,
+    });
+
+    return removedTabs;
+  }
+
+  removeAllTabs(windowId: string): Tab[] {
+    const windowState = this.state.windows.get(windowId);
+    if (!windowState) {
+      return [];
+    }
+
+    const removedTabs = [...windowState.tabs];
+    this.#updateWindowState(windowId, {
+      tabs: [],
+      activeTabId: undefined,
+      favicons: new Map(),
+    });
+
+    return removedTabs;
+  }
+
   clearTabs(windowId: string): void {
     const windowState = this.state.windows.get(windowId);
     if (!windowState) {

@@ -12,6 +12,7 @@
  */
 
 import { contextBridge, ipcRenderer } from "electron";
+import { IPC_CHANNELS } from "./constants/ipc";
 
 interface TabBarState {
   tabs: Array<{
@@ -31,6 +32,11 @@ interface TabBarAPI {
   onStateUpdated: (callback: (state: TabBarState) => void) => () => void;
   createTab: () => void;
   closeTab: (id: string) => void;
+  closeOtherTabs: (id: string) => void;
+  closeAllTabs: () => void;
+  reloadTab: (id: string) => void;
+  copyTabLink: (id: string) => void;
+  showContextMenu: (id: string) => void;
   switchTab: (id: string) => void;
   goBack: () => void;
   goForward: () => void;
@@ -39,15 +45,20 @@ interface TabBarAPI {
 const api: TabBarAPI = {
   onStateUpdated: (callback: (state: TabBarState) => void) => {
     const handler = (_event: Electron.IpcRendererEvent, state: TabBarState) => callback(state);
-    ipcRenderer.on("tabbar:state-updated", handler);
-    return () => ipcRenderer.removeListener("tabbar:state-updated", handler);
+    ipcRenderer.on(IPC_CHANNELS.TABBAR_STATE_UPDATED, handler);
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.TABBAR_STATE_UPDATED, handler);
   },
 
-  createTab: () => ipcRenderer.send("tab:create", "/"),
-  closeTab: (id: string) => ipcRenderer.send("tab:close", id),
-  switchTab: (id: string) => ipcRenderer.send("tab:switch", id),
-  goBack: () => ipcRenderer.send("nav:back"),
-  goForward: () => ipcRenderer.send("nav:forward"),
+  createTab: () => ipcRenderer.send(IPC_CHANNELS.TAB_CREATE, "/"),
+  closeTab: (id: string) => ipcRenderer.send(IPC_CHANNELS.TAB_CLOSE, id),
+  closeOtherTabs: (id: string) => ipcRenderer.send(IPC_CHANNELS.TAB_CLOSE_OTHERS, id),
+  closeAllTabs: () => ipcRenderer.send(IPC_CHANNELS.TAB_CLOSE_ALL),
+  reloadTab: (id: string) => ipcRenderer.send(IPC_CHANNELS.TAB_RELOAD, id),
+  copyTabLink: (id: string) => ipcRenderer.send(IPC_CHANNELS.TAB_COPY_LINK, id),
+  showContextMenu: (id: string) => ipcRenderer.send(IPC_CHANNELS.TAB_CONTEXT_MENU, id),
+  switchTab: (id: string) => ipcRenderer.send(IPC_CHANNELS.TAB_SWITCH, id),
+  goBack: () => ipcRenderer.send(IPC_CHANNELS.NAV_BACK),
+  goForward: () => ipcRenderer.send(IPC_CHANNELS.NAV_FORWARD),
 };
 
 contextBridge.exposeInMainWorld("tabBarAPI", api);

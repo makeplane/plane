@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { ipcMain, shell, IpcMainEvent, WebContents } from "electron";
+import { BrowserWindow, ipcMain, shell, Menu, IpcMainEvent, WebContents } from "electron";
 import { InstanceStore } from "../stores/instance-store";
 import { ViewManager } from "../managers/view-manager";
 import { generateCodeVerifier, computeCodeChallenge } from "../utils/pkce";
@@ -27,6 +27,11 @@ export class IPCBridge {
   #instanceSetHandler: ((event: IpcMainEvent, url: string) => void) | undefined = undefined;
   #tabCreateHandler: ((event: IpcMainEvent, tabPath: string) => void) | undefined = undefined;
   #tabCloseHandler: ((event: IpcMainEvent, id: string) => void) | undefined = undefined;
+  #tabCloseOthersHandler: ((event: IpcMainEvent, id: string) => void) | undefined = undefined;
+  #tabCloseAllHandler: ((event: IpcMainEvent) => void) | undefined = undefined;
+  #tabReloadHandler: ((event: IpcMainEvent, id: string) => void) | undefined = undefined;
+  #tabCopyLinkHandler: ((event: IpcMainEvent, id: string) => void) | undefined = undefined;
+  #tabContextMenuHandler: ((event: IpcMainEvent, id: string) => void) | undefined = undefined;
   #tabSwitchHandler: ((event: IpcMainEvent, id: string) => void) | undefined = undefined;
   #navBackHandler: ((event: IpcMainEvent) => void) | undefined = undefined;
   #navForwardHandler: ((event: IpcMainEvent) => void) | undefined = undefined;
@@ -69,6 +74,31 @@ export class IPCBridge {
     if (this.#tabCloseHandler) {
       ipcMain.removeListener(IPC_CHANNELS.TAB_CLOSE, this.#tabCloseHandler);
       this.#tabCloseHandler = undefined;
+    }
+
+    if (this.#tabCloseOthersHandler) {
+      ipcMain.removeListener(IPC_CHANNELS.TAB_CLOSE_OTHERS, this.#tabCloseOthersHandler);
+      this.#tabCloseOthersHandler = undefined;
+    }
+
+    if (this.#tabCloseAllHandler) {
+      ipcMain.removeListener(IPC_CHANNELS.TAB_CLOSE_ALL, this.#tabCloseAllHandler);
+      this.#tabCloseAllHandler = undefined;
+    }
+
+    if (this.#tabReloadHandler) {
+      ipcMain.removeListener(IPC_CHANNELS.TAB_RELOAD, this.#tabReloadHandler);
+      this.#tabReloadHandler = undefined;
+    }
+
+    if (this.#tabCopyLinkHandler) {
+      ipcMain.removeListener(IPC_CHANNELS.TAB_COPY_LINK, this.#tabCopyLinkHandler);
+      this.#tabCopyLinkHandler = undefined;
+    }
+
+    if (this.#tabContextMenuHandler) {
+      ipcMain.removeListener(IPC_CHANNELS.TAB_CONTEXT_MENU, this.#tabContextMenuHandler);
+      this.#tabContextMenuHandler = undefined;
     }
 
     if (this.#tabSwitchHandler) {
@@ -153,6 +183,84 @@ export class IPCBridge {
       viewManager.closeTab(id);
     };
     ipcMain.on(IPC_CHANNELS.TAB_CLOSE, this.#tabCloseHandler);
+
+    this.#tabCloseOthersHandler = (event, id: string) => {
+      const viewManager = this.#resolveViewManager(event.sender);
+      if (!viewManager) {
+        return;
+      }
+
+      viewManager.closeOtherTabs(id);
+    };
+    ipcMain.on(IPC_CHANNELS.TAB_CLOSE_OTHERS, this.#tabCloseOthersHandler);
+
+    this.#tabCloseAllHandler = (event) => {
+      const viewManager = this.#resolveViewManager(event.sender);
+      if (!viewManager) {
+        return;
+      }
+
+      viewManager.closeAllTabs();
+    };
+    ipcMain.on(IPC_CHANNELS.TAB_CLOSE_ALL, this.#tabCloseAllHandler);
+
+    this.#tabReloadHandler = (event, id: string) => {
+      const viewManager = this.#resolveViewManager(event.sender);
+      if (!viewManager) {
+        return;
+      }
+
+      viewManager.reloadTab(id);
+    };
+    ipcMain.on(IPC_CHANNELS.TAB_RELOAD, this.#tabReloadHandler);
+
+    this.#tabCopyLinkHandler = (event, id: string) => {
+      const viewManager = this.#resolveViewManager(event.sender);
+      if (!viewManager) {
+        return;
+      }
+
+      viewManager.copyTabLink(id);
+    };
+    ipcMain.on(IPC_CHANNELS.TAB_COPY_LINK, this.#tabCopyLinkHandler);
+
+    this.#tabContextMenuHandler = (event, id: string) => {
+      const viewManager = this.#resolveViewManager(event.sender);
+      if (!viewManager) {
+        return;
+      }
+
+      const tabCount = viewManager.getTabCount();
+      const menu = Menu.buildFromTemplate([
+        {
+          label: "Copy Link",
+          click: () => viewManager.copyTabLink(id),
+        },
+        {
+          label: "Reload Tab",
+          click: () => viewManager.reloadTab(id),
+        },
+        { type: "separator" },
+        {
+          label: "Close Tab",
+          enabled: tabCount > 1,
+          click: () => viewManager.closeTab(id),
+        },
+        {
+          label: "Close Other Tabs",
+          enabled: tabCount > 1,
+          click: () => viewManager.closeOtherTabs(id),
+        },
+        {
+          label: "Close All Tabs",
+          click: () => viewManager.closeAllTabs(),
+        },
+      ]);
+
+      const window = BrowserWindow.fromWebContents(event.sender) ?? undefined;
+      menu.popup({ window });
+    };
+    ipcMain.on(IPC_CHANNELS.TAB_CONTEXT_MENU, this.#tabContextMenuHandler);
 
     this.#tabSwitchHandler = (event, id: string) => {
       const viewManager = this.#resolveViewManager(event.sender);

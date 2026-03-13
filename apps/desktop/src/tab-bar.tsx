@@ -34,6 +34,7 @@ type TabBarAPI = {
   onStateUpdated: (callback: (state: TabBarState) => void) => () => void;
   createTab: () => void;
   closeTab: (id: string) => void;
+  showContextMenu: (id: string) => void;
   switchTab: (id: string) => void;
   goBack: () => void;
   goForward: () => void;
@@ -96,12 +97,21 @@ type TabBarAppProps = {
   subscribe: TabBarAPI["onStateUpdated"];
   createTab: TabBarAPI["createTab"];
   closeTab: TabBarAPI["closeTab"];
+  showContextMenu: TabBarAPI["showContextMenu"];
   switchTab: TabBarAPI["switchTab"];
   goBack: TabBarAPI["goBack"];
   goForward: TabBarAPI["goForward"];
 };
 
-export const TabBarApp = ({ subscribe, createTab, closeTab, switchTab, goBack, goForward }: TabBarAppProps) => {
+export const TabBarApp = ({
+  subscribe,
+  createTab,
+  closeTab,
+  showContextMenu,
+  switchTab,
+  goBack,
+  goForward,
+}: TabBarAppProps) => {
   const stateRef = useRef<TabBarState>(initialState);
   const [brokenFavicons, setBrokenFavicons] = useState<Record<string, string>>({});
 
@@ -146,6 +156,10 @@ export const TabBarApp = ({ subscribe, createTab, closeTab, switchTab, goBack, g
             aria-selected={isActive}
             data-tab-id={tab.id}
             onClick={() => switchTab(tab.id)}
+            onContextMenu={(event) => {
+              event.preventDefault();
+              showContextMenu(tab.id);
+            }}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
@@ -181,7 +195,7 @@ export const TabBarApp = ({ subscribe, createTab, closeTab, switchTab, goBack, g
         </React.Fragment>
       );
     });
-  }, [brokenFavicons, canClose, state.activeTabId, state.tabs, handleFaviconError, switchTab, closeTab]);
+  }, [brokenFavicons, canClose, state.activeTabId, state.tabs, handleFaviconError, switchTab, closeTab, showContextMenu]);
 
   return (
     <div className="tab-bar" id="tab-bar">
@@ -249,6 +263,7 @@ createRoot(rootEl).render(
     subscribe={api.onStateUpdated}
     createTab={api.createTab}
     closeTab={api.closeTab}
+    showContextMenu={api.showContextMenu}
     switchTab={api.switchTab}
     goBack={api.goBack}
     goForward={api.goForward}

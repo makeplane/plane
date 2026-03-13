@@ -322,8 +322,8 @@ catalogs:
       specifier: ^2.27.2
       version: 2.27.2
     '@todesktop/cli':
-      specifier: ^1.20.2
-      version: 1.20.2
+      specifier: ^1.22.0
+      version: 1.22.0
     '@todesktop/runtime':
       specifier: ^2.1.3
       version: 2.1.3
@@ -824,7 +824,7 @@ importers:
     devDependencies:
       '@todesktop/cli':
         specifier: 'catalog:'
-        version: 1.20.2(@types/react@18.3.27)
+        version: 1.22.0(@types/react@18.3.27)
       eslint-plugin-jsx-a11y:
         specifier: 'catalog:'
         version: 6.10.2(eslint@9.39.1(jiti@2.6.1))
@@ -7255,8 +7255,8 @@ packages:
       '@tiptap/core': ^2.7.0
       '@tiptap/pm': ^2.7.0
 
-  '@todesktop/cli@1.20.2':
-    resolution: {integrity: sha512-Nhkflxf1xEG11j0hc67UTCTfpJOACvQg0X3OUXod915sR0R+GwhlsVn/al221q+BBUZBygNwkrTHXc7yNH5UWg==}
+  '@todesktop/cli@1.22.0':
+    resolution: {integrity: sha512-poeL7cnHwC47/6MpJwZnuNFpwlJTGDFC6GEmPuZHzSqWDJEjbjnt+g54H2ejre5Rmo+BNjx7Lv429WZOGaAuiw==}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -19424,7 +19424,7 @@ snapshots:
       '@tiptap/core': 2.27.2(@tiptap/pm@2.27.2)
       '@tiptap/pm': 2.27.2
 
-  '@todesktop/cli@1.20.2(@types/react@18.3.27)':
+  '@todesktop/cli@1.22.0(@types/react@18.3.27)':
     dependencies:
       '@segment/analytics-node': 2.3.0
       '@sentry/node': 10.39.0

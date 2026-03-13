@@ -11,13 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { BrowserWindow, WebContents, WebContentsView, shell } from "electron";
+import { BrowserWindow, WebContents, WebContentsView, shell, clipboard } from "electron";
 import path from "path";
 import { TabStore } from "../stores/tab-store";
 import { NavigationStore } from "../stores/navigation-store";
 import { InstanceStore } from "../stores/instance-store";
 import { assert } from "../utils/assert";
 import { isAssetPath } from "../utils/url";
+import { IPC_CHANNELS } from "../constants/ipc";
 import type { WindowLayoutMode } from "../stores/types";
 
 const TAB_BAR_HEIGHT = 44;
@@ -262,7 +263,7 @@ export class ViewManager {
       platform: process.platform,
     };
 
-    this.#tabBarView.webContents.send("tabbar:state-updated", state);
+    this.#tabBarView.webContents.send(IPC_CHANNELS.TABBAR_STATE_UPDATED, state);
   }
 
   #onTabStoreChanged(): void {
@@ -591,6 +592,65 @@ export class ViewManager {
 
     this.createTab(closedTab.path);
     return true;
+  }
+
+  closeOtherTabs(keepId: string): void {
+    const removedTabs = this.#tabStore.removeOtherTabs(this.#windowId, keepId);
+
+    for (const tab of removedTabs) {
+      this.#tabStore.pushClosedTab(this.#windowId, { id: tab.id, path: tab.path });
+      const view = this.#views.get(tab.id);
+      if (view) {
+        this.#destroyView(tab.id, view);
+      }
+    }
+
+    // Ensure the kept tab is visible even if it hasn't finished loading yet,
+    // so the window doesn't show a blank area after destroying the other views.
+    this.#showView(keepId);
+  }
+
+  closeAllTabs(): void {
+    const removedTabs = this.#tabStore.removeAllTabs(this.#windowId);
+
+    for (const tab of removedTabs) {
+      this.#tabStore.pushClosedTab(this.#windowId, { id: tab.id, path: tab.path });
+      const view = this.#views.get(tab.id);
+      if (view) {
+        this.#destroyView(tab.id, view);
+      }
+    }
+
+    this.#visibleTabId = undefined;
+    this.createTab("/");
+  }
+
+  reloadTab(id: string): void {
+    const view = this.#views.get(id);
+    if (!view) {
+      return;
+    }
+
+    view.webContents.reload();
+  }
+
+  getTabCount(): number {
+    return this.#tabStore.getTabs(this.#windowId).length;
+  }
+
+  copyTabLink(id: string): void {
+    const tab = this.#tabStore.getTabById(this.#windowId, id);
+    if (!tab) {
+      return;
+    }
+
+    const instanceUrl = this.#instanceStore.getInstanceUrl();
+    if (!instanceUrl) {
+      return;
+    }
+
+    const fullUrl = new URL(tab.path, instanceUrl).href;
+    clipboard.writeText(fullUrl);
   }
 
   #onActiveTabChanged(activeTabId: string | undefined): void {
