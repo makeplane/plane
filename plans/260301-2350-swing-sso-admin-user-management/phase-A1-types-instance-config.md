@@ -150,7 +150,7 @@ swing_sso_config_variables = [
     },
     {
         "key": "SWING_SSO_COMPANY_CODE",
-        "value": os.environ.get("SWING_SSO_COMPANY_CODE", "sh"),
+        "value": os.environ.get("SWING_SSO_COMPANY_CODE", "VN"),
         "category": "SWING_SSO",
         "is_encrypted": False,
     },

@@ -126,7 +126,7 @@ class SwingSSOProvider(CredentialAdapter):
                 {"key": "SWING_SSO_URL", "default": ""},
                 {"key": "SWING_SSO_CLIENT_ID", "default": ""},
                 {"key": "SWING_SSO_CLIENT_SECRET", "default": ""},
-                {"key": "SWING_SSO_COMPANY_CODE", "default": "sh"},
+                {"key": "SWING_SSO_COMPANY_CODE", "default": "VN"},
             ]
         )
 
