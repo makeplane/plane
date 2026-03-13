@@ -262,7 +262,7 @@ class InstanceStaffBulkImportEndpoint(BaseAPIView):
         skip_existing = request.data.get("skip_existing", "true").lower() == "true"
 
         try:
-            decoded = csv_file.read().decode("utf-8")
+            decoded = csv_file.read().decode("utf-8-sig")
             reader = csv.DictReader(io.StringIO(decoded))
         except Exception as e:
             return Response({"error": f"Failed to parse CSV: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
@@ -296,6 +296,7 @@ class InstanceStaffBulkImportEndpoint(BaseAPIView):
                 "staff_id": staff_id,
                 "first_name": row.get("first_name", "").strip(),
                 "last_name": row.get("last_name", "").strip(),
+                "display_name": row.get("display_name", "").strip(),
                 "position": row.get("position", "").strip(),
                 "job_grade": row.get("job_grade", "").strip(),
                 "phone": row.get("phone", "").strip(),
@@ -405,7 +406,7 @@ class InstanceStaffExportEndpoint(BaseAPIView):
 
         writer = csv.writer(response)
         writer.writerow([
-            "staff_id", "last_name", "first_name", "email",
+            "staff_id", "last_name", "first_name", "display_name", "email",
             "department_code", "department_name", "position",
             "job_grade", "phone", "date_of_joining", "employment_status",
             "is_department_manager",
@@ -416,6 +417,7 @@ class InstanceStaffExportEndpoint(BaseAPIView):
                 staff.staff_id,
                 staff.user.last_name,
                 staff.user.first_name,
+                staff.user.display_name,
                 staff.user.email,
                 staff.department.code if staff.department else "",
                 staff.department.name if staff.department else "",
@@ -479,7 +481,7 @@ def _create_staff(department, data):
             "username": email,
             "first_name": data.get("first_name", ""),
             "last_name": data.get("last_name", ""),
-            "display_name": f"{data.get('last_name', '')} {data.get('first_name', '')}".strip(),
+            "display_name": data.get("display_name") or f"{data.get('last_name', '')} {data.get('first_name', '')}".strip(),
         },
     )
     if user_created:

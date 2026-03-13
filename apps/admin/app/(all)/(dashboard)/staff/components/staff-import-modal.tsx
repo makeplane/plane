@@ -62,7 +62,7 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
           <Dialog.Title>Bulk Import Staff</Dialog.Title>
 
           <div className="rounded-md border border-subtle p-3 text-13 text-tertiary space-y-1">
-            <p>CSV columns: <code className="text-primary">staff_id, email, first_name, last_name, department_code, position</code></p>
+            <p>CSV columns: <code className="text-primary">staff_id, first_name, last_name, display_name, department_code, position, job_grade, phone, date_of_joining</code></p>
             <p>Max 500 rows. Default password used for new user accounts.</p>
           </div>
 

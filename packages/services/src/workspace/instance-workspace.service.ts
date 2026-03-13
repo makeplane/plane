@@ -7,6 +7,28 @@
 import { API_BASE_URL } from "@plane/constants";
 import type { IWorkspace, TWorkspacePaginationInfo } from "@plane/types";
 
+export interface IWorkspaceProjectBulkImportResponse {
+  created: Array<{ workspace_slug: string; name: string; identifier: string; skipped_members: string[] }>;
+  updated?: Array<{ workspace_slug: string; name: string; identifier: string; skipped_members: string[] }>;
+  skipped: Array<{ row_number: number; workspace_slug: string; name: string; reason: string }>;
+  total_created: number;
+  total_updated?: number;
+  total_skipped: number;
+}
+
+export interface IWorkspaceModuleBulkImportResponse {
+  created: Array<{ workspace_slug: string; project_name: string; name: string }>;
+  skipped: Array<{
+    row_number: number;
+    workspace_slug: string;
+    project_name: string;
+    name: string;
+    reason: string;
+  }>;
+  total_created: number;
+  total_skipped: number;
+}
+
 export interface IWorkspaceBulkCreateResponse {
   created: IWorkspace[];
   skipped: Array<{ row_number: number; name: string; slug: string; reason: string }>;
@@ -20,6 +42,12 @@ export interface IWorkspaceBulkAssignResponse {
   total_assigned: number;
   total_skipped: number;
 }
+
+export interface ISlugCheckResponse {
+  slug: string;
+  is_available: boolean;
+}
+
 import { APIService } from "../api.service";
 
 /**
@@ -43,29 +71,33 @@ export class InstanceWorkspaceService extends APIService {
    * @throws {Error} If the API request fails
    */
   async list(nextPageCursor?: string): Promise<TWorkspacePaginationInfo> {
-    return this.get(`/api/instances/workspaces/`, {
+    return this.get<TWorkspacePaginationInfo>(`/api/instances/workspaces/`, {
       params: {
         cursor: nextPageCursor,
       },
     })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
+      .then((response) => response?.data as TWorkspacePaginationInfo)
+      .catch((error: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const errorData = (error as Record<string, unknown>)?.response?.data;
+        throw errorData;
       });
   }
 
   /**
    * Checks if a workspace slug is available
    * @param {string} slug - The workspace slug to check
-   * @returns {Promise<any>} Promise resolving to slug availability status
+   * @returns {Promise<ISlugCheckResponse>} Promise resolving to slug availability status
    * @throws {Error} If the API request fails
    */
-  async slugCheck(slug: string): Promise<any> {
+  async slugCheck(slug: string): Promise<ISlugCheckResponse> {
     const params = new URLSearchParams({ slug });
-    return this.get(`/api/instances/workspace-slug-check/?${params.toString()}`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
+    return this.get<ISlugCheckResponse>(`/api/instances/workspace-slug-check/?${params.toString()}`)
+      .then((response) => response?.data as ISlugCheckResponse)
+      .catch((error: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const errorData = (error as Record<string, unknown>)?.response?.data;
+        throw errorData;
       });
   }
 
@@ -76,10 +108,12 @@ export class InstanceWorkspaceService extends APIService {
    * @throws {Error} If the API request fails
    */
   async create(data: Partial<IWorkspace>): Promise<IWorkspace> {
-    return this.post("/api/instances/workspaces/", data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
+    return this.post<IWorkspace>("/api/instances/workspaces/", data)
+      .then((response) => response?.data as IWorkspace)
+      .catch((error: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const errorData = (error as Record<string, unknown>)?.response?.data;
+        throw errorData;
       });
   }
 
@@ -91,28 +125,80 @@ export class InstanceWorkspaceService extends APIService {
   async bulkCreate(
     workspaces: Array<{ name: string; organization_size?: string }>
   ): Promise<IWorkspaceBulkCreateResponse> {
-    return this.post("/api/instances/workspaces/bulk-create/", { workspaces })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
+    return this.post<IWorkspaceBulkCreateResponse>("/api/instances/workspaces/bulk-create/", {
+      workspaces,
+    })
+      .then((response) => response?.data as IWorkspaceBulkCreateResponse)
+      .catch((error: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const errorData = (error as Record<string, unknown>)?.response?.data;
+        throw errorData;
       });
   }
 
   async bulkAssignMembers(
     members: Array<{ email: string; workspace_slug: string; role: number }>
   ): Promise<IWorkspaceBulkAssignResponse> {
-    return this.post("/api/instances/workspaces/bulk-assign-members/", { members })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
+    return this.post<IWorkspaceBulkAssignResponse>("/api/instances/workspaces/bulk-assign-members/", {
+      members,
+    })
+      .then((response) => response?.data as IWorkspaceBulkAssignResponse)
+      .catch((error: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const errorData = (error as Record<string, unknown>)?.response?.data;
+        throw errorData;
+      });
+  }
+
+  async bulkImportProjects(
+    projects: Array<{
+      workspace_slug: string;
+      name: string;
+      description?: string;
+      network?: number;
+      project_leader?: string;
+      members?: string;
+      member_roles?: string;
+    }>
+  ): Promise<IWorkspaceProjectBulkImportResponse> {
+    return this.post<IWorkspaceProjectBulkImportResponse>("/api/instances/bulk-import-projects/", {
+      projects,
+    })
+      .then((response) => response?.data as IWorkspaceProjectBulkImportResponse)
+      .catch((error: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const errorData = (error as Record<string, unknown>)?.response?.data;
+        throw errorData;
+      });
+  }
+
+  async bulkImportModules(
+    modules: Array<{
+      workspace_slug: string;
+      project_name: string;
+      name: string;
+      description?: string;
+      status?: string;
+      start_date?: string;
+      target_date?: string;
+    }>
+  ): Promise<IWorkspaceModuleBulkImportResponse> {
+    return this.post<IWorkspaceModuleBulkImportResponse>("/api/instances/bulk-import-modules/", { modules })
+      .then((response) => response?.data as IWorkspaceModuleBulkImportResponse)
+      .catch((error: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const errorData = (error as Record<string, unknown>)?.response?.data;
+        throw errorData;
       });
   }
 
   async destroy(workspaceSlug: string): Promise<void> {
-    return this.delete(`/api/instances/workspaces/${workspaceSlug}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
+    return this.delete<void>(`/api/instances/workspaces/${workspaceSlug}/`)
+      .then((response) => response?.data as void)
+      .catch((error: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const errorData = (error as Record<string, unknown>)?.response?.data;
+        throw errorData;
       });
   }
 }
