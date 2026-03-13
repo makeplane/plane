@@ -20,6 +20,7 @@ from plane.db.models import (
     ProjectIdentifier,
     ProjectMember,
     State,
+    User,
     Workspace,
     WorkspaceMember,
 )
@@ -29,6 +30,8 @@ logger = logging.getLogger(__name__)
 
 MAX_PROJECTS = 100
 VALID_NETWORKS = {0, 2}
+VALID_ROLES = {ROLE.GUEST.value, ROLE.MEMBER.value, ROLE.ADMIN.value}
+DEFAULT_MEMBER_ROLE = ROLE.MEMBER.value
 
 
 def _generate_unique_identifier(name, workspace_id, existing_identifiers):
@@ -53,13 +56,43 @@ def _generate_unique_identifier(name, workspace_id, existing_identifiers):
     return candidate
 
 
+def _parse_comma_list(value):
+    """Split a comma-separated cell value into a stripped list, ignoring empty entries."""
+    if not value:
+        return []
+    return [v.strip() for v in str(value).split(",") if v.strip()]
+
+
+def _parse_member_roles(roles_value, count):
+    """Parse member_roles cell into a list of ints aligned with members list.
+
+    Falls back to DEFAULT_MEMBER_ROLE for missing/invalid entries.
+    """
+    raw = _parse_comma_list(roles_value)
+    result = []
+    for i in range(count):
+        if i < len(raw):
+            try:
+                role = int(raw[i])
+                result.append(role if role in VALID_ROLES else DEFAULT_MEMBER_ROLE)
+            except (ValueError, TypeError):
+                result.append(DEFAULT_MEMBER_ROLE)
+        else:
+            result.append(DEFAULT_MEMBER_ROLE)
+    return result
+
+
 class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
     """Bulk import projects into workspaces from JSON array.
 
     Accepts: POST { "projects": [{ "workspace_slug": str, "name": str,
-                                   "description"?: str, "network"?: int }] }
+                                   "description"?: str, "network"?: int,
+                                   "project_leader"?: str (email),
+                                   "members"?: str (comma-separated emails),
+                                   "member_roles"?: str (comma-separated role ints) }] }
     Returns: { created, skipped, total_created, total_skipped }
-    Each row targets its own workspace via workspace_slug.
+    - project_leader not found in workspace → skipped silently, project still created
+    - member not in workspace → listed in created[].skipped_members
     """
 
     permission_classes = [InstanceAdminPermission]
@@ -97,6 +130,9 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
             name = str(item.get("name") or "").strip()
             description = str(item.get("description") or "").strip()
             network_raw = item.get("network")
+            project_leader_email = str(item.get("project_leader") or "").strip().lower()
+            member_emails = _parse_comma_list(item.get("members"))
+            member_roles = _parse_member_roles(item.get("member_roles"), len(member_emails))
 
             # Validate workspace_slug
             if not workspace_slug:
@@ -133,6 +169,32 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
             if network not in VALID_NETWORKS:
                 network = 2
 
+            # Resolve project_leader (silent skip if not found in workspace)
+            project_leader_id = None
+            if project_leader_email:
+                leader = User.objects.filter(
+                    email=project_leader_email,
+                    workspacemember__workspace=workspace,
+                    workspacemember__is_active=True,
+                ).first()
+                if leader:
+                    project_leader_id = leader.id
+
+            # Resolve member emails → workspace members only
+            valid_members = []   # list of (User, role)
+            skipped_members = []
+            for email, role in zip(member_emails, member_roles):
+                email_lower = email.lower()
+                member_user = User.objects.filter(
+                    email=email_lower,
+                    workspacemember__workspace=workspace,
+                    workspacemember__is_active=True,
+                ).first()
+                if member_user:
+                    valid_members.append((member_user, role))
+                else:
+                    skipped_members.append(f"{email} not found in workspace")
+
             # Build per-workspace identifier set
             if workspace.id not in identifier_cache:
                 identifier_cache[workspace.id] = set(
@@ -152,6 +214,7 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
                         description=description,
                         network=network,
                         workspace=workspace,
+                        project_lead_id=project_leader_id,
                         created_by=request.user,
                         updated_by=request.user,
                     )
@@ -170,11 +233,12 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
                     )
 
                     # Auto-add workspace admins
+                    already_added = {request.user.id}
                     workspace_admins = WorkspaceMember.objects.filter(
                         workspace=workspace,
                         role=ROLE.ADMIN.value,
                         is_active=True,
-                    ).exclude(member_id=request.user.id).select_related("member")
+                    ).exclude(member_id__in=already_added).select_related("member")
 
                     for wm in workspace_admins:
                         ProjectMember.objects.get_or_create(
@@ -182,6 +246,16 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
                             member=wm.member,
                             defaults={"role": ROLE.ADMIN.value},
                         )
+                        already_added.add(wm.member_id)
+
+                    # Add imported members (skip if already added above)
+                    for member_user, role in valid_members:
+                        if member_user.id not in already_added:
+                            ProjectMember.objects.get_or_create(
+                                project=project,
+                                member=member_user,
+                                defaults={"role": role},
+                            )
 
                     # Create default states
                     State.objects.bulk_create(
@@ -204,7 +278,12 @@ class InstanceWorkspaceProjectBulkImportEndpoint(BaseAPIView):
 
                 # Track identifier to prevent intra-batch collisions
                 identifier_cache[workspace.id].add(identifier)
-                created.append({"workspace_slug": workspace_slug, "name": name, "identifier": identifier})
+                created.append({
+                    "workspace_slug": workspace_slug,
+                    "name": name,
+                    "identifier": identifier,
+                    "skipped_members": skipped_members,
+                })
 
             except IntegrityError:
                 skipped.append({"row_number": row_number, "workspace_slug": workspace_slug, "name": name, "reason": "Identifier or name already exists (concurrent creation)"})

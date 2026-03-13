@@ -8,8 +8,21 @@ import { API_BASE_URL } from "@plane/constants";
 import type { IWorkspace, TWorkspacePaginationInfo } from "@plane/types";
 
 export interface IWorkspaceProjectBulkImportResponse {
-  created: Array<{ workspace_slug: string; name: string; identifier: string }>;
+  created: Array<{ workspace_slug: string; name: string; identifier: string; skipped_members: string[] }>;
   skipped: Array<{ row_number: number; workspace_slug: string; name: string; reason: string }>;
+  total_created: number;
+  total_skipped: number;
+}
+
+export interface IWorkspaceModuleBulkImportResponse {
+  created: Array<{ workspace_slug: string; project_identifier: string; name: string }>;
+  skipped: Array<{
+    row_number: number;
+    workspace_slug: string;
+    project_identifier: string;
+    name: string;
+    reason: string;
+  }>;
   total_created: number;
   total_skipped: number;
 }
@@ -136,12 +149,40 @@ export class InstanceWorkspaceService extends APIService {
   }
 
   async bulkImportProjects(
-    projects: Array<{ workspace_slug: string; name: string; description?: string; network?: number }>
+    projects: Array<{
+      workspace_slug: string;
+      name: string;
+      description?: string;
+      network?: number;
+      project_leader?: string;
+      members?: string;
+      member_roles?: string;
+    }>
   ): Promise<IWorkspaceProjectBulkImportResponse> {
     return this.post<IWorkspaceProjectBulkImportResponse>("/api/instances/bulk-import-projects/", {
       projects,
     })
       .then((response) => response?.data as IWorkspaceProjectBulkImportResponse)
+      .catch((error: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const errorData = (error as Record<string, unknown>)?.response?.data;
+        throw errorData;
+      });
+  }
+
+  async bulkImportModules(
+    modules: Array<{
+      workspace_slug: string;
+      project_identifier: string;
+      name: string;
+      description?: string;
+      status?: string;
+      start_date?: string;
+      target_date?: string;
+    }>
+  ): Promise<IWorkspaceModuleBulkImportResponse> {
+    return this.post<IWorkspaceModuleBulkImportResponse>("/api/instances/bulk-import-modules/", { modules })
+      .then((response) => response?.data as IWorkspaceModuleBulkImportResponse)
       .catch((error: unknown) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const errorData = (error as Record<string, unknown>)?.response?.data;

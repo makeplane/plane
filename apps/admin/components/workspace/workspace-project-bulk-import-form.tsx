@@ -22,10 +22,21 @@ import type { IProjectRow } from "./workspace-project-bulk-import-preview";
 const MAX_ROWS = 100;
 const MAX_FILE_SIZE_MB = 5;
 
-/** Download a 4-column project import template (.xlsx) */
+/** Download a 7-column project import template (.xlsx) */
 async function downloadTemplate() {
   const XLSX = await import("xlsx");
-  const templateSheet = XLSX.utils.aoa_to_sheet([["workspace_slug", "name", "description", "network"]]);
+  const templateSheet = XLSX.utils.aoa_to_sheet([
+    ["workspace_slug", "name", "description", "network", "project_leader", "members", "member_roles"],
+    [
+      "my-workspace",
+      "Project Alpha",
+      "Example project description",
+      2,
+      "lead@example.com",
+      "member1@example.com,member2@example.com",
+      "15,20",
+    ],
+  ]);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, templateSheet, "Projects");
   XLSX.writeFile(workbook, "project-import-template.xlsx");
@@ -91,6 +102,9 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
           name: r.name,
           description: r.description,
           network: r.network,
+          project_leader: r.project_leader,
+          members: r.members,
+          member_roles: r.member_roles,
         }))
       );
       setResult(data);
@@ -114,9 +128,12 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
       <div className="space-y-2">
         <p className="text-sm font-medium">Excel file requirements:</p>
         <p className="text-sm text-tertiary">
-          File must have a header row with columns: <code className="text-primary">workspace_slug</code> (required),{" "}
-          <code className="text-primary">name</code> (required), <code className="text-primary">description</code>{" "}
-          (optional), <code className="text-primary">network</code> (optional, 0=Private / 2=Public, default: 2).
+          Required: <code className="text-primary">workspace_slug</code>, <code className="text-primary">name</code>.
+          Optional: <code className="text-primary">description</code>, <code className="text-primary">network</code>{" "}
+          (0=Private / 2=Public, default: 2), <code className="text-primary">project_leader</code> (email),{" "}
+          <code className="text-primary">members</code> (comma-separated emails),{" "}
+          <code className="text-primary">member_roles</code> (comma-separated: 5=Guest / 15=Member / 20=Admin, default:
+          15).
         </p>
         <p className="text-sm text-tertiary">
           Max {MAX_ROWS} rows and {MAX_FILE_SIZE_MB} MB per import. Each row can target a different workspace.
