@@ -141,7 +141,7 @@ export const InvitationFieldRow = observer(function InvitationFieldRow(props: TI
           )}
         />
       </div>
-      {/* role selector + remove button */}
+      {/* role selector + auto join checkbox + remove button */}
       <div className="flex items-center justify-between gap-2 shrink-0">
         <div className="flex flex-col gap-1">
           <Controller
@@ -168,6 +168,22 @@ export const InvitationFieldRow = observer(function InvitationFieldRow(props: TI
             )}
           />
         </div>
+        {/* Auto Join: directly adds member without invitation email */}
+        <Controller
+          control={control}
+          name={`emails.${index}.auto_join`}
+          render={({ field: { value, onChange } }) => (
+            <label className="flex cursor-pointer items-center gap-1.5 text-caption-sm-regular text-secondary whitespace-nowrap">
+              <input
+                type="checkbox"
+                checked={value}
+                onChange={(e) => onChange(e.target.checked)}
+                className="h-3.5 w-3.5 accent-accent-primary"
+              />
+              Auto Join
+            </label>
+          )}
+        />
         {showRemoveButton && (
           <div className="flex-item flex w-6">
             <button

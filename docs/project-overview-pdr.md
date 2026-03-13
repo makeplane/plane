@@ -1,9 +1,9 @@
 # Plane.so - Project Overview & Product Development Requirements
 
-**Version**: 1.2.0
+**Version**: 1.2.4
 **License**: AGPL-3.0
 **Type**: Open-source project management platform
-**Last Updated**: 2026-02-13
+**Last Updated**: 2026-03-09
 
 ## Vision & Purpose
 
@@ -85,7 +85,15 @@ Plane is a modern, open-source project management tool designed for teams to tra
 - API tokens for programmatic access
 - RBAC with workspace/project roles
 
-### 10. Integrations
+### 10. Organizational Hierarchy (v1.2.4)
+
+- Hierarchical department structure (up to 6 levels deep)
+- Staff profiles linked to users with employment status tracking
+- Organizational chart visualization (read-only workspace view)
+- Admin-managed department and staff CRUD in God-mode panel
+- Auto-join logic for bulk workspace membership synchronization
+
+### 11. Integrations
 
 - GitHub sync (repos, issues, comments)
 - Slack notifications
@@ -130,18 +138,19 @@ Plane is a modern, open-source project management tool designed for teams to tra
 
 ### Functional Requirements
 
-| Requirement               | Priority | Status  | Details                                                       |
-| ------------------------- | -------- | ------- | ------------------------------------------------------------- |
-| Multi-workspace support   | Critical | Shipped | Users can create/manage multiple workspaces                   |
-| Role-based access control | Critical | Shipped | Workspace & project-level roles (Owner, Admin, Member, Guest) |
-| Issue full lifecycle      | Critical | Shipped | Create, update, assign, comment, close, archive               |
-| Real-time collaboration   | High     | Shipped | WebSocket-based simultaneous editing                          |
-| Public sharing            | High     | Shipped | Share issues/workspaces publicly via links                    |
-| Analytics & reporting     | High     | Shipped | Dashboard views, trend charts, burn-down tracking             |
-| OAuth authentication      | High     | Shipped | Google, GitHub, GitLab, Gitea providers                       |
-| File uploads              | Medium   | Shipped | Attach files to issues, store in S3/MinIO                     |
-| API access                | Medium   | Shipped | REST API v1 with token-based auth                             |
-| Self-hosting              | Critical | Shipped | Docker/Kubernetes deployment options                          |
+| Requirement                  | Priority | Status  | Details                                                             |
+| ---------------------------- | -------- | ------- | ------------------------------------------------------------------- |
+| Multi-workspace support      | Critical | Shipped | Users can create/manage multiple workspaces                         |
+| Role-based access control    | Critical | Shipped | Workspace & project-level roles (Owner, Admin, Member, Guest)       |
+| Issue full lifecycle         | Critical | Shipped | Create, update, assign, comment, close, archive                     |
+| Real-time collaboration      | High     | Shipped | WebSocket-based simultaneous editing                                |
+| Public sharing               | High     | Shipped | Share issues/workspaces publicly via links                          |
+| Analytics & reporting        | High     | Shipped | Dashboard views, trend charts, burn-down tracking                   |
+| OAuth authentication         | High     | Shipped | Google, GitHub, GitLab, Gitea providers                             |
+| Organizational hierarchy      | High     | Shipped | Departments, staff profiles, org charts (v1.2.4)                    |
+| File uploads                 | Medium   | Shipped | Attach files to issues, store in S3/MinIO                           |
+| API access                   | Medium   | Shipped | REST API v1 with token-based auth                                   |
+| Self-hosting                 | Critical | Shipped | Docker/Kubernetes deployment options                                |
 
 ### Non-Functional Requirements
 

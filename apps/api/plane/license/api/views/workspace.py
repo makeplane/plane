@@ -108,3 +108,12 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
                     {"slug": "The workspace with the slug already exists"},
                     status=status.HTTP_409_CONFLICT,
                 )
+
+
+class InstanceWorkSpaceDetailEndpoint(BaseAPIView):
+    permission_classes = [InstanceAdminPermission]
+
+    def delete(self, request, slug):
+        workspace = Workspace.objects.get(slug=slug)
+        workspace.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

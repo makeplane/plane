@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
+from django.urls import path, include
 
 from plane.authentication.views import SwingSSOTestEndpoint
 from plane.license.api.views import (
@@ -25,6 +25,7 @@ from plane.license.api.views import (
     InstanceUserWorkspaceEndpoint,
     InstanceWorkspaceBulkCreateEndpoint,
     InstanceWorkspaceBulkAssignMembersEndpoint,
+    InstanceWorkSpaceDetailEndpoint,
     EmailLogMonitoringEndpoint,
     ScheduledJobMonitoringEndpoint,
     WorkerHealthMonitoringEndpoint,
@@ -83,6 +84,7 @@ urlpatterns = [
     path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
     path("workspaces/bulk-create/", InstanceWorkspaceBulkCreateEndpoint.as_view(), name="instance-workspace-bulk-create"),
     path("workspaces/bulk-assign-members/", InstanceWorkspaceBulkAssignMembersEndpoint.as_view(), name="instance-workspace-bulk-assign-members"),
+    path("workspaces/<str:slug>/", InstanceWorkSpaceDetailEndpoint.as_view(), name="instance-workspace-detail"),
     # Swing SSO test (admin-only, needs instances path for admin session cookie)
     path("swing-sso/test/", SwingSSOTestEndpoint.as_view(), name="swing-sso-test"),
     # User management
@@ -103,6 +105,10 @@ urlpatterns = [
         InstanceUserWorkspaceEndpoint.as_view(),
         name="instance-user-workspaces",
     ),
+    # Department management
+    path("", include("plane.license.api.urls.department")),
+    # Staff management
+    path("", include("plane.license.api.urls.staff")),
     # Monitoring
     path(
         "monitoring/email-logs/",

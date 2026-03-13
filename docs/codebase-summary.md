@@ -1,7 +1,7 @@
 # Plane.so Codebase Summary
 
-**Last Updated**: 2026-03-02
-**Version**: 1.2.3
+**Last Updated**: 2026-03-09
+**Version**: 1.2.4
 **Structure**: pnpm + Turborepo monorepo
 
 ## Repository Overview
@@ -49,6 +49,7 @@ plane.so/
 - `/(all)/[workspaceSlug]/` - Main workspace hierarchy
 - `[projectId]/` - Project-specific views (board, list, calendar, spreadsheet, gantt, timeline)
 - `dashboards/` - Analytics Dashboard Pro feature (CRUD pages, widget configuration)
+- `org-chart/` - Organizational chart (read-only hierarchy of departments & staff)
 
 ### 2. Admin App (`apps/admin/`)
 
@@ -62,9 +63,9 @@ plane.so/
 | **State Management** | MobX (6 stores)                            |
 | **Styling**          | Tailwind CSS v4                            |
 
-**Features**: Instance config, OAuth setup, email settings, AI config, image settings, user management, monitoring
+**Features**: Instance config, OAuth setup, email settings, AI config, image settings, user management, department/staff management, monitoring
 
-**Key Stores**: `instance`, `root`, `theme`, `user`, `workspace`, `instance-user`
+**Key Stores**: `instance`, `root`, `theme`, `user`, `workspace`, `instance-user`, `instance-department`, `instance-staff`
 
 **User Management Feature**:
 
@@ -72,6 +73,17 @@ plane.so/
 - Store: `instance-user.store.ts` - User CRUD state management
 - Service: `instance-user.service.ts` - API integration
 - Components: User list, create form, detail page, workspace assignment, password reset dialogs
+
+**Department & Staff Management Feature**:
+
+- Routes: `/departments`, `/staff` - List, create, detail, bulk import/export pages
+- Stores:
+  - `instance-department.store.ts` - Department CRUD + hierarchy management
+  - `instance-staff.store.ts` - Staff CRUD + employment status management
+- Services:
+  - `packages/services/src/department/` - Department API integration
+  - `packages/services/src/staff/` - Staff API integration
+- Components: Department tree, staff table, bulk import modal, deactivation workflows
 
 **Monitoring Feature** (Phase 1):
 

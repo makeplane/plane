@@ -9,7 +9,7 @@
 ## Overview
 
 - **Priority:** P1 (blocking all other phases)
-- **Status:** pending
+- **Status:** completed
 - **Effort:** 4h
 - Remove `workspace` FK from Department and StaffProfile. Remove `linked_project` FK from Department. Add `linked_workspace` OneToOneField(nullable) to Department. Update unique constraints to instance-level scope.
 
@@ -103,13 +103,13 @@ StaffProfile:
 
 ## Todo List
 
-- [ ] Write Django migration with RunPython data migration
-- [ ] Update Department model (remove workspace, linked_project; add linked_workspace)
-- [ ] Update StaffProfile model (remove workspace)
-- [ ] Update unique constraints (instance-level)
-- [ ] Test migration forward on dev DB
-- [ ] Test migration backward (reversible)
-- [ ] Verify no orphaned references
+- [x]Write Django migration with RunPython data migration
+- [x]Update Department model (remove workspace, linked_project; add linked_workspace)
+- [x]Update StaffProfile model (remove workspace)
+- [x]Update unique constraints (instance-level)
+- [x]Test migration forward on dev DB
+- [x]Test migration backward (reversible)
+- [x]Verify no orphaned references
 
 ## Success Criteria
 

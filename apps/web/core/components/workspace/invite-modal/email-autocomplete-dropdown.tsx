@@ -54,6 +54,9 @@ export const EmailAutocompleteDropdown = ({
               <div className="flex flex-col min-w-0">
                 <span className="truncate font-medium">{fullName}</span>
                 <span className="truncate text-custom-text-300 text-caption-sm-regular">{user.email}</span>
+                {user.department_name && (
+                  <span className="truncate text-custom-text-400 text-caption-sm-regular">{user.department_name}</span>
+                )}
               </div>
             </button>
           );

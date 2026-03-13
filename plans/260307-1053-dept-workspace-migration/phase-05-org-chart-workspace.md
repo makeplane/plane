@@ -11,7 +11,7 @@
 ## Overview
 
 - **Priority:** P2
-- **Status:** pending
+- **Status:** completed
 - **Effort:** 5h
 - Add read-only Org Chart page in workspace at `/:workspaceSlug/org-chart`. Backend returns department tree scoped to departments linked to this workspace (traverse up/down from linked dept). Frontend renders expand/collapse tree with staff counts, manager names, positions. Available to any workspace member.
 
@@ -181,18 +181,18 @@ OrgChartPage
 
 ## Todo List
 
-- [ ] Create OrgChartEndpoint with scoped tree query
-- [ ] Create or extend serializer with is_linked field
-- [ ] Create URL patterns and wire in **init**.py
-- [ ] Create OrgChartService (frontend)
-- [ ] Create org-chart page.tsx with layout.tsx and header.tsx
-- [ ] Create OrgChartTree component
-- [ ] Create OrgChartNode component (recursive, expand/collapse)
-- [ ] Create OrgChartEmptyState component
-- [ ] Add route in core.ts
-- [ ] Add sidebar navigation item
-- [ ] Test with workspace that has linked departments
-- [ ] Test empty state (workspace with no linked departments)
+- [x]Create OrgChartEndpoint with scoped tree query
+- [x]Create or extend serializer with is_linked field
+- [x]Create URL patterns and wire in **init**.py
+- [x]Create OrgChartService (frontend)
+- [x]Create org-chart page.tsx with layout.tsx and header.tsx
+- [x]Create OrgChartTree component
+- [x]Create OrgChartNode component (recursive, expand/collapse)
+- [x]Create OrgChartEmptyState component
+- [x]Add route in core.ts
+- [x]Add sidebar navigation item
+- [x]Test with workspace that has linked departments
+- [x]Test empty state (workspace with no linked departments)
 
 ## Success Criteria
 

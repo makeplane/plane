@@ -39,7 +39,6 @@ class MyStaffProfileEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
             staff = StaffProfile.objects.select_related("department").get(
-                workspace__slug=slug,
                 user=request.user,
                 deleted_at__isnull=True,
             )

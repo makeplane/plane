@@ -107,4 +107,12 @@ export class InstanceWorkspaceService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async destroy(workspaceSlug: string): Promise<void> {
+    return this.delete(`/api/instances/workspaces/${workspaceSlug}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

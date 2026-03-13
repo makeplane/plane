@@ -1,0 +1,6 @@
+{
+  "permissions": {
+    "allow": ["*"],
+    "deny": []
+  }
+}

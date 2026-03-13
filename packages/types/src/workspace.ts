@@ -34,6 +34,7 @@ export interface IWorkspace {
   total_projects?: number;
   role: number;
   timezone: string;
+  is_board_of_director_workspace: boolean;
 }
 
 export interface IWorkspaceLite {
@@ -60,7 +61,7 @@ export interface IWorkspaceMemberInvitation {
 }
 
 export interface IWorkspaceBulkInviteFormData {
-  emails: { email: string; role: TUserPermissions }[];
+  emails: { email: string; role: TUserPermissions; auto_join?: boolean }[];
 }
 
 export type Properties = {

@@ -11,7 +11,7 @@
 ## Overview
 
 - **Priority:** P1
-- **Status:** pending
+- **Status:** completed
 - **Effort:** 8h
 - Move all Department and Staff API endpoints from workspace-scoped (`/api/workspaces/<slug>/`) to instance-level (`/api/instances/`). Inherit from license `BaseAPIView` with `InstanceAdminPermission`. Replace `linked_project` logic with `linked_workspace`. Rewrite auto-membership: ProjectMember -> WorkspaceMember. Move MyStaffProfileEndpoint to `/api/v1/me/staff-profile/`.
 
@@ -172,21 +172,21 @@ AFTER: staff assigned to dept with linked_workspace
 
 ## Todo List
 
-- [ ] Update DepartmentSerializer (remove workspace, linked_project -> linked_workspace)
-- [ ] Update DepartmentTreeSerializer (linked_workspace_detail)
-- [ ] Update StaffProfileSerializer (remove workspace)
-- [ ] Create InstanceDepartmentEndpoint + Detail + Tree + Staff + LinkWorkspace views
-- [ ] Create InstanceStaffEndpoint + Detail + Transfer + Deactivate + BulkImport + BulkAction + Export + Stats views
-- [ ] Rewrite \_create_staff() helper for instance-level
-- [ ] Rewrite \_sync_members_to_workspace() (was \_sync_members_to_project)
-- [ ] Rewrite \_join_children_workspaces() (was \_join_children_projects)
-- [ ] Create department URL patterns (license/api/urls/)
-- [ ] Create staff URL patterns (license/api/urls/)
-- [ ] Wire URLs in license/urls.py
-- [ ] Move MyStaffProfileEndpoint to /api/v1/me/staff-profile/
-- [ ] Delete old workspace-scoped views and URL files
-- [ ] Remove old imports from **init**.py files
-- [ ] Test all endpoints
+- [x]Update DepartmentSerializer (remove workspace, linked_project -> linked_workspace)
+- [x]Update DepartmentTreeSerializer (linked_workspace_detail)
+- [x]Update StaffProfileSerializer (remove workspace)
+- [x]Create InstanceDepartmentEndpoint + Detail + Tree + Staff + LinkWorkspace views
+- [x]Create InstanceStaffEndpoint + Detail + Transfer + Deactivate + BulkImport + BulkAction + Export + Stats views
+- [x]Rewrite \_create_staff() helper for instance-level
+- [x]Rewrite \_sync_members_to_workspace() (was \_sync_members_to_project)
+- [x]Rewrite \_join_children_workspaces() (was \_join_children_projects)
+- [x]Create department URL patterns (license/api/urls/)
+- [x]Create staff URL patterns (license/api/urls/)
+- [x]Wire URLs in license/urls.py
+- [x]Move MyStaffProfileEndpoint to /api/v1/me/staff-profile/
+- [x]Delete old workspace-scoped views and URL files
+- [x]Remove old imports from **init**.py files
+- [x]Test all endpoints
 
 ## Success Criteria
 

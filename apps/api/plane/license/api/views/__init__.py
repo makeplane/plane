@@ -25,6 +25,7 @@ from .admin import (
 from .workspace import (
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
+    InstanceWorkSpaceDetailEndpoint,
 )
 
 from .user import (

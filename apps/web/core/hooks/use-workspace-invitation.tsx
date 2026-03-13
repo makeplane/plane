@@ -13,6 +13,7 @@ import { EUserPermissions } from "@plane/constants";
 type EmailRole = {
   email: string;
   role: EUserPermissions;
+  auto_join: boolean;
 };
 
 export type InvitationFormValues = {
@@ -24,6 +25,7 @@ const SEND_WORKSPACE_INVITATION_MODAL_DEFAULT_VALUES: InvitationFormValues = {
     {
       email: "",
       role: EUserPermissions.MEMBER,
+      auto_join: false,
     },
   ],
 };
@@ -65,7 +67,7 @@ export const useWorkspaceInvitationActions = (props: TUseWorkspaceInvitationProp
   };
 
   const appendField = () => {
-    append({ email: "", role: EUserPermissions.MEMBER });
+    append({ email: "", role: EUserPermissions.MEMBER, auto_join: false });
   };
 
   const onSubmitForm = async (data: InvitationFormValues) => {
@@ -75,7 +77,7 @@ export const useWorkspaceInvitationActions = (props: TUseWorkspaceInvitationProp
   };
 
   useEffect(() => {
-    if (fields.length === 0) append([{ email: "", role: EUserPermissions.MEMBER }]);
+    if (fields.length === 0) append([{ email: "", role: EUserPermissions.MEMBER, auto_join: false }]);
   }, [fields, append]);
 
   return {
