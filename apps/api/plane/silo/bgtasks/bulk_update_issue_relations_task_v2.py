@@ -14,6 +14,7 @@ from celery import shared_task
 from django.db import transaction, connection
 
 from plane.db.models import Issue, IssueRelation
+from plane.db.models.work_item_relation import WorkItemRelationDefinition, RelationCategory
 from plane.ee.models.job import ImportJob
 
 logger = logging.getLogger("plane.worker")
@@ -24,8 +25,9 @@ def bulk_update_issue_relations_task_v2(
     payload: dict, job_id: str, project_id: str, user_id: str | None = None, slug: str | None = None, **kwargs
 ):
     """
-    Bulk update issue relationships (parent, blocking, duplicate, etc)
-    Cycles and modules are handled separately in import_issues task
+    Bulk create issue relationships (parent, blocking, duplicate, custom, etc).
+    Uses ignore_conflicts=True so re-imports are idempotent — existing relations
+    are preserved and new ones from Jira are added.
 
     Args:
         payload: Dictionary containing:
@@ -69,6 +71,8 @@ def bulk_update_issue_relations_task_v2(
             all_issue_external_ids.add(related_id)
         if relationships.get("duplicate_of"):
             all_issue_external_ids.add(relationships["duplicate_of"])
+        for custom_rel in relationships.get("custom_relations", []):
+            all_issue_external_ids.add(custom_rel["linked_issue_external_id"])
 
     # Query all issues from database
     issues = Issue.objects.filter(
@@ -79,8 +83,41 @@ def bulk_update_issue_relations_task_v2(
 
     issue_map = {issue.external_id: issue.id for issue in issues}
 
+    # Resolve/create WorkItemRelationDefinition entries for custom relations.
+    # Cache by link_type name to avoid repeated DB queries.
+    definition_cache = {}  # link_type_name → WorkItemRelationDefinition.id
+
+    def get_or_create_relation_definition(link_type: dict) -> str | None:
+        """Get or create a WorkItemRelationDefinition for the given Jira link type."""
+        name = link_type.get("name", "").strip()
+        if not name:
+            return None
+
+        if name in definition_cache:
+            return definition_cache[name]
+
+        try:
+            definition, _created = WorkItemRelationDefinition.objects.get_or_create(
+                workspace_id=workspace_id,
+                name=name,
+                deleted_at__isnull=True,
+                defaults={
+                    "description": f"Imported from Jira link type: {name}",
+                    "outward": link_type.get("outward", name),
+                    "inward": link_type.get("inward", name),
+                    "is_default": False,
+                    "created_by_id": user_id,
+                },
+            )
+            definition_cache[name] = definition.id
+            return definition.id
+        except Exception as e:
+            logger.warning(f"Failed to get/create relation definition for '{name}': {e}")
+            return None
+
     # Prepare batch operations
     issue_relations = []
+    custom_issue_relations = []
     parent_updates = []
 
     for relation_data in relations_batch:
@@ -99,7 +136,7 @@ def bulk_update_issue_relations_task_v2(
             if parent_id:
                 parent_updates.append((issue_id, parent_id))
 
-        # Blocking relationships
+        # Blocking relationships (stored as blocked_by with swapped issue/related)
         for related_external_id in relationships.get("blocking", []):
             related_id = issue_map.get(related_external_id)
             if related_id:
@@ -107,10 +144,11 @@ def bulk_update_issue_relations_task_v2(
                     IssueRelation(
                         project_id=project_id,
                         workspace_id=workspace_id,
-                        issue_id=issue_id,
-                        related_issue_id=related_id,
-                        relation_type="blocks",
+                        issue_id=related_id,
+                        related_issue_id=issue_id,
+                        relation_type="blocked_by",
                         created_by_id=user_id,
+                        external_source=source,
                     )
                 )
 
@@ -126,6 +164,7 @@ def bulk_update_issue_relations_task_v2(
                         related_issue_id=related_id,
                         relation_type="blocked_by",
                         created_by_id=user_id,
+                        external_source=source,
                     )
                 )
 
@@ -141,6 +180,7 @@ def bulk_update_issue_relations_task_v2(
                         related_issue_id=related_id,
                         relation_type="relates_to",
                         created_by_id=user_id,
+                        external_source=source,
                     )
                 )
 
@@ -156,18 +196,59 @@ def bulk_update_issue_relations_task_v2(
                         related_issue_id=related_id,
                         relation_type="duplicate",
                         created_by_id=user_id,
+                        external_source=source,
                     )
                 )
+
+        # Custom relations (unmapped Jira link types → WorkItemRelationDefinition)
+        for custom_rel in relationships.get("custom_relations", []):
+            linked_id = issue_map.get(custom_rel["linked_issue_external_id"])
+            if not linked_id:
+                continue
+
+            definition_id = get_or_create_relation_definition(custom_rel["link_type"])
+            if not definition_id:
+                continue
+
+            # issue_id = inward issue, related_issue_id = outward issue
+            if custom_rel.get("current_is_outward"):
+                # Current issue is the outward side → related_issue_id = current, issue_id = linked
+                rel_issue_id = linked_id
+                rel_related_issue_id = issue_id
+            else:
+                # Current issue is the inward side → issue_id = current, related_issue_id = linked
+                rel_issue_id = issue_id
+                rel_related_issue_id = linked_id
+
+            custom_issue_relations.append(
+                IssueRelation(
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    issue_id=rel_issue_id,
+                    related_issue_id=rel_related_issue_id,
+                    category=RelationCategory.RELATION,
+                    relation_type=None,
+                    definition_id=definition_id,
+                    created_by_id=user_id,
+                    external_source=source,
+                    external_id=custom_rel.get("link_external_id"),
+                )
+            )
 
     # Bulk create in transaction
     with transaction.atomic():
         with connection.cursor() as cur:
             cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
 
-            # Create relationships
+            # Create dependency relationships
             if issue_relations:
                 IssueRelation.objects.bulk_create(issue_relations, ignore_conflicts=True)
-                logger.info(f"Created {len(issue_relations)} issue relations")
+                logger.info(f"Created {len(issue_relations)} dependency relations")
+
+            # Create custom (definition-based) relationships
+            if custom_issue_relations:
+                IssueRelation.objects.bulk_create(custom_issue_relations, ignore_conflicts=True)
+                logger.info(f"Created {len(custom_issue_relations)} custom relations")
 
             # Update parent relationships
             for issue_id, parent_id in parent_updates:

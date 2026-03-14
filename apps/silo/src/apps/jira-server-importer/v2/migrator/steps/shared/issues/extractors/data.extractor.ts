@@ -27,6 +27,7 @@ import type { TImportJob } from "@plane/types";
 import { getTransformedIssuePropertyValuesV2 } from "@/apps/jira-server-importer/migrator/transformers";
 import { buildExternalId, extractJobData } from "@/apps/jira-server-importer/v2/helpers/job";
 import type {
+  TCrossProjectRelation,
   TIssueRelationsData,
   TIssuesAssociationsData,
   TIssueTypesData,
@@ -67,6 +68,7 @@ export type TUnifiedExtractionResult = {
   associations: TIssuesAssociationsData;
   relations: TIssueRelationsData[];
   issueActivities: Partial<ExIssueActivity>[];
+  crossProjectRelations: TCrossProjectRelation[];
 };
 
 /**
@@ -77,6 +79,7 @@ export class JiraIssueDataExtractor {
   public async extractAll(props: TExtractionProps): Promise<TUnifiedExtractionResult> {
     const { job, sourceClient, source, issues, propertyData, additionalData, epicsAsWorkItems, storage } = props;
     const { projectId, resourceId } = extractJobData(job);
+    const jiraProjectKey = job.config?.project?.key ?? "";
 
     // 1. Instantiate sub-extractors
     const commentExtractor = this.getCommentExtractor(resourceId, projectId, source);
@@ -88,7 +91,8 @@ export class JiraIssueDataExtractor {
       projectId,
       resourceId,
       additionalData.knownCustomFieldMapping,
-      epicsAsWorkItems
+      epicsAsWorkItems,
+      jiraProjectKey
     );
     const subscribersExtractor = this.getSubscribersExtractor();
 
@@ -113,6 +117,7 @@ export class JiraIssueDataExtractor {
     const worklogs = new Map<string, Partial<TWorklog>[]>();
     const subscribers = new Map<string, string[]>();
     const relations: TIssueRelationsData[] = [];
+    const allCrossProjectRelations: TCrossProjectRelation[] = [];
 
     let totalCycleAssociations = 0;
     let totalModuleAssociations = 0;
@@ -136,19 +141,24 @@ export class JiraIssueDataExtractor {
       totalModuleAssociations += componentExternalIds.length;
       totalWorklogs += issueWorklogs.length;
 
-      // Relations
-      const relationships = await linkExtractor.extract(issue);
+      // Relations (now returns both same-project and cross-project)
+      const { relationships, crossProjectRelations } = await linkExtractor.extract(issue);
       if (
         relationships.parent ||
         relationships.blocking.length > 0 ||
         relationships.is_blocked_by.length > 0 ||
         relationships.relates_to.length > 0 ||
-        relationships.duplicate_of
+        relationships.duplicate_of ||
+        relationships.custom_relations.length > 0
       ) {
         relations.push({
           external_id: issueExternalId,
           relationships,
         });
+      }
+
+      if (crossProjectRelations.length > 0) {
+        allCrossProjectRelations.push(...crossProjectRelations);
       }
     }
 
@@ -169,6 +179,7 @@ export class JiraIssueDataExtractor {
       modules,
       worklogs,
       issueActivities,
+      crossProjectRelationsCount: allCrossProjectRelations.length,
     });
 
     return {
@@ -178,6 +189,7 @@ export class JiraIssueDataExtractor {
       associations: { cycles, modules, worklogs, subscribers },
       relations,
       issueActivities,
+      crossProjectRelations: allCrossProjectRelations,
     };
   }
 
@@ -208,9 +220,17 @@ export class JiraIssueDataExtractor {
     projectId: string,
     resourceId: string,
     knownCustomFieldMapping: TKnownFieldMapping[],
-    epicsAsWorkItems: boolean
+    epicsAsWorkItems: boolean,
+    jiraProjectKey: string
   ): JiraIssueLinkExtractor {
-    return new JiraIssueLinkExtractor(sourceClient, projectId, resourceId, knownCustomFieldMapping, epicsAsWorkItems);
+    return new JiraIssueLinkExtractor(
+      sourceClient,
+      projectId,
+      resourceId,
+      knownCustomFieldMapping,
+      epicsAsWorkItems,
+      jiraProjectKey
+    );
   }
 
   protected getIssueActivityExtractor(
@@ -276,6 +296,7 @@ export class JiraIssueDataExtractor {
     modules: Map<string, string[]>;
     worklogs: Map<string, Partial<TWorklog>[]>;
     issueActivities: Partial<ExIssueActivity>[];
+    crossProjectRelationsCount: number;
   }) {
     const { job, issues, comments, propertyValues, relations, issueActivities } = props;
 
@@ -325,6 +346,7 @@ export class JiraIssueDataExtractor {
       additional_data: {
         issuesWithRelations: relations.length,
         relationshipCounts,
+        crossProjectRelations: props.crossProjectRelationsCount,
       },
     });
 
@@ -350,6 +372,7 @@ export class JiraIssueDataExtractor {
       comments: comments.length,
       issueActivities: issueActivities.length,
       relations: relations.length,
+      crossProjectRelations: props.crossProjectRelationsCount,
     });
   }
 }

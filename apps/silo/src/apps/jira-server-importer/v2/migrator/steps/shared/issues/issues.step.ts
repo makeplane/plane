@@ -22,6 +22,7 @@ import { createEmptyContext, createPaginationContext } from "@/apps/jira-server-
 import type {
   IStep,
   IStorageService,
+  TCrossProjectRelation,
   TIssuePropertiesData,
   TIssueRelationsData,
   TIssuesAssociationsData,
@@ -32,6 +33,7 @@ import type {
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
 import { E_ADDITIONAL_STORAGE_KEYS, EJiraStep } from "@/apps/jira-server-importer/v2/types";
+import { buildExternalId, extractJobData } from "@/apps/jira-server-importer/v2/helpers/job";
 import { generateIssuePayloadV2 } from "@/etl/migrator/issues.migrator";
 import { getAPIClientInternal } from "@/services/client";
 import type { BulkIssuePayload } from "@/types";
@@ -39,6 +41,8 @@ import { celeryProducer } from "@/worker";
 import { extractErrorMetadata } from "@/helpers/errors";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
+import { DB } from "@/db/client";
 import { JiraIssueDataExtractor } from "./extractors/data.extractor";
 import { getKnownFieldIds } from "@/apps/jira-server-importer/v2/helpers/known-fields";
 
@@ -49,6 +53,14 @@ import { getKnownFieldIds } from "@/apps/jira-server-importer/v2/helpers/known-f
  * Processes attachments inline, resolves all entities
  * Uses existing transform functions for proper data conversion
  * Strips parent/cycles/modules → stored as relations for later
+ *
+ * Cross-project relations:
+ * - When a cross-project link is detected and the other project IS imported:
+ *   → resolves to a normal relation using the other project's Plane ID
+ * - When the other project is NOT imported:
+ *   → stores a WorkspaceEntityConnection (WEC) record keyed by the other issue's key
+ * - When importing an issue, checks for existing WEC records keyed by the current issue's key
+ *   → these are deferred relations from previously imported projects
  *
  * Dependencies:
  * - issue_properties (provides properties + rawFields for property value transformation)
@@ -119,14 +131,37 @@ export class JiraIssuesStep implements IStep {
         storage,
       });
 
-      const { processedIssues, comments, propertyValues, associations, relations, issueActivities } = {
+      const {
+        processedIssues,
+        comments,
+        propertyValues,
+        associations,
+        relations,
+        issueActivities,
+        crossProjectRelations,
+      } = {
         processedIssues: extractedData.issues,
         comments: extractedData.comments,
         propertyValues: extractedData.propertyValues,
         associations: extractedData.associations,
         relations: extractedData.relations,
         issueActivities: extractedData.issueActivities,
+        crossProjectRelations: extractedData.crossProjectRelations,
       };
+
+      // Handle cross-project relations:
+      // 1. Resolve deferred relations (WEC records from previously imported projects)
+      // 2. Store new cross-project relations as WEC records (or resolve immediately)
+      const crossProjectResolvedRelations = await this.handleCrossProjectRelations(
+        crossProjectRelations,
+        processedIssues,
+        jobContext,
+        storage
+      );
+
+      // Merge resolved cross-project relations into the main relations array.
+      // Must merge by external_id to avoid deduplication overwrites in storage.
+      const allRelations = this.mergeRelationsByExternalId([...relations, ...crossProjectResolvedRelations]);
 
       // Load entity mappings from storage
       const mappings = await this.loadMappings(job, processedIssues, associations, storage);
@@ -147,13 +182,15 @@ export class JiraIssuesStep implements IStep {
       );
 
       // Store relations for Relations Step
-      await this.storeRelations(relations, storage, job.id);
+      await this.storeRelations(allRelations, storage, job.id);
 
       logger.info(`[${job.id}] [${this.name}] Completed page`, {
         jobId: job.id,
         issues: processedIssues.length,
         comments: comments.length,
         pushed: pushed.length,
+        crossProjectRelations: crossProjectRelations.length,
+        crossProjectResolved: crossProjectResolvedRelations.length,
       });
 
       return this.buildNextContext(issuesResult, paginationCtx, processedIssues.length, pushed.length);
@@ -486,11 +523,6 @@ export class JiraIssuesStep implements IStep {
   }
 
   /**
-   * Extract all relations as external IDs
-   * Single unified structure for Relations Step
-   */
-
-  /**
    * Generate BulkIssuePayload and send to Celery
    * Uses generateIssuePayloadV2 to process attachments and resolve all entities
    */
@@ -614,5 +646,554 @@ export class JiraIssuesStep implements IStep {
       jobId,
       thisPage: relations.length,
     });
+  }
+
+  /**
+   * Merge multiple TIssueRelationsData entries that share the same external_id.
+   *
+   * Storage deduplicates by external_id (last write wins), so if we have two entries
+   * for the same issue (e.g., one from same-project extraction, one from cross-project
+   * resolution), the second would overwrite the first. This method combines their
+   * relationships into a single entry per external_id.
+   */
+  private mergeRelationsByExternalId(relations: TIssueRelationsData[]): TIssueRelationsData[] {
+    const merged = new Map<string, TIssueRelationsData>();
+
+    for (const rel of relations) {
+      const existing = merged.get(rel.external_id);
+      if (!existing) {
+        merged.set(rel.external_id, {
+          external_id: rel.external_id,
+          relationships: {
+            parent: rel.relationships.parent,
+            blocking: [...rel.relationships.blocking],
+            is_blocked_by: [...rel.relationships.is_blocked_by],
+            relates_to: [...rel.relationships.relates_to],
+            duplicate_of: rel.relationships.duplicate_of,
+            custom_relations: [...(rel.relationships.custom_relations ?? [])],
+          },
+        });
+      } else {
+        // Merge: parent uses first non-empty value, arrays are concatenated, duplicate_of uses first non-empty
+        if (!existing.relationships.parent && rel.relationships.parent) {
+          existing.relationships.parent = rel.relationships.parent;
+        }
+        existing.relationships.blocking.push(...rel.relationships.blocking);
+        existing.relationships.is_blocked_by.push(...rel.relationships.is_blocked_by);
+        existing.relationships.relates_to.push(...rel.relationships.relates_to);
+        if (!existing.relationships.duplicate_of && rel.relationships.duplicate_of) {
+          existing.relationships.duplicate_of = rel.relationships.duplicate_of;
+        }
+        existing.relationships.custom_relations.push(...(rel.relationships.custom_relations ?? []));
+      }
+    }
+
+    return Array.from(merged.values());
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Cross-project relations
+  // ──────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Handle all cross-project relation logic:
+   * 1. Resolve deferred relations (WEC records from previously imported projects)
+   * 2. For new cross-project links, check if the other project is already imported
+   *    - If yes: resolve immediately (build external_id using other project's Plane ID)
+   *    - If no: store a WEC record for later resolution
+   *
+   * Returns resolved relations to merge into the main relations array.
+   */
+  private async handleCrossProjectRelations(
+    crossProjectRelations: TCrossProjectRelation[],
+    processedIssues: IJiraIssue[],
+    jobContext: TJobContext,
+    storage: IStorageService
+  ): Promise<TIssueRelationsData[]> {
+    const { job } = jobContext;
+    const { projectId, resourceId } = extractJobData(job);
+    const resolvedRelations: TIssueRelationsData[] = [];
+
+    try {
+      // 1. Resolve deferred relations: check if any WEC records exist for issues in this batch
+      const deferredRelations = await this.resolveDeferredRelations(processedIssues, jobContext, storage);
+      resolvedRelations.push(...deferredRelations);
+
+      // 2. Process new cross-project relations from this batch
+      if (crossProjectRelations.length > 0) {
+        const { resolved, deferred } = await this.classifyCrossProjectRelations(
+          crossProjectRelations,
+          projectId,
+          resourceId,
+          job.workspace_id
+        );
+
+        // Add immediately resolved relations
+        resolvedRelations.push(...resolved);
+
+        // Store deferred relations as WEC records
+        if (deferred.length > 0) {
+          await this.storeDeferredRelations(deferred, processedIssues, jobContext, storage);
+        }
+      }
+
+      logger.info(`[${job.id}] [${this.name}] Cross-project relations handled`, {
+        jobId: job.id,
+        deferredResolved: deferredRelations.length,
+        immediatelyResolved: resolvedRelations.length - deferredRelations.length,
+        storedForLater: crossProjectRelations.length - (resolvedRelations.length - deferredRelations.length),
+      });
+    } catch (error) {
+      // Non-fatal: log and continue
+      logger.error(`[${job.id}] [${this.name}] Error handling cross-project relations`, {
+        jobId: job.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    return resolvedRelations;
+  }
+
+  /**
+   * Look up deferred cross-project relations for issues in the current batch.
+   *
+   * When a previous project import stored WEC records with entity_id = ${resourceId}:${issueKey},
+   * those records are resolved here when this issue is being imported.
+   */
+  private async resolveDeferredRelations(
+    processedIssues: IJiraIssue[],
+    jobContext: TJobContext,
+    storage: IStorageService
+  ): Promise<TIssueRelationsData[]> {
+    const { job } = jobContext;
+    const { projectId, resourceId } = extractJobData(job);
+    const resolvedRelations: TIssueRelationsData[] = [];
+
+    const workspaceConnectionId = await this.getOrCreateWorkspaceConnectionId(jobContext, storage);
+
+    for (const issue of processedIssues) {
+      const entityId = `${resourceId}:${issue.key}`;
+
+      try {
+        // TODO: Let's add type and entity_type as well to accurately get results
+        const wecRecords = await integrationConnectionHelper.findWorkspaceEntityConnections({
+          workspace_connection_id: workspaceConnectionId,
+          entity_id: entityId,
+        });
+
+        if (!wecRecords || wecRecords.length === 0) continue;
+
+        const currentIssueExternalId = buildExternalId(projectId, resourceId, issue.id);
+
+        for (const wec of wecRecords) {
+          const entityData = wec.entity_data as Record<string, string | null>;
+          const relationType = entityData.relation_type ?? "";
+          const sourceExternalId = entityData.source_external_id;
+
+          // The WEC was created by the OTHER project's import.
+          // "source" in the WEC = the issue from that other import
+          // "target" in the WEC = the issue in THIS project (which we're now importing)
+          // The current issue matches the entity_id, so we are the "target" side.
+
+          const otherExternalId = sourceExternalId; // the other issue's external_id
+          if (!otherExternalId) {
+            logger.warn(`[${job.id}] WEC ${wec.id} has no source_external_id, skipping`, { entityId });
+            continue;
+          }
+
+          const relation = this.buildRelationFromDeferred(
+            currentIssueExternalId,
+            otherExternalId,
+            relationType,
+            wec.entity_type ?? ""
+          );
+
+          if (relation) {
+            resolvedRelations.push(relation);
+          }
+        }
+
+        logger.debug(`[${job.id}] Resolved ${wecRecords.length} deferred relations for ${issue.key}`, {
+          entityId,
+        });
+      } catch (error) {
+        logger.warn(`[${job.id}] Failed to resolve deferred relations for ${issue.key}`, {
+          entityId,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+
+    return resolvedRelations;
+  }
+
+  /**
+   * Build a TIssueRelationsData entry from a deferred WEC record.
+   *
+   * The current issue is the "target" side of the WEC (matched by entity_id).
+   * We need to invert the relation since the WEC stores the relation
+   * from the source's (other issue's) perspective.
+   */
+  private buildRelationFromDeferred(
+    currentExternalId: string,
+    otherExternalId: string,
+    relationType: string,
+    entityType: string
+  ): TIssueRelationsData | null {
+    if (entityType === "RELATION:PARENT") {
+      // The WEC says: "other issue is the parent of source issue"
+      // But WE are the parent (entity_id matches our key).
+      // The source (other) issue's child needs us as parent.
+      // relation_type = "parent" means target_jira_key's parent is source_jira_key
+      // Wait — entity_id = ${resourceId}:${parentKey}, and we ARE the parent.
+      // The WEC's target_external_id = child's external_id (from the import that created the WEC)
+      // The WEC's source_external_id = null (we weren't imported yet) OR it's set
+      // Actually, re-reading the convention:
+      // source = the issue from the import that created the WEC (the child)
+      // target = the issue in the not-yet-imported project (us, the parent)
+      // So: source = child, target = parent (us)
+      // We set the child's parent to us:
+      return {
+        external_id: otherExternalId, // child's external_id
+        relationships: {
+          parent: currentExternalId, // parent = us
+          blocking: [],
+          is_blocked_by: [],
+          relates_to: [],
+          duplicate_of: "",
+          custom_relations: [],
+        },
+      };
+    }
+
+    // RELATION:OTHER — invert the relation type since we're now on the target side
+    switch (relationType) {
+      case "relates_to":
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            blocking: [],
+            is_blocked_by: [],
+            relates_to: [otherExternalId],
+            duplicate_of: "",
+            custom_relations: [],
+          },
+        };
+
+      case "blocks":
+        // Source (other) said they "block" us → we are blocked_by them
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            blocking: [],
+            is_blocked_by: [otherExternalId],
+            relates_to: [],
+            duplicate_of: "",
+            custom_relations: [],
+          },
+        };
+
+      case "blocked_by":
+        // Source (other) said they are "blocked_by" us → we block them
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            blocking: [otherExternalId],
+            is_blocked_by: [],
+            relates_to: [],
+            duplicate_of: "",
+            custom_relations: [],
+          },
+        };
+
+      case "duplicate":
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            blocking: [],
+            is_blocked_by: [],
+            relates_to: [],
+            duplicate_of: otherExternalId,
+            custom_relations: [],
+          },
+        };
+
+      default:
+        // Unknown relation type, treat as relates_to
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            blocking: [],
+            is_blocked_by: [],
+            relates_to: [otherExternalId],
+            duplicate_of: "",
+            custom_relations: [],
+          },
+        };
+    }
+  }
+
+  /**
+   * Classify cross-project relations into immediately resolvable and deferred.
+   *
+   * A relation is immediately resolvable if the other project has already been
+   * imported to Plane (checked via external_source='JIRA' and external_id on project table).
+   */
+  private async classifyCrossProjectRelations(
+    relations: TCrossProjectRelation[],
+    currentProjectId: string,
+    resourceId: string,
+    workspaceId: string
+  ): Promise<{
+    resolved: TIssueRelationsData[];
+    deferred: TCrossProjectRelation[];
+  }> {
+    const resolved: TIssueRelationsData[] = [];
+    const deferred: TCrossProjectRelation[] = [];
+
+    // Cache project lookups to avoid repeated DB queries
+    const projectCache = new Map<string, string | null>(); // otherProjectKey → Plane project ID or null
+
+    for (const rel of relations) {
+      let otherPlaneProjectId = projectCache.get(rel.otherProjectKey);
+
+      if (otherPlaneProjectId === undefined) {
+        // Look up the other project in the DB
+        otherPlaneProjectId = await this.lookupPlaneProject(resourceId, rel.otherProjectKey, workspaceId);
+        projectCache.set(rel.otherProjectKey, otherPlaneProjectId);
+      }
+
+      if (otherPlaneProjectId) {
+        // Other project exists — resolve immediately
+        const currentExternalId = buildExternalId(currentProjectId, resourceId, rel.currentIssueId);
+        const otherExternalId = buildExternalId(otherPlaneProjectId, resourceId, rel.otherIssueId);
+
+        const relation = this.buildResolvedRelation(currentExternalId, otherExternalId, rel.relationType);
+        if (relation) {
+          resolved.push(relation);
+        }
+      } else {
+        // Other project not imported yet — defer
+        deferred.push(rel);
+      }
+    }
+
+    return { resolved, deferred };
+  }
+
+  /**
+   * Look up a Plane project by its Jira external_id.
+   * Returns the Plane project UUID if found, null otherwise.
+   */
+  private async lookupPlaneProject(
+    resourceId: string,
+    jiraProjectKey: string,
+    workspaceId: string
+  ): Promise<string | null> {
+    try {
+      const db = DB.getInstance();
+      const externalId = `${resourceId}_${jiraProjectKey}`;
+      const rows = await db.query<{ id: string }>(
+        `SELECT id FROM projects WHERE external_source = $1 AND external_id = $2 AND workspace_id = $3 AND deleted_at IS NULL ORDER BY UPDATED_AT DESC LIMIT 1`,
+        [this.source, externalId, workspaceId]
+      );
+      return rows.length > 0 ? rows[0].id : null;
+    } catch (error) {
+      logger.warn(`Failed to look up Plane project for ${jiraProjectKey}`, {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return null;
+    }
+  }
+
+  /**
+   * Build a TIssueRelationsData for an immediately resolved cross-project relation.
+   * The relation is FROM the current issue TO the other issue.
+   */
+  private buildResolvedRelation(
+    currentExternalId: string,
+    otherExternalId: string,
+    relationType: string
+  ): TIssueRelationsData | null {
+    switch (relationType) {
+      case "parent":
+        // Other issue is the parent of current issue
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            parent: otherExternalId,
+            blocking: [],
+            is_blocked_by: [],
+            relates_to: [],
+            duplicate_of: "",
+            custom_relations: [],
+          },
+        };
+
+      case "blocks":
+        // Current issue blocks the other issue
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            blocking: [otherExternalId],
+            is_blocked_by: [],
+            relates_to: [],
+            duplicate_of: "",
+            custom_relations: [],
+          },
+        };
+
+      case "blocked_by":
+        // Current issue is blocked by the other issue
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            blocking: [],
+            is_blocked_by: [otherExternalId],
+            relates_to: [],
+            duplicate_of: "",
+            custom_relations: [],
+          },
+        };
+
+      case "relates_to":
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            blocking: [],
+            is_blocked_by: [],
+            relates_to: [otherExternalId],
+            duplicate_of: "",
+            custom_relations: [],
+          },
+        };
+
+      case "duplicate":
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            blocking: [],
+            is_blocked_by: [],
+            relates_to: [],
+            duplicate_of: otherExternalId,
+            custom_relations: [],
+          },
+        };
+
+      default:
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            blocking: [],
+            is_blocked_by: [],
+            relates_to: [otherExternalId],
+            duplicate_of: "",
+            custom_relations: [],
+          },
+        };
+    }
+  }
+
+  /**
+   * Store deferred cross-project relations as WorkspaceEntityConnection records.
+   *
+   * For each relation:
+   * - entity_id = ${resourceId}:${otherIssueKey} (keyed by the OTHER project's issue)
+   * - entity_type = 'RELATION:PARENT' or 'RELATION:OTHER'
+   * - entity_data stores enough info to resolve the relation when the other project is imported
+   *
+   * Convention for entity_data:
+   * - source = the issue from the current import (known external_id)
+   * - target = the issue in the other project (unknown external_id)
+   */
+  private async storeDeferredRelations(
+    deferredRelations: TCrossProjectRelation[],
+    _processedIssues: IJiraIssue[],
+    jobContext: TJobContext,
+    storage: IStorageService
+  ): Promise<void> {
+    const { job } = jobContext;
+    const { projectId, resourceId } = extractJobData(job);
+
+    const workspaceConnectionId = await this.getOrCreateWorkspaceConnectionId(jobContext, storage);
+
+    const promises = deferredRelations.map(async (rel) => {
+      const entityId = `${resourceId}:${rel.otherIssueKey}`;
+      const entityType = rel.relationType === "parent" ? "RELATION:PARENT" : "RELATION:OTHER";
+      const currentExternalId = buildExternalId(projectId, resourceId, rel.currentIssueId);
+
+      try {
+        await integrationConnectionHelper.createOrUpdateWorkspaceEntityConnection({
+          workspace_id: job.workspace_id,
+          workspace_connection_id: workspaceConnectionId,
+          entity_type: entityType,
+          type: "JIRA",
+          entity_id: entityId,
+          entity_data: {
+            resource_id: resourceId,
+            relation_type: rel.relationType,
+            source_jira_id: rel.currentIssueId,
+            target_jira_id: rel.otherIssueId,
+            source_jira_key: rel.currentIssueKey,
+            target_jira_key: rel.otherIssueKey,
+            source_external_id: currentExternalId,
+            target_external_id: null,
+          },
+        });
+      } catch (error) {
+        logger.warn(`[${job.id}] Failed to store deferred relation WEC`, {
+          entityId,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    });
+
+    await Promise.all(promises);
+
+    logger.info(`[${job.id}] [${this.name}] Stored ${deferredRelations.length} deferred cross-project relations`, {
+      jobId: job.id,
+      count: deferredRelations.length,
+    });
+  }
+
+  /**
+   * Ensure a WorkspaceConnection exists for this Jira import resource.
+   * Creates one if it doesn't exist yet, and caches the ID in storage.
+   */
+  private async getOrCreateWorkspaceConnectionId(jobContext: TJobContext, storage: IStorageService): Promise<string> {
+    const { job, credentials } = jobContext;
+
+    // Check storage cache first
+    const cached = await storage.retrieveData<string>(job.id, E_ADDITIONAL_STORAGE_KEYS.JIRA_WORKSPACE_CONNECTION_ID);
+    if (cached) return cached;
+
+    const { resourceId } = extractJobData(job);
+    const resource = (job as TImportJob<JiraConfig>).config?.resource;
+    const resourceUrl = resource?.url || "";
+    const resourceName = resource?.name || "";
+
+    const workspaceConnection = await integrationConnectionHelper.createOrUpdateWorkspaceConnection({
+      workspace_id: job.workspace_id,
+      connection_type: "JIRA_IMPORT",
+      connection_id: resourceId,
+      connection_slug: `jira-import-${resourceId}`,
+      connection_data: {
+        resource_url: resourceUrl,
+        resource_name: resourceName,
+      },
+      credential_id: credentials.id,
+    });
+
+    const connectionId = workspaceConnection.id;
+
+    // Cache in storage for subsequent pages
+    await storage.storeData(job.id, E_ADDITIONAL_STORAGE_KEYS.JIRA_WORKSPACE_CONNECTION_ID, [connectionId], []);
+
+    logger.info(`[${job.id}] [${this.name}] Created/retrieved WorkspaceConnection`, {
+      jobId: job.id,
+      workspaceConnectionId: connectionId,
+    });
+
+    return connectionId;
   }
 }

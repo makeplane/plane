@@ -22,6 +22,7 @@ import { logger } from "@plane/logger";
 import { createEmptyContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
 import type { IStep, TStepExecutionContext, TStepExecutionInput } from "@/apps/jira-server-importer/v2/types";
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
+import { extractJobData } from "@/apps/jira-server-importer/v2/helpers/job";
 import { getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
 import { extractErrorMetadata } from "@/helpers/errors";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
@@ -63,9 +64,16 @@ export class PlaneProjectConfigurationStep implements IStep {
         },
       });
 
+      // Set external_source and external_id on the project for cross-project relation lookups.
+      // This enables other Jira project imports to find this project by resourceId + projectKey.
+      const { resourceId } = extractJobData(job);
+      const projectKey = job.config?.project?.key ?? "";
+
       // Todo, once the features api supports time tracking, we can remove this
       const result = await planeClient.project.update(workspace_slug, project_id, {
         is_time_tracking_enabled: requiredFlags.issue_worklog,
+        external_source: job.source,
+        external_id: `${resourceId}_${projectKey}`,
       });
 
       const featureUpdate = await planeClient.project.toggleProjectFeatures(workspace_slug, project_id, {

@@ -74,7 +74,8 @@ export class JiraRelationsStep implements IStep {
           r.blocking?.length > 0 ||
           r.is_blocked_by?.length > 0 ||
           r.relates_to?.length > 0 ||
-          r.duplicate_of
+          r.duplicate_of ||
+          r.custom_relations?.length > 0
         );
       });
 

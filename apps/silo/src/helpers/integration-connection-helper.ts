@@ -537,6 +537,14 @@ class IntegrationConnectionHelper {
     return { userCredentials: planeCredentials, wsAdminCredentials: planeAdminCredentials };
   }
 
+  /**
+   * Flexible query for WorkspaceEntityConnection records.
+   * Accepts any combination of filterable fields.
+   */
+  async findWorkspaceEntityConnections(params: Partial<Record<string, string>>): Promise<TWorkspaceEntityConnection[]> {
+    return this.apiClient.workspaceEntityConnection.listWorkspaceEntityConnections(params);
+  }
+
   async getIssueLinkEntityConnection({
     entity_id,
     project_id,

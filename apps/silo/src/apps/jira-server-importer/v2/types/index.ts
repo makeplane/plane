@@ -47,6 +47,31 @@ export enum EJiraStep {
 }
 
 /**
+ * Custom relation data extracted from unmapped Jira issue link types.
+ * These become WorkItemRelationDefinition + IssueRelation with category="relation" in Plane.
+ */
+export type TCustomRelationData = {
+  /** Jira issue link instance ID, used as external_id on IssueRelation */
+  link_external_id: string;
+  linked_issue_external_id: string;
+  link_type: {
+    id: string;
+    name: string;
+    outward: string;
+    inward: string;
+  };
+  /**
+   * True when the Jira link has inwardIssue (linked issue performs the inward
+   * action on current → current needs to be placed as related_issue_id).
+   *
+   * In Plane's DB: issue_id shows outward label, related_issue_id shows inward label.
+   * - current_is_outward=true  (inwardIssue link) → issue_id = linked, related_issue_id = current
+   * - current_is_outward=false (outwardIssue link) → issue_id = current, related_issue_id = linked
+   */
+  current_is_outward: boolean;
+};
+
+/**
  * Issue relations data structure from storage
  */
 export type TIssueRelationsData = {
@@ -57,7 +82,28 @@ export type TIssueRelationsData = {
     is_blocked_by: string[];
     relates_to: string[];
     duplicate_of: string;
+    custom_relations: TCustomRelationData[];
   };
+};
+
+/**
+ * Cross-project relation detected during import.
+ * Stored as WorkspaceEntityConnection records for later resolution
+ * when the other project is imported.
+ *
+ * Convention:
+ * - "current" = the issue being imported right now
+ * - "other" = the linked issue in a different Jira project
+ * - relationType = relationship FROM current TO other
+ *   (e.g., "parent" means "other is the parent of current")
+ */
+export type TCrossProjectRelation = {
+  currentIssueId: string;
+  currentIssueKey: string;
+  otherIssueId: string;
+  otherIssueKey: string;
+  otherProjectKey: string;
+  relationType: string; // parent, blocked_by, blocks, relates_to, duplicate
 };
 
 export type TIssuesAssociationsData = {
@@ -105,6 +151,7 @@ export enum E_ADDITIONAL_STORAGE_KEYS {
   JIRA_RAW_FIELDS = "JIRA_RAW_FIELDS",
   JIRA_ISSUE_RELATIONS = "JIRA_ISSUE_RELATIONS",
   JIRA_KNOWN_FIELD_MAPPING = "JIRA_KNOWN_FIELD_MAPPING",
+  JIRA_WORKSPACE_CONNECTION_ID = "JIRA_WORKSPACE_CONNECTION_ID",
 }
 
 /**
