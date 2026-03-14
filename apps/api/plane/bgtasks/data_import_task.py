@@ -572,6 +572,13 @@ def preserve_external_sequence(slug, project, issue_id, issue_data):
             issue.sequence_id = issue_data.get("external_sequence_id")
             issue.save(disable_auto_set_user=True)
 
+            issue_sequence, _ = IssueSequence.objects.get_or_create(
+                issue=issue, project=project, defaults={"sequence": issue.sequence_id}
+            )
+            if issue_sequence.sequence != issue.sequence_id:
+                issue_sequence.sequence = issue.sequence_id
+                issue_sequence.save(disable_auto_set_user=True)
+
             # Check for duplicate issues with the same sequence_id
             duplicate_issues = Issue.objects.filter(
                 project_id=project.id, workspace__slug=slug, sequence_id=issue.sequence_id
