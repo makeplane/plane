@@ -13,10 +13,10 @@
 
 import { observer } from "mobx-react";
 import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
-import { Popover } from "@headlessui/react";
 // plane imports
 import { Badge } from "@plane/propel/badge";
 import type { IWorkItemRelationDefinition } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 // local imports
 import { CreateUpdateRelationInline } from "./create-update-relation-inline";
 
@@ -61,23 +61,25 @@ export const RelationDefinitionItem = observer(function RelationDefinitionItem(p
             >
               <Pencil className="size-3.5" />
             </button>
-            <Popover className="relative">
-              <Popover.Button className="flex items-center justify-center size-5 rounded-sm hover:bg-surface-3 text-tertiary">
-                <EllipsisVertical className="size-3.5" />
-              </Popover.Button>
-              <Popover.Panel className="absolute right-0 z-10 mt-1 w-36 rounded-md border border-subtle bg-surface-1 shadow-lg">
+            <CustomMenu
+              customButton={
                 <button
                   type="button"
-                  className="flex w-full items-center gap-2 px-3 py-2 text-body-xs-regular text-danger-primary hover:bg-surface-3"
-                  onClick={() => {
-                    onDelete();
-                  }}
+                  className="flex items-center justify-center size-5 rounded-sm hover:bg-surface-3 text-tertiary"
                 >
+                  <EllipsisVertical className="size-3.5" />
+                </button>
+              }
+              placement="bottom-end"
+              closeOnSelect
+            >
+              <CustomMenu.MenuItem onClick={onDelete} className="text-danger-primary">
+                <div className="flex items-center gap-2">
                   <Trash2 className="size-3.5" />
                   Delete
-                </button>
-              </Popover.Panel>
-            </Popover>
+                </div>
+              </CustomMenu.MenuItem>
+            </CustomMenu>
           </>
         ) : null}
       </div>
