@@ -307,17 +307,58 @@ export class JiraIssueLinkExtractor {
         });
       }
     } else {
-      // Catch-all: relates_to
-      const linkedIssue = link.outwardIssue || link.inwardIssue;
-      if (linkedIssue?.id) {
-        crossProjectRelations.push({
-          currentIssueId: currentIssue.id,
-          currentIssueKey: currentIssue.key,
-          otherIssueId: linkedIssue.id,
-          otherIssueKey: linkedIssue.key,
-          otherProjectKey,
-          relationType: "relates_to",
-        });
+      // Unmapped link type → custom relation (preserves Jira link type metadata)
+      const linkType = link.type;
+      if (linkType?.id && linkType?.name) {
+        if (link.outwardIssue?.id) {
+          crossProjectRelations.push({
+            currentIssueId: currentIssue.id,
+            currentIssueKey: currentIssue.key,
+            otherIssueId: link.outwardIssue.id,
+            otherIssueKey: link.outwardIssue.key,
+            otherProjectKey,
+            relationType: "custom",
+            linkType: {
+              id: linkType.id,
+              name: linkType.name,
+              outward: linkType.outward ?? linkType.name,
+              inward: linkType.inward ?? linkType.name,
+            },
+            currentIsOutward: false,
+            linkId: link.id,
+          });
+        }
+        if (link.inwardIssue?.id) {
+          crossProjectRelations.push({
+            currentIssueId: currentIssue.id,
+            currentIssueKey: currentIssue.key,
+            otherIssueId: link.inwardIssue.id,
+            otherIssueKey: link.inwardIssue.key,
+            otherProjectKey,
+            relationType: "custom",
+            linkType: {
+              id: linkType.id,
+              name: linkType.name,
+              outward: linkType.outward ?? linkType.name,
+              inward: linkType.inward ?? linkType.name,
+            },
+            currentIsOutward: true,
+            linkId: link.id,
+          });
+        }
+      } else {
+        // No link type info available, fall back to relates_to
+        const linkedIssue = link.outwardIssue || link.inwardIssue;
+        if (linkedIssue?.id) {
+          crossProjectRelations.push({
+            currentIssueId: currentIssue.id,
+            currentIssueKey: currentIssue.key,
+            otherIssueId: linkedIssue.id,
+            otherIssueKey: linkedIssue.key,
+            otherProjectKey,
+            relationType: "relates_to",
+          });
+        }
       }
     }
   }

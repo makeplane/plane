@@ -22,6 +22,7 @@ import { createEmptyContext, createPaginationContext } from "@/apps/jira-server-
 import type {
   IStep,
   IStorageService,
+  TCustomRelationData,
   TCrossProjectRelation,
   TIssuePropertiesData,
   TIssueRelationsData,
@@ -786,9 +787,9 @@ export class JiraIssuesStep implements IStep {
         const currentIssueExternalId = buildExternalId(projectId, resourceId, issue.id);
 
         for (const wec of wecRecords) {
-          const entityData = wec.entity_data as Record<string, string | null>;
-          const relationType = entityData.relation_type ?? "";
-          const sourceExternalId = entityData.source_external_id;
+          const entityData = wec.entity_data as Record<string, any>;
+          const relationType = (entityData.relation_type as string) ?? "";
+          const sourceExternalId = entityData.source_external_id as string | null;
 
           // The WEC was created by the OTHER project's import.
           // "source" in the WEC = the issue from that other import
@@ -805,7 +806,8 @@ export class JiraIssuesStep implements IStep {
             currentIssueExternalId,
             otherExternalId,
             relationType,
-            wec.entity_type ?? ""
+            wec.entity_type ?? "",
+            entityData
           );
 
           if (relation) {
@@ -838,7 +840,8 @@ export class JiraIssuesStep implements IStep {
     currentExternalId: string,
     otherExternalId: string,
     relationType: string,
-    entityType: string
+    entityType: string,
+    entityData?: Record<string, any>
   ): TIssueRelationsData | null {
     if (entityType === "RELATION:PARENT") {
       // The WEC says: "other issue is the parent of source issue"
@@ -918,6 +921,59 @@ export class JiraIssuesStep implements IStep {
           },
         };
 
+      case "custom": {
+        // Reconstruct custom relation from WEC entity_data
+        const linkType = entityData?.link_type;
+        if (!linkType) {
+          return {
+            external_id: currentExternalId,
+            relationships: {
+              blocking: [],
+              is_blocked_by: [],
+              relates_to: [otherExternalId],
+              duplicate_of: "",
+              custom_relations: [],
+            },
+          };
+        }
+
+        // The WEC was stored from the source's perspective.
+        // Source stored current_is_outward for its own issue.
+        // We (target) are the OTHER side, so we invert:
+        // If source was outward (current_is_outward=false means source is issue_id),
+        // then for us the source is the linked issue, and we are issue_id → current_is_outward stays false.
+        // Actually, the roles reverse: source's linked issue is us (target).
+        // We need to set current_is_outward for OUR issue relative to the link.
+        // Source had: current_is_outward = X, linked = target (us)
+        // Now we have: current = us (target), linked = source (other)
+        // We invert: current_is_outward = !X
+        const sourceCurrentIsOutward = entityData?.current_is_outward ?? false;
+
+        return {
+          external_id: currentExternalId,
+          relationships: {
+            blocking: [],
+            is_blocked_by: [],
+            relates_to: [],
+            duplicate_of: "",
+            custom_relations: [
+              {
+                link_external_id: entityData?.link_id
+                  ? buildExternalId(
+                      currentExternalId.split("_")[0],
+                      currentExternalId.split("_")[1],
+                      entityData.link_id
+                    )
+                  : "",
+                linked_issue_external_id: otherExternalId,
+                link_type: linkType,
+                current_is_outward: !sourceCurrentIsOutward,
+              },
+            ],
+          },
+        };
+      }
+
       default:
         // Unknown relation type, treat as relates_to
         return {
@@ -968,7 +1024,13 @@ export class JiraIssuesStep implements IStep {
         const currentExternalId = buildExternalId(currentProjectId, resourceId, rel.currentIssueId);
         const otherExternalId = buildExternalId(otherPlaneProjectId, resourceId, rel.otherIssueId);
 
-        const relation = this.buildResolvedRelation(currentExternalId, otherExternalId, rel.relationType);
+        const relation = this.buildResolvedRelation(
+          currentExternalId,
+          otherExternalId,
+          rel,
+          currentProjectId,
+          resourceId
+        );
         if (relation) {
           resolved.push(relation);
         }
@@ -1013,83 +1075,75 @@ export class JiraIssuesStep implements IStep {
   private buildResolvedRelation(
     currentExternalId: string,
     otherExternalId: string,
-    relationType: string
+    rel: TCrossProjectRelation,
+    projectId: string,
+    resourceId: string
   ): TIssueRelationsData | null {
-    switch (relationType) {
+    const emptyRelationships = {
+      blocking: [] as string[],
+      is_blocked_by: [] as string[],
+      relates_to: [] as string[],
+      duplicate_of: "",
+      custom_relations: [] as TCustomRelationData[],
+    };
+
+    switch (rel.relationType) {
       case "parent":
-        // Other issue is the parent of current issue
         return {
           external_id: currentExternalId,
-          relationships: {
-            parent: otherExternalId,
-            blocking: [],
-            is_blocked_by: [],
-            relates_to: [],
-            duplicate_of: "",
-            custom_relations: [],
-          },
+          relationships: { ...emptyRelationships, parent: otherExternalId },
         };
 
       case "blocks":
-        // Current issue blocks the other issue
         return {
           external_id: currentExternalId,
-          relationships: {
-            blocking: [otherExternalId],
-            is_blocked_by: [],
-            relates_to: [],
-            duplicate_of: "",
-            custom_relations: [],
-          },
+          relationships: { ...emptyRelationships, blocking: [otherExternalId] },
         };
 
       case "blocked_by":
-        // Current issue is blocked by the other issue
         return {
           external_id: currentExternalId,
-          relationships: {
-            blocking: [],
-            is_blocked_by: [otherExternalId],
-            relates_to: [],
-            duplicate_of: "",
-            custom_relations: [],
-          },
+          relationships: { ...emptyRelationships, is_blocked_by: [otherExternalId] },
         };
 
       case "relates_to":
         return {
           external_id: currentExternalId,
-          relationships: {
-            blocking: [],
-            is_blocked_by: [],
-            relates_to: [otherExternalId],
-            duplicate_of: "",
-            custom_relations: [],
-          },
+          relationships: { ...emptyRelationships, relates_to: [otherExternalId] },
         };
 
       case "duplicate":
         return {
           external_id: currentExternalId,
+          relationships: { ...emptyRelationships, duplicate_of: otherExternalId },
+        };
+
+      case "custom":
+        if (!rel.linkType) {
+          return {
+            external_id: currentExternalId,
+            relationships: { ...emptyRelationships, relates_to: [otherExternalId] },
+          };
+        }
+        return {
+          external_id: currentExternalId,
           relationships: {
-            blocking: [],
-            is_blocked_by: [],
-            relates_to: [],
-            duplicate_of: otherExternalId,
-            custom_relations: [],
+            ...emptyRelationships,
+            custom_relations: [
+              {
+                link_external_id: rel.linkId ? buildExternalId(projectId, resourceId, rel.linkId) : "",
+                linked_issue_external_id: otherExternalId,
+                link_type: rel.linkType,
+                current_is_outward: rel.currentIsOutward ?? false,
+              },
+            ],
           },
         };
 
       default:
         return {
           external_id: currentExternalId,
-          relationships: {
-            blocking: [],
-            is_blocked_by: [],
-            relates_to: [otherExternalId],
-            duplicate_of: "",
-            custom_relations: [],
-          },
+          relationships: { ...emptyRelationships, relates_to: [otherExternalId] },
         };
     }
   }
@@ -1123,22 +1177,31 @@ export class JiraIssuesStep implements IStep {
       const currentExternalId = buildExternalId(projectId, resourceId, rel.currentIssueId);
 
       try {
+        const entityData: Record<string, any> = {
+          resource_id: resourceId,
+          relation_type: rel.relationType,
+          source_jira_id: rel.currentIssueId,
+          target_jira_id: rel.otherIssueId,
+          source_jira_key: rel.currentIssueKey,
+          target_jira_key: rel.otherIssueKey,
+          source_external_id: currentExternalId,
+          target_external_id: null,
+        };
+
+        // Store custom relation metadata for later reconstruction
+        if (rel.relationType === "custom" && rel.linkType) {
+          entityData.link_type = rel.linkType;
+          entityData.current_is_outward = rel.currentIsOutward ?? false;
+          entityData.link_id = rel.linkId ?? null;
+        }
+
         await integrationConnectionHelper.createOrUpdateWorkspaceEntityConnection({
           workspace_id: job.workspace_id,
           workspace_connection_id: workspaceConnectionId,
           entity_type: entityType,
           type: "JIRA",
           entity_id: entityId,
-          entity_data: {
-            resource_id: resourceId,
-            relation_type: rel.relationType,
-            source_jira_id: rel.currentIssueId,
-            target_jira_id: rel.otherIssueId,
-            source_jira_key: rel.currentIssueKey,
-            target_jira_key: rel.otherIssueKey,
-            source_external_id: currentExternalId,
-            target_external_id: null,
-          },
+          entity_data: entityData,
         });
       } catch (error) {
         logger.warn(`[${job.id}] Failed to store deferred relation WEC`, {

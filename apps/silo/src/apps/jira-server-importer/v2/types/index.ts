@@ -103,7 +103,18 @@ export type TCrossProjectRelation = {
   otherIssueId: string;
   otherIssueKey: string;
   otherProjectKey: string;
-  relationType: string; // parent, blocked_by, blocks, relates_to, duplicate
+  relationType: string; // parent, blocked_by, blocks, relates_to, duplicate, custom
+  /** Present when relationType="custom" — carries the Jira link type metadata */
+  linkType?: {
+    id: string;
+    name: string;
+    outward: string;
+    inward: string;
+  };
+  /** For custom relations: true when current issue is the outward side */
+  currentIsOutward?: boolean;
+  /** Jira issue link instance ID */
+  linkId?: string;
 };
 
 export type TIssuesAssociationsData = {

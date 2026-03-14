@@ -83,18 +83,21 @@ def bulk_update_issue_relations_task_v2(
 
     issue_map = {issue.external_id: issue.id for issue in issues}
 
-    # Resolve/create WorkItemRelationDefinition entries for custom relations.
-    # Cache by link_type name to avoid repeated DB queries.
-    definition_cache = {}  # link_type_name → WorkItemRelationDefinition.id
+    # Resolve/create WorkItemRelationDefinition entries.
+    # Cache by name to avoid repeated DB queries.
+    definition_cache = {}  # name → WorkItemRelationDefinition.id
 
-    def get_or_create_relation_definition(link_type: dict) -> str | None:
-        """Get or create a WorkItemRelationDefinition for the given Jira link type."""
-        name = link_type.get("name", "").strip()
+    def get_or_create_relation_definition(name: str, defaults: dict | None = None) -> str | None:
+        """Get or create a WorkItemRelationDefinition by name for this workspace."""
+        name = name.strip()
         if not name:
             return None
 
         if name in definition_cache:
             return definition_cache[name]
+
+        if defaults is None:
+            defaults = {}
 
         try:
             definition, _created = WorkItemRelationDefinition.objects.get_or_create(
@@ -102,10 +105,10 @@ def bulk_update_issue_relations_task_v2(
                 name=name,
                 deleted_at__isnull=True,
                 defaults={
-                    "description": f"Imported from Jira link type: {name}",
-                    "outward": link_type.get("outward", name),
-                    "inward": link_type.get("inward", name),
-                    "is_default": False,
+                    "description": defaults.get("description", f"Imported from Jira link type: {name}"),
+                    "outward": defaults.get("outward", name),
+                    "inward": defaults.get("inward", name),
+                    "is_default": defaults.get("is_default", False),
                     "created_by_id": user_id,
                 },
             )
@@ -115,9 +118,13 @@ def bulk_update_issue_relations_task_v2(
             logger.warning(f"Failed to get/create relation definition for '{name}': {e}")
             return None
 
+    # Pre-resolve default relation definitions (seeded per workspace)
+    relates_to_definition_id = get_or_create_relation_definition("Relates to")
+    duplicate_definition_id = get_or_create_relation_definition("Duplicate")
+
     # Prepare batch operations
     issue_relations = []
-    custom_issue_relations = []
+    relation_issue_relations = []
     parent_updates = []
 
     for relation_data in relations_batch:
@@ -168,33 +175,38 @@ def bulk_update_issue_relations_task_v2(
                     )
                 )
 
-        # Related to relationships
-        for related_external_id in relationships.get("relates_to", []):
-            related_id = issue_map.get(related_external_id)
-            if related_id:
-                issue_relations.append(
-                    IssueRelation(
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        issue_id=issue_id,
-                        related_issue_id=related_id,
-                        relation_type="relates_to",
-                        created_by_id=user_id,
-                        external_source=source,
+        # Related to relationships (stored as relation with definition)
+        if relates_to_definition_id:
+            for related_external_id in relationships.get("relates_to", []):
+                related_id = issue_map.get(related_external_id)
+                if related_id:
+                    relation_issue_relations.append(
+                        IssueRelation(
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            issue_id=issue_id,
+                            related_issue_id=related_id,
+                            category=RelationCategory.RELATION,
+                            relation_type=None,
+                            definition_id=relates_to_definition_id,
+                            created_by_id=user_id,
+                            external_source=source,
+                        )
                     )
-                )
 
-        # Duplicate of relationship
-        if relationships.get("duplicate_of"):
+        # Duplicate of relationship (stored as relation with definition)
+        if relationships.get("duplicate_of") and duplicate_definition_id:
             related_id = issue_map.get(relationships["duplicate_of"])
             if related_id:
-                issue_relations.append(
+                relation_issue_relations.append(
                     IssueRelation(
                         project_id=project_id,
                         workspace_id=workspace_id,
                         issue_id=issue_id,
                         related_issue_id=related_id,
-                        relation_type="duplicate",
+                        category=RelationCategory.RELATION,
+                        relation_type=None,
+                        definition_id=duplicate_definition_id,
                         created_by_id=user_id,
                         external_source=source,
                     )
@@ -206,7 +218,14 @@ def bulk_update_issue_relations_task_v2(
             if not linked_id:
                 continue
 
-            definition_id = get_or_create_relation_definition(custom_rel["link_type"])
+            link_type = custom_rel["link_type"]
+            definition_id = get_or_create_relation_definition(
+                link_type.get("name", ""),
+                defaults={
+                    "outward": link_type.get("outward", link_type.get("name", "")),
+                    "inward": link_type.get("inward", link_type.get("name", "")),
+                },
+            )
             if not definition_id:
                 continue
 
@@ -220,7 +239,7 @@ def bulk_update_issue_relations_task_v2(
                 rel_issue_id = issue_id
                 rel_related_issue_id = linked_id
 
-            custom_issue_relations.append(
+            relation_issue_relations.append(
                 IssueRelation(
                     project_id=project_id,
                     workspace_id=workspace_id,
@@ -240,15 +259,15 @@ def bulk_update_issue_relations_task_v2(
         with connection.cursor() as cur:
             cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
 
-            # Create dependency relationships
+            # Create dependency relationships (blocked_by)
             if issue_relations:
                 IssueRelation.objects.bulk_create(issue_relations, ignore_conflicts=True)
                 logger.info(f"Created {len(issue_relations)} dependency relations")
 
-            # Create custom (definition-based) relationships
-            if custom_issue_relations:
-                IssueRelation.objects.bulk_create(custom_issue_relations, ignore_conflicts=True)
-                logger.info(f"Created {len(custom_issue_relations)} custom relations")
+            # Create relation relationships (relates_to, duplicate, custom)
+            if relation_issue_relations:
+                IssueRelation.objects.bulk_create(relation_issue_relations, ignore_conflicts=True)
+                logger.info(f"Created {len(relation_issue_relations)} relation records")
 
             # Update parent relationships
             for issue_id, parent_id in parent_updates:
