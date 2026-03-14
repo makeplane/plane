@@ -164,7 +164,7 @@ class WorkItemRelationDependencyViewSet(BaseViewSet):
 
     def list(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
         work_item_relation_query_set = IssueRelation.objects.filter(
-            category=RelationCategory.DEPENDENCY, workspace__slug=slug, project_id=project_id
+            category=RelationCategory.DEPENDENCY, workspace__slug=slug
         ).filter(Q(issue_id=work_item_id) | Q(related_issue_id=work_item_id))
 
         relation_work_item_ids = work_item_relation_query_set.aggregate(
@@ -296,7 +296,6 @@ class WorkItemRelationDependencyViewSet(BaseViewSet):
         work_item_relation = (
             self.relation_model.objects.filter(
                 workspace__slug=slug,
-                project_id=project_id,
                 category=RelationCategory.DEPENDENCY,
                 relation_type__in=[
                     DefaultDependencyKeys.BLOCKED_BY.value,
@@ -491,11 +490,7 @@ class WorkItemRelationRelationViewSet(BaseViewSet):
             )
 
         work_item_relation = (
-            self.relation_model.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                category=RelationCategory.RELATION,
-            )
+            self.relation_model.objects.filter(workspace__slug=slug, category=RelationCategory.RELATION)
             .filter(
                 Q(issue_id=related_work_item_id, related_issue_id=work_item_id)
                 | Q(issue_id=work_item_id, related_issue_id=related_work_item_id)
