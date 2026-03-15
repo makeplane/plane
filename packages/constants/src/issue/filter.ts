@@ -240,7 +240,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
         extra_options: {
           access: true,
-          values: ["show_empty_groups", "sub_issue", "hide_completed_cycles"],
+          values: ["show_empty_groups", "show_empty_sub_groups", "sub_issue", "hide_completed_cycles"],
         },
       },
       calendar: {

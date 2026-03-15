@@ -66,7 +66,7 @@ export type TCycleGroupOrderByOptions =
   | "end_date" // By end date ascending
   | "-end_date"; // By end date descending
 
-export type TIssueExtraOptions = "show_empty_groups" | "sub_issue" | "hide_completed_cycles";
+export type TIssueExtraOptions = "show_empty_groups" | "show_empty_sub_groups" | "sub_issue" | "hide_completed_cycles";
 
 // Type for cycle status filter
 export type TCycleStatusFilter = "current" | "upcoming" | "completed" | "draft";
@@ -167,6 +167,7 @@ export interface IIssueDisplayFilterOptions {
   layout?: any; // TODO: Need to fix this and set it to enum EIssueLayoutTypes
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
+  show_empty_sub_groups?: boolean;
   sub_issue?: boolean;
   cycle_group_order_by?: TCycleGroupOrderByOptions;
   hide_completed_cycles?: boolean;

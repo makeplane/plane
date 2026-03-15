@@ -873,6 +873,7 @@ export default {
       extra: {
         show_sub_issues: "Show sub-work items",
         show_empty_groups: "Show empty groups",
+        show_empty_sub_groups: "Show empty sub-groups",
         hide_completed_cycles: "Hide completed cycles",
       },
       cycle_group_order_by: "Order cycles by",

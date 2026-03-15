@@ -1047,6 +1047,8 @@ export default {
       extra: {
         show_sub_issues: "Показати похідні робочі одиниці",
         show_empty_groups: "Показати порожні групи",
+        show_empty_sub_groups: "Показати порожні підгрупи",
+        hide_completed_cycles: "Приховати завершені цикли",
       },
     },
     layouts: {

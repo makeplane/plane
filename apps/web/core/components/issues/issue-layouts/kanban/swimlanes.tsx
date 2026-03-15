@@ -45,6 +45,7 @@ interface ISubGroupSwimlaneHeader {
   isEpic?: boolean;
   list: IGroupByColumn[];
   showEmptyGroup: boolean;
+  showEmptySubGroup: boolean;
   sub_group_by: TIssueGroupByOptions | undefined;
 }
 
@@ -68,6 +69,7 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
   isEpic = false,
   list,
   showEmptyGroup,
+  showEmptySubGroup,
   sub_group_by,
 }: ISubGroupSwimlaneHeader) {
   const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
@@ -129,6 +131,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   showEmptyGroup: boolean;
+  showEmptySubGroup: boolean;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
 }
 
@@ -155,6 +158,7 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
     quickAddCallback,
     scrollableContainerRef,
     showEmptyGroup,
+    showEmptySubGroup,
     sub_group_by,
     updateIssue,
   } = props;
@@ -167,7 +171,7 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
       showGroup: true,
       showIssues: true,
     };
-    if (showEmptyGroup) subGroupVisibility.showGroup = true;
+    if (showEmptySubGroup) subGroupVisibility.showGroup = true;
     else {
       if (subGroupCount > 0) subGroupVisibility.showGroup = true;
       else subGroupVisibility.showGroup = false;
@@ -264,6 +268,7 @@ export interface IKanBanSwimLanes {
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   showEmptyGroup: boolean;
+  showEmptySubGroup: boolean;
   sub_group_by: TIssueGroupByOptions | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
 }
@@ -284,6 +289,7 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
     handleCollapsedGroups,
     loadMoreIssues,
     showEmptyGroup,
+    showEmptySubGroup,
     handleOnDrop,
     disableIssueCreation,
     enableQuickIssueCreate,
@@ -324,6 +330,7 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
           handleCollapsedGroups={handleCollapsedGroups}
           list={groupByList}
           showEmptyGroup={showEmptyGroup}
+          showEmptySubGroup={showEmptySubGroup}
           isEpic={isEpic}
         />
       </Row>
@@ -345,6 +352,7 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
           handleCollapsedGroups={handleCollapsedGroups}
           loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
+          showEmptySubGroup={showEmptySubGroup}
           handleOnDrop={handleOnDrop}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}

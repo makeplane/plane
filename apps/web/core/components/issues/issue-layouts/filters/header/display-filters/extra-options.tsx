@@ -25,6 +25,10 @@ const ISSUE_EXTRA_OPTIONS: {
     titleTranslationKey: "issue.display.extra.show_empty_groups",
   }, // filter on front-end
   {
+    key: "show_empty_sub_groups",
+    titleTranslationKey: "issue.display.extra.show_empty_sub_groups",
+  }, // filter on front-end, only when sub_group_by is set
+  {
     key: "hide_completed_cycles",
     titleTranslationKey: "issue.display.extra.hide_completed_cycles",
   }, // only shown when group_by is cycle
@@ -34,20 +38,24 @@ type Props = {
   selectedExtraOptions: {
     sub_issue: boolean;
     show_empty_groups: boolean;
+    show_empty_sub_groups?: boolean;
     hide_completed_cycles?: boolean;
   };
   handleUpdate: (key: keyof IIssueDisplayFilterOptions, val: boolean) => void;
   enabledExtraOptions: TIssueExtraOptions[];
   groupBy?: TIssueGroupByOptions;
+  subGroupBy?: TIssueGroupByOptions;
 };
 
 export const FilterExtraOptions = observer(function FilterExtraOptions(props: Props) {
-  const { selectedExtraOptions, handleUpdate, enabledExtraOptions, groupBy } = props;
+  const { selectedExtraOptions, handleUpdate, enabledExtraOptions, groupBy, subGroupBy } = props;
   // hooks
   const { t } = useTranslation();
   const isExtraOptionEnabled = (option: TIssueExtraOptions) => {
     // Show hide_completed_cycles only when group_by is cycle
     if (option === "hide_completed_cycles" && groupBy !== "cycle") return false;
+    // Show show_empty_sub_groups only when sub_group_by is set
+    if (option === "show_empty_sub_groups" && !subGroupBy) return false;
     return enabledExtraOptions.includes(option);
   };
 
