@@ -223,7 +223,7 @@ class WorkItemRelationDependencyViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        work_item = Issue.objects.filter(pk=work_item_id, workspace__slug=slug, project_id=project_id).first()
+        work_item = Issue.objects.filter(pk=work_item_id, workspace__slug=slug).first()
         if work_item is None:
             return Response(
                 {"message": "Work item not found"},
@@ -357,11 +357,7 @@ class WorkItemRelationRelationViewSet(BaseViewSet):
                 category=RelationCategory.RELATION,
                 definition_id__in=relation_definition_ids,
             )
-            .filter(
-                Q(issue_id=work_item_id) | Q(related_issue_id=work_item_id),
-                workspace__slug=slug,
-                project_id=project_id,
-            )
+            .filter(Q(issue_id=work_item_id) | Q(related_issue_id=work_item_id), workspace__slug=slug)
             .values("definition_id", "issue_id", "related_issue_id")
         )
 
