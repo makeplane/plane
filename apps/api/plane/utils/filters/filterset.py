@@ -8,7 +8,12 @@ from django.db import models
 from django.db.models import Q
 from django_filters import FilterSet, filters
 
-from plane.db.models import Issue
+from plane.db.models import Issue, IssueAssignee
+
+# Special value for filtering unassigned items
+UNASSIGNED_FILTER_VALUE = "none"
+# Special value for empty filter (returns 0 results)
+EMPTY_FILTER_VALUE = "__empty__"
 
 
 class UUIDInFilter(filters.BaseInFilter, filters.UUIDFilter):
@@ -16,6 +21,26 @@ class UUIDInFilter(filters.BaseInFilter, filters.UUIDFilter):
 
 
 class CharInFilter(filters.BaseInFilter, filters.CharFilter):
+    pass
+
+
+class UUIDOrNoneFilter(filters.CharFilter):
+    """
+    Filter that accepts either a valid UUID or the special 'none' value.
+    Used for fields that support filtering by "unassigned" (no relation).
+    When using method= parameter, the custom method handles all filtering logic.
+    """
+
+    pass
+
+
+class UUIDOrNoneInFilter(filters.BaseInFilter, filters.CharFilter):
+    """
+    Filter that accepts a list of UUIDs and/or the special 'none' value.
+    Used for __in lookups that support filtering by "unassigned" (no relation).
+    When using method= parameter, the custom method handles all filtering logic.
+    """
+
     pass
 
 
@@ -124,8 +149,9 @@ class BaseFilterSet(FilterSet):
 class IssueFilterSet(BaseFilterSet):
     # Custom filter methods to handle soft delete exclusion for relations
 
-    assignee_id = filters.UUIDFilter(method="filter_assignee_id")
-    assignee_id__in = UUIDInFilter(method="filter_assignee_id_in", lookup_expr="in")
+    # Use UUIDOrNone filters to support "none" value for unassigned issues
+    assignee_id = UUIDOrNoneFilter(method="filter_assignee_id")
+    assignee_id__in = UUIDOrNoneInFilter(method="filter_assignee_id_in", lookup_expr="in")
 
     cycle_id = filters.UUIDFilter(method="filter_cycle_id")
     cycle_id__in = UUIDInFilter(method="filter_cycle_id_in", lookup_expr="in")
@@ -181,19 +207,76 @@ class IssueFilterSet(BaseFilterSet):
 
     # Filter methods with soft delete exclusion for relations
 
+    def _get_unassigned_filter(self):
+        """Returns a Q filter for issues without active assignees.
+        Uses a subquery to correctly handle issues with no assignee records."""
+        # Get IDs of issues that have at least one active assignee
+        assigned_issue_ids = IssueAssignee.objects.filter(
+            deleted_at__isnull=True
+        ).values_list("issue_id", flat=True)
+        # Return filter for issues NOT in that list (unassigned issues)
+        return ~Q(pk__in=assigned_issue_ids)
+
+    def _get_empty_filter(self):
+        """Returns a Q filter that matches no issues (always false condition).
+        Used when __empty__ value is passed to return 0 results."""
+        # pk is never NULL, so this always returns empty queryset
+        return Q(pk__isnull=True)
+
     def filter_assignee_id(self, queryset, name, value):
-        """Filter by assignee ID, excluding soft deleted users"""
+        """Filter by assignee ID, excluding soft deleted users.
+        Supports special values:
+        - 'none' for unassigned issues
+        - '__empty__' for returning 0 results"""
+        if isinstance(value, str):
+            if value.lower() == EMPTY_FILTER_VALUE:
+                return self._get_empty_filter()
+            if value.lower() == UNASSIGNED_FILTER_VALUE:
+                return self._get_unassigned_filter()
+
         return Q(
             issue_assignee__assignee_id=value,
             issue_assignee__deleted_at__isnull=True,
         )
 
     def filter_assignee_id_in(self, queryset, name, value):
-        """Filter by assignee IDs (in), excluding soft deleted users"""
-        return Q(
-            issue_assignee__assignee_id__in=value,
-            issue_assignee__deleted_at__isnull=True,
-        )
+        """Filter by assignee IDs (in), excluding soft deleted users.
+        Supports special values:
+        - 'none' for unassigned issues
+        - '__empty__' for returning 0 results"""
+        has_none = False
+        has_empty = False
+        uuid_values = []
+
+        for v in value:
+            if isinstance(v, str):
+                if v.lower() == EMPTY_FILTER_VALUE:
+                    has_empty = True
+                elif v.lower() == UNASSIGNED_FILTER_VALUE:
+                    has_none = True
+                else:
+                    uuid_values.append(v)
+            else:
+                uuid_values.append(v)
+
+        # If __empty__ is the only value, return 0 results
+        if has_empty and not has_none and not uuid_values:
+            return self._get_empty_filter()
+
+        q_filter = Q()
+
+        # Filter for unassigned issues (no active assignees)
+        if has_none:
+            q_filter |= self._get_unassigned_filter()
+
+        # Filter for specific assignees
+        if uuid_values:
+            q_filter |= Q(
+                issue_assignee__assignee_id__in=uuid_values,
+                issue_assignee__deleted_at__isnull=True,
+            )
+
+        return q_filter
 
     def filter_cycle_id(self, queryset, name, value):
         """Filter by cycle ID, excluding soft deleted cycles"""

@@ -7,6 +7,7 @@
 // plane imports
 import type { IWorkItemFilterInstance } from "@plane/shared-state";
 import { CORE_LOGICAL_OPERATOR } from "@plane/types";
+import { EMPTY_FILTER_VALUE, UNASSIGNED_VALUE } from "@plane/utils";
 
 type UseQuickFiltersReturn = {
   /**
@@ -19,6 +20,10 @@ type UseQuickFiltersReturn = {
    */
   hasActiveFilter: boolean;
   /**
+   * Whether the "unassigned" filter is currently active
+   */
+  isUnassignedActive: boolean;
+  /**
    * Check if a specific member's issues are currently visible
    */
   isMemberVisible: (memberId: string) => boolean;
@@ -26,6 +31,10 @@ type UseQuickFiltersReturn = {
    * Toggle visibility of a member's issues
    */
   toggleMemberVisibility: (memberId: string, allMemberIds: string[]) => void;
+  /**
+   * Toggle visibility of unassigned issues
+   */
+  toggleUnassigned: () => void;
 };
 
 // Helper to get visible assignee IDs from condition value
@@ -36,97 +45,147 @@ const getVisibleIdsFromValue = (value: unknown): string[] => {
 };
 
 export const useQuickFilters = (membersIds: string[], filter: IWorkItemFilterInstance | undefined): UseQuickFiltersReturn => {
-  // Access filter.expression directly to ensure MobX tracks changes
-  // This is critical for reactivity - without this, the component won't re-render when filter changes
+  // Access multiple observables to ensure MobX tracks changes
+  // 1. expression - the main observable that changes when conditions are added/updated/removed
+  // 2. hasActiveFilters - computed that depends on expression
+  // 3. allConditionsForDisplay - computed that extracts conditions from expression
   const _expression = filter?.expression;
+  const _hasActiveFilters = filter?.hasActiveFilters;
+  const allConditions = filter?.allConditionsForDisplay ?? [];
 
-  // Find existing assignee condition (can be "in" for multiple values or "exact" for single)
+  // Find assignee condition from the computed conditions (reactive)
+  const assigneeCondition = allConditions.find(
+    (c) => c.property === "assignee_id" && (c.operator === "in" || c.operator === "exact")
+  );
+
+  // Helper to find condition for toggle operations (non-reactive, used inside actions)
   const findAssigneeCondition = () => {
     if (!filter) return undefined;
-    // Try "in" operator first (multiple values)
     const inCondition = filter.findFirstConditionByPropertyAndOperator("assignee_id", "in");
     if (inCondition) return inCondition;
-    // Fall back to "exact" operator (single value)
     return filter.findFirstConditionByPropertyAndOperator("assignee_id", "exact");
   };
 
-  const assigneeCondition = findAssigneeCondition();
-
-  // Get assignee IDs from the filter condition (these are users whose issues ARE visible)
-  // Also access assigneeCondition.value to ensure MobX tracks value changes
+  // Get raw IDs from condition value
   const conditionValue = assigneeCondition?.value;
-  const visibleAssigneeIds = assigneeCondition ? getVisibleIdsFromValue(conditionValue) : [...membersIds];
+  const rawVisibleIds = assigneeCondition ? getVisibleIdsFromValue(conditionValue) : [];
 
+  // Check if this is an empty filter (__empty__ means 0 results, all dimmed)
+  const isEmptyFilter = rawVisibleIds.includes(EMPTY_FILTER_VALUE);
+
+  // visibleAssigneeIds - IDs of users whose issues ARE currently visible
+  // - Empty filter: [] (no one visible)
+  // - No condition: all members + "none" (everyone visible)
+  // - Has condition: values from condition
+  const visibleAssigneeIds = isEmptyFilter
+    ? []
+    : assigneeCondition
+      ? rawVisibleIds
+      : [...membersIds, UNASSIGNED_VALUE];
+
+  // hasActiveFilter - whether there's an active assignee filter
   const hasActiveFilter = visibleAssigneeIds.length > 0;
 
-  // Check if a specific member's issues are currently visible
-  // NOTE: Not using useCallback - we want this to always use fresh values
-  const isMemberVisible = (memberId: string): boolean => {
-    // If no filter, all members are visible
-    if (!hasActiveFilter) return true;
-    // If filter exists, member is visible if they're in the filter
-    return visibleAssigneeIds.includes(memberId);
-  };
+  // isUnassignedActive - whether unassigned issues are visible
+  const isUnassignedActive = visibleAssigneeIds.includes(UNASSIGNED_VALUE);
 
-  // Toggle visibility of a member's issues
-  // NOTE: Not using useCallback - we want this to always use fresh values from the filter
+  // Check if a specific member's issues are currently visible
+  const isMemberVisible = (memberId: string): boolean => visibleAssigneeIds.includes(memberId);
+
+  // Toggle visibility of a member's issues (unified logic for members and unassigned)
   const toggleMemberVisibility = (memberId: string, allMemberIds: string[]) => {
     if (!filter) return;
 
     // Re-fetch condition to ensure we have fresh data
     const currentCondition = findAssigneeCondition();
-    const currentVisibleIds = currentCondition ? getVisibleIdsFromValue(currentCondition.value) : [];
-    const currentHasActiveFilter = currentVisibleIds.length > 0;
-    const isCurrentlyVisible = !currentHasActiveFilter || currentVisibleIds.includes(memberId);
+    const allIds = [...allMemberIds, UNASSIGNED_VALUE];
 
-    if (!currentHasActiveFilter) {
-      // No filter exists, user clicks on a highlighted avatar
-      // → Create filter with ALL users EXCEPT this one (hide this user's issues)
-      const newVisibleIds = allMemberIds.filter((id) => id !== memberId);
+    // Determine current state
+    const rawCurrentIds = currentCondition ? getVisibleIdsFromValue(currentCondition.value) : [];
+    const isCurrentEmpty = rawCurrentIds.includes(EMPTY_FILTER_VALUE);
 
-      if (newVisibleIds.length === 0) {
-        // Edge case: only one user in project, can't hide them
+    // Calculate current visible IDs
+    // - Empty filter: 0 visible
+    // - No condition: all visible
+    // - Has condition: values from condition
+    const currentVisibleIds = isCurrentEmpty ? [] : currentCondition ? rawCurrentIds : [...allIds];
+
+    const isCurrentlyVisible = currentVisibleIds.includes(memberId);
+
+    if (isCurrentlyVisible) {
+      // Click on bright (visible) → remove from filter (hide)
+      const newIds = currentVisibleIds.filter((id) => id !== memberId);
+
+      if (newIds.length === 0) {
+        if (currentCondition) {
+          filter.updateConditionValue(currentCondition.id, [EMPTY_FILTER_VALUE], true);
+        } else {
+          filter.addCondition(
+            CORE_LOGICAL_OPERATOR.AND,
+            {
+              property: "assignee_id",
+              operator: "in",
+              value: [EMPTY_FILTER_VALUE],
+            },
+            false
+          );
+        }
+
         return;
       }
 
-      filter.addCondition(
-        CORE_LOGICAL_OPERATOR.AND,
-        {
-          property: "assignee_id",
-          operator: "in",
-          value: newVisibleIds,
-        },
-        false
-      );
-    } else if (isCurrentlyVisible) {
-      // Filter exists, user clicks on a highlighted avatar (visible user)
-      // → Remove this user from filter (hide their issues)
-      const newVisibleIds = currentVisibleIds.filter((id) => id !== memberId);
-
-      if (newVisibleIds.length === 0) {
-        // Can't hide everyone, remove the filter instead
-        filter.removeCondition(currentCondition!.id);
+      // Update/create condition with remaining IDs
+      if (currentCondition) {
+        filter.updateConditionValue(currentCondition.id, newIds, true);
       } else {
-        filter.updateConditionValue(currentCondition!.id, newVisibleIds, true);
+        filter.addCondition(
+          CORE_LOGICAL_OPERATOR.AND,
+          {
+            property: "assignee_id",
+            operator: "in",
+            value: newIds,
+          },
+          false
+        );
       }
     } else {
-      // Filter exists, user clicks on a dimmed avatar (hidden user)
-      // → Add this user to filter (show their issues)
-      const newVisibleIds = [...currentVisibleIds, memberId];
+      // Click on dim (hidden) → add to filter (show)
+      // If was empty filter, start fresh with just this member
+      const baseIds = isCurrentEmpty ? [] : currentVisibleIds;
+      const newIds = [...baseIds, memberId];
 
-      // If all users are now visible, remove the filter entirely
-      if (newVisibleIds.length >= allMemberIds.length) {
-        filter.removeCondition(currentCondition!.id);
+      if (newIds.length >= allIds.length) {
+        // All visible → remove condition (initial state)
+        if (currentCondition) filter.removeCondition(currentCondition.id);
       } else {
-        filter.updateConditionValue(currentCondition!.id, newVisibleIds, true);
+        if (currentCondition) {
+          filter.updateConditionValue(currentCondition.id, newIds, true);
+        } else {
+          filter.addCondition(
+            CORE_LOGICAL_OPERATOR.AND,
+            {
+              property: "assignee_id",
+              operator: "in",
+              value: newIds,
+            },
+            false
+          );
+        }
       }
     }
+  };
+
+  // Toggle visibility of unassigned issues (uses the same logic as toggleMemberVisibility)
+  const toggleUnassigned = () => {
+    toggleMemberVisibility(UNASSIGNED_VALUE, membersIds);
   };
 
   return {
     visibleAssigneeIds,
     hasActiveFilter,
+    isUnassignedActive,
     isMemberVisible,
     toggleMemberVisibility,
+    toggleUnassigned,
   };
 };

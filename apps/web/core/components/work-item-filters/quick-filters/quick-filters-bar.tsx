@@ -6,6 +6,7 @@
 
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
+import { UserX } from "lucide-react";
 // plane imports
 import type { IWorkItemFilterInstance } from "@plane/shared-state";
 import { Tooltip, cn } from "@plane/ui";
@@ -32,7 +33,8 @@ export const QuickFiltersBar = observer(function QuickFiltersBar(props: TQuickFi
     // Get member IDs for the project
   const memberIds = useMemo(() => getProjectMemberIds(projectId, false) ?? [], [getProjectMemberIds, projectId]);
 
-  const { hasActiveFilter, isMemberVisible, toggleMemberVisibility } = useQuickFilters(memberIds, filter);
+  const { hasActiveFilter, isUnassignedActive, isMemberVisible, toggleMemberVisibility, toggleUnassigned } =
+    useQuickFilters(memberIds, filter);
 
 
   // Split into visible and overflow members
@@ -72,6 +74,21 @@ export const QuickFiltersBar = observer(function QuickFiltersBar(props: TQuickFi
           </div>
         </Tooltip>
       )}
+      <Tooltip tooltipContent="Unassigned">
+        <button
+          onClick={toggleUnassigned}
+          className={cn(
+            "flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full transition-all",
+            "bg-layer-2 text-typography-muted",
+            // When there's an active filter, show ring on visible (selected) state
+            hasActiveFilter && isUnassignedActive && "z-10 ring-2 ring-offset-1 ring-primary",
+            // Visibility styles: bright when visible, dim when hidden
+            isUnassignedActive ? "hover:bg-layer-3" : "opacity-40 hover:opacity-100"
+          )}
+        >
+          <UserX className="size-3" />
+        </button>
+      </Tooltip>
     </div>
   );
 });

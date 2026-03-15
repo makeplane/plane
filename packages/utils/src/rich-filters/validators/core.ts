@@ -11,6 +11,18 @@ import { getGroupChildren } from "../types";
 import { isConditionNode, isGroupNode } from "../types/core";
 
 /**
+ * Special value for filtering unassigned work items.
+ * When this value is sent to the backend, it returns items with no assignees.
+ */
+export const UNASSIGNED_VALUE = "none";
+
+/**
+ * Special value for empty filter (returns 0 results).
+ * When this value is sent to the backend, it returns no items.
+ */
+export const EMPTY_FILTER_VALUE = "__empty__";
+
+/**
  * Determines whether to notify about a change based on the filter value.
  * @param value - The filter value to check
  * @returns True if we should notify, false otherwise

@@ -35,10 +35,10 @@ export const AssigneeAvatarFilter = observer(function AssigneeAvatarFilter(props
         "relative flex-shrink-0 rounded-full transition-all duration-150",
         "hover:z-20 hover:scale-110",
         "focus:outline-none focus:z-20",
-        // Active filter styles - show ring on visible users
-        hasActiveFilter && isVisible && "z-10 ring-2 ring-offset-1 ring-blue-500",
-        // Visibility styles
-        isVisible ? "opacity-100" : "opacity-40 hover:opacity-70"
+        // When there's an active filter, show ring on visible (selected) users
+        hasActiveFilter && isVisible && "z-10 ring-2 ring-offset-1 ring-primary",
+        // Visibility styles: bright when visible, dim when hidden
+        isVisible ? "opacity-100" : "opacity-40 hover:opacity-100"
       )}
     >
       <Avatar
