@@ -5,7 +5,7 @@
  */
 
 import { useCallback, useMemo } from "react";
-import { AtSign, Briefcase } from "lucide-react";
+import { AtSign, Briefcase, UserX } from "lucide-react";
 // plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
@@ -227,6 +227,11 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
             showTooltip={false}
             size="sm"
           />
+        ),
+        unassignedIcon: (
+          <span className="flex size-4 items-center justify-center rounded-full bg-layer-2 text-typography-muted">
+            <UserX className="size-3" />
+          </span>
         ),
         ...operatorConfigs,
       }),

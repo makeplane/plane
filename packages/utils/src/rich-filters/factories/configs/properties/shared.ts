@@ -4,13 +4,15 @@
  * See the LICENSE file for details.
  */
 
+import type React from "react";
 // plane imports
 import type { IProject, IUserLite, TOperatorConfigMap, TSupportedOperators } from "@plane/types";
-import { COMPARISON_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
+import { COMPARISON_OPERATOR, EQUALITY_OPERATOR, FILTER_FIELD_TYPE } from "@plane/types";
 // local imports
 import { getDatePickerConfig, getDateRangePickerConfig, getMultiSelectConfig } from "../core";
 import type { IFilterIconConfig, TCreateDateFilterParams, TCreateFilterConfigParams, TFilterIconType } from "../shared";
-import { createOperatorConfigEntry } from "../shared";
+import { createFilterFieldConfig, createOperatorConfigEntry } from "../shared";
+import { UNASSIGNED_VALUE } from "../../../validators/core";
 
 // ------------ Base User Filter Types ------------
 
@@ -44,6 +46,46 @@ export const getMemberMultiSelectConfig = (params: TCreateUserFilterParams, sing
       ...params,
     }
   );
+
+/**
+ * Assignee filter specific params (includes unassigned option)
+ */
+export type TCreateAssigneeFilterParams = TCreateUserFilterParams & {
+  unassignedIcon?: React.ReactNode;
+};
+
+/**
+ * Helper to get the assignee multi select config with "Unassigned" option
+ * @param params - The filter params
+ * @returns The assignee multi select config with unassigned option
+ */
+export const getAssigneeMultiSelectConfig = (
+  params: TCreateAssigneeFilterParams,
+  singleValueOperator: TSupportedOperators
+) => {
+  // Create member options
+  const memberOptions = params.members.map((member) => ({
+    id: member.id,
+    label: member.display_name,
+    value: member.id,
+    icon: params.getOptionIcon?.(member),
+  }));
+
+  // Add "Unassigned" option at the end
+  const unassignedOption = {
+    id: UNASSIGNED_VALUE,
+    label: "Unassigned",
+    value: UNASSIGNED_VALUE,
+    icon: params.unassignedIcon,
+  };
+
+  return createFilterFieldConfig<typeof FILTER_FIELD_TYPE.MULTI_SELECT, string>({
+    type: FILTER_FIELD_TYPE.MULTI_SELECT,
+    singleValueOperator,
+    operatorLabel: params.operatorLabel,
+    getOptions: () => [...memberOptions, unassignedOption],
+  });
+};
 
 // ------------ Date Operators ------------
 

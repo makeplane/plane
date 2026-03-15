@@ -8,18 +8,18 @@
 import type { TFilterProperty } from "@plane/types";
 import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
-import type { TCreateFilterConfig, TCreateUserFilterParams } from "../../../rich-filters";
-import { createFilterConfig, createOperatorConfigEntry, getMemberMultiSelectConfig } from "../../../rich-filters";
+import type { TCreateFilterConfig, TCreateUserFilterParams, TCreateAssigneeFilterParams } from "../../../rich-filters";
+import {
+  createFilterConfig,
+  createOperatorConfigEntry,
+  getMemberMultiSelectConfig,
+  getAssigneeMultiSelectConfig,
+} from "../../../rich-filters";
 
 // ------------ Assignee filter ------------
 
 /**
- * Assignee filter specific params
- */
-export type TCreateAssigneeFilterParams = TCreateUserFilterParams;
-
-/**
- * Get the assignee filter config
+ * Get the assignee filter config (with Unassigned option)
  * @template K - The filter key
  * @param key - The filter key to use
  * @returns A function that takes parameters and returns the assignee filter config
@@ -34,7 +34,7 @@ export const getAssigneeFilterConfig =
       icon: params.filterIcon,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
-          getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
+          getAssigneeMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
       ]),
     });
