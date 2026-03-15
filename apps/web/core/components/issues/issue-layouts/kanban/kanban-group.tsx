@@ -280,7 +280,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     <div
       id={`${groupId}__${sub_group_id}`}
       className={cn(
-        "relative h-full min-h-[120px] transition-all",
+        "group relative h-full min-h-[120px] transition-all",
         { "rounded-sm bg-layer-1": isDraggingOverColumn },
         { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlayBeVisible }
       )}
@@ -326,7 +326,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
       {enableQuickIssueCreate &&
         !disableIssueCreation &&
         !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id) && (
-          <div className="sticky bottom-0 w-full bg-surface-2 py-0.5">
+          <div className="sticky bottom-0 w-full bg-surface-2 py-0.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
             <QuickAddIssueRoot
               layout={EIssueLayoutTypes.KANBAN}
               QuickAddButton={KanbanQuickAddIssueButton}
