@@ -4,68 +4,20 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      # Common source directories
-      - 'src/**'
-      - 'app/**'
-      - 'lib/**'
-      - 'api/**'
-      - 'server/**'
-      - 'backend/**'
-      - 'frontend/**'
-      - 'web/**'
-      - 'core/**'
-      # Monorepo patterns
+      # Plane API (Django)
+      - 'apps/api/**'
+      # Plane frontend apps
+      - 'apps/web/**'
+      - 'apps/admin/**'
+      - 'apps/space/**'
+      - 'apps/live/**'
+      # Shared packages
       - 'packages/**'
-      - 'apps/**'
-      - 'services/**'
-      # Go conventions
-      - 'cmd/**'
-      - 'pkg/**'
-      - 'internal/**'
-      # Rust workspaces
-      - 'crates/**'
-      # Serverless
-      - 'functions/**'
-      # Frontend framework conventions
-      - 'pages/**'
-      - 'components/**'
-      # Ruby/Rails
-      - 'db/**'
-      - 'config/**'
-      # Common web patterns
-      - 'routes/**'
-      - 'controllers/**'
-      - 'models/**'
-      - 'views/**'
-      - 'handlers/**'
-      - 'middleware/**'
-      # Tests
-      - 'tests/**'
-      - 'test/**'
-      - 'spec/**'
       # Build and dependency files
-      - 'package.json'
-      - 'package-lock.json'
-      - 'yarn.lock'
+      - 'apps/api/requirements*.txt'
+      - 'apps/api/pyproject.toml'
       - 'pnpm-lock.yaml'
-      - 'pyproject.toml'
-      - 'setup.py'
-      - 'setup.cfg'
-      - 'requirements*.txt'
-      - 'Pipfile'
-      - 'poetry.lock'
-      - 'go.mod'
-      - 'go.sum'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - 'pom.xml'
-      - 'build.gradle'
-      - 'build.gradle.kts'
-      - 'Gemfile'
-      - 'Gemfile.lock'
-      - '*.csproj'
-      - '*.sln'
-      - 'Dockerfile'
+      - 'package.json'
       - 'docker-compose.yml'
       - 'docker-compose.yaml'
   workflow_dispatch:
@@ -90,6 +42,31 @@ jobs:
       contents: write
       pull-requests: write
 
+    services:
+      postgres:
+        image: postgres:15.7-alpine
+        env:
+          POSTGRES_USER: plane
+          POSTGRES_PASSWORD: plane
+          POSTGRES_DB: plane
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: valkey/valkey:7.2.11-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       # Generate a GitHub App installation token to retrigger CI workflows on push
       # https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/making-authenticated-api-requests-with-a-github-app-in-a-github-actions-workflow
@@ -100,10 +77,90 @@ jobs:
           app-id: ${{ secrets.SKYRAMP_TESTBOT_APP_ID }}
           private-key: ${{ secrets.SKYRAMP_TESTBOT_APP_PRIVATE_KEY }}
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
+
+      # ── Plane API Setup ──────────────────────────────────────────────────────
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: apps/api/requirements.txt
+
+      - name: Install Plane API dependencies
+        working-directory: apps/api
+        run: pip install -r requirements.txt
+
+      - name: Configure Plane API environment
+        run: |
+          cat > apps/api/.env << 'EOF'
+          DEBUG=1
+          SECRET_KEY=ci-secret-key-for-testing-only-not-for-production
+          DATABASE_URL=postgresql://plane:plane@localhost:5432/plane
+          REDIS_HOST=localhost
+          REDIS_PORT=6379
+          REDIS_URL=redis://localhost:6379/
+          RABBITMQ_HOST=localhost
+          RABBITMQ_PORT=5672
+          RABBITMQ_USER=plane
+          RABBITMQ_PASSWORD=plane
+          RABBITMQ_VHOST=plane
+          AWS_ACCESS_KEY_ID=access-key
+          AWS_SECRET_ACCESS_KEY=secret-key
+          AWS_S3_BUCKET_NAME=uploads
+          AWS_S3_ENDPOINT_URL=http://localhost:9000
+          USE_MINIO=0
+          FILE_SIZE_LIMIT=5242880
+          GUNICORN_WORKERS=2
+          WEB_URL=http://localhost:8000
+          CORS_ALLOWED_ORIGINS=http://localhost:3000
+          ENABLE_DRF_SPECTACULAR=1
+          ALLOWED_HOSTS=localhost,127.0.0.1
+          EOF
+
+      - name: Run database migrations
+        working-directory: apps/api
+        run: python manage.py migrate
+
+      - name: Bootstrap Plane instance
+        working-directory: apps/api
+        run: |
+          python manage.py register_instance "ci-$(hostname)" || true
+          python manage.py configure_instance || true
+          python manage.py clear_cache || true
+          python manage.py collectstatic --noinput
+
+      - name: Start Plane API server
+        working-directory: apps/api
+        run: |
+          nohup gunicorn -w 2 -k uvicorn.workers.UvicornWorker \
+            plane.asgi:application \
+            --bind 0.0.0.0:8000 \
+            --access-logfile /tmp/plane-api-access.log \
+            --error-logfile /tmp/plane-api-error.log &
+          echo $! > /tmp/plane-api.pid
+
+      - name: Wait for Plane API to be ready
+        run: |
+          echo "Waiting for Plane API..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8000/ >/dev/null 2>&1; then
+              echo "Plane API is ready after ${i} attempts."
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "Plane API failed to start. Logs:"
+              cat /tmp/plane-api-error.log || true
+              exit 1
+            fi
+            sleep 3
+          done
+
+      # ── Skyramp Testbot ──────────────────────────────────────────────────────
 
       - name: Run Skyramp Testbot
         uses: skyramp/testbot@SKYR-3625
