@@ -140,6 +140,25 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       settings: undefined,
     },
   },
+  RELATION_RELEASE: {
+    i18n_displayName: "work_item_types.settings.properties.property_type.release_picker.label",
+    iconKey: "Release",
+    dataToUpdate: {
+      logo_props: {
+        in_use: "icon",
+        icon: {
+          name: "Release",
+          color: "#6d7b8a",
+        },
+      },
+      property_type: EIssuePropertyType.RELATION,
+      relation_type: EIssuePropertyRelationType.RELEASE,
+      is_multi: true,
+      is_required: false,
+      default_value: [],
+      settings: undefined,
+    },
+  },
   URL: {
     i18n_displayName: "common.url",
     iconKey: "Link2",

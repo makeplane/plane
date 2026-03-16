@@ -3904,6 +3904,9 @@ export default {
           member_picker: {
             label: "멤버 피커",
           },
+          release_picker: {
+            label: "릴리스 선택기",
+          },
           formula: {
             label: "수식",
           },
@@ -6571,6 +6574,7 @@ export default {
     releases: "릴리스",
     release: "릴리스",
     no_release: "릴리스 없음",
+    select_releases: "릴리스 선택",
     count_releases: "{count, plural, one {# 릴리스} other {# 릴리스}}",
     actions: {
       delete: "삭제",

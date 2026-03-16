@@ -16,7 +16,8 @@ import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 import { Menu } from "@plane/propel/menu";
 import { EPillSize, Pill } from "@plane/propel/pill";
-import { IssuePropertyLogo } from "@/components/work-item-types/properties/common/issue-property-logo";
+import { getIssuePropertyTypeDetails } from "@plane/utils";
+import { PropertyTypeIcon } from "@/components/work-item-types/properties/property-icon";
 import { useIssueProperty } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -31,6 +32,7 @@ export const TypeFormPropertiesListItem = observer(function TypeFormPropertiesLi
   const property = useIssueProperty(typeId, propertyId);
 
   if (!property) return null;
+  const propertyTypeDetails = getIssuePropertyTypeDetails(property.property_type, property.relation_type);
 
   const intakeFormT = (path: string) => t(`project_settings.features.intake.form.${path}`);
 
@@ -38,7 +40,9 @@ export const TypeFormPropertiesListItem = observer(function TypeFormPropertiesLi
     <div className="p-3 rounded-lg border border-subtle">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
-          <IssuePropertyLogo icon_props={property?.logo_props?.icon} colorClassName="text-secondary" size={12} />
+          {propertyTypeDetails?.iconKey && (
+            <PropertyTypeIcon iconKey={propertyTypeDetails.iconKey} className="size-3 text-secondary" />
+          )}
           <span className="text-secondary text-13 font-medium">{property.display_name}</span>
         </div>
         <div className="flex gap-2 items-center">

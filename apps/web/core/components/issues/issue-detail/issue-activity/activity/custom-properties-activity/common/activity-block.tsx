@@ -15,13 +15,19 @@ import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { calculateTimeAgo, cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import {
+  calculateTimeAgo,
+  cn,
+  getIssuePropertyTypeDetails,
+  renderFormattedDate,
+  renderFormattedTime,
+} from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { IssuePropertyLogo } from "@/components/work-item-types/properties/common/issue-property-logo";
+import { PropertyTypeIcon } from "@/components/work-item-types/properties/property-icon";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // local imports
 import { IssueUser } from "./issue-user";
@@ -48,6 +54,7 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
 
   const { higlightedActivityIds } = useWorkspaceNotifications();
   const propertyDetail = getIssuePropertyById(propertyId);
+  const propertyTypeDetails = getIssuePropertyTypeDetails(propertyDetail?.property_type, propertyDetail?.relation_type);
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
 
@@ -74,8 +81,8 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
           "text-secondary"
         )}
       >
-        {propertyDetail?.logo_props?.in_use && (
-          <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} size={14} colorClassName="text-secondary" />
+        {propertyTypeDetails?.iconKey && (
+          <PropertyTypeIcon iconKey={propertyTypeDetails.iconKey} className="size-3.5 text-secondary" />
         )}
       </div>
       <div className="w-full truncate text-secondary">

@@ -256,6 +256,7 @@ export const getWorkItemCustomPropertyActivityMessage = (
     DATETIME: getWorkItemDatePropertyActivityMessage,
     RELATION_USER: getWorkItemMemberPropertyActivityMessage,
     RELATION_ISSUE: getWorkItemRelationIssuePropertyActivityMessage,
+    RELATION_RELEASE: () => null,
     URL: getWorkItemUrlPropertyActivityMessage,
     FORMULA: () => null,
   };

@@ -3977,6 +3977,9 @@ se você tem certeza de que sua pesquisa está correta.`,
           member_picker: {
             label: "Seletor de membro",
           },
+          release_picker: {
+            label: "Seletor de releases",
+          },
           formula: {
             label: "Fórmula",
           },
@@ -6703,6 +6706,7 @@ da maneira que você quiser a partir das fontes que você especificar.`,
     releases: "Lançamentos",
     release: "Lançamento",
     no_release: "Nenhum lançamento",
+    select_releases: "Selecionar lançamentos",
     count_releases: "{count, plural, one {# lançamento} other {# lançamentos}}",
     actions: {
       delete: "Excluir",

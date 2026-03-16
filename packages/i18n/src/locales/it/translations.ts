@@ -3966,6 +3966,9 @@ Crea un nuovo progetto invece`,
           member_picker: {
             label: "Seleziona membro",
           },
+          release_picker: {
+            label: "Selettore release",
+          },
           formula: {
             label: "Formula",
           },
@@ -6699,6 +6702,7 @@ Crea un nuovo progetto invece`,
     releases: "Rilasci",
     release: "Rilascio",
     no_release: "Nessun rilascio",
+    select_releases: "Seleziona rilasci",
     count_releases: "{count, plural, one {# rilascio} other {# rilasci}}",
     actions: {
       delete: "Elimina",

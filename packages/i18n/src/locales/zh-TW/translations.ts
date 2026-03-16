@@ -3858,6 +3858,9 @@ export default {
           member_picker: {
             label: "成員選擇器",
           },
+          release_picker: {
+            label: "發佈選擇器",
+          },
           formula: {
             label: "公式",
           },
@@ -6481,6 +6484,7 @@ export default {
     releases: "發佈",
     release: "發佈",
     no_release: "尚無發佈",
+    select_releases: "選擇發佈",
     count_releases: "{count, plural, one {# 發佈} other {# 發佈}}",
     actions: {
       delete: "刪除",

@@ -3937,6 +3937,9 @@ export default {
           member_picker: {
             label: "メンバー選択",
           },
+          release_picker: {
+            label: "リリース選択",
+          },
           formula: {
             label: "数式",
           },
@@ -6621,6 +6624,7 @@ export default {
     releases: "リリース",
     release: "リリース",
     no_release: "リリースなし",
+    select_releases: "リリースを選択",
     count_releases: "{count, plural, one {# リリース} other {# リリース}}",
     actions: {
       delete: "削除",

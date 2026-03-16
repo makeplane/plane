@@ -3956,6 +3956,9 @@ Erstellen Sie ein neues.`,
           member_picker: {
             label: "Mitgliederauswahl",
           },
+          release_picker: {
+            label: "Release-Auswahl",
+          },
           formula: {
             label: "Formel",
           },
@@ -6699,6 +6702,7 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
     releases: "Releases",
     release: "Release",
     no_release: "Kein Release",
+    select_releases: "Releases auswählen",
     count_releases: "{count, plural, one {# Release} other {# Releases}}",
     actions: {
       delete: "Löschen",

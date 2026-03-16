@@ -3969,6 +3969,9 @@ export default {
           member_picker: {
             label: "Выбор участника",
           },
+          release_picker: {
+            label: "Выбор релизов",
+          },
           formula: {
             label: "Формула",
           },
@@ -6697,6 +6700,7 @@ export default {
     releases: "Релизы",
     release: "Релиз",
     no_release: "Нет релиза",
+    select_releases: "Выбрать релизы",
     count_releases: "{count, plural, one {# релиз} other {# релизов}}",
     actions: {
       delete: "Удалить",

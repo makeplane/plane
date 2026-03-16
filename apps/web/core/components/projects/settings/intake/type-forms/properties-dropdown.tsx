@@ -20,8 +20,9 @@ import { AddIcon } from "@plane/propel/icons";
 import { EPillSize, Pill } from "@plane/propel/pill";
 import { cn } from "@plane/propel/utils";
 import type { IIssueType } from "@plane/types";
+import { getIssuePropertyTypeDetails } from "@plane/utils";
 import { Checkbox } from "@plane/ui";
-import { IssuePropertyLogo } from "@/components/work-item-types/properties/common/issue-property-logo";
+import { PropertyTypeIcon } from "@/components/work-item-types/properties/property-icon";
 
 type Props = {
   onSelect: (value: string[]) => void;
@@ -67,6 +68,7 @@ export const TypePropertiesDropdown = observer(function TypePropertiesDropdown(p
       <Combobox.Options showSearch searchPlaceholder={intakeFormT("search_placeholder")} className="w-72 text-13">
         {properties.map((property) => {
           if (!property.id) return null;
+          const propertyTypeDetails = getIssuePropertyTypeDetails(property.property_type, property.relation_type);
           return (
             <Combobox.Option
               key={property.id}
@@ -79,11 +81,12 @@ export const TypePropertiesDropdown = observer(function TypePropertiesDropdown(p
             >
               <div className="flex items-center gap-1">
                 <Checkbox checked={selectedFields.includes(property.id)} disabled={isPropertyDisabled(property.id)} />
-                <IssuePropertyLogo
-                  size={12}
-                  icon_props={property?.logo_props?.icon}
-                  colorClassName={property.is_active ? "text-secondary" : "text-tertiary"}
-                />
+                {propertyTypeDetails?.iconKey && (
+                  <PropertyTypeIcon
+                    iconKey={propertyTypeDetails.iconKey}
+                    className={cn("size-3", property.is_active ? "text-secondary" : "text-tertiary")}
+                  />
+                )}
                 <span className="text-secondary text-13">{property.name}</span>
               </div>
               {property.is_required && (

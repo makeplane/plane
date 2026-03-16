@@ -3924,6 +3924,9 @@ Utwórz nowy.`,
           member_picker: {
             label: "Wybór członka",
           },
+          release_picker: {
+            label: "Selektor wydań",
+          },
           formula: {
             label: "Formuła",
           },
@@ -6631,6 +6634,7 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
     releases: "Wydania",
     release: "Wydanie",
     no_release: "Brak wydania",
+    select_releases: "Wybierz wydania",
     count_releases: "{count, plural, one {# wydanie} other {# wydania}}",
     actions: {
       delete: "Usuń",

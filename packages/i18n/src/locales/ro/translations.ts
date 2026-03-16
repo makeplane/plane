@@ -3971,6 +3971,9 @@ văzute aici`,
           member_picker: {
             label: "Selector de membri",
           },
+          release_picker: {
+            label: "Selector de lansări",
+          },
           formula: {
             label: "Formulă",
           },
@@ -6705,6 +6708,7 @@ așa cum dorești din sursele pe care le specifici.`,
     releases: "Lansări",
     release: "Lansare",
     no_release: "Nicio lansare",
+    select_releases: "Selectează lansări",
     count_releases: "{count, plural, one {# lansare} other {# lansări}}",
     actions: {
       delete: "Șterge",

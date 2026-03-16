@@ -17,17 +17,18 @@ import { InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // plane imports
 import type { EIssuePropertyType, TIssueProperty, TIssuePropertyDisplayContext } from "@plane/types";
-import { cn, getFormattedWorkItemProperties } from "@plane/utils";
+import { getFormattedWorkItemProperties, getIssuePropertyTypeDetails } from "@plane/utils";
 // local imports
-import { IssuePropertyLogo } from "@/components/work-item-types/properties/common/issue-property-logo";
+import { PropertyTypeIcon } from "@/components/work-item-types/properties/property-icon";
 
 function PropertyDetail({ property }: { property: Partial<TIssueProperty<EIssuePropertyType>> | undefined }) {
   if (!property) return null;
+  const propertyTypeDetails = getIssuePropertyTypeDetails(property.property_type, property.relation_type);
   return (
     <>
       <div className="flex-shrink-0 flex">
-        {property.logo_props?.in_use && property.logo_props.icon && (
-          <IssuePropertyLogo icon_props={property.logo_props.icon} colorClassName="text-tertiary" size={14} />
+        {propertyTypeDetails?.iconKey && (
+          <PropertyTypeIcon iconKey={propertyTypeDetails.iconKey} className="size-3.5 text-tertiary" />
         )}
       </div>
       <span className="w-full cursor-default truncate">

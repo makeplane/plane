@@ -29,6 +29,7 @@ export enum EIssuePropertyType {
 export enum EIssuePropertyRelationType {
   ISSUE = "ISSUE",
   USER = "USER",
+  RELEASE = "RELEASE",
 }
 
 // Base issue property type

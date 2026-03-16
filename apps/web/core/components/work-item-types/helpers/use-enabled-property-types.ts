@@ -21,6 +21,7 @@ type TPropertyTypeEnabledOptions = {
 export const useIsPropertyTypeEnabled = (options?: TPropertyTypeEnabledOptions) => {
   const { workspaceSlug } = useParams();
   const isFormulaFieldEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TYPE_FORMULA_FIELD");
+  const isReleasePickerEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TYPE_RELEASE_PICKER");
   // When options are provided (property creation context), formula requires a valid project context
   // (not available in templates). When options are not provided (value display context), only the flag is checked.
   const isFormulaAllowed = options ? isFormulaFieldEnabled && Boolean(options.projectId) : isFormulaFieldEnabled;
@@ -28,6 +29,7 @@ export const useIsPropertyTypeEnabled = (options?: TPropertyTypeEnabledOptions) 
   return (key: string): boolean => {
     const flagMap: Record<string, boolean> = {
       FORMULA: isFormulaAllowed,
+      RELATION_RELEASE: isReleasePickerEnabled,
     };
     return flagMap[key] ?? true;
   };

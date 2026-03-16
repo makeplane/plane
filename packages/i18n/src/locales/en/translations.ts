@@ -4372,6 +4372,9 @@ if you are sure your search is right. `,
           member_picker: {
             label: "Member picker",
           },
+          release_picker: {
+            label: "Release picker",
+          },
           formula: {
             label: "Formula",
           },
@@ -7158,6 +7161,7 @@ the way you want to from the sources you specify.`,
     releases: "Releases",
     release: "Release",
     no_release: "No release",
+    select_releases: "Select releases",
     count_releases: "{count, plural, one {# release} other {# releases}}",
     actions: {
       delete: "delete",

@@ -3993,6 +3993,9 @@ si vous êtes sûr que votre recherche est correcte.`,
           member_picker: {
             label: "Sélecteur de membre",
           },
+          release_picker: {
+            label: "Sélecteur de version",
+          },
           formula: {
             label: "Formule",
           },
@@ -6749,6 +6752,7 @@ si vous êtes sûr que votre recherche est correcte.`,
     releases: "Livraisons",
     release: "Livraison",
     no_release: "Aucune livraison",
+    select_releases: "Sélectionner des livraisons",
     count_releases: "{count, plural, one {# livraison} other {# livraisons}}",
     actions: {
       delete: "Supprimer",

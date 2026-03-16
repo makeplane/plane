@@ -33,6 +33,7 @@ export type TIssuePropertyTypeIconKey =
   | "ToggleLeft"
   | "Calendar"
   | "UsersRound"
+  | "Release"
   | "Link2"
   | "Formula";
 

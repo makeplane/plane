@@ -17,7 +17,6 @@ from django.core.exceptions import ValidationError
 # Third party imports
 from rest_framework import serializers
 
-
 # Module imports
 from plane.app.serializers.base import BaseSerializer
 from plane.db.models import (

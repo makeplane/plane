@@ -14,7 +14,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import type { TIssueProperty, TIssuePropertyTypeKeys, TOperationMode } from "@plane/types";
-import { EIssuePropertyType } from "@plane/types";
+import { EIssuePropertyRelationType, EIssuePropertyType } from "@plane/types";
 // local imports
 import type { TIssuePropertyFormError, TPropertyValidator } from "../property-list-item";
 import { SelectedAttributeProperties } from "./selected-attribute-properties";
@@ -53,7 +53,8 @@ export const PropertyAttributes = observer(function PropertyAttributes(props: TP
   if (
     !currentOperationMode ||
     !propertyDetail.property_type ||
-    DISABLE_ATTRIBUTE_CHANGE_LIST.includes(propertyDetail.property_type)
+    DISABLE_ATTRIBUTE_CHANGE_LIST.includes(propertyDetail.property_type) ||
+    propertyDetail.relation_type === EIssuePropertyRelationType.RELEASE
   )
     return;
 

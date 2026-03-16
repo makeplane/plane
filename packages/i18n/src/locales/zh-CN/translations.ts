@@ -3836,6 +3836,9 @@ export default {
           member_picker: {
             label: "成员选择器",
           },
+          release_picker: {
+            label: "发布选择器",
+          },
           formula: {
             label: "公式",
           },
@@ -6457,6 +6460,7 @@ export default {
     releases: "发布",
     release: "发布",
     no_release: "暂无发布",
+    select_releases: "选择发布",
     count_releases: "{count, plural, one {# 发布} other {# 发布}}",
     actions: {
       delete: "删除",

@@ -3919,6 +3919,9 @@ export default {
           member_picker: {
             label: "Вибір мембера",
           },
+          release_picker: {
+            label: "Вибір релізів",
+          },
           formula: {
             label: "Формула",
           },
@@ -6624,6 +6627,7 @@ export default {
     releases: "Релізи",
     release: "Реліз",
     no_release: "Немає релізу",
+    select_releases: "Вибрати релізи",
     count_releases: "{count, plural, one {# реліз} other {# релізи}}",
     actions: {
       delete: "Видалити",

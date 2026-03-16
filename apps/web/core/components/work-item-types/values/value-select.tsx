@@ -14,7 +14,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { InfoIcon } from "@plane/propel/icons";
-import { Sigma, TriangleAlert } from "lucide-react";
+import { useParams } from "react-router";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuePropertyType } from "@plane/types";
@@ -29,23 +29,24 @@ import type {
   TTextAttributeConfigurations,
   TDateAttributeConfigurations,
 } from "@plane/types";
-import { Loader, LUCIDE_ICONS_LIST } from "@plane/ui";
-import { getIssuePropertyTypeKey, cn } from "@plane/utils";
+import { Loader } from "@plane/ui";
+import { getIssuePropertyTypeDetails, getIssuePropertyTypeKey, cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { useIsPropertyTypeEnabled } from "../helpers/use-enabled-property-types";
 // local imports
-import { IssuePropertyLogo } from "../properties/common/issue-property-logo";
 import { BooleanInput } from "./components/boolean-input";
 import { DateValueSelect } from "./components/date-select";
 import { MemberValueSelect } from "./components/member-select";
 import { NumberValueInput } from "./components/number-input";
 import { OptionValueSelect } from "./components/option-select";
+import { ReleaseValueSelect } from "./components/release-select";
 import { TextValueInput } from "./components/text-input";
 import { UrlValueInput } from "./components/url-input";
 import { FormulaDisplay } from "./components/formula-display";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
+import { PropertyTypeIcon } from "../properties/property-icon";
 
 type TPropertyValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
@@ -71,16 +72,19 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
     getPropertyInstanceById,
     isDisabled,
   } = props;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { peekIssue } = useIssueDetail();
   const isPropertyTypeEnabled = useIsPropertyTypeEnabled();
+
+  const propertyTypeDetails = getIssuePropertyTypeDetails(propertyDetail?.property_type, propertyDetail?.relation_type);
 
   function IssuePropertyDetail() {
     return (
       <>
         <div className="shrink-0 grid place-items-center">
-          {propertyDetail?.logo_props?.in_use && (
-            <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} colorClassName="text-tertiary" />
+          {propertyTypeDetails?.iconKey && (
+            <PropertyTypeIcon iconKey={propertyTypeDetails.iconKey} className="size-4 text-tertiary" />
           )}
         </div>
         <span
@@ -197,6 +201,20 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
         />
       </>
     ),
+    RELATION_RELEASE: (
+      <>
+        <ReleaseValueSelect
+          propertyDetail={propertyDetail as TIssueProperty<EIssuePropertyType.RELATION>}
+          value={propertyValue}
+          error={propertyValueError}
+          workspaceSlug={workspaceSlug}
+          variant={variant}
+          buttonClassName="h-8"
+          isDisabled={isDisabled}
+          onReleaseValueChange={onPropertyValueChange}
+        />
+      </>
+    ),
     URL: (
       <>
         <UrlValueInput
@@ -210,12 +228,12 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
         />
       </>
     ),
-    ...(isPropertyTypeEnabled("FORMULA") && {
-      FORMULA: <FormulaDisplay value={propertyValue} />,
-    }),
+    FORMULA: <FormulaDisplay value={propertyValue} />,
   };
 
   const propertyTypeKey = getIssuePropertyTypeKey(propertyDetail?.property_type, propertyDetail?.relation_type);
+
+  if (!isPropertyTypeEnabled(propertyTypeKey)) return null;
 
   const CurrentPropertyAttribute = arePropertyValuesInitializing ? (
     <Loader className="w-full min-h-8">
@@ -240,10 +258,13 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
       {variant === "update" && (
         <>
           <SidebarPropertyListItem
-            icon={
-              LUCIDE_ICONS_LIST.find((item) => item.name === propertyDetail?.logo_props?.icon?.name)?.element ??
-              (propertyDetail?.property_type === EIssuePropertyType.FORMULA ? Sigma : TriangleAlert)
-            }
+            icon={() => (
+              <div>
+                {propertyTypeDetails?.iconKey && (
+                  <PropertyTypeIcon iconKey={propertyTypeDetails.iconKey} className="size-4 text-tertiary" />
+                )}
+              </div>
+            )}
             label={propertyDetail?.display_name ?? ""}
           >
             {CurrentPropertyAttribute}

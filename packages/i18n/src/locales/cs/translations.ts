@@ -3915,6 +3915,9 @@ Vytvořte nový.`,
           member_picker: {
             label: "Výběr člena",
           },
+          release_picker: {
+            label: "Výběr vydání",
+          },
           formula: {
             label: "Vzorec",
           },
@@ -6617,6 +6620,7 @@ Vytvořte nový.`,
     releases: "Vydání",
     release: "Vydání",
     no_release: "Žádné vydání",
+    select_releases: "Vyberte vydání",
     count_releases: "{count, plural, one {# vydání} other {# vydání}}",
     actions: {
       delete: "Smazat",

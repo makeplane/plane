@@ -33,12 +33,12 @@ import type {
   TRecurringWorkItemActivityVerbs,
 } from "@plane/types";
 import { ERecurringWorkItemRunLogStatus } from "@plane/types";
-import { cn, joinUrlPath, renderFormattedDate } from "@plane/utils";
+import { cn, getIssuePropertyTypeDetails, joinUrlPath, renderFormattedDate } from "@plane/utils";
 // root store
 import { store } from "@/lib/store-context";
 // plane web imports
 import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
-import { IssuePropertyLogo } from "@/components/work-item-types/properties/common/issue-property-logo";
+import { PropertyTypeIcon } from "@/components/work-item-types/properties/property-icon";
 import { getWorkItemCustomPropertyActivityMessage } from "@/helpers/workitem/activity";
 import { useIssueType } from "@/plane-web/hooks/store";
 
@@ -168,18 +168,15 @@ const getCustomPropertyActivityDetails = (activity: TRecurringWorkItemActivity):
     }
   };
 
-  // Create a wrapper component for IssuePropertyLogo since it needs special props
-  const IconWrapper: FC<{ className?: string }> = ({ className }) => {
-    if (propertyDetail?.logo_props?.in_use) {
-      return (
-        <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} size={14} colorClassName="text-secondary" />
-      );
-    }
+  const propertyTypeDetails = getIssuePropertyTypeDetails(propertyDetail.property_type, propertyDetail.relation_type);
+  const CustomPropertyIcon: FC<{ className?: string }> = ({ className }) => {
+    if (propertyTypeDetails?.iconKey)
+      return <PropertyTypeIcon iconKey={propertyTypeDetails.iconKey} className={className} />;
     return <RecurringWorkItemIcon className={className} />;
   };
 
   return {
-    icon: IconWrapper,
+    icon: CustomPropertyIcon,
     message: getWorkItemCustomPropertyActivityMessage({
       action: getActivityAction(activity.verb),
       newValue: activity.new_value,

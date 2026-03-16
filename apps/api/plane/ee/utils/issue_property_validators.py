@@ -19,7 +19,7 @@ from plane.ee.models import (
     IssuePropertyOption,
     RelationTypeEnum,
 )
-from plane.db.models import Issue, WorkspaceMember
+from plane.db.models import Issue, WorkspaceMember, Release
 from plane.ee.utils.base_validators import (
     validate_text,
     validate_uuid,
@@ -49,6 +49,9 @@ def validate_relation(property, value):
     elif property.relation_type == RelationTypeEnum.USER:
         if not WorkspaceMember.objects.filter(workspace_id=property.workspace_id, member_id=value).exists():
             raise ValidationError(f"{value} is not a valid user")
+    elif property.relation_type == RelationTypeEnum.RELEASE:
+        if not Release.objects.filter(workspace_id=property.workspace_id, id=value).exists():
+            raise ValidationError(f"{value} is not a valid release")
     else:
         raise ValidationError(f"{property.relation_type} is not a valid relation type")
 

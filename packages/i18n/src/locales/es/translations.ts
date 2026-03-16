@@ -3992,6 +3992,9 @@ si estás seguro de que tu búsqueda es correcta.`,
           member_picker: {
             label: "Selector de miembros",
           },
+          release_picker: {
+            label: "Selector de versiones",
+          },
           formula: {
             label: "Fórmula",
           },
@@ -6732,6 +6735,7 @@ si estás seguro de que tu búsqueda es correcta.`,
     releases: "Lanzamientos",
     release: "Lanzamiento",
     no_release: "Sin lanzamiento",
+    select_releases: "Seleccionar lanzamientos",
     count_releases: "{count, plural, one {# lanzamiento} other {# lanzamientos}}",
     actions: {
       delete: "Eliminar",

@@ -32,13 +32,12 @@ import type {
   TFormulaValidateResponse,
 } from "@plane/types";
 import { EIssuePropertyType } from "@plane/types";
-import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
+import { getIssuePropertyAttributeDisplayNameKey, cn, getIssuePropertyTypeDetails } from "@plane/utils";
 // plane web imports
 import { usePropertyOptions } from "@/plane-web/hooks/store";
 // local imports
 import { PropertyActiveCheckbox } from "./active-checkbox";
 import { AttributePill } from "./attributes/attribute-pill";
-import { IssuePropertyLogo } from "./common/issue-property-logo";
 import { PropertyAttributes } from "./dropdowns/property-attributes";
 import { PropertyTitleDescriptionInput } from "./dropdowns/property-title";
 import { PropertyTypeDropdown } from "./dropdowns/property-type";
@@ -46,6 +45,7 @@ import { PropertyMandatoryFieldCheckbox } from "./mandatory-field";
 import { IssuePropertyQuickActions } from "./quick-actions";
 import type { TIssuePropertyCreateList } from "./root";
 import { GripVertical } from "lucide-react";
+import { PropertyTypeIcon } from "./property-icon";
 
 export type TCustomPropertyOperations = {
   getPropertyDetail: (propertyId: string) => TIssueProperty<EIssuePropertyType> | undefined;
@@ -131,6 +131,10 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
     issuePropertyData?.property_type === EIssuePropertyType.FORMULA ||
     (issuePropertyData?.property_type === EIssuePropertyType.TEXT &&
       (issuePropertyData?.settings as TTextAttributeConfigurations | undefined)?.display_format === "readonly");
+  const propertyTypeDetails = getIssuePropertyTypeDetails(
+    issuePropertyData?.property_type,
+    issuePropertyData?.relation_type
+  );
 
   // get property default values
   const getDefaultValues = () => {
@@ -484,13 +488,8 @@ export const IssuePropertyListItem = observer(function IssuePropertyListItem(pro
           <Tooltip tooltipContent="Drag to rearrange">
             <GripVertical className="size-5 text-placeholder cursor-grab shrink-0" />
           </Tooltip>
-          {issuePropertyData?.logo_props && (
-            <div className="shrink-0 size-5 grid place-items-center">
-              <IssuePropertyLogo
-                icon_props={issuePropertyData.logo_props.icon}
-                colorClassName={issuePropertyData.is_active ? "text-secondary" : "text-tertiary"}
-              />
-            </div>
+          {propertyTypeDetails?.iconKey && (
+            <PropertyTypeIcon iconKey={propertyTypeDetails?.iconKey} className="shrink-0 size-4" />
           )}
           <div className="flex gap-1 w-full max-w-48 sm:max-w-[30vw] items-center">
             <span className={cn("px-1 truncate", issuePropertyData.is_active ? "text-secondary" : "text-tertiary")}>

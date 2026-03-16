@@ -3935,6 +3935,9 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
           member_picker: {
             label: "Chọn thành viên",
           },
+          release_picker: {
+            label: "Bộ chọn bản phát hành",
+          },
           formula: {
             label: "Công thức",
           },
@@ -6625,6 +6628,7 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
     releases: "Bản phát hành",
     release: "Bản phát hành",
     no_release: "Không có bản phát hành",
+    select_releases: "Chọn bản phát hành",
     count_releases: "{count, plural, one {# bản phát hành} other {# bản phát hành}}",
     actions: {
       delete: "Xóa",

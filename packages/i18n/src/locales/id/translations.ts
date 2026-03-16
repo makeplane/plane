@@ -3955,6 +3955,9 @@ jika Anda yakin pencarian Anda benar. `,
           member_picker: {
             label: "Pemilih anggota",
           },
+          release_picker: {
+            label: "Pemilih rilis",
+          },
           formula: {
             label: "Rumus",
           },
@@ -6655,6 +6658,7 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
     releases: "Rilis",
     release: "Rilis",
     no_release: "Tidak ada rilis",
+    select_releases: "Pilih rilis",
     count_releases: "{count, plural, one {# rilis} other {# rilis}}",
     actions: {
       delete: "Hapus",

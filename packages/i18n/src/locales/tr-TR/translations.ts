@@ -3938,6 +3938,9 @@ modüller arşivlenebilir.`,
           member_picker: {
             label: "Üye seçici",
           },
+          release_picker: {
+            label: "Sürüm seçici",
+          },
           formula: {
             label: "Formül",
           },
@@ -6686,6 +6689,7 @@ modüller arşivlenebilir.`,
     releases: "Sürümler",
     release: "Sürüm",
     no_release: "Sürüm yok",
+    select_releases: "Sürümleri seç",
     count_releases: "{count, plural, one {# Sürüm} other {# Sürüm}}",
     actions: {
       delete: "Sil",

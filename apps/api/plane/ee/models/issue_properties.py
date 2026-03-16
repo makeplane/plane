@@ -40,6 +40,7 @@ class PropertyTypeEnum(models.TextChoices):
 class RelationTypeEnum(models.TextChoices):
     ISSUE = "ISSUE", "Issue"
     USER = "USER", "User"
+    RELEASE = "RELEASE", "Release"
 
 
 class IssueProperty(ChangeTrackerMixin, ProjectOptionalBaseModel):

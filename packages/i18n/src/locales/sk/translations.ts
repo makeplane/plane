@@ -3889,6 +3889,9 @@ Vytvorte nový.`,
           member_picker: {
             label: "Výber člena",
           },
+          release_picker: {
+            label: "Výber vydania",
+          },
           formula: {
             label: "Vzorec",
           },
@@ -6591,6 +6594,7 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
     releases: "Vydania",
     release: "Vydanie",
     no_release: "Žiadne vydanie",
+    select_releases: "Vybrať vydania",
     count_releases: "{count, plural, one {# vydanie} other {# vydania}}",
     actions: {
       delete: "Odstrániť",
