@@ -25,6 +25,10 @@ from .issue import (
     IssueCommentCreateSerializer,
     IssueLinkCreateSerializer,
     IssueLinkUpdateSerializer,
+    IssueRelationCreateSerializer,
+    IssueRelationResponseSerializer,
+    IssueRelationSerializer,
+    RelatedIssueSerializer,
 )
 from .state import StateLiteSerializer, StateSerializer
 from .cycle import (

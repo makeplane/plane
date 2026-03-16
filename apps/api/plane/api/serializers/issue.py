@@ -20,6 +20,7 @@ from plane.db.models import (
     IssueComment,
     IssueLabel,
     IssueLink,
+    IssueRelation,
     Label,
     ProjectMember,
     State,
@@ -478,6 +479,137 @@ class IssueLinkSerializer(BaseSerializer):
             "updated_at",
         ]
 
+
+class IssueRelationCreateSerializer(serializers.Serializer):
+    """
+    Serializer for creating work item relations.
+
+    Validates relation type and target issue IDs for relation creation.
+    """
+
+    relation_type = serializers.ChoiceField(
+        choices=[
+            "blocking",
+            "blocked_by",
+            "duplicate",
+            "relates_to",
+            "start_before",
+            "start_after",
+            "finish_before",
+            "finish_after",
+        ]
+    )
+    issues = serializers.ListField(child=serializers.UUIDField(), allow_empty=False)
+
+    def validate_issues(self, value):
+        # Normalize duplicates to avoid redundant inserts.
+        unique_issues = list(dict.fromkeys(value))
+        if not unique_issues:
+            raise serializers.ValidationError("At least one issue id is required")
+        return unique_issues
+
+
+class IssueRelationResponseSerializer(serializers.Serializer):
+    """
+    Response serializer for work item relation lists grouped by type.
+    """
+
+    blocking = serializers.ListField(child=serializers.UUIDField())
+    blocked_by = serializers.ListField(child=serializers.UUIDField())
+    duplicate = serializers.ListField(child=serializers.UUIDField())
+    relates_to = serializers.ListField(child=serializers.UUIDField())
+    start_after = serializers.ListField(child=serializers.UUIDField())
+    start_before = serializers.ListField(child=serializers.UUIDField())
+    finish_after = serializers.ListField(child=serializers.UUIDField())
+    finish_before = serializers.ListField(child=serializers.UUIDField())
+
+
+class IssueRelationSerializer(BaseSerializer):
+    """
+    Serializer for relations where the related issue is the target.
+    """
+
+    id = serializers.UUIDField(source="related_issue.id", read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
+    name = serializers.CharField(source="related_issue.name", read_only=True)
+    relation_type = serializers.CharField(read_only=True)
+    state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
+    priority = serializers.CharField(source="related_issue.priority", read_only=True)
+    assignee_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        write_only=True,
+        required=False,
+    )
+
+    class Meta:
+        model = IssueRelation
+        fields = [
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
+            "name",
+            "state_id",
+            "priority",
+            "assignee_ids",
+            "created_by",
+            "created_at",
+            "updated_at",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
+
+
+class RelatedIssueSerializer(BaseSerializer):
+    """
+    Serializer for relations where the source issue is the target.
+    """
+
+    id = serializers.UUIDField(source="issue.id", read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
+    name = serializers.CharField(source="issue.name", read_only=True)
+    relation_type = serializers.CharField(read_only=True)
+    state_id = serializers.UUIDField(source="issue.state.id", read_only=True)
+    priority = serializers.CharField(source="issue.priority", read_only=True)
+    assignee_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        write_only=True,
+        required=False,
+    )
+
+    class Meta:
+        model = IssueRelation
+        fields = [
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
+            "name",
+            "state_id",
+            "priority",
+            "assignee_ids",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
 
 class IssueAttachmentSerializer(BaseSerializer):
     """
