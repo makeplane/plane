@@ -480,67 +480,113 @@ class IssueLinkSerializer(BaseSerializer):
         ]
 
 
-class IssueRelationCreateSerializer(serializers.Serializer):
-    """
-    Serializer for creating work item relations.
-
-    Validates relation type and target issue IDs for relation creation.
-    """
-
-    relation_type = serializers.ChoiceField(
-        choices=[
-            "blocking",
-            "blocked_by",
-            "duplicate",
-            "relates_to",
-            "start_before",
-            "start_after",
-            "finish_before",
-            "finish_after",
-        ]
-    )
-    issues = serializers.ListField(child=serializers.UUIDField(), allow_empty=False)
-
-    def validate_issues(self, value):
-        # Normalize duplicates to avoid redundant inserts.
-        unique_issues = list(dict.fromkeys(value))
-        if not unique_issues:
-            raise serializers.ValidationError("At least one issue id is required")
-        return unique_issues
-
-
 class IssueRelationResponseSerializer(serializers.Serializer):
     """
-    Response serializer for work item relation lists grouped by type.
+    Serializer for issue relations response showing grouped relation types.
+
+    Returns issue IDs organized by relation type for efficient client-side processing.
     """
 
-    blocking = serializers.ListField(child=serializers.UUIDField())
-    blocked_by = serializers.ListField(child=serializers.UUIDField())
-    duplicate = serializers.ListField(child=serializers.UUIDField())
-    relates_to = serializers.ListField(child=serializers.UUIDField())
-    start_after = serializers.ListField(child=serializers.UUIDField())
-    start_before = serializers.ListField(child=serializers.UUIDField())
-    finish_after = serializers.ListField(child=serializers.UUIDField())
-    finish_before = serializers.ListField(child=serializers.UUIDField())
+    blocking = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that are blocking this issue",
+    )
+    blocked_by = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that this issue is blocked by",
+    )
+    duplicate = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that are duplicates of this issue",
+    )
+    relates_to = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that relate to this issue",
+    )
+    start_after = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that start after this issue",
+    )
+    start_before = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that start before this issue",
+    )
+    finish_after = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that finish after this issue",
+    )
+    finish_before = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that finish before this issue",
+    )
+
+
+class IssueRelationCreateSerializer(serializers.Serializer):
+    """
+    Serializer for creating issue relations.
+
+    Creates issue relations with the specified relation type and issues.
+    Validates relation types and ensures proper issue ID format.
+    """
+
+    RELATION_TYPE_CHOICES = [
+        ("blocking", "Blocking"),
+        ("blocked_by", "Blocked By"),
+        ("duplicate", "Duplicate"),
+        ("relates_to", "Relates To"),
+        ("start_before", "Start Before"),
+        ("start_after", "Start After"),
+        ("finish_before", "Finish Before"),
+        ("finish_after", "Finish After"),
+    ]
+
+    relation_type = serializers.ChoiceField(
+        choices=RELATION_TYPE_CHOICES,
+        required=True,
+        help_text="Type of relationship between work items",
+    )
+    issues = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=True,
+        min_length=1,
+        help_text="Array of work item IDs to create relations with",
+    )
+
+    def validate_issues(self, value):
+        """Validate that issues list is not empty and contains valid UUIDs."""
+        if not value:
+            raise serializers.ValidationError("At least one issue ID is required.")
+        return value
+
+
+class IssueRelationRemoveSerializer(serializers.Serializer):
+    """
+    Serializer for removing issue relations.
+
+    Removes existing relationships between work items by specifying
+    the related issue ID.
+    """
+
+    related_issue = serializers.UUIDField(
+        required=True, help_text="ID of the related work item to remove relation with"
+    )
 
 
 class IssueRelationSerializer(BaseSerializer):
     """
-    Serializer for relations where the related issue is the target.
+    Serializer for issue relationships showing related issue details.
+
+    Provides comprehensive information about related issues including
+    project context, sequence ID, and relationship type.
     """
 
     id = serializers.UUIDField(source="related_issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
+    project_id = serializers.UUIDField(source="related_issue.project_id", read_only=True)
     sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
     name = serializers.CharField(source="related_issue.name", read_only=True)
     relation_type = serializers.CharField(read_only=True)
     state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
     priority = serializers.CharField(source="related_issue.priority", read_only=True)
-    assignee_ids = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
-        write_only=True,
-        required=False,
-    )
 
     class Meta:
         model = IssueRelation
@@ -552,7 +598,6 @@ class IssueRelationSerializer(BaseSerializer):
             "name",
             "state_id",
             "priority",
-            "assignee_ids",
             "created_by",
             "created_at",
             "updated_at",
@@ -570,21 +615,21 @@ class IssueRelationSerializer(BaseSerializer):
 
 class RelatedIssueSerializer(BaseSerializer):
     """
-    Serializer for relations where the source issue is the target.
+    Serializer for reverse issue relationships showing issue details.
+
+    Provides comprehensive information about the source issue in a relationship
+    including project context, sequence ID, and relationship type.
     """
 
     id = serializers.UUIDField(source="issue.id", read_only=True)
     project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
     sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
     name = serializers.CharField(source="issue.name", read_only=True)
+    type_id = serializers.UUIDField(source="issue.type.id", read_only=True)
     relation_type = serializers.CharField(read_only=True)
+    is_epic = serializers.BooleanField(source="issue.type.is_epic", read_only=True)
     state_id = serializers.UUIDField(source="issue.state.id", read_only=True)
     priority = serializers.CharField(source="issue.priority", read_only=True)
-    assignee_ids = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
-        write_only=True,
-        required=False,
-    )
 
     class Meta:
         model = IssueRelation
@@ -594,9 +639,10 @@ class RelatedIssueSerializer(BaseSerializer):
             "sequence_id",
             "relation_type",
             "name",
+            "type_id",
+            "is_epic",
             "state_id",
             "priority",
-            "assignee_ids",
             "created_by",
             "created_at",
             "updated_by",
@@ -610,6 +656,7 @@ class RelatedIssueSerializer(BaseSerializer):
             "updated_by",
             "updated_at",
         ]
+
 
 class IssueAttachmentSerializer(BaseSerializer):
     """

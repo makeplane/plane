@@ -2294,13 +2294,9 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
                 empty_uuid_array,
             )
 
-        # Filter by workspace_id to avoid JOIN; ArrayAgg's filter can reference the wrong
-        # table alias when the queryset joins workspace (e.g. via workspace__slug), which
-        # yields empty aggregates even when rows exist.
-        workspace_id = Workspace.objects.filter(slug=slug).values_list("id", flat=True).first()
         issue_relation_qs = IssueRelation.objects.filter(
             Q(issue_id=issue_id) | Q(related_issue_id=issue_id),
-            workspace_id=workspace_id,
+            workspace__slug=slug,
         )
 
         relation_ids = issue_relation_qs.aggregate(
@@ -2367,8 +2363,6 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
                                 "relation_type": "blocked_by",
                                 "state_id": "550e8400-e29b-41d4-a716-446655440002",
                                 "priority": "high",
-                                "type_id": "550e8400-e29b-41d4-a716-446655440003",
-                                "is_epic": False,
                                 "created_at": "2024-01-15T10:00:00Z",
                                 "updated_at": "2024-01-15T10:00:00Z",
                                 "created_by": "550e8400-e29b-41d4-a716-446655440004",
