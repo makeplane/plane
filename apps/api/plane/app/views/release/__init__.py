@@ -9,9 +9,13 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from .feature_flag import (
-    FeatureFlagPermission,
-    TeamspaceFeatureFlagPermission,
-    InitiativesFeatureFlagPermission,
-    ReleasesFeatureFlagPermission,
-)
+from .base import ReleaseEndpoint
+from .tag import ReleaseTagEndpoint
+from .label import ReleaseLabelEndpoint
+from .comment import ReleaseCommentViewSet, ReleaseCommentReactionViewSet
+from .work_item import ReleaseWorkItemEndpoint
+from .activity import ReleaseActivityEndpoint
+from .changelog import ReleaseChangelogEndpoint
+from .link import ReleaseLinkViewSet
+from .page import ReleasePageEndpoint
+from .attachment import ReleaseAttachmentEndpoint

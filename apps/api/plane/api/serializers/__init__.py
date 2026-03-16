@@ -76,6 +76,14 @@ from .member import ProjectMemberSerializer
 from .sticky import StickySerializer
 from .project import ProjectFeatureSerializer
 from .initiative import InitiativeSerializer, InitiativeLabelSerializer
+from .release import (
+    ReleaseSerializer,
+    ReleaseTagSerializer,
+    ReleaseLabelSerializer,
+    ReleaseCommentSerializer,
+    ReleaseLinkSerializer,
+    ReleaseWorkItemSerializer,
+)
 from .teamspace import TeamspaceSerializer
 
 from .work_item_search import (

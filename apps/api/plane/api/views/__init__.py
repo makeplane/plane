@@ -88,6 +88,15 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
+from .release import (
+    ReleaseViewSet,
+    ReleaseTagViewSet,
+    ReleaseLabelViewSet,
+    ReleaseWorkItemsViewSet,
+    ReleaseCommentViewSet,
+    ReleaseLinkViewSet,
+)
+
 from .project import (
     ProjectListCreateAPIEndpoint,
     ProjectDetailAPIEndpoint,

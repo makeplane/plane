@@ -29,6 +29,7 @@ from .webhook import urlpatterns as webhook_urls
 from .workspace import urlpatterns as workspace_urls
 from .timezone import urlpatterns as timezone_urls
 from .exporter import urlpatterns as exporter_urls
+from .release import urlpatterns as release_urls
 
 # Integrations URLS
 from .importer import urlpatterns as importer_urls
@@ -63,6 +64,7 @@ urlpatterns = [
     *webhook_urls,
     *timezone_urls,
     *exporter_urls,
+    *release_urls,
     # ee
     *integration_urls,
     *importer_urls,

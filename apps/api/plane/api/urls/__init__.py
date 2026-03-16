@@ -22,6 +22,7 @@ from .milestone import urlpatterns as milestone_patterns
 from .module import urlpatterns as module_patterns
 from .project import urlpatterns as project_patterns
 from .project_label import urlpatterns as project_label_patterns
+from .release import urlpatterns as release_patterns
 from .state import urlpatterns as state_patterns
 from .sticky import urlpatterns as sticky_patterns
 from .teamspace import urlpatterns as teamspace_patterns
@@ -52,6 +53,7 @@ urlpatterns = [
     *module_patterns,
     *project_patterns,
     *project_label_patterns,
+    *release_patterns,
     *state_patterns,
     *sticky_patterns,
     *teamspace_patterns,

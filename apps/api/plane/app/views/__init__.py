@@ -135,6 +135,20 @@ from .asset.v2 import (
 )
 from .asset.silo import SiloAssetsEndpoint
 
+from .release import (
+    ReleaseEndpoint,
+    ReleaseTagEndpoint,
+    ReleaseLabelEndpoint,
+    ReleaseCommentViewSet,
+    ReleaseCommentReactionViewSet,
+    ReleaseWorkItemEndpoint,
+    ReleaseActivityEndpoint,
+    ReleaseChangelogEndpoint,
+    ReleaseLinkViewSet,
+    ReleasePageEndpoint,
+    ReleaseAttachmentEndpoint,
+)
+
 from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,

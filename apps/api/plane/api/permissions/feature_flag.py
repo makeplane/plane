@@ -40,3 +40,10 @@ class InitiativesFeatureFlagPermission(FeatureFlagPermission):
 
     feature_flag = FeatureFlag.INITIATIVES
     message = "Payment required. Upgrade your plan to access Initiatives"
+
+
+class ReleasesFeatureFlagPermission(FeatureFlagPermission):
+    """Permission class for Releases feature flag"""
+
+    feature_flag = FeatureFlag.RELEASES
+    message = "Payment required. Upgrade your plan to access Releases"

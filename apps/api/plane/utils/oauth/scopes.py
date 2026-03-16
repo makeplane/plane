@@ -86,6 +86,20 @@ INITIATIVES_LABELS_READ_SCOPE = "initiatives.labels:read"
 INITIATIVES_LABELS_WRITE_SCOPE = "initiatives.labels:write"
 
 
+# RELEASES SCOPES
+RELEASES_READ_SCOPE = "releases:read"
+RELEASES_WRITE_SCOPE = "releases:write"
+RELEASES_TAGS_READ_SCOPE = "releases.tags:read"
+RELEASES_TAGS_WRITE_SCOPE = "releases.tags:write"
+RELEASES_LABELS_READ_SCOPE = "releases.labels:read"
+RELEASES_LABELS_WRITE_SCOPE = "releases.labels:write"
+RELEASES_WORK_ITEMS_READ_SCOPE = "releases.work_items:read"
+RELEASES_WORK_ITEMS_WRITE_SCOPE = "releases.work_items:write"
+RELEASES_COMMENTS_READ_SCOPE = "releases.comments:read"
+RELEASES_COMMENTS_WRITE_SCOPE = "releases.comments:write"
+RELEASES_LINKS_READ_SCOPE = "releases.links:read"
+RELEASES_LINKS_WRITE_SCOPE = "releases.links:write"
+
 # WORKSPACES SCOPES
 WORKSPACES_MEMBERS_READ_SCOPE = "workspaces.members:read"
 WORKSPACES_MEMBERS_WRITE_SCOPE = "workspaces.members:write"
@@ -190,6 +204,19 @@ ALL_OAUTH_SCOPES = {
     INITIATIVES_EPICS_WRITE_SCOPE: "Write access to initiatives epics",
     INITIATIVES_LABELS_READ_SCOPE: "Read access to initiatives labels",
     INITIATIVES_LABELS_WRITE_SCOPE: "Write access to initiatives labels",
+    # Releases scopes
+    RELEASES_READ_SCOPE: "Read access to releases",
+    RELEASES_WRITE_SCOPE: "Write access to releases",
+    RELEASES_TAGS_READ_SCOPE: "Read access to release tags",
+    RELEASES_TAGS_WRITE_SCOPE: "Write access to release tags",
+    RELEASES_LABELS_READ_SCOPE: "Read access to release labels",
+    RELEASES_LABELS_WRITE_SCOPE: "Write access to release labels",
+    RELEASES_WORK_ITEMS_READ_SCOPE: "Read access to release work items",
+    RELEASES_WORK_ITEMS_WRITE_SCOPE: "Write access to release work items",
+    RELEASES_COMMENTS_READ_SCOPE: "Read access to release comments",
+    RELEASES_COMMENTS_WRITE_SCOPE: "Write access to release comments",
+    RELEASES_LINKS_READ_SCOPE: "Read access to release links",
+    RELEASES_LINKS_WRITE_SCOPE: "Write access to release links",
     # Workspace scopes
     WORKSPACES_MEMBERS_READ_SCOPE: "Read access to workspace members",
     WORKSPACES_MEMBERS_WRITE_SCOPE: "Write access to workspace members",

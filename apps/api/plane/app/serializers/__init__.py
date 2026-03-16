@@ -145,6 +145,21 @@ from .exporter import ExporterHistorySerializer
 
 from .webhook import WebhookSerializer, WebhookLogSerializer
 
+from .release import (
+    ReleaseSerializer,
+    ReleaseWriteSerializer,
+    ReleaseTagSerializer,
+    ReleaseLabelSerializer,
+    ReleaseCommentSerializer,
+    ReleaseCommentReactionSerializer,
+    ReleaseWorkItemSerializer,
+    ReleaseActivitySerializer,
+    ReleaseChangelogSerializer,
+    ReleaseAttachmentSerializer,
+    ReleaseLinkSerializer,
+    ReleasePageSerializer,
+)
+
 from .favorite import UserFavoriteSerializer
 
 from .draft import (

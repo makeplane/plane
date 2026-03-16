@@ -45,6 +45,8 @@ from plane.db.models import (
     State,
     User,
     WorkItemRelationDefinition,
+    ReleaseWorkItem,
+    Release,
 )
 from plane.ee.models import Customer, TeamspaceMember, TeamspaceProject
 from plane.payment.flags.flag import FeatureFlag
@@ -109,6 +111,11 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    release_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Release.objects.all()),
+        write_only=True,
+        required=False,
+    )
     assignee_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
@@ -135,6 +142,8 @@ class IssueCreateSerializer(BaseSerializer):
         data["assignee_ids"] = assignee_ids if assignee_ids else []
         label_ids = self.initial_data.get("label_ids")
         data["label_ids"] = label_ids if label_ids else []
+        release_ids = self.initial_data.get("release_ids")
+        data["release_ids"] = release_ids if release_ids else []
         return data
 
     def validate(self, attrs):
@@ -209,6 +218,16 @@ class IssueCreateSerializer(BaseSerializer):
                 Label.objects.filter(
                     project_id=self.context.get("project_id"),
                     id__in=label_ids,
+                ).values_list("id", flat=True)
+            )
+
+        # Validate releases are from workspace
+        if attrs.get("release_ids"):
+            release_ids = [release.id for release in attrs["release_ids"]]
+            attrs["release_ids"] = list(
+                Release.objects.filter(
+                    workspace__slug=self.context.get("slug"),
+                    id__in=release_ids,
                 ).values_list("id", flat=True)
             )
 
@@ -360,6 +379,8 @@ class IssueCreateSerializer(BaseSerializer):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
 
+        releases = validated_data.pop("release_ids", None)
+
         # Related models
         project_id = instance.project_id
         workspace_id = instance.workspace_id
@@ -446,6 +467,37 @@ class IssueCreateSerializer(BaseSerializer):
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
+                )
+            except IntegrityError:
+                pass
+
+        if releases is not None:
+            existing_releases = ReleaseWorkItem.objects.filter(
+                work_item=instance, workspace_id=workspace_id
+            ).values_list("release_id", flat=True)
+
+            exisiting_releases_ids = [str(uid) for uid in existing_releases]
+            releases = [str(uid) for uid in releases]
+
+            new_releases_ids = set(releases) - set(exisiting_releases_ids)
+
+            ReleaseWorkItem.objects.filter(work_item=instance.id, workspace_id=workspace_id).exclude(
+                release_id__in=releases
+            ).delete()
+
+            try:
+                ReleaseWorkItem.objects.bulk_create(
+                    [
+                        ReleaseWorkItem(
+                            work_item=instance,
+                            workspace_id=workspace_id,
+                            created_by_id=created_by_id,
+                            updated_by_id=updated_by_id,
+                            release_id=release_id,
+                        )
+                        for release_id in new_releases_ids
+                    ],
+                    batch_size=10,
                 )
             except IntegrityError:
                 pass
