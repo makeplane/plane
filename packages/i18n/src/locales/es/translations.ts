@@ -541,6 +541,7 @@ export default {
   members: "Miembros",
   assignee: "Asignado",
   assignees: "Asignados",
+  subscriber: "{count, plural, one{# Suscriptor} other{# Suscriptores}}",
   you: "Tú",
   labels: "Etiquetas",
   create_new_label: "Crear nueva etiqueta",

@@ -47,8 +47,6 @@ import { IssueRelationStore } from "./relation.store";
 import type { IIssueRelationStore, IIssueRelationStoreActions } from "./relation.store";
 import { IssueSubIssuesStore } from "./sub_issues.store";
 import type { IIssueSubIssuesStore, IIssueSubIssuesStoreActions } from "./sub_issues.store";
-import { IssueSubscriptionStore } from "./subscription.store";
-import type { IIssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
 import { WorkItemPagesStore } from "./page.store";
 // services
 import { IssueService } from "@/services/issue/issue.service";
@@ -83,7 +81,6 @@ export interface IIssueDetail
     IIssueReactionStoreActions,
     IIssueLinkStoreActions,
     IIssueSubIssuesStoreActions,
-    IIssueSubscriptionStoreActions,
     IIssueAttachmentStoreActions,
     IIssueRelationStoreActions,
     IIssueActivityStoreActions,
@@ -148,7 +145,6 @@ export interface IIssueDetail
   commentReaction: IIssueCommentReactionStore;
   subIssues: IIssueSubIssuesStore;
   link: IIssueLinkStore;
-  subscription: IIssueSubscriptionStore;
   relation: IIssueRelationStore;
   pages: WorkItemPagesStore;
 }
@@ -193,7 +189,6 @@ export class IssueDetail implements IIssueDetail {
   attachment: IIssueAttachmentStore;
   subIssues: IIssueSubIssuesStore;
   link: IIssueLinkStore;
-  subscription: IIssueSubscriptionStore;
   relation: IIssueRelationStore;
   activity: IIssueActivityStore;
   comment: IIssueCommentStore;
@@ -260,7 +255,6 @@ export class IssueDetail implements IIssueDetail {
     this.commentReaction = new IssueCommentReactionStore(this);
     this.subIssues = new IssueSubIssuesStore(this, serviceType);
     this.link = new IssueLinkStore(this, serviceType);
-    this.subscription = new IssueSubscriptionStore(this, serviceType);
     this.relation = new IssueRelationStore(this);
     this.pages = new WorkItemPagesStore(rootStore);
     // services
@@ -426,16 +420,6 @@ export class IssueDetail implements IIssueDetail {
     this.subIssues.removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
   deleteSubIssue = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueId: string) =>
     this.subIssues.deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
-
-  // subscription
-  addSubscription = (issueId: string, isSubscribed: boolean | undefined | null) =>
-    this.subscription.addSubscription(issueId, isSubscribed);
-  fetchSubscriptions = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.subscription.fetchSubscriptions(workspaceSlug, projectId, issueId);
-  createSubscription = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.subscription.createSubscription(workspaceSlug, projectId, issueId);
-  removeSubscription = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    this.subscription.removeSubscription(workspaceSlug, projectId, issueId);
 
   // relations
   fetchRelations = async (workspaceSlug: string, projectId: string, issueId: string) =>

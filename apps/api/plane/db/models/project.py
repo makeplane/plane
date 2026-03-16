@@ -422,6 +422,17 @@ class ProjectMember(ProjectBaseModel):
         db_table = "project_members"
         ordering = ("-created_at",)
 
+    @classmethod
+    def is_member(cls, project_id, member_id):
+        is_member = cls.objects.filter(
+            project_id=project_id,
+            member_id=member_id,
+            deleted_at__isnull=True,
+            is_active=True,
+        ).exists()
+
+        return is_member
+
     def __str__(self):
         """Return members of the project"""
         return f"{self.member.email} <{self.project.name}>"

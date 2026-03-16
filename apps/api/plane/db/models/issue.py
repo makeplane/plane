@@ -691,6 +691,14 @@ class IssueSubscriber(ProjectBaseModel):
         db_table = "issue_subscribers"
         ordering = ("-created_at",)
 
+    @classmethod
+    def is_subscribed(cls, issue_id, subscriber_id):
+        return cls.objects.filter(
+            issue_id=issue_id,
+            subscriber_id=subscriber_id,
+            deleted_at__isnull=True,
+        ).exists()
+
     def __str__(self):
         return f"{self.issue.name} {self.subscriber.email}"
 

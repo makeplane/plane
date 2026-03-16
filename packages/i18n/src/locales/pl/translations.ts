@@ -526,6 +526,7 @@ export default {
   members: "Członkowie",
   assignee: "Przypisano",
   assignees: "Przypisani",
+  subscriber: "{count, plural, one{# Subskrybent} few{# Subskrybentów} other{# Subskrybentów}}",
   you: "Ty",
   labels: "Etykiety",
   create_new_label: "Utwórz nową etykietę",

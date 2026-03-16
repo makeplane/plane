@@ -315,6 +315,7 @@ export default {
   members: "Members",
   assignee: "Assignee",
   assignees: "Assignees",
+  subscriber: "{count, plural, one{# Subscriber} other{# Subscribers}}",
   you: "You",
   labels: "Labels",
   create_new_label: "Create new label",

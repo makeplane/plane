@@ -525,6 +525,7 @@ export default {
   members: "メンバー",
   assignee: "担当者",
   assignees: "担当者",
+  subscriber: "{count, plural, one{# 人の購読者} other{# 人の購読者}}",
   you: "あなた",
   labels: "ラベル",
   create_new_label: "新規ラベルを作成",

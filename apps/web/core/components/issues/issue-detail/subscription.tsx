@@ -11,22 +11,27 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import { useState } from "react";
 import { isNil } from "lodash-es";
 import { observer } from "mobx-react";
-import { Bell, BellOff } from "lucide-react";
 // plane-i18n
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // UI
-import { Button } from "@plane/propel/button";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { cn } from "@plane/propel/utils";
+import { IssueSubscriberService } from "@plane/services";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
+// components
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+
 import { useUserPermissions } from "@/hooks/store/user";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIssueSubscription } from "@/hooks/use-issue-subscription";
+import { useFlag } from "@/plane-web/hooks/store";
+// services
 
 export type TIssueSubscription = {
   workspaceSlug: string;
@@ -36,42 +41,35 @@ export type TIssueSubscription = {
 };
 
 export const IssueSubscription = observer(function IssueSubscription(props: TIssueSubscription) {
-  const { workspaceSlug, projectId, issueId, serviceType = EIssueServiceType.ISSUES } = props;
+  const { workspaceSlug, projectId, issueId } = props;
   const { t } = useTranslation();
   // hooks
-  const {
-    subscription: { getSubscriptionByIssueId },
-    createSubscription,
-    removeSubscription,
-  } = useIssueDetail(serviceType);
-  // state
-  const [loading, setLoading] = useState(false);
-  // hooks
   const { allowPermissions } = useUserPermissions();
-
-  const isSubscribed = getSubscriptionByIssueId(issueId);
-  const isEditable = allowPermissions(
+  const { isMobile } = usePlatformOS();
+  const issueSubscriberService = new IssueSubscriberService();
+  // permissions
+  const flagEnabled = useFlag(workspaceSlug, "MANAGE_ISSUE_SUBSCRIBERS");
+  const hasPermission = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT,
     workspaceSlug,
     projectId
   );
+  const { loading, isSubscribed, subscribers, handleSubscription, mutateSubscribers } = useIssueSubscription(
+    workspaceSlug,
+    projectId,
+    issueId
+  );
 
-  const handleSubscription = async () => {
-    setLoading(true);
+  // derived values
+  const subscribersCount = subscribers.length;
+  const isEditable = flagEnabled && hasPermission;
+
+  const handleSubscribers = async (subscriberIds: string[]) => {
     try {
-      if (isSubscribed) await removeSubscription(workspaceSlug, projectId, issueId);
-      else await createSubscription(workspaceSlug, projectId, issueId);
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("toast.success"),
-        message: isSubscribed
-          ? t("issue.subscription.actions.unsubscribed")
-          : t("issue.subscription.actions.subscribed"),
-      });
-      setLoading(false);
+      const updatedSubscribers = await issueSubscriberService.update(workspaceSlug, projectId, issueId, subscriberIds);
+      await mutateSubscribers(updatedSubscribers, false);
     } catch {
-      setLoading(false);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
@@ -88,20 +86,30 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
     );
 
   return (
-    <div>
+    <div className="flex items-center">
+      {isEditable && (
+        <MemberDropdown
+          projectId={projectId}
+          value={subscribers}
+          onChange={handleSubscribers}
+          multiple
+          buttonVariant={subscribersCount > 0 ? "transparent-without-text" : "border-without-text"}
+          buttonClassName={cn(getButtonStyling("secondary", "lg"), "rounded-r-none border-r-0")}
+          showTooltip={true}
+          placeholder={""}
+          tooltipContent={t("subscriber", { count: subscribersCount })}
+          renderByDefault={isMobile}
+          iconSize="sm"
+        />
+      )}
       <Button
-        prependIcon={isSubscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
         variant="secondary"
-        className="hover:!bg-accent-primary/20"
+        className={cn("hover:bg-accent-primary/20!", isEditable && "rounded-l-none")}
         onClick={handleSubscription}
-        disabled={!isEditable || loading}
+        disabled={!hasPermission || loading}
         size="lg"
       >
-        {loading ? (
-          <span>
-            <span className="hidden sm:block">{t("common.loading")}</span>
-          </span>
-        ) : isSubscribed ? (
+        {isSubscribed ? (
           <div className="hidden sm:block">{t("common.actions.unsubscribe")}</div>
         ) : (
           <div className="hidden sm:block">{t("common.actions.subscribe")}</div>

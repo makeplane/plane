@@ -533,6 +533,7 @@ export default {
   members: "Membri",
   assignee: "Responsabil",
   assignees: "Responsabili",
+  subscriber: "{count, plural, one{# Abonat} few{# Abonați} other{# Abonați}}",
   you: "Tu",
   labels: "Etichete",
   create_new_label: "Creează etichetă nouă",

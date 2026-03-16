@@ -533,6 +533,7 @@ export default {
   members: "Membri",
   assignee: "Assegnatario",
   assignees: "Assegnatari",
+  subscriber: "{count, plural, one{# Iscritto} other{# Iscritti}}",
   you: "Tu",
   labels: "Etichette",
   create_new_label: "Crea nuova etichetta",

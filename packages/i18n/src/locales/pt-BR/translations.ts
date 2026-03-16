@@ -537,6 +537,7 @@ export default {
   members: "Membros",
   assignee: "Responsável",
   assignees: "Responsáveis",
+  subscriber: "{count, plural, one{# Inscrito} other{# Inscritos}}",
   you: "Você",
   labels: "Etiquetas",
   create_new_label: "Criar nova etiqueta",

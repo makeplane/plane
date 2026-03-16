@@ -152,8 +152,6 @@ export class IssueStore implements IIssueStore {
     // fetch issue attachments
     if (issue.issue_attachments) this.rootIssueDetailStore.addAttachments(issueId, issue.issue_attachments);
 
-    this.rootIssueDetailStore.addSubscription(issueId, issue.is_subscribed);
-
     // fetch issue activity
     this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
 
@@ -379,9 +377,6 @@ export class IssueStore implements IIssueStore {
 
     // update attachments
     if (issue.issue_attachments) workItemDetailStore.addAttachments(issueId, issue.issue_attachments);
-
-    // update subscription
-    workItemDetailStore.addSubscription(issueId, issue.is_subscribed);
 
     return issue;
   };

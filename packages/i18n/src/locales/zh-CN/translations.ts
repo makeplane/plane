@@ -513,6 +513,7 @@ export default {
   members: "成员",
   assignee: "负责人",
   assignees: "负责人",
+  subscriber: "{count, plural, one{# 位订阅者} other{# 位订阅者}}",
   you: "您",
   labels: "标签",
   create_new_label: "创建新标签",

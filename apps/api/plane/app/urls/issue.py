@@ -46,7 +46,7 @@ from plane.app.views import (
     WorkItemRelationRelationViewSet,
 )
 
-urlpatterns = [
+all_urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/list/",
         IssueListEndpoint.as_view(),
@@ -186,23 +186,6 @@ urlpatterns = [
         name="issue-comment-replies",
     ),
     ## End Issue comment reply
-    # Issue Subscribers
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-subscribers/",
-        IssueSubscriberViewSet.as_view({"get": "list", "post": "create"}),
-        name="project-issue-subscribers",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-subscribers/<uuid:subscriber_id>/",
-        IssueSubscriberViewSet.as_view({"delete": "destroy"}),
-        name="project-issue-subscribers",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/subscribe/",
-        IssueSubscriberViewSet.as_view({"get": "subscription_status", "post": "subscribe", "delete": "unsubscribe"}),
-        name="project-issue-subscribers",
-    ),
-    ## End Issue Subscribers
     # Issue Reactions
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/reactions/",
@@ -330,3 +313,18 @@ urlpatterns = [
         name="work-item-relation-relation",
     ),
 ]
+
+issue_subscriber_urlpatterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/subscribers/",
+        IssueSubscriberViewSet.as_view({"get": "list", "patch": "update"}),
+        name="project-issue-subscribers",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/subscribers/me/",
+        IssueSubscriberViewSet.as_view({"get": "subscription_status", "post": "subscribe", "delete": "unsubscribe"}),
+        name="project-issue-subscribers",
+    ),
+]
+
+urlpatterns = all_urlpatterns + issue_subscriber_urlpatterns

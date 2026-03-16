@@ -527,6 +527,7 @@ export default {
   members: "Üyeler",
   assignee: "Atanan",
   assignees: "Atananlar",
+  subscriber: "{count, plural, one{# Abone} other{# Abone}}",
   you: "Siz",
   labels: "Etiketler",
   create_new_label: "Yeni etiket oluştur",

@@ -537,6 +537,7 @@ export default {
   members: "Membres",
   assignee: "Acteur",
   assignees: "Acteurs",
+  subscriber: "{count, plural, one{# Abonné} other{# Abonnés}}",
   you: "Vous",
   labels: "Étiquettes",
   create_new_label: "Créer une nouvelle étiquette",

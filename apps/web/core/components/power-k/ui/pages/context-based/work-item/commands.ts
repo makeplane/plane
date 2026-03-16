@@ -41,6 +41,7 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
+import { useIssueSubscription } from "@/hooks/use-issue-subscription";
 
 export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] => {
   // params
@@ -55,7 +56,6 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const {
     issue: { getIssueById, getIssueIdByIdentifier, addCycleToIssue, removeIssueFromCycle, changeModulesInIssue },
-    subscription: { getSubscriptionByIssueId, createSubscription, removeSubscription },
     updateIssue,
   } = useIssueDetail(EIssueServiceType.ISSUES);
   const {
@@ -64,7 +64,6 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       removeIssueFromCycle: removeEpicFromCycle,
       changeModulesInIssue: changeModulesInEpic,
     },
-    subscription: { createSubscription: createEpicSubscription, removeSubscription: removeEpicSubscription },
     updateIssue: updateEpic,
   } = useIssueDetail(EIssueServiceType.EPICS);
   // derived values
@@ -76,13 +75,12 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
   const isEstimateEnabled = entityDetails?.project_id
     ? areEstimateEnabledByProjectId(entityDetails?.project_id)
     : false;
-  const isSubscribed = Boolean(entityId ? getSubscriptionByIssueId(entityId) : false);
+
   // translation
   const { t } = useTranslation();
   // handlers
   const updateEntity = isEpic ? updateEpic : updateIssue;
-  const createEntitySubscription = isEpic ? createEpicSubscription : createSubscription;
-  const removeEntitySubscription = isEpic ? removeEpicSubscription : removeSubscription;
+
   // permission
   const isEditingAllowed =
     allowPermissions(
@@ -119,86 +117,67 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     [entityDetails, handleUpdateEntity]
   );
 
-  const handleSubscription = useCallback(async () => {
-    if (!workspaceSlug || !entityDetails || !entityDetails.project_id) return;
-
-    try {
-      if (isSubscribed) {
-        await removeEntitySubscription(workspaceSlug.toString(), entityDetails.project_id, entityDetails.id);
-      } else {
-        await createEntitySubscription(workspaceSlug.toString(), entityDetails.project_id, entityDetails.id);
-      }
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("toast.success"),
-        message: isSubscribed
-          ? t("issue.subscription.actions.unsubscribed")
-          : t("issue.subscription.actions.subscribed"),
-      });
-    } catch {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("toast.error"),
-        message: t("common.error.message"),
-      });
-    }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [createEntitySubscription, entityDetails, isSubscribed, removeEntitySubscription, workspaceSlug]);
+  const { isSubscribed, handleSubscription } = useIssueSubscription(
+    workspaceSlug,
+    entityDetails?.project_id ?? undefined,
+    entityDetails?.id ?? undefined
+  );
 
   const handleDeleteWorkItem = useCallback(() => {
     toggleDeleteIssueModal(true);
   }, [toggleDeleteIssueModal]);
 
-  const copyWorkItemIdToClipboard = useCallback(() => {
-    const id = `${projectDetails?.identifier}-${entityDetails?.sequence_id}`;
-    copyTextToClipboard(id)
-      .then(() => {
+  const copyWorkItemIdToClipboard = useCallback(
+    async () => {
+      try {
+        const id = `${projectDetails?.identifier}-${entityDetails?.sequence_id}`;
+        await copyTextToClipboard(id);
+
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("power_k.contextual_actions.work_item.copy_id_toast_success"),
         });
-      })
-      .catch(() => {
+      } catch {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("power_k.contextual_actions.work_item.copy_id_toast_error"),
         });
-      });
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [entityDetails?.sequence_id, projectDetails?.identifier]);
+      }
+    }, // oxlint-disable-next-line react-hooks/exhaustive-deps
+    [entityDetails?.sequence_id, projectDetails?.identifier]
+  );
 
-  const copyWorkItemTitleToClipboard = useCallback(() => {
-    copyTextToClipboard(entityDetails?.name ?? "")
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("power_k.contextual_actions.work_item.copy_title_toast_success"),
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("power_k.contextual_actions.work_item.copy_title_toast_error"),
-        });
+  const copyWorkItemTitleToClipboard = useCallback(async () => {
+    try {
+      await copyTextToClipboard(entityDetails?.name ?? "");
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("power_k.contextual_actions.work_item.copy_title_toast_success"),
       });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("power_k.contextual_actions.work_item.copy_title_toast_error"),
+      });
+    }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [entityDetails?.name]);
 
-  const copyWorkItemUrlToClipboard = useCallback(() => {
-    const url = new URL(window.location.href);
-    copyTextToClipboard(url.href)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("power_k.contextual_actions.work_item.copy_url_toast_success"),
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("power_k.contextual_actions.work_item.copy_url_toast_error"),
-        });
+  const copyWorkItemUrlToClipboard = useCallback(async () => {
+    try {
+      const url = new URL(window.location.href);
+      await copyTextToClipboard(url.href);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("power_k.contextual_actions.work_item.copy_url_toast_success"),
       });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("power_k.contextual_actions.work_item.copy_url_toast_error"),
+      });
+    }
+
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

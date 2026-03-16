@@ -512,6 +512,7 @@ export default {
   members: "成員",
   assignee: "指派對象",
   assignees: "指派對象",
+  subscriber: "{count, plural, one{# 位訂閱者} other{# 位訂閱者}}",
   you: "您",
   labels: "標籤",
   create_new_label: "建立新標籤",

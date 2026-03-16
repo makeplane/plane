@@ -134,6 +134,8 @@ class FeatureFlag(Enum):
     WORKITEM_TYPE_FORMULA_FIELD = "WORKITEM_TYPE_FORMULA_FIELD"
     # Custom relations
     CUSTOM_RELATIONS = "CUSTOM_RELATIONS"
+    # Manage Issue Subscribers
+    MANAGE_ISSUE_SUBSCRIBERS = "MANAGE_ISSUE_SUBSCRIBERS"
 
 
 class AdminFeatureFlag(Enum):

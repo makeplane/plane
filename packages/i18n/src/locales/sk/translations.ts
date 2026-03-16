@@ -526,6 +526,7 @@ export default {
   members: "Členovia",
   assignee: "Priradené",
   assignees: "Priradení",
+  subscriber: "{count, plural, one{# Odberateľ} few{# Odberatelia} other{# Odberateľov}}",
   you: "Vy",
   labels: "Štítky",
   create_new_label: "Vytvoriť nový štítok",

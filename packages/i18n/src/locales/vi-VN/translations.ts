@@ -533,6 +533,7 @@ export default {
   members: "Thành viên",
   assignee: "Người phụ trách",
   assignees: "Người phụ trách",
+  subscriber: "{count, plural, one{# Người theo dõi} other{# Người theo dõi}}",
   you: "Bạn",
   labels: "Nhãn",
   create_new_label: "Tạo nhãn mới",

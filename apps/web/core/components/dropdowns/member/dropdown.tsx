@@ -22,6 +22,7 @@ import type { MemberDropdownProps } from "./types";
 
 type TMemberDropdownProps = {
   icon?: LucideIcon;
+  iconSize?: "sm" | "md" | "base" | "lg" | number;
   memberIds?: string[];
   onClose?: () => void;
   optionsClassName?: string;

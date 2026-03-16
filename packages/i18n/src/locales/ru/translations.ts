@@ -529,6 +529,7 @@ export default {
   members: "Участники",
   assignee: "Назначенный",
   assignees: "Назначенные",
+  subscriber: "{count, plural, one{# Подписчик} few{# Подписчика} other{# Подписчиков}}",
   you: "Вы",
   labels: "Метки",
   create_new_label: "Создать новую метку",

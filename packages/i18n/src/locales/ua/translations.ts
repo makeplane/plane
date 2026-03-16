@@ -528,6 +528,7 @@ export default {
   members: "Учасники",
   assignee: "Призначено",
   assignees: "Призначені",
+  subscriber: "{count, plural, one{# Підписник} other{# Підписників}}",
   you: "Ви",
   labels: "Мітки",
   create_new_label: "Створити нову мітку",

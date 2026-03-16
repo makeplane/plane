@@ -33,6 +33,7 @@ import type { MemberDropdownProps } from "./types";
 type TMemberDropdownBaseProps = {
   getUserDetails: (userId: string) => IUserLite | undefined;
   icon?: LucideIcon;
+  iconSize?: "sm" | "md" | "base" | "lg" | number;
   memberIds?: string[];
   onClose?: () => void;
   onDropdownOpen?: () => void;
@@ -54,6 +55,7 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
     getUserDetails,
     hideIcon = false,
     icon,
+    iconSize = "md",
     memberIds,
     multiple,
     onChange,
@@ -155,14 +157,14 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
             variant={buttonVariant}
             renderToolTipByDefault={renderByDefault}
           >
-            {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} icon={icon} />}
+            {!hideIcon && <ButtonAvatars size={iconSize} showTooltip={showTooltip} userIds={value} icon={icon} />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate leading-5 text-left text-body-xs-medium">
+              <span className="grow truncate leading-5 text-left text-body-xs-medium">
                 {getDisplayName(value, showUserDetails, placeholder)}
               </span>
             )}
             {dropdownArrow && (
-              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              <ChevronDownIcon className={cn("h-2.5 w-2.5 shrink-0", dropdownArrowClassName)} aria-hidden="true" />
             )}
           </DropdownButton>
         </button>

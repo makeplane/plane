@@ -519,6 +519,7 @@ export default {
   members: "멤버",
   assignee: "담당자",
   assignees: "담당자",
+  subscriber: "{count, plural, one{구독자 #명} other{구독자 #명}}",
   you: "나",
   labels: "레이블",
   create_new_label: "새 레이블 생성",

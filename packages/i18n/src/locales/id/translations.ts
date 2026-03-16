@@ -532,6 +532,7 @@ export default {
   members: "Anggota",
   assignee: "Penugas",
   assignees: "Penugas",
+  subscriber: "{count, plural, one{# Pelanggan} other{# Pelanggan}}",
   you: "Anda",
   labels: "Label",
   create_new_label: "Buat label baru",

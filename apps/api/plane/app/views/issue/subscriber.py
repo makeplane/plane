@@ -15,11 +15,11 @@ from rest_framework import status
 
 # Module imports
 from .. import BaseViewSet
-from plane.app.serializers import IssueSubscriberSerializer, ProjectMemberLiteSerializer
+from plane.app.serializers import IssueSubscriberSerializer
 from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
 from plane.db.models import IssueSubscriber, ProjectMember
-
-from django.db.models import Q
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class IssueSubscriberViewSet(BaseViewSet):
@@ -56,38 +56,79 @@ class IssueSubscriberViewSet(BaseViewSet):
         )
 
     def list(self, request, slug, project_id, issue_id):
-        members = ProjectMember.objects.filter(
-            workspace__slug=slug, project_id=project_id, is_active=True
-        ).select_related("member")
-        serializer = ProjectMemberLiteSerializer(members, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        subscribers = IssueSubscriber.objects.filter(
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id
+        ).values_list("subscriber_id", flat=True)
+        return Response(subscribers, status=status.HTTP_200_OK)
 
-    def destroy(self, request, slug, project_id, issue_id, subscriber_id):
-        issue_subscriber = IssueSubscriber.objects.get(
-            project=project_id,
-            subscriber=subscriber_id,
-            workspace__slug=slug,
-            issue=issue_id,
-        )
-        issue_subscriber.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    @check_feature_flag(FeatureFlag.MANAGE_ISSUE_SUBSCRIBERS)
+    def update(self, request, slug, project_id, issue_id):
+        subscriber_ids = request.data.get("subscriber_ids", [])
 
-    def subscribe(self, request, slug, project_id, issue_id):
-        if (
-            IssueSubscriber.objects.filter(Q(issue__type__is_epic=False) | Q(issue__type__isnull=True))
-            .filter(
-                issue_id=issue_id,
-                subscriber=request.user,
-                workspace__slug=slug,
-                project=project_id,
-            )
-            .exists()
-        ):
+        # check if the subscriber IDs are part of the project members
+        project_members = ProjectMember.objects.filter(
+            project_id=project_id,
+            member_id__in=subscriber_ids,
+        ).values_list("member", flat=True)
+        if len(project_members) != len(subscriber_ids):
             return Response(
-                {"message": "Failed to subscribe to the issue."},
+                {
+                    "message": "Subscriber IDs are not part of the project members.",
+                    "code": "SUBSCRIBER_NOT_PROJECT_MEMBER",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Get existing subscriber IDs
+        existing_subscriber_uuids = IssueSubscriber.objects.filter(
+            project=project_id,
+            workspace__slug=slug,
+            issue=issue_id,
+        ).values_list("subscriber_id", flat=True)
+
+        existing_subscriber_ids = [str(uuid_obj) for uuid_obj in existing_subscriber_uuids]
+
+        # Add new subscribers
+        subscriber_ids_to_add = set(subscriber_ids) - set(existing_subscriber_ids)
+        for subscriber_id in subscriber_ids_to_add:
+            IssueSubscriber.objects.create(
+                issue_id=issue_id,
+                subscriber_id=subscriber_id,
+                project_id=project_id,
+            )
+
+        # Remove subscribers that are not in the new list
+        subscriber_ids_to_remove = set(existing_subscriber_ids) - set(subscriber_ids)
+        for subscriber_id in subscriber_ids_to_remove:
+            IssueSubscriber.objects.filter(
+                project=project_id,
+                subscriber=subscriber_id,
+                workspace__slug=slug,
+                issue=issue_id,
+            ).delete()
+
+        subscribers = IssueSubscriber.objects.filter(
+            project=project_id,
+            workspace__slug=slug,
+            issue=issue_id,
+        ).values_list("subscriber_id", flat=True)
+        return Response(subscribers, status=status.HTTP_200_OK)
+
+    def subscribe(self, request, slug, project_id, issue_id):
+        # Check if the subscriber is a member of the project
+        if not ProjectMember.is_member(project_id, request.user.id):
+            return Response(
+                {"message": "User is not member of the project.", "code": "SUBSCRIBE_NOT_PROJECT_MEMBER"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the current user is already subscribed to the issue
+        if IssueSubscriber.is_subscribed(issue_id, request.user.id):
+            return Response(
+                {"message": "Already subscribed to the issue.", "code": "SUBSCRIBER_ALREADY_EXISTS"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # Create a new subscription for the current user to the issue
         subscriber = IssueSubscriber.objects.create(
             issue_id=issue_id, subscriber_id=request.user.id, project_id=project_id
         )
@@ -98,17 +139,11 @@ class IssueSubscriberViewSet(BaseViewSet):
         issue_subscriber = IssueSubscriber.objects.get(
             project=project_id,
             subscriber=request.user,
-            workspace__slug=slug,
             issue=issue_id,
         )
         issue_subscriber.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def subscription_status(self, request, slug, project_id, issue_id):
-        issue_subscriber = IssueSubscriber.objects.filter(
-            issue=issue_id,
-            subscriber=request.user,
-            workspace__slug=slug,
-            project=project_id,
-        ).exists()
-        return Response({"subscribed": issue_subscriber}, status=status.HTTP_200_OK)
+        is_subscribed = IssueSubscriber.is_subscribed(issue_id, request.user.id)
+        return Response({"subscribed": is_subscribed}, status=status.HTTP_200_OK)
