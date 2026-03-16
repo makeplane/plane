@@ -23,6 +23,8 @@ export const PQL_KEYMAP_KEY = new PluginKey("pqlKeymap");
 export type PQLKeymapOptions = {
   editor: Editor;
   onSubmit?: (value: { json: JSONContent; text: string }) => void;
+  /** When true, the Enter key will not trigger onSubmit */
+  getIsSubmitDisabled: () => boolean;
   /** Returns the current dropdown state without holding a React ref object. */
   getDropdownState: () => DropdownState;
   onDropdownNavigate: (direction: "up" | "down") => void;
@@ -36,7 +38,15 @@ export function PQLKeymapPlugin(options: PQLKeymapOptions): Plugin {
 
     props: {
       handleKeyDown(_view, event): boolean {
-        const { editor, getDropdownState, onDropdownNavigate, onDropdownAccept, onDropdownClose, onSubmit } = options;
+        const {
+          editor,
+          getDropdownState,
+          onDropdownNavigate,
+          onDropdownAccept,
+          onDropdownClose,
+          onSubmit,
+          getIsSubmitDisabled,
+        } = options;
         const dropdown = getDropdownState();
 
         switch (event.key) {
@@ -65,20 +75,18 @@ export function PQLKeymapPlugin(options: PQLKeymapOptions): Plugin {
             return false;
 
           case "Enter":
+            event.preventDefault();
             if (dropdown.isOpen) {
-              event.preventDefault();
               onDropdownAccept();
               return true;
             }
-            if (onSubmit) {
-              event.preventDefault();
+            if (onSubmit && !getIsSubmitDisabled()) {
               onSubmit({
                 json: editor.getJSON(),
                 text: editor.getText(),
               });
-              return true;
             }
-            return false;
+            return true;
           case "Escape":
             if (dropdown.isOpen) {
               event.preventDefault();

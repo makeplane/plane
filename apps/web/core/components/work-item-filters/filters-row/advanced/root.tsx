@@ -77,7 +77,11 @@ export const WorkItemAdvancedFiltersRow = observer(function WorkItemAdvancedFilt
                 </div>
               </Tabs.Content>
               <Tabs.Content value="pql_filters">
-                <FiltersRowPQLSection layoutFilters={filter} pqlEditorRef={pqlEditorRef} />
+                <FiltersRowPQLSection
+                  disableSubmit={rest.variant === "modal"}
+                  layoutFilters={filter}
+                  pqlEditorRef={pqlEditorRef}
+                />
               </Tabs.Content>
             </div>
             <div className="shrink-0 py-1">

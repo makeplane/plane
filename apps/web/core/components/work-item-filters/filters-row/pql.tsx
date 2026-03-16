@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { AlignLeft, CircleDot } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "react-router";
@@ -28,11 +28,6 @@ import { PQLEditor } from "@/components/pql/editor";
 // plane web imports
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import type { TFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
-
-type Props = {
-  layoutFilters: WorkItemFilterInstance;
-  pqlEditorRef?: React.ForwardedRef<PQLEditorHandle>;
-};
 
 function constructFieldDefsFromConfigs(
   configManager: FilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression>["configManager"],
@@ -67,6 +62,7 @@ function constructFieldDefsFromConfigs(
       };
     })
     .filter((def): def is FieldDef => !!def); // Filter out undefined values
+  if (!fieldDefs.length) return [];
   const idFieldOperators: IFilterConfig<TWorkItemFilterProperty>["pqlSupportedOperators"] = new Map();
   Array.from(idField.supportedOperatorConfigsMap.entries())
     .filter(([, operatorConfig]) => operatorConfig.isOperatorEnabled)
@@ -95,7 +91,17 @@ function constructFieldDefsFromConfigs(
   return fieldDefs;
 }
 
-export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({ layoutFilters, pqlEditorRef }: Props) {
+type Props = {
+  disableSubmit?: boolean;
+  layoutFilters: WorkItemFilterInstance;
+  pqlEditorRef?: React.ForwardedRef<PQLEditorHandle>;
+};
+
+export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({
+  disableSubmit,
+  layoutFilters,
+  pqlEditorRef,
+}: Props) {
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -105,7 +111,11 @@ export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({ lay
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug: workspaceSlug ?? "" });
   // derived values
   const { pqlFiltersInstance, richFiltersInstance } = layoutFilters;
-  const fieldDefs = constructFieldDefsFromConfigs(layoutFilters.richFiltersInstance.configManager, operatorConfigs);
+  const fieldDefs = useMemo(
+    () => constructFieldDefsFromConfigs(layoutFilters.richFiltersInstance.configManager, operatorConfigs),
+    [layoutFilters.richFiltersInstance.configManager, operatorConfigs]
+  );
+  const editorKey = useMemo(() => fieldDefs.map((f) => f.value).join(","), [fieldDefs]);
   // translation
   const { t } = useTranslation();
 
@@ -125,11 +135,12 @@ export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({ lay
     [pqlFiltersInstance]
   );
 
-  if (!richFiltersInstance.configManager.areConfigsReady || !fieldDefs.length) return null;
+  if (!richFiltersInstance.configManager.areConfigsReady || !editorKey.length) return null;
 
   return (
     <div className="flex flex-col gap-y-1.5">
       <PQLEditor
+        key={editorKey}
         fieldDefs={fieldDefs}
         value={pqlFiltersInstance.value.json}
         onChange={(val) => {
@@ -145,6 +156,7 @@ export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({ lay
             stripped: val.text,
           })
         }
+        disableSubmit={disableSubmit || !pqlFiltersInstance.hasChanges}
         isSubmitting={isSubmitting}
         ref={pqlEditorRef}
       />

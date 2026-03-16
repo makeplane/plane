@@ -25,6 +25,8 @@ export type PQLEditorExtensionOptions = {
    * when not provided. Pass a custom array to support project-specific fields.
    */
   fieldDefs: FieldDef[];
+  /** When true, the Enter key will not trigger onSubmit */
+  getIsSubmitDisabled: () => boolean;
   /** Called whenever the document changes with the latest parse result */
   onParseResult: (result: ParseResult) => void;
   /** Called whenever the cursor moves to a position that has autocomplete candidates */
@@ -59,6 +61,7 @@ export const PQLEditorExtension = Extension.create<PQLEditorExtensionOptions>({
   addOptions() {
     return {
       fieldDefs: [],
+      getIsSubmitDisabled: () => false,
       onParseResult: () => {},
       onContextChange: () => {},
       onSubmit: undefined,
@@ -86,6 +89,7 @@ export const PQLEditorExtension = Extension.create<PQLEditorExtensionOptions>({
       PQLKeymapPlugin({
         editor: this.editor,
         onSubmit: this.options.onSubmit,
+        getIsSubmitDisabled: this.options.getIsSubmitDisabled,
         getDropdownState: this.options.getDropdownState,
         onDropdownNavigate: this.options.onDropdownNavigate,
         onDropdownAccept: () => this.options.onDropdownAccept(this.editor),

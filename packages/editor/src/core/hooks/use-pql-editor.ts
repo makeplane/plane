@@ -36,6 +36,7 @@ import { PQLCustomPropertyFieldExtension } from "../extensions/pql-editor/custom
 
 type UsePQLEditorArgs = Pick<PQLEditorProps, "onChange" | "onSubmit" | "value"> & {
   autoFocus: boolean;
+  disableSubmit?: boolean;
   dropdownStateRef: React.MutableRefObject<DropdownState>;
   editable: boolean;
   editorClassName?: string;
@@ -67,6 +68,7 @@ function isDateContext(context: SuggestionContext, fieldMap: Map<string, FieldDe
 
 export const usePQLEditor = ({
   autoFocus,
+  disableSubmit,
   dropdownStateRef,
   editable,
   editorClassName,
@@ -84,6 +86,11 @@ export const usePQLEditor = ({
 }: UsePQLEditorArgs) => {
   // Derive a Map for O(1) lookup; recomputed only when fieldDefs reference changes.
   const fieldMap = useMemo(() => new Map(fieldDefs.map((f) => [f.value, f])), [fieldDefs]);
+
+  // Keep a ref so the stable getter passed to the Tiptap extension always reads
+  // the latest value — extension options are frozen at initialization time.
+  const disableSubmitRef = useRef(disableSubmit);
+  disableSubmitRef.current = disableSubmit;
 
   // Tracks the most-recent suggestion context so value-accept handlers can
   // check whether we're inside an IN list without re-running the full context
@@ -260,6 +267,7 @@ export const usePQLEditor = ({
         onParseResult: handleParseResult,
         onContextChange: handleContextChange,
         onSubmit,
+        getIsSubmitDisabled: () => !!disableSubmitRef.current,
         getDropdownState: () => dropdownStateRef.current,
         onDropdownNavigate: handleDropdownNavigate,
         onDropdownAccept: handleDropdownAccept,

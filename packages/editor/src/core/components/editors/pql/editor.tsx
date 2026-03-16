@@ -29,6 +29,7 @@ function PQLEditor(props: PQLEditorProps & { forwardedRef?: React.ForwardedRef<P
   const {
     autoFocus,
     className,
+    disableSubmit,
     editable,
     editorClassName,
     fieldDefs,
@@ -58,6 +59,7 @@ function PQLEditor(props: PQLEditorProps & { forwardedRef?: React.ForwardedRef<P
 
   const { editor, selectOption } = usePQLEditor({
     autoFocus: !!autoFocus,
+    disableSubmit,
     dropdownStateRef,
     editable,
     editorClassName,
@@ -99,7 +101,7 @@ function PQLEditor(props: PQLEditorProps & { forwardedRef?: React.ForwardedRef<P
             onClick={() => setIsMaximized((prev) => !prev)}
             className="shrink-0"
           />
-          {onSubmit && (
+          {onSubmit && !disableSubmit && (
             <IconButton
               variant="primary"
               size="base"
