@@ -47,6 +47,7 @@
     "./pill": "./dist/pill/index.js",
     "./popover": "./dist/popover/index.js",
     "./portal": "./dist/portal/index.js",
+    "./progress/circular-progress-indicator": "./dist/progress/circular-progress-indicator.js",
     "./scrollarea": "./dist/scrollarea/index.js",
     "./separator": "./dist/separator/index.js",
     "./skeleton": "./dist/skeleton/index.js",

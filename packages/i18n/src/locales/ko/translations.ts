@@ -1964,6 +1964,16 @@ export default {
       customers: {
         title: "커스터머",
       },
+      releases: {
+        title: "릴리스",
+        update_release: "릴리스 업데이트",
+        create_release: "릴리스 만들기",
+        errors: {
+          release_not_found: "찾으시는 릴리스가 존재하지 않습니다.",
+          unknown: "문제가 발생했습니다. 다시 시도해 주세요.",
+        },
+      },
+
       cancel_trial: {
         title: "먼저 트라이얼을 취소하세요.",
         description: "유료 플랜 중 하나에 대한 활성 트라이얼이 있습니다. 계속하려면 먼저 이를 취소하세요.",
@@ -6550,5 +6560,111 @@ export default {
     },
     placeholder: '쿼리를 입력하고 "ENTER"를 눌러 필터링하세요...',
     error: "쿼리 제출 중 오류가 발생했습니다. 확인 후 다시 시도하세요.",
+  },
+  releases: {
+    releases: "릴리스",
+    release: "릴리스",
+    no_release: "릴리스 없음",
+    count_releases: "{count, plural, one {# 릴리스} other {# 릴리스}}",
+    actions: {
+      delete: "삭제",
+    },
+    delete_modal: {
+      title: "릴리스 삭제",
+      content: '릴리스 "{releaseName}"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+    },
+    settings: {
+      heading: {
+        title: "릴리스",
+        description: "릴리스를 사용해 프로젝트 산출물을 정확하게 관리하세요.",
+      },
+      toggle: {
+        title: "릴리스 사용",
+        description: "워크스페이스 구성원은 각자의 프로젝트에서 범위를 볼 수 있습니다.",
+      },
+      toasts: {
+        enable: {
+          loading: "릴리스를 사용하는 중...",
+          success: {
+            title: "릴리스가 활성화됨",
+            message: "이 워크스페이스에서 릴리스가 활성화되었습니다.",
+          },
+          error: {
+            title: "오류",
+            message: "릴리스를 활성화하지 못했습니다. 다시 시도해 주세요.",
+          },
+        },
+        disable: {
+          loading: "릴리스를 비활성화하는 중...",
+          success: {
+            title: "릴리스가 비활성화됨",
+            message: "이 워크스페이스에서 릴리스가 비활성화되었습니다.",
+          },
+          error: {
+            title: "오류",
+            message: "릴리스를 비활성화하지 못했습니다. 다시 시도해 주세요.",
+          },
+        },
+      },
+      tabs: {
+        tags: "릴리스 태그",
+        labels: "라벨",
+      },
+      tags: {
+        title: "릴리스 태그",
+        description: "태그를 사용해 릴리스를 분류하고 필터링하세요.",
+        add: "태그 추가",
+        empty_state: "아직 태그가 없습니다. 첫 번째 태그를 만들어 주세요.",
+        errors: {
+          version_required: "버전은 필수입니다.",
+          version_already_exists: "이 버전의 태그가 이미 존재합니다.",
+          generic: "문제가 발생했습니다. 다시 시도해 주세요.",
+        },
+        delete_modal: {
+          title: "태그 삭제",
+          content: '태그 "{tagVersion}"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+        },
+        actions: {
+          edit: "태그 수정",
+          delete: "태그 삭제",
+        },
+        toasts: {
+          delete: {
+            success: "태그가 삭제되었습니다.",
+            error: "태그를 삭제하지 못했습니다. 다시 시도해 주세요.",
+          },
+        },
+      },
+      labels: {
+        title: "라벨",
+        description: "라벨을 사용해 이니셔티브를 구조화하고 정리하세요.",
+        add: "라벨 추가",
+        empty_state: "아직 라벨이 없습니다. 첫 번째 라벨을 만들어 주세요.",
+        errors: {
+          name_required: "이름은 필수입니다.",
+          name_already_exists: "이 이름의 라벨이 이미 존재합니다.",
+          generic: "문제가 발생했습니다. 다시 시도해 주세요.",
+        },
+        modal: {
+          name_placeholder: "라벨 이름",
+          pick_color: "라벨 색상 선택",
+        },
+        actions: {
+          edit: "라벨 수정",
+          delete: "라벨 삭제",
+        },
+        drag_to_reorder: "드래그하여 순서 변경",
+        delete_modal: {
+          title: "라벨 삭제",
+          content: '라벨 "{labelName}"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+        },
+        toasts: {
+          delete: {
+            success: "라벨이 삭제되었습니다.",
+            error: "라벨을 삭제하지 못했습니다. 다시 시도해 주세요.",
+          },
+        },
+      },
+    },
   },
 } as const;

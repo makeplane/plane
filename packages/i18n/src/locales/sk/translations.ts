@@ -1981,6 +1981,16 @@ Vytvorte nový.`,
       customers: {
         title: "Zákazníci",
       },
+      releases: {
+        title: "Vydania",
+        update_release: "Aktualizovať vydanie",
+        create_release: "Vytvoriť vydanie",
+        errors: {
+          release_not_found: "Hľadané vydanie neexistuje.",
+          unknown: "Niečo sa pokazilo. Skúste to prosím znova.",
+        },
+      },
+
       cancel_trial: {
         title: "Najprv zrušte vašu skúšobnú verziu.",
         description:
@@ -6570,5 +6580,111 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
     },
     placeholder: 'Zadajte dopyt a stlačte "ENTER" na filtrovanie...',
     error: "Chyba pri odosielaní dopytu. Skontrolujte a skúste znova.",
+  },
+  releases: {
+    releases: "Vydania",
+    release: "Vydanie",
+    no_release: "Žiadne vydanie",
+    count_releases: "{count, plural, one {# vydanie} other {# vydania}}",
+    actions: {
+      delete: "Odstrániť",
+    },
+    delete_modal: {
+      title: "Odstrániť vydanie",
+      content: 'Naozaj chcete odstrániť vydanie "{releaseName}"? Túto akciu nie je možné vrátiť späť.',
+    },
+    settings: {
+      heading: {
+        title: "Vydania",
+        description: "Spravujte projektové dodávky s presnosťou pomocou vydaní.",
+      },
+      toggle: {
+        title: "Povoliť vydania",
+        description: "Členovia pracovného priestoru budú mať prístup na zobrazenie rozsahu vo svojich projektoch.",
+      },
+      toasts: {
+        enable: {
+          loading: "Povoľujú sa vydania...",
+          success: {
+            title: "Vydania povolené",
+            message: "Vydania boli pre tento pracovný priestor povolené.",
+          },
+          error: {
+            title: "Chyba",
+            message: "Nepodarilo sa povoliť vydania. Skúste to prosím znova.",
+          },
+        },
+        disable: {
+          loading: "Zakazujú sa vydania...",
+          success: {
+            title: "Vydania zakázané",
+            message: "Vydania boli pre tento pracovný priestor zakázané.",
+          },
+          error: {
+            title: "Chyba",
+            message: "Nepodarilo sa zakázať vydania. Skúste to prosím znova.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Tagy vydaní",
+        labels: "Štítky",
+      },
+      tags: {
+        title: "Tagy vydaní",
+        description: "Kategorizujte a filtrujte svoje vydania pomocou tagov.",
+        add: "Pridať tag",
+        empty_state: "Zatiaľ žiadne tagy. Vytvorte svoj prvý tag.",
+        errors: {
+          version_required: "Verzia je povinná.",
+          version_already_exists: "Tag s touto verziou už existuje.",
+          generic: "Niečo sa pokazilo. Skúste to prosím znova.",
+        },
+        delete_modal: {
+          title: "Odstrániť tag",
+          content: 'Naozaj chcete odstrániť tag "{tagVersion}"? Túto akciu nie je možné vrátiť späť.',
+        },
+        actions: {
+          edit: "Upraviť tag",
+          delete: "Odstrániť tag",
+        },
+        toasts: {
+          delete: {
+            success: "Tag bol úspešne odstránený.",
+            error: "Tag sa nepodarilo odstrániť. Skúste to prosím znova.",
+          },
+        },
+      },
+      labels: {
+        title: "Štítky",
+        description: "Štrukturujte a organizujte svoje iniciatívy pomocou štítkov.",
+        add: "Pridať štítok",
+        empty_state: "Zatiaľ žiadne štítky. Vytvorte svoj prvý štítok.",
+        errors: {
+          name_required: "Názov je povinný.",
+          name_already_exists: "Štítok s týmto názvom už existuje.",
+          generic: "Niečo sa pokazilo. Skúste to prosím znova.",
+        },
+        modal: {
+          name_placeholder: "Názov štítku",
+          pick_color: "Vyberte farbu štítku",
+        },
+        actions: {
+          edit: "Upraviť štítok",
+          delete: "Odstrániť štítok",
+        },
+        drag_to_reorder: "Potiahnutím zmeňte poradie",
+        delete_modal: {
+          title: "Odstrániť štítok",
+          content: 'Naozaj chcete odstrániť štítok "{labelName}"? Túto akciu nie je možné vrátiť späť.',
+        },
+        toasts: {
+          delete: {
+            success: "Štítok bol úspešne odstránený.",
+            error: "Štítok sa nepodarilo odstrániť. Skúste to prosím znova.",
+          },
+        },
+      },
+    },
   },
 } as const;

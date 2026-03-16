@@ -164,6 +164,8 @@ export enum E_FEATURE_FLAGS {
   WORKSPACE_SOCKET = "WORKSPACE_SOCKET",
   // project subscribers
   PROJECT_SUBSCRIBERS = "PROJECT_SUBSCRIBERS",
+  // releases
+  RELEASES = "RELEASES",
   // pql
   PQL = "PQL",
 }

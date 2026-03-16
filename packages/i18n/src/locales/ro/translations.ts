@@ -1996,6 +1996,16 @@ Creează un proiect nou.`,
       customers: {
         title: "Clienți",
       },
+      releases: {
+        title: "Lansări",
+        update_release: "Actualizează lansarea",
+        create_release: "Creează lansarea",
+        errors: {
+          release_not_found: "Lansarea pe care o cauți nu există.",
+          unknown: "Ceva nu a mers bine. Te rugăm să încerci din nou.",
+        },
+      },
+
       cancel_trial: {
         title: "Anulează mai întâi perioada de probă.",
         description:
@@ -6683,5 +6693,111 @@ așa cum dorești din sursele pe care le specifici.`,
     },
     placeholder: 'Introduceți o interogare și apăsați "ENTER" pentru filtrare...',
     error: "Eroare la trimiterea interogării. Verificați și încercați din nou.",
+  },
+  releases: {
+    releases: "Lansări",
+    release: "Lansare",
+    no_release: "Nicio lansare",
+    count_releases: "{count, plural, one {# lansare} other {# lansări}}",
+    actions: {
+      delete: "Șterge",
+    },
+    delete_modal: {
+      title: "Șterge lansarea",
+      content: 'Sigur vrei să ștergi lansarea "{releaseName}"? Această acțiune nu poate fi anulată.',
+    },
+    settings: {
+      heading: {
+        title: "Lansări",
+        description: "Gestionează cu precizie livrabilele proiectului folosind lansări.",
+      },
+      toggle: {
+        title: "Activează lansările",
+        description: "Membrii spațiului de lucru vor avea acces de vizualizare la scop în proiectele lor.",
+      },
+      toasts: {
+        enable: {
+          loading: "Se activează lansările...",
+          success: {
+            title: "Lansări activate",
+            message: "Lansările au fost activate pentru acest spațiu de lucru.",
+          },
+          error: {
+            title: "Eroare",
+            message: "Activarea lansărilor a eșuat. Te rugăm să încerci din nou.",
+          },
+        },
+        disable: {
+          loading: "Se dezactivează lansările...",
+          success: {
+            title: "Lansări dezactivate",
+            message: "Lansările au fost dezactivate pentru acest spațiu de lucru.",
+          },
+          error: {
+            title: "Eroare",
+            message: "Dezactivarea lansărilor a eșuat. Te rugăm să încerci din nou.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Taguri de lansare",
+        labels: "Etichete",
+      },
+      tags: {
+        title: "Taguri de lansare",
+        description: "Categorizează și filtrează lansările folosind taguri.",
+        add: "Adaugă tag",
+        empty_state: "Nu există încă taguri. Creează primul tău tag.",
+        errors: {
+          version_required: "Versiunea este obligatorie.",
+          version_already_exists: "Există deja un tag cu această versiune.",
+          generic: "Ceva nu a mers bine. Te rugăm să încerci din nou.",
+        },
+        delete_modal: {
+          title: "Șterge tagul",
+          content: 'Sigur vrei să ștergi tagul "{tagVersion}"? Această acțiune nu poate fi anulată.',
+        },
+        actions: {
+          edit: "Editează tagul",
+          delete: "Șterge tagul",
+        },
+        toasts: {
+          delete: {
+            success: "Tagul a fost șters cu succes.",
+            error: "Ștergerea tagului a eșuat. Te rugăm să încerci din nou.",
+          },
+        },
+      },
+      labels: {
+        title: "Etichete",
+        description: "Structurează și organizează inițiativele cu etichete.",
+        add: "Adaugă etichetă",
+        empty_state: "Nu există încă etichete. Creează prima ta etichetă.",
+        errors: {
+          name_required: "Numele este obligatoriu.",
+          name_already_exists: "Există deja o etichetă cu acest nume.",
+          generic: "Ceva nu a mers bine. Te rugăm să încerci din nou.",
+        },
+        modal: {
+          name_placeholder: "Numele etichetei",
+          pick_color: "Alege culoarea etichetei",
+        },
+        actions: {
+          edit: "Editează eticheta",
+          delete: "Șterge eticheta",
+        },
+        drag_to_reorder: "Trage pentru a reordona",
+        delete_modal: {
+          title: "Șterge eticheta",
+          content: 'Sigur vrei să ștergi eticheta "{labelName}"? Această acțiune nu poate fi anulată.',
+        },
+        toasts: {
+          delete: {
+            success: "Eticheta a fost ștearsă cu succes.",
+            error: "Ștergerea etichetei a eșuat. Te rugăm să încerci din nou.",
+          },
+        },
+      },
+    },
   },
 } as const;

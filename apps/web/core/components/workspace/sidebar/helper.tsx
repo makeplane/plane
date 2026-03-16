@@ -24,6 +24,7 @@ import {
   DashboardIcon,
   InitiativeIcon,
   PiChatLogo,
+  ReleaseIcon,
   TeamsIcon,
   YourWorkIcon,
   MultipleStickyIcon,
@@ -62,5 +63,7 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <CustomersIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "dashboards":
       return <DashboardIcon className={cn("size-4 flex-shrink-0", className)} />;
+    case "releases":
+      return <ReleaseIcon className={cn("size-4 flex-shrink-0", className)} />;
   }
 };

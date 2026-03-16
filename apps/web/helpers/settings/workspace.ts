@@ -22,6 +22,7 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
   const isEditorOPSEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.EDITOR_AI_OPS, false);
   const isPiDedupeEnabled = store.aiFeatureFlags.getAiFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.AI_DEDUPE, false);
   const isPlaneRunnerEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.PLANE_RUNNER, false);
+  const isReleasesEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES, false);
   const isCustomRelationsEnabled = store.featureFlags.getFeatureFlag(
     workspaceSlug,
     E_FEATURE_FLAGS.CUSTOM_RELATIONS,
@@ -36,6 +37,8 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
       return isCloudSSOEnabled;
     case "scripts":
       return isPlaneRunnerEnabled;
+    case "releases":
+      return isReleasesEnabled;
     case "relations":
       return isCustomRelationsEnabled;
     default:

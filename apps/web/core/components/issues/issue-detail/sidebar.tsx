@@ -29,6 +29,7 @@ import {
   UserCirclePropertyIcon,
   EstimatePropertyIcon,
   ParentPropertyIcon,
+  ReleaseIcon,
 } from "@plane/propel/icons";
 import {
   cn,
@@ -57,6 +58,7 @@ import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
 import { WorkItemSidebarCustomers } from "./customers/root";
 import { WorkItemSideBarMilestoneItem } from "./milestones/root";
+import { ReleaseSelect } from "./release-select";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -65,6 +67,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 
 type Props = {
   workspaceSlug: string;
@@ -87,6 +91,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const { getStateById } = useProjectState();
   const { isCustomersFeatureEnabled } = useCustomers();
   const { isMilestonesEnabled } = useMilestones();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
 
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
@@ -97,6 +102,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
   const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
+  const isReleasesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -336,6 +342,20 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   issueOperations.updateWorkItemMilestone?.(workspaceSlug, projectId, issueId, milestoneId)
                 }
               />
+            )}
+
+            {isReleasesFeatureEnabled && (
+              <SidebarPropertyListItem icon={ReleaseIcon} label={t("releases.releases")}>
+                <ReleaseSelect
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
+                  issueOperations={issueOperations}
+                  releaseIds={issue?.release_ids}
+                  disabled={!isEditable}
+                  className="w-full grow h-7.5"
+                />
+              </SidebarPropertyListItem>
             )}
 
             {issue.type_id && (

@@ -28,6 +28,7 @@ import {
   UserCirclePropertyIcon,
   EstimatePropertyIcon,
   ParentPropertyIcon,
+  ReleaseIcon,
   UpdatedAtPropertyIcon,
 } from "@plane/propel/icons";
 import {
@@ -57,6 +58,7 @@ import { IssueLabel } from "../issue-detail/label";
 import { IssueModuleSelect } from "../issue-detail/module-select";
 import { WorkItemSidebarCustomers } from "../issue-detail/customers/root";
 import { WorkItemSideBarMilestoneItem } from "../issue-detail/milestones/root";
+import { ReleaseSelect } from "../issue-detail/release-select";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -64,6 +66,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -85,6 +89,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const { getUserDetails } = useMember();
   const { isCustomersFeatureEnabled } = useCustomers();
   const { isMilestonesEnabled } = useMilestones();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
@@ -93,6 +98,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
   const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
+  const isReleasesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
 
   const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());
@@ -327,6 +333,20 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               issueOperations.updateWorkItemMilestone?.(workspaceSlug, projectId, issueId, milestoneId)
             }
           />
+        )}
+
+        {isReleasesFeatureEnabled && (
+          <SidebarPropertyListItem icon={ReleaseIcon} label={t("releases.releases")}>
+            <ReleaseSelect
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              issueOperations={issueOperations}
+              releaseIds={issue?.release_ids}
+              disabled={disabled}
+              className="w-full grow"
+            />
+          </SidebarPropertyListItem>
         )}
 
         {issue.type_id && (

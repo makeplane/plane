@@ -1989,6 +1989,16 @@ Buat proyek baru sebagai gantinya`,
       customers: {
         title: "Pelanggan",
       },
+      releases: {
+        title: "Rilis",
+        update_release: "Perbarui rilis",
+        create_release: "Buat rilis",
+        errors: {
+          release_not_found: "Rilis yang Anda cari tidak ada.",
+          unknown: "Terjadi kesalahan. Silakan coba lagi.",
+        },
+      },
+
       cancel_trial: {
         title: "Batalkan uji coba Anda terlebih dahulu.",
         description:
@@ -6633,5 +6643,111 @@ sesuai keinginan dari sumber yang Anda tentukan.`,
     },
     placeholder: 'Ketik kueri dan tekan "ENTER" untuk memfilter...',
     error: "Kesalahan saat mengirim kueri. Silakan periksa dan coba lagi.",
+  },
+  releases: {
+    releases: "Rilis",
+    release: "Rilis",
+    no_release: "Tidak ada rilis",
+    count_releases: "{count, plural, one {# rilis} other {# rilis}}",
+    actions: {
+      delete: "Hapus",
+    },
+    delete_modal: {
+      title: "Hapus rilis",
+      content: 'Apakah Anda yakin ingin menghapus rilis "{releaseName}"? Tindakan ini tidak dapat dibatalkan.',
+    },
+    settings: {
+      heading: {
+        title: "Rilis",
+        description: "Kelola deliverable proyek dengan presisi menggunakan rilis.",
+      },
+      toggle: {
+        title: "Aktifkan rilis",
+        description: "Anggota workspace akan memiliki akses lihat ke cakupan dalam proyek masing-masing.",
+      },
+      toasts: {
+        enable: {
+          loading: "Mengaktifkan rilis...",
+          success: {
+            title: "Rilis diaktifkan",
+            message: "Rilis telah diaktifkan untuk workspace ini.",
+          },
+          error: {
+            title: "Kesalahan",
+            message: "Gagal mengaktifkan rilis. Silakan coba lagi.",
+          },
+        },
+        disable: {
+          loading: "Menonaktifkan rilis...",
+          success: {
+            title: "Rilis dinonaktifkan",
+            message: "Rilis telah dinonaktifkan untuk workspace ini.",
+          },
+          error: {
+            title: "Kesalahan",
+            message: "Gagal menonaktifkan rilis. Silakan coba lagi.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Tag rilis",
+        labels: "Label",
+      },
+      tags: {
+        title: "Tag rilis",
+        description: "Kategorikan dan filter rilis Anda menggunakan tag.",
+        add: "Tambahkan tag",
+        empty_state: "Belum ada tag. Buat tag pertama Anda.",
+        errors: {
+          version_required: "Versi wajib diisi.",
+          version_already_exists: "Tag dengan versi ini sudah ada.",
+          generic: "Terjadi kesalahan. Silakan coba lagi.",
+        },
+        delete_modal: {
+          title: "Hapus tag",
+          content: 'Apakah Anda yakin ingin menghapus tag "{tagVersion}"? Tindakan ini tidak dapat dibatalkan.',
+        },
+        actions: {
+          edit: "Edit tag",
+          delete: "Hapus tag",
+        },
+        toasts: {
+          delete: {
+            success: "Tag berhasil dihapus.",
+            error: "Gagal menghapus tag. Silakan coba lagi.",
+          },
+        },
+      },
+      labels: {
+        title: "Label",
+        description: "Susun dan atur inisiatif Anda dengan label.",
+        add: "Tambahkan label",
+        empty_state: "Belum ada label. Buat label pertama Anda.",
+        errors: {
+          name_required: "Nama wajib diisi.",
+          name_already_exists: "Label dengan nama ini sudah ada.",
+          generic: "Terjadi kesalahan. Silakan coba lagi.",
+        },
+        modal: {
+          name_placeholder: "Nama label",
+          pick_color: "Pilih warna label",
+        },
+        actions: {
+          edit: "Edit label",
+          delete: "Hapus label",
+        },
+        drag_to_reorder: "Seret untuk mengurutkan ulang",
+        delete_modal: {
+          title: "Hapus label",
+          content: 'Apakah Anda yakin ingin menghapus label "{labelName}"? Tindakan ini tidak dapat dibatalkan.',
+        },
+        toasts: {
+          delete: {
+            success: "Label berhasil dihapus.",
+            error: "Gagal menghapus label. Silakan coba lagi.",
+          },
+        },
+      },
+    },
   },
 } as const;

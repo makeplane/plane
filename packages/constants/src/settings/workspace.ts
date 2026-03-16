@@ -140,6 +140,13 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/customers/`,
   },
+  releases: {
+    key: "releases",
+    i18n_label: "workspace_settings.settings.releases.title",
+    href: "/settings/releases",
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/releases/`,
+  },
   templates: {
     key: "templates",
     i18n_label: "common.templates",
@@ -194,6 +201,7 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
     WORKSPACE_SETTINGS["teamspaces"],
     WORKSPACE_SETTINGS["initiatives"],
     WORKSPACE_SETTINGS["customers"],
+    WORKSPACE_SETTINGS["releases"],
     WORKSPACE_SETTINGS["templates"],
     WORKSPACE_SETTINGS["relations"],
     WORKSPACE_SETTINGS["plane-intelligence"],

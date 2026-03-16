@@ -1978,6 +1978,16 @@ export default {
       customers: {
         title: "顧客",
       },
+      releases: {
+        title: "リリース",
+        update_release: "リリースを更新",
+        create_release: "リリースを作成",
+        errors: {
+          release_not_found: "お探しのリリースは存在しません。",
+          unknown: "問題が発生しました。もう一度お試しください。",
+        },
+      },
+
       cancel_trial: {
         title: "まずトライアルをキャンセルしてください。",
         description: "有料プランのトライアルが有効です。続行するには、まずキャンセルしてください。",
@@ -6600,5 +6610,111 @@ export default {
     },
     placeholder: 'クエリを入力して "ENTER" を押してフィルタリング...',
     error: "クエリの送信中にエラーが発生しました。確認して再試行してください。",
+  },
+  releases: {
+    releases: "リリース",
+    release: "リリース",
+    no_release: "リリースなし",
+    count_releases: "{count, plural, one {# リリース} other {# リリース}}",
+    actions: {
+      delete: "削除",
+    },
+    delete_modal: {
+      title: "リリースを削除",
+      content: 'リリース "{releaseName}" を削除してもよろしいですか？ この操作は元に戻せません。',
+    },
+    settings: {
+      heading: {
+        title: "リリース",
+        description: "リリースを使って、プロジェクトの成果物を正確に管理します。",
+      },
+      toggle: {
+        title: "リリースを有効にする",
+        description: "ワークスペースのメンバーは、それぞれのプロジェクト内のスコープを閲覧できます。",
+      },
+      toasts: {
+        enable: {
+          loading: "リリースを有効化しています...",
+          success: {
+            title: "リリースを有効にしました",
+            message: "このワークスペースでリリースが有効になりました。",
+          },
+          error: {
+            title: "エラー",
+            message: "リリースを有効にできませんでした。もう一度お試しください。",
+          },
+        },
+        disable: {
+          loading: "リリースを無効化しています...",
+          success: {
+            title: "リリースを無効にしました",
+            message: "このワークスペースでリリースが無効になりました。",
+          },
+          error: {
+            title: "エラー",
+            message: "リリースを無効にできませんでした。もう一度お試しください。",
+          },
+        },
+      },
+      tabs: {
+        tags: "リリースタグ",
+        labels: "ラベル",
+      },
+      tags: {
+        title: "リリースタグ",
+        description: "タグを使ってリリースを分類し、絞り込みできます。",
+        add: "タグを追加",
+        empty_state: "タグはまだありません。最初のタグを作成してください。",
+        errors: {
+          version_required: "バージョンは必須です。",
+          version_already_exists: "このバージョンのタグは既に存在します。",
+          generic: "問題が発生しました。もう一度お試しください。",
+        },
+        delete_modal: {
+          title: "タグを削除",
+          content: 'タグ "{tagVersion}" を削除してもよろしいですか？ この操作は元に戻せません。',
+        },
+        actions: {
+          edit: "タグを編集",
+          delete: "タグを削除",
+        },
+        toasts: {
+          delete: {
+            success: "タグを削除しました。",
+            error: "タグを削除できませんでした。もう一度お試しください。",
+          },
+        },
+      },
+      labels: {
+        title: "ラベル",
+        description: "ラベルを使ってイニシアチブを整理できます。",
+        add: "ラベルを追加",
+        empty_state: "ラベルはまだありません。最初のラベルを作成してください。",
+        errors: {
+          name_required: "名前は必須です。",
+          name_already_exists: "この名前のラベルは既に存在します。",
+          generic: "問題が発生しました。もう一度お試しください。",
+        },
+        modal: {
+          name_placeholder: "ラベル名",
+          pick_color: "ラベルの色を選択",
+        },
+        actions: {
+          edit: "ラベルを編集",
+          delete: "ラベルを削除",
+        },
+        drag_to_reorder: "ドラッグして並べ替え",
+        delete_modal: {
+          title: "ラベルを削除",
+          content: 'ラベル "{labelName}" を削除してもよろしいですか？ この操作は元に戻せません。',
+        },
+        toasts: {
+          delete: {
+            success: "ラベルを削除しました。",
+            error: "ラベルを削除できませんでした。もう一度お試しください。",
+          },
+        },
+      },
+    },
   },
 } as const;

@@ -315,6 +315,14 @@ export const projectRoutes: RouteConfigEntry[] = [
     ]),
 
     // ====================================================================
+    // RELEASES
+    // ====================================================================
+
+    layout("./(all)/[workspaceSlug]/(projects)/releases/layout.tsx", [
+      route(":workspaceSlug/releases", "./(all)/[workspaceSlug]/(projects)/releases/page.tsx"),
+    ]),
+
+    // ====================================================================
     // CUSTOMERS
     // ====================================================================
 

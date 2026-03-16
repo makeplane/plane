@@ -1982,6 +1982,16 @@ Utwórz nowy.`,
       customers: {
         title: "Klienci",
       },
+      releases: {
+        title: "Wydania",
+        update_release: "Zaktualizuj wydanie",
+        create_release: "Utwórz wydanie",
+        errors: {
+          release_not_found: "Szukane wydanie nie istnieje.",
+          unknown: "Coś poszło nie tak. Spróbuj ponownie.",
+        },
+      },
+
       cancel_trial: {
         title: "Najpierw anuluj swój okres próbny.",
         description:
@@ -6610,5 +6620,111 @@ w sposób, jaki chcesz, z określonych przez Ciebie źródeł.`,
     },
     placeholder: 'Wpisz zapytanie i naciśnij "ENTER", aby filtrować...',
     error: "Błąd podczas przesyłania zapytania. Sprawdź i spróbuj ponownie.",
+  },
+  releases: {
+    releases: "Wydania",
+    release: "Wydanie",
+    no_release: "Brak wydania",
+    count_releases: "{count, plural, one {# wydanie} other {# wydania}}",
+    actions: {
+      delete: "Usuń",
+    },
+    delete_modal: {
+      title: "Usuń wydanie",
+      content: 'Czy na pewno chcesz usunąć wydanie "{releaseName}"? Tej akcji nie można cofnąć.',
+    },
+    settings: {
+      heading: {
+        title: "Wydania",
+        description: "Zarządzaj dostawami projektu precyzyjnie dzięki wydaniom.",
+      },
+      toggle: {
+        title: "Włącz wydania",
+        description: "Członkowie przestrzeni roboczej będą mieć dostęp do podglądu zakresu w swoich projektach.",
+      },
+      toasts: {
+        enable: {
+          loading: "Włączanie wydań...",
+          success: {
+            title: "Wydania włączone",
+            message: "Wydania zostały włączone w tej przestrzeni roboczej.",
+          },
+          error: {
+            title: "Błąd",
+            message: "Nie udało się włączyć wydań. Spróbuj ponownie.",
+          },
+        },
+        disable: {
+          loading: "Wyłączanie wydań...",
+          success: {
+            title: "Wydania wyłączone",
+            message: "Wydania zostały wyłączone w tej przestrzeni roboczej.",
+          },
+          error: {
+            title: "Błąd",
+            message: "Nie udało się wyłączyć wydań. Spróbuj ponownie.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Tagi wydań",
+        labels: "Etykiety",
+      },
+      tags: {
+        title: "Tagi wydań",
+        description: "Kategoryzuj i filtruj swoje wydania za pomocą tagów.",
+        add: "Dodaj tag",
+        empty_state: "Nie ma jeszcze tagów. Utwórz swój pierwszy tag.",
+        errors: {
+          version_required: "Wersja jest wymagana.",
+          version_already_exists: "Tag z tą wersją już istnieje.",
+          generic: "Coś poszło nie tak. Spróbuj ponownie.",
+        },
+        delete_modal: {
+          title: "Usuń tag",
+          content: 'Czy na pewno chcesz usunąć tag "{tagVersion}"? Tej akcji nie można cofnąć.',
+        },
+        actions: {
+          edit: "Edytuj tag",
+          delete: "Usuń tag",
+        },
+        toasts: {
+          delete: {
+            success: "Tag został pomyślnie usunięty.",
+            error: "Nie udało się usunąć tagu. Spróbuj ponownie.",
+          },
+        },
+      },
+      labels: {
+        title: "Etykiety",
+        description: "Strukturyzuj i organizuj swoje inicjatywy za pomocą etykiet.",
+        add: "Dodaj etykietę",
+        empty_state: "Nie ma jeszcze etykiet. Utwórz swoją pierwszą etykietę.",
+        errors: {
+          name_required: "Nazwa jest wymagana.",
+          name_already_exists: "Etykieta o tej nazwie już istnieje.",
+          generic: "Coś poszło nie tak. Spróbuj ponownie.",
+        },
+        modal: {
+          name_placeholder: "Nazwa etykiety",
+          pick_color: "Wybierz kolor etykiety",
+        },
+        actions: {
+          edit: "Edytuj etykietę",
+          delete: "Usuń etykietę",
+        },
+        drag_to_reorder: "Przeciągnij, aby zmienić kolejność",
+        delete_modal: {
+          title: "Usuń etykietę",
+          content: 'Czy na pewno chcesz usunąć etykietę "{labelName}"? Tej akcji nie można cofnąć.',
+        },
+        toasts: {
+          delete: {
+            success: "Etykieta została pomyślnie usunięta.",
+            error: "Nie udało się usunąć etykiety. Spróbuj ponownie.",
+          },
+        },
+      },
+    },
   },
 } as const;

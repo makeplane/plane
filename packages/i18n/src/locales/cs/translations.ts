@@ -1978,6 +1978,16 @@ Vytvořte nový.`,
       customers: {
         title: "Zákazníci",
       },
+      releases: {
+        title: "Vydání",
+        update_release: "Aktualizovat vydání",
+        create_release: "Vytvořit vydání",
+        errors: {
+          release_not_found: "Hledané vydání neexistuje.",
+          unknown: "Něco se pokazilo. Zkuste to prosím znovu.",
+        },
+      },
+
       cancel_trial: {
         title: "Nejprve zrušte svou zkušební verzi.",
         description:
@@ -6596,5 +6606,112 @@ Vytvořte nový.`,
     },
     placeholder: 'Zadejte dotaz a stiskněte "ENTER" pro filtrování...',
     error: "Chyba při odesílání dotazu. Zkontrolujte a zkuste znovu.",
+  },
+  releases: {
+    releases: "Vydání",
+    release: "Vydání",
+    no_release: "Žádné vydání",
+    count_releases: "{count, plural, one {# vydání} other {# vydání}}",
+    actions: {
+      delete: "Smazat",
+    },
+    delete_modal: {
+      title: "Smazat vydání",
+      content: 'Opravdu chcete smazat vydání "{releaseName}"? Tuto akci nelze vrátit zpět.',
+    },
+    settings: {
+      heading: {
+        title: "Vydání",
+        description: "Spravujte projektové dodávky s přesností pomocí vydání.",
+      },
+      toggle: {
+        title: "Povolit vydání",
+        description:
+          "Členové pracovního prostoru budou mít ve svých příslušných projektech přístup k zobrazení rozsahu.",
+      },
+      toasts: {
+        enable: {
+          loading: "Povolují se vydání...",
+          success: {
+            title: "Vydání povolena",
+            message: "Vydání byla pro tento pracovní prostor povolena.",
+          },
+          error: {
+            title: "Chyba",
+            message: "Nepodařilo se povolit vydání. Zkuste to prosím znovu.",
+          },
+        },
+        disable: {
+          loading: "Zakazují se vydání...",
+          success: {
+            title: "Vydání zakázána",
+            message: "Vydání byla pro tento pracovní prostor zakázána.",
+          },
+          error: {
+            title: "Chyba",
+            message: "Nepodařilo se zakázat vydání. Zkuste to prosím znovu.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Tagy vydání",
+        labels: "Štítky",
+      },
+      tags: {
+        title: "Tagy vydání",
+        description: "Kategorizujte a filtrujte svá vydání pomocí tagů.",
+        add: "Přidat tag",
+        empty_state: "Zatím žádné tagy. Vytvořte svůj první tag.",
+        errors: {
+          version_required: "Verze je povinná.",
+          version_already_exists: "Tag s touto verzí již existuje.",
+          generic: "Něco se pokazilo. Zkuste to prosím znovu.",
+        },
+        delete_modal: {
+          title: "Smazat tag",
+          content: 'Opravdu chcete smazat tag "{tagVersion}"? Tuto akci nelze vrátit zpět.',
+        },
+        actions: {
+          edit: "Upravit tag",
+          delete: "Smazat tag",
+        },
+        toasts: {
+          delete: {
+            success: "Tag byl úspěšně smazán.",
+            error: "Tag se nepodařilo smazat. Zkuste to prosím znovu.",
+          },
+        },
+      },
+      labels: {
+        title: "Štítky",
+        description: "Strukturujte a organizujte své iniciativy pomocí štítků.",
+        add: "Přidat štítek",
+        empty_state: "Zatím žádné štítky. Vytvořte svůj první štítek.",
+        errors: {
+          name_required: "Název je povinný.",
+          name_already_exists: "Štítek s tímto názvem již existuje.",
+          generic: "Něco se pokazilo. Zkuste to prosím znovu.",
+        },
+        modal: {
+          name_placeholder: "Název štítku",
+          pick_color: "Vyberte barvu štítku",
+        },
+        actions: {
+          edit: "Upravit štítek",
+          delete: "Smazat štítek",
+        },
+        drag_to_reorder: "Přetažením změňte pořadí",
+        delete_modal: {
+          title: "Smazat štítek",
+          content: 'Opravdu chcete smazat štítek "{labelName}"? Tuto akci nelze vrátit zpět.',
+        },
+        toasts: {
+          delete: {
+            success: "Štítek byl úspěšně smazán.",
+            error: "Štítek se nepodařilo smazat. Zkuste to prosím znovu.",
+          },
+        },
+      },
+    },
   },
 } as const;

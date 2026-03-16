@@ -2009,6 +2009,16 @@ Créez plutôt un nouveau projet`,
       customers: {
         title: "Clients",
       },
+      releases: {
+        title: "Livraisons",
+        update_release: "Mettre à jour la livraison",
+        create_release: "Créer une livraison",
+        errors: {
+          release_not_found: "La livraison que vous recherchez n'existe pas.",
+          unknown: "Une erreur s'est produite. Veuillez réessayer.",
+        },
+      },
+
       cancel_trial: {
         title: "Annulez d'abord votre période d'essai.",
         description:
@@ -6728,5 +6738,112 @@ si vous êtes sûr que votre recherche est correcte.`,
     },
     placeholder: 'Saisissez une requête et appuyez sur "ENTRÉE" pour filtrer...',
     error: "Erreur lors de la soumission de la requête. Veuillez vérifier et réessayer.",
+  },
+  releases: {
+    releases: "Livraisons",
+    release: "Livraison",
+    no_release: "Aucune livraison",
+    count_releases: "{count, plural, one {# livraison} other {# livraisons}}",
+    actions: {
+      delete: "Supprimer",
+    },
+    delete_modal: {
+      title: "Supprimer la livraison",
+      content: 'Voulez-vous vraiment supprimer la livraison "{releaseName}" ? Cette action est irréversible.',
+    },
+    settings: {
+      heading: {
+        title: "Livraisons",
+        description: "Gérez les livrables du projet avec précision grâce aux livraisons.",
+      },
+      toggle: {
+        title: "Activer les livraisons",
+        description:
+          "Les membres de l’espace de travail auront un accès en lecture à la portée dans leurs projets respectifs.",
+      },
+      toasts: {
+        enable: {
+          loading: "Activation des livraisons...",
+          success: {
+            title: "Livraisons activées",
+            message: "Les livraisons ont été activées pour cet espace de travail.",
+          },
+          error: {
+            title: "Erreur",
+            message: "Impossible d’activer les livraisons. Veuillez réessayer.",
+          },
+        },
+        disable: {
+          loading: "Désactivation des livraisons...",
+          success: {
+            title: "Livraisons désactivées",
+            message: "Les livraisons ont été désactivées pour cet espace de travail.",
+          },
+          error: {
+            title: "Erreur",
+            message: "Impossible de désactiver les livraisons. Veuillez réessayer.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Tags de livraison",
+        labels: "Étiquettes",
+      },
+      tags: {
+        title: "Tags de livraison",
+        description: "Catégorisez et filtrez vos livraisons à l’aide de tags.",
+        add: "Ajouter un tag",
+        empty_state: "Pas encore de tags. Créez votre premier tag.",
+        errors: {
+          version_required: "La version est requise.",
+          version_already_exists: "Un tag avec cette version existe déjà.",
+          generic: "Une erreur s'est produite. Veuillez réessayer.",
+        },
+        delete_modal: {
+          title: "Supprimer le tag",
+          content: 'Voulez-vous vraiment supprimer le tag "{tagVersion}" ? Cette action est irréversible.',
+        },
+        actions: {
+          edit: "Modifier le tag",
+          delete: "Supprimer le tag",
+        },
+        toasts: {
+          delete: {
+            success: "Tag supprimé avec succès.",
+            error: "Impossible de supprimer le tag. Veuillez réessayer.",
+          },
+        },
+      },
+      labels: {
+        title: "Étiquettes",
+        description: "Structurez et organisez vos initiatives avec des étiquettes.",
+        add: "Ajouter une étiquette",
+        empty_state: "Pas encore d’étiquettes. Créez votre première étiquette.",
+        errors: {
+          name_required: "Le nom est requis.",
+          name_already_exists: "Une étiquette portant ce nom existe déjà.",
+          generic: "Une erreur s'est produite. Veuillez réessayer.",
+        },
+        modal: {
+          name_placeholder: "Nom de l’étiquette",
+          pick_color: "Choisir la couleur de l’étiquette",
+        },
+        actions: {
+          edit: "Modifier l’étiquette",
+          delete: "Supprimer l’étiquette",
+        },
+        drag_to_reorder: "Glisser pour réorganiser",
+        delete_modal: {
+          title: "Supprimer l’étiquette",
+          content: 'Voulez-vous vraiment supprimer l’étiquette "{labelName}" ? Cette action est irréversible.',
+        },
+        toasts: {
+          delete: {
+            success: "Étiquette supprimée avec succès.",
+            error: "Impossible de supprimer l’étiquette. Veuillez réessayer.",
+          },
+        },
+      },
+    },
   },
 } as const;

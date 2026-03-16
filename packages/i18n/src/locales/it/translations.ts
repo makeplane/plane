@@ -1994,6 +1994,16 @@ Crea un nuovo progetto invece`,
       customers: {
         title: "Clienti",
       },
+      releases: {
+        title: "Rilasci",
+        update_release: "Aggiorna rilascio",
+        create_release: "Crea rilascio",
+        errors: {
+          release_not_found: "Il rilascio che stai cercando non esiste.",
+          unknown: "Si è verificato un errore. Riprova.",
+        },
+      },
+
       cancel_trial: {
         title: "Cancella la tua prova prima.",
         description: "Hai una prova attiva per uno dei nostri piani pagati. Per procedere, per favore cancella prima.",
@@ -6678,5 +6688,112 @@ Crea un nuovo progetto invece`,
     },
     placeholder: 'Digita una query e premi "INVIO" per filtrare...',
     error: "Errore durante l'invio della query. Controlla e riprova.",
+  },
+  releases: {
+    releases: "Rilasci",
+    release: "Rilascio",
+    no_release: "Nessun rilascio",
+    count_releases: "{count, plural, one {# rilascio} other {# rilasci}}",
+    actions: {
+      delete: "Elimina",
+    },
+    delete_modal: {
+      title: "Elimina rilascio",
+      content: 'Sei sicuro di voler eliminare il rilascio "{releaseName}"? Questa azione non può essere annullata.',
+    },
+    settings: {
+      heading: {
+        title: "Rilasci",
+        description: "Gestisci con precisione le consegne del progetto con i rilasci.",
+      },
+      toggle: {
+        title: "Abilita rilasci",
+        description:
+          "I membri del workspace avranno accesso in sola visualizzazione all'ambito nei rispettivi progetti.",
+      },
+      toasts: {
+        enable: {
+          loading: "Abilitazione dei rilasci...",
+          success: {
+            title: "Rilasci abilitati",
+            message: "I rilasci sono stati abilitati per questo workspace.",
+          },
+          error: {
+            title: "Errore",
+            message: "Impossibile abilitare i rilasci. Riprova.",
+          },
+        },
+        disable: {
+          loading: "Disabilitazione dei rilasci...",
+          success: {
+            title: "Rilasci disabilitati",
+            message: "I rilasci sono stati disabilitati per questo workspace.",
+          },
+          error: {
+            title: "Errore",
+            message: "Impossibile disabilitare i rilasci. Riprova.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Tag di rilascio",
+        labels: "Etichette",
+      },
+      tags: {
+        title: "Tag di rilascio",
+        description: "Classifica e filtra i tuoi rilasci usando i tag.",
+        add: "Aggiungi tag",
+        empty_state: "Nessun tag ancora. Crea il tuo primo tag.",
+        errors: {
+          version_required: "La versione è obbligatoria.",
+          version_already_exists: "Esiste già un tag con questa versione.",
+          generic: "Si è verificato un errore. Riprova.",
+        },
+        delete_modal: {
+          title: "Elimina tag",
+          content: 'Sei sicuro di voler eliminare il tag "{tagVersion}"? Questa azione non può essere annullata.',
+        },
+        actions: {
+          edit: "Modifica tag",
+          delete: "Elimina tag",
+        },
+        toasts: {
+          delete: {
+            success: "Tag eliminato con successo.",
+            error: "Impossibile eliminare il tag. Riprova.",
+          },
+        },
+      },
+      labels: {
+        title: "Etichette",
+        description: "Struttura e organizza le tue iniziative con le etichette.",
+        add: "Aggiungi etichetta",
+        empty_state: "Nessuna etichetta ancora. Crea la tua prima etichetta.",
+        errors: {
+          name_required: "Il nome è obbligatorio.",
+          name_already_exists: "Esiste già un'etichetta con questo nome.",
+          generic: "Si è verificato un errore. Riprova.",
+        },
+        modal: {
+          name_placeholder: "Nome etichetta",
+          pick_color: "Scegli il colore dell'etichetta",
+        },
+        actions: {
+          edit: "Modifica etichetta",
+          delete: "Elimina etichetta",
+        },
+        drag_to_reorder: "Trascina per riordinare",
+        delete_modal: {
+          title: "Elimina etichetta",
+          content: 'Sei sicuro di voler eliminare l\'etichetta "{labelName}"? Questa azione non può essere annullata.',
+        },
+        toasts: {
+          delete: {
+            success: "Etichetta eliminata con successo.",
+            error: "Impossibile eliminare l'etichetta. Riprova.",
+          },
+        },
+      },
+    },
   },
 } as const;

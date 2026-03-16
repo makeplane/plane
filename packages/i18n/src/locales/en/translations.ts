@@ -323,6 +323,7 @@ export default {
   start_date: "Start date",
   end_date: "End date",
   due_date: "Due date",
+  target_date: "Target date",
   estimate: "Estimate",
   change_parent_issue: "Change parent work item",
   remove_parent_issue: "Remove parent work item",
@@ -1918,6 +1919,15 @@ Create a new project instead`,
         heading: "Manage work by what's important to your customers.",
         description:
           "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes.",
+      },
+      releases: {
+        title: "Releases",
+        update_release: "Update Release",
+        create_release: "Create Release",
+        errors: {
+          release_not_found: "The release you are looking for does not exist.",
+          unknown: "Something went wrong. Please try again.",
+        },
       },
       templates: {
         title: "Templates",
@@ -3769,6 +3779,7 @@ if you are sure your search is right. `,
     plane_pro: "Plane Pro",
     business: "Business",
     customers: "Customers",
+    releases: "Releases",
   },
   workspace_dashboards: "Dashboards",
   pi_chat: "Plane AI",
@@ -7134,6 +7145,112 @@ the way you want to from the sources you specify.`,
       header: {
         label: "Continue with {ldapProviderName}",
         sub_header: "Enter your {ldapProviderName} credentials",
+      },
+    },
+  },
+  releases: {
+    releases: "Releases",
+    release: "Release",
+    no_release: "No release",
+    count_releases: "{count, plural, one {# release} other {# releases}}",
+    actions: {
+      delete: "delete",
+    },
+    delete_modal: {
+      title: "Delete release",
+      content: 'Are you sure you want to delete release "{releaseName}"? This action cannot be undone.',
+    },
+    settings: {
+      heading: {
+        title: "Releases",
+        description: "Manage project deliverables with precision using Releases.",
+      },
+      toggle: {
+        title: "Enable Releases",
+        description: "Workspace members will have view access to the scope within their respective projects.",
+      },
+      toasts: {
+        enable: {
+          loading: "Enabling releases...",
+          success: {
+            title: "Releases enabled",
+            message: "Releases have been enabled for this workspace.",
+          },
+          error: {
+            title: "Error",
+            message: "Failed to enable releases. Please try again.",
+          },
+        },
+        disable: {
+          loading: "Disabling releases...",
+          success: {
+            title: "Releases disabled",
+            message: "Releases have been disabled for this workspace.",
+          },
+          error: {
+            title: "Error",
+            message: "Failed to disable releases. Please try again.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Release tags",
+        labels: "Labels",
+      },
+      tags: {
+        title: "Release tags",
+        description: "Categorise and filter your releases using tags.",
+        add: "Add Tag",
+        empty_state: "No tags yet. Create your first tag.",
+        errors: {
+          version_required: "Version is required.",
+          version_already_exists: "A tag with this version already exists.",
+          generic: "Something went wrong. Please try again.",
+        },
+        delete_modal: {
+          title: "Delete tag",
+          content: 'Are you sure you want to delete the tag "{tagVersion}"? This action cannot be undone.',
+        },
+        actions: {
+          edit: "Edit tag",
+          delete: "Delete tag",
+        },
+        toasts: {
+          delete: {
+            success: "Tag deleted successfully.",
+            error: "Failed to delete tag. Please try again.",
+          },
+        },
+      },
+      labels: {
+        title: "Labels",
+        description: "Structure and organise your initiatives with labels.",
+        add: "Add Label",
+        empty_state: "No labels yet. Create your first label.",
+        errors: {
+          name_required: "Name is required.",
+          name_already_exists: "A label with this name already exists.",
+          generic: "Something went wrong. Please try again.",
+        },
+        modal: {
+          name_placeholder: "Label name",
+          pick_color: "Pick label color",
+        },
+        actions: {
+          edit: "Edit label",
+          delete: "Delete label",
+        },
+        drag_to_reorder: "Drag to reorder",
+        delete_modal: {
+          title: "Delete label",
+          content: 'Are you sure you want to delete the label "{labelName}"? This action cannot be undone.',
+        },
+        toasts: {
+          delete: {
+            success: "Label deleted successfully.",
+            error: "Failed to delete label. Please try again.",
+          },
+        },
       },
     },
   },

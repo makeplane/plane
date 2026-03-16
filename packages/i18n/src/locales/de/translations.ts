@@ -2002,6 +2002,16 @@ Erstellen Sie ein neues.`,
       customers: {
         title: "Kunden",
       },
+      releases: {
+        title: "Releases",
+        update_release: "Release aktualisieren",
+        create_release: "Release erstellen",
+        errors: {
+          release_not_found: "Der gesuchte Release existiert nicht.",
+          unknown: "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+        },
+      },
+
       cancel_trial: {
         title: "Kündigen Sie zuerst Ihre Testphase.",
         description:
@@ -6678,5 +6688,115 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
     },
     placeholder: 'Geben Sie eine Abfrage ein und drücken Sie "ENTER" zum Filtern...',
     error: "Fehler beim Senden der Abfrage. Bitte überprüfen Sie und versuchen Sie es erneut.",
+  },
+  releases: {
+    releases: "Releases",
+    release: "Release",
+    no_release: "Kein Release",
+    count_releases: "{count, plural, one {# Release} other {# Releases}}",
+    actions: {
+      delete: "Löschen",
+    },
+    delete_modal: {
+      title: "Release löschen",
+      content:
+        'Möchten Sie den Release "{releaseName}" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+    },
+    settings: {
+      heading: {
+        title: "Releases",
+        description: "Verwalten Sie Projektlieferungen präzise mit Releases.",
+      },
+      toggle: {
+        title: "Releases aktivieren",
+        description:
+          "Mitglieder des Arbeitsbereichs haben in ihren jeweiligen Projekten Ansichtszugriff auf den Umfang.",
+      },
+      toasts: {
+        enable: {
+          loading: "Releases werden aktiviert...",
+          success: {
+            title: "Releases aktiviert",
+            message: "Releases wurden für diesen Arbeitsbereich aktiviert.",
+          },
+          error: {
+            title: "Fehler",
+            message: "Releases konnten nicht aktiviert werden. Bitte versuchen Sie es erneut.",
+          },
+        },
+        disable: {
+          loading: "Releases werden deaktiviert...",
+          success: {
+            title: "Releases deaktiviert",
+            message: "Releases wurden für diesen Arbeitsbereich deaktiviert.",
+          },
+          error: {
+            title: "Fehler",
+            message: "Releases konnten nicht deaktiviert werden. Bitte versuchen Sie es erneut.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Release-Tags",
+        labels: "Labels",
+      },
+      tags: {
+        title: "Release-Tags",
+        description: "Kategorisieren und filtern Sie Ihre Releases mit Tags.",
+        add: "Tag hinzufügen",
+        empty_state: "Noch keine Tags. Erstellen Sie Ihren ersten Tag.",
+        errors: {
+          version_required: "Version ist erforderlich.",
+          version_already_exists: "Ein Tag mit dieser Version existiert bereits.",
+          generic: "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+        },
+        delete_modal: {
+          title: "Tag löschen",
+          content:
+            'Möchten Sie den Tag "{tagVersion}" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+        },
+        actions: {
+          edit: "Tag bearbeiten",
+          delete: "Tag löschen",
+        },
+        toasts: {
+          delete: {
+            success: "Tag erfolgreich gelöscht.",
+            error: "Tag konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+          },
+        },
+      },
+      labels: {
+        title: "Labels",
+        description: "Strukturieren und organisieren Sie Ihre Initiativen mit Labels.",
+        add: "Label hinzufügen",
+        empty_state: "Noch keine Labels. Erstellen Sie Ihr erstes Label.",
+        errors: {
+          name_required: "Name ist erforderlich.",
+          name_already_exists: "Ein Label mit diesem Namen existiert bereits.",
+          generic: "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+        },
+        modal: {
+          name_placeholder: "Labelname",
+          pick_color: "Labelfarbe auswählen",
+        },
+        actions: {
+          edit: "Label bearbeiten",
+          delete: "Label löschen",
+        },
+        drag_to_reorder: "Zum Neuordnen ziehen",
+        delete_modal: {
+          title: "Label löschen",
+          content:
+            'Möchten Sie das Label "{labelName}" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+        },
+        toasts: {
+          delete: {
+            success: "Label erfolgreich gelöscht.",
+            error: "Label konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+          },
+        },
+      },
+    },
   },
 } as const;

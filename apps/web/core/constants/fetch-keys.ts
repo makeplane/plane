@@ -84,6 +84,8 @@ export const WORKSPACE_ESTIMATES = (workspaceSlug: string) => `WORKSPACE_ESTIMAT
 export const WORKSPACE_WORKFLOW_STATES = (workspaceSlug: string) =>
   `WORKSPACE_WORKFLOW_STATES_${workspaceSlug.toUpperCase()}`;
 
+export const RELEASES = (workspaceSlug: string) => `RELEASES_${workspaceSlug}`;
+
 export const WORKSPACE_INVITATION = (invitationId: string) => `WORKSPACE_INVITATION_${invitationId}`;
 
 export const WORKSPACE_MEMBER_ME_INFORMATION = (workspaceSlug: string) =>

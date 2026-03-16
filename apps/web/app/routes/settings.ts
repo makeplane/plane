@@ -67,6 +67,12 @@ export const settingsRoutes: RouteConfigEntry[] = [
         "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/customers/page.tsx"
       ),
 
+      // Releases
+      route(
+        ":workspaceSlug/settings/releases",
+        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/releases/page.tsx"
+      ),
+
       // Initiatives
       route(
         ":workspaceSlug/settings/initiatives",

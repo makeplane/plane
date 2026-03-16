@@ -35,6 +35,7 @@ export * from "./form";
 export * from "./graph";
 export * from "./icon";
 export * from "./initiatives";
+export * from "./releases";
 export * from "./instance";
 export * from "./intake";
 export * from "./issue";

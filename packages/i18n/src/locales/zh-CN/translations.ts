@@ -1952,6 +1952,16 @@ export default {
       customers: {
         title: "客户",
       },
+      releases: {
+        title: "发布",
+        update_release: "更新发布",
+        create_release: "创建发布",
+        errors: {
+          release_not_found: "您要查找的发布不存在。",
+          unknown: "出了点问题。请重试。",
+        },
+      },
+
       cancel_trial: {
         title: "请先取消试用期。",
         description: "您目前正在试用我们的付费计划。请先取消试用后再继续。",
@@ -6436,5 +6446,111 @@ export default {
     },
     placeholder: '输入查询并按 "ENTER" 进行筛选...',
     error: "提交查询时出错。请检查后重试。",
+  },
+  releases: {
+    releases: "发布",
+    release: "发布",
+    no_release: "暂无发布",
+    count_releases: "{count, plural, one {# 发布} other {# 发布}}",
+    actions: {
+      delete: "删除",
+    },
+    delete_modal: {
+      title: "删除发布",
+      content: "您确定要删除发布“{releaseName}”吗？此操作无法撤销。",
+    },
+    settings: {
+      heading: {
+        title: "发布",
+        description: "使用发布精准管理项目交付物。",
+      },
+      toggle: {
+        title: "启用发布",
+        description: "工作区成员将在各自的项目中拥有该范围的查看权限。",
+      },
+      toasts: {
+        enable: {
+          loading: "正在启用发布...",
+          success: {
+            title: "已启用发布",
+            message: "已为该工作区启用发布。",
+          },
+          error: {
+            title: "错误",
+            message: "启用发布失败。请重试。",
+          },
+        },
+        disable: {
+          loading: "正在禁用发布...",
+          success: {
+            title: "已禁用发布",
+            message: "已为该工作区禁用发布。",
+          },
+          error: {
+            title: "错误",
+            message: "禁用发布失败。请重试。",
+          },
+        },
+      },
+      tabs: {
+        tags: "发布标签",
+        labels: "标签",
+      },
+      tags: {
+        title: "发布标签",
+        description: "使用标签对发布进行分类和筛选。",
+        add: "添加标签",
+        empty_state: "还没有标签。创建您的第一个标签。",
+        errors: {
+          version_required: "版本为必填项。",
+          version_already_exists: "已存在具有此版本的标签。",
+          generic: "出了点问题。请重试。",
+        },
+        delete_modal: {
+          title: "删除标签",
+          content: "您确定要删除标签“{tagVersion}”吗？此操作无法撤销。",
+        },
+        actions: {
+          edit: "编辑标签",
+          delete: "删除标签",
+        },
+        toasts: {
+          delete: {
+            success: "标签已成功删除。",
+            error: "删除标签失败。请重试。",
+          },
+        },
+      },
+      labels: {
+        title: "标签",
+        description: "使用标签来整理和组织您的计划。",
+        add: "添加标签",
+        empty_state: "还没有标签。创建您的第一个标签。",
+        errors: {
+          name_required: "名称为必填项。",
+          name_already_exists: "已存在同名标签。",
+          generic: "出了点问题。请重试。",
+        },
+        modal: {
+          name_placeholder: "标签名称",
+          pick_color: "选择标签颜色",
+        },
+        actions: {
+          edit: "编辑标签",
+          delete: "删除标签",
+        },
+        drag_to_reorder: "拖动以重新排序",
+        delete_modal: {
+          title: "删除标签",
+          content: "您确定要删除标签“{labelName}”吗？此操作无法撤销。",
+        },
+        toasts: {
+          delete: {
+            success: "标签已成功删除。",
+            error: "删除标签失败。请重试。",
+          },
+        },
+      },
+    },
   },
 } as const;

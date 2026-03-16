@@ -28,6 +28,7 @@ export default defineConfig({
     "src/pill/index.ts",
     "src/popover/index.ts",
     "src/portal/index.ts",
+    "src/progress/circular-progress-indicator.tsx",
     "src/scrollarea/index.ts",
     "src/separator/index.ts",
     "src/skeleton/index.ts",

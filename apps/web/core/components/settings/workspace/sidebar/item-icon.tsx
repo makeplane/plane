@@ -35,6 +35,7 @@ import {
   PiIcon,
   ProjectStatesIcon,
   RelationPropertyIcon,
+  ReleaseIcon,
   TeamsIcon,
 } from "@plane/propel/icons";
 import type { TWorkspaceSettingsTabs } from "@plane/types";
@@ -52,6 +53,7 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   teamspaces: TeamsIcon,
   initiatives: InitiativeIcon,
   customers: CustomersIcon,
+  releases: ReleaseIcon,
   templates: Shapes,
   integrations: Cable,
   connections: Blocks,

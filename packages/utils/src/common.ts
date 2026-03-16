@@ -14,7 +14,7 @@
 import { clsx } from "clsx";
 import type { ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
-import type { CompleteOrEmpty, TError } from "@plane/types";
+import type { CompleteOrEmpty, TApiErrorResponse, TError } from "@plane/types";
 
 // Support email can be configured by the application
 export const getSupportEmail = (defaultEmail: string = ""): string => defaultEmail;
@@ -128,6 +128,14 @@ export const isComplete = <T>(obj: CompleteOrEmpty<T>): obj is T => {
 };
 
 export const convertRemToPixel = (rem: number): number => rem * 0.9 * 16;
+
+export const isApiError = (err: unknown): err is TApiErrorResponse =>
+  typeof err === "object" &&
+  err !== null &&
+  "code" in err &&
+  typeof (err as Record<string, unknown>).code === "string" &&
+  "error" in err &&
+  typeof (err as Record<string, unknown>).error === "string";
 
 /**
  *  Calculates the final sort_order for the movedItem

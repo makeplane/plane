@@ -32,12 +32,14 @@ export type TWorkspaceSettingsTabs =
   | "teamspaces"
   | "initiatives"
   | "customers"
+  | "releases"
   | "templates"
   | "plane-intelligence"
   | "connections"
   | "scripts"
-  | "relations"
-  | "access-tokens";
+  | "access-tokens"
+  | "relations";
+
 export type TWorkspaceSettingsItem = {
   key: TWorkspaceSettingsTabs;
   i18n_label: string;

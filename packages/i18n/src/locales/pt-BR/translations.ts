@@ -2005,6 +2005,16 @@ Crie um novo projeto em vez disso`,
       customers: {
         title: "Clientes",
       },
+      releases: {
+        title: "Lançamentos",
+        update_release: "Atualizar lançamento",
+        create_release: "Criar lançamento",
+        errors: {
+          release_not_found: "O lançamento que você está procurando não existe.",
+          unknown: "Algo deu errado. Tente novamente.",
+        },
+      },
+
       cancel_trial: {
         title: "Cancele seu período de teste primeiro.",
         description:
@@ -6681,5 +6691,111 @@ da maneira que você quiser a partir das fontes que você especificar.`,
     },
     placeholder: 'Digite uma consulta e pressione "ENTER" para filtrar...',
     error: "Erro ao enviar a consulta. Por favor, verifique e tente novamente.",
+  },
+  releases: {
+    releases: "Lançamentos",
+    release: "Lançamento",
+    no_release: "Nenhum lançamento",
+    count_releases: "{count, plural, one {# lançamento} other {# lançamentos}}",
+    actions: {
+      delete: "Excluir",
+    },
+    delete_modal: {
+      title: "Excluir lançamento",
+      content: 'Tem certeza de que deseja excluir o lançamento "{releaseName}"? Esta ação não pode ser desfeita.',
+    },
+    settings: {
+      heading: {
+        title: "Lançamentos",
+        description: "Gerencie as entregas do projeto com precisão usando lançamentos.",
+      },
+      toggle: {
+        title: "Ativar lançamentos",
+        description: "Os membros do workspace terão acesso de visualização ao escopo em seus respectivos projetos.",
+      },
+      toasts: {
+        enable: {
+          loading: "Ativando lançamentos...",
+          success: {
+            title: "Lançamentos ativados",
+            message: "Os lançamentos foram ativados para este workspace.",
+          },
+          error: {
+            title: "Erro",
+            message: "Não foi possível ativar os lançamentos. Tente novamente.",
+          },
+        },
+        disable: {
+          loading: "Desativando lançamentos...",
+          success: {
+            title: "Lançamentos desativados",
+            message: "Os lançamentos foram desativados para este workspace.",
+          },
+          error: {
+            title: "Erro",
+            message: "Não foi possível desativar os lançamentos. Tente novamente.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Tags de lançamento",
+        labels: "Etiquetas",
+      },
+      tags: {
+        title: "Tags de lançamento",
+        description: "Categorize e filtre seus lançamentos usando tags.",
+        add: "Adicionar tag",
+        empty_state: "Ainda não há tags. Crie sua primeira tag.",
+        errors: {
+          version_required: "A versão é obrigatória.",
+          version_already_exists: "Já existe uma tag com esta versão.",
+          generic: "Algo deu errado. Tente novamente.",
+        },
+        delete_modal: {
+          title: "Excluir tag",
+          content: 'Tem certeza de que deseja excluir a tag "{tagVersion}"? Esta ação não pode ser desfeita.',
+        },
+        actions: {
+          edit: "Editar tag",
+          delete: "Excluir tag",
+        },
+        toasts: {
+          delete: {
+            success: "Tag excluída com sucesso.",
+            error: "Não foi possível excluir a tag. Tente novamente.",
+          },
+        },
+      },
+      labels: {
+        title: "Etiquetas",
+        description: "Estruture e organize suas iniciativas com etiquetas.",
+        add: "Adicionar etiqueta",
+        empty_state: "Ainda não há etiquetas. Crie sua primeira etiqueta.",
+        errors: {
+          name_required: "O nome é obrigatório.",
+          name_already_exists: "Já existe uma etiqueta com esse nome.",
+          generic: "Algo deu errado. Tente novamente.",
+        },
+        modal: {
+          name_placeholder: "Nome da etiqueta",
+          pick_color: "Escolher cor da etiqueta",
+        },
+        actions: {
+          edit: "Editar etiqueta",
+          delete: "Excluir etiqueta",
+        },
+        drag_to_reorder: "Arraste para reordenar",
+        delete_modal: {
+          title: "Excluir etiqueta",
+          content: 'Tem certeza de que deseja excluir a etiqueta "{labelName}"? Esta ação não pode ser desfeita.',
+        },
+        toasts: {
+          delete: {
+            success: "Etiqueta excluída com sucesso.",
+            error: "Não foi possível excluir a etiqueta. Tente novamente.",
+          },
+        },
+      },
+    },
   },
 } as const;

@@ -84,6 +84,7 @@ class ReleaseEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
+
         serializer = ReleaseWriteSerializer(
             data=request.data,
             context={"workspace_id": workspace.id},
@@ -93,6 +94,7 @@ class ReleaseEndpoint(BaseAPIView):
             release = self.get_queryset().get(pk=serializer.data.get("id"))
             serializer = ReleaseSerializer(release)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.RELEASES)
@@ -111,7 +113,7 @@ class ReleaseEndpoint(BaseAPIView):
         )
         if not release:
             return Response(
-                {"error": "Release not found"},
+                {"error": "Release not found", "code": "RELEASE_NOT_FOUND"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 

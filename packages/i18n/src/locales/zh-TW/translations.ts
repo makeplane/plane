@@ -1954,6 +1954,16 @@ export default {
       customers: {
         title: "客戶",
       },
+      releases: {
+        title: "發佈",
+        update_release: "更新發佈",
+        create_release: "建立發佈",
+        errors: {
+          release_not_found: "您要尋找的發佈不存在。",
+          unknown: "發生錯誤。請再試一次。",
+        },
+      },
+
       cancel_trial: {
         title: "請先取消您的試用期。",
         description: "您有一個我們付費方案的有效試用期。請先取消它才能繼續。",
@@ -6460,5 +6470,111 @@ export default {
     },
     placeholder: '輸入查詢並按 "ENTER" 進行篩選...',
     error: "提交查詢時發生錯誤。請檢查後重試。",
+  },
+  releases: {
+    releases: "發佈",
+    release: "發佈",
+    no_release: "尚無發佈",
+    count_releases: "{count, plural, one {# 發佈} other {# 發佈}}",
+    actions: {
+      delete: "刪除",
+    },
+    delete_modal: {
+      title: "刪除發佈",
+      content: "您確定要刪除發佈「{releaseName}」嗎？此操作無法復原。",
+    },
+    settings: {
+      heading: {
+        title: "發佈",
+        description: "使用發佈精準管理專案交付物。",
+      },
+      toggle: {
+        title: "啟用發佈",
+        description: "工作區成員將在各自的專案中擁有此範圍的檢視權限。",
+      },
+      toasts: {
+        enable: {
+          loading: "正在啟用發佈...",
+          success: {
+            title: "已啟用發佈",
+            message: "此工作區已啟用發佈。",
+          },
+          error: {
+            title: "錯誤",
+            message: "啟用發佈失敗。請再試一次。",
+          },
+        },
+        disable: {
+          loading: "正在停用發佈...",
+          success: {
+            title: "已停用發佈",
+            message: "此工作區已停用發佈。",
+          },
+          error: {
+            title: "錯誤",
+            message: "停用發佈失敗。請再試一次。",
+          },
+        },
+      },
+      tabs: {
+        tags: "發佈標籤",
+        labels: "標籤",
+      },
+      tags: {
+        title: "發佈標籤",
+        description: "使用標籤對發佈進行分類與篩選。",
+        add: "新增標籤",
+        empty_state: "還沒有標籤。建立您的第一個標籤。",
+        errors: {
+          version_required: "版本為必填項。",
+          version_already_exists: "已存在具有此版本的標籤。",
+          generic: "發生錯誤。請再試一次。",
+        },
+        delete_modal: {
+          title: "刪除標籤",
+          content: "您確定要刪除標籤「{tagVersion}」嗎？此操作無法復原。",
+        },
+        actions: {
+          edit: "編輯標籤",
+          delete: "刪除標籤",
+        },
+        toasts: {
+          delete: {
+            success: "標籤已成功刪除。",
+            error: "刪除標籤失敗。請再試一次。",
+          },
+        },
+      },
+      labels: {
+        title: "標籤",
+        description: "使用標籤來整理與組織您的計劃。",
+        add: "新增標籤",
+        empty_state: "還沒有標籤。建立您的第一個標籤。",
+        errors: {
+          name_required: "名稱為必填項。",
+          name_already_exists: "已存在同名標籤。",
+          generic: "發生錯誤。請再試一次。",
+        },
+        modal: {
+          name_placeholder: "標籤名稱",
+          pick_color: "選擇標籤顏色",
+        },
+        actions: {
+          edit: "編輯標籤",
+          delete: "刪除標籤",
+        },
+        drag_to_reorder: "拖曳以重新排序",
+        delete_modal: {
+          title: "刪除標籤",
+          content: "您確定要刪除標籤「{labelName}」嗎？此操作無法復原。",
+        },
+        toasts: {
+          delete: {
+            success: "標籤已成功刪除。",
+            error: "刪除標籤失敗。請再試一次。",
+          },
+        },
+      },
+    },
   },
 } as const;

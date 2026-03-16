@@ -62,3 +62,8 @@ export type TDescription = {
   description_stripped: string;
   description_binary: string;
 };
+
+export type TApiErrorResponse<TCode extends string = string> = {
+  error: string;
+  code: TCode;
+};

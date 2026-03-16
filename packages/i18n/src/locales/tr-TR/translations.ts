@@ -1996,6 +1996,16 @@ Bunun yerine yeni bir proje oluşturun`,
       customers: {
         title: "Kastımerlar",
       },
+      releases: {
+        title: "Sürümler",
+        update_release: "Sürümü güncelle",
+        create_release: "Sürüm oluştur",
+        errors: {
+          release_not_found: "Aradığınız sürüm mevcut değil.",
+          unknown: "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+        },
+      },
+
       cancel_trial: {
         title: "Önce deneme sürenizi iptal edin.",
         description:
@@ -6665,5 +6675,111 @@ modüller arşivlenebilir.`,
     },
     placeholder: 'Bir sorgu yazın ve filtrelemek için "ENTER" tuşuna basın...',
     error: "Sorgu gönderilirken hata oluştu. Lütfen kontrol edip tekrar deneyin.",
+  },
+  releases: {
+    releases: "Sürümler",
+    release: "Sürüm",
+    no_release: "Sürüm yok",
+    count_releases: "{count, plural, one {# Sürüm} other {# Sürüm}}",
+    actions: {
+      delete: "Sil",
+    },
+    delete_modal: {
+      title: "Sürümü sil",
+      content: '"{releaseName}" sürümünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    },
+    settings: {
+      heading: {
+        title: "Sürümler",
+        description: "Sürümleri kullanarak proje teslimlerini hassas bir şekilde yönetin.",
+      },
+      toggle: {
+        title: "Sürümleri etkinleştir",
+        description: "Çalışma alanı üyeleri, kendi projelerinde kapsamı görüntüleme erişimine sahip olacak.",
+      },
+      toasts: {
+        enable: {
+          loading: "Sürümler etkinleştiriliyor...",
+          success: {
+            title: "Sürümler etkinleştirildi",
+            message: "Sürümler bu çalışma alanı için etkinleştirildi.",
+          },
+          error: {
+            title: "Hata",
+            message: "Sürümler etkinleştirilemedi. Lütfen tekrar deneyin.",
+          },
+        },
+        disable: {
+          loading: "Sürümler devre dışı bırakılıyor...",
+          success: {
+            title: "Sürümler devre dışı bırakıldı",
+            message: "Sürümler bu çalışma alanı için devre dışı bırakıldı.",
+          },
+          error: {
+            title: "Hata",
+            message: "Sürümler devre dışı bırakılamadı. Lütfen tekrar deneyin.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Sürüm etiketleri",
+        labels: "Etiketler",
+      },
+      tags: {
+        title: "Sürüm etiketleri",
+        description: "Etiketleri kullanarak sürümlerinizi kategorize edin ve filtreleyin.",
+        add: "Etiket ekle",
+        empty_state: "Henüz etiket yok. İlk etiketinizi oluşturun.",
+        errors: {
+          version_required: "Sürüm gereklidir.",
+          version_already_exists: "Bu sürüme sahip bir etiket zaten var.",
+          generic: "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+        },
+        delete_modal: {
+          title: "Etiketi sil",
+          content: '"{tagVersion}" etiketini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+        },
+        actions: {
+          edit: "Etiketi düzenle",
+          delete: "Etiketi sil",
+        },
+        toasts: {
+          delete: {
+            success: "Etiket başarıyla silindi.",
+            error: "Etiket silinemedi. Lütfen tekrar deneyin.",
+          },
+        },
+      },
+      labels: {
+        title: "Etiketler",
+        description: "Girişimlerinizi etiketlerle yapılandırın ve düzenleyin.",
+        add: "Etiket ekle",
+        empty_state: "Henüz etiket yok. İlk etiketinizi oluşturun.",
+        errors: {
+          name_required: "Ad gereklidir.",
+          name_already_exists: "Bu adda bir etiket zaten var.",
+          generic: "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+        },
+        modal: {
+          name_placeholder: "Etiket adı",
+          pick_color: "Etiket rengini seçin",
+        },
+        actions: {
+          edit: "Etiketi düzenle",
+          delete: "Etiketi sil",
+        },
+        drag_to_reorder: "Yeniden sıralamak için sürükleyin",
+        delete_modal: {
+          title: "Etiketi sil",
+          content: '"{labelName}" etiketini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+        },
+        toasts: {
+          delete: {
+            success: "Etiket başarıyla silindi.",
+            error: "Etiket silinemedi. Lütfen tekrar deneyin.",
+          },
+        },
+      },
+    },
   },
 } as const;

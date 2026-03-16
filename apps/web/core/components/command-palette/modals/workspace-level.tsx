@@ -50,6 +50,11 @@ const CreateUpdateTeamspaceViewModal = lazy(() =>
     default: module.CreateUpdateTeamspaceViewModal,
   }))
 );
+const CreateUpdateReleaseModal = lazy(() =>
+  import("@/components/releases/modal/modal").then((module) => ({
+    default: module.CreateUpdateReleaseModal,
+  }))
+);
 
 export type TWorkspaceLevelModalsProps = {
   workspaceSlug: string;
@@ -73,6 +78,8 @@ export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props
     toggleCreateInitiativeModal,
     createUpdateCustomerModal,
     toggleCreateCustomerModal,
+    createUpdateReleaseModal,
+    toggleCreateReleaseModal,
     createWorkItemAllowedProjectIds,
   } = useCommandPalette();
   const {
@@ -150,6 +157,12 @@ export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props
         isOpen={createUpdateCustomerModal.isOpen}
         customerId={createUpdateCustomerModal.customerId}
         onClose={() => toggleCreateCustomerModal({ isOpen: false, customerId: undefined })}
+      />
+      <CreateUpdateReleaseModal
+        isOpen={createUpdateReleaseModal.isOpen}
+        releaseId={createUpdateReleaseModal.releaseId}
+        handleClose={() => toggleCreateReleaseModal({ isOpen: false, releaseId: undefined })}
+        workspaceSlug={workspaceSlug}
       />
     </Suspense>
   );

@@ -1989,6 +1989,16 @@ Tạo dự án mới`,
       customers: {
         title: "Khách hàng",
       },
+      releases: {
+        title: "Bản phát hành",
+        update_release: "Cập nhật bản phát hành",
+        create_release: "Tạo bản phát hành",
+        errors: {
+          release_not_found: "Bản phát hành bạn đang tìm không tồn tại.",
+          unknown: "Đã xảy ra lỗi. Vui lòng thử lại.",
+        },
+      },
+
       cancel_trial: {
         title: "Hủy bỏ dùng thử trước.",
         description:
@@ -6604,5 +6614,111 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
     },
     placeholder: 'Nhập truy vấn và nhấn "ENTER" để lọc...',
     error: "Lỗi khi gửi truy vấn. Vui lòng kiểm tra và thử lại.",
+  },
+  releases: {
+    releases: "Bản phát hành",
+    release: "Bản phát hành",
+    no_release: "Không có bản phát hành",
+    count_releases: "{count, plural, one {# bản phát hành} other {# bản phát hành}}",
+    actions: {
+      delete: "Xóa",
+    },
+    delete_modal: {
+      title: "Xóa bản phát hành",
+      content: 'Bạn có chắc chắn muốn xóa bản phát hành "{releaseName}" không? Hành động này không thể hoàn tác.',
+    },
+    settings: {
+      heading: {
+        title: "Bản phát hành",
+        description: "Quản lý các hạng mục bàn giao của dự án một cách chính xác bằng bản phát hành.",
+      },
+      toggle: {
+        title: "Bật bản phát hành",
+        description: "Thành viên không gian làm việc sẽ có quyền xem phạm vi trong các dự án tương ứng của họ.",
+      },
+      toasts: {
+        enable: {
+          loading: "Đang bật bản phát hành...",
+          success: {
+            title: "Đã bật bản phát hành",
+            message: "Bản phát hành đã được bật cho không gian làm việc này.",
+          },
+          error: {
+            title: "Lỗi",
+            message: "Không thể bật bản phát hành. Vui lòng thử lại.",
+          },
+        },
+        disable: {
+          loading: "Đang tắt bản phát hành...",
+          success: {
+            title: "Đã tắt bản phát hành",
+            message: "Bản phát hành đã được tắt cho không gian làm việc này.",
+          },
+          error: {
+            title: "Lỗi",
+            message: "Không thể tắt bản phát hành. Vui lòng thử lại.",
+          },
+        },
+      },
+      tabs: {
+        tags: "Thẻ bản phát hành",
+        labels: "Nhãn",
+      },
+      tags: {
+        title: "Thẻ bản phát hành",
+        description: "Phân loại và lọc các bản phát hành của bạn bằng thẻ.",
+        add: "Thêm thẻ",
+        empty_state: "Chưa có thẻ nào. Hãy tạo thẻ đầu tiên của bạn.",
+        errors: {
+          version_required: "Phiên bản là bắt buộc.",
+          version_already_exists: "Đã tồn tại một thẻ với phiên bản này.",
+          generic: "Đã xảy ra lỗi. Vui lòng thử lại.",
+        },
+        delete_modal: {
+          title: "Xóa thẻ",
+          content: 'Bạn có chắc chắn muốn xóa thẻ "{tagVersion}" không? Hành động này không thể hoàn tác.',
+        },
+        actions: {
+          edit: "Chỉnh sửa thẻ",
+          delete: "Xóa thẻ",
+        },
+        toasts: {
+          delete: {
+            success: "Đã xóa thẻ thành công.",
+            error: "Không thể xóa thẻ. Vui lòng thử lại.",
+          },
+        },
+      },
+      labels: {
+        title: "Nhãn",
+        description: "Cấu trúc và sắp xếp các sáng kiến của bạn bằng nhãn.",
+        add: "Thêm nhãn",
+        empty_state: "Chưa có nhãn nào. Hãy tạo nhãn đầu tiên của bạn.",
+        errors: {
+          name_required: "Tên là bắt buộc.",
+          name_already_exists: "Đã tồn tại một nhãn với tên này.",
+          generic: "Đã xảy ra lỗi. Vui lòng thử lại.",
+        },
+        modal: {
+          name_placeholder: "Tên nhãn",
+          pick_color: "Chọn màu nhãn",
+        },
+        actions: {
+          edit: "Chỉnh sửa nhãn",
+          delete: "Xóa nhãn",
+        },
+        drag_to_reorder: "Kéo để sắp xếp lại",
+        delete_modal: {
+          title: "Xóa nhãn",
+          content: 'Bạn có chắc chắn muốn xóa nhãn "{labelName}" không? Hành động này không thể hoàn tác.',
+        },
+        toasts: {
+          delete: {
+            success: "Đã xóa nhãn thành công.",
+            error: "Không thể xóa nhãn. Vui lòng thử lại.",
+          },
+        },
+      },
+    },
   },
 } as const;
