@@ -18,6 +18,7 @@ from .script_execution import (
 )
 from .script_stats import ScriptStatsView
 from .function import FunctionListCreateView, FunctionRetrieveUpdateDestroyView
+from .runner_health import RunnerHealthView
 
 __all__ = [
     "ScriptListCreateView",
@@ -29,4 +30,5 @@ __all__ = [
     "ScriptStatsView",
     "FunctionListCreateView",
     "FunctionRetrieveUpdateDestroyView",
+    "RunnerHealthView",
 ]

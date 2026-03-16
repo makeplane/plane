@@ -70,6 +70,15 @@ app.use(loggerMiddleware);
 // Environment configuration is now loaded from env.ts
 
 /**
+ * GET /health
+ * Health check endpoint to verify the runner service is running
+ * Response: { status: "ok" }
+ */
+app.get("/health", (_req: Request, res: Response) => {
+  res.json({ status: "ok" });
+});
+
+/**
  * POST /build
  * Builds code from request body and returns the bundle
  * Request body: { code: string, code_type?: string }

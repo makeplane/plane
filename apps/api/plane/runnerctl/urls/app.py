@@ -20,9 +20,12 @@ from ..views.app import (
     ScriptStatsView,
     FunctionListCreateView,
     FunctionRetrieveUpdateDestroyView,
+    RunnerHealthView,
 )
 
 urlpatterns = [
+    # Health check endpoint
+    path("workspaces/<str:slug>/runnerctl/health/", RunnerHealthView.as_view(), name="runner-health"),
     # Test endpoint (no script_id required)
     path("workspaces/<str:slug>/runnerctl/test/", ScriptTestView.as_view(), name="script-test"),
     # Script endpoints

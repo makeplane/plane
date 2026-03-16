@@ -36,7 +36,7 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
     case "identity":
       return isCloudSSOEnabled;
     case "scripts":
-      return isPlaneRunnerEnabled;
+      return isPlaneRunnerEnabled && store.runners.isRunnerAvailable(workspaceSlug);
     case "releases":
       return isReleasesEnabled;
     case "relations":

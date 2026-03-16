@@ -11,13 +11,67 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
- 
- 
- 
- 
 import * as walk from "acorn-walk";
 import { tsParser } from "./ts-parser";
 import type { ASTNode } from "./ts-parser";
+
+// Extend acorn-walk's base visitors to handle TypeScript AST nodes produced by
+// @sveltejs/acorn-typescript. Without these, walk.simple() throws
+// "No walker function defined for node type TSxxx".
+const tsNodeTypes = [
+  "TSInterfaceDeclaration",
+  "TSTypeAliasDeclaration",
+  "TSEnumDeclaration",
+  "TSModuleDeclaration",
+  "TSAsExpression",
+  "TSSatisfiesExpression",
+  "TSNonNullExpression",
+  "TSTypeAssertion",
+  "TSTypeAnnotation",
+  "TSTypeParameterInstantiation",
+  "TSTypeParameterDeclaration",
+  "TSTypeReference",
+  "TSQualifiedName",
+  "TSFunctionType",
+  "TSConstructorType",
+  "TSMappedType",
+  "TSConditionalType",
+  "TSInferType",
+  "TSIndexedAccessType",
+  "TSLiteralType",
+  "TSUnionType",
+  "TSIntersectionType",
+  "TSTupleType",
+  "TSArrayType",
+  "TSRestType",
+  "TSOptionalType",
+  "TSParenthesizedType",
+  "TSTypePredicate",
+  "TSTypeQuery",
+  "TSImportType",
+  "TSTypeLiteral",
+  "TSPropertySignature",
+  "TSMethodSignature",
+  "TSIndexSignature",
+  "TSCallSignatureDeclaration",
+  "TSConstructSignatureDeclaration",
+  "TSInterfaceBody",
+  "TSEnumMember",
+  "TSModuleBlock",
+  "TSExternalModuleReference",
+  "TSAbstractMethodDefinition",
+  "TSParameterProperty",
+  "TSDeclareFunction",
+  "TSDeclareMethod",
+  "TSAbstractPropertyDefinition",
+  "TSInstantiationExpression",
+] as const;
+
+for (const nodeType of tsNodeTypes) {
+  if (!(nodeType in walk.base)) {
+    (walk.base as Record<string, walk.WalkerCallback<unknown>>)[nodeType] = () => {};
+  }
+}
 
 export interface ValidationResult {
   valid: boolean;

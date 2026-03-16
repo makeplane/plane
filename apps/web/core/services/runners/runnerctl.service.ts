@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+/* oxlint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access */
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // types
@@ -81,6 +82,13 @@ export class RunnerCtlService extends APIService {
       .catch((error) => {
         throw error?.response?.data;
       });
+  }
+
+  // Health check endpoint
+  async checkHealth(workspaceSlug: string): Promise<{ is_available: boolean }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/runnerctl/health/`)
+      .then((res) => res?.data)
+      .catch(() => ({ is_available: false }));
   }
 
   // Stats endpoint

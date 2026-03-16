@@ -26,12 +26,14 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useRunners } from "@/hooks/store/runners/use-runners";
 import { RunnersDashboard, FunctionsDashboard } from "@/components/runners";
 import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 import { ScriptsWorkspaceSettingsHeader } from "./header";
 import { Button } from "@plane/propel/button";
 import { RunnersUpgrade } from "@/components/runners/upgrade";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
+import PageNotFound from "@/app/not-found";
 
 type TabType = "scripts" | "functions";
 
@@ -41,6 +43,7 @@ const RunnersSettingsPage = observer(function RunnersSettingsPage() {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { getIntegrations } = useFeatureFlags();
+  const { isRunnerAvailable } = useRunners();
   const { t } = useTranslation();
 
   // Get active tab from URL or default to scripts
@@ -63,6 +66,12 @@ const RunnersSettingsPage = observer(function RunnersSettingsPage() {
     url.searchParams.set("tab", tab);
     window.history.replaceState({}, "", url.toString());
   };
+
+  const runnerHealthy = isRunnerAvailable(workspaceSlug);
+
+  if (!runnerHealthy) {
+    return <PageNotFound />;
+  }
 
   if (!isRunnerInstalled) {
     return (

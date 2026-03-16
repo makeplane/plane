@@ -64,13 +64,14 @@ class ScriptListCreateView(ListCreateAPIView):
             queryset = queryset.annotate(
                 total_executions=Count(
                     "executions",
-                    filter=Q(executions__deleted_at__isnull=True),
+                    filter=Q(executions__deleted_at__isnull=True, executions__workspace=workspace),
                 ),
                 successful_executions=Count(
                     "executions",
                     filter=Q(
                         executions__status="completed",
                         executions__deleted_at__isnull=True,
+                        executions__workspace=workspace,
                     ),
                 ),
                 last_run=Max(

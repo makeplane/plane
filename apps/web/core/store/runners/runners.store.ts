@@ -28,10 +28,12 @@ export interface IRunnersStore {
   stats: TRunnerScriptStats | null;
   isLoading: boolean;
   error: string | null;
+  runnerAvailability: Map<string, boolean>; // workspaceSlug => isAvailable
   // computed
   getScriptsByWorkspaceSlug: (workspaceSlug: string) => RunnerScript[];
   getScriptById: (scriptId: string) => RunnerScript | undefined;
   getExecutionsByScriptId: (scriptId: string) => TRunnerScriptExecution[];
+  isRunnerAvailable: (workspaceSlug: string) => boolean;
   // actions
   fetchScripts: (workspaceSlug: string, filters?: TRunnerScriptFilters) => Promise<RunnerScript[]>;
   fetchScriptById: (workspaceSlug: string, scriptId: string) => Promise<RunnerScript>;
@@ -39,6 +41,7 @@ export interface IRunnersStore {
   updateScript: (workspaceSlug: string, scriptId: string, data: Partial<RunnerScript>) => Promise<RunnerScript>;
   deleteScript: (workspaceSlug: string, scriptId: string) => Promise<void>;
   fetchStats: (workspaceSlug: string) => Promise<TRunnerScriptStats>;
+  checkRunnerHealth: (workspaceSlug: string) => Promise<boolean>;
 }
 
 export class RunnersStore implements IRunnersStore {
@@ -49,6 +52,7 @@ export class RunnersStore implements IRunnersStore {
   stats: TRunnerScriptStats | null = null;
   isLoading: boolean = false;
   error: string | null = null;
+  runnerAvailability: Map<string, boolean> = new Map();
   // root store
   rootStore: CoreRootStore;
   // services
@@ -63,6 +67,7 @@ export class RunnersStore implements IRunnersStore {
       stats: observable,
       isLoading: observable,
       error: observable,
+      runnerAvailability: observable,
       // actions
       fetchScripts: action,
       fetchScriptById: action,
@@ -70,6 +75,7 @@ export class RunnersStore implements IRunnersStore {
       updateScript: action,
       deleteScript: action,
       fetchStats: action,
+      checkRunnerHealth: action,
     });
 
     this.rootStore = store;
@@ -95,7 +101,28 @@ export class RunnersStore implements IRunnersStore {
     return this.executionMap.get(scriptId) ?? [];
   });
 
+  isRunnerAvailable = computedFn((workspaceSlug: string) => {
+    return this.runnerAvailability.get(workspaceSlug) ?? false;
+  });
+
   // actions
+  checkRunnerHealth = async (workspaceSlug: string): Promise<boolean> => {
+    try {
+      const result = await this.runnerCtlService.checkHealth(workspaceSlug);
+      const isAvailable = result.is_available === true;
+
+      runInAction(() => {
+        this.runnerAvailability.set(workspaceSlug, isAvailable);
+      });
+
+      return isAvailable;
+    } catch {
+      runInAction(() => {
+        this.runnerAvailability.set(workspaceSlug, false);
+      });
+      return false;
+    }
+  };
   fetchScripts = async (workspaceSlug: string, filters?: TRunnerScriptFilters): Promise<RunnerScript[]> => {
     try {
       runInAction(() => {

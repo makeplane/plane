@@ -107,7 +107,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { getInstance } = usePiChat();
   const { fetchAllWorkflows } = useWorkflows();
   const { fetchRelationDefinitions } = useRelationDefinition();
-  const { fetchScripts } = useRunners();
+  const { fetchScripts, checkRunnerHealth } = useRunners();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -348,6 +348,13 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     revalidateIfStale: false,
     errorRetryCount: 0,
   });
+
+  // fetching runner health
+  useSWR(
+    workspaceSlug ? `RUNNER_HEALTH_${workspaceSlug}` : null,
+    workspaceSlug ? () => checkRunnerHealth(workspaceSlug) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   // fetching runners scripts
   useSWR(
