@@ -64,7 +64,7 @@ export const OpinionPopover = observer(function OpinionPopover(props: Props) {
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("opinion.saved"), message: t("opinion.saved_successfully") });
       onClose();
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: t("common.error"), message: t("opinion.save_failed") });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t("opinion.save_failed") });
     } finally {
       setSubmitting(false);
     }
@@ -78,7 +78,7 @@ export const OpinionPopover = observer(function OpinionPopover(props: Props) {
       setToast({ type: TOAST_TYPE.SUCCESS, title: t("opinion.deleted"), message: t("opinion.deleted_successfully") });
       onClose();
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: t("common.error"), message: t("opinion.delete_failed") });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t("opinion.delete_failed") });
     } finally {
       setSubmitting(false);
     }
@@ -123,7 +123,7 @@ export const OpinionPopover = observer(function OpinionPopover(props: Props) {
             onClick={() => void handleSubmit()}
             className="rounded-md bg-surface-2 px-3 py-1 text-xs font-medium text-primary hover:bg-layer-3 disabled:opacity-50"
           >
-            {submitting ? t("common.saving") : t("common.save")}
+            {submitting ? t("saving") : t("save")}
           </button>
           {existingOpinion && (
             <button
