@@ -46,7 +46,7 @@ DEFAULT_STATES = [
         "is_system": True,
     },
     {
-        "name": "Internal Review",
+        "name": "Under Review",
         "color": "#8B5CF6",
         "sequence": 35000,
         "group": StateGroup.STARTED.value,

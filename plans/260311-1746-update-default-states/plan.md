@@ -13,19 +13,19 @@ created: 2026-03-11
 
 ## Goal
 
-1. Replace default state seed with new set (Draft, Scheduled, In Progress, Internal Review, Postponed, Done, Cancelled)
+1. Replace default state seed with new set (Draft, Scheduled, In Progress, Under Review, Postponed, Done, Cancelled)
 2. Default state = **Scheduled**
 3. System states are immutable by regular users — only **instance admin** or **god-mode admin** can create/edit/delete them
 
 ## Default State Mapping
 
-| Group           | States                                  |
-| --------------- | --------------------------------------- |
-| Draft (backlog) | Draft                                   |
-| Unstarted       | **Scheduled** ← default                 |
-| Started         | In Progress, Internal Review, Postponed |
-| Completed       | Done                                    |
-| Cancelled       | Cancelled                               |
+| Group           | States                               |
+| --------------- | ------------------------------------ |
+| Draft (backlog) | Draft                                |
+| Unstarted       | **Scheduled** ← default              |
+| Started         | In Progress, Under Review, Postponed |
+| Completed       | Done                                 |
+| Cancelled       | Cancelled                            |
 
 ## Phases
 
@@ -95,7 +95,7 @@ created: 2026-03-11
    - **Answer:** Allow sequence-only (Recommended)
    - **Rationale:** Phase 2's blanket PATCH guard was inconsistent with Session 1 Q3 decision. Must check request payload — if only `sequence` key is present, skip the is_system guard.
 
-2. **[Architecture]** Phase 3 data migration adds 'Internal Review' and 'Postponed' using `bulk_create(ignore_conflicts=True)`. If a project has a custom state with the same name, it won't hit the DB constraint and a duplicate is created. How should duplicates be handled?
+2. **[Architecture]** Phase 3 data migration adds 'Under Review' and 'Postponed' using `bulk_create(ignore_conflicts=True)`. If a project has a custom state with the same name, it won't hit the DB constraint and a duplicate is created. How should duplicates be handled?
    - Options: Skip by name check | Accept duplicates | Skip all custom projects
    - **Answer:** Skip by name check (Recommended)
    - **Rationale:** The existing `has_review` / `has_postponed` Python-level checks in Phase 3 are sufficient. No duplicates will be created if any state with that name already exists. `ignore_conflicts=True` is a safety net only.
@@ -352,13 +352,13 @@ Also generated + applied migration `0141` (pending model changes from workflow f
 
 #### Final Default State Set (7 states)
 
-| Group           | States                                  |
-| --------------- | --------------------------------------- |
-| Draft (backlog) | Draft                                   |
-| Unstarted       | **Scheduled** ← default                 |
-| Started         | In Progress, Internal Review, Postponed |
-| Completed       | Done                                    |
-| Cancelled       | Cancelled                               |
+| Group           | States                               |
+| --------------- | ------------------------------------ |
+| Draft (backlog) | Draft                                |
+| Unstarted       | **Scheduled** ← default              |
+| Started         | In Progress, Under Review, Postponed |
+| Completed       | Done                                 |
+| Cancelled       | Cancelled                            |
 
 > Triage state is **not** a default — it's created automatically by the Intake system when needed. The `TRIAGE` group, `TriageStateManager`, `is_triage` field, and all related Intake code remain intact (upstream feature).
 
