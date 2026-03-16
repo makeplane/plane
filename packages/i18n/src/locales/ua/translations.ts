@@ -4666,6 +4666,8 @@ export default {
     upload: {
       drop_file_here: "Перетягніть ваш zip файл Notion сюди",
       upload_title: "Завантажити експорт Notion",
+      upload_from_url: "Імпортувати за URL-адресою",
+      upload_from_url_description: "Вставте публічну URL-адресу вашого ZIP-експорту, щоб продовжити.",
       drag_drop_description: "Перетягніть ваш zip файл експорту Notion або натисніть для перегляду",
       file_type_restriction: "Підтримуються лише .zip файли, експортовані з Notion",
       select_file: "Вибрати файл",
@@ -4694,6 +4696,8 @@ export default {
     upload: {
       drop_file_here: "Перетягніть ваш zip файл Confluence сюди",
       upload_title: "Завантажити експорт Confluence",
+      upload_from_url: "Імпортувати за URL-адресою",
+      upload_from_url_description: "Вставте публічну URL-адресу вашого ZIP-експорту, щоб продовжити.",
       drag_drop_description: "Перетягніть ваш zip файл експорту Confluence або натисніть для перегляду",
       file_type_restriction: "Підтримуються лише .zip файли, експортовані з Confluence",
       select_file: "Вибрати файл",

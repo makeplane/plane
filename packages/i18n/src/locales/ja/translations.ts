@@ -4681,6 +4681,8 @@ export default {
     upload: {
       drop_file_here: "Notion zip ファイルをここにドロップ",
       upload_title: "Notion エクスポートをアップロード",
+      upload_from_url: "URLからインポート",
+      upload_from_url_description: "ZIPエクスポートの公開URLを貼り付けて続行してください。",
       drag_drop_description: "Notion エクスポート zip ファイルをドラッグ＆ドロップするか、クリックして参照",
       file_type_restriction: "Notionからエクスポートされた.zipファイルのみサポートされています",
       select_file: "ファイルを選択",
@@ -4709,6 +4711,8 @@ export default {
     upload: {
       drop_file_here: "Confluence zip ファイルをここにドロップ",
       upload_title: "Confluence エクスポートをアップロード",
+      upload_from_url: "URLからインポート",
+      upload_from_url_description: "ZIPエクスポートの公開URLを貼り付けて続行してください。",
       drag_drop_description: "Confluence エクスポート zip ファイルをドラッグ＆ドロップするか、クリックして参照",
       file_type_restriction: "Confluenceからエクスポートされた.zipファイルのみサポートされています",
       select_file: "ファイルを選択",

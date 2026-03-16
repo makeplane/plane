@@ -4551,6 +4551,8 @@ export default {
     upload: {
       drop_file_here: "将您的 Notion zip 文件拖放到这里",
       upload_title: "上传 Notion 导出文件",
+      upload_from_url: "从 URL 导入",
+      upload_from_url_description: "粘贴您的 ZIP 导出文件的公开 URL 以继续。",
       drag_drop_description: "拖放您的 Notion 导出 zip 文件，或点击浏览",
       file_type_restriction: "仅支持从 Notion 导出的 .zip 文件",
       select_file: "选择文件",
@@ -4579,6 +4581,8 @@ export default {
     upload: {
       drop_file_here: "将您的 Confluence zip 文件拖放到这里",
       upload_title: "上传 Confluence 导出文件",
+      upload_from_url: "从 URL 导入",
+      upload_from_url_description: "粘贴您的 ZIP 导出文件的公开 URL 以继续。",
       drag_drop_description: "拖放您的 Confluence 导出 zip 文件，或点击浏览",
       file_type_restriction: "仅支持从 Confluence 导出的 .zip 文件",
       select_file: "选择文件",

@@ -43,6 +43,7 @@ const defaultImporterData: TImporterDataPayload = {
   },
   [E_IMPORTER_STEPS.UPLOAD_ZIP]: {
     zipFile: undefined,
+    zipUrl: undefined,
   },
 };
 
@@ -98,7 +99,7 @@ export interface IZipImporterStore extends IImporterBaseStore {
   // upload methods
   uploadZipFile: (workspaceId: string, file: File) => Promise<void>;
   updateUploadProgress: (progress: number) => void;
-  confirmAndStartImport: (options?: { fileName?: string }) => Promise<void>;
+  confirmAndStartImport: (options?: { fileName?: string; fileUrl?: string }) => Promise<void>;
   resetUploadState: () => void;
   // helpers
   handleSyncJobConfig: <T extends keyof TDocImporterJobConfig>(key: T, config: TDocImporterJobConfig[T]) => void;
@@ -347,8 +348,9 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
    * @description Confirm the upload and start the import process
    * @param {Object} options - Options for the import
    * @param {string} options.fileName - Original file name
+   * @param {string} [options.fileUrl] - Optional URL for the file
    */
-  confirmAndStartImport = async (options?: { fileName?: string }): Promise<void> => {
+  confirmAndStartImport = async (options?: { fileName?: string; fileUrl?: string }): Promise<void> => {
     try {
       const {
         notionImporter: { workspace, user },
@@ -359,9 +361,12 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
       }
 
       const { fileKey, uploadId, etag } = this.uploadDetails;
+      const fileUrl = options?.fileUrl;
 
-      if (!fileKey || !uploadId || !etag) {
-        throw new Error("Missing upload details");
+      // Validation: we need either S3 upload details (fileKey, uploadId, etag) OR a fileUrl
+      const hasS3Details = fileKey && uploadId && etag;
+      if (!hasS3Details && !fileUrl) {
+        throw new Error("Missing upload details or file URL");
       }
 
       // Set state to confirming
@@ -373,16 +378,19 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
         }
       });
 
-      // Confirm the upload using Silo Assets
-      await this.siloAssetsService.confirmUpload(
-        workspace.slug,
-        uploadId // This is the asset_id from upload response
-      );
+      // Confirm the upload using Silo Assets ONLY if it's an S3 upload
+      if (hasS3Details) {
+        await this.siloAssetsService.confirmUpload(
+          workspace.slug,
+          uploadId // This is the asset_id from upload response
+        );
+      }
 
       this.configData = {
         ...this.configData,
         fileName: options?.fileName || "",
-        fileId: fileKey,
+        fileId: fileKey || "",
+        fileUrl: fileUrl || "",
       };
 
       await this.zipImporterService.startImport(workspace.id, user.id, this.configData);
