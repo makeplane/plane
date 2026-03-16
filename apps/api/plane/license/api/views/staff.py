@@ -260,14 +260,19 @@ class InstanceStaffBulkImportEndpoint(BaseAPIView):
             return Response({"error": "default_password is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         skip_existing = request.data.get("skip_existing", "true").lower() == "true"
+        update_existing = request.data.get("update_existing", "false").lower() == "true"
 
         try:
             decoded = csv_file.read().decode("utf-8-sig")
             reader = csv.DictReader(io.StringIO(decoded))
+            # Strip whitespace from header column names to handle "col1, col2" style headers
+            if reader.fieldnames:
+                reader.fieldnames = [f.strip() for f in reader.fieldnames]
         except Exception as e:
             return Response({"error": f"Failed to parse CSV: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
         created = 0
+        updated = 0
         skipped = 0
         errors = []
 
@@ -281,10 +286,33 @@ class InstanceStaffBulkImportEndpoint(BaseAPIView):
                 errors.append(f"Row {row_num}: missing staff_id")
                 continue
 
-            if skip_existing and StaffProfile.objects.filter(
-                staff_id=staff_id, deleted_at__isnull=True
-            ).exists():
-                skipped += 1
+            existing_profile = StaffProfile.objects.filter(staff_id=staff_id, deleted_at__isnull=True).first()
+
+            if existing_profile:
+                if update_existing:
+                    dept_code = row.get("department_code", "").strip()
+                    department = None
+                    if dept_code:
+                        department = Department.objects.filter(code=dept_code, deleted_at__isnull=True).first()
+
+                    data = {
+                        "first_name": row.get("first_name", "").strip(),
+                        "last_name": row.get("last_name", "").strip(),
+                        "display_name": row.get("display_name", "").strip(),
+                        "position": row.get("position", "").strip(),
+                        "job_grade": row.get("job_grade", "").strip(),
+                        "phone": row.get("phone", "").strip(),
+                        "date_of_joining": row.get("date_of_joining", "").strip() or None,
+                    }
+
+                    try:
+                        with transaction.atomic():
+                            _update_staff(existing_profile, department, data)
+                        updated += 1
+                    except Exception as e:
+                        errors.append(f"Row {row_num} ({staff_id}): {str(e)}")
+                elif skip_existing:
+                    skipped += 1
                 continue
 
             dept_code = row.get("department_code", "").strip()
@@ -312,7 +340,7 @@ class InstanceStaffBulkImportEndpoint(BaseAPIView):
             except Exception as e:
                 errors.append(f"Row {row_num} ({staff_id}): {str(e)}")
 
-        return Response({"created": created, "skipped": skipped, "errors": errors}, status=status.HTTP_200_OK)
+        return Response({"created": created, "updated": updated, "skipped": skipped, "errors": errors}, status=status.HTTP_200_OK)
 
 
 class InstanceStaffBulkActionEndpoint(BaseAPIView):
@@ -469,6 +497,31 @@ class InstanceStaffStatsEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+def _update_staff(staff_profile, department, data):
+    """Update User + StaffProfile fields for an existing staff member."""
+    user = staff_profile.user
+
+    # Update User name fields
+    user.first_name = data.get("first_name", user.first_name)
+    user.last_name = data.get("last_name", user.last_name)
+    display_name = data.get("display_name")
+    if display_name:
+        user.display_name = display_name
+    user.save(update_fields=["first_name", "last_name", "display_name"])
+
+    # Update StaffProfile fields
+    if department is not None:
+        staff_profile.department = department
+    staff_profile.position = data.get("position", staff_profile.position)
+    staff_profile.job_grade = data.get("job_grade", staff_profile.job_grade)
+    staff_profile.phone = data.get("phone", staff_profile.phone)
+    if data.get("date_of_joining") is not None:
+        staff_profile.date_of_joining = data["date_of_joining"]
+    staff_profile.save(update_fields=["department_id", "position", "job_grade", "phone", "date_of_joining"])
+
+    return staff_profile
 
 
 def _create_staff(department, data):
