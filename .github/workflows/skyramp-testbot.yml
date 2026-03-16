@@ -99,30 +99,31 @@ jobs:
 
       - name: Configure Plane API environment
         run: |
-          cat > apps/api/.env << 'EOF'
-          DEBUG=1
-          SECRET_KEY=ci-secret-key-for-testing-only-not-for-production
-          DATABASE_URL=postgresql://plane:plane@localhost:5432/plane
-          REDIS_HOST=localhost
-          REDIS_PORT=6379
-          REDIS_URL=redis://localhost:6379/
-          RABBITMQ_HOST=localhost
-          RABBITMQ_PORT=5672
-          RABBITMQ_USER=plane
-          RABBITMQ_PASSWORD=plane
-          RABBITMQ_VHOST=plane
-          AWS_ACCESS_KEY_ID=access-key
-          AWS_SECRET_ACCESS_KEY=secret-key
-          AWS_S3_BUCKET_NAME=uploads
-          AWS_S3_ENDPOINT_URL=http://localhost:9000
-          USE_MINIO=0
-          FILE_SIZE_LIMIT=5242880
-          GUNICORN_WORKERS=2
-          WEB_URL=http://localhost:8000
-          CORS_ALLOWED_ORIGINS=http://localhost:3000
-          ENABLE_DRF_SPECTACULAR=1
-          ALLOWED_HOSTS=localhost,127.0.0.1
-          EOF
+          # Write to $GITHUB_ENV so all variables are exported to every subsequent step
+          {
+            echo "DEBUG=1"
+            echo "SECRET_KEY=ci-secret-key-for-testing-only-not-for-production"
+            echo "DATABASE_URL=postgresql://plane:plane@localhost:5432/plane"
+            echo "REDIS_HOST=localhost"
+            echo "REDIS_PORT=6379"
+            echo "REDIS_URL=redis://localhost:6379/"
+            echo "RABBITMQ_HOST=localhost"
+            echo "RABBITMQ_PORT=5672"
+            echo "RABBITMQ_USER=plane"
+            echo "RABBITMQ_PASSWORD=plane"
+            echo "RABBITMQ_VHOST=plane"
+            echo "AWS_ACCESS_KEY_ID=access-key"
+            echo "AWS_SECRET_ACCESS_KEY=secret-key"
+            echo "AWS_S3_BUCKET_NAME=uploads"
+            echo "AWS_S3_ENDPOINT_URL=http://localhost:9000"
+            echo "USE_MINIO=0"
+            echo "FILE_SIZE_LIMIT=5242880"
+            echo "GUNICORN_WORKERS=2"
+            echo "WEB_URL=http://localhost:8000"
+            echo "CORS_ALLOWED_ORIGINS=http://localhost:3000"
+            echo "ENABLE_DRF_SPECTACULAR=1"
+            echo "ALLOWED_HOSTS=localhost,127.0.0.1"
+          } >> "$GITHUB_ENV"
 
       - name: Run database migrations
         working-directory: apps/api
