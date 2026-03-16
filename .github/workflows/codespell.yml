@@ -3,10 +3,10 @@
 name: Codespell
 
 on:
-  push:
-    branches: [preview]
-  pull_request:
-    branches: [preview]
+  # push:
+  #   branches: [preview]
+  # pull_request:
+  #   branches: [preview]
 
 permissions:
   contents: read
