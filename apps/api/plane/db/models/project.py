@@ -191,6 +191,7 @@ class Project(BaseModel):
     objects = ProjectBaseManager()
 
     FORBIDDEN_IDENTIFIER_CHARS_PATTERN = r"^.*[&+,:;$^}{*=?@#|'<>.()%!-].*$"
+    FORBIDDEN_NAME_CHARS_PATTERN = r"[<>\"{}[\]*^!#%\\]"
 
     @property
     def cover_image_url(self):
