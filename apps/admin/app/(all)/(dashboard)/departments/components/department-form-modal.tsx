@@ -59,9 +59,9 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
     if (editDept) {
       reset({
         name: editDept.name,
-        code: editDept.code,
-        short_name: editDept.short_name,
-        dept_code: editDept.dept_code,
+        code: editDept.code ?? "",
+        short_name: editDept.short_name ?? "",
+        dept_code: editDept.dept_code ?? "",
         dept_type: editDept.dept_type,
         description: editDept.description,
         parent: editDept.parent ?? "",
@@ -80,10 +80,10 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({ open,
     try {
       const payload: IInstanceDepartmentCreate = {
         ...data,
-        short_name: data.short_name.toUpperCase(),
+        short_name: (data.short_name ?? "").toUpperCase(),
         parent: data.parent || null,
         manager: data.manager || null,
-        linked_workspace: null,
+        linked_workspace: editDept?.linked_workspace ?? null,
       };
       if (editDept) {
         await updateDepartment(editDept.id, payload);

@@ -265,6 +265,9 @@ class InstanceStaffBulkImportEndpoint(BaseAPIView):
         try:
             decoded = csv_file.read().decode("utf-8-sig")
             reader = csv.DictReader(io.StringIO(decoded))
+            # Strip whitespace from header column names to handle "col1, col2" style headers
+            if reader.fieldnames:
+                reader.fieldnames = [f.strip() for f in reader.fieldnames]
         except Exception as e:
             return Response({"error": f"Failed to parse CSV: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -509,13 +512,14 @@ def _update_staff(staff_profile, department, data):
     user.save(update_fields=["first_name", "last_name", "display_name"])
 
     # Update StaffProfile fields
-    staff_profile.department = department if department is not None else staff_profile.department
+    if department is not None:
+        staff_profile.department = department
     staff_profile.position = data.get("position", staff_profile.position)
     staff_profile.job_grade = data.get("job_grade", staff_profile.job_grade)
     staff_profile.phone = data.get("phone", staff_profile.phone)
     if data.get("date_of_joining") is not None:
         staff_profile.date_of_joining = data["date_of_joining"]
-    staff_profile.save(update_fields=["department", "position", "job_grade", "phone", "date_of_joining"])
+    staff_profile.save(update_fields=["department_id", "position", "job_grade", "phone", "date_of_joining"])
 
     return staff_profile
 
