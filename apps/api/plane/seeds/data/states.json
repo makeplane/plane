@@ -31,7 +31,7 @@
   },
   {
     "id": 4,
-    "name": "Internal Review",
+    "name": "Under Review",
     "color": "#8B5CF6",
     "sequence": 35000,
     "group": "started",
