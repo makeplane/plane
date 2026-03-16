@@ -11,18 +11,24 @@
 
 import asyncio
 import contextlib
+import os
 import time
 from typing import Any
 from typing import Dict
 
+from opensearchpy import AWSV4SignerAuth
+from opensearchpy import AWSV4SignerAsyncAuth
+from opensearchpy import AsyncHttpConnection
 from opensearchpy import ConnectionTimeout
 from opensearchpy import OpenSearch
 from opensearchpy import RequestError
+from opensearchpy import RequestsHttpConnection
 from opensearchpy import TransportError
 from opensearchpy._async.client import AsyncOpenSearch
 
 from pi import logger
 from pi import settings
+from pi.core.embedding_config import active_model_supports_batch
 from pi.core.embedding_config import get_embedding_param_from_active_model
 from pi.core.vectordb.utils import build_issue_semantic_query
 from pi.core.vectordb.utils import build_issue_text_search_query
@@ -41,28 +47,95 @@ DOCS_INDEX = settings.vector_db.DOCS_INDEX
 WORKSPACE_ID = None  # Deprecated: use explicit workspace_id param instead
 
 
+def _build_opensearch_auth_kwargs_sync() -> Dict[str, Any]:
+    """
+    Build auth/connection kwargs for the synchronous OpenSearch client.
+
+    Preference order:
+    1. Basic auth if OPENSEARCH_USER/PASSWORD are set.
+    2. AWS SigV4 (IAM/IRSA/EKS pod identity) if AWS creds are available.
+    3. No auth (useful for local dev clusters without security).
+    """
+    if OPENSEARCH_USER and OPENSEARCH_PASSWORD:
+        return {"http_auth": (OPENSEARCH_USER, OPENSEARCH_PASSWORD)}
+
+    # Detect AWS creds via IRSA / EKS Pod Identity, consistent with API service.
+    has_aws_creds = bool(os.getenv("AWS_ROLE_ARN", "") or os.getenv("AWS_CONTAINER_CREDENTIALS_FULL_URI", ""))
+    if not has_aws_creds:
+        return {}
+
+    import boto3
+
+    region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION", "us-east-1")
+    credentials = boto3.Session().get_credentials()
+    if credentials is None:
+        return {}
+
+    auth = AWSV4SignerAuth(credentials, region, "es")
+    return {
+        "http_auth": auth,
+        "connection_class": RequestsHttpConnection,
+    }
+
+
+def _build_opensearch_auth_kwargs_async() -> Dict[str, Any]:
+    """
+    Build auth/connection kwargs for the asynchronous AsyncOpenSearch client.
+
+    Preference order:
+    1. Basic auth if OPENSEARCH_USER/PASSWORD are set.
+    2. AWS SigV4 async signer if AWS creds are available.
+    3. No auth (useful for local dev clusters without security).
+    """
+    if OPENSEARCH_USER and OPENSEARCH_PASSWORD:
+        return {"http_auth": (OPENSEARCH_USER, OPENSEARCH_PASSWORD)}
+
+    has_aws_creds = bool(os.getenv("AWS_ROLE_ARN", "") or os.getenv("AWS_CONTAINER_CREDENTIALS_FULL_URI", ""))
+    if not has_aws_creds:
+        return {}
+
+    import boto3
+
+    region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION", "us-east-1")
+    credentials = boto3.Session().get_credentials()
+    if credentials is None:
+        return {}
+
+    try:
+        async_auth = AWSV4SignerAsyncAuth(credentials, region, "es")
+    except Exception as exc:  # defensive guard – fall back to no auth
+        log.error("Failed to configure async AWS SigV4 auth for OpenSearch: %s", exc, exc_info=True)
+        return {}
+
+    return {
+        "http_auth": async_auth,
+        "connection_class": AsyncHttpConnection,
+    }
+
+
 class VectorStore:
     def __init__(self):
-        auth = (OPENSEARCH_USER, OPENSEARCH_PASSWORD)
+        sync_auth_kwargs = _build_opensearch_auth_kwargs_sync()
+        async_auth_kwargs = _build_opensearch_auth_kwargs_async()
 
         self.async_os = AsyncOpenSearch(
             hosts=[OPENSEARCH_URL],
-            http_auth=auth,
             use_ssl=True,
             verify_certs=False,
             ssl_show_warn=False,
             timeout=settings.vector_db.CONNECTION_TIMEOUT,
             connections_per_node=1,  # Prevent concurrent ML requests that hit rate limits
+            **async_auth_kwargs,
         )
 
         self.os = OpenSearch(
             hosts=[OPENSEARCH_URL],
-            http_auth=auth,
             use_ssl=True,
             verify_certs=False,
             ssl_show_warn=False,
             timeout=settings.vector_db.CONNECTION_TIMEOUT,
             connections_per_node=1,  # Prevent concurrent ML requests that hit rate limits
+            **sync_auth_kwargs,
         )
 
         # Background vector watch task is initialised on demand in
@@ -778,7 +851,7 @@ class VectorStore:
         """
         return self.os.transport.perform_request("GET", f"/_plugins/_ml/models/{model_id}")
 
-    def test_ml_model(self, model_id: str, test_input: list[str] | None = None) -> dict:
+    def test_ml_model(self, model_id: str, test_input: list[str] | str | None = None) -> dict:
         """
         Test inference with an ML model using the correct parameter format.
 
@@ -793,7 +866,11 @@ class VectorStore:
         # Get the correct parameter name for the active model
         param_name = get_embedding_param_from_active_model()
 
-        # Use provided test input or default
-        texts = test_input if test_input is not None else ["Test embedding generation"]
+        # Use provided test input or a default that respects batch capability
+        if test_input is None:
+            default = "Test embedding generation"
+            texts = default if not active_model_supports_batch() else [default]
+        else:
+            texts = test_input
 
         return self.os.transport.perform_request("POST", f"/_plugins/_ml/models/{model_id}/_predict", body={"parameters": {param_name: texts}})

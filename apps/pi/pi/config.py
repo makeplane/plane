@@ -222,6 +222,29 @@ class LLMConfig:
     CLAUDE_API_KEY: str = field(default_factory=lambda: os.getenv("CLAUDE_API_KEY", ""))
     COHERE_API_KEY: str = field(default_factory=lambda: os.getenv("COHERE_API_KEY", ""))
     GROQ_API_KEY: str = field(default_factory=lambda: os.getenv("GROQ_API_KEY", ""))
+    MODEL_SECRET_ARN: str = field(default_factory=lambda: os.getenv("MODEL_SECRET_ARN", ""))
+
+    def __post_init__(self) -> None:
+        secret_arn = self.MODEL_SECRET_ARN
+        has_aws_creds = bool(os.getenv("AWS_ROLE_ARN", "") or os.getenv("AWS_CONTAINER_CREDENTIALS_FULL_URI", ""))
+        if not (secret_arn and has_aws_creds):
+            return
+        from pi.utils.aws_secrets import get_secret
+
+        region = os.getenv("AWS_REGION", "us-east-1")
+        secret = get_secret(secret_arn, region)
+        if not os.getenv("OPENAI_API_KEY"):
+            self.OPENAI_API_KEY = str(secret.get(os.getenv("MODEL_OPENAI_KEY"), "") or "")
+        if not os.getenv("CLAUDE_API_KEY"):
+            self.CLAUDE_API_KEY = str(secret.get(os.getenv("MODEL_CLAUDE_KEY"), "") or "")
+        if not os.getenv("GROQ_API_KEY"):
+            self.GROQ_API_KEY = str(secret.get(os.getenv("MODEL_GROQ_KEY"), "") or "")
+        if not os.getenv("COHERE_API_KEY"):
+            self.COHERE_API_KEY = str(secret.get(os.getenv("MODEL_COHERE_KEY"), "") or "")
+        if not os.getenv("CUSTOM_LLM_API_KEY"):
+            key = str(secret.get(os.getenv("MODEL_CUSTOM_LLM_API_KEY"), "") or "")
+            if key:
+                self.CUSTOM_LLM_API_KEY = key
 
     # Base URLs (default to official endpoints; override via env for proxies/gateways)
     OPENAI_BASE_URL: str = field(default_factory=lambda: os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"))
@@ -369,6 +392,7 @@ class Database:
     PORT: Optional[str] = os.getenv("PLANE_PI_POSTGRES_PORT", None)
     DB: Optional[str] = os.getenv("PLANE_PI_POSTGRES_DB", None)
     URL: Optional[str] = os.getenv("PLANE_PI_DATABASE_URL", None)
+    RDS_SECRET_ARN: str = os.getenv("RDS_SECRET_ARN", "")
 
     # Connection pool settings for Celery workers
     CELERY_POOL_SIZE: int = get_env_int("CELERY_DB_POOL_SIZE", "20")
@@ -376,17 +400,50 @@ class Database:
     CELERY_POOL_TIMEOUT: int = get_env_int("CELERY_DB_POOL_TIMEOUT", "10")
     CELERY_POOL_RECYCLE: int = get_env_int("CELERY_DB_POOL_RECYCLE", "3600")
 
+    def _credentials_from_secret(self, force_refresh: bool = False) -> dict:
+        from pi.utils.aws_secrets import get_secret
+
+        region = os.getenv("AWS_REGION", "us-east-1")
+        secret = get_secret(self.RDS_SECRET_ARN, region, force_refresh=force_refresh)
+        return {
+            "host": secret.get(os.getenv("RDS_DB_HOST_KEY"), self.HOST or ""),
+            "port": secret.get(os.getenv("RDS_DB_PORT_KEY"), self.PORT or 5432),
+            "user": secret.get(os.getenv("RDS_DB_USERNAME_KEY"), self.USER or ""),
+            "password": secret.get(os.getenv("RDS_DB_PASSWORD_KEY"), self.PASSWORD or ""),
+            "name": secret.get(os.getenv("RDS_DB_NAME_KEY"), self.DB or ""),
+        }
+
     def connection_url(self) -> str:
         if self.URL:
             return self.URL
-        return f"postgresql://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DB}"
+        has_aws_creds = bool(os.getenv("AWS_ROLE_ARN", "") or os.getenv("AWS_CONTAINER_CREDENTIALS_FULL_URI", ""))
+        if self.RDS_SECRET_ARN and has_aws_creds:
+            from urllib.parse import quote
+
+            c = self._credentials_from_secret()
+            return f"postgresql://{quote(str(c["user"]))}:{quote(str(c["password"]))}" f"@{c["host"]}:{c["port"]}/{c["name"]}"
+        from urllib.parse import quote
+
+        user = quote(str(self.USER or ""), safe="")
+        password = quote(str(self.PASSWORD or ""), safe="")
+        return f"postgresql://{user}:{password}@{self.HOST}:{self.PORT}/{self.DB}"
 
     def async_connection_url(self) -> str:
         if self.URL:
             if "asyncpg" not in self.URL:
                 return self.URL.replace("postgresql", "postgresql+asyncpg")
             return self.URL
-        return f"postgresql+asyncpg://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DB}"
+        has_aws_creds = bool(os.getenv("AWS_ROLE_ARN", "") or os.getenv("AWS_CONTAINER_CREDENTIALS_FULL_URI", ""))
+        if self.RDS_SECRET_ARN and has_aws_creds:
+            from urllib.parse import quote
+
+            c = self._credentials_from_secret()
+            return f"postgresql+asyncpg://{quote(str(c["user"]))}:{quote(str(c["password"]))}" f"@{c["host"]}:{c["port"]}/{c["name"]}"
+        from urllib.parse import quote
+
+        user = quote(str(self.USER or ""), safe="")
+        password = quote(str(self.PASSWORD or ""), safe="")
+        return f"postgresql+asyncpg://{user}:{password}@{self.HOST}:{self.PORT}/{self.DB}"
 
 
 @dataclass
@@ -401,6 +458,118 @@ class Celery:
     # Tasks run asynchronously but progress is tracked via logs only
     BROKER_URL: str = os.getenv("CELERY_BROKER_URL") or os.getenv("AMQP_URL") or "pyamqp://guest@localhost:5672//"
     RESULT_BACKEND: str | None = None
+
+    def __post_init__(self) -> None:
+        def _parse_host_port_vhost(raw: str) -> tuple[str | None, int | None, str | None]:
+            """
+            Parse `host:port[/vhost]` (no scheme) into (host, port, vhost).
+            Returns (None, None, None) if `raw` doesn't match this shape.
+            """
+            if "://" in raw:
+                return None, None, None
+            if "@" in raw:
+                return None, None, None
+            if raw.strip() != raw or not raw:
+                return None, None, None
+            host_port, _, vhost_part = raw.partition("/")
+            host_port = host_port.strip()
+            if not host_port:
+                return None, None, None
+            host: str | None = None
+            port: int | None = None
+            if ":" in host_port:
+                h, p = host_port.rsplit(":", 1)
+                if h and p.isdigit():
+                    host = h
+                    port = int(p)
+            else:
+                host = host_port
+            vhost: str | None = None
+            if vhost_part:
+                vhost = "/" + vhost_part
+            return host, port, vhost
+
+        def _default_port_for_scheme(scheme: str) -> int:
+            # Align to common RabbitMQ defaults; for AmazonMQ users typically want amqps/5671.
+            if scheme == "amqps":
+                return 5671
+            return 5672
+
+        broker_env = os.getenv("CELERY_BROKER_URL") or os.getenv("AMQP_URL")
+        secret_arn = os.getenv("AMAZONMQ_SECRET_ARN", "")
+        has_aws_creds = bool(os.getenv("AWS_ROLE_ARN", "") or os.getenv("AWS_CONTAINER_CREDENTIALS_FULL_URI", ""))
+
+        # If no broker env var is set, keep existing behavior: fall back to secret-only mode.
+        if not broker_env:
+            if not (secret_arn and has_aws_creds):
+                return
+            from urllib.parse import quote
+
+            from pi.utils.aws_secrets import get_secret
+
+            region = os.getenv("AWS_REGION", "us-east-1")
+            secret = get_secret(secret_arn, region)
+            user = quote(str(secret.get(os.getenv("RABBITMQ_USER_KEY"), "")), safe="")
+            password = quote(str(secret.get(os.getenv("RABBITMQ_PASSWORD_KEY"), "")), safe="")
+            host = secret.get(os.getenv("RABBITMQ_HOST_KEY"), "")
+            port = secret.get(os.getenv("RABBITMQ_PORT_KEY"), 5671)
+            vhost = quote(str(secret.get(os.getenv("RABBITMQ_VHOST_KEY"), "/")), safe="")
+            self.BROKER_URL = f"amqps://{user}:{password}@{host}:{port}/{vhost}"
+            return
+
+        # If broker is provided but missing credentials (e.g. `host:5671`), inject creds from secret.
+        if not (secret_arn and has_aws_creds):
+            return
+
+        from urllib.parse import quote
+        from urllib.parse import urlparse
+
+        from pi.utils.aws_secrets import get_secret
+
+        parsed = urlparse(broker_env) if "://" in broker_env else None
+
+        # If broker env is a full URL and already includes creds, keep as-is.
+        if parsed and parsed.scheme and parsed.hostname and parsed.username and parsed.password:
+            return
+
+        # Support `host:port[/vhost]` by treating as `amqps://` (defaulting to 5671).
+        host_from_raw, port_from_raw, vhost_from_raw = _parse_host_port_vhost(broker_env)
+        if parsed is None and host_from_raw is None:
+            return
+
+        region = os.getenv("AWS_REGION", "us-east-1")
+        secret = get_secret(secret_arn, region)
+        secret_user = str(secret.get(os.getenv("RABBITMQ_USER_KEY"), ""))
+        secret_password = str(secret.get(os.getenv("RABBITMQ_PASSWORD_KEY"), ""))
+        if not (secret_user and secret_password):
+            return
+
+        scheme = "amqps"
+        if parsed and parsed.scheme:
+            scheme = parsed.scheme
+
+        host = host_from_raw
+        port = port_from_raw
+        vhost = vhost_from_raw
+
+        if parsed is not None:
+            host = parsed.hostname or host
+            port = parsed.port or port
+            if parsed.path:
+                # Normalize common cases: "", "/", "//" all mean root vhost "/"
+                if parsed.path in ("", "/", "//"):
+                    vhost = "/"
+                else:
+                    vhost = "/" + parsed.path.lstrip("/")
+
+        host = host or str(secret.get(os.getenv("RABBITMQ_HOST_KEY"), ""))
+        port = int(port or secret.get(os.getenv("RABBITMQ_PORT_KEY"), _default_port_for_scheme(scheme)))
+        vhost = vhost or str(secret.get(os.getenv("RABBITMQ_VHOST_KEY"), "/")) or "/"
+
+        user = quote(secret_user, safe="")
+        password = quote(secret_password, safe="")
+        vhost_q = quote(vhost, safe="")
+        self.BROKER_URL = f"{scheme}://{user}:{password}@{host}:{port}/{vhost_q}"
 
     TASK_SERIALIZER: str = "json"
     RESULT_SERIALIZER: str = "json"
@@ -468,6 +637,33 @@ class Settings:
     FEATURE_FLAG_SERVER_AUTH_TOKEN: str = os.getenv("FEATURE_FLAG_SERVER_AUTH_TOKEN", "")
 
     FOLLOWER_POSTGRES_URI: str = os.getenv("FOLLOWER_POSTGRES_URI", "")
+    FOLLOWER_RDS_SECRET_ARN: str = os.getenv("FOLLOWER_RDS_SECRET_ARN", "")
+
+    def follower_connection_url(self) -> str:
+        """Return the follower DB DSN, refreshing from Secrets Manager on TTL expiry."""
+        if self.FOLLOWER_POSTGRES_URI:
+            return self.FOLLOWER_POSTGRES_URI
+        has_aws_creds = bool(os.getenv("AWS_ROLE_ARN", "") or os.getenv("AWS_CONTAINER_CREDENTIALS_FULL_URI", ""))
+        if self.FOLLOWER_RDS_SECRET_ARN and has_aws_creds:
+            from urllib.parse import quote
+
+            from pi.utils.aws_secrets import get_secret
+
+            region = os.getenv("AWS_REGION", "us-east-1")
+            secret = get_secret(self.FOLLOWER_RDS_SECRET_ARN, region)
+            user = quote(
+                str(secret.get(os.getenv("FOLLOWER_RDS_DB_USERNAME_KEY"), "")),
+                safe="",
+            )
+            password = quote(
+                str(secret.get(os.getenv("FOLLOWER_RDS_DB_PASSWORD_KEY"), "")),
+                safe="",
+            )
+            host = secret.get(os.getenv("FOLLOWER_RDS_DB_HOST_KEY"), "")
+            port = secret.get(os.getenv("FOLLOWER_RDS_DB_PORT_KEY"), 5432)
+            name = secret.get(os.getenv("FOLLOWER_RDS_DB_NAME_KEY"), "")
+            return f"postgresql://{user}:{password}@{host}:{port}/{name}"
+        return self.FOLLOWER_POSTGRES_URI
 
     chat = Chat()
     server = Server()

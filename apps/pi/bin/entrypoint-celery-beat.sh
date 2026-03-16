@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if [ "$(id -u)" = "0" ]; then
+  exec su-exec plane "$0" "$@"
+fi
+
 echo "Starting Plane AI Celery Beat Scheduler..."
 
 # Set default values if not provided
@@ -14,4 +18,4 @@ echo "Schedule File: $CELERY_SCHEDULE_FILE"
 mkdir -p $(dirname "$CELERY_SCHEDULE_FILE")
 
 # Start the Celery beat scheduler
-python -m pi.scripts.celery_runner beat --loglevel=$CELERY_LOGLEVEL --schedule=$CELERY_SCHEDULE_FILE
+exec python -m pi.scripts.celery_runner beat --loglevel=$CELERY_LOGLEVEL --schedule=$CELERY_SCHEDULE_FILE

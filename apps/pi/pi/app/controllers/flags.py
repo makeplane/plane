@@ -21,6 +21,7 @@ Availability rule:
 from __future__ import annotations
 
 import asyncio
+import os
 from dataclasses import dataclass
 from typing import Dict
 from typing import Iterable
@@ -99,11 +100,9 @@ async def _compute_env_capabilities() -> _EnvCapabilities:
     # Embedding presence: ML_MODEL_ID or EMBEDDING_MODEL configured
     embedding_present = _has_value(settings.vector_db.ML_MODEL_ID) or _has_value(settings.vector_db.EMBEDDING_MODEL)
 
-    opensearch = (
-        _has_value(settings.vector_db.OPENSEARCH_URL)
-        and _has_value(settings.vector_db.OPENSEARCH_USER)
-        and _has_value(settings.vector_db.OPENSEARCH_PASSWORD)
-    )
+    has_basic_auth = _has_value(settings.vector_db.OPENSEARCH_USER) and _has_value(settings.vector_db.OPENSEARCH_PASSWORD)
+    has_iam_auth = bool(os.getenv("AWS_ROLE_ARN", "") or os.getenv("AWS_CONTAINER_CREDENTIALS_FULL_URI", ""))
+    opensearch = _has_value(settings.vector_db.OPENSEARCH_URL) and (has_basic_auth or has_iam_auth)
     cohere = _has_value(settings.llm_config.COHERE_API_KEY)
     groq = _has_value(settings.llm_config.GROQ_API_KEY)
     uploads = (

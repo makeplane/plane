@@ -32,6 +32,7 @@ FROM python:3.12.10-alpine AS base-runtime
 
 RUN apk add --no-cache libpq
 RUN apk add --no-cache "bash~=5.2"
+RUN apk add --no-cache "su-exec"
 
 WORKDIR /app
 
@@ -45,6 +46,9 @@ RUN mkdir -p /usr/share/licenses/plane/
 COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
 
 ENV PYTHONPATH=/app
+
+RUN addgroup -g 1000 plane && adduser -u 1000 -G plane -s /bin/sh -D plane
+RUN mkdir -p /app/celerybeat-schedule && chown -R plane:plane /app
 
 VOLUME [ "/var/tls" ]
 

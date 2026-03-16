@@ -43,9 +43,6 @@ from pi.config import settings
 
 config = context.config
 
-# setting up the database url for Alembic to use
-config.set_main_option("sqlalchemy.url", settings.database.connection_url())
-
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 

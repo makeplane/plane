@@ -98,6 +98,9 @@ These tasks run automatically on a schedule:
 - `CELERY_BROKER_URL`: RabbitMQ broker URL (default: `pyamqp://guest@localhost:5672//`)
 - **Note**: No result backend configured - tasks run asynchronously and progress is tracked via logs only
 
+### AmazonMQ / Secrets Manager (credential injection)
+- If `AMQP_URL`/`CELERY_BROKER_URL` is provided **without embedded credentials** (for example `b-...mq.us-east-1.on.aws:5671`), and `AMAZONMQ_SECRET_ARN` is configured, PI will fetch the username/password from AWS Secrets Manager and construct a full broker URL.
+
 ### Vector Sync
 - `CELERY_VECTOR_SYNC_ENABLED`: Enable/disable live sync (default: `1`)
 - `CELERY_VECTOR_SYNC_INTERVAL`: Sync interval in seconds (default: `30`)

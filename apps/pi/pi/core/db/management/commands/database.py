@@ -91,8 +91,8 @@ def wait_for_migrations():
         alembic_cfg = get_alembic_config()
         command.upgrade(alembic_cfg, "head")
         log.info("Migrations applied successfully!")
-    except Exception as e:
-        log.error(f"Migration failed: {e}")
+    except Exception:
+        log.error("Migration failed while applying database migrations. Check database connectivity and credentials.")
         sys.exit(1)
 
 

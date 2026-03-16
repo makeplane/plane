@@ -15,6 +15,7 @@ from langchain_cohere import CohereEmbeddings
 from pydantic import SecretStr
 
 from pi import settings
+from pi.core.embedding_config import active_model_supports_batch
 from pi.core.vectordb.client import VectorStore
 from pi.services.llm.llms import LLMConfig
 from pi.services.llm.llms import _create_custom_llm_config
@@ -192,7 +193,8 @@ def validate_embedding_model_id(model_id: Optional[str] = None) -> tuple[bool, s
 
         # Test actual embedding generation via OpenSearch ML model using correct parameter format
         test_text = "Test document for validating embedding model"
-        test_response = vs.test_ml_model(model_id=ml_model_id, test_input=[test_text])
+        test_input = [test_text] if active_model_supports_batch() else test_text
+        test_response = vs.test_ml_model(model_id=ml_model_id, test_input=test_input)
 
         # Extract embedding from response
         inference_results = test_response.get("inference_results", [])

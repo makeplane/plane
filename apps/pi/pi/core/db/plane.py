@@ -49,7 +49,7 @@ class PlaneDBPool:
         if cls._pool is None:
             try:
                 cls._pool = await create_pool(
-                    dsn=settings.FOLLOWER_POSTGRES_URI,
+                    dsn=settings.follower_connection_url(),
                     min_size=min_size,
                     max_size=max_size,
                     command_timeout=60,
@@ -141,7 +141,7 @@ class PlaneDBSync:
     def fetchrow(cls, query: str, params: SQLParams = None) -> Optional[Dict[str, Any]]:
         """Execute a query and return the first row (synchronous)."""
         try:
-            conn = psycopg2.connect(settings.FOLLOWER_POSTGRES_URI)
+            conn = psycopg2.connect(settings.follower_connection_url())
             try:
                 with conn.cursor() as cur:
                     cur.execute(query, params if params else ())
@@ -161,7 +161,7 @@ class PlaneDBSync:
     def fetch(cls, query: str, params: SQLParams = None) -> List[Dict[str, Any]]:
         """Execute a query and return all results (synchronous)."""
         try:
-            conn = psycopg2.connect(settings.FOLLOWER_POSTGRES_URI)
+            conn = psycopg2.connect(settings.follower_connection_url())
             try:
                 with conn.cursor() as cur:
                     cur.execute(query, params if params else ())

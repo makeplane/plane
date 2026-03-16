@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if [ "$(id -u)" = "0" ]; then
+  exec su-exec plane "$0" "$@"
+fi
+
 echo "Starting Plane AI API server..."
 
 # Set default values if not provided
@@ -18,4 +22,4 @@ echo "Checking for pending migrations..."
 python -m pi.manage check-migrations
 
 # Start the FastAPI application
-python -m pi.manage runserver
+exec python -m pi.manage runserver

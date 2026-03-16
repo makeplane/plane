@@ -60,13 +60,15 @@ def get_s3_client(use_public_url: bool = False):
                 plane_api.FRONTEND_URL so that the URL is accessible externally.
                 Otherwise, falls back to AWS_S3_ENDPOINT_URL or standard AWS S3.
     """
-    client_kwargs = {
+    client_kwargs: dict = {
         "service_name": "s3",
-        "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
-        "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
         "region_name": S3_REGION,
         "config": Config(signature_version="s3v4"),
     }
+    # Only pass explicit credentials when set; otherwise boto3 uses default chain (e.g. IRSA / EKS Pod Identity)
+    if settings.AWS_ACCESS_KEY_ID and settings.AWS_SECRET_ACCESS_KEY:
+        client_kwargs["aws_access_key_id"] = settings.AWS_ACCESS_KEY_ID
+        client_kwargs["aws_secret_access_key"] = settings.AWS_SECRET_ACCESS_KEY
 
     if not use_public_url:
         # Server-side operations: always use internal endpoint

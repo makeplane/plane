@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if [ "$(id -u)" = "0" ]; then
+  exec su-exec plane "$0" "$@"
+fi
+
 echo "Starting Plane AI Migrator..."
 
 # Bootstrap database (wait for DB, apply migrations, sync LLMs)
