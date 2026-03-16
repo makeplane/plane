@@ -36,7 +36,12 @@ export interface IInstanceStaffStore {
   deleteStaff: (id: string) => Promise<void>;
   transferStaff: (id: string, deptId: string) => Promise<IInstanceStaff>;
   deactivateStaff: (id: string) => Promise<IInstanceStaff>;
-  bulkImport: (file: File, defaultPassword: string, skipExisting: boolean) => Promise<IInstanceStaffBulkImportResponse>;
+  bulkImport: (
+    file: File,
+    defaultPassword: string,
+    skipExisting: boolean,
+    updateExisting?: boolean
+  ) => Promise<IInstanceStaffBulkImportResponse>;
   fetchStats: () => Promise<IInstanceStaffStats>;
 }
 
@@ -190,11 +195,12 @@ export class InstanceStaffStore implements IInstanceStaffStore {
   bulkImport = async (
     file: File,
     defaultPassword: string,
-    skipExisting: boolean
+    skipExisting: boolean,
+    updateExisting: boolean = false
   ): Promise<IInstanceStaffBulkImportResponse> => {
     try {
       this.loader = "mutation";
-      return await this.service.bulkImport(file, defaultPassword, skipExisting);
+      return await this.service.bulkImport(file, defaultPassword, skipExisting, updateExisting);
     } catch (error) {
       console.error("Error bulk importing staff", error);
       throw error;

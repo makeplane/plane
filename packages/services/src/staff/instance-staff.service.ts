@@ -56,11 +56,15 @@ export interface IInstanceStaffPaginatedResponse {
 
 export interface IInstanceStaffBulkImportResponse {
   created: number;
+  updated: number;
   skipped: number;
   errors: string[];
 }
 
-export type IInstanceStaffCreate = Omit<IInstanceStaff, "id" | "created_at" | "updated_at" | "user_detail" | "department_detail"> & {
+export type IInstanceStaffCreate = Omit<
+  IInstanceStaff,
+  "id" | "created_at" | "updated_at" | "user_detail" | "department_detail"
+> & {
   first_name?: string;
   last_name?: string;
   password?: string;
@@ -128,11 +132,17 @@ export class InstanceStaffService extends APIService {
       });
   }
 
-  async bulkImport(file: File, defaultPassword: string, skipExisting: boolean): Promise<IInstanceStaffBulkImportResponse> {
+  async bulkImport(
+    file: File,
+    defaultPassword: string,
+    skipExisting: boolean,
+    updateExisting: boolean = false
+  ): Promise<IInstanceStaffBulkImportResponse> {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("default_password", defaultPassword);
     formData.append("skip_existing", String(skipExisting));
+    formData.append("update_existing", String(updateExisting));
     return this.post("/api/instances/staff/bulk-import/", formData)
       .then((res) => res?.data as IInstanceStaffBulkImportResponse)
       .catch((err: { response?: { data: unknown } }) => {
@@ -142,7 +152,7 @@ export class InstanceStaffService extends APIService {
 
   async bulkActions(data: Record<string, unknown>): Promise<unknown> {
     return this.post("/api/instances/staff/bulk-actions/", data)
-      .then((res) => res?.data)
+      .then((res) => res?.data as unknown)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });

@@ -25,6 +25,7 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
   const [file, setFile] = useState<File | null>(null);
   const [defaultPassword, setDefaultPassword] = useState("");
   const [skipExisting, setSkipExisting] = useState(true);
+  const [updateExisting, setUpdateExisting] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<IInstanceStaffBulkImportResponse | null>(null);
 
@@ -32,6 +33,7 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
     setFile(null);
     setDefaultPassword("");
     setSkipExisting(true);
+    setUpdateExisting(false);
     setResult(null);
     onClose();
   };
@@ -40,10 +42,10 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
     if (!file || !defaultPassword) return;
     setIsSubmitting(true);
     try {
-      const data = await bulkImport(file, defaultPassword, skipExisting);
+      const data = await bulkImport(file, defaultPassword, skipExisting, updateExisting);
       setResult(data);
-      if (data.created > 0) {
-        setToast({ type: TOAST_TYPE.SUCCESS, title: `${data.created} staff imported` });
+      if (data.created > 0 || data.updated > 0) {
+        setToast({ type: TOAST_TYPE.SUCCESS, title: `${data.created} created, ${data.updated} updated` });
       }
       if (data.skipped > 0) {
         setToast({ type: TOAST_TYPE.WARNING, title: `${data.skipped} rows skipped` });
@@ -62,12 +64,24 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
           <Dialog.Title>Bulk Import Staff</Dialog.Title>
 
           <div className="rounded-md border border-subtle p-3 text-13 text-tertiary space-y-1">
-            <p>CSV columns: <code className="text-primary">staff_id, first_name, last_name, display_name, department_code, position, job_grade, phone, date_of_joining</code></p>
+            <p>
+              CSV columns:{" "}
+              <code className="text-primary">
+                staff_id, first_name, last_name, display_name, department_code, position, job_grade, phone,
+                date_of_joining
+              </code>
+            </p>
             <p>Max 500 rows. Default password used for new user accounts.</p>
           </div>
 
           {/* File upload */}
-          <input ref={fileInputRef} type="file" accept=".csv" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="hidden" />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            className="hidden"
+          />
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -79,8 +93,11 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
 
           {/* Default password */}
           <div className="space-y-1">
-            <label className="text-13 font-medium">Default password *</label>
+            <label htmlFor="default_password" className="text-13 font-medium">
+              Default password{" "}
+            </label>
             <Input
+              id="default_password"
               type="password"
               value={defaultPassword}
               onChange={(e) => setDefaultPassword(e.target.value)}
@@ -88,33 +105,58 @@ export const StaffImportModal = observer(function StaffImportModal({ open, onClo
             />
           </div>
 
-          {/* Skip existing */}
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="skip_existing"
-              checked={skipExisting}
-              onChange={(e) => setSkipExisting(e.target.checked)}
-              className="rounded"
-            />
-            <label htmlFor="skip_existing" className="text-13">Skip existing staff (by email)</label>
+          {/* Skip / update existing */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="skip_existing"
+                checked={skipExisting}
+                onChange={(e) => setSkipExisting(e.target.checked)}
+                className="rounded"
+              />
+              <label htmlFor="skip_existing" className="text-13">
+                Skip existing staff
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="update_existing"
+                checked={updateExisting}
+                onChange={(e) => setUpdateExisting(e.target.checked)}
+                className="rounded"
+              />
+              <label htmlFor="update_existing" className="text-13">
+                Update existing staff fields
+              </label>
+            </div>
           </div>
 
           {/* Results */}
           {result && (
-            <div className="flex gap-3 text-13">
-              <span className="px-3 py-1.5 rounded bg-success-subtle text-color-success-primary">Created: {result.created}</span>
+            <div className="flex gap-3 text-13 flex-wrap">
+              <span className="px-3 py-1.5 rounded bg-success-subtle text-success-primary">
+                Created: {result.created}
+              </span>
+              {result.updated > 0 && (
+                <span className="px-3 py-1.5 rounded bg-blue-100 text-blue-700">Updated: {result.updated}</span>
+              )}
               {result.skipped > 0 && (
                 <span className="px-3 py-1.5 rounded bg-yellow-100 text-yellow-700">Skipped: {result.skipped}</span>
               )}
               {result.errors.length > 0 && (
-                <span className="px-3 py-1.5 rounded bg-danger-subtle text-color-danger-primary">Errors: {result.errors.length}</span>
+                <span className="px-3 py-1.5 rounded bg-danger-subtle text-danger-primary">
+                  Errors: {result.errors.length}
+                </span>
               )}
             </div>
           )}
 
           <div className="flex justify-end gap-2 pt-1">
-            <Button variant="secondary" onClick={handleClose} type="button">Cancel</Button>
+            <Button variant="secondary" onClick={handleClose} type="button">
+              Cancel
+            </Button>
             <Button
               variant="primary"
               loading={isSubmitting}
