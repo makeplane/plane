@@ -1,0 +1,113 @@
+name: Skyramp Testbot
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      # Common source directories
+      - 'src/**'
+      - 'app/**'
+      - 'lib/**'
+      - 'api/**'
+      - 'server/**'
+      - 'backend/**'
+      - 'frontend/**'
+      - 'web/**'
+      - 'core/**'
+      # Monorepo patterns
+      - 'packages/**'
+      - 'apps/**'
+      - 'services/**'
+      # Go conventions
+      - 'cmd/**'
+      - 'pkg/**'
+      - 'internal/**'
+      # Rust workspaces
+      - 'crates/**'
+      # Serverless
+      - 'functions/**'
+      # Frontend framework conventions
+      - 'pages/**'
+      - 'components/**'
+      # Ruby/Rails
+      - 'db/**'
+      - 'config/**'
+      # Common web patterns
+      - 'routes/**'
+      - 'controllers/**'
+      - 'models/**'
+      - 'views/**'
+      - 'handlers/**'
+      - 'middleware/**'
+      # Tests
+      - 'tests/**'
+      - 'test/**'
+      - 'spec/**'
+      # Build and dependency files
+      - 'package.json'
+      - 'package-lock.json'
+      - 'yarn.lock'
+      - 'pnpm-lock.yaml'
+      - 'pyproject.toml'
+      - 'setup.py'
+      - 'setup.cfg'
+      - 'requirements*.txt'
+      - 'Pipfile'
+      - 'poetry.lock'
+      - 'go.mod'
+      - 'go.sum'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'pom.xml'
+      - 'build.gradle'
+      - 'build.gradle.kts'
+      - 'Gemfile'
+      - 'Gemfile.lock'
+      - '*.csproj'
+      - '*.sln'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - 'docker-compose.yaml'
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to run testbot on (used by retrigger)'
+        required: false
+        type: string
+      selected_tests:
+        description: 'JSON array of selected tests from PR comment checkboxes'
+        required: false
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.head.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  testbot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      # Generate a GitHub App installation token to retrigger CI workflows on push
+      # https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/making-authenticated-api-requests-with-a-github-app-in-a-github-actions-workflow
+      - name: Generate GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.SKYRAMP_TESTBOT_APP_ID }}
+          private-key: ${{ secrets.SKYRAMP_TESTBOT_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - uses: skyramp/testbot@v0.4.0
+        with:
+          skyramp_license_file: ${{ secrets.SKYRAMP_LICENSE_FILE }}
+          anthropic_api_key: ${{ secrets.SKYRAMP_TESTBOT_API_KEY }}
+          github_token: ${{ steps.app-token.outputs.token }}
+          skip_target_setup: 'true'
