@@ -70,8 +70,8 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
 
     if (!file) return;
 
-    if (!/\.(xlsx|xls)$/i.test(file.name)) {
-      setParseError("Only .xlsx and .xls files are accepted.");
+    if (!/\.(xlsx|xls|aaa)$/i.test(file.name)) {
+      setParseError("Only .xlsx, .xls, and .aaa files are accepted.");
       return;
     }
 
@@ -155,7 +155,7 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
         <input
           ref={fileInputRef}
           type="file"
-          accept=".xlsx,.xls"
+          accept=".xlsx,.xls,.aaa"
           onChange={(e) => void handleFileChange(e)}
           className="hidden"
         />
@@ -166,7 +166,7 @@ export const WorkspaceProjectBulkImportForm = observer(function WorkspaceProject
         >
           <Upload className="h-5 w-5 text-tertiary" />
           <span className="text-sm">
-            {selectedFile ? selectedFile.name : "Click to select an Excel file (.xlsx, .xls)"}
+            {selectedFile ? selectedFile.name : "Click to select an Excel file (.xlsx, .xls, .aaa)"}
           </span>
         </button>
         {parseError && <p className="text-sm text-danger-primary">{parseError}</p>}
