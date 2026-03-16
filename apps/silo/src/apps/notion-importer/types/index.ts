@@ -95,8 +95,9 @@ type TDocImporterDestination =
     };
 
 export type TDocImporterJobConfig = {
-  fileId: string;
-  fileName: string;
+  fileId?: string;
+  fileName?: string;
+  fileUrl?: string;
   destination: TDocImporterDestination;
   metadata?: {
     rootNodeUrl?: string;

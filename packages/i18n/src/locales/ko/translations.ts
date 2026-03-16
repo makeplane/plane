@@ -4612,6 +4612,8 @@ export default {
     upload: {
       drop_file_here: "Notion zip 파일을 여기에 드롭하세요",
       upload_title: "Notion 내보내기 업로드",
+      upload_from_url: "URL에서 가져오기",
+      upload_from_url_description: "계속하려면 ZIP 내보내기의 공개 URL을 붙여넣으세요.",
       drag_drop_description: "Notion 내보내기 zip 파일을 드래그 앤 드롭하거나 클릭해서 찾아보기",
       file_type_restriction: "Notion에서 내보낸 .zip 파일만 지원됩니다",
       select_file: "파일 선택",
@@ -4640,6 +4642,8 @@ export default {
     upload: {
       drop_file_here: "Confluence zip 파일을 여기에 드롭하세요",
       upload_title: "Confluence 내보내기 업로드",
+      upload_from_url: "URL에서 가져오기",
+      upload_from_url_description: "계속하려면 ZIP 내보내기의 공개 URL을 붙여넣으세요.",
       drag_drop_description: "Confluence 내보내기 zip 파일을 드래그 앤 드롭하거나 클릭해서 찾아보기",
       file_type_restriction: "Confluence에서 내보낸 .zip 파일만 지원됩니다",
       select_file: "파일 선택",
