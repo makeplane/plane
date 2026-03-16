@@ -32,6 +32,8 @@ function ActiveLoader(props: { layout: EIssueLayoutTypes }) {
       return <CalendarLayoutLoader />;
     case EIssueLayoutTypes.GANTT:
       return <GanttLayoutLoader />;
+    case EIssueLayoutTypes.GROUPED_BOARD:
+      return <KanbanLayoutLoader />;
     default:
       return null;
   }

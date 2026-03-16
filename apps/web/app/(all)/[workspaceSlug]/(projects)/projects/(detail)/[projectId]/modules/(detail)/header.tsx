@@ -187,6 +187,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                   EIssueLayoutTypes.CALENDAR,
                   EIssueLayoutTypes.SPREADSHEET,
                   EIssueLayoutTypes.GANTT,
+                  EIssueLayoutTypes.GROUPED_BOARD,
                 ]}
                 onChange={(layout) => handleLayoutChange(layout)}
                 selectedLayout={activeLayout}
@@ -200,6 +201,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                   EIssueLayoutTypes.CALENDAR,
                   EIssueLayoutTypes.SPREADSHEET,
                   EIssueLayoutTypes.GANTT,
+                  EIssueLayoutTypes.GROUPED_BOARD,
                 ]}
                 onChange={(layout) => handleLayoutChange(layout)}
                 activeLayout={activeLayout}

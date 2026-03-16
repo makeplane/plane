@@ -886,12 +886,14 @@ export default {
       calendar: "Calendar",
       spreadsheet: "Table",
       gantt: "Timeline",
+      grouped_board: "Grouped Board",
       title: {
         list: "List Layout",
         kanban: "Board Layout",
         calendar: "Calendar Layout",
         spreadsheet: "Table Layout",
         gantt: "Timeline Layout",
+        grouped_board: "Grouped Board Layout",
       },
     },
     states: {

@@ -61,6 +61,9 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   gantt: {
     filters: ["priority", "state", "labels"],
   },
+  grouped_board: {
+    filters: ["priority", "state", "labels"],
+  },
 };
 
 export const ISSUE_PRIORITY_FILTERS: TIssueFilterPriorityObject[] = [
@@ -273,6 +276,19 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         extra_options: {
           access: true,
           values: ["sub_issue"],
+        },
+      },
+      grouped_board: {
+        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by"],
+          sub_group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["show_empty_groups", "show_empty_sub_groups", "sub_issue", "hide_completed_cycles"],
         },
       },
     },

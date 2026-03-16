@@ -64,6 +64,7 @@ export const QuickAddIssueFormRoot = observer(function QuickAddIssueFormRoot(pro
     [EIssueLayoutTypes.CALENDAR]: CalendarQuickAddIssueForm,
     [EIssueLayoutTypes.GANTT]: GanttQuickAddIssueForm,
     [EIssueLayoutTypes.SPREADSHEET]: SpreadsheetQuickAddIssueForm,
+    [EIssueLayoutTypes.GROUPED_BOARD]: KanbanQuickAddIssueForm,
   };
 
   const CurrentLayoutQuickAddIssueForm = QUICK_ADD_ISSUE_FORMS[layout] ?? null;

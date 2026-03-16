@@ -560,7 +560,9 @@ export const handleGroupDragDrop = async (
   subGroupBy: TIssueGroupByOptions | undefined,
   shouldAddIssueAtTop = false
 ) => {
-  if (!source.id || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) return;
+  if (!source.id || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) {
+    return;
+  }
 
   let updatedIssue: Partial<TIssue> = {};
   const issueUpdates: IssueUpdates = {};
@@ -568,7 +570,9 @@ export const handleGroupDragDrop = async (
 
   const sourceIssue = getIssueById(source.id);
 
-  if (!sourceIssue) return;
+  if (!sourceIssue) {
+    return;
+  }
 
   updatedIssue = {
     id: sourceIssue.id,

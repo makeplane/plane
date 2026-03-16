@@ -6,7 +6,7 @@
 
 import { EIssueLayoutTypes } from "@plane/types";
 
-export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
+export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt" | "grouped_board";
 
 export type TIssueLayoutMap = Record<
   EIssueLayoutTypes,
@@ -59,6 +59,11 @@ export const ISSUE_LAYOUT_MAP: TIssueLayoutMap = {
     key: EIssueLayoutTypes.GANTT,
     i18n_title: "issue.layouts.title.gantt",
     i18n_label: "issue.layouts.gantt",
+  },
+  [EIssueLayoutTypes.GROUPED_BOARD]: {
+    key: EIssueLayoutTypes.GROUPED_BOARD,
+    i18n_title: "issue.layouts.title.grouped_board",
+    i18n_label: "issue.layouts.grouped_board",
   },
 };
 
