@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useArgs } from "storybook/preview-api";
@@ -26,7 +32,10 @@ const meta = {
 
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button
+          onClick={() => setOpen(true)}
+          className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-on-color"
+        >
           Open Dialog
         </button>
         {open && (
@@ -35,18 +44,18 @@ const meta = {
               <div className="p-6">
                 <Dialog.Title>Dialog Title</Dialog.Title>
                 <div className="mt-4">
-                  <p className="text-sm text-gray-600">This is the dialog content. You can put any content here.</p>
+                  <p className="text-gray-600 text-13">This is the dialog content. You can put any content here.</p>
                 </div>
                 <div className="mt-6 flex justify-end gap-2">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
+                    className="bg-gray-200 hover:bg-gray-300 rounded-sm px-4 py-2 text-13"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+                    className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-13 text-on-color"
                   >
                     Confirm
                   </button>
@@ -74,7 +83,10 @@ export const TopPosition: Story = {
     const [open, setOpen] = useState(args.open);
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button
+          onClick={() => setOpen(true)}
+          className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-on-color"
+        >
           Open Dialog (Top)
         </button>
         {open && (
@@ -83,14 +95,14 @@ export const TopPosition: Story = {
               <div className="p-6">
                 <Dialog.Title>Top Positioned Dialog</Dialog.Title>
                 <div className="mt-4">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-gray-600 text-13">
                     This dialog appears at the top of the screen instead of centered.
                   </p>
                 </div>
                 <div className="mt-6 flex justify-end gap-2">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
+                    className="bg-gray-200 hover:bg-gray-300 rounded-sm px-4 py-2 text-13"
                   >
                     Close
                   </button>
@@ -109,7 +121,10 @@ export const SmallWidth: Story = {
     const [open, setOpen] = useState(args.open);
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button
+          onClick={() => setOpen(true)}
+          className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-on-color"
+        >
           Open Small Dialog
         </button>
         {open && (
@@ -118,12 +133,12 @@ export const SmallWidth: Story = {
               <div className="p-6">
                 <Dialog.Title>Small Dialog</Dialog.Title>
                 <div className="mt-4">
-                  <p className="text-sm text-gray-600">This is a small dialog.</p>
+                  <p className="text-gray-600 text-13">This is a small dialog.</p>
                 </div>
                 <div className="mt-6 flex justify-end">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+                    className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-13 text-on-color"
                   >
                     Close
                   </button>
@@ -142,7 +157,10 @@ export const LargeWidth: Story = {
     const [open, setOpen] = useState(args.open);
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button
+          onClick={() => setOpen(true)}
+          className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-on-color"
+        >
           Open Large Dialog
         </button>
         {open && (
@@ -151,14 +169,14 @@ export const LargeWidth: Story = {
               <div className="p-6">
                 <Dialog.Title>Large Dialog</Dialog.Title>
                 <div className="mt-4">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-gray-600 text-13">
                     This is a large dialog with more horizontal space for content.
                   </p>
                 </div>
                 <div className="mt-6 flex justify-end">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+                    className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-13 text-on-color"
                   >
                     Close
                   </button>
@@ -177,7 +195,10 @@ export const WithCloseButton: Story = {
     const [open, setOpen] = useState(args.open);
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button
+          onClick={() => setOpen(true)}
+          className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-on-color"
+        >
           Open Dialog with Close Button
         </button>
         {open && (
@@ -186,12 +207,12 @@ export const WithCloseButton: Story = {
               <div className="p-6">
                 <div className="flex items-start justify-between">
                   <Dialog.Title>Dialog with Close Button</Dialog.Title>
-                  <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-gray-100">
+                  <button onClick={() => setOpen(false)} className="hover:bg-gray-100 rounded-full p-1">
                     <CloseIcon className="h-4 w-4" />
                   </button>
                 </div>
                 <div className="mt-4">
-                  <p className="text-sm text-gray-600">This dialog has a close button in the header.</p>
+                  <p className="text-gray-600 text-13">This dialog has a close button in the header.</p>
                 </div>
               </div>
             </Dialog.Panel>
@@ -211,7 +232,10 @@ export const ConfirmationDialog: Story = {
     };
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600">
+        <button
+          onClick={() => setOpen(true)}
+          className="bg-red-500 hover:bg-red-600 rounded-sm px-4 py-2 text-on-color"
+        >
           Delete Item
         </button>
         {open && (
@@ -220,20 +244,20 @@ export const ConfirmationDialog: Story = {
               <div className="p-6">
                 <Dialog.Title>Confirm Deletion</Dialog.Title>
                 <div className="mt-4">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-gray-600 text-13">
                     Are you sure you want to delete this item? This action cannot be undone.
                   </p>
                 </div>
                 <div className="mt-6 flex justify-end gap-2">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
+                    className="bg-gray-200 hover:bg-gray-300 rounded-sm px-4 py-2 text-13"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleConfirm}
-                    className="rounded bg-red-500 px-4 py-2 text-sm text-white hover:bg-red-600"
+                    className="bg-red-500 hover:bg-red-600 rounded-sm px-4 py-2 text-13 text-on-color"
                   >
                     Delete
                   </button>
@@ -257,7 +281,10 @@ export const FormDialog: Story = {
     };
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button
+          onClick={() => setOpen(true)}
+          className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-on-color"
+        >
           Open Form
         </button>
         {open && (
@@ -267,24 +294,24 @@ export const FormDialog: Story = {
                 <Dialog.Title>Create New Item</Dialog.Title>
                 <div className="mt-4 space-y-4">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="name" className="text-gray-700 block text-13 font-medium">
                       Name
                     </label>
                     <input
                       type="text"
                       id="name"
-                      className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                      className="border-gray-300 mt-1 w-full rounded-sm border px-3 py-2 text-13"
                       placeholder="Enter name"
                     />
                   </div>
                   <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="description" className="text-gray-700 block text-13 font-medium">
                       Description
                     </label>
                     <textarea
                       id="description"
                       rows={3}
-                      className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                      className="border-gray-300 mt-1 w-full rounded-sm border px-3 py-2 text-13"
                       placeholder="Enter description"
                     />
                   </div>
@@ -293,11 +320,14 @@ export const FormDialog: Story = {
                   <button
                     type="button"
                     onClick={() => setOpen(false)}
-                    className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
+                    className="bg-gray-200 hover:bg-gray-300 rounded-sm px-4 py-2 text-13"
                   >
                     Cancel
                   </button>
-                  <button type="submit" className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600">
+                  <button
+                    type="submit"
+                    className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-13 text-on-color"
+                  >
                     Create
                   </button>
                 </div>
@@ -315,7 +345,10 @@ export const ScrollableContent: Story = {
     const [open, setOpen] = useState(args.open);
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button
+          onClick={() => setOpen(true)}
+          className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-on-color"
+        >
           Open Scrollable Dialog
         </button>
         {open && (
@@ -325,7 +358,7 @@ export const ScrollableContent: Story = {
                 <Dialog.Title>Scrollable Content</Dialog.Title>
                 <div className="mt-4 max-h-96 overflow-y-auto">
                   {Array.from({ length: 20 }, (_, i) => (
-                    <p key={i} className="mb-2 text-sm text-gray-600">
+                    <p key={i} className="text-gray-600 mb-2 text-13">
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
                       labore et dolore magna aliqua.
                     </p>
@@ -334,7 +367,7 @@ export const ScrollableContent: Story = {
                 <div className="mt-6 flex justify-end">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+                    className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-13 text-on-color"
                   >
                     Close
                   </button>
@@ -368,7 +401,7 @@ export const AllWidths: Story = {
           <button
             key={width}
             onClick={() => setOpenWidth(width)}
-            className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+            className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-13 text-on-color"
           >
             {label}
           </button>
@@ -379,12 +412,12 @@ export const AllWidths: Story = {
               <div className="p-6">
                 <Dialog.Title>{label} Dialog</Dialog.Title>
                 <div className="mt-4">
-                  <p className="text-sm text-gray-600">This dialog uses the {label} width variant.</p>
+                  <p className="text-gray-600 text-13">This dialog uses the {label} width variant.</p>
                 </div>
                 <div className="mt-6 flex justify-end">
                   <button
                     onClick={() => setOpenWidth(null)}
-                    className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+                    className="bg-blue-500 hover:bg-blue-600 rounded-sm px-4 py-2 text-13 text-on-color"
                   >
                     Close
                   </button>

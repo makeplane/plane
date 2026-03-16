@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // local imports
 import { gitHubEmojis, shortcodeToEmoji } from "@tiptap/extension-emoji";
 import type { MarkdownSerializerState } from "@tiptap/pm/markdown";
@@ -25,7 +31,7 @@ export const EmojiExtension = Emoji.extend({
   },
 }).configure({
   // Filter out emojis without emoji value and remove fallbackImage property to prevent CDN calls
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   emojis: gitHubEmojis.filter((item) => item.emoji).map(({ fallbackImage, ...emoji }) => emoji),
   suggestion: emojiSuggestion,
   enableEmoticons: true,

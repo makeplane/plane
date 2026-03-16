@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React from "react";
 // plane utils
@@ -22,14 +28,14 @@ export function LinkItemBlock(props: TLinkItemBlockProps) {
   return (
     <div
       onClick={onClick}
-      className="cursor-pointer group flex items-center bg-custom-background-100 px-4 w-[230px] h-[56px] border-[0.5px] border-custom-border-200 rounded-md gap-4"
+      className="group flex h-[56px] w-[230px] cursor-pointer items-center gap-4 rounded-md border-[0.5px] border-subtle bg-surface-1 px-4"
     >
-      <div className="flex-shrink-0 size-8 rounded p-2 bg-custom-background-90 grid place-items-center">
-        <Icon className="size-4 stroke-2 text-custom-text-350 group-hover:text-custom-text-100" />
+      <div className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-surface-2 p-2">
+        <Icon className="size-4 stroke-2 text-tertiary group-hover:text-primary" />
       </div>
       <div className="flex-1 truncate">
-        <div className="text-sm font-medium truncate">{title}</div>
-        {createdAt && <div className="text-xs font-medium text-custom-text-400">{calculateTimeAgo(createdAt)}</div>}
+        <div className="truncate text-13 font-medium">{title}</div>
+        {createdAt && <div className="text-11 font-medium text-placeholder">{calculateTimeAgo(createdAt)}</div>}
       </div>
       {menuItems && (
         <div className="hidden group-hover:block">
@@ -42,8 +48,8 @@ export function LinkItemBlock(props: TLinkItemBlockProps) {
                   e.stopPropagation();
                   item.action();
                 }}
-                className={cn("flex items-center gap-2 w-full ", {
-                  "text-custom-text-400": item.disabled,
+                className={cn("flex w-full items-center gap-2", {
+                  "text-placeholder": item.disabled,
                 })}
                 disabled={item.disabled}
               >
@@ -52,8 +58,8 @@ export function LinkItemBlock(props: TLinkItemBlockProps) {
                   <h5>{item.title}</h5>
                   {item.description && (
                     <p
-                      className={cn("text-custom-text-300 whitespace-pre-line", {
-                        "text-custom-text-400": item.disabled,
+                      className={cn("whitespace-pre-line text-tertiary", {
+                        "text-placeholder": item.disabled,
                       })}
                     >
                       {item.description}

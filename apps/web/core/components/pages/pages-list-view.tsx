@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import type { TPageNavigationTabs } from "@plane/types";
@@ -28,7 +34,7 @@ export const PagesListView = observer(function PagesListView(props: TPageView) {
 
   // pages loader
   return (
-    <div className="relative w-full h-full overflow-hidden flex flex-col">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
       {/* tab header */}
       {isAnyPageAvailable && (
         <PagesListHeaderRoot

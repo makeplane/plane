@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import type { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
 import { observer } from "mobx-react";
@@ -190,7 +196,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
   );
 
   return (
-    <div className="flex flex-col gap-12 ">
+    <div className="flex flex-col gap-12">
       {priorityChartLoading ? (
         <ChartLoader />
       ) : parsedData?.data && parsedData.data.length > 0 ? (
@@ -220,7 +226,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
             searchPlaceholder={`${parsedData.data.length} ${xAxisLabel}`}
             actions={(table: Table<TChartDatum>) => (
               <Button
-                variant="accent-primary"
+                variant="secondary"
                 prependIcon={<Download className="h-3.5 w-3.5" />}
                 onClick={() => exportCSV(table.getRowModel().rows, [...defaultColumns, ...columns], workspaceSlug)}
               >
@@ -233,7 +239,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
         <EmptyStateCompact
           assetKey="unknown"
           assetClassName="size-20"
-          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          rootClassName="border border-subtle px-5 py-10 md:py-20 md:px-20"
           title={t("workspace_empty_state.analytics_work_items.title")}
         />
       )}

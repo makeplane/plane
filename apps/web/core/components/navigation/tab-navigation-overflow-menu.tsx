@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { Link } from "react-router";
 import { MoreHorizontal, Pin } from "lucide-react";
@@ -24,13 +30,7 @@ type Props = {
  * Displays items that don't fit in the visible area, with action icons
  * Shows "Eye" icon for user-hidden items, "Set as default" icon for all items
  */
-export const TabNavigationOverflowMenu: React.FC<Props> = ({
-  overflowItems,
-  isActive,
-  tabPreferences,
-  onToggleDefault,
-  onShow,
-}) => {
+export function TabNavigationOverflowMenu({ overflowItems, isActive, tabPreferences, onToggleDefault, onShow }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -39,8 +39,8 @@ export const TabNavigationOverflowMenu: React.FC<Props> = ({
       buttonClassName="!p-1.5"
       optionsClassName="min-w-[200px] space-y-1"
       customButton={
-        <div className="flex items-center justify-center rounded-md p-1 hover:bg-custom-background-80 transition-colors">
-          <MoreHorizontal className="h-4 w-4 text-custom-text-200" />
+        <div className="flex items-center justify-center rounded-md p-1 transition-colors hover:bg-layer-1">
+          <MoreHorizontal className="h-4 w-4 text-secondary" />
         </div>
       }
     >
@@ -51,10 +51,10 @@ export const TabNavigationOverflowMenu: React.FC<Props> = ({
         const isDefault = item.key === tabPreferences.defaultTab;
 
         return (
-          <Menu.MenuItem key={`${item.key}-overflow-${itemIsActive ? "active" : "inactive"}`} className="p-0 w-full">
-            <div className="flex items-center justify-between w-full group/menu-item">
-              <Link to={item.href} className="flex-1 min-w-0 w-full p-1">
-                <span className="text-xs">{t(item.i18n_key)}</span>
+          <Menu.MenuItem key={`${item.key}-overflow-${itemIsActive ? "active" : "inactive"}`} className="w-full p-0">
+            <div className="group/menu-item flex w-full items-center justify-between">
+              <Link to={item.href} className="w-full min-w-0 flex-1 p-1">
+                <span className="text-11">{t(item.i18n_key)}</span>
               </Link>
               <div className="flex items-center">
                 {/* Show Eye icon ONLY for user-hidden items */}
@@ -66,7 +66,7 @@ export const TabNavigationOverflowMenu: React.FC<Props> = ({
                       e.preventDefault();
                       onShow(item.key);
                     }}
-                    className="invisible group-hover/menu-item:visible p-1 rounded text-custom-text-300 hover:text-custom-text-100 transition-colors"
+                    className="invisible rounded-sm p-1 text-tertiary transition-colors group-hover/menu-item:visible hover:text-primary"
                     title="Show"
                   >
                     <Pin className="size-3" />
@@ -80,7 +80,7 @@ export const TabNavigationOverflowMenu: React.FC<Props> = ({
                       onToggleDefault(item.key);
                     }}
                     className={cn(
-                      "invisible group-hover/menu-item:visible p-1 rounded text-custom-text-300 hover:text-custom-text-100 transition-colors",
+                      "invisible rounded-sm p-1 text-tertiary transition-colors group-hover/menu-item:visible hover:text-primary",
                       {
                         visible: isDefault,
                       }
@@ -97,4 +97,4 @@ export const TabNavigationOverflowMenu: React.FC<Props> = ({
       })}
     </Menu>
   );
-};
+}

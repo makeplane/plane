@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Extension } from "@tiptap/core";
 import type { NodeType, Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
@@ -44,7 +50,6 @@ export const TrailingNode = Extension.create<TrailingNodeOptions>({
             return;
           }
 
-          // eslint-disable-next-line consistent-return
           return tr.insert(endPosition, type.create());
         },
         state: {

@@ -1,5 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Copy, Download, Edit, Share, Trash, Star, Archive } from "lucide-react";
+import { Download, Edit, Share, Star, Archive } from "lucide-react";
+import { CopyIcon, TrashIcon } from "../icons";
 import { ChevronRightIcon } from "../icons/arrows/chevron-right";
 import { ContextMenu } from "./context-menu";
 
@@ -33,7 +40,7 @@ export const Default: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
           </div>
         </ContextMenu.Trigger>
@@ -56,14 +63,14 @@ export const WithIcons: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
           </div>
         </ContextMenu.Trigger>
         <ContextMenu.Portal>
           <ContextMenu.Content>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy
             </ContextMenu.Item>
             <ContextMenu.Item>
@@ -80,8 +87,8 @@ export const WithIcons: Story = {
               Share
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
-              <span className="text-red-500">Delete</span>
+              <TrashIcon className="mr-2 h-4 w-4 text-danger-primary" />
+              <span className="text-danger-primary">Delete</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
         </ContextMenu.Portal>
@@ -95,14 +102,14 @@ export const WithSubmenus: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
           </div>
         </ContextMenu.Trigger>
         <ContextMenu.Portal>
           <ContextMenu.Content>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy
             </ContextMenu.Item>
             <ContextMenu.Item>
@@ -126,8 +133,8 @@ export const WithSubmenus: Story = {
             </ContextMenu.Submenu>
             <ContextMenu.Separator />
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
-              <span className="text-red-500">Delete</span>
+              <TrashIcon className="mr-2 h-4 w-4 text-danger-primary" />
+              <span className="text-danger-primary">Delete</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
         </ContextMenu.Portal>
@@ -141,14 +148,14 @@ export const DisabledItems: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
           </div>
         </ContextMenu.Trigger>
         <ContextMenu.Portal>
           <ContextMenu.Content>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy
             </ContextMenu.Item>
             <ContextMenu.Item disabled>
@@ -165,8 +172,8 @@ export const DisabledItems: Story = {
               Share (Disabled)
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
-              <span className="text-red-500">Delete</span>
+              <TrashIcon className="mr-2 h-4 w-4 text-danger-primary" />
+              <span className="text-danger-primary">Delete</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
         </ContextMenu.Portal>
@@ -180,14 +187,14 @@ export const OnFileCard: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="w-64 p-4 border border-custom-border-200 rounded-lg hover:bg-custom-background-80 cursor-pointer">
+          <div className="w-64 cursor-pointer rounded-lg border border-subtle p-4 hover:bg-layer-1">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-custom-primary-100 rounded flex items-center justify-center text-white text-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-accent-primary text-16 text-on-color">
                 📄
               </div>
               <div className="flex-1">
                 <div className="font-medium">Document.pdf</div>
-                <div className="text-sm text-custom-text-400">2.4 MB</div>
+                <div className="text-13 text-placeholder">2.4 MB</div>
               </div>
             </div>
           </div>
@@ -199,7 +206,7 @@ export const OnFileCard: Story = {
               Download
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy Link
             </ContextMenu.Item>
             <ContextMenu.Item>
@@ -212,8 +219,8 @@ export const OnFileCard: Story = {
               Archive
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
-              <span className="text-red-500">Delete</span>
+              <TrashIcon className="mr-2 h-4 w-4 text-danger-primary" />
+              <span className="text-danger-primary">Delete</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
         </ContextMenu.Portal>
@@ -227,10 +234,8 @@ export const OnImage: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="relative w-80 h-56 bg-custom-background-80 rounded-lg overflow-hidden cursor-pointer">
-            <div className="absolute inset-0 flex items-center justify-center text-custom-text-400">
-              Image Placeholder
-            </div>
+          <div className="relative h-56 w-80 cursor-pointer overflow-hidden rounded-lg bg-layer-1">
+            <div className="absolute inset-0 flex items-center justify-center text-placeholder">Image Placeholder</div>
           </div>
         </ContextMenu.Trigger>
         <ContextMenu.Portal>
@@ -240,11 +245,11 @@ export const OnImage: Story = {
               Save Image
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy Image
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy Image URL
             </ContextMenu.Item>
             <ContextMenu.Separator />
@@ -261,9 +266,9 @@ export const OnText: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="w-96 p-6 border border-custom-border-200 rounded-lg">
-            <h3 className="text-lg font-semibold mb-2">Context Menu on Text</h3>
-            <p className="text-custom-text-300">
+          <div className="w-96 rounded-lg border border-subtle p-6">
+            <h3 className="mb-2 text-16 font-semibold">Context Menu on Text</h3>
+            <p className="text-tertiary">
               Right click anywhere on this text area to see the context menu. This demonstrates how context menus can be
               applied to text content areas.
             </p>
@@ -272,7 +277,7 @@ export const OnText: Story = {
         <ContextMenu.Portal>
           <ContextMenu.Content>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy
             </ContextMenu.Item>
             <ContextMenu.Item>
@@ -293,7 +298,7 @@ export const NestedSubmenus: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
           </div>
         </ContextMenu.Trigger>
@@ -329,8 +334,8 @@ export const NestedSubmenus: Story = {
             </ContextMenu.Submenu>
             <ContextMenu.Separator />
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
-              <span className="text-red-500">Delete</span>
+              <TrashIcon className="mr-2 h-4 w-4 text-danger-primary" />
+              <span className="text-danger-primary">Delete</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
         </ContextMenu.Portal>
@@ -344,32 +349,32 @@ export const WithKeyboardShortcuts: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
           </div>
         </ContextMenu.Trigger>
         <ContextMenu.Portal>
           <ContextMenu.Content>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy
-              <span className="ml-auto text-xs text-custom-text-400">⌘C</span>
+              <span className="ml-auto text-11 text-placeholder">⌘C</span>
             </ContextMenu.Item>
             <ContextMenu.Item>
               <Edit className="mr-2 h-4 w-4" />
               Edit
-              <span className="ml-auto text-xs text-custom-text-400">⌘E</span>
+              <span className="ml-auto text-11 text-placeholder">⌘E</span>
             </ContextMenu.Item>
             <ContextMenu.Item>
               <Download className="mr-2 h-4 w-4" />
               Download
-              <span className="ml-auto text-xs text-custom-text-400">⌘D</span>
+              <span className="ml-auto text-11 text-placeholder">⌘D</span>
             </ContextMenu.Item>
             <ContextMenu.Separator />
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
-              <span className="text-red-500">Delete</span>
-              <span className="ml-auto text-xs text-custom-text-400">⌘⌫</span>
+              <TrashIcon className="mr-2 h-4 w-4 text-danger-primary" />
+              <span className="text-danger-primary">Delete</span>
+              <span className="ml-auto text-11 text-placeholder">⌘⌫</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
         </ContextMenu.Portal>

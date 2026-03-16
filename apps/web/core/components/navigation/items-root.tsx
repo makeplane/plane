@@ -1,5 +1,10 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // components/AppSidebarItemsRoot.tsx
-"use client";
 
 import React from "react";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
@@ -11,14 +16,16 @@ type Props = {
   showLabel?: boolean;
 };
 
-const Component = ({ dockItems, showLabel = true }: Props) => (
-  <>
-    {dockItems
-      .filter((item) => item.shouldRender)
-      .map((item) => (
-        <AppSidebarItem key={item.label} item={{ ...item, showLabel }} variant="link" />
-      ))}
-  </>
-);
+function Component({ dockItems, showLabel = true }: Props) {
+  return (
+    <>
+      {dockItems
+        .filter((item) => item.shouldRender)
+        .map((item) => (
+          <AppSidebarItem key={item.label} item={{ ...item, showLabel }} variant="link" />
+        ))}
+    </>
+  );
+}
 
 export const AppSidebarItemsRoot = withDockItems(Component);

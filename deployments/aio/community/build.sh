@@ -95,7 +95,7 @@ update_env_file(){
 
 build_dist_files(){
     cp ./variables.env $DIST_DIR/plane.env
-    cp ../../../apps/proxy/Caddyfile.ce $DIST_DIR/Caddyfile
+    cp ../../../apps/proxy/Caddyfile.aio.ce $DIST_DIR/Caddyfile
 
     echo "" >> $DIST_DIR/plane.env
     echo "" >> $DIST_DIR/plane.env
@@ -108,16 +108,6 @@ build_dist_files(){
     update_env_file $DIST_DIR/plane.env "API_BASE_URL" "http://localhost:3004"
     update_env_file $DIST_DIR/plane.env "SITE_ADDRESS" ":80"
 
-    # remove this line containing `plane-minio:9000`
-    remove_line $DIST_DIR/Caddyfile "plane-minio:9000" ""
-
-    # in caddyfile, update `reverse_proxy /spaces/* space:3000` to `reverse_proxy /spaces/* space:3002` 
-    string_replace $DIST_DIR/Caddyfile "web:3000" "localhost:3001"
-    string_replace $DIST_DIR/Caddyfile "space:3000" "localhost:3002"
-    string_replace $DIST_DIR/Caddyfile "admin:3000" "localhost:3003"
-    string_replace $DIST_DIR/Caddyfile "api:8000" "localhost:3004"
-    string_replace $DIST_DIR/Caddyfile "live:3000" "localhost:3005"
-    
 
     # print docker build command
     echo "------------------------------------------------"

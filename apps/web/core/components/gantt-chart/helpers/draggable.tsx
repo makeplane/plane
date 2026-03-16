@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { RefObject } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -37,7 +43,7 @@ export const ChartDraggable = observer(function ChartDraggable(props: Props) {
   } = props;
 
   return (
-    <div className="group w-full z-[5] relative inline-flex h-full cursor-pointer items-center font-medium transition-all">
+    <div className="group relative z-[5] inline-flex h-full w-full cursor-pointer items-center font-medium transition-all">
       {/* left resize drag handle */}
       {(typeof enableDependency === "function" ? enableDependency(block.id) : enableDependency) && (
         <LeftDependencyDraggable block={block} ganttContainerRef={ganttContainerRef} />
@@ -49,7 +55,7 @@ export const ChartDraggable = observer(function ChartDraggable(props: Props) {
         position={block.position}
       />
       <div
-        className={cn("relative z-[6] flex h-8 w-full items-center rounded", {
+        className={cn("relative z-[6] flex h-8 w-full items-center rounded-sm", {
           "pointer-events-none": isMoving,
         })}
         onMouseDown={(e) => enableBlockMove && handleBlockDrag(e, "move")}

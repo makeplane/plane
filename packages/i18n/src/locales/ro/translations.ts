@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Proiecte",
@@ -17,6 +23,7 @@ export default {
     favorites: "Favorite",
     pro: "Pro",
     upgrade: "Treci la versiunea superioară",
+    stickies: "Notițe",
   },
   auth: {
     common: {
@@ -338,13 +345,13 @@ export default {
   project_id_must_be_at_least_1_character: "ID-ul proiectului trebuie să conțină cel puțin 1 caracter",
   project_id_must_be_at_most_5_characters: "ID-ul proiectului trebuie să conțină cel mult 5 caractere",
   project_id: "ID-ul Proiectului",
-  project_id_tooltip_content: "Te ajută să identifici unic activitățile din proiect. Maxim 5 caractere.",
+  project_id_tooltip_content: "Te ajută să identifici unic activitățile din proiect. Maxim 10 caractere.",
   description_placeholder: "Descriere",
   only_alphanumeric_non_latin_characters_allowed: "Sunt permise doar caractere alfanumerice și non-latine.",
   project_id_is_required: "ID-ul proiectului este obligatoriu",
   project_id_allowed_char: "Sunt permise doar caractere alfanumerice și non-latine.",
   project_id_min_char: "ID-ul proiectului trebuie să aibă cel puțin 1 caracter",
-  project_id_max_char: "ID-ul proiectului trebuie să aibă cel mult 5 caractere",
+  project_id_max_char: "ID-ul proiectului trebuie să aibă cel mult 10 caractere",
   project_description_placeholder: "Introdu descrierea proiectului",
   select_network: "Selectează rețeaua",
   lead: "Lider",
@@ -405,7 +412,7 @@ export default {
   docs: "Documentație",
   full_changelog: "Jurnal complet al modificărilor",
   support: "Suport",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Oferit de Plane Documentație",
   please_select_at_least_one_invitation: "Te rugăm să selectezi cel puțin o invitație.",
   please_select_at_least_one_invitation_description:
@@ -1590,6 +1597,7 @@ export default {
         name: "Numele spațiului de lucru",
         company_size: "Dimensiunea companiei",
         url: "URL-ul spațiului de lucru",
+        workspace_timezone: "Fusul orar al spațiului de lucru",
         update_workspace: "Actualizează spațiul de lucru",
         delete_workspace: "Șterge acest spațiu de lucru",
         delete_workspace_description:
@@ -1984,6 +1992,45 @@ export default {
         title: "Nicio estimare configurată",
         description: "Creează un set de estimări pentru a comunica volumul de muncă pentru fiecare activitate.",
         primary_button: "Adaugă sistem de estimare",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cicluri",
+        short_title: "Cicluri",
+        description:
+          "Programați munca în perioade flexibile care se adaptează ritmului și ritmului unic al acestui proiect.",
+        toggle_title: "Activați ciclurile",
+        toggle_description: "Planificați munca în intervale de timp concentrate.",
+      },
+      modules: {
+        title: "Module",
+        short_title: "Module",
+        description: "Organizați munca în subproiecte cu lideri și responsabili dedicați.",
+        toggle_title: "Activați modulele",
+        toggle_description: "Membrii proiectului vor putea crea și edita module.",
+      },
+      views: {
+        title: "Vizualizări",
+        short_title: "Vizualizări",
+        description: "Salvați sortări personalizate, filtre și opțiuni de afișare sau partajați-le cu echipa dvs.",
+        toggle_title: "Activați vizualizările",
+        toggle_description: "Membrii proiectului vor putea crea și edita vizualizări.",
+      },
+      pages: {
+        title: "Pagini",
+        short_title: "Pagini",
+        description: "Creați și editați conținut liber: note, documente, orice.",
+        toggle_title: "Activați paginile",
+        toggle_description: "Membrii proiectului vor putea crea și edita pagini.",
+      },
+      intake: {
+        title: "Recepție",
+        short_title: "Recepție",
+        description:
+          "Permiteți non-membrilor să partajeze erori, feedback și sugestii; fără a perturba fluxul de lucru.",
+        toggle_title: "Activați recepția",
+        toggle_description: "Permiteți membrilor proiectului să creeze solicitări de recepție în aplicație.",
       },
     },
   },

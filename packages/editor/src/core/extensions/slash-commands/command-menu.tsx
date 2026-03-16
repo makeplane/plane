@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { FloatingOverlay } from "@floating-ui/react";
 import type { SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
@@ -131,7 +137,7 @@ export const SlashCommandsMenu = forwardRef(function SlashCommandsMenu(props: Sl
       <div
         id="slash-command"
         ref={commandListContainer}
-        className="relative max-h-80 min-w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        className="relative max-h-80 min-w-[12rem] space-y-2 overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-raised-200"
         style={{
           zIndex: 100,
         }}
@@ -144,7 +150,7 @@ export const SlashCommandsMenu = forwardRef(function SlashCommandsMenu(props: Sl
       >
         {sections.map((section, sectionIndex) => (
           <div key={section.key} className="space-y-2">
-            {section.title && <h6 className="text-xs font-semibold text-custom-text-300">{section.title}</h6>}
+            {section.title && <h6 className="text-11 font-semibold text-tertiary">{section.title}</h6>}
             <div>
               {section.items?.map((item, itemIndex) => (
                 <CommandMenuItem

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
@@ -33,7 +39,7 @@ export const IssueParentTag = observer(function IssueParentTag(props: TIssuePare
       control={control}
       name="parent_id"
       render={({ field: { onChange } }) => (
-        <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-90 p-2 text-xs">
+        <div className="flex w-min items-center gap-2 rounded-sm bg-surface-2 p-2 text-caption-sm-regular whitespace-nowrap">
           <div className="flex items-center gap-2">
             <span
               className="block h-1.5 w-1.5 rounded-full"
@@ -41,14 +47,14 @@ export const IssueParentTag = observer(function IssueParentTag(props: TIssuePare
                 backgroundColor: selectedParentIssue.state__color,
               }}
             />
-            <span className="flex-shrink-0 text-custom-text-200">
+            <span className="flex-shrink-0 text-secondary">
               {selectedParentIssue?.project_id && (
                 <IssueIdentifier
                   projectId={selectedParentIssue.project_id}
                   issueTypeId={selectedParentIssue.type_id}
                   projectIdentifier={selectedParentIssue?.project__identifier}
                   issueSequenceId={selectedParentIssue.sequence_id}
-                  textContainerClassName="text-xs"
+                  size="xs"
                 />
               )}
             </span>

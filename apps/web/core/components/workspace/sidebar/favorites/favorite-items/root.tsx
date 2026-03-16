@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
@@ -69,7 +75,7 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded bg-custom-background-100 text-sm p-1 pr-2">
+                <div className="rounded-sm bg-surface-1 p-1 pr-2 text-13">
                   <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} />
                 </div>
               );
@@ -120,7 +126,7 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
 
   return (
     <>
-      <DropIndicator isVisible={instruction === "reorder-above"} />
+      {isDragging && <DropIndicator isVisible={instruction === "reorder-above"} />}
       <FavoriteItemWrapper elementRef={elementRef} isMenuActive={isMenuActive}>
         <FavoriteItemDragHandle isDragging={isDragging} sort_order={favorite.sort_order} />
         <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} />

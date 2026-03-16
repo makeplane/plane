@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { EmptyStateCompact } from "./compact-empty-state";
 import type { BaseEmptyStateCommonProps } from "./types";
@@ -110,7 +116,7 @@ export const WithAssetKeyAndMultipleActions: Story = {
       {
         label: "Import",
         onClick: () => console.log("import-clicked"),
-        variant: "outline-primary",
+        variant: "secondary",
       },
     ],
   },

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
@@ -43,7 +49,7 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
               <BreadcrumbLink
                 label="Cycles"
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/cycles/`}
-                icon={<CycleIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
                 isLast
               />
             }
@@ -56,13 +62,13 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
           <CyclesViewHeader projectId={currentProjectDetails.id} />
           <Button
             variant="primary"
-            size="sm"
+            size="lg"
             data-ph-element={CYCLE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => {
               toggleCreateCycleModal(true);
             }}
           >
-            <div className="sm:hidden block">{t("add")}</div>
+            <div className="block sm:hidden">{t("add")}</div>
             <div className="hidden sm:block">{t("project_cycles.add_cycle")}</div>
           </Button>
         </Header.RightItem>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -44,22 +50,22 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
   };
 
   const enableIntercomConfig = () => {
-    submitInstanceConfigurations({ IS_INTERCOM_ENABLED: isIntercomEnabled ? "0" : "1" });
+    void submitInstanceConfigurations({ IS_INTERCOM_ENABLED: isIntercomEnabled ? "0" : "1" });
   };
 
   return (
     <>
-      <div className="flex items-center gap-14 px-4 py-3 border border-custom-border-200 rounded">
-        <div className="grow flex items-center gap-4">
+      <div className="flex items-center gap-14">
+        <div className="flex grow items-center gap-4">
           <div className="shrink-0">
-            <div className="flex items-center justify-center w-10 h-10 bg-custom-background-80 rounded-full">
-              <MessageSquare className="w-6 h-6 text-custom-text-300/80 p-0.5" />
+            <div className="flex size-11 items-center justify-center rounded-lg bg-layer-1">
+              <MessageSquare className="size-5 p-0.5 text-tertiary" />
             </div>
           </div>
 
           <div className="grow">
-            <div className="text-sm font-medium text-custom-text-100 leading-5">Chat with us</div>
-            <div className="text-xs font-normal text-custom-text-300 leading-5">
+            <div className="text-13 leading-5 font-medium text-primary">Chat with us</div>
+            <div className="text-11 leading-5 font-regular text-tertiary">
               Let your users chat with us via Intercom or another service. Toggling Telemetry off turns this off
               automatically.
             </div>

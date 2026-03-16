@@ -31,14 +31,12 @@ COPY --from=node /usr/local/lib /usr/local/lib
 COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/bin /usr/local/bin
 
-COPY --from=web-img /app /app/web
+COPY --from=web-img /usr/share/nginx/html /app/web
 COPY --from=space-img /app /app/space
-COPY --from=admin-img /app /app/admin
+COPY --from=admin-img /usr/share/nginx/html/god-mode /app/admin
 COPY --from=live-img /app /app/live
 
-RUN rm -rf /app/web/apps/web/.next/cache && \
-    rm -rf /app/space/apps/space/.next/cache && \
-    rm -rf /app/admin/apps/admin/.next/cache
+RUN rm -rf /app/space/apps/space/.next/cache
 
 COPY --from=proxy-img /usr/bin/caddy /usr/bin/caddy
 COPY dist/Caddyfile /app/proxy/Caddyfile

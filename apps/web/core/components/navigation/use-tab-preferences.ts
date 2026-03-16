@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { useMember } from "@/hooks/store/use-member";
@@ -23,7 +29,7 @@ export type TTabPreferencesHook = {
  */
 export const useTabPreferences = (workspaceSlug: string, projectId: string): TTabPreferencesHook => {
   const {
-    project: { getProjectMemberPreferences, updateProjectMemberPreferences },
+    project: { getProjectUserProperties, updateProjectUserProperties },
   } = useMember();
   // const { projectUserInfo } = useUserPermissions();
   const { data } = useUser();
@@ -33,21 +39,17 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
   const memberId = data?.id || null;
 
   // Get preferences from store
-  const storePreferences = getProjectMemberPreferences(projectId);
+  const storePreferences = getProjectUserProperties(projectId);
+  const defaultTab = storePreferences?.preferences?.navigation?.default_tab || DEFAULT_TAB_KEY;
+  const hideInMoreMenu = storePreferences?.preferences?.navigation?.hide_in_more_menu || [];
 
   // Convert store preferences to component format
   const tabPreferences: TTabPreferences = useMemo(() => {
-    if (storePreferences) {
-      return {
-        defaultTab: storePreferences.default_tab || DEFAULT_TAB_KEY,
-        hiddenTabs: storePreferences.hide_in_more_menu || [],
-      };
-    }
     return {
-      defaultTab: DEFAULT_TAB_KEY,
-      hiddenTabs: [],
+      defaultTab,
+      hiddenTabs: hideInMoreMenu,
     };
-  }, [storePreferences]);
+  }, [defaultTab, hideInMoreMenu]);
 
   const isLoading = !storePreferences && memberId !== null;
 
@@ -55,11 +57,14 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
    * Update preferences via store
    */
   const updatePreferences = async (newPreferences: TTabPreferences) => {
-    if (!memberId) return;
-
-    await updateProjectMemberPreferences(workspaceSlug, projectId, memberId, {
-      default_tab: newPreferences.defaultTab,
-      hide_in_more_menu: newPreferences.hiddenTabs,
+    await updateProjectUserProperties(workspaceSlug, projectId, {
+      preferences: {
+        pages: storePreferences?.preferences?.pages || { block_display: false },
+        navigation: {
+          default_tab: newPreferences.defaultTab,
+          hide_in_more_menu: newPreferences.hiddenTabs,
+        },
+      },
     });
   };
 
@@ -77,6 +82,7 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
           title: "Success!",
           message: "Default tab updated successfully.",
         });
+        return;
       })
       .catch(() => {
         setToast({

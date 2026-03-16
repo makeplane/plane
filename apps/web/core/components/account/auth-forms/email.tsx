@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC, FormEvent } from "react";
 import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -45,13 +51,13 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
   return (
     <form onSubmit={handleFormSubmit} className="space-y-4">
       <div className="space-y-1">
-        <label htmlFor="email" className="text-sm text-custom-text-300 font-medium">
+        <label htmlFor="email" className="text-13 font-medium text-tertiary">
           {t("auth.common.email.label")}
         </label>
         <div
           className={cn(
-            `relative flex items-center rounded-md bg-custom-background-100 border`,
-            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-custom-border-300`
+            `relative flex items-center rounded-md border bg-surface-1`,
+            !isFocused && Boolean(emailError?.email) ? `border-danger-strong` : `border-strong`
           )}
           onFocus={() => {
             setIsFocused(true);
@@ -67,8 +73,8 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
-            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
-            autoComplete="on"
+            className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder autofill:bg-danger-primary focus:bg-none active:bg-transparent`}
+            autoComplete="off"
             autoFocus
             ref={inputRef}
           />
@@ -79,22 +85,22 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
                 setEmail("");
                 inputRef.current?.focus();
               }}
-              className="absolute right-3 size-5 grid place-items-center"
+              className="absolute right-3 grid size-5 place-items-center"
               aria-label={t("aria_labels.auth_forms.clear_email")}
               tabIndex={-1}
             >
-              <XCircle className="size-5 stroke-custom-text-400" />
+              <XCircle className="size-5 stroke-placeholder" />
             </button>
           )}
         </div>
         {emailError?.email && !isFocused && (
-          <p className="flex items-center gap-1 text-xs text-red-600 px-0.5">
+          <p className="flex items-center gap-1 px-0.5 text-11 text-danger-primary">
             <CircleAlert height={12} width={12} />
             {t(emailError.email)}
           </p>
         )}
       </div>
-      <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+      <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
         {isSubmitting ? <Spinner height="20px" width="20px" /> : t("common.continue")}
       </Button>
     </form>

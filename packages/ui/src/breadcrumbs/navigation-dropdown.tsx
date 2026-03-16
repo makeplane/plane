@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { CheckIcon } from "lucide-react";
 import * as React from "react";
 // ui
@@ -39,14 +45,14 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
             }
           }}
           className={cn(
-            "group h-full flex items-center gap-2 px-1.5 py-1 text-sm font-medium text-custom-text-300 cursor-pointer rounded rounded-r-none",
+            "group flex h-full cursor-pointer items-center gap-2 rounded-sm rounded-r-none px-1.5 py-1 text-13 font-medium text-tertiary",
             {
-              "hover:bg-custom-background-80 hover:text-custom-text-100": !isLast,
+              "hover:bg-layer-1 hover:text-primary": !isLast,
             }
           )}
         >
-          <div className="flex @4xl:hidden text-custom-text-300">...</div>
-          <div className="hidden @4xl:flex gap-2">
+          <div className="flex text-tertiary @4xl:hidden">...</div>
+          <div className="hidden items-center gap-2 @4xl:flex">
             {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
             <Breadcrumbs.Label>{selectedItem?.title}</Breadcrumbs.Label>
           </div>
@@ -65,13 +71,13 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
         <>
           <NavigationButton />
           <Breadcrumbs.Separator
-            className={cn("rounded-r", {
-              "bg-custom-background-80": isOpen && !isLast,
-              "hover:bg-custom-background-80": !isLast,
+            className={cn("rounded-r-sm", {
+              "bg-layer-1": isOpen && !isLast,
+              "hover:bg-layer-1": !isLast,
             })}
             containerClassName="p-0"
-            iconClassName={cn("group-hover:rotate-90 hover:text-custom-text-100", {
-              "text-custom-text-100": isOpen,
+            iconClassName={cn("group-hover:rotate-90 hover:text-primary", {
+              "text-primary": isOpen,
               "rotate-90": isOpen || isLast,
             })}
             showDivider={!isLast}
@@ -79,11 +85,11 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
         </>
       }
       placement="bottom-start"
-      className="h-full rounded"
+      className="h-full rounded-sm"
       customButtonClassName={cn(
-        "group flex items-center gap-0.5 rounded hover:bg-custom-background-90 outline-none cursor-pointer h-full rounded",
+        "group flex h-full cursor-pointer items-center gap-0.5 rounded-sm outline-none hover:bg-surface-2",
         {
-          "bg-custom-background-90": isOpen,
+          "bg-surface-2": isOpen,
         }
       )}
       closeOnSelect
@@ -108,7 +114,7 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
             className={cn(
               "flex items-center gap-2",
               {
-                "text-custom-text-400": item.disabled,
+                "text-placeholder": item.disabled,
               },
               item.className
             )}
@@ -119,15 +125,15 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-custom-text-300 whitespace-pre-line", {
-                    "text-custom-text-400": item.disabled,
+                  className={cn("whitespace-pre-line text-tertiary", {
+                    "text-placeholder": item.disabled,
                   })}
                 >
                   {item.description}
                 </p>
               )}
             </div>
-            {item.key === selectedItemKey && <CheckIcon className="flex-shrink-0 size-3.5" />}
+            {item.key === selectedItemKey && <CheckIcon className="size-3.5 flex-shrink-0" />}
           </CustomMenu.MenuItem>
         );
       })}

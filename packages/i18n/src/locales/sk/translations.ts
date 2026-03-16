@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projekty",
@@ -17,6 +23,7 @@ export default {
     favorites: "Obľúbené",
     pro: "Pro",
     upgrade: "Upgrade",
+    stickies: "Poznámky",
   },
   auth: {
     common: {
@@ -337,13 +344,13 @@ export default {
   project_id_must_be_at_least_1_character: "ID projektu musí mať aspoň 1 znak",
   project_id_must_be_at_most_5_characters: "ID projektu môže mať maximálne 5 znakov",
   project_id: "ID projektu",
-  project_id_tooltip_content: "Pomáha jednoznačne identifikovať pracovné položky v projekte. Max. 5 znakov.",
+  project_id_tooltip_content: "Pomáha jednoznačne identifikovať pracovné položky v projekte. Max. 10 znakov.",
   description_placeholder: "Popis",
   only_alphanumeric_non_latin_characters_allowed: "Sú povolené iba alfanumerické a nelatinské znaky.",
   project_id_is_required: "ID projektu je povinné",
   project_id_allowed_char: "Sú povolené iba alfanumerické a nelatinské znaky.",
   project_id_min_char: "ID projektu musí mať aspoň 1 znak",
-  project_id_max_char: "ID projektu môže mať maximálne 5 znakov",
+  project_id_max_char: "ID projektu môže mať maximálne 10 znakov",
   project_description_placeholder: "Zadajte popis projektu",
   select_network: "Vybrať sieť",
   lead: "Vedúci",
@@ -401,7 +408,7 @@ export default {
   docs: "Dokumentáciu",
   full_changelog: "Úplný zmenový protokol",
   support: "Podpora",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Poháňa Plane Pages",
   please_select_at_least_one_invitation: "Vyberte aspoň jednu pozvánku.",
   please_select_at_least_one_invitation_description:
@@ -1581,6 +1588,7 @@ export default {
         name: "Názov pracovného priestoru",
         company_size: "Veľkosť spoločnosti",
         url: "URL pracovného priestoru",
+        workspace_timezone: "Časové pásmo pracovného priestoru",
         update_workspace: "Aktualizovať priestor",
         delete_workspace: "Zmazať tento priestor",
         delete_workspace_description: "Zmazaním priestoru odstránite všetky dáta a zdroje. Akcia je nevratná.",
@@ -1964,6 +1972,44 @@ export default {
         title: "Žiadne systémy odhadov",
         description: "Vytvorte systém odhadov na komunikáciu vyťaženia.",
         primary_button: "Pridať systém odhadov",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cykly",
+        short_title: "Cykly",
+        description:
+          "Naplánujte prácu v flexibilných obdobiach, ktoré sa prispôsobia jedinečnému rytmu a tempu tohto projektu.",
+        toggle_title: "Povoliť cykly",
+        toggle_description: "Naplánujte prácu v sústredenej časovej osi.",
+      },
+      modules: {
+        title: "Moduly",
+        short_title: "Moduly",
+        description: "Organizujte prácu do podprojektov s vyčlenenými vedúcimi a priradenými osobami.",
+        toggle_title: "Povoliť moduly",
+        toggle_description: "Členovia projektu budú môcť vytvárať a upravovať moduly.",
+      },
+      views: {
+        title: "Zobrazenia",
+        short_title: "Zobrazenia",
+        description: "Uložte vlastné triedenia, filtre a možnosti zobrazenia alebo ich zdieľajte so svojím tímom.",
+        toggle_title: "Povoliť zobrazenia",
+        toggle_description: "Členovia projektu budú môcť vytvárať a upravovať zobrazenia.",
+      },
+      pages: {
+        title: "Stránky",
+        short_title: "Stránky",
+        description: "Vytvárajte a upravujte voľný obsah: poznámky, dokumenty, čokoľvek.",
+        toggle_title: "Povoliť stránky",
+        toggle_description: "Členovia projektu budú môcť vytvárať a upravovať stránky.",
+      },
+      intake: {
+        title: "Príjem",
+        short_title: "Príjem",
+        description: "Umožnite nečlenom zdieľať chyby, spätnú väzbu a návrhy; bez narušenia vášho pracovného postupu.",
+        toggle_title: "Povoliť príjem",
+        toggle_description: "Povoliť členom projektu vytvárať žiadosti o príjem v aplikácii.",
       },
     },
   },

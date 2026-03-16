@@ -1,10 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import { LinkIcon, Star, StarOff, Users } from "lucide-react";
+import { Star, StarOff, Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon } from "@plane/propel/icons";
+import { LinkIcon, ModuleStatusIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IModule, TModuleStatus } from "@plane/types";
 import { EUserPermissions } from "@plane/types";
@@ -114,7 +120,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
     {
       id: "change_module_status",
       i18n_title: "power_k.contextual_actions.module.change_status",
-      iconNode: <ModuleStatusIcon status="backlog" className="shrink-0 size-3.5" />,
+      iconNode: <ModuleStatusIcon status="backlog" className="size-3.5 shrink-0" />,
       group: "contextual",
       contextType: "module",
       type: "change-page",

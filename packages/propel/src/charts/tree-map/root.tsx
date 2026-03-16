@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { Treemap, ResponsiveContainer, Tooltip } from "recharts";
 // plane imports
@@ -16,8 +22,8 @@ export const TreeMapChart = React.memo(function TreeMapChart(props: TreeMapChart
           data={data}
           nameKey="name"
           dataKey="value"
-          stroke="currentColor"
-          className="text-custom-background-100 bg-custom-background-100"
+          stroke="transparent"
+          className="cursor-pointer bg-layer-1"
           content={<CustomTreeMapContent />}
           animationEasing="ease-out"
           isUpdateAnimationActive={isAnimationActive}
@@ -29,7 +35,7 @@ export const TreeMapChart = React.memo(function TreeMapChart(props: TreeMapChart
               content={({ active, payload }) => <TreeMapTooltip active={active} payload={payload} />}
               cursor={{
                 fill: "currentColor",
-                className: "text-custom-background-90/80 cursor-pointer",
+                className: "bg-layer-1 cursor-pointer",
               }}
               wrapperStyle={{
                 pointerEvents: "auto",

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import type { Control, FieldArrayWithId, FormState } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -39,7 +45,10 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
   return (
     <div className={cn("mb-3 space-y-4", className)}>
       {fields.map((field, index) => (
-        <div key={field.id} className="relative group mb-1 flex items-start justify-between gap-x-4 text-sm w-full">
+        <div
+          key={field.id}
+          className="group relative mb-1 flex w-full items-start justify-between gap-x-4 text-body-xs-regular"
+        >
           <div className="w-full">
             <Controller
               control={control}
@@ -62,16 +71,18 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                     ref={ref}
                     hasError={Boolean(errors.emails?.[index]?.email)}
                     placeholder={t("workspace_settings.settings.members.modal.placeholder")}
-                    className="w-full text-xs sm:text-sm"
+                    className="w-full text-caption-sm-regular sm:text-body-xs-regular"
                   />
                   {errors.emails?.[index]?.email && (
-                    <span className="ml-1 text-xs text-red-500">{errors.emails?.[index]?.email?.message}</span>
+                    <span className="ml-1 text-caption-sm-regular text-danger-primary">
+                      {errors.emails?.[index]?.email?.message}
+                    </span>
                   )}
                 </>
               )}
             />
           </div>
-          <div className="flex items-center justify-between gap-2 flex-shrink-0 ">
+          <div className="flex shrink-0 items-center justify-between gap-2">
             <div className="flex flex-col gap-1">
               <Controller
                 control={control}
@@ -80,9 +91,9 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                 render={({ field: { value, onChange } }) => (
                   <CustomSelect
                     value={value}
-                    label={<span className="text-xs sm:text-sm">{ROLE[value]}</span>}
+                    label={<span className="text-caption-sm-regular sm:text-body-xs-regular">{ROLE[value]}</span>}
                     onChange={onChange}
-                    className="flex-grow w-24"
+                    className="w-24 flex-grow"
                     input
                   >
                     {Object.entries(ROLE).map(([key, value]) => {
@@ -99,8 +110,12 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
             </div>
             {fields.length > 1 && (
               <div className="flex-item flex w-6">
-                <button type="button" className="place-items-center self-center rounded" onClick={() => remove(index)}>
-                  <CloseIcon className="h-4 w-4 text-custom-text-200" />
+                <button
+                  type="button"
+                  className="place-items-center self-center rounded-sm"
+                  onClick={() => remove(index)}
+                >
+                  <CloseIcon className="h-4 w-4 text-secondary" />
                 </button>
               </div>
             )}

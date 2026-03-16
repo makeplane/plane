@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { PanelRight } from "lucide-react";
 // plane imports
@@ -37,26 +43,26 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
     <>
       <div
         id="page-toolbar-container"
-        className={cn("max-h-[52px] transition-all ease-linear duration-300 overflow-auto", {
+        className={cn("max-h-[52px] overflow-auto transition-all duration-300 ease-linear", {
           "max-h-0 overflow-hidden": shouldHideToolbar,
         })}
       >
         <div
           className={cn(
-            "hidden md:flex items-center relative min-h-[52px] page-toolbar-content px-page-x transition-all duration-200 ease-in-out",
+            "page-toolbar-content relative hidden min-h-[52px] items-center px-page-x transition-all duration-200 ease-in-out md:flex",
             {
               "wide-layout": isFullWidth,
             }
           )}
         >
-          <div className="max-w-full w-full flex items-center justify-between">
-            {editorRef && <PageToolbar editorRef={editorRef} />}
+          <div className="flex w-full max-w-full items-center justify-between">
+            <div className="flex-1">{editorRef && <PageToolbar editorRef={editorRef} />}</div>
             <div className="flex items-center gap-2">
               <PageCollaboratorsList page={page} />
               {!isNavigationPaneOpen && (
                 <button
                   type="button"
-                  className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
+                  className="grid size-6 shrink-0 place-items-center rounded-sm text-secondary transition-colors hover:bg-layer-transparent-hover hover:text-primary"
                   onClick={handleOpenNavigationPane}
                 >
                   <PanelRight className="size-3.5" />
@@ -67,12 +73,12 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
         </div>
       </div>
       {shouldHideToolbar && (
-        <div className="absolute z-10 top-0 right-0 h-[52px] px-page-x flex items-center">
+        <div className="absolute top-0 right-0 z-10 flex h-[52px] items-center px-page-x">
           {!isNavigationPaneOpen && (
             <Tooltip tooltipContent={t("page_navigation_pane.open_button")}>
               <button
                 type="button"
-                className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
+                className="grid size-6 shrink-0 place-items-center rounded-sm text-secondary transition-colors hover:bg-layer-transparent-hover hover:text-primary"
                 onClick={handleOpenNavigationPane}
                 aria-label={t("page_navigation_pane.open_button")}
               >

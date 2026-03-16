@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { Transition } from "@headlessui/react";
 // plane imports
@@ -24,25 +30,23 @@ export function SelectedOptionsDisplay<V extends TFilterValue>(props: TSelectedO
 
   // When no value is selected, display the empty value
   if (selectedArray.length === 0) {
-    return <span className="text-custom-text-400">{emptyValue}</span>;
+    return <span className="text-placeholder">{emptyValue}</span>;
   }
 
   // When no options are found but we have a fallback text
   if (options.length === 0) {
-    return <span className="text-custom-text-400">{fallbackText ?? `${selectedArray.length} option(s) selected`}</span>;
+    return <span className="text-placeholder">{fallbackText ?? `${selectedArray.length} option(s) selected`}</span>;
   }
 
   return (
-    <div className="flex items-center h-full overflow-hidden">
+    <div className="flex h-full items-center overflow-hidden">
       {selectedOptions.slice(0, displayCount).map((option, index) => (
         <React.Fragment key={index}>
           <div className="flex items-center whitespace-nowrap">
             {option?.icon && <span className={cn("mr-1", option.iconClassName)}>{option.icon}</span>}
-            <span className="truncate max-w-24">{option?.label}</span>
+            <span className="max-w-24 truncate">{option?.label}</span>
           </div>
-          {index < Math.min(displayCount, selectedOptions.length) - 1 && (
-            <span className="text-custom-text-300 mx-1">,</span>
-          )}
+          {index < Math.min(displayCount, selectedOptions.length) - 1 && <span className="mx-1 text-tertiary">,</span>}
         </React.Fragment>
       ))}
       {remainingCount > 0 && (
@@ -52,7 +56,7 @@ export function SelectedOptionsDisplay<V extends TFilterValue>(props: TSelectedO
           enter="transition-opacity duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
-          className="text-custom-text-300 whitespace-nowrap ml-1"
+          className="ml-1 whitespace-nowrap text-tertiary"
         >
           +{remainingCount} more
         </Transition>

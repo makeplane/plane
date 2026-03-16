@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import type { TIssuePriorities } from "@plane/constants";
 import { ISSUE_PRIORITIES } from "@plane/constants";
@@ -49,7 +55,7 @@ export const getPriorityMultiSelectConfig = (
 export const getPriorityFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreatePriorityFilterParams> =>
   (params: TCreatePriorityFilterParams) =>
-    createFilterConfig<P, TIssuePriorities>({
+    createFilterConfig<P>({
       id: key,
       label: "Priority",
       ...params,

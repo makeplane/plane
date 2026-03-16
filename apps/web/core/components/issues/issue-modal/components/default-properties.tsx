@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useState } from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -265,7 +271,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
             customButton={
               <button
                 type="button"
-                className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 text-xs hover:bg-custom-background-80"
+                className="flex h-full cursor-pointer items-center justify-between gap-1 rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-caption-sm-regular hover:bg-layer-1"
               >
                 {selectedParentIssue?.project_id && (
                   <IssueIdentifier
@@ -273,7 +279,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                     issueTypeId={selectedParentIssue.type_id}
                     projectIdentifier={selectedParentIssue?.project__identifier}
                     issueSequenceId={selectedParentIssue.sequence_id}
-                    textContainerClassName="text-xs"
+                    size="xs"
                   />
                 )}
               </button>
@@ -307,7 +313,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
         ) : (
           <button
             type="button"
-            className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 text-xs hover:bg-custom-background-80"
+            className="flex h-full cursor-pointer items-center justify-between gap-1 rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-caption-sm-regular hover:bg-layer-1"
             onClick={() => setParentIssueListModalOpen(true)}
           >
             <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />

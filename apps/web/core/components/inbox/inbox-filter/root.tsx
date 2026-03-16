@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { ListFilter } from "lucide-react";
 import { getButtonStyling } from "@plane/propel/button";
@@ -12,11 +18,11 @@ import useSize from "@/hooks/use-window-size";
 import { InboxIssueFilterSelection } from "./filters/filter-selection";
 import { InboxIssueOrderByDropdown } from "./sorting/order-by";
 
-const smallButton = <ListFilter className="size-3 " />;
+const smallButton = <ListFilter className="size-3" />;
 
 const largeButton = (
-  <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
-    <ListFilter className="size-3 " />
+  <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
+    <ListFilter className="size-3" />
     <span>Filters</span>
     <ChevronDownIcon className="size-3" strokeWidth={2} />
   </div>

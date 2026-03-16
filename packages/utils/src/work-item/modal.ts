@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { set } from "lodash-es";
 // plane imports
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
@@ -38,7 +44,7 @@ export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { 
 
   const dirtyFieldKeys = Object.keys(dirtyFields) as (keyof TIssue)[];
   for (const dirtyField of dirtyFieldKeys) {
-    if (!!dirtyFields[dirtyField]) {
+    if (dirtyFields[dirtyField]) {
       set(changedFields, [dirtyField], formData[dirtyField]);
     }
   }

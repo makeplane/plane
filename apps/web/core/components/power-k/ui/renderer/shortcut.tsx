@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { substringMatch } from "@plane/utils";
@@ -76,12 +82,12 @@ export function ShortcutRenderer(props: Props) {
       {!isShortcutsEmpty ? (
         groupedCommands.map((group) => (
           <div key={group.key}>
-            <h5 className="text-left text-sm font-medium pt-1 pb-2">{group.title}</h5>
+            <h5 className="pt-1 pb-2 text-left text-13 font-medium">{group.title}</h5>
             <div className="space-y-3 px-1">
               {group.commands.map((command) => (
                 <div key={command.id} className="mt-1">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-xs text-custom-text-200 text-left">{t(command.i18n_title)}</h4>
+                    <h4 className="text-left text-11 text-secondary">{t(command.i18n_title)}</h4>
                     <div className="flex items-center gap-x-1.5">
                       {command.keySequence && <KeySequenceBadge sequence={command.keySequence} />}
                       {(command.shortcut || command.modifierShortcut) && (
@@ -95,7 +101,7 @@ export function ShortcutRenderer(props: Props) {
           </div>
         ))
       ) : (
-        <p className="flex justify-center text-center text-sm text-custom-text-200">
+        <p className="flex justify-center text-center text-13 text-secondary">
           No shortcuts found for{" "}
           <span className="font-semibold italic">
             {`"`}

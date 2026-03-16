@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // - Parses TipTap/ProseMirror HTML fragments
 // - Removes <u> tags (Markdown has no underline)
 // - Adds a space after checkbox inputs for correct GFM task list rendering
@@ -33,24 +39,21 @@ function addSpacesToCheckboxes() {
           child.properties &&
           child.properties["data-type"] === "taskItem"
         ) {
-          const liElement = child as HASTElement;
+          const liElement = child;
 
           // Find the label and div elements
-          const label = liElement.children?.find(
-            (c) => c.type === "element" && (c as HASTElement).tagName === "label"
-          ) as HASTElement | undefined;
+          const label = liElement.children?.find((c) => c.type === "element" && c.tagName === "label") as
+            | HASTElement
+            | undefined;
 
-          const contentDiv = liElement.children?.find(
-            (c) => c.type === "element" && (c as HASTElement).tagName === "div"
-          ) as HASTElement | undefined;
+          const contentDiv = liElement.children?.find((c) => c.type === "element" && c.tagName === "div") as
+            | HASTElement
+            | undefined;
 
           if (label && contentDiv) {
             // Find the checkbox input
             const checkbox = label.children?.find(
-              (c) =>
-                c.type === "element" &&
-                (c as HASTElement).tagName === "input" &&
-                (c as HASTElement).properties?.type === "checkbox"
+              (c) => c.type === "element" && c.tagName === "input" && c.properties?.type === "checkbox"
             ) as HASTElement | undefined;
 
             if (checkbox) {
@@ -58,9 +61,9 @@ function addSpacesToCheckboxes() {
               const textContent: ElementContent[] = [];
               if (contentDiv.children) {
                 for (const child of contentDiv.children) {
-                  if (child.type === "element" && (child as HASTElement).tagName === "p") {
+                  if (child.type === "element" && child.tagName === "p") {
                     // Unwrap paragraph - add its children directly
-                    const pElement = child as HASTElement;
+                    const pElement = child;
                     if (pElement.children) {
                       textContent.push(...pElement.children);
                     }
@@ -80,7 +83,7 @@ function addSpacesToCheckboxes() {
             }
           }
         } else if (child && child.type === "element") {
-          helper(child as HASTElement);
+          helper(child);
         }
       }
     };

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as RadixScrollArea from "@radix-ui/react-scroll-area";
 import type { FC } from "react";
 import React from "react";
@@ -35,28 +41,28 @@ export function ScrollArea(props: TScrollAreaProps) {
       <RadixScrollArea.Viewport className="size-full">{children}</RadixScrollArea.Viewport>
       <RadixScrollArea.Scrollbar
         className={cn(
-          "group/track flex touch-none select-none bg-transparent transition-colors duration-150 ease-out",
+          "group/track flex touch-none bg-transparent transition-colors duration-150 ease-out select-none",
           sizeStyles[size]
         )}
         orientation="vertical"
       >
         <RadixScrollArea.Thumb
           className={cn(
-            "relative flex-1 rounded-[10px]  bg-custom-scrollbar-neutral group-hover:bg-custom-scrollbar-hover group-active/track:bg-custom-scrollbar-active",
+            "relative flex-1 rounded-[10px] bg-scrollbar-thumb group-hover:bg-scrollbar-thumb-surface-hover group-hover/track:bg-scrollbar-thumb-hover group-active/track:bg-scrollbar-thumb-active",
             thumbSizeStyles[size]
           )}
         />
       </RadixScrollArea.Scrollbar>
       <RadixScrollArea.Scrollbar
         className={cn(
-          "group/track flex touch-none select-none bg-transparent transition-colors duration-150 ease-out",
+          "group/track flex touch-none bg-transparent transition-colors duration-150 ease-out select-none",
           sizeStyles[size]
         )}
         orientation="horizontal"
       >
         <RadixScrollArea.Thumb
           className={cn(
-            "relative flex-1 rounded-[10px] bg-custom-scrollbar-neutral group-hover:bg-custom-scrollbar-hover group-active/track:bg-custom-scrollbar-active",
+            "relative flex-1 rounded-[10px] bg-scrollbar-thumb group-hover:bg-scrollbar-thumb-surface-hover group-hover/track:bg-scrollbar-thumb-hover group-active/track:bg-scrollbar-thumb-active",
             thumbSizeStyles[size]
           )}
         />

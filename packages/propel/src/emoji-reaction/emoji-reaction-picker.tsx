@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useMemo, useCallback } from "react";
 import { EmojiRoot } from "../emoji-icon-picker/emoji/emoji";
 import { emojiToString } from "../emoji-icon-picker/helper";
@@ -64,10 +70,7 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
       </Popover.Button>
       <Popover.Panel
         positionerClassName="z-50"
-        className={cn(
-          "w-80 bg-custom-background-100 rounded-md border-[0.5px] border-custom-border-300 overflow-hidden",
-          dropdownClassName
-        )}
+        className={cn("w-80 overflow-hidden rounded-md border-[0.5px] border-strong bg-surface-1", dropdownClassName)}
         side={finalSide}
         align={finalAlign}
         sideOffset={8}

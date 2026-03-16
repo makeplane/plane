@@ -1,4 +1,9 @@
-/* eslint-disable react/display-name */
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -60,8 +65,8 @@ export const CalendarIssueBlock = observer(
     const customActionButton = (
       <div
         ref={menuActionRef}
-        className={`w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
-          isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+        className={`w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
+          isMenuActive ? "bg-layer-1-active text-primary" : "text-secondary"
         }`}
         onClick={() => setIsMenuActive(!isMenuActive)}
       >
@@ -93,29 +98,29 @@ export const CalendarIssueBlock = observer(
               id={`issue-${issue.id}`}
               href={workItemLink}
               onClick={() => handleIssuePeekOverview(issue)}
-              className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-custom-border-200 hover:border-custom-border-400"
+              className="block w-full rounded-sm border-b border-subtle text-13 text-primary hover:border-subtle-1 md:border-[1px]"
               disabled={!!issue?.tempId || isMobile}
               ref={ref}
             >
               <>
                 {issue?.tempId !== undefined && (
-                  <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+                  <div className="absolute top-0 left-0 z-[99999] h-full w-full animate-pulse bg-surface-1/20" />
                 )}
 
                 <div
                   ref={blockRef}
                   className={cn(
-                    "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded  md:px-1 px-4 py-1.5 ",
+                    "group/calendar-block flex h-10 w-full items-center justify-between gap-1.5 rounded-sm px-4 py-1.5 md:h-8 md:px-1",
                     {
-                      "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100": isDragging,
-                      "bg-custom-background-100 hover:bg-custom-background-90": !isDragging,
-                      "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+                      "border-accent-strong bg-surface-2 shadow-raised-200": isDragging,
+                      "bg-surface-1 hover:bg-surface-2": !isDragging,
+                      "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id),
                     }
                   )}
                 >
                   <div className="flex h-full items-center gap-1.5 truncate">
                     <span
-                      className="h-full w-0.5 flex-shrink-0 rounded"
+                      className="h-full w-0.5 flex-shrink-0 rounded-sm"
                       style={{
                         backgroundColor: stateColor,
                       }}
@@ -124,14 +129,15 @@ export const CalendarIssueBlock = observer(
                       <IssueIdentifier
                         issueId={issue.id}
                         projectId={issue.project_id}
-                        textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                        size="xs"
+                        variant="tertiary"
                         displayProperties={issuesFilter?.issueFilters?.displayProperties}
                       />
                     )}
-                    <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
+                    <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
                   </div>
                   <div
-                    className={cn("flex-shrink-0 size-5", {
+                    className={cn("size-5 flex-shrink-0", {
                       "hidden group-hover/calendar-block:block": !isMobile,
                       block: isMenuActive,
                     })}

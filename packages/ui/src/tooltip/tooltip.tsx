@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Tooltip2 } from "@blueprintjs/popover2";
 import React, { useEffect, useRef, useState } from "react";
 // helpers
@@ -69,7 +75,7 @@ export function Tooltip({
 
   if (!shouldRender) {
     return (
-      <div ref={toolTipRef} className="h-full flex items-center">
+      <div ref={toolTipRef} className="flex h-full items-center">
         {children}
       </div>
     );
@@ -83,24 +89,19 @@ export function Tooltip({
       content={
         <div
           className={cn(
-            "relative block z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-custom-text-200 shadow-md",
+            "shadow-md relative z-50 block max-w-xs gap-1 overflow-hidden rounded-md bg-surface-1 p-2 text-11 break-words text-secondary",
             {
               hidden: isMobile,
             },
             className
           )}
         >
-          {tooltipHeading && <h5 className="font-medium text-custom-text-100">{tooltipHeading}</h5>}
+          {tooltipHeading && <h5 className="font-medium text-primary">{tooltipHeading}</h5>}
           {tooltipContent}
         </div>
       }
       position={position}
-      renderTarget={({
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        isOpen: isTooltipOpen,
-        ref: eleReference,
-        ...tooltipProps
-      }) =>
+      renderTarget={({ isOpen: isTooltipOpen, ref: eleReference, ...tooltipProps }) =>
         React.cloneElement(children, {
           ref: eleReference,
           ...tooltipProps,

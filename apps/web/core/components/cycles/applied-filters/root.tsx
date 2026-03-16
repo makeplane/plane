@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -36,7 +42,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
+    <div className="flex flex-wrap items-stretch gap-2 bg-surface-1">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TCycleFilters;
 
@@ -45,7 +51,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
 
         return (
           <Tag key={filterKey}>
-            <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+            <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
               {filterKey === "status" && (
                 <AppliedStatusFilters
@@ -64,7 +70,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
               {isEditingAllowed && (
                 <button
                   type="button"
-                  className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                  className="grid place-items-center text-tertiary hover:text-secondary"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
                   <CloseIcon height={12} width={12} strokeWidth={2} />

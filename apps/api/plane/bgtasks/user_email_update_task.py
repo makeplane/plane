@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import logging
 
@@ -7,10 +11,10 @@ from celery import shared_task
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 
 # Module imports
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 
 
@@ -32,7 +36,7 @@ def send_email_update_magic_code(email, token):
         context = {"code": token, "email": email}
 
         html_content = render_to_string("emails/auth/magic_signin.html", context)
-        text_content = strip_tags(html_content)
+        text_content = generate_plain_text_from_html(html_content)
 
         connection = get_connection(
             host=EMAIL_HOST,
@@ -83,7 +87,7 @@ def send_email_update_confirmation(email):
         context = {"email": email}
 
         html_content = render_to_string("emails/user/email_updated.html", context)
-        text_content = strip_tags(html_content)
+        text_content = generate_plain_text_from_html(html_content)
 
         connection = get_connection(
             host=EMAIL_HOST,

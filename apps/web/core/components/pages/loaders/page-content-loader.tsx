@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -10,9 +16,9 @@ export function PageContentLoader(props: Props) {
   const { className } = props;
 
   return (
-    <div className={cn("relative size-full flex flex-col", className)}>
+    <div className={cn("relative flex size-full flex-col", className)}>
       {/* header */}
-      <div className="flex-shrink-0 w-full h-12 border-b border-custom-border-100 relative flex items-center divide-x divide-custom-border-100">
+      <div className="relative flex h-12 w-full flex-shrink-0 items-center divide-x divide-subtle border-b border-subtle">
         <Loader className="relative flex items-center gap-1 pr-2">
           <Loader.Item width="26px" height="26px" />
           <Loader.Item width="26px" height="26px" />
@@ -37,7 +43,7 @@ export function PageContentLoader(props: Props) {
       </div>
 
       {/* content */}
-      <div className="size-full pt-[64px] overflow-hidden relative flex">
+      <div className="relative flex size-full overflow-hidden pt-[64px]">
         {/* editor loader */}
         <div className="size-full py-5">
           <Loader className="relative space-y-4">

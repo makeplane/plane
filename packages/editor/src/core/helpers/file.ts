@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export enum EFileError {
   INVALID_FILE_TYPE = "INVALID_FILE_TYPE",
   FILE_SIZE_TOO_LARGE = "FILE_SIZE_TOO_LARGE",

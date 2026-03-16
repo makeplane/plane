@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { isRouteErrorResponse } from "react-router";
 import { Banner } from "@plane/propel/banner";
@@ -13,11 +19,11 @@ interface ErrorActionsProps {
 function ErrorActions({ onGoHome, onReload }: ErrorActionsProps) {
   return (
     <div className="flex gap-3 pt-2">
-      <Button variant="primary" size="md" onClick={onGoHome}>
+      <Button variant="primary" size="lg" onClick={onGoHome}>
         Go to home
       </Button>
       {onReload && (
-        <Button variant="outline-primary" size="md" onClick={onReload}>
+        <Button variant="secondary" size="lg" onClick={onReload}>
           Reload page
         </Button>
       )}
@@ -34,8 +40,8 @@ interface DevErrorComponentProps {
 export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorComponentProps) {
   if (isRouteErrorResponse(error)) {
     return (
-      <div className="min-h-screen bg-custom-background-90 p-6 flex items-start justify-center transition-none">
-        <div className="w-full max-w-4xl mt-12 space-y-4 transition-none">
+      <div className="flex min-h-screen items-start justify-center bg-surface-2 p-6 transition-none">
+        <div className="mt-12 w-full max-w-4xl space-y-4 transition-none">
           <Banner
             variant="error"
             icon={<InfoFillIcon className="size-5" />}
@@ -46,16 +52,16 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
           <Card variant={ECardVariant.WITH_SHADOW} className="!p-6 transition-none">
             <div className="space-y-4">
               <div>
-                <h2 className="text-2xl font-semibold text-red-500 mb-2">
+                <h2 className="mb-2 text-20 font-semibold text-danger-primary">
                   {error.status} {error.statusText}
                 </h2>
-                <div className="h-px w-full bg-custom-border-200" />
+                <div className="bg-subtle-1 h-px w-full" />
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-custom-text-300 uppercase tracking-wide">Error Data</h3>
-                <div className="bg-custom-background-80 rounded-md p-4">
-                  <p className="text-sm text-custom-text-200 font-mono">{error.data}</p>
+                <h3 className="text-13 font-medium tracking-wide text-tertiary uppercase">Error Data</h3>
+                <div className="rounded-md bg-layer-1 p-4">
+                  <p className="font-code text-13 text-secondary">{error.data}</p>
                 </div>
               </div>
 
@@ -69,8 +75,8 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
 
   if (error instanceof Error) {
     return (
-      <div className="min-h-screen bg-custom-background-90 p-6 flex items-start justify-center transition-none">
-        <div className="w-full max-w-4xl mt-12 space-y-4 transition-none">
+      <div className="flex min-h-screen items-start justify-center bg-surface-2 p-6 transition-none">
+        <div className="mt-12 w-full max-w-4xl space-y-4 transition-none">
           <Banner
             variant="error"
             icon={<InfoFillIcon className="size-5" />}
@@ -80,22 +86,22 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
           <Card variant={ECardVariant.WITH_SHADOW} className="!p-6 transition-none">
             <div className="space-y-4">
               <div>
-                <h2 className="text-2xl font-semibold text-red-500 mb-2">Error</h2>
-                <div className="h-px w-full bg-custom-border-200" />
+                <h2 className="mb-2 text-20 font-semibold text-danger-primary">Error</h2>
+                <div className="bg-subtle-1 h-px w-full" />
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-custom-text-300 uppercase tracking-wide">Message</h3>
-                <div className="bg-custom-background-80 rounded-md p-4">
-                  <p className="text-sm text-custom-text-100 font-medium">{error.message}</p>
+                <h3 className="text-13 font-medium tracking-wide text-tertiary uppercase">Message</h3>
+                <div className="rounded-md bg-layer-1 p-4">
+                  <p className="text-13 font-medium text-primary">{error.message}</p>
                 </div>
               </div>
 
               {error.stack && (
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-custom-text-300 uppercase tracking-wide">Stack Trace</h3>
-                  <div className="bg-custom-background-80 rounded-md border border-custom-border-200 max-h-96 overflow-auto">
-                    <pre className="p-4 text-xs text-custom-text-200 font-mono whitespace-pre-wrap break-words">
+                  <h3 className="text-13 font-medium tracking-wide text-tertiary uppercase">Stack Trace</h3>
+                  <div className="max-h-96 overflow-auto rounded-md border border-subtle bg-layer-1">
+                    <pre className="p-4 font-code text-11 break-words whitespace-pre-wrap text-secondary">
                       {error.stack}
                     </pre>
                   </div>
@@ -106,12 +112,12 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
             </div>
           </Card>
 
-          <Card variant={ECardVariant.WITHOUT_SHADOW} className="!p-4 bg-custom-background-80 transition-none">
+          <Card variant={ECardVariant.WITHOUT_SHADOW} className="bg-layer-1 !p-4 transition-none">
             <div className="flex items-start gap-3">
-              <InfoFillIcon className="size-5 text-custom-text-300 flex-shrink-0 mt-0.5" />
+              <InfoFillIcon className="mt-0.5 size-5 flex-shrink-0 text-tertiary" />
               <div className="space-y-1">
-                <p className="text-sm font-medium text-custom-text-200">Development Mode</p>
-                <p className="text-xs text-custom-text-300">
+                <p className="text-13 font-medium text-secondary">Development Mode</p>
+                <p className="text-11 text-tertiary">
                   This detailed error view is only visible in development. In production, users will see a friendly
                   error page.
                 </p>
@@ -124,8 +130,8 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
   }
 
   return (
-    <div className="min-h-screen bg-custom-background-90 p-6 flex items-start justify-center transition-none">
-      <div className="w-full max-w-4xl mt-12 space-y-4 transition-none">
+    <div className="flex min-h-screen items-start justify-center bg-surface-2 p-6 transition-none">
+      <div className="mt-12 w-full max-w-4xl space-y-4 transition-none">
         <Banner
           variant="error"
           icon={<InfoFillIcon className="size-5" />}
@@ -136,12 +142,12 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
         <Card variant={ECardVariant.WITH_SHADOW} className="!p-6">
           <div className="space-y-4">
             <div>
-              <h2 className="text-2xl font-semibold text-custom-text-100 mb-2">Unknown Error</h2>
-              <div className="h-px w-full bg-custom-border-200" />
+              <h2 className="mb-2 text-20 font-semibold text-primary">Unknown Error</h2>
+              <div className="bg-subtle-1 h-px w-full" />
             </div>
 
-            <div className="bg-custom-background-80 rounded-md p-4">
-              <p className="text-sm text-custom-text-200">
+            <div className="rounded-md bg-layer-1 p-4">
+              <p className="text-13 text-secondary">
                 An unknown error occurred. Please try refreshing the page or contact support if the problem persists.
               </p>
             </div>

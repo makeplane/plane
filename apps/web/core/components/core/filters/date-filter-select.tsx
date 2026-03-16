@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { CalendarDays } from "lucide-react";
 // ui
@@ -39,7 +45,7 @@ export function DateFilterSelect({ title, value, onChange }: Props) {
     <CustomSelect
       value={value}
       label={
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-11">
           {dueDateRange.find((item) => item.value === value)?.icon}
           <span>
             {title} {dueDateRange.find((item) => item.value === value)?.name}

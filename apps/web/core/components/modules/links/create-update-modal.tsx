@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -81,10 +87,10 @@ export function CreateUpdateModuleLinkModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Add"} link</h3>
+          <h3 className="text-18 font-medium text-secondary">{data ? "Update" : "Add"} link</h3>
           <div className="mt-2 space-y-3">
             <div>
-              <label htmlFor="url" className="mb-2 text-custom-text-200">
+              <label htmlFor="url" className="mb-2 text-secondary">
                 URL
               </label>
               <Controller
@@ -108,9 +114,9 @@ export function CreateUpdateModuleLinkModal(props: Props) {
               />
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-custom-text-200">
+              <label htmlFor="title" className="mb-2 text-secondary">
                 Display title
-                <span className="text-[10px] block">Optional</span>
+                <span className="block text-10">Optional</span>
               </label>
               <Controller
                 control={control}
@@ -131,11 +137,11 @@ export function CreateUpdateModuleLinkModal(props: Props) {
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={onClose}>
+        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
+          <Button variant="secondary" size="lg" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
             {data ? (isSubmitting ? "Updating link" : "Update link") : isSubmitting ? "Adding link" : "Add link"}
           </Button>
         </div>

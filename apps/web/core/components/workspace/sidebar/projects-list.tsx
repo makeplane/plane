@@ -1,14 +1,21 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useRef, useEffect } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { Plus, Ellipsis } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Loader } from "@plane/ui";
@@ -159,16 +166,16 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
       <div
         ref={containerRef}
         className={cn({
-          "border-t border-custom-sidebar-border-300": isScrolled,
+          "border-t border-strong": isScrolled,
         })}
       >
         <>
           <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
-            <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90">
+            <div className="group flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-placeholder hover:bg-layer-transparent-hover">
               <Disclosure.Button
                 as="button"
                 type="button"
-                className="w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400"
+                className="flex w-full items-center gap-1 text-left text-13 font-semibold whitespace-nowrap text-placeholder"
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
                 aria-label={t(
                   isAllProjectsListOpen
@@ -176,41 +183,39 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                     : "aria_labels.projects_sidebar.open_projects_menu"
                 )}
               >
-                <span className="text-sm font-semibold">{t("projects")}</span>
+                <span className="text-13 font-semibold">{t("projects")}</span>
               </Disclosure.Button>
-              <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+              <div className="flex items-center gap-1">
                 {isAuthorizedUser && (
                   <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
-                    <button
-                      type="button"
-                      data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_TOOLTIP}
-                      className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                    <IconButton
+                      variant="ghost"
+                      size="sm"
+                      icon={PlusIcon}
                       onClick={() => {
                         setIsProjectModalOpen(true);
                       }}
+                      data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_TOOLTIP}
+                      className="hidden text-placeholder group-hover:inline-flex"
                       aria-label={t("aria_labels.projects_sidebar.create_new_project")}
-                    >
-                      <Plus className="size-3" />
-                    </button>
+                    />
                   </Tooltip>
                 )}
-                <Disclosure.Button
-                  as="button"
-                  type="button"
-                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  icon={ChevronRightIcon}
                   onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
+                  className="text-placeholder"
+                  iconClassName={cn("transition-transform", {
+                    "rotate-90": isAllProjectsListOpen,
+                  })}
                   aria-label={t(
                     isAllProjectsListOpen
                       ? "aria_labels.projects_sidebar.close_projects_menu"
                       : "aria_labels.projects_sidebar.open_projects_menu"
                   )}
-                >
-                  <ChevronRightIcon
-                    className={cn("flex-shrink-0 size-3 transition-all", {
-                      "rotate-90": isAllProjectsListOpen,
-                    })}
-                  />
-                </Disclosure.Button>
+                />
               </div>
             </div>
             <Transition
@@ -249,7 +254,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                         <button
                           type="button"
                           onClick={() => toggleExtendedProjectSidebar()}
-                          className="flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350"
+                          className="flex flex-grow items-center gap-1.5 text-13 font-medium text-tertiary"
                           id="extended-project-sidebar-toggle"
                           aria-label={t(
                             isExtendedProjectSidebarOpened
@@ -257,7 +262,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                               : "aria_labels.app_sidebar.open_extended_sidebar"
                           )}
                         >
-                          <Ellipsis className="flex-shrink-0 size-4" />
+                          <Ellipsis className="size-4 flex-shrink-0" />
                           <span>{isExtendedProjectSidebarOpened ? "Hide" : "More"}</span>
                         </button>
                       </SidebarNavItem>
@@ -273,7 +278,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
           <button
             type="button"
             data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_BUTTON}
-            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-sm leading-5 font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 rounded-md"
+            className="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-13 leading-5 font-medium text-secondary hover:bg-surface-2"
             onClick={() => {
               toggleCreateProjectModal(true);
             }}

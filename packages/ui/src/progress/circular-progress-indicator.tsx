@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 
 interface ICircularProgressIndicator {
@@ -9,7 +15,7 @@ interface ICircularProgressIndicator {
 }
 
 export function CircularProgressIndicator(props: ICircularProgressIndicator) {
-  const { size = 40, percentage = 25, strokeWidth = 6, strokeColor = "stroke-custom-primary-100", children } = props;
+  const { size = 40, percentage = 25, strokeWidth = 6, strokeColor = "stroke-success", children } = props;
 
   const sqSize = size;
   const radius = (size - strokeWidth) / 2;
@@ -20,7 +26,7 @@ export function CircularProgressIndicator(props: ICircularProgressIndicator) {
     <div className="relative">
       <svg width={size} height={size} viewBox={viewBox} fill="none">
         <circle
-          className="fill-none stroke-custom-background-80"
+          className="fill-none stroke-(--border-color-strong)"
           cx={size / 2}
           cy={size / 2}
           r={radius}

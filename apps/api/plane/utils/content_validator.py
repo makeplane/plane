@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import base64
 import nh3
@@ -56,9 +60,7 @@ def validate_binary_data(data):
     # Check for suspicious text patterns (HTML/JS)
     try:
         decoded_text = binary_data.decode("utf-8", errors="ignore")[:200]
-        if any(
-            pattern in decoded_text.lower() for pattern in SUSPICIOUS_BINARY_PATTERNS
-        ):
+        if any(pattern in decoded_text.lower() for pattern in SUSPICIOUS_BINARY_PATTERNS):
             return False, "Binary data contains suspicious content patterns"
     except Exception:
         pass  # Binary data might not be decodable as text, which is fine
@@ -137,8 +139,6 @@ ATTRIBUTES = {
         "rowspan",
         "colwidth",
         "background",
-        "hideContent",
-        "hidecontent",
         "style",
     },
     "td": {
@@ -148,8 +148,6 @@ ATTRIBUTES = {
         "background",
         "textColor",
         "textcolor",
-        "hideContent",
-        "hidecontent",
         "style",
     },
     "tr": {"background", "textColor", "textcolor", "style"},

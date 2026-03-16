@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -47,8 +53,8 @@ export const DateRangeFilterValueInput = observer(function DateRangeFilterValueI
       buttonVariant="transparent-with-text"
       buttonClassName={cn("rounded-none", {
         [COMMON_FILTER_ITEM_BORDER_CLASSNAME]: !isDisabled,
-        "text-red-500": isIncomplete,
-        "hover:bg-custom-background-100": isDisabled,
+        "text-danger-primary": isIncomplete,
+        "hover:bg-surface-1": isDisabled,
       })}
       renderPlaceholder
       renderInPortal

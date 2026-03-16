@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "../utils";
@@ -35,23 +41,21 @@ export function LinearProgressIndicator({
     else
       return (
         <Tooltip key={item.id} tooltipContent={`${item.name} ${Math.round(item.value)}${inPercentage ? "%" : ""}`}>
-          <div style={style} className={cn("first:rounded-l-sm last:rounded-r-sm", barClassName)} />
+          <div style={style} className={cn("first:rounded-l-xs last:rounded-r-xs", barClassName)} />
         </Tooltip>
       );
   });
 
   return (
     <div
-      className={cn("flex w-full items-center justify-between gap-[1px] rounded-sm", {
+      className={cn("flex w-full items-center justify-between gap-[1px] rounded-xs", {
         "h-2": size === "sm",
         "h-3": size === "md",
         "h-3.5": size === "lg",
         "h-[14px]": size === "xl",
       })}
     >
-      <div className={cn("flex h-full w-full gap-[1.5px] p-[2px] bg-custom-background-90 rounded-sm", className)}>
-        {bars}
-      </div>
+      <div className={cn("flex h-full w-full gap-[1.5px] rounded-xs bg-surface-2 p-[2px]", className)}>{bars}</div>
     </div>
   );
 }

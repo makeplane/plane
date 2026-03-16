@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -9,7 +15,7 @@ import type { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys }
 // components
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
 // plane web services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 import { RecentsEmptyState } from "../empty-states";
 import { EWidgetKeys, WidgetLoader } from "../loaders";
 import { FiltersDropdown } from "./filters";
@@ -21,7 +27,7 @@ const WIDGET_KEY = EWidgetKeys.RECENT_ACTIVITY;
 const workspaceService = new WorkspaceService();
 const filters: { name: TRecentActivityFilterKeys; icon?: React.ReactNode; i18n_key: string }[] = [
   { name: "all item", i18n_key: "home.recents.filters.all" },
-  { name: "issue", icon: <WorkItemsIcon className="w-4 h-4" />, i18n_key: "home.recents.filters.issues" },
+  { name: "issue", icon: <WorkItemsIcon className="h-4 w-4" />, i18n_key: "home.recents.filters.issues" },
   { name: "page", icon: <PageIcon height={16} width={16} />, i18n_key: "home.recents.filters.pages" },
   { name: "project", icon: <ProjectIcon height={16} width={16} />, i18n_key: "home.recents.filters.projects" },
 ];
@@ -72,8 +78,8 @@ export const RecentActivityWidget = observer(function RecentActivityWidget(props
   if (!isLoading && recents?.length === 0)
     return (
       <div ref={ref} className="max-h-[500px] overflow-y-scroll">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-base font-semibold text-custom-text-350">{t("home.recents.title")}</div>
+        <div className="mb-4 flex items-center justify-between">
+          <div className="text-14 font-semibold text-tertiary">{t("home.recents.title")}</div>
           {showFilterSelect && <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />}
         </div>
         <div className="flex flex-col items-center justify-center">
@@ -87,13 +93,13 @@ export const RecentActivityWidget = observer(function RecentActivityWidget(props
       maxHeight={415}
       containerClassName="box-border min-h-[250px]"
       fallback={<></>}
-      buttonClassName="bg-custom-background-90/20"
+      buttonClassName="bg-surface-2/20"
     >
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-base font-semibold text-custom-text-350">{t("home.recents.title")}</div>
+      <div className="mb-2 flex items-center justify-between">
+        <div className="text-14 font-semibold text-tertiary">{t("home.recents.title")}</div>
         {showFilterSelect && <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />}
       </div>
-      <div className="min-h-[250px] flex flex-col">
+      <div className="flex min-h-[250px] flex-col">
         {isLoading && <WidgetLoader widgetKey={WIDGET_KEY} />}
         {!isLoading &&
           recents

@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { MODULE_TRACKER_EVENTS, PROJECT_ERROR_MESSAGES } from "@plane/constants";
+import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IModule } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // constants
-// helpers
-import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -51,10 +55,6 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
           title: "Success!",
           message: "Module deleted successfully.",
         });
-        captureSuccess({
-          eventName: MODULE_TRACKER_EVENTS.delete,
-          payload: { id: data.id },
-        });
       })
       .catch((errors) => {
         const isPermissionError = errors?.error === "You don't have the required permissions.";
@@ -65,11 +65,6 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
           title: t(currentError.i18n_title),
           type: TOAST_TYPE.ERROR,
           message: currentError.i18n_message && t(currentError.i18n_message),
-        });
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.delete,
-          payload: { id: data.id },
-          error: errors,
         });
       })
       .finally(() => handleClose());
@@ -85,8 +80,8 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
       content={
         <>
           Are you sure you want to delete module-{" "}
-          <span className="break-all font-medium text-custom-text-100">{data?.name}</span>? All of the data related to
-          the module will be permanently removed. This action cannot be undone.
+          <span className="font-medium break-all text-primary">{data?.name}</span>? All of the data related to the
+          module will be permanently removed. This action cannot be undone.
         </>
       }
     />

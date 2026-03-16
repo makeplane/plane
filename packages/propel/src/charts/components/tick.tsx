@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 
 // Common classnames
-const AXIS_TICK_CLASSNAME = "fill-custom-text-300 text-sm";
+const AXIS_TICK_CLASSNAME = "fill-tertiary text-13";
 
 export const CustomXAxisTick = React.memo(function CustomXAxisTick({ x, y, payload, getLabel }: any) {
   return (

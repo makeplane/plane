@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -57,7 +63,7 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
     <CustomSearchSelect
       value={value}
       label={
-        <div className="flex items-center gap-2 h-3.5">
+        <div className="flex h-3.5 items-center gap-2">
           {selectedOption && (
             <Avatar name={selectedOption.member?.display_name} src={getFileURL(selectedOption.member?.avatar_url)} />
           )}
@@ -65,13 +71,13 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
             selectedOption.member?.display_name
           ) : (
             <div className="flex items-center gap-2">
-              <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
-              <span className="text-sm text-custom-sidebar-text-400">None</span>
+              <Ban className="h-3.5 w-3.5 rotate-90 text-placeholder" />
+              <span className="text-13 text-placeholder">None</span>
             </div>
           )}
         </div>
       }
-      buttonClassName="!px-3 !py-2 bg-custom-background-100"
+      buttonClassName="!px-3 !py-2 bg-surface-1"
       options={
         options &&
         options && [
@@ -81,8 +87,8 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
             query: "none",
             content: (
               <div className="flex items-center gap-2">
-                <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
-                <span className="py-0.5 text-sm text-custom-sidebar-text-400">None</span>
+                <Ban className="h-3.5 w-3.5 rotate-90 text-placeholder" />
+                <span className="py-0.5 text-13 text-placeholder">None</span>
               </div>
             ),
           },

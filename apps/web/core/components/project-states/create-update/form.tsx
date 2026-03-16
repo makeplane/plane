@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { TwitterPicker } from "react-color";
 import { Button } from "@plane/propel/button";
@@ -15,7 +21,7 @@ type TStateForm = {
 function PopoverButton({ color }: { color?: string }) {
   return (
     <div
-      className="group inline-flex items-center text-base font-medium focus:outline-none h-5 w-5 rounded transition-all"
+      className="group inline-flex h-5 w-5 items-center rounded-sm text-14 font-medium transition-all focus:outline-none"
       style={{
         backgroundColor: color ?? "black",
       }}
@@ -57,9 +63,9 @@ export function StateForm(props: TStateForm) {
   };
 
   return (
-    <div className="relative flex space-x-2 bg-custom-background-100 p-3 rounded">
+    <div className="relative flex space-x-2 rounded-sm bg-surface-1 p-3">
       {/* color */}
-      <div className="flex-shrink-0 h-full mt-2">
+      <div className="mt-2 h-full flex-shrink-0">
         <Popover button={<PopoverButton color={formData?.color} />} panelClassName="mt-4 -ml-3">
           <TwitterPicker color={formData?.color} onChange={(value) => handleFormData("color", value.hex)} />
         </Popover>
@@ -88,14 +94,14 @@ export function StateForm(props: TStateForm) {
           value={formData?.description}
           onChange={(e) => handleFormData("description", e.target.value)}
           hasError={(errors && Boolean(errors.description)) || false}
-          className="w-full text-sm min-h-14 resize-none"
+          className="min-h-14 w-full resize-none text-13"
         />
 
-        <div className="flex space-x-2 items-center">
-          <Button onClick={formSubmit} variant="primary" size="sm" disabled={buttonDisabled}>
+        <div className="flex items-center space-x-2">
+          <Button onClick={formSubmit} variant="primary" size="lg" disabled={buttonDisabled}>
             {buttonTitle}
           </Button>
-          <Button type="button" variant="neutral-primary" size="sm" disabled={buttonDisabled} onClick={onCancel}>
+          <Button type="button" variant="secondary" size="lg" disabled={buttonDisabled} onClick={onCancel}>
             Cancel
           </Button>
         </div>

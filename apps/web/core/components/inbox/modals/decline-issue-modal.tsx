@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 // types
 import { useTranslation } from "@plane/i18n";
@@ -45,7 +51,7 @@ export function DeclineIssueModal(props: Props) {
       content={
         <>
           Are you sure you want to decline work item{" "}
-          <span className="break-words font-medium text-custom-text-100">
+          <span className="font-medium break-words text-primary">
             {projectDetails?.identifier}-{data?.sequence_id}
           </span>
           {""}? This action cannot be undone.

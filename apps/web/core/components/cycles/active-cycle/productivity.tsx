@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { Fragment } from "react";
 import { observer } from "mobx-react";
@@ -45,12 +51,10 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
   return cycle && completionChartDistributionData ? (
-    <div className="flex flex-col min-h-[17rem] gap-5 px-3.5 py-4 bg-custom-background-100 border border-custom-border-200 rounded-lg">
+    <div className="flex min-h-[17rem] flex-col gap-5 rounded-lg border border-subtle bg-surface-1 px-3.5 py-4">
       <div className="relative flex items-center justify-between gap-4">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
-          <h3 className="text-base text-custom-text-300 font-semibold">
-            {t("project_cycles.active_cycle.issue_burndown")}
-          </h3>
+          <h3 className="text-14 font-semibold text-tertiary">{t("project_cycles.active_cycle.issue_burndown")}</h3>
         </Link>
         <EstimateTypeDropdown value={estimateType} onChange={onChange} cycleId={cycle.id} projectId={projectId} />
       </div>
@@ -59,7 +63,7 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
         {cycle.total_issues > 0 ? (
           <>
             <div className="h-full w-full px-2">
-              <div className="flex items-center justify-end gap-4 py-1 text-xs text-custom-text-300">
+              <div className="flex items-center justify-end gap-4 py-1 text-11 text-tertiary">
                 {estimateType === "points" ? (
                   <span>{`Pending points - ${cycle.backlog_estimate_points + cycle.unstarted_estimate_points + cycle.started_estimate_points}`}</span>
                 ) : (
@@ -67,7 +71,7 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
                 )}
               </div>
 
-              <div className="relative  h-full">
+              <div className="relative h-full">
                 {completionChartDistributionData && (
                   <Fragment>
                     {estimateType === "points" ? (
@@ -90,7 +94,7 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
           </>
         ) : (
           <>
-            <div className="flex items-center justify-center h-full w-full">
+            <div className="flex h-full w-full items-center justify-center">
               <SimpleEmptyState title={t("active_cycle.empty_state.chart.title")} assetPath={resolvedPath} />
             </div>
           </>
@@ -98,7 +102,7 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
       </Link>
     </div>
   ) : (
-    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
+    <Loader className="flex min-h-[17rem] flex-col gap-5 rounded-lg border border-subtle bg-surface-1">
       <Loader.Item width="100%" height="100%" />
     </Loader>
   );

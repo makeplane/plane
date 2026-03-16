@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { Fragment, useCallback, useRef, useState } from "react";
 import { isEmpty } from "lodash-es";
@@ -100,7 +106,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
   );
 
   return cycleId ? (
-    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
+    <div className="col-span-1 flex min-h-[17rem] flex-col gap-4 overflow-hidden rounded-lg border border-subtle bg-surface-1 p-4 lg:col-span-2 xl:col-span-1">
       <Tab.Group
         as={Fragment}
         defaultIndex={currentValue(tab)}
@@ -120,7 +126,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
       >
         <Tab.List
           as="div"
-          className="relative border-[0.5px] border-custom-border-200 rounded bg-custom-background-80 p-[1px] grid"
+          className="relative grid rounded-sm border-[0.5px] border-subtle bg-layer-1 p-[1px]"
           style={{
             gridTemplateColumns: `repeat(3, 1fr)`,
           }}
@@ -128,10 +134,10 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] rounded-[3px] py-1.5 text-11 font-semibold text-placeholder transition duration-500 focus:outline-none",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "bg-surface-1 text-tertiary": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -141,10 +147,10 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] rounded-[3px] py-1.5 text-11 font-semibold text-placeholder transition duration-500 focus:outline-none",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "bg-surface-1 text-tertiary": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -154,10 +160,10 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] rounded-[3px] py-1.5 text-11 font-semibold text-placeholder transition duration-500 focus:outline-none",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "bg-surface-1 text-tertiary": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -169,11 +175,11 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
         <Tab.Panels as={Fragment}>
           <Tab.Panel
             as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
+            className="vertical-scrollbar flex scrollbar-sm h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
           >
             <div
               ref={issuesContainerRef}
-              className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm"
+              className="vertical-scrollbar flex scrollbar-sm h-full w-full flex-col gap-1 overflow-y-auto"
             >
               {cycleIssueDetails && "issueIds" in cycleIssueDetails ? (
                 cycleIssueDetails.issueCount > 0 ? (
@@ -186,7 +192,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                       return (
                         <div
                           key={issue.id}
-                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
+                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md p-1 hover:bg-surface-2"
                           onClick={() => {
                             if (issue.id) {
                               setPeekIssue({
@@ -201,18 +207,14 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             }
                           }}
                         >
-                          <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
-                            <IssueIdentifier
-                              issueId={issue.id}
-                              projectId={projectId}
-                              textContainerClassName="text-xs text-custom-text-200"
-                            />
+                          <div className="flex w-full min-w-24 flex-grow items-center gap-1.5 truncate">
+                            <IssueIdentifier issueId={issue.id} projectId={projectId} size="xs" variant="secondary" />
                             <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
-                              <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
+                              <span className="truncate text-13 text-primary">{issue.name}</span>
                             </Tooltip>
                           </div>
                           <PriorityIcon priority={issue.priority} withContainer size={12} />
-                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <div className="flex flex-shrink-0 items-center gap-1.5">
                             <StateDropdown
                               value={issue.state_id}
                               onChange={() => {}}
@@ -227,9 +229,9 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                                 tooltipHeading="Target Date"
                                 tooltipContent={renderFormattedDate(issue.target_date)}
                               >
-                                <div className="h-full flex truncate items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
+                                <div className="flex h-full cursor-pointer items-center gap-1.5 truncate rounded-sm bg-layer-1 px-2 py-0.5 text-11 group-hover:bg-surface-1">
                                   <CalendarCheck className="h-3 w-3 flex-shrink-0" />
-                                  <span className="text-xs truncate">
+                                  <span className="truncate text-11">
                                     {renderFormattedDateWithoutYear(issue.target_date)}
                                   </span>
                                 </div>
@@ -243,13 +245,13 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                       <div
                         ref={setIssueLoaderElement}
                         className={
-                          "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-sm cursor-pointer animate-pulse"
+                          "relative flex h-11 animate-pulse cursor-pointer items-center gap-3 bg-layer-1 p-3 text-13"
                         }
                       />
                     )}
                   </>
                 ) : (
-                  <div className="flex items-center justify-center h-full w-full">
+                  <div className="flex h-full w-full items-center justify-center">
                     <SimpleEmptyState
                       title={t("active_cycle.empty_state.priority_issue.title")}
                       assetPath={priorityResolvedPath}
@@ -264,7 +266,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
 
           <Tab.Panel
             as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm"
+            className="vertical-scrollbar flex scrollbar-sm h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
@@ -300,7 +302,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                         key={`unassigned-${index}`}
                         title={
                           <div className="flex items-center gap-2">
-                            <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
+                            <div className="h-5 w-5 rounded-full border-2 border-subtle bg-layer-1">
                               <img src={userImage} height="100%" width="100%" className="rounded-full" alt="User" />
                             </div>
                             <span>{t("no_assignee")}</span>
@@ -312,7 +314,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                     );
                 })
               ) : (
-                <div className="flex items-center justify-center h-full w-full">
+                <div className="flex h-full w-full items-center justify-center">
                   <SimpleEmptyState
                     title={t("active_cycle.empty_state.assignee.title")}
                     assetPath={assigneesResolvedPath}
@@ -326,7 +328,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
 
           <Tab.Panel
             as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
+            className="vertical-scrollbar flex scrollbar-sm h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
@@ -336,12 +338,12 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                     title={
                       <div className="flex items-center gap-2 truncate">
                         <span
-                          className="block h-3 w-3 rounded-full flex-shrink-0"
+                          className="block h-3 w-3 flex-shrink-0 rounded-full"
                           style={{
                             backgroundColor: label.color ?? "#000000",
                           }}
                         />
-                        <span className="text-xs text-ellipsis truncate">{label.label_name ?? "No labels"}</span>
+                        <span className="truncate text-11 text-ellipsis">{label.label_name ?? "No labels"}</span>
                       </div>
                     }
                     completed={label.completed_issues}
@@ -358,7 +360,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                   />
                 ))
               ) : (
-                <div className="flex items-center justify-center h-full w-full">
+                <div className="flex h-full w-full items-center justify-center">
                   <SimpleEmptyState title={t("active_cycle.empty_state.label.title")} assetPath={labelsResolvedPath} />
                 </div>
               )
@@ -370,7 +372,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
       </Tab.Group>
     </div>
   ) : (
-    <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1">
+    <Loader className="col-span-1 flex min-h-[17rem] flex-col gap-4 overflow-hidden bg-surface-1 lg:col-span-2 xl:col-span-1">
       <Loader.Item width="100%" height="17rem" />
     </Loader>
   );

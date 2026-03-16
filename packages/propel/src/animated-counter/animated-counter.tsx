@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect } from "react";
 import { cn } from "../utils";
 
@@ -8,9 +14,9 @@ export interface AnimatedCounterProps {
 }
 
 const sizeClasses = {
-  sm: "text-xs",
-  md: "text-sm",
-  lg: "text-base",
+  sm: "text-11",
+  md: "text-13",
+  lg: "text-14",
 };
 
 export function AnimatedCounter({ count, className, size = "md" }: AnimatedCounterProps) {
@@ -44,24 +50,22 @@ export function AnimatedCounter({ count, className, size = "md" }: AnimatedCount
   const sizeClass = sizeClasses[size];
 
   return (
-    <div className={cn("relative inline-flex items-center justify-center overflow-hidden min-w-2", sizeClass)}>
+    <div className={cn("relative inline-flex min-w-2 items-center justify-center overflow-hidden", sizeClass)}>
       {/* Previous number sliding out */}
       {isAnimating && (
         <span
           key={`prev-${animationKey}`}
           className={cn(
             "absolute inset-0 flex items-center justify-center font-medium",
-            "animate-[slideOut_0.25s_ease-out_forwards]",
+            "animate-slide-out",
             direction === "up" && "[--slide-out-dir:-100%]",
             direction === "down" && "[--slide-out-dir:100%]",
-            sizeClass
+            sizeClass,
+            {
+              "animate-fade-out animate-slide-out": isAnimating && direction === "up",
+              "animate-fade-out animate-slide-out-down": isAnimating && direction === "down",
+            }
           )}
-          style={{
-            animation:
-              direction === "up"
-                ? "slideOut 0.25s ease-out forwards, fadeOut 0.25s ease-out forwards"
-                : "slideOutDown 0.25s ease-out forwards, fadeOut 0.25s ease-out forwards",
-          }}
         >
           {prevCount}
         </span>
@@ -72,21 +76,14 @@ export function AnimatedCounter({ count, className, size = "md" }: AnimatedCount
         key={`current-${animationKey}`}
         className={cn(
           "flex items-center justify-center font-medium",
-          isAnimating && "animate-[slideIn_0.25s_ease-out_forwards]",
           !isAnimating && "opacity-100",
           sizeClass,
+          {
+            "animate-slide-in-from-bottom": isAnimating && direction === "up",
+            "animate-slide-in-from-top": isAnimating && direction === "down",
+          },
           className
         )}
-        style={
-          isAnimating
-            ? {
-                animation:
-                  direction === "up"
-                    ? "slideInFromBottom 0.25s ease-out forwards"
-                    : "slideInFromTop 0.25s ease-out forwards",
-              }
-            : undefined
-        }
       >
         {displayCount}
       </span>

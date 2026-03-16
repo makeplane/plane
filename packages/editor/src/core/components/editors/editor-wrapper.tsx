@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor, Extensions } from "@tiptap/core";
 // components
 import { EditorContainer } from "@/components/editors";
@@ -41,6 +47,7 @@ export function EditorWrapper(props: Props) {
     handleEditorReady,
     autofocus,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     value,
   } = props;
@@ -67,6 +74,7 @@ export function EditorWrapper(props: Props) {
     handleEditorReady,
     autofocus,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     value,
   });

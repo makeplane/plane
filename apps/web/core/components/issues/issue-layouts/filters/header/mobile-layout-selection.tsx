@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -20,17 +26,17 @@ export function MobileLayoutSelection({
   return (
     <CustomMenu
       maxHeight={"md"}
-      className="flex flex-grow justify-center text-sm text-custom-text-200"
+      className="flex flex-grow justify-center text-13 text-secondary"
       placement="bottom-start"
       customButton={
-        <Button variant="neutral-primary" size="sm" className="relative px-2">
+        <Button variant="secondary" className="relative px-2">
           {activeLayout && (
             <IssueLayoutIcon layout={activeLayout} size={14} strokeWidth={2} className={`h-3.5 w-3.5`} />
           )}
-          <ChevronDownIcon className="size-3 text-custom-text-200 my-auto" strokeWidth={2} />
+          <ChevronDownIcon className="my-auto size-3 text-secondary" strokeWidth={2} />
         </Button>
       }
-      customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+      customButtonClassName="flex flex-grow justify-center text-secondary text-13"
       closeOnSelect
     >
       {ISSUE_LAYOUTS.filter((l) => layouts.includes(l.key)).map((layout, index) => (
@@ -42,7 +48,7 @@ export function MobileLayoutSelection({
           className="flex items-center gap-2"
         >
           <IssueLayoutIcon layout={layout.key} className="h-3 w-3" />
-          <div className="text-custom-text-300">{t(layout.i18n_label)}</div>
+          <div className="text-tertiary">{t(layout.i18n_label)}</div>
         </CustomMenu.MenuItem>
       ))}
     </CustomMenu>

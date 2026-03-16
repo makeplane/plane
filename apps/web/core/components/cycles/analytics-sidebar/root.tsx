@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -43,7 +49,7 @@ export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: 
 
   return (
     <div className="relative pb-2">
-      <div className="flex flex-col gap-5 w-full">
+      <div className="flex w-full flex-col gap-5">
         <CycleSidebarHeader
           workspaceSlug={workspaceSlug}
           projectId={projectId}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
 // hooks
@@ -19,7 +25,7 @@ export const IssueLinkActivity = observer(function IssueLinkActivity(props: TIss
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<MessageSquare size={14} className="text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >
@@ -31,7 +37,7 @@ export const IssueLinkActivity = observer(function IssueLinkActivity(props: TIss
               href={`${activity.new_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
             >
               link
             </a>
@@ -43,7 +49,7 @@ export const IssueLinkActivity = observer(function IssueLinkActivity(props: TIss
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
             >
               link
             </a>
@@ -55,7 +61,7 @@ export const IssueLinkActivity = observer(function IssueLinkActivity(props: TIss
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
             >
               link
             </a>

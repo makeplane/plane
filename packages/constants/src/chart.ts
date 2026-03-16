@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { TChartColorScheme } from "@plane/types";
 import { ChartXAxisProperty } from "@plane/types";
 
-export const LABEL_CLASSNAME = "uppercase text-custom-text-300/60 text-sm tracking-wide";
-export const AXIS_LABEL_CLASSNAME = "uppercase text-custom-text-300/60 text-sm tracking-wide";
+export const LABEL_CLASSNAME = "uppercase text-tertiary/60 text-13 tracking-wide";
+export const AXIS_LABEL_CLASSNAME = "uppercase text-tertiary/60 text-13 tracking-wide";
 
 export enum ChartXAxisDateGrouping {
   DAY = "DAY",

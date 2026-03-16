@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import os
 
@@ -44,6 +48,12 @@ google_config_variables = [
         "category": "GOOGLE",
         "is_encrypted": True,
     },
+    {
+        "key": "ENABLE_GOOGLE_SYNC",
+        "value": os.environ.get("ENABLE_GOOGLE_SYNC", "0"),
+        "category": "GOOGLE",
+        "is_encrypted": False,
+    },
 ]
 
 github_config_variables = [
@@ -62,6 +72,12 @@ github_config_variables = [
     {
         "key": "GITHUB_ORGANIZATION_ID",
         "value": os.environ.get("GITHUB_ORGANIZATION_ID"),
+        "category": "GITHUB",
+        "is_encrypted": False,
+    },
+    {
+        "key": "ENABLE_GITHUB_SYNC",
+        "value": os.environ.get("ENABLE_GITHUB_SYNC", "0"),
         "category": "GITHUB",
         "is_encrypted": False,
     },
@@ -86,6 +102,12 @@ gitlab_config_variables = [
         "value": os.environ.get("GITLAB_CLIENT_SECRET"),
         "category": "GITLAB",
         "is_encrypted": True,
+    },
+    {
+        "key": "ENABLE_GITLAB_SYNC",
+        "value": os.environ.get("ENABLE_GITLAB_SYNC", "0"),
+        "category": "GITLAB",
+        "is_encrypted": False,
     },
 ]
 
@@ -113,6 +135,12 @@ gitea_config_variables = [
         "value": os.environ.get("GITEA_CLIENT_SECRET"),
         "category": "GITEA",
         "is_encrypted": True,
+    },
+    {
+        "key": "ENABLE_GITEA_SYNC",
+        "value": os.environ.get("ENABLE_GITEA_SYNC", "0"),
+        "category": "GITEA",
+        "is_encrypted": False,
     },
 ]
 

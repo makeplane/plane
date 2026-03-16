@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { CircleDashed, Plus } from "lucide-react";
+import { CircleDashed } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // types
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
 // ui
@@ -14,7 +20,6 @@ import { ExistingIssuesListModal } from "@/components/core/modals/existing-issue
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
@@ -89,14 +94,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
 
   return (
     <>
-      <div className="group/list-header w-full flex-shrink-0 flex items-center gap-2 py-1.5">
+      <div className="group/list-header flex w-full flex-shrink-0 items-center gap-2 py-1.5">
         {canSelectIssues && (
-          <div className="flex-shrink-0 flex items-center w-3.5 absolute left-1">
+          <div className="absolute left-1 flex w-3.5 flex-shrink-0 items-center">
             <MultipleSelectGroupAction
               className={cn(
-                "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none ",
+                "pointer-events-none size-3.5 opacity-0 !outline-none group-hover/list-header:pointer-events-auto group-hover/list-header:opacity-100",
                 {
-                  "opacity-100 pointer-events-auto": !isGroupSelectionEmpty,
+                  "pointer-events-auto opacity-100": !isGroupSelectionEmpty,
                 }
               )}
               groupID={groupID}
@@ -105,16 +110,16 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             />
           </div>
         )}
-        <div className="flex-shrink-0 grid place-items-center overflow-hidden">
+        <div className="grid flex-shrink-0 place-items-center overflow-hidden">
           {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
         </div>
 
         <div
-          className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
+          className="relative flex w-full cursor-pointer flex-row items-center gap-1 overflow-hidden"
           onClick={() => handleCollapsedGroups(groupID)}
         >
-          <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
-          <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
+          <div className="line-clamp-1 inline-block truncate font-medium text-primary">{title}</div>
+          <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
           <div className="px-2.5">
             <WorkFlowGroupTree groupBy={groupBy} groupId={groupID} />
           </div>
@@ -124,14 +129,13 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           (renderExistingIssueModal ? (
             <CustomMenu
               customButton={
-                <span className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
-                  <Plus className="h-3.5 w-3.5" strokeWidth={2} />
+                <span className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1">
+                  <PlusIcon className="h-3.5 w-3.5" strokeWidth={2} />
                 </span>
               }
             >
               <CustomMenu.MenuItem
                 onClick={() => {
-                  captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                   setIsOpen(true);
                 }}
               >
@@ -139,7 +143,6 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem
                 onClick={() => {
-                  captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.add_existing });
                   setOpenExistingIssueListModal(true);
                 }}
               >
@@ -148,13 +151,12 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             </CustomMenu>
           ) : (
             <div
-              className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+              className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1"
               onClick={() => {
-                captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                 setIsOpen(true);
               }}
             >
-              <Plus width={14} strokeWidth={2} />
+              <PlusIcon width={14} strokeWidth={2} />
             </div>
           ))}
 

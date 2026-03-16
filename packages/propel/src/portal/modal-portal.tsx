@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useCallback, useMemo, useRef, useEffect } from "react";
 import { cn } from "../utils";
 import {
@@ -78,7 +84,7 @@ export function ModalPortal({
     const positionClass = fullScreen ? "" : PORTAL_POSITION_CLASSES[position];
 
     return cn(
-      "top-0 h-full bg-white shadow-lg absolute transition-transform duration-300 ease-out",
+      "shadow-lg absolute top-0 h-full bg-white transition-transform duration-300 ease-out",
       widthClass,
       positionClass,
       contentClassName
@@ -95,7 +101,7 @@ export function ModalPortal({
     >
       {showOverlay && (
         <div
-          className={cn("absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300", overlayClassName)}
+          className={cn("absolute inset-0 bg-black/50 transition-colors duration-300", overlayClassName)}
           onClick={handleOverlayClick}
           aria-hidden="true"
         />

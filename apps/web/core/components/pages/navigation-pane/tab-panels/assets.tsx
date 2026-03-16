@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -65,26 +71,26 @@ const AssetItem = observer(function AssetItem(props: AssetItemProps) {
     return (
       <a
         href={asset.href}
-        className="relative group/asset-item h-12 flex items-center gap-2 pr-2 rounded border border-custom-border-200 hover:bg-custom-background-80 transition-colors"
+        className="group/asset-item relative flex h-12 items-center gap-2 rounded-sm border border-subtle pr-2 transition-colors hover:bg-layer-1"
       >
         <div
-          className="flex-shrink-0 w-11 h-12 rounded-l bg-cover bg-no-repeat bg-center"
+          className="h-12 w-11 flex-shrink-0 rounded-l-sm bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url('${assetSrc}')`,
           }}
         />
         <div className="flex-1 space-y-0.5 truncate">
-          <p className="text-sm font-medium truncate">{asset.name}</p>
+          <p className="truncate text-13 font-medium">{asset.name}</p>
           <div className="flex items-end justify-between gap-2">
-            <p className="shrink-0 text-xs text-custom-text-200" />
+            <p className="shrink-0 text-11 text-secondary" />
             <a
               href={assetDownloadSrc}
               target="_blank"
               rel="noreferrer noopener"
-              className="shrink-0 py-0.5 px-1 flex items-center gap-1 rounded text-custom-text-200 hover:text-custom-text-100 opacity-0 pointer-events-none group-hover/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto transition-opacity"
+              className="pointer-events-none flex shrink-0 items-center gap-1 rounded-sm px-1 py-0.5 text-secondary opacity-0 transition-opacity group-hover/asset-item:pointer-events-auto group-hover/asset-item:opacity-100 hover:text-primary"
             >
-              <Download className="shrink-0 size-3" />
-              <span className="text-xs font-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>
+              <Download className="size-3 shrink-0" />
+              <span className="text-11 font-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>
             </a>
           </div>
         </div>
@@ -111,7 +117,7 @@ export const PageNavigationPaneAssetsTabPanel = observer(function PageNavigation
   if (assetsList.length === 0) return <PageNavigationPaneAssetsTabEmptyState />;
 
   return (
-    <div className="mt-5 space-y-4">
+    <div className="mt-5 space-y-4 px-4">
       {assetsList?.map((asset) => (
         <AssetItem key={asset.id} asset={asset} page={page} />
       ))}

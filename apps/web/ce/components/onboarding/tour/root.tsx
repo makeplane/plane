@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -10,8 +16,6 @@ import IssuesTour from "@/app/assets/onboarding/issues.webp?url";
 import ModulesTour from "@/app/assets/onboarding/modules.webp?url";
 import PagesTour from "@/app/assets/onboarding/pages.webp?url";
 import ViewsTour from "@/app/assets/onboarding/views.webp?url";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser } from "@/hooks/store/user";
@@ -89,16 +93,16 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
   return (
     <>
       {step === "welcome" ? (
-        <div className="w-4/5 overflow-hidden rounded-[10px] bg-custom-background-100 md:w-1/2 lg:w-2/5">
+        <div className="w-4/5 overflow-hidden rounded-[10px] bg-surface-1 md:w-1/2 lg:w-2/5">
           <div className="h-full overflow-hidden">
-            <div className="grid h-64 place-items-center bg-custom-primary-100">
-              <PlaneLockup className="h-10 w-auto text-white" />
+            <div className="grid h-64 place-items-center bg-accent-primary">
+              <PlaneLockup className="h-10 w-auto text-on-color" />
             </div>
             <div className="flex flex-col overflow-y-auto p-6">
-              <h3 className="font-semibold sm:text-xl">
+              <h3 className="font-semibold sm:text-18">
                 Welcome to Plane, {currentUser?.first_name} {currentUser?.last_name}
               </h3>
-              <p className="mt-3 text-sm text-custom-text-200">
+              <p className="mt-3 text-13 text-secondary">
                 We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get
                 started by creating a project.
               </p>
@@ -107,9 +111,6 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                   <Button
                     variant="primary"
                     onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.START_BUTTON,
-                      });
                       setStep("work-items");
                     }}
                   >
@@ -117,11 +118,8 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                   </Button>
                   <button
                     type="button"
-                    className="bg-transparent text-xs font-medium text-custom-primary-100 outline-custom-text-100"
+                    className="bg-transparent text-11 font-medium text-accent-primary outline-subtle-1"
                     onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.SKIP_BUTTON,
-                      });
                       onComplete();
                     }}
                   >
@@ -133,30 +131,30 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
           </div>
         </div>
       ) : (
-        <div className="relative grid h-3/5 w-4/5 grid-cols-10 overflow-hidden rounded-[10px] bg-custom-background-100 sm:h-3/4 md:w-1/2 lg:w-3/5">
+        <div className="relative grid h-3/5 w-4/5 grid-cols-10 overflow-hidden rounded-[10px] bg-surface-1 sm:h-3/4 md:w-1/2 lg:w-3/5">
           <button
             type="button"
-            className="fixed right-[9%] top-[19%] z-10 -translate-y-1/2 translate-x-1/2 cursor-pointer rounded-full border border-custom-text-100 p-1 sm:top-[11.5%] md:right-[24%] lg:right-[19%]"
+            className="fixed top-[19%] right-[9%] z-10 translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full border border-strong p-1 sm:top-[11.5%] md:right-[24%] lg:right-[19%]"
             onClick={onComplete}
           >
-            <CloseIcon className="h-3 w-3 text-custom-text-100" />
+            <CloseIcon className="border-strong- h-3 w-3 text-primary" />
           </button>
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 h-full overflow-hidden lg:col-span-7">
             <div
-              className={`flex h-1/2 items-end overflow-hidden bg-custom-primary-100 sm:h-3/5 ${
+              className={`flex h-1/2 items-end overflow-hidden bg-accent-primary sm:h-3/5 ${
                 currentStepIndex % 2 === 0 ? "justify-end" : "justify-start"
               }`}
             >
-              <img src={currentStep?.image} className="w-full h-full object-cover" alt={currentStep?.title} />
+              <img src={currentStep?.image} className="h-full w-full object-cover" alt={currentStep?.title} />
             </div>
             <div className="flex h-1/2 flex-col overflow-y-auto p-4 sm:h-2/5">
-              <h3 className="font-semibold sm:text-xl">{currentStep?.title}</h3>
-              <p className="mt-3 text-sm text-custom-text-200">{currentStep?.description}</p>
+              <h3 className="font-semibold sm:text-18">{currentStep?.title}</h3>
+              <p className="mt-3 text-13 text-secondary">{currentStep?.description}</p>
               <div className="mt-3 flex h-full items-end justify-between gap-4">
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (
-                    <Button variant="neutral-primary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
+                    <Button variant="secondary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
                       Back
                     </Button>
                   )}
@@ -170,9 +168,6 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                   <Button
                     variant="primary"
                     onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.CREATE_PROJECT_BUTTON,
-                      });
                       onComplete();
                       toggleCreateProjectModal(true);
                     }}

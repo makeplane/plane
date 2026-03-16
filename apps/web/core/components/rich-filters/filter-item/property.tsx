@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -51,13 +57,13 @@ function PropertyButton<P extends TFilterProperty, E extends TExternalFilter>(pr
     <Tooltip tooltipContent={tooltipContent} position="bottom-start" disabled={!tooltipContent}>
       <div
         className={cn(
-          "flex items-center gap-1 px-2 py-[5px] text-xs text-custom-text-300 min-w-0 h-full",
+          "flex h-full min-w-0 items-center gap-1 px-2 py-[5px] text-11 text-tertiary",
           COMMON_FILTER_ITEM_BORDER_CLASSNAME,
           className
         )}
       >
         {Icon && (
-          <div className="transition-transform duration-200 ease-in-out flex-shrink-0">
+          <div className="flex-shrink-0 transition-transform duration-200 ease-in-out">
             <Icon className="size-3.5" />
           </div>
         )}

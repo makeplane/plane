@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 // helpers
@@ -22,7 +28,7 @@ export function NotificationItemOptionButton(props: TNotificationItemOptionButto
       <button
         type="button"
         className={cn(
-          "relative flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center outline-none bg-custom-background-80 hover:bg-custom-background-90",
+          "relative flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-xs bg-layer-1 outline-none hover:bg-surface-2",
           buttonClassName
         )}
         onClick={(e) => {

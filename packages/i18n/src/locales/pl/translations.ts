@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projekty",
@@ -17,6 +23,7 @@ export default {
     favorites: "Ulubione",
     pro: "Pro",
     upgrade: "Uaktualnij",
+    stickies: "Notatki",
   },
   auth: {
     common: {
@@ -335,13 +342,13 @@ export default {
   project_id_must_be_at_least_1_character: "ID projektu musi mieć co najmniej 1 znak",
   project_id_must_be_at_most_5_characters: "ID projektu może mieć maksymalnie 5 znaków",
   project_id: "ID projektu",
-  project_id_tooltip_content: "Pomaga jednoznacznie identyfikować elementy pracy w projekcie. Max. 5 znaków.",
+  project_id_tooltip_content: "Pomaga jednoznacznie identyfikować elementy pracy w projekcie. Max. 10 znaków.",
   description_placeholder: "Opis",
   only_alphanumeric_non_latin_characters_allowed: "Dozwolone są tylko znaki alfanumeryczne i nielatynowskie.",
   project_id_is_required: "ID projektu jest wymagane",
   project_id_allowed_char: "Dozwolone są tylko znaki alfanumeryczne i nielatynowskie.",
   project_id_min_char: "ID projektu musi mieć co najmniej 1 znak",
-  project_id_max_char: "ID projektu może mieć maksymalnie 5 znaków",
+  project_id_max_char: "ID projektu może mieć maksymalnie 10 znaków",
   project_description_placeholder: "Wpisz opis projektu",
   select_network: "Wybierz sieć",
   lead: "Lead",
@@ -399,7 +406,7 @@ export default {
   docs: "Dokumentację",
   full_changelog: "Pełny dziennik zmian",
   support: "Wsparcie",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Oparte na Plane Pages",
   please_select_at_least_one_invitation: "Wybierz co najmniej jedno zaproszenie.",
   please_select_at_least_one_invitation_description:
@@ -1581,6 +1588,7 @@ export default {
         name: "Nazwa przestrzeni roboczej",
         company_size: "Rozmiar firmy",
         url: "URL przestrzeni roboczej",
+        workspace_timezone: "Strefa czasowa przestrzeni roboczej",
         update_workspace: "Zaktualizuj przestrzeń",
         delete_workspace: "Usuń tę przestrzeń",
         delete_workspace_description:
@@ -1966,6 +1974,45 @@ export default {
         title: "Brak systemów szacowania",
         description: "Utwórz system szacowania, aby komunikować obciążenie.",
         primary_button: "Dodaj system szacowania",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cykle",
+        short_title: "Cykle",
+        description:
+          "Planuj pracę w elastycznych okresach, które dostosowują się do unikalnego rytmu i tempa tego projektu.",
+        toggle_title: "Włącz cykle",
+        toggle_description: "Planuj pracę w skoncentrowanych ramach czasowych.",
+      },
+      modules: {
+        title: "Moduły",
+        short_title: "Moduły",
+        description: "Organizuj pracę w podprojekty z dedykowanymi liderami i przypisanymi osobami.",
+        toggle_title: "Włącz moduły",
+        toggle_description: "Członkowie projektu będą mogli tworzyć i edytować moduły.",
+      },
+      views: {
+        title: "Widoki",
+        short_title: "Widoki",
+        description: "Zapisuj niestandardowe sortowania, filtry i opcje wyświetlania lub udostępniaj je zespołowi.",
+        toggle_title: "Włącz widoki",
+        toggle_description: "Członkowie projektu będą mogli tworzyć i edytować widoki.",
+      },
+      pages: {
+        title: "Strony",
+        short_title: "Strony",
+        description: "Twórz i edytuj dowolne treści: notatki, dokumenty, cokolwiek.",
+        toggle_title: "Włącz strony",
+        toggle_description: "Członkowie projektu będą mogli tworzyć i edytować strony.",
+      },
+      intake: {
+        title: "Odbiór",
+        short_title: "Odbiór",
+        description:
+          "Pozwól osobom niebędącym członkami dzielić się błędami, opiniami i sugestiami; bez zakłócania przepływu pracy.",
+        toggle_title: "Włącz odbiór",
+        toggle_description: "Pozwól członkom projektu tworzyć żądania odbioru w aplikacji.",
       },
     },
   },

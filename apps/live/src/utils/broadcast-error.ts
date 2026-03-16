@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Hocuspocus } from "@hocuspocus/server";
 import { createRealtimeEvent } from "@plane/editor";
 import { logger } from "@plane/logger";
-import type { FetchPayloadWithContext, StorePayloadWithContext } from "@/types";
+import type { HocusPocusServerContext } from "@/types";
 import { broadcastMessageToPage } from "./broadcast-message";
 
 // Helper to broadcast error to frontend
@@ -10,7 +16,7 @@ export const broadcastError = async (
   pageId: string,
   errorMessage: string,
   errorType: "fetch" | "store",
-  context: FetchPayloadWithContext["context"] | StorePayloadWithContext["context"],
+  context: HocusPocusServerContext,
   errorCode?: "content_too_large" | "page_locked" | "page_archived",
   shouldDisconnect?: boolean
 ) => {

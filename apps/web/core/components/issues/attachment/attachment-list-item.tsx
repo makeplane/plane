@@ -1,7 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Trash } from "lucide-react";
+
 import { useTranslation } from "@plane/i18n";
+import { TrashIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
@@ -54,14 +61,14 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
           window.open(fileURL, "_blank");
         }}
       >
-        <div className="group flex items-center justify-between gap-3 h-11 hover:bg-custom-background-90 pl-9 pr-2">
-          <div className="flex items-center gap-3 text-sm truncate">
+        <div className="group flex h-11 items-center justify-between gap-3 pr-2 pl-9 hover:bg-surface-2">
+          <div className="flex items-center gap-3 truncate text-13">
             <div className="flex items-center gap-3">{fileIcon}</div>
             <Tooltip tooltipContent={`${fileName}.${fileExtension}`} isMobile={isMobile}>
-              <p className="text-custom-text-200 font-medium truncate">{`${fileName}.${fileExtension}`}</p>
+              <p className="truncate font-medium text-secondary">{`${fileName}.${fileExtension}`}</p>
             </Tooltip>
-            <span className="flex size-1.5 bg-custom-background-80 rounded-full" />
-            <span className="flex-shrink-0 text-custom-text-400">{convertBytesToSize(attachment.attributes.size)}</span>
+            <span className="flex size-1.5 rounded-full bg-layer-1" />
+            <span className="flex-shrink-0 text-placeholder">{convertBytesToSize(attachment.attributes.size)}</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -87,7 +94,7 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
                 }}
               >
                 <div className="flex items-center gap-2">
-                  <Trash className="h-3.5 w-3.5" strokeWidth={2} />
+                  <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
                   <span>{t("common.actions.delete")}</span>
                 </div>
               </CustomMenu.MenuItem>

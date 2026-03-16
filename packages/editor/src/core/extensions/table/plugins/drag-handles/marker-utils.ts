@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export const DROP_MARKER_CLASS = "table-drop-marker";
 export const COL_DRAG_MARKER_CLASS = "table-col-drag-marker";
 export const ROW_DRAG_MARKER_CLASS = "table-row-drag-marker";

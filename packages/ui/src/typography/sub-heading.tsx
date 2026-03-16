@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { cn } from "../utils";
 
@@ -9,7 +15,7 @@ type Props = {
 
 function SubHeading({ children, className, noMargin }: Props) {
   return (
-    <h3 className={cn("text-xl font-medium text-custom-text-200 block leading-7", !noMargin && "mb-2", className)}>
+    <h3 className={cn("block text-18 leading-7 font-medium text-secondary", !noMargin && "mb-2", className)}>
       {children}
     </h3>
   );

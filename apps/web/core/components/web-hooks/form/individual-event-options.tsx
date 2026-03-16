@@ -1,6 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import type { IWebhook } from "@plane/types";
+import { Checkbox } from "@plane/ui";
 
 export const INDIVIDUAL_WEBHOOK_OPTIONS: {
   key: keyof IWebhook;
@@ -49,18 +56,12 @@ export function WebhookIndividualEventOptions({ control }: Props) {
           render={({ field: { onChange, value } }) => (
             <div>
               <div className="flex items-center gap-2">
-                <input
-                  id={option.key}
-                  onChange={() => onChange(!value)}
-                  type="checkbox"
-                  name="selectIndividualEvents"
-                  checked={value === true}
-                />
-                <label className="text-sm" htmlFor={option.key}>
+                <Checkbox id={option.key} onChange={() => onChange(!value)} checked={value === true} />
+                <label className="text-13" htmlFor={option.key}>
                   {option.label}
                 </label>
               </div>
-              <p className="ml-6 mt-0.5 text-xs text-custom-text-300">{option.description}</p>
+              <p className="mt-0.5 ml-6 text-11 text-tertiary">{option.description}</p>
             </div>
           )}
         />

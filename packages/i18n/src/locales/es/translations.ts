@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Proyectos",
@@ -17,6 +23,7 @@ export default {
     favorites: "Favoritos",
     pro: "Pro",
     upgrade: "Mejorar",
+    stickies: "Notas adhesivas",
   },
   auth: {
     common: {
@@ -345,13 +352,13 @@ export default {
   project_id_must_be_at_most_5_characters: "El ID del proyecto debe tener como máximo 5 caracteres",
   project_id: "ID del proyecto",
   project_id_tooltip_content:
-    "Te ayuda a identificar elementos de trabajo en el proyecto de manera única. Máximo 5 caracteres.",
+    "Te ayuda a identificar elementos de trabajo en el proyecto de manera única. Máximo 10 caracteres.",
   description_placeholder: "Descripción",
   only_alphanumeric_non_latin_characters_allowed: "Solo se permiten caracteres alfanuméricos y no latinos.",
   project_id_is_required: "El ID del proyecto es requerido",
   project_id_allowed_char: "Solo se permiten caracteres alfanuméricos y no latinos.",
   project_id_min_char: "El ID del proyecto debe tener al menos 1 carácter",
-  project_id_max_char: "El ID del proyecto debe tener como máximo 5 caracteres",
+  project_id_max_char: "El ID del proyecto debe tener como máximo 10 caracteres",
   project_description_placeholder: "Ingresa la descripción del proyecto",
   select_network: "Seleccionar red",
   lead: "Líder",
@@ -412,7 +419,7 @@ export default {
   docs: "Documentación",
   full_changelog: "Registro de cambios completo",
   support: "Soporte",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Desarrollado por Plane Pages",
   please_select_at_least_one_invitation: "Por favor selecciona al menos una invitación.",
   please_select_at_least_one_invitation_description:
@@ -1600,6 +1607,7 @@ export default {
         name: "Nombre del espacio de trabajo",
         company_size: "Tamaño de la empresa",
         url: "URL del espacio de trabajo",
+        workspace_timezone: "Zona horaria del espacio de trabajo",
         update_workspace: "Actualizar espacio de trabajo",
         delete_workspace: "Eliminar este espacio de trabajo",
         delete_workspace_description:
@@ -1996,6 +2004,46 @@ export default {
         title: "Aún no hay sistemas de estimación",
         description: "Crea un conjunto de estimaciones para comunicar el volumen de trabajo por elemento de trabajo.",
         primary_button: "Agregar sistema de estimación",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Ciclos",
+        short_title: "Ciclos",
+        description:
+          "Programa el trabajo en períodos flexibles que se adaptan al ritmo y al tempo únicos de este proyecto.",
+        toggle_title: "Habilitar ciclos",
+        toggle_description: "Planifica el trabajo en períodos de tiempo enfocados.",
+      },
+      modules: {
+        title: "Módulos",
+        short_title: "Módulos",
+        description: "Organiza el trabajo en subproyectos con líderes y responsables dedicados.",
+        toggle_title: "Habilitar módulos",
+        toggle_description: "Los miembros del proyecto podrán crear y editar módulos.",
+      },
+      views: {
+        title: "Vistas",
+        short_title: "Vistas",
+        description:
+          "Guarda ordenaciones, filtros y opciones de visualización personalizadas o compártelos con tu equipo.",
+        toggle_title: "Habilitar vistas",
+        toggle_description: "Los miembros del proyecto podrán crear y editar vistas.",
+      },
+      pages: {
+        title: "Páginas",
+        short_title: "Páginas",
+        description: "Crea y edita contenido libre: notas, documentos, cualquier cosa.",
+        toggle_title: "Habilitar páginas",
+        toggle_description: "Los miembros del proyecto podrán crear y editar páginas.",
+      },
+      intake: {
+        title: "Recepción",
+        short_title: "Recepción",
+        description:
+          "Permite que los no miembros compartan errores, comentarios y sugerencias; sin interrumpir tu flujo de trabajo.",
+        toggle_title: "Habilitar recepción",
+        toggle_description: "Permitir a los miembros del proyecto crear solicitudes de recepción en la aplicación.",
       },
     },
   },

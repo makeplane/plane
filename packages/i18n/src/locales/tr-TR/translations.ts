@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projeler",
@@ -17,6 +23,7 @@ export default {
     favorites: "Favoriler",
     pro: "Pro",
     upgrade: "Yükselt",
+    stickies: "Yapışkan notlar",
   },
   auth: {
     common: {
@@ -337,13 +344,14 @@ export default {
   project_id_must_be_at_least_1_character: "Proje ID en az 1 karakter olmalı",
   project_id_must_be_at_most_5_characters: "Proje ID en fazla 5 karakter olmalı",
   project_id: "Proje ID",
-  project_id_tooltip_content: "Projedeki iş öğelerini benzersiz şekilde tanımlamanıza yardımcı olur. Maks. 5 karakter.",
+  project_id_tooltip_content:
+    "Projedeki iş öğelerini benzersiz şekilde tanımlamanıza yardımcı olur. Maks. 10 karakter.",
   description_placeholder: "Açıklama",
   only_alphanumeric_non_latin_characters_allowed: "Yalnızca alfasayısal ve Latin olmayan karakterlere izin verilir.",
   project_id_is_required: "Proje ID gereklidir",
   project_id_allowed_char: "Yalnızca alfasayısal ve Latin olmayan karakterlere izin verilir.",
   project_id_min_char: "Proje ID en az 1 karakter olmalı",
-  project_id_max_char: "Proje ID en fazla 5 karakter olmalı",
+  project_id_max_char: "Proje ID en fazla 10 karakter olmalı",
   project_description_placeholder: "Proje açıklamasını girin",
   select_network: "Ağ seç",
   lead: "Lider",
@@ -401,7 +409,7 @@ export default {
   docs: "Dokümanlar",
   full_changelog: "Tam Değişiklik Kaydı",
   support: "Destek",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Plane Pages tarafından desteklenmektedir",
   please_select_at_least_one_invitation: "Lütfen en az bir davet seçin.",
   please_select_at_least_one_invitation_description: "Çalışma alanına katılmak için lütfen en az bir davet seçin.",
@@ -1585,6 +1593,7 @@ export default {
         name: "Çalışma Alanı Adı",
         company_size: "Şirket Büyüklüğü",
         url: "Çalışma Alanı URL'si",
+        workspace_timezone: "Çalışma Alanı Saat Dilimi",
         update_workspace: "Çalışma Alanını Güncelle",
         delete_workspace: "Bu çalışma alanını sil",
         delete_workspace_description:
@@ -1952,6 +1961,44 @@ export default {
         title: "Henüz tahmin sistemi yok",
         description: "İş öğesi başına çalışma miktarını iletişim kurmak için bir tahmin seti oluşturun.",
         primary_button: "Tahmin sistemi ekle",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Döngüler",
+        short_title: "Döngüler",
+        description: "Bu projenin benzersiz ritmine ve hızına uyum sağlayan esnek dönemlerde iş planlayın.",
+        toggle_title: "Döngüleri etkinleştir",
+        toggle_description: "Odaklanmış zaman dilimlerinde iş planlayın.",
+      },
+      modules: {
+        title: "Modüller",
+        short_title: "Modüller",
+        description: "İşi özel liderler ve atananlarla alt projelere organize edin.",
+        toggle_title: "Modülleri etkinleştir",
+        toggle_description: "Proje üyeleri modüller oluşturabilir ve düzenleyebilir.",
+      },
+      views: {
+        title: "Görünümler",
+        short_title: "Görünümler",
+        description: "Özel sıralamalar, filtreler ve görüntüleme seçeneklerini kaydedin veya ekibinizle paylaşın.",
+        toggle_title: "Görünümleri etkinleştir",
+        toggle_description: "Proje üyeleri görünümler oluşturabilir ve düzenleyebilir.",
+      },
+      pages: {
+        title: "Sayfalar",
+        short_title: "Sayfalar",
+        description: "Serbest biçimli içerik oluşturun ve düzenleyin: notlar, belgeler, herhangi bir şey.",
+        toggle_title: "Sayfaları etkinleştir",
+        toggle_description: "Proje üyeleri sayfalar oluşturabilir ve düzenleyebilir.",
+      },
+      intake: {
+        title: "Alım",
+        short_title: "Alım",
+        description:
+          "Üye olmayanların hataları, geri bildirimleri ve önerileri paylaşmasına izin verin; iş akışınızı aksatmadan.",
+        toggle_title: "Alımı etkinleştir",
+        toggle_description: "Proje üyelerinin uygulama içinde alım talepleri oluşturmasına izin verin.",
       },
     },
   },

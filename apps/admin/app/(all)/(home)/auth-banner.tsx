@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Info } from "lucide-react";
 // plane constants
 import type { TAdminAuthErrorInfo } from "@plane/constants";
@@ -14,16 +20,16 @@ export function AuthBanner(props: TAuthBanner) {
 
   if (!bannerData) return <></>;
   return (
-    <div className="relative flex items-center p-2 rounded-md gap-2 border border-custom-primary-100/50 bg-custom-primary-100/10">
-      <div className="w-4 h-4 flex-shrink-0 relative flex justify-center items-center">
-        <Info size={16} className="text-custom-primary-100" />
+    <div className="relative flex items-center gap-2 rounded-md border border-accent-strong/50 bg-accent-primary/10 p-2">
+      <div className="relative flex h-4 w-4 flex-shrink-0 items-center justify-center">
+        <Info size={16} className="text-accent-primary" />
       </div>
-      <div className="w-full text-sm font-medium text-custom-primary-100">{bannerData?.message}</div>
+      <div className="w-full text-13 font-medium text-accent-primary">{bannerData?.message}</div>
       <div
-        className="relative ml-auto w-6 h-6 rounded-sm flex justify-center items-center transition-all cursor-pointer hover:bg-custom-primary-100/20 text-custom-primary-100/80"
+        className="relative ml-auto flex h-6 w-6 cursor-pointer items-center justify-center rounded-xs text-accent-primary transition-all hover:bg-accent-primary/20"
         onClick={() => handleBannerData && handleBannerData(undefined)}
       >
-        <CloseIcon className="w-4 h-4 flex-shrink-0" />
+        <CloseIcon className="h-4 w-4 flex-shrink-0" />
       </div>
     </div>
   );

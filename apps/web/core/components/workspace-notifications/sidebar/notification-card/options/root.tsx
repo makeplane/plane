@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -31,8 +37,12 @@ export const NotificationOption = observer(function NotificationOption(props: TN
   const notification = useNotification(notificationId);
 
   return (
-    <div className={cn("flex-shrink-0 hidden group-hover:block text-sm", isSnoozeStateModalOpen ? `!block` : ``)}>
-      <div className="relative flex justify-center items-center gap-2">
+    <div
+      className={cn("hidden flex-shrink-0 text-body-xs-medium group-hover:block", {
+        block: isSnoozeStateModalOpen,
+      })}
+    >
+      <div className="relative flex items-center justify-center gap-2">
         {/* read */}
         <NotificationItemReadOption workspaceSlug={workspaceSlug} notification={notification} />
 

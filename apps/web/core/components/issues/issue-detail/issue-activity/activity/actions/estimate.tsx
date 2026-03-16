@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { EstimatePropertyIcon } from "@plane/propel/icons";
 // hooks
@@ -20,7 +26,7 @@ export const IssueEstimateActivity = observer(function IssueEstimateActivity(pro
 
   return (
     <IssueActivityBlockComponent
-      icon={<EstimatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />}
+      icon={<EstimatePropertyIcon className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

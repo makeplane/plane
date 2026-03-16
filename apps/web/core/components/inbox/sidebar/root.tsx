@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -77,15 +83,15 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
   }, [currentTab, filteredInboxIssueIds, inboxIssueId, projectId, router, workspaceSlug]);
 
   return (
-    <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">
-      <div className="relative w-full h-full flex flex-col overflow-hidden">
+    <div className="h-full w-full flex-shrink-0 border-r border-strong bg-surface-1">
+      <div className="relative flex h-full w-full flex-col overflow-hidden">
         <Header variant={EHeaderVariant.SECONDARY}>
           {tabNavigationOptions.map((option) => (
             <div
               key={option?.key}
               className={cn(
-                `text-sm relative flex items-center gap-1 h-full px-3 cursor-pointer transition-all font-medium`,
-                currentTab === option?.key ? `text-custom-primary-100` : `hover:text-custom-text-200`
+                `relative flex h-full cursor-pointer items-center gap-1 px-3 text-13 font-medium transition-all`,
+                currentTab === option?.key ? `text-accent-primary` : `hover:text-secondary`
               )}
               onClick={() => {
                 if (currentTab != option?.key) {
@@ -96,14 +102,14 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
             >
               <div>{t(option?.i18n_label)}</div>
               {option?.key === "open" && currentTab === option?.key && (
-                <div className="rounded-full p-1.5 py-0.5 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold">
+                <div className="rounded-full bg-accent-primary/20 p-1.5 py-0.5 text-11 font-semibold text-accent-primary">
                   {inboxIssuePaginationInfo?.total_results || 0}
                 </div>
               )}
               <div
                 className={cn(
-                  `border absolute bottom-0 right-0 left-0 rounded-t-md`,
-                  currentTab === option?.key ? `border-custom-primary-100` : `border-transparent`
+                  `absolute right-0 bottom-0 left-0 rounded-t-md border`,
+                  currentTab === option?.key ? `border-accent-strong` : `border-transparent`
                 )}
               />
             </div>
@@ -118,7 +124,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
           <InboxSidebarLoader />
         ) : (
           <div
-            className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
+            className="vertical-scrollbar scrollbar-md h-full w-full overflow-hidden overflow-y-auto"
             ref={containerRef}
           >
             {filteredInboxIssueIds.length > 0 ? (
@@ -130,7 +136,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                 inboxIssueIds={filteredInboxIssueIds}
               />
             ) : (
-              <div className="flex items-center justify-center h-full w-full">
+              <div className="flex h-full w-full items-center justify-center">
                 {getAppliedFiltersCount > 0 ? (
                   <EmptyStateDetailed
                     assetKey="search"
@@ -168,7 +174,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
             )}
             <div ref={setElementRef}>
               {inboxIssuePaginationInfo?.next_page_results && (
-                <Loader className="mx-auto w-full space-y-4 py-4 px-2">
+                <Loader className="mx-auto w-full space-y-4 px-2 py-4">
                   <Loader.Item height="64px" width="w-100" />
                   <Loader.Item height="64px" width="w-100" />
                 </Loader>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import type { IGanttBlock } from "@plane/types";
@@ -39,30 +45,33 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
   return (
     <div
       className={cn("group/list-block", {
-        "rounded bg-custom-background-80": isDragging,
-        "rounded-l border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
-        "border border-r-0 border-custom-border-400": isIssueFocused,
+        "rounded-sm bg-layer-1": isDragging,
+        "rounded-l-sm border border-r-0 border-accent-strong": getIsIssuePeeked(block.data.id),
+        "border border-r-0 border-strong-1": isIssueFocused,
       })}
       onMouseEnter={() => updateActiveBlockId(block.id)}
       onMouseLeave={() => updateActiveBlockId(null)}
     >
       <Row
-        className={cn("group w-full flex items-center gap-2 pr-4", {
-          "bg-custom-background-90": isBlockHoveredOn,
-          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
-          "bg-custom-primary-100/10": isIssueSelected && isBlockHoveredOn,
-        })}
+        className={cn(
+          "group flex w-full items-center gap-2 bg-layer-transparent pr-4 hover:bg-layer-transparent-hover",
+          {
+            "bg-layer-transparent-hover": isBlockHoveredOn,
+            "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
+            "bg-accent-primary/10": isIssueSelected && isBlockHoveredOn,
+          }
+        )}
         style={{
           height: `${BLOCK_HEIGHT}px`,
         }}
       >
         {enableSelection && selectionHelpers && (
-          <div className="flex items-center gap-2 absolute left-1">
+          <div className="absolute left-1 flex items-center gap-2">
             <MultipleSelectEntityAction
               className={cn(
-                "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                "pointer-events-none opacity-0 transition-opacity group-hover/list-block:pointer-events-auto group-hover/list-block:opacity-100",
                 {
-                  "opacity-100 pointer-events-auto": isIssueSelected,
+                  "pointer-events-auto opacity-100": isIssueSelected,
                 }
               )}
               groupId={GANTT_SELECT_GROUP}
@@ -76,7 +85,7 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
             <IssueGanttSidebarBlock issueId={block.data.id} isEpic={isEpic} />
           </div>
           {duration && (
-            <div className="flex-shrink-0 text-sm text-custom-text-200">
+            <div className="flex-shrink-0 text-13 text-secondary">
               <span>
                 {duration} day{duration > 1 ? "s" : ""}
               </span>

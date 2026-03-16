@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -373,14 +379,14 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
   return (
     <FormProvider {...methods}>
       <div className="flex gap-2 bg-transparent">
-        <div className="rounded-lg w-full">
+        <div className="w-full rounded-lg">
           <form
             ref={formRef}
             onSubmit={handleSubmit((data) => handleFormSubmit(data))}
-            className="flex flex-col w-full"
+            className="flex w-full flex-col"
           >
-            <div className="p-5 rounded-t-lg bg-custom-background-100">
-              <h3 className="text-xl font-medium text-custom-text-200 pb-2">{modalTitle}</h3>
+            <div className="rounded-t-lg bg-surface-1 p-5">
+              <h3 className="pb-2 text-h4-medium text-secondary">{modalTitle}</h3>
               <div className="flex items-center justify-between pt-2 pb-4">
                 <div className="flex items-center gap-x-1">
                   <IssueProjectSelect
@@ -448,9 +454,9 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
             </div>
             <div
               className={cn(
-                "pb-4 space-y-3 bg-custom-background-100",
+                "space-y-3 bg-surface-1 pb-4",
                 activeAdditionalPropertiesLength > 4 &&
-                  "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+                  "vertical-scrollbar scrollbar-sm max-h-[45vh] overflow-hidden overflow-y-auto"
               )}
             >
               <div className="px-5">
@@ -484,8 +490,8 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
             </div>
             <div
               className={cn(
-                "px-4 py-3 border-t-[0.5px] border-custom-border-200 rounded-b-lg bg-custom-background-100",
-                activeAdditionalPropertiesLength > 0 && "shadow-custom-shadow-xs"
+                "rounded-b-lg border-t-[0.5px] border-subtle bg-surface-1 px-4 py-3",
+                activeAdditionalPropertiesLength > 0 && "shadow-raised-100"
               )}
             >
               <div className="pb-3">
@@ -505,12 +511,12 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
               </div>
               {showActionButtons && (
                 <div
-                  className="flex items-center justify-end gap-4 pb-3 pt-6 border-t-[0.5px] border-custom-border-200"
+                  className="flex items-center justify-end gap-4 border-t-[0.5px] border-subtle pt-6 pb-3"
                   tabIndex={getIndex("create_more")}
                 >
                   {!data?.id && (
                     <div
-                      className="inline-flex items-center gap-1.5 cursor-pointer"
+                      className="inline-flex cursor-pointer items-center gap-1.5"
                       onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
@@ -518,14 +524,14 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                       role="button"
                     >
                       <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
-                      <span className="text-xs">{t("create_more")}</span>
+                      <span className="text-caption-sm-regular">{t("create_more")}</span>
                     </div>
                   )}
                   <div className="flex items-center gap-2">
                     <div tabIndex={getIndex("discard_button")}>
                       <Button
-                        variant="neutral-primary"
-                        size="sm"
+                        variant="secondary"
+                        size="lg"
                         onClick={() => {
                           if (editorRef.current?.isEditorReadyToDiscard()) {
                             onClose();
@@ -543,9 +549,9 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                     </div>
                     <div tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}>
                       <Button
-                        variant={moveToIssue ? "neutral-primary" : "primary"}
+                        variant={moveToIssue ? "secondary" : "primary"}
+                        size="lg"
                         type="submit"
-                        size="sm"
                         ref={submitBtnRef}
                         loading={isSubmitting}
                         disabled={isDisabled}
@@ -558,10 +564,10 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                       <Button
                         variant="primary"
                         type="button"
-                        size="sm"
                         loading={isMoving}
                         onClick={handleMoveToProjects}
                         disabled={isMoving}
+                        size="lg"
                       >
                         {t("add_to_project")}
                       </Button>
@@ -575,7 +581,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         {shouldRenderDuplicateModal && (
           <div
             ref={modalContainerRef}
-            className="relative flex flex-col gap-2.5 px-3 py-4 rounded-lg shadow-xl bg-pi-50"
+            className="shadow-xl bg-pi-50 relative flex flex-col gap-2.5 rounded-lg px-3 py-4"
             style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
           >
             <DuplicateModalRoot

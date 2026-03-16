@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   ALargeSmall,
   CaseSensitive,
@@ -215,14 +221,7 @@ export const getSlashCommandFilteredSections =
             title: "Default",
             description: "Change text color",
             searchTerms: ["color", "text", "default"],
-            icon: (
-              <ALargeSmall
-                className="size-3.5"
-                style={{
-                  color: "rgba(var(--color-text-100))",
-                }}
-              />
-            ),
+            icon: <ALargeSmall className="size-3.5 text-primary" />,
             command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
           },
           ...COLORS_LIST.map(
@@ -261,8 +260,8 @@ export const getSlashCommandFilteredSections =
             icon: <ALargeSmall className="size-3.5" />,
             iconContainerStyle: {
               borderRadius: "4px",
-              backgroundColor: "rgba(var(--color-background-100))",
-              border: "1px solid rgba(var(--color-border-300))",
+              backgroundColor: "var(--background-color-surface-1)",
+              border: "1px solid var(--border-color-strong)",
             },
             command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
           },

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { uniq, get, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -6,7 +12,7 @@ import type { TIssueRelationIdMap, TIssueRelationMap, TIssueRelation, TIssue } f
 // components
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
 // Plane-web
-import { REVERSE_RELATIONS } from "@/plane-web/constants/gantt-chart";
+import { REVERSE_RELATIONS } from "@/constants/gantt-chart";
 import type { TIssueRelationTypes } from "@/plane-web/types";
 // services
 import { IssueRelationService } from "@/services/issue";

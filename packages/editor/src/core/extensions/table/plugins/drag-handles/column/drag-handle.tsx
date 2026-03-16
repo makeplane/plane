@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   shift,
   flip,
@@ -12,7 +18,7 @@ import {
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/core";
 import { Ellipsis } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -36,7 +42,7 @@ import {
   updateColDragMarker,
   updateColDropMarker,
 } from "../marker-utils";
-import { updateCellContentVisibility } from "../utils";
+import { showCellContent } from "../utils";
 import { ColumnOptionsDropdown } from "./dropdown";
 import { calculateColumnDropIndex, constructColumnDragPreview, getTableColumnNodesInfo } from "./utils";
 
@@ -49,6 +55,25 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
   const { col, editor } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // Track active event listeners for cleanup
+  const activeListenersRef = useRef<{
+    mouseup?: (e: MouseEvent) => void;
+    mousemove?: (e: MouseEvent) => void;
+  }>({});
+
+  // Cleanup window event listeners on unmount
+  useEffect(() => {
+    const listenersRef = activeListenersRef.current;
+    return () => {
+      // Remove any lingering window event listeners when component unmounts
+      if (listenersRef.mouseup) {
+        window.removeEventListener("mouseup", listenersRef.mouseup);
+      }
+      if (listenersRef.mousemove) {
+        window.removeEventListener("mousemove", listenersRef.mousemove);
+      }
+    };
+  }, []);
   // floating ui
   const { refs, floatingStyles, context } = useFloating({
     placement: "bottom-start",
@@ -94,6 +119,17 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
       e.stopPropagation();
       e.preventDefault();
 
+      // Prevent multiple simultaneous drag operations
+      // If there are already listeners attached, remove them first
+      if (activeListenersRef.current.mouseup) {
+        window.removeEventListener("mouseup", activeListenersRef.current.mouseup);
+      }
+      if (activeListenersRef.current.mousemove) {
+        window.removeEventListener("mousemove", activeListenersRef.current.mousemove);
+      }
+      activeListenersRef.current.mouseup = undefined;
+      activeListenersRef.current.mousemove = undefined;
+
       const table = findTable(editor.state.selection);
       if (!table) return;
 
@@ -116,8 +152,9 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
         hideDropMarker(dropMarker);
         hideDragMarker(dragMarker);
 
+        // Show cell content by clearing decorations
         if (isCellSelection(editor.state.selection)) {
-          updateCellContentVisibility(editor, false);
+          showCellContent(editor);
         }
 
         if (col !== dropIndex) {
@@ -133,6 +170,9 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
         }
         window.removeEventListener("mouseup", handleFinish);
         window.removeEventListener("mousemove", handleMove);
+        // Clear the ref
+        activeListenersRef.current.mouseup = undefined;
+        activeListenersRef.current.mousemove = undefined;
       };
 
       let pseudoColumn: HTMLElement | undefined;
@@ -169,6 +209,9 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
       };
 
       try {
+        // Store references for cleanup
+        activeListenersRef.current.mouseup = handleFinish;
+        activeListenersRef.current.mousemove = handleMove;
         window.addEventListener("mouseup", handleFinish);
         window.addEventListener("mousemove", handleMove);
       } catch (error) {
@@ -181,21 +224,18 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
 
   return (
     <>
-      <div className="table-col-handle-container absolute z-20 top-0 left-0 flex justify-center items-center w-full -translate-y-1/2">
+      <div className="table-col-handle-container absolute top-0 left-0 z-20 flex w-full -translate-y-1/2 items-center justify-center">
         <button
           ref={refs.setReference}
           {...getReferenceProps()}
           type="button"
           onMouseDown={handleMouseDown}
-          className={cn(
-            "px-1 bg-custom-background-90 border border-custom-border-400 rounded outline-none transition-all duration-200",
-            {
-              "!opacity-100 bg-custom-primary-100 border-custom-primary-100": isDropdownOpen,
-              "hover:bg-custom-background-80": !isDropdownOpen,
-            }
-          )}
+          className={cn("rounded-sm border border-strong-1 bg-layer-1 px-1 transition-all duration-200 outline-none", {
+            "border-accent-strong bg-accent-primary !opacity-100": isDropdownOpen,
+            "hover:bg-layer-1-hover": !isDropdownOpen,
+          })}
         >
-          <Ellipsis className="size-4 text-custom-text-100" />
+          <Ellipsis className="size-4 text-primary" />
         </button>
       </div>
       {isDropdownOpen && (
@@ -208,7 +248,7 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
             lockScroll
           />
           <div
-            className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
+            className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-raised-200"
             ref={refs.setFloating}
             {...getFloatingProps()}
             style={{

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -29,9 +35,9 @@ export const IssueRelationActivity = observer(function IssueRelationActivity(pro
     >
       {activityContent}
       {activity.old_value === "" ? (
-        <span className="font-medium text-custom-text-100">{activity.new_value}.</span>
+        <span className="font-medium text-primary">{activity.new_value}.</span>
       ) : (
-        <span className="font-medium text-custom-text-100">{activity.old_value}.</span>
+        <span className="font-medium text-primary">{activity.old_value}.</span>
       )}
     </IssueActivityBlockComponent>
   );

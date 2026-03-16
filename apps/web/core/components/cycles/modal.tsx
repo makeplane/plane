@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useEffect, useState } from "react";
 import { mutate } from "swr";
 // types
-import { CYCLE_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { renderFormattedPayloadDate } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
 import useKeypress from "@/hooks/use-keypress";
@@ -62,22 +66,12 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
           title: "Success!",
           message: "Cycle created successfully.",
         });
-        captureSuccess({
-          eventName: CYCLE_TRACKER_EVENTS.create,
-          payload: {
-            id: res.id,
-          },
-        });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.detail ?? "Error in creating cycle. Please try again.",
-        });
-        captureError({
-          eventName: CYCLE_TRACKER_EVENTS.create,
-          error: err,
         });
       });
   };
@@ -88,12 +82,6 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
       .then((res) => {
-        captureSuccess({
-          eventName: CYCLE_TRACKER_EVENTS.update,
-          payload: {
-            id: res.id,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -105,10 +93,6 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.detail ?? "Error in updating cycle. Please try again.",
-        });
-        captureError({
-          eventName: CYCLE_TRACKER_EVENTS.update,
-          error: err,
         });
       });
   };
@@ -136,14 +120,20 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
 
     if (payload.start_date && payload.end_date) {
       if (data?.id) {
-        // Update existing cycle - always include cycle_id for validation
-        isDateValid = await dateChecker(projectId, {
-          start_date: payload.start_date,
-          end_date: payload.end_date,
-          cycle_id: data.id,
-        });
+        // Update existing cycle - only check dates if they've changed
+        const originalStartDate = renderFormattedPayloadDate(data.start_date) ?? null;
+        const originalEndDate = renderFormattedPayloadDate(data.end_date) ?? null;
+        const hasDateChanged = payload.start_date !== originalStartDate || payload.end_date !== originalEndDate;
+
+        if (hasDateChanged) {
+          isDateValid = await dateChecker(projectId, {
+            start_date: payload.start_date,
+            end_date: payload.end_date,
+            cycle_id: data.id,
+          });
+        }
       } else {
-        // Create new cycle - no cycle_id needed
+        // Create new cycle - always check dates
         isDateValid = await dateChecker(projectId, {
           start_date: payload.start_date,
           end_date: payload.end_date,

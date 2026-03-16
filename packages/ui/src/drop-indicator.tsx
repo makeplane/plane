@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { cn } from "./utils";
 
@@ -12,11 +18,9 @@ export function DropIndicator(props: Props) {
   return (
     <div
       className={cn(
-        `block relative h-[2px] w-full
-    before:left-0 before:relative before:block before:top-[-2px] before:h-[6px] before:w-[6px] before:rounded
-    after:left-[calc(100%-6px)] after:relative after:block after:top-[-8px] after:h-[6px] after:w-[6px] after:rounded`,
+        `relative block h-[2px] w-full before:relative before:top-[-2px] before:left-0 before:block before:h-[6px] before:w-[6px] before:rounded-sm after:relative after:top-[-8px] after:left-[calc(100%-6px)] after:block after:h-[6px] after:w-[6px] after:rounded-sm`,
         {
-          "bg-custom-primary-100 before:bg-custom-primary-100 after:bg-custom-primary-100": isVisible,
+          "bg-accent-primary before:bg-accent-primary after:bg-accent-primary": isVisible,
         },
         classNames
       )}

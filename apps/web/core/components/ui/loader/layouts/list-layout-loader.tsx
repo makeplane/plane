@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Fragment, forwardRef } from "react";
 import { range } from "lodash-es";
 // plane ui
@@ -17,23 +23,26 @@ export const ListLoaderItemRow = forwardRef(function ListLoaderItemRow(
   return (
     <Row
       ref={ref}
-      className={cn("flex items-center justify-between h-11 py-3 ", {
-        "bg-custom-background-100": renderForPlaceHolder,
-        "border-b border-custom-border-200": !renderForPlaceHolder,
+      className={cn("flex h-11 items-center justify-between py-3", {
+        "bg-surface-1": renderForPlaceHolder,
+        "border-t border-subtle": !renderForPlaceHolder,
       })}
     >
       <div className="flex items-center gap-3">
         <span
-          className={cn("h-5 w-10 bg-custom-background-80 rounded", {
+          className={cn("h-5 w-10 rounded-sm bg-[var(--illustration-fill-tertiary)]", {
             "animate-pulse": shouldAnimate,
-            "bg-custom-background-90": renderForPlaceHolder,
+            "bg-surface-2": renderForPlaceHolder,
           })}
         />
         <span
-          className={cn(`h-5 w-${getRandomLength(["32", "52", "72"])} bg-custom-background-80 rounded`, {
-            "animate-pulse": shouldAnimate,
-            "bg-custom-background-90": renderForPlaceHolder,
-          })}
+          className={cn(
+            `h-5 w-${getRandomLength(["32", "52", "72"])} rounded-sm bg-[var(--illustration-fill-tertiary)]`,
+            {
+              "animate-pulse": shouldAnimate,
+              "bg-surface-2": renderForPlaceHolder,
+            }
+          )}
         />
       </div>
       <div className="flex items-center gap-2">
@@ -42,16 +51,16 @@ export const ListLoaderItemRow = forwardRef(function ListLoaderItemRow(
             {getRandomInt(1, 2) % 2 === 0 ? (
               <span
                 key={index}
-                className={cn("h-5 w-5 bg-custom-background-80 rounded", {
+                className={cn("h-5 w-5 rounded-sm bg-[var(--illustration-fill-tertiary)]", {
                   "animate-pulse": shouldAnimate,
-                  "bg-custom-background-90": renderForPlaceHolder,
+                  "bg-surface-2": renderForPlaceHolder,
                 })}
               />
             ) : (
               <span
-                className={cn("h-5 w-16 bg-custom-background-80 rounded", {
+                className={cn("h-5 w-16 rounded-sm bg-[var(--illustration-fill-tertiary)]", {
                   "animate-pulse": shouldAnimate,
-                  "bg-custom-background-90": renderForPlaceHolder,
+                  "bg-surface-2": renderForPlaceHolder,
                 })}
               />
             )}
@@ -67,10 +76,10 @@ ListLoaderItemRow.displayName = "ListLoaderItemRow";
 function ListSection({ itemCount }: { itemCount: number }) {
   return (
     <div className="flex flex-shrink-0 flex-col">
-      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 py-1">
-        <div className="flex items-center gap-2 py-1.5 w-full">
-          <span className="h-6 w-6 bg-custom-background-80 rounded animate-pulse" />
-          <span className="h-6 w-24 bg-custom-background-80 rounded animate-pulse" />
+      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-surface-2 py-1">
+        <div className="flex w-full items-center gap-2 py-1.5">
+          <span className="h-6 w-6 animate-pulse rounded-sm bg-layer-1" />
+          <span className="h-6 w-24 animate-pulse rounded-sm bg-layer-1" />
         </div>
       </Row>
       <div className="relative h-full w-full">

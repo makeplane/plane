@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
@@ -116,7 +122,7 @@ export const StickyDNDWrapper = observer(function StickyDNDWrapper(props: Props)
 
   return (
     <div
-      className="flex flex-col box-border p-[8px]"
+      className="box-border flex flex-col p-[8px]"
       style={{
         width: itemWidth,
       }}

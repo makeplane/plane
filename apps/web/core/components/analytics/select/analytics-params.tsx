@@ -1,10 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import type { Control, UseFormSetValue } from "react-hook-form";
 import { Controller } from "react-hook-form";
-import { Calendar, SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 // plane package imports
 import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "@plane/constants";
+import { CalendarLayoutIcon } from "@plane/propel/icons";
 import type { IAnalyticsParams } from "@plane/types";
 import { ChartYAxisMetric } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -63,8 +70,8 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
               }}
               label={
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-3 w-3" />
-                  <span className={cn("text-custom-text-200", value && "text-custom-text-100")}>
+                  <CalendarLayoutIcon className="h-3 w-3" />
+                  <span className={cn("text-secondary", value && "text-primary")}>
                     {xAxisOptions.find((v) => v.value === value)?.label || "Add Property"}
                   </span>
                 </div>
@@ -85,7 +92,7 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
               label={
                 <div className="flex items-center gap-2">
                   <SlidersHorizontal className="h-3 w-3" />
-                  <span className={cn("text-custom-text-200", value && "text-custom-text-100")}>
+                  <span className={cn("text-secondary", value && "text-primary")}>
                     {groupByOptions.find((v) => v.value === value)?.label || "Add Property"}
                   </span>
                 </div>

@@ -1,11 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { LinkIcon, Trash2 } from "lucide-react";
 // plane imports
-import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { LinkIcon, TrashIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomSelect, CustomMenu } from "@plane/ui";
@@ -13,7 +18,6 @@ import { cn, copyTextToClipboard } from "@plane/utils";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 
@@ -50,36 +54,35 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
   );
 
   const handleRemoveInvitation = async () => {
-    if (!workspaceSlug || !invitationDetails) return;
+    try {
+      if (!workspaceSlug || !invitationDetails) return;
 
-    await deleteMemberInvitation(workspaceSlug.toString(), invitationDetails.id)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Invitation removed successfully.",
-        });
-      })
-      .catch((err) =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error || "Something went wrong. Please try again.",
-        })
-      );
+      await deleteMemberInvitation(workspaceSlug.toString(), invitationDetails.id);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Invitation removed successfully.",
+      });
+    } catch (err: unknown) {
+      const error = err as { error?: string };
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: error?.error || "Something went wrong. Please try again.",
+      });
+    }
   };
 
   if (!invitationDetails || !currentWorkspaceMemberInfo) return null;
 
-  const handleCopyText = () => {
+  const handleCopyText = async () => {
     try {
       const inviteLink = new URL(invitationDetails.invite_link, window.location.origin).href;
-      copyTextToClipboard(inviteLink).then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("common.link_copied"),
-          message: t("entity.link_copied_to_clipboard", { entity: t("common.invite") }),
-        });
+      await copyTextToClipboard(inviteLink);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("common.link_copied"),
+        message: t("entity.link_copied_to_clipboard", { entity: t("common.invite") }),
       });
     } catch (error) {
       console.error("Error generating invite link:", error);
@@ -89,7 +92,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "copy-link",
-      action: handleCopyText,
+      action: () => void handleCopyText(),
       title: t("common.actions.copy_link"),
       icon: LinkIcon,
       shouldRender: !!invitationDetails.invite_link,
@@ -97,16 +100,13 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
     {
       key: "remove",
       action: () => {
-        captureClick({
-          elementName: MEMBER_TRACKER_ELEMENTS.WORKSPACE_INVITATIONS_LIST_CONTEXT_MENU,
-        });
         setRemoveMemberModal(true);
       },
       title: t("common.remove"),
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isAdmin,
-      className: "text-red-500",
-      iconClassName: "text-red-500",
+      className: "text-danger-primary",
+      iconClassName: "text-danger-primary",
     },
   ];
 
@@ -121,25 +121,25 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
         }}
         onSubmit={handleRemoveInvitation}
       />
-      <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90 w-full h-full">
+      <div className="group flex h-full w-full items-center justify-between px-3 py-4 hover:bg-layer-transparent-hover">
         <div className="flex items-center gap-x-4 gap-y-2">
-          <span className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
+          <span className="relative flex h-10 w-10 items-center justify-center rounded-sm bg-layer-3 p-4 text-tertiary capitalize">
             {(invitationDetails.email ?? "?")[0]}
           </span>
           <div>
-            <h4 className="cursor-default text-sm">{invitationDetails.email}</h4>
+            <h4 className="cursor-default text-body-xs-regular">{invitationDetails.email}</h4>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs">
-          <div className="flex items-center justify-center rounded bg-yellow-500/20 px-2.5 py-1 text-center text-xs font-medium text-yellow-500">
+        <div className="flex items-center gap-2 text-11">
+          <div className="flex items-center justify-center rounded-sm bg-label-yellow-bg-strong/20 px-2.5 py-1 text-center text-caption-sm-medium text-label-yellow-text">
             <p>{t("common.pending")}</p>
           </div>
           <CustomSelect
             customButton={
-              <div className="item-center flex gap-1 rounded px-2 py-0.5">
+              <div className="item-center flex gap-1 rounded-sm px-2 py-0.5">
                 <span
-                  className={`flex items-center rounded text-xs font-medium ${
-                    hasRoleChangeAccess ? "" : "text-custom-sidebar-text-400"
+                  className={`flex items-center rounded-sm text-caption-sm-medium ${
+                    hasRoleChangeAccess ? "" : "text-placeholder"
                   }`}
                 >
                   {ROLE[invitationDetails.role]}
@@ -157,7 +157,8 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
 
               updateMemberInvitation(workspaceSlug.toString(), invitationDetails.id, {
                 role: value,
-              }).catch((error) => {
+              }).catch((err: unknown) => {
+                const error = err as { error?: string };
                 setToast({
                   type: TOAST_TYPE.ERROR,
                   title: "Error!",
@@ -169,7 +170,11 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
             placement="bottom-end"
           >
             {Object.keys(ROLE).map((key) => {
-              if (currentWorkspaceRole && currentWorkspaceRole !== 20 && currentWorkspaceRole < parseInt(key))
+              if (
+                currentWorkspaceRole &&
+                Number(currentWorkspaceRole) !== 20 &&
+                Number(currentWorkspaceRole) < parseInt(key)
+              )
                 return null;
 
               return (
@@ -192,7 +197,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
                     className={cn(
                       "flex items-center gap-2",
                       {
-                        "text-custom-text-400": item.disabled,
+                        "text-placeholder": item.disabled,
                       },
                       item.className
                     )}
@@ -203,8 +208,8 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
                       <h5>{item.title}</h5>
                       {item.description && (
                         <p
-                          className={cn("text-custom-text-300 whitespace-pre-line", {
-                            "text-custom-text-400": item.disabled,
+                          className={cn("whitespace-pre-line text-tertiary", {
+                            "text-placeholder": item.disabled,
                           })}
                         >
                           {item.description}

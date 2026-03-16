@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
@@ -16,7 +20,10 @@ interface AppRailVisibilityProviderProps {
  * AppRailVisibilityProvider - manages app rail visibility state
  * Base provider that accepts isEnabled as a prop
  */
-export const AppRailVisibilityProvider = observer(({ children, isEnabled = false }: AppRailVisibilityProviderProps) => {
+export const AppRailVisibilityProvider = observer(function AppRailVisibilityProvider({
+  children,
+  isEnabled = false,
+}: AppRailVisibilityProviderProps) {
   const { workspaceSlug } = useParams();
 
   // User preference from localStorage

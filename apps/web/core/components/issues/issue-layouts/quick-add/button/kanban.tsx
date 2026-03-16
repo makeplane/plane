@@ -1,7 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { PlusIcon } from "lucide-react";
+
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
 import type { TQuickAddIssueButton } from "../root";
 
 export const KanbanQuickAddIssueButton = observer(function KanbanQuickAddIssueButton(props: TQuickAddIssueButton) {
@@ -9,11 +16,11 @@ export const KanbanQuickAddIssueButton = observer(function KanbanQuickAddIssueBu
   const { t } = useTranslation();
   return (
     <div
-      className="flex w-full cursor-pointer items-center gap-2 py-1.5 text-custom-text-350 hover:text-custom-text-300"
+      className="flex w-full cursor-pointer items-center gap-2 rounded-lg bg-layer-transparent px-2 py-1 py-1.5 hover:bg-layer-transparent-hover"
       onClick={onClick}
     >
       <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-      <span className="text-sm font-medium">{isEpic ? t("epic.new") : t("issue.new")}</span>
+      <span className="text-13 font-medium">{isEpic ? t("epic.new") : t("issue.new")}</span>
     </div>
   );
 });

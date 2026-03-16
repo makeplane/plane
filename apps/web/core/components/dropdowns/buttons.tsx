@@ -1,5 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // helpers
+import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // types
@@ -71,15 +78,19 @@ function BorderButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <div
+      <Button
+        variant="ghost"
+        size="sm"
         className={cn(
-          "h-full w-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-          { "bg-custom-background-80": isActive },
+          "flex h-full w-full items-center justify-start gap-1.5 border-[0.5px] border-strong",
+          {
+            "bg-layer-transparent-active": isActive,
+          },
           className
         )}
       >
         {children}
-      </div>
+      </Button>
     </Tooltip>
   );
 }
@@ -95,14 +106,16 @@ function BackgroundButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <div
+      <Button
+        variant="ghost"
+        size="sm"
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
+          "flex h-full w-full items-center justify-between gap-1.5 bg-layer-3 hover:bg-layer-1-hover",
           className
         )}
       >
         {children}
-      </div>
+      </Button>
     </Tooltip>
   );
 }
@@ -118,15 +131,19 @@ function TransparentButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <div
+      <Button
+        variant="ghost"
+        size="sm"
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-          { "bg-custom-background-80": isActive },
+          "flex h-full w-full items-center justify-between gap-1.5",
+          {
+            "bg-layer-transparent-active": isActive,
+          },
           className
         )}
       >
         {children}
-      </div>
+      </Button>
     </Tooltip>
   );
 }

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { useParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
@@ -70,7 +76,7 @@ export function SelectRepository(props: Props) {
           {userRepositories && options.length < totalCount && (
             <button
               type="button"
-              className="w-full p-1 text-center text-[0.6rem] text-custom-text-200 hover:bg-custom-background-80"
+              className="w-full p-1 text-center text-10 text-secondary hover:bg-layer-1"
               onClick={() => setSize(size + 1)}
               disabled={isValidating}
             >

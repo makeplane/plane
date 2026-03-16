@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projek",
@@ -17,6 +23,7 @@ export default {
     favorites: "Favorit",
     pro: "Pro",
     upgrade: "Upgrade",
+    stickies: "Catatan tempel",
   },
   auth: {
     common: {
@@ -340,13 +347,13 @@ export default {
   project_id_must_be_at_most_5_characters: "ID proyek maksimal 5 karakter",
   project_id: "ID proyek",
   project_id_tooltip_content:
-    "Membantu Anda mengidentifikasi item kerja dalam proyek secara unik. Maksimal 5 karakter.",
+    "Membantu Anda mengidentifikasi item kerja dalam proyek secara unik. Maksimal 10 karakter.",
   description_placeholder: "Deskripsi",
   only_alphanumeric_non_latin_characters_allowed: "Hanya karakter alfanumerik & Non-latin yang diizinkan.",
   project_id_is_required: "ID proyek diperlukan",
   project_id_allowed_char: "Hanya karakter alfanumerik & Non-latin yang diizinkan.",
   project_id_min_char: "ID proyek harus minimal 1 karakter",
-  project_id_max_char: "ID proyek maksimal 5 karakter",
+  project_id_max_char: "ID proyek maksimal 10 karakter",
   project_description_placeholder: "Masukkan deskripsi proyek",
   select_network: "Pilih jaringan",
   lead: "Pemimpin",
@@ -404,7 +411,7 @@ export default {
   docs: "Dokumen",
   full_changelog: "Changelog lengkap",
   support: "Dukungan",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Ditenagai oleh Plane Pages",
   please_select_at_least_one_invitation: "Silakan pilih setidaknya satu undangan.",
   please_select_at_least_one_invitation_description:
@@ -1586,6 +1593,7 @@ export default {
         name: "Nama ruang kerja",
         company_size: "Ukuran perusahaan",
         url: "URL ruang kerja",
+        workspace_timezone: "Zona waktu ruang kerja",
         update_workspace: "Perbarui ruang kerja",
         delete_workspace: "Hapus ruang kerja ini",
         delete_workspace_description:
@@ -1979,6 +1987,44 @@ export default {
         title: "Belum ada sistem perkiraan",
         description: "Buat serangkaian perkiraan untuk mengkomunikasikan jumlah pekerjaan per item kerja.",
         primary_button: "Tambah sistem perkiraan",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Siklus",
+        short_title: "Siklus",
+        description:
+          "Jadwalkan pekerjaan dalam periode fleksibel yang menyesuaikan dengan ritme dan tempo unik proyek ini.",
+        toggle_title: "Aktifkan siklus",
+        toggle_description: "Rencanakan pekerjaan dalam jangka waktu yang terfokus.",
+      },
+      modules: {
+        title: "Modul",
+        short_title: "Modul",
+        description: "Atur pekerjaan menjadi sub-proyek dengan pemimpin dan penerima tugas khusus.",
+        toggle_title: "Aktifkan modul",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit modul.",
+      },
+      views: {
+        title: "Tampilan",
+        short_title: "Tampilan",
+        description: "Simpan pengurutan, filter, dan opsi tampilan kustom atau bagikan dengan tim Anda.",
+        toggle_title: "Aktifkan tampilan",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit tampilan.",
+      },
+      pages: {
+        title: "Halaman",
+        short_title: "Halaman",
+        description: "Buat dan edit konten bebas: catatan, dokumen, apa saja.",
+        toggle_title: "Aktifkan halaman",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit halaman.",
+      },
+      intake: {
+        title: "Penerimaan",
+        short_title: "Penerimaan",
+        description: "Biarkan non-anggota berbagi bug, umpan balik, dan saran; tanpa mengganggu alur kerja Anda.",
+        toggle_title: "Aktifkan penerimaan",
+        toggle_description: "Izinkan anggota proyek membuat permintaan penerimaan dalam aplikasi.",
       },
     },
   },

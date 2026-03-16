@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // icons
 import { useTranslation } from "@plane/i18n";
@@ -30,12 +36,12 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
         if (!label) return null;
 
         return (
-          <div key={access} className="flex items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs">
+          <div key={access} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
             <span className="normal-case">{t(label)}</span>
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(access)}
               >
                 <CloseIcon height={10} width={10} strokeWidth={2} />

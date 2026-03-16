@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Separator } from "./separator";
 
@@ -40,15 +46,15 @@ export const Vertical: Story = {
 export const WithinContainer: Story = {
   render() {
     return (
-      <div className="w-[300px] rounded-lg border p-6 space-y-4">
+      <div className="w-[300px] space-y-4 rounded-lg border p-6">
         <div className="space-y-2">
-          <h4 className="font-medium leading-none">Section 1</h4>
-          <p className="text-sm text-muted-foreground">Description for section 1</p>
+          <h4 className="leading-none font-medium">Section 1</h4>
+          <p className="text-muted-foreground text-13">Description for section 1</p>
         </div>
         <Separator />
         <div className="space-y-2">
-          <h4 className="font-medium leading-none">Section 2</h4>
-          <p className="text-sm text-muted-foreground">Description for section 2</p>
+          <h4 className="leading-none font-medium">Section 2</h4>
+          <p className="text-muted-foreground text-13">Description for section 2</p>
         </div>
       </div>
     );

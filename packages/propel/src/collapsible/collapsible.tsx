@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState, useEffect, useCallback, createContext, useContext } from "react";
 import { Collapsible as BaseCollapsible } from "@base-ui-components/react/collapsible";
 import clsx from "clsx";
@@ -85,7 +91,7 @@ function Content({ children, className }: ContentProps) {
   return (
     <BaseCollapsible.Panel
       className={clsx(
-        "flex h-[var(--collapsible-panel-height)] flex-col overflow-hidden text-sm transition-all ease-out data-[ending-style]:h-0 data-[starting-style]:h-0",
+        "flex h-[var(--collapsible-panel-height)] flex-col overflow-hidden text-13 transition-all ease-out data-[ending-style]:h-0 data-[starting-style]:h-0",
         className
       )}
     >

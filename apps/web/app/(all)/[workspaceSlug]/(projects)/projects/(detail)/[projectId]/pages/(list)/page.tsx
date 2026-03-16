@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -51,7 +57,7 @@ function ProjectPagesPage({ params }: Route.ComponentProps) {
   // No access to cycle
   if (currentProjectDetails?.page_view === false)
     return (
-      <div className="flex items-center justify-center h-full w-full">
+      <div className="flex h-full w-full items-center justify-center">
         <DetailedEmptyState
           title={t("disabled_project.empty_state.page.title")}
           description={t("disabled_project.empty_state.page.description")}

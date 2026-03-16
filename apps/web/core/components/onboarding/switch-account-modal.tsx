@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 
 import { useTheme } from "next-themes";
@@ -62,7 +68,7 @@ export function SwitchAccountModal(props: Props) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -76,21 +82,21 @@ export function SwitchAccountModal(props: Props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem]">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all sm:my-8 sm:w-[40rem]">
                 <div className="p-6 pb-1">
                   <div className="flex gap-x-4">
                     <div className="flex items-start">
-                      <div className="grid place-items-center rounded-full bg-custom-primary-100/20 p-4">
-                        <ArrowRightLeft className="h-5 w-5 text-custom-primary-100" aria-hidden="true" />
+                      <div className="grid place-items-center rounded-full bg-accent-primary/20 p-4">
+                        <ArrowRightLeft className="h-5 w-5 text-accent-primary" aria-hidden="true" />
                       </div>
                     </div>
-                    <div className="flex flex-col py-3 gap-y-6">
-                      <Dialog.Title as="h3" className="text-2xl font-medium leading-6 text-custom-text-100">
+                    <div className="flex flex-col gap-y-6 py-3">
+                      <Dialog.Title as="h3" className="text-20 leading-6 font-medium text-primary">
                         Switch account
                       </Dialog.Title>
                       {userData?.email && (
-                        <div className="text-base font-normal text-custom-text-200">
-                          If you have signed up via <span className="text-custom-primary-100">{userData.email}</span>{" "}
+                        <div className="text-14 font-regular text-secondary">
+                          If you have signed up via <span className="text-accent-primary">{userData.email}</span>{" "}
                           un-intentionally, you can switch your account to a different one from here.
                         </div>
                       )}
@@ -98,7 +104,7 @@ export function SwitchAccountModal(props: Props) {
                   </div>
                 </div>
                 <div className="mb-2 flex items-center justify-end gap-3 p-4 sm:px-6">
-                  <Button variant="accent-primary" onClick={handleSwitchAccount} disabled={switchingAccount}>
+                  <Button variant="secondary" size="lg" onClick={handleSwitchAccount} disabled={switchingAccount}>
                     {switchingAccount ? "Switching..." : "Switch account"}
                   </Button>
                 </div>

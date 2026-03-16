@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // assets
@@ -28,15 +34,15 @@ export const ArchivedModulesView = observer(function ArchivedModulesView(props: 
 
   if (filteredArchivedModuleIds.length === 0)
     return (
-      <div className="h-full w-full grid place-items-center">
+      <div className="grid h-full w-full place-items-center">
         <div className="text-center">
           <img
             src={archivedModulesSearchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
-            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
+            className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching modules"
           />
-          <h5 className="text-xl font-medium mt-7 mb-1">No matching modules</h5>
-          <p className="text-custom-text-400 text-base">
+          <h5 className="mt-7 mb-1 text-18 font-medium">No matching modules</h5>
+          <p className="text-14 text-placeholder">
             {archivedModulesSearchQuery.trim() === ""
               ? "Remove the filters to see all modules"
               : "Remove the search criteria to see all modules"}
@@ -48,7 +54,7 @@ export const ArchivedModulesView = observer(function ArchivedModulesView(props: 
   return (
     <div className="h-full overflow-y-auto">
       <div className="flex h-full w-full justify-between">
-        <div className="flex h-full w-full flex-col overflow-y-auto vertical-scrollbar scrollbar-lg">
+        <div className="vertical-scrollbar flex scrollbar-lg h-full w-full flex-col overflow-y-auto">
           {filteredArchivedModuleIds.map((moduleId) => (
             <ModuleListItem key={moduleId} moduleId={moduleId} />
           ))}

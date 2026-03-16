@@ -1,9 +1,16 @@
 {
   "name": "@plane/editor",
-  "version": "1.1.0",
-  "description": "Core Editor that powers Plane",
-  "license": "AGPL-3.0",
+  "version": "1.2.0",
   "private": true,
+  "description": "Core Editor that powers Plane",
+  "keywords": [
+    "editor",
+    "markdown",
+    "nextjs",
+    "react",
+    "rich-text"
+  ],
+  "license": "AGPL-3.0",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -18,16 +25,12 @@
   "scripts": {
     "build": "tsc && tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --max-warnings=1435",
+    "check:lint": "oxlint --max-warnings=416 .",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check .",
-    "fix:lint": "eslint . --fix --max-warnings=1435",
-    "fix:format": "prettier --write .",
+    "check:format": "oxfmt --check .",
+    "fix:lint": "oxlint --fix .",
+    "fix:format": "oxfmt .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
-  },
-  "peerDependencies": {
-    "react": "catalog:",
-    "react-dom": "catalog:"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.1",
@@ -44,13 +47,16 @@
     "@tiptap/extension-blockquote": "^2.22.3",
     "@tiptap/extension-character-count": "^2.22.3",
     "@tiptap/extension-collaboration": "^2.22.3",
+    "@tiptap/extension-document": "^2.22.3",
     "@tiptap/extension-emoji": "^2.22.3",
+    "@tiptap/extension-heading": "^2.22.3",
     "@tiptap/extension-image": "^2.22.3",
     "@tiptap/extension-list-item": "^2.22.3",
     "@tiptap/extension-mention": "^2.22.3",
     "@tiptap/extension-placeholder": "^2.22.3",
     "@tiptap/extension-task-item": "^2.22.3",
     "@tiptap/extension-task-list": "^2.22.3",
+    "@tiptap/extension-text": "^2.22.3",
     "@tiptap/extension-text-align": "^2.22.3",
     "@tiptap/extension-text-style": "^2.22.3",
     "@tiptap/extension-underline": "^2.22.3",
@@ -65,6 +71,7 @@
     "is-emoji-supported": "^0.0.5",
     "jsx-dom-cjs": "^8.0.3",
     "linkifyjs": "^4.3.2",
+    "lodash-es": "catalog:",
     "lowlight": "^3.0.0",
     "lucide-react": "catalog:",
     "prosemirror-codemark": "^0.4.2",
@@ -79,6 +86,7 @@
   "devDependencies": {
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
@@ -86,11 +94,8 @@
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
-  "keywords": [
-    "editor",
-    "rich-text",
-    "markdown",
-    "nextjs",
-    "react"
-  ]
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  }
 }

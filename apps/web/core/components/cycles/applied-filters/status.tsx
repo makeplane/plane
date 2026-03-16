@@ -1,4 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
+// plane imports
 import { CYCLE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
@@ -22,7 +29,7 @@ export const AppliedStatusFilters = observer(function AppliedStatusFilters(props
           <div
             key={status}
             className={cn(
-              "flex items-center gap-1 rounded py-1 px-1.5 text-xs",
+              "flex items-center gap-1 rounded-sm px-1.5 py-1 text-11",
               statusDetails?.bgColor,
               statusDetails?.textColor
             )}
@@ -31,7 +38,7 @@ export const AppliedStatusFilters = observer(function AppliedStatusFilters(props
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(status)}
               >
                 <CloseIcon height={10} width={10} strokeWidth={2} />

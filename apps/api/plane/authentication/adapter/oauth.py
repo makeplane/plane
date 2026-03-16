@@ -1,19 +1,24 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import requests
+from django.db import DatabaseError, IntegrityError
 
 # Django imports
 from django.utils import timezone
-from django.db import DatabaseError, IntegrityError
+
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
 
 # Module imports
 from plane.db.models import Account
+from plane.utils.exception_logger import log_exception
 
 from .base import Adapter
-from plane.authentication.adapter.error import (
-    AuthenticationException,
-    AUTHENTICATION_ERROR_CODES,
-)
-from plane.utils.exception_logger import log_exception
 
 
 class OauthAdapter(Adapter):
@@ -74,6 +79,7 @@ class OauthAdapter(Adapter):
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
+            self.logger.warning("Error getting user token")
             code = self.authentication_error_code()
             raise AuthenticationException(error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code))
 
@@ -84,6 +90,12 @@ class OauthAdapter(Adapter):
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
+            self.logger.warning(
+                "Error getting user response",
+                extra={
+                    "headers": headers,
+                },
+            )
             code = self.authentication_error_code()
             raise AuthenticationException(error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code))
 

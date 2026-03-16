@@ -1,9 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search } from "lucide-react";
+import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope } from "lucide-react";
 // plane imports
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
+import { SearchIcon } from "@plane/propel/icons";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
 // assets
@@ -50,7 +57,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     key: "zoom_into_cycles_that_need_attention",
     title: "Zoom into cycles that need attention. ",
     description: "Investigate the state of any cycle that doesn’t conform to expectations in one click.",
-    icon: Search,
+    icon: SearchIcon,
   },
   {
     key: "stay_ahead_of_blockers",
@@ -74,51 +81,51 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
     <ContentWrapper className="gap-10">
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
-          "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",
+          "bg-gradient-to-l from-[#CFCFCF] to-[#212121]": userProfile?.theme.theme === "dark",
           "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": userProfile?.theme.theme === "light",
         })}
       >
         <div className="relative flex flex-col justify-center gap-7 px-14 lg:w-1/2">
           <div className="flex max-w-64 flex-col gap-2">
-            <h2 className="text-2xl font-semibold">{t("on_demand_snapshots_of_all_your_cycles")}</h2>
-            <p className="text-base font-medium text-custom-text-300">{t("active_cycles_description")}</p>
+            <h2 className="text-20 font-semibold">{t("on_demand_snapshots_of_all_your_cycles")}</h2>
+            <p className="text-14 font-medium text-tertiary">{t("active_cycles_description")}</p>
           </div>
           <div className="flex items-center gap-3">
             <a
-              className={`${getButtonStyling("primary", "md")} cursor-pointer`}
+              className={`${getButtonStyling("primary", "base")} cursor-pointer`}
               href={MARKETING_PRICING_PAGE_LINK}
               target="_blank"
               rel="noreferrer"
             >
-              <ProIcon className="h-3.5 w-3.5 text-white" />
+              <ProIcon className="h-3.5 w-3.5 text-on-color" />
               {t("upgrade")}
             </a>
           </div>
-          <span className="absolute left-0 top-0">
+          <span className="absolute top-0 left-0">
             <img
               src={isDarkMode ? ctaL1Dark : ctaL1Light}
-              className="w-[125px] h-[125px] object-contain rounded-xl"
+              className="h-[125px] w-[125px] rounded-xl object-contain"
               alt="l-1"
             />
           </span>
         </div>
         <div className="relative hidden w-1/2 lg:block">
-          <span className="absolute bottom-0 right-0">
-            <img src={isDarkMode ? ctaR1Dark : ctaR1Light} className="w-full h-full object-contain" alt="r-1" />
+          <span className="absolute right-0 bottom-0">
+            <img src={isDarkMode ? ctaR1Dark : ctaR1Light} className="h-full w-full object-contain" alt="r-1" />
           </span>
-          <span className="absolute -bottom-16 right-1/2 rounded-xl">
-            <img src={isDarkMode ? ctaR2Dark : ctaR2Light} className="w-full h-full object-contain" alt="r-2" />
+          <span className="absolute right-1/2 -bottom-16 rounded-xl">
+            <img src={isDarkMode ? ctaR2Dark : ctaR2Light} className="h-full w-full object-contain" alt="r-2" />
           </span>
         </div>
       </div>
       <div className="grid h-full grid-cols-1 gap-5 pb-8 lg:grid-cols-2 xl:grid-cols-3">
         {WORKSPACE_ACTIVE_CYCLES_DETAILS.map((item) => (
-          <div key={item.title} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-custom-background-80 p-4">
-            <div className="flex gap-2 justify-between">
+          <div key={item.title} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-layer-1 p-4">
+            <div className="flex justify-between gap-2">
               <h3 className="font-medium">{t(item.key)}</h3>
-              <item.icon className="mt-1 h-4 w-4 text-blue-500" />
+              <item.icon className="text-blue-500 mt-1 h-4 w-4" />
             </div>
-            <span className="text-sm text-custom-text-300">{t(`${item.key}_description`)}</span>
+            <span className="text-13 text-tertiary">{t(`${item.key}_description`)}</span>
           </div>
         ))}
       </div>

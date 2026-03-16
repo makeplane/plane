@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { CalendarDays } from "lucide-react";
 // plane imports
 import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
@@ -19,30 +25,30 @@ export function WorkItemPreviewCardDate(props: Props) {
   if (!startDate && !targetDate) return null;
 
   return (
-    <div className="text-xs h-full rounded px-1 text-custom-text-200">
+    <div className="h-full rounded-sm px-1 text-11 text-secondary">
       {isDateRangeEnabled ? (
         <div
-          className={cn("h-full flex items-center gap-1", {
-            "text-red-500": shouldHighlightDate,
+          className={cn("flex h-full items-center gap-1", {
+            "text-danger-primary": shouldHighlightDate,
           })}
         >
-          <CalendarDays className="shrink-0 size-3" />
+          <CalendarDays className="size-3 shrink-0" />
           <span>
             {renderFormattedDate(startDate)} - {renderFormattedDate(targetDate)}
           </span>
         </div>
       ) : startDate ? (
-        <div className="h-full flex items-center gap-1">
-          <StartDatePropertyIcon className="shrink-0 size-3" />
+        <div className="flex h-full items-center gap-1">
+          <StartDatePropertyIcon className="size-3 shrink-0" />
           <span>{renderFormattedDate(startDate)}</span>
         </div>
       ) : (
         <div
-          className={cn("h-full flex items-center gap-1", {
-            "text-red-500": shouldHighlightDate,
+          className={cn("flex h-full items-center gap-1", {
+            "text-danger-primary": shouldHighlightDate,
           })}
         >
-          <DueDatePropertyIcon className="shrink-0 size-3" />
+          <DueDatePropertyIcon className="size-3 shrink-0" />
           <span>{renderFormattedDate(targetDate)}</span>
         </div>
       )}

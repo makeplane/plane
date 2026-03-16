@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef } from "react";
 import { AlertCircle } from "lucide-react";
 // plane imports
@@ -45,10 +51,10 @@ export function GroupDragOverlay(props: Props) {
     <div
       ref={messageContainerRef}
       className={cn(
-        `absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-80/85 ${dragColumnOrientation}`,
+        `absolute top-0 left-0 h-full w-full items-center rounded-sm bg-layer-1/85 text-13 font-medium text-tertiary ${dragColumnOrientation}`,
         {
-          "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlayBeVisible,
-          "bg-red-200/60": workflowDisabledSource && isDropDisabled,
+          "z-2 flex flex-col border-[1px] border-strong": shouldOverlayBeVisible,
+          "bg-danger-subtle": workflowDisabledSource && isDropDisabled,
         },
         { hidden: !shouldOverlayBeVisible }
       )}
@@ -61,9 +67,9 @@ export function GroupDragOverlay(props: Props) {
         />
       ) : (
         <div
-          className={cn("p-3 my-8 flex flex-col rounded items-center", {
-            "text-custom-text-200": shouldOverlayBeVisible,
-            "text-custom-text-error": isDropDisabled,
+          className={cn("my-8 flex flex-col items-center rounded-sm p-3", {
+            "text-secondary": shouldOverlayBeVisible,
+            "text-danger-secondary": isDropDisabled,
           })}
         >
           {dropErrorMessage ? (

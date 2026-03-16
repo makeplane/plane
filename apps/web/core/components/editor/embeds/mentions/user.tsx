@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Link } from "react-router";
@@ -33,7 +39,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
 
   if (!userDetails) {
     return (
-      <div className="not-prose inline px-1 py-0.5 rounded bg-custom-background-80 text-custom-text-300 no-underline">
+      <div className="not-prose inline rounded-sm bg-layer-1 px-1 py-0.5 text-tertiary no-underline">
         @suspended user
       </div>
     );
@@ -42,9 +48,9 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
   return (
     <div
       className={cn(
-        "not-prose inline px-1 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 no-underline",
+        "not-prose inline rounded-sm bg-accent-subtle-active px-1 py-0.5 text-accent-primary no-underline",
         {
-          "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
+          "bg-label-yellow-bg text-label-yellow-text": id === currentUser?.id,
         }
       )}
     >
@@ -53,22 +59,22 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
           <Link to={profileLink}>@{userDetails?.display_name}</Link>
         </Popover.Button>
         <Popover.Panel side="bottom" align="start">
-          <div className="w-60 bg-custom-background-100 shadow-custom-shadow-rg rounded-lg p-3 border-[0.5px] border-custom-border-300">
+          <div className="w-60 rounded-lg border-[0.5px] border-strong bg-surface-1 p-3 shadow-raised-200">
             <div className="flex items-center gap-3">
-              <div className="flex-shrink-0 size-10 grid place-items-center">
+              <div className="grid size-10 flex-shrink-0 place-items-center">
                 <Avatar
                   src={getFileURL(userDetails?.avatar_url ?? "")}
                   name={userDetails?.display_name}
                   size={40}
-                  className="text-xl"
+                  className="text-18"
                   showTooltip={false}
                 />
               </div>
               <div>
-                <Link to={profileLink} className="not-prose font-medium text-custom-text-100 text-sm hover:underline">
+                <Link to={profileLink} className="not-prose text-13 font-medium text-primary hover:underline">
                   {userDetails?.first_name} {userDetails?.last_name}
                 </Link>
-                {roleDetails && <p className="text-custom-text-200 text-xs">{ROLE[roleDetails]}</p>}
+                {roleDetails && <p className="text-11 text-secondary">{ROLE[roleDetails]}</p>}
               </div>
             </div>
           </div>

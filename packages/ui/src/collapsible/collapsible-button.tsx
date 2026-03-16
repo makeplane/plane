@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import type { ISvgIcons } from "@plane/propel/icons";
@@ -27,22 +33,17 @@ export function CollapsibleButton(props: Props) {
     ChevronIcon = DropdownIcon,
   } = props;
   return (
-    <div
-      className={cn(
-        "flex items-center justify-between gap-3 h-12 px-2.5 py-3 border-b border-custom-border-200",
-        className
-      )}
-    >
+    <div className={cn("flex h-12 items-center justify-between gap-3 border-b border-subtle px-2.5 py-3", className)}>
       <div className="flex items-center gap-3.5">
         <div className="flex items-center gap-3">
           {!hideChevron && (
             <ChevronIcon
-              className={cn("size-2 text-custom-text-300 hover:text-custom-text-200 duration-300", {
+              className={cn("size-2 text-tertiary duration-300 hover:text-secondary", {
                 "-rotate-90": !isOpen,
               })}
             />
           )}
-          <span className={cn("text-base text-custom-text-100 font-medium", titleClassName)}>{title}</span>
+          <span className={cn("text-14 font-medium text-primary", titleClassName)}>{title}</span>
         </div>
         {indicatorElement && indicatorElement}
       </div>

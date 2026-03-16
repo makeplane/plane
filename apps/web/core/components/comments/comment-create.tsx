@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -42,7 +48,7 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
   // store hooks
   const workspaceStore = useWorkspace();
   // derived values
-  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
   // form info
   const {
     handleSubmit,
@@ -87,7 +93,7 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
 
   return (
     <div
-      className={cn("sticky bottom-0 z-[4] bg-custom-background-100 sm:static")}
+      className={cn("sticky bottom-0 z-[4] bg-surface-1 sm:static")}
       onKeyDown={(e) => {
         if (
           e.key === "Enter" &&

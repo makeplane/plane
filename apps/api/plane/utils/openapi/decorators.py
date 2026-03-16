@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """
 Helper decorators for drf-spectacular OpenAPI documentation.
 
@@ -262,6 +266,7 @@ def state_docs(**kwargs):
     }
 
     return extend_schema(**_merge_schema_options(defaults, kwargs))
+
 
 def sticky_docs(**kwargs):
     """Decorator for sticky management endpoints"""

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -47,7 +53,7 @@ export const ModuleGanttBlock = observer(function ModuleGanttBlock(props: Props)
       position="top-start"
     >
       <div
-        className="relative flex h-full w-full cursor-pointer items-center rounded"
+        className="relative flex h-full w-full cursor-pointer items-center rounded-sm"
         style={blockStyle}
         onClick={() =>
           router.push(
@@ -55,9 +61,9 @@ export const ModuleGanttBlock = observer(function ModuleGanttBlock(props: Props)
           )
         }
       >
-        <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
+        <div className="absolute top-0 left-0 h-full w-full bg-surface-1/50" />
         <div
-          className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100"
+          className="sticky w-auto truncate overflow-hidden px-2.5 py-1 text-13 text-primary"
           style={{ left: `${SIDEBAR_WIDTH}px` }}
         >
           {moduleDetails?.name}
@@ -82,7 +88,7 @@ export const ModuleGanttSidebarBlock = observer(function ModuleGanttSidebarBlock
       draggable={false}
     >
       <ModuleStatusIcon status={moduleDetails?.status ?? "backlog"} height="16px" width="16px" />
-      <h6 className="flex-grow truncate text-sm font-medium">{moduleDetails?.name}</h6>
+      <h6 className="flex-grow truncate text-13 font-medium">{moduleDetails?.name}</h6>
     </Link>
   );
 });

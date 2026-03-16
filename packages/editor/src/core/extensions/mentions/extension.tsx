@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // types
 import type { TMentionHandler } from "@/types";
@@ -30,6 +36,7 @@ export function CustomMentionExtension(props: TMentionHandler) {
       render: renderMentionsDropdown({
         searchCallback,
       }),
+      allowSpaces: true,
     },
   });
 }

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -20,14 +26,14 @@ export const NotificationSidebarHeader = observer(function NotificationSidebarHe
 
   if (!workspaceSlug) return <></>;
   return (
-    <Header className="my-auto bg-custom-background-100">
+    <Header className="my-auto bg-surface-1">
       <Header.LeftItem>
         <Breadcrumbs>
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
                 label={t("notification.label")}
-                icon={<InboxIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<InboxIcon className="h-4 w-4 text-primary" />}
                 disableTooltip
               />
             }

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Params } from "react-router";
 // plane web imports
 import { detectExtendedContextFromURL } from "@/plane-web/components/command-palette/power-k/context-detector";

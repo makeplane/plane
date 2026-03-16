@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/core";
 import { useState } from "react";
 // plane imports
@@ -31,9 +37,9 @@ export function ImageToolbarRoot(props: Props) {
     <>
       <div
         className={cn(
-          "absolute top-1 right-1 h-7 z-20 bg-black/80 rounded flex items-center gap-2 px-2 opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity",
+          "pointer-events-none absolute top-1 right-1 z-20 flex h-7 items-center gap-2 rounded-sm bg-black/80 px-2 opacity-0 transition-opacity group-hover/image-component:pointer-events-auto group-hover/image-component:opacity-100",
           {
-            "opacity-100 pointer-events-auto": shouldShowToolbar,
+            "pointer-events-auto opacity-100": shouldShowToolbar,
           }
         )}
       >

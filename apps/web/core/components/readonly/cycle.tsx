@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -30,7 +36,7 @@ export const ReadonlyCycle = observer(function ReadonlyCycle(props: TReadonlyCyc
   }, [projectId, workspaceSlug]);
 
   return (
-    <div className={cn("flex items-center gap-1 text-sm", className)}>
+    <div className={cn("flex items-center gap-1 text-13", className)}>
       {!hideIcon && <CycleIcon className="size-4 flex-shrink-0" />}
       <span className="flex-grow truncate">{cycleName ?? placeholder ?? t("common.none")}</span>
     </div>

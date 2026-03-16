@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import type { TFilterProperty } from "@plane/types";
 import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
@@ -21,7 +27,7 @@ export type TCreateAssigneeFilterParams = TCreateUserFilterParams;
 export const getAssigneeFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateAssigneeFilterParams> =>
   (params: TCreateAssigneeFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Assignees",
       ...params,
@@ -49,7 +55,7 @@ export type TCreateMentionFilterParams = TCreateUserFilterParams;
 export const getMentionFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateMentionFilterParams> =>
   (params: TCreateMentionFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Mentions",
       ...params,
@@ -77,7 +83,7 @@ export type TCreateCreatedByFilterParams = TCreateUserFilterParams;
 export const getCreatedByFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateCreatedByFilterParams> =>
   (params: TCreateCreatedByFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Created by",
       ...params,
@@ -105,7 +111,7 @@ export type TCreateSubscriberFilterParams = TCreateUserFilterParams;
 export const getSubscriberFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateSubscriberFilterParams> =>
   (params: TCreateSubscriberFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Subscriber",
       ...params,

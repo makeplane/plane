@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Dialog, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
 // constants
@@ -35,7 +41,7 @@ export function ModalCore(props: Props) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-30 overflow-y-auto">
@@ -51,7 +57,7 @@ export function ModalCore(props: Props) {
             >
               <Dialog.Panel
                 className={cn(
-                  "relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all w-full",
+                  "relative w-full transform rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all",
                   width,
                   className
                 )}

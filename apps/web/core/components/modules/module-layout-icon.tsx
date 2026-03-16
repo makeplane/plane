@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { TimelineLayoutIcon, GridLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
 import type { TModuleLayoutOptions } from "@plane/types";
@@ -27,7 +33,9 @@ export function ModuleLayoutIcon(props: ILayoutIcon) {
   return (
     <>
       {withContainer ? (
-        <div className={cn("flex items-center justify-center border rounded p-0.5 flex-shrink-0", containerClassName)}>
+        <div
+          className={cn("flex flex-shrink-0 items-center justify-center rounded-sm border p-0.5", containerClassName)}
+        >
           <Icon width={size} height={size} className={cn(className)} />
         </div>
       ) : (

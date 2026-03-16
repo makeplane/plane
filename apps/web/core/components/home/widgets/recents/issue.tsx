@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane types
 import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@plane/propel/icons";
@@ -65,7 +71,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       itemLink={workItemLink}
       title={issueDetails?.name}
       prependTitleElement={
-        <div className="flex-shrink-0 flex items-center gap-2">
+        <div className="flex flex-shrink-0 items-center gap-2">
           {issueDetails.type ? (
             <IssueIdentifier
               size="lg"
@@ -73,14 +79,14 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               projectId={issueDetails?.project_id || ""}
               projectIdentifier={issueDetails?.project_identifier || ""}
               issueSequenceId={issueDetails?.sequence_id || ""}
-              textContainerClassName="text-custom-sidebar-text-400 text-sm whitespace-nowrap"
+              variant="tertiary"
             />
           ) : (
-            <div className="flex gap-2 items-center justify-center">
-              <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
-                <WorkItemsIcon className="size-4 text-custom-text-350" />
+            <div className="flex items-center justify-center gap-2">
+              <div className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-layer-2">
+                <WorkItemsIcon className="size-4 text-tertiary" />
               </div>
-              <div className="font-medium text-custom-text-400 text-sm whitespace-nowrap">
+              <div className="text-13 font-medium whitespace-nowrap text-placeholder">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
               </div>
             </div>
@@ -88,7 +94,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 font-medium text-xs text-custom-text-400">
+        <div className="flex-shrink-0 text-11 font-medium text-placeholder">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }
@@ -99,7 +105,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               <StateGroupIcon
                 stateGroup={state?.group ?? "backlog"}
                 color={state?.color}
-                className="h-4 w-4 my-auto"
+                className="my-auto h-4 w-4"
                 percentage={state?.order}
               />
             </div>
@@ -130,7 +136,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="bg-transparent my-auto !px-2 border-none py-3"
+      className="my-auto border-none !px-2 py-3"
       itemClassName="my-auto"
       onItemClick={handlePeekOverview}
       preventDefaultProgress

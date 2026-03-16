@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 // constants
@@ -33,18 +39,18 @@ export const InboxIssueStatus = observer(function InboxIssueStatus(props: Props)
   return (
     <div
       className={cn(
-        `relative flex flex-col gap-1 p-1.5 py-0.5 rounded ${statusIcon.textColor(
+        `relative flex flex-col gap-1 rounded-sm p-1.5 py-0.5 ${statusIcon.textColor(
           isSnoozedDatePassed
         )} ${statusIcon.bgColor(isSnoozedDatePassed)}`
       )}
     >
       <div className={`flex items-center gap-1`}>
         <InboxStatusIcon type={inboxIssue?.status} size={iconSize} className="flex-shrink-0" renderColor={false} />
-        <div className="font-medium text-xs whitespace-nowrap">
+        <div className="text-11 font-medium whitespace-nowrap">
           {inboxIssue?.status === 0 && inboxIssue?.snoozed_till ? description : t(inboxIssueStatusDetail.i18n_title)}
         </div>
       </div>
-      {showDescription && <div className="text-sm whitespace-nowrap">{description}</div>}
+      {showDescription && <div className="text-13 whitespace-nowrap">{description}</div>}
     </div>
   );
 });

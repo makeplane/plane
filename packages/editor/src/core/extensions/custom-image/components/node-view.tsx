@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { NodeViewWrapper } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 // local imports
 import type { CustomImageExtensionType, TCustomImageAttributes } from "../types";
-import { ECustomImageStatus } from "../types";
+import { ECustomImageAttributeNames, ECustomImageStatus } from "../types";
 import { hasImageDuplicationFailed } from "../utils";
 import { CustomImageBlock } from "./block";
 import { CustomImageUploader } from "./uploader";
@@ -56,16 +62,25 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
       return;
     }
 
-    const getImageSource = async () => {
-      const url = await extension.options.getImageSource?.(imgNodeSrc);
-      setResolvedSrc(url);
-      const downloadUrl = await extension.options.getImageDownloadSource?.(imgNodeSrc);
-      setResolvedDownloadSrc(downloadUrl);
-    };
-    getImageSource();
-  }, [imgNodeSrc, extension.options]);
+    setResolvedSrc(undefined);
+    setResolvedDownloadSrc(undefined);
+    setFailedToLoadImage(false);
 
-  // Handle image duplication when status is duplicating
+    const getImageSource = async () => {
+      try {
+        const url = await extension.options.getImageSource?.(imgNodeSrc);
+        setResolvedSrc(url);
+        const downloadUrl = await extension.options.getImageDownloadSource?.(imgNodeSrc);
+        setResolvedDownloadSrc(downloadUrl);
+      } catch (error) {
+        console.error("Error fetching image source:", error);
+        setFailedToLoadImage(true);
+      }
+    };
+    void getImageSource();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imgNodeSrc, extension.options.getImageSource, extension.options.getImageDownloadSource]);
+
   useEffect(() => {
     const handleDuplication = async () => {
       if (status !== ECustomImageStatus.DUPLICATING || !extension.options.duplicateImage || !imgNodeSrc) {
@@ -81,17 +96,14 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
       try {
         hasRetriedOnMount.current = true;
 
-        const newAssetId = await extension.options.duplicateImage!(imgNodeSrc);
+        const newAssetId = await extension.options.duplicateImage(imgNodeSrc);
 
         if (!newAssetId) {
           throw new Error("Duplication returned invalid asset ID");
         }
 
-        // Update node with new source and success status
-        updateAttributes({
-          src: newAssetId,
-          status: ECustomImageStatus.UPLOADED,
-        });
+        setFailedToLoadImage(false);
+        updateAttributes({ src: newAssetId, status: ECustomImageStatus.UPLOADED });
       } catch (error: unknown) {
         console.error("Failed to duplicate image:", error);
         // Update status to failed
@@ -101,7 +113,8 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
       }
     };
 
-    handleDuplication();
+    void handleDuplication();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, imgNodeSrc, extension.options.duplicateImage, updateAttributes]);
 
   useEffect(() => {
@@ -115,15 +128,17 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
   useEffect(() => {
     if (status === ECustomImageStatus.UPLOADED) {
       hasRetriedOnMount.current = false;
+      setFailedToLoadImage(false);
     }
   }, [status]);
 
   const hasDuplicationFailed = hasImageDuplicationFailed(status);
-  const shouldShowBlock = (isUploaded || imageFromFileSystem) && !failedToLoadImage;
+  const hasValidImageSource = imageFromFileSystem || (isUploaded && resolvedSrc);
+  const shouldShowBlock = hasValidImageSource && !failedToLoadImage && !hasDuplicationFailed;
 
   return (
-    <NodeViewWrapper>
-      <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
+    <NodeViewWrapper key={node.attrs[ECustomImageAttributeNames.ID]}>
+      <div className="mx-0 my-2 p-0" data-drag-handle ref={imageComponentRef}>
         {shouldShowBlock && !hasDuplicationFailed ? (
           <CustomImageBlock
             editorContainer={editorContainer}
@@ -139,7 +154,7 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
             failedToLoadImage={failedToLoadImage}
             hasDuplicationFailed={hasDuplicationFailed}
             loadImageFromFileSystem={setImageFromFileSystem}
-            maxFileSize={editor.storage.imageComponent?.maxFileSize}
+            maxFileSize={(editor.storage.imageComponent as { maxFileSize?: number } | undefined)?.maxFileSize ?? 0}
             setIsUploaded={setIsUploaded}
             {...props}
           />

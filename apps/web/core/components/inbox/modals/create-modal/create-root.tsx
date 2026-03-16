@@ -1,8 +1,14 @@
-import type { FC, FormEvent } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FormEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -10,8 +16,6 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
@@ -170,12 +174,6 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
           descriptionEditorRef?.current?.clearEditor();
           setFormData(defaultIssueData);
         }
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.issue?.id,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: `Success!`,
@@ -184,13 +182,6 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
       })
       .catch((error) => {
         console.error(error);
-        captureError({
-          eventName: WORK_ITEM_TRACKER_EVENTS.create,
-          payload: {
-            id: formData?.id,
-          },
-          error: error as Error,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: `Error!`,
@@ -206,12 +197,12 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
 
   if (!workspaceSlug || !projectId || !workspaceId) return <></>;
   return (
-    <div className="flex gap-2 bg-transparent w-full">
-      <div className="rounded-lg w-full">
-        <form ref={formRef} onSubmit={handleFormSubmit} className="flex flex-col w-full">
-          <div className="space-y-5 p-5 rounded-t-lg bg-custom-background-100">
+    <div className="flex w-full gap-2 bg-transparent">
+      <div className="w-full rounded-lg">
+        <form ref={formRef} onSubmit={handleFormSubmit} className="flex w-full flex-col">
+          <div className="space-y-5 rounded-t-lg bg-surface-1 p-5">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-xl font-medium text-custom-text-200">{t("inbox_issue.modal.title")}</h3>
+              <h3 className="text-18 font-medium text-secondary">{t("inbox_issue.modal.title")}</h3>
               {duplicateIssues?.length > 0 && (
                 <DeDupeButtonRoot
                   workspaceSlug={workspaceSlug}
@@ -234,27 +225,27 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                 data={formData}
                 handleData={handleFormData}
                 editorRef={descriptionEditorRef}
-                containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
+                containerClassName="bg-layer-2 border-[0.5px] border-subtle-1 py-3 min-h-[150px]"
                 onEnterKeyPress={() => submitBtnRef?.current?.click()}
                 onAssetUpload={(assetId) => setUploadedAssetIds((prev) => [...prev, assetId])}
               />
               <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
             </div>
           </div>
-          <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200 rounded-b-lg bg-custom-background-100">
+          <div className="flex items-center justify-between gap-2 rounded-b-lg border-t-[0.5px] border-subtle bg-surface-1 px-5 py-4">
             <div
-              className="inline-flex items-center gap-1.5 cursor-pointer"
+              className="inline-flex cursor-pointer items-center gap-1.5"
               onClick={() => setCreateMore((prevData) => !prevData)}
               role="button"
               tabIndex={getIndex("create_more")}
             >
               <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
-              <span className="text-xs">{t("create_more")}</span>
+              <span className="text-11">{t("create_more")}</span>
             </div>
             <div className="flex items-center gap-3">
               <Button
-                variant="neutral-primary"
-                size="sm"
+                variant="secondary"
+                size="lg"
                 type="button"
                 onClick={() => {
                   if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
@@ -274,11 +265,11 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
               <Button
                 variant="primary"
                 ref={submitBtnRef}
-                size="sm"
                 type="submit"
                 loading={formSubmitting}
                 disabled={isTitleLengthMoreThan255Character}
                 tabIndex={getIndex("submit_button")}
+                size="lg"
               >
                 {formSubmitting ? t("creating") : t("create_work_item")}
               </Button>
@@ -289,7 +280,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
       {shouldRenderDuplicateModal && (
         <div
           ref={modalContainerRef}
-          className="relative flex flex-col gap-2.5 px-3 py-4 rounded-lg shadow-xl bg-pi-50"
+          className="shadow-xl bg-pi-50 relative flex flex-col gap-2.5 rounded-lg px-3 py-4"
           style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
         >
           <DuplicateModalRoot

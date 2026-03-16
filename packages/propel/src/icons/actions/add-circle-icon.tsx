@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 
 import { IconWrapper } from "../icon-wrapper";
 import type { ISvgIcons } from "../type";
 
-export const AddCircleIcon: React.FC<ISvgIcons> = ({ color = "currentColor", ...rest }) => {
+export function AddCircleIcon({ color = "currentColor", ...rest }: ISvgIcons) {
   const clipPathId = React.useId();
 
   return (
@@ -14,4 +20,4 @@ export const AddCircleIcon: React.FC<ISvgIcons> = ({ color = "currentColor", ...
       />
     </IconWrapper>
   );
-};
+}

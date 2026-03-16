@@ -1,11 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane ui
 import { Loader } from "@plane/ui";
 
 export function StickiesLoader() {
   return (
-    <div className="overflow-scroll pb-2 grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-4 gap-4 overflow-scroll pb-2">
       {Array.from({ length: 4 }).map((_, index) => (
-        <Loader key={index} className="space-y-5 border border-custom-border-200 p-3 rounded">
+        <Loader key={index} className="space-y-5 rounded-sm border border-subtle p-3">
           <div className="space-y-2">
             <Loader.Item height="20px" />
             <Loader.Item height="15px" width="75%" />

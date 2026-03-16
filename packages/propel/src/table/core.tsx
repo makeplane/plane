@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 
 import { cn } from "../utils/classname";
@@ -8,7 +14,7 @@ const Table = React.forwardRef(function Table(
 ) {
   return (
     <div className="relative w-full overflow-auto">
-      <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
+      <table ref={ref} className={cn("w-full caption-bottom text-13", className)} {...props} />
     </div>
   );
 });
@@ -18,13 +24,7 @@ const TableHeader = React.forwardRef(function TableHeader(
   { className, ...props }: React.ComponentPropsWithoutRef<"thead">,
   ref: React.ForwardedRef<React.ComponentRef<"thead">>
 ) {
-  return (
-    <thead
-      ref={ref}
-      className={cn("bg-custom-background-80 py-4 border-y border-custom-border-200", className)}
-      {...props}
-    />
-  );
+  return <thead ref={ref} className={cn("border-y border-subtle bg-layer-1 py-4", className)} {...props} />;
 });
 TableHeader.displayName = "TableHeader";
 
@@ -40,7 +40,7 @@ const TableFooter = React.forwardRef(function TableFooter(
   { className, ...props }: React.ComponentPropsWithoutRef<"tfoot">,
   ref: React.ForwardedRef<React.ComponentRef<"tfoot">>
 ) {
-  return <tfoot ref={ref} className={cn("bg-custom-background-300 font-medium", className)} {...props} />;
+  return <tfoot ref={ref} className={cn("bg-layer-1 font-medium", className)} {...props} />;
 });
 TableFooter.displayName = "TableFooter";
 
@@ -48,13 +48,7 @@ const TableRow = React.forwardRef(function TableRow(
   { className, ...props }: React.ComponentPropsWithoutRef<"tr">,
   ref: React.ForwardedRef<React.ComponentRef<"tr">>
 ) {
-  return (
-    <tr
-      ref={ref}
-      className={cn("transition-colors data-[state=selected]:bg-custom-background-100", className)}
-      {...props}
-    />
-  );
+  return <tr ref={ref} className={cn("transition-colors data-[state=selected]:bg-surface-1", className)} {...props} />;
 });
 TableRow.displayName = "TableRow";
 
@@ -66,7 +60,7 @@ const TableHead = React.forwardRef(function TableHead(
     <th
       ref={ref}
       className={cn(
-        "h-10 px-2 text-left align-middle font-medium text-custom-text-300 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "h-10 px-2 text-left align-middle font-medium text-tertiary [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         className
       )}
       {...props}
@@ -93,7 +87,7 @@ const TableCaption = React.forwardRef(function TableCaption(
   { className, ...props }: React.ComponentPropsWithoutRef<"caption">,
   ref: React.ForwardedRef<React.ComponentRef<"caption">>
 ) {
-  return <caption ref={ref} className={cn("mt-4 text-sm text-custom-text-300", className)} {...props} />;
+  return <caption ref={ref} className={cn("mt-4 text-13 text-tertiary", className)} {...props} />;
 });
 TableCaption.displayName = "TableCaption";
 

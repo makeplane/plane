@@ -1,14 +1,21 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
 // plane imports
 import { ISSUE_LAYOUT_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CheckIcon } from "@plane/propel/icons";
 import { EIssueLayoutTypes } from "@plane/types";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
+import { getIconButtonStyling } from "@plane/propel/icon-button";
 
 type TLayoutDropDown = {
   onChange: (value: EIssueLayoutTypes) => void;
@@ -38,9 +45,9 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
   const buttonContent = useCallback((isOpen: boolean, buttonValue: string | string[] | undefined) => {
     const dropdownValue = ISSUE_LAYOUT_MAP[buttonValue as EIssueLayoutTypes];
     return (
-      <div className="flex gap-2 items-center text-custom-text-200">
-        <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3.5 text-custom-text-200`} />
-        <span className="font-medium text-xs">{t(dropdownValue.i18n_label)}</span>
+      <div className="flex items-center gap-2 text-secondary">
+        <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3.5 text-secondary`} />
+        <span className="text-11 font-medium">{t(dropdownValue.i18n_label)}</span>
       </div>
     );
   }, []);
@@ -49,12 +56,12 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
     const dropdownValue = ISSUE_LAYOUT_MAP[props.value as EIssueLayoutTypes];
 
     return (
-      <div className={cn("flex gap-2 items-center text-custom-text-200 w-full justify-between")}>
-        <div className="flex gap-2 items-center">
-          <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3 text-custom-text-200`} />
-          <span className="font-medium text-xs">{t(dropdownValue.i18n_label)}</span>
+      <div className={cn("flex w-full items-center justify-between gap-2 text-secondary")}>
+        <div className="flex items-center gap-2">
+          <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3 text-secondary`} />
+          <span className="text-11 font-medium">{t(dropdownValue.i18n_label)}</span>
         </div>
-        {props.selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+        {props.selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
       </div>
     );
   }, []);
@@ -67,7 +74,7 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
       value={value?.toString()}
       keyExtractor={keyExtractor}
       options={options}
-      buttonContainerClassName="bg-custom-background-100 border border-custom-border-200 hover:bg-custom-background-90 focus:text-custom-text-300 focus:bg-custom-background-90 px-2 py-1.5  rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center relative"
+      buttonContainerClassName={cn(getIconButtonStyling("secondary", "lg"), "w-auto px-2")}
       buttonContent={buttonContent}
       renderItem={itemContent}
       disableSearch

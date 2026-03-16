@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 // plane constants
 import type { EIssueCommentAccessSpecifier } from "@plane/constants";
@@ -76,7 +82,7 @@ export const StickyEditor = React.forwardRef(function StickyEditor(
 
   return (
     <div
-      className={cn("relative border border-custom-border-200 rounded", parentClassName)}
+      className={cn("relative rounded-sm border border-subtle", parentClassName)}
       onFocus={() => !showToolbarInitially && setIsFocused(true)}
       onBlur={() => !showToolbarInitially && setIsFocused(false)}
     >
@@ -102,9 +108,9 @@ export const StickyEditor = React.forwardRef(function StickyEditor(
       />
       {showToolbar && (
         <div
-          className={cn("transition-all duration-300 ease-out origin-top px-4 h-[60px]", {
-            "max-h-[60px] opacity-100 scale-y-100": isFocused,
-            "max-h-0 opacity-0 scale-y-0 invisible": !isFocused,
+          className={cn("h-[60px] origin-top px-4 transition-all duration-300 ease-out", {
+            "max-h-[60px] scale-y-100 opacity-100": isFocused,
+            "invisible max-h-0 scale-y-0 opacity-0": !isFocused,
           })}
         >
           <StickyEditorToolbar

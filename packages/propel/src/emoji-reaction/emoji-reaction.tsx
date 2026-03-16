@@ -1,9 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { AnimatedCounter } from "../animated-counter";
 import { stringToEmoji } from "../emoji-icon-picker";
 import { AddReactionIcon } from "../icons";
 import { Tooltip } from "../tooltip";
 import { cn } from "../utils";
+import { IconButton } from "../icon-button";
 
 export interface EmojiReactionType {
   emoji: string;
@@ -60,8 +67,8 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
     const remainingCount = users.length - displayUsers.length;
 
     return (
-      <div className="text-xs">
-        <div className="font-medium mb-1">{stringToEmoji(emoji)}</div>
+      <div className="text-11">
+        <div className="mb-1 font-medium">{stringToEmoji(emoji)}</div>
         <div>
           {displayUsers.join(", ")}
           {remainingCount > 0 && ` and ${remainingCount} more`}
@@ -75,16 +82,16 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
       ref={ref}
       onClick={handleClick}
       className={cn(
-        "inline-flex items-center rounded-full border px-1.5 text-xs gap-0.5 transition-all duration-200",
+        "inline-flex items-center gap-0.5 rounded-full border px-1.5 text-11 transition-all duration-200",
         reacted
-          ? "bg-custom-primary-100/10 border-custom-primary-100 text-custom-primary-100"
-          : "bg-custom-background-100 border-custom-border-200 text-custom-text-300 hover:border-custom-border-300 hover:bg-custom-background-90",
+          ? "border-accent-strong bg-accent-primary/10 text-accent-primary"
+          : "border-subtle bg-surface-1 text-tertiary hover:border-strong hover:bg-surface-2",
         className
       )}
       {...props}
     >
-      <span className="text-base leading-unset">{emoji}</span>
-      {showCount && count > 0 && <AnimatedCounter count={count} size="sm" className="text-xs leading-normal" />}
+      <span className="leading-unset text-14">{emoji}</span>
+      {showCount && count > 0 && <AnimatedCounter count={count} size="sm" className="text-11 leading-normal" />}
     </button>
   );
 
@@ -100,22 +107,17 @@ const EmojiReactionButton = React.forwardRef(function EmojiReactionButton(
   ref: React.ForwardedRef<HTMLButtonElement>
 ) {
   return (
-    <button
-      ref={ref}
-      onClick={onAddReaction}
-      className={cn(
-        "inline-flex items-center justify-center rounded-full border border-dashed border-custom-border-300",
-        "bg-custom-background-100 text-custom-text-400 transition-all duration-200",
-        "hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5",
-        "focus:outline-none focus:ring-2 focus:ring-custom-primary-100/20 focus:ring-offset-1",
-        "h-6 w-6",
-        className
-      )}
-      title="Add reaction"
-      {...props}
-    >
-      <AddReactionIcon className="h-3 w-3" />
-    </button>
+    <Tooltip tooltipContent="Add reaction">
+      <IconButton
+        ref={ref}
+        icon={AddReactionIcon}
+        variant="ghost"
+        size="sm"
+        onClick={onAddReaction}
+        className={className}
+        {...props}
+      />
+    </Tooltip>
   );
 });
 

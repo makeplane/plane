@@ -1,10 +1,14 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { TALK_TO_SALES_URL } from "@plane/constants";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { getDiscountPillStyle } from "@plane/ui";
-import { calculateYearlyDiscount, cn, getSubscriptionName, getSubscriptionPriceDetails } from "@plane/utils";
+import { calculateYearlyDiscount, getSubscriptionName, getSubscriptionPriceDetails } from "@plane/utils";
 // components
 import { BasePaidPlanCard, TalkToSalesCard } from "@/components/license";
 // local components
@@ -73,7 +77,7 @@ export const PlanUpgradeCard = observer(function PlanUpgradeCard(props: PlanUpgr
         <>
           Yearly
           {yearlyDiscount > 0 && (
-            <span className={cn(getDiscountPillStyle(planVariant), "rounded-full px-1.5 py-0.5 ml-1 text-xs")}>
+            <span className="text-caption-sm ml-1 rounded-full bg-accent-primary px-1.5 py-0.5 text-on-color">
               -{yearlyDiscount}%
             </span>
           )}

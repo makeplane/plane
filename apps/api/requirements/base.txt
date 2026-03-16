@@ -1,7 +1,7 @@
 # base requirements
 
 # django
-Django==4.2.27
+Django==4.2.29
 # rest framework
 djangorestframework==3.15.2
 # postgres
@@ -21,7 +21,7 @@ celery==5.4.0
 django_celery_beat==2.6.0
 django-celery-results==2.5.1
 # file serve
-whitenoise==6.6.0
+whitenoise==6.11.0
 # fake data
 faker==25.0.0
 # filters
@@ -45,13 +45,13 @@ scout-apm==3.1.0
 # xlsx generation
 openpyxl==3.1.2
 # logging
-python-json-logger==3.3.0
+python-json-logger==4.0.0
 # html parser
 beautifulsoup4==4.12.3
 # analytics
 posthog==3.5.0
 # crypto
-cryptography==44.0.1
+cryptography==46.0.5
 # html validator
 lxml==6.0.0
 # s3

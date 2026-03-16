@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -59,13 +65,13 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
       >
         <Row
           className={cn(
-            `flex flex-col gap-2 relative border border-t-transparent border-l-transparent border-r-transparent border-b-custom-border-200 py-4 hover:bg-custom-primary/5 cursor-pointer transition-all`,
-            { "border-custom-primary-100 border": selectedInboxIssueId === issue.id }
+            `relative flex cursor-pointer flex-col gap-2 border border-t-transparent border-r-transparent border-b-subtle-1 border-l-transparent py-4 transition-all hover:bg-accent-primary/5`,
+            { "border border-accent-strong": selectedInboxIssueId === issue.id }
           )}
         >
           <div className="space-y-1">
             <div className="relative flex items-center justify-between gap-2">
-              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+              <div className="flex-shrink-0 text-11 font-medium text-tertiary">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
               <div className="flex items-center gap-2">
@@ -73,7 +79,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
               </div>
             </div>
-            <h3 className="truncate w-full text-sm">{issue.name}</h3>
+            <h3 className="w-full truncate text-13">{issue.name}</h3>
           </div>
 
           <div className="flex items-center justify-between">
@@ -83,21 +89,21 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}
                 isMobile={isMobile}
               >
-                <div className="text-xs text-custom-text-200">{renderFormattedDate(issue.created_at ?? "")}</div>
+                <div className="text-11 text-secondary">{renderFormattedDate(issue.created_at ?? "")}</div>
               </Tooltip>
 
-              <div className="border-2 rounded-full border-custom-border-400" />
+              <div className="rounded-full border-2 border-strong-1" />
 
               {issue.priority && (
                 <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
-                  <PriorityIcon priority={issue.priority} withContainer className="w-3 h-3" />
+                  <PriorityIcon priority={issue.priority} withContainer className="h-3 w-3" />
                 </Tooltip>
               )}
 
               {issue.label_ids && issue.label_ids.length > 3 ? (
-                <div className="relative !h-[17.5px] flex items-center gap-1 rounded border border-custom-border-300 px-1 text-xs">
-                  <span className="h-2 w-2 rounded-full bg-orange-400" />
-                  <span className="normal-case max-w-28 truncate">{`${issue.label_ids.length} labels`}</span>
+                <div className="relative flex !h-[17.5px] items-center gap-1 rounded-sm border border-strong px-1 text-11">
+                  <span className="bg-orange-400 h-2 w-2 rounded-full" />
+                  <span className="max-w-28 truncate normal-case">{`${issue.label_ids.length} labels`}</span>
                 </div>
               ) : (
                 <>
@@ -107,7 +113,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                     return (
                       <div
                         key={labelId}
-                        className="relative !h-[17.5px] flex items-center gap-1 rounded border border-custom-border-300 px-1 text-xs"
+                        className="relative flex !h-[17.5px] items-center gap-1 rounded-sm border border-strong px-1 text-11"
                       >
                         <span
                           className="h-2 w-2 rounded-full"
@@ -115,7 +121,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                             backgroundColor: labelDetails.color,
                           }}
                         />
-                        <span className="normal-case max-w-28 truncate">{labelDetails.name}</span>
+                        <span className="max-w-28 truncate normal-case">{labelDetails.name}</span>
                       </div>
                     );
                   })}

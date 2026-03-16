@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveIcon, CycleIcon, ModuleIcon, WorkItemsIcon } from "@plane/propel/icons";
@@ -72,7 +78,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                   label="Archives"
-                  icon={<ArchiveIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -81,7 +87,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
                 component={
                   <BreadcrumbLink
                     label={activeTabBreadcrumbDetail.label}
-                    icon={<activeTabBreadcrumbDetail.icon className="h-4 w-4 text-custom-text-300" />}
+                    icon={<activeTabBreadcrumbDetail.icon className="h-4 w-4 text-tertiary" />}
                   />
                 }
               />
@@ -93,7 +99,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
               tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "work items" : "work item"} in project's archived`}
               position="bottom"
             >
-              <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
+              <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2.5 py-0.5 text-center text-11 font-semibold text-accent-primary">
                 {issueCount}
               </span>
             </Tooltip>

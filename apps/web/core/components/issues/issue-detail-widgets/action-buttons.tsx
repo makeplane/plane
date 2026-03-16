@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React from "react";
-import { Link, Paperclip } from "lucide-react";
+import { Paperclip } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
+import { LinkIcon, ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // plane web imports
@@ -29,7 +35,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       {!hideWidgets?.includes("sub-work-items") && (
         <SubIssuesActionButton
           issueId={issueId}
@@ -63,7 +69,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           customButton={
             <IssueDetailWidgetButton
               title={t("issue.add.link")}
-              icon={<Link className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              icon={<LinkIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
               disabled={disabled}
             />
           }

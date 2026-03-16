@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
@@ -40,22 +46,22 @@ export function NameColumn(props: NameProps) {
   return (
     <Disclosure>
       {({}) => (
-        <div className="relative group">
-          <div className="flex items-center gap-2 w-72">
-            <div className="flex items-center gap-x-2 gap-y-2 flex-1">
+        <div className="group relative">
+          <div className="flex w-72 items-center gap-2">
+            <div className="flex flex-1 items-center gap-x-2 gap-y-2">
               {avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-4 items-center justify-center rounded-full capitalize text-white">
+                  <span className="relative flex size-6 items-center justify-center rounded-full text-on-color capitalize">
                     <img
                       src={getFileURL(avatar_url)}
-                      className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                      className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
                       alt={display_name || email}
                     />
                   </span>
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-4 items-center justify-center rounded-full bg-gray-700 capitalize text-white text-xs">
+                  <span className="relative flex size-6 items-center justify-center rounded-full bg-layer-3 text-11 text-on-color capitalize">
                     {(email ?? display_name ?? "?")[0]}
                   </span>
                 </Link>
@@ -71,11 +77,11 @@ export function NameColumn(props: NameProps) {
               >
                 <CustomMenu.MenuItem>
                   <div
-                    className="flex items-center gap-x-1 cursor-pointer text-red-600 font-medium"
+                    className="flex cursor-pointer items-center gap-x-1 font-medium text-danger-primary"
                     data-ph-element={MEMBER_TRACKER_ELEMENTS.PROJECT_MEMBER_TABLE_CONTEXT_MENU}
                     onClick={() => setRemoveMemberModal(rowData)}
                   >
-                    <CircleMinus className="flex-shrink-0 size-3.5" />
+                    <CircleMinus className="size-3.5 flex-shrink-0" />
                     {rowData.member?.id === currentUser?.id ? "Leave " : "Remove "}
                   </div>
                 </CustomMenu.MenuItem>
@@ -163,12 +169,12 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
                 );
               }}
               label={
-                <div className="flex ">
+                <div className="flex">
                   <span>{roleLabel}</span>
                 </div>
               }
-              buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
-              className="rounded-md p-0 w-32"
+              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-danger-strong" : "border-none"}`}
+              className="w-32 rounded-md p-0"
               input
             >
               {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => (
@@ -180,7 +186,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
           )}
         />
       ) : (
-        <div className="w-32 flex ">
+        <div className="flex w-32">
           <span>{roleLabel}</span>
         </div>
       )}

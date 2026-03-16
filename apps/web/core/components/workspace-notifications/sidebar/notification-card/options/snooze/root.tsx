@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Dispatch, SetStateAction } from "react";
 import { Fragment } from "react";
 import { observer } from "mobx-react";
@@ -98,11 +104,11 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
               >
                 <Popover.Button
                   className={cn(
-                    "relative flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center outline-none bg-custom-background-80 hover:bg-custom-background-90",
-                    open ? "bg-custom-background-80" : ""
+                    "relative flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-xs bg-layer-1 outline-none hover:bg-surface-2",
+                    open ? "bg-layer-1" : ""
                   )}
                 >
-                  <Clock className="h-3 w-3 text-custom-text-300" />
+                  <Clock className="h-3 w-3 text-tertiary" />
                 </Popover.Button>
               </Tooltip>
 
@@ -115,11 +121,11 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute mt-2 right-0 z-10 min-w-44 select-none">
-                  <div className="p-2 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1">
+                <Popover.Panel className="absolute right-0 z-10 mt-2 min-w-44 select-none">
+                  <div className="space-y-1 rounded-md border border-subtle bg-surface-1 p-2">
                     {data.snoozed_till && (
                       <button
-                        className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm text-custom-text-200 text-sm"
+                        className="w-full cursor-pointer rounded-xs p-1 px-2 text-left text-body-xs-medium text-secondary transition-all hover:bg-layer-1"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -133,7 +139,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
                     {NOTIFICATION_SNOOZE_OPTIONS.map((option) => (
                       <button
                         key={option.key}
-                        className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm text-custom-text-200 text-sm"
+                        className="w-full cursor-pointer rounded-xs p-1 px-2 text-left text-body-xs-medium text-secondary transition-all hover:bg-layer-1"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();

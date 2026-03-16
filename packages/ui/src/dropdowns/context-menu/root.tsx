@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 // hooks
@@ -198,15 +204,15 @@ function ContextMenuWithoutPortal(props: ContextMenuProps) {
   return (
     <div
       className={cn(
-        "fixed h-screen w-screen top-0 left-0 cursor-default z-30 opacity-0 pointer-events-none transition-opacity",
+        "pointer-events-none fixed top-0 left-0 z-30 h-screen w-screen cursor-default opacity-0 transition-opacity",
         {
-          "opacity-100 pointer-events-auto": isOpen,
+          "pointer-events-auto opacity-100": isOpen,
         }
       )}
     >
       <div
         ref={contextMenuRef}
-        className="fixed border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg rounded-md px-2 py-2.5 max-h-72 min-w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
+        className="vertical-scrollbar fixed scrollbar-sm max-h-72 min-w-[12rem] overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5"
         style={{
           top: position.y,
           left: position.x,

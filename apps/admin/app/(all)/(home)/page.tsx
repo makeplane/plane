@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -16,7 +22,7 @@ function HomePage() {
   // if instance is not fetched, show loading
   if (!instance && !error) {
     return (
-      <div className="flex items-center justify-center h-screen w-full">
+      <div className="flex h-screen w-full items-center justify-center">
         <LogoSpinner />
       </div>
     );

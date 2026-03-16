@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { Button } from "../button/button";
 import { cn } from "../utils/classname";
@@ -26,18 +32,18 @@ export function EmptyStateCompact({
   return (
     <div className={cn("flex size-full items-center justify-center", rootAlignClasses, rootClassName)}>
       <div
-        className={cn("flex max-w-[25rem] size-full flex-col justify-center gap-3", containerAlignClasses, className)}
+        className={cn("flex size-full max-w-[25rem] flex-col justify-center gap-3", containerAlignClasses, className)}
       >
         {resolvedAsset && <div className="flex max-w-40 items-center">{resolvedAsset}</div>}
 
         <div className="flex flex-col gap-4">
           {title && description ? (
             <div className="flex flex-col gap-2">
-              {title && <h3 className="text-lg font-semibold leading-7 text-custom-text-100">{title}</h3>}
-              {description && <p className="text-sm leading-5 text-custom-text-300">{description}</p>}
+              {title && <h3 className="text-16 leading-7 font-semibold text-primary">{title}</h3>}
+              {description && <p className="text-13 leading-5 text-tertiary">{description}</p>}
             </div>
           ) : (
-            title && <p className="text-sm leading-5 text-custom-text-300">{title}</p>
+            title && <p className="text-13 leading-5 text-tertiary">{title}</p>
           )}
 
           {customButton
@@ -48,7 +54,7 @@ export function EmptyStateCompact({
                   {actions.map((action, index) => {
                     const { label, variant, ...rest } = action;
                     return (
-                      <Button key={index} variant={variant} {...rest}>
+                      <Button key={index} variant={variant} size="base" {...rest}>
                         {label}
                       </Button>
                     );

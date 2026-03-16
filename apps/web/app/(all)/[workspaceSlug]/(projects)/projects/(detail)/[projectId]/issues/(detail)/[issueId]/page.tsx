@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useTheme } from "next-themes";
 import { redirect } from "react-router";
 import { useTranslation } from "@plane/i18n";
@@ -44,7 +50,7 @@ export default function IssueDetailsPage({ loaderData }: Route.ComponentProps) {
 
   if (loaderData.error) {
     return (
-      <div className="flex items-center justify-center size-full">
+      <div className="flex size-full items-center justify-center">
         <EmptyState
           image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
           title={t("issue.empty_state.issue_detail.title")}
@@ -59,7 +65,7 @@ export default function IssueDetailsPage({ loaderData }: Route.ComponentProps) {
   }
 
   return (
-    <div className="flex items-center justify-center size-full">
+    <div className="flex size-full items-center justify-center">
       <LogoSpinner />
     </div>
   );

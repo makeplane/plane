@@ -1,17 +1,36 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
 import { cn } from "../utils/classname";
 
+type TabsVariant = "contained";
+
+type TabsContextType = {
+  variant?: TabsVariant;
+};
+
+const TabsContext = React.createContext<TabsContextType | undefined>(undefined);
+
 type TabsCompound = React.ForwardRefExoticComponent<
-  React.ComponentProps<typeof TabsPrimitive.Root> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Root>>
+  React.ComponentProps<typeof TabsPrimitive.Root> & {
+    variant?: TabsVariant;
+  } & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Root>>
 > & {
   List: React.ForwardRefExoticComponent<
-    React.ComponentProps<typeof TabsPrimitive.List> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.List>>
+    React.ComponentProps<typeof TabsPrimitive.List> & {
+      background?: TabsVariant;
+    } & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.List>>
   >;
   Trigger: React.ForwardRefExoticComponent<
-    React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" } & React.RefAttributes<
-        React.ElementRef<typeof TabsPrimitive.Tab>
-      >
+    React.ComponentProps<typeof TabsPrimitive.Tab> & {
+      size?: "sm" | "md" | "lg";
+      variant?: TabsVariant;
+    } & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Tab>>
   >;
   Content: React.ForwardRefExoticComponent<
     React.ComponentProps<typeof TabsPrimitive.Panel> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Panel>>
@@ -20,28 +39,39 @@ type TabsCompound = React.ForwardRefExoticComponent<
 };
 
 const TabsRoot = React.forwardRef(function TabsRoot(
-  { className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>,
+  { className, variant, ...props }: React.ComponentProps<typeof TabsPrimitive.Root> & { variant?: TabsVariant },
   ref: React.ForwardedRef<React.ElementRef<typeof TabsPrimitive.Root>>
 ) {
   return (
-    <TabsPrimitive.Root
-      data-slot="tabs"
-      className={cn("flex flex-col w-full h-full", className)}
-      {...props}
-      ref={ref}
-    />
+    <TabsContext.Provider value={{ variant }}>
+      <TabsPrimitive.Root
+        data-slot="tabs"
+        className={cn("flex h-full w-full flex-col", className)}
+        {...props}
+        ref={ref}
+      />
+    </TabsContext.Provider>
   );
 });
 
 const TabsList = React.forwardRef(function TabsList(
-  { className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>,
+  {
+    className,
+    background = "contained",
+    ...props
+  }: React.ComponentProps<typeof TabsPrimitive.List> & {
+    background?: TabsVariant;
+  },
   ref: React.ForwardedRef<React.ElementRef<typeof TabsPrimitive.List>>
 ) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "flex w-full items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80/60 relative overflow-auto",
+        "relative flex w-full items-center justify-between gap-1.5 overflow-auto rounded-lg p-0.5 text-13",
+        {
+          "bg-layer-3": background === "contained",
+        },
         className
       )}
       {...props}
@@ -51,21 +81,25 @@ const TabsList = React.forwardRef(function TabsList(
 });
 
 const TabsTrigger = React.forwardRef(function TabsTrigger(
-  { className, size = "md", ...props }: React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" },
+  {
+    className,
+    size = "md",
+    ...props
+  }: React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg"; variant?: TabsVariant },
   ref: React.ForwardedRef<React.ElementRef<typeof TabsPrimitive.Tab>>
 ) {
   return (
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "flex items-center justify-center p-1 min-w-fit w-full font-medium text-custom-text-100 outline-none focus:outline-none cursor-pointer transition-all duration-200 ease-in-out rounded",
-        "data-[selected]:bg-custom-background-100 data-[selected]:text-custom-text-100 data-[selected]:shadow-sm",
-        "text-custom-text-400 hover:text-custom-text-300 hover:bg-custom-background-80/60",
-        "disabled:text-custom-text-400 disabled:cursor-not-allowed",
+        "flex w-full min-w-fit cursor-pointer items-center justify-center rounded-md border border-transparent p-1 font-medium text-primary transition-all duration-200 ease-in-out outline-none focus:outline-none",
+        "data-[selected]:shadow-sm data-[selected]:raised-200 data-[selected]:border data-[selected]:border-subtle-1 data-[selected]:bg-layer-2 data-[selected]:text-primary",
+        "text-placeholder hover:bg-layer-transparent-hover hover:text-tertiary",
+        "disabled:cursor-not-allowed disabled:text-placeholder",
         {
-          "text-xs": size === "sm",
-          "text-sm": size === "md",
-          "text-base": size === "lg",
+          "text-11": size === "sm",
+          "text-13": size === "md",
+          "text-14": size === "lg",
         },
         className
       )}
@@ -95,7 +129,7 @@ const TabsIndicator = React.forwardRef(function TabsIndicator(
   return (
     <div
       className={cn(
-        "absolute left-0 top-[50%] z-[-1] h-6 w-[var(--active-tab-width)] translate-x-[var(--active-tab-left)] -translate-y-[50%] rounded-sm bg-custom-background-100 shadow-sm transition-[width,transform] duration-200 ease-in-out",
+        "shadow-sm absolute top-[50%] left-0 z-[-1] h-6 w-[var(--active-tab-width)] translate-x-[var(--active-tab-left)] -translate-y-[50%] rounded-xs bg-surface-1 transition-[width,transform] duration-200 ease-in-out",
         className
       )}
       {...props}

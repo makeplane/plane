@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 // helpers
 import { cn } from "../utils";
@@ -15,7 +21,7 @@ export function Spinner({ height = "32px", width = "32px", className = "" }: ISp
         aria-hidden="true"
         height={height}
         width={width}
-        className={cn("animate-spin fill-custom-primary-100 text-custom-text-200", className)}
+        className={cn("animate-spin fill-accent-primary text-secondary", className)}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

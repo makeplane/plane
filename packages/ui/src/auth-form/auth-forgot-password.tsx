@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { cn } from "../utils";
 
@@ -27,9 +33,9 @@ export function AuthForgotPassword({
       onClick={handleClick}
       disabled={disabled}
       className={cn(
-        "text-sm text-custom-primary-100 hover:text-custom-primary-200 transition-colors duration-200",
+        "text-13 text-accent-primary transition-colors duration-200 hover:text-accent-secondary",
         {
-          "opacity-50 cursor-not-allowed": disabled,
+          "cursor-not-allowed opacity-50": disabled,
           "cursor-pointer": !disabled,
         },
         className

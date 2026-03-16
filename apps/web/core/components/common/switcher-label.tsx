@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { ISvgIcons } from "@plane/propel/icons";
@@ -22,7 +28,7 @@ export function SwitcherIcon({ logo_props, logo_url, LabelIcon, size = 12, type 
       <img
         src={getFileURL(logo_url)}
         alt="logo"
-        className="rounded-sm object-cover"
+        className="rounded-xs object-cover"
         style={{ height: size, width: size }}
       />
     );
@@ -41,7 +47,7 @@ type TSwitcherLabelProps = {
 export function SwitcherLabel(props: TSwitcherLabelProps) {
   const { logo_props, name, LabelIcon, logo_url, type = "lucide" } = props;
   return (
-    <div className="flex items-center gap-1 text-custom-text-200">
+    <div className="flex items-center gap-1 text-secondary">
       <SwitcherIcon logo_props={logo_props} logo_url={logo_url} LabelIcon={LabelIcon} type={type} />
       {truncateText(name ?? "", 40)}
     </div>

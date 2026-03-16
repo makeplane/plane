@@ -1,12 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Plus, StickyNote as StickyIcon } from "lucide-react";
+import { StickyNote as StickyIcon } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // plane ui
-import { RecentStickyIcon, StickyNoteIcon, CloseIcon } from "@plane/propel/icons";
+import { RecentStickyIcon, StickyNoteIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
@@ -50,22 +56,22 @@ export const StickyActionBar = observer(function StickyActionBar() {
   return (
     <div
       ref={ref}
-      className="sticky-action-bar__item flex flex-col bg-custom-background-90 rounded-full p-[2px] border-2 border-custom-primary-100/10 overflow-hidden"
+      className="sticky-action-bar__item flex flex-col overflow-hidden rounded-full border-2 border-accent-strong/10 bg-surface-2 p-[2px]"
     >
       <div
-        className={`flex flex-col gap-2 transition-all duration-300 ease-in-out origin-bottom ${isExpanded ? "scale-y-100 opacity-100 mb-2 " : "scale-y-0 opacity-0 h-0"}`}
+        className={`flex origin-bottom flex-col gap-2 transition-all duration-300 ease-in-out ${isExpanded ? "mb-2 scale-y-100 opacity-100 " : "h-0 scale-y-0 opacity-0"}`}
       >
         <Tooltip tooltipContent="All stickies" isMobile={false} position="left">
           <button
-            className="btn btn--icon rounded-full w-10 h-10 flex items-center justify-center shadow-sm bg-custom-background-100"
+            className="btn btn--icon shadow-sm flex h-10 w-10 items-center justify-center rounded-full bg-surface-1"
             onClick={() => toggleAllStickiesModal(true)}
           >
-            <RecentStickyIcon className="size-5 rotate-90 text-custom-text-350" />
+            <RecentStickyIcon className="size-5 rotate-90 text-tertiary" />
           </button>
         </Tooltip>
         {recentStickyId && (
           <Tooltip
-            className="scale-75 -mr-30 translate-x-10"
+            className="-mr-30 translate-x-10 scale-75"
             tooltipContent={
               <div className="-m-2 max-h-[150px]">
                 <StickyNote
@@ -86,7 +92,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
             disabled={showRecentSticky}
           >
             <button
-              className="btn btn--icon rounded-full w-10 h-10 flex items-center justify-center shadow-sm bg-custom-background-100"
+              className="btn btn--icon shadow-sm flex h-10 w-10 items-center justify-center rounded-full bg-surface-1"
               onClick={() => setShowRecentSticky(true)}
               style={{ color: recentStickyBackgroundColor }}
             >
@@ -96,34 +102,34 @@ export const StickyActionBar = observer(function StickyActionBar() {
         )}
         <Tooltip tooltipContent="Add sticky" isMobile={false} position="left">
           <button
-            className="btn btn--icon rounded-full w-10 h-10 flex items-center justify-center shadow-sm bg-custom-background-100"
+            className="btn btn--icon shadow-sm flex h-10 w-10 items-center justify-center rounded-full bg-surface-1"
             onClick={() => {
               updateActiveStickyId("");
               toggleShowNewSticky(true);
               setNewSticky(true);
             }}
           >
-            <Plus className="size-5 rotate-90 text-custom-text-350" />
+            <PlusIcon className="size-5 rotate-90 text-tertiary" />
           </button>
         </Tooltip>
       </div>
 
       <button
-        className={`btn btn--icon rounded-full w-10 h-10 flex items-center justify-center shadow-sm bg-custom-background-100 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
+        className={`btn btn--icon shadow-sm flex h-10 w-10 items-center justify-center rounded-full bg-surface-1 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
         {isExpanded ? (
-          <CloseIcon className="size-5 text-custom-text-350" />
+          <CloseIcon className="size-5 text-tertiary" />
         ) : (
-          <StickyIcon className="size-5 rotate-90 text-custom-text-350" />
+          <StickyIcon className="size-5 rotate-90 text-tertiary" />
         )}
       </button>
 
       <div
         className={cn(
-          "absolute bottom-16 right-0 z-[20]",
+          "absolute right-0 bottom-16 z-[20]",
           "transform transition-all duration-300 ease-in-out",
-          newSticky || showRecentSticky ? "translate-y-[0%] min-h-[300px]" : "translate-y-[100%] h-0"
+          newSticky || showRecentSticky ? "min-h-[300px] translate-y-[0%]" : "h-0 translate-y-[100%]"
         )}
       >
         {(newSticky || (showRecentSticky && recentStickyId)) && (

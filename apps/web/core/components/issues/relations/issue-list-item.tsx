@@ -1,9 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash, Link as LinkIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { LinkIcon, EditIcon, TrashIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, TIssueServiceType } from "@plane/types";
@@ -63,7 +68,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
   // derived values
   const issue = getIssueById(relationIssueId);
   const { handleRedirection } = useIssuePeekOverviewRedirection(!!issue?.is_epic);
-  const issueOperations = useRelationOperations(!!issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const issueOperations = useRelationOperations(issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const projectId = issue?.project_id;
 
@@ -124,9 +129,9 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
         className="w-full cursor-pointer"
       >
         {issue && (
-          <div className="group relative flex min-h-11 h-full w-full items-center px-1.5 py-1 transition-all hover:bg-custom-background-90">
+          <div className="group relative flex h-full min-h-11 w-full items-center px-1.5 py-1 transition-all hover:bg-surface-2">
             <span className="size-5 flex-shrink-0" />
-            <div className="flex w-full truncate cursor-pointer items-center gap-3">
+            <div className="flex min-w-0 flex-1 cursor-pointer items-center gap-3">
               <div className="flex-shrink-0">
                 {projectDetail && (
                   <IssueIdentifier
@@ -134,17 +139,18 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                     issueTypeId={issue.type_id}
                     projectIdentifier={projectDetail.identifier}
                     issueSequenceId={issue.sequence_id}
-                    textContainerClassName="text-xs text-custom-text-200"
+                    size="xs"
+                    variant="secondary"
                   />
                 )}
               </div>
 
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="w-full truncate text-sm text-custom-text-100">{issue.name}</span>
+                <span className="w-0 flex-1 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
             <div
-              className="flex-shrink-0 text-sm"
+              className="flex-shrink-0 text-13"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -158,12 +164,12 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 issueServiceType={issueServiceType}
               />
             </div>
-            <div className="flex-shrink-0 text-sm">
+            <div className="flex-shrink-0 pl-2 text-13">
               <CustomMenu placement="bottom-end" ellipsis>
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleEditIssue}>
                     <div className="flex items-center gap-2">
-                      <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                      <EditIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>{t("common.actions.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -188,7 +194,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleDeleteIssue}>
                     <div className="flex items-center gap-2">
-                      <Trash className="h-3.5 w-3.5" strokeWidth={2} />
+                      <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>{t("common.actions.delete")}</span>
                     </div>
                   </CustomMenu.MenuItem>

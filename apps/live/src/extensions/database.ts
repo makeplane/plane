@@ -1,11 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Database as HocuspocusDatabase } from "@hocuspocus/extension-database";
-// utils
+// plane imports
 import {
   getAllDocumentFormatsFromDocumentEditorBinaryData,
   getBinaryDataFromDocumentEditorHTMLString,
 } from "@plane/editor";
-// logger
+import type { TDocumentPayload } from "@plane/types";
 import { logger } from "@plane/logger";
+// lib
 import { AppError } from "@/lib/errors";
 // services
 import { getPageService } from "@/services/page/handler";
@@ -20,13 +27,32 @@ const fetchDocument = async ({ context, documentName: pageId, instance }: FetchP
   try {
     const service = getPageService(context.documentType, context);
     // fetch details
-    const response = await service.fetchDescriptionBinary(pageId);
+    const response = (await service.fetchDescriptionBinary(pageId)) as Buffer;
     const binaryData = new Uint8Array(response);
     // if binary data is empty, convert HTML to binary data
     if (binaryData.byteLength === 0) {
       const pageDetails = await service.fetchDetails(pageId);
-      const convertedBinaryData = getBinaryDataFromDocumentEditorHTMLString(pageDetails.description_html ?? "<p></p>");
+      const convertedBinaryData = getBinaryDataFromDocumentEditorHTMLString(
+        pageDetails.description_html ?? "<p></p>",
+        pageDetails.name
+      );
       if (convertedBinaryData) {
+        // save the converted binary data back to the database
+        try {
+          const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
+            convertedBinaryData,
+            true
+          );
+          const payload: TDocumentPayload = {
+            description_binary: contentBinaryEncoded,
+            description_html: contentHTML,
+            description_json: contentJSON,
+          };
+          await service.updateDescriptionBinary(pageId, payload);
+        } catch (e) {
+          const error = new AppError(e);
+          logger.error("Failed to save binary after first conversion from html:", error);
+        }
         return convertedBinaryData;
       }
     }
@@ -52,13 +78,15 @@ const storeDocument = async ({
   try {
     const service = getPageService(context.documentType, context);
     // convert binary data to all formats
-    const { contentBinaryEncoded, contentHTML, contentJSON } =
-      getAllDocumentFormatsFromDocumentEditorBinaryData(pageBinaryData);
+    const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
+      pageBinaryData,
+      true
+    );
     // create payload
-    const payload = {
+    const payload: TDocumentPayload = {
       description_binary: contentBinaryEncoded,
       description_html: contentHTML,
-      description: contentJSON,
+      description_json: contentJSON,
     };
     await service.updateDescriptionBinary(pageId, payload);
   } catch (error) {

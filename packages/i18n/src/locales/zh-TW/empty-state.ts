@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   common_empty_state: {
     progress: {
@@ -176,6 +182,11 @@ export default {
       title: "暫無個人權杖",
       description: "產生安全的 API 權杖以將工作區與外部系統和應用程式連線。",
       cta_primary: "新增 API 權杖",
+    },
+    webhooks: {
+      title: "尚未新增 Webhook",
+      description: "在專案事件發生時自動向外部服務傳送通知。",
+      cta_primary: "新增 webhook",
     },
   },
 } as const;

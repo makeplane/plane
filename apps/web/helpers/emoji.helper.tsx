@@ -1,4 +1,10 @@
 /**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+/**
  * Renders an emoji or icon
  * @param {string | { name: string; color: string }} emoji - The emoji or icon to render
  * @returns {React.ReactNode} The rendered emoji or icon

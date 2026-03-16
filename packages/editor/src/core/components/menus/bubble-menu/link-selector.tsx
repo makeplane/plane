@@ -1,7 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/core";
-import { Check, Link, Trash2 } from "lucide-react";
+
 import type { FC } from "react";
 import { useCallback, useRef, useState } from "react";
+import { LinkIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -46,10 +53,10 @@ export function BubbleMenuLinkSelector(props: Props) {
       classNames={{
         buttonContainer: "h-full",
         button: cn(
-          "h-full flex items-center gap-1 px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded whitespace-nowrap transition-colors",
+          "flex h-full items-center gap-1 rounded-sm px-3 text-13 font-medium whitespace-nowrap text-tertiary transition-colors hover:bg-layer-1 active:bg-layer-1",
           {
-            "bg-custom-background-80": context.open,
-            "text-custom-text-100": editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK),
+            "bg-layer-1": context.open,
+            "text-primary": editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK),
           }
         ),
       }}
@@ -58,15 +65,15 @@ export function BubbleMenuLinkSelector(props: Props) {
       menuButton={
         <>
           Link
-          <Link className="shrink-0 size-3" />
+          <LinkIcon className="size-3 shrink-0" />
         </>
       }
       options={options}
     >
-      <div className="w-60 mt-1 rounded-md bg-custom-background-100 shadow-custom-shadow-rg">
+      <div className="mt-1 w-60 rounded-md bg-surface-1 shadow-raised-200">
         <div
-          className={cn("flex rounded  border-[0.5px] border-custom-border-300 transition-colors", {
-            "border-red-500": error,
+          className={cn("flex rounded-sm border-[0.5px] border-strong transition-colors", {
+            "border-danger-strong": error,
           })}
         >
           <input
@@ -74,7 +81,7 @@ export function BubbleMenuLinkSelector(props: Props) {
             type="url"
             placeholder="Enter or paste a link"
             onClick={(e) => e.stopPropagation()}
-            className="flex-1 border-r-[0.5px] border-custom-border-300 bg-custom-background-100 py-2 px-1.5 text-xs outline-none placeholder:text-custom-text-400 rounded"
+            className="flex-1 rounded-sm border-r-[0.5px] border-strong bg-surface-1 px-1.5 py-2 text-11 outline-none placeholder:text-placeholder"
             defaultValue={editor.getAttributes("link").href || ""}
             onKeyDown={(e) => {
               setError(false);
@@ -89,30 +96,30 @@ export function BubbleMenuLinkSelector(props: Props) {
           {editor.getAttributes("link").href ? (
             <button
               type="button"
-              className="grid place-items-center rounded-sm p-1 text-red-500 hover:bg-red-500/20 transition-all"
+              className="grid place-items-center rounded-xs p-1 text-danger-primary transition-all hover:bg-danger-subtle-hover"
               onClick={(e) => {
                 unsetLinkEditor(editor);
                 e.stopPropagation();
                 context.onOpenChange(false);
               }}
             >
-              <Trash2 className="size-4" />
+              <TrashIcon className="size-4" />
             </button>
           ) : (
             <button
               type="button"
-              className="h-full aspect-square grid place-items-center p-1 rounded-sm text-custom-text-300 hover:bg-custom-background-80 transition-all"
+              className="grid aspect-square h-full place-items-center rounded-xs p-1 text-tertiary transition-all hover:bg-layer-1"
               onClick={(e) => {
                 e.stopPropagation();
                 handleLinkSubmit();
               }}
             >
-              <Check className="size-4" />
+              <CheckIcon className="size-4" />
             </button>
           )}
         </div>
         {error && (
-          <p className="text-xs text-red-500 my-1 px-2 pointer-events-none animate-in fade-in slide-in-from-top-0">
+          <p className="animate-in fade-in slide-in-from-top-0 pointer-events-none my-1 px-2 text-11 text-danger-primary">
             Please enter a valid URL
           </p>
         )}

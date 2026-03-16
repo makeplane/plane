@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -71,12 +77,12 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
         fetchIssueDetails={false}
         isDraft
       />
-      <div className="flex items-center justify-between gap-2 cursor-pointer">
+      <div className="flex cursor-pointer items-center justify-between gap-2">
         <SidebarAddButton
           label={
             <>
               <AddWorkItemIcon className="size-4" />
-              <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
+              <span className="max-w-[145px] truncate text-13 font-medium">{t("sidebar.new_work_item")}</span>
             </>
           }
           onClick={() => toggleCreateIssueModal(true)}

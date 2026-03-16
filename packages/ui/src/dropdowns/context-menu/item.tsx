@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState, useRef, useContext } from "react";
 import { usePopper } from "react-popper";
 import { ChevronRightIcon } from "@plane/propel/icons";
@@ -152,10 +158,10 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
         ref={setReferenceElement}
         type="button"
         className={cn(
-          "w-full flex items-center gap-2 px-1 py-1.5 text-left text-custom-text-200 rounded text-xs select-none",
+          "flex w-full items-center gap-2 rounded-sm px-1 py-1.5 text-left text-11 text-secondary select-none",
           {
-            "bg-custom-background-90": isActive,
-            "text-custom-text-400": item.disabled,
+            "bg-layer-transparent-hover": isActive,
+            "text-placeholder": item.disabled,
           },
           item.className
         )}
@@ -170,8 +176,8 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-custom-text-300 whitespace-pre-line", {
-                    "text-custom-text-400": item.disabled,
+                  className={cn("whitespace-pre-line text-tertiary", {
+                    "text-placeholder": item.disabled,
                   })}
                 >
                   {item.description}
@@ -190,22 +196,19 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className={cn(
-              "fixed z-[35] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-lg",
-              "ring-1 ring-black ring-opacity-5"
-            )}
+            className="fixed z-[35] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11"
             data-context-submenu="true"
           >
-            <div ref={nestedMenuRef} className="max-h-72 overflow-y-scroll vertical-scrollbar scrollbar-sm">
+            <div ref={nestedMenuRef} className="vertical-scrollbar scrollbar-sm max-h-72 overflow-y-scroll">
               {renderedNestedItems.map((nestedItem, index) => (
                 <button
                   key={nestedItem.key}
                   type="button"
                   className={cn(
-                    "w-full flex items-center gap-2 px-1 py-1.5 text-left text-custom-text-200 rounded text-xs select-none",
+                    "flex w-full items-center gap-2 rounded-sm px-1 py-1.5 text-left text-11 text-secondary select-none",
                     {
-                      "bg-custom-background-90": index === activeNestedIndex,
-                      "text-custom-text-400": nestedItem.disabled,
+                      "bg-layer-transparent-hover": index === activeNestedIndex,
+                      "text-placeholder": nestedItem.disabled,
                     },
                     nestedItem.className
                   )}
@@ -225,8 +228,8 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
                         <h5>{nestedItem.title}</h5>
                         {nestedItem.description && (
                           <p
-                            className={cn("text-custom-text-300 whitespace-pre-line", {
-                              "text-custom-text-400": nestedItem.disabled,
+                            className={cn("whitespace-pre-line text-tertiary", {
+                              "text-placeholder": nestedItem.disabled,
                             })}
                           >
                             {nestedItem.description}

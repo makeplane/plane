@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // ui
 import { Button } from "@plane/propel/button";
@@ -19,15 +25,15 @@ export function EmptyState({ title, description, image, primaryButton, secondary
   return (
     <div className="flex h-full w-full items-center justify-center px-5 md:px-10 lg:p-20">
       <div className="relative h-full w-full max-w-6xl">
-        <img src={image} className="w-52 sm:w-60 object-cover" alt={primaryButton?.text ?? ""} />
+        <img src={image} className="w-52 object-cover sm:w-60" alt={primaryButton?.text ?? ""} />
       </div>
       <div className="absolute flex w-full flex-col items-center pt-[30vh] text-center md:pt-[35vh] lg:pt-[45vh]">
-        <h6 className="mt-6 text-xl font-semibold">{title}</h6>
-        {description && <p className="mb-7 text-custom-text-300">{description}</p>}
+        <h6 className="mt-6 text-18 font-semibold">{title}</h6>
+        {description && <p className="mb-7 text-tertiary">{description}</p>}
         <div className="flex items-center gap-4">
           {primaryButton && (
             <Button
-              size="lg"
+              size="xl"
               variant="primary"
               prependIcon={primaryButton.icon}
               onClick={primaryButton.onClick}

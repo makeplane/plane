@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -38,16 +44,10 @@ export const SelectChannel = observer(function SelectChannel({ integration }: Pr
   });
 
   const { data: projectIntegration } = useSWR(
-    workspaceSlug && projectId && integration.id
-      ? SLACK_CHANNEL_INFO(workspaceSlug as string, projectId as string)
-      : null,
+    workspaceSlug && projectId && integration.id ? SLACK_CHANNEL_INFO(workspaceSlug, projectId) : null,
     () =>
       workspaceSlug && projectId && integration.id
-        ? appInstallationService.getSlackChannelDetail(
-            workspaceSlug as string,
-            projectId as string,
-            integration.id as string
-          )
+        ? appInstallationService.getSlackChannelDetail(workspaceSlug, projectId, integration.id)
         : null
   );
 
@@ -74,7 +74,7 @@ export const SelectChannel = observer(function SelectChannel({ integration }: Pr
       setSlackChannel(null);
     });
     appInstallationService
-      .removeSlackChannel(workspaceSlug as string, projectId as string, integration.id as string, slackChannel?.id)
+      .removeSlackChannel(workspaceSlug, projectId, integration.id, slackChannel?.id)
       .catch((err) => console.error(err));
   };
 
@@ -87,7 +87,7 @@ export const SelectChannel = observer(function SelectChannel({ integration }: Pr
       {projectIntegration ? (
         <button
           type="button"
-          className={`relative inline-flex h-4 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-700 transition-colors duration-200 ease-in-out focus:outline-none`}
+          className={`bg-gray-700 relative inline-flex h-4 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none`}
           role="switch"
           aria-checked
           onClick={() => {
@@ -96,7 +96,7 @@ export const SelectChannel = observer(function SelectChannel({ integration }: Pr
         >
           <span
             aria-hidden="true"
-            className={`inline-block h-2 w-2 transform self-center rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+            className={`shadow inline-block h-2 w-2 transform self-center rounded-full bg-white ring-0 transition duration-200 ease-in-out ${
               slackChannelAvailabilityToggle ? "translate-x-3" : "translate-x-0"
             }`}
           />

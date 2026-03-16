@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import type { TFilterProperty } from "@plane/types";
 // local imports
@@ -15,7 +21,7 @@ import { createFilterConfig, getSupportedDateOperators } from "../../../rich-fil
 export const getStartDateFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig<P>({
       id: key,
       label: "Start date",
       ...params,
@@ -33,7 +39,7 @@ export const getStartDateFilterConfig =
 export const getTargetDateFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig<P>({
       id: key,
       label: "Target date",
       ...params,
@@ -51,7 +57,7 @@ export const getTargetDateFilterConfig =
 export const getCreatedAtFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig<P>({
       id: key,
       label: "Created at",
       ...params,
@@ -69,7 +75,7 @@ export const getCreatedAtFilterConfig =
 export const getUpdatedAtFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
   (params: TCreateDateFilterParams) =>
-    createFilterConfig<P, Date>({
+    createFilterConfig<P>({
       id: key,
       label: "Updated at",
       ...params,

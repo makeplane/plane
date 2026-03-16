@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // plane imports
@@ -30,15 +36,15 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
   if (!activity) return <></>;
   return (
     <div
-      className={`relative flex items-center gap-3 text-xs ${
+      className={`relative flex items-center gap-3 text-caption-sm-regular ${
         ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`
       }`}
     >
-      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
-      <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-custom-background-80 text-custom-text-200">
-        {icon ? icon : <Network className="w-3.5 h-3.5" />}
+      <div className="absolute top-0 bottom-0 left-[13px] w-px bg-layer-3" aria-hidden />
+      <div className="z-[4] flex h-7 w-7 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-subtle bg-layer-2 text-secondary shadow-raised-100">
+        {icon ? icon : <Network className="h-3.5 w-3.5" />}
       </div>
-      <div className="w-full truncate text-custom-text-200">
+      <div className="w-full truncate text-secondary">
         {!activity?.field && activity?.verb === "created" ? (
           <IssueCreatorDisplay activityId={activityId} customUserName={customUserName} />
         ) : (
@@ -50,7 +56,7 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
             isMobile={isMobile}
             tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
           >
-            <span className="whitespace-nowrap text-custom-text-350"> {calculateTimeAgo(activity.created_at)}</span>
+            <span className="whitespace-nowrap text-tertiary"> {calculateTimeAgo(activity.created_at)}</span>
           </Tooltip>
         </span>
       </div>

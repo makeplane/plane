@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   combineTransactionSteps,
   escapeForRegEx,
@@ -152,7 +158,7 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
 
         return {
           ...versions,
-          [version as number]: emoji ? isEmojiSupported(emoji.emoji as string) : false,
+          [version]: emoji ? isEmojiSupported(emoji.emoji as string) : false,
         };
       }, {});
 

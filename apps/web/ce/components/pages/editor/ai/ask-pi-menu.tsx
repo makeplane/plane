@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { CircleArrowUp, CornerDownRight, RefreshCcw, Sparkles } from "lucide-react";
 // ui
@@ -33,7 +39,7 @@ export function AskPiMenu(props: Props) {
           "items-start": response,
         })}
       >
-        <span className="flex-shrink-0 size-7 grid place-items-center text-custom-text-200 rounded-full border border-custom-border-200">
+        <span className="grid size-7 flex-shrink-0 place-items-center rounded-full border border-subtle text-secondary">
           <Sparkles className="size-3" />
         </span>
         {response ? (
@@ -53,7 +59,7 @@ export function AskPiMenu(props: Props) {
             <div className="mt-3 flex items-center gap-4">
               <button
                 type="button"
-                className="p-1 text-custom-text-300 text-sm font-medium rounded hover:bg-custom-background-80 outline-none"
+                className="rounded-sm p-1 text-13 font-medium text-tertiary outline-none hover:bg-layer-1"
                 onClick={() => handleInsertText(false)}
               >
                 Replace selection
@@ -61,16 +67,16 @@ export function AskPiMenu(props: Props) {
               <Tooltip tooltipContent="Add to next line">
                 <button
                   type="button"
-                  className="flex-shrink-0 size-6 grid place-items-center rounded hover:bg-custom-background-80 outline-none"
+                  className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
                   onClick={() => handleInsertText(true)}
                 >
-                  <CornerDownRight className="text-custom-text-300 size-4" />
+                  <CornerDownRight className="size-4 text-tertiary" />
                 </button>
               </Tooltip>
               <Tooltip tooltipContent="Re-generate response">
                 <button
                   type="button"
-                  className="flex-shrink-0 size-6 grid place-items-center rounded hover:bg-custom-background-80 outline-none"
+                  className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -79,7 +85,7 @@ export function AskPiMenu(props: Props) {
                   disabled={isRegenerating}
                 >
                   <RefreshCcw
-                    className={cn("text-custom-text-300 size-4", {
+                    className={cn("size-4 text-tertiary", {
                       "animate-spin": isRegenerating,
                     })}
                   />
@@ -88,23 +94,23 @@ export function AskPiMenu(props: Props) {
             </div>
           </div>
         ) : (
-          <p className="text-sm text-custom-text-200">Pi is answering...</p>
+          <p className="text-13 text-secondary">AI is answering...</p>
         )}
       </div>
-      <div className="py-3 px-4">
-        <div className="flex items-center gap-2 border border-custom-border-200 rounded-md p-2">
-          <span className="flex-shrink-0 size-3 grid place-items-center">
-            <Sparkles className="size-3 text-custom-text-200" />
+      <div className="px-4 py-3">
+        <div className="flex items-center gap-2 rounded-md border border-subtle p-2">
+          <span className="grid size-3 flex-shrink-0 place-items-center">
+            <Sparkles className="size-3 text-secondary" />
           </span>
           <input
             type="text"
-            className="w-full bg-transparent border-none outline-none placeholder:text-custom-text-400 text-sm"
+            className="w-full border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Tell Pi what to do..."
+            placeholder="Tell AI what to do..."
           />
-          <span className="flex-shrink-0 size-4 grid place-items-center">
-            <CircleArrowUp className="size-4 text-custom-text-200" />
+          <span className="grid size-4 flex-shrink-0 place-items-center">
+            <CircleArrowUp className="size-4 text-secondary" />
           </span>
         </div>
       </div>

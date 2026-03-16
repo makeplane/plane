@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -95,12 +101,12 @@ export const MemberListFiltersDropdown = observer(function MemberListFiltersDrop
     <CustomMenu
       customButton={
         <div className="relative">
-          <Button variant="neutral-primary" size="sm" className="flex items-center gap-2">
+          <Button variant="secondary" size="lg" className="flex items-center gap-2">
             <span>Filters</span>
             <ChevronDownIcon className="h-3 w-3" />
           </Button>
           {appliedFiltersCount > 0 && (
-            <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-custom-primary-100" />
+            <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-accent-primary" />
           )}
         </div>
       }

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { Table } from "./table";
@@ -52,7 +58,7 @@ export const Default: Story = {
     keyExtractor: (rowData) => rowData.id,
     tableClassName: "bg-gray-100",
     tHeadClassName: "bg-gray-200",
-    tHeadTrClassName: "text-gray-600 text-left text-sm font-medium",
+    tHeadTrClassName: "text-gray-600 text-left text-13 font-medium",
     thClassName: "font-medium",
     tBodyClassName: "bg-gray-100",
     tBodyTrClassName: "text-gray-600",

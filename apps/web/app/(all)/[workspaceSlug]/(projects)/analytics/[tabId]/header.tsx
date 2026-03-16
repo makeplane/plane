@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { AnalyticsIcon } from "@plane/propel/icons";
@@ -16,7 +22,7 @@ export const WorkspaceAnalyticsHeader = observer(function WorkspaceAnalyticsHead
             component={
               <BreadcrumbLink
                 label={t("workspace_analytics.label")}
-                icon={<AnalyticsIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<AnalyticsIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />

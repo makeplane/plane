@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
@@ -36,13 +42,9 @@ export class ProfileStore implements IUserProfileStore {
     last_workspace_id: undefined,
     theme: {
       theme: undefined,
-      text: undefined,
-      palette: undefined,
       primary: undefined,
       background: undefined,
-      darkPalette: undefined,
-      sidebarText: undefined,
-      sidebarBackground: undefined,
+      darkPalette: false,
     },
     onboarding_step: {
       workspace_join: false,
@@ -219,12 +221,14 @@ export class ProfileStore implements IUserProfileStore {
     const currentProfileTheme = cloneDeep(this.data.theme);
     try {
       runInAction(() => {
-        Object.keys(data).forEach((key: string) => {
-          const userKey: keyof IUserTheme = key as keyof IUserTheme;
-          if (this.data.theme) set(this.data.theme, userKey, data[userKey]);
+        Object.keys(data).forEach((key) => {
+          const dataKey = key as keyof IUserTheme;
+          if (this.data.theme) set(this.data.theme, dataKey, data[dataKey]);
         });
       });
-      const userProfile = await this.userService.updateCurrentUserProfile({ theme: this.data.theme });
+      const userProfile = await this.userService.updateCurrentUserProfile({
+        theme: this.data.theme,
+      });
       return userProfile;
     } catch (error) {
       runInAction(() => {

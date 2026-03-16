@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { findChildren } from "@tiptap/core";
 import type { EditorView } from "@tiptap/pm/view";
 // types
@@ -30,6 +36,7 @@ export const createIdsForView = (view: EditorView, options: UniqueIDOptions) => 
   });
 
   tr.setMeta("addToHistory", false);
+  tr.setMeta("uniqueIdOnlyChange", true);
 
   view.dispatch(tr);
 };

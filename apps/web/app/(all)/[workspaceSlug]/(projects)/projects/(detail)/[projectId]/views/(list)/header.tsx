@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
@@ -15,7 +21,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
-  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
   const { loader } = useProject();
@@ -31,7 +37,7 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
                 <BreadcrumbLink
                   label="Views"
                   href={`/${workspaceSlug}/projects/${projectId}/views/`}
-                  icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -45,7 +51,7 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
             <Button
               data-ph-element={PROJECT_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
               variant="primary"
-              size="sm"
+              size="lg"
               onClick={() => toggleCreateViewModal(true)}
             >
               Add view

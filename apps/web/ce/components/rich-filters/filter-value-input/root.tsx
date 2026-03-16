@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -11,7 +17,7 @@ export const AdditionalFilterValueInput = observer(function AdditionalFilterValu
 >(_props: TFilterValueInputProps<P, V>) {
   return (
     // Fallback
-    <div className="h-full flex items-center px-4 text-xs text-custom-text-400 transition-opacity duration-200 cursor-not-allowed">
+    <div className="flex h-full cursor-not-allowed items-center px-4 text-11 text-placeholder transition-opacity duration-200">
       Filter type not supported
     </div>
   );

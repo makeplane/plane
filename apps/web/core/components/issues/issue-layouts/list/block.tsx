@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Dispatch, MouseEvent, SetStateAction } from "react";
 import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -28,6 +34,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 // types
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { calculateIdentifierWidth } from "../utils";
 import type { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
@@ -76,7 +83,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const projectId = routerProjectId?.toString();
   // hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
-  const { getProjectIdentifierById } = useProject();
+  const { getProjectIdentifierById, currentProjectNextSequenceId } = useProject();
   const {
     getIsIssuePeeked,
     peekIssue,
@@ -150,8 +157,12 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     }
   };
 
-  //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
-  const keyMinWidth = displayProperties?.key ? (projectIdentifier?.length ?? 0) * 7 : 0;
+  // Calculate width for: projectIdentifier + "-" + dynamic sequence number digits
+  // Use next_work_item_sequence from backend (static value from project endpoint)
+  const maxSequenceId = currentProjectNextSequenceId ?? 1;
+  const keyMinWidth = displayProperties?.key
+    ? calculateIdentifierWidth(projectIdentifier?.length ?? 0, maxSequenceId)
+    : 0;
 
   const workItemLink = generateWorkItemLink({
     workspaceSlug,
@@ -173,13 +184,13 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
       <Row
         ref={issueRef}
         className={cn(
-          "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent",
+          "group/list-block relative flex min-h-11 flex-col gap-3 bg-layer-transparent py-3 text-13 transition-colors hover:bg-layer-transparent-hover",
           {
-            "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
-            "border-custom-border-400": isIssueActive,
+            "border-accent-strong": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
+            "border-strong-1": isIssueActive,
             "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
-            "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
-            "bg-custom-background-80": isCurrentBlockDragging,
+            "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
+            "bg-layer-1": isCurrentBlockDragging,
             "md:flex-row md:items-center": isSidebarCollapsed,
             "lg:flex-row lg:items-center": !isSidebarCollapsed,
           }
@@ -196,7 +207,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           }
         }}
       >
-        <div className="flex gap-2 w-full truncate">
+        <div className="flex w-full gap-2 truncate">
           <div className="flex flex-grow items-center gap-0.5 truncate">
             <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
               {/* select checkbox */}
@@ -211,12 +222,12 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                   }
                   disabled={issue.project_id === projectId}
                 >
-                  <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1">
+                  <div className="absolute left-1 grid w-3.5 flex-shrink-0 place-items-center">
                     <MultipleSelectEntityAction
                       className={cn(
-                        "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                        "pointer-events-none opacity-0 transition-opacity group-hover/list-block:pointer-events-auto group-hover/list-block:opacity-100",
                         {
-                          "opacity-100 pointer-events-auto": isIssueSelected,
+                          "pointer-events-auto opacity-100": isIssueSelected,
                         }
                       )}
                       groupId={groupId}
@@ -233,7 +244,8 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                     <IssueIdentifier
                       issueId={issueId}
                       projectId={issue.project_id}
-                      textContainerClassName="text-xs font-medium text-custom-text-300"
+                      size="xs"
+                      variant="tertiary"
                       displayProperties={displayProperties}
                     />
                   )}
@@ -241,11 +253,11 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               )}
 
               {/* sub-issues chevron */}
-              <div className="size-4 grid place-items-center flex-shrink-0">
+              <div className="grid size-4 flex-shrink-0 place-items-center">
                 {subIssuesCount > 0 && !isEpic && (
                   <button
                     type="button"
-                    className="size-4 grid place-items-center rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                    className="grid size-4 place-items-center rounded-xs text-placeholder hover:text-tertiary"
                     onClick={handleToggleExpand}
                   >
                     <ChevronRightIcon
@@ -259,7 +271,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               </div>
 
               {issue?.tempId !== undefined && (
-                <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+                <div className="absolute top-0 left-0 z-[99999] h-full w-full animate-pulse bg-surface-1/20" />
               )}
             </div>
 
@@ -270,7 +282,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >
-              <p className="truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
+              <p className="cursor-pointer truncate text-body-xs-medium text-primary">{issue.name}</p>
             </Tooltip>
             {isEpic && displayProperties && (
               <WithDisplayPropertiesHOC
@@ -278,13 +290,13 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                 displayPropertyKey="sub_issue_count"
                 shouldRenderProperty={(properties) => !!properties.sub_issue_count}
               >
-                <IssueStats issueId={issue.id} className="ml-2 font-medium text-custom-text-350" />
+                <IssueStats issueId={issue.id} className="ml-2 text-body-xs-medium text-tertiary" />
               </WithDisplayPropertiesHOC>
             )}
           </div>
           {!issue?.tempId && (
             <div
-              className={cn("block border border-custom-border-300 rounded", {
+              className={cn("block rounded-sm border border-strong", {
                 "md:hidden": isSidebarCollapsed,
                 "lg:hidden": !isSidebarCollapsed,
               })}
@@ -300,7 +312,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           {!issue?.tempId ? (
             <>
               <IssueProperties
-                className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
+                className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-shrink-0 md:flex-grow" : "lg:flex-shrink-0 lg:flex-grow"} items-center gap-2 whitespace-nowrap`}
                 issue={issue}
                 isReadOnly={!canEditIssueProperties}
                 updateIssue={updateIssue}

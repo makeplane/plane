@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { IUserLite } from "../users";
 import type {
   TInstanceAIConfigurationKeys,
@@ -5,7 +11,9 @@ import type {
   TInstanceImageConfigurationKeys,
   TInstanceAuthenticationKeys,
   TInstanceWorkspaceConfigurationKeys,
+  TCoreLoginMediums,
 } from "./";
+import type { TExtendedLoginMediums } from "./auth-ee";
 
 export interface IInstanceInfo {
   instance: IInstance;
@@ -98,3 +106,5 @@ export interface IInstanceConfiguration {
 export type IFormattedInstanceConfiguration = {
   [key in TInstanceConfigurationKeys]: string;
 };
+
+export type TLoginMediums = TCoreLoginMediums | TExtendedLoginMediums;

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,12 +24,7 @@ export const AppHeader = observer(function AppHeader(props: AppHeaderProps) {
 
   return (
     <div className={cn("z-[18]", className)}>
-      <Row
-        className={cn(
-          "h-11 flex gap-2 w-full items-center border-b border-custom-border-200 bg-custom-sidebar-background-100",
-          rowClassName
-        )}
-      >
+      <Row className={cn("flex h-11 w-full items-center gap-2 border-b border-subtle bg-surface-1", rowClassName)}>
         <ExtendedAppHeader header={header} />
       </Row>
       {mobileHeader && mobileHeader}

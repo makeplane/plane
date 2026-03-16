@@ -1,9 +1,14 @@
-import { useState, useRef, useEffect } from "react";
-import { Search } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useRef, useState } from "react";
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { CloseIcon } from "@plane/propel/icons";
-// plane helpers
-// helpers
+import { IconButton } from "@plane/propel/icon-button";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -17,6 +22,7 @@ export function PageSearchInput(props: Props) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
+
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
@@ -32,36 +38,32 @@ export function PageSearchInput(props: Props) {
     }
   };
 
-  useEffect(() => {
-    if (searchQuery.trim() !== "") setIsSearchOpen(true);
-  }, [searchQuery]);
-
   return (
     <div className="flex">
       {!isSearchOpen && (
-        <button
-          type="button"
-          className="flex-shrink-0 hover:bg-custom-background-80 rounded text-custom-text-400 relative flex justify-center items-center w-6 h-6 my-auto"
+        <IconButton
+          variant="ghost"
+          size="lg"
+          className="my-auto -mr-1 shrink-0"
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
-        >
-          <Search className="h-3.5 w-3.5" />
-        </button>
+          icon={SearchIcon}
+        />
       )}
       <div
         className={cn(
-          "flex items-center justify-start rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+          "flex w-0 items-center justify-start overflow-hidden rounded-md border border-transparent text-placeholder opacity-0 transition-[width] ease-linear",
           {
-            "w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+            "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
           }
         )}
       >
-        <Search className="h-3.5 w-3.5" />
+        <SearchIcon className="h-3.5 w-3.5" />
         <input
           ref={inputRef}
-          className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+          className="ml-2 w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
           placeholder="Search pages"
           value={searchQuery}
           onChange={(e) => updateSearchQuery(e.target.value)}

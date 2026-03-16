@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane types
 import { useTranslation } from "@plane/i18n";
 // hooks
@@ -40,11 +46,11 @@ export function UserGreetingsView(props: IUserGreetingsView) {
   const greeting = parseInt(hour, 10) < 12 ? "morning" : parseInt(hour, 10) < 18 ? "afternoon" : "evening";
 
   return (
-    <div className="flex flex-col items-center my-6">
-      <h2 className="text-2xl font-semibold text-center">
+    <div className="my-6 flex flex-col items-center">
+      <h2 className="text-center text-20 font-semibold">
         {t("good")} {t(greeting)}, {user?.first_name} {user?.last_name}
       </h2>
-      <h5 className="flex items-center gap-2 font-medium text-custom-text-400">
+      <h5 className="flex items-center gap-2 font-medium text-placeholder">
         <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
         <div>
           {weekDay}, {date} {timeString}

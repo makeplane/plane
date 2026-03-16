@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Ref } from "react";
 import React, { useEffect, useState, useRef, Fragment } from "react";
 import type { Placement } from "@popperjs/core";
@@ -208,14 +214,14 @@ export function GptAssistantPopover(props: Props) {
       >
         <Popover.Panel
           as="div"
-          className={`fixed z-10 flex w-full min-w-[50rem] max-w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${className}`}
+          className={`shadow fixed z-10 flex w-full max-w-full min-w-[50rem] flex-col space-y-4 overflow-hidden rounded-[10px] border border-subtle bg-surface-1 p-4 ${className}`}
           ref={setPopperElement as Ref<HTMLDivElement>}
           style={styles.popper}
           {...attributes.popper}
         >
           <div className="vertical-scroll-enable max-h-72 space-y-4 overflow-y-auto">
             {prompt && (
-              <div className="text-sm">
+              <div className="text-13">
                 Content:
                 <RichTextEditor
                   editable={false}
@@ -230,7 +236,7 @@ export function GptAssistantPopover(props: Props) {
               </div>
             )}
             {response !== "" && (
-              <div className="page-block-section max-h-[8rem] text-sm">
+              <div className="page-block-section max-h-[8rem] text-13">
                 Response:
                 <RichTextEditor
                   editable={false}
@@ -244,7 +250,7 @@ export function GptAssistantPopover(props: Props) {
               </div>
             )}
             {invalidResponse && (
-              <div className="text-sm text-red-500">
+              <div className="text-13 text-danger-primary">
                 No response could be generated. This may be due to insufficient content or task information. Please try
                 again.
               </div>
@@ -269,22 +275,22 @@ export function GptAssistantPopover(props: Props) {
               />
             )}
           />
-          <div className="flex gap-2 justify-between">
+          <div className="flex justify-between gap-2">
             {responseActionButton ? (
               <>{responseActionButton}</>
             ) : (
               <>
-                <div className="flex items-start justify-center gap-2 text-sm text-custom-primary">
+                <div className="flex items-start justify-center gap-2 text-13 text-accent-primary">
                   <AlertCircle className="h-4 w-4" />
                   <p>By using this feature, you consent to sharing the message with a 3rd party service. </p>
                 </div>
               </>
             )}
             <div className="flex items-center gap-2">
-              <Button variant="neutral-primary" size="sm" onClick={onClose}>
+              <Button variant="secondary" onClick={onClose}>
                 Close
               </Button>
-              <Button variant="primary" size="sm" onClick={handleSubmit(handleAIResponse)} loading={isSubmitting}>
+              <Button variant="primary" onClick={handleSubmit(handleAIResponse)} loading={isSubmitting}>
                 {generateResponseButtonText}
               </Button>
             </div>

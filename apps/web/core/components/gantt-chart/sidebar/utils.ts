@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ChartDataType, IBlockUpdateData, IGanttBlock } from "@plane/types";
 
 export const handleOrderChange = (
@@ -5,7 +11,7 @@ export const handleOrderChange = (
   droppedBlockId: string | undefined,
   dropAtEndOfList: boolean,
   blockIds: string[] | null,
-  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock,
+  getBlockById: (id: string, currentViewData?: ChartDataType) => IGanttBlock,
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void
 ) => {
   if (!blockIds || !draggingBlockId || !droppedBlockId) return;

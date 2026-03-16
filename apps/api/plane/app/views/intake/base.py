@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -322,6 +326,9 @@ class IntakeIssueViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Issue)
     def partial_update(self, request, slug, project_id, pk):
+        skip_activity = request.data.pop("skip_activity", False)
+        is_description_update = request.data.get("description_html") is not None
+
         intake_id = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
         intake_issue = IntakeIssue.objects.get(
             issue_id=pk,
@@ -391,7 +398,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
                     "description_html": issue_data.get("description_html", issue.description_html),
-                    "description": issue_data.get("description", issue.description),
+                    "description_json": issue_data.get("description_json", issue.description_json),
                 }
 
             issue_current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
@@ -418,26 +425,30 @@ class IntakeIssueViewSet(BaseViewSet):
         # Both serializers are valid, now save them
         if issue_serializer:
             issue_serializer.save()
+
+            # Check if the update is a migration description update
+            is_migration_description_update = skip_activity and is_description_update
             # Log all the updates
-            if issue is not None:
-                issue_activity.delay(
-                    type="issue.activity.updated",
-                    requested_data=issue_requested_data,
-                    actor_id=str(request.user.id),
-                    issue_id=str(issue.id),
-                    project_id=str(project_id),
-                    current_instance=issue_current_instance,
-                    epoch=int(timezone.now().timestamp()),
-                    notification=True,
-                    origin=base_host(request=request, is_app=True),
-                    intake=str(intake_issue.id),
-                )
-                # updated issue description version
-                issue_description_version_task.delay(
-                    updated_issue=issue_current_instance,
-                    issue_id=str(pk),
-                    user_id=request.user.id,
-                )
+            if not is_migration_description_update:
+                if issue is not None:
+                    issue_activity.delay(
+                        type="issue.activity.updated",
+                        requested_data=issue_requested_data,
+                        actor_id=str(request.user.id),
+                        issue_id=str(issue.id),
+                        project_id=str(project_id),
+                        current_instance=issue_current_instance,
+                        epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                        origin=base_host(request=request, is_app=True),
+                        intake=str(intake_issue.id),
+                    )
+                    # updated issue description version
+                    issue_description_version_task.delay(
+                        updated_issue=issue_current_instance,
+                        issue_id=str(pk),
+                        user_id=request.user.id,
+                    )
 
         if intake_serializer:
             intake_serializer.save()

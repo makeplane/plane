@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { SmilePlus } from "lucide-react";
@@ -37,15 +43,13 @@ export const Default: Story = {
           onChange={setSelectedEmoji}
           closeOnSelect
           label={
-            <span className="flex items-center justify-center rounded-md px-2 size-8 text-xl">
-              {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-6 text-custom-text-100" />}
+            <span className="flex size-8 items-center justify-center rounded-md px-2 text-18">
+              {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-6 text-primary" />}
             </span>
           }
         />
         {selectedEmoji && (
-          <div className="text-sm p-4 bg-custom-background-80 rounded border border-custom-border-200">
-            Selected: {selectedEmoji}
-          </div>
+          <div className="rounded-sm border border-subtle bg-layer-1 p-4 text-13">Selected: {selectedEmoji}</div>
         )}
       </div>
     );
@@ -71,13 +75,13 @@ export const WithCustomLabel: Story = {
           onChange={setSelectedEmoji}
           closeOnSelect
           label={
-            <button className="px-4 py-2 bg-custom-background-80 border border-custom-border-200 rounded hover:bg-custom-background-90 flex items-center gap-2">
+            <button className="flex items-center gap-2 rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2">
               {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-4 w-4" />}
-              <span className="text-sm">Add Reaction</span>
+              <span className="text-13">Add Reaction</span>
             </button>
           }
         />
-        {selectedEmoji && <div className="text-sm">Selected: {selectedEmoji}</div>}
+        {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
       </div>
     );
   },
@@ -136,7 +140,7 @@ export const InlineReactions: Story = {
           onChange={handleReactionAdd}
           closeOnSelect
           label={
-            <button className="inline-flex items-center justify-center rounded-full border border-dashed border-custom-border-300 bg-custom-background-100 text-custom-text-400 transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
+            <button className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-accent-strong hover:bg-accent-primary/5 hover:text-accent-primary">
               <SmilePlus className="h-3.5 w-3.5" />
             </button>
           }
@@ -160,9 +164,9 @@ export const DifferentPlacements: Story = {
     const [isOpen4, setIsOpen4] = useState(false);
 
     return (
-      <div className="p-8 space-y-8">
-        <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Bottom Start:</span>
+      <div className="space-y-8 p-8">
+        <div className="flex items-center gap-4">
+          <span className="w-32 text-13">Bottom Start:</span>
           <EmojiReactionPicker
             isOpen={isOpen1}
             handleToggle={setIsOpen1}
@@ -171,8 +175,8 @@ export const DifferentPlacements: Story = {
             label={<SmilePlus className="h-6 w-6" />}
           />
         </div>
-        <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Bottom End:</span>
+        <div className="flex items-center gap-4">
+          <span className="w-32 text-13">Bottom End:</span>
           <EmojiReactionPicker
             isOpen={isOpen2}
             handleToggle={setIsOpen2}
@@ -181,8 +185,8 @@ export const DifferentPlacements: Story = {
             label={<SmilePlus className="h-6 w-6" />}
           />
         </div>
-        <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Top Start:</span>
+        <div className="flex items-center gap-4">
+          <span className="w-32 text-13">Top Start:</span>
           <EmojiReactionPicker
             isOpen={isOpen3}
             handleToggle={setIsOpen3}
@@ -191,8 +195,8 @@ export const DifferentPlacements: Story = {
             label={<SmilePlus className="h-6 w-6" />}
           />
         </div>
-        <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Top End:</span>
+        <div className="flex items-center gap-4">
+          <span className="w-32 text-13">Top End:</span>
           <EmojiReactionPicker
             isOpen={isOpen4}
             handleToggle={setIsOpen4}
@@ -226,12 +230,12 @@ export const SearchDisabled: Story = {
           closeOnSelect
           searchDisabled
           label={
-            <button className="px-4 py-2 bg-custom-background-80 border border-custom-border-200 rounded hover:bg-custom-background-90">
+            <button className="rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2">
               No Search
             </button>
           }
         />
-        {selectedEmoji && <div className="text-sm">Selected: {selectedEmoji}</div>}
+        {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
       </div>
     );
   },
@@ -257,12 +261,12 @@ export const CustomSearchPlaceholder: Story = {
           closeOnSelect
           searchPlaceholder="Find your emoji..."
           label={
-            <button className="px-4 py-2 bg-custom-background-80 border border-custom-border-200 rounded hover:bg-custom-background-90">
+            <button className="rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2">
               Custom Search
             </button>
           }
         />
-        {selectedEmoji && <div className="text-sm">Selected: {selectedEmoji}</div>}
+        {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
       </div>
     );
   },
@@ -285,31 +289,31 @@ export const CloseOnSelectDisabled: Story = {
 
     return (
       <div className="space-y-4 p-4">
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <EmojiReactionPicker
             isOpen={isOpen}
             handleToggle={setIsOpen}
             onChange={handleChange}
             closeOnSelect={false}
             label={
-              <button className="px-4 py-2 bg-custom-background-80 border border-custom-border-200 rounded hover:bg-custom-background-90">
+              <button className="rounded-sm border border-subtle bg-layer-1 px-4 py-2 hover:bg-surface-2">
                 Select Multiple (Stays Open)
               </button>
             }
           />
           <button
-            className="px-3 py-1.5 text-sm bg-custom-background-80 rounded hover:bg-custom-background-90"
+            className="rounded-sm bg-layer-1 px-3 py-1.5 text-13 hover:bg-surface-2"
             onClick={() => setSelectedEmojis([])}
           >
             Clear
           </button>
         </div>
         {selectedEmojis.length > 0 && (
-          <div className="text-sm p-4 bg-custom-background-80 rounded border border-custom-border-200">
-            <div className="font-medium mb-2">Selected ({selectedEmojis.length}):</div>
-            <div className="flex gap-2 flex-wrap">
+          <div className="rounded-sm border border-subtle bg-layer-1 p-4 text-13">
+            <div className="mb-2 font-medium">Selected ({selectedEmojis.length}):</div>
+            <div className="flex flex-wrap gap-2">
               {selectedEmojis.map((emoji, idx) => (
-                <span key={idx} className="text-xl">
+                <span key={idx} className="text-18">
                   {emoji}
                 </span>
               ))}
@@ -360,14 +364,14 @@ export const InMessageContext: Story = {
     };
 
     return (
-      <div className="max-w-md border border-custom-border-200 rounded-lg p-4 space-y-3">
+      <div className="max-w-md space-y-3 rounded-lg border border-subtle p-4">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-custom-primary-100 flex items-center justify-center text-white text-sm">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-primary text-13 text-on-color">
             AB
           </div>
           <div className="flex-1">
-            <div className="font-medium text-sm">Alice Brown</div>
-            <div className="text-sm text-custom-text-300 mt-1">
+            <div className="text-13 font-medium">Alice Brown</div>
+            <div className="mt-1 text-13 text-tertiary">
               Just finished the design for the new dashboard! Would love to hear your thoughts.
             </div>
           </div>
@@ -380,7 +384,7 @@ export const InMessageContext: Story = {
             onChange={handleReactionAdd}
             closeOnSelect
             label={
-              <button className="inline-flex items-center justify-center rounded-full border border-dashed border-custom-border-300 bg-custom-background-100 text-custom-text-400 transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
+              <button className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-accent-strong hover:bg-accent-primary/5 hover:text-accent-primary">
                 <SmilePlus className="h-3.5 w-3.5" />
               </button>
             }

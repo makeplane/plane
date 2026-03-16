@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   common_empty_state: {
     progress: {
@@ -181,6 +187,11 @@ export default {
       title: "まだ個人トークンはありません",
       description: "ワークスペースを外部システムおよびアプリケーションと接続するための安全なAPIトークンを生成します。",
       cta_primary: "APIトークンを追加",
+    },
+    webhooks: {
+      title: "まだWebhookが追加されていません",
+      description: "プロジェクトイベントが発生したときに外部サービスへの通知を自動化します。",
+      cta_primary: "Webhookを追加",
     },
   },
 } as const;

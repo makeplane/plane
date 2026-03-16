@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -83,10 +89,7 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
         <button
           ref={setReferenceElement}
           type="button"
-          className={cn(
-            "clickable block h-full w-full outline-none hover:bg-custom-background-80",
-            buttonContainerClassName
-          )}
+          className={cn("clickable block h-full w-full outline-none hover:bg-layer-1", buttonContainerClassName)}
           onClick={handleOnClick}
           disabled={disabled}
           tabIndex={tabIndex}
@@ -98,9 +101,9 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
           ref={setReferenceElement}
           type="button"
           className={cn(
-            "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
+            "clickable block h-full max-w-full outline-none hover:bg-layer-1",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
@@ -120,7 +123,7 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
           >
             {!hideIcon && <CycleIcon className="h-3 w-3 flex-shrink-0" />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
-              <span className="max-w-40 flex-grow truncate">{selectedName ?? placeholder}</span>
+              <span className="max-w-40 truncate">{selectedName ?? placeholder}</span>
             )}
             {dropdownArrow && (
               <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />

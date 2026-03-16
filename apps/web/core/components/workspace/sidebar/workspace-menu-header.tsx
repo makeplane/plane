@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
@@ -40,10 +46,10 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
   const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN] as any, EUserPermissionsLevel.WORKSPACE);
 
   return (
-    <div className="flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded mt-2.5">
+    <div className="group/workspace-button mt-2.5 flex rounded-sm bg-surface-1 px-2 hover:bg-surface-2">
       <Disclosure.Button
         as="button"
-        className="flex-1 sticky top-0  z-10  w-full  py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400  text-sm font-semibold"
+        className="sticky top-0 z-10 flex w-full flex-1 items-center justify-between gap-1 py-1.5 text-13 font-semibold text-placeholder"
         onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
       >
         <span>{t("workspace")}</span>
@@ -52,7 +58,7 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
         customButton={
           <span
             ref={actionSectionRef}
-            className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded my-auto"
+            className="my-auto grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
             onClick={() => {
               setIsMenuActive(!isMenuActive);
             }}
@@ -61,9 +67,9 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
           </span>
         }
         className={cn(
-          "h-full flex items-center opacity-0 z-20 pointer-events-none flex-shrink-0 group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto my-auto",
+          "pointer-events-none z-20 my-auto flex h-full flex-shrink-0 items-center opacity-0 group-hover/workspace-button:pointer-events-auto group-hover/workspace-button:opacity-100",
           {
-            "opacity-100 pointer-events-auto": isMenuActive,
+            "pointer-events-auto opacity-100": isMenuActive,
           }
         )}
         customButtonClassName="grid place-items-center"
@@ -87,13 +93,13 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
       </CustomMenu>
       <Disclosure.Button
         as="button"
-        className="sticky top-0 z-10 group/workspace-button px-0.5 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold"
+        className="group/workspace-button sticky top-0 z-10 flex items-center justify-between gap-1 rounded-sm px-0.5 py-1.5 text-11 font-semibold text-placeholder hover:bg-surface-2"
         onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
       >
         {" "}
-        <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded hover:bg-custom-sidebar-background-80">
+        <span className="pointer-events-none flex-shrink-0 rounded-sm opacity-0 group-hover/workspace-button:pointer-events-auto group-hover/workspace-button:opacity-100 hover:bg-layer-1">
           <ChevronRightIcon
-            className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+            className={cn("size-4 flex-shrink-0 text-placeholder transition-transform", {
               "rotate-90": isWorkspaceMenuOpen,
             })}
           />

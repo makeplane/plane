@@ -1,0 +1,46 @@
+(plane_proxy) {
+	request_body {
+		max_size {$FILE_SIZE_LIMIT}
+	}
+
+    handle /spaces/* {
+        reverse_proxy localhost:3002
+    }
+	
+    handle /live/* {
+        reverse_proxy localhost:3005
+    }
+	handle /api/* {
+        reverse_proxy localhost:3004
+    }
+
+	handle /auth/* {
+        reverse_proxy localhost:3004
+    }
+
+	handle_path /god-mode* {
+        root * /app/admin
+        try_files {path} {path}/ /index.html
+        file_server
+    }
+    handle_path /* {
+        root * /app/web
+        try_files {path} {path}/ /index.html
+        file_server
+    }
+}
+
+{
+	{$CERT_EMAIL}
+	acme_ca {$CERT_ACME_CA:https://acme-v02.api.letsencrypt.org/directory} 
+	{$CERT_ACME_DNS}
+	servers {
+		max_header_size 25MB
+		client_ip_headers X-Forwarded-For X-Real-IP
+		trusted_proxies static {$TRUSTED_PROXIES:0.0.0.0/0}
+	}
+}
+
+{$SITE_ADDRESS} {
+	import plane_proxy
+}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "../button/button";
@@ -75,25 +81,25 @@ function ModalContent({
   onClose?: () => void;
 }) {
   return (
-    <div className="flex flex-col h-full bg-white">
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+    <div className="flex h-full flex-col bg-white">
+      <div className="border-gray-200 flex items-center justify-between border-b p-6">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-          <p className="text-sm text-gray-500 mt-1">Modal demonstration</p>
+          <h2 className="text-gray-900 text-18 font-semibold">{title}</h2>
+          <p className="text-gray-500 mt-1 text-13">Modal demonstration</p>
         </div>
         {showCloseButton && onClose && (
-          <Button variant="link-neutral" size="sm" onClick={onClose} aria-label="Close modal">
+          <Button variant="ghost" onClick={onClose} aria-label="Close modal">
             ✕
           </Button>
         )}
       </div>
-      <div className="flex-1 p-6 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto p-6">
         <p className="text-gray-600 mb-6">{description}</p>
 
         <div className="space-y-4">
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-medium text-gray-900 mb-2">Feature Highlights</h3>
-            <ul className="text-sm text-gray-600 space-y-1">
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h3 className="text-gray-900 mb-2 font-medium">Feature Highlights</h3>
+            <ul className="text-gray-600 space-y-1 text-13">
               <li>• ESC key closes the modal</li>
               <li>• Click outside overlay to close</li>
             </ul>
@@ -115,7 +121,7 @@ export const Positions: Story = {
       <div className="flex gap-3">
         {Object.values(EPortalPosition).map((position) => (
           <React.Fragment key={position}>
-            <Button variant="outline-primary" onClick={() => setActiveModal(position)}>
+            <Button variant="secondary" onClick={() => setActiveModal(position)}>
               {position.charAt(0).toUpperCase() + position.slice(1)}
             </Button>
             <ModalPortal
@@ -146,7 +152,7 @@ export const Widths: Story = {
       <div className="flex gap-3">
         {Object.values(EPortalWidth).map((width) => (
           <React.Fragment key={width}>
-            <Button variant="neutral-primary" onClick={() => setActiveModal(width)}>
+            <Button variant="secondary" onClick={() => setActiveModal(width)}>
               {width.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
             </Button>
             <ModalPortal
@@ -174,7 +180,7 @@ export const BasicPortal: Story = {
       <div className="relative">
         <p>This content renders in the normal document flow.</p>
         <PortalWrapper portalId="storybook-portal">
-          <div className="fixed top-4 right-4 p-4 bg-blue-500 text-white rounded shadow-lg z-50">
+          <div className="bg-blue-500 shadow-lg fixed top-4 right-4 z-50 rounded-sm p-4 text-on-color">
             This content is rendered in a portal!
           </div>
         </PortalWrapper>

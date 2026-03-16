@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Progetti",
@@ -17,6 +23,7 @@ export default {
     favorites: "Preferiti",
     pro: "Pro",
     upgrade: "Aggiorna",
+    stickies: "Stickies",
   },
   auth: {
     common: {
@@ -340,13 +347,13 @@ export default {
   project_id_must_be_at_most_5_characters: "L'ID del progetto deve contenere al massimo 5 caratteri",
   project_id: "ID del progetto",
   project_id_tooltip_content:
-    "Ti aiuta a identificare in modo univoco gli elementi di lavoro nel progetto. Massimo 5 caratteri.",
+    "Ti aiuta a identificare in modo univoco gli elementi di lavoro nel progetto. Massimo 10 caratteri.",
   description_placeholder: "Descrizione",
   only_alphanumeric_non_latin_characters_allowed: "Sono ammessi solo caratteri alfanumerici e non latini.",
   project_id_is_required: "L'ID del progetto è obbligatorio",
   project_id_allowed_char: "Sono ammessi solo caratteri alfanumerici e non latini.",
   project_id_min_char: "L'ID del progetto deve contenere almeno 1 carattere",
-  project_id_max_char: "L'ID del progetto deve contenere al massimo 5 caratteri",
+  project_id_max_char: "L'ID del progetto deve contenere al massimo 10 caratteri",
   project_description_placeholder: "Inserisci la descrizione del progetto",
   select_network: "Seleziona rete",
   lead: "Responsabile",
@@ -406,7 +413,7 @@ export default {
   docs: "Documentazione",
   full_changelog: "Changelog completo",
   support: "Supporto",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Supportato da Plane Pages",
   please_select_at_least_one_invitation: "Seleziona almeno un invito.",
   please_select_at_least_one_invitation_description: "Seleziona almeno un invito per unirti allo spazio di lavoro.",
@@ -1590,6 +1597,7 @@ export default {
         name: "Nome dello spazio di lavoro",
         company_size: "Dimensione aziendale",
         url: "URL dello spazio di lavoro",
+        workspace_timezone: "Fuso orario dello spazio di lavoro",
         update_workspace: "Aggiorna spazio di lavoro",
         delete_workspace: "Elimina questo spazio di lavoro",
         delete_workspace_description:
@@ -1983,6 +1991,46 @@ export default {
         title: "Nessun sistema di stime ancora",
         description: "Crea un set di stime per comunicare la quantità di lavoro per elemento di lavoro.",
         primary_button: "Aggiungi sistema di stime",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cicli",
+        short_title: "Cicli",
+        description:
+          "Pianifica il lavoro in periodi flessibili che si adattano al ritmo e al tempo unici di questo progetto.",
+        toggle_title: "Abilita cicli",
+        toggle_description: "Pianifica il lavoro in periodi di tempo mirati.",
+      },
+      modules: {
+        title: "Moduli",
+        short_title: "Moduli",
+        description: "Organizza il lavoro in sotto-progetti con responsabili e assegnatari dedicati.",
+        toggle_title: "Abilita moduli",
+        toggle_description: "I membri del progetto potranno creare e modificare moduli.",
+      },
+      views: {
+        title: "Viste",
+        short_title: "Viste",
+        description:
+          "Salva ordinamenti, filtri e opzioni di visualizzazione personalizzati o condividili con il tuo team.",
+        toggle_title: "Abilita viste",
+        toggle_description: "I membri del progetto potranno creare e modificare viste.",
+      },
+      pages: {
+        title: "Pagine",
+        short_title: "Pagine",
+        description: "Crea e modifica contenuti liberi: note, documenti, qualsiasi cosa.",
+        toggle_title: "Abilita pagine",
+        toggle_description: "I membri del progetto potranno creare e modificare pagine.",
+      },
+      intake: {
+        title: "Ricezione",
+        short_title: "Ricezione",
+        description:
+          "Consenti ai non membri di condividere bug, feedback e suggerimenti; senza interrompere il tuo flusso di lavoro.",
+        toggle_title: "Abilita ricezione",
+        toggle_description: "Consenti ai membri del progetto di creare richieste di ricezione nell'app.",
       },
     },
   },

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { MoreVertical } from "lucide-react";
 import React, { forwardRef } from "react";
 // helpers
@@ -15,24 +21,21 @@ export const DragHandle = forwardRef(function DragHandle(
   const { className, disabled = false } = props;
 
   if (disabled) {
-    return <div className="w-[14px] h-[18px]" />;
+    return <div className="h-[18px] w-[14px]" />;
   }
 
   return (
     <button
       type="button"
-      className={cn(
-        "p-0.5 flex flex-shrink-0 rounded bg-custom-background-90 text-custom-sidebar-text-200 cursor-grab",
-        className
-      )}
+      className={cn("flex flex-shrink-0 cursor-grab rounded-sm bg-surface-2 p-0.5 text-secondary", className)}
       onContextMenu={(e) => {
         e.preventDefault();
         e.stopPropagation();
       }}
       ref={ref}
     >
-      <MoreVertical className="h-3.5 w-3.5 stroke-custom-text-400" />
-      <MoreVertical className="-ml-5 h-3.5 w-3.5 stroke-custom-text-400" />
+      <MoreVertical className="h-3.5 w-3.5 stroke-placeholder" />
+      <MoreVertical className="-ml-5 h-3.5 w-3.5 stroke-placeholder" />
     </button>
   );
 });

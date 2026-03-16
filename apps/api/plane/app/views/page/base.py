@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 from datetime import datetime
@@ -46,7 +50,7 @@ from plane.utils.error_codes import ERROR_CODES
 # Local imports
 from ..base import BaseAPIView, BaseViewSet
 from plane.bgtasks.page_transaction_task import page_transaction
-from plane.bgtasks.page_version_task import page_version
+from plane.bgtasks.page_version_task import track_page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 from plane.app.permissions import ProjectPagePermission
@@ -128,7 +132,7 @@ class PageViewSet(BaseViewSet):
             context={
                 "project_id": project_id,
                 "owned_by_id": request.user.id,
-                "description": request.data.get("description", {}),
+                "description_json": request.data.get("description_json", {}),
                 "description_binary": request.data.get("description_binary", None),
                 "description_html": request.data.get("description_html", "<p></p>"),
             },
@@ -495,14 +499,12 @@ class PagesDescriptionViewSet(BaseViewSet):
     permission_classes = [ProjectPagePermission]
 
     def retrieve(self, request, slug, project_id, page_id):
-        page = (
-            Page.objects.get(
-                Q(owned_by=self.request.user) | Q(access=0),
-                pk=page_id,
-                workspace__slug=slug,
-                projects__id=project_id,
-                project_pages__deleted_at__isnull=True,
-            )
+        page = Page.objects.get(
+            Q(owned_by=self.request.user) | Q(access=0),
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
         )
         binary_data = page.description_binary
 
@@ -517,14 +519,12 @@ class PagesDescriptionViewSet(BaseViewSet):
         return response
 
     def partial_update(self, request, slug, project_id, page_id):
-        page = (
-            Page.objects.get(
-                Q(owned_by=self.request.user) | Q(access=0),
-                pk=page_id,
-                workspace__slug=slug,
-                projects__id=project_id,
-                project_pages__deleted_at__isnull=True,
-            )
+        page = Page.objects.get(
+            Q(owned_by=self.request.user) | Q(access=0),
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
         )
 
         if page.is_locked:
@@ -545,26 +545,28 @@ class PagesDescriptionViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Store the old description_html before saving (needed for both tasks)
+        old_description_html = page.description_html
+
         # Serialize the existing instance
-        existing_instance = json.dumps({"description_html": page.description_html}, cls=DjangoJSONEncoder)
+        existing_instance = json.dumps({"description_html": old_description_html}, cls=DjangoJSONEncoder)
 
         # Use serializer for validation and update
         serializer = PageBinaryUpdateSerializer(page, data=request.data, partial=True)
         if serializer.is_valid():
+            serializer.save()
+
             # Capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
                     new_description_html=request.data.get("description_html", "<p></p>"),
-                    old_description_html=page.description_html,
+                    old_description_html=old_description_html,
                     page_id=page_id,
                 )
 
-            # Update the page using serializer
-            updated_page = serializer.save()
-
             # Run background tasks
-            page_version.delay(
-                page_id=updated_page.id,
+            track_page_version.delay(
+                page_id=page_id,
                 existing_instance=existing_instance,
                 user_id=request.user.id,
             )

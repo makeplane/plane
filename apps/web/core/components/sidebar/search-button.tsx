@@ -1,4 +1,10 @@
-import { Search } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { SearchIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -10,15 +16,15 @@ export function SidebarSearchButton(props: Props) {
   return (
     <div
       className={cn(
-        "flex-shrink-0 size-8 aspect-square grid place-items-center rounded-md shadow-sm hover:bg-custom-sidebar-background-90 outline-none border-[0.5px] border-custom-sidebar-border-300",
+        "shadow-sm grid aspect-square size-8 flex-shrink-0 place-items-center rounded-md border-[0.5px] border-strong outline-none hover:bg-surface-2",
         {
-          "bg-custom-primary-100/10 hover:bg-custom-primary-100/10 border-custom-primary-200": isActive,
+          "border-accent-strong-200 bg-accent-primary/10 hover:bg-accent-primary/10": isActive,
         }
       )}
     >
-      <Search
-        className={cn("size-4 text-custom-sidebar-text-300", {
-          "text-custom-primary-200": isActive,
+      <SearchIcon
+        className={cn("size-4 text-tertiary", {
+          "text-accent-secondary": isActive,
         })}
       />
     </div>

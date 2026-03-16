@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 
 import type { Props } from "../types";
 
-export function SettingIcon({ width = "24", height = "24", color = "rgb(var(--color-text-200))", className }: Props) {
+export function SettingIcon({ width = "24", height = "24", color = "var(--text-color-secondary)", className }: Props) {
   return (
     <svg
       width={width}

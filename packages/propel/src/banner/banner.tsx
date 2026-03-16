@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { cn } from "../utils";
 import type { TBannerVariant } from "./helper";
@@ -106,7 +112,7 @@ export const Banner = React.forwardRef(function Banner(
       {...props}
     >
       {/* Left side: Icon and Title */}
-      <div className="flex items-center gap-3 flex-1 min-w-0">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         {renderIcon()}
         {title && <div className={cn(titleStyling)}>{title}</div>}
         {children}

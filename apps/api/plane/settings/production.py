@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """Production settings"""
 
 import os
@@ -83,6 +87,11 @@ LOGGING = {
         },
         "plane.mongo": {
             "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.authentication": {
+            "level": "DEBUG" if DEBUG else "INFO",
             "handlers": ["console"],
             "propagate": False,
         },

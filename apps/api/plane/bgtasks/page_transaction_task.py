@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import logging
 
@@ -88,7 +92,6 @@ def page_transaction(new_description_html, old_description_html, page_id):
 
         has_existing_logs = PageLog.objects.filter(page_id=page_id).exists()
 
-
         # Extract all components in a single pass (optimized)
         old_components = extract_all_components(old_description_html)
         new_components = extract_all_components(new_description_html)
@@ -125,12 +128,9 @@ def page_transaction(new_description_html, old_description_html, page_id):
                     )
                 )
 
-
         # Bulk insert and cleanup
         if new_transactions:
-            PageLog.objects.bulk_create(
-                new_transactions, batch_size=50, ignore_conflicts=True
-            )
+            PageLog.objects.bulk_create(new_transactions, batch_size=50, ignore_conflicts=True)
 
         if deleted_transaction_ids:
             PageLog.objects.filter(transaction__in=deleted_transaction_ids).delete()

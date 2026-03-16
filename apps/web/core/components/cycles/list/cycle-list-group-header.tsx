@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React from "react";
 // types
@@ -20,18 +26,18 @@ export function CycleListGroupHeader(props: Props) {
   const { type, title, count, showCount = false, isExpanded = false } = props;
   return (
     <Row className="flex items-center justify-between py-2.5">
-      <div className="flex items-center gap-5 flex-shrink-0">
-        <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
+      <div className="flex flex-shrink-0 items-center gap-5">
+        <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
           <CycleGroupIcon cycleGroup={type} className="h-5 w-5" />
         </div>
 
         <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
-          <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
-          {showCount && <div className="pl-2 text-sm font-medium text-custom-text-300">{`${count ?? "0"}`}</div>}
+          <div className="line-clamp-1 inline-block truncate font-medium text-primary">{title}</div>
+          {showCount && <div className="pl-2 text-13 font-medium text-tertiary">{`${count ?? "0"}`}</div>}
         </div>
       </div>
       <ChevronDownIcon
-        className={cn("h-4 w-4 text-custom-sidebar-text-300 duration-300 ", {
+        className={cn("size-4 shrink-0 text-tertiary transition-transform", {
           "rotate-180": isExpanded,
         })}
       />

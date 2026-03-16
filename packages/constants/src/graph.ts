@@ -1,27 +1,33 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export const CHARTS_THEME = {
   background: "transparent",
   text: {
-    color: "rgb(var(--color-text-200))",
+    color: "var(--text-color-secondary)",
   },
   axis: {
     domain: {
       line: {
-        stroke: "rgb(var(--color-background-80))",
+        stroke: "var(--background-color-layer-2)",
         strokeWidth: 0.5,
       },
     },
   },
   tooltip: {
     container: {
-      background: "rgb(var(--color-background-80))",
-      color: "rgb(var(--color-text-200))",
+      background: "var(--background-color-layer-2)",
+      color: "var(--text-color-secondary)",
       fontSize: "0.8rem",
-      border: "1px solid rgb(var(--color-border-300))",
+      border: "1px solid var(--border-color-strong)",
     },
   },
   grid: {
     line: {
-      stroke: "rgb(var(--color-border-100))",
+      stroke: "var(--border-color-subtle)",
     },
   },
 };

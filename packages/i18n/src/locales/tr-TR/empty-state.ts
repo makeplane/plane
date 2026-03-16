@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   common_empty_state: {
     progress: {
@@ -189,6 +195,11 @@ export default {
       description:
         "Çalışma alanınızı harici sistemler ve uygulamalarla bağlamak için güvenli API token'ları oluşturun.",
       cta_primary: "API token'ı ekle",
+    },
+    webhooks: {
+      title: "Henüz Webhook eklenmedi",
+      description: "Proje olayları gerçekleştiğinde harici hizmetlere bildirimleri otomatikleştirin.",
+      cta_primary: "Webhook ekle",
     },
   },
 } as const;

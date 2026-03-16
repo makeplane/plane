@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/react";
-import { Check } from "lucide-react";
+
 import type { FC } from "react";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 // plane utils
 import { cn } from "@plane/utils";
 // components
@@ -59,23 +65,23 @@ export function BubbleMenuNodeSelector(props: Props) {
       classNames={{
         buttonContainer: "h-full",
         button: cn(
-          "h-full flex items-center gap-1 px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded whitespace-nowrap transition-colors",
+          "flex h-full items-center gap-1 rounded-sm px-3 text-13 font-medium whitespace-nowrap text-tertiary transition-colors hover:bg-layer-1 active:bg-layer-1",
           {
-            "bg-custom-background-80": context.open,
+            "bg-layer-1": context.open,
           }
         ),
       }}
       menuButton={
         <>
           <span>{activeItem?.name}</span>
-          <ChevronDownIcon className="shrink-0 size-3" />
+          <ChevronDownIcon className="size-3 shrink-0" />
         </>
       }
       options={options}
       getFloatingProps={getFloatingProps}
       getReferenceProps={getReferenceProps}
     >
-      <section className="w-48 max-h-[90vh] mt-1 flex flex-col overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg">
+      <section className="mt-1 flex max-h-[90vh] w-48 flex-col overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-raised-200">
         {items.map((item) => (
           <button
             key={item.name}
@@ -86,9 +92,9 @@ export function BubbleMenuNodeSelector(props: Props) {
               e.stopPropagation();
             }}
             className={cn(
-              "flex items-center justify-between rounded px-1 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80",
+              "flex items-center justify-between rounded-sm px-1 py-1.5 text-13 text-secondary hover:bg-layer-1",
               {
-                "bg-custom-background-80": activeItem.name === item.name,
+                "bg-layer-1": activeItem.name === item.name,
               }
             )}
           >
@@ -96,7 +102,7 @@ export function BubbleMenuNodeSelector(props: Props) {
               <item.icon className="size-3 flex-shrink-0" />
               <span>{item.name}</span>
             </div>
-            {activeItem.name === item.name && <Check className="size-3 text-custom-text-300 flex-shrink-0" />}
+            {activeItem.name === item.name && <CheckIcon className="size-3 flex-shrink-0 text-tertiary" />}
           </button>
         ))}
       </section>

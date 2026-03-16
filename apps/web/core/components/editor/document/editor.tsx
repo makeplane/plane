@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { forwardRef } from "react";
 // plane imports
 import { DocumentEditorWithRef } from "@plane/editor";
@@ -92,7 +98,7 @@ export const DocumentEditor = forwardRef(function DocumentEditor(
       }}
       extendedEditorProps={extendedEditorProps}
       {...rest}
-      containerClassName={cn("relative pl-3 pb-3", containerClassName)}
+      containerClassName={cn("relative pb-3 pl-3", containerClassName)}
     />
   );
 });

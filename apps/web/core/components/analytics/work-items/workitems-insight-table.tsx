@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import type { ColumnDef, Row, RowData } from "@tanstack/react-table";
 import { observer } from "mobx-react";
@@ -110,17 +116,15 @@ const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
                       shape="circle"
                     />
                   ) : (
-                    <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-custom-background-80  capitalize overflow-hidden">
+                    <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-layer-1 capitalize">
                       {row.original.display_name ? (
                         row.original.display_name?.[0]
                       ) : (
-                        <UserRound className="text-custom-text-200 " size={12} />
+                        <UserRound className="text-secondary" size={12} />
                       )}
                     </div>
                   )}
-                  <span className="break-words text-custom-text-200">
-                    {row.original.display_name ?? t(`Unassigned`)}
-                  </span>
+                  <span className="break-words text-secondary">{row.original.display_name ?? t(`Unassigned`)}</span>
                 </div>
               </div>
             ),

@@ -1,6 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { Accordion as BaseAccordion } from "@base-ui-components/react";
-import { PlusIcon } from "lucide-react";
+
+import { PlusIcon } from "../icons";
 
 export interface AccordionRootProps {
   defaultValue?: string[];
@@ -32,7 +39,7 @@ export interface AccordionContentProps {
 
 function AccordionRoot({ defaultValue = [], allowMultiple = false, className = "", children }: AccordionRootProps) {
   return (
-    <BaseAccordion.Root defaultValue={defaultValue} openMultiple={allowMultiple} className={`text-base ${className}`}>
+    <BaseAccordion.Root defaultValue={defaultValue} openMultiple={allowMultiple} className={`text-14 ${className}`}>
       {children}
     </BaseAccordion.Root>
   );
@@ -48,7 +55,7 @@ function AccordionItem({ value, disabled, className = "", children }: AccordionI
 
 function AccordionTrigger({
   className = "",
-  icon = <PlusIcon aria-hidden="true" className="transition-all ease-out  group-data-[panel-open]:rotate-45" />,
+  icon = <PlusIcon aria-hidden="true" className="transition-all ease-out group-data-[panel-open]:rotate-45" />,
   iconClassName = "",
   children,
   asChild = false,

@@ -1,13 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
-import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
+import { getPageName } from "@plane/utils";
 // constants
-// hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
@@ -45,12 +49,6 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
     setIsDeleting(true);
     await removePage({ pageId })
       .then(() => {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
-          payload: {
-            id: pageId,
-          },
-        });
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -63,12 +61,6 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
         }
       })
       .catch(() => {
-        captureError({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
-          payload: {
-            id: pageId,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -91,7 +83,7 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       content={
         <>
           Are you sure you want to delete page-{" "}
-          <span className="break-words font-medium text-custom-text-100 break-all">{name}</span> ? The Page will be
+          <span className="font-medium break-words break-all text-primary">{getPageName(name)}</span> ? The Page will be
           deleted permanently. This action cannot be undone.
         </>
       }

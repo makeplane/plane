@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // @ts-expect-error Due to live server dependencies
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/dist/cjs/entry-point/element/adapter.js";
 import React, { Fragment, useEffect, useMemo } from "react";
@@ -46,11 +52,9 @@ const moveItem = <T,>(
   // Insert at the calculated position (bounds check is implicit in splice)
   newData.splice(adjustedDestinationIndex, 0, movedItem);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { __uuid__: movedItemId, ...movedItemData } = movedItem;
   return {
     newData: newData.map((item) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { __uuid__: uuid, ...rest } = item;
       return rest as T;
     }),

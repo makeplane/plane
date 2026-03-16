@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode, MutableRefObject } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { cn } from "@plane/utils";
@@ -79,7 +85,7 @@ function RenderIfVisible(props: Props) {
 
   const child = isVisible ? <>{children}</> : placeholderChildren;
   const style = isVisible || !shouldRecordHeights ? {} : { height: placeholderHeight.current, width: "100%" };
-  const className = isVisible || placeholderChildren ? classNames : cn(classNames, "bg-custom-background-80");
+  const className = isVisible || placeholderChildren ? classNames : cn(classNames, "bg-layer-1");
 
   return React.createElement(as, { ref: intersectionRef, style, className }, child);
 }

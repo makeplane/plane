@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { MoveRight } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -18,16 +24,16 @@ export function IssuePeekOverviewError(props: TIssuePeekOverviewError) {
   const { isMobile } = usePlatformOS();
 
   return (
-    <div className="w-full h-full overflow-hidden relative flex flex-col">
-      <div className="flex-shrink-0 flex justify-start">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
+      <div className="flex flex-shrink-0 justify-start">
         <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
-          <button onClick={removeRoutePeekId} className="w-5 h-5 m-5">
-            <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+          <button onClick={removeRoutePeekId} className="m-5 h-5 w-5">
+            <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
           </button>
         </Tooltip>
       </div>
 
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <EmptyState
           image={emptyIssue ?? undefined}
           title="Work item does not exist"

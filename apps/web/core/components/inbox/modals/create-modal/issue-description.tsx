@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC, RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -15,7 +21,7 @@ import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 const workspaceService = new WorkspaceService();
 
@@ -55,7 +61,7 @@ export const InboxIssueDescription = observer(function InboxIssueDescription(pro
 
   if (loader === "issue-loading")
     return (
-      <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
+      <Loader className="min-h-[6rem] rounded-md border border-subtle">
         <Loader.Item width="100%" height="140px" />
       </Loader>
     );

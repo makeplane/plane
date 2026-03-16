@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -51,7 +57,7 @@ export const ProjectViewsList = observer(function ProjectViewsList() {
             {filteredProjectViews.length > 0 ? (
               filteredProjectViews.map((view) => <ProjectViewListItem key={view.id} view={view} />)
             ) : (
-              <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
+              <p className="mt-10 text-center text-13 text-tertiary">No results found</p>
             )}
           </ListLayout>
         </div>

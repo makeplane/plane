@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { SyntheticEvent } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
@@ -11,8 +17,6 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
-  MODULE_TRACKER_EVENTS,
-  MODULE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { WorkItemsIcon } from "@plane/propel/icons";
@@ -26,8 +30,6 @@ import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
-// helpers
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
@@ -72,16 +74,6 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
     const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
       () => {
         if (!storedValue) toggleFavoriteMenu(true);
-        captureElementAndEvent({
-          element: {
-            elementName: MODULE_TRACKER_ELEMENTS.CARD_ITEM,
-          },
-          event: {
-            eventName: MODULE_TRACKER_EVENTS.favorite,
-            payload: { id: moduleId },
-            state: "SUCCESS",
-          },
-        });
       }
     );
 
@@ -107,18 +99,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
       workspaceSlug.toString(),
       projectId.toString(),
       moduleId
-    ).then(() => {
-      captureElementAndEvent({
-        element: {
-          elementName: MODULE_TRACKER_ELEMENTS.CARD_ITEM,
-        },
-        event: {
-          eventName: MODULE_TRACKER_EVENTS.unfavorite,
-          payload: { id: moduleId },
-          state: "SUCCESS",
-        },
-      });
-    });
+    );
 
     setPromiseToast(removeFromFavoritePromise, {
       loading: "Removing module from favorites...",
@@ -209,7 +190,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
-                <span className="truncate text-base font-medium">{moduleDetails.name}</span>
+                <span className="truncate text-14 font-medium">{moduleDetails.name}</span>
               </Tooltip>
               <div className="flex items-center gap-2" onClick={handleEventPropagation}>
                 {moduleStatus && (
@@ -220,16 +201,16 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                   />
                 )}
                 <button onClick={openModuleOverview}>
-                  <Info className="h-4 w-4 text-custom-text-400" />
+                  <Info className="h-4 w-4 text-placeholder" />
                 </button>
               </div>
             </div>
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-custom-text-200">
-                <WorkItemsIcon className="h-4 w-4 text-custom-text-300" />
-                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Work item"}</span>
+              <div className="flex items-center gap-1.5 text-secondary">
+                <WorkItemsIcon className="h-4 w-4 text-tertiary" />
+                <span className="text-11 text-tertiary">{issueCount ?? "0 Work item"}</span>
               </div>
               {moduleLeadDetails ? (
                 <span className="cursor-default">
@@ -237,14 +218,14 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                 </span>
               ) : (
                 <Tooltip tooltipContent="No lead">
-                  <SquareUser className="h-4 w-4 mx-1 text-custom-text-300 " />
+                  <SquareUser className="mx-1 h-4 w-4 text-tertiary" />
                 </Tooltip>
               )}
             </div>
             <LinearProgressIndicator size="lg" data={progressIndicatorData} />
             <div className="flex items-center justify-between py-0.5" onClick={handleEventPropagation}>
               <DateRangeDropdown
-                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
+                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-tertiary border-[0.5px] border-strong rounded-sm text-11`}
                 buttonVariant="transparent-with-text"
                 className="h-7"
                 value={{

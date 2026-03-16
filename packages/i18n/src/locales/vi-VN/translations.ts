@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Dự án",
@@ -17,6 +23,7 @@ export default {
     favorites: "Yêu thích",
     pro: "Phiên bản Pro",
     upgrade: "Nâng cấp",
+    stickies: "Ghi chú",
   },
   auth: {
     common: {
@@ -338,13 +345,13 @@ export default {
   project_id_must_be_at_least_1_character: "ID dự án phải có ít nhất 1 ký tự",
   project_id_must_be_at_most_5_characters: "ID dự án chỉ được tối đa 5 ký tự",
   project_id: "ID dự án",
-  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong dự án của bạn. Tối đa 5 ký tự.",
+  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong dự án của bạn. Tối đa 10 ký tự.",
   description_placeholder: "Mô tả",
   only_alphanumeric_non_latin_characters_allowed: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
   project_id_is_required: "ID dự án là bắt buộc",
   project_id_allowed_char: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
   project_id_min_char: "ID dự án phải có ít nhất 1 ký tự",
-  project_id_max_char: "ID dự án chỉ được tối đa 5 ký tự",
+  project_id_max_char: "ID dự án chỉ được tối đa 10 ký tự",
   project_description_placeholder: "Nhập mô tả dự án",
   select_network: "Chọn mạng",
   lead: "Người phụ trách",
@@ -405,7 +412,7 @@ export default {
   docs: "Tài liệu",
   full_changelog: "Nhật ký thay đổi đầy đủ",
   support: "Hỗ trợ",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Được hỗ trợ bởi Plane Pages",
   please_select_at_least_one_invitation: "Vui lòng chọn ít nhất một lời mời.",
   please_select_at_least_one_invitation_description:
@@ -1587,6 +1594,7 @@ export default {
         name: "Tên không gian làm việc",
         company_size: "Quy mô công ty",
         url: "URL không gian làm việc",
+        workspace_timezone: "Múi giờ không gian làm việc",
         update_workspace: "Cập nhật không gian làm việc",
         delete_workspace: "Xóa không gian làm việc này",
         delete_workspace_description:
@@ -1977,6 +1985,45 @@ export default {
         title: "Chưa có hệ thống ước tính",
         description: "Tạo một tập hợp ước tính để truyền đạt khối lượng công việc cho mỗi mục công việc.",
         primary_button: "Thêm hệ thống ước tính",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Chu kỳ",
+        short_title: "Chu kỳ",
+        description:
+          "Lên lịch công việc trong các khoảng thời gian linh hoạt thích ứng với nhịp điệu và tốc độ độc đáo của dự án này.",
+        toggle_title: "Bật chu kỳ",
+        toggle_description: "Lập kế hoạch công việc trong khung thời gian tập trung.",
+      },
+      modules: {
+        title: "Mô-đun",
+        short_title: "Mô-đun",
+        description: "Tổ chức công việc thành các dự án phụ với người dẫn đầu và người được phân công chuyên trách.",
+        toggle_title: "Bật mô-đun",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa mô-đun.",
+      },
+      views: {
+        title: "Chế độ xem",
+        short_title: "Chế độ xem",
+        description: "Lưu các tùy chọn sắp xếp, bộ lọc và hiển thị tùy chỉnh hoặc chia sẻ chúng với nhóm của bạn.",
+        toggle_title: "Bật chế độ xem",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa chế độ xem.",
+      },
+      pages: {
+        title: "Trang",
+        short_title: "Trang",
+        description: "Tạo và chỉnh sửa nội dung tự do: ghi chú, tài liệu, bất cứ thứ gì.",
+        toggle_title: "Bật trang",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa trang.",
+      },
+      intake: {
+        title: "Tiếp nhận",
+        short_title: "Tiếp nhận",
+        description:
+          "Cho phép những người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất; mà không làm gián đoạn quy trình làm việc của bạn.",
+        toggle_title: "Bật tiếp nhận",
+        toggle_description: "Cho phép thành viên dự án tạo yêu cầu tiếp nhận trong ứng dụng.",
       },
     },
   },

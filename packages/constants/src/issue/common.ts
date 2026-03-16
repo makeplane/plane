@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -168,10 +174,6 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   {
     key: "key",
     titleTranslationKey: "issue.display.properties.id",
-  },
-  {
-    key: "issue_type",
-    titleTranslationKey: "issue.display.properties.issue_type",
   },
   {
     key: "assignee",

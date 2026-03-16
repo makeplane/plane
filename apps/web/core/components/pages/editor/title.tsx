@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // editor
@@ -23,7 +29,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
   // page filters
   const { fontSize } = usePageFilters();
   // ui
-  const titleFontClassName = cn("tracking-[-2%] font-bold", {
+  const titleFontClassName = cn("font-bold tracking-[-2%]", {
     "text-[1.6rem] leading-[1.9rem]": fontSize === "small-font",
     "text-[2rem] leading-[2.375rem]": fontSize === "large-font",
   });
@@ -35,7 +41,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
           className={cn(
             titleFontClassName,
             {
-              "text-custom-text-400": !title,
+              "text-placeholder": !title,
             },
             "break-words"
           )}
@@ -45,7 +51,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
       ) : (
         <div className="relative">
           <TextArea
-            className={cn(titleFontClassName, "block w-full border-none outline-none p-0 resize-none rounded-none")}
+            className={cn(titleFontClassName, "block w-full resize-none rounded-none border-none p-0 outline-none")}
             placeholder="Untitled"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -62,7 +68,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
           />
           <div
             className={cn(
-              "pointer-events-none absolute bottom-1 right-1 z-[2] font-normal rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
+              "pointer-events-none absolute right-1 bottom-1 z-[2] rounded-sm bg-surface-1 p-0.5 text-11 font-regular text-secondary opacity-0 transition-opacity",
               {
                 "opacity-100": isLengthVisible,
               }
@@ -70,7 +76,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
           >
             <span
               className={cn({
-                "text-red-500": title && title.length > 255,
+                "text-danger-primary": title && title.length > 255,
               })}
             >
               {title?.length}

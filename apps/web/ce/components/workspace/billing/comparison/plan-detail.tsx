@@ -1,24 +1,25 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import {
   SUBSCRIPTION_REDIRECTION_URLS,
   SUBSCRIPTION_WITH_BILLING_FREQUENCY,
   TALK_TO_SALES_URL,
-  WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
-  WORKSPACE_SETTINGS_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import type { TBillingFrequency } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { getUpgradeButtonStyle } from "@plane/ui";
-import { cn, getSubscriptionName } from "@plane/utils";
+import { getSubscriptionName } from "@plane/utils";
 // components
 import { DiscountInfo } from "@/components/license/modal/card/discount-info";
 import type { TPlanDetail } from "@/constants/plans";
 // local imports
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { PlanFrequencyToggle } from "./frequency-toggle";
 
 type TPlanDetailProps = {
@@ -27,9 +28,6 @@ type TPlanDetailProps = {
   billingFrequency: TBillingFrequency | undefined;
   setBillingFrequency: (frequency: TBillingFrequency) => void;
 };
-
-const COMMON_BUTTON_STYLE =
-  "relative inline-flex items-center justify-center w-full px-4 py-1.5 text-xs font-medium rounded-lg focus:outline-none transition-all duration-300 animate-slide-up";
 
 export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) {
   const { subscriptionType, planDetail, billingFrequency, setBillingFrequency } = props;
@@ -45,36 +43,30 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
     billingFrequency === "month"
       ? planDetail.monthlyPriceSecondaryDescription
       : planDetail.yearlyPriceSecondaryDescription;
-  // helper styles
-  const upgradeButtonStyle = getUpgradeButtonStyle(subscriptionType, false) ?? getButtonStyling("primary", "lg");
 
   const handleRedirection = () => {
     const frequency = billingFrequency ?? "year";
     // Get the redirection URL based on the subscription type and billing frequency
     const redirectUrl = SUBSCRIPTION_REDIRECTION_URLS[subscriptionType][frequency] ?? TALK_TO_SALES_URL;
-    captureSuccess({
-      eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.upgrade_plan_redirected,
-      payload: {
-        subscriptionType,
-      },
-    });
     // Open the URL in a new tab
     window.open(redirectUrl, "_blank");
   };
 
   return (
-    <div className="flex flex-col justify-between col-span-1 p-3 space-y-0.5">
+    <div className="col-span-1 flex flex-col justify-between space-y-0.5 p-3">
       {/* Plan name and pricing section */}
       <div className="flex flex-col items-start">
-        <div className="flex w-full gap-2 items-center text-xl font-medium">
-          <span className="transition-all duration-300">{subscriptionName}</span>
+        <div className="flex w-full items-center gap-2 text-h4-semibold">
+          <span>{subscriptionName}</span>
           {subscriptionType === EProductSubscriptionEnum.PRO && (
-            <span className="px-2 rounded text-custom-primary-200 bg-custom-primary-100/20 text-xs">Popular</span>
+            <span className="rounded-sm bg-accent-primary px-2 py-0.5 text-caption-sm-medium text-on-color">
+              Popular
+            </span>
           )}
         </div>
-        <div className="flex gap-x-2 items-start text-custom-text-300 pb-1 transition-all duration-300 animate-slide-up">
+        <div className="flex items-start gap-x-2 pb-1 text-tertiary">
           {isSubscriptionActive && displayPrice !== undefined && (
-            <div className="flex items-center gap-1 text-2xl text-custom-text-100 font-semibold transition-all duration-300">
+            <div className="flex items-center gap-1 text-h3-semibold text-primary">
               <DiscountInfo
                 currency="$"
                 frequency={billingFrequency ?? "month"}
@@ -85,11 +77,9 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
             </div>
           )}
           <div className="pt-1">
-            {pricingDescription && <div className="transition-all duration-300">{pricingDescription}</div>}
+            {pricingDescription && <div>{pricingDescription}</div>}
             {pricingSecondaryDescription && (
-              <div className="text-xs text-custom-text-400 transition-all duration-300">
-                {pricingSecondaryDescription}
-              </div>
+              <div className="text-caption-xs text-placeholder">{pricingSecondaryDescription}</div>
             )}
           </div>
         </div>
@@ -109,18 +99,10 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
       )}
 
       {/* Subscription button */}
-      <div className={cn("flex flex-col gap-1 py-3 items-start transition-all duration-300")}>
-        <button
-          onClick={handleRedirection}
-          className={cn(upgradeButtonStyle, COMMON_BUTTON_STYLE)}
-          data-ph-element={
-            isSubscriptionActive
-              ? WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILLING_UPGRADE_BUTTON(subscriptionType)
-              : WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILLING_TALK_TO_SALES_BUTTON
-          }
-        >
+      <div className="flex flex-col items-start gap-1 py-3">
+        <Button variant="primary" size="lg" onClick={handleRedirection} className="w-full">
           {isSubscriptionActive ? `Upgrade to ${subscriptionName}` : t("common.upgrade_cta.talk_to_sales")}
-        </button>
+        </Button>
       </div>
     </div>
   );

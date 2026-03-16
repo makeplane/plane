@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from "./core";
 
@@ -138,8 +144,8 @@ export const WithActions: Story = {
             <TableCell>john@example.com</TableCell>
             <TableCell>Admin</TableCell>
             <TableCell className="text-right">
-              <button className="mr-2 text-blue-500 hover:underline">Edit</button>
-              <button className="text-red-500 hover:underline">Delete</button>
+              <button className="text-blue-500 mr-2 hover:underline">Edit</button>
+              <button className="text-danger-primary hover:underline">Delete</button>
             </TableCell>
           </TableRow>
           <TableRow>
@@ -147,8 +153,8 @@ export const WithActions: Story = {
             <TableCell>jane@example.com</TableCell>
             <TableCell>User</TableCell>
             <TableCell className="text-right">
-              <button className="mr-2 text-blue-500 hover:underline">Edit</button>
-              <button className="text-red-500 hover:underline">Delete</button>
+              <button className="text-blue-500 mr-2 hover:underline">Edit</button>
+              <button className="text-danger-primary hover:underline">Delete</button>
             </TableCell>
           </TableRow>
         </TableBody>
@@ -173,30 +179,30 @@ export const WithBadges: Story = {
           <TableRow>
             <TableCell>Website Redesign</TableCell>
             <TableCell>
-              <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">In Progress</span>
+              <span className="bg-green-100 rounded-full px-2 py-1 text-11 text-success-primary">In Progress</span>
             </TableCell>
             <TableCell>
-              <span className="rounded-full bg-red-100 px-2 py-1 text-xs text-red-800">High</span>
+              <span className="bg-red-100 rounded-full px-2 py-1 text-11 text-danger-primary">High</span>
             </TableCell>
             <TableCell>John Doe</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Mobile App</TableCell>
             <TableCell>
-              <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">Planned</span>
+              <span className="bg-blue-100 text-blue-800 rounded-full px-2 py-1 text-11">Planned</span>
             </TableCell>
             <TableCell>
-              <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs text-yellow-800">Medium</span>
+              <span className="bg-yellow-100 text-yellow-800 rounded-full px-2 py-1 text-11">Medium</span>
             </TableCell>
             <TableCell>Jane Smith</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>API Integration</TableCell>
             <TableCell>
-              <span className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-800">Completed</span>
+              <span className="bg-gray-100 text-gray-800 rounded-full px-2 py-1 text-11">Completed</span>
             </TableCell>
             <TableCell>
-              <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">Low</span>
+              <span className="bg-green-100 rounded-full px-2 py-1 text-11 text-success-primary">Low</span>
             </TableCell>
             <TableCell>Bob Wilson</TableCell>
           </TableRow>
@@ -296,8 +302,8 @@ export const LargeDataset: Story = {
               <TableCell>{["Engineering", "Sales", "Marketing", "Support"][i % 4]}</TableCell>
               <TableCell>
                 <span
-                  className={`rounded-full px-2 py-1 text-xs ${
-                    i % 2 === 0 ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                  className={`rounded-full px-2 py-1 text-11 ${
+                    i % 2 === 0 ? "bg-green-100 text-success-primary" : "bg-gray-100 text-gray-800"
                   }`}
                 >
                   {i % 2 === 0 ? "Active" : "Inactive"}
@@ -314,7 +320,7 @@ export const LargeDataset: Story = {
 export const CustomStyling: Story = {
   render() {
     return (
-      <Table className="border-2 border-blue-200">
+      <Table className="border-blue-200 border-2">
         <TableHeader>
           <TableRow className="bg-blue-100">
             <TableHead className="text-blue-900">Name</TableHead>

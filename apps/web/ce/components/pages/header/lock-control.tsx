@@ -1,11 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // plane imports
-import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
@@ -79,8 +82,7 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
           <button
             type="button"
             onClick={toggleLock}
-            data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON}
-            className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
+            className="grid size-6 flex-shrink-0 place-items-center rounded-sm text-secondary transition-colors hover:bg-layer-1 hover:text-primary"
             aria-label="Lock"
           >
             <LockKeyhole className="size-3.5" />
@@ -92,12 +94,11 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
         <button
           type="button"
           onClick={toggleLock}
-          data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON}
-          className="h-6 flex items-center gap-1 px-2 rounded text-custom-primary-100 bg-custom-primary-100/20 hover:bg-custom-primary-100/30 transition-colors"
+          className="flex h-6 items-center gap-1 rounded-sm bg-accent-primary/20 px-2 text-accent-primary transition-colors hover:bg-accent-primary/30"
           aria-label="Locked"
         >
-          <LockKeyhole className="flex-shrink-0 size-3.5 animate-lock-icon" />
-          <span className="text-xs font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in">
+          <LockKeyhole className="animate-lock-icon size-3.5 flex-shrink-0" />
+          <span className="animate-text-slide-in overflow-hidden text-11 font-medium whitespace-nowrap transition-all duration-500 ease-out">
             Locked
           </span>
         </button>
@@ -105,11 +106,11 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
 
       {displayState === "unlocked" && (
         <div
-          className="h-6 flex items-center gap-1 px-2 rounded text-custom-text-200 animate-fade-out"
+          className="flex h-6 animate-fade-out items-center gap-1 rounded-sm px-2 text-secondary"
           aria-label="Unlocked"
         >
-          <LockKeyholeOpen className="flex-shrink-0 size-3.5 animate-unlock-icon" />
-          <span className="text-xs font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in animate-text-fade-out">
+          <LockKeyholeOpen className="animate-unlock-icon size-3.5 flex-shrink-0" />
+          <span className="animate-text-slide-in animate-text-fade-out overflow-hidden text-11 font-medium whitespace-nowrap transition-all duration-500 ease-out">
             Unlocked
           </span>
         </div>

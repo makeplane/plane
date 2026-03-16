@@ -1,7 +1,13 @@
-import { Download, ExternalLink, Minus, Plus } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { Download, Minus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import { CloseIcon } from "@plane/propel/icons";
+import { NewTabIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -193,8 +199,8 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
 
   return (
     <div
-      className={cn("fixed inset-0 size-full z-50 bg-black/90 opacity-0 pointer-events-none transition-opacity", {
-        "opacity-100 pointer-events-auto editor-image-full-screen-modal": isFullScreenEnabled,
+      className={cn("pointer-events-none fixed inset-0 z-50 size-full bg-black/90 opacity-0 transition-opacity", {
+        "editor-image-full-screen-modal pointer-events-auto opacity-100": isFullScreenEnabled,
         "cursor-default": !isDragging,
         "cursor-grabbing": isDragging,
       })}
@@ -205,15 +211,15 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
       <div
         ref={modalRef}
         onMouseDown={(e) => e.target === modalRef.current && handleClose()}
-        className="relative size-full grid place-items-center overflow-hidden"
+        className="relative grid size-full place-items-center overflow-hidden"
       >
         <button
           type="button"
           onClick={handleClose}
-          className="absolute top-10 right-10 size-8 grid place-items-center"
+          className="absolute top-10 right-10 grid size-8 place-items-center"
           aria-label="Close image viewer"
         >
-          <CloseIcon className="size-8 text-white/60 hover:text-white transition-colors" />
+          <CloseIcon className="size-8 text-white/60 transition-colors hover:text-white" />
         </button>
         <img
           ref={setImageRef}
@@ -231,7 +237,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
           }}
           onMouseDown={handleMouseDown}
         />
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1 rounded-md border border-white/20 py-2 divide-x divide-white/20 bg-black">
+        <div className="fixed bottom-10 left-1/2 flex -translate-x-1/2 items-center justify-center gap-1 divide-x divide-subtle-1 rounded-md border border-subtle-1 bg-black py-2">
           <div className="flex items-center">
             <button
               type="button"
@@ -242,13 +248,13 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
                 }
                 handleMagnification("decrease");
               }}
-              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
+              className="grid size-6 place-items-center text-white/60 transition-colors duration-200 hover:text-white disabled:text-white/30"
               disabled={magnification <= MIN_ZOOM}
               aria-label="Zoom out"
             >
               <Minus className="size-4" />
             </button>
-            <span className="text-sm w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
+            <span className="w-12 text-center text-13 text-white">{Math.round(100 * magnification)}%</span>
             <button
               type="button"
               onClick={(e) => {
@@ -258,18 +264,18 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
                 }
                 handleMagnification("increase");
               }}
-              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
+              className="grid size-6 place-items-center text-white/60 transition-colors duration-200 hover:text-white disabled:text-white/30"
               disabled={magnification >= MAX_ZOOM}
               aria-label="Zoom in"
             >
-              <Plus className="size-4" />
+              <PlusIcon className="size-4" />
             </button>
           </div>
           {!isTouchDevice && (
             <button
               type="button"
               onClick={() => window.open(downloadSrc, "_blank")}
-              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+              className="grid size-8 flex-shrink-0 place-items-center text-white/60 transition-colors duration-200 hover:text-white"
               aria-label="Download image"
             >
               <Download className="size-4" />
@@ -279,10 +285,10 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
             <button
               type="button"
               onClick={() => window.open(src, "_blank")}
-              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+              className="grid size-8 flex-shrink-0 place-items-center text-white/60 transition-colors duration-200 hover:text-white"
               aria-label="Open image in new tab"
             >
-              <ExternalLink className="size-4" />
+              <NewTabIcon className="size-4" />
             </button>
           )}
         </div>

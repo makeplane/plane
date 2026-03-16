@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // ui
 import { Checkbox } from "@plane/ui";
@@ -23,7 +29,7 @@ export const MultipleSelectEntityAction = observer(function MultipleSelectEntity
 
   return (
     <Checkbox
-      className={cn("!outline-none size-3.5", className)}
+      className={cn("size-3.5 !outline-none", className)}
       iconClassName="size-3"
       onClick={(e) => {
         e.stopPropagation();

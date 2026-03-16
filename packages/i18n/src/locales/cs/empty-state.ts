@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   common_empty_state: {
     progress: {
@@ -187,6 +193,11 @@ export default {
       description:
         "Generujte bezpečné API tokeny pro připojení vašeho pracovního prostoru s externími systémy a aplikacemi.",
       cta_primary: "Přidat API token",
+    },
+    webhooks: {
+      title: "Zatím nebyl přidán žádný Webhook",
+      description: "Automatizujte oznámení externím službám při výskytu událostí projektu.",
+      cta_primary: "Přidat webhook",
     },
   },
 } as const;

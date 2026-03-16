@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Extensions } from "@tiptap/core";
 import { CharacterCount } from "@tiptap/extension-character-count";
@@ -47,6 +53,7 @@ type TArguments = Pick<
   | "isTouchDevice"
   | "mentionHandler"
   | "placeholder"
+  | "showPlaceholderOnEmpty"
   | "tabIndex"
   | "extendedEditorProps"
 > & {
@@ -65,6 +72,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     isTouchDevice = false,
     mentionHandler,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     editable,
     extendedEditorProps,
@@ -108,7 +116,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     TableCell,
     TableRow,
     CustomMentionExtension(mentionHandler),
-    CustomPlaceholderExtension({ placeholder }),
+    CustomPlaceholderExtension({ placeholder, showPlaceholderOnEmpty }),
     CharacterCount,
     CustomColorExtension,
     CustomTextAlignExtension,

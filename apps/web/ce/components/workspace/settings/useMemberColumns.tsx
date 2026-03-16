@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, LOGIN_MEDIUM_LABELS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { renderFormattedDate } from "@plane/utils";
 import { MemberHeaderColumn } from "@/components/project/member-header-column";
@@ -29,6 +35,7 @@ export const useMemberColumns = () => {
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const isSuspended = (rowData: RowData) => rowData.is_active === false;
+
   // handlers
   const handleDisplayFilterUpdate = (filterUpdates: Partial<IMemberFilters>) => {
     updateFilters(filterUpdates);
@@ -49,7 +56,7 @@ export const useMemberColumns = () => {
       tdRender: (rowData: RowData) => (
         <NameColumn
           rowData={rowData}
-          workspaceSlug={workspaceSlug as string}
+          workspaceSlug={workspaceSlug}
           isAdmin={isAdmin}
           currentUser={currentUser}
           setRemoveMemberModal={setRemoveMemberModal}
@@ -61,9 +68,7 @@ export const useMemberColumns = () => {
       key: "Display name",
       content: t("workspace_settings.settings.members.details.display_name"),
       tdRender: (rowData: RowData) => (
-        <div className={`w-32 ${isSuspended(rowData) ? "text-custom-text-400" : ""}`}>
-          {rowData.member.display_name}
-        </div>
+        <div className={`w-32 ${isSuspended(rowData) ? "text-placeholder" : ""}`}>{rowData.member.display_name}</div>
       ),
       thRender: () => (
         <MemberHeaderColumn
@@ -78,9 +83,7 @@ export const useMemberColumns = () => {
       key: "Email address",
       content: t("workspace_settings.settings.members.details.email_address"),
       tdRender: (rowData: RowData) => (
-        <div className={`w-48 truncate ${isSuspended(rowData) ? "text-custom-text-400" : ""}`}>
-          {rowData.member.email}
-        </div>
+        <div className={`w-48 truncate ${isSuspended(rowData) ? "text-placeholder" : ""}`}>{rowData.member.email}</div>
       ),
       thRender: () => (
         <MemberHeaderColumn
@@ -101,16 +104,18 @@ export const useMemberColumns = () => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         />
       ),
-      tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug as string} />,
+      tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug} />,
     },
 
     {
       key: "Authentication",
       content: t("workspace_settings.settings.members.details.authentication"),
-      tdRender: (rowData: RowData) =>
-        isSuspended(rowData) ? null : (
-          <div className="capitalize">{rowData.member.last_login_medium?.replace("-", " ")}</div>
-        ),
+      tdRender: (rowData: RowData) => {
+        if (isSuspended(rowData)) return null;
+        const loginMedium = rowData.member.last_login_medium;
+        if (!loginMedium) return null;
+        return <div>{LOGIN_MEDIUM_LABELS[loginMedium]}</div>;
+      },
     },
 
     {

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { ImageIcon, RotateCcw } from "lucide-react";
 import type { ChangeEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -168,9 +174,16 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
     [uploadFile, editor, getPos]
   );
 
+  const isErrorState = failedToLoadImage || hasDuplicationFailed;
+
+  const borderColor =
+    selected && editor.isEditable && !isErrorState
+      ? "color-mix(in srgb, var(--border-color-accent-strong) 20%, transparent)"
+      : undefined;
+
   const getDisplayMessage = useCallback(() => {
     const isUploading = isImageBeingUploaded;
-    if (failedToLoadImage || hasDuplicationFailed) {
+    if (isErrorState) {
       return "Error loading image";
     }
 
@@ -183,7 +196,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
     }
 
     return "Add an image";
-  }, [draggedInside, editor.isEditable, failedToLoadImage, isImageBeingUploaded, hasDuplicationFailed]);
+  }, [draggedInside, editor.isEditable, isErrorState, isImageBeingUploaded]);
 
   const handleRetryClick = useCallback(
     (e: React.MouseEvent) => {
@@ -198,18 +211,20 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 bg-custom-background-90 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
+        "image-upload-component flex cursor-default items-center justify-start gap-2 rounded-lg border border-dashed bg-layer-3 px-2 py-3 text-tertiary transition-all duration-200 ease-in-out",
         {
-          "hover:text-custom-text-200 hover:bg-custom-background-80 cursor-pointer": editor.isEditable,
-          "bg-custom-background-80 text-custom-text-200": draggedInside && editor.isEditable,
-          "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
-            selected && editor.isEditable,
-          "text-red-500 cursor-default": failedToLoadImage || hasDuplicationFailed,
-          "hover:text-red-500": (failedToLoadImage || hasDuplicationFailed) && editor.isEditable,
-          "bg-red-500/10": (failedToLoadImage || hasDuplicationFailed) && selected,
-          "hover:bg-red-500/10": (failedToLoadImage || hasDuplicationFailed) && selected && editor.isEditable,
+          "border-subtle": !(selected && editor.isEditable && !isErrorState),
+          "cursor-pointer hover:bg-layer-3-hover hover:text-secondary": editor.isEditable && !isErrorState,
+          "bg-layer-3-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
+          "bg-accent-primary/10 text-accent-secondary hover:bg-accent-primary/10 hover:text-accent-secondary":
+            selected && editor.isEditable && !isErrorState,
+          "cursor-default bg-danger-subtle text-danger-primary": isErrorState,
+          "hover:bg-danger-subtle-hover hover:text-danger-primary": isErrorState && editor.isEditable,
+          "bg-danger-subtle-selected": isErrorState && selected,
+          "hover:bg-danger-subtle-active": isErrorState && selected && editor.isEditable,
         }
       )}
+      style={borderColor ? { borderColor } : undefined}
       onDrop={onDrop}
       onDragOver={onDragEnter}
       onDragLeave={onDragLeave}
@@ -221,21 +236,21 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
       }}
     >
       <ImageIcon className="size-4" />
-      <div className="text-base font-medium flex-1">{getDisplayMessage()}</div>
+      <div className="flex-1 text-14 font-medium">{getDisplayMessage()}</div>
       {hasDuplicationFailed && editor.isEditable && (
         <button
           type="button"
           onClick={handleRetryClick}
           className={cn(
-            "flex items-center gap-1 px-2 py-1 text-xs font-medium text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-200 rounded-md transition-all duration-200 ease-in-out",
+            "flex items-center gap-1 rounded-md px-2 py-1 font-medium text-danger-primary transition-all duration-200 ease-in-out hover:bg-danger-subtle-hover",
             {
-              "hover:bg-red-500/20": selected,
+              "hover:bg-danger-subtle-hover": selected,
             }
           )}
           title="Retry duplication"
         >
           <RotateCcw className="size-3" />
-          Retry
+          <span className="text-11">Retry</span>
         </button>
       )}
       <input

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isNodeSelection, mergeAttributes, Node, nodeInputRule } from "@tiptap/core";
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 // constants
@@ -25,7 +31,7 @@ export const CustomHorizontalRule = Node.create<HorizontalRuleOptions>({
   addOptions() {
     return {
       HTMLAttributes: {
-        class: "py-4 border-custom-border-400",
+        class: "py-4 border-strong-1",
       },
     };
   },

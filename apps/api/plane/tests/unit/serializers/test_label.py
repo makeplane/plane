@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import pytest
 from plane.app.serializers import LabelSerializer
 from plane.db.models import Project, Label
@@ -10,9 +14,7 @@ class TestLabelSerializer:
     @pytest.mark.django_db
     def test_label_serializer_create_valid_data(self, db, workspace):
         """Test creating a label with valid data"""
-        project = Project.objects.create(
-            name="Test Project", identifier="TEST", workspace=workspace
-        )
+        project = Project.objects.create(name="Test Project", identifier="TEST", workspace=workspace)
 
         serializer = LabelSerializer(
             data={"name": "Test Label"},
@@ -30,14 +32,10 @@ class TestLabelSerializer:
     @pytest.mark.django_db
     def test_label_serializer_create_duplicate_name(self, db, workspace):
         """Test creating a label with a duplicate name"""
-        project = Project.objects.create(
-            name="Test Project", identifier="TEST", workspace=workspace
-        )
+        project = Project.objects.create(name="Test Project", identifier="TEST", workspace=workspace)
 
         Label.objects.create(name="Test Label", project=project)
 
-        serializer = LabelSerializer(
-            data={"name": "Test Label"}, context={"project_id": project.id}
-        )
+        serializer = LabelSerializer(data={"name": "Test Label"}, context={"project_id": project.id})
         assert not serializer.is_valid()
         assert serializer.errors == {"name": ["LABEL_NAME_ALREADY_EXISTS"]}

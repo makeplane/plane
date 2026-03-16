@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 // icons import
@@ -20,7 +26,7 @@ const meta: Meta<typeof TabNavigationList> = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[900px] p-8 bg-custom-background-100">
+      <div className="w-[900px] bg-surface-1 p-8">
         <Story />
       </div>
     ),
@@ -49,7 +55,7 @@ export const Default: Story = {
       <div className="space-y-8">
         {/* Example 1: Navigation with anchor tags (simulating React Router Link) */}
         <div className="space-y-3">
-          <div className="text-xs font-medium text-custom-text-300 uppercase tracking-wide">
+          <div className="text-11 font-medium tracking-wide text-tertiary uppercase">
             With Navigation Links (e.g., React Router)
           </div>
           <TabNavigationList>
@@ -63,7 +69,7 @@ export const Default: Story = {
                 }}
               >
                 <TabNavigationItem isActive={activeNavTab === item.key}>
-                  <div className="flex items-center gap-2 z-10">
+                  <div className="z-10 flex items-center gap-2">
                     <item.icon className="h-4 w-4" />
                     <span>{item.name}</span>
                   </div>
@@ -71,15 +77,15 @@ export const Default: Story = {
               </a>
             ))}
           </TabNavigationList>
-          <div className="text-xs text-custom-text-300">
-            Active: <span className="font-mono text-custom-text-100">{activeNavTab}</span>
+          <div className="text-11 text-tertiary">
+            Active: <span className="font-mono text-primary">{activeNavTab}</span>
           </div>
         </div>
 
         {/* Code example */}
-        <div className="mt-6 p-4 bg-custom-background-80 rounded-md">
-          <div className="text-xs font-medium text-custom-text-200 mb-2">Example Code:</div>
-          <pre className="text-xs text-custom-text-300 overflow-x-auto">
+        <div className="mt-6 rounded-md bg-layer-1 p-4">
+          <div className="mb-2 text-11 font-medium text-secondary">Example Code:</div>
+          <pre className="overflow-x-auto text-11 text-tertiary">
             {`// With React Router Link
 <TabNavigationList>
   {items.map(item => (

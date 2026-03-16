@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projects",
@@ -17,6 +23,7 @@ export default {
     favorites: "Favorites",
     pro: "Pro",
     upgrade: "Upgrade",
+    stickies: "Stickies",
   },
 
   auth: {

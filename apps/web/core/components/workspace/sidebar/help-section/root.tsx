@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { HelpCircle, MessagesSquare, User } from "lucide-react";
@@ -45,9 +51,9 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
         closeOnSelect
       >
         <CustomMenu.MenuItem onClick={() => window.open("https://go.plane.so/p-docs", "_blank")}>
-          <div className="flex items-center gap-x-2 rounded text-xs">
-            <PageIcon className="h-3.5 w-3.5 text-custom-text-200" height={14} width={14} />
-            <span className="text-xs">{t("documentation")}</span>
+          <div className="flex items-center gap-x-2 rounded-sm text-11">
+            <PageIcon className="h-3.5 w-3.5 text-secondary" height={14} width={14} />
+            <span className="text-11">{t("documentation")}</span>
           </div>
         </CustomMenu.MenuItem>
         {isChatSupportEnabled && (
@@ -55,46 +61,44 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             <button
               type="button"
               onClick={openChatSupport}
-              className="flex w-full items-center gap-x-2 rounded text-xs hover:bg-custom-background-80"
+              className="flex w-full items-center gap-x-2 rounded-sm text-11 hover:bg-layer-1"
             >
-              <MessagesSquare className="h-3.5 w-3.5 text-custom-text-200" />
-              <span className="text-xs">{t("message_support")}</span>
+              <MessagesSquare className="h-3.5 w-3.5 text-secondary" />
+              <span className="text-11">{t("message_support")}</span>
             </button>
           </CustomMenu.MenuItem>
         )}
         <CustomMenu.MenuItem onClick={() => window.open("mailto:sales@plane.so", "_blank")}>
-          <div className="flex items-center gap-x-2 rounded text-xs">
-            <User className="h-3.5 w-3.5 text-custom-text-200" size={14} />
-            <span className="text-xs">{t("contact_sales")}</span>
+          <div className="flex items-center gap-x-2 rounded-sm text-11">
+            <User className="h-3.5 w-3.5 text-secondary" size={14} />
+            <span className="text-11">{t("contact_sales")}</span>
           </div>
         </CustomMenu.MenuItem>
-        <div className="my-1 border-t border-custom-border-200" />
+        <div className="my-1 border-t border-subtle" />
         <CustomMenu.MenuItem>
           <button
             type="button"
             onClick={() => toggleShortcutsListModal(true)}
-            className="flex w-full items-center justify-start text-xs hover:bg-custom-background-80"
+            className="justify-sbg-layer-211 flex w-full items-center hover:bg-layer-1"
           >
-            <span className="text-xs">{t("keyboard_shortcuts")}</span>
+            <span className="text-11">{t("keyboard_shortcuts")}</span>
           </button>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem>
           <button
             type="button"
             onClick={() => setProductUpdatesModalOpen(true)}
-            className="flex w-full items-center justify-start text-xs hover:bg-custom-background-80"
+            className="justify-sbg-layer-211 flex w-full items-center hover:bg-layer-1"
           >
-            <span className="text-xs">{t("whats_new")}</span>
+            <span className="text-11">{t("whats_new")}</span>
           </button>
         </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={() => window.open("https://go.plane.so/p-discord", "_blank", "noopener,noreferrer")}
-        >
-          <div className="flex items-center gap-x-2 rounded text-xs">
-            <span className="text-xs">Discord</span>
+        <CustomMenu.MenuItem onClick={() => window.open("https://forum.plane.so", "_blank", "noopener,noreferrer")}>
+          <div className="flex items-center gap-x-2 rounded-sm text-11">
+            <span className="text-11">Forum</span>
           </div>
         </CustomMenu.MenuItem>
-        <div className="px-1 pt-2 mt-1 text-xs text-custom-text-200 border-t border-custom-border-200">
+        <div className="mt-1 border-t border-subtle px-1 pt-2 text-11 text-secondary">
           <PlaneVersionNumber />
         </div>
       </CustomMenu>

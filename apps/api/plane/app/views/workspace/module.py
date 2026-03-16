@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.db.models import Prefetch, Q, Count
 
@@ -42,7 +46,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             )
             .annotate(
                 completed_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
@@ -54,7 +58,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             )
             .annotate(
                 cancelled_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
@@ -66,7 +70,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             )
             .annotate(
                 started_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
@@ -78,7 +82,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             )
             .annotate(
                 unstarted_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
@@ -90,7 +94,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             )
             .annotate(
                 backlog_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,

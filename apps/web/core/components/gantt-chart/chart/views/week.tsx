@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -13,54 +18,52 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
   const weekBlocks: IWeekBlock[] = renderView;
 
   return (
-    <div className={`absolute top-0 left-0 min-h-full h-max w-max flex`}>
+    <div className={`absolute top-0 left-0 flex h-max min-h-full w-max`}>
       {currentViewData &&
         weekBlocks?.map((block, rootIndex) => (
           <div
-            key={`month-${block?.startDate}-${block?.endDate}`}
-            className="relative flex flex-col outline-[0.25px] outline outline-custom-border-200"
+            key={`month-${block?.startDate.toString()}-${block?.endDate.toString()}`}
+            className="relative flex flex-col outline-[0.25px] outline-subtle-1"
           >
             {/** Header Div */}
             <div
-              className="w-full sticky top-0 z-[5] bg-custom-background-100 flex-shrink-0 outline-[1px] outline outline-custom-border-200"
+              className="sticky top-0 z-[5] w-full flex-shrink-0 bg-surface-1 outline-[1px] outline-subtle-1"
               style={{
                 height: `${HEADER_HEIGHT}px`,
               }}
             >
               {/** Main Months Title */}
-              <div className="w-full inline-flex h-7 justify-between">
+              <div className="inline-flex h-7 w-full justify-between">
                 <div
-                  className="sticky flex items-center font-normal z-[1] m-1 whitespace-nowrap px-3 py-1 text-sm capitalize bg-custom-background-100 text-custom-text-200"
+                  className="sticky z-[1] m-1 flex items-center bg-surface-1 px-3 py-1 text-13 font-regular whitespace-nowrap text-secondary capitalize"
                   style={{
                     left: `${SIDEBAR_WIDTH}px`,
                   }}
                 >
                   {block?.title}
                 </div>
-                <div className="sticky whitespace-nowrap px-3 py-2 text-xs capitalize text-custom-text-400">
+                <div className="sticky px-3 py-2 text-11 whitespace-nowrap text-placeholder capitalize">
                   {block?.weekData?.title}
                 </div>
               </div>
               {/** Days Sub title */}
-              <div className="h-5 w-full flex">
+              <div className="flex h-5 w-full">
                 {block?.children?.map((weekDay, index) => (
                   <div
                     key={`sub-title-${rootIndex}-${index}`}
                     className={cn(
-                      "flex flex-shrink-0 p-1 text-center capitalize justify-between outline-[0.25px] outline outline-custom-border-200",
+                      "flex flex-shrink-0 justify-between p-1 text-center capitalize outline-[0.25px] outline-subtle-1",
                       {
-                        "bg-custom-primary-100/20": weekDay.today,
+                        "bg-accent-primary/20": weekDay.today,
                       }
                     )}
                     style={{ width: `${currentViewData?.data.dayWidth}px` }}
                   >
-                    <div className="space-x-1 text-xs font-medium text-custom-text-400">
-                      {weekDay.dayData.abbreviation}
-                    </div>
-                    <div className="space-x-1 text-xs font-medium">
+                    <div className="space-x-1 text-11 font-medium text-placeholder">{weekDay.dayData.abbreviation}</div>
+                    <div className="space-x-1 text-11 font-medium">
                       <span
                         className={cn({
-                          "rounded bg-custom-primary-100 px-1 text-white": weekDay.today,
+                          "rounded-sm bg-accent-primary px-1 text-on-color": weekDay.today,
                         })}
                       >
                         {weekDay.date.getDate()}
@@ -71,17 +74,17 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
               </div>
             </div>
             {/** Day Columns */}
-            <div className="h-full w-full flex-grow flex bg-custom-background-100">
+            <div className="flex h-full w-full flex-grow bg-surface-1">
               {block?.children?.map((weekDay, index) => (
                 <div
                   key={`column-${rootIndex}-${index}`}
-                  className={cn("h-full overflow-hidden outline-[0.25px] outline outline-custom-border-100", {
-                    "bg-custom-primary-100/20": weekDay.today,
+                  className={cn("h-full overflow-hidden outline-[0.25px] outline-subtle", {
+                    "bg-accent-primary/20": weekDay.today,
                   })}
                   style={{ width: `${currentViewData?.data.dayWidth}px` }}
                 >
                   {["sat", "sun"].includes(weekDay?.dayData?.shortTitle) && (
-                    <div className="h-full bg-custom-background-90 outline-[0.25px] outline outline-custom-border-300" />
+                    <div className="h-full bg-surface-2 outline-[0.25px] outline-strong" />
                   )}
                 </div>
               ))}

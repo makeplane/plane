@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Menu } from "@headlessui/react";
 import { MoreHorizontal } from "lucide-react";
 import * as React from "react";
@@ -194,7 +200,7 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
     >
       <div
         className={cn(
-          "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
+          "my-1 min-w-[12rem] overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap focus:outline-none",
           {
             "max-h-60": maxHeight === "lg",
             "max-h-48": maxHeight === "md",
@@ -257,8 +263,8 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
                     type="button"
                     onClick={handleMenuButtonClick}
                     disabled={disabled}
-                    className={`relative grid place-items-center rounded p-1 text-custom-text-200 outline-none hover:text-custom-text-100 ${
-                      disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
+                    className={`relative grid place-items-center rounded-sm p-1 text-secondary outline-none hover:text-primary ${
+                      disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-layer-transparent-hover"
                     } ${buttonClassName}`}
                     tabIndex={customButtonTabIndex}
                     aria-label={ariaLabel}
@@ -271,12 +277,10 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
                   <button
                     ref={setReferenceElement}
                     type="button"
-                    className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-xs duration-300 ${
-                      open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
-                    } ${noBorder ? "" : "border border-custom-border-300 shadow-sm focus:outline-none"} ${
-                      disabled
-                        ? "cursor-not-allowed text-custom-text-200"
-                        : "cursor-pointer hover:bg-custom-background-80"
+                    className={`flex items-center justify-between gap-1 rounded-md px-2.5 py-1 text-11 whitespace-nowrap duration-300 ${
+                      open ? "text-primary" : "text-secondary"
+                    } ${noBorder ? "" : "shadow-sm border border-strong focus:outline-none"} ${
+                      disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
                     } ${buttonClassName}`}
                     onClick={handleMenuButtonClick}
                     tabIndex={customButtonTabIndex}
@@ -396,10 +400,10 @@ function SubMenu(props: ICustomSubMenuProps) {
           {({ active }) => (
             <div
               className={cn(
-                "w-full select-none rounded px-1 py-1.5 text-left text-custom-text-200 flex items-center justify-between cursor-pointer",
+                "flex w-full cursor-pointer items-center justify-between rounded-sm px-1 py-1.5 text-left text-secondary select-none",
                 {
-                  "bg-custom-background-80": active && !disabled,
-                  "text-custom-text-400": disabled,
+                  "bg-layer-transparent-hover": active && !disabled,
+                  "text-placeholder": disabled,
                   "cursor-not-allowed": disabled,
                 }
               )}
@@ -419,8 +423,7 @@ function SubMenu(props: ICustomSubMenuProps) {
             style={styles.popper}
             {...attributes.popper}
             className={cn(
-              "fixed z-30 min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-1 text-xs shadow-custom-shadow-lg",
-              "ring-1 ring-black ring-opacity-5", // Additional styling to make it stand out
+              "fixed z-30 min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1 p-1 text-11",
               contentClassName
             )}
             data-prevent-outside-click="true"
@@ -459,10 +462,10 @@ function MenuItem(props: ICustomMenuItemProps) {
         <button
           type="button"
           className={cn(
-            "w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200",
+            "w-full truncate rounded-sm px-1 py-1.5 text-left text-secondary select-none",
             {
-              "bg-custom-background-80": active && !disabled,
-              "text-custom-text-400": disabled,
+              "bg-layer-transparent-hover": active && !disabled,
+              "text-placeholder": disabled,
             },
             className
           )}
@@ -489,10 +492,10 @@ function SubMenuTrigger(props: ICustomSubMenuTriggerProps) {
       {({ active }) => (
         <div
           className={cn(
-            "w-full select-none rounded px-1 py-1.5 text-left text-custom-text-200 flex items-center justify-between",
+            "flex w-full items-center justify-between rounded-sm px-1 py-1.5 text-left text-secondary select-none",
             {
-              "bg-custom-background-80": active && !disabled,
-              "text-custom-text-400": disabled,
+              "bg-layer-transparent-hover": active && !disabled,
+              "text-placeholder": disabled,
               "cursor-pointer": !disabled,
               "cursor-not-allowed": disabled,
             },
@@ -513,7 +516,7 @@ function SubMenuContent(props: ICustomSubMenuContentProps) {
   return (
     <div
       className={cn(
-        "z-[15] min-w-[12rem] overflow-hidden rounded-md border border-custom-border-300 bg-custom-background-100 p-1 text-xs shadow-custom-shadow-rg",
+        "z-[15] min-w-[12rem] overflow-hidden rounded-md border border-subtle-1 bg-surface-1 p-1 text-11",
         className
       )}
     >

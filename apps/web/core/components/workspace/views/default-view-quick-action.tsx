@@ -1,7 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { ExternalLink, LinkIcon } from "lucide-react";
-// plane imports
+
 import { useTranslation } from "@plane/i18n";
+// plane imports
+import { LinkIcon, NewTabIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
 import type { TStaticViewTypes } from "@plane/types";
@@ -38,7 +45,7 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: t("open_in_new_tab"),
-      icon: ExternalLink,
+      icon: NewTabIcon,
     },
     {
       key: "copy-link",
@@ -54,7 +61,7 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
         ellipsis
         placement="bottom-end"
         closeOnSelect
-        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
       >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
@@ -67,7 +74,7 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -78,8 +85,8 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
                 <h5>{t(item.title || "")}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("whitespace-pre-line text-tertiary", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

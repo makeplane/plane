@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -115,7 +121,7 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
         <>
           {/* TODO: Translate here */}
           {`Are you sure you want to delete ${isEpic ? "epic" : "work item"} `}
-          <span className="break-words font-medium text-custom-text-100">
+          <span className="font-medium break-words text-primary">
             {projectDetails?.identifier}-{issue?.sequence_id}
           </span>
           {` ? All of the data related to the ${isEpic ? "epic" : "work item"} will be permanently removed. This action cannot be undone.`}

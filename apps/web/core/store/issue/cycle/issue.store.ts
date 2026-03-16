@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { get, set, concat, uniq, update } from "lodash-es";
 import { action, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -131,7 +137,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
    * @param projectId
    * @param id is the cycle Id
    */
-  fetchParentStats = (workspaceSlug: string, projectId?: string | undefined, id?: string | undefined) => {
+  fetchParentStats = (workspaceSlug: string, projectId?: string, id?: string) => {
     const cycleId = id ?? this.cycleId;
 
     if (projectId && cycleId) {
@@ -150,7 +156,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     }
   };
 
-  updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
+  updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string) => {
     try {
       const distributionUpdates = getDistributionPathsPostUpdate(
         prevIssueState,
@@ -305,12 +311,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     }
   ) => {
     // call API call to transfer issues
-    const response = await this.cycleService.transferIssues(
-      workspaceSlug as string,
-      projectId as string,
-      cycleId as string,
-      payload
-    );
+    const response = await this.cycleService.transferIssues(workspaceSlug, projectId, cycleId, payload);
     // call fetch issues
     if (this.paginationOptions) {
       await this.fetchIssues(workspaceSlug, projectId, "mutation", this.paginationOptions, cycleId);

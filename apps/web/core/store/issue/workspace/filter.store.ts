@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -18,13 +24,13 @@ import type {
 import { EIssuesStoreType, EIssueLayoutTypes, STATIC_VIEW_TYPES } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // local imports
 import type { IBaseIssueFilterStore, IIssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 import type { IIssueRootStore } from "../root.store";
 
-type TWorkspaceFilters = TStaticViewTypes | string;
+type TWorkspaceFilters = TStaticViewTypes;
 
 export type TBaseFilterStore = IBaseIssueFilterStore & IIssueFilterHelperStore;
 
@@ -132,7 +138,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
       if (STATIC_VIEW_TYPES.includes(viewId)) {
         const currentUserId = this.rootIssueStore.currentUserId;
-        const paramForStaticView = this.getFilterConditionBasedOnViews(currentUserId, viewId as TStaticViewTypes);
+        const paramForStaticView = this.getFilterConditionBasedOnViews(currentUserId, viewId);
         if (paramForStaticView) {
           filterParams = { ...filterParams, ...paramForStaticView };
         }
@@ -212,7 +218,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       if (!issueFilters) return;
 
       const _filters = {
-        richFilters: issueFilters.richFilters as TWorkItemFilterExpression,
+        richFilters: issueFilters.richFilters,
         displayFilters: issueFilters.displayFilters as IIssueDisplayFilterOptions,
         displayProperties: issueFilters.displayProperties as IIssueDisplayProperties,
         kanbanFilters: issueFilters.kanbanFilters as TIssueKanbanFilters,

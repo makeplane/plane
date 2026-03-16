@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
@@ -120,18 +125,18 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
           className={cn(
             `flex w-full items-center justify-between gap-2 rounded-md p-1`,
             roundedTab ? `rounded-3xl` : `rounded-md`,
-            noBackground ? `` : `bg-custom-background-90`,
-            size === "xs" ? `text-xs` : `text-sm`
+            noBackground ? `` : `bg-layer-2`,
+            size === "xs" ? `text-11` : `text-13`
           )}
         >
           {PROGRESS_STATS.map((stat) => (
             <Tab
               className={cn(
-                `p-1 w-full text-custom-text-100 outline-none focus:outline-none cursor-pointer transition-all`,
-                roundedTab ? `rounded-3xl border border-custom-border-200` : `rounded`,
+                `w-full cursor-pointer p-1 text-primary transition-all outline-none focus:outline-none`,
+                roundedTab ? `rounded-3xl border border-subtle` : `rounded-sm`,
                 stat.key === currentTab
-                  ? "bg-custom-background-100 text-custom-text-300"
-                  : "text-custom-text-400 hover:text-custom-text-300"
+                  ? "bg-layer-transparent-active text-secondary"
+                  : "text-placeholder hover:text-secondary"
               )}
               key={stat.key}
               onClick={() => setModuleTab(stat.key)}
@@ -140,7 +145,7 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
             </Tab>
           ))}
         </Tab.List>
-        <Tab.Panels className="py-3 text-custom-text-200">
+        <Tab.Panels className="py-3 text-secondary">
           <Tab.Panel key={"stat-assignees"}>
             <AssigneeStatComponent
               distribution={distributionAssigneeData}

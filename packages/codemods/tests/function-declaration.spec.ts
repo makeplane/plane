@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { describe, it, expect } from "vitest";
 import { applyTransform } from "@hypermod/utils";
 import * as transformer from "../function-declaration";
@@ -13,7 +19,7 @@ describe("function-declaration", () => {
         return <div>Hello, world!</div>;
       };
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -39,7 +45,7 @@ describe("function-declaration", () => {
         return <div>Hello, {name}!</div>;
       };
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -73,7 +79,7 @@ describe("function-declaration", () => {
         return <div>Hello, {name}!</div>;
       };
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -101,7 +107,7 @@ describe("function-declaration", () => {
         return "hello";
       };
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -121,7 +127,7 @@ describe("function-declaration", () => {
         return <div>Analytics</div>;
       });
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -141,7 +147,7 @@ describe("function-declaration", () => {
         return <a href="https://github.com">Star us</a>;
       };
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -161,7 +167,7 @@ describe("function-declaration", () => {
         return <div>Sidebar</div>;
       });
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -179,7 +185,7 @@ describe("function-declaration", () => {
       `
       export const DateAlert = (props: TDateAlertProps) => <></>;
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -200,7 +206,7 @@ describe("function-declaration", () => {
         return <>{children}</>;
       });
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -224,7 +230,7 @@ describe("function-declaration", () => {
         return <div>Hello</div>;
       });
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -247,7 +253,7 @@ describe("function-declaration", () => {
         return <div>Chart</div>;
       });
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -271,7 +277,7 @@ describe("function-declaration", () => {
         return <button ref={ref}>Click me</button>;
       });
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -293,7 +299,7 @@ describe("function-declaration", () => {
 
       export const EditorAdditionalMentionsRoot: React.FC<TCallbackMentionComponentProps> = () => null;
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -315,7 +321,7 @@ describe("function-declaration", () => {
         <div ref={ref}>Content</div>
       ));
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -338,7 +344,7 @@ describe("function-declaration", () => {
         null
       );
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -381,7 +387,7 @@ export const PreloadResources = () =>
   // usePreloadResources();
   null;
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -426,7 +432,7 @@ export const MyObserverComponent = observer(() => {
   return <div>Observer component</div>;
 });
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -444,7 +450,7 @@ export const MyObserverComponent = observer(() => {
       `
       export const Foo = () => <div />; // trailing comment
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toContain("// trailing comment");
@@ -456,10 +462,111 @@ export const MyObserverComponent = observer(() => {
       `
       export /* leading comment */ const Foo = () => <div />;
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toContain("/* leading comment */");
   });
-});
 
+  it("should preserve dependency arrays when transforming wrapped components", async () => {
+    const result = await applyTransform(
+      transformer,
+      `
+      import { useMemo } from "react";
+
+      const MyComponent = useMemo(() => {
+        return () => <div>Hello</div>;
+      }, [dep]);
+      `,
+      { parser: "tsx", path: "file.tsx" }
+    );
+
+    expect(result).toMatchInlineSnapshot(`
+      "import { useMemo } from "react";
+
+            const MyComponent = useMemo(function MyComponent() {
+              return () => <div>Hello</div>;
+            }, [dep]);"
+    `);
+  });
+
+  it("should preserve dependency arrays for constants that look like components", async () => {
+    const result = await applyTransform(
+      transformer,
+      `
+      import { useMemo } from "react";
+
+      const ACTION_HANDLERS = useMemo(function ACTION_HANDLERS() {
+        return {
+          archived: () => {},
+        };
+      }, []);
+      `,
+      { parser: "tsx", path: "file.tsx" }
+    );
+
+    expect(result).toMatchInlineSnapshot(`
+      "import { useMemo } from "react";
+
+            const ACTION_HANDLERS = useMemo(function ACTION_HANDLERS() {
+              return {
+                archived: () => {},
+              };
+            }, []);"
+    `);
+  });
+
+  it("should handle memo with generic type arguments correctly", async () => {
+    const result = await applyTransform(
+      transformer,
+      `
+      import { memo } from "react";
+
+      type TAccessMenuProps = {
+        currentAccess: number;
+      };
+
+      export const AccessMenu = memo<TAccessMenuProps>(
+        ({ currentAccess }) => {
+          return <div>{currentAccess}</div>;
+        }
+      );
+      `,
+      { parser: "tsx" }
+    );
+
+    expect(result).toMatchInlineSnapshot(`
+      "import { memo } from "react";
+
+            type TAccessMenuProps = {
+              currentAccess: number;
+            };
+
+            export const AccessMenu = memo(function AccessMenu(
+              {
+                currentAccess
+              }: TAccessMenuProps
+            ) {
+              return <div>{currentAccess}</div>;
+            });"
+    `);
+  });
+
+  it("should not transform CONSTANT_CASE variables", async () => {
+    const result = await applyTransform(
+      transformer,
+      `
+      export const MY_CONSTANT = () => {
+        return "value";
+      };
+      `,
+      { parser: "tsx" }
+    );
+
+    expect(result).toMatchInlineSnapshot(`
+      "export const MY_CONSTANT = () => {
+              return "value";
+            };"
+    `);
+  });
+});

@@ -1,7 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
-// plane imports
+
 import type { ENotificationFilterType } from "@plane/constants";
+import { CheckIcon } from "@plane/propel/icons";
+// plane imports
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -27,18 +34,23 @@ export const NotificationFilterOptionItem = observer(function NotificationFilter
   return (
     <div
       key={value}
-      className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
+      className="flex cursor-pointer items-center gap-2 rounded-xs p-1 px-2 transition-all hover:bg-layer-1"
       onClick={() => handleFilterTypeChange(value, !isSelected)}
     >
       <div
-        className={cn("flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-sm transition-all", {
-          "bg-custom-primary text-white": isSelected,
-          "bg-custom-background-90": !isSelected,
+        className={cn("flex h-3 w-3 flex-shrink-0 items-center justify-center rounded-xs transition-all", {
+          "bg-accent-primary text-on-color": isSelected,
+          "bg-surface-2": !isSelected,
         })}
       >
-        {isSelected && <Check className="h-2.5 w-2.5" />}
+        {isSelected && <CheckIcon className="h-2.5 w-2.5" />}
       </div>
-      <div className={cn("whitespace-nowrap text-sm", isSelected ? "text-custom-text-100" : "text-custom-text-200")}>
+      <div
+        className={cn("text-body-xs-medium whitespace-nowrap", {
+          "text-primary": isSelected,
+          "text-secondary": !isSelected,
+        })}
+      >
         {label}
       </div>
     </div>

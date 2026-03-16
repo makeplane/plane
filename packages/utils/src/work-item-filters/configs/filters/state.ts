@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
 import type { IState, TFilterProperty, TStateGroups, TSupportedOperators } from "@plane/types";
@@ -48,7 +54,7 @@ export const getStateGroupMultiSelectConfig = (
 export const getStateGroupFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateStateGroupFilterParams> =>
   (params: TCreateStateGroupFilterParams) =>
-    createFilterConfig<P, TStateGroups>({
+    createFilterConfig<P>({
       id: key,
       label: "State Group",
       ...params,
@@ -102,7 +108,7 @@ export const getStateMultiSelectConfig = (params: TCreateStateFilterParams, sing
 export const getStateFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateStateFilterParams> =>
   (params: TCreateStateFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "State",
       ...params,

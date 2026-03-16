@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   common_empty_state: {
     progress: {
@@ -176,6 +182,11 @@ export default {
       title: "暂无个人令牌",
       description: "生成安全的 API 令牌以将工作空间与外部系统和应用程序连接。",
       cta_primary: "添加 API 令牌",
+    },
+    webhooks: {
+      title: "尚未添加 Webhook",
+      description: "在项目事件发生时自动向外部服务发送通知。",
+      cta_primary: "添加 webhook",
     },
   },
 } as const;

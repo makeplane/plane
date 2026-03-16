@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projekte",
@@ -17,6 +23,7 @@ export default {
     favorites: "Favoriten",
     pro: "Pro",
     upgrade: "Upgrade",
+    stickies: "Notizen",
   },
   auth: {
     common: {
@@ -344,13 +351,13 @@ export default {
   project_id_must_be_at_least_1_character: "Projekt-ID muss mindestens 1 Zeichen lang sein",
   project_id_must_be_at_most_5_characters: "Projekt-ID darf maximal 5 Zeichen lang sein",
   project_id: "Projekt-ID",
-  project_id_tooltip_content: "Hilft, Arbeitselemente im Projekt eindeutig zu identifizieren. Max. 5 Zeichen.",
+  project_id_tooltip_content: "Hilft, Arbeitselemente im Projekt eindeutig zu identifizieren. Max. 10 Zeichen.",
   description_placeholder: "Beschreibung",
   only_alphanumeric_non_latin_characters_allowed: "Es sind nur alphanumerische und nicht-lateinische Zeichen erlaubt.",
   project_id_is_required: "Projekt-ID ist erforderlich",
   project_id_allowed_char: "Es sind nur alphanumerische und nicht-lateinische Zeichen erlaubt.",
   project_id_min_char: "Projekt-ID muss mindestens 1 Zeichen lang sein",
-  project_id_max_char: "Projekt-ID darf maximal 5 Zeichen lang sein",
+  project_id_max_char: "Projekt-ID darf maximal 10 Zeichen lang sein",
   project_description_placeholder: "Geben Sie eine Projektbeschreibung ein",
   select_network: "Netzwerk auswählen",
   lead: "Leitung",
@@ -412,7 +419,7 @@ export default {
   docs: "Dokumentation",
   full_changelog: "Vollständiges Änderungsprotokoll",
   support: "Support",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Bereitgestellt von Plane Pages",
   please_select_at_least_one_invitation: "Bitte wählen Sie mindestens eine Einladung aus.",
   please_select_at_least_one_invitation_description:
@@ -1596,6 +1603,7 @@ export default {
         name: "Name des Arbeitsbereichs",
         company_size: "Unternehmensgröße",
         url: "URL des Arbeitsbereichs",
+        workspace_timezone: "Zeitzone des Arbeitsbereichs",
         update_workspace: "Arbeitsbereich aktualisieren",
         delete_workspace: "Diesen Arbeitsbereich löschen",
         delete_workspace_description:
@@ -1987,6 +1995,46 @@ export default {
         title: "Keine Schätzungssysteme",
         description: "Erstellen Sie ein Schätzungssystem, um den Aufwand zu kommunizieren.",
         primary_button: "Schätzungssystem hinzufügen",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Zyklen",
+        short_title: "Zyklen",
+        description:
+          "Planen Sie die Arbeit in flexiblen Zeiträumen, die sich dem einzigartigen Rhythmus und Tempo dieses Projekts anpassen.",
+        toggle_title: "Zyklen aktivieren",
+        toggle_description: "Planen Sie die Arbeit in fokussierten Zeiträumen.",
+      },
+      modules: {
+        title: "Module",
+        short_title: "Module",
+        description: "Organisieren Sie die Arbeit in Teilprojekte mit engagierten Leitern und Verantwortlichen.",
+        toggle_title: "Module aktivieren",
+        toggle_description: "Projektmitglieder können Module erstellen und bearbeiten.",
+      },
+      views: {
+        title: "Ansichten",
+        short_title: "Ansichten",
+        description:
+          "Speichern Sie benutzerdefinierte Sortierungen, Filter und Anzeigeoptionen oder teilen Sie sie mit Ihrem Team.",
+        toggle_title: "Ansichten aktivieren",
+        toggle_description: "Projektmitglieder können Ansichten erstellen und bearbeiten.",
+      },
+      pages: {
+        title: "Seiten",
+        short_title: "Seiten",
+        description: "Erstellen und bearbeiten Sie freie Inhalte: Notizen, Dokumente, alles.",
+        toggle_title: "Seiten aktivieren",
+        toggle_description: "Projektmitglieder können Seiten erstellen und bearbeiten.",
+      },
+      intake: {
+        title: "Aufnahme",
+        short_title: "Aufnahme",
+        description:
+          "Ermöglichen Sie Nicht-Mitgliedern, Fehler, Feedback und Vorschläge zu teilen, ohne Ihren Workflow zu unterbrechen.",
+        toggle_title: "Aufnahme aktivieren",
+        toggle_description: "Projektmitgliedern erlauben, In-App-Aufnahmeanfragen zu erstellen.",
       },
     },
   },

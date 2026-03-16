@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Selection } from "@tiptap/pm/state";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";

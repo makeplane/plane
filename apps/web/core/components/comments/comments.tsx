@@ -1,5 +1,10 @@
-import type { FC } from "react";
-import React, { useMemo } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -19,6 +24,7 @@ type TCommentsWrapper = {
   getCommentById?: (activityId: string) => TIssueComment | undefined;
   showAccessSpecifier?: boolean;
   showCopyLinkOption?: boolean;
+  enableReplies?: boolean;
 };
 
 export const CommentsWrapper = observer(function CommentsWrapper(props: TCommentsWrapper) {
@@ -31,6 +37,7 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
     projectId,
     showAccessSpecifier = false,
     showCopyLinkOption = false,
+    enableReplies = false,
   } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -49,9 +56,9 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
   );
 
   return (
-    <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
+    <div className="relative flex h-full flex-col gap-y-2 overflow-hidden">
       {renderCommentCreate}
-      <div className="flex-grow py-4 overflow-y-auto">
+      <div className="flex-grow overflow-y-auto py-4">
         {comments?.map((data, index) => {
           let comment;
           if (typeof data === "string") {
@@ -65,13 +72,15 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
             <CommentCard
               key={comment.id}
               workspaceSlug={workspaceSlug}
-              comment={comment as TIssueComment}
+              entityId={entityId}
+              comment={comment}
               activityOperations={activityOperations}
               disabled={!isEditingAllowed}
               ends={index === 0 ? "top" : index === comments.length - 1 ? "bottom" : undefined}
               projectId={projectId}
               showAccessSpecifier={showAccessSpecifier}
               showCopyLinkOption={showCopyLinkOption}
+              enableReplies={enableReplies}
             />
           );
         })}

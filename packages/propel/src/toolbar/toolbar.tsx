@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import type { LucideIcon } from "lucide-react";
 import type { ISvgIcons } from "../icons";
@@ -42,7 +48,7 @@ const ToolbarRoot = React.forwardRef(function ToolbarRoot(
   return (
     <div
       ref={ref}
-      className={cn("flex h-9 w-full items-stretch gap-1.5 bg-custom-background-90 overflow-x-scroll", className)}
+      className={cn("flex h-9 w-full items-stretch gap-1.5 overflow-x-scroll bg-surface-2", className)}
       {...props}
     >
       {children}
@@ -58,7 +64,7 @@ const ToolbarGroup = React.forwardRef(function ToolbarGroup(
     <div
       ref={ref}
       className={cn(
-        "flex items-stretch gap-0.5 border-r border-custom-border-200 px-2.5",
+        "flex items-stretch gap-0.5 border-r border-subtle px-2.5",
         {
           "pl-0": isFirst,
         },
@@ -80,9 +86,9 @@ const ToolbarItem = React.forwardRef(function ToolbarItem(
       ref={ref}
       type="button"
       className={cn(
-        "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-400 hover:bg-custom-background-80 transition-colors",
+        "grid aspect-square place-items-center rounded-xs p-0.5 text-placeholder transition-colors hover:bg-layer-1",
         {
-          "bg-custom-background-80 text-custom-text-100": isActive,
+          "bg-layer-1 text-primary": isActive,
         },
         className
       )}
@@ -90,7 +96,7 @@ const ToolbarItem = React.forwardRef(function ToolbarItem(
     >
       <Icon
         className={cn("h-3.5 w-3.5", {
-          "text-custom-text-100": isActive,
+          "text-primary": isActive,
         })}
         strokeWidth={2.5}
       />
@@ -102,9 +108,9 @@ const ToolbarItem = React.forwardRef(function ToolbarItem(
     return (
       <Tooltip
         tooltipContent={
-          <div className="flex flex-col gap-1 text-center text-xs">
+          <div className="flex flex-col gap-1 text-center text-11">
             <span className="font-medium">{tooltip}</span>
-            {shortcut && <kbd className="text-custom-text-400">{shortcut.join(" + ")}</kbd>}
+            {shortcut && <kbd className="text-placeholder">{shortcut.join(" + ")}</kbd>}
           </div>
         }
       >
@@ -120,17 +126,16 @@ const ToolbarSeparator = React.forwardRef(function ToolbarSeparator(
   { className, ...props }: ToolbarSeparatorProps,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
-  return <div ref={ref} className={cn("h-full w-px bg-custom-border-200 mx-1", className)} {...props} />;
+  return <div ref={ref} className={cn("bg-subtle-1 mx-1 h-full w-px", className)} {...props} />;
 });
 
 const buttonVariants = {
-  primary: "bg-custom-primary-100 text-white hover:bg-custom-primary-200 focus:bg-custom-primary-200",
-  secondary:
-    "bg-custom-background-100 text-custom-text-200 border border-custom-border-200 hover:bg-custom-background-90 focus:bg-custom-background-90",
+  primary: "bg-accent-primary text-on-color hover:bg-accent-primary/80 focus:bg-accent-primary/80",
+  secondary: "bg-surface-1 text-secondary border border-subtle hover:bg-surface-2 focus:bg-surface-2",
   outline:
-    "border border-custom-primary-100 text-custom-primary-100 bg-transparent hover:bg-custom-primary-100/10 focus:bg-custom-primary-100/20",
-  ghost: "text-custom-text-200 hover:bg-custom-background-90 focus:bg-custom-background-90",
-  destructive: "bg-red-500 text-white hover:bg-red-600 focus:bg-red-600",
+    "border border-accent-strong text-accent-primary bg-transparent hover:bg-accent-primary/10 focus:bg-accent-primary/20",
+  ghost: "text-secondary hover:bg-surface-2 focus:bg-surface-2",
+  destructive: "bg-danger-primary text-on-color hover:bg-danger-primary-hover focus:bg-danger-primary-selected",
 };
 
 const ToolbarSubmitButton = React.forwardRef(function ToolbarSubmitButton(
@@ -142,9 +147,9 @@ const ToolbarSubmitButton = React.forwardRef(function ToolbarSubmitButton(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors duration-200",
-          "focus:outline-none focus:ring-2 focus:ring-custom-primary-100/20 focus:ring-offset-2",
-          "disabled:opacity-50 disabled:pointer-events-none",
+          "inline-flex items-center justify-center gap-2 rounded-md px-2.5 py-1.5 text-11 font-medium transition-colors duration-200",
+          "focus:ring-2 focus:ring-accent-strong/20 focus:ring-offset-2 focus:outline-none",
+          "disabled:pointer-events-none disabled:opacity-50",
           buttonVariants[variant],
           className
         )}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -29,7 +35,7 @@ const HomePage = observer(function HomePage() {
 
   if (isInitializing)
     return (
-      <div className="flex h-screen min-h-[500px] w-full justify-center items-center">
+      <div className="flex h-screen min-h-[500px] w-full items-center justify-center bg-surface-1">
         <LogoSpinner />
       </div>
     );
@@ -37,7 +43,7 @@ const HomePage = observer(function HomePage() {
   if (currentUser && isAuthenticated) {
     if (nextPath && isValidNextPath(nextPath)) {
       return (
-        <div className="flex h-screen min-h-[500px] w-full justify-center items-center">
+        <div className="flex h-screen min-h-[500px] w-full items-center justify-center bg-surface-1">
           <LogoSpinner />
         </div>
       );

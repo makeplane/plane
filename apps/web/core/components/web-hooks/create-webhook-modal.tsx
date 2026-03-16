@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useState } from "react";
 import { useParams } from "next/navigation";
 // types
-import { WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
@@ -10,7 +15,6 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { csvDownload } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import useKeypress from "@/hooks/use-keypress";
 // components
 import { WebhookForm } from "./form";
@@ -68,12 +72,6 @@ export function CreateWebhookModal(props: ICreateWebhookModal) {
 
     await createWebhook(workspaceSlug.toString(), payload)
       .then(({ webHook, secretKey }) => {
-        captureSuccess({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_created,
-          payload: {
-            webhook: formData?.url,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("workspace_settings.settings.webhooks.toasts.created.title"),
@@ -86,13 +84,6 @@ export function CreateWebhookModal(props: ICreateWebhookModal) {
         csvDownload(csvData, `webhook-secret-key-${Date.now()}`);
       })
       .catch((error) => {
-        captureError({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_created,
-          payload: {
-            webhook: formData?.url,
-          },
-          error: error as Error,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("workspace_settings.settings.webhooks.toasts.not_created.title"),

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { orderBy, isEmpty, update, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -144,7 +150,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
         }
       })
       // .filter((n) => (this.filters.read ? (n.read_at ? true : false) : n.read_at ? false : true))
-      .map((n) => n.id) as string[];
+      .map((n) => n.id);
     return workspaceNotificationIds;
   });
 

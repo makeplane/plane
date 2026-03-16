@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { FloatingOverlay } from "@floating-ui/react";
 import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
@@ -124,9 +130,9 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
       <div
         ref={dropdownContainerRef}
         className={cn(
-          "relative max-h-80 w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2 opacity-0 invisible transition-opacity",
+          "invisible relative max-h-80 w-[14rem] space-y-2 overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 opacity-0 shadow-raised-200 transition-opacity",
           {
-            "opacity-100 visible": isVisible,
+            "visible opacity-100": isVisible,
           }
         )}
         style={{
@@ -150,15 +156,15 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
                 id={`emoji-item-${index}`}
                 type="button"
                 className={cn(
-                  "flex items-center gap-2 w-full rounded px-2 py-1.5 text-sm text-left truncate text-custom-text-200 hover:bg-custom-background-80 transition-colors duration-150",
+                  "flex w-full items-center gap-2 truncate rounded-sm px-2 py-1.5 text-left text-13 text-secondary transition-colors duration-150 hover:bg-layer-1-hover",
                   {
-                    "bg-custom-background-80": isSelected,
+                    "bg-layer-1-hover": isSelected,
                   }
                 )}
                 onClick={() => selectItem(index)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <span className="size-5 grid place-items-center flex-shrink-0 text-base">{item.emoji}</span>
+                <span className="grid size-5 flex-shrink-0 place-items-center text-14">{item.emoji}</span>
                 <span className="flex-grow truncate">
                   <span className="font-medium">:{item.name}:</span>
                 </span>
@@ -166,7 +172,7 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
             );
           })
         ) : (
-          <div className="text-center text-sm text-custom-text-400 py-2">No emojis found</div>
+          <div className="py-2 text-center text-13 text-placeholder">No emojis found</div>
         )}
       </div>
     </>

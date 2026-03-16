@@ -1,10 +1,15 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // lucide icons
-import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { Minimize2, Maximize2, Circle } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 // ui
@@ -13,7 +18,6 @@ import { CustomMenu } from "@plane/ui";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // types
@@ -75,7 +79,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         title: "Success!",
         message: "Work items added to the cycle successfully.",
       });
-    } catch (error) {
+    } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -108,11 +112,11 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         />
       )}
       <div
-        className={`relative flex flex-shrink-0 gap-2 py-1.5 ${
+        className={`relative flex flex-shrink-0 gap-1 py-1.5 ${
           verticalAlignPosition ? `w-[44px] flex-col items-center` : `w-full flex-row items-center`
         }`}
       >
-        <div className="flex h-[25px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
+        <div className="flex size-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
 
@@ -122,14 +126,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           }`}
         >
           <div
-            className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-custom-text-100 ${
-              verticalAlignPosition ? `vertical-lr max-h-[400px]` : ``
+            className={`line-clamp-1 inline-block truncate overflow-hidden font-medium text-primary ${
+              verticalAlignPosition ? `max-h-[400px] vertical-lr` : ``
             }`}
           >
             {title}
           </div>
           <div
-            className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `pr-0.5` : `pl-2`}`}
+            className={`flex-shrink-0 text-13 font-medium text-tertiary ${verticalAlignPosition ? `pr-0.5` : `pl-2`}`}
           >
             {count || 0}
           </div>
@@ -138,8 +142,8 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         <WorkFlowGroupTree groupBy={group_by} groupId={column_id} />
 
         {sub_group_by === null && (
-          <div
-            className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+          <button
+            className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
             onClick={() => handleCollapsedGroups("group_by", column_id)}
           >
             {verticalAlignPosition ? (
@@ -147,22 +151,21 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             ) : (
               <Minimize2 width={14} strokeWidth={2} />
             )}
-          </div>
+          </button>
         )}
 
         {!disableIssueCreation &&
           (renderExistingIssueModal ? (
             <CustomMenu
               customButton={
-                <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
-                  <Plus height={14} width={14} strokeWidth={2} />
+                <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover">
+                  <PlusIcon height={14} width={14} strokeWidth={2} />
                 </span>
               }
               placement="bottom-end"
             >
               <CustomMenu.MenuItem
                 onClick={() => {
-                  captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                   setIsOpen(true);
                 }}
               >
@@ -170,7 +173,6 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem
                 onClick={() => {
-                  captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.add_existing });
                   setOpenExistingIssueListModal(true);
                 }}
               >
@@ -178,15 +180,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               </CustomMenu.MenuItem>
             </CustomMenu>
           ) : (
-            <div
-              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+            <button
+              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
               onClick={() => {
-                captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                 setIsOpen(true);
               }}
             >
-              <Plus width={14} strokeWidth={2} />
-            </div>
+              <PlusIcon width={14} strokeWidth={2} />
+            </button>
           ))}
       </div>
     </>

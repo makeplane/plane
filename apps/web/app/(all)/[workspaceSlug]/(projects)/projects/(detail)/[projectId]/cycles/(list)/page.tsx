@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -67,7 +73,7 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
   // No access to cycle
   if (currentProjectDetails?.cycle_view === false)
     return (
-      <div className="flex items-center justify-center h-full w-full">
+      <div className="flex h-full w-full items-center justify-center">
         <DetailedEmptyState
           title={t("disabled_project.empty_state.cycle.title")}
           description={t("disabled_project.empty_state.cycle.description")}
@@ -88,7 +94,7 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <CycleCreateUpdateModal
           workspaceSlug={workspaceSlug}
           projectId={projectId}

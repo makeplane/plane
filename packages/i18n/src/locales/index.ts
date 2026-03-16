@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // Export all locale files to make them accessible from the package root
 export { default as enCore } from "./en/core";
 export { default as enTranslations } from "./en/translations";

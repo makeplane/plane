@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -21,7 +27,7 @@ import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/com
 export const ModulesListHeader = observer(function ModulesListHeader() {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
@@ -47,7 +53,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
                 <BreadcrumbLink
                   label="Modules"
                   href={`/${workspaceSlug}/projects/${projectId}/modules/`}
-                  icon={<ModuleIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -61,13 +67,13 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
         {canUserCreateModule ? (
           <Button
             variant="primary"
-            size="sm"
             data-ph-element={MODULE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => {
               toggleCreateModuleModal(true);
             }}
+            size="lg"
           >
-            <div className="sm:hidden block">{t("add")}</div>
+            <div className="block sm:hidden">{t("add")}</div>
             <div className="hidden sm:block">{t("project_module.add_module")}</div>
           </Button>
         ) : (

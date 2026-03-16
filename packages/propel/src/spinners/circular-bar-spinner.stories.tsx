@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { CircularBarSpinner } from "./circular-bar-spinner";
 
@@ -49,7 +55,7 @@ export const ExtraLarge: Story = {
 
 export const CustomColor: Story = {
   args: {
-    className: "text-green-500",
+    className: "text-success-primary",
   },
 };
 
@@ -59,23 +65,23 @@ export const AllSizes: Story = {
       <div className="flex items-center gap-6">
         <div className="text-center">
           <CircularBarSpinner height="12px" width="12px" />
-          <p className="mt-2 text-xs text-gray-600">Small</p>
+          <p className="text-gray-600 mt-2 text-11">Small</p>
         </div>
         <div className="text-center">
           <CircularBarSpinner height="16px" width="16px" />
-          <p className="mt-2 text-xs text-gray-600">Default</p>
+          <p className="text-gray-600 mt-2 text-11">Default</p>
         </div>
         <div className="text-center">
           <CircularBarSpinner height="24px" width="24px" />
-          <p className="mt-2 text-xs text-gray-600">Medium</p>
+          <p className="text-gray-600 mt-2 text-11">Medium</p>
         </div>
         <div className="text-center">
           <CircularBarSpinner height="32px" width="32px" />
-          <p className="mt-2 text-xs text-gray-600">Large</p>
+          <p className="text-gray-600 mt-2 text-11">Large</p>
         </div>
         <div className="text-center">
           <CircularBarSpinner height="48px" width="48px" />
-          <p className="mt-2 text-xs text-gray-600">XL</p>
+          <p className="text-gray-600 mt-2 text-11">XL</p>
         </div>
       </div>
     );
@@ -88,23 +94,23 @@ export const ColorVariations: Story = {
       <div className="flex items-center gap-6">
         <div className="text-center">
           <CircularBarSpinner className="text-blue-500" height="24px" width="24px" />
-          <p className="mt-2 text-xs text-gray-600">Blue</p>
+          <p className="text-gray-600 mt-2 text-11">Blue</p>
         </div>
         <div className="text-center">
-          <CircularBarSpinner className="text-green-500" height="24px" width="24px" />
-          <p className="mt-2 text-xs text-gray-600">Green</p>
+          <CircularBarSpinner className="text-success-primary" height="24px" width="24px" />
+          <p className="text-gray-600 mt-2 text-11">Green</p>
         </div>
         <div className="text-center">
-          <CircularBarSpinner className="text-red-500" height="24px" width="24px" />
-          <p className="mt-2 text-xs text-gray-600">Red</p>
+          <CircularBarSpinner className="text-danger-primary" height="24px" width="24px" />
+          <p className="text-gray-600 mt-2 text-11">Red</p>
         </div>
         <div className="text-center">
           <CircularBarSpinner className="text-purple-500" height="24px" width="24px" />
-          <p className="mt-2 text-xs text-gray-600">Purple</p>
+          <p className="text-gray-600 mt-2 text-11">Purple</p>
         </div>
         <div className="text-center">
           <CircularBarSpinner className="text-orange-500" height="24px" width="24px" />
-          <p className="mt-2 text-xs text-gray-600">Orange</p>
+          <p className="text-gray-600 mt-2 text-11">Orange</p>
         </div>
       </div>
     );
@@ -114,7 +120,7 @@ export const ColorVariations: Story = {
 export const InButton: Story = {
   render() {
     return (
-      <button className="flex items-center gap-2 rounded bg-green-500 px-4 py-2 text-white">
+      <button className="bg-green-500 flex items-center gap-2 rounded-sm px-4 py-2 text-on-color">
         <CircularBarSpinner height="16px" width="16px" />
         <span>Processing...</span>
       </button>
@@ -125,10 +131,10 @@ export const InButton: Story = {
 export const CenteredInCard: Story = {
   render() {
     return (
-      <div className="w-96 rounded-lg border border-gray-200 bg-white p-8 shadow-md">
+      <div className="border-gray-200 shadow-md w-96 rounded-lg border bg-white p-8">
         <div className="flex flex-col items-center justify-center space-y-4">
           <CircularBarSpinner height="48px" width="48px" />
-          <p className="text-sm text-gray-600">Processing data...</p>
+          <p className="text-gray-600 text-13">Processing data...</p>
         </div>
       </div>
     );

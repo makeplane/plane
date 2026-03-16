@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 import os
 from datetime import datetime, timedelta
 from urllib.parse import urlencode, urlparse
@@ -101,9 +105,7 @@ class GiteaOAuthProvider(OauthAdapter):
                     else None
                 ),
                 "refresh_token_expired_at": (
-                    datetime.fromtimestamp(
-                        token_response.get("refresh_token_expired_at"), tz=pytz.utc
-                    )
+                    datetime.fromtimestamp(token_response.get("refresh_token_expired_at"), tz=pytz.utc)
                     if token_response.get("refresh_token_expired_at")
                     else None
                 ),

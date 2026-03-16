@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
-import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
+import { SquareStackIcon } from "lucide-react";
+import { CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane utils
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TWorkspaceDraftIssue } from "@plane/types";
@@ -15,8 +22,9 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 // plane-web imports
-import { IdentifierText, IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local imports
+import { IdentifierText } from "../issue-detail/identifier-text";
 import { CreateUpdateIssueModal } from "../issue-modal/modal";
 import { WorkspaceDraftIssueDeleteIssueModal } from "./delete-modal";
 import { DraftIssueProperties } from "./draft-issue-properties";
@@ -59,7 +67,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     {
       key: "edit",
       title: "edit",
-      icon: Pencil,
+      icon: EditIcon,
       action: () => {
         setIssueToEdit(issue);
         setCreateUpdateIssueModal(true);
@@ -68,7 +76,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     {
       key: "make-a-copy",
       title: "make_a_copy",
-      icon: Copy,
+      icon: CopyIcon,
       action: () => {
         setCreateUpdateIssueModal(true);
       },
@@ -86,7 +94,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     {
       key: "delete",
       title: "delete",
-      icon: Trash2,
+      icon: TrashIcon,
       action: () => {
         setDeleteIssueModal(true);
       },
@@ -119,7 +127,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
       />
       <div
         id={`issue-${issue.id}`}
-        className=" relative border-b border-b-custom-border-200 w-full cursor-pointer"
+        className="relative w-full cursor-pointer border-b border-b-subtle-1"
         onDoubleClick={() => {
           setIssueToEdit(issue);
           setCreateUpdateIssueModal(true);
@@ -128,7 +136,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
         <Row
           ref={issueRef}
           className={cn(
-            "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent last:border-b-transparent",
+            "group/list-block relative flex min-h-11 flex-col gap-3 bg-layer-transparent py-3 text-13 transition-colors hover:bg-layer-transparent-hover",
             {
               "md:flex-row md:items-center": isSidebarCollapsed,
               "lg:flex-row lg:items-center": !isSidebarCollapsed,
@@ -145,24 +153,25 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
                       <IdentifierText
                         identifier={projectIdentifier}
                         enableClickToCopyIdentifier
-                        textContainerClassName="text-xs font-medium text-custom-text-300"
+                        size="xs"
+                        variant="tertiary"
                       />
                     </div>
                   )}
                 </div>
 
                 {/* sub-issues chevron */}
-                <div className="size-4 grid place-items-center flex-shrink-0" />
+                <div className="grid size-4 flex-shrink-0 place-items-center" />
               </div>
 
               <Tooltip tooltipContent={issue.name} position="top-start" renderByDefault={false}>
-                <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
+                <p className="w-full cursor-pointer truncate text-13 text-primary">{issue.name}</p>
               </Tooltip>
             </div>
 
             {/* quick actions */}
             <div
-              className={cn("block border border-custom-border-300 rounded", {
+              className={cn("block rounded-sm border border-strong", {
                 "md:hidden": isSidebarCollapsed,
                 "lg:hidden": !isSidebarCollapsed,
               })}
@@ -173,7 +182,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
 
           <div className="flex flex-shrink-0 items-center gap-2">
             <DraftIssueProperties
-              className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
+              className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-shrink-0 md:flex-grow" : "lg:flex-shrink-0 lg:flex-grow"} items-center gap-2 whitespace-nowrap`}
               issue={issue}
               updateIssue={async (projectId, issueId, data) => {
                 await updateIssue(workspaceSlug, issueId, data);

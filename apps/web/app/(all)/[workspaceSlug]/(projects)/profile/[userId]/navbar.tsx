@@ -1,13 +1,16 @@
-import React from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+// plane imports
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-
-// components
-// constants
 import { Header, EHeaderVariant } from "@plane/ui";
+import { cn } from "@plane/utils";
 
 type Props = {
   isAuthorized: boolean;
@@ -27,11 +30,13 @@ export function ProfileNavbar(props: Props) {
         {tabsList.map((tab) => (
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
             <span
-              className={`flex whitespace-nowrap border-b-2 p-4 text-sm font-medium outline-none ${
-                pathname === `/${workspaceSlug}/profile/${userId}${tab.selected}`
-                  ? "border-custom-primary-100 text-custom-primary-100"
-                  : "border-transparent"
-              }`}
+              className={cn(
+                `flex border-b-2 p-4 text-13 font-medium whitespace-nowrap text-tertiary outline-none hover:text-primary ${
+                  pathname === `/${workspaceSlug}/profile/${userId}${tab.selected}`
+                    ? "border-accent-strong text-accent-primary hover:text-accent-primary"
+                    : "border-transparent"
+                }`
+              )}
             >
               {t(tab.i18n_label)}
             </span>
