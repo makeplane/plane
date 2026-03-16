@@ -50,6 +50,7 @@ from plane.utils.openapi import (
     asset_docs,
 )
 from plane.utils.exception_logger import log_exception
+from plane.utils.asset import validate_asset_type
 from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
@@ -152,20 +153,11 @@ class UserAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the file type is allowed
-        allowed_types = [
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-            "image/jpg",
-            "image/gif",
-        ]
-        if type not in allowed_types:
+        # Validate file type
+        is_valid, error_msg = validate_asset_type(type, entity_type)
+        if not is_valid:
             return Response(
-                {
-                    "error": "Invalid file type. Only JPEG and PNG files are allowed.",
-                    "status": False,
-                },
+                {"error": error_msg, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -334,20 +326,11 @@ class UserServerAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the file type is allowed
-        allowed_types = [
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-            "image/jpg",
-            "image/gif",
-        ]
-        if type not in allowed_types:
+        # Validate file type
+        is_valid, error_msg = validate_asset_type(type, entity_type)
+        if not is_valid:
             return Response(
-                {
-                    "error": "Invalid file type. Only JPEG and PNG files are allowed.",
-                    "status": False,
-                },
+                {"error": error_msg, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -555,10 +538,11 @@ class GenericAssetEndpoint(BaseAPIView):
         # Check if the file size is within the limit
         size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
-        # Check if the file type is allowed
-        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+        # Validate file type
+        is_valid, error_msg = validate_asset_type(type, FileAsset.EntityTypeContext.ISSUE_ATTACHMENT)
+        if not is_valid:
             return Response(
-                {"error": f"Invalid file type: {type}", "status": False},
+                {"error": error_msg, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

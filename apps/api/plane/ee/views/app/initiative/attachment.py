@@ -14,7 +14,6 @@ import json
 import uuid
 
 # Django imports
-from django.conf import settings
 from django.utils import timezone
 from django.http import HttpResponseRedirect
 from django.core.serializers.json import DjangoJSONEncoder
@@ -33,7 +32,7 @@ from plane.ee.serializers import InitiativeAttachmentSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.utils.asset import validate_asset_type, get_asset_size_limit
 
 
 class InitiativeAttachmentEndpoint(BaseAPIView):
@@ -62,24 +61,18 @@ class InitiativeAttachmentEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the file size is greater than the limit
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
-            slug=slug,
-            user_id=str(request.user.id),
-        ):
-            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
-        else:
-            size_limit = min(size, settings.FILE_SIZE_LIMIT)
-
-        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+        # Validate file type
+        is_valid, error_msg = validate_asset_type(type, FileAsset.EntityTypeContext.INITIATIVE_ATTACHMENT)
+        if not is_valid:
             return Response(
-                {
-                    "error": "Invalid file type.",
-                    "status": False,
-                },
+                {"error": error_msg, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Calculate file size limit
+        size_limit = get_asset_size_limit(
+            size, FileAsset.EntityTypeContext.INITIATIVE_ATTACHMENT, slug, request.user.id
+        )
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)

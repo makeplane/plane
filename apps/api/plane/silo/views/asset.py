@@ -24,6 +24,7 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.settings.storage import S3Storage
 from plane.db.models import FileAsset, Workspace
 from plane.utils.exception_logger import log_exception
+from plane.utils.asset import validate_asset_type
 from .base import BaseServiceAPIView
 
 
@@ -103,10 +104,11 @@ class ImportAssetEndpoint(BaseServiceAPIView):
         # Check if the file size is within the limit
         size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
-        # Check if the file type is allowed
-        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+        # Validate file type
+        is_valid, error_msg = validate_asset_type(type, FileAsset.EntityTypeContext.ISSUE_ATTACHMENT)
+        if not is_valid:
             return Response(
-                {"error": "Invalid file type.", "status": False},
+                {"error": error_msg, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

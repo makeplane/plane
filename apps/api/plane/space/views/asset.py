@@ -14,7 +14,6 @@ import uuid
 from enum import Enum
 
 # Django imports
-from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 
@@ -30,8 +29,7 @@ from plane.db.models import DeployBoard, FileAsset, Project, APIToken, BotTypeEn
 from plane.settings.storage import S3Storage
 from .base import BaseAPIView
 from plane.ee.models import IntakeForm, IntakeSetting
-from plane.payment.flags.flag import FeatureFlag
-from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.utils.asset import validate_asset_type, get_asset_size_limit
 
 
 class EntityAssetEndpoint(BaseAPIView):
@@ -116,21 +114,16 @@ class EntityAssetEndpoint(BaseAPIView):
         entity_type = request.data.get("entity_type", "")
         entity_identifier = request.data.get("entity_identifier")
 
-        # Check if the file size is greater than the limit
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
-            slug=publish_entity.workspace.slug,
-            user_id=str(request.user.id),
-        ):
-            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
-        else:
-            size_limit = min(size, settings.FILE_SIZE_LIMIT)
-
-        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+        # Validate file type
+        is_valid, error_msg = validate_asset_type(type, entity_type)
+        if not is_valid:
             return Response(
-                {"error": "Invalid file type.", "status": False},
+                {"error": error_msg, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Calculate file size limit
+        size_limit = get_asset_size_limit(size, entity_type, publish_entity.workspace.slug, request.user.id)
 
         # asset key
         asset_key = f"{publish_entity.workspace_id}/{uuid.uuid4().hex}-{name}"

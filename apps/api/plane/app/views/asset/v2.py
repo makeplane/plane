@@ -33,9 +33,32 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.utils.cache import invalidate_cache_directly
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.throttles.asset import AssetRateThrottle
-from plane.payment.flags.flag_decorator import check_workspace_feature_flag
-from plane.payment.flags.flag import FeatureFlag
 from plane.authentication.session import BaseSessionAuthentication
+from plane.utils.asset import validate_asset_type, get_asset_size_limit
+
+WORKSPACE_ATTACHMENT_ENTITY_TYPES = {
+    FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
+    FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+    FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+    FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
+    FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
+    FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
+    FileAsset.EntityTypeContext.WORKSPACE_MEMBERS_IMPORT,
+    FileAsset.EntityTypeContext.WORK_ITEM_IMPORT,
+    FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+}
+
+PROJECT_ATTACHMENT_ENTITY_TYPES = {
+    FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+    FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
+    FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
+    FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+    FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+    FileAsset.EntityTypeContext.PROJECT_DESCRIPTION,
+    FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
+    FileAsset.EntityTypeContext.INTAKE_FORM_ATTACHMENT,
+    FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+}
 
 
 class UserAssetsV2Endpoint(BaseAPIView):
@@ -125,9 +148,6 @@ class UserAssetsV2Endpoint(BaseAPIView):
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
         entity_type = request.data.get("entity_type", False)
 
-        # Check if the file size is within the limit
-        size_limit = min(size, settings.FILE_SIZE_LIMIT)
-
         #  Check if the entity type is allowed
         if not entity_type or entity_type not in ["USER_AVATAR", "USER_COVER"]:
             return Response(
@@ -135,22 +155,20 @@ class UserAssetsV2Endpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the file type is allowed
-        allowed_types = [
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-            "image/jpg",
-            "image/gif",
-        ]
-        if type not in allowed_types:
+        # Validate file type
+        is_valid, error_msg = validate_asset_type(
+            type,
+            entity_type,
+            attachment_entity_types=WORKSPACE_ATTACHMENT_ENTITY_TYPES,
+        )
+        if not is_valid:
             return Response(
-                {
-                    "error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed.",
-                    "status": False,
-                },
+                {"error": error_msg, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Check if the file size is within the limit
+        size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         # asset key
         asset_key = f"{uuid.uuid4().hex}-{name}"
@@ -370,57 +388,20 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the file type is allowed
-        allowed_types = [
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-            "image/jpg",
-            "image/gif",
-        ]
-
-        # Define the set of entity types that use settings.ATTACHMENT_MIME_TYPES
-        special_entity_types = {
-            FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
-            FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
-            FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
-            FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
-            FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
-            FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
-            FileAsset.EntityTypeContext.WORKSPACE_MEMBERS_IMPORT,
-            FileAsset.EntityTypeContext.WORK_ITEM_IMPORT,
-            FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
-        }
-
-        # Map entity type category to allowed types and error message
-        if entity_type in special_entity_types:
-            valid_types = settings.ATTACHMENT_MIME_TYPES
-            error_message = "Invalid file type."
-        else:
-            valid_types = allowed_types
-            error_message = "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed."
-
-        if type not in valid_types:
+        # Validate file type
+        is_valid, error_msg = validate_asset_type(
+            type,
+            entity_type,
+            attachment_entity_types=WORKSPACE_ATTACHMENT_ENTITY_TYPES,
+        )
+        if not is_valid:
             return Response(
-                {"error": error_message, "status": False},
+                {"error": error_msg, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if entity_type in [
-            FileAsset.EntityTypeContext.WORKSPACE_LOGO,
-            FileAsset.EntityTypeContext.PROJECT_COVER,
-            FileAsset.EntityTypeContext.CUSTOMER_LOGO,
-        ]:
-            size_limit = min(size, settings.FILE_SIZE_LIMIT)
-        else:
-            if not settings.IS_SELF_MANAGED and check_workspace_feature_flag(
-                feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
-                slug=slug,
-                user_id=str(request.user.id),
-            ):
-                size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
-            else:
-                size_limit = min(size, settings.FILE_SIZE_LIMIT)
+        # Calculate file size limit
+        size_limit = get_asset_size_limit(size, entity_type, slug, request.user.id)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -679,56 +660,20 @@ class ProjectAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the file type is allowed
-        allowed_types = [
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-            "image/jpg",
-            "image/gif",
-        ]
-
-        # Define the set of entity types that use settings.ATTACHMENT_MIME_TYPES
-        special_entity_types = {
-            FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
-            FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
-            FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
-            FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
-            FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
-            FileAsset.EntityTypeContext.PROJECT_DESCRIPTION,
-            FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
-            FileAsset.EntityTypeContext.INTAKE_FORM_ATTACHMENT,
-            FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
-        }
-
-        # Map entity type category to allowed types and error message
-        if entity_type in special_entity_types:
-            valid_types = settings.ATTACHMENT_MIME_TYPES
-            error_message = "Invalid file type."
-        else:
-            valid_types = allowed_types
-            error_message = "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed."
-
-        if type not in valid_types:
+        # Validate file type
+        is_valid, error_msg = validate_asset_type(
+            type,
+            entity_type,
+            attachment_entity_types=PROJECT_ATTACHMENT_ENTITY_TYPES,
+        )
+        if not is_valid:
             return Response(
-                {"error": error_message, "status": False},
+                {"error": error_msg, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if entity_type in [
-            FileAsset.EntityTypeContext.WORKSPACE_LOGO,
-            FileAsset.EntityTypeContext.PROJECT_COVER,
-        ]:
-            size_limit = min(size, settings.FILE_SIZE_LIMIT)
-        else:
-            if check_workspace_feature_flag(
-                feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
-                slug=slug,
-                user_id=str(request.user.id),
-            ):
-                size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
-            else:
-                size_limit = min(size, settings.FILE_SIZE_LIMIT)
+        # Calculate file size limit
+        size_limit = get_asset_size_limit(size, entity_type, slug, request.user.id)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)

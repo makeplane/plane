@@ -648,6 +648,9 @@ ATTACHMENT_MIME_TYPES = [
     "text/markdown",
 ]
 
+# Allowed file types for user uploads
+ALLOW_ALL_ATTACHMENT_TYPES = os.environ.get("ALLOW_ALL_ATTACHMENT_TYPES", "0") == "1"
+
 
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")

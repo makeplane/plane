@@ -36,7 +36,6 @@ from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
-from django.conf import settings
 
 # Third party imports
 from rest_framework import status
@@ -165,8 +164,7 @@ from plane.utils.openapi import (
     FORBIDDEN_RESPONSE,
     WORKSPACE_NOT_FOUND_RESPONSE,
 )
-from plane.payment.flags.flag_decorator import check_workspace_feature_flag
-from plane.payment.flags.flag import FeatureFlag
+from plane.utils.asset import validate_asset_type, get_asset_size_limit
 from plane.ee.utils.workflow import WorkflowStateManager
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
@@ -2071,21 +2069,16 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the file size is greater than the limit
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
-            slug=slug,
-            user_id=str(request.user.id),
-        ):
-            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
-        else:
-            size_limit = min(size, settings.FILE_SIZE_LIMIT)
-
-        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+        # Validate file type
+        is_valid, error_msg = validate_asset_type(type, FileAsset.EntityTypeContext.ISSUE_ATTACHMENT)
+        if not is_valid:
             return Response(
-                {"error": "Invalid file type.", "status": False},
+                {"error": error_msg, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Calculate file size limit
+        size_limit = get_asset_size_limit(size, FileAsset.EntityTypeContext.ISSUE_ATTACHMENT, slug, request.user.id)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -2422,21 +2415,16 @@ class IssueAttachmentServerEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the file size is greater than the limit
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
-            slug=slug,
-            user_id=str(request.user.id),
-        ):
-            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
-        else:
-            size_limit = min(size, settings.FILE_SIZE_LIMIT)
-
-        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+        # Validate file type
+        is_valid, error_msg = validate_asset_type(type, FileAsset.EntityTypeContext.ISSUE_ATTACHMENT)
+        if not is_valid:
             return Response(
-                {"error": "Invalid file type.", "status": False},
+                {"error": error_msg, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Calculate file size limit
+        size_limit = get_asset_size_limit(size, FileAsset.EntityTypeContext.ISSUE_ATTACHMENT, slug, request.user.id)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
