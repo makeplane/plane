@@ -1496,7 +1496,7 @@ class PlaneSDKAdapter:
     def add_cycle_work_items(self, workspace_slug: str, project_id: str, cycle_id: str, issues: List[str]) -> Dict[str, Any]:
         """Add work items to a cycle (v0.2)."""
         # log all input arguments
-        log.info(f"Adding work items to cycle {workspace_slug}, {project_id}, {cycle_id}, {issues}")
+        log.debug(f"Adding work items to cycle {workspace_slug}, {project_id}, {cycle_id}, {issues}")
         try:
             # Pass request as positional argument (not data= keyword)
             response = self.client.cycles.add_work_items(workspace_slug, project_id, cycle_id, issue_ids=issues)

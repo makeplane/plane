@@ -249,7 +249,7 @@ class DupesTracker:
                         cached_input_text_price = costs["cached_input_price"]
                         llm_model_pricing_id = costs["pricing_id"]
 
-                        log.info(
+                        log.debug(
                             f"Tracked dupes LLM usage: model={model_key}, "
                             f"input_tokens={input_text_tokens}, output_tokens={output_text_tokens}, "
                             f"cached_tokens={cached_input_text_tokens}, "
@@ -303,7 +303,6 @@ class DupesTracker:
             self.db.commit()
             self.db.refresh(dupes_tracking)
 
-            log.info(f"Successfully tracked dupes operation for workspace {workspace_id}")
             return dupes_tracking
 
         except Exception as e:

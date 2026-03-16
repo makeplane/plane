@@ -30,7 +30,7 @@ from openai import PermissionDeniedError
 from openai import RateLimitError
 from openai import UnprocessableEntityError
 
-from pi.services.llm.llms import get_fallback_model_name
+from pi.services.llm.llms import LLMFactory
 
 log = logging.getLogger(__name__)
 
@@ -69,6 +69,8 @@ def llm_error_handler(
             # Introspect function signature to only pass supported kwargs on retries
             sig = inspect.signature(func)
             func_param_names = set(sig.parameters.keys())
+            # Extract current model name for provider-aware fallbacks
+            _current_model = kwargs.get("llm_model") or kwargs.get("model") or kwargs.get("switch_llm")
 
             for attempt in range(max_retries + 1):
                 try:
@@ -97,8 +99,7 @@ def llm_error_handler(
                 except LengthFinishReasonError as e:  # type: ignore[misc]
                     # Completion hit its length limit while using structured output
                     if attempt < max_retries and enable_retry:
-                        # Switch to best available fallback model (compact JSON serialization)
-                        fallback_model = get_fallback_model_name()
+                        fallback_model = LLMFactory.get_fallback_model_name(_current_model)
                         log.warning(
                             f"{log_context} Length finish encountered, switching model to {fallback_model} and retrying {func.__name__} (attempt {attempt + 1})"  # noqa: E501
                         )
@@ -121,8 +122,7 @@ def llm_error_handler(
                 except asyncio.TimeoutError as e:
                     # Function exceeded timeout - retry with fallback model
                     if attempt < max_retries and enable_retry:
-                        # Switch to best available fallback model (typically faster)
-                        fallback_model = get_fallback_model_name()
+                        fallback_model = LLMFactory.get_fallback_model_name(_current_model)
                         log.warning(
                             f"{log_context} Timeout ({current_timeout}s) exceeded, switching model to {fallback_model} and retrying {func.__name__} (attempt {attempt + 1})"  # noqa: E501
                         )

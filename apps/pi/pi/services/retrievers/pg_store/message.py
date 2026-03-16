@@ -593,7 +593,7 @@ async def mark_assistant_response_as_replaced(db: AsyncSession, user_message_id:
         old_assistant_message.is_replaced = True
 
         await db.commit()
-        log.info(
+        log.debug(
             f"Marked assistant message {old_assistant_message.id} (sequence {old_assistant_message.sequence}) "
             f"as replaced for user message {user_message_id}"
         )

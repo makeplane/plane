@@ -676,7 +676,7 @@ async def prepare_edited_cycle_artifact_data(artifact_data: dict) -> dict:
     entity_info = None
     if isinstance(artifact_data, dict) and "entity_info" in artifact_data:
         entity_info = artifact_data.get("entity_info")
-        log.info(f"Found entity_info in edited cycle artifact data: {entity_info}")
+        log.debug(f"Found entity_info in edited cycle artifact data: {entity_info}")
 
     for key, value in artifact_data.items():
         # Skip null/empty values
@@ -705,7 +705,7 @@ async def prepare_edited_cycle_artifact_data(artifact_data: dict) -> dict:
         project_obj = clean_data.pop("project")
         if "id" in project_obj:
             clean_data["project_id"] = str(project_obj["id"])
-            log.info(f"Converted project object to project_id: {clean_data["project_id"]}")
+            log.debug(f"Converted project object to project_id: {clean_data["project_id"]}")
 
     # Add properties if any
     if properties:
@@ -714,7 +714,7 @@ async def prepare_edited_cycle_artifact_data(artifact_data: dict) -> dict:
     # Restore entity_info if it was present
     if entity_info:
         clean_data["entity_info"] = entity_info
-        log.info(f"Restored entity_info to clean cycle data: {entity_info}")
+        log.debug(f"Restored entity_info to clean cycle data: {entity_info}")
 
     return clean_data
 
@@ -731,7 +731,7 @@ async def prepare_edited_workitem_artifact_data(artifact_data: dict) -> dict:
     entity_info = None
     if isinstance(artifact_data, dict) and "entity_info" in artifact_data:
         entity_info = artifact_data.get("entity_info")
-        log.info(f"Found entity_info in edited workitem artifact data: {entity_info}")
+        log.debug(f"Found entity_info in edited workitem artifact data: {entity_info}")
 
     # Collect all async tasks for parallel execution
     tasks: list[Any] = []
@@ -847,7 +847,7 @@ async def prepare_edited_workitem_artifact_data(artifact_data: dict) -> dict:
     # Restore entity_info if it was present in the original data
     if entity_info:
         clean_data["entity_info"] = entity_info
-        log.info(f"Restored entity_info to clean workitem data: {entity_info}")
+        log.debug(f"Restored entity_info to clean workitem data: {entity_info}")
 
     return clean_data
 

@@ -276,7 +276,7 @@ async def process_conv_history(conv_history: list[dict[str, Any]], db: AsyncSess
     conv_history_enhanced = ""
     recent_conv_history = conv_history[-MAX_CHAT_LENGTH:]
     if len(recent_conv_history) < len(conv_history):
-        log.info(f"Truncating the conversation history to MAX_CHAT_LENGTH: {MAX_CHAT_LENGTH} messages, based on configured limit")
+        log.debug(f"Truncating the conversation history to MAX_CHAT_LENGTH: {MAX_CHAT_LENGTH} messages, based on configured limit")
 
     for idx, qa_pair in enumerate(recent_conv_history):
         # Process user message with potential attachments
@@ -610,7 +610,7 @@ async def process_message_attachments_for_llm(
                 }
 
             attachment_blocks.append(content_block)
-            log.info(f"Processed attachment {filename} ({content_type}) for LLM")
+            log.debug(f"Processed attachment {filename} ({content_type}) for LLM")
 
         return attachment_blocks
 
@@ -877,7 +877,7 @@ def conv_history_from_app_query(query: str) -> Tuple[str, str, List[BaseMessage]
             content = content.strip()
             if not content:
                 continue
-            log.info(f"Conversation history role: {role}, content: {content}")
+            log.debug(f"Conversation history role: {role}, content: {content}")
             if role == "User":
                 langchain_conv_history.append(HumanMessage(content=content))
             elif role == "Assistant":

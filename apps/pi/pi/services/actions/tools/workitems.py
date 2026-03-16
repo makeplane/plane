@@ -325,7 +325,7 @@ async def _workitems_pre_handler(
             raise ValueError("Could not find epic issue type for this project. Please ensure an epic issue type exists.")
 
         kwargs["type_id"] = epic_type_id
-        log.info(f"Injected epic type_id {epic_type_id} for create_epic")
+        log.debug(f"Injected epic type_id {epic_type_id} for create_epic")
 
     # State resolution for create/update/list/epic tools
     if tool_name in ["workitems_create", "workitems_update", "workitems_list", "create_epic", "update_epic"]:
@@ -393,7 +393,7 @@ async def _workitems_pre_handler(
                             found_slug = await get_workspace_slug(workspace_id)
                             if found_slug:
                                 kwargs["workspace_slug"] = found_slug
-                                log.info(f"Auto-resolved workspace_slug {found_slug} from issue_id {issue_id}")
+                                log.debug(f"Auto-resolved workspace_slug {found_slug} from issue_id {issue_id}")
 
             except Exception as e:
                 log.warning(f"Failed to auto-resolve context from issue_id {issue_id}: {e}")
@@ -456,7 +456,7 @@ async def _workitems_post_handler(
                     if identifier_info:
                         data["project_identifier"] = identifier_info.get("project_identifier")
                         data["sequence_id"] = identifier_info.get("sequence_id")
-                        log.info(f"Enriched workitem data with identifier info: {identifier_info.get("identifier")}")
+                        log.debug(f"Enriched workitem data with identifier info: {identifier_info.get("identifier")}")
                 except Exception as e:
                     log.warning(f"Could not enrich workitem data with identifier info: {e}")
 
@@ -497,7 +497,7 @@ async def _workitems_post_handler(
                                 except Exception as e:
                                     log.warning(f"Could not enrich workitem {item.get("id")} with identifier info: {e}")
 
-                        log.info(f"Enriched {len(results)} workitems with identifiers and URLs")
+                        log.debug(f"Enriched {len(results)} workitems with identifiers and URLs")
                     except Exception as e:
                         log.warning(f"Error enriching workitems list with identifiers: {e}")
 

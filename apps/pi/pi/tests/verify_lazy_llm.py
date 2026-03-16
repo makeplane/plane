@@ -21,36 +21,8 @@ from pi.services.llm import llms
 
 
 async def main():
-    print("Verifying LazyLLM implementation...")
-
-    # Access the global llm instance
-    lazy_instance = llms.llm
-
-    print(f"Global llm type: {type(lazy_instance)}")
-    print(f"Is instance of LazyLLM? {isinstance(lazy_instance, llms.LazyLLM)}")
-
-    # Check internal state BEFORE access
-    if hasattr(lazy_instance, "_proxy_target"):
-        print(f"Internal _proxy_target before access: {lazy_instance._proxy_target}")
-        if lazy_instance._proxy_target is None:
-            print("SUCCESS: LLM is not yet initialized.")
-        else:
-            print("FAILURE: LLM is already initialized!")
-    else:
-        print("FAILURE: LazyLLM structure not found.")
-
-    # Trigger initialization
-    print("\nTriggering initialization via attribute access...")
-    _ = lazy_instance.model_name
-
-    # Check internal state AFTER access
-    print(f"Internal _proxy_target after access: {lazy_instance._proxy_target}")
-    if lazy_instance._proxy_target is not None:
-        print("SUCCESS: LLM initialized on demand.")
-    else:
-        print("FAILURE: LLM did not initialize!")
-
-    print("\nVerification Complete for Global LLM.")
+    print("Verifying LazyLLM implementation via ChatKit.tool_llm...")
+    print("(Global singleton LLM instances have been removed; LazyLLM is used by ChatKit)")
 
     print("\nVerifying ChatKit.tool_llm implementation...")
     from pi.services.chat.kit import ChatKit

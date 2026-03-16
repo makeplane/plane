@@ -124,7 +124,7 @@ async def _project_post_handler(
         if "already taken" in error_msg or "409" in error_msg or "conflict" in error_msg:
             if "name" in error_msg and "identifier" not in error_msg:
                 # Name conflict - can't retry
-                log.info(f"Project name '{name}' already exists. Error: {result["error"]}")
+                log.debug(f"Project name '{name}' already exists. Error: {result["error"]}")
                 result["error"] = f"Failed to create project: A project with the name '{name}' already exists. Please choose a different name."
             else:
                 # Identifier conflict - retry with new identifier
@@ -133,10 +133,10 @@ async def _project_post_handler(
                 retry_result = await method_executor.execute(category, method_key, **retry_kwargs)
 
                 if retry_result["success"]:
-                    log.info(f"Successfully created project with fallback identifier '{new_identifier}'")
+                    log.debug(f"Successfully created project with fallback identifier '{new_identifier}'")
                     result = retry_result
                 else:
-                    log.info(f"Failed to create project even with alternative identifier. Error: {retry_result["error"]}")
+                    log.debug(f"Failed to create project even with alternative identifier. Error: {retry_result["error"]}")
                     result = retry_result
         else:
             # Check if project was created despite error (timeout recovery)
@@ -157,7 +157,7 @@ async def _project_post_handler(
                         "workspace_slug": workspace_slug,
                     }
                     result = {"success": True, "data": project_data}
-                    log.info(f"Recovered project creation from DB for identifier '{base_identifier}'")
+                    log.debug(f"Recovered project creation from DB for identifier '{base_identifier}'")
             except Exception as e:
                 log.error(f"Failed to recover project creation from DB: {e}")
 

@@ -391,9 +391,9 @@ async def get_answer_stream_json(
                                 clarification_content = chunk.replace("πspecial clarification blockπ: ", "")
                                 try:
                                     clarification_data = json.loads(clarification_content)
-                                    log.info(f"ChatID: {data.chat_id} - Clarification data received in the endpoint: {clarification_data}")
+                                    log.debug(f"ChatID: {data.chat_id} - Clarification data received in the endpoint: {clarification_data}")
                                     formatted_text = format_clarification_as_text(clarification_data)
-                                    log.info(f"ChatID: {data.chat_id} - Clarification formatted text: {formatted_text}")
+                                    log.debug(f"ChatID: {data.chat_id} - Clarification formatted text: {formatted_text}")
                                     payload = {"chunk": formatted_text}
                                     yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
                                 except json.JSONDecodeError:

@@ -894,7 +894,7 @@ async def search_user_by_name(
     params: list[Any] = []
     param_index = 1
 
-    log.info(f"Searching for user by name filters (display='{display_name}', first='{first_name}', last='{last_name}', project_id='{project_id}')")
+    log.debug(f"Searching for user by name filters (display='{display_name}', first='{first_name}', last='{last_name}', project_id='{project_id}')")
 
     clauses: list[str] = []
 
