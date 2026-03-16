@@ -356,6 +356,10 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
     def list(self, request, slug):
         issue_queryset = self.get_queryset()
 
+        query_params = request.query_params.copy()
+        sub_issue = query_params.get("sub_issue", None)
+        query_params.pop("sub_issue", None)
+
         # Apply filtering from filterset
         issue_queryset = self.filter_queryset(issue_queryset)
 
@@ -365,10 +369,10 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         order_by_param = self._validate_order_by_field(order_by_param)
 
         # Apply legacy filters
-        filters = issue_filters(request.query_params, "GET")
+        filters = issue_filters(query_params, "GET")
         issue_queryset = issue_queryset.filter(**filters)
 
-        if request.query_params.get("sub_issue", None) == "false":
+        if sub_issue and sub_issue == "false":
             issue_queryset = issue_queryset.filter(Q(parent__isnull=True) | (Q(parent__type__is_epic=True)))
 
         # Get common project permission filters
