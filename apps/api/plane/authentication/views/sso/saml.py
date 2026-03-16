@@ -27,6 +27,7 @@ from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
 )
 from plane.authentication.utils.redirection_path import get_redirection_path
+from plane.authentication.utils.group_sync import process_group_sync_on_login
 from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
@@ -51,6 +52,14 @@ class SAMLAuthCloudCallbackEndpoint(View):
             user_login(request=request, user=user)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)
+            # Process group sync (cloud - syncs for specific workspace)
+            process_group_sync_on_login(
+                user=user,
+                auth_response=getattr(provider, "saml_attributes", {}),
+                provider_type="saml",
+                workspace_id=workspace_id,
+                is_cloud=True,
+            )
             # Get the redirection path
             path = get_redirection_path(user=user)
             # redirect to referer path

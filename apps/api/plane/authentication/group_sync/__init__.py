@@ -12,15 +12,21 @@
 from .providers import (
     GroupProviderRegistry,
     BaseGroupProvider,
+    LDAPGroupProvider,
     OIDCGroupProvider,
     OIDCGroupCloudProvider,
+    SAMLGroupProvider,
+    SAMLGroupCloudProvider,
 )
 from .service import GroupSyncService
 
 __all__ = [
     "GroupProviderRegistry",
     "BaseGroupProvider",
+    "LDAPGroupProvider",
     "OIDCGroupProvider",
     "OIDCGroupCloudProvider",
+    "SAMLGroupProvider",
+    "SAMLGroupCloudProvider",
     "GroupSyncService",
 ]

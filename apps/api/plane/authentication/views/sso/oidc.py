@@ -61,7 +61,8 @@ class OIDCAuthCloudCallbackEndpoint(View):
             # Process group sync (cloud - syncs for specific workspace)
             process_group_sync_on_login(
                 user=user,
-                userinfo_response=provider.userinfo_response,
+                auth_response=provider.userinfo_response,
+                provider_type="oidc",
                 workspace_id=workspace_id,
                 is_cloud=True,
             )

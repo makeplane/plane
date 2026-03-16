@@ -256,6 +256,9 @@ class SAMLAdapter(Adapter):
             )
         attributes = self.auth.get_attributes()
 
+        # Expose raw SAML attributes for group sync
+        self.saml_attributes = attributes
+
         email = get_attribute_value(attributes, self.attribute_mapping, "email", default=None)
 
         if not email:
@@ -428,6 +431,9 @@ class SAMLAuthCloudAdapter(Adapter):
                 error_message="SAML_PROVIDER_ERROR",
             )
         attributes = self.auth.get_attributes()
+
+        # Expose raw SAML attributes for group sync
+        self.saml_attributes = attributes
 
         email = get_attribute_value(attributes, self.attribute_mapping, "email", default=None)
 

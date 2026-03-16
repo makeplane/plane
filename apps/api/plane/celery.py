@@ -149,7 +149,7 @@ EE_JOBS = {
     },
     # IdP group sync - runs every 2 hours
     "sync-idp-groups-offline": {
-        "task": "plane.authentication.bgtasks.group_sync_task.sync_oidc_groups_offline",
+        "task": "plane.authentication.bgtasks.group_sync_task.sync_idp_groups_offline",
         "schedule": crontab(hour="*/2", minute=10),  # Every 2 hours at minute 10
     },
 }

@@ -22,31 +22,37 @@ logger = logging.getLogger("plane.authentication")
 
 def process_group_sync_on_login(
     user,
-    userinfo_response: dict,
+    auth_response: dict,
+    provider_type: str = "oidc",
     workspace_id: Optional[UUID] = None,
     is_cloud: bool = False,
 ) -> None:
     """
-    Process group sync after successful OIDC authentication.
+    Process group sync after successful authentication.
 
     For self-hosted: syncs groups across all workspaces where user is a member
     For cloud: syncs groups only for the specified workspace
 
     Args:
         user: The authenticated user
-        userinfo_response: The raw userinfo response from the OIDC provider
+        auth_response: The raw response from the identity provider
+                       (userinfo for OIDC, assertion attributes for SAML, LDAP attributes for LDAP)
+        provider_type: The provider type ('oidc', 'saml', 'ldap')
         workspace_id: The workspace ID (required for cloud, optional for self-hosted)
         is_cloud: Whether this is a cloud environment
     """
-    if not userinfo_response:
-        logger.debug("No userinfo response available for group sync")
+    if not auth_response:
+        logger.debug("No auth response available for group sync")
         return
 
     try:
-        # Get the OIDC group provider
-        provider = GroupProviderRegistry.get_provider("oidc", is_cloud=is_cloud)
+        # Get the group provider for the auth type
+        provider = GroupProviderRegistry.get_provider(provider_type, is_cloud=is_cloud)
         if not provider:
-            logger.warning("OIDC group provider not found")
+            logger.warning(
+                "Group provider not found",
+                extra={"provider_type": provider_type},
+            )
             return
 
         sync_service = GroupSyncService()
@@ -56,7 +62,7 @@ def process_group_sync_on_login(
             _sync_for_workspace(
                 user=user,
                 workspace_id=workspace_id,
-                userinfo_response=userinfo_response,
+                auth_response=auth_response,
                 provider=provider,
                 sync_service=sync_service,
             )
@@ -64,7 +70,7 @@ def process_group_sync_on_login(
             # Self-hosted: sync for all workspaces where user is a member
             _sync_for_all_workspaces(
                 user=user,
-                userinfo_response=userinfo_response,
+                auth_response=auth_response,
                 provider=provider,
                 sync_service=sync_service,
             )
@@ -83,7 +89,7 @@ def process_group_sync_on_login(
 def _sync_for_workspace(
     user,
     workspace_id: UUID,
-    userinfo_response: dict,
+    auth_response: dict,
     provider,
     sync_service: GroupSyncService,
 ) -> None:
@@ -108,8 +114,8 @@ def _sync_for_workspace(
         )
         return
 
-    # Extract groups from userinfo
-    groups = provider.extract_groups(userinfo_response, config.group_attribute_key)
+    # Extract groups from auth response
+    groups = provider.extract_groups(auth_response, config.group_attribute_key)
 
     if not groups:
         logger.debug(
@@ -143,7 +149,7 @@ def _sync_for_workspace(
 
 def _sync_for_all_workspaces(
     user,
-    userinfo_response: dict,
+    auth_response: dict,
     provider,
     sync_service: GroupSyncService,
 ) -> None:
@@ -171,7 +177,9 @@ def _sync_for_all_workspaces(
     for config in configs:
         try:
             # Extract groups using the workspace's configured attribute key
-            groups = provider.extract_groups(userinfo_response, config.group_attribute_key)
+            groups = provider.extract_groups(
+                auth_response, config.group_attribute_key
+            )
 
             if not groups:
                 continue

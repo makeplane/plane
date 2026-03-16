@@ -78,7 +78,7 @@ class LDAPProvider(CredentialAdapter):
                 },
                 {
                     "key": "LDAP_USER_ATTRIBUTES",
-                    "default": os.environ.get("LDAP_USER_ATTRIBUTES", "mail,cn,givenName,sn"),
+                    "default": os.environ.get("LDAP_USER_ATTRIBUTES", "mail,cn,givenName,sn,memberOf"),
                 },
             ]
         )
@@ -251,6 +251,9 @@ class LDAPProvider(CredentialAdapter):
                 )
 
             user_dn, ldap_attrs = user_result
+
+            # Expose raw LDAP attributes for group sync
+            self.ldap_attributes = ldap_attrs
 
             # Authenticate user
             if not self._authenticate_user(conn, user_dn, self.code):

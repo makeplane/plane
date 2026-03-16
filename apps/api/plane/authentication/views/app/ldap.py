@@ -20,6 +20,7 @@ from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
 from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
+from plane.authentication.utils.group_sync import process_group_sync_on_login
 from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
@@ -82,6 +83,13 @@ class LDAPSignInAuthEndpoint(View):
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
+            # Process group sync (self-hosted only - syncs across all workspaces)
+            process_group_sync_on_login(
+                user=user,
+                auth_response=getattr(provider, "ldap_attributes", {}),
+                provider_type="ldap",
+                is_cloud=False,
+            )
             # Get the redirection path
             if next_path:
                 path = next_path

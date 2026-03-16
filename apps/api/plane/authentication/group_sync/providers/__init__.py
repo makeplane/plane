@@ -10,12 +10,17 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 from .base import BaseGroupProvider
+from .ldap import LDAPGroupProvider
 from .oidc import OIDCGroupProvider, OIDCGroupCloudProvider
 from .registry import GroupProviderRegistry
+from .saml import SAMLGroupProvider, SAMLGroupCloudProvider
 
 __all__ = [
     "BaseGroupProvider",
+    "LDAPGroupProvider",
     "OIDCGroupProvider",
     "OIDCGroupCloudProvider",
+    "SAMLGroupProvider",
+    "SAMLGroupCloudProvider",
     "GroupProviderRegistry",
 ]

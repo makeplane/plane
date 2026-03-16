@@ -42,6 +42,7 @@ export type TInstanceLDAPAuthenticationConfigurationKeys =
   | "LDAP_BIND_PASSWORD"
   | "LDAP_USER_SEARCH_BASE"
   | "LDAP_USER_SEARCH_FILTER"
+  | "LDAP_GROUP_SYNC_SEARCH_FILTER"
   | "LDAP_USER_ATTRIBUTES"
   | "LDAP_PROVIDER_NAME";
 

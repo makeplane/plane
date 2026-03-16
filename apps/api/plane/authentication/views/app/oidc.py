@@ -107,7 +107,8 @@ class OIDCallbackEndpoint(View):
             # Process group sync (self-hosted - syncs across all workspaces)
             process_group_sync_on_login(
                 user=user,
-                userinfo_response=provider.userinfo_response,
+                auth_response=provider.userinfo_response,
+                provider_type="oidc",
                 is_cloud=False,
             )
             # Get the redirection path

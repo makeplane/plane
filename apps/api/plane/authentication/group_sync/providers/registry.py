@@ -12,7 +12,9 @@
 from typing import Optional
 
 from .base import BaseGroupProvider
+from .ldap import LDAPGroupProvider
 from .oidc import OIDCGroupProvider, OIDCGroupCloudProvider
+from .saml import SAMLGroupProvider, SAMLGroupCloudProvider
 
 
 class GroupProviderRegistry:
@@ -26,16 +28,14 @@ class GroupProviderRegistry:
     # Self-hosted providers (use instance-level config)
     _providers: dict[str, type[BaseGroupProvider]] = {
         "oidc": OIDCGroupProvider,
-        # Future providers:
-        # "saml": SAMLGroupProvider,
-        # "ldap": LDAPGroupProvider,
+        "saml": SAMLGroupProvider,
+        "ldap": LDAPGroupProvider,
     }
 
     # Cloud providers (use workspace-level config)
     _cloud_providers: dict[str, type[BaseGroupProvider]] = {
         "oidc": OIDCGroupCloudProvider,
-        # Future providers:
-        # "saml": SAMLGroupCloudProvider,
+        "saml": SAMLGroupCloudProvider,
     }
 
     _instances: dict[str, BaseGroupProvider] = {}

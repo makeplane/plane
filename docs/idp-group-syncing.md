@@ -10,7 +10,10 @@ Group Sync lets you manage project memberships in Plane directly from your IdP. 
 
 1. User authenticates via your IdP provider like Okta, Keycloak, Azure Active Directory, Google Workspace, and others.
 
-2. Plane receives the user's group claims from the `userinfo` endpoint or ID token.
+2. Plane receives the user's group information from the IdP:
+   - **OIDC**: from the `userinfo` endpoint or ID token claims.
+   - **SAML**: from assertion attributes in the SAML response.
+   - **LDAP**: from user entry attributes (e.g., `memberOf`) in the directory.
 
 3. Plane checks if any received groups are mapped to projects in the workspace.
 
@@ -22,11 +25,32 @@ Group Sync lets you manage project memberships in Plane directly from your IdP. 
 
 ### Prerequisites
 
-- SSO via OIDC or LDAP must be configured and enabled for your workspace.
+- SSO via OIDC, SAML, or LDAP must be configured and enabled for your workspace.
 
 - Domain verification must have been done if you are on our Cloud.
 
-- Your IdP must be configured to include group claims in its response.
+- Your IdP must be configured to include group information in its response.
+
+### Provider-specific setup
+
+#### OIDC
+
+Ensure your IdP includes a groups claim in the userinfo response or ID token. Common claim names: `groups`, `roles`, `custom:groups`.
+
+#### SAML
+
+Ensure your IdP includes a group attribute in the SAML assertion. You may need to configure an Attribute Statement in your IdP to release group membership. Common attribute names: `groups`, `memberOf`, `http://schemas.xmlsoap.org/claims/Group`.
+
+#### LDAP
+
+Group membership is read from the user's LDAP entry attributes. The most common attribute is `memberOf`, which contains Distinguished Names (DNs) of groups the user belongs to. Plane automatically extracts the CN (Common Name) component from DN values, so a `memberOf` value of `cn=engineering,ou=groups,dc=example,dc=com` becomes the group name `engineering`.
+
+For background (offline) sync, Plane queries your LDAP directory using a configurable search filter. Set `LDAP_GROUP_SYNC_SEARCH_FILTER` to control how users are looked up. The default is `(mail={email})`. The `{email}` placeholder is replaced with the user's email address. Examples:
+- `(mail={email})` — default, matches on the `mail` attribute
+- `(userPrincipalName={email})` — for Active Directory environments
+- `(&(objectClass=person)(mail={email}))` — with additional object class constraint
+
+### Steps
 
 1. Turn on **Group Sync**.
 
@@ -38,9 +62,13 @@ Group Sync lets you manage project memberships in Plane directly from your IdP. 
 
    Others: `groups`, `roles`, `memberOf`, `custom:groups`
 
+   **Tip for LDAP:** Set this to `memberOf` if your directory uses the standard group membership attribute.
+
 3. Configure group maps.
 
    Add **Group name** as it exactly is on your IdP (`engineering-team`, `product-managers`), select the target project on Plane, and assign a role for auto-added members (**Admin**, **Member**, **Guest**).
+
+   **Tip for LDAP:** Use the CN (Common Name) of the group, not the full DN. For example, use `engineering` instead of `cn=engineering,ou=groups,dc=example,dc=com`.
 
 4. Configure sync behavior.
 
@@ -49,6 +77,8 @@ Group Sync lets you manage project memberships in Plane directly from your IdP. 
    | **Sync on log-in** | Sync group memberships each time users logs in.       | Enabled • _Recommended_ Disabled |
    | **Auto-remove**    | Remove users from projects when they leave the group. | Enabled Disabled • _Default_     |
    | **Sync interval**  | Background sync frequency for membership updates      | Set to 24 hours                  |
+
+   **Note:** Background sync (Sync interval) is supported for OIDC and LDAP. SAML does not support background sync because assertions are only available during login.
 
 ## Behavior
 
@@ -94,17 +124,21 @@ Group Sync on, user logs in:
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌──────────────┐     ┌──────────────────┐     ┌─────────────────────────┐  │
-│  │     IdP      │────▶│  OIDC Callback   │────▶│  process_group_sync_    │  │
-│  │ (Okta, etc.) │     │    Endpoint      │     │      on_login()         │  │
+│  │     IdP      │────▶│  Auth Callback   │────▶│  process_group_sync_    │  │
+│  │ (Okta, etc.) │     │  (OIDC/SAML/LDAP)│     │      on_login()         │  │
 │  └──────────────┘     └──────────────────┘     └───────────┬─────────────┘  │
 │                                                             │                │
 │                                                             ▼                │
 │                              ┌──────────────────────────────────────────┐   │
 │                              │         GroupProviderRegistry            │   │
 │                              │  ┌────────────┐  ┌────────────────────┐  │   │
-│                              │  │   OIDC     │  │  OIDC Cloud        │  │   │
-│                              │  │  Provider  │  │    Provider        │  │   │
+│                              │  │   OIDC     │  │  SAML              │  │   │
+│                              │  │  Provider  │  │  Provider          │  │   │
 │                              │  └────────────┘  └────────────────────┘  │   │
+│                              │  ┌────────────┐                          │   │
+│                              │  │   LDAP     │                          │   │
+│                              │  │  Provider  │                          │   │
+│                              │  └────────────┘                          │   │
 │                              └───────────────────┬──────────────────────┘   │
 │                                                  │ extract_groups()         │
 │                                                  ▼                          │
@@ -141,6 +175,8 @@ apps/api/plane/authentication/
 │       ├── __init__.py
 │       ├── base.py             # BaseGroupProvider abstract class
 │       ├── oidc.py             # OIDC provider implementations
+│       ├── saml.py             # SAML provider implementations
+│       ├── ldap.py             # LDAP provider implementation
 │       └── registry.py         # Provider registry
 ├── models/
 │   └── group_sync.py           # GroupSyncConfig, GroupMapping models
@@ -148,9 +184,12 @@ apps/api/plane/authentication/
 │   └── group_sync.py           # Login-time orchestration
 ├── views/
 │   ├── app/
-│   │   └── oidc.py             # Self-hosted OIDC callback
+│   │   ├── oidc.py             # Self-hosted OIDC callback
+│   │   ├── saml.py             # Self-hosted SAML callback
+│   │   └── ldap.py             # Self-hosted LDAP callback
 │   └── sso/
 │       ├── oidc.py             # Cloud OIDC callback
+│       ├── saml.py             # Cloud SAML callback
 │       └── group_sync.py       # Config & mapping API endpoints
 └── serializers/
     └── sso/
@@ -283,7 +322,7 @@ class SyncResult:
 | `sync_user_memberships()`           | Main entry point - orchestrates the full sync        |
 | `_is_workspace_member()`            | Check if user is active workspace member             |
 | `_add_to_workspace()`               | Add user to workspace with Member role               |
-| `_build_group_mapping_lookup()`     | Build group name → (project_id, role) lookup         |
+| `_build_group_mapping_lookup()`     | Build group name -> (project_id, role) lookup        |
 | `_calculate_target_memberships()`   | Determine target projects based on user's groups     |
 | `_get_current_synced_memberships()` | Get projects where user was added via group sync     |
 | `_add_to_project()`                 | Add user to project with GROUP_SYNC source           |
@@ -332,20 +371,60 @@ class OIDCGroupProvider(BaseGroupProvider):
     """
     OIDC provider for self-hosted instances.
     Uses instance-level OIDC config from environment variables.
+    Extracts groups from the userinfo response using the configured claim key.
+    Supports offline group fetching via refresh token + userinfo endpoint.
     """
-
-    def extract_groups(self, auth_response, group_attribute_key):
-        # Extract from userinfo response using configured claim key
-        return auth_response.get(group_attribute_key, [])
 ```
 
 #### OIDCGroupCloudProvider (Cloud)
 
 ```python
-class OIDCGroupCloudProvider(BaseGroupProvider):
+class OIDCGroupCloudProvider(OIDCGroupProvider):
     """
     OIDC provider for cloud instances.
     Uses workspace-specific IdentityProvider configuration from database.
+    """
+```
+
+#### SAMLGroupProvider (Self-hosted)
+
+```python
+# Location: plane/authentication/group_sync/providers/saml.py
+
+class SAMLGroupProvider(BaseGroupProvider):
+    """
+    SAML provider for self-hosted instances.
+    Extracts groups from the SAML assertion attributes.
+    SAML attributes format: {"groups": ["engineering", "product"]}
+    Does NOT support offline group fetching (assertions only available at login).
+    """
+```
+
+#### SAMLGroupCloudProvider (Cloud)
+
+```python
+class SAMLGroupCloudProvider(SAMLGroupProvider):
+    """
+    SAML provider for cloud instances.
+    Behavior is identical to self-hosted since SAML cannot fetch groups offline.
+    """
+```
+
+#### LDAPGroupProvider (Self-hosted)
+
+```python
+# Location: plane/authentication/group_sync/providers/ldap.py
+
+class LDAPGroupProvider(BaseGroupProvider):
+    """
+    LDAP provider for self-hosted instances.
+    Extracts groups from LDAP user entry attributes.
+
+    Handles two group attribute formats:
+    1. DN format (memberOf): [b"cn=engineering,ou=groups,..."] -> extracts CN
+    2. Flat format: [b"engineering", b"product"] -> uses directly
+
+    Supports offline group fetching by querying LDAP with the service account.
     """
 ```
 
@@ -355,12 +434,19 @@ class OIDCGroupCloudProvider(BaseGroupProvider):
 # Location: plane/authentication/group_sync/providers/registry.py
 
 class GroupProviderRegistry:
-    @staticmethod
-    def get_provider(provider_type: str, is_cloud: bool = False):
-        if provider_type == "oidc":
-            return OIDCGroupCloudProvider() if is_cloud else OIDCGroupProvider()
-        # Future: saml, ldap
-        return None
+    _providers = {
+        "oidc": OIDCGroupProvider,
+        "saml": SAMLGroupProvider,
+        "ldap": LDAPGroupProvider,
+    }
+    _cloud_providers = {
+        "oidc": OIDCGroupCloudProvider,
+        "saml": SAMLGroupCloudProvider,
+    }
+
+    @classmethod
+    def get_provider(cls, provider_type: str, is_cloud: bool = False):
+        """Get a group provider instance by type."""
 ```
 
 ---
@@ -369,53 +455,69 @@ class GroupProviderRegistry:
 
 #### process_group_sync_on_login
 
-Called after successful OIDC authentication.
+Called after successful authentication (OIDC, SAML, or LDAP).
 
 ```python
 # Location: plane/authentication/utils/group_sync.py
 
 def process_group_sync_on_login(
     user,
-    userinfo_response: dict,
+    auth_response: dict,
+    provider_type: str = "oidc",
     workspace_id: Optional[UUID] = None,
     is_cloud: bool = False,
 ) -> None:
     """
-    Process group sync after successful OIDC authentication.
+    Process group sync after successful authentication.
+
+    Args:
+        user: The authenticated user
+        auth_response: The raw response from the identity provider
+        provider_type: The provider type ('oidc', 'saml', 'ldap')
+        workspace_id: The workspace ID (required for cloud, optional for self-hosted)
+        is_cloud: Whether this is a cloud environment
 
     For self-hosted: syncs groups across ALL workspaces with group sync enabled
     For cloud: syncs groups only for the specified workspace
     """
 ```
 
-#### Cloud vs Self-hosted Flow
+#### Provider Comparison
 
-| Aspect          | Cloud                             | Self-hosted                            |
-| --------------- | --------------------------------- | -------------------------------------- |
-| Config source   | Database (IdentityProvider model) | Environment variables                  |
-| Workspace scope | Single workspace per auth         | All workspaces with group sync enabled |
-| Provider class  | `OIDCGroupCloudProvider`          | `OIDCGroupProvider`                    |
-| Called from     | `OIDCAuthCloudCallbackEndpoint`   | `OIDCallbackEndpoint`                  |
+| Aspect                | OIDC                            | SAML                            | LDAP                               |
+| --------------------- | ------------------------------- | ------------------------------- | ---------------------------------- |
+| Auth response         | Userinfo JSON                   | Assertion attributes            | LDAP entry attributes              |
+| Group format          | `["eng", "prod"]`               | `["eng", "prod"]`               | DN or flat (bytes, decoded to str) |
+| Default claim key     | `groups`                        | `groups`                        | `memberOf`                         |
+| Offline sync          | Yes (refresh token + userinfo)  | No (assertion only at login)    | Yes (LDAP query with service acct) |
+| Cloud support         | Yes                             | Yes                             | No (self-hosted only)              |
+| Config source (cloud) | IdentityProvider model          | IdentityProvider model          | N/A                                |
+| Offline search filter  | N/A                             | N/A                             | `LDAP_GROUP_SYNC_SEARCH_FILTER`    |
+| Config source (self)  | Environment variables           | Environment variables           | Environment variables              |
+| Called from (self)    | `OIDCallbackEndpoint`           | `SAMLCallbackEndpoint`          | `LDAPSignInAuthEndpoint`           |
+| Called from (cloud)   | `OIDCAuthCloudCallbackEndpoint` | `SAMLAuthCloudCallbackEndpoint` | N/A                                |
 
 ---
 
 ### Sync Flow Diagram
 
 ```
-User Login via OIDC
+User Login via OIDC / SAML / LDAP
         │
         ▼
 ┌───────────────────────────────────────┐
-│  OIDC Callback Endpoint               │
-│  • Validate tokens                    │
+│  Auth Callback Endpoint               │
+│  • Validate credentials/tokens        │
 │  • Create/update user                 │
 │  • Call process_group_sync_on_login() │
+│    with provider_type & auth_response │
 └───────────────────┬───────────────────┘
                     │
                     ▼
 ┌───────────────────────────────────────┐
 │  process_group_sync_on_login()        │
-│  • Get provider (OIDC/LDAP/SAML)      │
+│  • Get provider from registry         │
+│    (OIDC / SAML / LDAP)               │
 │  • For each workspace with sync on:   │
 │    └─ Call sync_user_memberships()    │
 └───────────────────┬───────────────────┘
@@ -426,7 +528,7 @@ User Login via OIDC
 │                                       │
 │  1. Get GroupSyncConfig               │
 │  2. Get all GroupMappings             │
-│  3. Extract groups from userinfo      │
+│  3. Extract groups from auth response │
 │  4. Calculate target memberships      │
 │     (highest role if multiple groups) │
 │                                       │
@@ -563,9 +665,17 @@ Yes. Create separate maps for each project. Users will be added to all mapped pr
 
 With `Sync on login` enabled, changes take effect on the user's next login. If a user is currently logged in, they will see updates after their next authentication.
 
-**Does this work with SAML?**
+**Which SSO providers are supported?**
 
-Group Sync is available for OIDC and LDAP right now. Support for SAML will come a little later.
+Group Sync is available for **OIDC**, **SAML**, and **LDAP**.
+
+**Does background sync work with all providers?**
+
+Background sync (periodic offline syncing) works with **OIDC** (via refresh tokens) and **LDAP** (via service account queries). **SAML** does not support background sync because SAML assertions are only available during the login flow.
+
+**How does LDAP group extraction work?**
+
+LDAP group membership is typically stored in the `memberOf` attribute as Distinguished Names (DNs). Plane automatically extracts the CN (Common Name) from each DN. For example, `cn=engineering,ou=groups,dc=example,dc=com` becomes `engineering`. If your LDAP directory uses flat group names instead of DNs, those are used directly.
 
 **What happens when a user is removed from all IdP groups?**
 

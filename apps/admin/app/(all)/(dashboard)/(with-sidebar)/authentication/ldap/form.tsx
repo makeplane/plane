@@ -55,6 +55,7 @@ export const InstanceLDAPConfigForm: FC<Props> = (props) => {
       LDAP_BIND_PASSWORD: config["LDAP_BIND_PASSWORD"],
       LDAP_USER_SEARCH_BASE: config["LDAP_USER_SEARCH_BASE"],
       LDAP_USER_SEARCH_FILTER: config["LDAP_USER_SEARCH_FILTER"],
+      LDAP_GROUP_SYNC_SEARCH_FILTER: config["LDAP_GROUP_SYNC_SEARCH_FILTER"],
       LDAP_USER_ATTRIBUTES: config["LDAP_USER_ATTRIBUTES"],
       LDAP_PROVIDER_NAME: config["LDAP_PROVIDER_NAME"],
     },
@@ -106,6 +107,15 @@ export const InstanceLDAPConfigForm: FC<Props> = (props) => {
       description: "The LDAP filter to find users (e.g., (uid={username}))",
       placeholder: "(uid={username})",
       error: Boolean(errors.LDAP_USER_SEARCH_FILTER),
+      required: false,
+    },
+    {
+      key: "LDAP_GROUP_SYNC_SEARCH_FILTER",
+      type: "text",
+      label: "Group Sync Search Filter",
+      description: "The LDAP filter used to find users during background group sync (e.g., (mail={email}))",
+      placeholder: "(mail={email})",
+      error: Boolean(errors.LDAP_GROUP_SYNC_SEARCH_FILTER),
       required: false,
     },
     {
@@ -180,6 +190,7 @@ export const InstanceLDAPConfigForm: FC<Props> = (props) => {
           LDAP_BIND_PASSWORD: response.find((item) => item.key === "LDAP_BIND_PASSWORD")?.value,
           LDAP_USER_SEARCH_BASE: response.find((item) => item.key === "LDAP_USER_SEARCH_BASE")?.value,
           LDAP_USER_SEARCH_FILTER: response.find((item) => item.key === "LDAP_USER_SEARCH_FILTER")?.value,
+          LDAP_GROUP_SYNC_SEARCH_FILTER: response.find((item) => item.key === "LDAP_GROUP_SYNC_SEARCH_FILTER")?.value,
           LDAP_USER_ATTRIBUTES: response.find((item) => item.key === "LDAP_USER_ATTRIBUTES")?.value,
           LDAP_PROVIDER_NAME: response.find((item) => item.key === "LDAP_PROVIDER_NAME")?.value,
         });
