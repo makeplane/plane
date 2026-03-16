@@ -20,7 +20,7 @@ Migrate existing projects' seeded states to reflect new names and `is_system=Tru
 
 1. Existing states matching old default names → set `is_system=True`
 2. Rename "Todo" → "Scheduled" and change group if needed, set as default
-3. Add missing new states (Internal Review, Postponed) to existing projects
+3. Add missing new states (Under Review, Postponed) to existing projects
 4. Update `default=True` to point to "Scheduled" (unmark "Draft")
 5. Update seed JSON file
 
@@ -32,7 +32,7 @@ Data migration strategy:
 │   ├── Mark known system state names as is_system=True
 │   ├── Rename "Todo" → "Scheduled", set default=True
 │   ├── Unmark "Draft" as default
-│   ├── Add "Internal Review" + "Postponed" to started group
+│   ├── Add "Under Review" + "Postponed" to started group
 │   └── Leave any custom (non-system) states untouched
 └── Update states.json seed file
 ```
@@ -102,7 +102,7 @@ def migrate_system_states(apps, schema_editor):
         wid = entry["workspace"]
 
         has_review = State.objects.filter(
-            project_id=pid, name="Internal Review", deleted_at__isnull=True
+            project_id=pid, name="Under Review", deleted_at__isnull=True
         ).exists()
         has_postponed = State.objects.filter(
             project_id=pid, name="Postponed", deleted_at__isnull=True
@@ -111,7 +111,7 @@ def migrate_system_states(apps, schema_editor):
         if not has_review:
             new_states.append(State(
                 project_id=pid, workspace_id=wid,
-                name="Internal Review", color="#8B5CF6",
+                name="Under Review", color="#8B5CF6",
                 sequence=35000, group="started",
                 is_system=True, default=False
             ))
@@ -148,13 +148,13 @@ Replace content with new state set matching DEFAULT_STATES (all 8 states includi
 - All existing "Todo" states renamed to "Scheduled" with `default=True`
 - "Draft" no longer marked as default
 - `is_system=True` on all old seeded states
-- Each project has "Internal Review" and "Postponed" in started group
+- Each project has "Under Review" and "Postponed" in started group
 - Migration is idempotent (safe to run twice)
 
 ## Risk Assessment
 
 - **Medium**: Renames affect existing issues in "Todo" state — state still works, just renamed
-- Projects with custom "Scheduled" or "Internal Review" states may get duplicates → `ignore_conflicts=True` handles name collision
+- Projects with custom "Scheduled" or "Under Review" states may get duplicates → `ignore_conflicts=True` handles name collision
 
 <!-- Updated: Validation Session 2 - Reorder unset Draft default before setting Scheduled; name-check confirmed as primary duplicate guard -->
 
