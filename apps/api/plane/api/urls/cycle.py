@@ -9,11 +9,17 @@ from plane.api.views.cycle import (
     CycleDetailAPIEndpoint,
     CycleIssueListCreateAPIEndpoint,
     CycleIssueDetailAPIEndpoint,
+    CycleProgressAPIEndpoint,
     TransferCycleIssueAPIEndpoint,
     CycleArchiveUnarchiveAPIEndpoint,
 )
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/progress/",
+        CycleProgressAPIEndpoint.as_view(http_method_names=["get"]),
+        name="cycle-progress",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/",
         CycleListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),

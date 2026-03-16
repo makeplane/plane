@@ -77,6 +77,22 @@ from plane.utils.openapi import (
 )
 
 
+class CycleProgressAPIEndpoint(BaseAPIView):
+    """Returns progress statistics for a cycle."""
+
+    def get(self, request, slug, project_id, cycle_id):
+        cycle = Cycle.objects.get(pk=cycle_id, project_id=project_id, workspace__slug=slug)
+        issues = cycle.issue_cycle.all()
+        total = issues.count()
+        completed = issues.filter(issue__state__group="completed").count()
+        cancelled = issues.filter(issue__state__group="cancelled").count()
+        return Response({
+            "total_issues": total,
+            "completed_issues": completed,
+            "cancelled_issues": cancelled,
+            "completion_percentage": round((completed / total * 100) if total else 0, 2),
+        })
+
 class CycleListCreateAPIEndpoint(BaseAPIView):
     """Cycle List and Create Endpoint"""
 
