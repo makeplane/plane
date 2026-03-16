@@ -34,7 +34,7 @@ export const EmailAutocompleteDropdown = ({
       ) : (
         suggestions.map((user, i) => {
           const fullName = (
-            [user.first_name, user.last_name].filter(Boolean).join(" ").trim() ||
+            [user.last_name, user.first_name].filter(Boolean).join(" ").trim() ||
             user.display_name ||
             ""
           ).toUpperCase();
