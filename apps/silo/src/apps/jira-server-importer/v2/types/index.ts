@@ -15,6 +15,7 @@ import type { JiraIssueField, JiraV2Service } from "@plane/etl/jira-server";
 import type { Client as PlaneClient, TWorklog } from "@plane/sdk";
 import type { TImportJob, TWorkspaceCredential } from "@plane/types";
 import type { KNOWN_CUSTOM_FIELDS } from "../helpers/constants";
+import type { Resolution } from "jira.js/out/version2/models";
 
 export enum EJiraStep {
   // Pre-run
@@ -28,6 +29,7 @@ export enum EJiraStep {
   MODULES = "modules",
   CYCLES = "cycles",
   COMMENTS = "comments",
+  RESOLUTIONS = "resolutions",
   ISSUE_TYPES = "issue_types",
   ISSUE_PROPERTIES = "issue_properties",
   DEFAULT_PROPERTIES = "default_properties",
@@ -45,6 +47,10 @@ export enum EJiraStep {
   CLEANUP_ISSUE_SEQUENCE = "cleanup_issue_sequence",
   SUMMARY = "summary",
 }
+
+export type TDefaultPropertyData = {
+  resolutions?: Resolution[];
+};
 
 /**
  * Custom relation data extracted from unmapped Jira issue link types.

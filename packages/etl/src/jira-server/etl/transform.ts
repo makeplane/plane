@@ -379,7 +379,8 @@ export const transformIssuePropertyValues = (
 export const transformDefaultPropertyValues = (
   ctx: TTransformationContext,
   issue: IJiraIssue,
-  issueTypeId: string
+  issueTypeId: string,
+  planeIssueProperties: Partial<ExIssueProperty>[]
 ): TPropertyValuesPayload => {
   const { resourceId, projectId, source } = ctx;
   const propertyValuesPayload: TPropertyValuesPayload = {};
@@ -431,13 +432,48 @@ export const transformDefaultPropertyValues = (
 
   // Resolution State
   if (issue.fields.resolution) {
-    const resolutionExternalId = `${resourceId}-${projectId}-${issueTypeId}-resolution_state`;
-    propertyValuesPayload[resolutionExternalId] = [
-      {
-        external_source: source,
-        value: issue.fields.resolution.name || "",
-      },
-    ];
+    const resolutionProperty = planeIssueProperties.find(
+      (property) => property.external_id === `${resourceId}-${projectId}-${issueTypeId}-resolution_state`
+    );
+    const resolutionExternalId = resolutionProperty?.external_id;
+
+    if (resolutionExternalId) {
+      // In case we are importing the property as text
+      if (resolutionProperty?.property_type === "TEXT") {
+        propertyValuesPayload[resolutionExternalId] = [
+          { external_source: source, value: issue.fields.resolution.name || "" },
+        ];
+      }
+      // In case we are importing the property as option
+      else if (resolutionProperty?.property_type === "OPTION" && resolutionProperty.options) {
+        const targetOption = resolutionProperty.options.find((option) => option.name === issue.fields.resolution!.name);
+        if (targetOption?.external_id) {
+          propertyValuesPayload[resolutionExternalId] = [
+            {
+              external_source: source,
+              external_id: targetOption.external_id,
+              value: targetOption.external_id,
+            },
+          ];
+        } else {
+          console.warn("[Assertion Failed] Resolution option not found for resolution name", {
+            resolutionProperty,
+            resolutionName: issue.fields.resolution?.name,
+            issue: issue.fields.resolution,
+          });
+        }
+      } else {
+        console.warn("[Assertion Failed] Resolution property type is not TEXT or OPTION", {
+          resolutionProperty,
+          issue: issue.fields.resolution,
+        });
+      }
+    } else {
+      console.warn("[Assertion Failed] Resolution external id is not found", {
+        resolutionProperty,
+        issue: issue.fields.resolution,
+      });
+    }
   }
 
   // Resolution as Resolution Date

@@ -29,6 +29,7 @@ import {
   JiraStatesStep,
   PlaneProjectCreateStep,
 } from "../shared";
+import { JiraResolutionsStep } from "../shared/entities/resolutions.step";
 
 const JIRA_SERVER_STEPS = [
   // Pre-run steps
@@ -37,6 +38,7 @@ const JIRA_SERVER_STEPS = [
   // Entity steps
   new JiraUsersStep(),
   new JiraStatesStep(),
+  new JiraResolutionsStep(),
   new JiraModulesStep(E_IMPORTER_KEYS.JIRA_SERVER),
   new JiraBoardsStep(),
   new JiraCyclesStep(E_IMPORTER_KEYS.JIRA_SERVER),

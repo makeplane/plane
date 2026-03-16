@@ -24,6 +24,7 @@ import { getSupportedDefaultProperties } from "@/apps/jira-server-importer/v2/he
 import type {
   IStep,
   IStorageService,
+  TDefaultPropertyData,
   TIssuePropertiesData,
   TIssueTypesData,
   TJobContext,
@@ -38,6 +39,7 @@ import { executionLog } from "@/lib/execution-log/service/execution-log.service"
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 import { KNOWN_CUSTOM_FIELDS } from "@/apps/jira-server-importer/v2/helpers/constants";
 import type { IKnownCustomFieldMatcher } from "@/apps/jira-server-importer/v2/helpers/constants";
+import type { Resolution } from "jira.js/out/version2/models";
 
 const EXCLUDED_CUSTOM_FIELDS = [
   ...KNOWN_CUSTOM_FIELDS.START_DATE.names,
@@ -83,7 +85,7 @@ export class JiraIssuePropertiesStep implements IStep {
 
       // Pull all fields (no pagination)
       const pulled = await this.pull(jobContext, projectId, issueTypesData);
-      const defaultProperties = this.generateDefaultProperties(job, issueTypesData);
+      const defaultProperties = await this.generateDefaultProperties(job, storage, issueTypesData);
       const knownCustomFieldMapping = this.extractKnownCustomFields(pulled);
       const filteredPulled = this.removeKnownCustomFields(pulled);
 
@@ -185,12 +187,14 @@ export class JiraIssuePropertiesStep implements IStep {
    * Generate default properties for each issue type
    * Creates properties like fixVersion, Version, Reporter, etc.
    */
-  private generateDefaultProperties(
+  private async generateDefaultProperties(
     job: TImportJob<JiraConfig>,
+    storage: IStorageService,
     issueTypesData: TIssueTypesData
-  ): Partial<ExIssueProperty>[] {
+  ): Promise<Partial<ExIssueProperty>[]> {
     const { resourceId, projectId } = extractJobData(job);
     const defaultProperties: Partial<ExIssueProperty>[] = [];
+    const propertyData = await this.getDefaultPropertyData(job.id, storage);
 
     for (const issueType of issueTypesData) {
       const properties = getSupportedDefaultProperties(
@@ -198,7 +202,8 @@ export class JiraIssuePropertiesStep implements IStep {
         projectId,
         issueType.id,
         issueType.external_id,
-        this.source
+        this.source,
+        propertyData
       );
       defaultProperties.push(...properties);
     }
@@ -209,6 +214,13 @@ export class JiraIssuePropertiesStep implements IStep {
     });
 
     return defaultProperties;
+  }
+
+  private async getDefaultPropertyData(jobId: string, storage: IStorageService): Promise<TDefaultPropertyData> {
+    const resolutions = await storage.retrieveData(jobId, EJiraStep.RESOLUTIONS);
+    return {
+      resolutions: resolutions as Resolution[],
+    };
   }
 
   /**
