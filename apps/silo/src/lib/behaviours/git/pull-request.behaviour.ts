@@ -39,6 +39,8 @@ import { left, right } from "@/types/either";
  */
 
 export class PullRequestBehaviour {
+  private static readonly WORKFLOW_TRANSITION_WARNING_MESSAGE =
+    "⚠️ State transition attempt blocked by project workflow settings for the following Work Item(s)";
   // projectId and PR state map
   private readonly projectIdToPRStateMap: Record<string, Record<string, { id: string; name: string }>>;
   private readonly commentPrefix: string;
@@ -110,11 +112,21 @@ export class PullRequestBehaviour {
       const referredIssues = [...references.closingReferences, ...references.nonClosingReferences];
 
       const updateResults = await this.updateReferencedIssues(referredIssues, pullRequestDetails, event);
-
-      const validIssues = updateResults.filter((result): result is IssueWithReference => result !== null);
+      const validIssues = updateResults
+        .map((result) => result.result)
+        .filter((result): result is IssueWithReference => result !== null);
+      const workflowTransitionBlockedIssues = updateResults
+        .filter((result) => result.stateTransitionSkipped)
+        .map((result) => result.result)
+        .filter((result): result is IssueWithReference => result !== null);
 
       if (validIssues.length > 0) {
-        await this.manageCommentOnPullRequest(pullRequestDetails, validIssues, references.nonClosingReferences);
+        await this.manageCommentOnPullRequest(
+          pullRequestDetails,
+          validIssues,
+          references.nonClosingReferences,
+          workflowTransitionBlockedIssues
+        );
       }
     } catch (error) {
       logger.error("Error handling pull request", {
@@ -182,7 +194,7 @@ export class PullRequestBehaviour {
     references: IssueReference[],
     prDetails: IPullRequestDetails,
     event: string
-  ): Promise<(IssueWithReference | null)[]> {
+  ): Promise<{ result: IssueWithReference | null; stateTransitionSkipped: boolean }[]> {
     return Promise.all(references.map((reference) => this.updateSingleIssue(reference, prDetails, event)));
   }
 
@@ -212,8 +224,9 @@ export class PullRequestBehaviour {
     reference: IssueReference,
     prDetails: IPullRequestDetails,
     event: string
-  ): Promise<IssueWithReference | null> {
+  ): Promise<{ result: IssueWithReference | null; stateTransitionSkipped: boolean }> {
     let issue: ExIssue | null = null;
+    let stateTransitionSkipped = false;
 
     try {
       issue = await this.planeClient.issue.getIssueByIdentifier(
@@ -227,30 +240,37 @@ export class PullRequestBehaviour {
       // for gitlab we get the state from config directly
       const targetState = this.projectIdToPRStateMap[issue.project]?.[event];
       if (targetState && reference.isClosing) {
-        await this.planeClient.issue.update(this.workspaceSlug, issue.project, issue.id, { state: targetState.id });
-        logger.info(
-          `[${this.providerName.toUpperCase()}] Issue ${reference.identifier}-${reference.sequence} updated to state ${targetState.name}`
-        );
+        try {
+          await this.planeClient.issue.update(this.workspaceSlug, issue.project, issue.id, { state: targetState.id });
+          logger.info(
+            `[${this.providerName.toUpperCase()}] Issue ${reference.identifier}-${reference.sequence} updated to state ${targetState.name}`
+          );
+        } catch (error: any) {
+          stateTransitionSkipped = this.isStateTransitionSkipped(error);
+
+          if (!stateTransitionSkipped) {
+            throw error;
+          }
+
+          logger.info(
+            `[${this.providerName.toUpperCase()}] State transition blocked by workflow settings for ${reference.identifier}-${reference.sequence}`
+          );
+        }
       }
 
       // Create link to pull request
       const linkTitle = `[${prDetails.number}] ${prDetails.title}`;
       await this.planeClient.issue.createLink(this.workspaceSlug, issue.project, issue.id, linkTitle, prDetails.url);
 
-      return { reference, issue };
+      return { result: { reference, issue }, stateTransitionSkipped };
     } catch (error: any) {
+      stateTransitionSkipped = stateTransitionSkipped || this.isStateTransitionSkipped(error);
+
       // Handle permission errors
       if (error?.detail && error?.detail.includes(CONSTANTS.NO_PERMISSION_ERROR)) {
         logger.info(
           `[${this.providerName.toUpperCase()}] No permission to process event: ${error.detail} ${reference.identifier}-${reference.sequence}`
         );
-
-        // If we managed to get the issue before the error, still return it
-        if (issue) {
-          return { reference, issue };
-        }
-
-        return null;
       }
 
       // Handle 404 errors (issue not found)
@@ -258,7 +278,7 @@ export class PullRequestBehaviour {
         logger.info(
           `[${this.providerName.toUpperCase()}] Issue not found: ${reference.identifier}-${reference.sequence}`
         );
-        return null;
+        return { result: null, stateTransitionSkipped };
       }
 
       // Generic error handling
@@ -269,10 +289,10 @@ export class PullRequestBehaviour {
 
       // If we managed to get the issue before the error, still return it
       if (issue) {
-        return { reference, issue };
+        return { result: { reference, issue }, stateTransitionSkipped };
       }
 
-      return null;
+      return { result: null, stateTransitionSkipped };
     }
   }
 
@@ -285,7 +305,8 @@ export class PullRequestBehaviour {
   private async manageCommentOnPullRequest(
     prDetails: IPullRequestDetails,
     validIssues: IssueWithReference[],
-    nonClosingReferences: IssueReference[]
+    nonClosingReferences: IssueReference[],
+    workflowTransitionBlockedIssues: IssueWithReference[] = []
   ): Promise<void> {
     const body = this.generateCommentBody(validIssues, nonClosingReferences);
     const comments = await this.fetchExistingComments(prDetails);
@@ -295,6 +316,10 @@ export class PullRequestBehaviour {
       await this.updateExistingComment(prDetails, existingComment.id, body);
     } else {
       await this.createNewComment(prDetails, body);
+    }
+
+    if (workflowTransitionBlockedIssues.length > 0) {
+      await this.createWorkflowTransitionWarningComment(prDetails, workflowTransitionBlockedIssues);
     }
   }
 
@@ -383,6 +408,34 @@ export class PullRequestBehaviour {
 
     body += `\n\nThis comment was auto-generated by [Plane](https://plane.so)\n`;
     return body;
+  }
+
+  private async createWorkflowTransitionWarningComment(
+    prDetails: IPullRequestDetails,
+    closingIssues: IssueWithReference[]
+  ): Promise<void> {
+    const body = `${PullRequestBehaviour.WORKFLOW_TRANSITION_WARNING_MESSAGE}\n\n${this.formatIssueSection(closingIssues)}\n\nThis comment was auto-generated by [Plane](https://plane.so)\n`;
+    await this.service.createPullRequestComment(
+      prDetails.repository.owner,
+      prDetails.repository.name,
+      prDetails.number.toString(),
+      body
+    );
+    logger.info(
+      `Created workflow transition warning comment for pull request ${prDetails.number} in repo ${prDetails.repository.owner}/${prDetails.repository.name}`
+    );
+  }
+
+  private isStateTransitionSkipped(error: any): boolean {
+    const possibleMessages = [
+      error?.error,
+      error?.detail,
+      error?.message,
+      error?.response?.data?.error,
+      error?.response?.data?.detail,
+    ].filter((message): message is string => typeof message === "string");
+
+    return possibleMessages.some((message) => message.toLowerCase().includes("state transition is not allowed"));
   }
 
   /**
