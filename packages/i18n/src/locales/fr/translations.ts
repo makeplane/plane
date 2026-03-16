@@ -2755,6 +2755,9 @@ Créez plutôt un nouveau projet`,
     end_date: "Date de fin",
     in_your_timezone: "Dans votre fuseau horaire",
     transfer_work_items: "Transférer {count} éléments de travail",
+    transfer: {
+      no_cycles_available: "Aucun autre cycle disponible pour transférer les éléments de travail.",
+    },
     date_range: "Plage de dates",
     add_date: "Ajouter une date",
     active_cycle: {
@@ -2767,6 +2770,8 @@ Créez plutôt un nouveau projet`,
       ideal: "Idéal",
       current: "Actuel",
       labels: "Étiquettes",
+      trailing: "En retard",
+      leading: "En avance",
     },
     upcoming_cycle: {
       label: "Cycle à venir",

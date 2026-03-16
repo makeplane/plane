@@ -2661,6 +2661,9 @@ export default {
     end_date: "結束日期",
     in_your_timezone: "在您的時區",
     transfer_work_items: "轉移 {count} 工作事項",
+    transfer: {
+      no_cycles_available: "沒有其他可用的週期來轉移工作項目。",
+    },
     date_range: "日期範圍",
     add_date: "新增日期",
     active_cycle: {
@@ -2673,6 +2676,8 @@ export default {
       ideal: "理想",
       current: "目前",
       labels: "標籤",
+      trailing: "落後",
+      leading: "領先",
     },
     upcoming_cycle: {
       label: "即將到來的週期",

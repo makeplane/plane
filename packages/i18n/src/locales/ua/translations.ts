@@ -2711,6 +2711,9 @@ export default {
     end_date: "Дата завершення",
     in_your_timezone: "У вашому часовому поясі",
     transfer_work_items: "Перенести {count} робочих одиниць",
+    transfer: {
+      no_cycles_available: "Немає інших циклів для переміщення робочих елементів.",
+    },
     date_range: "Діапазон дат",
     add_date: "Додати дату",
     active_cycle: {
@@ -2723,6 +2726,8 @@ export default {
       ideal: "Ідеальний",
       current: "Поточний",
       labels: "Мітки",
+      trailing: "Відставання",
+      leading: "Випередження",
     },
     upcoming_cycle: {
       label: "Майбутній цикл",

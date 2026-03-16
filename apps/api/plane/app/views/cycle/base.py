@@ -74,7 +74,9 @@ from plane.utils.timezone_converter import (
     convert_to_utc,
     user_timezone_converter,
 )
-from plane.ee.models import EntityProgress
+from plane.ee.models import EntityProgress, ProjectFeature
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class CycleViewSet(BaseViewSet):
@@ -676,6 +678,17 @@ class CycleDateCheckEndpoint(BaseAPIView):
             date=str(end_date),
             project_id=project_id,
         )
+
+        # If the project has parallel cycles enabled, overlapping dates are allowed
+        is_project_parallel = bool(
+            ProjectFeature.objects.filter(project_id=project_id, workspace__slug=slug)
+            .values_list("is_parallel_cycles_enabled", flat=True)
+            .first()
+        )
+        allow_parallel = is_project_parallel and check_workspace_feature_flag(FeatureFlag.PARALLEL_CYCLES, slug)
+
+        if allow_parallel:
+            return Response({"status": True}, status=status.HTTP_200_OK)
 
         # Check if any cycle intersects in the given interval
         cycles = Cycle.objects.filter(

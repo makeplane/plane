@@ -11,19 +11,25 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import React, { useRef } from "react";
 import { format, startOfToday } from "date-fns";
+import { usePathname, useSearchParams } from "next/navigation";
+import { CalendarDays } from "lucide-react";
 // plane imports
+import { Button } from "@plane/propel/button";
+import { CycleGroupIcon, InfoIcon } from "@plane/propel/icons";
+import { BetaBadge } from "@/components/common/beta";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICycle, TCycleProgress } from "@plane/types";
 import { ControlLink, Loader } from "@plane/ui";
-import { findHowManyDaysLeft } from "@plane/utils";
-import { CycleListItemAction } from "@/components/cycles/list/cycle-list-item-action";
+import { generateQueryParams } from "@plane/utils";
+import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
+import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
+import { CycleQuickActions } from "@/components/cycles/quick-actions";
 // hooks
+import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
-import { BetaBadge } from "@/components/common/beta";
 import ProgressDonut from "./progress-donut";
 
 type Props = {
@@ -39,11 +45,23 @@ export function CycleProgressHeader(props: Props) {
 
   // router
   const router = useAppRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const parentRef = useRef(null);
   const progressToday = progress && progress.find((d) => d.date === format(startOfToday(), "yyyy-MM-dd"));
+  // store hooks
+  const { getUserDetails } = useMember();
+  const createdByDetails = cycleDetails.created_by ? getUserDetails(cycleDetails.created_by) : undefined;
   // handlers
-  const handleControlLinkClick = () => {
-    router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`);
+  const openCycleOverview = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const query = generateQueryParams(searchParams, ["peekCycle"]);
+    if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
+      router.push(`${pathname}?${query}`);
+    } else {
+      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`);
+    }
   };
 
   const handleEventPropagation = (e: React.MouseEvent) => {
@@ -53,35 +71,38 @@ export function CycleProgressHeader(props: Props) {
 
   return (
     <ControlLink
-      onClick={handleControlLinkClick}
       href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}
+      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`)}
     >
-      <div className="px-page-x flex items-center justify-between py-4 bg-surface-1 w-full">
-        <div className="flex gap-6 h-full truncate">
-          {progress === null && <Loader.Item width="65px" height="65px" className="flex-shrink-0 rounded-full" />}
-          {progress && (
-            <ProgressDonut progress={progressToday} days_left={findHowManyDaysLeft(cycleDetails.end_date) ?? 0} />
-          )}
-          <div className="flex flex-col h-full my-auto w-full overflow-hidden">
+      <div ref={parentRef} className="group px-page-x flex items-center justify-between py-4 bg-surface-1 w-full">
+        <div className="flex gap-4 h-full truncate items-center">
+          {progress === null && <Loader.Item width="48px" height="48px" className="shrink-0 rounded-full" />}
+          {progress && <ProgressDonut progress={progressToday} />}
+          <div className="flex flex-col overflow-hidden">
             <div className="flex gap-2 items-center">
-              <div className="text-11 text-accent-secondary font-medium">Currently active cycle</div>
+              <CycleGroupIcon cycleGroup="current" height="16" width="16" />
               <BetaBadge />
             </div>
             <Tooltip tooltipContent={cycleDetails.name} position="bottom-end">
-              <div className="inline-block line-clamp-1 truncate font-bold text-primary my-1 text-[20px] text-left">
-                {cycleDetails.name}
-              </div>
+              <span className="truncate font-bold text-primary text-xl">{cycleDetails.name}</span>
             </Tooltip>
           </div>
         </div>
-        <div className="flex shrink-0 gap-4 items-center" onClick={handleEventPropagation}>
-          <CycleListItemAction
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            cycleId={cycleId}
-            cycleDetails={cycleDetails}
+        <div className="flex shrink-0 gap-3 items-center" onClick={handleEventPropagation}>
+          <button onClick={openCycleOverview} className="shrink-0 hidden group-hover:flex">
+            <InfoIcon className="h-4 w-4 text-placeholder" />
+          </button>
+          {cycleDetails.start_date && cycleDetails.end_date && (
+            <Button variant="secondary" size="sm" prependIcon={<CalendarDays className="size-3" />} disabled>
+              <MergedDateDisplay startDate={cycleDetails.start_date} endDate={cycleDetails.end_date} />
+            </Button>
+          )}
+          {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails.id} />}
+          <CycleQuickActions
             parentRef={parentRef}
-            isActive
+            cycleId={cycleId}
+            projectId={projectId}
+            workspaceSlug={workspaceSlug}
           />
         </div>
       </div>

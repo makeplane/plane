@@ -2708,6 +2708,9 @@ export default {
     end_date: "終了日",
     in_your_timezone: "あなたのタイムゾーン",
     transfer_work_items: "作業項目を転送 {count}",
+    transfer: {
+      no_cycles_available: "作業アイテムを転送できる他のサイクルがありません。",
+    },
     date_range: "日付範囲",
     add_date: "日付を追加",
     active_cycle: {
@@ -2720,6 +2723,8 @@ export default {
       ideal: "理想",
       current: "現在",
       labels: "ラベル",
+      trailing: "遅れ",
+      leading: "リード",
     },
     upcoming_cycle: {
       label: "今後のサイクル",

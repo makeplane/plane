@@ -103,6 +103,7 @@ class ProjectFeature(ProjectBaseModel):
     is_workflow_enabled = models.BooleanField(default=False)
     is_milestone_enabled = models.BooleanField(default=False)
     is_automated_cycle_enabled = models.BooleanField(default=False)
+    is_parallel_cycles_enabled = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Project Feature"

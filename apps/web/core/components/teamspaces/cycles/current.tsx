@@ -35,11 +35,11 @@ type TTeamCurrentCyclesRoot = {
 
 const ProjectActiveCycleCollapsible = observer(function ProjectActiveCycleCollapsible({
   projectId,
-  cycleId,
+  cycleIds,
   workspaceSlug,
 }: {
   projectId: string;
-  cycleId: string;
+  cycleIds: string[];
   workspaceSlug: string;
 }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -53,7 +53,7 @@ const ProjectActiveCycleCollapsible = observer(function ProjectActiveCycleCollap
         <ProjectActiveCycleRoot
           workspaceSlug={workspaceSlug}
           projectId={projectId}
-          cycleId={cycleId}
+          cycleIds={cycleIds}
           showHeader={false}
         />
       </CollapsibleContent>
@@ -88,11 +88,11 @@ export const TeamCurrentCyclesRoot = observer(function TeamCurrentCyclesRoot(pro
 
   return (
     <ContentWrapper variant={ERowVariant.HUGGING} className="relative">
-      {Object.entries(groupedActiveCycleIds).map(([projectId, cycleId]) => (
+      {Object.entries(groupedActiveCycleIds).map(([projectId, cycleIds]) => (
         <ProjectActiveCycleCollapsible
           key={projectId}
           projectId={projectId}
-          cycleId={cycleId}
+          cycleIds={cycleIds}
           workspaceSlug={workspaceSlug}
         />
       ))}

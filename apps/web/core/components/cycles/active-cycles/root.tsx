@@ -11,39 +11,37 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { lazy, Suspense, useMemo } from "react";
+import { lazy, Suspense } from "react";
 import { useFlag } from "@/plane-web/hooks/store";
+
+// Module-level lazy imports so React sees stable component references across renders/remounts.
+// This prevents the active-cycle collapsible state from resetting.
+const ActiveCycleV1 = lazy(() => import("./v1/root").then((module) => ({ default: module["ActiveCycleRoot"] })));
+const ActiveCycleV2 = lazy(() => import("./v2/root").then((module) => ({ default: module["ActiveCycleRoot"] })));
 
 type ProjectActiveCycleRootProps = {
   workspaceSlug: string;
   projectId: string;
   cycleId?: string;
+  cycleIds?: string[];
   showHeader?: boolean;
 };
 
 export function ProjectActiveCycleRoot(props: ProjectActiveCycleRootProps) {
-  const { workspaceSlug, projectId, cycleId, showHeader = true } = props;
+  const { workspaceSlug, projectId, cycleId, cycleIds, showHeader = true } = props;
   // derived values
   const isFeatureEnabled = useFlag(workspaceSlug, "CYCLE_PROGRESS_CHARTS");
-
-  const ActiveCycle = useMemo(
-    function ActiveCycle() {
-      return lazy(() =>
-        isFeatureEnabled
-          ? import(`./v2/root`).then((module) => ({
-              default: module["ActiveCycleRoot"],
-            }))
-          : import("./v1/root").then((module) => ({
-              default: module["ActiveCycleRoot"],
-            }))
-      );
-    },
-    [isFeatureEnabled]
-  );
+  const ActiveCycle = isFeatureEnabled ? ActiveCycleV2 : ActiveCycleV1;
 
   return (
     <Suspense fallback={<></>}>
-      <ActiveCycle workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} showHeader={showHeader} />
+      <ActiveCycle
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        cycleId={cycleId}
+        cycleIds={cycleIds}
+        showHeader={showHeader}
+      />
     </Suspense>
   );
 }

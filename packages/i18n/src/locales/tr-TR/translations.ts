@@ -2709,6 +2709,9 @@ Bunun yerine yeni bir proje oluşturun`,
     end_date: "Bitiş tarihi",
     in_your_timezone: "Saat diliminizde",
     transfer_work_items: "{count} iş öğesini aktar",
+    transfer: {
+      no_cycles_available: "İş öğelerini aktaracak başka döngü bulunamadı.",
+    },
     date_range: "Tarih aralığı",
     add_date: "Tarih ekle",
     active_cycle: {
@@ -2721,6 +2724,8 @@ Bunun yerine yeni bir proje oluşturun`,
       ideal: "İdeal",
       current: "Mevcut",
       labels: "Etiketler",
+      trailing: "Geride",
+      leading: "İlerde",
     },
     upcoming_cycle: {
       label: "Yaklaşan döngü",

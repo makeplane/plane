@@ -104,6 +104,8 @@ class FeatureFlag(Enum):
     MILESTONES = "MILESTONES"
     # Automated Cycles
     AUTO_SCHEDULE_CYCLES = "AUTO_SCHEDULE_CYCLES"
+    # Parallel Cycles
+    PARALLEL_CYCLES = "PARALLEL_CYCLES"
     # Exports
     ADVANCED_EXPORTS = "ADVANCED_EXPORTS"
     # WORKSPACE_MEMBER_ACTIVITY

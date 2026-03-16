@@ -114,6 +114,7 @@ export class ProjectDetailsStore implements IProjectDetailsStore {
               is_milestone_enabled: false,
               project_id: projectId,
               is_automated_cycle_enabled: false,
+              is_parallel_cycles_enabled: false,
             };
           }
         }

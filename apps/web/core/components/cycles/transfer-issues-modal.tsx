@@ -13,6 +13,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { SearchIcon, CycleIcon, TransferIcon, CloseIcon } from "@plane/propel/icons";
@@ -34,6 +35,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
   const [query, setQuery] = useState("");
 
   // store hooks
+  const { t } = useTranslation();
   const { currentProjectIncompleteCycleIds, getCycleById, fetchActiveCycleProgress } = useCycle();
   const {
     issues: { transferIssuesFromCycle },
@@ -138,9 +140,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
             ) : (
               <div className="flex w-full items-center justify-center gap-4 p-5 text-13">
                 <AlertCircle className="h-3.5 w-3.5 text-secondary" />
-                <span className="text-center text-secondary">
-                  You don’t have any current cycle. Please create one to transfer the work items.
-                </span>
+                <span className="text-center text-secondary">{t("project_cycles.transfer.no_cycles_available")}</span>
               </div>
             )
           ) : (

@@ -51,6 +51,7 @@ export interface ICycleStore {
   currentProjectCompletedCycleIds: string[] | null;
   currentProjectIncompleteCycleIds: string[] | null;
   currentProjectActiveCycleId: string | null;
+  getActiveCycleIds: (projectId: string) => string[];
   currentProjectArchivedCycleIds: string[] | null;
   currentProjectActiveCycle: ICycle | null;
 
@@ -218,7 +219,7 @@ export abstract class CycleStore implements ICycleStore {
   }
 
   /**
-   * returns active cycle id for a project
+   * returns active cycle id for a project (first one found — kept for backwards compatibility)
    */
   get currentProjectActiveCycleId() {
     const projectId = this.rootStore.router.projectId;
@@ -230,6 +231,17 @@ export abstract class CycleStore implements ICycleStore {
     );
     return activeCycle || null;
   }
+
+  /**
+   * returns all active cycle ids for a project — supports parallel cycles, sorted by start_date ascending
+   */
+  getActiveCycleIds = computedFn((projectId: string): string[] => {
+    if (!projectId) return [];
+    const activeCycles = Object.values(this.cycleMap ?? {}).filter(
+      (cycle) => cycle.project_id === projectId && cycle.status?.toLowerCase() === "current"
+    );
+    return sortBy(activeCycles, [(c) => c.start_date]).map((c) => c.id);
+  });
 
   /**
    * returns all archived cycle ids for a project

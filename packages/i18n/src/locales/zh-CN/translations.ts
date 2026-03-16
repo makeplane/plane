@@ -2640,6 +2640,9 @@ export default {
     end_date: "结束日期",
     in_your_timezone: "在您的时区",
     transfer_work_items: "转移 {count} 工作项",
+    transfer: {
+      no_cycles_available: "没有其他可用的周期来转移工作项。",
+    },
     date_range: "日期范围",
     add_date: "添加日期",
     active_cycle: {
@@ -2652,6 +2655,8 @@ export default {
       ideal: "理想",
       current: "当前",
       labels: "标签",
+      trailing: "落后",
+      leading: "领先",
     },
     upcoming_cycle: {
       label: "即将到来的周期",

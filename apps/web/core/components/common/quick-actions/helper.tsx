@@ -21,6 +21,7 @@ import { useQuickActionsFactory } from "@/components/common/quick-actions/factor
 interface UseCycleMenuItemsProps {
   cycleDetails: ICycle | undefined;
   isEditingAllowed: boolean;
+  isFavorite: boolean;
   workspaceSlug: string;
   projectId: string;
   cycleId: string;
@@ -30,6 +31,7 @@ interface UseCycleMenuItemsProps {
   handleDelete: () => void;
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
+  handleFavorite: () => void;
 }
 
 interface UseModuleMenuItemsProps {
@@ -73,7 +75,7 @@ type MenuResult = {
 
 export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => {
   const factory = useQuickActionsFactory();
-  const { cycleDetails, isEditingAllowed, workspaceSlug, projectId, cycleId, ...handlers } = props;
+  const { cycleDetails, isEditingAllowed, isFavorite, workspaceSlug, projectId, cycleId, ...handlers } = props;
 
   const isArchived = !!cycleDetails?.archived_at;
   const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
@@ -103,6 +105,10 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
     factory.createEditMenuItem(handlers.handleEdit, isEditingAllowed && !isCompleted && !isArchived),
     factory.createOpenInNewTabMenuItem(handlers.handleOpenInNewTab),
     factory.createCopyLinkMenuItem(handlers.handleCopyLink),
+    factory.createFavoriteMenuItem(handlers.handleFavorite, {
+      isFavorite,
+      shouldRender: isEditingAllowed && !isArchived,
+    }),
     ...(endCycleFeature?.items ?? []),
     ...(exportFeature?.items ?? []),
     factory.createArchiveMenuItem(handlers.handleArchive, {

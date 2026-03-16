@@ -32,11 +32,11 @@ function ScopeDelta(props: Props) {
     <div className="flex text-indigo-400 font-medium">
       {prevData.scope < dataToday.scope! ? (
         <>
-          <TrendingUp className="w-[12px] h-[12px] my-auto mr-1" /> +
+          <TrendingUp className="size-3 my-auto mr-1" /> +
         </>
       ) : (
         <>
-          <TrendingDown className="w-[14px] h-[14px] my-auto mr-1" /> -
+          <TrendingDown className="size-3 my-auto mr-1" /> -
         </>
       )}
       {Math.round(delta)}%

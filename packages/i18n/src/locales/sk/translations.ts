@@ -2670,6 +2670,9 @@ Vytvorte nový.`,
     end_date: "Dátum konca",
     in_your_timezone: "Váš časový pásmo",
     transfer_work_items: "Presunúť {count} pracovných položiek",
+    transfer: {
+      no_cycles_available: "Nie sú k dispozícii žiadne iné cykly na prenos pracovných položiek.",
+    },
     date_range: "Dátumový rozsah",
     add_date: "Pridať dátum",
     active_cycle: {
@@ -2682,6 +2685,8 @@ Vytvorte nový.`,
       ideal: "Ideálne",
       current: "Aktuálne",
       labels: "Štítky",
+      trailing: "Oneskorenie",
+      leading: "Náskok",
     },
     upcoming_cycle: {
       label: "Nadchádzajúci cyklus",

@@ -59,6 +59,7 @@ class ProjectFeatureSerializer(BaseSerializer):
             "is_workflow_enabled",
             "is_milestone_enabled",
             "is_automated_cycle_enabled",
+            "is_parallel_cycles_enabled",
             "project_id",
         ]
         read_only_fields = [

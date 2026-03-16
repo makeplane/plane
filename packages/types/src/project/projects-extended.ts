@@ -107,6 +107,7 @@ export type TProjectFeaturesList = {
   is_workflow_enabled: boolean;
   is_milestone_enabled: boolean;
   is_automated_cycle_enabled: boolean;
+  is_parallel_cycles_enabled: boolean;
 };
 
 export type TProjectFeatures = {

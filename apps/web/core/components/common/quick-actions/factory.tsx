@@ -12,7 +12,7 @@
  */
 
 import { useState } from "react";
-import { ArchiveRestoreIcon, StopCircle, Download, LockOpen } from "lucide-react";
+import { ArchiveRestoreIcon, Star, StopCircle, Download, LockOpen } from "lucide-react";
 // plane imports
 import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -82,6 +82,17 @@ export const useQuickActionsFactory = () => {
       title: t("copy_link"),
       icon: LinkIcon,
       action: handler,
+    }),
+
+    createFavoriteMenuItem: (
+      handler: () => void,
+      opts: { isFavorite: boolean; shouldRender?: boolean }
+    ): TContextMenuItem => ({
+      key: "toggle-favorite",
+      title: opts.isFavorite ? t("remove_from_favorites") : t("add_to_favorites"),
+      icon: Star,
+      action: handler,
+      shouldRender: opts.shouldRender,
     }),
 
     createArchiveMenuItem: (

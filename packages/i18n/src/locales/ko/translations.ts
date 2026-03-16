@@ -2689,6 +2689,9 @@ export default {
     end_date: "종료일",
     in_your_timezone: "내 시간대",
     transfer_work_items: "{count}개의 작업 항목 이전",
+    transfer: {
+      no_cycles_available: "작업 항목을 전송할 수 있는 다른 사이클이 없습니다.",
+    },
     date_range: "날짜 범위",
     add_date: "날짜 추가",
     active_cycle: {
@@ -2701,6 +2704,8 @@ export default {
       ideal: "이상적인",
       current: "현재",
       labels: "레이블",
+      trailing: "뒤처짐",
+      leading: "앞섬",
     },
     upcoming_cycle: {
       label: "다가오는 주기",

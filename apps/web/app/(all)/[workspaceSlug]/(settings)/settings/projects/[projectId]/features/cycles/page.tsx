@@ -25,7 +25,7 @@ import { ProjectSettingsFeatureControlItem } from "@/components/settings/project
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { AutoScheduleCycles } from "@/components/cycles/settings";
+import { AutoScheduleCycles, ParallelCycles } from "@/components/cycles/settings";
 // plane web imports
 import type { Route } from "./+types/page";
 import { FeaturesCyclesProjectSettingsHeader } from "./header";
@@ -55,7 +55,7 @@ function FeaturesCyclesSettingsPage({ params }: Route.ComponentProps) {
           title={t("project_settings.features.cycles.title")}
           description={t("project_settings.features.cycles.description")}
         />
-        <div className="mt-7">
+        <div className="mt-7 flex flex-col gap-4">
           <ProjectSettingsFeatureControlItem
             title={t("project_settings.features.cycles.toggle_title")}
             description={t("project_settings.features.cycles.toggle_description")}
@@ -64,9 +64,15 @@ function FeaturesCyclesSettingsPage({ params }: Route.ComponentProps) {
             value={!!currentProjectDetails?.cycle_view}
             workspaceSlug={workspaceSlug}
           />
+          {/* Parallel cycles configuration */}
+          <ParallelCycles
+            disabled={!currentProjectDetails?.cycle_view}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+          />
         </div>
-        {/* Auto-schedule cycles configuration */}
         <div className="mt-12">
+          {/* Auto-schedule cycles configuration */}
           <AutoScheduleCycles disabled={!currentProjectDetails?.cycle_view} />
         </div>
       </section>

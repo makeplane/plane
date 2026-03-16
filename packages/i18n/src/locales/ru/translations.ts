@@ -2720,6 +2720,9 @@ export default {
     end_date: "Дата окончания",
     in_your_timezone: "В вашем часовом поясе",
     transfer_work_items: "Перенести {count} рабочих элементов",
+    transfer: {
+      no_cycles_available: "Нет других циклов для переноса рабочих элементов.",
+    },
     date_range: "Диапазон дат",
     add_date: "Добавить дату",
     active_cycle: {
@@ -2732,6 +2735,8 @@ export default {
       ideal: "Идеальный",
       current: "Текущий",
       labels: "Метки",
+      trailing: "Отставание",
+      leading: "Опережение",
     },
     upcoming_cycle: {
       label: "Предстоящий цикл",

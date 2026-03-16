@@ -2716,6 +2716,9 @@ Utwórz nowy.`,
     end_date: "Data końca",
     in_your_timezone: "W Twojej strefie czasowej",
     transfer_work_items: "Przenieś {count} elementów pracy",
+    transfer: {
+      no_cycles_available: "Brak innych cykli dostępnych do przeniesienia elementów pracy.",
+    },
     date_range: "Zakres dat",
     add_date: "Dodaj datę",
     active_cycle: {
@@ -2728,6 +2731,8 @@ Utwórz nowy.`,
       ideal: "Idealny",
       current: "Obecny",
       labels: "Etykiety",
+      trailing: "Opóźnienie",
+      leading: "Wyprzedzenie",
     },
     upcoming_cycle: {
       label: "Nadchodzący cykl",

@@ -58,6 +58,7 @@ export interface ICycleStore extends ICeCycleStore {
 
   updateCycleStatus: (workspaceSlug: string, projectId: string, cycleId: string, action: CYCLE_ACTION) => Promise<void>;
   isNextCycle: (projectId: string, cycleId: string) => boolean;
+  isParallelCyclesEnabled: (workspaceSlug: string, projectId: string) => boolean;
 }
 
 export class CycleStore extends CeCycleStore implements ICycleStore {
@@ -88,6 +89,15 @@ export class CycleStore extends CeCycleStore implements ICycleStore {
     this.cycleUpdateService = new CycleUpdateService();
     this.cycleService = new CycleService();
   }
+
+  isParallelCyclesEnabled = computedFn((workspaceSlug: string, projectId: string) => {
+    const isFeatureFlagEnabled = this.store.featureFlags.getFeatureFlag(workspaceSlug, "PARALLEL_CYCLES", false);
+    const isProjectFeatureEnabled = this.store.projectDetails.isProjectFeatureEnabled(
+      projectId,
+      "is_parallel_cycles_enabled"
+    );
+    return isProjectFeatureEnabled && isFeatureFlagEnabled;
+  });
 
   fetchUpdates = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const updates = await this.cycleUpdateService.getCycleUpdates(workspaceSlug, projectId, cycleId);
@@ -229,15 +239,29 @@ export class CycleStore extends CeCycleStore implements ICycleStore {
   };
 
   isNextCycle = computedFn((projectId: string, cycleId: string) => {
-    //check for an active cycle
-    const activeCycle = Object.values(this.cycleMap ?? {}).find(
-      (c) => c.project_id === projectId && c.status?.toLowerCase() === "current"
-    );
-    if (activeCycle) return false;
-    // filter cycles with  status "upcoming" return one with the latest start date
+    // When parallel cycles are enabled (feature flag + project setting), any upcoming cycle can be started
+    const workspaceSlug = this.store.router.workspaceSlug;
+    const allowParallel = workspaceSlug ? this.isParallelCyclesEnabled(workspaceSlug, projectId) : false;
+
+    if (!allowParallel) {
+      // Default behaviour: block start if any active cycle already exists
+      const activeCycle = Object.values(this.cycleMap ?? {}).find(
+        (c) => c.project_id === projectId && c.status?.toLowerCase() === "current"
+      );
+      if (activeCycle) return false;
+    }
+
+    // In parallel mode (or when no active cycle exists): return true for any upcoming cycle
     const upcomingCycles = Object.values(this.cycleMap ?? {}).filter(
       (c) => c.project_id === projectId && c.status?.toLowerCase() === "upcoming"
     );
+
+    if (allowParallel) {
+      // Any upcoming cycle can be started — show Start button for all of them
+      return upcomingCycles.some((c) => c.id === cycleId);
+    }
+
+    // Default: only the earliest upcoming cycle can be started
     const nextCycle = sortBy(upcomingCycles, [(c) => c.start_date])[0];
     return nextCycle?.id === cycleId;
   });

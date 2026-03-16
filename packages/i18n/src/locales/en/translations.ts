@@ -2796,6 +2796,9 @@ Create a new project instead`,
     end_date: "End date",
     in_your_timezone: "In your timezone",
     transfer_work_items: "Transfer {count} work items",
+    transfer: {
+      no_cycles_available: "No other cycles available to transfer work items to.",
+    },
     date_range: "Date range",
     add_date: "Add date",
     active_cycle: {
@@ -2808,6 +2811,8 @@ Create a new project instead`,
       ideal: "Ideal",
       current: "Current",
       labels: "Labels",
+      trailing: "Trailing",
+      leading: "Leading",
     },
     upcoming_cycle: {
       label: "Upcoming cycle",

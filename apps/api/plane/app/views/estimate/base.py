@@ -200,33 +200,34 @@ class EstimatePointEndpoint(BaseViewSet):
             estimate__isnull=False,
             estimate__type="points",
         ).exists():
-            cycle = Cycle.objects.filter(
+            # Trigger activity for all active cycles — there can be multiple when
+            # parallel cycles are enabled for the project
+            active_cycles = Cycle.objects.filter(
                 start_date__lte=timezone.now(),
                 end_date__gte=timezone.now(),
                 project_id=project_id,
                 workspace__slug=slug,
-            ).first()
+            )
 
-            # If cycle exists, proceed with the logic
-            if cycle:
-                cycle_id = str(cycle.id)
+            for cycle in active_cycles:
                 issues = Issue.objects.annotate(cycle_id=F("issue_cycle__cycle_id")).filter(
                     estimate_point_id=estimate_point_id, cycle_id=cycle.id
                 )
 
-                # Trigger the entity issue state activity task
-                entity_issue_state_activity_task.delay(
-                    issue_cycle_data=[
-                        {
-                            "issue_id": str(issue.id),
-                            "cycle_id": str(cycle_id),
-                        }
-                        for issue in issues
-                    ],
-                    user_id=str(request.user.id),
-                    slug=slug,
-                    action="UPDATED",
-                )
+                if issues.exists():
+                    # Trigger the entity issue state activity task
+                    entity_issue_state_activity_task.delay(
+                        issue_cycle_data=[
+                            {
+                                "issue_id": str(issue.id),
+                                "cycle_id": str(cycle.id),
+                            }
+                            for issue in issues
+                        ],
+                        user_id=str(request.user.id),
+                        slug=slug,
+                        action="UPDATED",
+                    )
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -291,33 +292,35 @@ class EstimatePointEndpoint(BaseViewSet):
         if Project.objects.filter(
             workspace__slug=slug, pk=project_id, estimate__isnull=False, estimate__type="points"
         ).exists():
-            cycle = Cycle.objects.filter(
+            # Trigger activity for all active cycles — there can be multiple when
+            # parallel cycles are enabled for the project
+            active_cycles = Cycle.objects.filter(
                 start_date__lte=timezone.now(),
                 end_date__gte=timezone.now(),
                 project_id=project_id,
                 workspace__slug=slug,
-            ).first()
-            if cycle:
-                cycle_id = str(cycle.id)
+            )
 
+            for cycle in active_cycles:
                 issues = Issue.objects.filter(
                     estimate_point_id=(new_estimate_id if new_estimate_id else estimate_point_id),
                     issue_cycle__cycle_id=cycle.id,
                 )
 
-                # Trigger the entity issue state activity task
-                entity_issue_state_activity_task.delay(
-                    issue_cycle_data=[
-                        {
-                            "issue_id": str(issue.id),
-                            "cycle_id": str(cycle_id),
-                        }
-                        for issue in issues
-                    ],
-                    user_id=str(request.user.id),
-                    slug=slug,
-                    action="UPDATED",
-                )
+                if issues.exists():
+                    # Trigger the entity issue state activity task
+                    entity_issue_state_activity_task.delay(
+                        issue_cycle_data=[
+                            {
+                                "issue_id": str(issue.id),
+                                "cycle_id": str(cycle.id),
+                            }
+                            for issue in issues
+                        ],
+                        user_id=str(request.user.id),
+                        slug=slug,
+                        action="UPDATED",
+                    )
 
         old_estimate_point.delete()
 

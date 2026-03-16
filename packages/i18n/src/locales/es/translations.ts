@@ -2749,6 +2749,9 @@ Crea un nuevo proyecto en su lugar`,
     end_date: "Fecha de finalización",
     in_your_timezone: "En tu zona horaria",
     transfer_work_items: "Transferir {count} elementos de trabajo",
+    transfer: {
+      no_cycles_available: "No hay otros ciclos disponibles para transferir elementos de trabajo.",
+    },
     date_range: "Rango de fechas",
     add_date: "Agregar fecha",
     active_cycle: {
@@ -2761,6 +2764,8 @@ Crea un nuevo proyecto en su lugar`,
       ideal: "Ideal",
       current: "Actual",
       labels: "Etiquetas",
+      trailing: "Retrasado",
+      leading: "Adelantado",
     },
     upcoming_cycle: {
       label: "Ciclo próximo",

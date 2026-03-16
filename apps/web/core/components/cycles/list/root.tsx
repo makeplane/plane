@@ -25,6 +25,7 @@ import { CycleListGroupHeader } from "./cycle-list-group-header";
 import { CyclesListMap } from "./cycles-list-map";
 
 export interface ICyclesList {
+  activeCycleIds?: string[];
   completedCycleIds: string[];
   upcomingCycleIds?: string[] | undefined;
   cycleIds: string[];
@@ -37,16 +38,19 @@ const UpcomingCyclesCollapsible = observer(function UpcomingCyclesCollapsible({
   upcomingCycleIds,
   projectId,
   workspaceSlug,
+  isOpen,
+  onOpenChange,
 }: {
   upcomingCycleIds: string[];
   projectId: string;
   workspaceSlug: string;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
 }) {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <Collapsible className="flex flex-shrink-0 flex-col" open={isOpen} onOpenChange={setIsOpen}>
+    <Collapsible className="flex flex-shrink-0 flex-col" open={isOpen} onOpenChange={onOpenChange}>
       <CollapsibleTrigger className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-layer-1 cursor-pointer">
         <CycleListGroupHeader
           title={t("project_cycles.upcoming_cycle.label")}
@@ -67,16 +71,19 @@ const CompletedCyclesCollapsible = observer(function CompletedCyclesCollapsible(
   completedCycleIds,
   projectId,
   workspaceSlug,
+  isOpen,
+  onOpenChange,
 }: {
   completedCycleIds: string[];
   projectId: string;
   workspaceSlug: string;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
 
   return (
-    <Collapsible className="flex flex-shrink-0 flex-col pb-7" open={isOpen} onOpenChange={setIsOpen}>
+    <Collapsible className="flex flex-shrink-0 flex-col pb-7" open={isOpen} onOpenChange={onOpenChange}>
       <CollapsibleTrigger className="sticky top-0 z-2 w-full flex-shrink-0 border-b border-subtle bg-layer-1 cursor-pointer">
         <CycleListGroupHeader
           title={t("project_cycles.completed_cycle.label")}
@@ -94,7 +101,18 @@ const CompletedCyclesCollapsible = observer(function CompletedCyclesCollapsible(
 });
 
 export const CyclesList = observer(function CyclesList(props: ICyclesList) {
-  const { completedCycleIds, upcomingCycleIds, cycleIds, workspaceSlug, projectId, isArchived = false } = props;
+  const {
+    activeCycleIds,
+    completedCycleIds,
+    upcomingCycleIds,
+    cycleIds,
+    workspaceSlug,
+    projectId,
+    isArchived = false,
+  } = props;
+  // Lift collapsible state here so it persists across child remounts
+  const [isUpcomingOpen, setIsUpcomingOpen] = useState(true);
+  const [isCompletedOpen, setIsCompletedOpen] = useState(false);
 
   return (
     <ContentWrapper variant={ERowVariant.HUGGING} className="flex-row">
@@ -105,18 +123,24 @@ export const CyclesList = observer(function CyclesList(props: ICyclesList) {
           </>
         ) : (
           <>
-            <ProjectActiveCycleRoot workspaceSlug={workspaceSlug} projectId={projectId} />
+            {activeCycleIds && activeCycleIds.length > 0 && (
+              <ProjectActiveCycleRoot workspaceSlug={workspaceSlug} projectId={projectId} cycleIds={activeCycleIds} />
+            )}
             {upcomingCycleIds && (
               <UpcomingCyclesCollapsible
                 upcomingCycleIds={upcomingCycleIds}
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}
+                isOpen={isUpcomingOpen}
+                onOpenChange={setIsUpcomingOpen}
               />
             )}
             <CompletedCyclesCollapsible
               completedCycleIds={completedCycleIds}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
+              isOpen={isCompletedOpen}
+              onOpenChange={setIsCompletedOpen}
             />
           </>
         )}

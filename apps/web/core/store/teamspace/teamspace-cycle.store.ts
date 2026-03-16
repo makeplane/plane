@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { set, update } from "lodash-es";
+import { set, sortBy, update } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -32,7 +32,7 @@ export interface ITeamspaceCycleStore {
   getTeamspaceFilteredActiveCycleIds: (teamspaceId: string) => string[];
   getTeamspaceFilteredCompletedCycleIds: (teamspaceId: string) => string[];
   getTeamspaceFilteredUpcomingCycleIds: (teamspaceId: string) => string[];
-  getTeamspaceGroupedActiveCycleIds: (teamspaceId: string) => Record<string, string>; // project_id -> teamspace active cycle ID
+  getTeamspaceGroupedActiveCycleIds: (teamspaceId: string) => Record<string, string[]>; // project_id -> teamspace active cycle IDs
   getTeamspaceGroupedUpcomingCycleIds: (teamspaceId: string) => Record<string, string[]>; // project_id -> teamspace upcoming cycle IDs
   getTeamspaceGroupedCompletedCycleIds: (teamspaceId: string) => Record<string, string[]>; // project_id -> teamspace completed cycle IDs
   // actions
@@ -139,19 +139,29 @@ export class TeamspaceCycleStore implements ITeamspaceCycleStore {
   /**
    * Returns teamspace grouped active cycle IDs
    * @param teamspaceId
-   * @returns Record<string, string> project_id -> teamspace active cycle ID
+   * @returns Record<string, string[]> project_id -> teamspace active cycle IDs
    */
-  getTeamspaceGroupedActiveCycleIds = computedFn((teamspaceId: string): Record<string, string> => {
+  getTeamspaceGroupedActiveCycleIds = computedFn((teamspaceId: string): Record<string, string[]> => {
     const teamActiveCycleIds = this.getTeamspaceFilteredActiveCycleIds(teamspaceId);
-    // Group by project_id -> cycle_id, only one active cycle per project
-    const projectGroupedActiveCycleIds: Record<string, string> = {};
+    // Group by project_id -> cycle_ids (supports parallel cycles)
+    const projectGroupedActiveCycleIds: Record<string, string[]> = {};
     teamActiveCycleIds.forEach((cycleId) => {
       const cycle = this.cycleStore.getCycleById(cycleId);
       const projectId = cycle?.project_id;
       if (projectId) {
-        projectGroupedActiveCycleIds[projectId] = cycleId;
+        if (!projectGroupedActiveCycleIds[projectId]) {
+          projectGroupedActiveCycleIds[projectId] = [];
+        }
+        projectGroupedActiveCycleIds[projectId].push(cycleId);
       }
     });
+    // Sort each project's cycles by start_date ascending
+    for (const projectId of Object.keys(projectGroupedActiveCycleIds)) {
+      const cycles = projectGroupedActiveCycleIds[projectId]
+        .map((id) => this.cycleStore.getCycleById(id))
+        .filter((c): c is ICycle => !!c);
+      projectGroupedActiveCycleIds[projectId] = sortBy(cycles, [(c) => c.start_date]).map((c) => c.id);
+    }
     return projectGroupedActiveCycleIds;
   });
 

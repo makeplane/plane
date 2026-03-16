@@ -2716,6 +2716,9 @@ Tạo dự án mới`,
     end_date: "Ngày kết thúc",
     in_your_timezone: "Trong múi giờ của bạn",
     transfer_work_items: "Chuyển {count} mục công việc",
+    transfer: {
+      no_cycles_available: "Không có chu kỳ nào khác để chuyển mục công việc.",
+    },
     date_range: "Khoảng thời gian",
     add_date: "Thêm ngày",
     active_cycle: {
@@ -2728,6 +2731,8 @@ Tạo dự án mới`,
       ideal: "Lý tưởng",
       current: "Hiện tại",
       labels: "Nhãn",
+      trailing: "Chậm tiến độ",
+      leading: "Vượt tiến độ",
     },
     upcoming_cycle: {
       label: "Chu kỳ sắp tới",

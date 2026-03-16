@@ -12,3 +12,4 @@
  */
 
 export * from "./auto-schedule-cycles";
+export * from "./parallel-cycles";

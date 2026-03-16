@@ -36,6 +36,7 @@ type ActiveCycleRootProps = {
   workspaceSlug: string;
   projectId: string;
   cycleId: string | undefined;
+  cycleIds?: string[];
   showHeader?: boolean;
 };
 
@@ -101,22 +102,78 @@ const ActiveCyclesComponent = observer(function ActiveCyclesComponent({
   );
 });
 
-export const ActiveCycleRoot = observer(function ActiveCycleRoot(props: ActiveCycleRootProps) {
-  const { workspaceSlug, projectId, cycleId: propsCycleId, showHeader = true } = props;
-  // plane hooks
-  const { t } = useTranslation();
-  // store hooks
-  const { currentProjectActiveCycleId } = useCycle();
-  // derived values
-  const cycleId = propsCycleId ?? currentProjectActiveCycleId ?? undefined;
-  // fetch cycle details
+// Renders details for a single cycle ID — calls the data-fetching hook internally
+const ActiveCycleEntry = observer(function ActiveCycleEntry({
+  cycleId,
+  workspaceSlug,
+  projectId,
+}: {
+  cycleId: string;
+  workspaceSlug: string;
+  projectId: string;
+}) {
   const {
     handleFiltersUpdate,
     cycle: activeCycle,
     cycleIssueDetails,
-  } = useActiveCycleDetails({ workspaceSlug, projectId, cycleId });
+  } = useActiveCycleDetails({
+    workspaceSlug,
+    projectId,
+    cycleId,
+  });
+
+  return (
+    <ActiveCyclesComponent
+      cycleId={cycleId}
+      activeCycle={activeCycle}
+      workspaceSlug={workspaceSlug}
+      projectId={projectId}
+      handleFiltersUpdate={handleFiltersUpdate}
+      cycleIssueDetails={cycleIssueDetails}
+    />
+  );
+});
+
+export const ActiveCycleRoot = observer(function ActiveCycleRoot(props: ActiveCycleRootProps) {
+  const { workspaceSlug, projectId, cycleId: propsCycleId, cycleIds: propsCycleIds, showHeader = true } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { getActiveCycleIds, currentProjectActiveCycleId } = useCycle();
+  const activeCyclesForProject = getActiveCycleIds(projectId);
+
+  // When explicit cycleIds are provided (e.g. from teamspace), use them.
+  // When a single cycleId is provided (e.g. from cycle detail page), use it.
+  // Otherwise render all active cycles (supports parallel cycles).
+  const activeCycleIds =
+    propsCycleIds && propsCycleIds.length > 0
+      ? propsCycleIds
+      : propsCycleId
+        ? [propsCycleId]
+        : activeCyclesForProject.length > 0
+          ? activeCyclesForProject
+          : currentProjectActiveCycleId
+            ? [currentProjectActiveCycleId]
+            : [];
 
   const [isOpen, setIsOpen] = useState(true);
+
+  const content =
+    activeCycleIds.length === 0 ? (
+      <ActiveCyclesComponent
+        cycleId={undefined}
+        activeCycle={null}
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        handleFiltersUpdate={() => {}}
+      />
+    ) : (
+      <>
+        {activeCycleIds.map((id) => (
+          <ActiveCycleEntry key={id} cycleId={id} workspaceSlug={workspaceSlug} projectId={projectId} />
+        ))}
+      </>
+    );
 
   return (
     <>
@@ -125,26 +182,10 @@ export const ActiveCycleRoot = observer(function ActiveCycleRoot(props: ActiveCy
           <CollapsibleTrigger className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-layer-1 cursor-pointer">
             <CycleListGroupHeader title={t("project_cycles.active_cycle.label")} type="current" isExpanded={isOpen} />
           </CollapsibleTrigger>
-          <CollapsibleContent>
-            <ActiveCyclesComponent
-              cycleId={cycleId}
-              activeCycle={activeCycle}
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              handleFiltersUpdate={handleFiltersUpdate}
-              cycleIssueDetails={cycleIssueDetails}
-            />
-          </CollapsibleContent>
+          <CollapsibleContent>{content}</CollapsibleContent>
         </Collapsible>
       ) : (
-        <ActiveCyclesComponent
-          cycleId={cycleId}
-          activeCycle={activeCycle}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          handleFiltersUpdate={handleFiltersUpdate}
-          cycleIssueDetails={cycleIssueDetails}
-        />
+        content
       )}
     </>
   );

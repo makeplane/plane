@@ -33,17 +33,24 @@ export interface ICyclesView {
 export const CyclesView = observer(function CyclesView(props: ICyclesView) {
   const { workspaceSlug, projectId } = props;
   // store hooks
-  const { getFilteredCycleIds, getFilteredCompletedCycleIds, loader, currentProjectActiveCycleId } = useCycle();
+  const { getFilteredCycleIds, getFilteredCompletedCycleIds, getActiveCycleIds } = useCycle();
   const { searchQuery } = useCycleFilter();
   const { t } = useTranslation();
   // derived values
   const filteredCycleIds = getFilteredCycleIds(projectId, false);
   const filteredCompletedCycleIds = getFilteredCompletedCycleIds(projectId);
-  const filteredUpcomingCycleIds = (filteredCycleIds ?? []).filter(
-    (cycleId) => cycleId !== currentProjectActiveCycleId
-  );
+  const activeCycleIdSet = new Set(getActiveCycleIds(projectId));
+  // Only show active cycles that pass the current filters (status, date, search)
+  const filteredActiveCycleIds: string[] = [];
+  const filteredUpcomingCycleIds: string[] = [];
+  for (const cycleId of filteredCycleIds ?? []) {
+    if (activeCycleIdSet.has(cycleId)) filteredActiveCycleIds.push(cycleId);
+    else filteredUpcomingCycleIds.push(cycleId);
+  }
 
-  if (loader || !filteredCycleIds) return <CycleModuleListLayoutLoader />;
+  // Only show loader before initial fetch (filteredCycleIds is null).
+  // Avoid showing loader on refetch to prevent unmounting CyclesList and resetting collapsible states.
+  if (!filteredCycleIds) return <CycleModuleListLayoutLoader />;
 
   if (filteredCycleIds.length === 0 && filteredCompletedCycleIds?.length === 0)
     return (
@@ -66,6 +73,7 @@ export const CyclesView = observer(function CyclesView(props: ICyclesView) {
 
   return (
     <CyclesList
+      activeCycleIds={filteredActiveCycleIds}
       completedCycleIds={filteredCompletedCycleIds ?? []}
       upcomingCycleIds={filteredUpcomingCycleIds}
       cycleIds={filteredCycleIds}

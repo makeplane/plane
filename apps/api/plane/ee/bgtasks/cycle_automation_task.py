@@ -30,7 +30,8 @@ from plane.db.models import BotTypeEnum, ProjectMember
 from plane.utils.exception_logger import log_exception
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from plane.utils.timezone_converter import convert_to_utc
-
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 @shared_task
 def schedule_cycle(automated_cycle_id: str, project_id: str, bot_id: str):
@@ -51,6 +52,16 @@ def schedule_cycle(automated_cycle_id: str, project_id: str, bot_id: str):
         start_date = automated_cycle.start_date
         workspace_id = automated_cycle.workspace_id
 
+        # Check if the project allows parallel (overlapping) cycles
+        is_project_parallel = bool(
+            ProjectFeature.objects.filter(project_id=project_id)
+            .values_list("is_parallel_cycles_enabled", flat=True)
+            .first()
+        )
+        allow_parallel = is_project_parallel and check_workspace_feature_flag(
+            FeatureFlag.PARALLEL_CYCLES, automated_cycle.workspace.slug
+        )
+
         desired_windows = []
         for i in range(number_of_cycles):
             start_dt = start_date + timedelta(days=i * (cycle_duration + cooldown_period))
@@ -68,23 +79,24 @@ def schedule_cycle(automated_cycle_id: str, project_id: str, bot_id: str):
         cycles_to_create = []
 
         for start_dt, end_dt in desired_windows:
-            # Check if there's any overlap
-            is_clashing = any((ec["start_date"] <= end_dt and ec["end_date"] >= start_dt) for ec in existing_cycles)
+            # When parallel cycles are allowed, skip the overlap check
+            if not allow_parallel:
+                is_clashing = any((ec["start_date"] <= end_dt and ec["end_date"] >= start_dt) for ec in existing_cycles)
 
-            if is_clashing:
-                logs.append(
-                    AutomatedCycleLog(
-                        automated_cycle=automated_cycle,
-                        workspace_id=workspace_id,
-                        project_id=project_id,
-                        cycle_id=None,
-                        action="cycle_creation_failed",
-                        status="failed",
-                        message=f"Cycle window {start_dt.date()} - {end_dt.date()} overlaps with existing cycle.",
-                        scheduled_at=timezone.now(),
+                if is_clashing:
+                    logs.append(
+                        AutomatedCycleLog(
+                            automated_cycle=automated_cycle,
+                            workspace_id=workspace_id,
+                            project_id=project_id,
+                            cycle_id=None,
+                            action="cycle_creation_failed",
+                            status="failed",
+                            message=f"Cycle window {start_dt.date()} - {end_dt.date()} overlaps with existing cycle.",
+                            scheduled_at=timezone.now(),
+                        )
                     )
-                )
-                continue
+                    continue
 
             start_dt = convert_to_utc(
                 date=str(start_dt.date()),
@@ -213,27 +225,65 @@ def maintain_future_cycles():
             if scheduled_cycle.is_auto_rollover_enabled:
                 workspace_slug = Workspace.objects.get(id=scheduled_cycle.workspace_id).slug
 
-                # first check if the current active cycle is not the same as the old cycle
-                current_cycle = (
-                    Cycle.objects.filter(
-                        Q(start_date__lte=current_time_in_utc) & Q(end_date__gte=current_time_in_utc),
-                        workspace__slug=workspace_slug,
-                        project_id=project_id,
-                        deleted_at__isnull=True,
-                    )
-                    .order_by("start_date")
+                # Check if the project allows parallel cycles
+                is_project_parallel = (
+                    ProjectFeature.objects.filter(project_id=project_id)
+                    .values_list("is_parallel_cycles_enabled", flat=True)
                     .first()
                 )
-                if current_cycle and current_cycle.id != cycle_id:
+                allow_parallel = is_project_parallel and check_workspace_feature_flag(
+                    FeatureFlag.PARALLEL_CYCLES, workspace_slug
+                )
+
+                # Find all currently active cycles excluding the one that just ended
+                active_cycles = Cycle.objects.filter(
+                    Q(start_date__lte=current_time_in_utc) & Q(end_date__gte=current_time_in_utc),
+                    workspace__slug=workspace_slug,
+                    project_id=project_id,
+                    deleted_at__isnull=True,
+                ).exclude(id=cycle_id)
+
+                active_count = active_cycles.count()
+
+                if allow_parallel and active_count > 1:
+                    # get the next upcoming cycle created by the automation bot
+                    next_cycle = (
+                        Cycle.objects.filter(
+                            workspace__slug=workspace_slug,
+                            project_id=project_id,
+                            start_date__gt=current_time_in_utc,
+                            deleted_at__isnull=True,
+                            owned_by_id=bot_id,
+                        )
+                        .order_by("start_date")
+                        .first()
+                    )
+                    if next_cycle:
+                        transfer_cycle_issues(
+                            slug=workspace_slug,
+                            project_id=project_id,
+                            cycle_id=cycle_id,
+                            new_cycle_id=next_cycle.id,
+                            request=None,
+                            user_id=str(bot_id),
+                        )
+                    else:
+                        # if no next cycle is found then skip the rollover
+                        pass
+                    # Multiple active cycles exist — rollover target is ambiguous, skip
+                    pass
+                elif active_count == 1:
+                    # Exactly one other active cycle — transfer issues into it
                     transfer_cycle_issues(
                         slug=workspace_slug,
                         project_id=project_id,
                         cycle_id=cycle_id,
-                        new_cycle_id=current_cycle.id,
+                        new_cycle_id=str(active_cycles.first().id),
                         request=None,
                         user_id=str(bot_id),
                     )
                 else:
+                    # No other active cycle — fall back to the next upcoming cycle
                     next_cycle = (
                         Cycle.objects.filter(
                             workspace__slug=workspace_slug,

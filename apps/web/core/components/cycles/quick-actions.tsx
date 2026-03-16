@@ -18,7 +18,7 @@ import { MoreHorizontal } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast, setPromiseToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
@@ -50,7 +50,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
   const [deleteModal, setDeleteModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { getCycleById, restoreCycle } = useCycle();
+  const { getCycleById, restoreCycle, addCycleToFavorites, removeCycleFromFavorites } = useCycle();
   const { t } = useTranslation();
   // derived values
   const cycleDetails = getCycleById(cycleId);
@@ -72,6 +72,37 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
       });
     });
   const handleOpenInNewTab = () => window.open(`/${cycleLink}`, "_blank");
+
+  const handleFavoriteToggle = () => {
+    if (!workspaceSlug || !projectId) return;
+    if (cycleDetails?.is_favorite) {
+      const promise = removeCycleFromFavorites(workspaceSlug, projectId, cycleId);
+      setPromiseToast(promise, {
+        loading: t("project_cycles.action.unfavorite.loading"),
+        success: {
+          title: t("project_cycles.action.unfavorite.success.title"),
+          message: () => t("project_cycles.action.unfavorite.success.description"),
+        },
+        error: {
+          title: t("project_cycles.action.unfavorite.failed.title"),
+          message: () => t("project_cycles.action.unfavorite.failed.description"),
+        },
+      });
+    } else {
+      const promise = addCycleToFavorites(workspaceSlug, projectId, cycleId);
+      setPromiseToast(promise, {
+        loading: t("project_cycles.action.favorite.loading"),
+        success: {
+          title: t("project_cycles.action.favorite.success.title"),
+          message: () => t("project_cycles.action.favorite.success.description"),
+        },
+        error: {
+          title: t("project_cycles.action.favorite.failed.title"),
+          message: () => t("project_cycles.action.favorite.failed.description"),
+        },
+      });
+    }
+  };
 
   const handleRestoreCycle = async () =>
     await restoreCycle(workspaceSlug, projectId, cycleId)
@@ -97,12 +128,14 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
     projectId,
     cycleId,
     isEditingAllowed,
+    isFavorite: !!cycleDetails?.is_favorite,
     handleEdit: () => setUpdateModal(true),
     handleArchive: () => setArchiveCycleModal(true),
     handleRestore: handleRestoreCycle,
     handleDelete: () => setDeleteModal(true),
     handleCopyLink: handleCopyText,
     handleOpenInNewTab,
+    handleFavorite: handleFavoriteToggle,
   });
 
   const MENU_ITEMS: TContextMenuItem[] = Array.isArray(menuResult) ? menuResult : menuResult.items;
@@ -147,8 +180,9 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
       )}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
-        customButton={<IconButton variant="tertiary" size="lg" icon={MoreHorizontal} />}
+        customButton={<IconButton variant="tertiary" size="base" icon={MoreHorizontal} />}
         placement="bottom-end"
+        portalElement={document.body}
         closeOnSelect
         maxHeight="lg"
         buttonClassName={customClassName}

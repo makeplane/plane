@@ -2738,6 +2738,9 @@ Erstellen Sie ein neues.`,
     end_date: "Enddatum",
     in_your_timezone: "In Ihrer Zeitzone",
     transfer_work_items: "Übertragen von {count} Arbeitselementen",
+    transfer: {
+      no_cycles_available: "Keine anderen Zyklen verfügbar, um Arbeitselemente zu übertragen.",
+    },
     date_range: "Datumsbereich",
     add_date: "Datum hinzufügen",
     active_cycle: {
@@ -2750,6 +2753,8 @@ Erstellen Sie ein neues.`,
       ideal: "Ideal",
       current: "Aktuell",
       labels: "Labels",
+      trailing: "Rückstand",
+      leading: "Vorsprung",
     },
     upcoming_cycle: {
       label: "Bevorstehender Zyklus",
