@@ -18,7 +18,6 @@ import { CalendarDays } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { CycleGroupIcon, InfoIcon } from "@plane/propel/icons";
-import { BetaBadge } from "@/components/common/beta";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICycle, TCycleProgress } from "@plane/types";
 import { ControlLink, Loader } from "@plane/ui";
@@ -79,10 +78,6 @@ export function CycleProgressHeader(props: Props) {
           {progress === null && <Loader.Item width="48px" height="48px" className="shrink-0 rounded-full" />}
           {progress && <ProgressDonut progress={progressToday} />}
           <div className="flex flex-col overflow-hidden">
-            <div className="flex gap-2 items-center">
-              <CycleGroupIcon cycleGroup="current" height="16" width="16" />
-              <BetaBadge />
-            </div>
             <Tooltip tooltipContent={cycleDetails.name} position="bottom-end">
               <span className="truncate font-bold text-primary text-xl">{cycleDetails.name}</span>
             </Tooltip>

@@ -123,9 +123,7 @@ export const CyclesList = observer(function CyclesList(props: ICyclesList) {
           </>
         ) : (
           <>
-            {activeCycleIds && activeCycleIds.length > 0 && (
-              <ProjectActiveCycleRoot workspaceSlug={workspaceSlug} projectId={projectId} cycleIds={activeCycleIds} />
-            )}
+            <ProjectActiveCycleRoot workspaceSlug={workspaceSlug} projectId={projectId} cycleIds={activeCycleIds} />
             {upcomingCycleIds && (
               <UpcomingCyclesCollapsible
                 upcomingCycleIds={upcomingCycleIds}
