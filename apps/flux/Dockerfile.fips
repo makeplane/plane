@@ -15,10 +15,10 @@ RUN apk update
 RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
-ARG TURBO_VERSION=2.8.13
+ARG TURBO_VERSION=2.8.7
 RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
 COPY . .
-RUN turbo prune --scope=silo --docker
+RUN turbo prune --scope=flux --docker
 
 # *****************************************************************************
 # STAGE 2: Install dependencies & build the project
@@ -34,17 +34,18 @@ COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN corepack enable pnpm
-RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
 
-# Build the project and its dependencies
+# Copy full directory structure before fetch to ensure all package.json files are available
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
-ENV CI=true
-RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --store-dir=/pnpm/store
+
+# Fetch dependencies to cache store, then install offline with dev deps
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
-RUN pnpm turbo run build --filter=silo
+RUN pnpm turbo run build --filter=flux
 
 # *****************************************************************************
 # STAGE 3: Run the project
@@ -61,10 +62,10 @@ RUN update-crypto-policies --set FIPS
 WORKDIR /app
 
 COPY --from=installer /app/packages ./packages
-COPY --from=installer /app/apps/silo/dist ./apps/silo/dist
-COPY --from=installer /app/apps/silo/node_modules ./apps/silo/node_modules
+COPY --from=installer /app/apps/flux/dist ./apps/flux/dist
+COPY --from=installer /app/apps/flux/node_modules ./apps/flux/node_modules
 COPY --from=installer /app/node_modules ./node_modules
-COPY --from=installer /app/apps/silo/package.json ./apps/silo/package.json
+COPY --from=installer /app/apps/flux/package.json ./apps/flux/package.json
 
 COPY LICENSE.txt .
 RUN mkdir -p /usr/share/licenses/plane/
@@ -75,9 +76,10 @@ RUN groupadd -g 1000 node && useradd -u 1000 -g node -s /bin/sh -d /app node
 RUN chown -R node:node /app
 
 ENV TURBO_TELEMETRY_DISABLED=1
+ENV PORT=3000
 
 USER node
 
 EXPOSE 3000
 
-CMD ["node", "apps/silo"]
+CMD ["node", "apps/flux"]

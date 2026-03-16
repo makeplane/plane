@@ -81,6 +81,20 @@ FROM registry.access.redhat.com/ubi10/nginx-126 AS production
 COPY apps/admin/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=installer /app/apps/admin/build/client /usr/share/nginx/html/god-mode
 
+USER root
+
+RUN dnf install -y crypto-policies crypto-policies-scripts && dnf clean all
+RUN update-crypto-policies --set FIPS
+
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
+
+RUN mkdir -p /var/lib/nginx/tmp/client_body /var/log/nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/lib/nginx /var/log/nginx /var/cache/nginx  /run
+
+USER nginx
+
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \

@@ -79,7 +79,8 @@ jobs:
       dh_img_email: ${{ steps.set_env_variables.outputs.DH_IMG_EMAIL }}
       dh_img_pi: ${{ steps.set_env_variables.outputs.DH_IMG_PI }}
       dh_img_aio: ${{ steps.set_env_variables.outputs.DH_IMG_AIO }}
-
+      dh_img_node_runner: ${{ steps.set_env_variables.outputs.DH_IMG_NODE_RUNNER }}
+      dh_img_flux: ${{ steps.set_env_variables.outputs.DH_IMG_FLUX }}
       build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
       build_prerelease: ${{ steps.set_env_variables.outputs.BUILD_PRERELEASE }}
@@ -112,7 +113,6 @@ jobs:
 
           BR_NAME=$( echo "${{ env.TARGET_BRANCH }}" |sed 's/[^a-zA-Z0-9.-]//g')
           echo "TARGET_BRANCH=$BR_NAME" >> $GITHUB_OUTPUT
-
           if [ "${{ env.BUILD_IMAGES_TYPE }}" == "fips" ]; then
             echo "FIPS_BUILD=true" >> $GITHUB_OUTPUT
             echo "DH_IMG_WEB=web-commercial-fips" >> $GITHUB_OUTPUT
@@ -126,6 +126,8 @@ jobs:
             echo "DH_IMG_EMAIL=email-commercial-fips" >> $GITHUB_OUTPUT
             echo "DH_IMG_PI=plane-pi-commercial-fips" >> $GITHUB_OUTPUT
             echo "DH_IMG_AIO=plane-aio-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_NODE_RUNNER=node-runner-commercial-fips" >> $GITHUB_OUTPUT
+            echo "DH_IMG_FLUX=flux-commercial-fips" >> $GITHUB_OUTPUT
           else
             echo "FIPS_BUILD=false" >> $GITHUB_OUTPUT
             echo "DH_IMG_WEB=web-commercial" >> $GITHUB_OUTPUT
@@ -139,8 +141,9 @@ jobs:
             echo "DH_IMG_EMAIL=email-commercial" >> $GITHUB_OUTPUT
             echo "DH_IMG_PI=plane-pi-commercial" >> $GITHUB_OUTPUT
             echo "DH_IMG_AIO=plane-aio-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_NODE_RUNNER=node-runner-commercial" >> $GITHUB_OUTPUT
+            echo "DH_IMG_FLUX=flux-commercial" >> $GITHUB_OUTPUT
           fi
-
           echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
           BUILD_PRERELEASE=false
@@ -205,6 +208,52 @@ jobs:
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_admin }}
           build-context: .
           dockerfile-path: ${{ needs.branch_build_setup.outputs.fips_build == 'true' && './apps/admin/Dockerfile.fips' || './apps/admin/Dockerfile.admin' }}
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+
+  branch_build_push_flux:
+    name: Build-Push Flux Docker Image
+    runs-on: ubuntu-22.04-4core
+    needs: [branch_build_setup]
+    steps:
+      - name: Flux Build and Push
+        uses: makeplane/actions/build-push@v1.4.0
+        with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          docker-image-owner: makeplane
+          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/flux/Dockerfile.fips') || '' }}
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_flux }}
+          build-context: .
+          dockerfile-path: ./apps/flux/Dockerfile.flux
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+
+  branch_build_push_node_runner:
+    name: Build-Push Node Runner Docker Image
+    runs-on: ubuntu-22.04-4core
+    needs: [branch_build_setup]
+    steps:
+      - name: Node Runner Build and Push
+        uses: makeplane/actions/build-push@v1.4.0
+        with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          docker-image-owner: makeplane
+          fips-docker-file-path: ${{ (needs.branch_build_setup.outputs.fips_build == 'true' && './apps/runners/node-runner/Dockerfile.fips') || '' }}
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_node_runner }}
+          build-context: .
+          dockerfile-path: ./apps/runners/node-runner/Dockerfile.runner
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -445,6 +494,8 @@ jobs:
         branch_build_push_email,
         branch_build_push_silo,
         branch_build_push_plane_pi,
+        branch_build_push_node_runner,
+        branch_build_push_flux,
       ]
     steps:
       - name: Checkout Files
@@ -689,6 +740,8 @@ jobs:
         branch_build_push_email,
         branch_build_push_silo,
         branch_build_push_plane_pi,
+        branch_build_push_node_runner,
+        branch_build_push_flux,
         upload_artifacts_s3,
       ]
     env:
@@ -740,6 +793,9 @@ jobs:
             ${{ github.workspace }}/deployments/portainer/commercial/portainer-compose.yml
             ${{ github.workspace }}/deployments/portainer/commercial/swarm-compose.yml
             ${{ github.workspace }}/deployments/podman/commercial/podman-quadlets.tar.gz
+            ${{ (env.FIPS_BUILD == 'true' && format('{0}/deployments/cli/commercial/docker-compose-fips.yml', github.workspace)) || '' }}
+            ${{ (env.FIPS_BUILD == 'true' && format('{0}/deployments/coolify/commercial/coolify-compose-fips.yml', github.workspace)) || '' }}
+            ${{ (env.FIPS_BUILD == 'true' && format('{0}/deployments/portainer/commercial/portainer-compose-fips.yml', github.workspace)) || '' }}
 
       - name: Create Release FIPS
         if: ${{ needs.branch_build_setup.outputs.fips_build == 'true' }}

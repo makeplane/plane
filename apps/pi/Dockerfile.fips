@@ -20,14 +20,35 @@ RUN pip install --upgrade pip && \
 
 FROM registry.access.redhat.com/ubi10/python-312-minimal AS base-runtime
 
+USER root
+
+RUN microdnf install -y shadow-utils crypto-policies crypto-policies-scripts && microdnf clean all
+
+RUN update-crypto-policies --set FIPS
+
 WORKDIR /app
 
 COPY --from=builder /usr/local/bin /usr/local/bin
 COPY --from=builder /app/pi /app/pi
 COPY --from=builder /app/bin /app/bin
 
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
+
+RUN groupadd -g 1000 plane && useradd -u 1000 -g plane -s /bin/sh -d /app plane
+
+RUN mkdir -p /var/tls && \
+    chmod +x ./bin/* && \
+    chmod -R 755 /app /var/tls && \
+    chown -R plane:plane /app /var/tls
+
 ENV PYTHONPATH=/app
 
 VOLUME [ "/var/tls" ]
+
+USER plane
+
+EXPOSE 8000
 
 CMD ["./bin/entrypoint-api.sh"]

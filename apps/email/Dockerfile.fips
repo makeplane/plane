@@ -17,7 +17,10 @@ RUN goreleaser build --snapshot --clean --single-target --output=./email-server
 FROM registry.access.redhat.com/ubi10/ubi-minimal AS runner
 
 RUN microdnf install -y ca-certificates openssl shadow-utils nmap-ncat \
+    crypto-policies crypto-policies-scripts \
     && microdnf clean all
+
+RUN update-crypto-policies --set FIPS
 
 WORKDIR /opt/email
 
@@ -34,6 +37,10 @@ COPY --from=builder /app/email-server /opt/email/email-server
 COPY --from=builder /app/spam.txt /opt/email/spam.txt
 COPY --from=builder /app/domain-blacklist.txt /opt/email/domain-blacklist.txt
 COPY --from=builder /app/cert-gen.sh /opt/email/cert-gen.sh
+
+COPY --from=builder /app/LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY --from=builder /app/LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
 
 RUN mkdir -p /opt/email/emails && \
 	mkdir -p /opt/email/keys && \

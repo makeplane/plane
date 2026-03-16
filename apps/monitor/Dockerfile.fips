@@ -19,8 +19,24 @@ RUN goreleaser build --snapshot --clean --single-target --output=./prime-monitor
 
 FROM registry.access.redhat.com/ubi10/ubi-minimal AS run
 
+RUN microdnf install -y shadow-utils crypto-policies crypto-policies-scripts && microdnf clean all
+
+RUN update-crypto-policies --set FIPS
+
 WORKDIR /app
 
 COPY --from=build /app/prime-monitor /usr/local/bin/prime-monitor
+COPY --from=build /app/bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-CMD [ "prime-monitor", "start" ]
+COPY --from=build /app/LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY --from=build /app/LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
+
+RUN groupadd -g 1000 plane && useradd -u 1000 -g plane -s /bin/sh -d /app plane
+
+RUN chown -R plane:plane /app
+
+USER plane
+
+CMD ["/usr/local/bin/docker-entrypoint.sh"]

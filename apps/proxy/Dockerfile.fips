@@ -12,10 +12,18 @@ RUN microdnf install -y \
       curl \
       bash \
       nss \
+      crypto-policies \
+      crypto-policies-scripts \
     && microdnf clean all
+
+RUN update-crypto-policies --set FIPS
 
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 COPY Caddyfile.ee /etc/caddy/Caddyfile
+
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
 
 WORKDIR /srv
 EXPOSE 80 443

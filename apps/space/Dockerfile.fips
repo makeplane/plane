@@ -78,12 +78,28 @@ RUN pnpm turbo run build --filter=space
 # =========================================================================== #
 FROM registry.access.redhat.com/ubi10/nodejs-22 AS runner
 
+USER root
+
+RUN dnf install -y shadow-utils crypto-policies crypto-policies-scripts && dnf clean all
+
+RUN update-crypto-policies --set FIPS
+
 # Copy only what is required at runtime
 COPY --from=installer /app/apps/space/build apps/space/build
 COPY --from=installer /app/apps/space/node_modules apps/space/node_modules
 COPY --from=installer /app/node_modules node_modules
 
 WORKDIR /opt/app-root/src/apps/space
+
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
+
+RUN groupadd -g 1000 node && useradd -u 1000 -g node -s /bin/sh -d /opt/app-root/src node
+
+RUN chown -R node:node /opt/app-root/src
+
+USER node
 
 EXPOSE 3000
 
