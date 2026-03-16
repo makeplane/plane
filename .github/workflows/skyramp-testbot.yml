@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
+      # Adding this to test setup only
+      - '.github/workflows/skyramp-testbot.yml'
       # Plane API (Django)
       - 'apps/api/**'
       # Plane frontend apps
