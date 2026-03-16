@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { HelpCircle, MessagesSquare, User } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -24,7 +24,7 @@ import { PlaneVersionNumber } from "@/plane-web/components/global";
 export const HelpMenuRoot = observer(function HelpMenuRoot() {
   // store hooks
   const { t } = useTranslation();
-  const { toggleShortcutsListModal } = usePowerK();
+  usePowerK();
   const { openChatSupport, isEnabled: isChatSupportEnabled } = useChatSupport();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
@@ -53,7 +53,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
         maxHeight="lg"
         closeOnSelect
       >
-        <CustomMenu.MenuItem onClick={() => window.open("https://go.plane.so/p-docs", "_blank")}>
+        <CustomMenu.MenuItem onClick={() => window.open(`${window.location.origin}/docs`, "_blank")}>
           <div className="flex items-center gap-x-2 rounded-sm text-11">
             <PageIcon className="h-3.5 w-3.5 text-secondary" height={14} width={14} />
             <span className="text-11">{t("documentation")}</span>
