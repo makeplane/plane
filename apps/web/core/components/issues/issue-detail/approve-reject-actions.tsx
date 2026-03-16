@@ -22,6 +22,8 @@ import { useUser } from "@/hooks/store/user";
 import { useWorkflows } from "@/hooks/store/use-workflows";
 // stores
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 type Props = {
   projectId: string;
@@ -38,9 +40,16 @@ export const WorkItemApproveRejectActions = observer(function WorkItemApproveRej
   // hooks
   const { t } = useTranslation();
   const { data: currentUser } = useUser();
-  const { updateStateViaWorkflow } = useIssueDetail();
+  const {
+    updateStateViaWorkflow,
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const { getProjectIdentifierById } = useProject();
   const { isWorkflowsEnabled, isApprovalsEnabled, isApprovalPending, isCurrentUserApprover } = useWorkflows();
+  const { getStateById } = useProjectState();
   // derived values
+  const projectIdentifier = getProjectIdentifierById(projectId);
+  const workItemDetails = getIssueById(workItemId);
   const isEnabled = workspaceSlug ? isWorkflowsEnabled(workspaceSlug.toString(), projectId) : false;
   const isApprovalFeatureEnabled =
     isEnabled && workspaceSlug ? isApprovalsEnabled(workspaceSlug.toString(), projectId) : false;
@@ -54,16 +63,18 @@ export const WorkItemApproveRejectActions = observer(function WorkItemApproveRej
       : false;
   }, [isPending, currentUser?.id, workspaceSlug, projectId, typeId, currentStateId]);
 
+  // handlers
   const handleAction = useCallback(
     async (action: "approve" | "reject") => {
       if (!workspaceSlug || isLoading) return;
       setIsLoading(action);
       try {
-        await updateStateViaWorkflow(workspaceSlug.toString(), projectId, workItemId, action);
+        const newStateId = await updateStateViaWorkflow(workspaceSlug.toString(), projectId, workItemId, action);
+        const newStateDetail = getStateById(newStateId);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: t("toast.success"),
-          message: action === "approve" ? "Approved" : "Rejected",
+          title: `${projectIdentifier}-${workItemDetails?.sequence_id} ${action === "approve" ? "Approved" : "Rejected"}`,
+          message: `Work item is moved to ${newStateDetail?.name}`,
         });
       } catch {
         setToast({

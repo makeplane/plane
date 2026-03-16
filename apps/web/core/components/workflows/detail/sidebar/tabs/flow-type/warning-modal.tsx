@@ -26,6 +26,10 @@ type Props = {
 export function FlowTypeChangeWarningModal(props: Props) {
   const { isOpen, onClose, newFlowType, onSubmit, isSubmitting = false } = props;
 
+  // derived values
+  const oldFlowLabel = newFlowType === "approval" ? "Transition" : "Approval";
+  const newFlowLabel = newFlowType === "approval" ? "Approval" : "Transition";
+
   // TODO: use AlertModalCore once it supports variant
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose}>
@@ -33,7 +37,9 @@ export function FlowTypeChangeWarningModal(props: Props) {
         <div className="flex gap-1.5">
           <AlertIcon className="size-5 text-icon-warning-subtle" />
           <div className="flex flex-col gap-1">
-            <h5 className="text-h5-medium">Switch from “Approval” to “Transition”?</h5>
+            <h5 className="text-h5-medium">
+              Switch from “{oldFlowLabel}” to “{newFlowLabel}”?
+            </h5>
             <p className="text-body-sm-regular text-tertiary">
               {newFlowType === "approval" ? (
                 <span>

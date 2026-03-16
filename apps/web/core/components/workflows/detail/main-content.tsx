@@ -53,12 +53,7 @@ export const WorkflowDetailMainContent = observer(function WorkflowDetailMainCon
   return (
     <>
       <ScrollArea scrollType="hover" orientation="vertical" size="sm" className="grow size-full overflow-y-scroll">
-        <div
-          className={cn("py-9", {
-            "px-page-x lg:px-12 w-full": hugging,
-            "w-full max-w-225 mx-auto px-page-x @min-[58.95rem]:px-0": !hugging,
-          })}
-        >
+        <div className={cn("py-9 w-full max-w-225 mx-auto px-page-x")}>
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-3">
               <p className="text-h3-medium">{workflow.name}</p>

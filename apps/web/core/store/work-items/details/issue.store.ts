@@ -30,7 +30,7 @@ export interface IIssueStoreActions {
     projectId: string,
     issueId: string,
     action: "approve" | "reject"
-  ) => Promise<void>;
+  ) => Promise<string>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
@@ -247,6 +247,8 @@ export class IssueStore implements IIssueStore {
         currentStore.updateIssue(workspaceSlug, projectId, issueId, { state_id: response.state_id }, false),
         this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId),
       ]);
+
+      return response.state_id;
     } catch (error) {
       console.error("Failed to approve or reject workflow work item", error);
       throw error;
