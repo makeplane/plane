@@ -512,7 +512,14 @@ async def execute_tools_for_ask_mode(
                         enhanced_query_for_processing=enhanced_query_for_processing,
                         tools=tools,
                     )
-                    yield formatted_text
+                    # Yield with the same special prefix as build mode so chat.py
+                    # detects it, persists the assistant message, and skips the
+                    # empty-response fallback.
+                    try:
+                        stream_chunk = f"πspecial clarification blockπ: {json.dumps(clarification_payload, default=str)}\n"
+                    except Exception:
+                        stream_chunk = f"πspecial clarification blockπ: {formatted_text}\n"
+                    yield stream_chunk
                     return
 
                 else:

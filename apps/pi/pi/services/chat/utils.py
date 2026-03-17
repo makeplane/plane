@@ -684,16 +684,15 @@ async def auto_populate_disambiguation_options(
         if "projects" in hints or "project" in hints or "pages" in hints or any("project" in str(f).lower() for f in fields):
             if workspace_id:
                 query = """
-                SELECT p.id, p.name, p.identifier
+                SELECT p.id, p.name, p.identifier, p.archived_at
                 FROM projects p
                 JOIN project_members pm ON p.id = pm.project_id
                 WHERE p.workspace_id = $1
                 AND pm.member_id = $2
                 AND p.deleted_at IS NULL
-                AND p.archived_at IS NULL
                 AND pm.deleted_at IS NULL
                 AND pm.is_active = true
-                ORDER BY p.name
+                ORDER BY p.archived_at NULLS FIRST, p.name
                 LIMIT 50
                 """
                 results = await PlaneDBPool.fetch(query, (workspace_id, user_id))
@@ -701,6 +700,8 @@ async def auto_populate_disambiguation_options(
                     opt = {"id": str(row["id"]), "name": row["name"], "type": "project"}
                     if row["identifier"]:
                         opt["identifier"] = row["identifier"]
+                    if row["archived_at"] is not None:
+                        opt["archived"] = True
                     options.append(opt)
 
                 if options:
@@ -710,12 +711,11 @@ async def auto_populate_disambiguation_options(
         elif "modules" in hints or "module" in hints or any("module" in str(f).lower() for f in fields):
             if project_id:
                 query = """
-                SELECT m.id, m.name, m.description
+                SELECT m.id, m.name, m.description, m.archived_at
                 FROM modules m
                 WHERE m.project_id = $1
                 AND m.deleted_at IS NULL
-                AND m.archived_at IS NULL
-                ORDER BY m.name
+                ORDER BY m.archived_at NULLS FIRST, m.name
                 LIMIT 50
                 """
                 results = await PlaneDBPool.fetch(query, (project_id,))
@@ -723,6 +723,8 @@ async def auto_populate_disambiguation_options(
                     opt = {"id": str(row["id"]), "name": row["name"], "type": "module"}
                     if row["description"]:
                         opt["description"] = row["description"]
+                    if row["archived_at"] is not None:
+                        opt["archived"] = True
                     options.append(opt)
 
                 if options:
@@ -732,12 +734,11 @@ async def auto_populate_disambiguation_options(
         elif "cycles" in hints or "cycle" in hints or any("cycle" in str(f).lower() for f in fields):
             if project_id:
                 query = """
-                SELECT c.id, c.name, c.start_date, c.end_date, c.project_id
+                SELECT c.id, c.name, c.start_date, c.end_date, c.project_id, c.archived_at
                 FROM cycles c
                 WHERE c.project_id = $1
                 AND c.deleted_at IS NULL
-                AND c.archived_at IS NULL
-                ORDER BY c.start_date DESC, c.name
+                ORDER BY c.archived_at NULLS FIRST, c.start_date DESC, c.name
                 LIMIT 50
                 """
                 results = await PlaneDBPool.fetch(query, (project_id,))
@@ -747,6 +748,8 @@ async def auto_populate_disambiguation_options(
                         opt["start_date"] = str(row["start_date"])
                     if row["end_date"]:
                         opt["end_date"] = str(row["end_date"])
+                    if row["archived_at"] is not None:
+                        opt["archived"] = True
                     options.append(opt)
 
                 if options:

@@ -9,6 +9,7 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+import contextlib
 import json
 from collections.abc import AsyncIterator
 from typing import Any
@@ -58,6 +59,104 @@ from .utils import format_message_with_attachments
 log = logger.getChild(__name__)
 NON_PLANE_TEMPERATURE = settings.llm_config.CONTEXT_OFF_TEMPERATURE
 DEFAULT_LLM = settings.llm_model.DEFAULT
+
+
+def _fuzzy_filter_options(
+    options: List[Dict[str, Any]],
+    reason: str,
+    threshold: float = 0.6,
+    max_fallback: int = 10,
+) -> List[Dict[str, Any]]:
+    """Filter auto-populated disambiguation options to only include relevant ones.
+
+    Extracts a search term from `reason` (e.g., 'Gate' from "Multiple matches
+    found for project 'Gate'") and scores each option using SequenceMatcher.
+    Options with name or identifier similarity >= threshold are kept.
+
+    Falls back to returning the top `max_fallback` options sorted by
+    similarity (descending) if:
+    - No search term can be extracted from reason
+    - No options pass the similarity threshold
+    """
+    import re
+    from difflib import SequenceMatcher
+
+    if not options or not reason:
+        return options
+
+    # Extract search term from quoted strings in reason (single or double quotes)
+    match = re.search(r"""['"]([^'"]+)['"]""", reason)
+    if not match:
+        # No quoted term found; can't fuzzy-filter, return all
+        return options
+
+    search_term = match.group(1).lower()
+
+    def _score(opt: Dict[str, Any]) -> float:
+        """Best similarity score across name and identifier fields."""
+        best = 0.0
+        for field in ("name", "identifier"):
+            val = str(opt.get(field, "")).lower()
+            if not val:
+                continue
+            # SequenceMatcher ratio: 0.0 (no match) to 1.0 (identical)
+            score = SequenceMatcher(None, search_term, val).ratio()
+            # Also check substring containment (boosts e.g. "gate" in "gate")
+            if search_term in val or val in search_term:
+                score = max(score, 0.8)
+            best = max(best, score)
+        return best
+
+    scored = [(opt, _score(opt)) for opt in options]
+    filtered = [opt for opt, s in scored if s >= threshold]
+
+    if filtered:
+        return filtered
+
+    # Nothing passed threshold — return top N sorted by score (most relevant first)
+    scored.sort(key=lambda x: x[1], reverse=True)
+    return [opt for opt, _ in scored[:max_fallback]]
+
+
+async def _mark_archived_options(options: List[Dict[str, Any]]) -> None:
+    """Check disambiguation options against DB and flag archived entities.
+
+    Mutates each option dict in-place: sets ``archived=True`` when the
+    underlying entity has been archived.  The display layer
+    (``format_clarification_as_text``) reads this flag to append an
+    "(archived)" label in the user-facing text.
+    """
+    if not options:
+        return
+
+    from pi.core.db.plane import PlaneDBPool
+
+    type_to_table = {
+        "project": "projects",
+        "module": "modules",
+        "cycle": "cycles",
+        "workitem": "issues",
+    }
+
+    ids_by_type: Dict[str, List[str]] = {}
+    for opt in options:
+        opt_type = opt.get("type")
+        opt_id = opt.get("id")
+        if not opt_id or not opt_type or str(opt_id).startswith("__"):
+            continue
+        if opt_type in type_to_table:
+            ids_by_type.setdefault(opt_type, []).append(str(opt_id))
+
+    archived_ids: set = set()
+    for entity_type, id_list in ids_by_type.items():
+        table = type_to_table[entity_type]
+        query = f"SELECT id FROM {table} WHERE id = ANY($1::uuid[]) AND archived_at IS NOT NULL"
+        rows = await PlaneDBPool.fetch(query, (id_list,))
+        archived_ids.update(str(r["id"]) for r in (rows or []))
+
+    for opt in options:
+        if str(opt.get("id", "")) in archived_ids:
+            opt["archived"] = True
 
 
 class ChatKit(AttachmentMixin):
@@ -537,7 +636,11 @@ Provide concise, relevant context from the attachment(s):"""
                 reason: Short description of why clarification is needed (e.g., "Multiple users named John").
                 questions: List of concrete questions to ask the user to resolve ambiguity.
                 missing_fields: Optional list of required fields that are missing from the user's request.
-                disambiguation_options: Optional list of candidate options to present (e.g., [{"name": "John A", "id": "..."}]).
+                disambiguation_options: Optional list of candidate options to present.
+                    Each option MUST include the UUID in the `id` field (copy it exactly from the tool result).
+                    Use `identifier` for the short code (e.g. "GATE"), NOT for the UUID.
+                    Example for a project: {"id": "79de968c-1f8c-43b1-8fc6-893720441651", "name": "gate", "identifier": "GATE", "type": "project"}.
+                    Example for a user: {"id": "4dcadeda-0314-4a9f-9c15-05bcf6ca076f", "name": "John A", "email": "john@example.com", "type": "user"}.
                 category_hints: Optional list of action categories likely involved (e.g., ["workitems", "users"]).
 
             Returns:
@@ -563,6 +666,7 @@ Provide concise, relevant context from the attachment(s):"""
                     user_id=user_id,
                     chat_id=chat_id,
                 )
+
                 # For pages, merge auto-populated projects with any LLM-provided options
                 if should_force_populate and auto_populated:
                     # Remove any workspace scope options the LLM might have added
@@ -570,6 +674,12 @@ Provide concise, relevant context from the attachment(s):"""
                     options_to_use = llm_options + auto_populated
                 else:
                     options_to_use.extend(auto_populated)
+
+            # Fuzzy-filter ALL assembled options (LLM-provided or auto-populated)
+            # to keep only relevant ones based on the search term in `reason`.
+            # Skipped for pages (force_populate) since those are scope selections.
+            if options_to_use and not should_force_populate:
+                options_to_use = _fuzzy_filter_options(options_to_use, reason)
 
             # Inject Workspace-level scope option for Pages when not in project chat
             try:
@@ -637,6 +747,9 @@ Provide concise, relevant context from the attachment(s):"""
                         opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get('id')}/overview/"
                         opt2["type"] = opt_type or "project"
                 enhanced_options.append(opt2)
+
+            with contextlib.suppress(Exception):
+                await _mark_archived_options(enhanced_options)
 
             payload: Dict[str, Any] = {
                 "reason": reason,

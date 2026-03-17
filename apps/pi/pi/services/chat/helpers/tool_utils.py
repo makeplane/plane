@@ -641,6 +641,7 @@ def tool_name_shown_to_user(tool_name: str) -> str:
         "users_list": "List Users",
         "workitems_list": "List Work-items",
         "list_member_projects": "List Member Projects",
+        "ask_for_clarification": "Elicitation",
     }
     name_to_return = tool_to_user_map.get(tool_name, "")
     if not name_to_return:
@@ -1383,17 +1384,21 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - **Lookup fallback**: If one of the search tools for a given entity type fails or returns "Invalid identifier format", immediately try the next search tool for that entity type with the same query
     If the that too fails with an error, fallback to the structured_db_tool with an appropriate natural language query
 - **Tool failures → structured_db_tool**: If any retrieval tool (search_*, *_list, *_get, *_retrieve) fails with an error, immediately try `structured_db_tool` with an equivalent natural language query before asking for clarification
-- **Multiple matches**: If the search tool for a given entity type returns multiple candidates (users, work-items, etc.), call `ask_for_clarification` with:
+- **Multiple matches**: If the search tool for a given entity type returns multiple candidates (users, work-items, etc.), you **MUST** call `ask_for_clarification` with:
   - `reason`: "Multiple matches found for [entity_type]"
   - `questions`: ["Which [entity] did you mean?"]
   - `disambiguation_options`: List the candidates with key details (name, id, email for users; name, id, project for work-items; and so on)
-- **Zero matches**: If all search tools for a given entity type return no results, call `ask_for_clarification` with:
+  - **YOU MUST call `ask_for_clarification`** — DO NOT just embed the question in your text response or use the ππANSWERππ delimiter for disambiguation. The tool ensures proper follow-up handling.
+- **Zero matches**: If all search tools for a given entity type return no results, you **MUST** call `ask_for_clarification` with:
   - `reason`: "No [entity_type] found matching '[query]'"
   - `questions`: ["Could you provide more details or check the spelling?"]
-- **CRITICAL**: Always attempt fallback searches before giving up or asking for clarification
+  - **YOU MUST call `ask_for_clarification`** — DO NOT just report the error to the user in text. This is MANDATORY.
+- **CRITICAL**: Always attempt fallback searches before asking for clarification
 - **MISSING PROJECT FOR PROJECT-SCOPED ENTITIES**: If you need a project list for scope selection or disambiguation:
   - **PREFER** `list_member_projects` to get active (unarchived, undeleted) projects the user is a member of
-  - THEN call `ask_for_clarification` with `disambiguation_options` containing these filtered projects
+  - **THEN you MUST call `ask_for_clarification`** with `disambiguation_options` containing these filtered projects
+  - **DO NOT** embed the project list in your text response or answer via ππANSWERππ — you MUST route through `ask_for_clarification` so the system can persist the clarification and handle the follow-up correctly
+- **MANDATORY DISAMBIGUATION FLOW**: Even after a successful fallback search (e.g., `list_member_projects` returns results after `search_project_by_name` returned nothing), you MUST still call `ask_for_clarification` with the results as `disambiguation_options`. Never present fallback results as a text-only answer.
 - **No identical retries**: Do not call the same retrieval tool with the exact same parameters more than once. If it returns no/invalid results, proceed to the next fallback (within the same entity type) or ask for clarification.
   - **Do not loop the same call.**
 
@@ -1569,48 +1574,7 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
 
     # Inject clarification context if present (from previous turn's ask_for_clarification)
     if clarification_context and isinstance(clarification_context, dict):
-        try:
-            original_query_text = clarification_context.get("original_query")
-            reason = clarification_context.get("reason")
-            answer_text = clarification_context.get("answer_text")
-            missing_fields = clarification_context.get("missing_fields") or []
-            category_hints = clarification_context.get("category_hints") or []
-            disambig = clarification_context.get("disambiguation_options") or []
-
-            method_prompt += "\n\n**USER CLARIFICATION (previous turn):**\n"
-            # CRITICAL: Include the original query to maintain full context
-            if original_query_text:
-                method_prompt += f"Original user request: {original_query_text}\n"
-            if reason:
-                method_prompt += f"Clarification reason: {reason}\n"
-            if missing_fields:
-                method_prompt += f"Missing fields resolved: {', '.join([str(x) for x in missing_fields])}\n"
-            if category_hints:
-                method_prompt += f"Category hints: {', '.join([str(x) for x in category_hints])}\n"
-            if disambig:
-                method_prompt += "The user was shown these options:\n"
-                for idx, opt in enumerate(disambig, 1):
-                    if isinstance(opt, dict):
-                        opt_id = opt.get("id")
-                        opt_name = opt.get("name") or opt.get("display_name") or ""
-                        opt_identifier = opt.get("identifier") or ""
-                        opt_email = opt.get("email") or ""
-
-                        # Format based on what fields are available
-                        if opt_email:
-                            # User entity
-                            method_prompt += f"  {idx}. {opt_name} ({opt_email}) → UUID: {opt_id}\n"
-                        elif opt_identifier:
-                            # Project/workitem entity
-                            method_prompt += f"  {idx}. {opt_name} (Identifier: {opt_identifier}) → UUID: {opt_id}\n"
-                        else:
-                            # Generic entity
-                            method_prompt += f"  {idx}. {opt_name} → UUID: {opt_id}\n"
-            if answer_text:
-                method_prompt += f"\nUser's clarification answer: {answer_text}\n"
-            method_prompt += "\nIMPORTANT: The current user message is a clarification response to the original request above. Use the clarification answer to resolve missing information and continue with the ORIGINAL request, not as a new standalone request.\n"  # noqa E501
-        except Exception:
-            pass
+        method_prompt += build_clarification_context_block(clarification_context)
         # Reasoning guidance is added globally below so it applies to all build-mode planning.
 
     # Ensure build-mode planning uses the same "reasoning around tool_calls" guidance as ask-mode.
@@ -1662,7 +1626,8 @@ Here's the answer to your question...
 def build_clarification_context_block(clar_ctx: dict | None) -> str:
     """Builds a formatted clarification context block for prompts.
 
-    Expected clar_ctx keys: original_query, reason, disambiguation_options (list of dicts), answer_text
+    Expected clar_ctx keys: original_query, reason, disambiguation_options (list of dicts),
+    answer_text, missing_fields, category_hints
     """
     try:
         if not clar_ctx or not isinstance(clar_ctx, dict):
@@ -1672,6 +1637,8 @@ def build_clarification_context_block(clar_ctx: dict | None) -> str:
         reason = clar_ctx.get("reason")
         disambig_options = clar_ctx.get("disambiguation_options") or []
         answer_text = clar_ctx.get("answer_text")
+        missing_fields = clar_ctx.get("missing_fields") or []
+        category_hints = clar_ctx.get("category_hints") or []
 
         parts: list[str] = []
         parts.append("\n\n**CLARIFICATION CONTEXT:**\n")
@@ -1679,6 +1646,10 @@ def build_clarification_context_block(clar_ctx: dict | None) -> str:
             parts.append(f"Original user request: {original_query_text}\n")
         if reason:
             parts.append(f"Clarification reason: {reason}\n")
+        if missing_fields:
+            parts.append(f"Missing fields resolved: {", ".join(str(x) for x in missing_fields)}\n")
+        if category_hints:
+            parts.append(f"Category hints: {", ".join(str(x) for x in category_hints)}\n")
         if disambig_options:
             parts.append("The user was previously shown these options:\n")
             for idx, opt in enumerate(disambig_options, 1):
@@ -1959,31 +1930,29 @@ def format_clarification_as_text(clarification_data: Dict[str, Any]) -> str:
                     email = option.get("email")
                     identifier = option.get("identifier")
                     url = option.get("url")
+                    archived_tag = " *(archived)*" if option.get("archived") else ""
 
                     if display_name and email:
-                        # Likely a user - link only the name, show email separately
                         if url:
-                            text_parts.append(f"{i}. [**{display_name}**]({url}) ({email})\n")
+                            text_parts.append(f"{i}. [**{display_name}**]({url}) ({email}){archived_tag}\n")
                         else:
-                            text_parts.append(f"{i}. **{display_name}** ({email})\n")
+                            text_parts.append(f"{i}. **{display_name}** ({email}){archived_tag}\n")
                     elif display_name and "(" in display_name and ")" in display_name:
-                        # Handle case where LLM combines name and email in single field like "John Doe (john@example.com)"
                         name_part = display_name.split("(")[0].strip()
                         if url:
-                            text_parts.append(f"{i}. [**{name_part}**]({url}) ({display_name.split('(')[1]}\n")
+                            text_parts.append(f"{i}. [**{name_part}**]({url}) ({display_name.split("(")[1]}{archived_tag}\n")
                         else:
-                            text_parts.append(f"{i}. **{display_name}**\n")
+                            text_parts.append(f"{i}. **{display_name}**{archived_tag}\n")
                     elif display_name and identifier:
-                        # Likely a workitem
                         if url:
-                            text_parts.append(f"{i}. [**{display_name}**]({url}) (ID: {identifier})\n")
+                            text_parts.append(f"{i}. [**{display_name}**]({url}) (ID: {identifier}){archived_tag}\n")
                         else:
-                            text_parts.append(f"{i}. **{display_name}** (ID: {identifier})\n")
+                            text_parts.append(f"{i}. **{display_name}** (ID: {identifier}){archived_tag}\n")
                     elif display_name:
                         if url:
-                            text_parts.append(f"{i}. [**{display_name}**]({url})\n")
+                            text_parts.append(f"{i}. [**{display_name}**]({url}){archived_tag}\n")
                         else:
-                            text_parts.append(f"{i}. **{display_name}**\n")
+                            text_parts.append(f"{i}. **{display_name}**{archived_tag}\n")
                     else:
                         # Handle custom dict formats (e.g., intake items with custom keys)
                         # Extract meaningful values and format them nicely
@@ -2005,8 +1974,10 @@ def format_clarification_as_text(clarification_data: Dict[str, Any]) -> str:
                 else:
                     text_parts.append(f"{i}. {str(option)}\n")
 
+        # missing_fields info is useful in the LLM prompt (build_clarification_context_block)
+        # but raw field names are confusing in user-facing text; the questions already cover it.
         # if missing_fields:
-        #     text_parts.append(f"\n*Missing information: {", ".join([str(m) for m in missing_fields])}*\n")
+        #     text_parts.append(f"\n*Missing information: {', '.join(str(m) for m in missing_fields)}*\n")
 
         text_parts.append("\n*Please provide your answer in your next message.*")
 
@@ -2223,12 +2194,11 @@ async def handle_missing_required_fields(
                         from pi.core.db.plane import PlaneDBPool as _DB
 
                         query = """
-                            SELECT p.id, p.name, p.identifier
+                            SELECT p.id, p.name, p.identifier, p.archived_at
                             FROM projects p
                             WHERE p.workspace_id = $1
                               AND p.deleted_at IS NULL
-                              AND p.archived_at IS NULL
-                            ORDER BY p.name
+                            ORDER BY p.archived_at NULLS FIRST, p.name
                             LIMIT 50
                             """
                         rows = await _DB.fetch(query, (ws_id,))
@@ -2236,6 +2206,8 @@ async def handle_missing_required_fields(
                             option = {"id": str(r["id"]), "name": r["name"], "type": "project"}
                             if r.get("identifier"):
                                 option["identifier"] = r["identifier"]
+                            if r.get("archived_at") is not None:
+                                option["archived"] = True
                             disambig_options.append(option)
                     else:
                         # Fallback to API list with defensive filtering
@@ -2264,10 +2236,12 @@ async def handle_missing_required_fields(
                                     is_archived = it.get("archived_at") is not None
                                     is_deleted = it.get("deleted_at") is not None
 
-                                    if pid and name and not is_archived and not is_deleted:
+                                    if pid and name and not is_deleted:
                                         option = {"id": str(pid), "name": str(name), "type": "project"}
                                         if identifier:
                                             option["identifier"] = str(identifier)
+                                        if is_archived:
+                                            option["archived"] = True
                                         disambig_options.append(option)
                                 except Exception:
                                     continue

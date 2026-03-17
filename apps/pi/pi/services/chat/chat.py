@@ -761,7 +761,8 @@ class PlaneChatBot(ChatKit):
                     final_response = "".join(string_chunks)
 
                 # Ensure we always have content to persist (prevent placeholder on refresh)
-                if not final_response or not final_response.strip():
+                # Skip if clarification was already persisted as the assistant message
+                if (not final_response or not final_response.strip()) and not clarification_saved_multi:
                     fallback_message = "I wasn't able to generate a complete response. But, if you are satisfied with the action plan, click `Confirm`, else please try again."  # noqa: E501
                     final_response = fallback_message
                     log.warning(
@@ -773,24 +774,26 @@ class PlaneChatBot(ChatKit):
                     yield fallback_message
 
                 # Save assistant message with reasoning blocks (always persist to avoid placeholder)
-                assistant_message_result = await upsert_message(
-                    message_id=response_id,
-                    chat_id=chat_id,
-                    content=final_response,
-                    user_type=UserTypeChoices.ASSISTANT.value,
-                    parent_id=query_id,
-                    llm_model=switch_llm,
-                    reasoning=reasoning,
-                    source=getattr(data, "source", None) or None,
-                    db=db,
-                )
+                # Skip if clarification was already persisted as the assistant message (avoid overwrite)
+                if not clarification_saved_multi:
+                    assistant_message_result = await upsert_message(
+                        message_id=response_id,
+                        chat_id=chat_id,
+                        content=final_response,
+                        user_type=UserTypeChoices.ASSISTANT.value,
+                        parent_id=query_id,
+                        llm_model=switch_llm,
+                        reasoning=reasoning,
+                        source=getattr(data, "source", None) or None,
+                        db=db,
+                    )
 
-                # Assistant message search index upserted via Celery background task
+                    # Assistant message search index upserted via Celery background task
 
-                if assistant_message_result["message"] != "success":
-                    final_response = "An unexpected error occurred. Please try again"  # Set final_response for title generation
-                    yield final_response
-                    return
+                    if assistant_message_result["message"] != "success":
+                        final_response = "An unexpected error occurred. Please try again"  # Set final_response for title generation
+                        yield final_response
+                        return
 
                 log.debug(f"ChatID: {chat_id} - Final Response: {final_response}")
 

@@ -485,7 +485,11 @@ MUST call search/retrieval tools (even if ID is in context):
 
 When query mentions entity NAMES without IDs and the UUID is NOT in context:
 1. Call appropriate search_*_by_name tool first (e.g., search_user_by_name, search_project_by_name)
-2. If search returns multiple matches: call ask_for_clarification with the disambiguation options
+2. If search returns multiple matches: call ask_for_clarification with:
+   - `reason`: "Multiple matches found for [entity_type]"
+   - `questions`: ["Which [entity] did you mean?"]
+   - `disambiguation_options`: List the candidate entities from the search results with key details (name, id, email for users; name, id, identifier for projects; etc.)
+   - **CRITICAL**: You MUST include `disambiguation_options` from the search results — do NOT omit them. If you omit options, the system auto-populates ALL entities which may include irrelevant ones.
 3. If search returns no matches (e.g., "No user found", "Not found", "No project found", etc.):
    - **YOU MUST call ask_for_clarification** - DO NOT just report the error to the user
    - Use reason: "No [entity_type] found matching '[search_term]'"

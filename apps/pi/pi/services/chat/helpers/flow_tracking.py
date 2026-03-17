@@ -823,7 +823,7 @@ async def store_and_format_clarification(
 
         clar_kind = "retrieval"
         bound_names = [getattr(t, "name", "") for t in tools] if tools else []
-        categories: list[str] = []
+        categories: list[str] = (clarification_payload.get("category_hints") or []) if clarification_payload else []
 
         # Ensure original_query is not None
         original_query = enhanced_query_for_processing or ""
