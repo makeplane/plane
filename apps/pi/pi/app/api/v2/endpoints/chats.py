@@ -652,6 +652,7 @@ async def unmark_chat_favorite(
 async def list_favorite_chats(
     workspace_id: Optional[UUID4] = Query(None, description="Optional workspace UUID for filtering"),
     workspace_slug: Optional[str] = Query(None, description="Optional workspace slug for filtering"),
+    is_project_chat: Optional[bool] = Query(False, description="Optional flag to filter project chats"),
     db: AsyncSession = Depends(get_async_session),
     current_user=Depends(get_current_user),
 ):
@@ -717,7 +718,7 @@ async def list_favorite_chats(
     """
     user_id = current_user.id
 
-    result = await get_favorite_chats(user_id=user_id, db=db, workspace_id=workspace_id)
+    result = await get_favorite_chats(user_id=user_id, db=db, workspace_id=workspace_id, is_project_chat=is_project_chat)
 
     # The get_favorite_chats function always returns a tuple of (status_code, content)
     status_code, content = result

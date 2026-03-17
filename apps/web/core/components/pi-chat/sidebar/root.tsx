@@ -33,7 +33,7 @@ export const PiSidebar = observer(function PiSidebar() {
 
   useSWR(
     workspaceSlug ? `PI_FAVORITE_CHATS_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchFavoriteChats(getWorkspaceBySlug(workspaceSlug)?.id || "") : null,
+    workspaceSlug ? () => fetchFavoriteChats(getWorkspaceBySlug(workspaceSlug)?.id || "", false) : null,
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
@@ -43,7 +43,7 @@ export const PiSidebar = observer(function PiSidebar() {
   // filter user threads
   const filteredUserThread =
     userThreads && userThreads.filter((thread) => thread.title.toLowerCase().includes(searchQuery.toLowerCase()));
-  const favoriteChats = geFavoriteChats();
+  const favoriteChats = geFavoriteChats(false);
   // update search query
   const updateSearchQuery = (value: string) => setSearchQuery(value);
 

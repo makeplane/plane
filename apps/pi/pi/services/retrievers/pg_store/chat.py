@@ -1452,7 +1452,7 @@ async def upsert_chat(
 
 
 async def get_user_chat_threads(
-    user_id: UUID4, db: AsyncSession, workspace_id: Optional[UUID4], is_project_chat: Optional[bool] = False, is_latest: Optional[bool] = False
+    user_id: UUID4, db: AsyncSession, workspace_id: Optional[UUID4], is_project_chat: Optional[bool] = None, is_latest: Optional[bool] = False
 ) -> Union[List[Dict[str, Any]], Tuple[int, Dict[str, str]]]:
     """
     Retrieves all chat threads for a user.
@@ -1470,9 +1470,11 @@ async def get_user_chat_threads(
             select(Chat)
             .where(Chat.user_id == user_id)  # type: ignore[union-attr,arg-type]
             .where(Chat.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
-            .where(Chat.is_project_chat == is_project_chat)  # type: ignore[union-attr,arg-type]
             .where(~Chat.id.in_(app_message_subquery))  # type: ignore[union-attr,arg-type,attr-defined]
         )
+
+        if is_project_chat is not None:
+            chat_query = chat_query.where(Chat.is_project_chat == is_project_chat)  # type: ignore[union-attr,arg-type]
 
         if workspace_id is not None:
             chat_query = chat_query.where(Chat.workspace_id == workspace_id)  # type: ignore[union-attr,arg-type]
@@ -1592,7 +1594,7 @@ async def unfavorite_chat(chat_id: UUID4, db: AsyncSession) -> Tuple[int, Dict[s
 
 
 async def get_favorite_chats(
-    user_id: UUID4, db: AsyncSession, workspace_id: Optional[UUID4] = None
+    user_id: UUID4, db: AsyncSession, workspace_id: Optional[UUID4] = None, is_project_chat: Optional[bool] = None
 ) -> Tuple[int, Union[List[Dict[str, Any]], Dict[str, str]]]:
     """
     Retrieves all favorite chats for a user.
@@ -1614,6 +1616,9 @@ async def get_favorite_chats(
             .where(~Chat.id.in_(app_message_subquery))  # type: ignore[union-attr,arg-type,attr-defined]
             .order_by(desc(Chat.updated_at))  # type: ignore[union-attr,arg-type]
         )
+
+        if is_project_chat is not None:
+            stmt = stmt.where(Chat.is_project_chat == is_project_chat)  # type: ignore[union-attr,arg-type]
 
         if workspace_id is not None:
             stmt = stmt.where(Chat.workspace_id == workspace_id)  # type: ignore[union-attr,arg-type]
@@ -1675,7 +1680,7 @@ async def get_user_chat_threads_paginated(
     user_id: UUID4,
     db: AsyncSession,
     workspace_id: Optional[UUID4],
-    is_project_chat: Optional[bool] = False,
+    is_project_chat: Optional[bool] = None,
     cursor: Optional[str] = None,
     per_page: int = 30,
 ) -> Union[Tuple[List[Dict[str, Any]], PaginationResponse], Tuple[int, Dict[str, str]]]:
@@ -1696,9 +1701,11 @@ async def get_user_chat_threads_paginated(
             select(Chat)
             .where(Chat.user_id == user_id)  # type: ignore[union-attr,arg-type]
             .where(Chat.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
-            .where(Chat.is_project_chat == is_project_chat)  # type: ignore[union-attr,arg-type]
             .where(~Chat.id.in_(app_message_subquery))  # type: ignore[union-attr,arg-type,attr-defined]
         )
+
+        if is_project_chat is not None:
+            chat_query = chat_query.where(Chat.is_project_chat == is_project_chat)  # type: ignore[union-attr,arg-type]
 
         if workspace_id is not None:
             chat_query = chat_query.where(Chat.workspace_id == workspace_id)  # type: ignore[union-attr,arg-type]
@@ -1708,9 +1715,11 @@ async def get_user_chat_threads_paginated(
             select(func.count(Chat.id))  # type: ignore[union-attr,arg-type]
             .where(Chat.user_id == user_id)  # type: ignore[union-attr,arg-type]
             .where(Chat.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
-            .where(Chat.is_project_chat == is_project_chat)  # type: ignore[union-attr,arg-type]
             .where(~Chat.id.in_(app_message_subquery))  # type: ignore[union-attr,arg-type,attr-defined]
         )
+
+        if is_project_chat is not None:
+            count_query = count_query.where(Chat.is_project_chat == is_project_chat)  # type: ignore[union-attr,arg-type]
 
         if workspace_id is not None:
             count_query = count_query.where(Chat.workspace_id == workspace_id)  # type: ignore[union-attr,arg-type]

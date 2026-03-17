@@ -275,10 +275,11 @@ export class PiChatService extends APIService {
   }
 
   // get favorite chats
-  async listFavoriteChats(workspaceId: string | undefined): Promise<TUserThreads[]> {
+  async listFavoriteChats(workspaceId: string | undefined, isProjectChat: boolean = false): Promise<TUserThreads[]> {
     return this.get(`/api/v1/chat/get-favorite-chats/`, {
       params: {
         ...(workspaceId && { workspace_id: workspaceId }),
+        is_project_chat: isProjectChat,
       },
     })
       .then((response) => response?.data)

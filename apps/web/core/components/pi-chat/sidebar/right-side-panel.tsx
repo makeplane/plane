@@ -22,6 +22,8 @@ import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import RecentChats from "./recents";
 import { Toolbar } from "./toolbar";
 import { useOutsideClickDetector } from "@plane/hooks";
+import FavoriteChats from "./favorites";
+import useSWR from "swr";
 
 type TProps = {
   isSidePanelOpen: boolean;
@@ -37,10 +39,28 @@ export const RightSidePanel = observer(function RightSidePanel(props: TProps) {
   // router
   const { workspaceSlug } = useParams();
   // store
-  const { activeChatId, geUserThreadsByWorkspaceId, isLoadingThreads, initPiChat } = usePiChat();
+  const {
+    activeChatId,
+    geUserThreadsByWorkspaceId,
+    isLoadingThreads,
+    initPiChat,
+    fetchFavoriteChats,
+    geFavoriteChats,
+  } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = workspaceSlug && getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
   const userThreads = geUserThreadsByWorkspaceId(workspaceId?.toString());
+  const favoriteChats = geFavoriteChats(true);
+
+  useSWR(
+    workspaceSlug ? `PI_FAVORITE_CHATS_PROJECT_LEVEL_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchFavoriteChats(getWorkspaceBySlug(workspaceSlug)?.id || "", true) : null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      errorRetryCount: 0,
+    }
+  );
 
   // filter user threads
   const filteredUserThread =
@@ -84,6 +104,8 @@ export const RightSidePanel = observer(function RightSidePanel(props: TProps) {
           toggleSidePanel(false);
         }}
       />
+      {/* Favorites */}
+      {favoriteChats && favoriteChats.length > 0 && <FavoriteChats favoriteChats={favoriteChats} isFullScreen />}
       {/* History */}
       <div className="flex-1 overflow-y-auto">
         <RecentChats

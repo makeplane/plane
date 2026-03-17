@@ -970,12 +970,13 @@ async def unfavorite_user_chat(data: UnfavoriteChatRequest, db: AsyncSession = D
 async def get_user_favorite_chats(
     workspace_id: Optional[UUID4] = None,
     workspace_slug: Optional[str] = None,
+    is_project_chat: Optional[bool] = False,
     db: AsyncSession = Depends(get_async_session),
     current_user=Depends(get_current_user),
 ):
     user_id = current_user.id
 
-    result = await get_favorite_chats(user_id=user_id, db=db, workspace_id=workspace_id)
+    result = await get_favorite_chats(user_id=user_id, db=db, workspace_id=workspace_id, is_project_chat=is_project_chat)
 
     # The get_favorite_chats function always returns a tuple of (status_code, content)
     status_code, content = result

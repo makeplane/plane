@@ -66,7 +66,7 @@ export interface IPiChatStore {
   getDefaultLLM: () => string;
   geUserThreads: () => TUserThreads[];
   geUserThreadsByWorkspaceId: (workspaceId: string | undefined) => TUserThreads[];
-  geFavoriteChats: () => TUserThreads[];
+  geFavoriteChats: (isProjectChat: boolean) => TUserThreads[];
   getChatById: (chatId: string) => TChatHistory;
   getChatFocus: (chatId: string | undefined) => TFocus | undefined;
   getChatMode: (chatId: string) => string;
@@ -113,7 +113,7 @@ export interface IPiChatStore {
   favoriteChat: (chatId: string, workspaceId: string | undefined) => Promise<void>;
   unfavoriteChat: (chatId: string, workspaceId: string | undefined) => Promise<void>;
   fetchRecentChats: (workspaceId: string | undefined, isProjectChat: boolean) => Promise<void>;
-  fetchFavoriteChats: (workspaceId: string | undefined) => Promise<void>;
+  fetchFavoriteChats: (workspaceId: string | undefined, isProjectChat: boolean) => Promise<void>;
   togglePiArtifactsDrawer: (value?: string) => void;
   regenerateAnswer: (chatId: string, token: string, workspaceId: string | undefined) => Promise<void>;
   getGroupedArtifactsByDialogue: (
@@ -265,9 +265,12 @@ export class PiChatStore implements IPiChatStore {
     );
   });
 
-  geFavoriteChats = computedFn(() => {
+  geFavoriteChats = computedFn((isProjectChat: boolean = false) => {
     if (!this.favoriteChats) return [];
-    return this.favoriteChats?.map((chatId) => this.chatMap[chatId]);
+    const chatIds = isProjectChat
+      ? this.favoriteChats.filter((chatId) => this.projectThreads.includes(chatId))
+      : this.favoriteChats.filter((chatId) => this.piThreads.includes(chatId));
+    return chatIds?.map((chatId) => this.chatMap[chatId]) || [];
   });
 
   getChatById = computedFn((chatId: string) => this.chatMap[chatId]);
@@ -904,8 +907,8 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  fetchFavoriteChats = async (workspaceId: string | undefined) => {
-    const response = await this.piChatService.listFavoriteChats(workspaceId);
+  fetchFavoriteChats = async (workspaceId: string | undefined, isProjectChat: boolean = false) => {
+    const response = await this.piChatService.listFavoriteChats(workspaceId, isProjectChat);
     runInAction(() => {
       response.forEach((chat) => {
         update(this.chatMap, chat.chat_id, (prev: TChatHistory | undefined) => ({
