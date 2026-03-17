@@ -125,61 +125,63 @@ export const GroupedBoard = observer(function GroupedBoard(props: IGroupedBoard)
     return count > 0;
   };
 
-  // Jira-styled board without sub_group_by
+  // Jira-styled board without sub_group_by - use same structure as with swimlanes
   if (!sub_group_by || !subGroupByList) {
     return (
       <div className="h-full w-full overflow-auto">
-        {/* Sticky Column Headers */}
-        <div className="sticky top-0 z-[4] flex bg-surface-2 border-b border-subtle">
-          {groupByList.map((column, idx) => {
-            const shouldShowColumn = visibilityGroupBy(column);
-            if (!shouldShowColumn) return null;
+        <div className="flex flex-col">
+          {/* Column Headers - same style as swimlane version */}
+          <div className="flex gap-2 px-2">
+            {groupByList.map((column, idx) => {
+              const shouldShowColumn = visibilityGroupBy(column);
+              if (!shouldShowColumn) return null;
 
-            return (
-              <GroupedBoardColumnHeader
-                key={column.id}
-                column={column}
-                columnIndex={idx}
-                group_by={group_by}
-                count={getGroupIssueCount(column.id, undefined, false) ?? 0}
-              />
-            );
-          })}
-        </div>
+              return (
+                <GroupedBoardColumnHeader
+                  key={column.id}
+                  column={column}
+                  columnIndex={idx}
+                  group_by={group_by}
+                  count={getGroupIssueCount(column.id, undefined, false) ?? 0}
+                />
+              );
+            })}
+          </div>
 
-        {/* Single row of columns (no swimlanes) */}
-        <div className="flex min-h-[calc(100%-42px)]">
-          {groupByList.map((column, idx) => {
-            const shouldShowColumn = visibilityGroupBy(column);
-            if (!shouldShowColumn) return null;
+          {/* Columns - same style as swimlane version */}
+          <div className="flex gap-2 px-2 pb-4">
+            {groupByList.map((column, idx) => {
+              const shouldShowColumn = visibilityGroupBy(column);
+              if (!shouldShowColumn) return null;
 
-            return (
-              <GroupedBoardColumn
-                key={column.id}
-                column={column}
-                columnIndex={idx}
-                issuesMap={issuesMap}
-                groupedIssueIds={groupedIssueIds}
-                displayProperties={displayProperties}
-                sub_group_by={sub_group_by}
-                group_by={group_by}
-                sub_group_id="null"
-                updateIssue={updateIssue}
-                quickActions={quickActions}
-                enableQuickIssueCreate={enableQuickIssueCreate}
-                quickAddCallback={quickAddCallback}
-                loadMoreIssues={loadMoreIssues}
-                disableIssueCreation={disableIssueCreation}
-                canEditProperties={canEditProperties}
-                scrollableContainerRef={scrollableContainerRef}
-                handleOnDrop={handleOnDrop}
-                orderBy={orderBy}
-                isDropDisabled={column.isDropDisabled}
-                dropErrorMessage={column.dropErrorMessage}
-                isEpic={isEpic}
-              />
-            );
-          })}
+              return (
+                <GroupedBoardColumn
+                  key={column.id}
+                  column={column}
+                  columnIndex={idx}
+                  issuesMap={issuesMap}
+                  groupedIssueIds={groupedIssueIds}
+                  displayProperties={displayProperties}
+                  sub_group_by={sub_group_by}
+                  group_by={group_by}
+                  sub_group_id="null"
+                  updateIssue={updateIssue}
+                  quickActions={quickActions}
+                  enableQuickIssueCreate={enableQuickIssueCreate}
+                  quickAddCallback={quickAddCallback}
+                  loadMoreIssues={loadMoreIssues}
+                  disableIssueCreation={disableIssueCreation}
+                  canEditProperties={canEditProperties}
+                  scrollableContainerRef={scrollableContainerRef}
+                  handleOnDrop={handleOnDrop}
+                  orderBy={orderBy}
+                  isDropDisabled={column.isDropDisabled}
+                  dropErrorMessage={column.dropErrorMessage}
+                  isEpic={isEpic}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
     );

@@ -293,7 +293,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     return layout === EIssueLayoutTypes.CALENDAR
       ? "target_date"
-      : [EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN]?.includes(layout)
+      : [EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN, EIssueLayoutTypes.GROUPED_BOARD]?.includes(layout)
         ? displayFilters?.group_by
         : undefined;
   }
@@ -303,7 +303,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
     if (!displayFilters || displayFilters.group_by === displayFilters.sub_group_by) return;
 
-    return displayFilters?.layout === "kanban" ? displayFilters?.sub_group_by : undefined;
+    const layout = displayFilters?.layout;
+    return [EIssueLayoutTypes.KANBAN, EIssueLayoutTypes.GROUPED_BOARD].includes(layout)
+      ? displayFilters?.sub_group_by
+      : undefined;
   }
 
   getIssueIds = (groupId?: string, subGroupId?: string) => {

@@ -65,6 +65,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const storeType = useIssueStoreType() as KanbanStoreType;
+
   const { allowPermissions } = useUserPermissions();
   const { issueMap, issuesFilter, issues } = useIssues(storeType);
   const {
@@ -109,6 +110,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   );
 
   const groupedIssueIds = issues?.groupedIssueIds;
+  console.log('issues 222:>> ', issues);
 
   const userDisplayFilters = displayFilters || null;
 

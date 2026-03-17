@@ -110,6 +110,7 @@ export const GroupedBoardColumn = observer(function GroupedBoardColumn(props: IG
   } = useIssuesStore();
 
   // Read issueIds from prop (passed from parent to ensure MobX reactivity)
+
   const issueIds = isSubGroup
     ? ((groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[sub_group_id] ?? [])
     : ((groupedIssueIds as TGroupedIssues)?.[groupId] ?? []);
