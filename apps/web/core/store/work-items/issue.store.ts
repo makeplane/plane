@@ -27,7 +27,7 @@ export type IIssueStore = {
   addIssue(issues: TIssue[]): void;
   addIssueIdentifier(issueIdentifier: string, issueId: string): void;
   updateIssue(issueId: string, issue: Partial<TIssue>): void;
-  applyWorkItemFallbackUpdate(issueId: string, issue: Partial<TIssue>): void;
+  updateWorkItemWithoutSideEffects(workItemId: string, workItem: Partial<TIssue>): void;
   removeIssue(issueId: string): void;
   // helper methods
   getIssueById(issueId: string): undefined | TIssue;
@@ -53,7 +53,7 @@ export class IssueStore implements IIssueStore {
       addIssue: action,
       addIssueIdentifier: action,
       updateIssue: action,
-      applyWorkItemFallbackUpdate: action,
+      updateWorkItemWithoutSideEffects: action,
       removeIssue: action,
     });
     this.issueService = new IssueService();
@@ -118,19 +118,21 @@ export class IssueStore implements IIssueStore {
     runInAction(() => {
       const existingWorkItem = this.workItemsMap.get(issueId);
       if (!existingWorkItem) return;
+      const currentDateTime = getCurrentDateTimeInISO();
 
       const completedAtUpdate =
         issue.state_id && existingWorkItem.state_id !== issue.state_id
           ? {
               completed_at:
-                rootStore.state.getStateById(issue.state_id)?.group === "completed" ? getCurrentDateTimeInISO() : null,
+                rootStore.state.getStateById(issue.state_id)?.group === "completed" ? currentDateTime : null,
             }
           : {};
       const updatedIssue: TIssue = {
         ...existingWorkItem,
         ...issue,
         ...completedAtUpdate,
-        updated_at: getCurrentDateTimeInISO(),
+        updated_at: currentDateTime,
+        last_activity_at: currentDateTime,
       };
 
       this.workItemsMap.set(issueId, updatedIssue);
@@ -138,13 +140,13 @@ export class IssueStore implements IIssueStore {
   };
 
   /**
-   * @description This method restores work item values without applying side-effects.
-   * Used for rollback/fallback paths where caller payload is the source of truth.
+   * @description This method updates the work item in the workItemsMap without side-effects.
+   * Used for rollback/fallback and data sync paths where payload is the source of truth.
    * @param {string} workItemId
    * @param {Partial<TIssue>} workItem
    * @returns {void}
    */
-  applyWorkItemFallbackUpdate = (workItemId: string, workItem: Partial<TIssue>): void => {
+  updateWorkItemWithoutSideEffects = (workItemId: string, workItem: Partial<TIssue>): void => {
     runInAction(() => {
       const existingWorkItem = this.workItemsMap.get(workItemId);
       if (!existingWorkItem) return;

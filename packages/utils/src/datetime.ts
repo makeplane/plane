@@ -80,6 +80,27 @@ export const renderFormattedPayloadDate = (date: Date | string | undefined | nul
   return formattedDate;
 };
 
+/**
+ * @returns {string | undefined} formatted date+time in the user's local timezone
+ * @description Parses a UTC ISO string (e.g. "2026-03-12T18:58:06.796048Z") and formats it in local time
+ * @param {string | Date | undefined | null} date
+ * @param {string} formatToken (optional) // default "do MMMM, yyyy hh:mma"
+ * @example renderFormattedDateTime("2026-03-12T18:58:06.796048Z") // "12th March, 2026 12:28AM" (depends on local tz)
+ */
+export const renderFormattedDateTime = (
+  date: string | Date | undefined | null,
+  formatToken: string = "do MMMM, yyyy hh:mma"
+): string | undefined => {
+  if (!date) return;
+  const parsedDate = typeof date === "string" ? parseISO(date) : date;
+  if (!isValid(parsedDate)) return;
+  try {
+    return format(parsedDate, formatToken);
+  } catch (_e) {
+    return format(parsedDate, "do MMMM, yyyy hh:mma");
+  }
+};
+
 // Format Time Helpers
 /**
  * @returns {string} formatted date in the format of hh:mm a or HH:mm

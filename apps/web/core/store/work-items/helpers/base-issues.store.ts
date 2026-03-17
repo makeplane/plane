@@ -607,7 +607,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       this.fetchParentStats(workspaceSlug, projectId);
     } catch (error) {
       // If errored out update store again to revert the change
-      this.rootIssueStore.issues.applyWorkItemFallbackUpdate(issueId, issueBeforeUpdate ?? {});
+      this.rootIssueStore.issues.updateWorkItemWithoutSideEffects(issueId, issueBeforeUpdate ?? {});
       this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
       throw error;
     }

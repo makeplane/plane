@@ -84,6 +84,7 @@ export type TBaseIssue = {
 
   created_by: string;
   updated_by: string;
+  last_activity_at: string | null;
 
   is_draft: boolean;
   is_epic?: boolean;

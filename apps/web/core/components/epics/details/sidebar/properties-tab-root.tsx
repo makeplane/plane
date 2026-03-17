@@ -35,6 +35,7 @@ import {
   cn,
   getDate,
   renderFormattedDate,
+  renderFormattedDateTime,
   renderFormattedPayloadDate,
   shouldHighlightIssueDueDate,
 } from "@plane/utils";
@@ -254,19 +255,19 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             childrenClassName="px-1.5 h-7.5"
           >
             <span className="truncate text-body-xs-medium text-secondary">
-              {renderFormattedDate(epicDetails.created_at)}
+              {renderFormattedDateTime(epicDetails.created_at)}
             </span>
           </SidebarPropertyListItem>
         )}
 
-        {epicDetails.updated_at && (
+        {(epicDetails.last_activity_at || epicDetails.updated_at) && (
           <SidebarPropertyListItem
             icon={UpdatedAtPropertyIcon}
             label={t("common.updated_at")}
             childrenClassName="px-1.5 h-7.5"
           >
             <span className="truncate text-body-xs-medium text-secondary">
-              {renderFormattedDate(epicDetails.updated_at)}
+              {renderFormattedDateTime(epicDetails.last_activity_at ?? epicDetails.updated_at)}
             </span>
           </SidebarPropertyListItem>
         )}
@@ -278,7 +279,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             childrenClassName="px-1.5 h-7.5"
           >
             <span className="truncate text-body-xs-medium text-secondary">
-              {renderFormattedDate(epicDetails.completed_at)}
+              {renderFormattedDateTime(epicDetails.completed_at)}
             </span>
           </SidebarPropertyListItem>
         )}

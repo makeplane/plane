@@ -93,7 +93,7 @@ export class WorkItemMilestoneStore {
       }
     } catch (error) {
       // Revert on error
-      this.workItemStore.applyWorkItemFallbackUpdate(workItemId, { milestone_id: oldMilestoneId });
+      this.workItemStore.updateWorkItemWithoutSideEffects(workItemId, { milestone_id: oldMilestoneId });
 
       if (updatedMilestoneInstance) {
         updatedMilestoneInstance.work_item_ids = updatedMilestoneInstance.work_item_ids.filter(

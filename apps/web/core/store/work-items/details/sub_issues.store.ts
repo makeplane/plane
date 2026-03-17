@@ -150,7 +150,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
     }
     if (issueList) {
-      this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(parentIssueId, {
+      this.rootIssueDetailStore.rootIssueStore.issues.updateWorkItemWithoutSideEffects(parentIssueId, {
         sub_issues_count: issueList.length,
       });
     }

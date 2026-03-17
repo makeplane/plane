@@ -131,6 +131,7 @@ def issue_on_results(
         "sub_issues_count",
         "created_at",
         "updated_at",
+        "last_activity_at",
         "created_by",
         "updated_by",
         "attachment_count",

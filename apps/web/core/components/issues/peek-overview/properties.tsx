@@ -35,6 +35,7 @@ import {
   cn,
   getDate,
   renderFormattedDate,
+  renderFormattedDateTime,
   renderFormattedPayloadDate,
   shouldHighlightIssueDueDate,
 } from "@plane/utils";
@@ -236,17 +237,21 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             label={t("common.created_at")}
             childrenClassName="px-1.5 h-7.5"
           >
-            <span className="truncate text-body-xs-medium text-secondary">{renderFormattedDate(issue.created_at)}</span>
+            <span className="truncate text-body-xs-medium text-secondary">
+              {renderFormattedDateTime(issue.created_at)}
+            </span>
           </SidebarPropertyListItem>
         )}
 
-        {issue.updated_at && (
+        {(issue.last_activity_at || issue.updated_at) && (
           <SidebarPropertyListItem
             icon={UpdatedAtPropertyIcon}
             label={t("common.updated_at")}
             childrenClassName="px-1.5 h-7.5"
           >
-            <span className="truncate text-body-xs-medium text-secondary">{renderFormattedDate(issue.updated_at)}</span>
+            <span className="truncate text-body-xs-medium text-secondary">
+              {renderFormattedDateTime(issue.last_activity_at ?? issue.updated_at)}
+            </span>
           </SidebarPropertyListItem>
         )}
 
@@ -257,7 +262,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             childrenClassName="px-1.5 h-7.5"
           >
             <span className="truncate text-body-xs-medium text-secondary">
-              {renderFormattedDate(issue.completed_at)}
+              {renderFormattedDateTime(issue.completed_at)}
             </span>
           </SidebarPropertyListItem>
         )}

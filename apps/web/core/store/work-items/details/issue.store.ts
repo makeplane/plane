@@ -199,6 +199,7 @@ export class IssueStore implements IIssueStore {
       archived_at: issue?.archived_at,
       created_by: issue?.created_by,
       updated_by: issue?.updated_by,
+      last_activity_at: issue?.last_activity_at,
       is_draft: issue?.is_draft,
       is_subscribed: issue?.is_subscribed,
       is_epic: issue?.is_epic,

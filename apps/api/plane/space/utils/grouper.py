@@ -103,6 +103,7 @@ def issue_on_results(
         "created_by",
         "created_at",
         "updated_at",
+        "last_activity_at",
         "updated_by",
         "state__group",
         "attachment_count",
