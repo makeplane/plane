@@ -33,6 +33,7 @@ export class IPCBridge {
   #tabCopyLinkHandler: ((event: IpcMainEvent, id: string) => void) | undefined = undefined;
   #tabContextMenuHandler: ((event: IpcMainEvent, id: string) => void) | undefined = undefined;
   #tabSwitchHandler: ((event: IpcMainEvent, id: string) => void) | undefined = undefined;
+  #tabMoveHandler: ((event: IpcMainEvent, tabId: string, toIndex: number) => void) | undefined = undefined;
   #navBackHandler: ((event: IpcMainEvent) => void) | undefined = undefined;
   #navForwardHandler: ((event: IpcMainEvent) => void) | undefined = undefined;
 
@@ -104,6 +105,11 @@ export class IPCBridge {
     if (this.#tabSwitchHandler) {
       ipcMain.removeListener(IPC_CHANNELS.TAB_SWITCH, this.#tabSwitchHandler);
       this.#tabSwitchHandler = undefined;
+    }
+
+    if (this.#tabMoveHandler) {
+      ipcMain.removeListener(IPC_CHANNELS.TAB_MOVE, this.#tabMoveHandler);
+      this.#tabMoveHandler = undefined;
     }
 
     if (this.#navBackHandler) {
@@ -271,6 +277,16 @@ export class IPCBridge {
       viewManager.switchTab(id);
     };
     ipcMain.on(IPC_CHANNELS.TAB_SWITCH, this.#tabSwitchHandler);
+
+    this.#tabMoveHandler = (event, tabId: string, toIndex: number) => {
+      const viewManager = this.#resolveViewManager(event.sender);
+      if (!viewManager) {
+        return;
+      }
+
+      viewManager.moveTab(tabId, toIndex);
+    };
+    ipcMain.on(IPC_CHANNELS.TAB_MOVE, this.#tabMoveHandler);
 
     // Navigation - called from tab bar preload
     this.#navBackHandler = (event) => {

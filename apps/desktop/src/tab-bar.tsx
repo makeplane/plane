@@ -36,6 +36,7 @@ type TabBarAPI = {
   closeTab: (id: string) => void;
   showContextMenu: (id: string) => void;
   switchTab: (id: string) => void;
+  moveTab: (tabId: string, toIndex: number) => void;
   goBack: () => void;
   goForward: () => void;
 };
@@ -99,6 +100,7 @@ type TabBarAppProps = {
   closeTab: TabBarAPI["closeTab"];
   showContextMenu: TabBarAPI["showContextMenu"];
   switchTab: TabBarAPI["switchTab"];
+  moveTab: TabBarAPI["moveTab"];
   goBack: TabBarAPI["goBack"];
   goForward: TabBarAPI["goForward"];
 };
@@ -109,11 +111,14 @@ export const TabBarApp = ({
   closeTab,
   showContextMenu,
   switchTab,
+  moveTab,
   goBack,
   goForward,
 }: TabBarAppProps) => {
   const stateRef = useRef<TabBarState>(initialState);
   const [brokenFavicons, setBrokenFavicons] = useState<Record<string, string>>({});
+  const [draggedTabId, setDraggedTabId] = useState<string | null>(null);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
 
   const state = useSyncExternalStore(
     (onStoreChange) => {
@@ -140,21 +145,60 @@ export const TabBarApp = ({
     });
   }, []);
 
+  const handleDragStart = useCallback((event: React.DragEvent<HTMLDivElement>, tabId: string) => {
+    setDraggedTabId(tabId);
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", tabId);
+  }, []);
+
+  const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>, index: number) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const midpoint = rect.left + rect.width / 2;
+    const dropIndex = event.clientX < midpoint ? index : index + 1;
+    setDropTargetIndex(dropIndex);
+  }, []);
+
+  const handleDrop = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      if (draggedTabId != null && dropTargetIndex != null) {
+        const fromIndex = state.tabs.findIndex((t) => t.id === draggedTabId);
+        const adjustedIndex = dropTargetIndex > fromIndex ? dropTargetIndex - 1 : dropTargetIndex;
+        moveTab(draggedTabId, adjustedIndex);
+      }
+      setDraggedTabId(null);
+      setDropTargetIndex(null);
+    },
+    [draggedTabId, dropTargetIndex, state.tabs, moveTab]
+  );
+
+  const handleDragEnd = useCallback(() => {
+    setDraggedTabId(null);
+    setDropTargetIndex(null);
+  }, []);
+
   const tabsMarkup = useMemo(() => {
     return state.tabs.map((tab, index) => {
       const showDivider = shouldShowDivider(state.tabs, index, state.activeTabId);
       const isActive = tab.id === state.activeTabId;
       const showFavicon = tab.favicon && brokenFavicons[tab.id] !== tab.favicon;
+      const isDragged = tab.id === draggedTabId;
+      const isDropBefore = dropTargetIndex === index;
+      const isDropAfter = dropTargetIndex === index + 1 && index === state.tabs.length - 1;
 
       return (
         <React.Fragment key={tab.id}>
           <div className={showDivider ? "tab-divider" : "tab-divider tab-divider-hidden"} />
           <div
-            className={`tab${isActive ? " active" : ""}`}
+            className={`tab${isActive ? " active" : ""}${isDragged ? " dragging" : ""}${isDropBefore ? " drop-before" : ""}${isDropAfter ? " drop-after" : ""}`}
             role="tab"
             tabIndex={0}
             aria-selected={isActive}
             data-tab-id={tab.id}
+            draggable
             onClick={() => switchTab(tab.id)}
             onContextMenu={(event) => {
               event.preventDefault();
@@ -166,6 +210,10 @@ export const TabBarApp = ({
                 switchTab(tab.id);
               }
             }}
+            onDragStart={(event) => handleDragStart(event, tab.id)}
+            onDragOver={(event) => handleDragOver(event, index)}
+            onDrop={handleDrop}
+            onDragEnd={handleDragEnd}
           >
             {tab.isLoading ? (
               <div className="tab-spinner">{SPINNER_SVG}</div>
@@ -195,7 +243,22 @@ export const TabBarApp = ({
         </React.Fragment>
       );
     });
-  }, [brokenFavicons, canClose, state.activeTabId, state.tabs, handleFaviconError, switchTab, closeTab, showContextMenu]);
+  }, [
+    brokenFavicons,
+    canClose,
+    state.activeTabId,
+    state.tabs,
+    draggedTabId,
+    dropTargetIndex,
+    handleFaviconError,
+    handleDragStart,
+    handleDragOver,
+    handleDrop,
+    handleDragEnd,
+    switchTab,
+    closeTab,
+    showContextMenu,
+  ]);
 
   return (
     <div className="tab-bar" id="tab-bar">
@@ -265,6 +328,7 @@ createRoot(rootEl).render(
     closeTab={api.closeTab}
     showContextMenu={api.showContextMenu}
     switchTab={api.switchTab}
+    moveTab={api.moveTab}
     goBack={api.goBack}
     goForward={api.goForward}
   />

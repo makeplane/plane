@@ -25,6 +25,7 @@ export const IPC_CHANNELS = {
   TAB_COPY_LINK: "tab:copy-link",
   TAB_CONTEXT_MENU: "tab:context-menu",
   TAB_SWITCH: "tab:switch",
+  TAB_MOVE: "tab:move",
   NAV_BACK: "nav:back",
   NAV_FORWARD: "nav:forward",
   PKCE_START: "pkce:start-flow",

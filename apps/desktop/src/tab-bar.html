@@ -225,6 +225,18 @@
         background: var(--bg-layer-transparent-selected);
       }
 
+      .tab.dragging {
+        opacity: 0.4;
+      }
+
+      .tab.drop-before {
+        box-shadow: inset 2px 0 0 0 var(--bg-accent-primary);
+      }
+
+      .tab.drop-after {
+        box-shadow: inset -2px 0 0 0 var(--bg-accent-primary);
+      }
+
       .tab-icon {
         width: 16px;
         height: 16px;

@@ -290,6 +290,25 @@ export class TabStore extends Store<TabState> {
     );
   }
 
+  moveTab(windowId: string, tabId: string, toIndex: number): void {
+    const windowState = this.state.windows.get(windowId);
+    if (!windowState) {
+      return;
+    }
+
+    const fromIndex = windowState.tabs.findIndex((t) => t.id === tabId);
+    if (fromIndex === -1 || toIndex === fromIndex) {
+      return;
+    }
+
+    const clampedTo = Math.max(0, Math.min(toIndex, windowState.tabs.length - 1));
+    const newTabs = [...windowState.tabs];
+    const [moved] = newTabs.splice(fromIndex, 1);
+    newTabs.splice(clampedTo, 0, moved);
+
+    this.#updateWindowState(windowId, { ...windowState, tabs: newTabs });
+  }
+
   removeOtherTabs(windowId: string, keepId: string): Tab[] {
     const windowState = this.state.windows.get(windowId);
     if (!windowState) {

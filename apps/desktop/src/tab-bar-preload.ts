@@ -38,6 +38,7 @@ interface TabBarAPI {
   copyTabLink: (id: string) => void;
   showContextMenu: (id: string) => void;
   switchTab: (id: string) => void;
+  moveTab: (tabId: string, toIndex: number) => void;
   goBack: () => void;
   goForward: () => void;
 }
@@ -57,6 +58,7 @@ const api: TabBarAPI = {
   copyTabLink: (id: string) => ipcRenderer.send(IPC_CHANNELS.TAB_COPY_LINK, id),
   showContextMenu: (id: string) => ipcRenderer.send(IPC_CHANNELS.TAB_CONTEXT_MENU, id),
   switchTab: (id: string) => ipcRenderer.send(IPC_CHANNELS.TAB_SWITCH, id),
+  moveTab: (tabId: string, toIndex: number) => ipcRenderer.send(IPC_CHANNELS.TAB_MOVE, tabId, toIndex),
   goBack: () => ipcRenderer.send(IPC_CHANNELS.NAV_BACK),
   goForward: () => ipcRenderer.send(IPC_CHANNELS.NAV_FORWARD),
 };

@@ -579,6 +579,10 @@ export class ViewManager {
     this.#visibleTabId = undefined;
   }
 
+  moveTab(tabId: string, toIndex: number): void {
+    this.#tabStore.moveTab(this.#windowId, tabId, toIndex);
+  }
+
   switchTab(id: string): void {
     this.#tabStore.setActiveTab(this.#windowId, id);
     this.updateNavigationState();
