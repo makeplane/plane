@@ -590,7 +590,7 @@ export default {
   bank_wide_project: {
     label: "Bank-wide Project",
     settings: {
-      title: "Bank-wide",
+      title: "Bank-wide Project",
       label: "Mark as Bank-wide Project",
       description:
         "Designate this project as a bank-wide project, making it visible and relevant to all members across the organization.",

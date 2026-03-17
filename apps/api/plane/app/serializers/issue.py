@@ -578,20 +578,32 @@ class IssueLinkSerializer(BaseSerializer):
             "issue",
         ]
 
-    def to_internal_value(self, data):
-        # Modify the URL before validation by appending http:// if missing
-        url = data.get("url", "")
-        if url and not url.startswith(("http://", "https://")):
-            data["url"] = "http://" + url
-
-        return super().to_internal_value(data)
-
     def validate_url(self, value):
-        # Use Django's built-in URLValidator for validation
-        url_validator = URLValidator()
-        try:
-            url_validator(value)
-        except ValidationError:
+        from urllib.parse import urlparse
+
+        # Block dangerous schemes that can lead to XSS or content injection
+        BLOCKED_SCHEMES = {"javascript", "data", "vbscript"}
+
+        parsed = urlparse(value)
+
+        if not parsed.scheme:
+            raise serializers.ValidationError({"error": "Invalid URL format. URL must include a protocol scheme."})
+
+        if parsed.scheme.lower() in BLOCKED_SCHEMES:
+            raise serializers.ValidationError({"error": "This URL scheme is not allowed."})
+
+        # http/https require a netloc (domain)
+        if parsed.scheme.lower() in ("http", "https") and not parsed.netloc:
+            raise serializers.ValidationError({"error": "Invalid URL format."})
+
+        # Guard against netloc smuggling blocked schemes (e.g., http://vbscript:payload)
+        if parsed.netloc:
+            netloc_prefix = parsed.netloc.split(":")[0].lower()
+            if netloc_prefix in BLOCKED_SCHEMES:
+                raise serializers.ValidationError({"error": "This URL scheme is not allowed."})
+
+        # Custom protocols require at least scheme://something
+        if not parsed.netloc and not parsed.path:
             raise serializers.ValidationError({"error": "Invalid URL format."})
 
         return value

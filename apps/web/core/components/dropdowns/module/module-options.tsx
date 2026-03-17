@@ -52,7 +52,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
     if (isOpen) {
       onOpen();
       if (!isMobile) {
-        inputRef.current && inputRef.current.focus();
+        inputRef.current?.focus();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -90,7 +90,9 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
       content: (
         <div className="flex items-center gap-2">
           <ModuleIcon className="h-3 w-3 flex-shrink-0" />
-          <span className="flex-grow truncate">{moduleDetails?.name}</span>
+          <span className="flex-grow truncate" title={moduleDetails?.name}>
+            {moduleDetails?.name}
+          </span>
         </div>
       ),
     };
@@ -102,7 +104,9 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
       content: (
         <div className="flex items-center gap-2">
           <ModuleIcon className="h-3 w-3 flex-shrink-0" />
-          <span className="flex-grow truncate">{t("module.no_module")}</span>
+          <span className="flex-grow truncate" title={t("module.no_module")}>
+            {t("module.no_module")}
+          </span>
         </div>
       ),
     });
@@ -129,7 +133,8 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("common.search.label")}
-            displayValue={(assigned: any) => assigned?.name}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+            displayValue={(assigned: any) => assigned?.name ?? ""}
             onKeyDown={searchInputKeyDown}
           />
         </div>
@@ -153,7 +158,9 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
                 >
                   {({ selected }) => (
                     <>
-                      <span className="flex-grow truncate">{option.content}</span>
+                      <span className="flex-grow truncate" title={option.query}>
+                        {option.content}
+                      </span>
                       {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                     </>
                   )}
