@@ -1,0 +1,38 @@
+# Vercel Serverless Requirements for Plane API
+# This is a minimal set of dependencies for serverless deployment
+
+# Core Django
+Django>=4.2,<5.0
+djangorestframework>=3.14.0
+django-cors-headers>=4.3.0
+django-filter>=23.5
+django-redis>=5.4.0
+
+# Database
+psycopg2-binary>=2.9.9
+
+# ASGI adapter for serverless
+mangum>=0.17.0
+
+# Auth
+PyJWT>=2.8.0
+cryptography>=41.0.0
+
+# Utils
+python-json-logger>=2.0.7
+python-dateutil>=2.8.2
+pytz>=2024.1
+
+# HTTP
+requests>=2.31.0
+urllib3>=2.0.0
+
+# Redis
+redis>=5.0.0
+
+# Note: Many packages from the full requirements.txt are excluded
+# because they're for features that don't work on serverless:
+# - celery (background tasks)
+# - channels (websocket)
+# - boto3 (S3 - can be added if needed)
+# - scout-apm (monitoring)
