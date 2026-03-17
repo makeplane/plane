@@ -33,6 +33,7 @@ import {
   SortByDownIcon,
   TrashIcon,
   UpgradeIcon,
+  CommandIcon,
 } from "./actions";
 // Arrow icons
 import {
@@ -45,6 +46,7 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
   AccordionCloseIcon,
+  BackspaceIcon,
 } from "./arrows";
 // Default icon
 import { DefaultIcon } from "./default-icon";
@@ -59,7 +61,7 @@ import {
   TimelineLayoutIcon,
 } from "./layouts";
 // Misc icons
-import { InfoIcon, AlertIcon, HistoryIcon } from "./misc";
+import { InfoIcon, AlertIcon, HistoryIcon, ShiftIcon } from "./misc";
 // Project icons
 import { CycleIcon, EpicIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "./project";
 // Property icons
@@ -186,6 +188,7 @@ export const ICON_REGISTRY = {
   "action.check": CheckIcon,
   "action.close": CloseIcon,
   "action.copy": CopyIcon,
+  "action.command": CommandIcon,
   "action.edit": EditIcon,
   "action.globe": GlobeIcon,
   "action.link": LinkIcon,
@@ -209,6 +212,7 @@ export const ICON_REGISTRY = {
   "arrow.chevron-up": ChevronUpIcon,
   "arrow.arrow-left": ArrowLeftIcon,
   "arrow.arrow-right": ArrowRightIcon,
+  "arrow.backspace": BackspaceIcon,
 
   // Misc icons
   "misc.info": InfoIcon,
@@ -226,6 +230,7 @@ export const ICON_REGISTRY = {
   "other-products.sentry": SentryIcon,
   "other-products.raycast": RaycastIcon,
   "other-products.gitlab": GitlabIcon,
+  "misc.shift": ShiftIcon,
 
   // Default fallback
   default: DefaultIcon,

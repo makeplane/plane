@@ -93,8 +93,8 @@ export function ShortcutRenderer(props: Props) {
             <div className="space-y-3 px-1">
               {group.commands.map((command) => (
                 <div key={command.id} className="mt-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-11 text-secondary text-left">{t(command.i18n_title)}</h4>
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <h4 className="text-11 text-secondary text-left shrink-0">{t(command.i18n_title)}</h4>
                     <div className="flex items-center gap-x-1.5">
                       {command.keySequence && <KeySequenceBadge sequence={command.keySequence} />}
                       {(command.shortcut || command.modifierShortcut) && (

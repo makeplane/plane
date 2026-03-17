@@ -12,95 +12,66 @@
  */
 
 import React from "react";
+import { BackspaceIcon, CommandIcon, ShiftIcon } from "@plane/propel/icons";
 
-/**
- * Formats a shortcut string for display
- * Converts "cmd+shift+," to proper keyboard symbols
- */
-export const formatShortcutForDisplay = (shortcut: string | undefined): string | null => {
-  if (!shortcut) return null;
+type TShortcutPart = { type: "text"; value: string } | { type: "icon"; component: React.FC<{ className?: string }> };
 
-  const isMac = typeof window !== "undefined" && navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+const KEY_DISPLAY_MAP: Record<string, { text: string; macText?: string; macIcon?: React.FC<{ className?: string }> }> =
+  {
+    cmd: { text: "Ctrl", macIcon: CommandIcon },
+    meta: { text: "Ctrl", macIcon: CommandIcon },
+    ctrl: { text: "Ctrl", macText: "⌃" },
+    alt: { text: "Alt", macText: "⌥" },
+    option: { text: "Alt", macText: "⌥" },
+    shift: { text: "Shift", macIcon: ShiftIcon },
+    delete: { text: "⌫", macIcon: BackspaceIcon },
+    backspace: { text: "⌫", macIcon: BackspaceIcon },
+    enter: { text: "↵" },
+    return: { text: "↵" },
+    space: { text: "Space" },
+    escape: { text: "Esc" },
+    esc: { text: "Esc" },
+    tab: { text: "Tab" },
+    arrowup: { text: "↑" },
+    up: { text: "↑" },
+    arrowdown: { text: "↓" },
+    down: { text: "↓" },
+    arrowleft: { text: "←" },
+    left: { text: "←" },
+    arrowright: { text: "→" },
+    right: { text: "→" },
+  };
 
-  const parts = shortcut.split("+").map((part) => {
-    const lower = part.toLowerCase().trim();
+const getIsMac = () => typeof window !== "undefined" && navigator.userAgent.indexOf("Mac") !== -1;
 
-    // Map to proper symbols
-    switch (lower) {
-      case "cmd":
-      case "meta":
-        return isMac ? "⌘" : "Ctrl";
-      case "ctrl":
-        return isMac ? "⌃" : "Ctrl";
-      case "alt":
-      case "option":
-        return isMac ? "⌥" : "Alt";
-      case "shift":
-        return isMac ? "⇧" : "Shift";
-      case "delete":
-      case "backspace":
-        return "⌫";
-      case "enter":
-      case "return":
-        return "↵";
-      case "space":
-        return "Space";
-      case "escape":
-      case "esc":
-        return "Esc";
-      case "tab":
-        return "Tab";
-      case "arrowup":
-      case "up":
-        return "↑";
-      case "arrowdown":
-      case "down":
-        return "↓";
-      case "arrowleft":
-      case "left":
-        return "←";
-      case "arrowright":
-      case "right":
-        return "→";
-      case ",":
-        return ",";
-      case ".":
-        return ".";
-      default:
-        return part.toUpperCase();
-    }
+const getShortcutParts = (shortcut: string): TShortcutPart[] => {
+  const isMac = getIsMac();
+  return shortcut.split("+").map((part) => {
+    const entry = KEY_DISPLAY_MAP[part.toLowerCase().trim()];
+    if (!entry) return { type: "text", value: part.toUpperCase() };
+    if (isMac && entry.macIcon) return { type: "icon", component: entry.macIcon };
+    return { type: "text", value: (isMac && entry.macText) || entry.text };
   });
-
-  return parts.join("");
 };
 
 export function ShortcutBadge({ shortcut }: { shortcut: string | undefined }) {
   if (!shortcut) return null;
 
-  const formatted = formatShortcutForDisplay(shortcut);
+  const parts = getShortcutParts(shortcut);
 
   return (
     <div className="shrink-0 pointer-events-none inline-flex items-center gap-1 select-none font-medium">
-      {formatted?.split("").map((char, index) => (
-        <React.Fragment key={index}>
-          <kbd className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary">
-            {char.toUpperCase()}
-          </kbd>
-        </React.Fragment>
+      {parts.map((part, index) => (
+        <kbd
+          key={index}
+          className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary"
+        >
+          {part.type === "icon" ? <part.component className="size-3" /> : part.value}
+        </kbd>
       ))}
     </div>
   );
 }
-
-/**
- * Formats key sequence for display (e.g., "gm" -> "G then M")
- */
-export const formatKeySequenceForDisplay = (sequence: string | undefined): string => {
-  if (!sequence) return "";
-
-  const chars = sequence.split("");
-  return chars.map((c) => c.toUpperCase()).join(" then ");
-};
 
 export function KeySequenceBadge({ sequence }: { sequence: string | undefined }) {
   if (!sequence) return null;

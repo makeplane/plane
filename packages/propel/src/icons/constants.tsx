@@ -19,6 +19,7 @@ export const ActionsIconsMap = [
   { icon: <Icon name="action.check" />, title: "CheckIcon" },
   { icon: <Icon name="action.close" />, title: "CloseIcon" },
   { icon: <Icon name="action.copy" />, title: "CopyIcon" },
+  { icon: <Icon name="action.command" />, title: "CommandIcon" },
   { icon: <Icon name="action.edit" />, title: "EditIcon" },
   { icon: <Icon name="action.globe" />, title: "GlobeIcon" },
   { icon: <Icon name="action.link" />, title: "LinkIcon" },
@@ -46,6 +47,7 @@ export const ArrowsIconsMap = [
   { icon: <Icon name="arrow.arrow-left" />, title: "ArrowLeftIcon" },
   { icon: <Icon name="arrow.arrow-right" />, title: "ArrowRightIcon" },
   { icon: <Icon name="arrow.accordion-close" />, title: "AccordionCloseIcon" },
+  { icon: <Icon name="arrow.backspace" />, title: "BackspaceIcon" },
 ];
 
 export const WorkspaceIconsMap = [
@@ -55,7 +57,10 @@ export const WorkspaceIconsMap = [
   { icon: <Icon name="workspace.draft" />, title: "DraftIcon" },
   { icon: <Icon name="workspace.home" />, title: "HomeIcon" },
   { icon: <Icon name="workspace.inbox" />, title: "InboxIcon" },
-  { icon: <Icon name="workspace.multiple-sticky" />, title: "MultipleStickyIcon" },
+  {
+    icon: <Icon name="workspace.multiple-sticky" />,
+    title: "MultipleStickyIcon",
+  },
   { icon: <Icon name="workspace.project" />, title: "ProjectIcon" },
   { icon: <Icon name="workspace.your-work" />, title: "YourWorkIcon" },
 ];
@@ -88,7 +93,10 @@ export const LayoutIconsMap = [
 
 export const PropertyIconsMap = [
   { icon: <Icon name="property.boolean" />, title: "BooleanPropertyIcon" },
-  { icon: <Icon name="property.completed-at" />, title: "CompletedAtPropertyIcon" },
+  {
+    icon: <Icon name="property.completed-at" />,
+    title: "CompletedAtPropertyIcon",
+  },
   { icon: <Icon name="property.created-at" />, title: "CreatedAtPropertyIcon" },
   { icon: <Icon name="property.dropdown" />, title: "DropdownPropertyIcon" },
   { icon: <Icon name="property.due-date" />, title: "DueDatePropertyIcon" },
@@ -97,7 +105,10 @@ export const PropertyIconsMap = [
   { icon: <Icon name="property.hash" />, title: "HashPropertyIcon" },
   { icon: <Icon name="property.label" />, title: "LabelPropertyIcon" },
   { icon: <Icon name="property.members" />, title: "MembersPropertyIcon" },
-  { icon: <Icon name="property.overdue-date" />, title: "OverdueDatePropertyIcon" },
+  {
+    icon: <Icon name="property.overdue-date" />,
+    title: "OverdueDatePropertyIcon",
+  },
   { icon: <Icon name="property.parent" />, title: "ParentPropertyIcon" },
   { icon: <Icon name="property.priority" />, title: "PriorityPropertyIcon" },
   { icon: <Icon name="property.relates-to" />, title: "RelatesToPropertyIcon" },
@@ -106,9 +117,15 @@ export const PropertyIconsMap = [
   { icon: <Icon name="property.start-date" />, title: "StartDatePropertyIcon" },
   { icon: <Icon name="property.state" />, title: "StatePropertyIcon" },
   { icon: <Icon name="property.updated-at" />, title: "UpdatedAtPropertyIcon" },
-  { icon: <Icon name="property.user-circle" />, title: "UserCirclePropertyIcon" },
+  {
+    icon: <Icon name="property.user-circle" />,
+    title: "UserCirclePropertyIcon",
+  },
   { icon: <Icon name="property.user" />, title: "UserPropertyIcon" },
-  { icon: <Icon name="property.user-square" />, title: "UserSquarePropertyIcon" },
+  {
+    icon: <Icon name="property.user-square" />,
+    title: "UserSquarePropertyIcon",
+  },
   { icon: <Icon name="property.workflows" />, title: "WorkflowsPropertyIcon" },
   { icon: <Icon name="property.label-filled" />, title: "LabelFilledIcon" },
 ];
@@ -127,4 +144,5 @@ export const MiscIconsMap = [
   { icon: <Icon name="misc.info" />, title: "InfoIcon" },
   { icon: <Icon name="misc.alert" />, title: "AlertIcon" },
   { icon: <Icon name="misc.history" />, title: "HistoryIcon" },
+  { icon: <Icon name="misc.shift" />, title: "ShiftIcon" },
 ];

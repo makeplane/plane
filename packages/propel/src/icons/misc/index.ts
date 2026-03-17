@@ -16,3 +16,4 @@ export * from "./history-icon";
 export * from "./activity-icon";
 export * from "./info-icon";
 export * from "./updates-icon";
+export * from "./shift-icon";
