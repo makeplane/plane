@@ -68,8 +68,8 @@ class ProjectLabelListCreateAPIEndpoint(BaseAPIView):
 
     def get_permissions(self):
         if self.request.method == "GET":
-            return [WorkspaceViewerPermission(), TokenHasScopeIfOAuth]
-        return [WorkSpaceAdminPermission(), TokenHasScopeIfOAuth]
+            return [WorkspaceViewerPermission(), TokenHasScopeIfOAuth()]
+        return [WorkSpaceAdminPermission(), TokenHasScopeIfOAuth()]
 
     def get_queryset(self):
         return (

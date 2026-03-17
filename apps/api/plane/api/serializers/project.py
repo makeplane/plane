@@ -18,6 +18,7 @@ import re
 
 # Module imports
 from plane.db.models import (
+    Intake,
     Project,
     ProjectIdentifier,
     WorkspaceMember,
@@ -380,6 +381,13 @@ class ProjectFeatureSerializer(serializers.Serializer):
                 )
 
         project = Project.objects.get(id=self.context["project_id"])
+
+        if validated_data.get("intakes"):
+            Intake.objects.get_or_create(
+                project=project,
+                is_default=True,
+                defaults={"name": f"{project.name} Intake"},
+            )
 
         if validated_data.get("work_item_types"):
             # Check if default issue type already exists
