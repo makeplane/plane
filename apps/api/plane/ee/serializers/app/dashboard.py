@@ -104,6 +104,14 @@ class WidgetSerializer(BaseSerializer):
     height = serializers.IntegerField(required=False)
     width = serializers.IntegerField(required=False)
     filters = serializers.JSONField(required=False)
+    chart_type = serializers.ChoiceField(choices=Widget.ChartTypeEnum.values)
+    chart_model = serializers.ChoiceField(choices=Widget.ChartModelEnum.values)
+    x_axis_property = serializers.ChoiceField(choices=Widget.PropertyEnum.values, allow_null=True, required=False)
+    y_axis_metric = serializers.ChoiceField(choices=Widget.YAxisMetricEnum.values, allow_null=True, required=False)
+    x_axis_date_grouping = serializers.ChoiceField(
+        choices=Widget.XAxisDateGroupingEnum.values, allow_null=True, required=False
+    )
+    group_by = serializers.ChoiceField(choices=Widget.PropertyEnum.values, allow_null=True, required=False)
 
     def create(self, validated_data):
         workspace_id = self.context["workspace_id"]

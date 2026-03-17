@@ -29,6 +29,7 @@ export enum EWidgetChartTypes {
   PIE_CHART = "PIE_CHART",
   DONUT_CHART = "DONUT_CHART",
   NUMBER = "NUMBER",
+  TABLE_CHART = "TABLE_CHART",
 }
 
 export enum EWidgetXAxisDateGrouping {
@@ -123,13 +124,18 @@ export type TNumberWidgetConfig = {
   text_color?: string;
 };
 // combined
+
+// table chart
+export type TTableChartWidgetConfig = TBarChartWidgetConfig;
+
 export type TDashboardWidgetConfig =
   | TBarChartWidgetConfig
   | TLineChartWidgetConfig
   | TAreaChartWidgetConfig
   | TDonutChartWidgetConfig
   | TPieChartWidgetConfig
-  | TNumberWidgetConfig;
+  | TNumberWidgetConfig
+  | TTableChartWidgetConfig;
 
 export type TDashboardWidget = {
   chart_model: EWidgetChartModels | undefined;

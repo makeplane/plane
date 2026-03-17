@@ -4945,6 +4945,20 @@ si estás seguro de que tu búsqueda es correcta.`,
           },
           text_color: "Color de texto",
         },
+        table_chart: {
+          short_label: "Tabla",
+          long_label: "Gráfico de tabla",
+          chart_models: {
+            basic: {
+              short_label: "Básico",
+              long_label: "Tabla",
+            },
+          },
+          columns: "Columnas",
+          rows: "Filas",
+          rows_placeholder: "Añadir filas",
+          configure_rows_hint: "Seleccione una propiedad para las filas para ver esta tabla.",
+        },
       },
       color_palettes: {
         modern: "Moderno",
@@ -5063,6 +5077,12 @@ si estás seguro de que tu búsqueda es correcta.`,
         text: {
           basic: {
             y_axis_metric: "A la métrica le falta un valor.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "A las columnas les falta un valor.",
+            group_by: "A las filas les falta un valor.",
           },
         },
         ask_admin: "Solicite a su administrador que configure este widget.",

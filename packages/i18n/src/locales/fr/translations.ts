@@ -4951,6 +4951,20 @@ si vous êtes sûr que votre recherche est correcte.`,
           },
           text_color: "Couleur du texte",
         },
+        table_chart: {
+          short_label: "Tableau",
+          long_label: "Graphique en tableau",
+          chart_models: {
+            basic: {
+              short_label: "Basique",
+              long_label: "Tableau",
+            },
+          },
+          columns: "Colonnes",
+          rows: "Lignes",
+          rows_placeholder: "Ajouter des lignes",
+          configure_rows_hint: "Sélectionnez une propriété pour les lignes pour afficher ce tableau.",
+        },
       },
       color_palettes: {
         modern: "Moderne",
@@ -5069,6 +5083,12 @@ si vous êtes sûr que votre recherche est correcte.`,
         text: {
           basic: {
             y_axis_metric: "La métrique manque d'une valeur.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Il manque une valeur aux colonnes.",
+            group_by: "Il manque une valeur aux lignes.",
           },
         },
         ask_admin: "Demandez à votre administrateur de configurer ce widget.",

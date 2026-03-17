@@ -4885,6 +4885,20 @@ jika Anda yakin pencarian Anda benar. `,
           },
           text_color: "Warna teks",
         },
+        table_chart: {
+          short_label: "Tabel",
+          long_label: "Grafik tabel",
+          chart_models: {
+            basic: {
+              short_label: "Dasar",
+              long_label: "Tabel",
+            },
+          },
+          columns: "Kolom",
+          rows: "Baris",
+          rows_placeholder: "Tambah baris",
+          configure_rows_hint: "Pilih properti untuk baris untuk melihat tabel ini.",
+        },
       },
       color_palettes: {
         modern: "Modern",
@@ -5003,6 +5017,12 @@ jika Anda yakin pencarian Anda benar. `,
         text: {
           basic: {
             y_axis_metric: "Metrik tidak memiliki nilai.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Kolom tidak memiliki nilai.",
+            group_by: "Baris tidak memiliki nilai.",
           },
         },
         ask_admin: "Tanyakan admin Anda untuk mengonfigurasi widget ini.",

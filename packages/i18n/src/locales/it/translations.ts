@@ -4911,6 +4911,20 @@ Crea un nuovo progetto invece`,
           },
           text_color: "Colore testo",
         },
+        table_chart: {
+          short_label: "Tabella",
+          long_label: "Grafico a tabella",
+          chart_models: {
+            basic: {
+              short_label: "Base",
+              long_label: "Tabella",
+            },
+          },
+          columns: "Colonne",
+          rows: "Righe",
+          rows_placeholder: "Aggiungi righe",
+          configure_rows_hint: "Seleziona una proprietà per le righe per visualizzare questa tabella.",
+        },
       },
       color_palettes: {
         modern: "Moderno",
@@ -5029,6 +5043,12 @@ Crea un nuovo progetto invece`,
         text: {
           basic: {
             y_axis_metric: "La metrica manca di un valore.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Alle colonne manca un valore.",
+            group_by: "Alle righe manca un valore.",
           },
         },
         ask_admin: "Chiedi al tuo amministratore di configurare questo widget.",

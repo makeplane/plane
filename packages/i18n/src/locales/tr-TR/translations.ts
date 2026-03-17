@@ -4906,6 +4906,20 @@ modüller arşivlenebilir.`,
           },
           text_color: "Tekst rengi",
         },
+        table_chart: {
+          short_label: "Tablo",
+          long_label: "Tablo grafiği",
+          chart_models: {
+            basic: {
+              short_label: "Temel",
+              long_label: "Tablo",
+            },
+          },
+          columns: "Sütunlar",
+          rows: "Satırlar",
+          rows_placeholder: "Satır ekle",
+          configure_rows_hint: "Bu tabloyu görüntülemek için satırlar için bir özellik seçin.",
+        },
       },
       sections: {
         charts: "Çarts",
@@ -5024,6 +5038,12 @@ modüller arşivlenebilir.`,
         number: {
           basic: {
             y_axis_metric: "Metrik için değer eksik.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Sütunlar için değer eksik.",
+            group_by: "Satırlar için değer eksik.",
           },
         },
         ask_admin: "Bu vicıtı konfigüre etmesi için admininize sorun.",

@@ -16,6 +16,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { CHART_WIDGETS_Y_AXIS_METRICS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { EWidgetYAxisMetric, TDashboardWidget } from "@plane/types";
+import { EWidgetChartTypes } from "@plane/types";
 // local components
 import { WidgetMetricSelect } from "./metric-select";
 
@@ -28,7 +29,11 @@ export function WidgetConfigSidebarYAxisConfig(props: Props) {
   // translation
   const { t } = useTranslation();
   // form info
-  const { control } = useFormContext<TDashboardWidget>();
+  const { control, watch } = useFormContext<TDashboardWidget>();
+  // derived values
+  const selectedChartType = watch("chart_type");
+
+  if (selectedChartType === EWidgetChartTypes.TABLE_CHART) return null;
 
   return (
     <div className="flex-shrink-0 space-y-1 text-13">

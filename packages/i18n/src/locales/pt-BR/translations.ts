@@ -4924,6 +4924,20 @@ se você tem certeza de que sua pesquisa está correta.`,
           },
           text_color: "Cor do texto",
         },
+        table_chart: {
+          short_label: "Tabela",
+          long_label: "Gráfico de tabela",
+          chart_models: {
+            basic: {
+              short_label: "Básico",
+              long_label: "Tabela",
+            },
+          },
+          columns: "Colunas",
+          rows: "Linhas",
+          rows_placeholder: "Adicionar linhas",
+          configure_rows_hint: "Selecione uma propriedade para as linhas para visualizar esta tabela.",
+        },
       },
       color_palettes: {
         modern: "Moderno",
@@ -5044,6 +5058,12 @@ se você tem certeza de que sua pesquisa está correta.`,
         text: {
           basic: {
             y_axis_metric: "A métrica está sem um valor.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "As colunas estão sem um valor.",
+            group_by: "As linhas estão sem um valor.",
           },
         },
         ask_admin: "Peça ao seu administrador para configurar este widget.",

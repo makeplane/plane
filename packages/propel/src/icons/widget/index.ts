@@ -17,3 +17,4 @@ export * from "./donut-chart";
 export * from "./line-chart";
 export * from "./number";
 export * from "./pie-chart";
+export * from "./table-chart";

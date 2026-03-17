@@ -4861,6 +4861,20 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
           },
           text_color: "Màu văn bản",
         },
+        table_chart: {
+          short_label: "Bảng",
+          long_label: "Biểu đồ bảng",
+          chart_models: {
+            basic: {
+              short_label: "Cơ bản",
+              long_label: "Bảng",
+            },
+          },
+          columns: "Cột",
+          rows: "Hàng",
+          rows_placeholder: "Thêm hàng",
+          configure_rows_hint: "Chọn một thuộc tính cho hàng để xem bảng này.",
+        },
       },
       color_palettes: {
         modern: "Hiện đại",
@@ -4981,6 +4995,12 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
         text: {
           basic: {
             y_axis_metric: "Chỉ số đang thiếu giá trị.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Cột đang thiếu giá trị.",
+            group_by: "Hàng đang thiếu giá trị.",
           },
         },
         ask_admin: "Yêu cầu quản trị viên của bạn cấu hình widget này.",

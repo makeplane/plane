@@ -4731,6 +4731,20 @@ export default {
           },
           text_color: "文本颜色",
         },
+        table_chart: {
+          short_label: "表格",
+          long_label: "表格图表",
+          chart_models: {
+            basic: {
+              short_label: "基础",
+              long_label: "表格",
+            },
+          },
+          columns: "列",
+          rows: "行",
+          rows_placeholder: "添加行",
+          configure_rows_hint: "选择行的属性以查看此表格。",
+        },
       },
       color_palettes: {
         modern: "现代",
@@ -4849,6 +4863,12 @@ export default {
         text: {
           basic: {
             y_axis_metric: "指标缺少值。",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "列缺少值。",
+            group_by: "行缺少值。",
           },
         },
         ask_admin: "请联系管理员配置此组件。",

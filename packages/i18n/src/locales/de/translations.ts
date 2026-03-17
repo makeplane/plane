@@ -4907,6 +4907,20 @@ Erstellen Sie ein neues.`,
           },
           text_color: "Textfarbe",
         },
+        table_chart: {
+          short_label: "Tabelle",
+          long_label: "Tabellendiagramm",
+          chart_models: {
+            basic: {
+              short_label: "Standard",
+              long_label: "Tabelle",
+            },
+          },
+          columns: "Spalten",
+          rows: "Zeilen",
+          rows_placeholder: "Zeilen hinzufügen",
+          configure_rows_hint: "Wählen Sie eine Eigenschaft für Zeilen aus, um diese Tabelle anzuzeigen.",
+        },
       },
       color_palettes: {
         modern: "Modern",
@@ -5025,6 +5039,12 @@ Erstellen Sie ein neues.`,
         text: {
           basic: {
             y_axis_metric: "Der Metrik fehlt ein Wert.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Spalten fehlt ein Wert.",
+            group_by: "Zeilen fehlt ein Wert.",
           },
         },
         ask_admin: "Bitten Sie Ihren Administrator, dieses Widget zu konfigurieren.",

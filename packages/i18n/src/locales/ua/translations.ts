@@ -4852,6 +4852,20 @@ export default {
           },
           text_color: "Колір тексту",
         },
+        table_chart: {
+          short_label: "Таблиця",
+          long_label: "Таблична діаграма",
+          chart_models: {
+            basic: {
+              short_label: "Базова",
+              long_label: "Таблиця",
+            },
+          },
+          columns: "Стовпці",
+          rows: "Рядки",
+          rows_placeholder: "Додати рядки",
+          configure_rows_hint: "Виберіть властивість для рядків, щоб переглянути цю таблицю.",
+        },
       },
       color_palettes: {
         modern: "Модерн",
@@ -4970,6 +4984,12 @@ export default {
         text: {
           basic: {
             y_axis_metric: "Відсутнє значення метрики.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Стовпцям не вистачає значення.",
+            group_by: "Рядкам не вистачає значення.",
           },
         },
         ask_admin: "Попросіть адміністратора налаштувати цей віджет.",

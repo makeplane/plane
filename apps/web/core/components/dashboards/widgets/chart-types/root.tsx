@@ -30,6 +30,7 @@ import { DashboardWidgetHeader } from "./header";
 import { DashboardLineChartWidget } from "./line-chart";
 import { DashboardNumberWidget } from "./number";
 import { DashboardPieChartWidget } from "./pie-chart";
+import { DashboardTableChartWidget } from "./table-chart";
 import type { TWidgetComponentProps } from "./";
 import { commonWidgetClassName, parseWidgetData } from "./";
 
@@ -93,6 +94,9 @@ export const DashboardWidgetRoot = observer(function DashboardWidgetRoot(props: 
       break;
     case EWidgetChartTypes.PIE_CHART:
       WidgetComponent = DashboardPieChartWidget;
+      break;
+    case EWidgetChartTypes.TABLE_CHART:
+      WidgetComponent = DashboardTableChartWidget;
       break;
     default:
       WidgetComponent = null;

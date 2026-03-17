@@ -69,6 +69,11 @@ export const WIDGET_CHART_TYPES_LIST: {
     i18n_short_label: "dashboards.widget.chart_types.number.short_label",
     i18n_long_label: "dashboards.widget.chart_types.number.long_label",
   },
+  {
+    key: EWidgetChartTypes.TABLE_CHART,
+    i18n_short_label: "dashboards.widget.chart_types.table_chart.short_label",
+    i18n_long_label: "dashboards.widget.chart_types.table_chart.long_label",
+  },
 ];
 
 export const DEFAULT_WIDGET_CHART_TYPE_PAYLOAD: {
@@ -184,6 +189,21 @@ export const DEFAULT_WIDGET_CHART_TYPE_PAYLOAD: {
       },
     },
   },
+  [EWidgetChartTypes.TABLE_CHART]: {
+    // For table charts, y_axis_metric is static because it cannot be changed.
+    y_axis_metric: EWidgetYAxisMetric.WORK_ITEM_COUNT,
+    config: {
+      orientation: "vertical",
+      show_legends: true,
+      show_tooltip: true,
+    },
+    [EWidgetChartModels.BASIC]: {
+      y_axis_metric: EWidgetYAxisMetric.WORK_ITEM_COUNT,
+      config: {
+        bar_color: DEFAULT_WIDGET_COLOR,
+      },
+    },
+  },
 };
 
 export const WIDGET_CHART_MODELS_LIST: Record<
@@ -276,6 +296,14 @@ export const WIDGET_CHART_MODELS_LIST: Record<
       value: EWidgetChartModels.BASIC,
       i18n_short_label: "dashboards.widget.chart_types.number.chart_models.basic.short_label",
       i18n_long_label: "dashboards.widget.chart_types.number.chart_models.basic.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS, E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
+    },
+  ],
+  [EWidgetChartTypes.TABLE_CHART]: [
+    {
+      value: EWidgetChartModels.BASIC,
+      i18n_short_label: "dashboards.widget.chart_types.table_chart.chart_models.basic.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.table_chart.chart_models.basic.long_label",
       flags: [E_FEATURE_FLAGS.DASHBOARDS, E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
   ],
@@ -469,6 +497,11 @@ export const WIDGET_DROPDOWN_SECTIONS: {
         key: EWidgetChartTypes.NUMBER,
         i18n_label: "dashboards.widget.chart_types.number.short_label",
         models: WIDGET_CHART_MODELS_LIST[EWidgetChartTypes.NUMBER],
+      },
+      {
+        key: EWidgetChartTypes.TABLE_CHART,
+        i18n_label: "dashboards.widget.chart_types.table_chart.short_label",
+        models: WIDGET_CHART_MODELS_LIST[EWidgetChartTypes.TABLE_CHART],
       },
     ],
   },

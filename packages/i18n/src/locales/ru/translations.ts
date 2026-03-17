@@ -4918,6 +4918,20 @@ export default {
           },
           text_color: "Цвет текста",
         },
+        table_chart: {
+          short_label: "Таблица",
+          long_label: "Табличная диаграмма",
+          chart_models: {
+            basic: {
+              short_label: "Основная",
+              long_label: "Таблица",
+            },
+          },
+          columns: "Столбцы",
+          rows: "Строки",
+          rows_placeholder: "Добавить строки",
+          configure_rows_hint: "Выберите свойство для строк, чтобы просмотреть эту таблицу.",
+        },
       },
       color_palettes: {
         modern: "Современная",
@@ -5036,6 +5050,12 @@ export default {
         text: {
           basic: {
             y_axis_metric: "Отсутствует значение для метрики.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Столбцам не хватает значения.",
+            group_by: "Строкам не хватает значения.",
           },
         },
         ask_admin: "Попросите администратора настроить этот виджет.",

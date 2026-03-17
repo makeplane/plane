@@ -22,7 +22,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
-import { EWidgetChartModels, EWidgetChartTypes, EWidgetXAxisProperty } from "@plane/types";
+import { EWidgetChartModels, EWidgetChartTypes, EWidgetXAxisProperty, EWidgetYAxisMetric } from "@plane/types";
 // local components
 import { WidgetChartTypeIcon } from "../../widgets";
 import { DashboardWidgetChartTypesDropdown } from "../../widgets/dropdown";
@@ -72,38 +72,46 @@ export function WidgetConfigSidebarBasicConfig(props: Props) {
     [getValues]
   );
 
+  const getYAxisMetricForChartType = useCallback(
+    (chartType: EWidgetChartTypes): EWidgetYAxisMetric | undefined => {
+      if (chartType === EWidgetChartTypes.TABLE_CHART) {
+        return EWidgetYAxisMetric.WORK_ITEM_COUNT;
+      }
+      const current = getValues("y_axis_metric");
+      if (current == null) return undefined;
+      if (chartType === EWidgetChartTypes.NUMBER) {
+        return NUMBER_WIDGET_Y_AXIS_METRICS_LIST.includes(current) ? current : NUMBER_WIDGET_Y_AXIS_METRICS_LIST[0];
+      }
+      return CHART_WIDGETS_Y_AXIS_METRICS_LIST.includes(current) ? current : CHART_WIDGETS_Y_AXIS_METRICS_LIST[0];
+    },
+    [getValues]
+  );
+
   const handleChartTypeChange = useCallback(
     async (chartType: EWidgetChartTypes, chartModel: EWidgetChartModels) => {
       const updatedConfig = getUpdatedConfig(chartType, chartModel);
-      // update form values
       const payload: Partial<TDashboardWidget> = {
         chart_type: chartType,
         chart_model: chartModel,
         config: updatedConfig,
       };
-      // update y-axis metric
-      const yAxisMetric = getValues("y_axis_metric");
-      let newYAxisMetric = yAxisMetric;
-      if (yAxisMetric) {
-        if (chartType === EWidgetChartTypes.NUMBER && !NUMBER_WIDGET_Y_AXIS_METRICS_LIST.includes(yAxisMetric)) {
-          newYAxisMetric = NUMBER_WIDGET_Y_AXIS_METRICS_LIST[0];
-        }
-        if (chartType !== EWidgetChartTypes.NUMBER && !CHART_WIDGETS_Y_AXIS_METRICS_LIST.includes(yAxisMetric)) {
-          newYAxisMetric = CHART_WIDGETS_Y_AXIS_METRICS_LIST[0];
-        }
-        payload.y_axis_metric = newYAxisMetric;
-      }
-      if (chartModel === EWidgetChartModels.BASIC) {
+
+      const yAxisMetric = getYAxisMetricForChartType(chartType);
+      if (yAxisMetric != null) payload.y_axis_metric = yAxisMetric;
+
+      if (chartModel === EWidgetChartModels.BASIC && chartType !== EWidgetChartTypes.TABLE_CHART) {
         payload.group_by = null;
       }
       if (chartType === EWidgetChartTypes.DONUT_CHART && chartModel === EWidgetChartModels.PROGRESS) {
         payload.x_axis_property = EWidgetXAxisProperty.STATE_GROUPS;
       }
-      Object.keys(payload).forEach((key) => {
-        const payloadKey = key as keyof typeof payload;
-        setValue(payloadKey, payloadKey);
-      });
-      // make api call
+      if (chartType === EWidgetChartTypes.TABLE_CHART && !getValues("x_axis_property")) {
+        payload.x_axis_property = EWidgetXAxisProperty.STATES;
+      }
+
+      for (const [key, value] of Object.entries(payload)) {
+        if (value !== undefined) setValue(key as keyof TDashboardWidget, value);
+      }
       await handleSubmit(payload);
     },
     [getUpdatedConfig, handleSubmit]

@@ -4760,6 +4760,20 @@ Vytvorte nový.`,
           },
           text_color: "Farba textu",
         },
+        table_chart: {
+          short_label: "Tabuľka",
+          long_label: "Tabuľkový graf",
+          chart_models: {
+            basic: {
+              short_label: "Základný",
+              long_label: "Tabuľka",
+            },
+          },
+          columns: "Stĺpce",
+          rows: "Riadky",
+          rows_placeholder: "Pridať riadky",
+          configure_rows_hint: "Vyberte vlastnosť pre riadky na zobrazenie tejto tabuľky.",
+        },
       },
       color_palettes: {
         modern: "Moderná",
@@ -4878,6 +4892,12 @@ Vytvorte nový.`,
         text: {
           basic: {
             y_axis_metric: "Metrike chýba hodnota.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Stĺpcom chýba hodnota.",
+            group_by: "Riadkom chýba hodnota.",
           },
         },
         ask_admin: "Požiadajte svojho administrátora o konfiguráciu tohto vidžetu.",

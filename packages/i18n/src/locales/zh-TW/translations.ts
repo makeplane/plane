@@ -4752,6 +4752,20 @@ export default {
           },
           text_color: "文字顏色",
         },
+        table_chart: {
+          short_label: "表格",
+          long_label: "表格圖表",
+          chart_models: {
+            basic: {
+              short_label: "基本",
+              long_label: "表格",
+            },
+          },
+          columns: "列",
+          rows: "行",
+          rows_placeholder: "添加行",
+          configure_rows_hint: "選擇行的屬性以查看此表格。",
+        },
       },
       color_palettes: {
         modern: "現代",
@@ -4870,6 +4884,12 @@ export default {
         text: {
           basic: {
             y_axis_metric: "指標缺少值。",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "列缺少值。",
+            group_by: "行缺少值。",
           },
         },
         ask_admin: "請管理員配置此小工具。",

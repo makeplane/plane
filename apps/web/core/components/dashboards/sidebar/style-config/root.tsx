@@ -55,30 +55,35 @@ export const WidgetConfigSidebarStyleConfig = observer(function WidgetConfigSide
     [handleSubmit]
   );
 
+  if (selectedChartType === EWidgetChartTypes.TABLE_CHART) return null;
+
   return (
-    <div className="flex-shrink-0 space-y-3 text-13">
-      <Collapsible open={isCollapsibleIcon} onOpenChange={setIsCollapsibleIcon}>
-        <CollapsibleTrigger>
-          <div className="flex items-center gap-0.5 p-1 -ml-1 hover:bg-layer-1 rounded-sm transition-colors">
-            <h6 className="font-semibold text-secondary">{t("dashboards.widget.common.style")}</h6>
-            <div className="flex-shrink-0 size-4 grid place-items-center">
-              <ChevronRightIcon
-                className={cn("size-2.5 transition-all", {
-                  "rotate-90": isCollapsibleIcon,
-                })}
-              />
+    <>
+      <div className="flex-shrink-0 h-px border-t border-subtle" />
+      <div className="flex-shrink-0 space-y-3 text-13">
+        <Collapsible open={isCollapsibleIcon} onOpenChange={setIsCollapsibleIcon}>
+          <CollapsibleTrigger>
+            <div className="flex items-center gap-0.5 p-1 -ml-1 hover:bg-layer-1 rounded-sm transition-colors">
+              <h6 className="font-semibold text-secondary">{t("dashboards.widget.common.style")}</h6>
+              <div className="flex-shrink-0 size-4 grid place-items-center">
+                <ChevronRightIcon
+                  className={cn("size-2.5 transition-all", {
+                    "rotate-90": isCollapsibleIcon,
+                  })}
+                />
+              </div>
             </div>
-          </div>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="mt-3 flex flex-col gap-y-4">
-            <WidgetConfigSidebarAppearanceConfig handleConfigUpdate={handleConfigUpdate} />
-            {selectedChartType !== EWidgetChartTypes.NUMBER && (
-              <WidgetConfigSidebarGuidesConfig handleConfigUpdate={handleConfigUpdate} />
-            )}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-    </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="mt-3 flex flex-col gap-y-4">
+              <WidgetConfigSidebarAppearanceConfig handleConfigUpdate={handleConfigUpdate} />
+              {selectedChartType !== EWidgetChartTypes.NUMBER && (
+                <WidgetConfigSidebarGuidesConfig handleConfigUpdate={handleConfigUpdate} />
+              )}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+    </>
   );
 });

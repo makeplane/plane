@@ -4865,6 +4865,20 @@ export default {
           },
           text_color: "テキスト カラー",
         },
+        table_chart: {
+          short_label: "表",
+          long_label: "表グラフ",
+          chart_models: {
+            basic: {
+              short_label: "基本",
+              long_label: "表",
+            },
+          },
+          columns: "列",
+          rows: "行",
+          rows_placeholder: "行を追加",
+          configure_rows_hint: "この表を表示するには行のプロパティを選択してください。",
+        },
       },
       color_palettes: {
         modern: "モダン",
@@ -4983,6 +4997,12 @@ export default {
         text: {
           basic: {
             y_axis_metric: "メトリック イズ ミッシング ア バリュー",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "列に値がありません。",
+            group_by: "行に値がありません。",
           },
         },
         ask_admin: "アスク ユア アドミン トゥ コンフィギュア ディス ウィジェット",

@@ -178,7 +178,6 @@ export const DashboardsWidgetConfigSidebarRoot = observer(function DashboardsWid
         <WidgetConfigSidebarBasicConfig handleSubmit={handleFormSubmit} />
         <div className="flex-shrink-0 h-px border-t border-subtle" />
         <WidgetConfigSidebarAxisConfig handleSubmit={handleFormSubmit} />
-        <div className="flex-shrink-0 h-px border-t border-subtle" />
         <WidgetConfigSidebarStyleConfig handleSubmit={handleFormSubmit} />
         <div className="flex-shrink-0 h-px border-t border-subtle" />
         <WidgetConfigSidebarFilters

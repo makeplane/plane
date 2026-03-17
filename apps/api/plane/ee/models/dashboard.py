@@ -90,6 +90,7 @@ class Widget(BaseModel):
         PIE_CHART = "PIE_CHART", "Pie Chart"
         DONUT_CHART = "DONUT_CHART", "Donut Chart"
         NUMBER = "NUMBER", "Number Chart"
+        TABLE_CHART = "TABLE_CHART", "Table Chart"
 
     class ChartModelEnum(models.TextChoices):
         BASIC = "BASIC", "Basic"

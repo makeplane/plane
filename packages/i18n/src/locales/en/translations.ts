@@ -5369,6 +5369,20 @@ if you are sure your search is right. `,
           },
           text_color: "Text color",
         },
+        table_chart: {
+          short_label: "Table",
+          long_label: "Table chart",
+          chart_models: {
+            basic: {
+              short_label: "Basic",
+              long_label: "Table",
+            },
+          },
+          columns: "Columns",
+          rows: "Rows",
+          rows_placeholder: "Add rows",
+          configure_rows_hint: "Select a property for rows to view this table.",
+        },
       },
       sections: {
         charts: "Charts",
@@ -5487,6 +5501,12 @@ if you are sure your search is right. `,
         number: {
           basic: {
             y_axis_metric: "Metric is missing a value.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Columns is missing a value.",
+            group_by: "Rows is missing a value.",
           },
         },
         ask_admin: "Ask your admin to configure this widget.",

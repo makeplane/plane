@@ -4917,6 +4917,20 @@ văzute aici`,
           },
           text_color: "Culoare text",
         },
+        table_chart: {
+          short_label: "Tabel",
+          long_label: "Grafic tabel",
+          chart_models: {
+            basic: {
+              short_label: "De bază",
+              long_label: "Tabel",
+            },
+          },
+          columns: "Coloane",
+          rows: "Rânduri",
+          rows_placeholder: "Adaugă rânduri",
+          configure_rows_hint: "Selectați o proprietate pentru rânduri pentru a vizualiza acest tabel.",
+        },
       },
       color_palettes: {
         modern: "Modern",
@@ -5035,6 +5049,12 @@ văzute aici`,
         text: {
           basic: {
             y_axis_metric: "Metrica lipsește o valoare.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Coloanelor lipsește o valoare.",
+            group_by: "Rândurilor lipsește o valoare.",
           },
         },
         ask_admin: "Întreabă administratorul tău pentru a configura acest widget.",

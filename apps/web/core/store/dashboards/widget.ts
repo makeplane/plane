@@ -193,6 +193,11 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
     if (chartType === EWidgetChartTypes.NUMBER) {
       if (!this.y_axis_metric) return "y_axis_metric";
     }
+    if (chartType === EWidgetChartTypes.TABLE_CHART) {
+      if (!this.x_axis_property) return "x_axis_property";
+      if (!this.y_axis_metric) return "y_axis_metric";
+      if (!this.group_by) return "group_by";
+    }
     return null;
   }
 

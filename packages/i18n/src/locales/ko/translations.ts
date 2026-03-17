@@ -4824,6 +4824,20 @@ export default {
           },
           text_color: "텍스트 컬러",
         },
+        table_chart: {
+          short_label: "테이블",
+          long_label: "테이블 차트",
+          chart_models: {
+            basic: {
+              short_label: "기본",
+              long_label: "테이블",
+            },
+          },
+          columns: "열",
+          rows: "행",
+          rows_placeholder: "행 추가",
+          configure_rows_hint: "이 테이블을 보려면 행에 대한 속성을 선택하세요.",
+        },
       },
       color_palettes: {
         modern: "모던",
@@ -4942,6 +4956,12 @@ export default {
         text: {
           basic: {
             y_axis_metric: "메트릭에 값이 없습니다.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "열에 값이 없습니다.",
+            group_by: "행에 값이 없습니다.",
           },
         },
         ask_admin: "이 위젯을 구성하려면 관리자에게 문의하세요.",

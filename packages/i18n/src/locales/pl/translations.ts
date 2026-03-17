@@ -4853,6 +4853,20 @@ Utwórz nowy.`,
           },
           text_color: "Kolor tekstu",
         },
+        table_chart: {
+          short_label: "Tabela",
+          long_label: "Wykres tabelaryczny",
+          chart_models: {
+            basic: {
+              short_label: "Podstawowy",
+              long_label: "Tabela",
+            },
+          },
+          columns: "Kolumny",
+          rows: "Wiersze",
+          rows_placeholder: "Dodaj wiersze",
+          configure_rows_hint: "Wybierz właściwość dla wierszy, aby wyświetlić tę tabelę.",
+        },
       },
       color_palettes: {
         modern: "Nowoczesna",
@@ -4971,6 +4985,12 @@ Utwórz nowy.`,
         text: {
           basic: {
             y_axis_metric: "Metryka nie ma wartości.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Kolumny nie mają wartości.",
+            group_by: "Wiersze nie mają wartości.",
           },
         },
         ask_admin: "Poproś swojego administratora o skonfigurowanie tego widżetu.",

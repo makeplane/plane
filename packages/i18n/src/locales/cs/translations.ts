@@ -4844,6 +4844,20 @@ Vytvořte nový.`,
           },
           text_color: "Barva textu",
         },
+        table_chart: {
+          short_label: "Tabulka",
+          long_label: "Tabulkový graf",
+          chart_models: {
+            basic: {
+              short_label: "Základní",
+              long_label: "Tabulka",
+            },
+          },
+          columns: "Sloupce",
+          rows: "Řádky",
+          rows_placeholder: "Přidat řádky",
+          configure_rows_hint: "Vyberte vlastnost pro řádky pro zobrazení této tabulky.",
+        },
       },
       color_palettes: {
         modern_tech: "Moderní technologie",
@@ -4962,6 +4976,12 @@ Vytvořte nový.`,
         text: {
           basic: {
             y_axis_metric: "Metrika chybí.",
+          },
+        },
+        table_chart: {
+          basic: {
+            x_axis_property: "Sloupcům chybí hodnota.",
+            group_by: "Řádkům chybí hodnota.",
           },
         },
         ask_admin: "Požádejte svého správce, aby konfiguroval tento widget.",

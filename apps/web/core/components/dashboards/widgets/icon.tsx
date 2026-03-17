@@ -20,6 +20,7 @@ import {
   BasicLineChartIcon,
   BasicNumberIcon,
   BasicPieChartIcon,
+  BasicTableChartIcon,
   ComparisonAreaChartIcon,
   GroupedBarChartIcon,
   MultiLineLineChartIcon,
@@ -72,6 +73,8 @@ export function WidgetChartTypeIcon(props: Props) {
     Icon = BasicPieChartIcon;
   } else if (chartType === EWidgetChartTypes.NUMBER) {
     Icon = BasicNumberIcon;
+  } else if (chartType === EWidgetChartTypes.TABLE_CHART) {
+    Icon = BasicTableChartIcon;
   }
 
   return Icon ? <Icon className={className} /> : null;

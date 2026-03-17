@@ -26,6 +26,8 @@ import numberDark from "@/app/assets/empty-state/dashboards/widgets/charts/numbe
 import numberLight from "@/app/assets/empty-state/dashboards/widgets/charts/number-light.webp?url";
 import pieChartDark from "@/app/assets/empty-state/dashboards/widgets/charts/pie_chart-dark.webp?url";
 import pieChartLight from "@/app/assets/empty-state/dashboards/widgets/charts/pie_chart-light.webp?url";
+import tableChartDark from "@/app/assets/empty-state/dashboards/widgets/charts/table_chart-dark.svg?url";
+import tableChartLight from "@/app/assets/empty-state/dashboards/widgets/charts/table_chart-light.svg?url";
 
 export const CHART_ASSET_MAP: Record<EWidgetChartTypes, { dark: string; light: string }> = {
   AREA_CHART: { dark: areaChartDark, light: areaChartLight },
@@ -34,4 +36,5 @@ export const CHART_ASSET_MAP: Record<EWidgetChartTypes, { dark: string; light: s
   LINE_CHART: { dark: lineChartDark, light: lineChartLight },
   NUMBER: { dark: numberDark, light: numberLight },
   PIE_CHART: { dark: pieChartDark, light: pieChartLight },
+  TABLE_CHART: { dark: tableChartDark, light: tableChartLight },
 };
