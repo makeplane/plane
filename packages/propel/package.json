@@ -71,14 +71,14 @@
     "class-variance-authority": "0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "framer-motion": "^12.23.0",
+    "framer-motion": "^12.38.0",
     "frimousse": "^0.3.0",
     "lucide-react": "catalog:",
     "react": "catalog:",
-    "react-day-picker": "9.5.0",
+    "react-day-picker": "9.14.0",
     "react-dom": "catalog:",
     "recharts": "^2.15.1",
-    "tailwind-merge": "3.4.0",
+    "tailwind-merge": "3.5.0",
     "use-font-face-observer": "^1.3.0"
   },
   "devDependencies": {
