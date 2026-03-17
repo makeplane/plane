@@ -12,6 +12,6 @@
     "@types/jscodeshift": "^17.3.0",
     "ast-types": "0.14.2",
     "jscodeshift": "^17.3.0",
-    "vitest": "^4.0.8"
+    "vitest": "^4.1.0"
   }
 }

@@ -33,8 +33,8 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@floating-ui/dom": "^1.7.1",
-    "@floating-ui/react": "^0.26.4",
+    "@floating-ui/dom": "^1.7.6",
+    "@floating-ui/react": "^0.27.19",
     "@headlessui/react": "^1.7.3",
     "@hocuspocus/provider": "2.15.2",
     "@plane/constants": "workspace:*",
@@ -66,7 +66,7 @@
     "@tiptap/starter-kit": "^2.22.3",
     "@tiptap/suggestion": "^2.22.3",
     "buffer": "^6.0.3",
-    "emoji-regex": "^10.3.0",
+    "emoji-regex": "^10.6.0",
     "highlight.js": "^11.8.0",
     "is-emoji-supported": "^0.0.5",
     "jsx-dom-cjs": "^8.0.3",
@@ -76,12 +76,12 @@
     "lucide-react": "catalog:",
     "prosemirror-codemark": "^0.4.2",
     "tippy.js": "^6.3.7",
-    "tiptap-markdown": "^0.8.10",
+    "tiptap-markdown": "^0.9.0",
     "uuid": "catalog:",
     "y-indexeddb": "^9.0.12",
     "y-prosemirror": "^1.2.15",
-    "y-protocols": "^1.0.6",
-    "yjs": "^13.6.20"
+    "y-protocols": "^1.0.7",
+    "yjs": "^13.6.30"
   },
   "devDependencies": {
     "@plane/tailwind-config": "workspace:*",
@@ -90,7 +90,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "postcss": "^8.4.38",
+    "postcss": "^8.5.8",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
