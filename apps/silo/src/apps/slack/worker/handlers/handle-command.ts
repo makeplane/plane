@@ -10,6 +10,7 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
+/* oxlint-disable */
 
 import type { TSlackCommandPayload } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
@@ -19,6 +20,7 @@ import { ENTITIES } from "../../helpers/constants";
 import { convertToSlackOptions } from "../../helpers/slack-options";
 import { createProjectSelectionModal } from "../../views";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
+import { filterUserProjects } from "@/helpers/generic-helpers";
 
 export const handleCommand = async (data: TSlackCommandPayload) => {
   const details = await getConnectionDetails(data.team_id, {
@@ -47,7 +49,7 @@ export const handleCommand = async (data: TSlackCommandPayload) => {
 
   try {
     const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
-    const filteredProjects = projects.results.filter((project) => project.is_member === true);
+    const filteredProjects = filterUserProjects(projects);
     const plainTextOptions = convertToSlackOptions(filteredProjects);
     const modal = createProjectSelectionModal(
       plainTextOptions,

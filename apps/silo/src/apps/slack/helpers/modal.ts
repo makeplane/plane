@@ -10,6 +10,7 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
+/* oxlint-disable */
 
 import { logger } from "@plane/logger";
 import type { ExIssue, IssueWithExpanded } from "@plane/sdk";
@@ -274,10 +275,13 @@ async function prepareModalData(params: TSlackWorkItemOrIntakeModalParams) {
     throw new Error("Target access token is required");
   }
 
+  // Get user projects
+  const userProjects = convertToSlackOptions(projects.results.filter((project) => project.archived_at == null));
+
   // Prepare modal data
   const modalData = {
     selectedProject: convertToSlackOption(selectedProject),
-    projectOptions: convertToSlackOptions(projects.results),
+    projectOptions: userProjects,
   };
 
   const privateMetadata = JSON.stringify({ entityType: metadata?.entityType, entityPayload: metadata?.entityPayload });

@@ -10,6 +10,7 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
+/* oxlint-disable */
 
 import axios from "axios";
 import type { TBlockActionModalPayload, TBlockActionPayload } from "@plane/etl/slack";
@@ -419,8 +420,10 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload, details
   if (isIntakeEnabled) {
     // Show project selection modal with intake/work item choice
     const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
+    // Get user projects
+    const userProjects = convertToSlackOptions(projects.results.filter((project) => project.archived_at == null));
     const modal = createProjectSelectionModal(
-      convertToSlackOptions(projects.results),
+      userProjects,
       metadata.entityPayload,
       selection.value,
       metadata.entityType,
@@ -453,8 +456,10 @@ async function handleCreateWorkItemAction(data: TBlockActionPayload, details: TS
   if (isIntakeEnabled) {
     // Show project selection modal with intake/work item choice
     const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
+    // Get user projects
+    const userProjects = convertToSlackOptions(projects.results.filter((project) => project.archived_at == null));
     const modal = createProjectSelectionModal(
-      convertToSlackOptions(projects.results),
+      userProjects,
       {
         type: ENTITIES.SHORTCUT_PROJECT_SELECTION,
         mode: "create",

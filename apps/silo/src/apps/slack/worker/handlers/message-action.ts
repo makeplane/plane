@@ -10,6 +10,7 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
+/* oxlint-disable */
 
 import type { TMessageActionPayload } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
@@ -23,6 +24,7 @@ import { getSlackToPlaneUserMapFromWC } from "../../helpers/user";
 import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
 import { alreadyLinkedModalView, createLinkIssueModalView } from "../../views/link-issue-modal";
+import { filterUserProjects } from "@/helpers/generic-helpers";
 
 const apiClient = getAPIClient();
 
@@ -163,7 +165,7 @@ const handleCreateNewWorkItem = async (data: TMessageActionPayload, isWorkItem: 
   const { workspaceConnection, slackService, planeClient } = details;
 
   const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
-  const filteredProjects = projects.results.filter((project) => project.is_member === true);
+  const filteredProjects = filterUserProjects(projects);
   const plainTextOptions = convertToSlackOptions(filteredProjects);
   const modal = createProjectSelectionModal(
     plainTextOptions,

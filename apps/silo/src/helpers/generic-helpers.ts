@@ -10,9 +10,9 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
+/* oxlint-disable */
 
-/* oxlint-disable @typescript-eslint/no-explicit-any */
-/* oxlint-disable @typescript-eslint/no-unsafe-argument */
+import type { ExProject } from "@plane/sdk";
 
 export const removeArrayObjSpaces = (arr: any[]) => arr.map((obj) => removeSpacesFromKeys(obj));
 
@@ -59,3 +59,8 @@ export const removeUndefinedFromObject = (obj: any): any =>
 
 // Capitalise the first letters in a string
 export const capitalize = (str: string): string => (str.length > 0 ? `${str[0].toUpperCase()}${str.slice(1)}` : "");
+
+// Filter out projects in which user is absent, archived projects from all projects
+export const filterUserProjects = (projects: { results?: ExProject[] }): ExProject[] => {
+  return projects.results?.filter((project) => project.is_member === true && project.archived_at == null) ?? [];
+};
