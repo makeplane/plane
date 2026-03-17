@@ -103,6 +103,7 @@ from .project import (
     ProjectDetailAPIEndpoint,
     ProjectArchiveUnarchiveAPIEndpoint,
     ProjectFeatureAPIEndpoint,
+    ProjectSummaryAPIEndpoint,
 )
 
 from .project_page import (
