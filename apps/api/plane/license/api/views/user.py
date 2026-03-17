@@ -10,7 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Django imports
-from django.db.models import Case, When, BooleanField, Q, Count, Value, CharField
+from django.db.models import Exists, OuterRef, Q, Count, Value, CharField
 from django.db.models.functions import Concat, Coalesce
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
@@ -45,8 +45,8 @@ class InstanceUserManagementViewSet(BaseAPIView):
         instance = Instance.objects.first()
 
         return User.objects.filter(is_bot=False).annotate(
-            is_instance_admin=Case(
-                When(instance_owner__instance=instance, then=True), default=False, output_field=BooleanField()
+            is_instance_admin=Exists(
+                InstanceAdmin.objects.filter(instance=instance, user=OuterRef("pk"))
             ),
             workspace_count=Count("member_workspace", filter=Q(member_workspace__is_active=True), distinct=True),
         )
