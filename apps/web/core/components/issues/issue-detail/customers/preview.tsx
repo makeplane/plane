@@ -38,7 +38,7 @@ export function CustomerPreview(props: TProps) {
   const stage = CUSTOMER_STAGES.find((stage) => stage.value === customer?.stage);
   const customerLogoSrc = getCustomerLogoSrc(customer);
   return (
-    <div className="bg-layer-1/40">
+    <div className="bg-layer-1/40" data-prevent-outside-click>
       <div className={"min-w-[350px] max-w-[400px]"}>
         <div className="bg-surface-1 border border-subtle-1 rounded-lg p-5 shadow-raised-100">
           <div className="flex justify-between items-center">
