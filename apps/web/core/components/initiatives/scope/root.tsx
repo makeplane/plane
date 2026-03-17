@@ -246,7 +246,7 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
                 </div>
 
                 <InitiativeScopeProjectFiltersRow />
-                {activeTab === INITIATIVE_SCOPE_TABS.EPICS && (
+                {activeTab === INITIATIVE_SCOPE_TABS.EPICS && filter.richFiltersInstance && (
                   <WorkItemFiltersRow filter={filter.richFiltersInstance} />
                 )}
 

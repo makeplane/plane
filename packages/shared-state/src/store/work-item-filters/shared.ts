@@ -12,6 +12,6 @@
  */
 
 // plane imports
-import type { EIssuesStoreType } from "@plane/types";
+import type { WorkItemFiltersEntity } from "@plane/constants";
 
-export type TWorkItemFilterKey = `${EIssuesStoreType}-${string}`;
+export type TWorkItemFilterKey = `${WorkItemFiltersEntity}-${string}`;

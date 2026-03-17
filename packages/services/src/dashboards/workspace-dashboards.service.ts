@@ -14,7 +14,14 @@
 // plane constants
 import { API_BASE_URL } from "@plane/constants";
 // plane types
-import type { TDashboardWidget, TDashboard, TDashboardWidgetsLayoutPayload, TDashboardWidgetData } from "@plane/types";
+import type {
+  TDashboardWidget,
+  TDashboard,
+  TDashboardWidgetsLayoutPayload,
+  TDashboardWidgetData,
+  TExternalDashboardWidgetFilterExpression,
+  TWorkItemFilterExpression,
+} from "@plane/types";
 import { APIService } from "../api.service";
 
 export class WorkspaceDashboardsService extends APIService {
@@ -217,9 +224,18 @@ export class WorkspaceDashboardsService extends APIService {
   async retrieveWidgetData(
     workspaceSlug: string,
     dashboardId: string,
-    widgetId: string
+    widgetId: string,
+    quickFilters?: TWorkItemFilterExpression
   ): Promise<TDashboardWidgetData> {
-    return this.get(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/${widgetId}/charts/`)
+    const queryParams: Record<string, string> = {};
+
+    if (quickFilters) {
+      queryParams.filters = JSON.stringify(quickFilters);
+    }
+
+    return this.get(`/api/workspaces/${workspaceSlug}/dashboards/${dashboardId}/widgets/${widgetId}/charts/`, {
+      params: queryParams,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -11,11 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -29,7 +30,12 @@ import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
+import { WorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/base";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row/basic";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
 import { useDashboards } from "@/plane-web/hooks/store";
+import { WORK_ITEM_FILTERS_ENTITY } from "@plane/constants";
 
 type Props = {
   data?: Partial<TDashboard>;
@@ -40,6 +46,7 @@ type Props = {
 const defaultValues: Partial<TDashboard> = {
   name: "",
   project_ids: [],
+  filters: {},
 };
 
 export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdateWorkspaceDashboardModal(props: Props) {
@@ -49,6 +56,11 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
   // app router
   const router = useAppRouter();
   // store hooks
+  const {
+    workspace: { getWorkspaceMemberIds },
+  } = useMember();
+  const { getWorkspaceLabelIds } = useLabel();
+  const { joinedProjectIds } = useProject();
   const {
     getDashboardById,
     workspaceDashboards: { canCurrentUserCreateDashboard, createDashboard },
@@ -210,6 +222,43 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
                 />
                 <span className="text-caption-xs text-danger-primary">{errors?.project_ids?.message}</span>
               </div>
+            </div>
+            <div>
+              <div className="inline-block mb-2 text-caption-md text-secondary font-medium">
+                {t("dashboards.create_modal.filters_label")}
+              </div>
+              <Controller
+                name="filters"
+                control={control}
+                render={({ field: { value, onChange } }) => {
+                  const workItemFilters = {
+                    richFilters: value ?? {},
+                    lastUsedFilterType: "rich_filters",
+                  } as const;
+                  return (
+                    <WorkItemFiltersHOC
+                      entityType={WORK_ITEM_FILTERS_ENTITY.WORKSPACE_DASHBOARD_SOURCE}
+                      isTemporary
+                      filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
+                      initialWorkItemFilters={workItemFilters}
+                      updateFilters={async (params) => {
+                        if (params.type === "rich_filters") onChange(params.expression);
+                      }}
+                      memberIds={getWorkspaceMemberIds(workspaceSlug)}
+                      labelIds={getWorkspaceLabelIds(workspaceSlug)}
+                      projectIds={joinedProjectIds}
+                      showOnMount
+                      workspaceSlug={workspaceSlug?.toString() ?? ""}
+                    >
+                      {({ filter }) =>
+                        filter?.richFiltersInstance && (
+                          <WorkItemFiltersRow filter={filter.richFiltersInstance} variant="modal" />
+                        )
+                      }
+                    </WorkItemFiltersHOC>
+                  );
+                }}
+              />
             </div>
           </div>
         </div>

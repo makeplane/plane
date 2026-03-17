@@ -28,13 +28,13 @@ import { FilterInstance } from "../rich-filters/filter";
 import { workItemFiltersAdapter } from "./adapter";
 
 export type WorkItemFilterInstanceInitParams<E extends TExternalFilter> = {
-  richFilters: {
+  richFilters?: {
     expressionOptions?: TExpressionOptions<E>;
     initialExpression?: TWorkItemFilterExpression;
     onExpressionChange?: (expression: TWorkItemFilterExpression) => void;
   };
   showOnMount?: boolean;
-  pql: InitializePQLFilterInstanceParams;
+  pql?: InitializePQLFilterInstanceParams;
   viewOptions?: TWorkItemFiltersViewOptions<E>;
   lastUsedFilterType: AdvancedFilterType;
   updateLastUsedFilterTypeCallback: (filterType: AdvancedFilterType) => Promise<void>;
@@ -56,8 +56,8 @@ export interface IWorkItemFilterInstance {
   canSaveView: boolean;
   canUpdateView: boolean;
   // instances
-  richFiltersInstance: FilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression>;
-  pqlFiltersInstance: PQLFilterInstance;
+  richFiltersInstance: FilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression> | undefined;
+  pqlFiltersInstance: PQLFilterInstance | undefined;
 }
 
 export class WorkItemFilterInstance implements IWorkItemFilterInstance {
@@ -72,29 +72,33 @@ export class WorkItemFilterInstance implements IWorkItemFilterInstance {
   private updateLastUsedFilterTypeCallback: WorkItemFilterInstanceInitParams<TWorkItemFilterExpression>["updateLastUsedFilterTypeCallback"];
 
   constructor(params: WorkItemFilterInstanceInitParams<TWorkItemFilterExpression>) {
-    this.richFiltersInstance = new FilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression>({
-      adapter: workItemFiltersAdapter,
-      initialExpression: params.richFilters.initialExpression,
-      onExpressionChange: params.richFilters.onExpressionChange,
-      options: {
-        expression: { ...params.richFilters.expressionOptions, ...params.viewOptions },
-        visibility: params.showOnMount
-          ? { autoSetVisibility: false, isVisibleOnMount: true }
-          : { autoSetVisibility: true },
-      },
-    });
-    this.pqlFiltersInstance = new PQLFilterInstance({
-      ...params.pql,
-      viewOptions: params.viewOptions as TWorkItemFiltersViewOptions<TExternalFilter>,
-    });
+    if (params.richFilters) {
+      this.richFiltersInstance = new FilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression>({
+        adapter: workItemFiltersAdapter,
+        initialExpression: params.richFilters.initialExpression,
+        onExpressionChange: params.richFilters.onExpressionChange,
+        options: {
+          expression: { ...params.richFilters.expressionOptions, ...params.viewOptions },
+          visibility: params.showOnMount
+            ? { autoSetVisibility: false, isVisibleOnMount: true }
+            : { autoSetVisibility: true },
+        },
+      });
+    }
+    if (params.pql) {
+      this.pqlFiltersInstance = new PQLFilterInstance({
+        ...params.pql,
+        viewOptions: params.viewOptions as TWorkItemFiltersViewOptions<TExternalFilter>,
+      });
+    }
     this.lastUsedFilterType = params.lastUsedFilterType;
     this.updateLastUsedFilterTypeCallback = params.updateLastUsedFilterTypeCallback;
     this.viewOptions = params.viewOptions;
     this.isFiltersRowVisible =
       !!params.showOnMount ||
       (params.lastUsedFilterType === "rich_filters"
-        ? this.richFiltersInstance.hasActiveFilters
-        : params.pql.initialValue.stripped.trim() !== "");
+        ? !!this.richFiltersInstance?.hasActiveFilters
+        : params.pql?.initialValue.stripped.trim() !== "");
 
     makeObservable<WorkItemFilterInstance, "activeFilterInstance">(this, {
       // observables
@@ -155,7 +159,7 @@ export class WorkItemFilterInstance implements IWorkItemFilterInstance {
 
   clearFilters: IWorkItemFilterInstance["clearFilters"] = async () => {
     if (this.lastUsedFilterType === "rich_filters") {
-      await this.richFiltersInstance.clearFilters();
+      await this.richFiltersInstance?.clearFilters();
     }
   };
 

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AtSign, CircleUserRound, Files, SignalHigh, Tag, Users } from "lucide-react";
@@ -87,13 +87,18 @@ type Props = {
 };
 
 const FilterContent = observer(function FilterContent({ projectIds, initialFilters, handleSubmit }: Props) {
+  const handleSubmitRef = useRef(handleSubmit);
+  useEffect(() => {
+    handleSubmitRef.current = handleSubmit;
+  }, [handleSubmit]);
+
   const filterInstance = useMemo(
     () =>
       new FilterInstance<TDashboardWidgetFilterKeys, TExternalDashboardWidgetFilterExpression>({
         adapter: new DashboardWidgetFilterAdapter(),
         initialExpression: initialFilters,
         onExpressionChange: (expression) => {
-          void handleSubmit({
+          void handleSubmitRef.current?.({
             filters: expression,
           });
         },

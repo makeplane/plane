@@ -50,19 +50,19 @@ export const DashboardsWidgetConfigSidebarRoot = observer(function DashboardsWid
   const { t } = useTranslation();
   // feature flag
 
-  const { isEditingWidget: widgetIdToEdit, getWidgetById, toggleEditWidget, toggleDeleteWidget } = widgetsStore ?? {};
+  const { getWidgetById, toggleEditWidget, toggleDeleteWidget, isEditingWidget: widgetIdToEdit } = widgetsStore ?? {};
   const isEditingWidget = !!widgetIdToEdit;
   const widget = widgetIdToEdit ? getWidgetById?.(widgetIdToEdit) : undefined;
   const {
     asJSON,
     id,
     isConfigurationMissing,
-    fetchWidgetData,
     updateWidget,
     x_axis_property,
     y_axis_metric,
     group_by,
     filters,
+    fetchWidgetData,
   } = widget ?? {};
   const shouldShowSidebar = !isViewModeEnabled && !!widgetIdToEdit;
 
@@ -92,7 +92,7 @@ export const DashboardsWidgetConfigSidebarRoot = observer(function DashboardsWid
 
         const hasDataAffectingChanges = dataAffectingProperties.some((key) => key in data && data[key] !== undefined);
 
-        if (!isConfigurationMissing && hasDataAffectingChanges) {
+        if (id && !isConfigurationMissing && hasDataAffectingChanges) {
           await fetchWidgetData?.();
         }
       } catch {
@@ -103,7 +103,7 @@ export const DashboardsWidgetConfigSidebarRoot = observer(function DashboardsWid
         });
       }
     },
-    [fetchWidgetData, isConfigurationMissing, updateWidget]
+    [id, isConfigurationMissing, fetchWidgetData, updateWidget]
   );
 
   const handleDelete = useCallback(() => {

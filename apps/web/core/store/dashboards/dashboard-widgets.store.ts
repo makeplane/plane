@@ -23,10 +23,13 @@ import type {
   TDashboardWidget,
   TDashboardWidgetData,
   TDashboardWidgetsLayoutPayload,
+  TExternalDashboardWidgetFilterExpression,
+  TWorkItemFilterExpression,
 } from "@plane/types";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 import { DashboardWidgetInstance } from "./widget";
+import type { IDashboardInstance } from "./dashboard";
 
 const TOTAL_COLUMNS = 4;
 const NEW_WIDGET_WIDTH = 2;
@@ -61,6 +64,7 @@ export interface IDashboardWidgetsStore {
   updateWidgetsLayout: (updatedWidgets: Layout[]) => Promise<void>;
   toggleEditWidget: (widgetId: string | null) => void;
   toggleDeleteWidget: (widgetId: string | null) => void;
+  refetchAllWidgetData: () => void;
 }
 
 export type TDashboardWidgetHelpers = {
@@ -71,7 +75,7 @@ export type TDashboardWidgetHelpers = {
     updateWidget: (widgetId: string, payload: Partial<TDashboardWidget>) => Promise<TDashboardWidget>;
     updateWidgetsLayout: (payload: TDashboardWidgetsLayoutPayload[]) => Promise<void>;
     deleteWidget: (widgetId: string) => Promise<void>;
-    fetchWidgetData: (widgetId: string) => Promise<TDashboardWidgetData>;
+    fetchWidgetData: (widgetId: string, filters?: TWorkItemFilterExpression) => Promise<TDashboardWidgetData>;
   };
   permissions: {
     canCurrentUserCreateWidget: boolean;
@@ -114,10 +118,11 @@ export class DashboardWidgetsStore implements IDashboardWidgetsStore {
   private helpers: TDashboardWidgetHelpers;
   // root store
   private rootStore: RootStore;
+  private dashboard: IDashboardInstance;
 
-  constructor(store: RootStore, helpers: TDashboardWidgetHelpers) {
-    // initialize helpers
+  constructor(store: RootStore, helpers: TDashboardWidgetHelpers, dashboard: IDashboardInstance) {
     this.helpers = helpers;
+    this.dashboard = dashboard;
     // initialize root store
     this.rootStore = store;
 
@@ -141,6 +146,7 @@ export class DashboardWidgetsStore implements IDashboardWidgetsStore {
       updateWidgetsLayout: action,
       toggleEditWidget: action,
       toggleDeleteWidget: action,
+      refetchAllWidgetData: action,
     });
   }
 
@@ -250,7 +256,11 @@ export class DashboardWidgetsStore implements IDashboardWidgetsStore {
             if (this.widgetsData[widget.id]) {
               this.widgetsData[widget.id].mutateProperties(widget);
             } else {
-              set(this.widgetsData, [widget.id], new DashboardWidgetInstance(this.rootStore, widget, this.helpers));
+              set(
+                this.widgetsData,
+                [widget.id],
+                new DashboardWidgetInstance(this.rootStore, this.dashboard, widget, this.helpers)
+              );
             }
           }
         }
@@ -278,7 +288,11 @@ export class DashboardWidgetsStore implements IDashboardWidgetsStore {
         if (this.widgetsData[widgetId]) {
           this.widgetsData[widgetId].mutateProperties(res);
         } else {
-          set(this.widgetsData, [widgetId], new DashboardWidgetInstance(this.rootStore, res, this.helpers));
+          set(
+            this.widgetsData,
+            [widgetId],
+            new DashboardWidgetInstance(this.rootStore, this.dashboard, res, this.helpers)
+          );
         }
       });
       return res;
@@ -298,7 +312,7 @@ export class DashboardWidgetsStore implements IDashboardWidgetsStore {
       if (!res || !resId) throw new Error("No response found");
       // update observable
       runInAction(() => {
-        set(this.widgetsData, [resId], new DashboardWidgetInstance(this.rootStore, res, this.helpers));
+        set(this.widgetsData, [resId], new DashboardWidgetInstance(this.rootStore, this.dashboard, res, this.helpers));
       });
       return res;
     } catch (error) {
@@ -382,6 +396,14 @@ export class DashboardWidgetsStore implements IDashboardWidgetsStore {
   toggleDeleteWidget: IDashboardWidgetsStore["toggleDeleteWidget"] = (widgetId) => {
     runInAction(() => {
       this.isDeletingWidget = widgetId;
+    });
+  };
+
+  refetchAllWidgetData: IDashboardWidgetsStore["refetchAllWidgetData"] = () => {
+    Object.values(this.widgetsData).forEach((widget) => {
+      if (widget.id && !widget.isConfigurationMissing && widget.isWidgetAvailableInCurrentPlan) {
+        void widget.fetchWidgetData();
+      }
     });
   };
 }

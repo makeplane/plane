@@ -13,12 +13,14 @@
 
 // local types
 import type { TLogoProps } from "../common";
+import type { TWorkItemFilterExpression } from "../view-props";
 
 export type TDashboardLevel = "workspace";
 
 export type TDashboard = {
   created_at: Date | undefined;
   created_by: string | undefined;
+  filters: TWorkItemFilterExpression | undefined;
   id: string | undefined;
   is_favorite: boolean | undefined;
   logo_props: TLogoProps | undefined;

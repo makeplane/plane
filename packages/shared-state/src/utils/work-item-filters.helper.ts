@@ -23,6 +23,7 @@ import type {
 // local imports
 import { workItemFiltersAdapter } from "../store/work-item-filters/adapter";
 import { buildTempFilterExpressionFromConditions } from "./rich-filter.helper";
+import type { WorkItemFiltersEntity } from "@plane/constants";
 
 export type TWorkItemFilterCondition = TFilterConditionForBuild<TWorkItemFilterProperty, TFilterValue>;
 
@@ -47,7 +48,7 @@ export const buildWorkItemFilterExpressionFromConditions = (
 
 type TEnrichRichFiltersWithEntityContextParams = {
   richFilters: TWorkItemFilterExpression | undefined;
-  entityType: EIssuesStoreType;
+  entityType: WorkItemFiltersEntity;
   entityId: string | undefined;
 };
 

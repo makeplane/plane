@@ -13,8 +13,8 @@
 
 // plane imports
 import type { WorkItemFilterInstance } from "@plane/shared-state";
+import type { WorkItemFiltersEntity } from "@plane/constants";
 import type {
-  EIssuesStoreType,
   IIssueFilters,
   PQLFilterValue,
   TWorkItemFilterExpression,
@@ -26,7 +26,7 @@ import type {
 import type { UpdateAdvancedFiltersParams } from "@/store/work-items/helpers/issue-filter-helper.store";
 
 export type TSharedWorkItemFiltersProps = {
-  entityType: EIssuesStoreType; // entity type (project, cycle, workspace, teamspace, etc)
+  entityType: WorkItemFiltersEntity; // entity type (project, cycle, workspace, teamspace, etc)
   filtersToShowByLayout: TWorkItemFilterProperty[];
   updateFilters: (params: UpdateAdvancedFiltersParams) => Promise<void>;
   handlePQLChange?: (newValue: PQLFilterValue) => void;
@@ -38,8 +38,14 @@ export type TSharedWorkItemFiltersHOCChildrenProps = {
   filter: WorkItemFilterInstance | undefined;
 };
 
-export type TSharedWorkItemFiltersHOCProps = TSharedWorkItemFiltersProps & {
+export type TSharedWorkItemFiltersBaseHOCProps = TSharedWorkItemFiltersProps & {
   children: React.ReactNode | ((props: TSharedWorkItemFiltersHOCChildrenProps) => React.ReactNode);
+  initialWorkItemFilters:
+    | (Pick<IIssueFilters, "lastUsedFilterType"> & Partial<Pick<IIssueFilters, "richFilters" | "pqlFilters">>)
+    | undefined;
+};
+
+export type TSharedWorkItemFiltersHOCProps = TSharedWorkItemFiltersBaseHOCProps & {
   initialWorkItemFilters: IIssueFilters | undefined;
 };
 

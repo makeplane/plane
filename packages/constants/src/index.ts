@@ -38,7 +38,7 @@ export * from "./initiatives";
 export * from "./releases";
 export * from "./instance";
 export * from "./intake";
-export * from "./issue";
+export * from "./work-item";
 export * from "./members";
 export * from "./label";
 export * from "./metadata";

@@ -264,7 +264,11 @@ export const ExportForm = observer(function ExportForm(props: Props) {
               showOnMount
               workspaceSlug={workspaceSlug}
             >
-              {({ filter }) => filter && <WorkItemFiltersRow filter={filter.richFiltersInstance} variant="modal" />}
+              {({ filter }) =>
+                filter?.richFiltersInstance && (
+                  <WorkItemFiltersRow filter={filter.richFiltersInstance} variant="modal" />
+                )
+              }
             </WorkspaceLevelWorkItemFiltersHOC>
           )}
         />

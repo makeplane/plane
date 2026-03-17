@@ -4982,6 +4982,7 @@ export default {
         placeholder: "이 프로젝트들의 데이터가 이 대시보드를 지원합니다.",
         required_error: "프로젝트는 필수입니다",
       },
+      filters_label: "위 데이터 소스에 대한 필터 설정",
       create_dashboard: "대시보드 생성",
       update_dashboard: "대시보드 업데이트",
     },

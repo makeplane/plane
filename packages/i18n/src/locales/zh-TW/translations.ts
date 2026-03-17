@@ -4910,6 +4910,7 @@ export default {
         placeholder: "來自這些專案的數據將為此儀表板提供支持。",
         required_error: "專案為必填項",
       },
+      filters_label: "為上述資料來源設定篩選條件",
       create_dashboard: "創建儀表板",
       update_dashboard: "更新儀表板",
     },

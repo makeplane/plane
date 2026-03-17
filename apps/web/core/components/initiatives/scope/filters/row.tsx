@@ -53,5 +53,6 @@ export const InitiativeScopeEpicFiltersRow = observer(function InitiativeScopeEp
 }: {
   epicFilterInstance: IWorkItemFilterInstance["richFiltersInstance"];
 }) {
+  if (!epicFilterInstance) return null;
   return <WorkItemFiltersRow filter={epicFilterInstance} />;
 });

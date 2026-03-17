@@ -5024,6 +5024,7 @@ export default {
         placeholder: "データ フロム ジーズ プロジェクツ ウィル パワー ディス ダッシュボード",
         required_error: "プロジェクツ アー リクワイアド",
       },
+      filters_label: "上記のデータソースにフィルターを設定",
       create_dashboard: "クリエイト ダッシュボード",
       update_dashboard: "アップデート ダッシュボード",
     },

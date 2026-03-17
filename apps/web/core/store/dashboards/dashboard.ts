@@ -15,7 +15,7 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane types
-import type { TDashboard, TDashboardLevel, TLogoProps } from "@plane/types";
+import type { TDashboard, TDashboardLevel, TLogoProps, TWorkItemFilterExpression } from "@plane/types";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IDashboardWidgetsStore, TDashboardWidgetHelpers } from "./dashboard-widgets.store";
@@ -23,8 +23,10 @@ import { DashboardWidgetsStore } from "./dashboard-widgets.store";
 
 export interface IDashboardInstance extends TDashboard {
   // observables
+  filters: TWorkItemFilterExpression | undefined;
   viewModeToggle: boolean;
   dashboardLevel: TDashboardLevel;
+  quickFilters: TWorkItemFilterExpression | undefined;
   // permissions
   canCurrentUserEditDashboard: boolean;
   canCurrentUserFavoriteDashboard: boolean;
@@ -39,6 +41,7 @@ export interface IDashboardInstance extends TDashboard {
   toggleViewingMode: (status?: boolean) => void;
   addToFavorites: () => Promise<void>;
   removeFromFavorites: () => Promise<void>;
+  updateQuickFilters: (filters: TWorkItemFilterExpression | undefined) => void;
   // sub-stores
   widgetsStore: IDashboardWidgetsStore;
 }
@@ -63,7 +66,9 @@ export class DashboardInstance implements IDashboardInstance {
   // observables
   dashboardLevel: TDashboardLevel;
   viewModeToggle: boolean = true;
+  quickFilters: TWorkItemFilterExpression | undefined;
   // dashboard properties
+  filters: TWorkItemFilterExpression | undefined;
   created_at: Date | undefined;
   created_by: string | undefined;
   id: string | undefined;
@@ -91,6 +96,7 @@ export class DashboardInstance implements IDashboardInstance {
     // initialize dashboard level
     this.dashboardLevel = dashboardLevel;
     // initialize dashboard properties
+    this.filters = dashboard.filters;
     this.created_at = dashboard.created_at;
     this.created_by = dashboard.created_by;
     this.id = dashboard.id;
@@ -107,7 +113,7 @@ export class DashboardInstance implements IDashboardInstance {
     // initialize root store
     this.rootStore = store;
     // initialize sub-store
-    this.widgetsStore = new DashboardWidgetsStore(store, combinedHelpers.widget);
+    this.widgetsStore = new DashboardWidgetsStore(store, combinedHelpers.widget, this);
 
     makeObservable(this, {
       // observables
@@ -118,6 +124,8 @@ export class DashboardInstance implements IDashboardInstance {
       id: observable.ref,
       is_favorite: observable.ref,
       logo_props: observable,
+      quickFilters: observable,
+      filters: observable,
       name: observable.ref,
       owned_by: observable.ref,
       project_ids: observable,
@@ -136,8 +144,16 @@ export class DashboardInstance implements IDashboardInstance {
       toggleViewingMode: action,
       addToFavorites: action,
       removeFromFavorites: action,
+      updateQuickFilters: action,
     });
   }
+
+  updateQuickFilters: IDashboardInstance["updateQuickFilters"] = (filters) => {
+    runInAction(() => {
+      this.quickFilters = filters;
+    });
+    this.widgetsStore.refetchAllWidgetData();
+  };
 
   // permissions
   get canCurrentUserEditDashboard() {
@@ -159,6 +175,7 @@ export class DashboardInstance implements IDashboardInstance {
       created_by: this.created_by,
       id: this.id,
       is_favorite: this.is_favorite,
+      filters: this.filters,
       logo_props: this.logo_props,
       name: this.name,
       owned_by: this.owned_by,

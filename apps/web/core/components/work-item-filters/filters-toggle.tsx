@@ -16,7 +16,7 @@ import { useParams } from "react-router";
 // plane imports
 import { IconButton } from "@plane/propel/icon-button";
 import { FilterIcon } from "@plane/propel/icons";
-import type { EIssuesStoreType } from "@plane/types";
+import type { WorkItemFiltersEntity } from "@plane/constants";
 // components
 import { FiltersToggle } from "@/components/rich-filters/filters-toggle";
 // hooks
@@ -26,7 +26,7 @@ import { useFlag } from "@/plane-web/hooks/store";
 
 type TWorkItemFiltersToggleProps = {
   enablePQL?: boolean;
-  entityType: EIssuesStoreType;
+  entityType: WorkItemFiltersEntity;
   entityId: string;
 };
 

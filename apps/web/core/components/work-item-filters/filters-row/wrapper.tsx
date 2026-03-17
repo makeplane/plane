@@ -53,7 +53,7 @@ export const WorkItemFiltersRowWrapper = observer(function WorkItemFiltersRowWra
           <WorkItemAdvancedFiltersRow {...rest} />
         </div>
       ) : (
-        <WorkItemFiltersRow {...rest} filter={rest.filter.richFiltersInstance} />
+        rest.filter.richFiltersInstance && <WorkItemFiltersRow {...rest} filter={rest.filter.richFiltersInstance} />
       )}
     </>
   );

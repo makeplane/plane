@@ -22,13 +22,13 @@ import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-ite
 import type { TWorkItemFiltersEntityProps } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
 import { useWorkItemFiltersConfig } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
 // local imports
-import type { TSharedWorkItemFiltersHOCProps, TSharedWorkItemFiltersProps } from "./shared";
+import type { TSharedWorkItemFiltersBaseHOCProps } from "./shared";
 
 type TAdditionalWorkItemFiltersProps = {
   viewOptions?: TWorkItemFiltersViewOptions<TWorkItemFilterExpression>;
 } & TWorkItemFiltersEntityProps;
 
-type TWorkItemFiltersHOCProps = TSharedWorkItemFiltersHOCProps & TAdditionalWorkItemFiltersProps;
+type TWorkItemFiltersHOCProps = TSharedWorkItemFiltersBaseHOCProps & TAdditionalWorkItemFiltersProps;
 
 export const WorkItemFiltersHOC = observer(function WorkItemFiltersHOC(props: TWorkItemFiltersHOCProps) {
   const { children, initialWorkItemFilters } = props;
@@ -44,11 +44,9 @@ export const WorkItemFiltersHOC = observer(function WorkItemFiltersHOC(props: TW
   );
 });
 
-type TWorkItemFilterProps = TSharedWorkItemFiltersProps &
+type TWorkItemFilterProps = TSharedWorkItemFiltersBaseHOCProps &
   TAdditionalWorkItemFiltersProps &
-  Pick<TSharedWorkItemFiltersHOCProps, "children"> & {
-    initialWorkItemFilters: IIssueFilters;
-  };
+  Pick<TSharedWorkItemFiltersBaseHOCProps, "children" | "initialWorkItemFilters">;
 
 const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItemFilterProps) {
   const {
@@ -72,10 +70,10 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
     [isTemporary, entityId]
   );
   // memoize initial values to prevent re-computations when reference changes
-  const initialRichTextFilters = useMemo(() => initialWorkItemFilters.richFilters, [initialWorkItemFilters]);
-  const initialPqlFilters = useMemo(() => initialWorkItemFilters.pqlFilters, [initialWorkItemFilters]);
+  const initialRichTextFilters = useMemo(() => initialWorkItemFilters?.richFilters, [initialWorkItemFilters]);
+  const initialPqlFilters = useMemo(() => initialWorkItemFilters?.pqlFilters, [initialWorkItemFilters]);
   const lastUsedFilterType = useMemo(
-    () => initialWorkItemFilters.lastUsedFilterType || "rich_filters",
+    () => initialWorkItemFilters?.lastUsedFilterType || "rich_filters",
     [initialWorkItemFilters]
   );
   const workItemFiltersConfig = useWorkItemFiltersConfig({
@@ -92,13 +90,17 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
           initialExpression: initialRichTextFilters,
           onExpressionChange: (expression) => updateFilters({ type: "rich_filters", expression }),
         },
-        pql: {
-          initialValue: initialPqlFilters,
-          onSubmit: async (value) => {
-            await updateFilters({ type: "pql_filters", value });
-          },
-          onValueChange: handlePQLChange,
-        },
+        ...(initialPqlFilters
+          ? {
+              pql: {
+                initialValue: initialPqlFilters,
+                onSubmit: async (value) => {
+                  await updateFilters({ type: "pql_filters", value });
+                },
+                onValueChange: handlePQLChange,
+              },
+            }
+          : {}),
         showOnMount,
         viewOptions,
         lastUsedFilterType,
@@ -119,12 +121,14 @@ const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItem
   );
 
   useEffect(() => {
-    filterInstance.richFiltersInstance.configManager.setAreConfigsReady(workItemFiltersConfig.areAllConfigsInitialized);
-    filterInstance.richFiltersInstance.configManager.registerAll(workItemFiltersConfig.configs);
+    filterInstance.richFiltersInstance?.configManager.setAreConfigsReady(
+      workItemFiltersConfig.areAllConfigsInitialized
+    );
+    filterInstance.richFiltersInstance?.configManager.registerAll(workItemFiltersConfig.configs);
   }, [
     workItemFiltersConfig.areAllConfigsInitialized,
     workItemFiltersConfig.configs,
-    filterInstance.richFiltersInstance.configManager,
+    filterInstance.richFiltersInstance?.configManager,
   ]);
 
   return (

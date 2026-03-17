@@ -55,7 +55,7 @@ export const DashboardWidgetChartTypesDropdown = observer(function DashboardWidg
   const { t } = useTranslation();
 
   return (
-    <Popover className="relative flex-shrink-0 text-left">
+    <Popover className="relative shrink-0 text-left">
       <Popover.Button
         as="button"
         type="button"

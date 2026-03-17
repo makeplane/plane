@@ -42,7 +42,7 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
   const dashboardDetails = getDashboardById(dashboardId);
   const { widgetsStore, isViewModeEnabled } = dashboardDetails ?? {};
   const { toggleDeleteWidget, toggleEditWidget } = widgetsStore ?? {};
-  const { canCurrentUserDeleteWidget, canCurrentUserEditWidget, fetchWidgetData, isFetchingData } = widget;
+  const { canCurrentUserDeleteWidget, canCurrentUserEditWidget, isFetchingData, fetchWidgetData } = widget;
 
   const MENU_ITEMS: TContextMenuItem[] = useMemo(
     () => [
@@ -60,7 +60,9 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
         key: "refresh",
         icon: RotateCw,
         title: "Refresh",
-        action: () => fetchWidgetData?.(),
+        action: () => {
+          if (widget.id) void fetchWidgetData?.();
+        },
         disabled: isFetchingData,
       },
       {
@@ -77,7 +79,6 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
     [
       canCurrentUserDeleteWidget,
       canCurrentUserEditWidget,
-      fetchWidgetData,
       isFetchingData,
       toggleDeleteWidget,
       toggleEditWidget,
@@ -129,7 +130,7 @@ export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(pro
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              fetchWidgetData();
+              if (widget.id) void fetchWidgetData?.();
             }}
             disabled={isFetchingData}
           >

@@ -30,6 +30,7 @@ import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { TDashboardWidgetHelpers } from "./dashboard-widgets.store";
+import type { IDashboardInstance } from "./dashboard";
 
 export interface IDashboardWidgetInstance extends TDashboardWidget {
   isFetchingData: boolean;
@@ -74,8 +75,15 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
   private helpers: TDashboardWidgetHelpers;
   // root store
   private rootStore: RootStore;
+  private dashboard: IDashboardInstance;
 
-  constructor(store: RootStore, widget: TDashboardWidget, helpers: TDashboardWidgetHelpers) {
+  constructor(
+    store: RootStore,
+    dashboard: IDashboardInstance,
+    widget: TDashboardWidget,
+    helpers: TDashboardWidgetHelpers
+  ) {
+    this.dashboard = dashboard;
     // initialize widget properties
     this.chart_model = widget.chart_model;
     this.chart_type = widget.chart_type;
@@ -131,7 +139,6 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
       // actions
       mutateProperties: action,
       updateWidget: action,
-      fetchWidgetData: action,
     });
   }
 
@@ -156,6 +163,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
       y_axis_coord: this.y_axis_coord,
       y_axis_metric: this.y_axis_metric,
       filters: this.filters,
+      fetchWidgetData: action,
     };
   }
 
@@ -234,10 +242,15 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
     const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
     if (!workspaceSlug || !this.id) throw new Error("Required fields not found");
     const originalWidget = { ...this.asJSON };
+    const filtersUpdated = "filters" in data && data.filters !== undefined;
     try {
       // optimistically update
       this.mutateProperties(data);
       const res = await this.helpers.actions.updateWidget(this.id, data);
+      // Refetch widget data when filters change so the chart reflects the new filters
+      if (filtersUpdated && !this.isConfigurationMissing) {
+        void this.fetchWidgetData();
+      }
       return res;
     } catch (error) {
       // revert changes
@@ -259,8 +272,9 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
       runInAction(() => {
         this.isFetchingData = true;
       });
-      // make api call
-      const res = await this.helpers.actions.fetchWidgetData(this.id);
+
+      const res = await this.helpers.actions.fetchWidgetData(this.id, this.dashboard.quickFilters);
+
       runInAction(() => {
         this.data = res;
       });

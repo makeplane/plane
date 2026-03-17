@@ -28,17 +28,24 @@ import { SwitcherLabel } from "@/components/common/switcher-label";
 // plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
 import { DashboardQuickActions } from "@/components/dashboards/quick-actions";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 import { DashboardWidgetChartTypesDropdown } from "@/components/dashboards/widgets/dropdown";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
+import { WORK_ITEM_FILTERS_ENTITY } from "@plane/constants";
 
-export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashboardDetailsHeader() {
+type Props = {
+  workspaceSlug: string;
+  dashboardId: string;
+};
+
+export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashboardDetailsHeader(props: Props) {
+  const { workspaceSlug, dashboardId } = props;
   // refs
   const parentRef = useRef(null);
   // states
   const [isAddingWidget, setIsAddingWidget] = useState(false);
   // navigation
-  const { workspaceSlug, dashboardId } = useParams();
   const router = useAppRouter();
   // store hooks
   const {
@@ -122,12 +129,16 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
       </Header.LeftItem>
       {dashboardDetails && (
         <Header.RightItem className="items-center">
+          <WorkItemFiltersToggle
+            entityType={WORK_ITEM_FILTERS_ENTITY.WORKSPACE_DASHBOARD}
+            entityId={dashboardId.toString()}
+          />
           {!isViewModeEnabled && canCurrentUserCreateWidget && (
             <DashboardWidgetChartTypesDropdown
-              buttonClassName={getButtonStyling("secondary", "base")}
+              buttonClassName={getButtonStyling("secondary", "lg")}
               buttonContent={
                 <>
-                  {!isAddingWidget && <PlusIcon className="flex-shrink-0 size-3.5" />}
+                  {!isAddingWidget && <PlusIcon className="shrink-0 size-3.5" />}
                   {t(isAddingWidget ? "common.adding" : "dashboards.widget.common.add_widget")}
                 </>
               }
@@ -147,7 +158,6 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
           <DashboardQuickActions
             dashboardId={dashboardId.toString()}
             parentRef={parentRef}
-            showEdit={false}
             customClassName="p-1 rounded-sm outline-none hover:bg-layer-1 bg-layer-1/70 size-[26px]"
           />
         </Header.RightItem>

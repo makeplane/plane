@@ -5010,6 +5010,7 @@ export default {
         placeholder: "Дані з цих проджектів будуть живити цей дешборд.",
         required_error: "Проджекти обов'язкові",
       },
+      filters_label: "Налаштуйте фільтри для джерел даних вище",
       create_dashboard: "Створити дешборд",
       update_dashboard: "Оновити дешборд",
     },

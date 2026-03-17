@@ -113,8 +113,8 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
           updateWidgetsLayout: async (payload) =>
             await this.service.updateWidgetsLayout(workspaceSlug, dashboardId, payload),
           deleteWidget: async (widgetId) => await this.service.destroyWidget(workspaceSlug, dashboardId, widgetId),
-          fetchWidgetData: async (widgetId) =>
-            await this.service.retrieveWidgetData(workspaceSlug, dashboardId, widgetId),
+          fetchWidgetData: async (widgetId, quickFilters) =>
+            await this.service.retrieveWidgetData(workspaceSlug, dashboardId, widgetId, quickFilters),
         },
         permissions: {
           canCurrentUserCreateWidget:

@@ -102,7 +102,7 @@ export const RichFiltersRow = observer(function FiltersRow<K extends TFilterProp
   );
 
   const ModalVariant = (
-    <div className="w-full flex flex-wrap items-center gap-2 min-h-11 bg-layer-1 rounded-lg p-2">{mainContent}</div>
+    <div className="w-full flex flex-wrap items-center gap-2 min-h-11 bg-layer-1 rounded-lg">{mainContent}</div>
   );
 
   const HeaderVariant = (

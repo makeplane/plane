@@ -45,7 +45,7 @@ export const WorkItemAdvancedFiltersRow = observer(function WorkItemAdvancedFilt
     void filter?.updateLastUsedFilterType(value);
   };
 
-  if (!filter) return null;
+  if (!filter || !filter.richFiltersInstance || !filter.pqlFiltersInstance) return null;
 
   return (
     <div

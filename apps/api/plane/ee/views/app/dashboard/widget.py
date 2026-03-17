@@ -156,7 +156,14 @@ class WidgetListEndpoint(BaseAPIView):
             project_id__in=dashboard_project_ids,
         )
 
-        # get the widget filter
+        # apply dashboard-level filters first (source filter - set during creation)
+        if _dashboard.filters:
+            issues = ComplexFilterBackend().filter_queryset(request, issues, self, _dashboard.filters)
+
+        # apply quick dashboard filter (transient, from 'filters' query param)
+        issues = ComplexFilterBackend().filter_queryset(request, issues, self)
+
+        # apply widget-level filter
         if dashboard_widget.filters:
             # use the complex filter backend using dashboard widget filters
             issues = ComplexFilterBackend().filter_queryset(request, issues, self, dashboard_widget.filters)

@@ -33,6 +33,7 @@ function constructFieldDefsFromConfigs(
   configManager: FilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression>["configManager"],
   operatorConfigs: TFiltersOperatorConfigs
 ): FieldDef[] {
+  if (!configManager) return [];
   // TODO: refactor this logic and implement searchable select for ID
   const operatorConfigsWithoutIsNull = {
     allowedOperators: new Set(
@@ -112,8 +113,11 @@ export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({
   // derived values
   const { pqlFiltersInstance, richFiltersInstance } = layoutFilters;
   const fieldDefs = useMemo(
-    () => constructFieldDefsFromConfigs(layoutFilters.richFiltersInstance.configManager, operatorConfigs),
-    [layoutFilters.richFiltersInstance.configManager, operatorConfigs]
+    () =>
+      layoutFilters.richFiltersInstance?.configManager
+        ? constructFieldDefsFromConfigs(layoutFilters.richFiltersInstance.configManager, operatorConfigs)
+        : [],
+    [layoutFilters.richFiltersInstance?.configManager, operatorConfigs]
   );
   const editorKey = useMemo(() => fieldDefs.map((f) => f.value).join(","), [fieldDefs]);
   // translation
@@ -121,6 +125,7 @@ export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({
 
   const handleSubmit = useCallback(
     async (value: PQLFilterValue) => {
+      if (!pqlFiltersInstance) return;
       try {
         setIsSubmitting(true);
         setHasError(false);
@@ -135,7 +140,7 @@ export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({
     [pqlFiltersInstance]
   );
 
-  if (!richFiltersInstance.configManager.areConfigsReady || !editorKey.length) return null;
+  if (!pqlFiltersInstance || !richFiltersInstance?.configManager.areConfigsReady || !editorKey.length) return null;
 
   return (
     <div className="flex flex-col gap-y-1.5">

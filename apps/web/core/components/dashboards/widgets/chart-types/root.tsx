@@ -55,10 +55,10 @@ export const DashboardWidgetRoot = observer(function DashboardWidgetRoot(props: 
     canCurrentUserEditWidget,
     chart_type,
     data,
-    fetchWidgetData,
     isConfigurationMissing,
     isWidgetAvailableInCurrentPlan,
     x_axis_property,
+    fetchWidgetData,
     group_by,
     x_axis_date_grouping,
   } = widget ?? {};

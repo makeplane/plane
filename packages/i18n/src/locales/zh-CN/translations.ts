@@ -4889,6 +4889,7 @@ export default {
         placeholder: "这些项目的数据将为此仪表板提供支持。",
         required_error: "项目为必填项",
       },
+      filters_label: "为上述数据源设置筛选条件",
       create_dashboard: "创建仪表板",
       update_dashboard: "更新仪表板",
     },
