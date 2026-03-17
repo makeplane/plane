@@ -9,16 +9,19 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-# Third Party imports
+# Django imports
+from django.db.models import Q
+
+# Rest Framework imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.serializers import WorkItemRelationDefinitionInputSerializer, WorkItemRelationDefinitionSerializer
-from plane.db.models import WorkItemRelationDefinition, Workspace
+from plane.db.models import DEFAULT_IMPLEMENTS_DEFINITION, WorkItemRelationDefinition, Workspace
 from plane.payment.flags.flag import FeatureFlag
-from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 
 # Local imports
 from .. import BaseViewSet
@@ -40,22 +43,54 @@ class WorkItemRelationDefinitionViewSet(BaseViewSet):
         return (last_sort_order) + self.DEFAULT_SORT_ORDER if last_sort_order else self.DEFAULT_SORT_ORDER
 
     def get_queryset(self):
-        return (
-            super().get_queryset().filter(workspace__slug=self.kwargs.get("slug")).order_by("sort_order", "-created_at")
-        )
+        # processing the query params
+        workspace_slug = self.kwargs.get("slug")
+        is_active = self.request.query_params.get("is_active", "true") == "true"
+        is_default = self.request.query_params.get("is_default", "true") == "true"
 
-    @check_feature_flag(FeatureFlag.CUSTOM_RELATIONS)
+        # getting the queryset
+        q = super().get_queryset().filter(workspace__slug=workspace_slug).order_by("sort_order", "-created_at")
+
+        # filtering the queryset based on the is_active query param
+        if is_active:
+            q = q.filter(is_active=True)
+
+        # filtering the queryset based on the is_default query param
+        if is_default:
+            q = q.filter(is_default=True)
+
+        # filtering the queryset based on the feature flag
+        is_custom_relations_feature_flag_enabled = check_workspace_feature_flag(
+            FeatureFlag.CUSTOM_RELATIONS, workspace_slug
+        )
+        if not is_custom_relations_feature_flag_enabled:
+            q = q.filter(is_default=True)
+
+        # filtering the queryset based on the timeline dependency feature flag
+        is_timeline_dependency_feature_flag_enabled = check_workspace_feature_flag(
+            FeatureFlag.TIMELINE_DEPENDENCY, workspace_slug
+        )
+        if not is_timeline_dependency_feature_flag_enabled:
+            q = q.filter(
+                ~Q(
+                    Q(inward=DEFAULT_IMPLEMENTS_DEFINITION["inward"])
+                    | Q(outward=DEFAULT_IMPLEMENTS_DEFINITION["outward"])
+                )
+            )
+
+        # returning the queryset
+        return q
+
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
         return super().list(request, slug)
 
-    @check_feature_flag(FeatureFlag.CUSTOM_RELATIONS)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def retrieve(self, request, slug, pk):
         return super().retrieve(request, slug, pk)
 
     @check_feature_flag(FeatureFlag.CUSTOM_RELATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def create(self, request, slug):
         # validating the workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -80,7 +115,7 @@ class WorkItemRelationDefinitionViewSet(BaseViewSet):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.CUSTOM_RELATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
         # validating the relation definition
         relation_definition = WorkItemRelationDefinition.objects.get(workspace__slug=slug, pk=pk)
@@ -103,7 +138,7 @@ class WorkItemRelationDefinitionViewSet(BaseViewSet):
         return Response(response_data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOM_RELATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, slug, pk):
         # validating the relation definition
         relation_definition = WorkItemRelationDefinition.objects.get(workspace__slug=slug, pk=pk)

@@ -54,7 +54,7 @@ export const RelationDefinitionRoot = observer(function RelationDefinitionRoot(p
   // fetch on mount
   useEffect(() => {
     if (workspaceSlug) {
-      fetchRelationDefinitions(workspaceSlug);
+      fetchRelationDefinitions(workspaceSlug, { is_default: "false" });
     }
   }, [workspaceSlug, fetchRelationDefinitions]);
 

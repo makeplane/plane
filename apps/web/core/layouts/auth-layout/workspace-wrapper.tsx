@@ -128,6 +128,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const isInitiativesFeatureEnabled = initiative.isInitiativesFeatureEnabled;
   const isTemplatePublishEnabled = getIsTemplatePublishEnabled(workspaceSlug);
   const isWorkflowsFeatureEnabled = useFlag(workspaceSlug, "WORKFLOWS");
+  const isCustomRelationsEnabled = useFlag(workspaceSlug, "CUSTOM_RELATIONS", false);
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
 
   // fetching user workspace information
@@ -167,8 +168,10 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   });
   // fetch relation definitions
   useSWR(
-    currentWorkspace ? `RELATION_DEFINITIONS_${workspaceSlug}` : null,
-    currentWorkspace ? () => fetchRelationDefinitions(workspaceSlug) : null,
+    currentWorkspace ? `RELATION_DEFINITIONS_${workspaceSlug}_${isCustomRelationsEnabled}` : null,
+    currentWorkspace
+      ? () => fetchRelationDefinitions(workspaceSlug, { is_default: isCustomRelationsEnabled ? "false" : "true" })
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

@@ -26,7 +26,10 @@ export interface IRelationDefinitionStore {
   // computed fn
   getById: (id: string) => IWorkItemRelationDefinition | undefined;
   // actions
-  fetchRelationDefinitions: (workspaceSlug: string) => Promise<IWorkItemRelationDefinition[]>;
+  fetchRelationDefinitions: (
+    workspaceSlug: string,
+    params?: Record<string, string>
+  ) => Promise<IWorkItemRelationDefinition[]>;
   createRelationDefinition: (
     workspaceSlug: string,
     data: TWorkItemRelationDefinitionPayload
@@ -71,10 +74,13 @@ export class RelationDefinitionStore implements IRelationDefinitionStore {
   getById = computedFn((id: string): IWorkItemRelationDefinition | undefined => this.relationDefinitionMap[id]);
 
   // actions
-  fetchRelationDefinitions = async (workspaceSlug: string): Promise<IWorkItemRelationDefinition[]> => {
+  fetchRelationDefinitions = async (
+    workspaceSlug: string,
+    params?: Record<string, string>
+  ): Promise<IWorkItemRelationDefinition[]> => {
     try {
       this.loader = "init-loader";
-      const definitions = await this.service.list(workspaceSlug);
+      const definitions = await this.service.list(workspaceSlug, params);
       runInAction(() => {
         this.relationDefinitionMap = {};
         for (const def of definitions) {

@@ -136,6 +136,8 @@ class FeatureFlag(Enum):
     CUSTOM_RELATIONS = "CUSTOM_RELATIONS"
     # Manage Issue Subscribers
     MANAGE_ISSUE_SUBSCRIBERS = "MANAGE_ISSUE_SUBSCRIBERS"
+    # Timeline dependency
+    TIMELINE_DEPENDENCY = "TIMELINE_DEPENDENCY"
 
 
 class AdminFeatureFlag(Enum):

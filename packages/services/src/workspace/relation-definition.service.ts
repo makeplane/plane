@@ -20,8 +20,8 @@ export class WorkItemRelationDefinitionService extends APIService {
     super(BASE_URL || API_BASE_URL);
   }
 
-  async list(workspaceSlug: string): Promise<IWorkItemRelationDefinition[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/work-item-relation-definitions/`)
+  async list(workspaceSlug: string, params?: Record<string, string>): Promise<IWorkItemRelationDefinition[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/work-item-relation-definitions/`, { params })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
