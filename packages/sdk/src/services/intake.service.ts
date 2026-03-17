@@ -11,10 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TInboxIssueStatus, TInboxIssueWithPagination } from "@plane/types";
-import { APIService } from "@/services/api.service";
 // types
-import type { ExIntakeIssue, ExIssue } from "@/types/types";
+import type { ExIntakeIssue, ExIssue, TInboxIssueStatus, TInboxIssueWithPagination } from "@/types/types";
+import { APIService } from "@/services/api.service";
 // constants
 
 export type IntakeIssueCreatePayload = {

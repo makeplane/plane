@@ -117,24 +117,7 @@ export const transformGitHubIssue = async (
     creator = userMap[issue.user.login];
   }
 
-  let issue_html = `<p>${issue.body || ""}</p>`;
-
-  if (!creator) {
-    const issueBody = issue.body || "";
-    const currentUserReference = `<a href="${issue.user?.html_url}">${issue.user?.login}</a>`;
-
-    // Regular expression to match the existing creator reference
-    const creatorReferenceRegex = /Issue (updated|created) on GitHub By \[(.*?)\]\((.*?)\)/gim;
-
-    if (creatorReferenceRegex.test(issueBody)) {
-      // Update existing reference and add new one
-      const updatedBody = issueBody.replace(creatorReferenceRegex, "");
-      issue_html = `<p>${updatedBody}\n\n\nIssue ${isUpdate ? "updated" : "created"} on GitHub By ${currentUserReference}</p>`;
-    } else {
-      // Add new creator reference
-      issue_html = `<p>${issueBody}\n\n\nIssue ${isUpdate ? "updated" : "created"} on GitHub By ${currentUserReference}</p>`;
-    }
-  }
+  let issue_html = `${issueHTML.replaceAll("\n", "") || ""}`;
 
   const imageMap = GithubContentParser.extractImageInfo(issueHTML);
   issue_html = await GithubContentParser.toPlaneHtml(issue_html, imagePrefix, imageMap, {
