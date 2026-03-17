@@ -486,7 +486,7 @@ async def oauth_callback(
                     """)
                     await db.execute(update_stmt, {"message_id": str(oauth_state.message_token), "timestamp": datetime.utcnow()})
                     await db.commit()
-                    log.info(f"Updated MessageFlowStep {oauth_state.message_token} to mark OAuth as complete")
+                    log.debug(f"Updated MessageFlowStep {oauth_state.message_token} to mark OAuth as complete")
                 except Exception as e:
                     log.warning(f"Failed to update MessageFlowStep OAuth status: {e}")
                     # Don't fail the OAuth flow if this update fails

@@ -22,6 +22,7 @@ import type {
   TIssueActivity,
   TIssueLink,
   TIssueServiceType,
+  TWorkItemsMetaResponse,
   TIssuesResponse,
   TIssueSubIssues,
 } from "@plane/types";
@@ -78,6 +79,16 @@ export class IssueService extends APIService {
       { params: queries },
       config
     )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getWorkItemsMeta(workspaceSlug: string, projectId: string, queries?: any): Promise<TWorkItemsMetaResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/meta/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

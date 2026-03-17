@@ -32,9 +32,9 @@ export const PageWrapper = (props: TPageWrapperProps) => {
 
   return (
     <div
-      className={cn("mx-auto w-full h-full space-y-6 py-4", {
+      className={cn("mx-auto w-full h-full space-y-6 pt-12 pb-6", {
         "md:px-4 max-w-[1000px] 2xl:max-w-[1200px]": size === "md",
-        "px-4 lg:px-12": size === "lg",
+        "px-4": size === "lg",
       })}
     >
       <div>

@@ -14,9 +14,9 @@
 // "states" | "state_groups" | "priority" | "created_by";
 
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
-import { PriorityIcon } from "@plane/propel/icons";
-import type { IWorkspace, IWorkspaceMember } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { LabelPropertyIcon, PriorityIcon } from "@plane/propel/icons";
+import type { IBaseLabel, IWorkspace, IWorkspaceMember } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 import { HIGHLIGHT_CLASS, HIGHLIGHT_WITH_LINE } from "@/helpers/common";
 import { ProjectStateIcon } from "@/components/workspace-project-states";
@@ -41,17 +41,29 @@ export const highlightProjectOnDrop = (
     }, 2000);
   }, 200);
 };
-export const groupDetails = (
-  getProjectStateById: (projectStateId: string) => TProjectState | undefined,
+type GroupDetailsOptions = {
+  getProjectStateById: (projectStateId: string) => TProjectState | undefined;
   getProjectStatedByStateGroupKey: (
     workspaceId: string,
     groupKey: TProjectStateGroupKey
-  ) => TProjectState[] | undefined,
-  getWorkspaceMemberDetails: (workspaceMemberId: string) => IWorkspaceMember | null,
-  groupByKey: string,
-  currentWorkspace: IWorkspace | null,
-  selectedGroupKey: string | undefined
-): GroupDetails | undefined => {
+  ) => TProjectState[] | undefined;
+  getWorkspaceMemberDetails: (workspaceMemberId: string) => IWorkspaceMember | null;
+  groupByKey: string;
+  currentWorkspace: IWorkspace | null;
+  selectedGroupKey: string | undefined;
+  getLabelById?: (labelId: string) => IBaseLabel | undefined;
+};
+
+export const groupDetails = (options: GroupDetailsOptions): GroupDetails | undefined => {
+  const {
+    getProjectStateById,
+    getProjectStatedByStateGroupKey,
+    getWorkspaceMemberDetails,
+    groupByKey,
+    currentWorkspace,
+    selectedGroupKey,
+    getLabelById,
+  } = options;
   switch (selectedGroupKey) {
     case "states": {
       const state = getProjectStateById(groupByKey);
@@ -105,6 +117,21 @@ export const groupDetails = (
           <></>
         ),
         prePopulatedPayload: {},
+      };
+    }
+    case "labels": {
+      if (groupByKey === "no-label") {
+        return {
+          title: "No Label",
+          icon: <LabelPropertyIcon className="h-3.5 w-3.5" />,
+          prePopulatedPayload: {},
+        };
+      }
+      const label = getLabelById?.(groupByKey);
+      return {
+        title: label?.name || "Label",
+        icon: <LabelPropertyIcon color={label?.color} className="h-3 w-3 flex-shrink-0" />,
+        prePopulatedPayload: { label_ids: [groupByKey] },
       };
     }
   }

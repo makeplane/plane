@@ -21,7 +21,8 @@ import { CopyIcon, ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDescriptionVersion } from "@plane/types";
-import { Avatar, EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";

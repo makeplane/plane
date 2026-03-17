@@ -31,6 +31,7 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
+    "@chevrotain/regexp-to-ast": "^11.1.1",
     "@floating-ui/dom": "^1.7.1",
     "@floating-ui/react": "^0.26.4",
     "@headlessui/react": "^1.7.3",

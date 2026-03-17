@@ -52,7 +52,11 @@ class GiteaOauthInitiateSpaceEndpoint(View):
 
         try:
             state = uuid.uuid4().hex
-            provider = GiteaOAuthProvider(request=request, state=state)
+            provider = GiteaOAuthProvider(
+                request=request,
+                state=state,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/auth/spaces/gitea/callback/",
+            )
             request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
@@ -93,7 +97,11 @@ class GiteaCallbackSpaceEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            provider = GiteaOAuthProvider(request=request, code=code)
+            provider = GiteaOAuthProvider(
+                request=request,
+                code=code,
+                redirect_uri=f"{request.scheme}://{request.get_host()}/auth/spaces/gitea/callback/",
+            )
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)

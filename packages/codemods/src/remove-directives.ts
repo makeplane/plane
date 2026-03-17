@@ -12,7 +12,11 @@
  */
 
 import { API, FileInfo, Options } from "jscodeshift";
-import type { CommentKind, DirectiveKind } from "ast-types/gen/kinds";
+import type {
+  CommentKind,
+  DirectiveKind,
+  StatementKind,
+} from "ast-types/gen/kinds";
 
 export default function transform(file: FileInfo, api: API, options: Options) {
   const j = api.jscodeshift;
@@ -78,8 +82,8 @@ export default function transform(file: FileInfo, api: API, options: Options) {
 
     // Also handle the case where they might be in body as ExpressionStatements
     if (path.node.body) {
-      const newBody: any[] = [];
-      let capturedComments: any[] = [];
+      const newBody: StatementKind[] = [];
+      let capturedComments: CommentKind[] = [];
 
       path.node.body.forEach((node) => {
         let shouldRemove = false;

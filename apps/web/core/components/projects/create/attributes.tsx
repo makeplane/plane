@@ -22,6 +22,7 @@ import { renderFormattedPayloadDate, getDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { LabelsDropdown } from "@/components/projects/dropdowns/labels";
 import { MembersDropdown } from "@/components/projects/dropdowns/members";
 import { StateDropdown } from "@/components/projects/dropdowns/state";
 import { ProjectNetworkIcon } from "@/components/projects/common/project-network-icon";
@@ -207,6 +208,23 @@ function ProjectAttributes(props: Props) {
                 onChange(members);
                 handleFormOnChange?.();
               }}
+              className="h-7"
+            />
+          )}
+        />
+      )}
+      {isProjectGroupingEnabled && (
+        <Controller
+          control={control}
+          name="label_ids"
+          render={({ field: { value, onChange } }) => (
+            <LabelsDropdown
+              value={(value as string[]) ?? []}
+              onChange={(labelIds) => {
+                onChange(labelIds);
+                handleFormOnChange?.();
+              }}
+              workspaceSlug={workspaceSlug}
               className="h-7"
             />
           )}

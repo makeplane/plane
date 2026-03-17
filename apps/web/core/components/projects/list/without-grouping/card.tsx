@@ -21,12 +21,12 @@ import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { LinkIcon, LockIcon, NewTabIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
+import { LabelPropertyIcon, LinkIcon, LockIcon, NewTabIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import type { IProject } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
-import { Avatar, AvatarGroup, ContextMenu, FavoriteStar } from "@plane/ui";
+import { Avatar, AvatarGroup } from "@plane/propel/avatar";
+import { ContextMenu, FavoriteStar } from "@plane/ui";
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
@@ -37,11 +37,13 @@ import { ArchiveRestoreProjectModal } from "@/components/projects/modals/archive
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspaceProjectLabels } from "@/hooks/store/use-workspace-project-labels";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import type { TProject } from "@/types/projects";
 
 type Props = {
-  project: IProject;
+  project: TProject;
 };
 
 export const ProjectCard = observer(function ProjectCard(props: Props) {
@@ -59,9 +61,11 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   const { getUserDetails } = useMember();
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
   const { allowPermissions } = useUserPermissions();
+  const { getLabelById } = useWorkspaceProjectLabels();
   // hooks
   const { isMobile } = usePlatformOS();
   // derived values
+  const projectLabelIds = project.label_ids;
   const projectMembersIds = project.members;
   const shouldRenderFavorite = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -308,6 +312,23 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                   <span className="text-13 italic text-placeholder">No Member Yet</span>
                 )}
               </Tooltip>
+              {projectLabelIds && projectLabelIds.length > 0 && (
+                <div className="flex items-center gap-1 flex-wrap">
+                  {projectLabelIds.map((labelId) => {
+                    const label = getLabelById(labelId);
+                    if (!label) return null;
+                    return (
+                      <div
+                        key={labelId}
+                        className="flex items-center gap-1 rounded-sm border border-subtle-1 px-1.5 py-0.5 text-11 text-secondary"
+                      >
+                        <LabelPropertyIcon color={label.color} className="h-2 w-2 flex-shrink-0" />
+                        <span className="truncate max-w-[80px]">{label.name}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
               {isArchived && <div className="text-11 text-placeholder font-medium">Archived</div>}
             </div>
             {isArchived ? (

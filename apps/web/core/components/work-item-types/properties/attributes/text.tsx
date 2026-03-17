@@ -16,7 +16,13 @@ import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import type { EIssuePropertyType, TIssueProperty, TOperationMode, TTextAttributeDisplayOptions } from "@plane/types";
+import type {
+  EIssuePropertyType,
+  TIssueProperty,
+  TOperationMode,
+  TTextAttributeDisplayOptions,
+  TTextAttributeConfigurations,
+} from "@plane/types";
 import { TextArea } from "@plane/ui";
 import { getTextAttributeDisplayNameKey } from "@plane/utils";
 // local imports
@@ -64,7 +70,7 @@ export const TextAttributes = observer(function TextAttributes(props: TTextAttri
           onChange={(value) => {
             onTextDetailChange("settings", value as TIssueProperty<EIssuePropertyType.TEXT>["settings"]);
             onTextDetailChange("default_value", []);
-            if (value?.display_format === "readonly") {
+            if ((value as TTextAttributeConfigurations)?.display_format === "readonly") {
               onTextDetailChange("is_required", false);
             }
           }}

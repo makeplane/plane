@@ -154,7 +154,11 @@ export class FilterConfig<P extends TFilterProperty> implements IFilterConfig<P>
    */
   getDisplayOperatorByValue: IFilterConfig<P>["getDisplayOperatorByValue"] = computedFn((operator, value) => {
     const operatorConfig = this.getOperatorConfig(operator);
-    if (operatorConfig?.type === FILTER_FIELD_TYPE.MULTI_SELECT && (Array.isArray(value) ? value.length : 0) <= 1) {
+    if (
+      (operatorConfig?.type === FILTER_FIELD_TYPE.MULTI_SELECT ||
+        operatorConfig?.type === FILTER_FIELD_TYPE.ASYNC_MULTI_SELECT) &&
+      (Array.isArray(value) ? value.length : 0) <= 1
+    ) {
       if (isNegativeOperator(operator)) {
         return toNegativeOperator(operatorConfig.singleValueOperator) as typeof operator;
       }

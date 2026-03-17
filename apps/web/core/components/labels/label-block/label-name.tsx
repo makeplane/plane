@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { LabelFilledIcon } from "@plane/propel/icons";
 import { Component } from "lucide-react";
 
 interface ILabelName {
@@ -27,12 +28,7 @@ export function LabelName(props: ILabelName) {
       {isGroup ? (
         <Component className="h-3.5 w-3.5" color={color} />
       ) : (
-        <span
-          className="h-3.5 w-3.5 flex-shrink-0 rounded-full"
-          style={{
-            backgroundColor: color && color !== "" ? color : "#000",
-          }}
-        />
+        <LabelFilledIcon className="h-3.5 w-3.5 flex-shrink-0 rounded-full" color={color} />
       )}
       <h6 className="text-13">{name}</h6>
     </div>

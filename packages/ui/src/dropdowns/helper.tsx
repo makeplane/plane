@@ -94,7 +94,11 @@ interface MultipleValuesProps {
 
 export type ICustomSearchSelectProps = IDropdownProps &
   CustomSearchSelectProps &
-  (SingleValueProps | MultipleValuesProps);
+  (SingleValueProps | MultipleValuesProps) & {
+    searchQuery?: string;
+    onSearchQueryChange?: (query: string) => void;
+    fetchMoreOptions?: () => void;
+  };
 
 export interface ICustomMenuItemProps {
   children: React.ReactNode;

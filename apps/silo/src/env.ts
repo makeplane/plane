@@ -119,6 +119,23 @@ const envSchema = z.object({
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
   AWS_S3_ENDPOINT_URL: z.string().optional(),
   AWS_S3_BUCKET_NAME: z.string().default("uploads"),
+  // AWS Secrets Manager (optional - for ElastiCache / AmazonMQ on AWS)
+  AWS_ROLE_ARN: z.string().optional(),
+  // EKS Pod Identity (alternative to AWS_ROLE_ARN for Secrets Manager)
+  AWS_CONTAINER_CREDENTIALS_FULL_URI: z.string().optional(),
+  AWS_SECRET_CACHE_TTL: z.string().default("300").transform(Number),
+  // ElastiCache (Redis)
+  ELASTICACHE_SECRET_ARN: z.string().optional(),
+  REDIS_AUTH_TOKEN_KEY: z.string().default("REDIS_AUTH_TOKEN"),
+  REDIS_HOST_KEY: z.string().default("REDIS_HOST"),
+  REDIS_PORT_KEY: z.string().default("REDIS_PORT"),
+  // AmazonMQ (RabbitMQ)
+  AMAZONMQ_SECRET_ARN: z.string().optional(),
+  RABBITMQ_USER_KEY: z.string().default("RABBITMQ_USER"),
+  RABBITMQ_PASSWORD_KEY: z.string().default("RABBITMQ_PASSWORD"),
+  RABBITMQ_HOST_KEY: z.string().default("RABBITMQ_HOST"),
+  RABBITMQ_PORT_KEY: z.string().default("RABBITMQ_PORT"),
+  RABBITMQ_VHOST_KEY: z.string().default("RABBITMQ_VHOST"),
   // Internal Plane App Env Variables
   PRD_AGENT_CLIENT_ID: z.string().optional(),
   PRD_AGENT_CLIENT_SECRET: z.string().optional(),
@@ -143,3 +160,105 @@ function validateEnv() {
 }
 
 export const env = validateEnv();
+
+// ---------------------------------------------------------------------------
+// AWS Secrets Manager integration
+// Resolves AMQP_URL and REDIS_URL from AWS Secrets Manager when configured.
+// Call resolveSecrets() once at startup before opening any connections.
+// A background interval re-fetches secrets based on AWS_SECRET_CACHE_TTL so
+// that reconnections (e.g. after a connection drop) pick up rotated credentials.
+// ---------------------------------------------------------------------------
+
+let refreshTimer: ReturnType<typeof setInterval> | undefined;
+
+/**
+ * Fetch a secret from AWS Secrets Manager (lazy-imports the SDK so non-AWS
+ * environments never pay for it).
+ */
+async function fetchSecret(secretArn: string, region: string): Promise<Record<string, unknown>> {
+  const { getSecret } = await import("@/lib/aws-secrets");
+  return getSecret(secretArn, region, true);
+}
+
+function isBareHostPort(url: string): boolean {
+  return !/^(amqps?|rediss?):\/\//i.test(url);
+}
+
+function secretString(secret: Record<string, unknown>, key: string, fallback = ""): string {
+  const val = secret[key];
+  return typeof val === "string" ? val : fallback;
+}
+
+async function resolveAmqpUrl(): Promise<string> {
+  if (!env.AMAZONMQ_SECRET_ARN) return env.AMQP_URL;
+
+  const secret = await fetchSecret(env.AMAZONMQ_SECRET_ARN, env.AWS_REGION);
+  const user = encodeURIComponent(secretString(secret, env.RABBITMQ_USER_KEY));
+  const password = encodeURIComponent(secretString(secret, env.RABBITMQ_PASSWORD_KEY));
+
+  // If AMQP_URL is a bare host:port, use it as the endpoint
+  if (isBareHostPort(env.AMQP_URL)) {
+    const vhost = encodeURIComponent(secretString(secret, env.RABBITMQ_VHOST_KEY, "/"));
+    return `amqps://${user}:${password}@${env.AMQP_URL}/${vhost}`;
+  }
+
+  // No usable AMQP_URL — build entirely from the secret
+  const host = secretString(secret, env.RABBITMQ_HOST_KEY);
+  const port = Number(secret[env.RABBITMQ_PORT_KEY] ?? 5671);
+  const vhost = encodeURIComponent(secretString(secret, env.RABBITMQ_VHOST_KEY, "/"));
+  return `amqps://${user}:${password}@${host}:${port}/${vhost}`;
+}
+
+async function resolveRedisUrl(): Promise<string> {
+  if (!env.ELASTICACHE_SECRET_ARN) return env.REDIS_URL;
+
+  const secret = await fetchSecret(env.ELASTICACHE_SECRET_ARN, env.AWS_REGION);
+  const token = encodeURIComponent(secretString(secret, env.REDIS_AUTH_TOKEN_KEY));
+
+  // If REDIS_URL is a bare host:port, use it as the endpoint
+  if (isBareHostPort(env.REDIS_URL)) {
+    return `rediss://:${token}@${env.REDIS_URL}`;
+  }
+
+  // No usable REDIS_URL — build entirely from the secret
+  const host = secretString(secret, env.REDIS_HOST_KEY);
+  const port = Number(secret[env.REDIS_PORT_KEY] ?? 6379);
+  return `rediss://:${token}@${host}:${port}`;
+}
+
+async function refreshSecrets(): Promise<void> {
+  const [amqpUrl, redisUrl] = await Promise.all([resolveAmqpUrl(), resolveRedisUrl()]);
+  (env as Record<string, unknown>).AMQP_URL = amqpUrl;
+  (env as Record<string, unknown>).REDIS_URL = redisUrl;
+}
+
+/**
+ * Resolve AMQP_URL / REDIS_URL from AWS Secrets Manager (if configured) and
+ * start a background refresh interval so reconnections pick up rotated creds.
+ *
+ * Safe to call in non-AWS environments — it no-ops when the secret ARNs are
+ * not set.
+ */
+export async function resolveSecrets(): Promise<void> {
+  // True when either IRSA (AWS_ROLE_ARN) or EKS Pod Identity
+  // (AWS_CONTAINER_CREDENTIALS_FULL_URI) is present.
+  const hasAwsCredentials = Boolean((env.AWS_ROLE_ARN ?? "").trim() || env.AWS_CONTAINER_CREDENTIALS_FULL_URI);
+  if (!hasAwsCredentials || (!env.ELASTICACHE_SECRET_ARN && !env.AMAZONMQ_SECRET_ARN)) {
+    return; // nothing to resolve
+  }
+
+  await refreshSecrets();
+  logger.info("AWS Secrets Manager: resolved connection URLs");
+
+  // Schedule periodic refresh so reconnections use fresh credentials
+  const ttlMs = env.AWS_SECRET_CACHE_TTL * 1000;
+  if (ttlMs > 0 && !refreshTimer) {
+    refreshTimer = setInterval(() => {
+      refreshSecrets().catch((err: unknown) => {
+        logger.error("AWS Secrets Manager: failed to refresh secrets", { error: err });
+      });
+    }, ttlMs);
+    // Allow the process to exit even if the timer is still running
+    refreshTimer.unref();
+  }
+}

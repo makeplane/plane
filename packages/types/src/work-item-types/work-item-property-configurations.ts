@@ -33,7 +33,8 @@ export type TIssuePropertyTypeIconKey =
   | "ToggleLeft"
   | "Calendar"
   | "UsersRound"
-  | "Link2";
+  | "Link2"
+  | "Formula";
 
 export type TIssuePropertyTypeDetails<T extends EIssuePropertyType> = {
   i18n_displayName: string;
@@ -68,6 +69,11 @@ export type TDateAttributeConfigurations = {
   display_format: TDateAttributeDisplayOptions;
 };
 
+// Formula attribute configurations
+export type TFormulaAttributeConfigurations = {
+  referenced_properties: string[];
+};
+
 // Issue property settings configurations
 export type TIssuePropertySettingsMap = {
   [EIssuePropertyType.TEXT]: TTextAttributeConfigurations;
@@ -77,6 +83,7 @@ export type TIssuePropertySettingsMap = {
   [EIssuePropertyType.DATETIME]: TDateAttributeConfigurations;
   [EIssuePropertyType.RELATION]: undefined;
   [EIssuePropertyType.URL]: undefined;
+  [EIssuePropertyType.FORMULA]: TFormulaAttributeConfigurations;
 };
 
 // Rendered component configurations

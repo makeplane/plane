@@ -62,7 +62,7 @@ class FeatureFlagService:
                 logger.warning(f"workspace_slug is None for feature flag check: {flag}")
                 return False
             result = await is_feature_enabled(flag, context.workspace_slug, context.user_id)
-            logger.info(f"Feature flag {flag} for workspace {context.workspace_slug} : {result}")
+            logger.debug(f"Feature flag {flag} for workspace {context.workspace_slug} : {result}")
             return result
         except Exception as e:
             logger.error(f"Error checking feature flag {flag}: {e}")

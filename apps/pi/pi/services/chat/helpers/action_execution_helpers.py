@@ -107,13 +107,13 @@ async def validate_and_resolve_ids(tool_args: Dict[str, Any], workspace_slug: Op
 
                 workitem_info = await search_workitem_by_identifier(str(issue_id), workspace_slug)
                 if workitem_info and workitem_info.get("id"):
-                    log.info(f"Resolved issue_id identifier '{issue_id}' to UUID: {workitem_info["id"]}")
+                    log.debug(f"Resolved issue_id identifier '{issue_id}' to UUID: {workitem_info["id"]}")
                     resolved_args["issue_id"] = str(workitem_info["id"])  # Convert to string
 
                     # Also resolve project_id from workitem if not already set
                     if not project_id and workitem_info.get("project_id"):
                         resolved_args["project_id"] = str(workitem_info["project_id"])  # Convert to string
-                        log.info(f"Auto-resolved project_id from workitem: {workitem_info["project_id"]}")
+                        log.debug(f"Auto-resolved project_id from workitem: {workitem_info["project_id"]}")
 
             except Exception as e:
                 log.warning(f"Failed to resolve issue_id '{issue_id}' from identifier: {e}")
@@ -133,7 +133,7 @@ async def validate_and_resolve_ids(tool_args: Dict[str, Any], workspace_slug: Op
 
                     issue_info = await get_issue_identifier_for_artifact(str(resolved_args["issue_id"]))
                     if issue_info and issue_info.get("project_id"):
-                        log.info(f"Resolved invalid project_id '{project_id}' to UUID: {issue_info["project_id"]}")
+                        log.debug(f"Resolved invalid project_id '{project_id}' to UUID: {issue_info["project_id"]}")
                         resolved_args["project_id"] = str(issue_info["project_id"])  # Convert to string
                 except Exception as e:
                     log.warning(f"Failed to resolve project_id from issue_id: {e}")
@@ -145,7 +145,7 @@ async def validate_and_resolve_ids(tool_args: Dict[str, Any], workspace_slug: Op
 
                 issue_info = await get_issue_identifier_for_artifact(str(resolved_args["issue_id"]))
                 if issue_info and issue_info.get("project_id"):
-                    log.info(f"Resolved missing project_id from issue_id: {issue_info["project_id"]}")
+                    log.debug(f"Resolved missing project_id from issue_id: {issue_info["project_id"]}")
                     resolved_args["project_id"] = str(issue_info["project_id"])  # Convert to string
             except Exception as e:
                 log.warning(f"Failed to resolve missing project_id from issue_id: {e}")
@@ -382,7 +382,7 @@ async def load_artifacts(
 
             if version:
                 version_id = str(version.id)
-                log.info(f"Created ActionArtifactVersion {version_id} for edited artifact {artifact.id}")
+                log.debug(f"Created ActionArtifactVersion {version_id} for edited artifact {artifact.id}")
             else:
                 log.warning(f"Failed to create ActionArtifactVersion for edited artifact {artifact.id}")
 
@@ -448,14 +448,14 @@ async def update_flow_steps(results, message_id, chat_id, db: AsyncSession):
                         success=r.get("success", False),
                         entity_info=entity_info,
                     )
-                    log.info(f"Updated ActionArtifactVersion {version_id} execution status: success={r.get("success", False)}")
+                    log.debug(f"Updated ActionArtifactVersion {version_id} execution status: success={r.get("success", False)}")
                 except (ValueError, TypeError) as e:
                     log.warning(f"Invalid version_id format: {version_id}, error: {e}")
 
 
 def format_response(planned_actions, results, start_time) -> Dict[str, Any]:
     """Format the execution response with clean, non-redundant structure."""
-    log.info(f"\n\nResults in format_response: {results}\n")
+    log.debug(f"\n\nResults in format_response: {results}\n")
     try:
         total_planned = len(planned_actions)
         completed_count = sum(1 for r in results if r.get("success"))
@@ -472,7 +472,7 @@ def format_response(planned_actions, results, start_time) -> Dict[str, Any]:
         if results:
             response["actions"] = create_clean_actions_response(results)
 
-        log.info(f"\n\nRESPONSE: {response}\n\n")
+        log.debug(f"\n\nRESPONSE: {response}\n\n")
 
         return response
 
@@ -679,7 +679,7 @@ def create_clean_actions_response(executed_actions: List[Dict[str, Any]]) -> Lis
 
     clean_actions = []
 
-    log.info(f"\n\nEXECUTED ACTIONS in create_clean_actions_response: {executed_actions}\n\n")
+    log.debug(f"\n\nEXECUTED ACTIONS in create_clean_actions_response: {executed_actions}\n\n")
 
     for action in executed_actions:
         # Extract action from tool name (e.g., "workitems_create" -> "create")

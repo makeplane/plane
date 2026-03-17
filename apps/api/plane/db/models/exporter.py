@@ -22,13 +22,14 @@ from django.db import models
 
 # Module imports
 from .base import BaseModel
+from plane.db.mixins import FiltersMixin
 
 
 def generate_token():
     return uuid4().hex
 
 
-class ExporterHistory(BaseModel):
+class ExporterHistory(BaseModel, FiltersMixin):
     name = models.CharField(max_length=255, verbose_name="Exporter Name", null=True, blank=True)
     type = models.CharField(
         max_length=50,
@@ -62,6 +63,7 @@ class ExporterHistory(BaseModel):
     )
     filters = models.JSONField(blank=True, null=True)
     rich_filters = models.JSONField(default=dict, blank=True, null=True)
+    display_filters = None
 
     class Meta:
         verbose_name = "Exporter"

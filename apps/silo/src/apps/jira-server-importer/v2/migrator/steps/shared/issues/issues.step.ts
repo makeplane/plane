@@ -40,6 +40,7 @@ import { extractErrorMetadata } from "@/helpers/errors";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 import { JiraIssueDataExtractor } from "./extractors/data.extractor";
+import { KNOWN_CUSTOM_FIELDS } from "@/apps/jira-server-importer/v2/helpers/constants";
 
 /**
  * Jira Server Issues Step
@@ -97,12 +98,14 @@ export class JiraIssuesStep implements IStep {
       await this.initializeReportBatchCount(paginationCtx, issuesResult.total, job);
 
       if (this.shouldReturnEmpty(issuesResult, paginationCtx)) {
-        logger.info(`[${job.id}] [${this.name}] No issues found`, { jobId: job.id });
+        logger.info(`[${job.id}] [${this.name}] No issues found`, {
+          jobId: job.id,
+        });
         return createEmptyContext();
       }
 
       // Process issues: extract comments, property values, associations, and relations using orchestrator
-      const dataExtractor = new JiraIssueDataExtractor();
+      const dataExtractor = this.getDataExtractor();
       const extractedData = await dataExtractor.extractAll({
         job,
         sourceClient: jobContext.sourceClient,
@@ -124,7 +127,7 @@ export class JiraIssuesStep implements IStep {
       const mappings = await this.loadMappings(job, processedIssues, associations, storage);
 
       // Transform issues (uses existing transformIssue function)
-      const transformed = await this.transform(job, processedIssues);
+      const transformed = await this.transform(job, processedIssues, additionalData.knownCustomFieldMapping);
 
       // Generate payload and send to Celery
       const pushed = await this.push(
@@ -155,6 +158,10 @@ export class JiraIssuesStep implements IStep {
       });
       throw error;
     }
+  }
+
+  protected getDataExtractor(): JiraIssueDataExtractor {
+    return new JiraIssueDataExtractor();
   }
 
   /**
@@ -439,11 +446,20 @@ export class JiraIssuesStep implements IStep {
    * Transform Jira issues to Plane issues
    * Uses existing transformIssue function
    */
-  private async transform(job: TImportJob<JiraConfig>, issues: IJiraIssue[]): Promise<Partial<ExIssue>[]> {
+  private async transform(
+    job: TImportJob<JiraConfig>,
+    issues: IJiraIssue[],
+    knownCustomFieldMapping: TKnownFieldMapping[]
+  ): Promise<Partial<ExIssue>[]> {
     const resourceId = job.config?.resource?.id || "";
     const resourceUrl = job.config?.resource?.url || "";
     const stateMapping = job.config?.state || {};
     const priorityMapping = job.config?.priority || {};
+    const startDateField = knownCustomFieldMapping?.find((field) => field.data.name === KNOWN_CUSTOM_FIELDS.START_DATE)
+      ?.data?.id;
+    const completionDateField = knownCustomFieldMapping?.find(
+      (field) => field.data.name === KNOWN_CUSTOM_FIELDS.COMPLETION_DATE
+    )?.data?.id;
 
     const transformed = issues.map((issue) =>
       transformIssueV2(
@@ -451,7 +467,11 @@ export class JiraIssuesStep implements IStep {
         issue,
         resourceUrl,
         stateMapping,
-        priorityMapping
+        priorityMapping,
+        {
+          startDate: startDateField,
+          completionDate: completionDateField,
+        }
       )
     );
 

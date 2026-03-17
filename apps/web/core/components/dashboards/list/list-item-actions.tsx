@@ -18,7 +18,8 @@ import { InfoIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { Avatar, FavoriteStar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { FavoriteStar } from "@plane/ui";
 // plane utils
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks

@@ -21,7 +21,8 @@ import { TreeMapChart } from "@plane/propel/charts/tree-map";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { TreeMapIcon } from "@plane/propel/icons";
 import type { TreeMapItem } from "@plane/types";
-import { Avatar, Loader } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Loader } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

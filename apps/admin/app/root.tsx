@@ -11,10 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useContext } from "react";
 import type { ReactNode } from "react";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
 import * as Sentry from "@sentry/react-router";
+import { Button } from "@plane/propel/button";
+import { StoreContext } from "@/providers/store.provider";
 import appleTouchIcon from "@/app/assets/favicon/apple-touch-icon.png?url";
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
 import favicon32 from "@/app/assets/favicon/favicon-32x32.png?url";
@@ -101,9 +104,34 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     Sentry.captureException(error);
   }
 
+  const store = useContext(StoreContext);
+  const isSelfManaged = store?.instance?.config?.is_self_managed ?? true;
+
   return (
-    <div>
-      <p>Something went wrong.</p>
+    <div className="bg-surface-1 grid h-screen place-items-center p-4">
+      <div className="space-y-8 text-center">
+        <div className="space-y-2">
+          <h3 className="text-16 font-semibold">Something went wrong{isSelfManaged ? "" : "."}</h3>
+          <p className="mx-auto md:w-1/2 text-13 text-secondary">
+            We{"'"}ve encountered an unexpected error
+            {!isSelfManaged && " and our team has been automatically notified"}. Please try reloading the page. If this
+            issue persists, reach out to{" "}
+            <a href="mailto:support@plane.so" className="text-accent-primary">
+              support@plane.so
+            </a>{" "}
+            or visit our{" "}
+            <a href="https://forum.plane.so" target="_blank" rel="noopener noreferrer" className="text-accent-primary">
+              community forum
+            </a>{" "}
+            for assistance.
+          </p>
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <Button variant="primary" size="lg" onClick={() => window.location.reload()}>
+            Reload page
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

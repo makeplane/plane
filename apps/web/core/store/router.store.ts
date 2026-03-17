@@ -17,23 +17,39 @@ import { action, makeObservable, observable, computed, runInAction } from "mobx"
 import type { TProfileViews } from "@plane/types";
 export interface IRouterStore {
   // observables
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   query: Params;
   // actions
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   setQuery: (query: Params) => void;
   // computed
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   workspaceSlug: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   teamspaceId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   projectId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   cycleId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   moduleId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   viewId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   globalViewId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   profileViewId: TProfileViews | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   userId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   peekId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   issueId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   inboxId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   webhookId: string | undefined;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   epicId: string | undefined;
 }
 

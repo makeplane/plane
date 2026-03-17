@@ -20,8 +20,8 @@ import { detectSprintFieldId, parseJiraServerSprint } from "@/apps/jira-server-i
  */
 export class JiraSprintExtractor {
   constructor(
-    private readonly projectId: string,
-    private readonly resourceId: string
+    protected readonly projectId: string,
+    protected readonly resourceId: string
   ) {}
 
   public extract(issue: IJiraIssue): string[] {

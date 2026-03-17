@@ -9,6 +9,8 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+from plane.license.api.views.user import InstanceUserManagementViewSet
+
 from django.urls import path
 
 from plane.license.api.views import (
@@ -16,6 +18,7 @@ from plane.license.api.views import (
     InstanceAdminEndpoint,
     InstanceAdminSignInEndpoint,
     InstanceAdminSignUpEndpoint,
+    InstanceAdminEmailCheckEndpoint,
     InstanceConfigurationEndpoint,
     DisableEmailFeatureEndpoint,
     InstanceEndpoint,
@@ -27,6 +30,25 @@ from plane.license.api.views import (
     InstanceWorkSpaceEndpoint,
     AdminFeatureFlagEndpoint,
     CheckUpdateEndpoint,
+    InstanceAdminPasswordResetEndpoint
+)
+
+from plane.authentication.views import (
+        # Admin authentication
+    GoogleOauthInitiateAdminEndpoint,
+    GoogleCallbackAdminEndpoint,
+    GitHubOauthInitiateAdminEndpoint,
+    GitHubCallbackAdminEndpoint,
+    GitLabOauthInitiateAdminEndpoint,
+    GitLabCallbackAdminEndpoint,
+    GiteaOauthInitiateAdminEndpoint,
+    GiteaCallbackAdminEndpoint,
+    OIDCAuthInitiateAdminEndpoint,
+    OIDCCallbackAdminEndpoint,
+    SAMLAuthInitiateAdminEndpoint,
+    LDAPSignInAuthAdminEndpoint,
+    MagicGenerateAdminEndpoint,
+    MagicSignInAdminEndpoint,
 )
 
 urlpatterns = [
@@ -63,7 +85,17 @@ urlpatterns = [
     path(
         "admins/sign-up/",
         InstanceAdminSignUpEndpoint.as_view(),
-        name="instance-admin-sign-in",
+        name="instance-admin-sign-up",
+    ),
+    path(
+        "admins/email-check/",
+        InstanceAdminEmailCheckEndpoint.as_view(),
+        name="instance-admin-email-check",
+    ),
+    path(
+        "admins/reset-password/",
+        InstanceAdminPasswordResetEndpoint.as_view(),
+        name="instance-admin-password-reset",
     ),
     path(
         "admins/sign-up-screen-visited/",
@@ -85,5 +117,77 @@ urlpatterns = [
         "admins/feature-flags/",
         AdminFeatureFlagEndpoint.as_view(),
         name="admin-feature-flags",
+    ),    path(
+        "admin/google/",
+        GoogleOauthInitiateAdminEndpoint.as_view(),
+        name="admin-google-initiate",
     ),
+    path(
+        "admin/google/callback/",
+        GoogleCallbackAdminEndpoint.as_view(),
+        name="admin-google-callback",
+    ),
+    path(
+        "admin/github/",
+        GitHubOauthInitiateAdminEndpoint.as_view(),
+        name="admin-github-initiate",
+    ),
+    path(
+        "admin/github/callback/",
+        GitHubCallbackAdminEndpoint.as_view(),
+        name="admin-github-callback",
+    ),
+    path(
+        "admin/gitlab/",
+        GitLabOauthInitiateAdminEndpoint.as_view(),
+        name="admin-gitlab-initiate",
+    ),
+    path(
+        "admin/gitlab/callback/",
+        GitLabCallbackAdminEndpoint.as_view(),
+        name="admin-gitlab-callback",
+    ),
+    path(
+        "admin/gitea/",
+        GiteaOauthInitiateAdminEndpoint.as_view(),
+        name="admin-gitea-initiate",
+    ),
+    path(
+        "admin/gitea/callback/",
+        GiteaCallbackAdminEndpoint.as_view(),
+        name="admin-gitea-callback",
+    ),
+    path(
+        "admin/oidc/",
+        OIDCAuthInitiateAdminEndpoint.as_view(),
+        name="admin-oidc-initiate",
+    ),
+    path(
+        "admin/oidc/callback/",
+        OIDCCallbackAdminEndpoint.as_view(),
+        name="admin-oidc-callback",
+    ),
+    path(
+        "admin/saml/",
+        SAMLAuthInitiateAdminEndpoint.as_view(),
+        name="admin-saml-initiate",
+    ),
+    path(
+        "admin/ldap/",
+        LDAPSignInAuthAdminEndpoint.as_view(),
+        name="admin-ldap",
+    ),
+    path(
+        "admin/magic-generate/",
+        MagicGenerateAdminEndpoint.as_view(),
+        name="admin-magic-generate",
+    ),
+    path(
+        "admin/magic-sign-in/",
+        MagicSignInAdminEndpoint.as_view(),
+        name="admin-magic-sign-in",
+    ),
+    # Instance user management
+    path("users/", InstanceUserManagementViewSet.as_view(), name="instance-users-list"),
+    path("users/<uuid:pk>/", InstanceUserManagementViewSet.as_view(), name="instance-user-detail"),
 ]

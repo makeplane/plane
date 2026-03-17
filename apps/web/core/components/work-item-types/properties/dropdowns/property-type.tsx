@@ -34,6 +34,7 @@ type TPropertyTypeDropdownProps = {
   handlePropertyObjectChange: (value: Partial<TIssueProperty<EIssuePropertyType>>) => void;
   error?: string;
   isUpdateAllowed: boolean;
+  allowedPropertyTypes?: TIssuePropertyTypeKeys[];
 };
 
 export const PropertyTypeDropdown = observer(function PropertyTypeDropdown(props: TPropertyTypeDropdownProps) {
@@ -44,6 +45,7 @@ export const PropertyTypeDropdown = observer(function PropertyTypeDropdown(props
     handlePropertyObjectChange,
     error = "",
     isUpdateAllowed,
+    allowedPropertyTypes,
   } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -52,18 +54,20 @@ export const PropertyTypeDropdown = observer(function PropertyTypeDropdown(props
   const propertyTypeDetails = getIssuePropertyTypeDetails(propertyType, propertyRelationType);
 
   // Can be used with CustomSearchSelect as well
-  const issuePropertyTypeOptions = Object.entries(ISSUE_PROPERTY_TYPE_DETAILS).map(([key, property]) => ({
-    value: key,
-    query: t(property.i18n_displayName),
-    content: (
-      <div className="flex gap-2 items-center">
-        <div className="flex-shrink-0">
-          <PropertyTypeIcon iconKey={property.iconKey} />
+  const issuePropertyTypeOptions = Object.entries(ISSUE_PROPERTY_TYPE_DETAILS)
+    .filter(([key]) => !allowedPropertyTypes || allowedPropertyTypes.includes(key as TIssuePropertyTypeKeys))
+    .map(([key, property]) => ({
+      value: key,
+      query: t(property.i18n_displayName),
+      content: (
+        <div className="flex gap-2 items-center">
+          <div className="flex-shrink-0">
+            <PropertyTypeIcon iconKey={property.iconKey} />
+          </div>
+          <div>{t(property.i18n_displayName)}</div>
         </div>
-        <div>{t(property.i18n_displayName)}</div>
-      </div>
-    ),
-  }));
+      ),
+    }));
 
   const onPropertyTypeChange = (key: TIssuePropertyTypeKeys) => {
     handlePropertyObjectChange({

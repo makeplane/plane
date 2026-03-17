@@ -18,8 +18,8 @@ import { useParams } from "next/navigation";
 import { EmojiPicker, Logo } from "@plane/propel/emoji-icon-picker";
 import { LeadIcon, TeamsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Avatar, AvatarGroup } from "@plane/propel/avatar";
 import { EFileAssetType } from "@plane/types";
-import { AvatarGroup, Avatar } from "@plane/ui";
 // plane utils
 import { getFileURL } from "@plane/utils";
 // components

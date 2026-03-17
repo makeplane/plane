@@ -769,7 +769,7 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
                     url = f"{api_base_url}/{row["workspace_slug"]}/browse/{issue_identifier}/"
                     entity_link = {"name": row["name"], "id": str(row["id"]), "issue_identifier": issue_identifier, "url": url, "type": "issue"}
                     entity_links.append(entity_link)
-                    log.info(f"construct_entity_urls_from_db: Entity (workitem) Link: {entity_link}")
+                    log.debug(f"construct_entity_urls_from_db: Entity (workitem) Link: {entity_link}")
 
         # Process projects
         if entity_ids.get("projects"):
@@ -791,7 +791,7 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
                 url = f"{api_base_url}/{row["workspace_slug"]}/projects/{row["id"]}/overview/"
                 entity_link = {"name": row["name"], "id": str(row["id"]), "identifier": row["identifier"], "url": url, "type": "project"}
                 entity_links.append(entity_link)
-                log.info(f"construct_entity_urls_from_db: Entity (project) Link: {entity_link}")
+                log.debug(f"construct_entity_urls_from_db: Entity (project) Link: {entity_link}")
 
         # Process pages
         if entity_ids.get("pages"):
@@ -826,7 +826,7 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
 
                 entity_link = {"name": row["name"], "id": str(row["id"]), "url": url, "type": "page"}
                 entity_links.append(entity_link)
-                log.info(f"construct_entity_urls_from_db: Entity (page) Link: {entity_link}")
+                log.debug(f"construct_entity_urls_from_db: Entity (page) Link: {entity_link}")
 
         # Process modules
         if entity_ids.get("modules"):
@@ -849,7 +849,7 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
                 url = f"{api_base_url}/{row["workspace_slug"]}/projects/{row["project_id"]}/modules/{row["id"]}/"
                 entity_link = {"name": row["name"], "id": str(row["id"]), "url": url, "type": "module"}
                 entity_links.append(entity_link)
-                log.info(f"construct_entity_urls_from_db: Entity (module) Link: {entity_link}")
+                log.debug(f"construct_entity_urls_from_db: Entity (module) Link: {entity_link}")
 
         # Process cycles
         if entity_ids.get("cycles"):
@@ -872,7 +872,7 @@ async def construct_entity_urls_from_db(entity_ids: Dict[str, List[str]], api_ba
                 url = f"{api_base_url}/{row["workspace_slug"]}/projects/{row["project_id"]}/cycles/{row["id"]}/"
                 entity_link = {"name": row["name"], "id": str(row["id"]), "url": url, "type": "cycle"}
                 entity_links.append(entity_link)
-                log.info(f"construct_entity_urls_from_db: Entity (cycle) Link: {entity_link}")
+                log.debug(f"construct_entity_urls_from_db: Entity (cycle) Link: {entity_link}")
 
     except Exception as e:
         log.error(f"Error constructing entity URLs from database: {e}")
@@ -1469,9 +1469,9 @@ def _fix_group_by_order_by_mismatch_parsed(parsed: exp.Expression, dialect: str 
                             aliased_expr = exp.alias_(expr_to_add.copy(), alias_name)
                             select.append("expressions", aliased_expr)
 
-                            log.info(f"[DISTINCT Fix] Added ORDER BY expression to SELECT: {expr_sql} AS {alias_name}")
+                            log.debug(f"[DISTINCT Fix] Added ORDER BY expression to SELECT: {expr_sql} AS {alias_name}")
 
-                        log.info(f"[DISTINCT Fix] Added {len(expressions_to_add)} ORDER BY expression(s) to SELECT for DISTINCT compatibility")
+                        log.debug(f"[DISTINCT Fix] Added {len(expressions_to_add)} ORDER BY expression(s) to SELECT for DISTINCT compatibility")
 
         return parsed.sql(dialect=dialect)
 

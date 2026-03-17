@@ -14,7 +14,7 @@
 import type { FC } from "react";
 import { memo } from "react";
 import Link from "next/link";
-import { Avatar, AvatarGroup } from "@plane/ui";
+import { Avatar, AvatarGroup } from "@plane/propel/avatar";
 import { getFileURL } from "@plane/utils";
 
 type OverflowCardProps = {

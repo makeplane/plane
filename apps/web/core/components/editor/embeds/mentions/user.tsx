@@ -17,7 +17,7 @@ import { Link } from "react-router";
 // plane imports
 import { ROLE } from "@plane/constants";
 import { Popover } from "@plane/propel/popover";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { cn, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

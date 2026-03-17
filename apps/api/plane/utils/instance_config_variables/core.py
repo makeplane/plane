@@ -93,6 +93,12 @@ github_config_variables = [
 
 gitlab_config_variables = [
     {
+        "key": "IS_GITLAB_ENABLED",
+        "value": os.environ.get("IS_GITLAB_ENABLED", "0"),
+        "category": "GITLAB",
+        "is_encrypted": False,
+    },
+    {
         "key": "GITLAB_HOST",
         "value": os.environ.get("GITLAB_HOST"),
         "category": "GITLAB",

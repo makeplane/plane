@@ -14,7 +14,7 @@
 # Python imports
 import os
 from datetime import timedelta
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin, urlparse, quote
 
 # Third party imports
 import dj_database_url
@@ -243,7 +243,7 @@ if not REDIS_URL and _has_elasticache:
 
     _ec_secret = get_secret(os.environ["ELASTICACHE_SECRET_ARN"], _aws_region)
     REDIS_URL = "rediss://:{token}@{host}:{port}".format(
-        token=_ec_secret.get(os.environ.get("REDIS_AUTH_TOKEN_KEY"), ""),
+        token=quote(_ec_secret.get(os.environ.get("REDIS_AUTH_TOKEN_KEY"), ""), safe=""),
         host=_ec_secret.get(os.environ.get("REDIS_HOST_KEY"), ""),
         port=_ec_secret.get(os.environ.get("REDIS_PORT_KEY"), 6379),
     )
@@ -252,7 +252,7 @@ elif REDIS_URL and _is_bare_redis_host_port(REDIS_URL) and _has_elasticache:
     from plane.utils.aws_secrets import get_secret
 
     _ec_secret = get_secret(os.environ["ELASTICACHE_SECRET_ARN"], _aws_region)
-    _token = _ec_secret.get(os.environ.get("REDIS_AUTH_TOKEN_KEY", "token"), "")
+    _token = quote(_ec_secret.get(os.environ.get("REDIS_AUTH_TOKEN_KEY", "token"), ""), safe="")
     REDIS_URL = f"rediss://:{_token}@{REDIS_URL}"
 
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
@@ -356,21 +356,21 @@ if not AMQP_URL and _has_amazonmq:
 
     _mq_secret = get_secret(os.environ["AMAZONMQ_SECRET_ARN"], _aws_region_mq)
     AMQP_URL = "amqps://{user}:{password}@{host}:{port}/{vhost}".format(
-        user=_mq_secret.get(os.environ.get("RABBITMQ_USER_KEY"), ""),
-        password=_mq_secret.get(os.environ.get("RABBITMQ_PASSWORD_KEY"), ""),
+        user=quote(_mq_secret.get(os.environ.get("RABBITMQ_USER_KEY"), ""), safe=""),
+        password=quote(_mq_secret.get(os.environ.get("RABBITMQ_PASSWORD_KEY"), ""), safe=""),
         host=_mq_secret.get(os.environ.get("RABBITMQ_HOST_KEY"), ""),
         port=_mq_secret.get(os.environ.get("RABBITMQ_PORT_KEY"), 5671),
-        vhost=_mq_secret.get(os.environ.get("RABBITMQ_VHOST_KEY"), "/"),
+        vhost=quote(_mq_secret.get(os.environ.get("RABBITMQ_VHOST_KEY"), "/"), safe=""),
     )
 # AmazonMQ: AMQP_URL is bare host:port — build amqps URL with username/password from Secrets Manager, vhost from env.
 elif AMQP_URL and _is_bare_amqp_host_port(AMQP_URL) and _has_amazonmq:
     from plane.utils.aws_secrets import get_secret
 
     _mq_secret = get_secret(os.environ["AMAZONMQ_SECRET_ARN"], _aws_region_mq)
-    _vhost = os.environ.get("RABBITMQ_VHOST", "/")
+    _vhost = quote(os.environ.get("RABBITMQ_VHOST", "/"), safe="")
     AMQP_URL = "amqps://{user}:{password}@{host}/{vhost}".format(
-        user=_mq_secret.get(os.environ.get("RABBITMQ_USER_KEY"), ""),
-        password=_mq_secret.get(os.environ.get("RABBITMQ_PASSWORD_KEY"), ""),
+        user=quote(_mq_secret.get(os.environ.get("RABBITMQ_USER_KEY"), ""), safe=""),
+        password=quote(_mq_secret.get(os.environ.get("RABBITMQ_PASSWORD_KEY"), ""), safe=""),
         host=AMQP_URL,
         vhost=_vhost,
     )
@@ -379,7 +379,13 @@ elif AMQP_URL and _is_bare_amqp_host_port(AMQP_URL) and _has_amazonmq:
 if AMQP_URL:
     CELERY_BROKER_URL = AMQP_URL
 else:
-    CELERY_BROKER_URL = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}/{RABBITMQ_VHOST}"
+    CELERY_BROKER_URL = "amqp://{user}:{password}@{host}:{port}/{vhost}".format(
+        user=quote(RABBITMQ_USER, safe=""),
+        password=quote(RABBITMQ_PASSWORD, safe=""),
+        host=RABBITMQ_HOST,
+        port=RABBITMQ_PORT,
+        vhost=quote(RABBITMQ_VHOST, safe=""),
+    )
 
 
 CELERY_TIMEZONE = TIME_ZONE

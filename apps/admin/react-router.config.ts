@@ -9,6 +9,11 @@ export default {
   basename: basePath,
   // If running on Vercel, use the Vercel preset
   presets: process.env.VERCEL === "1" ? [vercelPreset()] : [],
+  future: {
+    v8_middleware: true,
+    v8_splitRouteModules: true,
+    v8_viteEnvironmentApi: true,
+  },
   // Admin runs as a client-side app; build a static client bundle only
   ssr: false,
 } satisfies Config;

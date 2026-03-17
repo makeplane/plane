@@ -31,6 +31,10 @@ export function IntakePublishForm({
   projectLogo,
   projectCoverImage,
   formTitle,
+  formDescription,
+  showDescription = true,
+  isTitleRequired = true,
+  isDescriptionRequired = true,
   properties,
   isSubmitting = false,
   onSubmit,
@@ -195,9 +199,11 @@ export function IntakePublishForm({
           {/* Form Title */}
           <div className="mb-6">
             <h3 className="text-18 font-medium text-secondary">{formTitle || "Create a work item"}</h3>
-            <div className="text-13 text-tertiary flex gap-2 mt-1">
-              <span>Let the team know what you would like them to work on.</span>
-            </div>
+            {formDescription && (
+              <div className="text-13 text-tertiary flex gap-2 mt-1">
+                <span>{formDescription}</span>
+              </div>
+            )}
           </div>
 
           {/* Name Field */}
@@ -275,14 +281,14 @@ export function IntakePublishForm({
           {/* Title Field */}
           <div className="w-full">
             <div className="text-13 text-tertiary mb-1 font-medium">
-              What&apos;s this work item about?
-              <span className="ml-0.5 text-danger-primary">*</span>
+              Title
+              {isTitleRequired && <span className="ml-0.5 text-danger-primary">*</span>}
             </div>
             <Controller
               control={control}
               name="name"
               rules={{
-                required: "Title is required",
+                required: isTitleRequired ? "Title is required" : false,
                 maxLength: {
                   value: 255,
                   message: "Title should be less than 255 characters",
@@ -308,40 +314,57 @@ export function IntakePublishForm({
           </div>
 
           {/* Description Field */}
-          <div className="w-full">
-            <div className="text-13 text-tertiary mb-1 font-medium">Describe what should happen</div>
-            {EditorComponent ? (
-              <Controller
-                name="description_html"
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <EditorComponent
-                    onChange={(_description: object, description_html: string) => onChange(description_html)}
-                    {...editorProps}
-                  />
-                )}
-              />
-            ) : (
-              <Controller
-                name="description_html"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <textarea
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder="Add as much detail as you'd like to help the team identify your exact situation and needs."
-                    disabled={isPreview}
-                    className={cn(
-                      "w-full px-3 py-2 rounded-md border border-subtle-1 bg-surface-1 text-13 focus:outline-none min-h-[120px] resize-none",
-                      {
-                        "cursor-not-allowed opacity-60": isPreview,
-                      }
-                    )}
-                  />
-                )}
-              />
-            )}
-          </div>
+          {showDescription && (
+            <div className="w-full">
+              <div className="text-13 text-tertiary mb-1 font-medium">
+                Description
+                {isDescriptionRequired && <span className="ml-0.5 text-danger-primary">*</span>}
+              </div>
+              {EditorComponent ? (
+                <Controller
+                  name="description_html"
+                  control={control}
+                  rules={{
+                    validate: isDescriptionRequired
+                      ? (value: string) =>
+                          (value && value !== "<p></p>" && value.trim() !== "") || "Description is required"
+                      : undefined,
+                  }}
+                  render={({ field: { onChange } }) => (
+                    <EditorComponent
+                      onChange={(_description: object, description_html: string) => onChange(description_html)}
+                      {...editorProps}
+                    />
+                  )}
+                />
+              ) : (
+                <Controller
+                  name="description_html"
+                  control={control}
+                  rules={{
+                    required: isDescriptionRequired ? "Description is required" : false,
+                  }}
+                  render={({ field: { value, onChange } }) => (
+                    <textarea
+                      value={value}
+                      onChange={(e) => onChange(e.target.value)}
+                      placeholder="Add as much detail as you'd like to help the team identify your exact situation and needs."
+                      disabled={isPreview}
+                      className={cn(
+                        "w-full px-3 py-2 rounded-md border border-subtle-1 bg-surface-1 text-13 focus:outline-none min-h-[120px] resize-none",
+                        {
+                          "cursor-not-allowed opacity-60": isPreview,
+                        }
+                      )}
+                    />
+                  )}
+                />
+              )}
+              {errors.description_html && (
+                <span className="text-11 text-danger-primary">{errors.description_html.message as string}</span>
+              )}
+            </div>
+          )}
 
           {/* Dynamic Property Fields */}
           {properties.map((propertyConfig) => (

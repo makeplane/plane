@@ -89,13 +89,11 @@ async def _compute_env_capabilities() -> _EnvCapabilities:
     # LLM presence: OpenAI, Claude, or Custom LLM with required config
     openai_present = _has_value(settings.llm_config.OPENAI_API_KEY)
     claude_present = _has_value(settings.llm_config.CLAUDE_API_KEY)
-    custom_llm_present = (
-        settings.llm_config.CUSTOM_LLM_ENABLED
-        and _has_value(settings.llm_config.CUSTOM_LLM_BASE_URL)
-        and _has_value(settings.llm_config.CUSTOM_LLM_API_KEY)
-        and _has_value(settings.llm_config.CUSTOM_LLM_MODEL_KEY)
-        and _has_value(settings.llm_config.CUSTOM_LLM_NAME)
-    )
+    custom_llm_present = False
+    if settings.llm_config.CUSTOM_LLM_ENABLED:
+        provider = settings.llm_config.CUSTOM_LLM_PROVIDER.lower().strip()
+        required = settings.llm_config.LLM_PROVIDER_REQUIRED_ENV.get(provider, settings.llm_config.LLM_PROVIDER_REQUIRED_ENV["openai"])
+        custom_llm_present = all(_has_value(getattr(settings.llm_config, f, None)) for f in required)
     llm_present = openai_present or claude_present or custom_llm_present
 
     # Embedding presence: ML_MODEL_ID or EMBEDDING_MODEL configured
@@ -194,7 +192,7 @@ async def get_workspace_feature_availability(
     combined = _combine_env_and_remote(env_ready, remote_enabled)
     combined = _apply_dependencies(combined)
 
-    log.info(
+    log.debug(
         "Flags computed (workspace_slug=%s) env_ready=%s remote_enabled=%s combined=%s",
         workspace_slug,
         env_ready,

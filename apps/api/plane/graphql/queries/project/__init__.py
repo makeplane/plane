@@ -9,5 +9,5 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from .base import ProjectQuery, ProjectMembersQuery
+from .base import ProjectQuery, ProjectMembersQuery, IsProjectPublicQuery
 from .feature import ProjectFeatureQuery

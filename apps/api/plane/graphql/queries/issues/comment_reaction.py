@@ -26,6 +26,7 @@ from plane.graphql.helpers import get_work_item
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.types.issues.comment_reaction import CommentReactionType
+from plane.graphql.utils.archive import ArchivedFilterTypes
 
 
 @sync_to_async
@@ -53,7 +54,9 @@ class WorkItemCommentReactionQuery:
         user = info.context.user
         user_id = str(user.id)
 
-        await get_work_item(workspace_slug=slug, project_id=project, work_item_id=work_item)
+        await get_work_item(
+            workspace_slug=slug, project_id=project, work_item_id=work_item, archived_filter=ArchivedFilterTypes.INCLUDE
+        )
 
         comment_reactions = await get_work_item_comment_reactions(
             workspace_slug=slug, project_id=project, comment_id=comment, user_id=user_id

@@ -296,7 +296,7 @@ class PlaneChatBot(ChatKit):
                     attachment_blocks=attachment_blocks, user_query=query, db=db, message_id=query_id
                 )
                 if attachment_context:
-                    log.info(f"ChatID: {chat_id} - Extracted attachment context: {attachment_context[:200]}...")
+                    log.debug(f"ChatID: {chat_id} - Extracted attachment context: {attachment_context[:200]}...")
 
         # Set attachment blocks context for tool execution
         self._current_attachment_blocks = attachment_blocks
@@ -453,7 +453,7 @@ class PlaneChatBot(ChatKit):
         # But keep parsed_query clean for database storage
         enhanced_query_for_processing = self.enhance_query_with_context(parsed_query, attachment_context)
         if attachment_context:
-            log.info(f"ChatID: {chat_id} - Enhanced query with attachment context for routing")
+            log.debug(f"ChatID: {chat_id} - Enhanced query with attachment context for routing")
 
         # Prefetch web search only when workspace context is OFF (fast path)
         web_search_context: str | None = None
@@ -508,8 +508,8 @@ class PlaneChatBot(ChatKit):
         # Check if the query is a preset question
         preset_query_steps = preset_question_flow(query)
         if preset_query_steps:
-            log.info(f"ChatID: {chat_id} - Using preset question flow for: {query}")
-            log.info(f"ChatID: {chat_id} - Preset query steps: {preset_query_steps}")
+            log.debug(f"ChatID: {chat_id} - Using preset question flow for: {query}")
+            log.debug(f"ChatID: {chat_id} - Preset query steps: {preset_query_steps}")
 
         _title_handled_on_cancel = False
         try:
@@ -694,14 +694,14 @@ class PlaneChatBot(ChatKit):
                         if not clarification_saved_multi and chunk.startswith("πspecial clarification blockπ: "):
                             try:
                                 clar_content = chunk.replace("πspecial clarification blockπ: ", "")
-                                log.info(f"ChatID: {chat_id} - Clarification content in the original chunk from the tool execution: {clar_content}")
+                                log.debug(f"ChatID: {chat_id} - Clarification content in the original chunk from the tool execution: {clar_content}")
                                 try:
                                     clar_data = json.loads(clar_content)
                                 except json.JSONDecodeError:
                                     log.warning(f"ChatID: {chat_id} - Failed to parse clarification JSON: {clar_content}")
                                     clar_data = {"raw": clar_content}
                                 clar_text = format_clarification_as_text(clar_data)
-                                log.info(f"ChatID: {chat_id} - Clarification in text format: {clar_text}")
+                                log.debug(f"ChatID: {chat_id} - Clarification in text format: {clar_text}")
                                 await upsert_message(
                                     message_id=response_id,
                                     chat_id=chat_id,
@@ -792,7 +792,7 @@ class PlaneChatBot(ChatKit):
                     yield final_response
                     return
 
-                log.info(f"ChatID: {chat_id} - Final Response: {final_response}")
+                log.debug(f"ChatID: {chat_id} - Final Response: {final_response}")
 
             if final_response:
                 query_flow_store["answer"] = final_response

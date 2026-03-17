@@ -37,11 +37,17 @@ class ExtendedIssueFilterSet(IssueFilterSet):
     type_id = filters.UUIDFilter(field_name="type_id")
     type_id__in = UUIDInFilter(field_name="type_id", lookup_expr="in")
 
-    parent_id = filters.UUIDFilter(field_name="parent_id")
-
     milestone_id = filters.UUIDFilter(method="filter_milestone_id")
     milestone_id__in = UUIDInFilter(method="filter_milestone_id_in", lookup_expr="in")
     milestone_id__isnull = filters.BooleanFilter(method="filter_milestone_id_isnull", lookup_expr="isnull")
+
+    epic_id = filters.UUIDFilter(method="filter_epic_id")
+    epic_id__in = UUIDInFilter(method="filter_epic_id_in", lookup_expr="in")
+    epic_id__isnull = filters.BooleanFilter(method="filter_epic_id_isnull", lookup_expr="isnull")
+
+    parent_id = filters.UUIDFilter(method="filter_parent_id")
+    parent_id__in = UUIDInFilter(method="filter_parent_id_in", lookup_expr="in")
+    parent_id__isnull = filters.BooleanFilter(method="filter_parent_id_isnull", lookup_expr="isnull")
 
     customproperty_value = filters.CharFilter(method="filter_custom_property_value")
     customproperty_value__exact = filters.CharFilter(method="filter_custom_property_value_exact")
@@ -396,6 +402,62 @@ class ExtendedIssueFilterSet(IssueFilterSet):
             return ~has_non_deleted_milestone
         else:
             return has_non_deleted_milestone
+
+    def filter_epic_id(self, queryset, name, value):
+        """Filter by epic ID, excluding soft deleted epics"""
+        return Q(
+            parent_id=value,
+            parent__deleted_at__isnull=True,
+            parent__type__is_epic=True,
+        )
+
+    def filter_epic_id_in(self, queryset, name, value):
+        """Filter by epic IDs (in), excluding soft deleted epics"""
+        return Q(
+            parent_id__in=value,
+            parent__deleted_at__isnull=True,
+            parent__type__is_epic=True,
+        )
+
+    def filter_epic_id_isnull(self, queryset, name, value):
+        """Filter by epic ID (is null), excluding soft deleted epics"""
+        has_non_deleted_epic = Q(
+            parent__type__is_epic=True,
+            parent__isnull=False,
+            parent__deleted_at__isnull=True,
+        )
+        if value in (True, "true", "True", 1, "1"):
+            return ~has_non_deleted_epic
+        else:
+            return has_non_deleted_epic
+
+    def filter_parent_id(self, queryset, name, value):
+        """Filter by parent ID, excluding soft deleted parents"""
+        return Q(
+            Q(parent__type__is_epic=False) | Q(parent__type__isnull=True),
+            parent_id=value,
+            parent__deleted_at__isnull=True,
+        )
+
+    def filter_parent_id_in(self, queryset, name, value):
+        """Filter by parent IDs (in), excluding soft deleted parents"""
+        return Q(
+            Q(parent__type__is_epic=False) | Q(parent__type__isnull=True),
+            parent_id__in=value,
+            parent__deleted_at__isnull=True,
+        )
+
+    def filter_parent_id_isnull(self, queryset, name, value):
+        """Filter by parent ID (is null), excluding soft deleted parents"""
+        has_non_deleted_parent = Q(
+            Q(parent__type__is_epic=False) | Q(parent__type__isnull=True),
+            parent__isnull=False,
+            parent__deleted_at__isnull=True,
+        )
+        if value in (True, "true", "True", 1, "1"):
+            return ~has_non_deleted_parent
+        else:
+            return has_non_deleted_parent
 
 
 class InitiativeFilterSet(BaseFilterSet):

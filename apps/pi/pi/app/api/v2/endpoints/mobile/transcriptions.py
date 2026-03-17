@@ -182,7 +182,7 @@ async def create_transcription(
         )
 
     # Log transcription request
-    log.info(f"Mobile transcription request: workspace={workspace_id}, " f"chat={chat_id}, file={file.filename}, user={user_id}")
+    log.debug(f"Mobile transcription request: workspace={workspace_id}, " f"chat={chat_id}, file={file.filename}, user={user_id}")
 
     try:
         success, message = await process_transcription(

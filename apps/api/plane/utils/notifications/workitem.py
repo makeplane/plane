@@ -163,7 +163,11 @@ class WorkItemNotificationHandler(BaseNotificationHandler):
         subscribers = list(set(subscribers))
 
         # Remove actor from the list
-        subscribers = [subscriber for subscriber in subscribers if subscriber != UUID(self.context.actor_id)]
+        subscribers = [
+            subscriber
+            for subscriber in subscribers
+            if subscriber != UUID(self.context.actor_id) and str(subscriber) not in exclude_users
+        ]
 
         return SubscriberData(
             subscribers=subscribers,

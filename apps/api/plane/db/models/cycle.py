@@ -18,7 +18,7 @@ from django.db import models
 
 # Module imports
 from .project import ProjectBaseModel
-
+from plane.db.mixins import FiltersMixin
 
 def get_default_filters():
     return {
@@ -134,7 +134,7 @@ class CycleIssue(ProjectBaseModel):
         return f"{self.cycle}"
 
 
-class CycleUserProperties(ProjectBaseModel):
+class CycleUserProperties(ProjectBaseModel, FiltersMixin):
     cycle = models.ForeignKey("db.Cycle", on_delete=models.CASCADE, related_name="cycle_user_properties")
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

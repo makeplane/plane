@@ -53,6 +53,9 @@ export const authRoutes: RouteConfigEntry[] = [
   // Mobile Auth
   route("m/auth", "./m/auth/page.tsx"),
 
+  // Desktop Auth
+  route("d/auth", "./d/auth/page.tsx"),
+
   // OAuth Consent Page
   layout("./oauth/layout.tsx", [route("oauth", "./oauth/page.tsx")]),
 ];

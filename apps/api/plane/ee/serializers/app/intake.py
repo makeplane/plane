@@ -197,6 +197,8 @@ class IntakeFormReadSerializer(IntakeFormSerializer):
             "intake",
             "work_item_type",
             "form_fields",
+            "is_workitem_description_required",
+            "is_workitem_name_required",
             "created_at",
             "updated_at",
             "created_by",

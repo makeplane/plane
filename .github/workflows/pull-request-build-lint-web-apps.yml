@@ -117,10 +117,10 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .turbo
-          key: turbo-${{ runner.os }}-${{ github.event.pull_request.base.sha }}-${{ github.sha }}
+          key: turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.event.pull_request.base.sha }}-${{ github.sha }}
           restore-keys: |
-            turbo-${{ runner.os }}-${{ github.event.pull_request.base.sha }}-
-            turbo-${{ runner.os }}-
+            turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.event.pull_request.base.sha }}-
+            turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -132,7 +132,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: .turbo
-          key: turbo-${{ runner.os }}-${{ github.event.pull_request.base.sha }}-${{ github.sha }}
+          key: turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.event.pull_request.base.sha }}-${{ github.sha }}
 
   # Lint check depends on build artifacts (type checking is covered by the build step)
   check-lint:
@@ -175,7 +175,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .turbo
-          key: turbo-${{ runner.os }}-${{ github.event.pull_request.base.sha }}-${{ github.sha }}
+          key: turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.event.pull_request.base.sha }}-${{ github.sha }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -223,10 +223,10 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .turbo
-          key: turbo-${{ runner.os }}-${{ github.event.pull_request.base.sha }}-${{ github.sha }}
+          key: turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.event.pull_request.base.sha }}-${{ github.sha }}
           restore-keys: |
-            turbo-${{ runner.os }}-${{ github.event.pull_request.base.sha }}-
-            turbo-${{ runner.os }}-
+            turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.event.pull_request.base.sha }}-
+            turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

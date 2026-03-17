@@ -184,7 +184,7 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
             storage = S3Storage(request=request)
             new_asset_key = f"{project.workspace_id}/{uuid.uuid4().hex}"
             # save the duplicate asset as project
-            asset = FileAsset.objects.get(pk=asset_id)
+            asset = FileAsset.objects.get(pk=asset_id, workspace_id=project_template.workspace_id)
             # copy the asset
             storage.copy_object(asset.asset, new_asset_key)
 

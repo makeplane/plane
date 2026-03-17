@@ -114,3 +114,44 @@ def get_all_workspace_feature_flags(slug) -> dict:
             log_exception(e)
             return {}
     return {}
+
+
+# Admin feature flag checks
+def check_admin_feature_flag(feature_key, default_value=False):
+    """decorator to check admin feature flag"""
+
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(instance, request, *args, **kwargs):
+            try:
+                if not settings.FEATURE_FLAG_SERVER_BASE_URL:
+                    raise ValueError("FEATURE_FLAG_SERVER_BASE_URL is not configured")
+
+                # Fetch from the feature flag server
+                url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/workspaces/licenses/"
+                headers = {
+                    "content-type": "application/json",
+                    "x-api-key": settings.FEATURE_FLAG_SERVER_AUTH_TOKEN,
+                }
+
+                response = requests.post(url, headers=headers, timeout=10)
+                response.raise_for_status()
+
+                values = response.json().get("values", {})
+
+                is_enabled = values.get(feature_key.value, default_value)
+            except (requests.exceptions.RequestException, ValueError, TypeError, KeyError) as e:
+                log_exception(e)
+                is_enabled = default_value
+
+            if is_enabled:
+                return view_func(instance, request, *args, **kwargs)
+            else:
+                return Response(
+                    {"error": "Feature not available", "error_code": ErrorCodes.PAYMENT_REQUIRED.value},
+                    status=status.HTTP_402_PAYMENT_REQUIRED,
+                )
+
+        return _wrapped_view
+
+    return decorator

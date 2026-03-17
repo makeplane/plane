@@ -13,8 +13,8 @@
 
 import { useState } from "react";
 import { EUserPermissionsLevel } from "@plane/constants";
+import { Avatar } from "@plane/propel/avatar";
 import { EUserProjectRoles } from "@plane/types";
-import { Avatar } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";

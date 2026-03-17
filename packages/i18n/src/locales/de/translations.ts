@@ -452,6 +452,8 @@ export default {
     },
   },
   intake: "Eingang",
+  renew: "Erneuern",
+  preview: "Vorschau",
   time_tracking: "Zeiterfassung",
   work_management: "Arbeitsverwaltung",
   projects_and_issues: "Projekte und Arbeitselemente",
@@ -540,6 +542,8 @@ export default {
   you: "Sie",
   labels: "Labels",
   create_new_label: "Neues Label erstellen",
+  label_name: "Label-Name",
+  failed_to_create_label: "Label konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
   start_date: "Startdatum",
   end_date: "Enddatum",
   due_date: "Fälligkeitsdatum",
@@ -608,6 +612,9 @@ export default {
       name: "Name",
     },
   },
+  upgrade_request: "Bitten Sie Ihren Arbeitsbereichs-Admin um ein Upgrade.",
+  copied_to_clipboard: "In die Zwischenablage kopiert",
+  copied_to_clipboard_description: "Die URL wurde erfolgreich in Ihre Zwischenablage kopiert",
   toast: {
     success: "Erfolg!",
     error: "Fehler!",
@@ -707,6 +714,15 @@ export default {
     manage_widgets: "Widgets verwalten",
     title: "Startseite",
     star_us_on_github: "Geben Sie uns einen Stern auf GitHub",
+    business_trial_banner: {
+      title: "Ihre 14-tägige Business-Testversion ist aktiv!",
+      description:
+        "Entdecken Sie alle Business-Funktionen. Wenn Sie bereit sind, können Sie ein Abonnement abschließen. Es erfolgt keine automatische Abrechnung.",
+      trial_ends_today: "Testversion endet heute",
+      trial_ends_in_days: "Testversion endet in {days, plural, one {# Tag} other {# Tagen}}",
+      start_subscription: "Abonnement starten",
+      explore_business_features: "Business-Funktionen entdecken",
+    },
   },
   link: {
     modal: {
@@ -1968,6 +1984,14 @@ Erstellen Sie ein neues.`,
       project_states: {
         title: "Projektstatus",
       },
+      projects: {
+        title: "Projekte",
+        description: "Projektstatus verwalten, Projektlabels aktivieren und weitere Konfiguration.",
+        tabs: {
+          states: "Projektstatus",
+          labels: "Projektlabels",
+        },
+      },
       teamspaces: {
         title: "Teamspaces",
       },
@@ -2604,17 +2628,54 @@ Erstellen Sie ein neues.`,
         toggle_description: "Projektmitglieder können Seiten erstellen und bearbeiten.",
       },
       intake: {
-        heading: "Intake-Verantwortung",
+        intake_responsibility: "Intake-Verantwortung",
+        intake_sources: "Intake-Quellen",
         title: "Aufnahme",
         short_title: "Aufnahme",
         description:
           "Ermöglichen Sie Nicht-Mitgliedern, Fehler, Feedback und Vorschläge zu teilen, ohne Ihren Workflow zu unterbrechen.",
         toggle_title: "Aufnahme aktivieren",
         toggle_description: "Projektmitgliedern erlauben, In-App-Aufnahmeanfragen zu erstellen.",
+        toggle_tooltip_on: "Bitten Sie Ihren Projekt-Admin, dies zu aktivieren.",
+        toggle_tooltip_off: "Bitten Sie Ihren Projekt-Admin, dies zu deaktivieren.",
         notify_assignee: {
           title: "Zuständige benachrichtigen",
           description:
             "Für eine neue Intake-Anfrage werden die Standard-Zuständigen über Benachrichtigungen informiert",
+        },
+        in_app: {
+          title: "In der App",
+          description:
+            "Erhalten Sie neue Arbeitselemente von Mitgliedern und Gästen in Ihrem Arbeitsbereich, ohne Ihre bestehenden Arbeitselemente zu stören.",
+        },
+        email: {
+          title: "E-Mail",
+          description:
+            "Sammeln Sie neue Arbeitselemente von allen, die eine E-Mail an eine Plane-E-Mail-Adresse senden.",
+          fieldName: "E-Mail-ID",
+        },
+        form: {
+          title: "Formulare",
+          description:
+            "Ermöglichen Sie Personen außerhalb Ihres Arbeitsbereichs, über ein dediziertes und sicheres Formular potenzielle neue Arbeitselemente zu erstellen.",
+          fieldName: "Standard-Formular-URL",
+          create_forms: "Formulare mit Arbeitselementtypen erstellen",
+          manage_forms: "Formulare verwalten",
+          manage_forms_tooltip: "Bitten Sie Ihren Arbeitsbereichs-Admin, dies zu verwalten.",
+          create_form: "Formular erstellen",
+          edit_form: "Formulardetails bearbeiten",
+          form_title: "Formulartitel",
+          form_title_required: "Formulartitel ist erforderlich",
+          work_item_type: "Arbeitselementtyp",
+          remove_property: "Eigenschaft entfernen",
+          select_properties: "Eigenschaften auswählen",
+          search_placeholder: "Nach Eigenschaften suchen",
+          toasts: {
+            success_create: "Intake-Formular erfolgreich erstellt",
+            success_update: "Intake-Formular erfolgreich aktualisiert",
+            error_create: "Intake-Formular konnte nicht erstellt werden",
+            error_update: "Intake-Formular konnte nicht aktualisiert werden",
+          },
         },
         toasts: {
           set: {
@@ -2644,6 +2705,11 @@ Erstellen Sie ein neues.`,
           "Meilensteine bieten eine Ebene, um Arbeitselemente auf gemeinsame Fertigstellungstermine auszurichten.",
         toggle_title: "Meilensteine aktivieren",
         toggle_description: "Organisieren Sie Arbeitselemente nach Meilenstein-Fristen.",
+      },
+      toasts: {
+        loading: "Projektfunktion wird aktualisiert...",
+        success: "Projektfunktion erfolgreich aktualisiert.",
+        error: "Beim Aktualisieren der Projektfunktion ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
       },
     },
   },
@@ -3873,6 +3939,9 @@ Erstellen Sie ein neues.`,
           member_picker: {
             label: "Mitgliederauswahl",
           },
+          formula: {
+            label: "Formel",
+          },
         },
         attributes: {
           label: "Attribute",
@@ -3998,6 +4067,31 @@ Erstellen Sie ein neues.`,
             options: {
               required: "Sie müssen mindestens eine Option hinzufügen.",
             },
+            formula: {
+              required: "Formelausdruck ist erforderlich.",
+              invalid: "Ungültige Formel: {error}",
+              circular_reference:
+                "Zirkuläre Referenz erkannt. Eine Formel kann nicht direkt oder indirekt auf sich selbst verweisen.",
+              invalid_reference: "Formel verweist auf eine nicht existierende Eigenschaft.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Formelfeld",
+          tooltip: "Geben Sie eine Formel mit der Syntax '{'Feldname'}' ein. Unterstützt +, -, *, / und & Operatoren.",
+          placeholder: "Formel eingeben",
+          test_button: "Test",
+          validating: "Wird überprüft",
+          validation_success: "Formel ist gültig! Gibt {resultType} zurück",
+          validation_success_with_refs: "Formel ist gültig! Gibt {resultType} zurück ({count} Feld(er) referenziert)",
+          error: {
+            empty: "Bitte geben Sie eine Formel ein",
+            missing_context: "Fehlender Workspace-, Projekt- oder Arbeitsaufgabentyp-Kontext",
+            validation_failed: "Validierung fehlgeschlagen",
+          },
+          picker: {
+            no_match: "Keine passenden Eigenschaften",
+            no_available: "Keine verfügbaren Eigenschaften",
           },
         },
         enable_disable: {
@@ -4104,6 +4198,15 @@ Erstellen Sie ein neues.`,
         },
       },
       tooltip: "Klicken zum {action}",
+    },
+    change_confirmation: {
+      title: "Arbeitsaufgabentyp ändern?",
+      description:
+        "Das Ändern des Arbeitsaufgabentyps kann zum Verlust von benutzerdefinierten Eigenschaftswerten führen, die spezifisch für den aktuellen Typ sind. Diese Aktion kann nicht rückgängig gemacht werden.",
+      button: {
+        loading: "Wird geändert",
+        default: "Typ ändern",
+      },
     },
     empty_state: {
       enable: {
@@ -4473,6 +4576,7 @@ Erstellen Sie ein neues.`,
     created: "Erstellt",
     initiated: "Eingeleitet",
     pulling: "Abrufen",
+    timed_out: "Zeitüberschreitung",
     pulled: "Abgerufen",
     transforming: "Umwandeln",
     transformed: "Umgewandelt",
@@ -5796,6 +5900,62 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       },
     },
   },
+  intake_forms: {
+    create: {
+      title: "Arbeitselement erstellen",
+      "sub-title": "Lassen Sie das Team wissen, woran Sie arbeiten möchten.",
+      name: "Name",
+      email: "E-Mail",
+      about: "Worum geht es bei diesem Arbeitselement?",
+      description: "Beschreiben Sie, was passieren soll",
+      description_placeholder:
+        "Fügen Sie so viele Details hinzu, wie Sie möchten, damit das Team Ihre Situation und Bedürfnisse erkennt.",
+      loading: "Wird erstellt",
+      create_work_item: "Arbeitselement erstellen",
+      errors: {
+        name: "Name ist erforderlich",
+        name_max_length: "Name darf maximal 255 Zeichen haben",
+        email: "E-Mail ist erforderlich",
+        email_invalid: "Ungültige E-Mail-Adresse",
+        title: "Titel ist erforderlich",
+        title_max_length: "Titel darf maximal 255 Zeichen haben",
+      },
+    },
+    success: {
+      title: "Super! Ihr Arbeitselement ist jetzt in der Team-Warteschlange.",
+      description: "Das Team kann dieses Arbeitselement jetzt aus der Intake-Warteschlange genehmigen oder verwerfen.",
+      primary_button: {
+        text: "Weiteres Arbeitselement hinzufügen",
+      },
+      secondary_button: {
+        text: "Mehr über Intake erfahren",
+      },
+    },
+    how_it_works: {
+      title: "Wie funktioniert es?",
+      heading: "Dies ist ein Intake-Formular.",
+      description:
+        "Intake ist eine Plane-Funktion, mit der Projekt-Admins und Manager Arbeitselemente von außen in ihre Projekte holen können.",
+      steps: {
+        step_1: "Dieses kurze Formular ermöglicht die Erstellung eines neuen Arbeitselements in einem Plane-Projekt.",
+        step_2: "Wenn Sie dieses Formular absenden, wird ein neues Arbeitselement im Intake dieses Projekts erstellt.",
+        step_3: "Jemand aus diesem Projekt oder Team wird es prüfen.",
+        step_4:
+          "Wenn sie es genehmigen, wird dieses Arbeitselement in die Projekt-Warteschlange verschoben. Andernfalls wird es abgelehnt.",
+        step_5:
+          "Um den Status dieses Arbeitselements zu erfahren, wenden Sie sich an den Projektmanager, Admin oder die Person, die Ihnen den Link zu dieser Seite geschickt hat.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Arbeitselementtyp auswählen",
+        search_placeholder: "Nach Arbeitselementtyp suchen",
+      },
+      actions: {
+        select_properties: "Eigenschaften auswählen",
+      },
+    },
+  },
   recurring_work_items: {
     settings: {
       heading: "Wiederkehrende Arbeitsaufgaben",
@@ -6306,4 +6466,5 @@ so zu sehen, wie Sie es von den angegebenen Quellen wünschen.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Der Projektname darf keine Sonderzeichen enthalten.",
 } as const;

@@ -28,6 +28,7 @@ import { CreateUpdateProjectViewModal } from "@/components/views/modal";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
+import { useEpicMeta } from "@/hooks/store/use-epic-meta";
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -77,6 +78,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   const { getProjectEpicDetails, getProjectIssueTypes, isWorkItemTypeEnabledForProject, isEpicEnabledForProject } =
     useIssueTypes();
   const { getProjectMilestoneIds, isMilestonesEnabled } = useMilestones();
+  const { getProjectEpicIds } = useEpicMeta();
   // derived values
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
   const isEpicEnabled = isEpicEnabledForProject(workspaceSlug, projectId);
@@ -87,6 +89,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   );
   const projectEpicDetails = getProjectEpicDetails(projectId);
   const projectMilestoneIds = getProjectMilestoneIds(projectId);
+  const projectEpicIds = getProjectEpicIds(projectId);
   const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
   const hasProjectMemberLevelPermissions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
@@ -267,6 +270,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
         stateIds={getProjectStateIds(projectId)}
         workItemTypeIds={isWorkItemTypeEnabled ? projectWorkItemTypeIds : undefined}
         milestoneIds={isMilestonesFeatureEnabled ? projectMilestoneIds : undefined}
+        epicIds={isEpicEnabled ? projectEpicIds : undefined}
         customPropertyIds={customPropertyIds}
         saveViewOptions={saveViewOptions}
         updateViewOptions={updateViewOptions}

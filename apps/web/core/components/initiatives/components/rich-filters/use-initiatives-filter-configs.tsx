@@ -16,7 +16,7 @@ import { CalendarCheck2, CalendarClock, Tags, Users } from "lucide-react";
 import { INITIATIVE_STATES } from "@plane/constants";
 import { InitiativeStateIcon } from "@plane/propel/icons";
 import type { IUserLite, TInitiativeLabel } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import {
   getInitiativeLeadFilterConfig,
   getInitiativeStartDateFilterConfig,

@@ -12,5 +12,6 @@
  */
 
 export * from "./workspace-project-states.store";
+export * from "./workspace-project-labels.store";
 export * from "./project-state";
 export * from "./filters";

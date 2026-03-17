@@ -223,22 +223,21 @@ func DeactivateEnterpriseLicense(api prime_api.IPrimeMonitorApi, key string) fun
 			})
 		}
 
+		// Attempt to deactivate with Prime, log errors but always proceed with local cleanup
 		fetchError := api.DeactivateEnterpriseLicense(prime_api.LicenseDeactivatePayload{
 			LicenseKey: license.LicenseKey,
 		})
 
 		if fetchError != nil {
-			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": fetchError.Error,
-			})
+			fmt.Printf("ERROR: Failed to deactivate enterprise license with Prime: %s\n", fetchError.Error)
 		}
 
 		// Create a transaction for clearing the license, flags and license users
 		err := db.Db.Transaction(func(tx *gorm.DB) error {
-			// Clear the license and license users
-			db.Db.Delete(&license)
-			db.Db.Where("license_id = ?", license.ID).Delete(&db.Flags{})
-			db.Db.Where("license_id = ?", license.ID).Delete(&db.UserLicense{})
+			// Clear flags and user licenses before deleting the license (foreign key constraints)
+			tx.Where("license_id = ?", license.ID).Delete(&db.Flags{})
+			tx.Where("license_id = ?", license.ID).Delete(&db.UserLicense{})
+			tx.Delete(&license)
 			return nil
 		})
 
@@ -356,6 +355,13 @@ func GetEnterpriseLicenseSync(api prime_api.IPrimeMonitorApi, key string) func(*
 
 		// Use transaction to update license, users, and flags
 		txErr := db.Db.Transaction(func(tx *gorm.DB) error {
+			// Refresh enterprise license from Prime response
+			updatedLicense, err := router_helpers.RefreshEnterpriseLicenseFromResponse(license, data, tx)
+			if err != nil {
+				return err
+			}
+			license = updatedLicense
+
 			// Refresh enterprise license users from Prime response
 			if err := router_helpers.RefreshEnterpriseLicenseUsers(context.Background(), license, *data, tx); err != nil {
 				return err

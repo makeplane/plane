@@ -53,7 +53,7 @@ async def get_execution_context(request, chatbot: PlaneChatBot, user_id, db) -> 
     else:
         token = await chatbot._get_oauth_token_for_user(db, str(user_id), str(request.workspace_id))
         if token:
-            log.info(f"Retrieved OAuth token from database for user {user_id}, workspace {request.workspace_id}")
+            log.debug(f"Retrieved OAuth token from database for user {user_id}, workspace {request.workspace_id}")
         else:
             log.warning(f"No valid OAuth token found for user {user_id}, workspace {request.workspace_id}")
 
@@ -73,7 +73,7 @@ class BuildModeToolExecutor:
     async def execute(self, request, user_id):
         """Execute the planned actions"""
 
-        log.info(f"EXECUTE ACTION REQUEST: {request}")
+        log.debug(f"EXECUTE ACTION REQUEST: {request}")
         # 1. Load artifacts
         message_id = request.message_id
         chat_id = request.chat_id
@@ -98,7 +98,7 @@ class BuildModeToolExecutor:
 
         # Log token type for debugging (without exposing the actual token)
         token_type = "API key" if token.startswith("plane_api_") else "OAuth access token"
-        log.info(f"Using {token_type} for execution (token length: {len(token)}, starts with: {token[:10]}...)")
+        log.debug(f"Using {token_type} for execution (token length: {len(token)}, starts with: {token[:10]}...)")
 
         # 3. Execution
         # Setup
@@ -162,10 +162,10 @@ class BuildModeToolExecutor:
             raise ValueError(f"Tool '{tool_name}' not found in category '{category}' (entity_type: '{entity_type}')")
 
         # Execute the tool - EXPECT structured payload dict
-        log.info(f"[DEBUG] execute_single_action: About to invoke tool '{tool_name}' with args: {args}")
+        log.debug(f"[DEBUG] execute_single_action: About to invoke tool '{tool_name}' with args: {args}")
         try:
             result = await tool.ainvoke(args)
-            log.info(f"[DEBUG] execute_single_action: Tool '{tool_name}' returned successfully. Result: {result}")
+            log.debug(f"[DEBUG] execute_single_action: Tool '{tool_name}' returned successfully. Result: {result}")
         except Exception as tool_error:
             log.error(f"[DEBUG] execute_single_action: Tool '{tool_name}' raised exception: {tool_error}", exc_info=True)
             raise
@@ -202,7 +202,7 @@ class BuildModeToolExecutor:
         - Use focused LLM calls to extract specific values from tool results
         - Validate extracted values (e.g., UUID format)
         """
-        log.info(f"\n\nORCHESTRATE EXECUTION: {len(planned_actions)} actions\n")
+        log.debug(f"\n\nORCHESTRATE EXECUTION: {len(planned_actions)} actions\n")
 
         # Use the new hybrid orchestrator
         orchestrator = PlaceholderOrchestrator(

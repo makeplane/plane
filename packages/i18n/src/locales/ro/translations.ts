@@ -446,6 +446,8 @@ export default {
     },
   },
   intake: "Cereri",
+  renew: "Reînnoiește",
+  preview: "Previzualizare",
   time_tracking: "Monitorizare timp",
   work_management: "Gestionare muncă",
   projects_and_issues: "Proiecte și activități",
@@ -534,6 +536,8 @@ export default {
   you: "Tu",
   labels: "Etichete",
   create_new_label: "Creează etichetă nouă",
+  label_name: "Nume etichetă",
+  failed_to_create_label: "Nu s-a putut crea eticheta. Vă rugăm să încercați din nou.",
   start_date: "Data de început",
   end_date: "Data de sfârșit",
   due_date: "Data limită",
@@ -600,6 +604,9 @@ export default {
       name: "Nume",
     },
   },
+  upgrade_request: "Solicitați administratorului spațiului de lucru să facă upgrade.",
+  copied_to_clipboard: "Copiat în clipboard",
+  copied_to_clipboard_description: "URL-ul a fost copiat cu succes în clipboard",
   toast: {
     success: "Succes!",
     error: "Eroare!",
@@ -699,6 +706,15 @@ export default {
     manage_widgets: "Gestionează mini-aplicațiile",
     title: "Acasă",
     star_us_on_github: "Dă-ne o stea pe GitHub",
+    business_trial_banner: {
+      title: "Perioada de probă de 14 zile pentru planul Business este activă!",
+      description:
+        "Explorați toate funcțiile Business. Când sunteți pregătit, alegeți să vă abonați. Nu veți fi facturat automat.",
+      trial_ends_today: "Perioada de probă se încheie astăzi",
+      trial_ends_in_days: "Perioada de probă se încheie în {days, plural, one {# zi} other {# zile}}",
+      start_subscription: "Începe abonamentul",
+      explore_business_features: "Explorează funcțiile Business",
+    },
   },
   link: {
     modal: {
@@ -1962,6 +1978,14 @@ Creează un proiect nou.`,
       project_states: {
         title: "Stări de proiect",
       },
+      projects: {
+        title: "Proiecte",
+        description: "Gestionează stările proiectelor, activează etichetele proiectelor și alte configurări.",
+        tabs: {
+          states: "Stări de proiect",
+          labels: "Etichete de proiect",
+        },
+      },
       teamspaces: {
         title: "Spații de echipă",
       },
@@ -2605,16 +2629,52 @@ Creează un proiect nou.`,
         toggle_description: "Membrii proiectului vor putea crea și edita pagini.",
       },
       intake: {
-        heading: "Responsabilitate de primire",
+        intake_responsibility: "Responsabilitate de primire",
+        intake_sources: "Surse de primire",
         title: "Recepție",
         short_title: "Recepție",
         description:
           "Permiteți non-membrilor să partajeze erori, feedback și sugestii; fără a perturba fluxul de lucru.",
         toggle_title: "Activați recepția",
         toggle_description: "Permiteți membrilor proiectului să creeze solicitări de recepție în aplicație.",
+        toggle_tooltip_on: "Solicitați administratorului proiectului să activeze.",
+        toggle_tooltip_off: "Solicitați administratorului proiectului să dezactiveze.",
         notify_assignee: {
           title: "Notifică persoanele desemnate",
           description: "Pentru o nouă cerere de primire, persoanele desemnate implicit vor fi alertate prin notificări",
+        },
+        in_app: {
+          title: "În aplicație",
+          description:
+            "Primiți elemente de lucru noi de la membri și invitați în spațiul de lucru fără a perturba cele existente.",
+        },
+        email: {
+          title: "E-mail",
+          description: "Colectați elemente de lucru noi de la oricine trimite un e-mail la o adresă Plane.",
+          fieldName: "ID e-mail",
+        },
+        form: {
+          title: "Formulare",
+          description:
+            "Permiteți persoanelor din afara spațiului de lucru să creeze elemente de lucru noi potențiale printr-un formular dedicat și sigur.",
+          fieldName: "URL formular implicit",
+          create_forms: "Creați formulare folosind tipuri de elemente de lucru",
+          manage_forms: "Gestionați formularele",
+          manage_forms_tooltip: "Solicitați administratorului spațiului de lucru să gestioneze.",
+          create_form: "Creați formular",
+          edit_form: "Editați detaliile formularului",
+          form_title: "Titlul formularului",
+          form_title_required: "Titlul formularului este obligatoriu",
+          work_item_type: "Tip element de lucru",
+          remove_property: "Eliminați proprietatea",
+          select_properties: "Selectați proprietăți",
+          search_placeholder: "Căutați proprietăți",
+          toasts: {
+            success_create: "Formularul de primire a fost creat cu succes",
+            success_update: "Formularul de primire a fost actualizat cu succes",
+            error_create: "Crearea formularului de primire a eșuat",
+            error_update: "Actualizarea formularului de primire a eșuat",
+          },
         },
         toasts: {
           set: {
@@ -2644,6 +2704,11 @@ Creează un proiect nou.`,
           "Etapele importante oferă un strat pentru a alinia elementele de lucru către date comune de finalizare.",
         toggle_title: "Activați etapele importante",
         toggle_description: "Organizați elementele de lucru după termenele etapelor importante.",
+      },
+      toasts: {
+        loading: "Se actualizează funcționalitatea proiectului...",
+        success: "Funcționalitatea proiectului a fost actualizată cu succes.",
+        error: "Ceva a mers greșit la actualizarea funcționalității proiectului. Vă rugăm să încercați din nou.",
       },
     },
   },
@@ -3888,6 +3953,9 @@ văzute aici`,
           member_picker: {
             label: "Selector de membri",
           },
+          formula: {
+            label: "Formulă",
+          },
         },
         attributes: {
           label: "Atribute",
@@ -4013,6 +4081,32 @@ văzute aici`,
             options: {
               required: "Trebuie să adaugi cel puțin o opțiune.",
             },
+            formula: {
+              required: "Expresia formulei este obligatorie.",
+              invalid: "Formulă invalidă: {error}",
+              circular_reference:
+                "Referință circulară detectată. O formulă nu poate face referire la ea însăși direct sau indirect.",
+              invalid_reference: "Formula face referire la o proprietate inexistentă.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Câmp formulă",
+          tooltip: "Introduceți o formulă folosind sintaxa '{'Nume câmp'}'. Suportă operatorii +, -, *, / și &.",
+          placeholder: "Scrieți formula",
+          test_button: "Test",
+          validating: "Se validează",
+          validation_success: "Formula este validă! Returnează {resultType}",
+          validation_success_with_refs:
+            "Formula este validă! Returnează {resultType} ({count} câmp(uri) referențiat(e))",
+          error: {
+            empty: "Vă rugăm introduceți o formulă",
+            missing_context: "Lipsește contextul spațiului de lucru, proiectului sau tipului de element de lucru",
+            validation_failed: "Validarea a eșuat",
+          },
+          picker: {
+            no_match: "Nicio proprietate corespunzătoare",
+            no_available: "Nicio proprietate disponibilă",
           },
         },
         enable_disable: {
@@ -4118,6 +4212,15 @@ văzute aici`,
         },
       },
       tooltip: "Click pentru a {action}",
+    },
+    change_confirmation: {
+      title: "Schimbați tipul de element de lucru?",
+      description:
+        "Schimbarea tipului de element de lucru poate duce la pierderea valorilor proprietăților personalizate care sunt specifice tipului curent. Această acțiune nu poate fi anulată.",
+      button: {
+        loading: "Se schimbă",
+        default: "Schimbă tipul",
+      },
     },
     empty_state: {
       enable: {
@@ -4483,6 +4586,7 @@ văzute aici`,
     created: "Creat",
     initiated: "Inițiat",
     pulling: "Se extrag",
+    timed_out: "Timp expirat",
     pulled: "Extras",
     transforming: "Se transformă",
     transformed: "Transformat",
@@ -5803,6 +5907,61 @@ așa cum dorești din sursele pe care le specifici.`,
       },
     },
   },
+  intake_forms: {
+    create: {
+      title: "Creează un element de lucru",
+      "sub-title": "Spune echipei pe ce ai dori să lucreze.",
+      name: "Nume",
+      email: "E-mail",
+      about: "Despre ce este acest element de lucru?",
+      description: "Descrie ce ar trebui să se întâmple",
+      description_placeholder:
+        "Adaugă cât de multe detalii dorești pentru a ajuta echipa să identifice situația și nevoile tale.",
+      loading: "Se creează",
+      create_work_item: "Creează element de lucru",
+      errors: {
+        name: "Numele este obligatoriu",
+        name_max_length: "Numele trebuie să aibă mai puțin de 255 de caractere",
+        email: "E-mailul este obligatoriu",
+        email_invalid: "Adresă de e-mail invalidă",
+        title: "Titlul este obligatoriu",
+        title_max_length: "Titlul trebuie să aibă mai puțin de 255 de caractere",
+      },
+    },
+    success: {
+      title: "Elementul tău de lucru este acum în coada echipei.",
+      description: "Echipa poate acum aproba sau respinge acest element de lucru din coada de primire.",
+      primary_button: {
+        text: "Adaugă alt element de lucru",
+      },
+      secondary_button: {
+        text: "Află mai multe despre primire",
+      },
+    },
+    how_it_works: {
+      title: "Cum funcționează?",
+      heading: "Acesta este un formular de primire.",
+      description:
+        "Primirea este o funcționalitate Plane care permite administratorilor și managerilor de proiect să primească elemente de lucru din exterior în proiectele lor.",
+      steps: {
+        step_1: "Acest formular scurt îți permite să creezi un element de lucru nou într-un proiect Plane.",
+        step_2: "Când trimiți acest formular, se creează un element de lucru nou în primirea acelui proiect.",
+        step_3: "Cineva din acel proiect sau echipă îl va revizui.",
+        step_4: "Dacă îl aprobă, acest element va fi mutat în coada de lucru a proiectului. Altfel, va fi respins.",
+        step_5:
+          "Pentru a verifica starea acelui element, contactează managerul proiectului, administratorul sau persoana care ți-a trimis linkul către această pagină.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Selectează tipul de element de lucru",
+        search_placeholder: "Caută un tip de element de lucru",
+      },
+      actions: {
+        select_properties: "Selectează proprietăți",
+      },
+    },
+  },
   recurring_work_items: {
     settings: {
       heading: "Elemente de lucru recurente",
@@ -6312,4 +6471,5 @@ așa cum dorești din sursele pe care le specifici.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Numele proiectului nu poate conține caractere speciale.",
 } as const;

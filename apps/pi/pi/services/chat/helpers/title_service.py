@@ -78,7 +78,7 @@ async def get_title(chatbot_instance, chat_id: UUID4, messages: List[Message], d
                 # log.info(f"ChatID: {chat_id} - Generating a title for the chat")
                 title = await generate_title(chatbot_instance, chat_id, [first_question, first_answer], db)
             else:
-                log.info(f"ChatID: {chat_id} - A unique title already exists for the chat")
+                log.debug(f"ChatID: {chat_id} - A unique title already exists for the chat")
                 title = existing_title
 
             return title

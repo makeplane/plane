@@ -143,7 +143,7 @@ export interface IStep {
 
   /** data that should be loaded before handling this step */
   dependencies: EJiraStep[];
-  shouldFail?: boolean;
+  stepRequired?: boolean;
 
   /** Execute pull, transform, and push for this step */
   execute(input: TStepExecutionInput): Promise<TStepExecutionContext>;

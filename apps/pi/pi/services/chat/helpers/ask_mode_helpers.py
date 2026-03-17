@@ -111,7 +111,7 @@ async def check_and_enrich_clarification_context(
 
         if clar_row:
             clar_payload = clar_row.payload or {}
-            log.info(
+            log.debug(
                 f"ChatID: {chat_id} - Found pending clarification, enriching user_meta. Kind: {clar_row.kind}, Categories: {clar_row.categories}"
             )
             user_meta["clarification_context"] = {
@@ -400,7 +400,7 @@ async def record_preset_routing_step(*, query_id: UUID4, chat_id: UUID4, step_or
 
 async def process_preset_reasoning_messages(reasoning_messages: List[str], reasoning_container: dict) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """Yield preset reasoning messages as special reasoning blocks."""
-    log.info(f"Reasoning messages: {reasoning_messages}")
+    log.debug(f"Reasoning messages: {reasoning_messages}")
 
     for reasoning_msg in reasoning_messages:
         reasoning_chunk_dict = {
@@ -513,7 +513,7 @@ async def generate_chat_title_if_needed(
                     log.warning(f"ChatID: {chat_id} - No final_response available for title generation")
 
                 if title:
-                    log.info(f"ChatID: {chat_id} - Generated title: {title}")
+                    log.debug(f"ChatID: {chat_id} - Generated title: {title}")
             except Exception as e:
                 log.error(f"Error generating title: {str(e)}")
 
@@ -535,20 +535,20 @@ def log_ask_mode_request_details(data: Any, context: Dict[str, Any]) -> None:
             - workspace_in_context (computed)
     """
     chat_id = data.chat_id
-    log.info(f"ChatID: {chat_id} - Input query: {data.query}")
-    log.info(f"ChatID: {chat_id} - Enhanced query: {context.get("enhanced_query_for_processing")}")
-    log.info(f"ChatID: {chat_id} - Attachment context: {context.get("attachment_context")}")
-    log.info(f"ChatID: {chat_id} - User meta: {data.context}")
-    log.info(f"ChatID: {chat_id} - Workspace in context: {context.get("workspace_in_context", data.workspace_in_context)}")
-    log.info(f"ChatID: {chat_id} - Workspace slug: {context.get("workspace_slug", data.workspace_slug)}")
-    log.info(f"ChatID: {chat_id} - Workspace ID: {context.get("workspace_id", str(data.workspace_id) if data.workspace_id else None)}")
-    log.info(f"ChatID: {chat_id} - Web search enabled: {context.get("websearch_enabled", getattr(data, "is_websearch_enabled", False))}")
-    log.info(f"ChatID: {chat_id} - Is New Chat: {data.is_new}")
-    log.info(f"ChatID: {chat_id} - Source: {data.source}")
-    log.info(f"ChatID: {chat_id} - Is Project Chat: {data.is_project_chat}")
-    log.info(f"ChatID: {chat_id} - User ID: {data.user_id}")
-    log.info(f"ChatID: {chat_id} - Project ID: {str(data.project_id) if data.project_id else None}")
-    log.info(f"ChatID: {chat_id} - LLM: {data.llm}")
+    log.debug(f"ChatID: {chat_id} - Input query: {data.query}")
+    log.debug(f"ChatID: {chat_id} - Enhanced query: {context.get("enhanced_query_for_processing")}")
+    log.debug(f"ChatID: {chat_id} - Attachment context: {context.get("attachment_context")}")
+    log.debug(f"ChatID: {chat_id} - User meta: {data.context}")
+    log.debug(f"ChatID: {chat_id} - Workspace in context: {context.get("workspace_in_context", data.workspace_in_context)}")
+    log.debug(f"ChatID: {chat_id} - Workspace slug: {context.get("workspace_slug", data.workspace_slug)}")
+    log.debug(f"ChatID: {chat_id} - Workspace ID: {context.get("workspace_id", str(data.workspace_id) if data.workspace_id else None)}")
+    log.debug(f"ChatID: {chat_id} - Web search enabled: {context.get("websearch_enabled", getattr(data, "is_websearch_enabled", False))}")
+    log.debug(f"ChatID: {chat_id} - Is New Chat: {data.is_new}")
+    log.debug(f"ChatID: {chat_id} - Source: {data.source}")
+    log.debug(f"ChatID: {chat_id} - Is Project Chat: {data.is_project_chat}")
+    log.debug(f"ChatID: {chat_id} - User ID: {data.user_id}")
+    log.debug(f"ChatID: {chat_id} - Project ID: {str(data.project_id) if data.project_id else None}")
+    log.debug(f"ChatID: {chat_id} - LLM: {data.llm}")
 
 
 async def construct_enhanced_prompt_and_context(

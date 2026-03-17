@@ -40,7 +40,7 @@ import type {
   IProject,
   TWorkItemFilterProperty,
 } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import {
   getAssigneeFilterConfig,
   getCreatedAtFilterConfig,

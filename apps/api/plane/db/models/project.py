@@ -28,7 +28,7 @@ from django.dispatch import receiver
 from plane.bgtasks.deletion_task import soft_delete_pages_on_project_deletion
 
 # Module imports
-from plane.db.mixins import AuditModel, SoftDeletionManager, SoftDeletionQuerySet
+from plane.db.mixins import AuditModel, SoftDeletionManager, SoftDeletionQuerySet, FiltersMixin
 
 from .base import BaseModel
 from .workspace import WorkspaceManager
@@ -189,6 +189,8 @@ class Project(BaseModel):
         super().__init__(*args, **kwargs)
 
     objects = ProjectBaseManager()
+
+    FORBIDDEN_IDENTIFIER_CHARS_PATTERN = r"^.*[&+,:;$^}{*=?@#|'<>.()%!-].*$"
 
     @property
     def cover_image_url(self):
@@ -504,7 +506,7 @@ class ProjectPublicMember(ProjectBaseModel):
         ordering = ("-created_at",)
 
 
-class ProjectUserProperty(ProjectBaseModel):
+class ProjectUserProperty(ProjectBaseModel, FiltersMixin):
     from .issue import get_default_filters, get_default_display_filters, get_default_display_properties
 
     user = models.ForeignKey(

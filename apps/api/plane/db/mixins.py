@@ -77,7 +77,12 @@ class BulkOperationHooks:
             else:
                 # For regular updates, use the current queryset
                 objs = self
-            post_bulk_update.send(sender=self.__class__, model=self.model, objs=objs)
+            post_bulk_update.send(
+                sender=self.model,
+                model=self.model,
+                objs=objs,
+                updated_fields=set(kwargs.keys()),
+            )
         return rows
 
     @transaction.atomic
@@ -96,7 +101,7 @@ class BulkOperationHooks:
 
         objs = super().bulk_create(*args, **kwargs)
 
-        post_bulk_create.send(sender=self.__class__, model=self.model, objs=objs)
+        post_bulk_create.send(sender=self.model, model=self.model, objs=objs)
 
         return objs
 
@@ -140,6 +145,74 @@ class SoftDeleteModel(models.Model):
 
 class AuditModel(TimeAuditModel, UserAuditModel, SoftDeleteModel):
     """To path when the record was created and last modified"""
+
+    class Meta:
+        abstract = True
+
+
+def get_default_pql_filter_state() -> dict:
+    return {
+        # The default state for pql_filters can be an empty string or a default PQL query saved by the frontend.
+        # with custom editor tags for user pill etc.
+        "json": {},
+        # This field is used to store the stripped version of the pql filter without any editor tags,
+        # which can be used for backend processing and validation.
+        "stripped": "",
+    }
+
+def get_default_filters():
+    return {
+        "priority": None,
+        "state": None,
+        "state_group": None,
+        "assignees": None,
+        "created_by": None,
+        "labels": None,
+        "start_date": None,
+        "target_date": None,
+        "subscriber": None,
+    }
+
+
+class FilterMethod(models.TextChoices):
+    """
+    Filter methods for cycle user properties.
+    """
+    RICH_FILTERS = "rich_filters", "Rich Filters"
+    PQL_FILTERS = "pql_filters", "PQL Filters"
+    AI_FILTERS = "ai_filters", "AI Filters"
+
+
+def get_default_display_filters():
+    return {
+        "group_by": None,
+        "order_by": "-created_at",
+        "type": None,
+        "sub_issue": True,
+        "show_empty_groups": True,
+        "layout": "list",
+        "calendar_date_range": "",
+    }
+
+class FiltersMixin(models.Model):
+    """
+    Mixin that validates pql_filters contains valid PQL syntax before saving.
+
+    Apply to any model that has a ``pql_filters`` TextField. Validation runs in
+    both ``clean()`` (for form / admin integration) and ``save()`` (to guard
+    direct ``.save()`` calls that bypass ``full_clean()``).
+
+    Usage::
+
+        class MyModel(FiltersMixin, SomeBaseModel):
+            pql_filters = models.JSONField(default=get_default_pql_filter_state)
+    """
+
+    pql_filters = models.JSONField(default=get_default_pql_filter_state)
+    rich_filters = models.JSONField(default=dict)
+    filters = models.JSONField(default=get_default_filters)
+    last_used_filter = models.CharField(max_length=255, default=FilterMethod.RICH_FILTERS)
+    display_filters = models.JSONField(default=get_default_display_filters)
 
     class Meta:
         abstract = True

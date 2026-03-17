@@ -20,7 +20,6 @@ from strawberry.types import Info
 
 # Module Imports
 from plane.db.models import IntakeIssue, Issue, Project, ProjectMember
-from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.types.issues.meta import IssueShortenedMetaInfo
 from plane.graphql.utils.roles import Roles
@@ -46,14 +45,10 @@ def project_member_exists(workspace_slug, project_identifier, user):
 
 
 @sync_to_async
-def get_project_id(workspace_slug, project_identifier):
+def get_project_id(workspace_slug, project_identifier) -> str:
     try:
-        project = Project.objects.only("id").get(
-            workspace__slug=workspace_slug,
-            identifier=project_identifier,
-            archived_at__isnull=True,
-        )
-        return project.id
+        project = Project.objects.only("id").get(workspace__slug=workspace_slug, identifier=project_identifier)
+        return str(project.id)
     except Project.DoesNotExist:
         message = "Project not found."
         error_extensions = {"code": "PROJECT_NOT_FOUND", "statusCode": 404}
@@ -61,7 +56,9 @@ def get_project_id(workspace_slug, project_identifier):
 
 
 @sync_to_async
-def get_issue_details(workspace_slug: str, project_id: str, issue_sequence: str):
+def get_shortened_issue_details(
+    workspace_slug: str, project_id: str, issue_sequence: str
+) -> tuple[str, bool, bool, str | None]:
     try:
         issue = Issue.objects.only("id", "type").get(
             workspace__slug=workspace_slug,
@@ -72,7 +69,7 @@ def get_issue_details(workspace_slug: str, project_id: str, issue_sequence: str)
         issue_intake = IntakeIssue.objects.filter(issue=issue, status__in=[-2, 0]).first()
 
         return (
-            issue.id,
+            str(issue.id),
             issue.type.is_epic if issue.type else False,
             bool(issue_intake),
             issue_intake.id if issue_intake else None,
@@ -90,9 +87,6 @@ class IssueShortenedMetaInfoQuery:
     async def issue_shortened_meta_info(
         self, info: Info, slug: str, work_item_identifier: str
     ) -> IssueShortenedMetaInfo:
-        user = info.context.user
-        user_id = str(user.id)
-
         workspace_slug = slug
         project_identifier = None
         issue_sequence = None
@@ -108,22 +102,11 @@ class IssueShortenedMetaInfoQuery:
             error_extensions = {"code": "ISSUE_NOT_FOUND", "statusCode": 404}
             raise GraphQLError(message, extensions=error_extensions)
 
-        project_id = await get_project_id(workspace_slug, project_identifier)
+        project_id = await get_project_id(workspace_slug=workspace_slug, project_identifier=project_identifier)
 
-        is_project_member = await project_member_exists(workspace_slug, project_identifier, info.context.user)
-        if not is_project_member:
-            # validate teamspace membership
-            project_teamspace_filter = await project_member_filter_via_teamspaces_async(
-                user_id=user_id,
-                workspace_slug=workspace_slug,
-            )
-            teamspace_project_ids = project_teamspace_filter.teamspace_project_ids
-            if not teamspace_project_ids or str(project_id) not in teamspace_project_ids:
-                message = "User does not have permission to access this project."
-                error_extensions = {"code": "UNAUTHORIZED", "statusCode": 403}
-                raise GraphQLError(message, extensions=error_extensions)
-
-        issue_id, is_epic, is_intake, intake_id = await get_issue_details(workspace_slug, project_id, issue_sequence)
+        issue_id, is_epic, is_intake, intake_id = await get_shortened_issue_details(
+            workspace_slug=workspace_slug, project_id=project_id, issue_sequence=issue_sequence
+        )
 
         return IssueShortenedMetaInfo(
             project=str(project_id),

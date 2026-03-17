@@ -30,20 +30,22 @@ from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.types.asset import FileAssetEntityType
 from plane.graphql.types.epics.base import EpicStatsType
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
+from plane.graphql.utils.archive import ArchivedFilter, apply_archived_filter
 from plane.graphql.utils.feature_flag import _validate_feature_flag
 
 # Local Imports
-from .page import is_epic_page_feature_flagged, get_epic_pages_count
+from .page import get_epic_pages_count, is_epic_page_feature_flagged
 
 
 def epic_base_query(
     workspace_slug: Optional[str] = None,
     project_id: Optional[str] = None,
     user_id: Optional[str] = None,
+    archived_filter: Optional[ArchivedFilter] = None,
 ):
     """
     Get the epic base query for objects and all objects the given workspace slug
-    and project id
+    and project id.
     """
     epic_base_query = (
         Issue.objects
@@ -60,8 +62,6 @@ def epic_base_query(
         .exclude(state__group=StateGroup.TRIAGE.value)
         # epic filters
         .filter(Q(type__isnull=False) & Q(type__is_epic=True))
-        # archived filters
-        .filter(archived_at__isnull=True)
         # deleted filters
         .filter(deleted_at__isnull=True)
         # draft filters
@@ -83,6 +83,9 @@ def epic_base_query(
             workspace_slug=workspace_slug,
         )
         epic_base_query = epic_base_query.filter(project_teamspace_filter.query).distinct()
+
+    # archived filters
+    epic_base_query = apply_archived_filter(queryset=epic_base_query, archived_filter=archived_filter)
 
     return epic_base_query
 
@@ -177,12 +180,15 @@ def get_project_epics(
     user_id: str,
     filters: Optional[JSON] = {},
     orderBy: Optional[str] = "-created_at",
+    archived_filter: Optional[ArchivedFilter] = None,
 ):
     """
     Get all epics for the given project
     """
 
-    base_query = epic_base_query(workspace_slug=workspace_slug, project_id=project_id, user_id=user_id)
+    base_query = epic_base_query(
+        workspace_slug=workspace_slug, project_id=project_id, user_id=user_id, archived_filter=archived_filter
+    )
 
     epics = (
         base_query.select_related("workspace", "project", "state")
@@ -196,11 +202,11 @@ def get_project_epics(
 
 
 @sync_to_async
-def get_epic(workspace_slug: str, project_id: str, epic_id: str):
+def get_epic(workspace_slug: str, project_id: str, epic_id: str, archived_filter: Optional[ArchivedFilter] = None):
     """
     Get the epic for the given project and epic id
     """
-    base_query = epic_base_query(workspace_slug=workspace_slug, project_id=project_id)
+    base_query = epic_base_query(workspace_slug=workspace_slug, project_id=project_id, archived_filter=archived_filter)
 
     try:
         return base_query.get(id=epic_id)

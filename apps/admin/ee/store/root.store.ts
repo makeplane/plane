@@ -18,6 +18,8 @@ import { InstanceFeatureFlagsStore } from "@/plane-admin/store/instance-feature-
 import { CoreRootStore } from "@/store/root.store";
 import type { IInstanceManagementStore } from "./instance-management.store";
 import { InstanceManagementStore } from "./instance-management.store";
+import type { IInstanceUserStore } from "./instance-user.store";
+import { InstanceUserStore } from "./instance-user.store";
 // plane admin store
 
 enableStaticRendering(typeof window === "undefined");
@@ -25,11 +27,13 @@ enableStaticRendering(typeof window === "undefined");
 export class RootStore extends CoreRootStore {
   instanceFeatureFlags: IInstanceFeatureFlagsStore;
   instanceManagement: IInstanceManagementStore;
+  instanceUser: IInstanceUserStore;
 
   constructor() {
     super();
     this.instanceFeatureFlags = new InstanceFeatureFlagsStore();
     this.instanceManagement = new InstanceManagementStore(this);
+    this.instanceUser = new InstanceUserStore(this);
   }
 
   hydrate(initialData: any) {
@@ -41,5 +45,6 @@ export class RootStore extends CoreRootStore {
     super.resetOnSignOut();
     this.instanceFeatureFlags = new InstanceFeatureFlagsStore();
     this.instanceManagement = new InstanceManagementStore(this);
+    this.instanceUser = new InstanceUserStore(this);
   }
 }

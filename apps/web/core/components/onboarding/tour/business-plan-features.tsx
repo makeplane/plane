@@ -16,8 +16,8 @@ import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
+import { Avatar } from "@plane/propel/avatar";
 import { PlaneLockup } from "@plane/propel/icons";
-import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import tourImage from "@/app/assets/onboarding/tour.webp?url";

@@ -22,6 +22,7 @@ import type {
   TFilterFieldType,
   TFilterValue,
   TMultiSelectFilterFieldConfig,
+  TAsyncMultiSelectFilterFieldConfig,
   TNumberFilterFieldConfig,
   TSingleSelectFilterFieldConfig,
   TSupportedFilterFieldConfigs,
@@ -106,19 +107,21 @@ export const createFilterFieldConfig = <T extends TFilterFieldType, V extends TF
     ? TSingleSelectFilterFieldConfig<V>
     : T extends typeof FILTER_FIELD_TYPE.MULTI_SELECT
       ? TMultiSelectFilterFieldConfig<V>
-      : T extends typeof FILTER_FIELD_TYPE.DATE
-        ? TDateFilterFieldConfig<V>
-        : T extends typeof FILTER_FIELD_TYPE.DATE_RANGE
-          ? TDateRangeFilterFieldConfig<V>
-          : T extends typeof FILTER_FIELD_TYPE.BOOLEAN
-            ? TBooleanFilterFieldConfig
-            : T extends typeof FILTER_FIELD_TYPE.NUMBER
-              ? TNumberFilterFieldConfig<V>
-              : T extends typeof FILTER_FIELD_TYPE.NUMBER_RANGE
-                ? TNumberRangeFilterFieldConfig<V>
-                : T extends typeof FILTER_FIELD_TYPE.TEXT
-                  ? TTextFilterFieldConfig<V>
-                  : T extends typeof FILTER_FIELD_TYPE.WITH_VALUE
-                    ? TWithValueFilterFieldConfig<V>
-                    : never
+      : T extends typeof FILTER_FIELD_TYPE.ASYNC_MULTI_SELECT
+        ? TAsyncMultiSelectFilterFieldConfig<V>
+        : T extends typeof FILTER_FIELD_TYPE.DATE
+          ? TDateFilterFieldConfig<V>
+          : T extends typeof FILTER_FIELD_TYPE.DATE_RANGE
+            ? TDateRangeFilterFieldConfig<V>
+            : T extends typeof FILTER_FIELD_TYPE.BOOLEAN
+              ? TBooleanFilterFieldConfig
+              : T extends typeof FILTER_FIELD_TYPE.NUMBER
+                ? TNumberFilterFieldConfig<V>
+                : T extends typeof FILTER_FIELD_TYPE.NUMBER_RANGE
+                  ? TNumberRangeFilterFieldConfig<V>
+                  : T extends typeof FILTER_FIELD_TYPE.TEXT
+                    ? TTextFilterFieldConfig<V>
+                    : T extends typeof FILTER_FIELD_TYPE.WITH_VALUE
+                      ? TWithValueFilterFieldConfig<V>
+                      : never
 ): TSupportedFilterFieldConfigs<V> => config as TSupportedFilterFieldConfigs<V>;

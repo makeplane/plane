@@ -234,8 +234,8 @@ class SAMLAdapter(Adapter):
             "post_data": request.POST.copy(),
         }
 
-    def get_auth_url(self):
-        return self.auth.login()
+    def get_auth_url(self, return_to=None):
+        return self.auth.login(return_to=return_to)
 
     def authenticate(self):
         self.auth.process_response()

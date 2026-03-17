@@ -17,8 +17,9 @@ import type { IStep, TStepExecutionContext, TStepExecutionInput } from "@/apps/j
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { wait } from "@/helpers/delay";
 import { getAPIClientInternal } from "@/services/client";
+import { ImportTimeoutError } from "@/apps/jira-server-importer/v2/helpers/errors";
 
-const MAX_STALE_POLLS = 60; // ~5 min with no progress = timeout
+const MAX_STALE_POLLS = 120; // ~10 min with no progress = timeout
 const client = getAPIClientInternal();
 
 /**
@@ -36,6 +37,8 @@ export class WaitForCeleryStep implements IStep {
   name = EJiraStep.WAIT_FOR_CELERY;
   dependencies = [];
 
+  stepRequired: boolean = true;
+
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
     const { jobContext, previousContext } = input;
 
@@ -50,7 +53,8 @@ export class WaitForCeleryStep implements IStep {
           completed: report.completed_batch_count,
           total: report.total_batch_count,
         });
-        return createEmptyContext();
+
+        throw new ImportTimeoutError(`[${jobContext.job.id}] [${this.name}] Timeout: no progress`);
       }
 
       logger.info(`[${jobContext.job.id}] [${this.name}] Waiting for Celery to finish`, {

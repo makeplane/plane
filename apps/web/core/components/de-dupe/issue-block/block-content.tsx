@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { TDeDupeIssue } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";

@@ -153,8 +153,8 @@ class PlaceholderOrchestrator:
         Returns:
             List of execution results with metadata
         """
-        log.info(f"Starting orchestrated execution of {len(self.planned_actions)} actions")
-        log.info(f"\n\nPlanned actions: {self.planned_actions}\n\n")
+        log.debug(f"Starting orchestrated execution of {len(self.planned_actions)} actions")
+        log.debug(f"\n\nPlanned actions: {self.planned_actions}\n\n")
 
         remaining = list(self.planned_actions)
         iteration = 0
@@ -222,7 +222,7 @@ class PlaceholderOrchestrator:
         if iteration >= max_iterations:
             log.warning(f"Reached max iterations ({max_iterations}), stopping")
 
-        log.info(f"Orchestration complete. Executed {len(self.results)} actions successfully")
+        log.debug(f"Orchestration complete. Executed {len(self.results)} actions successfully")
         return self.results
 
     async def _partition_by_readiness(self, actions: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
@@ -277,7 +277,7 @@ class PlaceholderOrchestrator:
                 if prerequisite in pending_tool_names:
                     # Special case: don't block if we are checking against ourselves (rare but possible)
                     # or if there are multiple instances of same tool (handled by loop logic)
-                    log.info(f"Action '{tool_name}' blocked by pending implicit dependency '{prerequisite}'")
+                    log.debug(f"Action '{tool_name}' blocked by pending implicit dependency '{prerequisite}'")
                     return True
 
         return False
@@ -324,7 +324,7 @@ class PlaceholderOrchestrator:
             if self._is_placeholder(value):
                 resolved = await self._resolve_single_placeholder(key, value)
                 args[key] = resolved
-                log.info(f"Resolved {key}: {value} -> {resolved}")
+                log.debug(f"Resolved {key}: {value} -> {resolved}")
 
             # Handle lists of placeholders
             elif isinstance(value, list):
@@ -404,7 +404,7 @@ class PlaceholderOrchestrator:
         # Validate the resolved value
         self._validate_extracted_value(field_name, resolved_value)
 
-        log.info(f"✅ Resolved {field_name}='{placeholder}' → '{resolved_value}' " f"(from {entity_type}:{entity_name})")
+        log.debug(f"✅ Resolved {field_name}='{placeholder}' → '{resolved_value}' " f"(from {entity_type}:{entity_name})")
 
         return resolved_value
 
@@ -505,7 +505,7 @@ IMPORTANT:
         tool_name = action["tool_name"]
         args = action["args"]
 
-        log.info(f"Executing: {tool_name} with args: {args}")
+        log.debug(f"Executing: {tool_name} with args: {args}")
 
         # Build tool if not cached
         if tool_name not in self.tools_cache:
@@ -523,7 +523,7 @@ IMPORTANT:
                 # e.g., "initiatives_create_label" -> "initiatives"
                 category = tool_name.split("_")[0] if "_" in tool_name else tool_name
 
-            log.info(f"Building tools for category '{category}' (tool: {tool_name})")
+            log.debug(f"Building tools for category '{category}' (tool: {tool_name})")
             tools = self.chatbot._build_method_tools(category, self.method_executor, self.context)
             for tool in tools:
                 self.tools_cache[tool.name] = tool
@@ -534,10 +534,10 @@ IMPORTANT:
             raise ValueError(f"Tool '{tool_name}' not found")
 
         # Execute the tool
-        log.info(f"[DEBUG] About to invoke tool '{tool_name}' with args: {args}")
+        log.debug(f"[DEBUG] About to invoke tool '{tool_name}' with args: {args}")
         try:
             result = await tool.ainvoke(args)
-            log.info(f"[DEBUG] Tool '{tool_name}' invocation completed. Result type: {type(result)}")
+            log.debug(f"[DEBUG] Tool '{tool_name}' invocation completed. Result type: {type(result)}")
         except Exception as tool_error:
             log.error(f"[DEBUG] Tool '{tool_name}' raised exception during ainvoke: {tool_error}", exc_info=True)
             raise
@@ -611,13 +611,13 @@ IMPORTANT:
             keys.append(f"{entity_type}:{planned_name.lower()}")  # e.g., "property:severity"
             keys.append(planned_name.lower())  # Allow lookup by planned name
             if planned_name.lower() != actual_name.lower():
-                log.info(f"⚠️ Name mismatch: planned='{planned_name}' vs actual='{actual_name}'. " f"Storing under both names for lookup.")
+                log.debug(f"⚠️ Name mismatch: planned='{planned_name}' vs actual='{actual_name}'. " f"Storing under both names for lookup.")
 
         # Store under all keys
         for key in keys:
             self.execution_context[key] = result
 
-        log.info(f"✅ Stored in context: {entity_type}:{actual_name} (with {len(keys)} lookup keys)")
+        log.debug(f"✅ Stored in context: {entity_type}:{actual_name} (with {len(keys)} lookup keys)")
 
         # If result includes a workitem_entity (e.g., from intake creation), also store it
         if "workitem_entity" in result:
@@ -637,7 +637,7 @@ IMPORTANT:
                 for key in workitem_keys:
                     self.execution_context[key] = workitem_result
 
-                log.info(f"✅ Also stored secondary entity: {workitem_type}:{workitem_name} (ID: {workitem_entity.get("entity_id")})")
+                log.debug(f"✅ Also stored secondary entity: {workitem_type}:{workitem_name} (ID: {workitem_entity.get("entity_id")})")
 
     def _can_resolve_from_context(self, entity_type: Optional[str], entity_name: Optional[str]) -> bool:
         """

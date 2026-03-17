@@ -13,10 +13,10 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import type { TIssueProperty, TOperationMode } from "@plane/types";
+import type { TIssueProperty, TIssuePropertyTypeKeys, TOperationMode } from "@plane/types";
 import { EIssuePropertyType } from "@plane/types";
 // local imports
-import type { TIssuePropertyFormError } from "../property-list-item";
+import type { TIssuePropertyFormError, TPropertyValidator } from "../property-list-item";
 import { SelectedAttributeProperties } from "./selected-attribute-properties";
 
 type TPropertyAttributesProps = {
@@ -27,12 +27,26 @@ type TPropertyAttributesProps = {
     value: TIssueProperty<EIssuePropertyType>[K],
     shouldSync?: boolean
   ) => void;
+  onPropertyConfigValidityChange?: (isValid: boolean) => void;
+  propertyValidator?: TPropertyValidator;
   error?: TIssuePropertyFormError;
   isUpdateAllowed: boolean;
+  allProperties?: TIssueProperty<EIssuePropertyType>[];
+  allowedPropertyTypes?: TIssuePropertyTypeKeys[];
 };
 
 export const PropertyAttributes = observer(function PropertyAttributes(props: TPropertyAttributesProps) {
-  const { propertyDetail, currentOperationMode, onPropertyDetailChange, error, isUpdateAllowed } = props;
+  const {
+    propertyDetail,
+    currentOperationMode,
+    onPropertyDetailChange,
+    onPropertyConfigValidityChange,
+    propertyValidator,
+    error,
+    isUpdateAllowed,
+    allProperties,
+    allowedPropertyTypes,
+  } = props;
   // list of property types that should not be allowed to change attributes
   const DISABLE_ATTRIBUTE_CHANGE_LIST = [EIssuePropertyType.BOOLEAN, EIssuePropertyType.DATETIME];
 
@@ -49,8 +63,12 @@ export const PropertyAttributes = observer(function PropertyAttributes(props: TP
         propertyDetail={propertyDetail}
         currentOperationMode={currentOperationMode}
         onPropertyDetailChange={onPropertyDetailChange}
+        onPropertyConfigValidityChange={onPropertyConfigValidityChange}
+        propertyValidator={propertyValidator}
         error={error}
         isUpdateAllowed={isUpdateAllowed}
+        allProperties={allProperties}
+        allowedPropertyTypes={allowedPropertyTypes}
       />
     </div>
   );

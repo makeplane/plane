@@ -30,4 +30,6 @@ export type TTableData<T> = {
   tBodyClassName?: string;
   tBodyTrClassName?: string;
   tdClassName?: string;
+  isLoading?: boolean;
+  emptyState?: React.ReactNode;
 };

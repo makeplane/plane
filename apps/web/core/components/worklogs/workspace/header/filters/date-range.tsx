@@ -43,8 +43,12 @@ export const WorkspaceWorklogFilterDateRange = observer(function WorkspaceWorklo
     }
   }, [endDateValue, filters.created_at, startDateValue]);
 
-  const handleDateChange = (from: string | undefined, to: string | undefined) =>
-    handleSelectedOptions([`${from};after`, `${to};before`]);
+  const handleDateChange = (from: string | undefined, to: string | undefined) => {
+    const options: string[] = [];
+    if (from) options.push(`${from};after`);
+    if (to) options.push(`${to};before`);
+    handleSelectedOptions(options);
+  };
 
   const handleSelectedOptions = (updatedIds: string[]) => updateFilters(workspaceSlug, "created_at", updatedIds);
 

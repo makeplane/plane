@@ -10,20 +10,21 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
-from typing import Optional
 from datetime import datetime
-
-# Strawberry imports
-import strawberry
-import strawberry_django
-from strawberry.types import Info
-from strawberry.scalars import JSON
-
-# Module imports
-from plane.db.models import Project, ProjectMember, Issue
+from typing import Optional
 
 # Third-party library imports
+import strawberry
+import strawberry_django
 from asgiref.sync import sync_to_async
+
+# Strawberry imports
+from strawberry.scalars import JSON
+from strawberry.types import Info
+
+# Module imports
+from plane.db.models import Issue, Project, ProjectMember
+from plane.graphql.utils.timezone import user_timezone_converter
 
 
 @strawberry_django.type(Project)
@@ -108,6 +109,21 @@ class ProjectType:
         )()
         return project_active_issues
 
+    @strawberry.field
+    def created_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.created_at)
+        return converted_date
+
+    @strawberry.field
+    def updated_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.updated_at)
+        return converted_date
+
+    @strawberry.field
+    def archived_at(self, info) -> Optional[datetime]:
+        converted_date = user_timezone_converter(info.context.user, self.archived_at)
+        return converted_date
+
 
 @strawberry_django.type(ProjectMember)
 class ProjectMemberType:
@@ -137,4 +153,12 @@ class ProjectLiteType:
     name: Optional[str] = None
     identifier: Optional[str] = None
     is_member: Optional[bool] = False
+    logo_props: Optional[JSON] = None
+
+
+@strawberry.type
+class ProjectPublicLiteType:
+    id: Optional[strawberry.ID] = None
+    name: Optional[str] = None
+    identifier: Optional[str] = None
     logo_props: Optional[JSON] = None

@@ -34,8 +34,9 @@ from pi.services.chat.utils import get_current_timestamp_context
 from pi.services.llm import llms
 from pi.services.llm.error_handling import llm_error_handler
 from pi.services.llm.error_handling import streaming_error_handler
+from pi.services.llm.llms import LLMFactory
 from pi.services.llm.llms import _is_custom_model
-from pi.services.llm.llms import get_lightweight_llm
+from pi.services.llm.llms import create_custom_llm
 
 # from pi.services.retrievers import thread_store
 from pi.services.retrievers import pg_store
@@ -70,34 +71,29 @@ class ChatKit(AttachmentMixin):
         from pi.services.llm.llms import create_anthropic_llm
         from pi.services.llm.llms import create_openai_llm
 
-        # Model name mapping for user-friendly names to actual LiteLLM model names
-        claude_model_name_mapping = {
-            "claude-sonnet-4-0": settings.llm_model.CLAUDE_SONNET_4_0,
-            "claude-sonnet-4-5": settings.llm_model.CLAUDE_SONNET_4_5,
-            "claude-sonnet-4-6": settings.llm_model.CLAUDE_SONNET_4_6,
-        }
+        _anthropic_models = settings.llm_config.USER_VISIBLE_MODELS_ANTHROPIC
 
         tool_llm_streaming = False
         if not switch_llm:
             switch_llm = settings.llm_model.GPT_4_1
             TOOL_LLM = settings.llm_model.GPT_4_1
             tool_config = LLMConfig.openai(TOOL_LLM, temperature=0.2, streaming=tool_llm_streaming)
+        elif _is_custom_model(switch_llm):
+            # Custom self-hosted model (checked first to avoid name collisions
+            # with built-in model names, e.g. CUSTOM_LLM_MODEL_KEY=claude-sonnet-4-6)
+            TOOL_LLM = settings.llm_config.CUSTOM_LLM_MODEL_KEY
+            tool_config = LLMConfig(
+                model=TOOL_LLM,
+                base_url=settings.llm_config.CUSTOM_LLM_BASE_URL,
+                api_key=settings.llm_config.CUSTOM_LLM_API_KEY or "not-needed",
+                temperature=None,
+                streaming=tool_llm_streaming,
+            )
         else:
-            # Map user-friendly model names to actual model names
-            actual_model_name = claude_model_name_mapping.get(switch_llm, switch_llm)
-
-            if switch_llm in claude_model_name_mapping:
-                # This is a Claude model
-                if actual_model_name in [
-                    settings.llm_model.CLAUDE_SONNET_4_0,
-                    settings.llm_model.CLAUDE_SONNET_4_5,
-                    settings.llm_model.CLAUDE_SONNET_4_6,
-                ]:
-                    # Direct Anthropic API models
-                    TOOL_LLM = actual_model_name
-                    tool_config = LLMConfig.anthropic(TOOL_LLM, streaming=tool_llm_streaming, temperature=0.2)
-                else:
-                    raise ValueError(f"Unsupported model: {actual_model_name}")
+            if switch_llm in _anthropic_models:
+                # Direct Anthropic API model
+                TOOL_LLM = switch_llm
+                tool_config = LLMConfig.anthropic(TOOL_LLM, streaming=tool_llm_streaming, temperature=0.2)
 
             elif switch_llm == "gpt-5-standard":
                 # This is GPT-5 Standard with medium reasoning
@@ -121,16 +117,6 @@ class ChatKit(AttachmentMixin):
                 # This is GPT-5.1
                 TOOL_LLM = "gpt-5.1"
                 tool_config = LLMConfig.openai(TOOL_LLM, streaming=False)
-            elif _is_custom_model(switch_llm):
-                # Custom self-hosted model
-                TOOL_LLM = settings.llm_config.CUSTOM_LLM_MODEL_KEY
-                tool_config = LLMConfig(
-                    model=TOOL_LLM,
-                    base_url=settings.llm_config.CUSTOM_LLM_BASE_URL,
-                    api_key=settings.llm_config.CUSTOM_LLM_API_KEY or "not-needed",
-                    temperature=0.2,
-                    streaming=tool_llm_streaming,
-                )
             else:
                 # This is a regular OpenAI model
                 TOOL_LLM = switch_llm
@@ -144,7 +130,7 @@ class ChatKit(AttachmentMixin):
 
         self.switch_llm = switch_llm
         # Get chat LLM - reasoning effort is now determined by model name
-        self.chat_llm = llms.get_chat_llm(switch_llm)
+        self.chat_llm = llms.LLMFactory.get_chat_llm(switch_llm)
 
         # Log key model info
         getattr(self.chat_llm, "model_name", "unknown")
@@ -154,14 +140,11 @@ class ChatKit(AttachmentMixin):
             pass
 
         # Create tool LLM with appropriate factory (Anthropic vs OpenAI)
-        # Check if this is a direct Anthropic model (not LiteLLM proxy)
-        is_direct_anthropic = switch_llm in ["claude-sonnet-4-0", "claude-sonnet-4-5", "claude-sonnet-4-6"] or tool_config.model in [
-            settings.llm_model.CLAUDE_SONNET_4_0,
-            settings.llm_model.CLAUDE_SONNET_4_5,
-            settings.llm_model.CLAUDE_SONNET_4_6,
-        ]
+        is_direct_anthropic = switch_llm in _anthropic_models or tool_config.model in _anthropic_models
 
-        if is_direct_anthropic:
+        if _is_custom_model(switch_llm):
+            self.tool_llm = llms.LazyLLM(lambda cfg=tool_config: create_custom_llm(cfg))
+        elif is_direct_anthropic:
             # Use ChatAnthropic for direct Anthropic models (supports prompt caching)
             self.tool_llm = llms.LazyLLM(lambda: create_anthropic_llm(tool_config))
         else:
@@ -227,7 +210,6 @@ class ChatKit(AttachmentMixin):
 
         try:
             from pi.app.models.enums import MessageMetaStepType
-            from pi.services.llm.llms import LLMFactory
 
             # Create a lightweight LLM for context extraction
             # Use LLMFactory.get_fast_llm() which handles API key detection and provider selection
@@ -262,7 +244,7 @@ Provide concise, relevant context from the attachment(s):"""
             response = await context_llm.ainvoke([context_message])
 
             if hasattr(response, "content"):
-                return str(response.content).strip()
+                return extract_text_from_content(response.content).strip()
             else:
                 return str(response).strip()
 
@@ -383,14 +365,10 @@ Provide concise, relevant context from the attachment(s):"""
         entity_urls = None
         try:
             extracted_ids = extract_ids_from_sql_result(query_execution_result)
-            log.info(f"ChatID: {chat_id} - _create_entity_urls_for_db_search: Extracted IDs: {extracted_ids}")
             # Construct URLs using dynamic function (no need for user_meta)
             if any(extracted_ids.values()):
                 api_base_url = settings.plane_api.FRONTEND_URL
-                log.info(f"ChatID: {chat_id} - kit.py:_create_entity_urls_for_db_search: API Base URL: {api_base_url}")
                 entity_urls = await construct_entity_urls_from_db(entity_ids=extracted_ids, api_base_url=api_base_url)
-                log.info(f"ChatID: {chat_id} - kit.py:_create_entity_urls_for_db_search: Entity URLs: {entity_urls}")
-                # intermediate_results["entity_urls"] = entity_urls
 
                 query_flow_store["tool_response"] += f"Entity extraction: {sum(len(ids) for ids in extracted_ids.values())} entities found\n"
                 if entity_urls:
@@ -735,7 +713,7 @@ Provide concise, relevant context from the attachment(s):"""
                 # Extract and return the results text
                 # result = StandardAgentResponse.extract_results(response)
                 result = StandardAgentResponse.format_response_with_entity_urls(response)
-                log.info(f"ChatID: {chat_id} - kit.py:structured_db_tool: format_response_with_entity_urls result: {result}")
+                log.debug(f"ChatID: {chat_id} - kit.py:structured_db_tool: format_response_with_entity_urls result: {result}")
                 return result
             except Exception as e:
                 log.error(f"Error in structured_db_tool: {str(e)}")
@@ -779,7 +757,7 @@ Provide concise, relevant context from the attachment(s):"""
                     return "Failed to retrieve cycle details: cycle_id is required"
 
                 # Log what facets were requested
-                log.info(
+                log.debug(
                     f"ChatID: {chat_id} - fetch_cycle_details called with cycle_id={cycle_id}, "
                     f"facets={facets}, filters={filters}, detail_level={detail_level}"
                 )
@@ -833,7 +811,7 @@ Provide concise, relevant context from the attachment(s):"""
                 data["summary"] = await get_cycle_summary_metrics(cycle_id)
                 try:
                     _s = data.get("summary") or {}
-                    log.info(
+                    log.debug(
                         f"ChatID: {chat_id} - fetch_cycle_details: summary totals: total={_s.get("total_issues")}, "
                         f"completed={_s.get("completed_issues")}, open={_s.get("open_issues")}"
                     )
@@ -846,7 +824,7 @@ Provide concise, relevant context from the attachment(s):"""
                 if "by_assignee" in facets:
                     assignee_breakdown = await get_cycle_breakdown_by_assignee(cycle_id)
                     data.setdefault("breakdowns", {})["by_assignee"] = assignee_breakdown
-                    log.info(f"ChatID: {chat_id} - fetch_cycle_details: by_assignee breakdown returned {len(assignee_breakdown)} rows")
+                    log.debug(f"ChatID: {chat_id} - fetch_cycle_details: by_assignee breakdown returned {len(assignee_breakdown)} rows")
 
                 if "by_priority" in facets:
                     data.setdefault("breakdowns", {})["by_priority"] = await get_cycle_breakdown_by_priority(cycle_id)
@@ -878,7 +856,7 @@ Provide concise, relevant context from the attachment(s):"""
 
                 if "issues" in facets:
                     data["issues"] = await list_cycle_issues_filtered(cycle_id=cycle_id, filters=filters, limit=limit or 50, offset=offset or 0)
-                    log.info(
+                    log.debug(
                         f"ChatID: {chat_id} - fetch_cycle_details: Retrieved {len(data.get("issues", []))} issues "
                         f"with filters={filters}, limit={limit or 50}"
                     )
@@ -887,7 +865,7 @@ Provide concise, relevant context from the attachment(s):"""
                 try:
                     requested_breakdown_facets = {"by_state", "by_assignee", "by_priority", "by_label", "by_type", "scope_change", "burndown"}
                     if (detail_level or "summary") == "summary" and any(f in (facets or []) for f in requested_breakdown_facets):
-                        log.info(f"ChatID: {chat_id} - fetch_cycle_details: elevating detail_level to 'metrics' due to requested facets {facets}")
+                        log.debug(f"ChatID: {chat_id} - fetch_cycle_details: elevating detail_level to 'metrics' due to requested facets {facets}")
                         detail_level = "metrics"
                 except Exception:
                     pass
@@ -1159,9 +1137,9 @@ Provide concise, relevant context from the attachment(s):"""
                     if isinstance(results_text, str) and len(results_text) > 800:
                         log_payload["results"] = f"{results_text[:800]}...<truncated>"
                         log_payload["results_length"] = len(results_text)
-                    log.info(f"ChatID: {chat_id} - Web search tool response payload: {log_payload}")
+                    log.debug(f"ChatID: {chat_id} - Web search tool response payload: {log_payload}")
                 except Exception as log_exc:
-                    log.info(f"ChatID: {chat_id} - Web search tool response payload (unformatted): {str(result)[:800]} ({log_exc})")
+                    log.debug(f"ChatID: {chat_id} - Web search tool response payload (unformatted): {str(result)[:800]} ({log_exc})")
 
                 # Store the standardized response for consistency
                 self._store_agent_response("web_search_tool", result)
@@ -1357,8 +1335,7 @@ Provide concise, relevant context from the attachment(s):"""
     async def title_generation(self, chat_history: list[str]) -> str:
         import time
 
-        # Use dedicated lightweight LLM (nano/mini/haiku) for title generation, not the chat model
-        title_llm = get_lightweight_llm(streaming=False, temperature=0.2)
+        title_llm = LLMFactory.get_lightweight_llm(streaming=False, temperature=0.2, model_name=self.switch_llm)
         if self._token_tracking_context:
             title_llm.set_tracking_context(  # type: ignore[attr-defined]
                 self._token_tracking_context["message_id"],
@@ -1411,7 +1388,7 @@ Provide concise, relevant context from the attachment(s):"""
         else:
             user_meta = {"time_context": timestamp_context}
 
-        log.info(f"Processing structured DB query: {query}")
+        log.debug(f"Processing structured DB query: {query}")
         # Import here to avoid circular import
         from pi.agents.sql_agent import text2sql
 
@@ -1438,7 +1415,7 @@ Provide concise, relevant context from the attachment(s):"""
         query_execution_result: str = response_data.get("results", "")
 
         entity_urls = await self._create_entity_urls_for_db_search(query_execution_result, query_flow_store, intermediate_results, chat_id, source)
-        log.info(f"ChatID: {chat_id} - kit.py:handle_structured_db_query: Entity URLs: {entity_urls}")
+        log.debug(f"ChatID: {chat_id} - kit.py:handle_structured_db_query: Entity URLs: {entity_urls}")
         # Format results into a string, passing SQL query so we can detect LIMIT clauses
         sql_query_for_format = intermediate_results.get("generated_sql") if isinstance(intermediate_results, dict) else None
         formatted_query_result = await format_as_bullet_points(query_execution_result, sql_query_for_format)
@@ -1590,7 +1567,7 @@ Provide concise, relevant context from the attachment(s):"""
                 content_length = len(content_preview)
                 if content_length > 800:
                     content_preview = f"{content_preview[:800]}...<truncated>"
-                log.info(
+                log.debug(
                     "Web search prefetch payload: %s",
                     {
                         "search_query": query,
@@ -1604,7 +1581,7 @@ Provide concise, relevant context from the attachment(s):"""
                     },
                 )
             except Exception as log_exc:
-                log.info(f"Web search prefetch payload (unformatted): {str(result)[:800]} ({log_exc})")
+                log.debug(f"Web search prefetch payload (unformatted): {str(result)[:800]} ({log_exc})")
             if db is not None and message_id is not None:
                 from pi.services.llm.token_tracker import TokenTracker
 
@@ -1721,8 +1698,8 @@ Provide concise, relevant context from the attachment(s):"""
 
         # log.info(f"Formatting {len(retrieved_docs)} {doc_type} results")
         formatted_results = []
-        log.info(f"kit.py:format_retrieved_results: Formatting {len(retrieved_docs)} {doc_type} results")
-        log.info(f"kit.py:format_retrieved_results: Retrieved docs: {retrieved_docs}")
+        log.debug(f"kit.py:format_retrieved_results: Formatting {len(retrieved_docs)} {doc_type} results")
+        log.debug(f"kit.py:format_retrieved_results: Retrieved docs: {retrieved_docs}")
         for doc in retrieved_docs:
             if doc_type == "issues":
                 # Accept both legacy and new metadata keys

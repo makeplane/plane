@@ -432,6 +432,8 @@ export default {
     },
   },
   intake: "進件",
+  renew: "更新",
+  preview: "預覽",
   time_tracking: "時間追蹤",
   work_management: "工作管理",
   projects_and_issues: "專案與工作事項",
@@ -513,6 +515,8 @@ export default {
   you: "您",
   labels: "標籤",
   create_new_label: "建立新標籤",
+  label_name: "標籤名稱",
+  failed_to_create_label: "建立標籤失敗，請重試。",
   start_date: "開始日期",
   end_date: "結束日期",
   due_date: "截止日期",
@@ -581,6 +585,9 @@ export default {
       name: "名稱",
     },
   },
+  upgrade_request: "請洽工作區管理員升級。",
+  copied_to_clipboard: "已複製到剪貼簿",
+  copied_to_clipboard_description: "URL 已成功複製到您的剪貼簿",
   toast: {
     success: "成功！",
     error: "錯誤！",
@@ -680,6 +687,14 @@ export default {
     manage_widgets: "管理小工具",
     title: "首頁",
     star_us_on_github: "在 GitHub 上給我們星星",
+    business_trial_banner: {
+      title: "您的14天Business方案試用已啟動！",
+      description: "探索所有Business功能。準備好後，選擇訂閱。不會自動收費。",
+      trial_ends_today: "試用今天結束",
+      trial_ends_in_days: "試用將在{days}天後結束",
+      start_subscription: "開始訂閱",
+      explore_business_features: "探索Business功能",
+    },
   },
   link: {
     modal: {
@@ -1921,6 +1936,14 @@ export default {
       project_states: {
         title: "專案狀態",
       },
+      projects: {
+        title: "專案",
+        description: "管理專案狀態、啟用專案標籤及其他設定。",
+        tabs: {
+          states: "專案狀態",
+          labels: "專案標籤",
+        },
+      },
       teamspaces: {
         title: "團隊空間",
       },
@@ -2539,15 +2562,49 @@ export default {
         toggle_description: "專案成員將能夠建立和編輯頁面。",
       },
       intake: {
-        heading: "接收責任",
+        intake_responsibility: "接收責任",
+        intake_sources: "接收來源",
         title: "接收",
         short_title: "接收",
         description: "讓非成員分享錯誤、回饋和建議；而不會中斷您的工作流程。",
         toggle_title: "啟用接收",
         toggle_description: "允許專案成員在應用程式中建立接收請求。",
+        toggle_tooltip_on: "請專案管理員代為開啟。",
+        toggle_tooltip_off: "請專案管理員代為關閉。",
         notify_assignee: {
           title: "通知負責人",
           description: "對於新的接收請求，預設負責人將透過通知收到提醒",
+        },
+        in_app: {
+          title: "應用程式內",
+          description: "從工作區的成員與訪客取得新的工作項目，不影響現有工作項目。",
+        },
+        email: {
+          title: "電子郵件",
+          description: "從任何寄信到 Plane 電子郵件地址的人收集新的工作項目。",
+          fieldName: "電子郵件 ID",
+        },
+        form: {
+          title: "表單",
+          description: "讓工作區外的人透過專用安全表單為您建立潛在的新工作項目。",
+          fieldName: "預設表單 URL",
+          create_forms: "使用工作項目類型建立表單",
+          manage_forms: "管理表單",
+          manage_forms_tooltip: "請工作區管理員代為管理。",
+          create_form: "建立表單",
+          edit_form: "編輯表單詳細資訊",
+          form_title: "表單標題",
+          form_title_required: "表單標題為必填",
+          work_item_type: "工作項目類型",
+          remove_property: "移除屬性",
+          select_properties: "選擇屬性",
+          search_placeholder: "搜尋屬性",
+          toasts: {
+            success_create: "接收表單已成功建立",
+            success_update: "接收表單已成功更新",
+            error_create: "無法建立接收表單",
+            error_update: "無法更新接收表單",
+          },
         },
         toasts: {
           set: {
@@ -3784,6 +3841,9 @@ export default {
           member_picker: {
             label: "成員選擇器",
           },
+          formula: {
+            label: "公式",
+          },
         },
         attributes: {
           label: "屬性",
@@ -3909,6 +3969,30 @@ export default {
             options: {
               required: "您必須添加至少一個選項。",
             },
+            formula: {
+              required: "公式表達式為必填。",
+              invalid: "無效的公式：{error}",
+              circular_reference: "偵測到循環參照。公式不能直接或間接參照自身。",
+              invalid_reference: "公式參照了不存在的屬性。",
+            },
+          },
+        },
+        formula: {
+          field_label: "公式欄位",
+          tooltip: "使用 '{'欄位名稱'}' 語法輸入公式。支援 +、-、*、/ 和 & 運算子。",
+          placeholder: "編寫公式",
+          test_button: "測試",
+          validating: "驗證中",
+          validation_success: "公式有效！回傳 {resultType}",
+          validation_success_with_refs: "公式有效！回傳 {resultType}（參照了 {count} 個欄位）",
+          error: {
+            empty: "請輸入公式",
+            missing_context: "缺少工作空間、專案或工作項目類型上下文",
+            validation_failed: "驗證失敗",
+          },
+          picker: {
+            no_match: "沒有相符的屬性",
+            no_available: "沒有可用的屬性",
           },
         },
         enable_disable: {
@@ -4012,6 +4096,14 @@ export default {
         },
       },
       tooltip: "點擊以{action}",
+    },
+    change_confirmation: {
+      title: "更改工作項目類型？",
+      description: "更改工作項目類型可能會導致丟失特定於當前類型的自定義屬性值。此操作無法撤銷。",
+      button: {
+        loading: "更改中",
+        default: "更改類型",
+      },
     },
     empty_state: {
       enable: {
@@ -4351,6 +4443,7 @@ export default {
     created: "已創建",
     initiated: "已啟動",
     pulling: "拉取中",
+    timed_out: "超時",
     pulled: "已拉取",
     transforming: "轉換中",
     transformed: "已轉換",
@@ -5621,6 +5714,58 @@ export default {
       },
     },
   },
+  intake_forms: {
+    create: {
+      title: "建立工作項目",
+      "sub-title": "讓團隊知道您希望他們處理的內容。",
+      name: "名稱",
+      email: "電子郵件",
+      about: "此工作項目的內容是什麼？",
+      description: "描述應該發生什麼",
+      description_placeholder: "盡量提供詳細資訊，協助團隊了解您的情況與需求。",
+      loading: "建立中",
+      create_work_item: "建立工作項目",
+      errors: {
+        name: "名稱為必填",
+        name_max_length: "名稱不得超過 255 個字元",
+        email: "電子郵件為必填",
+        email_invalid: "電子郵件地址無效",
+        title: "標題為必填",
+        title_max_length: "標題不得超過 255 個字元",
+      },
+    },
+    success: {
+      title: "您的工作項目已加入團隊佇列。",
+      description: "團隊現在可以從進件佇列中核准或捨棄此工作項目。",
+      primary_button: {
+        text: "新增另一個工作項目",
+      },
+      secondary_button: {
+        text: "進一步了解進件",
+      },
+    },
+    how_it_works: {
+      title: "運作方式",
+      heading: "這是進件表單。",
+      description: "進件是 Plane 的功能，讓專案管理員與經理能將外部工作項目納入專案。",
+      steps: {
+        step_1: "此簡短表單可讓您在 Plane 專案中建立新的工作項目。",
+        step_2: "提交此表單後，會在該專案的進件中建立新的工作項目。",
+        step_3: "該專案或團隊的成員會進行審核。",
+        step_4: "若核准，此工作項目將移至專案的工作佇列；否則將被拒絕。",
+        step_5: "若要查詢該工作項目的狀態，請聯絡專案經理、管理員或提供此頁面連結的人。",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "選擇工作項目類型",
+        search_placeholder: "搜尋工作項目類型",
+      },
+      actions: {
+        select_properties: "選擇屬性",
+      },
+    },
+  },
   recurring_work_items: {
     settings: {
       heading: "重複工作項目",
@@ -6105,4 +6250,5 @@ export default {
       },
     },
   },
+  project_name_cannot_contain_special_characters: "專案名稱不能包含特殊字元。",
 } as const;

@@ -25,6 +25,8 @@ import type {
   TIssuePropertyTypeKeys,
   TPropertyValueVariant,
   TTextAttributeDisplayOptions,
+  TTextAttributeConfigurations,
+  TDateAttributeConfigurations,
 } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getIssuePropertyTypeKey, cn } from "@plane/utils";
@@ -90,7 +92,10 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
           value={propertyValue}
           error={propertyValueError}
           variant={variant}
-          display_format={propertyDetail?.settings?.display_format as TTextAttributeDisplayOptions}
+          display_format={
+            (propertyDetail?.settings as TTextAttributeConfigurations | undefined)
+              ?.display_format as TTextAttributeDisplayOptions
+          }
           readOnlyData={propertyDetail?.default_value?.[0]}
           className="min-h-8"
           isDisabled={isDisabled}
@@ -142,7 +147,10 @@ export const PropertyValueSelect = observer(function PropertyValueSelect(props: 
           value={propertyValue}
           error={propertyValueError}
           variant={variant}
-          displayFormat={propertyDetail?.settings?.display_format as TDateAttributeDisplayOptions}
+          displayFormat={
+            (propertyDetail?.settings as TDateAttributeConfigurations | undefined)
+              ?.display_format as TDateAttributeDisplayOptions
+          }
           buttonClassName="h-8"
           isDisabled={isDisabled}
           onDateValueChange={onPropertyValueChange}

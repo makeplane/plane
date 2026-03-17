@@ -19,8 +19,8 @@ import { useTranslation } from "@plane/i18n";
 import { MembersPropertyIcon, PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IWorkspace } from "@plane/types";
+import { Avatar } from "@plane/propel/avatar";
 import { EUserProjectRoles } from "@plane/types";
-import { Avatar } from "@plane/ui";
 import { cn, getDate, getFileURL, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
@@ -32,6 +32,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import type { TProject } from "@/types/projects";
 import type { EProjectPriority } from "@/types/workspace-project-states";
 // local imports
+import { LabelsDropdown } from "@/components/projects/dropdowns/labels";
 import { MembersDropdown } from "@/components/projects/dropdowns/members";
 import { PriorityDropdown } from "@/components/projects/dropdowns/priority";
 import { StateDropdown } from "@/components/projects/dropdowns/state";
@@ -183,6 +184,19 @@ export const Attributes = observer(function Attributes(props: Props) {
               onChange={() => {}}
               className="h-5 my-auto"
               buttonClassName="cursor-not-allowed"
+            />
+          </div>
+        </Tooltip>
+      )}
+      {displayProperties["labels"] && (
+        <Tooltip tooltipContent="Labels" position="top">
+          <div className="h-5 my-auto" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+            <LabelsDropdown
+              value={project.label_ids ?? []}
+              onChange={(labelIds) => handleUpdateProject({ label_ids: labelIds })}
+              disabled={!isEditingAllowed || isArchived}
+              workspaceSlug={workspaceSlug}
+              className="h-5 my-auto"
             />
           </div>
         </Tooltip>

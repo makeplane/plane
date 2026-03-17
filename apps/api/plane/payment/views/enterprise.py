@@ -580,7 +580,7 @@ class InstanceLicenseEndpoint(BaseAPIView):
                 ).count()
                 data["billable_members"] = member_count
                 data["occupied_seats"] = member_count
-                return Response(response.json(), status=response.status_code)
+                return Response(data, status=response.status_code)
             else:
                 return Response(
                     {"error": "Payment server is not configured"},

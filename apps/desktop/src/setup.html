@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect to Plane</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Light mode colors - extracted from packages/tailwind-config/variables.css */
+      /* Neutral colors */
+      --neutral-white: oklch(1 0 0);
+      --neutral-100: oklch(0.9848 0.0003 230.66);
+      --neutral-200: oklch(0.9696 0.0007 230.67);
+      --neutral-300: oklch(0.9543 0.001 230.67);
+      --neutral-400: oklch(0.9389 0.0014 230.68);
+      --neutral-500: oklch(0.9235 0.001733 230.6853);
+      --neutral-600: oklch(0.8925 0.0024 230.7);
+      --neutral-700: oklch(0.8612 0.0032 230.71);
+      --neutral-1000: oklch(0.5288 0.0083 230.88);
+      --neutral-1100: oklch(0.4377 0.0066 230.87);
+      --neutral-1200: oklch(0.2378 0.0029 230.83);
+      /* Brand colors */
+      --brand-default: oklch(0.4799 0.1158 242.91);
+      --brand-900: oklch(0.4347 0.104093 242.4823);
+      --brand-1000: oklch(0.3399 0.0783 240.32);
+      /* Red/Danger colors */
+      --red-700: oklch(0.583 0.238666 28.4765);
+      /* Semantic tokens */
+      --bg-canvas: var(--neutral-300);
+      --bg-surface-1: var(--neutral-white);
+      --bg-surface-2: var(--neutral-100);
+      --bg-layer-2: var(--neutral-white);
+      --bg-layer-2-hover: var(--neutral-100);
+      --bg-layer-2-active: var(--neutral-200);
+      --bg-accent-primary: var(--brand-default);
+      --bg-accent-primary-hover: var(--brand-900);
+      --bg-accent-primary-active: var(--brand-1000);
+      --txt-primary: var(--neutral-1200);
+      --txt-secondary: var(--neutral-1100);
+      --txt-tertiary: var(--neutral-1000);
+      --txt-on-color: var(--neutral-100);
+      --txt-danger-secondary: var(--red-700);
+      --border-subtle: var(--neutral-400);
+      --border-subtle-1: var(--neutral-500);
+      --border-strong: var(--neutral-600);
+      --border-danger-strong: var(--red-700);
+      /* Shadows */
+      --shadow-raised-100: 0px 1px 6px -1px rgba(41, 47, 61, 0.03), 0px 1px 4px 0px rgba(41, 47, 61, 0.04);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        /* Dark mode colors - extracted from packages/tailwind-config/variables.css */
+        /* Alpha colors */
+        --alpha-white-100: oklch(1 0 0 / 5%);
+        /* Neutral colors */
+        --neutral-black: oklch(0.1689 0.0021 230.81);
+        --neutral-100: oklch(0.1932 0.002 230.81);
+        --neutral-200: oklch(0.2158 0.0025 230.82);
+        --neutral-300: oklch(0.2378 0.0029 230.83);
+        --neutral-400: oklch(0.2593 0.0033 230.84);
+        --neutral-500: oklch(0.3011 0.0041 230.85);
+        --neutral-600: oklch(0.3415 0.0049 230.86);
+        --neutral-1100: oklch(0.8455 0.0035 230.72);
+        --neutral-1200: oklch(0.9235 0.001733 230.6853);
+        /* Brand colors */
+        --brand-default: oklch(0.6311 0.126281 238.01);
+        --brand-500: oklch(0.4511 0.087024 237.37);
+        --brand-400: oklch(0.4088 0.077702 237.13);
+        /* Red/Danger colors */
+        --red-700: oklch(0.7022 0.1892 22.23);
+        /* Semantic tokens */
+        --bg-canvas: var(--neutral-black);
+        --bg-surface-1: var(--neutral-100);
+        --bg-surface-2: var(--neutral-200);
+        --bg-layer-2: var(--neutral-300);
+        --bg-layer-2-hover: var(--neutral-400);
+        --bg-layer-2-active: var(--neutral-500);
+        --bg-layer-transparent-hover: var(--alpha-white-100);
+        --bg-accent-primary: var(--brand-default);
+        --bg-accent-primary-hover: var(--brand-500);
+        --bg-accent-primary-active: var(--brand-400);
+        --txt-primary: var(--neutral-1200);
+        --txt-secondary: var(--neutral-1100);
+        --txt-on-color: var(--neutral-1200);
+        --txt-danger-secondary: var(--red-700);
+        --border-subtle-1: var(--neutral-500);
+        --border-strong: var(--neutral-600);
+        /* Shadows */
+        --shadow-raised-100: 0px 1px 6px -1px rgba(0, 0, 0, 0.5), 0px 1px 4px 0px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-surface-1);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      color: var(--txt-primary);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 360px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo {
+      margin-bottom: 48px;
+      color: var(--txt-primary);
+    }
+
+    /* Views */
+    .view {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .view.hidden {
+      display: none;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    h4 {
+      font-size: 20px;
+      font-weight: 500;
+      text-align: center;
+      color: var(--txt-primary);
+      margin-bottom: 8px;
+    }
+
+    /* Choice View Styles */
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .choice-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      height: 36px;
+      padding: 8px 16px;
+      background: var(--bg-layer-2);
+      border: 1px solid var(--border-subtle-1);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      color: var(--txt-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      text-align: left;
+      box-shadow: var(--shadow-raised-100);
+    }
+
+    .choice-card:hover {
+      background: var(--bg-layer-2-hover);
+      border-color: var(--border-strong);
+    }
+
+    .choice-card:active {
+      background: var(--bg-layer-2-active);
+    }
+
+    .choice-card svg {
+      width: 14px;
+      height: 14px;
+      color: var(--txt-secondary);
+    }
+
+    /* Input View Styles */
+    .form-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--txt-secondary);
+    }
+
+    input {
+      width: 100%;
+      height: 32px;
+      padding: 6px 10px;
+      font-size: 13px;
+      color: var(--txt-primary);
+      background: transparent;
+      border: 1px solid var(--border-subtle-1);
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input:focus {
+      border-color: var(--bg-accent-primary);
+      box-shadow: 0 0 0 1px var(--bg-accent-primary);
+    }
+
+    input.error {
+      border-color: var(--red-700);
+      color: var(--red-700);
+    }
+
+    .error-message {
+      font-size: 12px;
+      color: var(--txt-danger-secondary);
+      min-height: 18px;
+      display: none;
+      margin-top: 4px;
+    }
+    
+    .error-message.visible {
+      display: block;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      height: 36px;
+      padding: 8px 16px; 
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--txt-on-color);
+      background: var(--bg-accent-primary);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s;
+    }
+
+    .btn-primary:hover {
+      background: var(--bg-accent-primary-hover);
+    }
+
+    .btn-primary:active {
+      background: var(--bg-accent-primary-active);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .footer {
+      font-size: 12px;
+      color: var(--txt-secondary);
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    .footer a {
+      color: var(--bg-accent-primary);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Animation classes */
+    .fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <svg viewBox="0 0 580 362" fill="none" xmlns="http://www.w3.org/2000/svg" style="height: 33px; width: auto; color: var(--txt-primary);">
+        <path d="M0.582031 21.3454C0.582031 6.03817 16.6812 -3.9163 30.3772 2.92484L148.547 62.0099V200.676C148.547 220.162 159.567 237.995 176.991 246.707L283.636 300.03V340.708C283.636 356.015 267.537 365.97 253.841 359.115L29.0253 246.707C11.6016 237.995 0.582031 220.175 0.582031 200.676V21.3454ZM148.547 21.3454C148.547 6.03817 164.647 -3.9163 178.342 2.93849L296.513 62.0236V200.69C296.513 220.175 307.532 238.009 324.956 246.721L431.601 300.043V340.722C431.601 356.029 415.502 365.983 401.806 359.129L283.636 300.043V161.377C283.636 141.878 272.616 124.058 255.193 115.346L148.547 62.0236V21.3454ZM296.499 21.3454C296.499 6.03817 312.598 -3.9163 326.294 2.93849L551.11 115.346C568.547 124.058 579.553 141.878 579.553 161.377V340.722C579.553 356.029 563.454 365.983 549.758 359.129L431.588 300.043V161.377C431.588 141.878 420.568 124.058 403.144 115.346L296.499 62.0236V21.3454Z" fill="currentColor"/>
+      </svg>
+    </div>
+
+    <!-- View 1: Choice Screen -->
+    <div id="view-choice" class="view fade-in">
+      <h4>Choose an instance type</h4>
+      <div class="choices">
+        <button id="btn-cloud" class="choice-card">
+          <!-- Cloud SVG -->
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.9163 9.66602C13.9162 8.49478 13.0204 7.53165 11.8773 7.42578C11.5376 7.39413 11.2617 7.13738 11.2064 6.80078C10.9528 5.2593 9.61341 4.08317 8.00031 4.08301C6.38706 4.08301 5.04678 5.25918 4.79327 6.80078C4.73792 7.1375 4.46215 7.39427 4.12238 7.42578C2.97917 7.53165 2.08348 8.49478 2.08331 9.66602C2.08331 10.9087 3.09067 11.916 4.33331 11.916H11.6663C12.909 11.916 13.9163 10.9087 13.9163 9.66602ZM15.4163 9.66602C15.4163 11.7371 13.7374 13.416 11.6663 13.416H4.33331C2.26225 13.416 0.583313 11.7371 0.583313 9.66602C0.583462 7.90524 1.79646 6.42776 3.43292 6.02441C4.00139 4.03734 5.83047 2.58301 8.00031 2.58301C10.1702 2.58315 11.9975 4.03814 12.5657 6.02539C14.2027 6.42838 15.4162 7.90488 15.4163 9.66602Z" fill="currentColor"/>
+          </svg>
+          <span>Cloud</span>
+        </button>
+        <button id="btn-self-managed" class="choice-card">
+          <!-- Self-managed SVG -->
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.9163 10.667C13.9163 9.60858 13.0587 8.75018 12.0003 8.75H4.00031C2.94176 8.75 2.08331 9.60847 2.08331 10.667C2.08331 11.7255 2.94176 12.584 4.00031 12.584H12.0003C13.0587 12.5838 13.9163 11.7254 13.9163 10.667ZM4.00616 9.91699C4.42038 9.91699 4.75616 10.2528 4.75616 10.667C4.75616 11.0812 4.42038 11.417 4.00616 11.417H4.00031C3.58609 11.417 3.25031 11.0812 3.25031 10.667C3.25031 10.2528 3.58609 9.91699 4.00031 9.91699H4.00616ZM4.00616 4.58398C4.42038 4.58398 4.75616 4.91977 4.75616 5.33398C4.75599 5.74805 4.42027 6.08398 4.00616 6.08398H4.00031C3.5862 6.08398 3.25048 5.74805 3.25031 5.33398C3.25031 4.91977 3.58609 4.58398 4.00031 4.58398H4.00616ZM13.9163 5.33398C13.9163 4.27555 13.0587 3.41717 12.0003 3.41699H4.00031C2.94176 3.41699 2.08331 4.27544 2.08331 5.33398C2.08349 6.39236 2.94187 7.25 4.00031 7.25H12.0003L12.1956 7.24023C13.1621 7.14223 13.9162 6.3263 13.9163 5.33398ZM15.4163 5.33398C15.4162 6.41296 14.9153 7.37391 14.1341 8C14.9156 8.62615 15.4163 9.58773 15.4163 10.667C15.4163 12.5538 13.8871 14.0838 12.0003 14.084H4.00031C2.11333 14.084 0.583313 12.5539 0.583313 10.667C0.583313 9.5881 1.08354 8.62616 1.86456 8C1.0838 7.37389 0.583414 6.4126 0.583313 5.33398C0.583313 3.44701 2.11333 1.91699 4.00031 1.91699H12.0003C13.8871 1.91717 15.4163 3.44711 15.4163 5.33398Z" fill="currentColor"/>
+          </svg>
+          <span>Self-managed</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- View 2: Input Screen -->
+    <div id="view-input" class="view hidden">
+      <h4>Enter your Plane instance URL</h4>
+      <form id="setup-form" class="form-group">
+        <div>
+          <label for="instance-url">Instance URL</label>
+        </div>
+        <input
+          type="url"
+          id="instance-url"
+          placeholder="https://app.plane.so"
+          autocomplete="url"
+          spellcheck="false"
+        >
+        <p class="error-message" id="error-message"></p>
+        
+        <button type="submit" id="connect-btn" class="btn-primary">Connect</button>
+      </form>
+
+      <p class="footer">
+        Are you a cloud user? <a href="#" id="switch-to-cloud">Switch to cloud</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // State
+    const CLOUD_URL = 'https://app.plane.so';
+    const viewChoice = document.getElementById('view-choice');
+    const viewInput = document.getElementById('view-input');
+    const btnCloud = document.getElementById('btn-cloud');
+    const btnSelfManaged = document.getElementById('btn-self-managed');
+    const btnConnect = document.getElementById('connect-btn');
+    const switchCloudLink = document.getElementById('switch-to-cloud');
+    const form = document.getElementById('setup-form');
+    const input = document.getElementById('instance-url');
+    const errorMessage = document.getElementById('error-message');
+
+    // --- Logic ---
+
+    function showView(view) {
+      viewChoice.classList.add('hidden');
+      viewInput.classList.add('hidden');
+      view.classList.remove('hidden');
+      view.classList.add('fade-in');
+
+      // Autofocus input if switching to input view
+      if (view === viewInput) {
+        setTimeout(() => input.focus(), 100);
+      }
+    }
+
+    function connect(url) {
+      if (!url) {
+        return;
+      }
+      
+      console.log('Connecting to:', url);
+
+      // Disable buttons to prevent double click
+      btnCloud.disabled = true;
+      btnConnect.disabled = true;
+      btnConnect.innerText = 'Connecting';
+
+      if (window.planeDesktop) {
+        window.planeDesktop.setInstanceUrl(url);
+      } else {
+        console.error('window.planeDesktop API not found.');
+        // Reset buttons so user isn't stuck if API is missing
+        btnCloud.disabled = false;
+        btnConnect.disabled = false;
+        btnConnect.innerText = 'Connect';
+      }
+    }
+
+    function showError(message) {
+      input.classList.add('error');
+      errorMessage.textContent = message;
+      errorMessage.classList.add('visible');
+    }
+
+    function clearError() {
+      input.classList.remove('error');
+      errorMessage.classList.remove('visible');
+    }
+
+    // --- Event Listeners ---
+
+    // Choice View: Cloud
+    btnCloud.addEventListener('click', () => {
+      connect(CLOUD_URL);
+    });
+
+    // Choice View: Self-managed
+    btnSelfManaged.addEventListener('click', () => {
+      showView(viewInput);
+    });
+
+		// Input View: Switch back to Cloud
+    switchCloudLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      connect(CLOUD_URL);
+    });
+
+    // Input View: Form Submit
+    input.addEventListener('input', clearError);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+
+      const urlText = input.value.trim();
+      if (!urlText) {
+        showError('Please enter your Plane instance URL');
+        return;
+      }
+
+      // Basic URL structure check
+      try {
+        const urlObj = new URL(urlText);
+        if (!['http:', 'https:'].includes(urlObj.protocol)) {
+          showError('URL must start with http:// or https://');
+          return;
+        }
+      } catch {
+        showError('Please enter a valid URL (e.g. https://app.plane.so)');
+        return;
+      }
+
+      connect(urlText);
+    });
+
+    // Initial View
+    showView(viewChoice);
+
+  </script>
+</body>
+</html>

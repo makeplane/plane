@@ -12,6 +12,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Combobox } from "@plane/propel/combobox";
 import { filterIntakeEligibleProperties } from "@plane/propel/domain/intake-form";
@@ -30,6 +31,9 @@ type Props = {
 export const TypePropertiesDropdown = observer(function TypePropertiesDropdown(props: Props) {
   const { workItemType, selectedFields = [], onSelect } = props;
 
+  const { t } = useTranslation();
+
+  const intakeFormT = (path: string) => t(`project_settings.features.intake.form.${path}`);
   // Filter out RELATION type properties for intake forms
   const properties = filterIntakeEligibleProperties(workItemType.activeProperties);
 
@@ -57,10 +61,10 @@ export const TypePropertiesDropdown = observer(function TypePropertiesDropdown(p
       <Combobox.Button>
         <Button variant="secondary" className="bg-layer-1 rounded-lg px-1.5 py-1">
           <AddIcon className="size-3" />
-          <span className="truncate text-11 text-tertiary font-semibold">Select properties</span>
+          <span className="truncate text-11 text-tertiary font-semibold">{intakeFormT("select_properties")}</span>
         </Button>
       </Combobox.Button>
-      <Combobox.Options showSearch searchPlaceholder="Search for properties" className="w-72 text-13">
+      <Combobox.Options showSearch searchPlaceholder={intakeFormT("search_placeholder")} className="w-72 text-13">
         {properties.map((property) => {
           if (!property.id) return null;
           return (
@@ -84,7 +88,7 @@ export const TypePropertiesDropdown = observer(function TypePropertiesDropdown(p
               </div>
               {property.is_required && (
                 <Pill size={EPillSize.XS} className="text-tertiary border-none text-11">
-                  Mandatory
+                  {t("common.mandatory")}
                 </Pill>
               )}
             </Combobox.Option>

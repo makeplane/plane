@@ -22,15 +22,15 @@ import type { TWorklog } from "@plane/sdk";
  * Responsibility: Extract worklogs from Jira issues, handling pagination and transformation.
  */
 export class JiraWorklogExtractor {
-  public async extract(jobId: string, client: JiraV2Service, issue: IJiraIssue): Promise<Partial<TWorklog>[]> {
-    const transformWorklog = (worklog: Worklog) => ({
-      description: worklog.comment ?? "",
-      duration: worklog.timeSpentSeconds ? worklog.timeSpentSeconds / 60 : 0,
-      logged_by: worklog.author?.emailAddress,
-      created_at: worklog.created,
-      updated_at: worklog.updated,
-    });
+  private transformWorklog = (worklog: Worklog) => ({
+    description: worklog.comment ?? "",
+    duration: worklog.timeSpentSeconds ? worklog.timeSpentSeconds / 60 : 0,
+    logged_by: worklog.author?.emailAddress || worklog.author?.displayName,
+    created_at: worklog.created,
+    updated_at: worklog.updated,
+  });
 
+  public async extract(jobId: string, client: JiraV2Service, issue: IJiraIssue): Promise<Partial<TWorklog>[]> {
     const totalWorklogCount = issue.fields.worklog.total;
     const pulledWorklogsCount = issue.fields?.worklog?.worklogs?.length || 0;
 
@@ -58,6 +58,6 @@ export class JiraWorklogExtractor {
       },
     });
 
-    return worklogs.map(transformWorklog);
+    return worklogs.map(this.transformWorklog);
   }
 }

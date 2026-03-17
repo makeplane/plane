@@ -21,7 +21,7 @@ import type {
   TCustomPropertyFilterKey,
   TFilterConfig,
 } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import type { TCustomPropertyFilterParams, TFilterIconType } from "@plane/utils";
 import {
   getBooleanPropertyFilterConfig,

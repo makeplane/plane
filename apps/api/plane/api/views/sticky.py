@@ -39,6 +39,7 @@ class StickyViewSet(BaseViewSet):
         "GET": [[READ_SCOPE], [STICKIES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [STICKIES_WRITE_SCOPE]],
         "PUT": [[WRITE_SCOPE], [STICKIES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [STICKIES_WRITE_SCOPE]],
         "DELETE": [[WRITE_SCOPE], [STICKIES_WRITE_SCOPE]],
     }
 

@@ -306,7 +306,7 @@ def generate_tool_from_metadata(
     # Apply @tool decorator
     decorated_tool = tool(tool_func)
 
-    log.info(f"Generated tool: {metadata.name} (category={category}, method={method_key})")
+    log.debug(f"Generated tool: {metadata.name} (category={category}, method={method_key})")
 
     return decorated_tool  # type: ignore[return-value]
 
@@ -344,5 +344,5 @@ def generate_tools_for_category(
             log.error(f"Error generating tool for {category}.{method_key}: {e}", exc_info=True)
             # Continue generating other tools
 
-    log.info(f"Generated {len(tools)} tools for category '{category}'")
+    log.debug(f"Generated {len(tools)} tools for category '{category}'")
     return tools

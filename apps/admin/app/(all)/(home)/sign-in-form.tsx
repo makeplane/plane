@@ -13,20 +13,26 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { observer } from "mobx-react";
 // plane internal packages
 import type { EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
-import { API_BASE_URL } from "@plane/constants";
-import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
-import { Input, Spinner } from "@plane/ui";
+import { OAuthOptions } from "@plane/ui";
 // components
 import { Banner } from "@/components/common/banner";
+import { FormHeader } from "@/components/instance/form-header";
+// helpers
+import { decodeEmailFromUrl } from "@/helpers/authentication";
+// hooks
+import { useAdminOAuthSignIn } from "@/hooks/oauth/sign-in";
+import { useInstance } from "@/hooks/store";
 // local components
-import { FormHeader } from "../../../core/components/instance/form-header";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader } from "./auth-header";
 import { authErrorHandler } from "./auth-helpers";
+import { EmailForm } from "./email-form";
+import { MagicLinkForm } from "./magic-link-form";
+import { PasswordForm } from "./password-form";
 
 // service initialization
 const authService = new AuthService();
@@ -45,46 +51,45 @@ type TError = {
   message: string | undefined;
 };
 
-// form data
-type TFormData = {
-  email: string;
-  password: string;
-};
+enum EAdminAuthStep {
+  EMAIL = "EMAIL",
+  PASSWORD = "PASSWORD",
+  MAGIC_CODE = "MAGIC_CODE",
+}
 
-const defaultFromData: TFormData = {
-  email: "",
-  password: "",
-};
-
-export function InstanceSignInForm() {
+export const InstanceSignInForm = observer(function InstanceSignInForm() {
   // search params
   const searchParams = useSearchParams();
-  const emailParam = searchParams.get("email") || undefined;
+  const encodedEmail = searchParams.get("ctx");
+  const emailParam = decodeEmailFromUrl(encodedEmail);
   const errorCode = searchParams.get("error_code") || undefined;
   const errorMessage = searchParams.get("error_message") || undefined;
+  // store hooks
+  const { config } = useInstance();
+  const { isOAuthEnabled, oAuthOptions } = useAdminOAuthSignIn();
   // state
-  const [showPassword, setShowPassword] = useState(false);
+  const [authStep, setAuthStep] = useState<EAdminAuthStep>(EAdminAuthStep.EMAIL);
+  const [email, setEmail] = useState(emailParam || "");
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
-  const [formData, setFormData] = useState<TFormData>(defaultFromData);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorInfo, setErrorInfo] = useState<TAdminAuthErrorInfo | undefined>(undefined);
-
-  const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
-    setFormData((prev) => ({ ...prev, [key]: value }));
+  // derived values
+  const isMagicLoginEnabled = config?.is_magic_login_enabled && config?.is_smtp_configured;
 
   useEffect(() => {
-    if (csrfToken === undefined)
-      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+    if (csrfToken === undefined) {
+      void authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+    }
   }, [csrfToken]);
 
   useEffect(() => {
-    if (emailParam) setFormData((prev) => ({ ...prev, email: emailParam }));
+    if (emailParam) setEmail(emailParam);
   }, [emailParam]);
 
   // derived values
   const errorData: TError = useMemo(() => {
     if (errorCode && errorMessage) {
-      switch (errorCode) {
+      const code = errorCode as EErrorCodes;
+      switch (code) {
         case EErrorCodes.INSTANCE_NOT_CONFIGURED:
           return { type: EErrorCodes.INSTANCE_NOT_CONFIGURED, message: errorMessage };
         case EErrorCodes.REQUIRED_EMAIL_PASSWORD:
@@ -101,11 +106,6 @@ export function InstanceSignInForm() {
     } else return { type: undefined, message: undefined };
   }, [errorCode, errorMessage]);
 
-  const isButtonDisabled = useMemo(
-    () => (!isSubmitting && formData.email && formData.password ? false : true),
-    [formData.email, formData.password, isSubmitting]
-  );
-
   useEffect(() => {
     if (errorCode) {
       const errorDetail = authErrorHandler(errorCode?.toString() as EAdminAuthErrorCodes);
@@ -114,6 +114,16 @@ export function InstanceSignInForm() {
       }
     }
   }, [errorCode]);
+
+  const handleEmailClear = () => {
+    setEmail("");
+    setAuthStep(EAdminAuthStep.EMAIL);
+    setErrorInfo(undefined);
+  };
+
+  const handleError = (error: TAdminAuthErrorInfo) => {
+    setErrorInfo(error);
+  };
 
   return (
     <>
@@ -124,83 +134,41 @@ export function InstanceSignInForm() {
             heading="Manage your Plane instance"
             subHeading="Configure instance-wide settings to secure your instance"
           />
-          <form
-            className="space-y-4"
-            method="POST"
-            action={`${API_BASE_URL}/api/instances/admins/sign-in/`}
-            onSubmit={() => setIsSubmitting(true)}
-            onError={() => setIsSubmitting(false)}
-          >
-            {errorData.type && errorData?.message ? (
-              <Banner type="error" message={errorData?.message} />
-            ) : (
-              <>
-                {errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />}
-              </>
-            )}
-            <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-
-            <div className="w-full space-y-1">
-              <label className="text-13 text-tertiary font-medium" htmlFor="email">
-                Email <span className="text-danger-primary">*</span>
-              </label>
-              <Input
-                className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
-                id="email"
-                name="email"
-                type="email"
-                inputSize="md"
-                placeholder="name@company.com"
-                value={formData.email}
-                onChange={(e) => handleFormChange("email", e.target.value)}
-                autoComplete="off"
-                autoFocus
-              />
-            </div>
-
-            <div className="w-full space-y-1">
-              <label className="text-13 text-tertiary font-medium" htmlFor="password">
-                Password <span className="text-danger-primary">*</span>
-              </label>
-              <div className="relative">
-                <Input
-                  className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  inputSize="md"
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={(e) => handleFormChange("password", e.target.value)}
-                  autoComplete="off"
-                />
-                {showPassword ? (
-                  <button
-                    type="button"
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
-                    onClick={() => setShowPassword(false)}
-                  >
-                    <EyeOff className="h-4 w-4" />
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
-                    onClick={() => setShowPassword(true)}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-            <div className="py-2">
-              <Button type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
-                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign in"}
-              </Button>
-            </div>
-          </form>
+          {errorData.type && errorData?.message ? (
+            <Banner type="error" message={errorData?.message} />
+          ) : (
+            <>{errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />}</>
+          )}
+          {isOAuthEnabled && <OAuthOptions options={oAuthOptions} showDivider />}
+          {/* Step 1: Email input */}
+          {authStep === EAdminAuthStep.EMAIL && (
+            <EmailForm
+              email={email}
+              onEmailChange={setEmail}
+              onPasswordStep={() => setAuthStep(EAdminAuthStep.PASSWORD)}
+              onMagicCodeStep={() => setAuthStep(EAdminAuthStep.MAGIC_CODE)}
+              onError={handleError}
+            />
+          )}
+          {/* Step 2a: Password form */}
+          {authStep === EAdminAuthStep.PASSWORD && (
+            <PasswordForm
+              email={email}
+              csrfToken={csrfToken}
+              onEmailClear={handleEmailClear}
+              onSwitchToMagicCode={isMagicLoginEnabled ? () => setAuthStep(EAdminAuthStep.MAGIC_CODE) : undefined}
+            />
+          )}
+          {/* Step 2b: Magic code form */}
+          {authStep === EAdminAuthStep.MAGIC_CODE && (
+            <MagicLinkForm
+              email={email}
+              onEmailClear={handleEmailClear}
+              onSwitchToPassword={() => setAuthStep(EAdminAuthStep.PASSWORD)}
+            />
+          )}
         </div>
       </div>
     </>
   );
-}
+});

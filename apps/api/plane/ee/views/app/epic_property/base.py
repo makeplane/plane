@@ -10,7 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Django imports
-from django.db import IntegrityError, models
+from django.db import IntegrityError, models, transaction
 
 # Third party imports
 from rest_framework import status
@@ -18,12 +18,12 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.db.models import Issue, IssueType
-from plane.ee.views.base import BaseAPIView
-from plane.ee.models import IssueProperty, IssuePropertyOption
+from plane.ee.models import IssueProperty, IssuePropertyOption, PropertyTypeEnum
 from plane.ee.permissions import ProjectEntityPermission
-from plane.ee.serializers import IssuePropertySerializer, IssuePropertyOptionSerializer
-from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.ee.serializers import IssuePropertyOptionSerializer, IssuePropertySerializer
+from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 
 
 class EpicPropertyEndpoint(BaseAPIView):
@@ -123,12 +123,16 @@ class EpicPropertyEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, pk=None):
         # Get a single epic property
         if pk:
-            issue_property = IssueProperty.objects.get(
-                workspace__slug=slug,
-                project_id=project_id,
-                issue_type__is_epic=True,
-                issue_type__is_active=True,
-                pk=pk,
+            issue_property = (
+                IssueProperty.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    issue_type__is_epic=True,
+                    issue_type__is_active=True,
+                    pk=pk,
+                )
+                .select_related("formula_config")
+                .get()
             )
             serializer = IssuePropertySerializer(issue_property)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -139,7 +143,7 @@ class EpicPropertyEndpoint(BaseAPIView):
             project_id=project_id,
             issue_type__is_epic=True,
             issue_type__is_active=True,
-        )
+        ).select_related("formula_config")
         serializer = IssuePropertySerializer(issue_properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -175,48 +179,76 @@ class EpicPropertyEndpoint(BaseAPIView):
             if request.data.get("is_required") is True:
                 request.data["default_value"] = []
 
-            # Create a new issue properties
-            serializer = IssuePropertySerializer(data=request.data)
-            # Validate the data
-            serializer.is_valid(raise_exception=True)
-            # Save the data
-            serializer.save(project_id=project_id, issue_type_id=epic_id)
+            # ========== FORMULA PROPERTY ==========
+            # extracting the formula and example output
+            formula = request.data.pop("formula", None)
+            example_output = request.data.pop("example_output", None)
 
-            issue_property = IssueProperty.objects.get(
-                project_id=project_id,
-                issue_type_id=epic_id,
-                issue_type__is_epic=True,
-                pk=serializer.data["id"],
-            )
-
-            # Check if the property type is option and create the options
-            if issue_property.property_type == "OPTION":
-                try:
-                    self.create_options(issue_property, options)
-                    # Reset the default options if the property is required
-                    if issue_property.is_required:
-                        self.reset_options_default(issue_property)
-                    # Reset the default options if property is not multi and more than one default value
-                    if (
-                        not issue_property.is_multi
-                        and IssuePropertyOption.objects.filter(
-                            property_id=issue_property.id,
-                            workspace_id=issue_property.workspace_id,
-                            project_id=issue_property.project_id,
-                            is_default=True,
-                            property__issue_type__is_epic=True,
-                        ).count()
-                        > 1
-                    ):
-                        self.reset_options_default(issue_property)
-                    self.update_property_default_options(issue_property)
-
-                except IntegrityError:
+            if request.data.get("property_type") == PropertyTypeEnum.FORMULA:
+                # checking if the user has the feature flag enabled
+                if not check_workspace_feature_flag(feature_key=FeatureFlag.WORKITEM_TYPE_FORMULA_FIELD, slug=slug):
                     return Response(
-                        {"error": "An option with the same name already exists in this property"},
-                        status=status.HTTP_409_CONFLICT,
+                        {"error": "Upgrade your plan to enable formula properties"}, status=status.HTTP_403_FORBIDDEN
                     )
 
+                # validating the formula is not empty
+                if not formula:
+                    return Response(
+                        {"error": "Formula is required for formula properties"}, status=status.HTTP_400_BAD_REQUEST
+                    )
+            # ========== FORMULA PROPERTY ==========
+
+            with transaction.atomic():
+                serializer = IssuePropertySerializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save(project_id=project_id, issue_type_id=epic_id)
+
+                issue_property = IssueProperty.objects.get(
+                    project_id=project_id,
+                    issue_type_id=epic_id,
+                    issue_type__is_epic=True,
+                    pk=serializer.data["id"],
+                )
+
+                # ========== FORMULA PROPERTY ==========
+                # creating the formula property
+                issue_property.handle_formula_property(formula, example_output)
+                # ========== FORMULA PROPERTY ==========
+
+                if issue_property.property_type == "OPTION":
+                    try:
+                        self.create_options(issue_property, options)
+                        # Reset the default options if the property is required
+                        if issue_property.is_required:
+                            self.reset_options_default(issue_property)
+                        # Reset the default options if property is not multi and more than one default value
+                        if (
+                            not issue_property.is_multi
+                            and IssuePropertyOption.objects.filter(
+                                property_id=issue_property.id,
+                                workspace_id=issue_property.workspace_id,
+                                project_id=issue_property.project_id,
+                                is_default=True,
+                                property__issue_type__is_epic=True,
+                            ).count()
+                            > 1
+                        ):
+                            self.reset_options_default(issue_property)
+                        self.update_property_default_options(issue_property)
+
+                    except IntegrityError:
+                        return Response(
+                            {"error": "An option with the same name already exists in this property"},
+                            status=status.HTTP_409_CONFLICT,
+                        )
+
+            issue_property = (
+                IssueProperty.objects.filter(
+                    project_id=project_id, issue_type_id=epic_id, issue_type__is_epic=True, pk=serializer.data["id"]
+                )
+                .select_related("formula_config")
+                .get()
+            )
             serializer = IssuePropertySerializer(issue_property)
             # generate the response with the new data and options
             response = {
@@ -260,6 +292,21 @@ class EpicPropertyEndpoint(BaseAPIView):
                 {"error": "Some fields cannot be updated as issues exist with this property"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # ========== FORMULA PROPERTY ==========
+        # extracting the formula and example output
+        formula = request.data.pop("formula", None)
+        example_output = request.data.pop("example_output", None)
+
+        # validating the formula is not empty
+        if request.data.get("property_type") == PropertyTypeEnum.FORMULA:
+            # checking if the user has the feature flag enabled
+            if not check_workspace_feature_flag(feature_key=FeatureFlag.WORKITEM_TYPE_FORMULA_FIELD, slug=slug):
+                return Response(
+                    {"error": "Upgrade your plan to enable formula properties"}, status=status.HTTP_403_FORBIDDEN
+                )
+        # ========== FORMULA PROPERTY ==========
+
         # if property type is being changed, reset the defaults
         if request.data.get("property_type") and request.data.get("property_type") != issue_property.property_type:
             defaults = {
@@ -273,6 +320,13 @@ class EpicPropertyEndpoint(BaseAPIView):
             for field, default_value in defaults.items():
                 request.data.setdefault(field, default_value)
 
+            # ========== FORMULA PROPERTY ==========
+            # deleting the formula config if changing away from FORMULA type
+            if issue_property.property_type == PropertyTypeEnum.FORMULA and issue_property.formula_config:
+                issue_property.formula_config.delete()
+                issue_property.formula_config = None
+            # ========== FORMULA PROPERTY ==========
+
         # Check defaults
         if not request.data.get("is_multi", issue_property.is_multi) and len(request.data.get("default_value", [])) > 1:
             return Response(
@@ -284,39 +338,49 @@ class EpicPropertyEndpoint(BaseAPIView):
         if request.data.get("is_required", issue_property.is_required) is True:
             request.data["default_value"] = []
 
-        serializer = IssuePropertySerializer(issue_property, data=request.data, partial=True)
-        # Validate the data
-        serializer.is_valid(raise_exception=True)
-        # Save the data
-        serializer.save()
+        with transaction.atomic():
+            serializer = IssuePropertySerializer(issue_property, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-        if issue_property.property_type == "OPTION":
-            try:
-                self.handle_options_create_update(issue_property, options, slug, project_id)
-                # Reset the default options if the property is required
-                if issue_property.is_required:
-                    self.reset_options_default(issue_property)
-                # Reset the default options if property is not multi and more than one default value
-                if (
-                    not issue_property.is_multi
-                    and IssuePropertyOption.objects.filter(
-                        property_id=issue_property.id,
-                        workspace_id=issue_property.workspace_id,
-                        project_id=issue_property.project_id,
-                        is_default=True,
-                        property__issue_type__is_epic=True,
-                    ).count()
-                    > 1
-                ):
-                    self.reset_options_default(issue_property)
-                self.update_property_default_options(issue_property)
+            issue_property.refresh_from_db()
 
-            except IntegrityError:
-                return Response(
-                    {"error": "An option with the same name already exists in this property"},
-                    status=status.HTTP_409_CONFLICT,
-                )
+            if issue_property.property_type == "OPTION":
+                try:
+                    self.handle_options_create_update(issue_property, options, slug, project_id)
+                    # Reset the default options if the property is required
+                    if issue_property.is_required:
+                        self.reset_options_default(issue_property)
+                    # Reset the default options if property is not multi and more than one default value
+                    if (
+                        not issue_property.is_multi
+                        and IssuePropertyOption.objects.filter(
+                            property_id=issue_property.id,
+                            workspace_id=issue_property.workspace_id,
+                            project_id=issue_property.project_id,
+                            is_default=True,
+                            property__issue_type__is_epic=True,
+                        ).count()
+                        > 1
+                    ):
+                        self.reset_options_default(issue_property)
+                    self.update_property_default_options(issue_property)
 
+                except IntegrityError:
+                    return Response(
+                        {"error": "An option with the same name already exists in this property"},
+                        status=status.HTTP_409_CONFLICT,
+                    )
+
+            # ========== FORMULA PROPERTY ==========
+            # updating the formula property
+            if formula:
+                issue_property.handle_formula_property(formula, example_output)
+            # ========== FORMULA PROPERTY ==========
+
+        # Re-fetch with formula_config for response
+        issue_property = IssueProperty.objects.filter(pk=issue_property.id).select_related("formula_config").get()
+        serializer = IssuePropertySerializer(issue_property)
         response = {
             **serializer.data,
             "options": self.get_options_response(issue_property, slug, project_id),
@@ -344,5 +408,10 @@ class EpicPropertyEndpoint(BaseAPIView):
             issue_type__is_epic=True,
             pk=pk,
         )
+        # ========== FORMULA PROPERTY ==========
+        # deleting the formula config when we delete the issue property
+        if issue_property.formula_config:
+            issue_property.formula_config.delete()
+        # ========== FORMULA PROPERTY ==========
         issue_property.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

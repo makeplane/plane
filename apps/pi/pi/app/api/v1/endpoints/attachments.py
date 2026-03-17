@@ -74,14 +74,14 @@ async def create_attachment_upload(
             return JSONResponse(status_code=415, content={"detail": "Unsupported file type"})
 
         # 🔒 SECURITY SCAN BEFORE UPLOADING TO S3
-        log.info(f"Scanning file before S3 upload: {file.filename}")
+        log.debug(f"Scanning file before S3 upload: {file.filename}")
         is_safe, error_message = await scan_file_for_malware(file_data, content_type, file.filename or "attachment")
 
         if not is_safe:
             log.warning(f"File rejected during pre-upload scan: {error_message}")
             return JSONResponse(status_code=400, content={"detail": f"File rejected: {error_message}"})
 
-        log.info(f"File passed security scan: {file.filename}")
+        log.debug(f"File passed security scan: {file.filename}")
 
         sanitized_filename = sanitize_filename(file.filename or "attachment")
 
@@ -115,7 +115,7 @@ async def create_attachment_upload(
         attachment.status = "uploaded"
         await db.commit()
 
-        log.info(f"File scanned and uploaded successfully: {file_path}")
+        log.debug(f"File scanned and uploaded successfully: {file_path}")
 
         # Prepare response
         download_url = get_presigned_url_download(attachment)
@@ -182,7 +182,7 @@ async def complete_attachment_upload(
         try:
             s3_client = get_s3_client()
             s3_client.head_object(Bucket=S3_BUCKET, Key=attachment.file_path)
-            log.info(f"Verified S3 file exists: {attachment.file_path}")
+            log.debug(f"Verified S3 file exists: {attachment.file_path}")
         except Exception as s3_error:
             log.error(f"S3 file verification failed for {attachment.file_path}: {s3_error}")
             return JSONResponse(status_code=400, content={"detail": "File not found in S3. Please upload the file first."})

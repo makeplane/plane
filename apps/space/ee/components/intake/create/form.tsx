@@ -139,7 +139,7 @@ const IssueForm = observer(function IssueForm(props: TProps) {
 
         <div className="md:col-span-3">
           <div className="text-13 text-tertiary mb-1 font-medium">
-            {t("intake_forms.create.about")}
+            {t("title")}
             <span className="ml-0.5 text-danger-primary">*</span>
           </div>
           <Controller
@@ -168,7 +168,7 @@ const IssueForm = observer(function IssueForm(props: TProps) {
           <span className="text-11 text-danger-primary capitalize">{errors?.name?.message}</span>
         </div>
         <div className="md:col-span-3">
-          <div className="text-13 text-tertiary mb-1 font-medium">{t("intake_forms.create.description")}</div>
+          <div className="text-13 text-tertiary mb-1 font-medium">{t("description")}</div>
           <Controller
             name="description_html"
             control={control}

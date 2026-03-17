@@ -96,6 +96,7 @@ export type TProjectExtended = TProjectAttributes & {
   project_name?: string;
   update_status?: EUpdateStatus | undefined;
   initiative_ids?: string[];
+  label_ids?: string[];
 };
 
 export type TProjectFeaturesList = {

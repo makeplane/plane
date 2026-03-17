@@ -16,8 +16,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Ban } from "lucide-react";
 import { EUserProjectRoles } from "@plane/types";
+import { Avatar } from "@plane/propel/avatar";
 // plane ui
-import { Avatar, CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks

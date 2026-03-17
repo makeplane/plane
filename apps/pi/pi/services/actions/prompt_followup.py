@@ -462,7 +462,7 @@ class ArtifactFollowupService:
                     json_match = re.search(r"\{.*\}", str(response.content), re.DOTALL)
                     if json_match:
                         llm_modifications = json.loads(json_match.group(0))
-                        log.info(f"Extracted JSON modifications from LLM response: {llm_modifications}")
+                        log.debug(f"Extracted JSON modifications from LLM response: {llm_modifications}")
                         # Apply any direct modifications from LLM
                         for field, value in llm_modifications.items():
                             if field in modified_json and modified_json[field] != value:
@@ -711,7 +711,7 @@ async def handle_artifact_prompt_followup(
 
         # Step 2: Route based on analysis
         if query_analysis["needs_entity_resolution"]:
-            log.info(f"Using LLM path for query requiring entity resolution: {current_query}")
+            log.debug(f"Using LLM path for query requiring entity resolution: {current_query}")
 
             # Get previous queries
             previous_followup_queries = await get_artifact_prompt_history_from_flow_steps(db=db, artifact_id=artifact_id, message_id=user_message_id)
@@ -729,7 +729,7 @@ async def handle_artifact_prompt_followup(
                 db=db,
             )
         else:
-            log.info(f"Using direct modification for simple query: {current_query}")
+            log.debug(f"Using direct modification for simple query: {current_query}")
             # Apply direct modifications
             updated_artifact_data = current_artifact_data.copy()
             changes = await _apply_direct_query_modifications(updated_artifact_data, current_query, entity_type, query_analysis, user_message_id, db)
@@ -964,7 +964,7 @@ Respond with JSON containing only the fields to modify:
         json_match = re.search(r"\{.*\}", str(response.content), re.DOTALL)
         if json_match:
             field_values = json.loads(json_match.group(0))
-            log.info(f"Generated field values for query '{query}': {field_values}")
+            log.debug(f"Generated field values for query '{query}': {field_values}")
             return field_values
         else:
             log.warning(f"No JSON found in LLM response for query: {query}")

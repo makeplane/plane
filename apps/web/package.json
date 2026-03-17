@@ -47,7 +47,6 @@
     "@react-router/node": "catalog:",
     "@sentry/react-router": "catalog:",
     "@tanstack/react-table": "^8.21.3",
-    "@todesktop/client-core": "^1.12.4",
     "@vercel/react-router": "catalog:",
     "axios": "catalog:",
     "clsx": "^2.0.0",

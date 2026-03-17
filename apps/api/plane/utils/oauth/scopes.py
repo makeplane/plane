@@ -108,10 +108,10 @@ TEAMSPACES_MEMBERS_WRITE_SCOPE = "teamspaces.members:write"
 PROFILE_READ_SCOPE = "profile:read"
 
 # AGENTS SCOPES
-AGENT_RUNS_READ_SCOPE = "agent_runs:read"
-AGENT_RUNS_WRITE_SCOPE = "agent_runs:write"
-AGENT_RUN_ACTIVITIES_READ_SCOPE = "agent_runs.activities:read"
-AGENT_RUN_ACTIVITIES_WRITE_SCOPE = "agent_runs.activities:write"
+AGENT_RUNS_READ_SCOPE = "agents.runs:read"
+AGENT_RUNS_WRITE_SCOPE = "agents.runs:write"
+AGENT_RUN_ACTIVITIES_READ_SCOPE = "agents.run_activities:read"
+AGENT_RUN_ACTIVITIES_WRITE_SCOPE = "agents.run_activities:write"
 
 # ASSETS SCOPES
 ASSETS_READ_SCOPE = "assets:read"

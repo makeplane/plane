@@ -149,6 +149,28 @@ export type TIssuesResponse = {
   total_results: number;
 };
 
+export type TWorkItemMeta = {
+  id: string;
+  sequence_id: number;
+  name: string;
+  project_identifier: string;
+};
+
+export type TWorkItemsMetaResponse = {
+  grouped_by: string | null;
+  sub_grouped_by?: string | null;
+  next_cursor: string;
+  prev_cursor: string;
+  next_page_results: boolean;
+  prev_page_results: boolean;
+  total_count: number;
+  count: number;
+  total_pages: number;
+  extra_stats: null;
+  results: TWorkItemMeta[];
+  total_results: number;
+};
+
 export type TBulkIssueProperties = Pick<
   TIssue,
   | "state_id"

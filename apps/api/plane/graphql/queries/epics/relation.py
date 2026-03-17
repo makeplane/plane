@@ -41,6 +41,7 @@ from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.epics.relation import EpicRelationType
 from plane.graphql.types.issues.relation import WorkItemRelationTypes
+from plane.graphql.utils.archive import ArchivedFilterTypes
 
 
 @strawberry.type
@@ -263,9 +264,11 @@ class EpicRelationQuery:
         work_item_required_fields = ["id", "name", "priority", "sequence_id", "project", "state", "type"]
 
         # fetch all work items in a single query
+        # intentionally using the work_item_base_query instead of epic_base_query to avoid N+1 queries
+        # TODO: Need to update to global work item base query to access epics
         if all_work_item_ids:
             work_item_query = (
-                work_item_base_query(workspace_slug=slug)
+                work_item_base_query(workspace_slug=slug, archived_filter=ArchivedFilterTypes.INCLUDE)
                 .filter(id__in=all_work_item_ids)
                 .select_related("project", "type")
                 .prefetch_related("assignees")

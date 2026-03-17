@@ -14,6 +14,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { EIssuePropertyType } from "@plane/types";
 import type { IIssueType, TIssuePropertyValueErrors, TIssuePropertyValues, TPropertyValueVariant } from "@plane/types";
 // local imports
 import { PropertyValueSelect } from "./value-select";
@@ -47,7 +48,11 @@ export const WorkItemCustomPropertyValues = observer(function WorkItemCustomProp
   // store hooks
   const issueType = getWorkItemTypeById(issueTypeId);
   // derived values
-  const sortedProperties = issueType?.activeProperties;
+  // Formula properties are computed by the backend, so exclude them from the create variant
+  const sortedProperties =
+    variant === "create"
+      ? issueType?.activeProperties?.filter((p) => p.property_type !== EIssuePropertyType.FORMULA)
+      : issueType?.activeProperties;
 
   if (!sortedProperties?.length) return null;
 

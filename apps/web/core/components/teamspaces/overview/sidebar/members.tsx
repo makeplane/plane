@@ -17,7 +17,8 @@ import { useParams } from "next/navigation";
 // Plane imports
 import { TrashIcon, LeadIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
-import { Avatar, CustomMenu } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { CustomMenu } from "@plane/ui";
 // helpers
 import { cn, getFileURL } from "@plane/utils";
 // hooks

@@ -48,7 +48,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
       text: `${oauthActionText} with Google`,
       icon: <img src={googleLogo} height={18} width={18} alt="Google Logo" />,
       onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
+        window.location.assign(`${API_BASE_URL}/auth/spaces/google/${next_path ? `?next_path=${next_path}` : ``}`);
       },
       enabled: config?.is_google_enabled,
     },
@@ -64,7 +64,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
         />
       ),
       onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/github/${next_path ? `?next_path=${next_path}` : ``}`);
+        window.location.assign(`${API_BASE_URL}/auth/spaces/github/${next_path ? `?next_path=${next_path}` : ``}`);
       },
       enabled: config?.is_github_enabled,
     },
@@ -73,7 +73,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
       text: `${oauthActionText} with GitLab`,
       icon: <img src={gitlabLogo} height={18} width={18} alt="GitLab Logo" />,
       onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
+        window.location.assign(`${API_BASE_URL}/auth/spaces/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
       },
       enabled: config?.is_gitlab_enabled,
     },
@@ -82,7 +82,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
       text: `${oauthActionText} with Gitea`,
       icon: <img src={giteaLogo} height={18} width={18} alt="Gitea Logo" />,
       onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
+        window.location.assign(`${API_BASE_URL}/auth/spaces/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
       },
       enabled: config?.is_gitea_enabled,
     },

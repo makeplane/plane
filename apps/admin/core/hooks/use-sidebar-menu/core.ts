@@ -11,13 +11,21 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Image, BrainCog, Cog, Mail } from "lucide-react";
+import { Image, BrainCog, Cog, Mail, CreditCard, Users } from "lucide-react";
 // plane imports
 import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
 import type { TSidebarMenuItem } from "./types";
 
-export type TCoreSidebarMenuKey = "general" | "email" | "workspace" | "authentication" | "ai" | "image";
+export type TCoreSidebarMenuKey =
+  | "general"
+  | "email"
+  | "workspace"
+  | "authentication"
+  | "ai"
+  | "image"
+  | "billing"
+  | "user-management";
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
@@ -56,5 +64,17 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "Images in Plane",
     description: "Allow third-party image libraries.",
     href: `/image/`,
+  },
+  billing: {
+    Icon: CreditCard,
+    name: "Billing",
+    description: "Active plans",
+    href: `/billing/`,
+  },
+  "user-management": {
+    Icon: Users,
+    name: "User Management",
+    description: "Instance user management",
+    href: `/user-management/`,
   },
 };

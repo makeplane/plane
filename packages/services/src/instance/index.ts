@@ -13,3 +13,4 @@
 
 export * from "./instance.service";
 export * from "./instance-management.service";
+export * from "./instance-user.service";

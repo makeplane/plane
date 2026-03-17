@@ -190,7 +190,16 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
-    return this.isCurrentUserOwner;
+    const workspaceSlug = this.workspace && this.rootStore.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+    const isAdmin = currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+
+    if (this.hasSharedAccess) {
+      return this.isCurrentUserOwner || this.canEditWithSharedAccess || isAdmin;
+    }
+
+    return this.isCurrentUserOwner || isAdmin;
   }
 
   /**

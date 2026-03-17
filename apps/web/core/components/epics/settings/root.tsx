@@ -100,6 +100,7 @@ export const EpicsRoot = observer(function EpicsRoot() {
         {epicDetails?.id && (
           <EpicPropertiesRoot
             epicId={epicDetails?.id}
+            projectId={projectId?.toString() ?? ""}
             propertiesLoader={getProjectWorkItemPropertiesLoader(projectId?.toString(), EWorkItemTypeEntity.EPIC)}
             getWorkItemTypeById={useIssueType}
             containerClassName="py-7"

@@ -18,7 +18,8 @@ import { useSearchParams } from "next/navigation";
 // plane imports
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Row, Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Row } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";

@@ -69,6 +69,7 @@ export const IssueTypesList = observer(function IssueTypesList(props: TIssueType
           <IssueTypeListItem
             key={issueTypeId}
             issueTypeId={issueTypeId}
+            projectId={projectId?.toString()}
             isOpen={
               openIssueTypeId === issueTypeId ||
               (issueTypeId === currentProjectDefaultIssueType?.id && currentProjectIssueTypeIds.length === 1)

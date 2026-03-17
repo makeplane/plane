@@ -15,7 +15,8 @@ import { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // hooks
-import { Avatar, Loader } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Loader } from "@plane/ui";
 import { FilterHeader } from "@/components/issues/filters/helpers/filter-header";
 import { FilterOption } from "@/components/issues/filters/helpers/filter-option";
 import { useMember } from "@/hooks/store/use-member";

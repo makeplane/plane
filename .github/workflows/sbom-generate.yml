@@ -1,0 +1,98 @@
+name: Generate SBOM
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Docker image tag to generate SBOMs for (e.g. preview, v1.14.0)"
+        required: true
+        type: string
+      image_variant:
+        description: "Image variant to scan"
+        required: true
+        type: choice
+        default: "commercial"
+        options:
+          - "commercial"
+          - "community"
+      sbom_format:
+        description: "SBOM output format"
+        required: true
+        type: choice
+        default: "spdx-json"
+        options:
+          - "spdx-json"
+          - "cyclonedx-json"
+
+env:
+  TAG_NAME: ${{ github.event.inputs.tag_name }}
+  IMAGE_VARIANT: ${{ github.event.inputs.image_variant }}
+  SBOM_FORMAT: ${{ github.event.inputs.sbom_format }}
+
+jobs:
+  setup:
+    name: Setup Image Matrix
+    runs-on: ubuntu-22.04
+    outputs:
+      images: ${{ steps.set_images.outputs.images }}
+    steps:
+      - id: set_images
+        name: Set Image List
+        run: |
+          if [ "${{ env.IMAGE_VARIANT }}" == "commercial" ]; then
+            echo 'images=["web-commercial","space-commercial","admin-commercial","live-commercial","backend-commercial","proxy-commercial","monitor-commercial","silo-commercial","email-commercial","plane-pi-commercial","plane-aio-commercial"]' >> $GITHUB_OUTPUT
+          elif [ "${{ env.IMAGE_VARIANT }}" == "community" ]; then
+            echo 'images=["plane-frontend","plane-space","plane-admin","plane-live","plane-backend","plane-proxy","plane-aio-community"]' >> $GITHUB_OUTPUT
+          fi
+
+  generate-sbom:
+    name: SBOM - ${{ matrix.image }}
+    needs: setup
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJson(needs.setup.outputs.images) }}
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Pull Docker Image
+        run: docker pull makeplane/${{ matrix.image }}:${{ env.TAG_NAME }}
+
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0
+
+      - name: Generate SBOM
+        run: |
+          syft makeplane/${{ matrix.image }}:${{ env.TAG_NAME }} \
+            --output ${{ env.SBOM_FORMAT }}=sbom-${{ matrix.image }}-${{ env.TAG_NAME }}.${{ env.SBOM_FORMAT == 'spdx-json' && 'spdx.json' || 'cdx.json' }}
+
+      - name: Upload SBOM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-${{ matrix.image }}-${{ env.TAG_NAME }}
+          path: sbom-${{ matrix.image }}-*
+          retention-days: 90
+
+  merge-sboms:
+    name: Merge All SBOMs
+    needs: [setup, generate-sbom]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download All SBOMs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: sbom-*
+          merge-multiple: true
+          path: sboms/
+
+      - name: Upload Merged SBOM Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-bundle-${{ env.IMAGE_VARIANT }}-${{ env.TAG_NAME }}
+          path: sboms/
+          retention-days: 90

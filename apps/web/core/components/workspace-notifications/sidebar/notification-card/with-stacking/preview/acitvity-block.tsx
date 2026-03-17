@@ -29,8 +29,8 @@ import {
   StatePropertyIcon,
 } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Avatar } from "@plane/propel/avatar";
 import type { IUserLite } from "@plane/types";
-import { Avatar } from "@plane/ui";
 import {
   calculateTimeAgo,
   getFileURL,

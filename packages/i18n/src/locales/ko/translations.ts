@@ -438,6 +438,8 @@ export default {
     },
   },
   intake: "접수",
+  renew: "갱신",
+  preview: "미리보기",
   time_tracking: "시간 추적",
   work_management: "작업 관리",
   projects_and_issues: "프로젝트 및 작업 항목",
@@ -520,6 +522,8 @@ export default {
   you: "나",
   labels: "레이블",
   create_new_label: "새 레이블 생성",
+  label_name: "레이블 이름",
+  failed_to_create_label: "레이블 생성에 실패했습니다. 다시 시도해 주세요.",
   start_date: "시작 날짜",
   end_date: "종료 날짜",
   due_date: "마감일",
@@ -588,6 +592,9 @@ export default {
       name: "이름",
     },
   },
+  upgrade_request: "워크스페이스 관리자에게 업그레이드를 요청하세요.",
+  copied_to_clipboard: "클립보드에 복사됨",
+  copied_to_clipboard_description: "URL이 클립보드에 성공적으로 복사되었습니다",
   toast: {
     success: "성공!",
     error: "오류!",
@@ -686,6 +693,14 @@ export default {
     manage_widgets: "위젯 관리",
     title: "홈",
     star_us_on_github: "GitHub에서 별표",
+    business_trial_banner: {
+      title: "14일 Business 플랜 체험판이 활성화되었습니다!",
+      description: "모든 Business 기능을 살펴보세요. 준비가 되면 구독을 선택하세요. 자동으로 청구되지 않습니다.",
+      trial_ends_today: "체험판이 오늘 종료됩니다",
+      trial_ends_in_days: "체험판 종료까지 {days}일 남음",
+      start_subscription: "구독 시작",
+      explore_business_features: "Business 기능 살펴보기",
+    },
   },
   link: {
     modal: {
@@ -1931,6 +1946,14 @@ export default {
       project_states: {
         title: "프로젝트 스테이트",
       },
+      projects: {
+        title: "프로젝트",
+        description: "프로젝트 상태 관리, 프로젝트 레이블 활성화 및 기타 구성을 관리합니다.",
+        tabs: {
+          states: "프로젝트 스테이트",
+          labels: "프로젝트 레이블",
+        },
+      },
       teamspaces: {
         title: "팀스페이스",
       },
@@ -2561,15 +2584,50 @@ export default {
         toggle_description: "프로젝트 멤버가 페이지를 생성하고 편집할 수 있습니다.",
       },
       intake: {
-        heading: "인테이크 책임",
+        intake_responsibility: "인테이크 책임",
+        intake_sources: "인테이크 소스",
         title: "접수",
         short_title: "접수",
         description: "워크플로를 방해하지 않고 비회원이 버그, 피드백 및 제안을 공유할 수 있도록 합니다.",
         toggle_title: "접수 활성화",
         toggle_description: "프로젝트 멤버가 앱 내에서 접수 요청을 생성할 수 있도록 허용합니다.",
+        toggle_tooltip_on: "프로젝트 관리자에게 활성화를 요청하세요.",
+        toggle_tooltip_off: "프로젝트 관리자에게 비활성화를 요청하세요.",
         notify_assignee: {
           title: "담당자에게 알림",
           description: "새로운 인테이크 요청의 경우 기본 담당자가 알림을 통해 알림을 받습니다",
+        },
+        in_app: {
+          title: "앱 내",
+          description: "기존 작업 항목을 방해하지 않고 워크스페이스의 멤버와 게스트로부터 새로운 작업 항목을 받습니다.",
+        },
+        email: {
+          title: "이메일",
+          description: "Plane 이메일 주소로 이메일을 보내는 누구로부터든 새로운 작업 항목을 수집합니다.",
+          fieldName: "이메일 ID",
+        },
+        form: {
+          title: "양식",
+          description:
+            "전용 보안 양식을 통해 워크스페이스 외부 사용자가 잠재적인 새로운 작업 항목을 만들 수 있도록 합니다.",
+          fieldName: "기본 양식 URL",
+          create_forms: "작업 항목 유형을 사용하여 양식 만들기",
+          manage_forms: "양식 관리",
+          manage_forms_tooltip: "워크스페이스 관리자에게 관리를 요청하세요.",
+          create_form: "양식 만들기",
+          edit_form: "양식 세부 정보 편집",
+          form_title: "양식 제목",
+          form_title_required: "양식 제목은 필수입니다",
+          work_item_type: "작업 항목 유형",
+          remove_property: "속성 제거",
+          select_properties: "속성 선택",
+          search_placeholder: "속성 검색",
+          toasts: {
+            success_create: "인테이크 양식이 성공적으로 생성되었습니다",
+            success_update: "인테이크 양식이 성공적으로 업데이트되었습니다",
+            error_create: "인테이크 양식 생성에 실패했습니다",
+            error_update: "인테이크 양식 업데이트에 실패했습니다",
+          },
         },
         toasts: {
           set: {
@@ -2598,6 +2656,11 @@ export default {
         description: "마일스톤은 작업 항목을 공유 완료 날짜에 맞춰 정렬하는 레이어를 제공합니다.",
         toggle_title: "마일스톤 활성화",
         toggle_description: "마일스톤 마감일별로 작업 항목을 구성합니다.",
+      },
+      toasts: {
+        loading: "프로젝트 기능 업데이트 중...",
+        success: "프로젝트 기능이 성공적으로 업데이트되었습니다.",
+        error: "프로젝트 기능 업데이트 중 문제가 발생했습니다. 다시 시도해 주세요.",
       },
     },
   },
@@ -3824,6 +3887,9 @@ export default {
           member_picker: {
             label: "멤버 피커",
           },
+          formula: {
+            label: "수식",
+          },
         },
         attributes: {
           label: "어트리뷰트",
@@ -3949,6 +4015,30 @@ export default {
             options: {
               required: "최소한 하나의 옵션을 추가해야 합니다.",
             },
+            formula: {
+              required: "수식 표현식이 필요합니다.",
+              invalid: "잘못된 수식: {error}",
+              circular_reference: "순환 참조가 감지되었습니다. 수식은 직접 또는 간접적으로 자신을 참조할 수 없습니다.",
+              invalid_reference: "수식이 존재하지 않는 속성을 참조합니다.",
+            },
+          },
+        },
+        formula: {
+          field_label: "수식 필드",
+          tooltip: "'{'필드 이름'}' 구문을 사용하여 수식을 입력하세요. +, -, *, /, & 연산자를 지원합니다.",
+          placeholder: "수식 작성",
+          test_button: "테스트",
+          validating: "검증 중",
+          validation_success: "수식이 유효합니다! {resultType}을(를) 반환합니다",
+          validation_success_with_refs: "수식이 유효합니다! {resultType}을(를) 반환합니다 ({count}개 필드 참조)",
+          error: {
+            empty: "수식을 입력해 주세요",
+            missing_context: "워크스페이스, 프로젝트 또는 작업 항목 유형 컨텍스트가 없습니다",
+            validation_failed: "검증 실패",
+          },
+          picker: {
+            no_match: "일치하는 속성 없음",
+            no_available: "사용 가능한 속성 없음",
           },
         },
         enable_disable: {
@@ -4054,6 +4144,15 @@ export default {
         },
       },
       tooltip: "클릭하여 {action}",
+    },
+    change_confirmation: {
+      title: "워크 아이템 타입을 변경하시겠습니까?",
+      description:
+        "워크 아이템 타입을 변경하면 현재 타입에 특정한 사용자 정의 속성 값이 손실될 수 있습니다. 이 작업은 취소할 수 없습니다.",
+      button: {
+        loading: "변경 중",
+        default: "타입 변경",
+      },
     },
     empty_state: {
       enable: {
@@ -4407,6 +4506,7 @@ export default {
     created: "생성됨",
     initiated: "시작됨",
     pulling: "풀링 중",
+    timed_out: "시간 초과",
     pulled: "풀링 완료",
     transforming: "변환 중",
     transformed: "변환 완료",
@@ -5699,6 +5799,60 @@ export default {
       },
     },
   },
+  intake_forms: {
+    create: {
+      title: "작업 항목 만들기",
+      "sub-title": "팀에 어떤 작업을 원하는지 알려주세요.",
+      name: "이름",
+      email: "이메일",
+      about: "이 작업 항목은 무엇에 관한 것인가요?",
+      description: "무슨 일이 일어나야 하는지 설명하세요",
+      description_placeholder: "팀이 상황과 요구 사항을 파악할 수 있도록 필요한 만큼 자세히 작성해 주세요.",
+      loading: "만드는 중",
+      create_work_item: "작업 항목 만들기",
+      errors: {
+        name: "이름은 필수입니다",
+        name_max_length: "이름은 255자 미만이어야 합니다",
+        email: "이메일은 필수입니다",
+        email_invalid: "유효하지 않은 이메일 주소입니다",
+        title: "제목은 필수입니다",
+        title_max_length: "제목은 255자 미만이어야 합니다",
+      },
+    },
+    success: {
+      title: "작업 항목이 팀 대기열에 추가되었습니다.",
+      description: "팀에서 이 작업 항목을 인테이크 대기열에서 승인하거나 삭제할 수 있습니다.",
+      primary_button: {
+        text: "다른 작업 항목 추가",
+      },
+      secondary_button: {
+        text: "인테이크 자세히 알아보기",
+      },
+    },
+    how_it_works: {
+      title: "작동 방식",
+      heading: "인테이크 양식입니다.",
+      description:
+        "인테이크는 프로젝트 관리자와 매니저가 외부의 작업 항목을 프로젝트로 가져올 수 있는 Plane 기능입니다.",
+      steps: {
+        step_1: "이 간단한 양식으로 Plane 프로젝트에 새 작업 항목을 만들 수 있습니다.",
+        step_2: "이 양식을 제출하면 해당 프로젝트의 인테이크에 새 작업 항목이 생성됩니다.",
+        step_3: "해당 프로젝트 또는 팀의 누군가가 검토합니다.",
+        step_4: "승인되면 이 작업 항목은 프로젝트의 작업 대기열로 이동합니다. 그렇지 않으면 거부됩니다.",
+        step_5:
+          "해당 작업 항목의 상태를 확인하려면 프로젝트 매니저, 관리자 또는 이 페이지 링크를 보낸 분에게 연락하세요.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "작업 항목 유형 선택",
+        search_placeholder: "작업 항목 유형 검색",
+      },
+      actions: {
+        select_properties: "속성 선택",
+      },
+    },
+  },
   recurring_work_items: {
     settings: {
       heading: "반복 작업 항목",
@@ -6186,4 +6340,5 @@ export default {
       },
     },
   },
+  project_name_cannot_contain_special_characters: "프로젝트 이름에는 특수 문자를 사용할 수 없습니다.",
 } as const;

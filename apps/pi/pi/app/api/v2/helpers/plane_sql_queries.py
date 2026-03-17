@@ -837,7 +837,7 @@ async def search_user_by_name(
     params: list[Any] = []
     param_index = 1
 
-    log.info(f"Searching for user by name filters (display='{display_name}', first='{first_name}', last='{last_name}', project_id='{project_id}')")
+    log.debug(f"Searching for user by name filters (display='{display_name}', first='{first_name}', last='{last_name}', project_id='{project_id}')")
 
     clauses: list[str] = []
 
@@ -918,10 +918,10 @@ async def search_user_by_name(
             param_index += 1
 
     query += " LIMIT 20"
-    log.info(f"Searching for user by name query: {query}, params: {params}")
+    log.debug(f"Searching for user by name query: {query}, params: {params}")
     try:
         rows = await PlaneDBPool.fetch(query, tuple(params))
-        log.info(f"Searching for user by name rows: {rows}")
+        log.debug(f"Searching for user by name rows: {rows}")
         return [
             {
                 "id": str(r["id"]),
@@ -1079,7 +1079,7 @@ async def get_all_workspace_ids() -> List[str]:
     try:
         results = await PlaneDBPool.fetch(query)
         workspace_ids = [row["workspace_id"] for row in results]
-        log.info(f"Fetched {len(workspace_ids)} workspace IDs")
+        log.debug(f"Fetched {len(workspace_ids)} workspace IDs")
         return workspace_ids
     except Exception as e:
         log.error(f"Error fetching all workspace IDs: {e}")
@@ -1156,10 +1156,10 @@ async def search_workitem_by_identifier(identifier: str, workspace_slug: Optiona
         result = await PlaneDBPool.fetchrow(query, tuple(params))
 
         if result:
-            log.info(f"Found work item with identifier '{identifier}': {result["name"]}")
+            log.debug(f"Found work item with identifier '{identifier}': {result["name"]}")
             return dict(result)
         else:
-            log.info(f"No work item found with identifier '{identifier}'")
+            log.debug(f"No work item found with identifier '{identifier}'")
             return None
 
     except Exception as e:
@@ -1550,7 +1550,7 @@ async def get_cycle_breakdown_by_assignee(cycle_id: str) -> List[Dict[str, Any]]
             }
             for r in rows
         ]
-        log.info(f"get_cycle_breakdown_by_assignee for cycle {cycle_id}: returned {len(result)} assignees")
+        log.debug(f"get_cycle_breakdown_by_assignee for cycle {cycle_id}: returned {len(result)} assignees")
         return result
     except Exception as e:
         log.error(f"Error computing breakdown by assignee for cycle {cycle_id}: {e}")

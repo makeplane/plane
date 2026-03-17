@@ -22,6 +22,7 @@ import { EmptyStateCompact } from "@plane/propel/empty-state";
 import {
   DueDatePropertyIcon,
   InitiativeIcon,
+  LabelPropertyIcon,
   MembersPropertyIcon,
   PriorityPropertyIcon,
   StartDatePropertyIcon,
@@ -42,6 +43,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web
 import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 import { InitiativeMultiSelectModal } from "@/components/initiatives/common/multi-select-modal";
+import { LabelsDropdown } from "@/components/projects/dropdowns/labels";
 import { MembersDropdown } from "@/components/projects/dropdowns/members";
 import { PriorityDropdown } from "@/components/projects/dropdowns/priority";
 import { StateDropdown } from "@/components/projects/dropdowns/state";
@@ -193,6 +195,19 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                     {projectMembersIds?.length} member(s)
                   </div>
                 }
+              />
+            </div>
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
+                <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
+                <span>Labels</span>
+              </div>
+              <LabelsDropdown
+                value={project.label_ids ?? []}
+                onChange={(labelIds) => handleUpdateProject({ label_ids: labelIds })}
+                disabled={!isEditingAllowed || isArchived}
+                workspaceSlug={workspaceSlug.toString()}
+                className="h-7 my-auto w-full"
               />
             </div>
             {isInitiativesFeatureEnabled && (

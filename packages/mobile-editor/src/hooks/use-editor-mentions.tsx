@@ -15,7 +15,7 @@ import { useCallback, useEffect } from "react";
 // plane editor
 import type { TMentionSection, TMentionSuggestion } from "@plane/editor";
 // plane ui
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 // store
 import { useMentions } from "@/hooks/store";
 // types

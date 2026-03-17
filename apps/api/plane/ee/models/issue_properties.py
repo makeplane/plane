@@ -9,16 +9,19 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Python imports
+from typing import Optional
+
 # Django imports
-from django.db import models
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
+from django.db import models
 from django.db.models import Q
 from django.template.defaultfilters import slugify
-from django.contrib.postgres.fields import ArrayField
 
 # Module imports
-from plane.db.models import ProjectOptionalBaseModel
 from plane.db.mixins import ChangeTrackerMixin
+from plane.db.models import ProjectOptionalBaseModel
 
 
 class PropertyTypeEnum(models.TextChoices):
@@ -112,6 +115,32 @@ class IssueProperty(ChangeTrackerMixin, ProjectOptionalBaseModel):
             if changed_fields:
                 fields_to_update = {field: getattr(self, field) for field in changed_fields}
                 IssueTypeProperty.objects.filter(issue_type=issue_type, property=self).update(**fields_to_update)
+
+    def handle_formula_property(self, formula: str, example_output: Optional[str] = None) -> None:
+        """
+        Create or update the linked FormulaProperty for this issue property.
+        """
+
+        if self.property_type != PropertyTypeEnum.FORMULA:
+            return
+
+        # if the formula config already exists, update it
+        if self.formula_config:
+            self.formula_config.formula = formula
+            self.formula_config.example_output = (
+                example_output if example_output else self.formula_config.example_output
+            )
+            self.formula_config.save(update_fields=["formula", "example_output"])
+        # if the formula config does not exist, create it
+        else:
+            formula_config = FormulaProperty.objects.create(
+                workspace_id=self.workspace_id,
+                project_id=self.project_id,
+                formula=formula,
+                example_output=example_output,
+            )
+            self.formula_config = formula_config
+            self.save(update_fields=["formula_config"])
 
     def __str__(self):
         return self.display_name
@@ -207,6 +236,48 @@ class IssuePropertyValue(ProjectOptionalBaseModel):
 
     def __str__(self):
         return f"{self.property.display_name}"
+
+    @classmethod
+    def cleanup_orphaned_for_issues(cls, issue_ids, new_type_id):
+        """
+        Delete property values that are not valid for the new issue type.
+
+        This is called when issue type changes (via save() or bulk update).
+        Properties shared between old and new types are preserved.
+
+        Args:
+            issue_ids: List of issue IDs to clean up
+            new_type_id: The new type ID (None if type is being unset)
+        """
+        if not issue_ids:
+            return
+
+        if not new_type_id:
+            # Changed to null type - all property values are orphaned
+            cls.objects.filter(issue_id__in=issue_ids).delete()
+            return
+
+        # Get valid property IDs for the new type
+        valid_property_ids = set(
+            IssueTypeProperty.objects.filter(
+                issue_type_id=new_type_id, deleted_at__isnull=True
+            ).values_list("property_id", flat=True)
+        )
+
+        # Delete values for properties not valid on new type (preserves shared properties)
+        cls.objects.filter(issue_id__in=issue_ids).exclude(
+            property_id__in=valid_property_ids
+        ).delete()
+
+    @classmethod
+    def archive_and_cleanup_orphaned_for_issues(cls, issue_ids, new_type_id, old_type_id=None):
+        """Archive orphaned property values to issue descriptions, then delete them."""
+        if not issue_ids:
+            return
+        from plane.ee.utils.issue_property_archiver import archive_orphaned_property_values_to_description
+
+        archive_orphaned_property_values_to_description(issue_ids, new_type_id, old_type_id)
+        cls.cleanup_orphaned_for_issues(issue_ids, new_type_id)
 
 
 class IssuePropertyActivity(ProjectOptionalBaseModel):

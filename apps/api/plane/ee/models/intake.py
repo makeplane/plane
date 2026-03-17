@@ -43,6 +43,8 @@ class IntakeForm(ProjectBaseModel):
     description = models.TextField(blank=True, null=True, verbose_name=" Intake Form Description")
     anchor = models.CharField(max_length=255, default=get_anchor, unique=True, db_index=True)
     is_active = models.BooleanField(default=True, verbose_name=" Intake Form Is Active")
+    is_workitem_description_required = models.BooleanField(default=True)
+    is_workitem_name_required = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "Intake Form"
@@ -112,6 +114,7 @@ class IntakeFormField(ProjectBaseModel):
     work_item_property = models.ForeignKey(
         "ee.IssueProperty", on_delete=models.CASCADE, related_name="intake_form_fields"
     )
+    sort_order = models.PositiveIntegerField(default=65535)
 
     class Meta:
         verbose_name = "Intake Form Field"

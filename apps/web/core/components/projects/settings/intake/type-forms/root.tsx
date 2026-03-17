@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 
+import { useTranslation } from "@plane/i18n";
 import { PlusIcon, LayersIcon } from "@plane/propel/icons";
 // components
 import { Loader } from "@plane/ui";
@@ -29,6 +30,7 @@ export function TypeFormsRoot() {
   const { workspaceSlug, projectId } = useParams();
 
   // hooks
+  const { t } = useTranslation();
   const { fetchTypeForms, getProjectFormIds, isCustomFormsEnabled } = useIntakeTypeForms();
   //states
   const [isSelectTypesModalOpen, setIsSelectTypesModalOpen] = useState(false);
@@ -49,6 +51,7 @@ export function TypeFormsRoot() {
   // derived values
   const projectFormIds = projectId ? getProjectFormIds(projectId.toString()) : [];
 
+  const intakeT = (path: string) => t(`project_settings.features.intake.${path}`);
   // handlers
   const handleSelectType = (typeId: string) => {
     setFormCreateList((prev) => [...prev, typeId]);
@@ -63,7 +66,7 @@ export function TypeFormsRoot() {
       <div className="flex gap-2 px-3 pt-3 items-center justify-between">
         <div className="flex items-center gap-2">
           <LayersIcon className="size-4" />{" "}
-          <span className="text-11 font-medium text-secondary">Create Forms using work item types</span>
+          <span className="text-11 font-medium text-secondary">{intakeT("form.create_forms")}</span>
         </div>
         <IconButton size="sm" variant={"ghost"} icon={PlusIcon} onClick={() => setIsSelectTypesModalOpen(true)} />
       </div>

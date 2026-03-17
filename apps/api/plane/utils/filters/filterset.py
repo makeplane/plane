@@ -173,6 +173,7 @@ class IssueFilterSet(BaseFilterSet):
             "updated_at": ["exact", "range"],
             "is_draft": ["exact"],
             "priority": ["exact", "in"],
+            "id": ["exact", "in"],
         }
 
     def filter_is_archived(self, queryset, name, value):

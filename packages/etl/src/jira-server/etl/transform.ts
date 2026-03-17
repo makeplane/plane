@@ -111,7 +111,11 @@ export const transformIssueV2 = (
   issue: IJiraIssue,
   resourceUrl: string,
   stateMap: IStateConfig[],
-  priorityMap: IPriorityConfig[]
+  priorityMap: IPriorityConfig[],
+  knownCustomFields: {
+    startDate?: string;
+    completionDate?: string;
+  }
 ): Partial<PlaneIssue> => {
   const { resourceId, projectId, source } = ctx;
   const targetState = getTargetState(stateMap, issue.fields.status);
@@ -145,8 +149,10 @@ export const transformIssueV2 = (
     created_by: issue.fields.creator?.emailAddress || issue.fields.creator?.displayName,
     name: issue.fields.summary ?? "Untitled",
     description_html: description,
-    target_date: issue.fields.duedate,
-    start_date: issue.fields.customfield_10015,
+    target_date:
+      issue.fields.duedate ||
+      (knownCustomFields.completionDate ? issue.fields[knownCustomFields.completionDate] : null),
+    start_date: knownCustomFields.startDate ? issue.fields[knownCustomFields.startDate] : null,
     created_at: issue.fields.created,
     attachments: attachments,
     state: targetState?.id ?? "",
@@ -170,8 +176,10 @@ export const transformComment = (ctx: TTransformationContext, comment: JiraComme
     external_source: source,
     created_at: comment.created,
     created_by: comment.author?.emailAddress || comment.author?.displayName,
-    // @ts-expect-error - Ignoring ts error for possible undefined
-    comment_html: comment.renderedBody ? comment.renderedBody : (comment.body ?? "<p></p>"),
+    comment_html: comment.renderedBody
+      ? comment.renderedBody
+      : // @ts-expect-error - Ignoring ts error for possible undefined
+        (comment.body ?? "<p></p>"),
     actor: comment.author?.emailAddress || comment.author?.displayName,
     issue: `${projectId}_${resourceId}_${comment.issue_id}`,
   };
@@ -231,7 +239,7 @@ export const transformIssueType = (
   issueType: JiraIssueTypeDetails
 ): Partial<ExIssueType> => {
   const { resourceId, projectId, source } = ctx;
-  const isEpic = issueType.name?.toLowerCase().includes("epic");
+  const isEpic = issueType.name?.toLowerCase() === "epic";
 
   return {
     name: issueType.name,

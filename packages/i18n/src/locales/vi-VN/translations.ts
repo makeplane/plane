@@ -446,6 +446,8 @@ export default {
     },
   },
   intake: "Thu thập",
+  renew: "Gia hạn",
+  preview: "Xem trước",
   time_tracking: "Theo dõi thời gian",
   work_management: "Quản lý công việc",
   projects_and_issues: "Dự án và mục công việc",
@@ -534,6 +536,8 @@ export default {
   you: "Bạn",
   labels: "Nhãn",
   create_new_label: "Tạo nhãn mới",
+  label_name: "Tên nhãn",
+  failed_to_create_label: "Không thể tạo nhãn. Vui lòng thử lại.",
   start_date: "Ngày bắt đầu",
   end_date: "Ngày kết thúc",
   due_date: "Ngày hết hạn",
@@ -602,6 +606,9 @@ export default {
       name: "Tên",
     },
   },
+  upgrade_request: "Yêu cầu Quản trị viên Không gian làm việc nâng cấp.",
+  copied_to_clipboard: "Đã sao chép vào bảng tạm",
+  copied_to_clipboard_description: "URL đã được sao chép thành công vào bảng tạm của bạn",
   toast: {
     success: "Thành công!",
     error: "Lỗi!",
@@ -701,6 +708,15 @@ export default {
     manage_widgets: "Quản lý tiện ích",
     title: "Trang chủ",
     star_us_on_github: "Gắn sao cho chúng tôi trên GitHub",
+    business_trial_banner: {
+      title: "Bản dùng thử 14 ngày gói Business của bạn đã được kích hoạt!",
+      description:
+        "Khám phá tất cả các tính năng Business. Khi bạn sẵn sàng, hãy chọn đăng ký. Bạn sẽ không bị tính phí tự động.",
+      trial_ends_today: "Bản dùng thử kết thúc hôm nay",
+      trial_ends_in_days: "Bản dùng thử kết thúc sau {days} ngày",
+      start_subscription: "Bắt đầu đăng ký",
+      explore_business_features: "Khám phá tính năng Business",
+    },
   },
   link: {
     modal: {
@@ -1955,6 +1971,14 @@ Tạo dự án mới`,
       project_states: {
         title: "Trạng thái dự án",
       },
+      projects: {
+        title: "Dự án",
+        description: "Quản lý trạng thái dự án, bật nhãn dự án và các cấu hình khác.",
+        tabs: {
+          states: "Trạng thái dự án",
+          labels: "Nhãn dự án",
+        },
+      },
       teamspaces: {
         title: "Không gian nhóm",
       },
@@ -2590,16 +2614,52 @@ Tạo dự án mới`,
         toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa trang.",
       },
       intake: {
-        heading: "Trách nhiệm tiếp nhận",
+        intake_responsibility: "Trách nhiệm tiếp nhận",
+        intake_sources: "Nguồn tiếp nhận",
         title: "Tiếp nhận",
         short_title: "Tiếp nhận",
         description:
           "Cho phép những người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất; mà không làm gián đoạn quy trình làm việc của bạn.",
         toggle_title: "Bật tiếp nhận",
         toggle_description: "Cho phép thành viên dự án tạo yêu cầu tiếp nhận trong ứng dụng.",
+        toggle_tooltip_on: "Yêu cầu Quản trị viên Dự án bật tính năng này.",
+        toggle_tooltip_off: "Yêu cầu Quản trị viên Dự án tắt tính năng này.",
         notify_assignee: {
           title: "Thông báo người được chỉ định",
           description: "Đối với yêu cầu tiếp nhận mới, người được chỉ định mặc định sẽ được cảnh báo qua thông báo",
+        },
+        in_app: {
+          title: "Trong ứng dụng",
+          description:
+            "Nhận mục công việc mới từ Thành viên và Khách trong không gian làm việc mà không ảnh hưởng đến mục hiện có.",
+        },
+        email: {
+          title: "Email",
+          description: "Thu thập mục công việc mới từ bất kỳ ai gửi email đến địa chỉ email Plane.",
+          fieldName: "ID email",
+        },
+        form: {
+          title: "Biểu mẫu",
+          description:
+            "Cho phép người ngoài không gian làm việc tạo mục công việc mới tiềm năng cho bạn qua biểu mẫu chuyên dụng và an toàn.",
+          fieldName: "URL biểu mẫu mặc định",
+          create_forms: "Tạo biểu mẫu bằng loại mục công việc",
+          manage_forms: "Quản lý biểu mẫu",
+          manage_forms_tooltip: "Yêu cầu Quản trị viên Không gian làm việc quản lý.",
+          create_form: "Tạo biểu mẫu",
+          edit_form: "Chỉnh sửa chi tiết biểu mẫu",
+          form_title: "Tiêu đề biểu mẫu",
+          form_title_required: "Tiêu đề biểu mẫu là bắt buộc",
+          work_item_type: "Loại mục công việc",
+          remove_property: "Xóa thuộc tính",
+          select_properties: "Chọn thuộc tính",
+          search_placeholder: "Tìm thuộc tính",
+          toasts: {
+            success_create: "Đã tạo biểu mẫu tiếp nhận thành công",
+            success_update: "Đã cập nhật biểu mẫu tiếp nhận thành công",
+            error_create: "Không thể tạo biểu mẫu tiếp nhận",
+            error_update: "Không thể cập nhật biểu mẫu tiếp nhận",
+          },
         },
         toasts: {
           set: {
@@ -3858,6 +3918,9 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
           member_picker: {
             label: "Chọn thành viên",
           },
+          formula: {
+            label: "Công thức",
+          },
         },
         attributes: {
           label: "Thuộc tính",
@@ -3983,6 +4046,31 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
             options: {
               required: "Bạn phải thêm ít nhất một tùy chọn.",
             },
+            formula: {
+              required: "Biểu thức công thức là bắt buộc.",
+              invalid: "Công thức không hợp lệ: {error}",
+              circular_reference:
+                "Phát hiện tham chiếu vòng. Công thức không thể tham chiếu chính nó trực tiếp hoặc gián tiếp.",
+              invalid_reference: "Công thức tham chiếu đến thuộc tính không tồn tại.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Trường công thức",
+          tooltip: "Nhập công thức sử dụng cú pháp '{'Tên trường'}'. Hỗ trợ các toán tử +, -, *, / và &.",
+          placeholder: "Viết công thức",
+          test_button: "Kiểm tra",
+          validating: "Đang xác thực",
+          validation_success: "Công thức hợp lệ! Trả về {resultType}",
+          validation_success_with_refs: "Công thức hợp lệ! Trả về {resultType} ({count} trường được tham chiếu)",
+          error: {
+            empty: "Vui lòng nhập công thức",
+            missing_context: "Thiếu ngữ cảnh không gian làm việc, dự án hoặc loại mục công việc",
+            validation_failed: "Xác thực thất bại",
+          },
+          picker: {
+            no_match: "Không có thuộc tính phù hợp",
+            no_available: "Không có thuộc tính khả dụng",
           },
         },
         enable_disable: {
@@ -4088,6 +4176,15 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
         },
       },
       tooltip: "Nhấp để {action}",
+    },
+    change_confirmation: {
+      title: "Thay đổi loại mục công việc?",
+      description:
+        "Thay đổi loại mục công việc có thể dẫn đến mất các giá trị thuộc tính tùy chỉnh cụ thể cho loại hiện tại. Hành động này không thể hoàn tác.",
+      button: {
+        loading: "Đang thay đổi",
+        default: "Thay đổi loại",
+      },
     },
     empty_state: {
       enable: {
@@ -4444,6 +4541,7 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
     created: "Đã tạo",
     initiated: "Đã bắt đầu",
     pulling: "Đang kéo",
+    timed_out: "Quá thời gian",
     pulled: "Đã kéo",
     transforming: "Đang chuyển đổi",
     transformed: "Đã chuyển đổi",
@@ -5740,6 +5838,60 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
       },
     },
   },
+  intake_forms: {
+    create: {
+      title: "Tạo mục công việc",
+      "sub-title": "Cho nhóm biết bạn muốn họ làm việc về điều gì.",
+      name: "Tên",
+      email: "Email",
+      about: "Mục công việc này là về gì?",
+      description: "Mô tả điều nên xảy ra",
+      description_placeholder: "Thêm càng nhiều chi tiết càng tốt để giúp nhóm nắm tình huống và nhu cầu của bạn.",
+      loading: "Đang tạo",
+      create_work_item: "Tạo mục công việc",
+      errors: {
+        name: "Tên là bắt buộc",
+        name_max_length: "Tên phải ít hơn 255 ký tự",
+        email: "Email là bắt buộc",
+        email_invalid: "Địa chỉ email không hợp lệ",
+        title: "Tiêu đề là bắt buộc",
+        title_max_length: "Tiêu đề phải ít hơn 255 ký tự",
+      },
+    },
+    success: {
+      title: "Mục công việc của bạn đã vào hàng đợi của nhóm.",
+      description: "Nhóm giờ có thể phê duyệt hoặc loại bỏ mục công việc này khỏi hàng đợi tiếp nhận.",
+      primary_button: {
+        text: "Thêm mục công việc khác",
+      },
+      secondary_button: {
+        text: "Tìm hiểu thêm về Tiếp nhận",
+      },
+    },
+    how_it_works: {
+      title: "Cách hoạt động?",
+      heading: "Đây là biểu mẫu Tiếp nhận.",
+      description:
+        "Tiếp nhận là tính năng Plane cho phép quản trị viên và quản lý dự án nhận mục công việc từ bên ngoài vào dự án.",
+      steps: {
+        step_1: "Biểu mẫu ngắn này cho phép bạn tạo mục công việc mới trong dự án Plane.",
+        step_2: "Khi bạn gửi biểu mẫu này, một mục công việc mới sẽ được tạo trong Tiếp nhận của dự án đó.",
+        step_3: "Ai đó từ dự án hoặc nhóm sẽ xem xét.",
+        step_4: "Nếu họ phê duyệt, mục công việc sẽ chuyển vào hàng đợi công việc của dự án. Nếu không sẽ bị từ chối.",
+        step_5:
+          "Để kiểm tra trạng thái mục công việc đó, hãy liên hệ quản lý dự án, quản trị viên hoặc người gửi cho bạn liên kết trang này.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Chọn loại mục công việc",
+        search_placeholder: "Tìm loại mục công việc",
+      },
+      actions: {
+        select_properties: "Chọn thuộc tính",
+      },
+    },
+  },
   recurring_work_items: {
     settings: {
       heading: "Công việc lặp lại",
@@ -6242,4 +6394,5 @@ theo cách bạn muốn từ các nguồn bạn chỉ định.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Tên dự án không được chứa ký tự đặc biệt.",
 } as const;

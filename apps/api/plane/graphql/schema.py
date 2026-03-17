@@ -181,7 +181,7 @@ from .queries.page import (
     WorkspacePageMentionQuery,
     WorkspacePageQuery,
 )
-from .queries.project import ProjectFeatureQuery, ProjectMembersQuery, ProjectQuery
+from .queries.project import ProjectFeatureQuery, ProjectMembersQuery, ProjectQuery, IsProjectPublicQuery
 from .queries.roles import UserProjectRolesQuery
 from .queries.search import GlobalSearchQuery
 from .queries.state import StateQuery, TriageStateQuery, WorkspaceStateQuery
@@ -260,6 +260,7 @@ class Query(
     ProjectQuery,
     ProjectMembersQuery,
     ProjectFeatureQuery,
+    IsProjectPublicQuery,
     # workitem
     IssueShortenedMetaInfoQuery,
     WorkspaceIssuesInformationQuery,

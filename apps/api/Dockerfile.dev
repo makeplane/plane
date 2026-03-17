@@ -20,7 +20,8 @@ RUN apk add --no-cache --upgrade \
     "xmlsec" \
     "ca-certificates" \
     "openssl" \
-    "openldap-dev"
+    "openldap-dev" \
+    "su-exec"
 
 COPY requirements.txt ./
 COPY requirements ./requirements
@@ -52,9 +53,13 @@ COPY package.json package.json
 RUN apk --no-cache add "bash~=5.2"
 COPY ./bin ./bin/
 
-RUN mkdir -p /code/plane/logs
-RUN chmod -R +x /code/bin
-RUN chmod -R 777 /code
+# Create user first so chown can reference it by name
+RUN addgroup -g 1000 plane && adduser -u 1000 -G plane -s /bin/sh -D plane
+
+RUN mkdir -p /code/plane/logs && \
+    chmod +x ./bin/* && \
+    chmod -R 755 /code && \
+    chown -R plane:plane /code
 
 
 # Expose container port and run entry point script

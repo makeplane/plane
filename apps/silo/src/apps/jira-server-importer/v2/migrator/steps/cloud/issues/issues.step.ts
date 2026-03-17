@@ -23,6 +23,8 @@ import { JiraIssuesStep } from "../../shared/issues";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 import { extractErrorMetadata } from "@/helpers/errors";
+import type { JiraIssueDataExtractor } from "../../shared/issues/extractors/data.extractor";
+import { JiraCloudDataExtractor } from "./extractors/data.extractor";
 
 /**
  * Jira Cloud Issues Step
@@ -42,6 +44,10 @@ export class JiraCloudIssuesStep extends JiraIssuesStep {
     };
   }
 
+  protected getDataExtractor(): JiraIssueDataExtractor {
+    return new JiraCloudDataExtractor();
+  }
+
   /**
    * Pull paginated issues from Jira Cloud using nextPageToken
    */
@@ -49,7 +55,11 @@ export class JiraCloudIssuesStep extends JiraIssuesStep {
     jobContext: TJobContext;
     projectKey: string;
     jql?: string;
-    paginationCtx: { startAt: number; totalProcessed: number; nextPageToken?: string };
+    paginationCtx: {
+      startAt: number;
+      totalProcessed: number;
+      nextPageToken?: string;
+    };
   }) {
     const { job } = props.jobContext;
 
@@ -61,7 +71,7 @@ export class JiraCloudIssuesStep extends JiraIssuesStep {
       const total = await withCache(
         `jira-cloud-issues-total-${props.projectKey}`,
         job,
-        async () => await client.getNumberOfIssues(props.projectKey)
+        async () => await client.getNumberOfIssues(props.projectKey, props.jql)
       );
 
       const result = await pullIssuesV2(
@@ -120,8 +130,17 @@ export class JiraCloudIssuesStep extends JiraIssuesStep {
    * Build next context with nextPageToken for Jira Cloud pagination
    */
   protected buildNextContext(
-    issuesResult: { items: any[]; hasMore: boolean; total: number; nextPageToken?: string },
-    paginationCtx: { startAt: number; totalProcessed: number; nextPageToken?: string },
+    issuesResult: {
+      items: any[];
+      hasMore: boolean;
+      total: number;
+      nextPageToken?: string;
+    },
+    paginationCtx: {
+      startAt: number;
+      totalProcessed: number;
+      nextPageToken?: string;
+    },
     pulled: number,
     pushed: number
   ) {
@@ -164,7 +183,11 @@ export class JiraCloudIssuesStep extends JiraIssuesStep {
    */
   protected shouldReturnEmpty(
     issuesResult: { items: any[]; hasMore: boolean; total: number },
-    paginationCtx: { startAt: number; totalProcessed: number; nextPageToken?: string }
+    paginationCtx: {
+      startAt: number;
+      totalProcessed: number;
+      nextPageToken?: string;
+    }
   ): boolean {
     // First page in Cloud is when there's no nextPageToken in context
     return issuesResult.items.length === 0 && !paginationCtx.nextPageToken;

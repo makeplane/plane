@@ -43,7 +43,8 @@ from pi.services.chat.prompts import pai_ask_system_prompt
 from pi.services.chat.utils import reasoning_dict_maker
 from pi.services.llm.cache_utils import create_claude_cached_system_message
 from pi.services.llm.cache_utils import get_claude_bind_kwargs_with_cache
-from pi.services.llm.cache_utils import should_enable_claude_caching
+from pi.services.llm.cache_utils import should_cache_messages
+from pi.services.llm.cache_utils import should_cache_tool_bindings
 
 log = logger.getChild(__name__)
 
@@ -122,7 +123,7 @@ async def execute_tools_for_ask_mode(
     web_search_context: str | None = None,
 ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
     """Execute tools for ask mode"""
-    log.info(f"ChatID: {chat_id} - Executing tools for ask mode with enhanced_conversation_history: {enhanced_conversation_history}")
+    log.debug(f"ChatID: {chat_id} - Executing tools for ask mode with enhanced_conversation_history: {enhanced_conversation_history}")
     try:
         # Extract workspace_in_context from query_flow_store
         workspace_in_context = True
@@ -166,8 +167,8 @@ async def execute_tools_for_ask_mode(
             query_label = "Query (raw user input from clarification)" if is_clarification_followup else "Query"
 
             # Log comprehensive debugging information
-            log.info(f"ChatID: {chat_id} - {query_label}: {enhanced_query_for_processing}")
-            log.info(f"ChatID: {chat_id} - Ask mode LLM input - Available tools: {[t.name for t in tools]}")
+            log.debug(f"ChatID: {chat_id} - {query_label}: {enhanced_query_for_processing}")
+            log.debug(f"ChatID: {chat_id} - Ask mode LLM input - Available tools: {[t.name for t in tools]}")
 
         except Exception as e:
             log.warning(f"ChatID: {chat_id} - Failed to log debug info: {e}")
@@ -187,10 +188,9 @@ async def execute_tools_for_ask_mode(
         # deduplicate tools
         tools = list({tool.name: tool for tool in tools}.values())
 
-        # Enable prompt caching for Claude models when binding tools
+        # Tool-level cache_control only works with native ChatAnthropic
         bind_kwargs = {}
-        if should_enable_claude_caching(chatbot_instance.switch_llm):
-            # For Claude with caching: mark tools for caching via cache_control
+        if should_cache_tool_bindings(chatbot_instance.switch_llm):
             bind_kwargs = get_claude_bind_kwargs_with_cache()
 
         llm_with_tools = chatbot_instance.tool_llm.bind_tools(tools, **bind_kwargs)
@@ -311,7 +311,7 @@ async def execute_tools_for_ask_mode(
 
                         # Extract content from the accumulated message and emit as answer
                         if ai_message and hasattr(ai_message, "content") and ai_message.content:
-                            content = str(ai_message.content).strip()
+                            content = extract_text_from_content(ai_message.content).strip()
                             # Handle case where delimiter exists but answer is empty (fallback to reasoning)
                             ANSWER_DELIMITER = "ππANSWERππ"
                             if ANSWER_DELIMITER in content:
@@ -383,8 +383,8 @@ async def execute_tools_for_ask_mode(
         # Static content (system prompt + context_block) should remain constant for cache hits
         system_prompt_to_use = f"{pai_ask_system_prompt}\n\n{context_block}"
 
-        # Add system message with cache control if using Claude
-        if should_enable_claude_caching(chatbot_instance.switch_llm):
+        # Message-level cache_control works with both ChatAnthropic and LiteLLM
+        if should_cache_messages(chatbot_instance.switch_llm):
             messages.append(create_claude_cached_system_message(system_prompt_to_use))
         else:
             messages.append(SystemMessage(content=system_prompt_to_use))
@@ -436,11 +436,11 @@ async def execute_tools_for_ask_mode(
         assert ai_message is not None
 
         # Log LLM's initial response for debugging
-        log.info(f"ChatID: {chat_id} - Has Tool Calls: {hasattr(ai_message, "tool_calls") and bool(getattr(ai_message, "tool_calls", None))}")
+        log.debug(f"ChatID: {chat_id} - Has Tool Calls: {hasattr(ai_message, "tool_calls") and bool(getattr(ai_message, "tool_calls", None))}")
 
         # Check if LLM made any tool calls
         if not ai_message.tool_calls:
-            log.info(f"ChatID: {chat_id} - No tool calls found in the initial LLM response.")
+            log.debug(f"ChatID: {chat_id} - No tool calls found in the initial LLM response.")
 
             if not final_response_marker_emitted:
                 stage = "final_response"
@@ -472,7 +472,7 @@ async def execute_tools_for_ask_mode(
                             # Persist the same reasoning content shown in UI so it is available in history.
                             reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
                         content_preview = str(reasoning_chunk_dict.get("content", ""))[:1500]
-                        log.info(f"ChatID: {chat_id} - LLM tool-selection content (final aggregated): {content_preview}")
+                        log.debug(f"ChatID: {chat_id} - LLM tool-selection content (final aggregated): {content_preview}")
                         yield reasoning_chunk_dict
         except Exception:
             pass
@@ -498,7 +498,7 @@ async def execute_tools_for_ask_mode(
 
                 # Intercept clarification requests and short-circuit
                 if tool_name == "ask_for_clarification":
-                    log.info(f"ChatID: {chat_id} - Clarification requested by LLM: {tool_args.get("reason", "No reason provided")}")
+                    log.debug(f"ChatID: {chat_id} - Clarification requested by LLM: {tool_args.get("reason", "No reason provided")}")
                     clarification_payload, result = await check_and_build_clarification(tools=tools, tool_name=tool_name, tool_args=tool_args)
                     formatted_text, current_step = await store_and_format_clarification(
                         query_id=query_id,
@@ -523,12 +523,12 @@ async def execute_tools_for_ask_mode(
                             original_query = enhanced_query_for_processing
                             tool_query = tool_args.get("query") if isinstance(tool_args, dict) else None
                             if tool_query and tool_query != original_query:
-                                log.info(f"ChatID: {chat_id} - Web search query rewritten. Original: '{original_query}' | Tool: '{tool_query}'")
-                        log.info(f"ChatID: {chat_id} - Executing tool: {tool_name} with args: {str(tool_args)[:100]}")
+                                log.debug(f"ChatID: {chat_id} - Web search query rewritten. Original: '{original_query}' | Tool: '{tool_query}'")
+                        log.debug(f"ChatID: {chat_id} - Executing tool: {tool_name} with args: {str(tool_args)[:100]}")
                         try:
                             # Yield tool execution status
                             user_friendly_tool_name = tool_name_shown_to_user(tool_name)
-                            log.info(f"ChatID: {chat_id} - Tool name: {tool_name} - User friendly tool name: {user_friendly_tool_name}")
+                            log.debug(f"ChatID: {chat_id} - Tool name: {tool_name} - User friendly tool name: {user_friendly_tool_name}")
                             # Format tool query for display (same as build mode)
                             tool_query_str = format_tool_query_for_display(tool_name, tool_args, enhanced_query_for_processing)
                             stage = "retrieval_tool_execution"
@@ -561,7 +561,7 @@ async def execute_tools_for_ask_mode(
 
                             # Log brief output for observability
                             result_preview = str(tool_result) if tool_result else "None"
-                            log.info(f"ChatID: {chat_id} - Tool {tool_name} result preview: {result_preview[:200]}")
+                            log.debug(f"ChatID: {chat_id} - Tool {tool_name} result preview: {result_preview[:200]}")
                             log.debug(f"ChatID: {chat_id} - Tool {tool_name} completed successfully")
 
                             # Track the response
@@ -791,7 +791,7 @@ async def execute_tools_for_ask_mode(
                     final_content = answer_part
                 else:
                     final_content = parts[0].strip()
-            log.info(f"ChatID: {chat_id} - Final response length: {len(final_content)} chars")
+            log.debug(f"ChatID: {chat_id} - Final response length: {len(final_content)} chars")
             # Stream the final answer in chunks to simulate streaming
             # Note: plane-attachment:// placeholders are replaced with presigned URLs in chat.py
             # before yielding to the client, while the original placeholders are stored in DB

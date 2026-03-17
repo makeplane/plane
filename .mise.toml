@@ -1,2 +1,5 @@
+[env]
+_.file = ".env"
+
 [tools]
 node = "22.18.0"

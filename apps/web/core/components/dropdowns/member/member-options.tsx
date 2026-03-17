@@ -23,7 +23,7 @@ import { useTranslation } from "@plane/i18n";
 import { CheckIcon, SearchIcon, SuspendedUserIcon } from "@plane/propel/icons";
 import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import type { IUserLite } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { cn, getFileURL, sortByCurrentUserThenSelected } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

@@ -23,7 +23,7 @@ from pi.core.vectordb import VectorStore
 from pi.services.dupes.prompts import dupes_human_prompt
 from pi.services.dupes.prompts import dupes_system_prompt
 from pi.services.llm.error_handling import llm_error_handler
-from pi.services.llm.llms import get_dupes_llm
+from pi.services.llm.llms import LLMFactory
 
 vector_db = VectorStore()
 
@@ -93,7 +93,7 @@ async def identify_duplicates_with_llm(query_title: str, query_description: str,
         return [], {}
 
     # Create the dupes LLM with structured output (include_raw=True to preserve token usage)
-    dupes_llm = get_dupes_llm()
+    dupes_llm = LLMFactory.get_lightweight_llm(streaming=False, temperature=0.0)
     dupes_structured_llm = dupes_llm.with_structured_output(DuplicateIdentificationResponse, include_raw=True, method="json_schema")  # type: ignore[arg-type]
 
     # Format candidates for LLM input as a clean numbered list
@@ -113,10 +113,8 @@ async def identify_duplicates_with_llm(query_title: str, query_description: str,
 
     # Get LLM response
     dupes_llm_start = time.time()
-    log.info("Starting dupes LLM call")
     response = dupes_structured_llm.invoke(messages)
     dupes_llm_elapsed = time.time() - dupes_llm_start
-    log.info(f"Dupes LLM call completed in {dupes_llm_elapsed:.2f}s (DUPES)")
 
     if not response:
         log.warning("No response from LLM for duplicate detection")
@@ -247,7 +245,7 @@ async def get_dupes(data: DupeSearchRequest):
         tracking_data["token_usage"] = token_usage  # Pass extracted tokens, not the full response
 
         # Get model key for token tracking
-        dupes_llm = get_dupes_llm()
+        dupes_llm = LLMFactory.get_lightweight_llm(streaming=False, temperature=0.0)
         tracking_data["model_key"] = getattr(dupes_llm, "model_name", "unknown")
 
         log.info(f"LLM identified {len(llm_identified_dupes)} duplicates from {len(candidates_for_llm)} candidates")

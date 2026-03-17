@@ -36,7 +36,8 @@ from pi.services.chat.utils import get_current_timestamp_context
 from pi.services.chat.utils import reasoning_dict_maker
 from pi.services.llm.cache_utils import create_claude_cached_system_message
 from pi.services.llm.cache_utils import get_claude_bind_kwargs_with_cache
-from pi.services.llm.cache_utils import should_enable_claude_caching
+from pi.services.llm.cache_utils import should_cache_messages
+from pi.services.llm.cache_utils import should_cache_tool_bindings
 from pi.services.retrievers.pg_store.message import upsert_message_flow_steps as _upsert_message_flow_steps
 from pi.services.schemas.chat import ActionCategorySelection
 
@@ -60,6 +61,7 @@ from .helpers.build_mode_helpers import selected_action_categories_display
 from .helpers.tool_utils import WordBatcher
 from .helpers.tool_utils import build_method_prompt
 from .helpers.tool_utils import classify_tool
+from .helpers.tool_utils import extract_text_from_content
 from .helpers.tool_utils import format_tool_query_for_display
 from .helpers.tool_utils import preflight_missing_required_fields
 from .helpers.tool_utils import tool_name_shown_to_user
@@ -120,7 +122,7 @@ async def _inject_urls_into_entities(entities: list[Dict[str, Any]] | str, pendi
                 api_base_url = settings.plane_api.FRONTEND_URL
                 entity_urls = await construct_entity_urls_from_db(entity_ids_by_type, api_base_url)
                 url_map = {url_info["id"]: url_info["url"] for url_info in entity_urls}
-                log.info(f"Fetched {len(url_map)} URLs from database for action tool results")
+                log.debug(f"Fetched {len(url_map)} URLs from database for action tool results")
             except Exception as e:
                 log.error(f"Failed to fetch URLs from database: {e}")
 
@@ -392,12 +394,12 @@ async def execute_tools_for_build_mode(
             query_label = "User Intent (clarification response)" if is_clarification_followup else "User Intent"
 
             # Log comprehensive debugging information
-            log.info(f"ChatID: {chat_id} - {query_label}: {combined_tool_query}")
-            log.info(f"ChatID: {chat_id} - Selected Categories: {built_categories}")
-            log.info(f"ChatID: {chat_id} - Available Tools Count: {len(combined_tools)}")
+            log.debug(f"ChatID: {chat_id} - {query_label}: {combined_tool_query}")
+            log.debug(f"ChatID: {chat_id} - Selected Categories: {built_categories}")
+            log.debug(f"ChatID: {chat_id} - Available Tools Count: {len(combined_tools)}")
             try:
                 tool_names_for_log = [t.name for t in combined_tools]
-                log.info(f"ChatID: {chat_id} - Planning tools: {tool_names_for_log}")
+                log.debug(f"ChatID: {chat_id} - Planning tools: {tool_names_for_log}")
             except Exception:
                 pass
 
@@ -423,16 +425,15 @@ async def execute_tools_for_build_mode(
         # deduplicate tools
         combined_tools = list({tool.name: tool for tool in combined_tools}.values())
 
-        # Enable prompt caching for Claude models when binding tools
+        # Tool-level cache_control only works with native ChatAnthropic
         bind_kwargs = {}
-        if should_enable_claude_caching(chatbot_instance.switch_llm):
-            # For Claude with caching: mark tools for caching via cache_control
+        if should_cache_tool_bindings(chatbot_instance.switch_llm):
             bind_kwargs = get_claude_bind_kwargs_with_cache()
 
         llm_with_method_tools = chatbot_instance.tool_llm.bind_tools(combined_tools, **bind_kwargs)
 
-        # Initialize messages with cache control for Claude
-        if should_enable_claude_caching(chatbot_instance.switch_llm):
+        # Message-level cache_control works with both ChatAnthropic and LiteLLM
+        if should_cache_messages(chatbot_instance.switch_llm):
             messages = [
                 create_claude_cached_system_message(method_prompt),
                 HumanMessage(content=user_message_content),
@@ -533,7 +534,7 @@ async def execute_tools_for_build_mode(
 
                         # Extract content from the accumulated message and emit as answer
                         if accumulated_msg and hasattr(accumulated_msg, "content") and accumulated_msg.content:
-                            content_str = str(accumulated_msg.content).strip()
+                            content_str = extract_text_from_content(accumulated_msg.content).strip()
                             if content_str:
                                 answer_streaming_started = True
                                 final_answer_streamed = True
@@ -562,7 +563,7 @@ async def execute_tools_for_build_mode(
         # This represents the LLM's internal thinking/reasoning process
 
         # Log LLM's initial response for debugging
-        log.info(f"ChatID: {chat_id} - LLM INITIAL RESPONSE")
+        log.debug(f"ChatID: {chat_id} - LLM INITIAL RESPONSE")
         try:
             _has_tool_calls = hasattr(response, "tool_calls") and bool(getattr(response, "tool_calls", None))
         except Exception:
@@ -570,7 +571,7 @@ async def execute_tools_for_build_mode(
 
         # FAILSAFE: Detect if LLM mistakenly put tool_calls in content instead of using API
         # This can happen with certain models/prompts - detect and handle gracefully
-        response_content = str(getattr(response, "content", "") or "").strip()
+        response_content = extract_text_from_content(getattr(response, "content", "") or "").strip()
         if not _has_tool_calls and "```tool_calls" in response_content:
             log.warning(f"ChatID: {chat_id} - DETECTED: LLM output tool_calls as markdown instead of API. Stripping from content.")
             # Strip the tool_calls markdown block from content to avoid showing JSON to user
@@ -580,14 +581,14 @@ async def execute_tools_for_build_mode(
             # Update response content to cleaned version for streaming
             if hasattr(response, "content"):
                 response.content = cleaned_content
-            log.info(f"ChatID: {chat_id} - Stripped tool_calls markdown. Cleaned content: {cleaned_content[:200]}...")
+            log.debug(f"ChatID: {chat_id} - Stripped tool_calls markdown. Cleaned content: {cleaned_content[:200]}...")
 
-        log.info(f"ChatID: {chat_id} - Has Tool Calls: {_has_tool_calls}")
+        log.debug(f"ChatID: {chat_id} - Has Tool Calls: {_has_tool_calls}")
 
         if _has_tool_calls:
             # Yield reasoning chunk for the planner tool selection
             try:
-                _content_preview = str(getattr(response, "content", "") or "").strip()
+                _content_preview = extract_text_from_content(getattr(response, "content", "") or "").strip()
                 if _content_preview:
                     ## change point: "πspecial reasoning blockπ:
                     stage = "planner_tool_selection"
@@ -613,16 +614,16 @@ async def execute_tools_for_build_mode(
                     else:
                         tool_names.append(getattr(_tc, "name", ""))
 
-                reasoning_text = str(getattr(response, "content", "") or "").strip()
+                reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
                 reason_preview = reasoning_text or "(none)"
 
-                log.info(f"ChatID: {chat_id} - Planner selected tools: {tool_names}")
-                log.info(f"ChatID: {chat_id} - Planner reasoning: {reason_preview}")
+                log.debug(f"ChatID: {chat_id} - Planner selected tools: {tool_names}")
+                log.debug(f"ChatID: {chat_id} - Planner reasoning: {reason_preview}")
             else:
                 # Log when no tool calls are made
-                reasoning_text = str(getattr(response, "content", "") or "").strip()
-                log.info(f"ChatID: {chat_id} - Planner selected tools: []")
-                log.info(f"ChatID: {chat_id} - Planner reasoning (no tools): {reasoning_text}")
+                reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
+                log.debug(f"ChatID: {chat_id} - Planner selected tools: []")
+                log.debug(f"ChatID: {chat_id} - Planner reasoning (no tools): {reasoning_text}")
         except Exception as e:
             log.warning(f"ChatID: {chat_id} - Failed to log planner decisions: {e}")
 
@@ -657,11 +658,11 @@ async def execute_tools_for_build_mode(
             # If no tool calls in this response, the LLM has finished its work
             # Either it has planned actions, or it's providing a final answer (retrieval-only)
             if not _has_tool_calls:
-                log.info(f"ChatID: {chat_id} - No tool calls returned; LLM has finished (planned {len(planned_actions)} actions)")
+                log.debug(f"ChatID: {chat_id} - No tool calls returned; LLM has finished (planned {len(planned_actions)} actions)")
                 break
 
             # Execute all tool calls in this round
-            log.info(f"ChatID: {chat_id} - Entering the for loop to execute selected tool calls in this iteration: {iteration_count}")
+            log.debug(f"ChatID: {chat_id} - Entering the for loop to execute selected tool calls in this iteration: {iteration_count}")
 
             # Priority Check for Clarification
             # If ask_for_clarification is present, it MUST override all other tools in this batch
@@ -675,7 +676,7 @@ async def execute_tools_for_build_mode(
                     break
 
             if clarification_call:
-                log.info(
+                log.debug(
                     f"ChatID: {chat_id} - DETECTED CLARIFICATION: Discarding {len(current_response_tool_calls) - 1} other tools and {len(planned_actions)} pending actions."  # noqa: E501
                 )
                 # Filter to run ONLY the clarification
@@ -707,7 +708,7 @@ async def execute_tools_for_build_mode(
                         log.info(f"ChatID: {chat_id} - Web search query rewritten. Original: '{original_query}' | Tool: '{tool_query}'")
 
                 # Log each tool call execution for debugging
-                log.info(f"ChatID: {chat_id} - EXECUTING TOOL: {tool_name} with args: {tool_args}")
+                log.debug(f"ChatID: {chat_id} - EXECUTING TOOL: {tool_name} with args: {tool_args}")
 
                 # Track tool calls to detect loops
                 tool_call_signature = f"{tool_name}({tool_args})"
@@ -972,7 +973,7 @@ async def execute_tools_for_build_mode(
                         execution_success,
                         execution_error,
                     ) = result  # type: ignore[assignment]
-                    log.info(f"ChatID: {chat_id} - Tool {tool_name} result: {tool_message.content}")
+                    log.debug(f"ChatID: {chat_id} - Tool {tool_name} result: {tool_message.content}")
                     if tool_message is not None:
                         tool_messages.append(tool_message)
                         # Format tool message content for user-friendly display (remove UUIDs, URLs, etc.)
@@ -1044,7 +1045,7 @@ async def execute_tools_for_build_mode(
             has_more_tool_calls = bool(getattr(response, "tool_calls", None))
             if has_more_tool_calls:
                 try:
-                    _iter_content = str(getattr(response, "content", "") or "").strip()
+                    _iter_content = extract_text_from_content(getattr(response, "content", "") or "").strip()
                     if _iter_content:
                         ## change point: "πspecial reasoning blockπ:
                         stage = "planner_tool_selection"
@@ -1063,7 +1064,7 @@ async def execute_tools_for_build_mode(
 
             # FAILSAFE: Detect if LLM mistakenly put tool_calls in content in iterations
             if not _has_tool_calls:
-                iter_content = str(getattr(response, "content", "") or "").strip()
+                iter_content = extract_text_from_content(getattr(response, "content", "") or "").strip()
                 if "```tool_calls" in iter_content:
                     log.warning(f"ChatID: {chat_id} - DETECTED (iteration {iteration_count}): LLM output tool_calls as markdown. Stripping.")
                     cleaned_content = re.sub(r"```tool_calls\s*\n?\[[\s\S]*?\]\s*\n?```", "", iter_content).strip()
@@ -1081,16 +1082,16 @@ async def execute_tools_for_build_mode(
                         else:
                             tool_names.append(getattr(_tc, "name", ""))
 
-                    reasoning_text = str(getattr(response, "content", "") or "").strip()
+                    reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
                     reason_preview = reasoning_text or "(none)"
 
-                    log.info(f"ChatID: {chat_id} - Planner selected tools (iteration {iteration_count}): {tool_names}")
-                    log.info(f"ChatID: {chat_id} - Planner reasoning (iteration {iteration_count}): {reason_preview}")
+                    log.debug(f"ChatID: {chat_id} - Planner selected tools (iteration {iteration_count}): {tool_names}")
+                    log.debug(f"ChatID: {chat_id} - Planner reasoning (iteration {iteration_count}): {reason_preview}")
                 else:
                     # Log when no tool calls are made in iteration
-                    reasoning_text = str(getattr(response, "content", "") or "").strip()
-                    log.info(f"ChatID: {chat_id} - Planner selected tools (iteration {iteration_count}): []")
-                    log.info(f"ChatID: {chat_id} - Planner reasoning (iteration {iteration_count}, no tools): {reasoning_text}")
+                    reasoning_text = extract_text_from_content(getattr(response, "content", "") or "").strip()
+                    log.debug(f"ChatID: {chat_id} - Planner selected tools (iteration {iteration_count}): []")
+                    log.debug(f"ChatID: {chat_id} - Planner reasoning (iteration {iteration_count}, no tools): {reasoning_text}")
             except Exception as e:
                 log.warning(f"ChatID: {chat_id} - Failed to log planner decisions for iteration {iteration_count}: {e}")
 
@@ -1220,7 +1221,7 @@ async def execute_tools_for_build_mode(
             ANSWER_DELIMITER = "ππANSWERππ"
             content = ""
             if hasattr(response, "content") and response.content:
-                content = str(response.content).strip()
+                content = extract_text_from_content(response.content).strip()
                 # Strip delimiter - we only want the final answer part for persistence
                 if ANSWER_DELIMITER in content:
                     parts = content.split(ANSWER_DELIMITER, 1)
@@ -1280,7 +1281,7 @@ async def execute_tools_for_build_mode(
         ANSWER_DELIMITER = "ππANSWERππ"
         final_response_content = ""
         if hasattr(response, "content") and response.content:
-            content = str(response.content).strip()
+            content = extract_text_from_content(response.content).strip()
             # Strip delimiter - we only want the final answer part for persistence
             if ANSWER_DELIMITER in content:
                 parts = content.split(ANSWER_DELIMITER, 1)

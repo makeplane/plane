@@ -18,7 +18,8 @@ import { useTranslation } from "@plane/i18n";
 import { SuspendedUserIcon } from "@plane/propel/icons";
 import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { Avatar, Tooltip } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Tooltip } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 

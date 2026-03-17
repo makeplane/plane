@@ -21,6 +21,7 @@ from plane.ee.views.app.issue_property import (
     IssuePropertyEndpoint,
     IssuePropertyOptionEndpoint,
     IssuePropertyActivityEndpoint,
+    IssuePropertyFormulaValidateEndpoint,
 )
 
 urlpatterns = [
@@ -105,5 +106,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/property-activity/",
         IssuePropertyActivityEndpoint.as_view(),
         name="issue-property-activity",
+    ),
+    # validating the formula property in issue type
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-types/<uuid:issue_type_id>/issue-properties/formula-validate/",
+        IssuePropertyFormulaValidateEndpoint.as_view(),
+        name="issue-property-formula-validate",
     ),
 ]

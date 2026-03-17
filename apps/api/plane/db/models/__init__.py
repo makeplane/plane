@@ -99,3 +99,18 @@ from .device import Device, DeviceSession
 from .sticky import Sticky
 
 from .description import Description, DescriptionVersion
+
+from .release import (
+    Release,
+    ReleaseTag,
+    ReleaseLabel,
+    ReleaseLabelAssociation,
+    ReleaseComment,
+    ReleaseCommentReaction,
+    ReleaseWorkItem,
+    ReleaseActivity,
+    ReleaseChangelog,
+    ReleaseAttachment,
+    ReleaseLink,
+    ReleasePage,
+)

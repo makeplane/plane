@@ -1,0 +1,9 @@
+{
+  "appPath": "./apps/desktop",
+  "bundleWorkspacePackages": {
+    "enabled": true
+  },
+  "icon": "./apps/desktop/icon.png",
+  "id": "260130r75i625",
+  "schemaVersion": 1
+}

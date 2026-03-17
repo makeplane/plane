@@ -12,12 +12,14 @@
 # Standard Library imports
 import json
 import logging
+import os
 import signal
-import time
 import sys
+import time
 
 # Third Party imports
 import pika
+from pika.exceptions import ProbableAuthenticationError
 from django.db import IntegrityError, close_old_connections, connection
 from django.db.utils import OperationalError
 from django.conf import settings
@@ -54,23 +56,10 @@ class AutomationConsumer:
         logger.info(f"AutomationConsumer initialized for queue '{self.queue_name}'")
 
     def _setup_connection_params(self):
-        """Set up RabbitMQ connection parameters."""
-        if hasattr(settings, "AMQP_URL") and settings.AMQP_URL:
-            self.connection_params = pika.URLParameters(settings.AMQP_URL)
-        else:
-            host = getattr(settings, "RABBITMQ_HOST", "localhost")
-            port = int(getattr(settings, "RABBITMQ_PORT", 5672))
-            username = getattr(settings, "RABBITMQ_USER", "guest")
-            password = getattr(settings, "RABBITMQ_PASSWORD", "guest")
-            virtual_host = getattr(settings, "RABBITMQ_VHOST", "/")
+        """Set up RabbitMQ connection parameters from Django settings or AWS Secrets Manager."""
+        from plane.utils.amqp import get_amqp_connection_params
 
-            self.connection_params = pika.ConnectionParameters(
-                host=host,
-                port=port,
-                virtual_host=virtual_host,
-                credentials=pika.PlainCredentials(username, password),
-                heartbeat=600,
-            )
+        self.connection_params = get_amqp_connection_params()
 
     def _setup_signal_handlers(self):
         """Set up signal handlers for graceful shutdown."""
@@ -268,6 +257,20 @@ class AutomationConsumer:
             except OperationalError:
                 logger.warning("Database connection lost permanently, stopping consumer")
                 sys.exit(1)
+            except ProbableAuthenticationError:
+                if os.environ.get("AMAZONMQ_SECRET_ARN") and (
+                    os.environ.get("AWS_ROLE_ARN")
+                    or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI")
+                ):
+                    logger.warning("Auth failure — refreshing AMQP secret")
+                    from plane.utils.amqp import get_amqp_connection_params
+
+                    self.connection_params = get_amqp_connection_params(
+                        force_refresh=True
+                    )
+                    retry_count += 1
+                else:
+                    raise
             except Exception as e:
                 log_exception(e)
                 retry_count += 1

@@ -16,7 +16,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import type { TPage } from "@plane/types";
-import { Avatar, Loader } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
+import { Loader } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, getPageName } from "@plane/utils";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";

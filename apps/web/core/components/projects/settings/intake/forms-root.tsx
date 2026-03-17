@@ -15,6 +15,7 @@ import { useState } from "react";
 import { LayersIcon, ListTodo, RefreshCcw } from "lucide-react";
 import { CopyIcon, NewTabIcon, InfoIcon } from "@plane/propel/icons";
 import { SPACE_BASE_URL, SPACE_BASE_PATH } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -51,7 +52,10 @@ export function IntakeFormsRoot(props: Props) {
   // states
   const [isRenewModalOpen, setIsRenewModalOpen] = useState(false);
   // hooks
+  const { t } = useTranslation();
   const { toggleIntakeForms, regenerateIntakeForms } = useProjectInbox();
+
+  const intakeT = (path: string) => t(`project_settings.features.intake.${path}`);
 
   const handleSubmit = async () => {
     if (!workspaceSlug || !projectId || isFormEnabled === undefined) return;
@@ -60,14 +64,14 @@ export function IntakeFormsRoot(props: Props) {
       is_form_enabled: !isFormEnabled,
     });
     setPromiseToast(updateProjectPromise, {
-      loading: "Updating project feature...",
+      loading: t("project_settings.features.toasts.loading"),
       success: {
-        title: "Success!",
-        message: () => "Project feature updated successfully.",
+        title: t("toast.success"),
+        message: () => t("project_settings.features.toasts.success"),
       },
       error: {
-        title: "Error!",
-        message: () => "Something went wrong while updating project feature. Please try again.",
+        title: t("toast.error"),
+        message: () => t("project_settings.features.toasts.error"),
       },
     });
   };
@@ -78,8 +82,8 @@ export function IntakeFormsRoot(props: Props) {
     copyTextToClipboard(publishLink).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Copied to clipboard",
-        message: "The URL has been successfully copied to your clipboard",
+        title: t("copied_to_clipboard"),
+        message: t("copied_to_clipboard_description"),
       })
     );
   };
@@ -101,16 +105,13 @@ export function IntakeFormsRoot(props: Props) {
           <div className="w-full">
             <div className="flex justify-between gap-4">
               <div className="flex-1 w-full">
-                <div className="text-13 font-medium leading-5 align-top ">Forms</div>
-                <p className="text-13 text-tertiary text-wrap mt-1">
-                  Let folks outside your workspace create potential new work items for you via a dedicated and secure
-                  form.{" "}
-                </p>
+                <div className="text-13 font-medium leading-5 align-top ">{intakeT("form.title")}</div>
+                <p className="text-13 text-tertiary text-wrap mt-1">{intakeT("form.description")}</p>
               </div>
               <div className="flex items-center">
                 {isEnabled && isFormEnabled !== undefined && (
                   <Tooltip
-                    tooltipContent={`Ask your Project Admin to turn this ${isFormEnabled ? "off" : "on"}.`}
+                    tooltipContent={isFormEnabled ? intakeT("toggle_tooltip_off") : intakeT("toggle_tooltip_on")}
                     position="top"
                     className=""
                     disabled={isAdmin}
@@ -138,7 +139,7 @@ export function IntakeFormsRoot(props: Props) {
                   <div className="p-3 space-y-2">
                     <div className="flex gap-2 rounded">
                       <ListTodo className="h-4 w-4 flex-shrink-0 text-tertiary" />
-                      <span className="text-11 font-medium">Default form URL</span>
+                      <span className="text-11 font-medium">{intakeT("form.fieldName")}</span>
                     </div>
                     <div className="flex gap-2 h-[30px] truncate">
                       {anchor ? (
@@ -164,7 +165,7 @@ export function IntakeFormsRoot(props: Props) {
                           className="w-fit cursor-pointer px-2 py-1 text-center text-13 font-medium outline-none my-auto h-full"
                           onClick={() => setIsRenewModalOpen(true)}
                         >
-                          <RefreshCcw className="w-[16px]" /> Renew
+                          <RefreshCcw className="w-[16px]" /> {t("renew")}
                         </Button>
                       )}
                     </div>
@@ -173,7 +174,7 @@ export function IntakeFormsRoot(props: Props) {
                     <div className="flex gap-2 items-center justify-between px-3 pb-3">
                       <div className="flex items-center gap-2">
                         <LayersIcon className="size-3" />{" "}
-                        <span className="text-11 font-medium text-secondary">Create Forms using work item types</span>
+                        <span className="text-11 font-medium text-secondary">{intakeT("form.create_forms")}</span>
                       </div>
                       {isAdmin ? (
                         <Button
@@ -183,14 +184,11 @@ export function IntakeFormsRoot(props: Props) {
                             window.open(`/${workspaceSlug}/projects/${projectId}/settings/features/intake`, "_blank");
                           }}
                         >
-                          <span>Manage forms</span>
+                          <span>{intakeT("form.manage_forms")}</span>
                           <NewTabIcon className="size-3" />
                         </Button>
                       ) : (
-                        <Tooltip
-                          tooltipContent="Ask your Workspace Admin
-to manage this."
-                        >
+                        <Tooltip tooltipContent={intakeT("form.manage_forms_tooltip")}>
                           <InfoIcon className="size-3" />
                         </Tooltip>
                       )}

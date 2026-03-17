@@ -9,6 +9,10 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Thrid party imports
+from rest_framework import serializers
+from zxcvbn import zxcvbn
+
 # Module imports
 from .base import BaseSerializer
 from plane.db.models import User
@@ -47,3 +51,26 @@ class InstanceAdminSerializer(BaseSerializer):
         model = InstanceAdmin
         fields = "__all__"
         read_only_fields = ["id", "instance", "user"]
+
+
+class InstanceAdminPasswordResetSerializer(serializers.Serializer):
+    new_password = serializers.CharField(required=True, write_only=True)
+
+    def validate_new_password(self, value):
+        results = zxcvbn(value)
+        if results["score"] < 3:
+            raise serializers.ValidationError(
+                "Password is too weak. Please use a strong password", code="INVALID_PASSWORD"
+            )
+        return value
+
+    def save(self):
+        "Update the user's password and reset the flag"
+        user = self.context.get("request").user
+        new_password = self.validated_data["new_password"]
+
+        user.set_password(new_password)
+        user.is_password_reset_required = False
+        user.save()
+
+        return user

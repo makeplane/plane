@@ -16,7 +16,7 @@ from django.db import models
 # Module import
 from .project import ProjectOptionalBaseModel
 from plane.utils.issue_filters import issue_filters
-
+from plane.db.mixins import FiltersMixin
 
 def get_default_filters():
     return {
@@ -62,7 +62,7 @@ def get_default_display_properties():
     }
 
 
-class IssueView(ProjectOptionalBaseModel):
+class IssueView(ProjectOptionalBaseModel, FiltersMixin):
     name = models.CharField(max_length=255, verbose_name="View Name")
     description = models.TextField(verbose_name="View Description", blank=True)
     query = models.JSONField(verbose_name="View Query")

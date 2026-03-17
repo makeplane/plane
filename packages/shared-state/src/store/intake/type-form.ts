@@ -23,6 +23,8 @@ export interface IIntakeTypeFormInstance {
   is_active: boolean;
   description?: string;
   anchor?: string;
+  is_workitem_name_required?: boolean;
+  is_workitem_description_required?: boolean;
   mutateInstance: (data: Partial<TIntakeTypeForm>) => void;
   update: () => Promise<TIntakeTypeForm>;
 }
@@ -36,6 +38,8 @@ export class IntakeTypeFormInstance implements IIntakeTypeFormInstance {
   description?: string;
   anchor?: string;
   work_item_type: string;
+  is_workitem_name_required?: boolean;
+  is_workitem_description_required?: boolean;
 
   // services
   updateCallback: (data: Partial<TIntakeTypeForm>) => Promise<TIntakeTypeForm>;
@@ -48,6 +52,8 @@ export class IntakeTypeFormInstance implements IIntakeTypeFormInstance {
     this.is_active = data.is_active ?? false;
     this.description = data.description;
     this.anchor = data.anchor;
+    this.is_workitem_name_required = data.is_workitem_name_required ?? true;
+    this.is_workitem_description_required = data.is_workitem_description_required ?? true;
 
     // services
     this.updateCallback = updateCallback;
@@ -60,6 +66,8 @@ export class IntakeTypeFormInstance implements IIntakeTypeFormInstance {
       is_active: observable,
       description: observable,
       anchor: observable,
+      is_workitem_name_required: observable,
+      is_workitem_description_required: observable,
       // actions
       mutateInstance: action,
       update: action,
@@ -75,6 +83,8 @@ export class IntakeTypeFormInstance implements IIntakeTypeFormInstance {
       is_active: this.is_active,
       description: this.description,
       anchor: this.anchor,
+      is_workitem_name_required: this.is_workitem_name_required,
+      is_workitem_description_required: this.is_workitem_description_required,
     };
   }
 

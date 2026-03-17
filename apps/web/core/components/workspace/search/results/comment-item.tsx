@@ -11,8 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { Avatar } from "@plane/propel/avatar";
 import type { IWorkspaceCommentEnhancedSearchResult } from "@plane/constants";
-import { Avatar } from "@plane/ui";
 import { getFileURL, sanitizeHTML } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";

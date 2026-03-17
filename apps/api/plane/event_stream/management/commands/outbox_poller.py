@@ -190,6 +190,15 @@ class DatabaseConnectionPool:
     ):
         self.pool: psycopg_pool.AsyncConnectionPool | None = None
         self.dsn = self._get_dsn_from_settings()
+        db = settings.DATABASES["default"]
+        self._secret_arn = db.get("SECRET_ARN") or os.environ.get("RDS_SECRET_ARN", "")
+        self._use_secrets_manager = bool(
+            self._secret_arn
+            and (
+                os.environ.get("AWS_ROLE_ARN", "")
+                or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
+            )
+        )
         self.pool_size = pool_size
         self.min_size = min_size
         self.max_size = max_size
@@ -208,12 +217,43 @@ class DatabaseConnectionPool:
         # If DATABASE_URL is not set, use the default database settings
         if not dsn:
             db = settings.DATABASES["default"]
-            dsn = f"postgresql://{quote(db['USER'])}:{quote(db['PASSWORD'])}@{db['HOST']}:{db['PORT']}/{db['NAME']}"
+            secret_arn = db.get("SECRET_ARN") or os.environ.get("RDS_SECRET_ARN", "")
+            has_aws_creds = bool(
+                os.environ.get("AWS_ROLE_ARN", "")
+                or os.environ.get("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
+            )
+            if secret_arn and has_aws_creds:
+                dsn = self._dsn_from_secrets_manager(db, secret_arn)
+            else:
+                dsn = f"postgresql://{quote(db['USER'])}:{quote(db['PASSWORD'])}@{db['HOST']}:{db['PORT']}/{db['NAME']}"
 
         # If the DSN starts with postgres://, replace it with postgresql://
         if dsn.startswith("postgres://"):
             dsn = dsn.replace("postgres://", "postgresql://", 1)
         return dsn
+
+    def _dsn_from_secrets_manager(self, db: dict, secret_arn: str, force_refresh: bool = False) -> str:
+        """Build DSN from AWS Secrets Manager when IRSA or EKS Pod Identity is present."""
+        from plane.utils.aws_secrets import get_secret
+
+        region = db.get("AWS_REGION") or os.environ.get("AWS_REGION", "us-east-1")
+        secret = get_secret(secret_arn, region, force_refresh=force_refresh)
+        host = secret.get(
+            os.environ.get("RDS_DB_HOST_KEY"), db.get("HOST", "")
+        )
+        port = secret.get(
+            os.environ.get("RDS_DB_PORT_KEY"), db.get("PORT", 5432)
+        )
+        user = secret.get(
+            os.environ.get("RDS_DB_USERNAME_KEY"), db.get("USER", "")
+        )
+        password = secret.get(
+            os.environ.get("RDS_DB_PASSWORD_KEY"), db.get("PASSWORD", "")
+        )
+        name = secret.get(
+            os.environ.get("RDS_DB_NAME_KEY"), db.get("NAME", "")
+        )
+        return f"postgresql://{quote(str(user))}:{quote(str(password))}@{host}:{port}/{name}"
 
     async def connect(self):
         """Initialize the connection pool with comprehensive configuration."""
@@ -235,12 +275,45 @@ class DatabaseConnectionPool:
                 open=False,
             )
 
-            # Open the pool explicitly
-            await self.pool.open()
+            try:
+                # Open the pool explicitly
+                await self.pool.open()
 
-            # Test the pool with a simple query
-            async with self.pool.connection() as conn:
-                await conn.execute("SELECT 1")
+                # Test the pool with a simple query
+                async with self.pool.connection() as conn:
+                    await conn.execute("SELECT 1")
+            except psycopg.OperationalError as e:
+                if (
+                    self._use_secrets_manager
+                    and "password authentication failed" in str(e).lower()
+                ):
+                    log.warning(
+                        "Auth failure on pool open — refreshing secret and retrying"
+                    )
+                    if self.pool:
+                        await self.pool.close()
+                        self.pool = None
+                    db = settings.DATABASES["default"]
+                    self.dsn = self._dsn_from_secrets_manager(
+                        db, self._secret_arn, force_refresh=True
+                    )
+                    self.pool = psycopg_pool.AsyncConnectionPool(
+                        conninfo=self.dsn,
+                        min_size=self.min_size,
+                        max_size=self.max_size,
+                        timeout=self.timeout,
+                        max_idle=self.max_idle,
+                        max_lifetime=self.max_lifetime,
+                        reconnect_timeout=self.reconnect_timeout,
+                        configure=self._configure_connection,
+                        reset=self._reset_connection,
+                        open=False,
+                    )
+                    await self.pool.open()
+                    async with self.pool.connection() as conn:
+                        await conn.execute("SELECT 1")
+                else:
+                    raise
 
             log.info(
                 "Connection pool established successfully",

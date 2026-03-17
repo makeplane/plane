@@ -20,6 +20,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
 from pi import logger
+from pi.core.db.plane import PlaneDBSync
 from pi.core.db.plane_pi.engine import sync_engine
 
 log = logger.getChild(__name__)
@@ -40,29 +41,44 @@ def get_alembic_config() -> Config:
 @app.command("wait-for-db")
 def wait_for_db(timeout: int = 60):
     """
-    Wait until the database connection is available.
-    This command will block until a connection can be opened successfully
+    Wait until both database connections (Plane PI and Follower) are available.
+    This command will block until both connections can be opened successfully
     or until the timeout is reached.
     """
-    log.info("Waiting for the database to be available...")
+    log.info("Waiting for the Plane PI database to be available...")
     start_time = time.time()
 
     while True:
         try:
             with sync_engine.connect() as connection:
-                # Execute a simple query to test the connection.
                 connection.execute(text("SELECT 1"))
-            log.info("Database connection established!")
-            return
+            log.info("Plane PI database connection established!")
+            break
         except OperationalError:
             if time.time() - start_time > timeout:
-                log.error("Database connection timed out.")
+                log.error("Plane PI database connection check failed. Please verify PLANE_PI_DATABASE_URL is correctly configured.")
                 sys.exit(1)
-            log.info("Database not available, retrying in 2 seconds...")
+            log.info("Plane PI database not available, retrying in 2 seconds...")
             time.sleep(2)
         except Exception as e:
-            log.error(f"Unexpected error while connecting to the database: {e}")
+            log.error(f"Unexpected error while connecting to the Plane PI database: {e}")
             sys.exit(1)
+
+    log.info("Waiting for the Plane Follower Database to be available...")
+
+    while True:
+        try:
+            result = PlaneDBSync.fetchrow("SELECT 1 AS ok")
+            if result:
+                log.info("Plane Follower Database connection established!")
+                return
+            raise RuntimeError("Plane Follower Database.fetchrow returned None")
+        except Exception:
+            if time.time() - start_time > timeout:
+                log.error("Plane Follower Database connectivity check failed. Please verify FOLLOWER_POSTGRES_URI is correctly configured.")
+                sys.exit(1)
+            log.info("Plane Follower Database not available, retrying in 2 seconds...")
+            time.sleep(2)
 
 
 @app.command("wait-for-migrations")
@@ -88,7 +104,7 @@ def makemigrations(message: str = "auto"):
     alembic_cfg = get_alembic_config()
     log.info("Generating migration script...")
     command.revision(alembic_cfg, message=message, autogenerate=True)
-    log.info(f"Migration script created with message: {message}")
+    log.debug(f"Migration script created with message: {message}")
 
 
 @app.command()
@@ -229,14 +245,14 @@ def bootstrap_db():
 @app.command("check-db-connectivity")
 def check_db_connectivity():
     """
-    Check PostgreSQL database connectivity.
+    Check PostgreSQL and Plane Follower Database connectivity.
 
-    Tests the connection to PostgreSQL and displays database information.
+    Tests the SQLAlchemy and Plane Follower Database connections and displays database information.
 
     Example:
         python -m pi.manage check-db-connectivity
     """
-    typer.echo("Checking PostgreSQL connectivity...")
+    typer.echo("Checking PostgreSQL and Plane Follower Database connectivity...")
     typer.echo("-" * 60)
 
     try:
@@ -247,7 +263,7 @@ def check_db_connectivity():
 
             typer.echo("✓ PostgreSQL is reachable")
             typer.echo("")
-            typer.echo("Database Information:")
+            typer.echo("PostgreSQL Information:")
             typer.echo(f"  Version: {version}")
             typer.echo("")
 
@@ -261,10 +277,29 @@ def check_db_connectivity():
             db_user = result.scalar()
             typer.echo(f"  User: {db_user}")
 
-        typer.echo("-" * 60)
-        typer.echo("✓ PostgreSQL connectivity check PASSED")
+        plane_follower_db_info = PlaneDBSync.fetchrow(
+            """
+            SELECT
+                version() AS version,
+                current_database() AS database_name,
+                current_user AS user_name
+            """
+        )
+        if not plane_follower_db_info:
+            raise RuntimeError("Plane Follower Database connectivity check failed. Please verify FOLLOWER_POSTGRES_URI is correctly configured.")
 
-        log.info("PostgreSQL connectivity check successful")
+        typer.echo("")
+        typer.echo("✓ Plane Follower Database is reachable")
+        typer.echo("")
+        typer.echo("Plane Follower Database Information:")
+        typer.echo(f"  Version: {plane_follower_db_info["version"]}")
+        typer.echo(f"  Database: {plane_follower_db_info["database_name"]}")
+        typer.echo(f"  User: {plane_follower_db_info["user_name"]}")
+
+        typer.echo("-" * 60)
+        typer.echo("✓ PostgreSQL and Plane Follower Database connectivity check PASSED")
+
+        log.info("PostgreSQL and Plane Follower Database connectivity checks successful")
 
     except OperationalError as exc:
         log.error("PostgreSQL connectivity check failed: %s", exc, exc_info=True)
@@ -274,6 +309,19 @@ def check_db_connectivity():
         typer.echo("")
         typer.echo("Please verify:")
         typer.echo("  - DATABASE_URL is correctly configured")
+        typer.echo("  - PostgreSQL service is running")
+        typer.echo("  - Database credentials are correct")
+        typer.echo("  - Network connectivity is available")
+        raise typer.Exit(code=1)
+
+    except RuntimeError as exc:
+        log.error("Plane Follower Database connectivity check failed: %s", exc, exc_info=True)
+        typer.echo("-" * 60)
+        typer.echo("✗ Plane Follower Database connectivity check FAILED")
+        typer.echo(f"Error: {exc}")
+        typer.echo("")
+        typer.echo("Please verify:")
+        typer.echo("  - FOLLOWER_POSTGRES_URI is correctly configured")
         typer.echo("  - PostgreSQL service is running")
         typer.echo("  - Database credentials are correct")
         typer.echo("  - Network connectivity is available")

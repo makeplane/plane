@@ -20,6 +20,16 @@ const meta = preview.meta({
   parameters: {
     layout: "centered",
   },
+  argTypes: {
+    size: {
+      control: "select",
+      options: ["sm", "md", "base", "lg"],
+    },
+    shape: {
+      control: "select",
+      options: ["circle", "square"],
+    },
+  },
   args: {
     name: "John Doe",
     src: "https://i.pravatar.cc/150?img=1",
@@ -28,96 +38,38 @@ const meta = preview.meta({
 
 export const Default = meta.story({});
 
-export const WithName = meta.story({
-  args: {
-    name: "Jane Smith",
-    src: "https://i.pravatar.cc/150?img=5",
-  },
+export const Circle = Default.extend({ args: { shape: "circle", size: "lg" } });
+
+export const Square = Default.extend({ args: { shape: "square", size: "lg" } });
+
+export const Small = Default.extend({ args: { size: "sm" } });
+
+export const Medium = Default.extend({ args: { size: "md" } });
+
+export const Base = Default.extend({ args: { size: "base" } });
+
+export const Large = Default.extend({ args: { size: "lg" } });
+
+export const CustomSize = Default.extend({ args: { size: 48 } });
+
+export const FallbackInitials = Default.extend({ args: { name: "Alice Johnson", src: undefined } });
+
+export const FallbackCustomColor = Default.extend({
+  args: { name: "Bob Wilson", src: undefined, fallbackBackgroundColor: "#3b82f6" },
 });
 
-export const Fallback = meta.story({
-  args: {
-    name: "Alice Johnson",
-    src: "invalid-url",
-  },
+export const FallbackCustomText = Default.extend({
+  args: { fallbackText: "AB", name: undefined, src: undefined, fallbackBackgroundColor: "#10b981" },
 });
 
-export const FallbackWithCustomColor = meta.story({
-  args: {
-    name: "Bob Wilson",
-    src: "invalid-url",
-    fallbackBackgroundColor: "#3b82f6",
-    fallbackTextColor: "#ffffff",
-  },
+export const FallbackNoName = Default.extend({
+  args: { name: undefined, src: undefined, fallbackBackgroundColor: "#f59e0b" },
 });
 
-export const FallbackWithCustomText = meta.story({
-  args: {
-    fallbackText: "AB",
-    src: "invalid-url",
-    fallbackBackgroundColor: "#10b981",
-    fallbackTextColor: "#ffffff",
-  },
+export const InvalidUrl = Default.extend({
+  args: { name: "John Doe", src: "https://invalid-url-example.com/404.png" },
 });
 
-export const Small = meta.story({
-  args: {
-    name: "Small Avatar",
-    src: "https://i.pravatar.cc/150?img=2",
-    size: "sm",
-  },
-});
-
-export const Medium = meta.story({
-  args: {
-    name: "Medium Avatar",
-    src: "https://i.pravatar.cc/150?img=3",
-    size: "md",
-  },
-});
-
-export const Base = meta.story({
-  args: {
-    name: "Base Avatar",
-    src: "https://i.pravatar.cc/150?img=4",
-    size: "base",
-  },
-});
-
-export const Large = meta.story({
-  args: {
-    name: "Large Avatar",
-    src: "https://i.pravatar.cc/150?img=6",
-    size: "lg",
-  },
-});
-
-export const CircleShape = meta.story({
-  args: {
-    name: "Circle Avatar",
-    src: "https://i.pravatar.cc/150?img=7",
-    shape: "circle",
-  },
-});
-
-export const SquareShape = meta.story({
-  args: {
-    name: "Square Avatar",
-    src: "https://i.pravatar.cc/150?img=8",
-    shape: "square",
-  },
-});
-
-export const NumericSize = meta.story({
-  args: {
-    name: "Custom Size",
-    src: "invalid-url",
-    size: 48,
-  },
-});
-
-export const NoNameNoFallback = meta.story({
-  args: {
-    src: "invalid-url",
-  },
+export const Workspace = Default.extend({
+  args: { name: "Plane", shape: "square", size: "lg", src: undefined, fallbackBackgroundColor: "#3b82f6" },
 });

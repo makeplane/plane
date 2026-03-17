@@ -60,8 +60,16 @@ import type { IWorkspaceNotificationStore } from "@/plane-web/store/notification
 import { WorkspaceNotificationStore } from "@/plane-web/store/notifications/notifications.store";
 import type { IProjectPageStore } from "./pages/project-page.store";
 import { ProjectPageStore } from "./pages/project-page.store";
-import type { IProjectFilterStore, IWorkspaceProjectStatesStore } from "./workspace-project-states";
-import { ProjectFilterStore, WorkspaceProjectStatesStore } from "./workspace-project-states";
+import type {
+  IProjectFilterStore,
+  IWorkspaceProjectStatesStore,
+  IWorkspaceProjectLabelsStore,
+} from "./workspace-project-states";
+import {
+  ProjectFilterStore,
+  WorkspaceProjectStatesStore,
+  WorkspaceProjectLabelsStore,
+} from "./workspace-project-states";
 import type { IProjectRootStore } from "./project";
 import { ProjectRootStore } from "./project";
 import type { IProjectDetailsStore } from "./project/project-details";
@@ -206,6 +214,7 @@ enableStaticRendering(typeof window === "undefined");
 export class CoreRootStore {
   workspaceRoot: IWorkspaceRootStore;
   workspaceProjectStates: IWorkspaceProjectStatesStore;
+  workspaceProjectLabels: IWorkspaceProjectLabelsStore;
   projectFilter: IProjectFilterStore;
   projectRoot: IProjectRootStore;
   projectDetails: IProjectDetailsStore;
@@ -221,6 +230,7 @@ export class CoreRootStore {
   label: ILabelStore;
   analytics: IAnalyticsStore;
   projectPages: IProjectPageStore;
+  /** @deprecated Avoid router store to prevent sync issues. Use React Router params/props/hooks directly instead. */
   router: IRouterStore;
   commandPalette: ICommandPaletteStore;
   theme: IThemeStore;
@@ -294,6 +304,7 @@ export class CoreRootStore {
     this.theme = new ThemeStore();
     this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this as unknown as RootStore);
+    this.workspaceProjectLabels = new WorkspaceProjectLabelsStore(this as unknown as RootStore);
     this.projectFilter = new ProjectFilterStore(this as unknown as RootStore);
     this.projectRoot = new ProjectRootStore(this);
     this.projectDetails = new ProjectDetailsStore(this as unknown as RootStore);
@@ -381,6 +392,7 @@ export class CoreRootStore {
     this.user = new UserStore(this as unknown as RootStore);
     this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this as unknown as RootStore);
+    this.workspaceProjectLabels = new WorkspaceProjectLabelsStore(this as unknown as RootStore);
     this.projectFilter = new ProjectFilterStore(this as unknown as RootStore);
     this.projectRoot = new ProjectRootStore(this);
     this.projectDetails = new ProjectDetailsStore(this as unknown as RootStore);

@@ -9,33 +9,36 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+# Python imports
+from typing import Optional, Union
+
 # Django imports
-from django.db.models import F, Value, Case, When
-from django.utils import timezone
-from django.core.exceptions import ValidationError
-from django.db.models import Q, CharField, Func
-from django.db.models.functions import Cast
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.core.exceptions import ValidationError
+from django.db.models import Case, CharField, F, Func, Q, Value, When
+from django.db.models.fields import UUIDField
+from django.db.models.functions import Cast
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
+from plane.db.models import Issue, Project
+from plane.ee.bgtasks.issue_property_activity_task import issue_property_activity
 from plane.ee.models import IssueProperty, IssuePropertyValue, PropertyTypeEnum
-from plane.db.models import Issue
-from plane.db.models import Project
-from plane.ee.views.base import BaseAPIView
 from plane.ee.permissions import ProjectEntityPermission
+from plane.ee.utils.formula.work_item_properties import fetch_formula_values
 from plane.ee.utils.issue_property_validators import (
-    property_validators,
-    property_savers,
     SAVE_MAPPER,
     VALIDATOR_MAPPER,
+    property_savers,
+    property_validators,
 )
-from plane.ee.bgtasks.issue_property_activity_task import issue_property_activity
-from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 
 
 class IssuePropertyValueEndpoint(BaseAPIView):
@@ -87,10 +90,56 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             )
         )
 
+    # ========== FORMULA PROPERTY ==========
+    def get_formula_values(
+        self,
+        workspace_slug: str,
+        project_id: Union[str, UUIDField],
+        work_item_id: Union[str, UUIDField],
+        property_ids: Optional[list] = None,
+    ) -> Optional[dict]:
+        # validate feature flag
+        feature_flag = FeatureFlag.WORKITEM_TYPE_FORMULA_FIELD
+        if not check_workspace_feature_flag(feature_key=feature_flag, slug=workspace_slug):
+            return None
+
+        # validating the property type required for formula properties
+        if property_ids:
+            issue_property_formula_properties = IssueProperty.objects.filter(
+                workspace__slug=workspace_slug,
+                project_id=project_id,
+                id__in=property_ids,
+                issue_type__is_epic=False,
+                property_type=PropertyTypeEnum.FORMULA,
+            )
+            if issue_property_formula_properties.count() != len(property_ids):
+                return None
+
+        # fetch formula values
+        formula_values = fetch_formula_values(work_item_id=work_item_id, property_ids=property_ids)
+        return formula_values
+
+    # ========== FORMULA PROPERTY ==========
+
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, issue_id, property_id=None):
         # Get a single issue property value
         if property_id:
+            # ========== FORMULA PROPERTY ==========
+            formula_values = (
+                self.get_formula_values(
+                    workspace_slug=slug,
+                    project_id=project_id,
+                    work_item_id=issue_id,
+                    property_ids=[property_id],
+                )
+                or None
+            )
+            if formula_values:
+                return Response(formula_values, status=status.HTTP_200_OK)
+            # ========== FORMULA PROPERTY ==========
+
+            # Regular property value
             issue_property_value = IssuePropertyValue.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
@@ -99,9 +148,11 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 property__issue_type__is_epic=False,
             )
 
-            issue_property_value = self.query_annotator(issue_property_value).values("property_id", "value")
+            issue_property_value = self.query_annotator(issue_property_value).values("property_id", "values")
 
-            return Response(issue_property_value, status=status.HTTP_200_OK)
+            if issue_property_value:
+                return Response(issue_property_value[0], status=status.HTTP_200_OK)
+            return Response({"property_id": str(property_id), "values": []}, status=status.HTTP_200_OK)
 
         # Get all issue property values
         issue_property_values = IssuePropertyValue.objects.filter(
@@ -121,6 +172,16 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             for issue_property_value in issue_property_values
         }
 
+        # ========== FORMULA PROPERTY ==========
+        formula_values = self.get_formula_values(
+            workspace_slug=slug,
+            project_id=project_id,
+            work_item_id=issue_id,
+        )
+        if formula_values:
+            response.update(formula_values)
+        # ========== FORMULA PROPERTY ==========
+
         return Response(response, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
@@ -131,6 +192,18 @@ class IssuePropertyValueEndpoint(BaseAPIView):
 
             # Get all the issue property ids
             issue_property_ids = list(issue_property_values.keys())
+
+            # ========== FORMULA PROPERTY ==========
+            # Check if any of the properties are formula properties (read-only)
+            formula_properties = IssueProperty.objects.filter(
+                id__in=issue_property_ids, property_type=PropertyTypeEnum.FORMULA
+            ).values_list("id", "display_name")
+
+            # if formula property is present, remove it from the issue property values
+            if formula_properties:
+                for uuid, _ in formula_properties:
+                    issue_property_values.pop(str(uuid))
+            # ========== FORMULA PROPERTY ==========
 
             # existing values
             existing_prop_queryset = IssuePropertyValue.objects.filter(
@@ -153,14 +226,14 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             project = Project.objects.get(pk=project_id)
             workspace_id = project.workspace_id
 
-            # Get all issue properties
+            # Get all issue properties (exclude formula properties)
             issue_properties = IssueProperty.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_type_id=issue_type_id,
                 issue_type__is_epic=False,
                 is_active=True,
-            )
+            ).exclude(property_type=PropertyTypeEnum.FORMULA)
 
             # Validate the data
             property_validators(
@@ -214,6 +287,13 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 pk=property_id,
                 issue_type__is_epic=False,
             )
+
+            # Check if this is a formula property (read-only)
+            if issue_property.property_type == PropertyTypeEnum.FORMULA:
+                return Response(
+                    {"error": f"Formula property '{issue_property.display_name}' is read-only and cannot be edited"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             existing_prop_queryset = IssuePropertyValue.objects.filter(
                 workspace__slug=slug,

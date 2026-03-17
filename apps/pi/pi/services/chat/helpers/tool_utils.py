@@ -325,7 +325,7 @@ async def stream_llm_with_delimiter(
             response_tool_calls = getattr(response, "tool_calls", None) if response else None
             content_preview = str(response_content)[:500] if response_content else "None"
             tool_calls_preview = str(response_tool_calls)[:300] if response_tool_calls else "None"
-            log.info(
+            log.debug(
                 f"stream_llm_with_delimiter - LLM Response Summary:\n"
                 f"  - Has tool_calls: {bool(response_tool_calls)}\n"
                 f"  - Tool calls: {tool_calls_preview}\n"
@@ -340,7 +340,7 @@ async def stream_llm_with_delimiter(
                 if delimiter_pos != -1:
                     reasoning_part = full_content[:delimiter_pos]
                     answer_part = full_content[delimiter_pos + len(ANSWER_DELIMITER) :]
-                    log.info(
+                    log.debug(
                         f"stream_llm_with_delimiter - DELIMITER ANALYSIS:\n"
                         f"{"=" * 80}\n"
                         f"REASONING SECTION (before delimiter, {len(reasoning_part)} chars):\n"
@@ -351,7 +351,7 @@ async def stream_llm_with_delimiter(
                         f"{"=" * 80}"
                     )
                 else:
-                    log.info(f"stream_llm_with_delimiter - NO DELIMITER FOUND in content:\n" f"{"=" * 80}\n" f"{full_content}\n" f"{"=" * 80}")
+                    log.debug(f"stream_llm_with_delimiter - NO DELIMITER FOUND in content:\n" f"{"=" * 80}\n" f"{full_content}\n" f"{"=" * 80}")
         except Exception as log_err:
             log.debug(f"stream_llm_with_delimiter - Failed to log response: {log_err}")
 
@@ -1565,7 +1565,7 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
     else:
         method_prompt += "\nSkip greetings and get straight to the point."
 
-    log.info(f"ENHANCED_CONVERSATION_HISTORY being sent to LLM:\n{enhanced_conversation_history}")
+    log.debug(f"ENHANCED_CONVERSATION_HISTORY being sent to LLM:\n{enhanced_conversation_history}")
 
     # Inject clarification context if present (from previous turn's ask_for_clarification)
     if clarification_context and isinstance(clarification_context, dict):
@@ -2467,7 +2467,7 @@ async def handle_missing_required_fields(
 
         # Log clarification payload synthesized during preflight
         with contextlib.suppress(Exception):
-            log.info(
+            log.debug(
                 f"{"*" * 100}\nChatID: {chat_id} - ASK_FOR_CLARIFICATION payload (preflight): {json.dumps(clarification_payload, default=str)}\n{"*" * 100}"  # noqa: E501
             )
 
@@ -2614,7 +2614,7 @@ async def batch_llm_stream_by_words(llm_stream: AsyncIterator[Any], words_per_ba
         if not chunk_content:
             continue
 
-        batched = batcher.add(str(chunk_content))
+        batched = batcher.add(extract_text_from_content(chunk_content))
         if batched:
             yield batched
 

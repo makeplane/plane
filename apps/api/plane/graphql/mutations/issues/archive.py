@@ -31,6 +31,7 @@ from plane.graphql.helpers.state import get_state
 from plane.graphql.helpers.work_item import get_work_item
 from plane.graphql.helpers.workspace import get_workspace_async
 from plane.graphql.permissions.project import ProjectBasePermission
+from plane.graphql.utils.archive import ArchivedFilterTypes
 
 
 @strawberry.type
@@ -116,7 +117,7 @@ class WorkItemArchiveMutation:
             project_id=project_id,
             work_item_id=work_item,
             filters={"archived_at__isnull": False},
-            include_archived=True,
+            archived_filter=ArchivedFilterTypes.ONLY,
         )
         work_item_id = str(work_item_details.id)
 

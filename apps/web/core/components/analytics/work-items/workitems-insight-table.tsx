@@ -23,7 +23,7 @@ import { ProjectIcon } from "@plane/propel/icons";
 // plane package imports
 import type { AnalyticsTableDataMap, WorkItemInsightColumns } from "@plane/types";
 // plane web components
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";

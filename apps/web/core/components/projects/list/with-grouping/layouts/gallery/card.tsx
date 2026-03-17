@@ -125,7 +125,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
               workspaceSlug={workspaceSlug.toString()}
               currentWorkspace={currentWorkspace}
               dateClassname="block"
-              displayProperties={{ state: true, priority: true, lead: true, members: true, date: true }}
+              displayProperties={{ state: true, priority: true, lead: true, members: true, labels: true, date: true }}
             />
           </div>
         </>

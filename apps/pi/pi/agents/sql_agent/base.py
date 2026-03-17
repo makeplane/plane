@@ -38,10 +38,10 @@ from pi.app.models.enums import MessageMetaStepType
 from pi.config import settings
 from pi.services.chat.helpers.flow_tracking import FlowStepCollector
 from pi.services.llm.cache_utils import create_claude_cached_system_message
-from pi.services.llm.cache_utils import should_enable_claude_caching
+from pi.services.llm.cache_utils import should_cache_messages
 from pi.services.llm.error_handling import llm_error_handler
 from pi.services.llm.llms import LazyLLM
-from pi.services.llm.llms import get_sql_agent_llm
+from pi.services.llm.llms import LLMFactory
 from pi.services.schemas.chat import QueryFlowStore
 
 from .helpers import _fix_group_by_order_by_mismatch_parsed
@@ -107,8 +107,8 @@ Message = Union[SystemMessage, HumanMessage, AIMessage]
 # Derive per-call instances below to prevent context collisions.
 # Wrapped in LazyLLM to defer creation until first use — prevents import-time crash
 # when no API keys are configured (e.g., custom-only deployments).
-table_selection_model = LazyLLM(lambda: get_sql_agent_llm("table_selection"))
-sql_generation_model = LazyLLM(lambda: get_sql_agent_llm("sql_generation"))
+table_selection_model = LazyLLM(lambda: LLMFactory.get_sql_agent_llm("table_selection"))
+sql_generation_model = LazyLLM(lambda: LLMFactory.get_sql_agent_llm("sql_generation"))
 
 
 # Log the default models being used
@@ -160,7 +160,7 @@ async def _perform_table_selection_llm_call(
             effective_model = "gpt-5-fast"
             log.info("Table selection: Automatically using gpt-5-fast instead of gpt-5-standard to prevent token limits")
 
-        table_selection_model_instance = get_sql_agent_llm("table_selection", effective_model)
+        table_selection_model_instance = LLMFactory.get_sql_agent_llm("table_selection", effective_model)
     else:
         table_selection_model_instance = table_selection_model  # type: ignore[assignment]
 
@@ -204,8 +204,7 @@ async def select_relevant_tables(
     """
     # Prepare messages for the LLM
     # Enable prompt caching for Claude models - cache the static TABLE_SELECTION prompt
-    if should_enable_claude_caching(llm_model):
-        # Cache the large static table descriptions prompt
+    if should_cache_messages(llm_model):
         langchain_messages: List[Message] = [create_claude_cached_system_message(TABLE_SELECTION)]
     else:
         langchain_messages = [SystemMessage(content=TABLE_SELECTION)]
@@ -223,21 +222,14 @@ async def select_relevant_tables(
 
     # Use error handler for table selection LLM call
     response = await _perform_table_selection_llm_call(langchain_messages, message_id, db, llm_model=llm_model, chat_id=chat_id)
+    # Fallback model testing HOOK: Uncomment the line below to test the fallback model
+    # response = "TABLE_SELECTION_FAILURE"
 
     # Handle failure case
     if response == "TABLE_SELECTION_FAILURE":
         log.error("Table selection failed after all retries")
 
-        # Fallback to fast provider model for OpenAI/Anthropic deployments
-        has_openai_key = bool(settings.llm_config.OPENAI_API_KEY and settings.llm_config.OPENAI_API_KEY.strip())
-        has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
-
-        if has_openai_key:
-            fallback_model = settings.llm_config.PROVIDER_DEFAULT_MODELS_FAST.get("openai")
-        elif has_claude_key:
-            fallback_model = settings.llm_config.PROVIDER_DEFAULT_MODELS_FAST.get("anthropic")
-        else:
-            fallback_model = settings.llm_model.DEFAULT
+        fallback_model = LLMFactory.get_fallback_model_name(llm_model)
 
         log.info(f"Attempting table selection fallback with {fallback_model} replacing {llm_model}")
         try:
@@ -288,7 +280,7 @@ async def _perform_sql_generation_llm_call(
     """Perform the actual LLM call for SQL generation with error handling."""
     # Derive a fresh per-call instance to avoid shared-instance tracking context overlap
     if llm_model:
-        per_call_sql_model = get_sql_agent_llm("sql_generation", llm_model)
+        per_call_sql_model = LLMFactory.get_sql_agent_llm("sql_generation", llm_model)
     else:
         per_call_sql_model = sql_generation_model  # type: ignore[assignment]
     per_call_sql_model.set_tracking_context(message_id, db, MessageMetaStepType.SQL_GENERATION, chat_id=chat_id)  # type: ignore[attr-defined]
@@ -329,7 +321,7 @@ async def sql_generation(
     # Enable prompt caching for Claude models
     # Cache the full SQL generator prompt (including table-specific context)
     # Cache hits occur when the same tables are queried in subsequent requests
-    if should_enable_claude_caching(llm_model):
+    if should_cache_messages(llm_model):
         langchain_messages: List[Message] = [create_claude_cached_system_message(modified_sql_generator)]
     else:
         langchain_messages = [SystemMessage(content=modified_sql_generator)]
@@ -394,7 +386,7 @@ async def text2sql(
             base_step = int(base_step_raw) if base_step_raw is not None else 0
         except Exception:
             base_step = 0
-        log.info(f"ChatID: {chat_id} - text2sql base_step from flow_store: {base_step}")
+        log.debug(f"ChatID: {chat_id} - text2sql base_step from flow_store: {base_step}")
 
         # Initialize a single dictionary to collect all intermediate results
         intermediate_results: Dict[str, Any] = {
@@ -410,16 +402,16 @@ async def text2sql(
         user_message = _create_message_with_attachments(query, attachment_blocks)
 
         # Log the incoming user query
-        log.info(f"ChatID: {chat_id} - User Query: {query}")
+        log.debug(f"ChatID: {chat_id} - User Query: {query}")
 
         # Step One: Table Selection
         relevant_tables: List[str]
         if preset_tables:
             # Use preset tables, skip LLM call
             relevant_tables = preset_tables.copy()
-            log.info(f"ChatID: {chat_id} - Using Preset Tables: {relevant_tables}")
+            log.debug(f"ChatID: {chat_id} - Using Preset Tables: {relevant_tables}")
             query_flow_store["tool_response"] += f"Text2SSQL: Using Preset Tables: {relevant_tables}\n"
-            log.info(f"ChatID: {chat_id} - Using preset tables: {relevant_tables}")
+            log.debug(f"ChatID: {chat_id} - Using preset tables: {relevant_tables}")
         else:
             # Regular table selection with LLM
             if project_id:
@@ -430,7 +422,7 @@ async def text2sql(
             selection_res = []
             relevant_tables = []  # await get_relevant_tables_from_cache(query)
             if relevant_tables:
-                log.info(f"ChatID: {chat_id} - Relevant tables from cache: {relevant_tables}")
+                log.debug(f"ChatID: {chat_id} - Relevant tables from cache: {relevant_tables}")
                 selection_res.append({"relevant_tables": relevant_tables})
             else:
                 table_selection_start = time.time()
@@ -450,7 +442,7 @@ async def text2sql(
                 for idx, res in enumerate(selection_res):
                     iteration_relevant_tables = res["relevant_tables"]  # Access as dictionary key
                     # log_relevant_tables_info(chat_id or "", iteration_relevant_tables, idx)
-                    log.info(f"ChatID: {chat_id} - Selected Tables {idx}: {iteration_relevant_tables}")
+                    log.debug(f"ChatID: {chat_id} - Selected Tables {idx}: {iteration_relevant_tables}")
                     query_flow_store["tool_response"] += f"Text2SSQL: Relevant Tables {idx}: {iteration_relevant_tables}\n"
                     relevant_tables.extend(iteration_relevant_tables)
             else:
@@ -620,7 +612,7 @@ async def text2sql(
         if preset_sql_query:
             # Use preset SQL query, skip LLM call
             generated_query = preset_sql_query.strip()
-            log.info(f"ChatID: {chat_id} - Using Preset SQL Query: {generated_query}")
+            log.debug(f"ChatID: {chat_id} - Using Preset SQL Query: {generated_query}")
             query_flow_store["tool_response"] += f"Text2SSQL: Using Preset SQL: {generated_query}\n"
             # log.info(f"ChatID: {chat_id} - Using preset SQL query")
 
@@ -689,7 +681,7 @@ async def text2sql(
                 log.info(f"ChatID: {chat_id} - SQL generation completed in {sql_generation_elapsed:.2f}s")
                 generated_query = sql_query
                 # log_generated_sql_info(chat_id or "", generated_query or "")
-                log.info(f"ChatID: {chat_id} - Generated SQL Query: {generated_query}")
+                log.debug(f"ChatID: {chat_id} - Generated SQL Query: {generated_query}")
 
                 # Store SQL generation in our intermediate results
                 intermediate_results["generated_sql"] = generated_query
@@ -860,7 +852,8 @@ async def text2sql(
                 log.info(f"ChatID: {chat_id} - SQL execution completed in {sql_execution_elapsed:.2f}s")
         except Exception as e:
             intermediate_results["sql_execution_error"] = e
-            log.error(f"Error executing SQL query for chat ID {chat_id}: {e} \n Generated SQL query that resulted in the error:\n {final_query}\n")
+            log.error(f"Error executing SQL query for chat ID {chat_id}: {e}")
+            log.debug(f"Generated SQL query that resulted in the error for chat ID {chat_id}:\n {final_query}\n")
 
             # Try to fix GROUP BY/ORDER BY issues and re-execute
             try:

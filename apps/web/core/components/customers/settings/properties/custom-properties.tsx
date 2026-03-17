@@ -18,7 +18,13 @@ import { v4 } from "uuid";
 import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import type { EIssuePropertyType, TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plane/types";
+import type {
+  EIssuePropertyType,
+  TCreationListModes,
+  TIssueProperty,
+  TIssuePropertyPayload,
+  TIssuePropertyTypeKeys,
+} from "@plane/types";
 // plane ui
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // helpers
@@ -52,6 +58,16 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
   const { sortedProperties, getPropertyById, createProperty, deleteProperty } = useCustomerProperties();
   // derived
   const isAnyPropertiesAvailable = customerPropertyCreateList.length > 0 || sortedProperties.length > 0;
+  // customers don't support formula properties
+  const allowedPropertyTypes: TIssuePropertyTypeKeys[] = [
+    "TEXT",
+    "DECIMAL",
+    "OPTION",
+    "BOOLEAN",
+    "DATETIME",
+    "RELATION_USER",
+    "URL",
+  ];
 
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -131,6 +147,7 @@ export const CustomerCustomPropertiesRoot = observer(function CustomerCustomProp
                   lastElementRef={lastElementRef}
                   properties={sortedProperties}
                   isUpdateAllowed={true}
+                  allowedPropertyTypes={allowedPropertyTypes}
                 />
                 <div className={cn("flex items-center py-2 px-4", !isAnyPropertiesAvailable && "justify-center")}>
                   <Button

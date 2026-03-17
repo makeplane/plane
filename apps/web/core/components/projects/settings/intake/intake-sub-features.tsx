@@ -18,6 +18,7 @@ import useSWR from "swr";
 import { RefreshCcw } from "lucide-react";
 import { CopyIcon, NewTabIcon } from "@plane/propel/icons";
 import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -45,6 +46,7 @@ type Props = {
 };
 const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
   const { projectId, allowEdit = true, showDefault = true, featureList, isTooltip = false } = props;
+  const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   const [modalType, setModalType] = useState("");
   const { fetchIntakeForms, toggleIntakeForms, regenerateIntakeForms, intakeForms } = useProjectInbox();
@@ -70,6 +72,7 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
     in_app: true,
     form: isIntakeFormEnabled,
   };
+  const intakeT = (path: string) => t(`project_settings.features.intake.${path}`);
 
   const settings = intakeForms[projectId];
   const isAdmin = allowPermissions(
@@ -83,8 +86,8 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
     copyTextToClipboard(text).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Copied to clipboard",
-        message: "The URL has been successfully copied to your clipboard",
+        title: t("copied_to_clipboard"),
+        message: t("copied_to_clipboard_description"),
       })
     );
   };
@@ -96,14 +99,14 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
       [featureKey]: !settings[featureKey],
     });
     setPromiseToast(updateProjectPromise, {
-      loading: "Updating project feature...",
+      loading: t("project_settings.features.toasts.loading"),
       success: {
-        title: "Success!",
-        message: () => "Project feature updated successfully.",
+        title: t("toast.success"),
+        message: () => t("project_settings.features.toasts.success"),
       },
       error: {
-        title: "Error!",
-        message: () => "Something went wrong while updating project feature. Please try again.",
+        title: t("toast.error"),
+        message: () => t("project_settings.features.toasts.error"),
       },
     });
   };
@@ -147,13 +150,17 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                   <div className="w-full space-y-2">
                     <div className="flex justify-between gap-4">
                       <div className="flex-1 w-full">
-                        <div className="text-13 font-medium leading-5 align-top ">{feature.title}</div>
-                        <p className="text-13 text-tertiary text-wrap mt-1">{feature.description} </p>
+                        <div className="text-13 font-medium leading-5 align-top">{intakeT(`${featureKey}.title`)}</div>
+                        <p className="text-13 text-tertiary text-wrap mt-1">{intakeT(`${featureKey}.description`)}</p>
                       </div>
                       <div className={cn(!isTooltip && "flex items-center")}>
                         {settings && (
                           <Tooltip
-                            tooltipContent={`Ask your Project Admin to turn this ${settings[key as keyof TInboxForm] ? "off" : "on"}.`}
+                            tooltipContent={
+                              settings[key as keyof TInboxForm]
+                                ? intakeT("toggle_tooltip_off")
+                                : intakeT("toggle_tooltip_on")
+                            }
                             position="top"
                             className=""
                             disabled={isAdmin}
@@ -179,7 +186,8 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                       <div className="rounded-md space-y-2">
                         <div className="p-3 space-y-2">
                           <div className="flex gap-2 rounded">
-                            {feature.icon} <span className="text-11 font-medium">{feature.fieldName}</span>
+                            {feature.icon}{" "}
+                            <span className="text-11 font-medium">{intakeT(`${featureKey}.fieldName`)}</span>
                           </div>
                           <div className="flex gap-2 h-[30px] w-full">
                             {settings?.anchors?.[feature.key] ? (
@@ -214,7 +222,7 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                                 className="w-fit cursor-pointer px-2 py-1 text-center text-13 font-medium outline-none my-auto h-full"
                                 onClick={() => setModalType(feature.key)}
                               >
-                                <RefreshCcw className="w-[16px]" /> Renew
+                                <RefreshCcw className="w-[16px]" /> {t("renew")}
                               </Button>
                             )}
                           </div>

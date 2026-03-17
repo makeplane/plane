@@ -17,7 +17,8 @@ import { CircleMinus } from "lucide-react";
 // plane imports
 import { EditIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { EWorkItemTypeEntity, IIssueType, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";
-import { Avatar, AvatarGroup, CustomMenu } from "@plane/ui";
+import { Avatar, AvatarGroup } from "@plane/propel/avatar";
+import { CustomMenu } from "@plane/ui";
 import type { TProjectBlueprintDetails } from "@plane/utils";
 import { cn, getFileURL } from "@plane/utils";
 // plane web imports

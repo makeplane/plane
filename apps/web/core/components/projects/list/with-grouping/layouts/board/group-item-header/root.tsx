@@ -22,6 +22,7 @@ import { CreateProjectModal } from "@/components/projects/modals/create-project-
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useWorkspaceProjectLabels } from "@/hooks/store/use-workspace-project-labels";
 // plane web imports
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 // local imports
@@ -52,18 +53,20 @@ export const ProjectBoardGroupItemHeader = observer(function ProjectBoardGroupIt
   } = useMember();
   const { workspaceSlug } = useParams();
   const { currentWorkspace } = useWorkspace();
+  const { getLabelById } = useWorkspaceProjectLabels();
 
   // derived values
   const selectedGroupKey = filters?.display_filters?.group_by;
 
-  const details = groupDetails(
+  const details = groupDetails({
     getProjectStateById,
     getProjectStatedByStateGroupKey,
     getWorkspaceMemberDetails,
     groupByKey,
     currentWorkspace,
-    selectedGroupKey
-  );
+    selectedGroupKey,
+    getLabelById,
+  });
 
   return (
     <>

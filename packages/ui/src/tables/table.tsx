@@ -16,6 +16,7 @@ import React from "react";
 import { cn } from "../utils";
 // types
 import type { TTableData } from "./types";
+import { Loader } from "../loader";
 
 export function Table<T>(props: TTableData<T>) {
   const {
@@ -29,6 +30,7 @@ export function Table<T>(props: TTableData<T>) {
     tBodyClassName = "",
     tBodyTrClassName = "",
     tdClassName = "",
+    isLoading = false,
   } = props;
 
   return (
@@ -42,19 +44,31 @@ export function Table<T>(props: TTableData<T>) {
           ))}
         </tr>
       </thead>
-      <tbody className={cn("divide-y divide-subtle", tBodyClassName)}>
-        {data.map((item) => (
-          <tr
-            key={keyExtractor(item)}
-            className={cn("divide-x divide-subtle text-13 text-secondary", tBodyTrClassName)}
-          >
-            {columns.map((column) => (
-              <td key={`${column.key}-${keyExtractor(item)}`} className={cn("px-2.5 py-2", tdClassName)}>
-                {column.tdRender(item)}
-              </td>
-            ))}
+      <tbody className={cn("divide-y divide-subtle-1", tBodyClassName)}>
+        {isLoading ? (
+          <tr>
+            <td colSpan={columns.length}>
+              <Loader className="py-2 flex flex-col gap-2">
+                <Loader.Item height="28px" width="100%" />
+                <Loader.Item height="28px" width="100%" />
+                <Loader.Item height="28px" width="100%" />
+              </Loader>
+            </td>
           </tr>
-        ))}
+        ) : (
+          data.map((item) => (
+            <tr
+              key={keyExtractor(item)}
+              className={cn("divide-x divide-subtle-1 text-13 text-secondary", tBodyTrClassName)}
+            >
+              {columns.map((column) => (
+                <td key={`${column.key}-${keyExtractor(item)}`} className={cn("px-2.5 py-2", tdClassName)}>
+                  {column.tdRender(item)}
+                </td>
+              ))}
+            </tr>
+          ))
+        )}
       </tbody>
     </table>
   );

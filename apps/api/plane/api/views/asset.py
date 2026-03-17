@@ -558,7 +558,7 @@ class GenericAssetEndpoint(BaseAPIView):
         # Check if the file type is allowed
         if not type or type not in settings.ATTACHMENT_MIME_TYPES:
             return Response(
-                {"error": "Invalid file type.", "status": False},
+                {"error": f"Invalid file type: {type}", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

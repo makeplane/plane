@@ -201,6 +201,7 @@ class AdminFeatureFlagEndpoint(BaseAPIView):
             response.raise_for_status()
 
             values = response.json().get("values", {})
+
             oidc_saml_auth = values.get("OIDC_SAML_AUTH", False)
             ldap_auth = values.get("LDAP_AUTH", False)
 

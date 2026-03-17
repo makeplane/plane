@@ -12,6 +12,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { IntakePublishForm } from "@plane/propel/domain/intake-form";
 import { CloseIcon } from "@plane/propel/icons";
 import type { EIssuePropertyType, TIssueProperty } from "@plane/types";
@@ -26,13 +27,29 @@ type Props = {
   projectId: string;
   typeId: string;
   formTitle: string;
+  formDescription?: string;
+  showDescription?: boolean;
+  isTitleRequired?: boolean;
+  isDescriptionRequired?: boolean;
   selectedFields: string[];
 };
 
 export const IntakeFormPreviewModal = observer(function IntakeFormPreviewModal(props: Props) {
-  const { isOpen, onClose, projectId, typeId, formTitle, selectedFields } = props;
+  const {
+    isOpen,
+    onClose,
+    projectId,
+    typeId,
+    formTitle,
+    formDescription,
+    showDescription,
+    isTitleRequired,
+    isDescriptionRequired,
+    selectedFields,
+  } = props;
 
   // hooks
+  const { t } = useTranslation();
   const workItemType = useIssueType(typeId);
   const { getProjectById } = useProject();
 
@@ -64,7 +81,7 @@ export const IntakeFormPreviewModal = observer(function IntakeFormPreviewModal(p
       className="p-5"
     >
       <div className="flex items-center justify-between text-placeholder sticky">
-        <span className="text-13 font-medium">Preview</span>
+        <span className="text-13 font-medium">{t("preview")}</span>
         <CloseIcon className="size-4 cursor-pointer" onClick={onClose} />
       </div>
       <div className="">
@@ -76,6 +93,10 @@ export const IntakeFormPreviewModal = observer(function IntakeFormPreviewModal(p
               projectCoverImage={currentProjectDetails.cover_image_url}
               projectCoverImageFallback={DEFAULT_COVER_IMAGE_URL}
               formTitle={formTitle || ""}
+              formDescription={formDescription}
+              showDescription={showDescription}
+              isTitleRequired={isTitleRequired}
+              isDescriptionRequired={isDescriptionRequired}
               properties={formProperties}
               onSubmit={async (data) => console.log("Form submitted:", data)}
             />

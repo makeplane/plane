@@ -39,6 +39,10 @@ class ValidateAuthToken:
         else:
             self.token = generate_random_string()
 
+    def set_expiry(self, expiry_seconds):
+        """Set the token expiry time in seconds."""
+        self.expiry = expiry_seconds
+
     def token_exists(self):
         if self.token and self.ri:
             token_details = self.ri.get(self.token)
@@ -46,9 +50,13 @@ class ValidateAuthToken:
                 return True
         return False
 
-    def set_value(self, session_key):
+    def set_value(self, session_key, code_challenge=None, challenge_method=None):
         if self.token and self.ri:
-            self.ri.set(self.token, json.dumps({"session_id": session_key}), ex=self.expiry)
+            data = {"session_id": session_key}
+            if code_challenge:
+                data["code_challenge"] = code_challenge
+                data["challenge_method"] = challenge_method or "S256"
+            self.ri.set(self.token, json.dumps(data), ex=self.expiry)
         else:
             raise ValueError("Token or Redis instance not set")
 

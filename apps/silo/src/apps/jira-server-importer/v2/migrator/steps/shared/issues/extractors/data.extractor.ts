@@ -66,11 +66,11 @@ export class JiraIssueDataExtractor {
     const { projectId, resourceId } = extractJobData(job);
 
     // 1. Instantiate sub-extractors
-    const commentExtractor = new JiraCommentExtractor(resourceId, projectId, source);
-    const sprintExtractor = new JiraSprintExtractor(projectId, resourceId);
-    const componentExtractor = new JiraComponentExtractor(projectId, resourceId);
-    const worklogExtractor = new JiraWorklogExtractor();
-    const linkExtractor = new JiraIssueLinkExtractor(
+    const commentExtractor = this.getCommentExtractor(resourceId, projectId, source);
+    const sprintExtractor = this.getSprintExtractor(projectId, resourceId);
+    const componentExtractor = this.getComponentExtractor(projectId, resourceId);
+    const worklogExtractor = this.getWorklogExtractor();
+    const linkExtractor = this.getLinkExtractor(
       sourceClient,
       projectId,
       resourceId,
@@ -153,6 +153,37 @@ export class JiraIssueDataExtractor {
       associations: { cycles, modules, worklogs },
       relations,
     };
+  }
+
+  // --- Protected getter methods for sub-extractors ---
+
+  protected getCommentExtractor(
+    resourceId: string,
+    projectId: string,
+    source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA
+  ): JiraCommentExtractor {
+    return new JiraCommentExtractor(resourceId, projectId, source);
+  }
+
+  protected getSprintExtractor(projectId: string, resourceId: string): JiraSprintExtractor {
+    return new JiraSprintExtractor(projectId, resourceId);
+  }
+
+  protected getComponentExtractor(projectId: string, resourceId: string): JiraComponentExtractor {
+    return new JiraComponentExtractor(projectId, resourceId);
+  }
+
+  protected getWorklogExtractor(): JiraWorklogExtractor {
+    return new JiraWorklogExtractor();
+  }
+
+  protected getLinkExtractor(
+    sourceClient: JiraV2Service,
+    projectId: string,
+    resourceId: string,
+    knownCustomFieldMapping: TKnownFieldMapping[]
+  ): JiraIssueLinkExtractor {
+    return new JiraIssueLinkExtractor(sourceClient, projectId, resourceId, knownCustomFieldMapping);
   }
 
   private collectMetrics(props: {

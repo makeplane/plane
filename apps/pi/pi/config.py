@@ -235,6 +235,11 @@ class LLMConfig:
         default_factory=lambda: ["gpt-4.1", "gpt-5-fast", "gpt-5.1", "claude-sonnet-4-0", "claude-sonnet-4-5", "claude-sonnet-4-6"]
     )
 
+    # Anthropic models that support prompt caching (cache_control parameter).
+    # Only direct Anthropic API models should be listed here -- NOT custom/LiteLLM models.
+    # Models in USER_VISIBLE_MODELS_ANTHROPIC but absent here will work fine, just without caching.
+    ANTHROPIC_CACHE_ELIGIBLE_MODELS: list[str] = field(default_factory=lambda: ["claude-sonnet-4-0", "claude-sonnet-4-5", "claude-sonnet-4-6"])
+
     # Provider default models
     PROVIDER_DEFAULT_MODELS: dict[str, str] = field(
         default_factory=lambda: {
@@ -291,12 +296,24 @@ class LLMConfig:
 
     # Custom Self-Hosted LLM Configuration
     CUSTOM_LLM_ENABLED: bool = field(default_factory=lambda: os.getenv("CUSTOM_LLM_ENABLED", "false").lower() == "true")
+
+    CUSTOM_LLM_NAME: str = field(default_factory=lambda: (os.getenv("CUSTOM_LLM_NAME") or "").strip() or "Custom LLM")
     CUSTOM_LLM_MODEL_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_MODEL_KEY", ""))
+    CUSTOM_LLM_DESCRIPTION: str = field(default_factory=lambda: (os.getenv("CUSTOM_LLM_DESCRIPTION") or "").strip() or "Custom LLM")
+    CUSTOM_LLM_PROVIDER: str = field(default_factory=lambda: (os.getenv("CUSTOM_LLM_PROVIDER") or "").strip() or "openai")
+
     CUSTOM_LLM_BASE_URL: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_BASE_URL", ""))
-    CUSTOM_LLM_API_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_API_KEY", "not-needed"))
-    CUSTOM_LLM_NAME: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_NAME", "Self-Hosted LLM"))
-    CUSTOM_LLM_DESCRIPTION: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_DESCRIPTION", "Custom self-hosted OpenAI-compatible model"))
+    CUSTOM_LLM_API_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_API_KEY", ""))
     CUSTOM_LLM_MAX_TOKENS: int = field(default_factory=lambda: int(os.getenv("CUSTOM_LLM_MAX_TOKENS", "128000")))
+    CUSTOM_LLM_AWS_REGION: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_AWS_REGION", ""))
+
+    # Provider → required config fields
+    LLM_PROVIDER_REQUIRED_ENV: dict[str, list[str]] = field(
+        default_factory=lambda: {
+            "openai": ["CUSTOM_LLM_MODEL_KEY", "CUSTOM_LLM_API_KEY", "CUSTOM_LLM_BASE_URL"],
+            "bedrock": ["CUSTOM_LLM_MODEL_KEY", "CUSTOM_LLM_API_KEY", "CUSTOM_LLM_AWS_REGION"],
+        }
+    )
 
 
 @dataclass
@@ -520,6 +537,14 @@ class Settings:
         colorlog.getLogger("botocore.endpoint").setLevel(colorlog.INFO)
         colorlog.getLogger("botocore.client").setLevel(colorlog.INFO)
         colorlog.getLogger("botocore.utils").setLevel(colorlog.INFO)
+        colorlog.getLogger("botocore.credentials").setLevel(colorlog.WARNING)
+        colorlog.getLogger("botocore.tokens").setLevel(colorlog.WARNING)
+
+        # Suppress langchain_aws noisy logs
+        colorlog.getLogger("langchain_aws").setLevel(colorlog.WARNING)
+        colorlog.getLogger("langchain_aws.utils").setLevel(colorlog.ERROR)
+        colorlog.getLogger("langchain_aws.llms.bedrock").setLevel(colorlog.WARNING)
+        colorlog.getLogger("langchain_aws.chat_models.bedrock").setLevel(colorlog.WARNING)
 
         # Suppress Datadog trace debug logs and errors (if agent not running)
         colorlog.getLogger("ddtrace").setLevel(colorlog.WARNING)
@@ -574,9 +599,17 @@ class Settings:
 
         # Get the root logger and configure it
         root_logger = colorlog.getLogger()
-        # Set logging level based on DEBUG environment variable
-        debug_enabled = get_env_bool("DEBUG")
-        log_level = logging.DEBUG if debug_enabled else logging.INFO
+
+        # Determine log level from LOG_LEVEL env var (standard Python level names).
+        # Falls back to DEBUG boolean for backward compatibility.
+        log_level_name = os.getenv("LOG_LEVEL", "").strip().upper()
+        if log_level_name and hasattr(logging, log_level_name):
+            log_level = getattr(logging, log_level_name)
+        else:
+            # Backward-compatible fallback: DEBUG env var → DEBUG level, otherwise INFO
+            debug_enabled = get_env_bool("DEBUG")
+            log_level = logging.DEBUG if debug_enabled else logging.INFO
+
         root_logger.setLevel(log_level)
         root_logger.addHandler(handler)
         root_logger.propagate = True
@@ -591,7 +624,7 @@ class Settings:
 
         # Log the configuration for confirmation (only once)
         if not hasattr(cls, "_logger_configured"):
-            root_logger.info(f"Logging configured - DEBUG: {debug_enabled}, Level: {logging.getLevelName(log_level)}")
+            root_logger.info(f"Logging configured - Level: {logging.getLevelName(log_level)}")
             cls._logger_configured = True
 
         return root_logger

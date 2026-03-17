@@ -19,6 +19,8 @@ from plane.db.models.issue import IssueRelation
 
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
+# YYYY-MM-DD date format pattern
+date_value_pattern = re.compile(r"\d{4}-\d{2}-\d{2}$")
 
 
 # check the valid uuids
@@ -82,11 +84,15 @@ def date_filter(issue_filter, date_term, queries):
                             offset=date_query[2],
                         )
                 else:
+                    if not date_value_pattern.match(date_query[0]):
+                        continue
                     if "after" in date_query:
                         issue_filter[f"{date_term}__gte"] = date_query[0]
                     else:
                         issue_filter[f"{date_term}__lte"] = date_query[0]
             else:
+                if not date_value_pattern.match(date_query[0]):
+                    continue
                 issue_filter[f"{date_term}__contains"] = date_query[0]
 
 

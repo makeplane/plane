@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import type { Control, FieldPath } from "react-hook-form";
@@ -27,6 +27,7 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web imports
 import { IssueTypeDropdown } from "@/components/work-item-types/dropdowns/issue-type";
 import { useIssueTypes } from "@/plane-web/hooks/store";
+import { WorkItemTypeChangeConfirmationModal } from "./work-item-type-change-confirmation-modal";
 
 export type TIssueFields = TIssue & TBulkIssueProperties;
 
@@ -44,6 +45,7 @@ type TIssueTypeSelectProps<T extends Partial<TIssueFields>> = {
   dropDownContainerClassName?: string;
   showMandatoryFieldInfo?: boolean; // Show info about mandatory fields
   handleFormChange?: () => void;
+  workItemId?: string; // If set, this is an update (existing issue) - used for confirmation modal
 };
 
 export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Partial<TIssueFields>>(
@@ -60,7 +62,13 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
     renderChevron = false,
     dropDownContainerClassName,
     handleFormChange,
+    workItemId,
   } = props;
+  // state for confirmation modal
+  const [pendingTypeChange, setPendingTypeChange] = useState<{
+    newTypeId: string | null;
+    onChange: (value: string | null) => void;
+  } | null>(null);
   // router
   const { workspaceSlug } = useParams();
   // plane web store hooks
@@ -71,7 +79,8 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
   // derived values
   const isWorkItemTypeEnabled = !!projectId && isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId);
 
-  const handleIssueTypeChange = (newValue: string | null) => {
+  const applyTypeChange = (newValue: string | null, onChange: (value: string | null) => void) => {
+    onChange(newValue);
     if (workItemTemplateId) {
       reset({
         ...DEFAULT_WORK_ITEM_FORM_VALUES,
@@ -81,6 +90,18 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
       editorRef?.current?.clearEditor();
       setWorkItemTemplateId(null);
     }
+    handleFormChange?.();
+  };
+
+  const handleConfirmTypeChange = () => {
+    if (pendingTypeChange) {
+      applyTypeChange(pendingTypeChange.newTypeId, pendingTypeChange.onChange);
+      setPendingTypeChange(null);
+    }
+  };
+
+  const handleCancelTypeChange = () => {
+    setPendingTypeChange(null);
   };
 
   return (
@@ -106,10 +127,17 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
                     getWorkItemTypes={getProjectIssueTypes}
                     handleIssueTypeChange={(issueTypeId) => {
                       // If it's not set as required, then allow issue type to be null (unset issue type)
-                      const newValue = !isRequired && value === issueTypeId ? null : issueTypeId;
-                      onChange(newValue);
-                      handleIssueTypeChange(newValue);
-                      handleFormChange?.();
+                      const newTypeId = !isRequired && value === issueTypeId ? null : issueTypeId;
+
+                      // Show confirmation modal for existing issues when type is changing
+                      // Only show if: existing issue (has ID), currently has a type, and type is actually changing
+                      if (workItemId && value && newTypeId !== value) {
+                        setPendingTypeChange({ newTypeId, onChange });
+                        return;
+                      }
+
+                      // For new issues or when setting type for first time, change immediately
+                      applyTypeChange(newTypeId, onChange);
                     }}
                     isInitializing={workItemTypeLoader === "init-loader"}
                     issueTypeId={value?.toString() || null}
@@ -123,6 +151,12 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
           />
         </>
       )}
+      {/* Confirmation modal for type change */}
+      <WorkItemTypeChangeConfirmationModal
+        isOpen={!!pendingTypeChange}
+        onClose={handleCancelTypeChange}
+        onConfirm={handleConfirmTypeChange}
+      />
     </>
   );
 });

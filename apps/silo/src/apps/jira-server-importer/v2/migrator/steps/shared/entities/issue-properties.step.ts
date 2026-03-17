@@ -36,7 +36,7 @@ import { getAPIClientInternal } from "@/services/client";
 import { extractErrorMetadata } from "@/helpers/errors";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
-import { KNOWN_CUSTOM_FIELDS_REVERSE_MAP } from "@/apps/jira-server-importer/v2/helpers/constants";
+import { KNOWN_CUSTOM_FIELDS, KNOWN_CUSTOM_FIELDS_REVERSE_MAP } from "@/apps/jira-server-importer/v2/helpers/constants";
 
 /**
  * Jira Server Issue Properties Step
@@ -78,20 +78,20 @@ export class JiraIssuePropertiesStep implements IStep {
       const pulled = await this.pull(jobContext, projectId, issueTypesData);
       const defaultProperties = this.generateDefaultProperties(job, issueTypesData);
       const knownCustomFieldMapping = this.extractKnownCustomFields(pulled);
+      const filteredPulled = this.removeKnownCustomFields(pulled);
 
-      if (pulled.length === 0) {
+      await this.storeAdditionalData(jobContext.job, storage, { rawFields: filteredPulled, knownCustomFieldMapping });
+
+      if (filteredPulled.length === 0) {
         logger.info(`[${jobContext.job.id}] [${this.name}] No custom fields found`, { jobId: job.id });
         return createEmptyContext();
       }
 
-      const transformed = this.transform(job, pulled);
+      const transformed = this.transform(job, filteredPulled);
       const allProperties = [...transformed, ...defaultProperties];
       const pushed = await this.push(jobContext, allProperties, issueTypesData);
 
-      await Promise.all([
-        this.storePropertiesData(this.name, jobContext.job, pushed, storage),
-        this.storeAdditionalData(jobContext.job, storage, { rawFields: pulled, knownCustomFieldMapping }),
-      ]);
+      await this.storePropertiesData(this.name, jobContext.job, pushed, storage);
 
       logger.info(`[${jobContext.job.id}] [${this.name}] Completed`, {
         jobId: job.id,
@@ -339,7 +339,7 @@ export class JiraIssuePropertiesStep implements IStep {
    * @returns knownCustomFieldMapping
    */
   protected extractKnownCustomFields(jiraFields: JiraIssueField[]): TKnownFieldMapping[] {
-    return jiraFields.reduce((acc, field) => {
+    const extractedKnownCustomFields = jiraFields.reduce((acc, field) => {
       if (field.name && field.name in KNOWN_CUSTOM_FIELDS_REVERSE_MAP) {
         acc.push({
           name: KNOWN_CUSTOM_FIELDS_REVERSE_MAP[field.name],
@@ -348,6 +348,19 @@ export class JiraIssuePropertiesStep implements IStep {
       }
       return acc;
     }, [] as TKnownFieldMapping[]);
+    logger.info("[Jira] Extracted known custom fields", extractedKnownCustomFields);
+
+    return extractedKnownCustomFields;
+  }
+
+  /**
+   * @param jiraFields
+   * @returns
+   */
+  protected removeKnownCustomFields(jiraFields: JiraIssueField[]): JiraIssueField[] {
+    return jiraFields.filter((field) => {
+      return !field.name || ![KNOWN_CUSTOM_FIELDS.START_DATE].includes(field.name);
+    });
   }
 
   /**

@@ -186,6 +186,7 @@ export default {
   project_created_successfully: "Project created successfully",
   project_created_successfully_description: "Project created successfully. You can now start adding work items to it.",
   project_name_already_taken: "The project name is already taken.",
+  project_name_cannot_contain_special_characters: "The project name cannot contain special characters.",
   project_identifier_already_taken: "The project identifier is already taken.",
   project_cover_image_alt: "Project cover image",
   name_is_required: "Name is required",
@@ -232,6 +233,8 @@ export default {
   modules: "Modules",
   pages: "Pages",
   intake: "Intake",
+  renew: "Renew",
+  preview: "Preview",
   time_tracking: "Time Tracking",
   work_management: "Work management",
   projects_and_issues: "Projects and work items",
@@ -315,6 +318,8 @@ export default {
   you: "You",
   labels: "Labels",
   create_new_label: "Create new label",
+  label_name: "Label name",
+  failed_to_create_label: "Failed to create label. Please try again.",
   start_date: "Start date",
   end_date: "End date",
   due_date: "Due date",
@@ -386,6 +391,9 @@ export default {
       name: "Name",
     },
   },
+  upgrade_request: "Ask your Workspace Admin to upgrade.",
+  copied_to_clipboard: "Copied to clipboard",
+  copied_to_clipboard_description: "The URL has been successfully copied to your clipboard",
   toast: {
     success: "Success!",
     error: "Error!",
@@ -485,6 +493,15 @@ now to enhance your experience!`,
     manage_widgets: "Manage widgets",
     title: "Home",
     star_us_on_github: "Star us on GitHub",
+    business_trial_banner: {
+      title: "Your 14-day Business plan trial is live!",
+      description:
+        "Explore all Business features. When you're ready, choose to subscribe. You'll not be billed automatically.",
+      trial_ends_today: "Trial ends today",
+      trial_ends_in_days: "Trial ends in {days, plural, one {# day} other {# days}}",
+      start_subscription: "Start subscription",
+      explore_business_features: "Explore Business features",
+    },
   },
   link: {
     modal: {
@@ -1874,6 +1891,14 @@ Create a new project instead`,
         description:
           "Project States is a Plane-only feature for tracking progress of all your projects by any project property.",
       },
+      projects: {
+        title: "Projects",
+        description: "Manage project states, and enable project labels, and other configuration.",
+        tabs: {
+          states: "Project states",
+          labels: "Project labels",
+        },
+      },
       teamspaces: {
         title: "Teamspaces",
         heading: "Teamspaces",
@@ -2474,15 +2499,51 @@ Create a new project instead`,
         toggle_description: "Project members will be able to create and edit pages.",
       },
       intake: {
-        heading: "Intake responsibility",
+        intake_responsibility: "Intake responsibility",
+        intake_sources: "Intake sources",
         title: "Intake",
         short_title: "Intake",
         description: "Let non-members share bugs, feedback, and suggestions; without disrupting your workflow.",
         toggle_title: "Enable intake",
         toggle_description: "Let project members create in app intake requests.",
+        toggle_tooltip_on: "Ask your Project Admin to turn this on.",
+        toggle_tooltip_off: "Ask your Project Admin to turn this off.",
         notify_assignee: {
           title: "Notify assignees",
           description: "For a new request to intake, default assignees will be alerted via notifications",
+        },
+        in_app: {
+          title: "In-app",
+          description:
+            "Get new work items from Members and Guests in your workspace without disruption to your existing work items.",
+        },
+        email: {
+          title: "Email",
+          description: "Collect new work items from anyone who sends an email to a Plane email address.",
+          fieldName: "Email ID",
+        },
+        form: {
+          title: "Forms",
+          description:
+            "Let folks outside your workspace create potential new work items for you via a dedicated and secure form.",
+          fieldName: "Default form URL",
+          create_forms: "Create Forms using work item types",
+          manage_forms: "Manage forms",
+          manage_forms_tooltip: "Ask your Workspace Admin to manage this.",
+          create_form: "Create form",
+          edit_form: "Edit form details",
+          form_title: "Form title",
+          form_title_required: "Form title is required",
+          work_item_type: "Work item type",
+          remove_property: "Remove property",
+          select_properties: "Select properties",
+          search_placeholder: "Search for properties",
+          toasts: {
+            success_create: "Intake form created successfully",
+            success_update: "Intake form updated successfully",
+            error_create: "Failed to create intake form",
+            error_update: "Failed to update intake form",
+          },
         },
         toasts: {
           set: {
@@ -2511,6 +2572,11 @@ Create a new project instead`,
         description: "Milestones provide a layer to align work items toward shared completion dates.",
         toggle_title: "Enable milestones",
         toggle_description: "Organize work items by milestone deadlines.",
+      },
+      toasts: {
+        loading: "Updating project feature...",
+        success: "Project feature updated successfully.",
+        error: "Something went wrong while updating project feature. Please try again.",
       },
     },
     epics: {
@@ -4198,6 +4264,9 @@ if you are sure your search is right. `,
           member_picker: {
             label: "Member picker",
           },
+          formula: {
+            label: "Formula",
+          },
         },
         attributes: {
           label: "Attributes",
@@ -4323,6 +4392,31 @@ if you are sure your search is right. `,
             options: {
               required: "You must add at least one option.",
             },
+            formula: {
+              required: "Formula expression is required.",
+              invalid: "Invalid formula: {error}",
+              circular_reference:
+                "Circular reference detected. A formula cannot reference itself directly or indirectly.",
+              invalid_reference: "Formula references non-existent property.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Formula field",
+          tooltip: "Enter a formula using '{'Field Name'}' syntax. Supports +, -, *, /, & operators.",
+          placeholder: "Write the formula",
+          test_button: "Test",
+          validating: "Validating",
+          validation_success: "Formula is valid! Returns {resultType}",
+          validation_success_with_refs: "Formula is valid! Returns {resultType} ({count} field(s) referenced)",
+          error: {
+            empty: "Please enter a formula",
+            missing_context: "Missing workspace, project, or work item type context",
+            validation_failed: "Validation failed",
+          },
+          picker: {
+            no_match: "No matching properties",
+            no_available: "No available properties",
           },
         },
         enable_disable: {
@@ -4428,6 +4522,15 @@ if you are sure your search is right. `,
         },
       },
       tooltip: "Click to {action}",
+    },
+    change_confirmation: {
+      title: "Change work item type?",
+      description:
+        "Changing the work item type may result in loss of custom property values that are specific to the current type. This action cannot be undone.",
+      button: {
+        loading: "Changing",
+        default: "Change type",
+      },
     },
     empty_state: {
       enable: {
@@ -4788,6 +4891,7 @@ if you are sure your search is right. `,
     created: "Created",
     initiated: "Initiated",
     pulling: "Pulling",
+    timed_out: "Timed Out",
     pulled: "Pulled",
     progressing: "Progressing",
     transforming: "Transforming",
@@ -6175,8 +6279,6 @@ the way you want to from the sources you specify.`,
       "sub-title": "Let the team know what you would like them to work on.",
       name: "Name",
       email: "Email",
-      about: "What's this work item about?",
-      description: "Describe what should happen",
       description_placeholder:
         "Add as much detail as you'd like to help the team identify your exact situation and needs.",
       loading: "Creating",
@@ -6936,4 +7038,4 @@ the way you want to from the sources you specify.`,
       },
     },
   },
-} as const;
+};

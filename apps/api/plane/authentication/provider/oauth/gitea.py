@@ -28,7 +28,7 @@ class GiteaOAuthProvider(OauthAdapter):
     provider = "gitea"
     scope = "openid email profile"
 
-    def __init__(self, request, code=None, state=None, callback=None):
+    def __init__(self, request, code=None, state=None, callback=None, redirect_uri=None):
         (GITEA_CLIENT_ID, GITEA_CLIENT_SECRET, GITEA_HOST) = get_configuration_value(
             [
                 {
@@ -68,7 +68,7 @@ class GiteaOAuthProvider(OauthAdapter):
         client_id = GITEA_CLIENT_ID
         client_secret = GITEA_CLIENT_SECRET
 
-        redirect_uri = f"{'https' if request.is_secure() else 'http'}://{request.get_host()}/auth/gitea/callback/"
+        redirect_uri = redirect_uri if redirect_uri else f"{'https' if request.is_secure() else 'http'}://{request.get_host()}/auth/gitea/callback/"
         url_params = {
             "client_id": client_id,
             "scope": self.scope,

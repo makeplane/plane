@@ -17,6 +17,7 @@ import type {
   TDateRangeFilterFieldConfig,
   TSingleSelectFilterFieldConfig,
   TMultiSelectFilterFieldConfig,
+  TAsyncMultiSelectFilterFieldConfig,
 } from "../field-types";
 import type { CORE_COLLECTION_OPERATOR, CORE_COMPARISON_OPERATOR, CORE_EQUALITY_OPERATOR } from "../operators";
 
@@ -26,7 +27,9 @@ export type TCoreExactOperatorConfigs =
   | TDateFilterFieldConfig<TFilterValue>;
 
 // ----------------------------- IN Operator -----------------------------
-export type TCoreInOperatorConfigs = TMultiSelectFilterFieldConfig<TFilterValue>;
+export type TCoreInOperatorConfigs =
+  | TMultiSelectFilterFieldConfig<TFilterValue>
+  | TAsyncMultiSelectFilterFieldConfig<TFilterValue>;
 
 // ----------------------------- RANGE Operator -----------------------------
 export type TCoreRangeOperatorConfigs = TDateRangeFilterFieldConfig<TFilterValue>;

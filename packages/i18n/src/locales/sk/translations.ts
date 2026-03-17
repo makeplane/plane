@@ -443,6 +443,8 @@ export default {
     },
   },
   intake: "Príjem",
+  renew: "Obnoviť",
+  preview: "Náhľad",
   time_tracking: "Sledovanie času",
   work_management: "Správa práce",
   projects_and_issues: "Projekty a pracovné položky",
@@ -527,6 +529,8 @@ export default {
   you: "Vy",
   labels: "Štítky",
   create_new_label: "Vytvoriť nový štítok",
+  label_name: "Názov štítku",
+  failed_to_create_label: "Vytvorenie štítku zlyhalo. Skúste to prosím znova.",
   start_date: "Dátum začiatku",
   end_date: "Dátum ukončenia",
   due_date: "Termín",
@@ -595,6 +599,9 @@ export default {
       name: "Názov",
     },
   },
+  upgrade_request: "Požadujte od správcu pracovného priestoru upgrade.",
+  copied_to_clipboard: "Skopírované do schránky",
+  copied_to_clipboard_description: "URL bola úspešne skopírovaná do schránky",
   toast: {
     success: "Úspech!",
     error: "Chyba!",
@@ -694,6 +701,15 @@ pre lepší zážitok!`,
     manage_widgets: "Spravovať widgety",
     title: "Domov",
     star_us_on_github: "Ohodnoťte nás na GitHube",
+    business_trial_banner: {
+      title: "Vaša 14-dňová skúšobná verzia plánu Business je aktívna!",
+      description:
+        "Preskúmajte všetky funkcie Business. Keď budete pripravení, vyberte si predplatné. Nebudete automaticky účtovaní.",
+      trial_ends_today: "Skúšobná verzia končí dnes",
+      trial_ends_in_days: "Skúšobná verzia končí za {days, plural, one {# deň} few {# dni} other {# dní}}",
+      start_subscription: "Začať predplatné",
+      explore_business_features: "Preskúmať funkcie Business",
+    },
   },
   link: {
     modal: {
@@ -1946,6 +1962,14 @@ Vytvorte nový.`,
       },
       project_states: {
         title: "Stavy projektu",
+      },
+      projects: {
+        title: "Projekty",
+        description: "Spravujte stavy projektov, povoľte štítky projektov a ďalšie konfigurácie.",
+        tabs: {
+          states: "Stavy projektu",
+          labels: "Štítky projektu",
+        },
       },
       teamspaces: {
         title: "Tímspejsy",
@@ -3848,6 +3872,9 @@ Vytvorte nový.`,
           member_picker: {
             label: "Výber člena",
           },
+          formula: {
+            label: "Vzorec",
+          },
         },
         attributes: {
           label: "Atribúty",
@@ -3973,6 +4000,31 @@ Vytvorte nový.`,
             options: {
               required: "Musíte pridať aspoň jednu možnosť.",
             },
+            formula: {
+              required: "Výraz vzorca je povinný.",
+              invalid: "Neplatný vzorec: {error}",
+              circular_reference:
+                "Zistená cyklická referencia. Vzorec nemôže odkazovať sám na seba priamo ani nepriamo.",
+              invalid_reference: "Vzorec odkazuje na neexistujúcu vlastnosť.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Pole vzorca",
+          tooltip: "Zadajte vzorec pomocou syntaxe '{'Názov poľa'}'. Podporuje operátory +, -, *, / a &.",
+          placeholder: "Napíšte vzorec",
+          test_button: "Test",
+          validating: "Overovanie",
+          validation_success: "Vzorec je platný! Vracia {resultType}",
+          validation_success_with_refs: "Vzorec je platný! Vracia {resultType} ({count} odkazovaných polí)",
+          error: {
+            empty: "Zadajte prosím vzorec",
+            missing_context: "Chýba kontext pracovného priestoru, projektu alebo typu pracovnej položky",
+            validation_failed: "Overenie zlyhalo",
+          },
+          picker: {
+            no_match: "Žiadne zodpovedajúce vlastnosti",
+            no_available: "Žiadne dostupné vlastnosti",
           },
         },
         enable_disable: {
@@ -4078,6 +4130,15 @@ Vytvorte nový.`,
         },
       },
       tooltip: "Kliknite pre {action}",
+    },
+    change_confirmation: {
+      title: "Zmeniť typ pracovnej položky?",
+      description:
+        "Zmena typu pracovnej položky môže viesť k strate hodnôt vlastných vlastností, ktoré sú špecifické pre aktuálny typ. Túto akciu nie je možné vrátiť späť.",
+      button: {
+        loading: "Mení sa",
+        default: "Zmeniť typ",
+      },
     },
     empty_state: {
       enable: {
@@ -4439,6 +4500,7 @@ Vytvorte nový.`,
     created: "Vytvorené",
     initiated: "Iniciované",
     pulling: "Sťahuje sa",
+    timed_out: "Časový limit vypršal",
     pulled: "Stiahnuté",
     transforming: "Transformuje sa",
     transformed: "Transformované",
@@ -5743,6 +5805,60 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
       upload_progress_message: "Prosím nezatvárajte toto okno.",
     },
   },
+  intake_forms: {
+    create: {
+      title: "Vytvoriť pracovnú položku",
+      "sub-title": "Dajte tímu vedieť, na čom by ste chceli, aby pracoval.",
+      name: "Meno",
+      email: "E-mail",
+      about: "O čom je táto pracovná položka?",
+      description: "Opíšte, čo by sa malo stať",
+      description_placeholder: "Pridajte toľko detailov, koľko chcete, aby tím identifikoval vašu situáciu a potreby.",
+      loading: "Vytváram",
+      create_work_item: "Vytvoriť pracovnú položku",
+      errors: {
+        name: "Meno je povinné",
+        name_max_length: "Meno musí mať menej ako 255 znakov",
+        email: "E-mail je povinný",
+        email_invalid: "Neplatná e-mailová adresa",
+        title: "Názov je povinný",
+        title_max_length: "Názov musí mať menej ako 255 znakov",
+      },
+    },
+    success: {
+      title: "Vaša pracovná položka je teraz v poradníku tímu.",
+      description: "Tím môže teraz schváliť alebo zahodiť túto pracovnú položku z fronty príjmov.",
+      primary_button: {
+        text: "Pridať ďalšiu pracovnú položku",
+      },
+      secondary_button: {
+        text: "Zistiť viac o príjme",
+      },
+    },
+    how_it_works: {
+      title: "Ako to funguje?",
+      heading: "Toto je formulár príjmu.",
+      description:
+        "Príjem je funkcia Plane, ktorá umožňuje správcom a manažérom projektov získavať pracovné položky zvonku do svojich projektov.",
+      steps: {
+        step_1: "Tento krátky formulár vám umožňuje vytvoriť novú pracovnú položku v projekte Plane.",
+        step_2: "Keď odošlete tento formulár, vytvorí sa nová pracovná položka v príjme tohto projektu.",
+        step_3: "Niekto z tohto projektu alebo tímu to skontroluje.",
+        step_4: "Ak to schvália, táto pracovná položka sa presunie do fronty práce projektu. Inak bude odmietnutá.",
+        step_5:
+          "Ak chcete zistiť stav tejto pracovnej položky, kontaktujte manažéra projektu, správcu alebo toho, kto vám poslal odkaz na túto stránku.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Vybrať typ pracovnej položky",
+        search_placeholder: "Hľadať typ pracovnej položky",
+      },
+      actions: {
+        select_properties: "Vybrať vlastnosti",
+      },
+    },
+  },
   recurring_work_items: {
     settings: {
       heading: "Opakujúce sa pracovné položky",
@@ -6243,4 +6359,5 @@ takým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "Názov projektu nesmie obsahovať špeciálne znaky.",
 } as const;

@@ -26,7 +26,9 @@ import { ThemeSwitch } from "@/components/core/theme/theme-switch";
 import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
+import { isDesktop } from "@/hooks/use-desktop";
 
+// THEME: temporarily disable the theme switcher on desktop since it's not supported yet
 export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
   option: {
     id: string;
@@ -100,10 +102,20 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
             onChange={(themeOption) => {
               void handleThemeChange(themeOption);
             }}
+            isDisabled={isDesktop()}
+            tooltipContent={
+              isDesktop() ? (
+                <span>
+                  Theme customization is not yet supported on the desktop app. Currently using your{" "}
+                  <strong>system theme</strong>. Your existing theme preferences is saved and can be changed from the
+                  web app.
+                </span>
+              ) : undefined
+            }
           />
         }
       />
-      {userProfile.theme?.theme === "custom" && <CustomThemeSelector />}
+      {!isDesktop() && userProfile.theme?.theme === "custom" && <CustomThemeSelector />}
     </>
   );
 });

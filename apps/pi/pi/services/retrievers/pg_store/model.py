@@ -107,10 +107,13 @@ async def get_active_models(db: AsyncSession, user_id: str, workspace_slug: str)
             models_list.append(model_entry)
 
         # Add custom self-hosted model if enabled
-        if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_BASE_URL:
+        if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_MODEL_KEY:
+            provider = settings.llm_config.CUSTOM_LLM_PROVIDER.lower().strip()
+            required = settings.llm_config.LLM_PROVIDER_REQUIRED_ENV.get(provider, settings.llm_config.LLM_PROVIDER_REQUIRED_ENV["openai"])
             custom_key = settings.llm_config.CUSTOM_LLM_MODEL_KEY
-            # Don't duplicate if already in list
-            if custom_key and custom_key not in seen:
+            has_required_env = all(bool(str(getattr(settings.llm_config, f, "") or "").strip()) for f in required)
+
+            if has_required_env and custom_key not in seen:
                 has_any_vendor_model = bool(models_to_include)
                 custom_entry = {
                     "id": custom_key,

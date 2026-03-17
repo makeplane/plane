@@ -22,7 +22,7 @@ import {
 } from "@plane/propel/icons";
 import type { IUserLite } from "@plane/types";
 import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/propel/avatar";
 import {
   createFilterConfig,
   createOperatorConfigEntry,

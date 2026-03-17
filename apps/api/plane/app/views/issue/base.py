@@ -12,6 +12,7 @@
 # Python imports
 import copy
 import json
+import re
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -1617,7 +1618,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
 
 class IssueMetaEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
-    def get(self, request, slug, project_id, issue_id):
+    def get(self, request, slug, project_id, issue_id=None):
         issue = Issue.issue_objects.only("sequence_id", "project__identifier").get(
             id=issue_id, project_id=project_id, workspace__slug=slug
         )
@@ -1627,6 +1628,52 @@ class IssueMetaEndpoint(BaseAPIView):
                 "project_identifier": issue.project.identifier,
             },
             status=status.HTTP_200_OK,
+        )
+
+
+class IssueListMetaEndpoint(BaseAPIView):
+    def get_search_filter(self, query):
+        q = Q()
+
+        # Search in name and description_stripped fields for the query
+        if query:
+            q = Q(name__icontains=query) | Q(description_stripped__icontains=query)
+
+            # For sequence_id search, we need to check if the query is a number and then filter by sequence_id
+            if query.isdigit():
+                q |= Q(sequence_id=int(query))
+            else:
+                # If the query is not a number, we can also check if it matches the pattern of sequence_id
+                # which is project identifier followed by a hyphen and then a number (e.g. PROJ-123)
+                match = re.match(r"^[A-Za-z0-9]+-(\d+)$", query)
+                if match:
+                    q |= Q(sequence_id=int(match.group(1)))
+        return q
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id):
+        query = request.GET.get("search", False)
+
+        issue_ids = request.GET.get("issues", "")
+
+        issue_ids = [issue_id for issue_id in issue_ids.split(",") if issue_id != ""]
+
+        q = self.get_search_filter(query)
+        issue_queryset = Issue.issue_objects.filter(q, workspace__slug=slug, project_id=project_id)
+
+        # If issue_ids are provided, filter the queryset to include only those issues
+        if issue_ids:
+            issue_queryset = issue_queryset.filter(id__in=issue_ids)
+
+        # Paginate the queryset and return only the id, sequence_id,
+        # name and project identifier for the issues in the paginated result
+        return self.paginate(
+            request=request,
+            queryset=issue_queryset,
+            total_count_queryset=issue_queryset,
+            on_results=lambda issues: issues.values(
+                "id", "sequence_id", "name", project_identifier=F("project__identifier")
+            ),
         )
 
 

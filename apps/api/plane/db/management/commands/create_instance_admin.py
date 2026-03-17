@@ -8,6 +8,8 @@
 #
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+# Python imports
+import logging
 
 # Django imports
 from django.core.management.base import BaseCommand, CommandError
@@ -15,6 +17,9 @@ from django.core.management.base import BaseCommand, CommandError
 # Module imports
 from plane.license.models import Instance, InstanceAdmin
 from plane.db.models import User
+
+
+logger = logging.getLogger("plane.api")
 
 
 class Command(BaseCommand):
@@ -31,20 +36,22 @@ class Command(BaseCommand):
             raise CommandError("Please provide the email of the admin.")
 
         user = User.objects.filter(email=admin_email).first()
+        logger.info(f"Creating instance admin with email {admin_email}")
         if user is None:
             raise CommandError("User with the provided email does not exist.")
 
         try:
             # Get the instance
-            instance = Instance.objects.last()
+            instance = Instance.objects.first()
+            logger.info(f"Creating instance admin for user {user.email} on instance {instance.id}")
 
-            # Get or create an instance admin
-            _, created = InstanceAdmin.objects.get_or_create(user=user, instance=instance, role=20)
-
-            if not created:
+            # check if the the current user
+            instance_admin = InstanceAdmin.objects.filter(instance=instance, user=user).first()
+            if instance_admin:
                 raise CommandError("The provided email is already an instance admin.")
-
+            
+            _ = InstanceAdmin.objects.create(instance=instance, user=user)
             self.stdout.write(self.style.SUCCESS("Successfully created the admin"))
         except Exception as e:
-            print(e)
+            logger.error(f"Error creating instance admin for user {user.email}: {str(e)}")
             raise CommandError("Failed to create the instance admin.")

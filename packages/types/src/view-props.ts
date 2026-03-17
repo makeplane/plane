@@ -129,6 +129,9 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "type_id",
   "name",
   "milestone_id",
+  "id",
+  "epic_id",
+  "parent_id",
 ] as const;
 export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number] | TCustomPropertyFilterKey;
 

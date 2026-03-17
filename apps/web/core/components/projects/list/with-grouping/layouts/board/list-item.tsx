@@ -24,6 +24,8 @@ import { EUserProjectRoles } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
+import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web components
 import { ProjectCard } from "@/components/projects/list/with-grouping/layouts/gallery/card";
 
@@ -39,7 +41,9 @@ export const ProjectBoardListItem = observer(function ProjectBoardListItem(props
   // hooks
   const { getProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
+  const { filters } = useProjectFilter();
   // derived values
+  const selectedGroupKey = filters?.display_filters?.group_by;
   const project = getProjectById(projectId);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const isDragAllowed = allowPermissions(
@@ -59,18 +63,24 @@ export const ProjectBoardListItem = observer(function ProjectBoardListItem(props
       draggable({
         element,
         dragHandle: element,
-        canDrag: () => isDragAllowed,
+        canDrag: () => isDragAllowed && selectedGroupKey !== "labels",
         getInitialData: () => ({ id: project.id, type: "PROJECT" }),
       })
     );
-  }, [cardRef?.current, project, isDragAllowed]);
+  }, [cardRef?.current, project, isDragAllowed, selectedGroupKey]);
   return (
     <div
       className="flex whitespace-nowrap gap-2 rounded-sm w-full"
       ref={cardRef}
       id={`kanban-${project.id}`}
       onDragStart={() => {
-        if (!isDragAllowed) {
+        if (selectedGroupKey === "labels") {
+          setToast({
+            title: "Warning!",
+            type: TOAST_TYPE.WARNING,
+            message: "Cannot move projects when grouped by labels",
+          });
+        } else if (!isDragAllowed) {
           setToast({
             title: "Warning!",
             type: TOAST_TYPE.ERROR,

@@ -18,7 +18,7 @@ import { observer } from "mobx-react";
 import type { EditorRefApi } from "@plane/editor";
 import { Button } from "@plane/propel/button";
 import type { TCommentsOperations } from "@plane/types";
-import { Avatar, AvatarGroup } from "@plane/ui";
+import { Avatar, AvatarGroup } from "@plane/propel/avatar";
 import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

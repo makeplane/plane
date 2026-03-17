@@ -454,6 +454,8 @@ export default {
     },
   },
   intake: "Entrada",
+  renew: "Renovar",
+  preview: "Vista previa",
   time_tracking: "Seguimiento de tiempo",
   work_management: "Gestión del trabajo",
   projects_and_issues: "Proyectos y elementos de trabajo",
@@ -542,6 +544,8 @@ export default {
   you: "Tú",
   labels: "Etiquetas",
   create_new_label: "Crear nueva etiqueta",
+  label_name: "Nombre de etiqueta",
+  failed_to_create_label: "No se pudo crear la etiqueta. Por favor, inténtelo de nuevo.",
   start_date: "Fecha de inicio",
   end_date: "Fecha de fin",
   due_date: "Fecha de vencimiento",
@@ -610,6 +614,9 @@ export default {
       name: "Nombre",
     },
   },
+  upgrade_request: "Pide a tu administrador del espacio de trabajo que actualice.",
+  copied_to_clipboard: "Copiado al portapapeles",
+  copied_to_clipboard_description: "La URL se ha copiado correctamente al portapapeles",
   toast: {
     success: "¡Éxito!",
     error: "¡Error!",
@@ -709,6 +716,15 @@ ahora para mejorar tu experiencia!`,
     manage_widgets: "Gestionar widgets",
     title: "Inicio",
     star_us_on_github: "Danos una estrella en GitHub",
+    business_trial_banner: {
+      title: "¡Tu prueba de 14 días del plan Business está activa!",
+      description:
+        "Explora todas las funciones Business. Cuando estés listo, elige suscribirte. No se te cobrará automáticamente.",
+      trial_ends_today: "La prueba termina hoy",
+      trial_ends_in_days: "La prueba termina en {days, plural, one {# día} other {# días}}",
+      start_subscription: "Iniciar suscripción",
+      explore_business_features: "Explorar funciones Business",
+    },
   },
   link: {
     modal: {
@@ -1972,6 +1988,14 @@ Crea un nuevo proyecto en su lugar`,
       project_states: {
         title: "Estados del proyecto",
       },
+      projects: {
+        title: "Proyectos",
+        description: "Administrar estados de proyectos, habilitar etiquetas de proyectos y otras configuraciones.",
+        tabs: {
+          states: "Estados del proyecto",
+          labels: "Etiquetas del proyecto",
+        },
+      },
       teamspaces: {
         title: "Espacios de equipo",
       },
@@ -2615,17 +2639,54 @@ Crea un nuevo proyecto en su lugar`,
         toggle_description: "Los miembros del proyecto podrán crear y editar páginas.",
       },
       intake: {
-        heading: "Responsabilidad de ingreso",
+        intake_responsibility: "Responsabilidad de ingreso",
+        intake_sources: "Fuentes de ingreso",
         title: "Recepción",
         short_title: "Recepción",
         description:
           "Permite que los no miembros compartan errores, comentarios y sugerencias; sin interrumpir tu flujo de trabajo.",
         toggle_title: "Habilitar recepción",
         toggle_description: "Permitir a los miembros del proyecto crear solicitudes de recepción en la aplicación.",
+        toggle_tooltip_on: "Pide a tu administrador del proyecto que active esto.",
+        toggle_tooltip_off: "Pide a tu administrador del proyecto que desactive esto.",
         notify_assignee: {
           title: "Notificar asignados",
           description:
             "Para una nueva solicitud de ingreso, los asignados predeterminados serán alertados mediante notificaciones",
+        },
+        in_app: {
+          title: "En la aplicación",
+          description:
+            "Recibe nuevos elementos de trabajo de miembros e invitados en tu espacio de trabajo sin interrumpir los existentes.",
+        },
+        email: {
+          title: "Correo electrónico",
+          description:
+            "Recopila nuevos elementos de trabajo de cualquiera que envíe un correo a una dirección de Plane.",
+          fieldName: "ID de correo electrónico",
+        },
+        form: {
+          title: "Formularios",
+          description:
+            "Permite que personas fuera de tu espacio de trabajo creen posibles nuevos elementos de trabajo mediante un formulario dedicado y seguro.",
+          fieldName: "URL del formulario predeterminado",
+          create_forms: "Crear formularios usando tipos de elementos de trabajo",
+          manage_forms: "Gestionar formularios",
+          manage_forms_tooltip: "Pide a tu administrador del espacio de trabajo que gestione esto.",
+          create_form: "Crear formulario",
+          edit_form: "Editar detalles del formulario",
+          form_title: "Título del formulario",
+          form_title_required: "El título del formulario es obligatorio",
+          work_item_type: "Tipo de elemento de trabajo",
+          remove_property: "Eliminar propiedad",
+          select_properties: "Seleccionar propiedades",
+          search_placeholder: "Buscar propiedades",
+          toasts: {
+            success_create: "Formulario de ingreso creado correctamente",
+            success_update: "Formulario de ingreso actualizado correctamente",
+            error_create: "Error al crear el formulario de ingreso",
+            error_update: "Error al actualizar el formulario de ingreso",
+          },
         },
         toasts: {
           set: {
@@ -2655,6 +2716,11 @@ Crea un nuevo proyecto en su lugar`,
           "Los hitos proporcionan una capa para alinear los elementos de trabajo hacia fechas de finalización compartidas.",
         toggle_title: "Habilitar hitos",
         toggle_description: "Organiza elementos de trabajo por plazos de hitos.",
+      },
+      toasts: {
+        loading: "Actualizando función del proyecto...",
+        success: "Función del proyecto actualizada correctamente.",
+        error: "Algo salió mal al actualizar la función del proyecto. Por favor, inténtalo de nuevo.",
       },
     },
   },
@@ -3909,6 +3975,9 @@ si estás seguro de que tu búsqueda es correcta.`,
           member_picker: {
             label: "Selector de miembros",
           },
+          formula: {
+            label: "Fórmula",
+          },
         },
         attributes: {
           label: "Atributos",
@@ -4034,6 +4103,32 @@ si estás seguro de que tu búsqueda es correcta.`,
             options: {
               required: "Debes agregar al menos una opción.",
             },
+            formula: {
+              required: "La expresión de fórmula es obligatoria.",
+              invalid: "Fórmula no válida: {error}",
+              circular_reference:
+                "Referencia circular detectada. Una fórmula no puede hacer referencia a sí misma directa o indirectamente.",
+              invalid_reference: "La fórmula hace referencia a una propiedad inexistente.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Campo de fórmula",
+          tooltip: "Ingrese una fórmula usando la sintaxis '{'Nombre del campo'}'. Admite operadores +, -, *, / y &.",
+          placeholder: "Escribir la fórmula",
+          test_button: "Probar",
+          validating: "Validando",
+          validation_success: "¡La fórmula es válida! Devuelve {resultType}",
+          validation_success_with_refs:
+            "¡La fórmula es válida! Devuelve {resultType} ({count} campo(s) referenciado(s))",
+          error: {
+            empty: "Por favor ingrese una fórmula",
+            missing_context: "Falta el contexto de espacio de trabajo, proyecto o tipo de elemento de trabajo",
+            validation_failed: "La validación falló",
+          },
+          picker: {
+            no_match: "No hay propiedades coincidentes",
+            no_available: "No hay propiedades disponibles",
           },
         },
         enable_disable: {
@@ -4139,6 +4234,15 @@ si estás seguro de que tu búsqueda es correcta.`,
         },
       },
       tooltip: "Clic para {action}",
+    },
+    change_confirmation: {
+      title: "¿Cambiar tipo de elemento de trabajo?",
+      description:
+        "Cambiar el tipo de elemento de trabajo puede resultar en la pérdida de valores de propiedades personalizadas que son específicas del tipo actual. Esta acción no se puede deshacer.",
+      button: {
+        loading: "Cambiando",
+        default: "Cambiar tipo",
+      },
     },
     empty_state: {
       enable: {
@@ -4508,6 +4612,7 @@ si estás seguro de que tu búsqueda es correcta.`,
     created: "Creado",
     initiated: "Iniciado",
     pulling: "Extrayendo",
+    timed_out: "Tiempo agotado",
     pulled: "Extraído",
     transforming: "Transformando",
     transformed: "Transformado",
@@ -5832,6 +5937,61 @@ si estás seguro de que tu búsqueda es correcta.`,
       },
     },
   },
+  intake_forms: {
+    create: {
+      title: "Crear un elemento de trabajo",
+      "sub-title": "Haz saber al equipo en qué te gustaría que trabajen.",
+      name: "Nombre",
+      email: "Correo electrónico",
+      about: "¿De qué trata este elemento de trabajo?",
+      description: "Describe qué debería ocurrir",
+      description_placeholder:
+        "Añade todos los detalles que quieras para ayudar al equipo a identificar tu situación y necesidades.",
+      loading: "Creando",
+      create_work_item: "Crear elemento de trabajo",
+      errors: {
+        name: "El nombre es obligatorio",
+        name_max_length: "El nombre debe tener menos de 255 caracteres",
+        email: "El correo electrónico es obligatorio",
+        email_invalid: "Dirección de correo no válida",
+        title: "El título es obligatorio",
+        title_max_length: "El título debe tener menos de 255 caracteres",
+      },
+    },
+    success: {
+      title: "¡Genial! Tu elemento de trabajo ya está en la cola del equipo.",
+      description: "El equipo puede aprobar o descartar este elemento de trabajo desde su cola de entrada.",
+      primary_button: {
+        text: "Añadir otro elemento de trabajo",
+      },
+      secondary_button: {
+        text: "Saber más sobre Entrada",
+      },
+    },
+    how_it_works: {
+      title: "¿Cómo funciona?",
+      heading: "Este es un formulario de Entrada.",
+      description:
+        "Entrada es una función de Plane que permite a los administradores y gestores de proyecto recibir elementos de trabajo externos en sus proyectos.",
+      steps: {
+        step_1: "Este breve formulario te permite crear un nuevo elemento de trabajo en un proyecto de Plane.",
+        step_2: "Al enviar este formulario, se crea un nuevo elemento de trabajo en la Entrada de ese proyecto.",
+        step_3: "Alguien de ese proyecto o equipo lo revisará.",
+        step_4: "Si lo aprueban, el elemento pasará a la cola de trabajo del proyecto. Si no, se rechazará.",
+        step_5:
+          "Para consultar el estado de ese elemento, contacta con el gestor del proyecto, el administrador o quien te envió el enlace a esta página.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Seleccionar tipo de elemento de trabajo",
+        search_placeholder: "Buscar un tipo de elemento de trabajo",
+      },
+      actions: {
+        select_properties: "Seleccionar propiedades",
+      },
+    },
+  },
   recurring_work_items: {
     settings: {
       heading: "Tareas recurrentes",
@@ -6339,4 +6499,5 @@ si estás seguro de que tu búsqueda es correcta.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "El nombre del proyecto no puede contener caracteres especiales.",
 } as const;

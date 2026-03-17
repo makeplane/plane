@@ -132,7 +132,7 @@ async def create_transcription(
         )
 
     # Log transcription request
-    log.info(f"Transcription request: workspace={workspace_id}, chat={chat_id}, " f"file={file.filename}, user={user_id}")
+    log.debug(f"Transcription request: workspace={workspace_id}, chat={chat_id}, " f"file={file.filename}, user={user_id}")
 
     try:
         success, message = await process_transcription(

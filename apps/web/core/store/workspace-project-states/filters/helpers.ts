@@ -217,6 +217,19 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
         });
         return projectsByCreatedBy;
       }
+      // project grouping by labels
+      case "labels": {
+        const workspaceLabels = this.store.workspaceProjectLabels.workspaceLabels;
+        const projectsByLabels = {} as TProjectsBoardLayoutStructure;
+        // Add "No Label" group for projects without labels
+        const noLabelProjects = projects.filter((project) => !project.label_ids || project.label_ids.length === 0);
+        projectsByLabels["no-label"] = noLabelProjects.map((p) => p.id);
+        (workspaceLabels ?? []).forEach((label) => {
+          const labelFilteredProjects = projects.filter((project) => project.label_ids?.includes(label.id));
+          projectsByLabels[label.id] = labelFilteredProjects.map((p) => p.id);
+        });
+        return projectsByLabels;
+      }
       default:
         return undefined;
     }

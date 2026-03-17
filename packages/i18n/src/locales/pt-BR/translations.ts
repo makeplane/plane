@@ -451,6 +451,8 @@ export default {
     },
   },
   intake: "Admissão",
+  renew: "Renovar",
+  preview: "Visualização",
   time_tracking: "Rastreamento de tempo",
   work_management: "Gerenciamento de trabalho",
   projects_and_issues: "Projetos e itens de trabalho",
@@ -538,6 +540,8 @@ export default {
   you: "Você",
   labels: "Etiquetas",
   create_new_label: "Criar nova etiqueta",
+  label_name: "Nome da etiqueta",
+  failed_to_create_label: "Falha ao criar etiqueta. Por favor, tente novamente.",
   start_date: "Data de início",
   end_date: "Data de término",
   due_date: "Data de vencimento",
@@ -606,6 +610,9 @@ export default {
       name: "Nome",
     },
   },
+  upgrade_request: "Peça ao administrador do espaço de trabalho para fazer upgrade.",
+  copied_to_clipboard: "Copiado para a área de transferência",
+  copied_to_clipboard_description: "A URL foi copiada com sucesso para a área de transferência",
   toast: {
     success: "Sucesso!",
     error: "Erro!",
@@ -705,6 +712,15 @@ agora para melhorar sua experiência!`,
     manage_widgets: "Gerenciar widgets",
     title: "Página inicial",
     star_us_on_github: "Nos dê uma estrela no GitHub",
+    business_trial_banner: {
+      title: "Seu teste de 14 dias do plano Business está ativo!",
+      description:
+        "Explore todos os recursos Business. Quando estiver pronto, escolha assinar. Você não será cobrado automaticamente.",
+      trial_ends_today: "O teste termina hoje",
+      trial_ends_in_days: "O teste termina em {days, plural, one {# dia} other {# dias}}",
+      start_subscription: "Iniciar assinatura",
+      explore_business_features: "Explorar recursos Business",
+    },
   },
   link: {
     modal: {
@@ -1971,6 +1987,14 @@ Crie um novo projeto em vez disso`,
       project_states: {
         title: "Estados do projeto",
       },
+      projects: {
+        title: "Projetos",
+        description: "Gerencie estados de projetos, ative etiquetas de projetos e outras configurações.",
+        tabs: {
+          states: "Estados do projeto",
+          labels: "Etiquetas do projeto",
+        },
+      },
       teamspaces: {
         title: "Espaços de equipe",
       },
@@ -2609,17 +2633,53 @@ Crie um novo projeto em vez disso`,
         toggle_description: "Os membros do projeto poderão criar e editar páginas.",
       },
       intake: {
-        heading: "Responsabilidade de recebimento",
+        intake_responsibility: "Responsabilidade de recebimento",
+        intake_sources: "Fontes de recebimento",
         title: "Recepção",
         short_title: "Recepção",
         description:
           "Permita que não membros compartilhem bugs, feedback e sugestões; sem interromper seu fluxo de trabalho.",
         toggle_title: "Ativar recepção",
         toggle_description: "Permitir que membros do projeto criem solicitações de recepção no aplicativo.",
+        toggle_tooltip_on: "Peça ao administrador do projeto para ativar.",
+        toggle_tooltip_off: "Peça ao administrador do projeto para desativar.",
         notify_assignee: {
           title: "Notificar responsáveis",
           description:
             "Para uma nova solicitação de recebimento, os responsáveis padrão serão alertados via notificações",
+        },
+        in_app: {
+          title: "No aplicativo",
+          description:
+            "Receba novos itens de trabalho de membros e convidados do seu espaço de trabalho sem perturbar os existentes.",
+        },
+        email: {
+          title: "E-mail",
+          description: "Colete novos itens de trabalho de qualquer pessoa que envie um e-mail para um endereço Plane.",
+          fieldName: "ID do e-mail",
+        },
+        form: {
+          title: "Formulários",
+          description:
+            "Permita que pessoas fora do seu espaço de trabalho criem possíveis novos itens de trabalho por meio de um formulário dedicado e seguro.",
+          fieldName: "URL do formulário padrão",
+          create_forms: "Criar formulários usando tipos de itens de trabalho",
+          manage_forms: "Gerenciar formulários",
+          manage_forms_tooltip: "Peça ao administrador do espaço de trabalho para gerenciar.",
+          create_form: "Criar formulário",
+          edit_form: "Editar detalhes do formulário",
+          form_title: "Título do formulário",
+          form_title_required: "O título do formulário é obrigatório",
+          work_item_type: "Tipo de item de trabalho",
+          remove_property: "Remover propriedade",
+          select_properties: "Selecionar propriedades",
+          search_placeholder: "Pesquisar propriedades",
+          toasts: {
+            success_create: "Formulário de recebimento criado com sucesso",
+            success_update: "Formulário de recebimento atualizado com sucesso",
+            error_create: "Falha ao criar formulário de recebimento",
+            error_update: "Falha ao atualizar formulário de recebimento",
+          },
         },
         toasts: {
           set: {
@@ -2649,6 +2709,11 @@ Crie um novo projeto em vez disso`,
           "Os marcos fornecem uma camada para alinhar itens de trabalho em direção a datas de conclusão compartilhadas.",
         toggle_title: "Ativar marcos",
         toggle_description: "Organize itens de trabalho por prazos de marcos.",
+      },
+      toasts: {
+        loading: "Atualizando recurso do projeto...",
+        success: "Recurso do projeto atualizado com sucesso.",
+        error: "Algo deu errado ao atualizar o recurso do projeto. Por favor, tente novamente.",
       },
     },
   },
@@ -3894,6 +3959,9 @@ se você tem certeza de que sua pesquisa está correta.`,
           member_picker: {
             label: "Seletor de membro",
           },
+          formula: {
+            label: "Fórmula",
+          },
         },
         attributes: {
           label: "Atributos",
@@ -4019,6 +4087,31 @@ se você tem certeza de que sua pesquisa está correta.`,
             options: {
               required: "Você deve adicionar pelo menos uma opção.",
             },
+            formula: {
+              required: "A expressão da fórmula é obrigatória.",
+              invalid: "Fórmula inválida: {error}",
+              circular_reference:
+                "Referência circular detectada. Uma fórmula não pode referenciar a si mesma direta ou indiretamente.",
+              invalid_reference: "A fórmula referencia uma propriedade inexistente.",
+            },
+          },
+        },
+        formula: {
+          field_label: "Campo de fórmula",
+          tooltip: "Insira uma fórmula usando a sintaxe '{'Nome do campo'}'. Suporta os operadores +, -, *, / e &.",
+          placeholder: "Escrever a fórmula",
+          test_button: "Testar",
+          validating: "Validando",
+          validation_success: "A fórmula é válida! Retorna {resultType}",
+          validation_success_with_refs: "A fórmula é válida! Retorna {resultType} ({count} campo(s) referenciado(s))",
+          error: {
+            empty: "Por favor, insira uma fórmula",
+            missing_context: "Contexto de espaço de trabalho, projeto ou tipo de item de trabalho ausente",
+            validation_failed: "Falha na validação",
+          },
+          picker: {
+            no_match: "Nenhuma propriedade correspondente",
+            no_available: "Nenhuma propriedade disponível",
           },
         },
         enable_disable: {
@@ -4124,6 +4217,15 @@ se você tem certeza de que sua pesquisa está correta.`,
         },
       },
       tooltip: "Clique para {action}",
+    },
+    change_confirmation: {
+      title: "Alterar tipo de item de trabalho?",
+      description:
+        "Alterar o tipo de item de trabalho pode resultar na perda de valores de propriedades personalizadas que são específicas do tipo atual. Esta ação não pode ser desfeita.",
+      button: {
+        loading: "Alterando",
+        default: "Alterar tipo",
+      },
     },
     empty_state: {
       enable: {
@@ -4490,6 +4592,7 @@ se você tem certeza de que sua pesquisa está correta.`,
     created: "Criado",
     initiated: "Iniciado",
     pulling: "Extraindo",
+    timed_out: "Tempo limite esgotado",
     pulled: "Extraído",
     transforming: "Transformando",
     transformed: "Transformado",
@@ -5805,6 +5908,62 @@ da maneira que você quiser a partir das fontes que você especificar.`,
       project: "Nenhum modelo encontrado.",
     },
   },
+  intake_forms: {
+    create: {
+      title: "Criar um item de trabalho",
+      "sub-title": "Informe à equipe sobre o que você gostaria que eles trabalhassem.",
+      name: "Nome",
+      email: "E-mail",
+      about: "Sobre o que é este item de trabalho?",
+      description: "Descreva o que deveria acontecer",
+      description_placeholder:
+        "Adicione quantos detalhes quiser para ajudar a equipe a identificar sua situação e necessidades.",
+      loading: "Criando",
+      create_work_item: "Criar item de trabalho",
+      errors: {
+        name: "Nome é obrigatório",
+        name_max_length: "O nome deve ter menos de 255 caracteres",
+        email: "E-mail é obrigatório",
+        email_invalid: "Endereço de e-mail inválido",
+        title: "Título é obrigatório",
+        title_max_length: "O título deve ter menos de 255 caracteres",
+      },
+    },
+    success: {
+      title: "Seu item de trabalho está na fila da equipe.",
+      description: "A equipe pode aprovar ou descartar este item de trabalho da fila de admissão.",
+      primary_button: {
+        text: "Adicionar outro item de trabalho",
+      },
+      secondary_button: {
+        text: "Saiba mais sobre Admissão",
+      },
+    },
+    how_it_works: {
+      title: "Como funciona?",
+      heading: "Este é um formulário de Admissão.",
+      description:
+        "Admissão é um recurso do Plane que permite que administradores e gerentes de projeto recebam itens de trabalho externos em seus projetos.",
+      steps: {
+        step_1: "Este formulário curto permite criar um novo item de trabalho em um projeto Plane.",
+        step_2: "Ao enviar este formulário, um novo item de trabalho é criado na Admissão desse projeto.",
+        step_3: "Alguém desse projeto ou equipe irá revisar.",
+        step_4:
+          "Se aprovarem, este item será movido para a fila de trabalho do projeto. Caso contrário, será rejeitado.",
+        step_5:
+          "Para verificar o status desse item, entre em contato com o gerente do projeto, administrador ou quem enviou o link desta página.",
+      },
+    },
+    type_forms: {
+      select_types: {
+        title: "Selecionar tipo de item de trabalho",
+        search_placeholder: "Pesquisar tipo de item de trabalho",
+      },
+      actions: {
+        select_properties: "Selecionar propriedades",
+      },
+    },
+  },
   recurring_work_items: {
     settings: {
       heading: "Itens de trabalho recorrentes",
@@ -6310,4 +6469,5 @@ da maneira que você quiser a partir das fontes que você especificar.`,
       },
     },
   },
+  project_name_cannot_contain_special_characters: "O nome do projeto não pode conter caracteres especiais.",
 } as const;

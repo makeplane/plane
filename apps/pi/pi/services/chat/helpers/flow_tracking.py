@@ -26,6 +26,7 @@ from pi.app.models.enums import ExecutionStatus
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageMetaStepType
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
+from pi.services.chat.helpers.tool_utils import extract_text_from_content
 from pi.services.chat.utils import standardize_flow_step_content
 from pi.services.retrievers.pg_store.message import upsert_message_flow_steps
 
@@ -319,7 +320,7 @@ def persist_tool_selection_steps(func: Callable) -> Callable:
                 current_step += 1
 
             # Persist LLM reasoning content if present
-            reasoning_text = str(getattr(ai_message, "content", "") or "").strip()
+            reasoning_text = extract_text_from_content(getattr(ai_message, "content", "") or "").strip()
             if reasoning_text:
                 steps.append({
                     "step_order": current_step,
@@ -495,6 +496,7 @@ async def _collect_ai_message_from_astream(llm_with_tools: Any, messages: Any) -
     Why: tool calls arrive incrementally in streaming (chunks). We must accumulate chunks
     into a complete message so callers can reliably read `.tool_calls` and `.content`.
     """
+
     accumulated: Any = None
     async for chunk in llm_with_tools.astream(messages):
         if accumulated is None:
@@ -503,7 +505,6 @@ async def _collect_ai_message_from_astream(llm_with_tools: Any, messages: Any) -
         try:
             accumulated = accumulated + chunk
         except Exception:
-            # Best-effort fallback: keep the latest chunk.
             accumulated = chunk
 
     if accumulated is None:
@@ -596,7 +597,7 @@ async def orchestrate_llm_step_with_streaming(llm_with_tools, messages, **kwargs
             log.info(f"orchestrate_llm_step: Added tool_selection step with {len(tool_calls)} tools")
 
         # Persist LLM reasoning content if present
-        reasoning_text = str(getattr(ai_message, "content", "") or "").strip()
+        reasoning_text = extract_text_from_content(getattr(ai_message, "content", "") or "").strip()
         if reasoning_text:
             steps.append({
                 "step_order": current_step,
@@ -620,7 +621,7 @@ async def orchestrate_llm_step_with_streaming(llm_with_tools, messages, **kwargs
                     flow_steps=steps,
                     db=_db,
                 )
-                log.info(f"orchestrate_llm_step: Persistence result: {result.get("message") if isinstance(result, dict) else result}")
+                log.debug(f"orchestrate_llm_step: Persistence result: {result.get("message") if isinstance(result, dict) else result}")
         else:
             log.warning(
                 f"orchestrate_llm_step: Skipping persistence - steps={len(steps)}, has_query_id={query_id is not None}, has_chat_id={chat_id is not None}, has_db={db is not None}"  # noqa: E501
@@ -665,6 +666,7 @@ async def orchestrate_llm_step(llm_with_tools, messages, **kwargs):
 
     # Execute LLM call
     ai_message = await llm_with_tools.ainvoke(messages)
+
     steps: List[Dict[str, Any]] = []
 
     try:
@@ -708,7 +710,7 @@ async def orchestrate_llm_step(llm_with_tools, messages, **kwargs):
             log.info(f"orchestrate_llm_step: Added tool_selection step with {len(tool_calls)} tools")
 
         # Persist LLM reasoning content if present
-        reasoning_text = str(getattr(ai_message, "content", "") or "").strip()
+        reasoning_text = extract_text_from_content(getattr(ai_message, "content", "") or "").strip()
         if reasoning_text:
             steps.append({
                 "step_order": current_step,
@@ -732,7 +734,7 @@ async def orchestrate_llm_step(llm_with_tools, messages, **kwargs):
                     flow_steps=steps,
                     db=_db,
                 )
-                log.info(f"orchestrate_llm_step: Persistence result: {result.get("message") if isinstance(result, dict) else result}")
+                log.debug(f"orchestrate_llm_step: Persistence result: {result.get("message") if isinstance(result, dict) else result}")
         else:
             log.warning(
                 f"orchestrate_llm_step: Skipping persistence - steps={len(steps)}, has_query_id={query_id is not None}, has_chat_id={chat_id is not None}, has_db={db is not None}"  # noqa: E501
