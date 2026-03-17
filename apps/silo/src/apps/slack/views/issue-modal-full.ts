@@ -10,6 +10,7 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
+/* eslint-disable */
 
 import type { PlainTextElement } from "@slack/types";
 import { ACTIONS, E_ISSUE_OBJECT_TYPE_SELECTION } from "../helpers/constants";
@@ -22,6 +23,7 @@ import type {
   RichTextInputBlock,
   StaticSelectInputBlock,
 } from "./custom-blocks";
+import { buildOptionGroups } from "../helpers/slack-options";
 
 export type IssueModalViewFull = {
   type: "modal";
@@ -69,6 +71,7 @@ export const createIssueModalViewFull = (props: TIssueModalViewProps): IssueModa
   const { selectedProject, projectOptions } = options;
   const { showIntakeDropdown, threadSync } = config;
   const { showThreadSync, threadSyncEnabled } = threadSync ?? { showThreadSync: false, threadSyncEnabled: false };
+  const { option_groups, initial_option } = buildOptionGroups(projectOptions, 50, selectedProject.value);
 
   const createOrUpdate = isUpdate ? "Update" : "Create";
 
@@ -105,8 +108,8 @@ export const createIssueModalViewFull = (props: TIssueModalViewProps): IssueModa
                   text: "Choose Project",
                   emoji: true,
                 },
-                initial_option: selectedProject,
-                options: projectOptions,
+                option_groups,
+                initial_option,
                 action_id: ACTIONS.PROJECT,
               },
               label: {

@@ -74,3 +74,40 @@ export const convertToSlackOptions = (
  * @returns Slack-formatted hyperlink string
  */
 export const createSlackHyperlinkMarkdown = (displayText: string, url: string): string => `<${url}|${displayText}>`;
+
+export type TSlackOptionGroup = {
+  label: { type: "plain_text"; text: string };
+  options: PlainTextOption[];
+};
+
+// Implement option groups for project dropdowns to accomodate more than 100 projects in a workspace.
+export const buildOptionGroups = (
+  items: PlainTextOption[],
+  groupSize = 50,
+  selectedValue?: string
+): {
+  option_groups: TSlackOptionGroup[];
+  initial_option?: PlainTextOption;
+} => {
+  const option_groups: TSlackOptionGroup[] = [];
+
+  for (let i = 0; i < items.length; i += groupSize) {
+    const start = i + 1;
+    const end = Math.min(i + groupSize, items.length);
+
+    option_groups.push({
+      label: {
+        type: "plain_text",
+        text: `${start}-${end}`,
+      },
+      options: items.slice(i, i + groupSize),
+    });
+  }
+
+  const initial_option = items.find((item) => item.value === selectedValue);
+
+  return {
+    option_groups,
+    ...((initial_option && { initial_option }) ?? {}),
+  };
+};
