@@ -232,11 +232,11 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t("common.search.label")}
-                displayValue={(assigned: any) => assigned?.name}
+                displayValue={(assigned: IState | null) => assigned?.name ?? ""}
                 onKeyDown={searchInputKeyDown}
               />
             </div>
-            <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
+            <div className="mt-2 max-h-56 space-y-1 overflow-y-scroll">
               {filteredOptions ? (
                 filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
