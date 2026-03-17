@@ -51,17 +51,20 @@ RUN pnpm turbo run build --filter=flux
 # STAGE 3: Run the project
 # *****************************************************************************
 
-FROM base AS runner
+FROM registry.access.redhat.com/ubi10/nodejs-22 AS runner
+USER root
 WORKDIR /app
 
-COPY --from=installer /app/packages ./packages
-COPY --from=installer /app/apps/flux/dist ./apps/flux/dist
-COPY --from=installer /app/apps/flux/node_modules ./apps/flux/node_modules
-COPY --from=installer /app/node_modules ./node_modules
-COPY --from=installer /app/apps/flux/package.json ./apps/flux/package.json
+COPY --chown=1001:0 --from=installer /app/packages ./packages
+COPY --chown=1001:0 --from=installer /app/apps/flux/dist ./apps/flux/dist
+COPY --chown=1001:0 --from=installer /app/apps/flux/node_modules ./apps/flux/node_modules
+COPY --chown=1001:0 --from=installer /app/node_modules ./node_modules
+COPY --chown=1001:0 --from=installer /app/apps/flux/package.json ./apps/flux/package.json
 
 ENV TURBO_TELEMETRY_DISABLED=1
 ENV PORT=3000
+
+USER 1001
 
 EXPOSE 3000
 

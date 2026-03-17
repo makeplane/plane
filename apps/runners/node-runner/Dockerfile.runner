@@ -50,25 +50,29 @@ RUN pnpm turbo run build --filter=plane-runner-host
 # STAGE 3: Run the project
 # *****************************************************************************
 
-FROM base AS runner
+FROM registry.access.redhat.com/ubi10/nodejs-22 AS runner
+USER root
 WORKDIR /app
 
-COPY --from=installer /app/packages ./packages
-COPY --from=installer /app/apps/runners/node-runner/dist ./apps/runners/node-runner/dist
-COPY --from=installer /app/apps/runners/node-runner/node_modules ./apps/runners/node-runner/node_modules
-COPY --from=installer /app/apps/runners/node-runner/package.json ./apps/runners/node-runner/package.json
-COPY --from=installer /app/node_modules ./node_modules
+COPY --chown=1001:0 --from=installer /app/packages ./packages
+COPY --chown=1001:0 --from=installer /app/apps/runners/node-runner/dist ./apps/runners/node-runner/dist
+COPY --chown=1001:0 --from=installer /app/apps/runners/node-runner/node_modules ./apps/runners/node-runner/node_modules
+COPY --chown=1001:0 --from=installer /app/apps/runners/node-runner/package.json ./apps/runners/node-runner/package.json
+COPY --chown=1001:0 --from=installer /app/node_modules ./node_modules
 
 # Directory where script packages will be installed at runtime
-RUN mkdir -p /app/scripts
+RUN mkdir -p /app/scripts && \
+    chown -R 1001:0 /app/scripts
 
-COPY LICENSE.txt .
+COPY --chown=1001:0 LICENSE.txt .
 RUN mkdir -p /usr/share/licenses/plane/
 COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
 
 ENV NODE_ENV=production
 ENV TURBO_TELEMETRY_DISABLED=1
 ENV NPM_CONFIG_CACHE=/tmp/.npm-cache
+
+USER 1001
 
 EXPOSE 3000
 
