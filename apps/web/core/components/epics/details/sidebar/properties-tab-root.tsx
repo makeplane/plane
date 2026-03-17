@@ -111,14 +111,20 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
         onClose={() => toggleInitiativeModal()}
         selectedInitiativeIds={epicDetails.initiative_ids ?? []}
         onSubmit={(initiativeIds) =>
-          epicOperations.update(workspaceSlug, projectId, epicId, { initiative_ids: initiativeIds })
+          epicOperations.update(workspaceSlug, projectId, epicId, {
+            initiative_ids: initiativeIds,
+          })
         }
       />
       <div className={`mb-2 space-y-2.5 ${disabled ? "opacity-60" : ""}`}>
         <SidebarPropertyListItem icon={StatePropertyIcon} label="State">
           <StateDropdown
             value={epicDetails?.state_id}
-            onChange={(val) => epicOperations.update(workspaceSlug, projectId, epicId, { state_id: val })}
+            onChange={(val) =>
+              epicOperations.update(workspaceSlug, projectId, epicId, {
+                state_id: val,
+              })
+            }
             projectId={projectId?.toString() ?? ""}
             disabled={disabled}
             buttonVariant="transparent-with-text"
@@ -133,7 +139,11 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
         <SidebarPropertyListItem icon={MembersPropertyIcon} label="Assignees">
           <MemberDropdown
             value={epicDetails?.assignee_ids ?? undefined}
-            onChange={(val) => epicOperations.update(workspaceSlug, projectId, epicId, { assignee_ids: val })}
+            onChange={(val) =>
+              epicOperations.update(workspaceSlug, projectId, epicId, {
+                assignee_ids: val,
+              })
+            }
             disabled={disabled}
             projectId={projectId?.toString() ?? ""}
             placeholder="Add assignees"
@@ -151,7 +161,11 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
         <SidebarPropertyListItem icon={PriorityPropertyIcon} label="Priority">
           <PriorityDropdown
             value={epicDetails?.priority}
-            onChange={(val) => epicOperations.update(workspaceSlug, projectId, epicId, { priority: val })}
+            onChange={(val) =>
+              epicOperations.update(workspaceSlug, projectId, epicId, {
+                priority: val,
+              })
+            }
             disabled={disabled}
             buttonVariant="transparent-with-text"
             className="w-full h-7.5 grow rounded-sm"
@@ -179,7 +193,9 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             disabled={disabled}
           >
             {epicDetails.initiative_ids?.length
-              ? t("initiatives.placeholder", { count: epicDetails.initiative_ids?.length })
+              ? t("initiatives.placeholder", {
+                  count: epicDetails.initiative_ids?.length,
+                })
               : t("initiatives.add_initiative")}
           </button>
         </SidebarPropertyListItem>
@@ -201,6 +217,34 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
+        </SidebarPropertyListItem>
+
+        <SidebarPropertyListItem icon={DueDatePropertyIcon} label="Due date">
+          <div className="flex items-center gap-2 w-full">
+            <DateDropdown
+              placeholder="Add due date"
+              value={epicDetails.target_date}
+              onChange={(val) =>
+                epicOperations.update(workspaceSlug, projectId, epicId, {
+                  target_date: val ? renderFormattedPayloadDate(val) : null,
+                })
+              }
+              minDate={minDate ?? undefined}
+              disabled={disabled}
+              buttonVariant="transparent-with-text"
+              className="group w-full grow"
+              buttonContainerClassName="w-full text-left h-7.5"
+              buttonClassName={cn("w-full text-body-xs-regular", {
+                "text-placeholder": !epicDetails.target_date,
+                "text-danger-primary": shouldHighlightIssueDueDate(epicDetails.target_date, stateDetails?.group),
+              })}
+              hideIcon
+              clearIconClassName="h-3 w-3 hidden group-hover:inline !text-primary"
+            />
+            {epicDetails.target_date && (
+              <DateAlert date={epicDetails.target_date} workItem={epicDetails} projectId={projectId} />
+            )}
+          </div>
         </SidebarPropertyListItem>
 
         {epicDetails.created_at && (
@@ -239,40 +283,14 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
           </SidebarPropertyListItem>
         )}
 
-        <SidebarPropertyListItem icon={DueDatePropertyIcon} label="Due date">
-          <div className="flex items-center gap-2 w-full">
-            <DateDropdown
-              placeholder="Add due date"
-              value={epicDetails.target_date}
-              onChange={(val) =>
-                epicOperations.update(workspaceSlug, projectId, epicId, {
-                  target_date: val ? renderFormattedPayloadDate(val) : null,
-                })
-              }
-              minDate={minDate ?? undefined}
-              disabled={disabled}
-              buttonVariant="transparent-with-text"
-              className="group w-full grow"
-              buttonContainerClassName="w-full text-left h-7.5"
-              buttonClassName={cn("w-full text-body-xs-regular", {
-                "text-placeholder": !epicDetails.target_date,
-                "text-danger-primary": shouldHighlightIssueDueDate(epicDetails.target_date, stateDetails?.group),
-              })}
-              hideIcon
-              clearIconClassName="h-3 w-3 hidden group-hover:inline !text-primary"
-            />
-            {epicDetails.target_date && (
-              <DateAlert date={epicDetails.target_date} workItem={epicDetails} projectId={projectId} />
-            )}
-          </div>
-        </SidebarPropertyListItem>
-
         {projectId && areEstimateEnabledByProjectId(projectId) && (
           <SidebarPropertyListItem icon={EstimatePropertyIcon} label="Estimate">
             <EstimateDropdown
               value={epicDetails?.estimate_point ?? undefined}
               onChange={(val: string | undefined) =>
-                epicOperations.update(workspaceSlug, projectId, epicId, { estimate_point: val })
+                epicOperations.update(workspaceSlug, projectId, epicId, {
+                  estimate_point: val,
+                })
               }
               projectId={projectId}
               disabled={disabled}
