@@ -300,6 +300,8 @@ export const useMultipleSelect = (props: Props) => {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!e.shiftKey) return;
+      const active = document.activeElement as HTMLElement | null;
+      if (active?.matches("input, textarea, select, [contenteditable]") || active?.isContentEditable) return;
 
       const activeEntityDetails = getActiveEntityDetails();
       const nextActiveEntity = getNextActiveEntity();
@@ -333,6 +335,8 @@ export const useMultipleSelect = (props: Props) => {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.shiftKey) return;
+      const active = document.activeElement as HTMLElement | null;
+      if (active?.matches("input, textarea, select, [contenteditable]") || active?.isContentEditable) return;
       const activeEntityDetails = getActiveEntityDetails();
       // set active entity id to the first entity
       if (["ArrowUp", "ArrowDown"].includes(e.key) && !activeEntityDetails) {
