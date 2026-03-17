@@ -750,7 +750,6 @@ export class PiChatStore implements IPiChatStore {
         this.isLoadingMap[chatId] = true;
       });
       const response = await this.piChatService.retrieveChat(chatId, workspaceId);
-
       runInAction(() => {
         update(this.chatMap, chatId, (chat) => ({
           ...response.results,
@@ -766,8 +765,11 @@ export class PiChatStore implements IPiChatStore {
           ...chat,
           llm: response.results.llm ?? chat?.llm,
         }));
-        if (chatId === this.activeChatId) {
-          this.activeModel = response?.results?.llm || this.getDefaultLLM() || undefined;
+        if (chatId === this.activeChatId && this.models.length > 0) {
+          this.activeModel =
+            response?.results?.llm && this.models.find((model) => model.id === response?.results?.llm)
+              ? response?.results?.llm
+              : this.getDefaultLLM() || undefined;
         }
         this.isLoadingMap[chatId] = false;
       });
@@ -850,7 +852,10 @@ export class PiChatStore implements IPiChatStore {
       runInAction(() => {
         this.models = response.models;
         if (!this.activeModel) {
-          this.activeModel = response.models?.find((model) => model.is_default)?.id;
+          const activeChatLlm = this.activeChat?.llm;
+          this.activeModel =
+            response.models.find((model) => model.id === activeChatLlm)?.id ||
+            response.models?.find((model) => model.is_default)?.id;
         }
       });
     } catch (e) {
