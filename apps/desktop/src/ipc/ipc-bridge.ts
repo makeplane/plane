@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { BrowserWindow, ipcMain, shell, Menu, IpcMainEvent, WebContents } from "electron";
+import { app, BrowserWindow, ipcMain, shell, Menu, IpcMainEvent, WebContents } from "electron";
 import { InstanceStore } from "../stores/instance-store";
 import { ViewManager } from "../managers/view-manager";
 import { generateCodeVerifier, computeCodeChallenge } from "../utils/pkce";
@@ -36,6 +36,7 @@ export class IPCBridge {
   #tabMoveHandler: ((event: IpcMainEvent, tabId: string, toIndex: number) => void) | undefined = undefined;
   #navBackHandler: ((event: IpcMainEvent) => void) | undefined = undefined;
   #navForwardHandler: ((event: IpcMainEvent) => void) | undefined = undefined;
+  #badgeSetCountHandler: ((event: IpcMainEvent, count: number) => void) | undefined = undefined;
 
   // PKCE: stores the code_verifier for the current OAuth flow
   #pendingCodeVerifier: string | null = null;
@@ -120,6 +121,11 @@ export class IPCBridge {
     if (this.#navForwardHandler) {
       ipcMain.removeListener(IPC_CHANNELS.NAV_FORWARD, this.#navForwardHandler);
       this.#navForwardHandler = undefined;
+    }
+
+    if (this.#badgeSetCountHandler) {
+      ipcMain.removeListener(IPC_CHANNELS.BADGE_SET_COUNT, this.#badgeSetCountHandler);
+      this.#badgeSetCountHandler = undefined;
     }
 
     // Remove ipcMain.handle() handlers (do not require handler references)
@@ -322,5 +328,13 @@ export class IPCBridge {
       this.#pendingCodeVerifier = null;
       return verifier;
     });
+
+    // Badge count - called from web app via preload
+    this.#badgeSetCountHandler = (_event, count: number) => {
+      const num = Number(count);
+      const safeCount = Number.isFinite(num) ? Math.max(0, Math.round(num)) : 0;
+      app.setBadgeCount(safeCount);
+    };
+    ipcMain.on(IPC_CHANNELS.BADGE_SET_COUNT, this.#badgeSetCountHandler);
   }
 }

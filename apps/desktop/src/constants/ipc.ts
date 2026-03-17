@@ -30,4 +30,5 @@ export const IPC_CHANNELS = {
   NAV_FORWARD: "nav:forward",
   PKCE_START: "pkce:start-flow",
   PKCE_GET_VERIFIER: "pkce:get-verifier",
+  BADGE_SET_COUNT: "badge:set-count",
 } as const;

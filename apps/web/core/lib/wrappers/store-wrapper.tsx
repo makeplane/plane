@@ -14,6 +14,7 @@
 import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
+import { reaction } from "mobx";
 import { useTheme } from "next-themes";
 import type { TLanguage } from "@plane/i18n";
 import { useTranslation } from "@plane/i18n";
@@ -21,8 +22,9 @@ import { useTranslation } from "@plane/i18n";
 import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useUserProfile } from "@/hooks/store/user";
-import { isDesktop } from "@/hooks/use-desktop";
+import { isDesktop, getDesktopAPI } from "@/hooks/use-desktop";
 
 type TStoreWrapper = {
   children: ReactNode;
@@ -36,6 +38,7 @@ function StoreWrapper(props: TStoreWrapper) {
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: userProfile } = useUserProfile();
   const { changeLanguage } = useTranslation();
+  const { unreadNotificationsCount } = useWorkspaceNotifications();
 
   // Track if we've initialized theme from server (one-time only)
   const hasInitializedThemeRef = useRef(false);
@@ -123,6 +126,23 @@ function StoreWrapper(props: TStoreWrapper) {
     if (!userProfile?.language) return;
     changeLanguage(userProfile?.language as TLanguage);
   }, [userProfile?.language, changeLanguage]);
+
+  /**
+   * Desktop badge count: sync unread notification count to the native app icon.
+   * Uses a MobX reaction so the badge updates whenever the observable changes,
+   * regardless of which component triggered the update.
+   */
+  useEffect(() => {
+    if (!isDesktop()) return;
+
+    return reaction(
+      () => unreadNotificationsCount.total_unread_notifications_count,
+      (count) => {
+        getDesktopAPI().setBadgeCount?.(count);
+      },
+      { fireImmediately: true }
+    );
+  }, [unreadNotificationsCount]);
 
   return <>{children}</>;
 }

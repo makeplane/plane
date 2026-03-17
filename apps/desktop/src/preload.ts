@@ -21,6 +21,7 @@ interface PlaneDesktopAPI {
   openExternal: (url: string) => void;
   startPKCEFlow: () => Promise<{ code_challenge: string; challenge_method: string }>;
   getCodeVerifier: () => Promise<string | null>;
+  setBadgeCount: (count: number) => void;
 }
 
 const api: PlaneDesktopAPI = {
@@ -36,6 +37,9 @@ const api: PlaneDesktopAPI = {
   // PKCE for desktop OAuth security
   startPKCEFlow: () => ipcRenderer.invoke(IPC_CHANNELS.PKCE_START),
   getCodeVerifier: () => ipcRenderer.invoke(IPC_CHANNELS.PKCE_GET_VERIFIER),
+
+  // Badge
+  setBadgeCount: (count: number) => ipcRenderer.send(IPC_CHANNELS.BADGE_SET_COUNT, count),
 };
 
 contextBridge.exposeInMainWorld("planeDesktop", api);

@@ -30,6 +30,8 @@ interface PlaneDesktopAPI {
   startPKCEFlow: () => Promise<{ code_challenge: string; challenge_method: string }>;
   /** Get the code_verifier for token exchange (single-use, clears after retrieval) */
   getCodeVerifier: () => Promise<string | null>;
+  /** Set the app icon badge count (dock on macOS, taskbar on Linux) */
+  setBadgeCount: (count: number) => void;
 }
 
 declare global {
