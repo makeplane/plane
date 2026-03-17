@@ -198,7 +198,6 @@ class IssueSearchEndpoint(BaseAPIView):
                     | Q(
                         issue_intake__status__in=[
                             IntakeIssueStatus.ACCEPTED.value,
-                            IntakeIssueStatus.REJECTED.value,
                             IntakeIssueStatus.DUPLICATE.value,
                         ]
                     )
@@ -265,6 +264,8 @@ class IssueSearchEndpoint(BaseAPIView):
             project_id=project_id, member=self.request.user, is_active=True, role=5
         ).exists():
             issues = issues.filter(created_by=self.request.user)
+
+        issues = issues.exclude(id=issue_id)
 
         return Response(
             issues.values(
