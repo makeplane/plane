@@ -194,7 +194,7 @@ def _extract_success_message_from_result(result: str) -> Optional[str]:
 
 
 async def extract_execution_status_from_flow_steps(
-    message_flow_steps: List[MessageFlowStep], user_message_id: uuid.UUID, db: AsyncSession
+    message_flow_steps: List[MessageFlowStep], user_message_id: uuid.UUID, db: AsyncSession, is_latest_message: bool = False
 ) -> Dict[str, Any]:
     """
     Extract execution status information from planned actions for a specific user message.
@@ -346,7 +346,9 @@ async def extract_execution_status_from_flow_steps(
             failed_count += 1
 
         # Update action data with execution status
+        action_data["is_executed"] = is_executed
         action_data["success"] = is_executed and is_successful
+        action_data["is_editable"] = is_latest_message and not is_executed
 
         if is_executed and executed_at:
             action_data["executed_at"] = executed_at
@@ -417,12 +419,18 @@ async def extract_execution_status_from_flow_steps(
 
         actions.append(action_data)
 
+    # Compute summary boolean fields based on actions array
+    any_executed = any(action.get("is_executed", False) for action in actions)
+    any_editable = any(action.get("is_editable", False) for action in actions)
+
     return {
         "action_summary": {
             "total_planned": total_actions,
             "completed": completed_count,
             "failed": failed_count,
             "duration_seconds": 0.0,  # Default duration since we don't track it in flow steps
+            "is_executed": any_executed,
+            "is_editable": any_editable,
         },
         "actions": actions,
     }
@@ -564,7 +572,13 @@ async def retrieve_chat_history(
                             feedback = assistant_message.message_feedbacks[0].feedback or ""
 
                         # Extract execution status information for this user message
-                        execution_status_info = await extract_execution_status_from_flow_steps(message_flow_steps, user_message.id, db)
+                        # Check if this is the last user message in the chat (for is_editable)
+                        is_last_user_message = all(
+                            msg.user_type != UserTypeChoices.USER.value or msg.sequence <= user_message.sequence for msg in messages
+                        )
+                        execution_status_info = await extract_execution_status_from_flow_steps(
+                            message_flow_steps, user_message.id, db, is_latest_message=is_last_user_message
+                        )
 
                         qa_pair: Dict[str, Any] = {
                             "query": user_message.content or "",
@@ -577,8 +591,6 @@ async def retrieve_chat_history(
                             "answer_id": str(assistant_message.id),
                             "attachment_ids": attachments_dict.get(user_message.id, []),
                             "attachments": attachments_object_dict.get(user_message.id, []),
-                            # Add execution status information for frontend
-                            "execution_status": execution_status_info,
                         }
 
                         # For external responses, augment reasoning with cleaned tool results from flow steps
@@ -1064,7 +1076,13 @@ async def retrieve_chat_history(
                             assistant_answer = "⏳ Processing your request..."
 
                         # Extract execution status information for this user message
-                        execution_status_info = await extract_execution_status_from_flow_steps(message_flow_steps, user_message.id, db)
+                        # Check if this is the last user message in the chat (for is_editable)
+                        is_last_user_message = all(
+                            msg.user_type != UserTypeChoices.USER.value or msg.sequence <= user_message.sequence for msg in messages
+                        )
+                        execution_status_info = await extract_execution_status_from_flow_steps(
+                            message_flow_steps, user_message.id, db, is_latest_message=is_last_user_message
+                        )
 
                         standalone_qa_pair: Dict[str, Any] = {
                             "query": user_message.content or "",
@@ -1077,8 +1095,6 @@ async def retrieve_chat_history(
                             "answer_id": "",  # No assistant message yet
                             "attachment_ids": attachments_dict.get(user_message.id, []),
                             "attachments": attachments_object_dict.get(user_message.id, []),  # Add this line for consistency
-                            # Add execution status information for frontend
-                            "execution_status": execution_status_info,
                         }
 
                         # Flatten actions and summary at the top-level for frontend compatibility (build mode)

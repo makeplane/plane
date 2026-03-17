@@ -38,6 +38,26 @@ from pi.services.retrievers.pg_store.action_artifact import get_latest_artifact_
 log = logger.getChild(__name__)
 
 
+def _extract_display_data_from_version(version_data: dict) -> dict:
+    """Extract tool_args_raw from version data for display preparation.
+
+    Version data has structure:
+        {"tool_args_raw": {...}, "planning_data": {...}, "planning_context": {...}, ...}
+
+    Display/preparation functions expect the actual tool args (name, assignee_ids, etc.),
+    not the wrapper. This helper extracts tool_args_raw and carries over entity_info
+    (needed for executed artifact display).
+    """
+    tool_args = version_data.get("tool_args_raw")
+    if isinstance(tool_args, dict) and tool_args:
+        result = tool_args.copy()
+        # Carry over entity_info if present (needed for executed artifact display)
+        if "entity_info" in version_data:
+            result["entity_info"] = version_data["entity_info"]
+        return result
+    return version_data
+
+
 class FieldType:
     """Constants for different field categories."""
 
@@ -1421,9 +1441,11 @@ async def prepare_artifact_response_data(db, artifact, is_latest=False) -> dict:
                 tool_name = tn
 
     try:
-        if is_edited and artifact.entity in ["workitem", "project"]:
-            # Use special handling for edited artifacts
-            enhanced_data = await prepare_edited_artifact_data(artifact.entity, artifact_data_to_use)
+        if is_edited:
+            # Use special handling for edited artifacts — extract tool_args_raw
+            # from version wrapper before passing to display preparation
+            display_data = _extract_display_data_from_version(artifact_data_to_use)
+            enhanced_data = await prepare_edited_artifact_data(artifact.entity, display_data)
         else:
             # Use existing logic for unedited artifacts - pass action and entity_id for update operations
             enhanced_data = await prepare_artifact_data(
@@ -1501,7 +1523,7 @@ async def prepare_artifact_response_data(db, artifact, is_latest=False) -> dict:
         "message_id": str(artifact.message_id) if artifact.message_id else None,
         "is_executed": actual_is_executed,  # Use actual source
         "success": actual_success,  # Use actual source
-        "is_editable": (artifact.entity == "workitem" and is_latest and not actual_is_executed),  # Use actual is_executed
+        "is_editable": (is_latest and not actual_is_executed),  # Use actual is_executed
         "entity_id": entity_id,
         "entity_url": entity_url,
         "entity_name": entity_name,
@@ -1563,9 +1585,11 @@ async def batch_prepare_artifact_response_data(db, artifacts: List[Any], latest_
                         tool_name = tn
 
             try:
-                if is_edited and artifact.entity in ["workitem", "project"]:
-                    # Use special handling for edited artifacts
-                    enhanced_data = await prepare_edited_artifact_data(artifact.entity, artifact_data_to_use)
+                if is_edited:
+                    # Use special handling for edited artifacts — extract tool_args_raw
+                    # from version wrapper before passing to display preparation
+                    display_data = _extract_display_data_from_version(artifact_data_to_use)
+                    enhanced_data = await prepare_edited_artifact_data(artifact.entity, display_data)
                 else:
                     # Use existing logic for unedited artifacts
                     enhanced_data = await prepare_artifact_data(
@@ -1640,7 +1664,7 @@ async def batch_prepare_artifact_response_data(db, artifacts: List[Any], latest_
                 "message_id": str(artifact.message_id) if artifact.message_id else None,
                 "is_executed": actual_is_executed,
                 "success": actual_success,
-                "is_editable": (artifact.entity == "workitem" and is_latest_query and not actual_is_executed),
+                "is_editable": (is_latest_query and not actual_is_executed),
                 "entity_id": entity_id,
                 "entity_url": entity_url,
                 "entity_name": entity_name,

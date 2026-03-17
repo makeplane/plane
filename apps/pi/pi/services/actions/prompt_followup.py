@@ -42,8 +42,11 @@ from pi import settings
 from pi.app.models.enums import MessageMetaStepType
 from pi.services.actions.method_executor import MethodExecutor
 from pi.services.actions.plane_actions_executor import PlaneActionsExecutor
+from pi.services.actions.tools import get_tools_for_category
+from pi.services.actions.tools.entity_search import get_entity_search_tools
 from pi.services.chat.chat import PlaneChatBot
 from pi.services.chat.prompts import plane_context
+from pi.services.query_utils import _parse_query_internal
 from pi.services.retrievers.pg_store.action_artifact import add_query_to_artifact
 from pi.services.retrievers.pg_store.action_artifact import get_artifact_prompt_history_from_flow_steps
 
@@ -63,6 +66,8 @@ TOOL_ENTITY_MAPPING = {
 
 SEARCH_CATEGORIES = ["users", "workitems", "states", "labels", "modules", "cycles", "projects"]
 
+READONLY_PATTERNS = ("_list", "_retrieve", "_search", "_get_")
+
 
 class ArtifactModificationResponse(BaseModel):
     """Structured response for artifact JSON modification."""
@@ -80,29 +85,52 @@ class EntityResolver:
         self.context = context
 
     async def get_search_tools(self, access_token: str) -> List[Any]:
-        """Get search tools using existing infrastructure."""
+        """Get entity search tools and read-only SDK tools for resolution.
 
-        # Create actions executor (same pattern as main flow)
+        Uses the same direct approach as build mode (build_mode_helpers.py)
+        to avoid the universal_tool_names whitelist in _build_planning_method_tools.
+        """
+
         if access_token.startswith("plane_api_"):
             actions_executor = PlaneActionsExecutor(api_key=access_token, base_url=settings.plane_api.HOST)
         else:
             actions_executor = PlaneActionsExecutor(access_token=access_token, base_url=settings.plane_api.HOST)
 
         method_executor = MethodExecutor(actions_executor)
+        tools: List[Any] = []
+        seen_names: set[str] = set()
 
-        # Build search tools for common categories
-        search_tools = []
+        def _add_unique(new_tools: List[Any]) -> int:
+            added = 0
+            for t in new_tools:
+                name = getattr(t, "name", "")
+                if name and name not in seen_names:
+                    tools.append(t)
+                    seen_names.add(name)
+                    added += 1
+            return added
+
+        # 1. All entity search tools directly (same as build_mode_helpers.py line 361)
+        try:
+            entity_tools = get_entity_search_tools(method_executor, self.context) or []
+            count = _add_unique(entity_tools)
+            log.debug(f"Added {count} entity search tools")
+        except Exception as e:
+            log.error(f"Failed to load entity search tools: {e}")
+
+        # 2. Read-only SDK tools per category as fallback for resolution
         for category in SEARCH_CATEGORIES:
             try:
-                tools_for_cat = self.chatbot._build_planning_method_tools(category, method_executor, self.context)
-                category_search_tools = [t for t in tools_for_cat if t.name.startswith("search_")]
-                search_tools.extend(category_search_tools)
-                log.debug(f"Built {len(category_search_tools)} search tools for category: {category}")
+                cat_tools = get_tools_for_category(category, method_executor, self.context) or []
+                readonly_tools = [t for t in cat_tools if any(p in getattr(t, "name", "") for p in READONLY_PATTERNS)]
+                count = _add_unique(readonly_tools)
+                log.debug(f"Added {count} read-only tools for category: {category}")
             except Exception as e:
-                log.error(f"Could not build tools for category {category}: {e}")
+                log.error(f"Could not build read-only tools for category {category}: {e}")
 
-        log.info(f"Total search tools available: {len(search_tools)}")
-        return search_tools
+        log.info(f"Total resolution tools available: {len(tools)}")
+
+        return tools
 
     async def execute_tool_calls(self, tool_calls: List[Any], search_tools: List[Any]) -> Dict[str, Any]:
         """Execute tool calls and return results using existing patterns."""
@@ -434,19 +462,20 @@ class ArtifactFollowupService:
                     entity_changes = modifier.apply_entity_changes(modified_json, tool_results, context["entity_type"])
                     changes_made.extend(entity_changes)
 
-            # Handle mixed queries: apply direct modifications for non-entity fields
-            # This handles cases where LLM makes tool calls but doesn't provide final JSON
+            # Handle remaining modifications the tool calls didn't cover
             try:
-                # Re-analyze the query to find direct field modifications
                 entity_config = ENTITY_FIELD_CONFIG.get(context["entity_type"], {})
-                direct_fields = entity_config.get("direct_fields", [])
+                all_fields = list(entity_config.get("direct_fields", [])) + list(entity_config.get("relation_fields", []))
 
-                # Apply direct modifications using LLM extraction
+                # Exclude fields already resolved by tool calls so the extraction LLM doesn't overwrite UUIDs with names
+                already_resolved = {k for k in modified_json if modified_json[k] != context["current_json"].get(k)}
+                remaining_fields = [f for f in all_fields if f not in already_resolved]
+
                 direct_changes = await _apply_direct_query_modifications(
                     modified_json,
                     context["user_query"],
                     context["entity_type"],
-                    {"target_fields": direct_fields, "operations": ["set", "change"]},
+                    {"target_fields": remaining_fields, "operations": ["set", "change", "add", "remove", "clear"], "user_id": context.get("user_id")},
                     message_id,
                     db,
                 )
@@ -706,8 +735,11 @@ async def handle_artifact_prompt_followup(
 ) -> Dict[str, Any]:
     """Handle artifact prompt followup with intelligent query decomposition."""
     try:
+        # Strip HTML so all downstream LLM calls receive plain text
+        clean_query = _parse_query_internal(current_query).parsed_content
+
         # Step 1: Decompose query to understand what needs to be done
-        query_analysis = await _analyze_query_requirements(current_query, entity_type, db, user_id, workspace_id, user_message_id)
+        query_analysis = await _analyze_query_requirements(clean_query, entity_type, db, user_id, workspace_id, user_message_id)
 
         # Step 2: Route based on analysis
         if query_analysis["needs_entity_resolution"]:
@@ -719,7 +751,7 @@ async def handle_artifact_prompt_followup(
             # Generate updated artifact data via LLM
             updated_artifact_data = await generate_followup_artifact_data(
                 current_artifact_data=current_artifact_data,
-                current_query=current_query,
+                current_query=clean_query,
                 previous_followup_queries=previous_followup_queries,
                 entity_type=entity_type,
                 workspace_id=workspace_id,
@@ -732,11 +764,11 @@ async def handle_artifact_prompt_followup(
             log.debug(f"Using direct modification for simple query: {current_query}")
             # Apply direct modifications
             updated_artifact_data = current_artifact_data.copy()
-            changes = await _apply_direct_query_modifications(updated_artifact_data, current_query, entity_type, query_analysis, user_message_id, db)
+            changes = await _apply_direct_query_modifications(updated_artifact_data, clean_query, entity_type, query_analysis, user_message_id, db)
             if not changes:
                 return {"artifact_data": current_artifact_data, "change_summary": "No modifications could be applied", "success": True}
 
-        # Store the followup query
+        # Store the original HTML query for history, not the stripped version
         await add_query_to_artifact(db=db, artifact_id=artifact_id, message_id=user_message_id, new_query=current_query, chat_id=chat_id)
 
         return {"artifact_data": updated_artifact_data, "success": True}
@@ -759,58 +791,36 @@ async def _analyze_query_requirements(
     # Get current date context
     today = date.today().isoformat()
 
-    # Create analysis prompt with date context
-    analysis_prompt = f"""# Query Analysis for {entity_type.title()} Modification
+    analysis_prompt = f"""Analyze this {entity_type} modification request. Determine whether it can be handled by setting literal values on direct fields, or whether it requires looking up entities (users, states, labels, modules, cycles, projects, work items) by name.
 
-Analyze the following user request to determine processing requirements:
+Query: "{query}"
+Today: {today}
 
-**User Query:** "{query}"
+Direct fields (literal values — text, dates, priority, numbers): {", ".join(direct_fields)}
+Relation fields (require entity lookup to resolve UUIDs): {", ".join(relation_fields)}
 
-**Context:**
-- Entity Type: {entity_type}
-- Current Date: {today}
-- Direct Fields: {", ".join(direct_fields)}
-- Relation Fields: {", ".join(relation_fields)}
+Set needs_entity_resolution = true when:
+- The query references an entity by name (e.g. state "done", label "urgent", user "john")
+- The query implies an entity lookup (e.g. "mark as done" → state_id, "add me" → assignee_ids)
 
-## Analysis Task
+Set needs_entity_resolution = false when:
+- The query only sets literal values on direct fields (e.g. "rename to X", "set priority to high", "set start date to today")
 
-Determine if this query requires entity resolution (searching for users, states, labels, etc.) or can be handled with direct field modifications only.
+Return the specific target_fields from the lists above that the query intends to modify.
 
-**Entity Resolution Needed When:**
-- User mentions specific entity names (users, states, labels, modules, cycles)
-- Query involves relationships or assignments to named entities
-- References to existing work items by identifier
-- **CRITICAL**: ANY assignment query including "assign to me", "assign it to me", "add me" (requires proper array handling)
-
-**Direct Modification When:**
-- Simple value changes (name, priority, dates, descriptions)
-- Clear field assignments with explicit values
-- No entity names mentioned AND no assignment operations
-
-## Examples
-
-```
-"change name to test" → Direct (name field)
-"set priority to high" → Direct (priority field)
-"set start date to today" → Direct (start_date = {today})
-"assign to john" → Entity resolution (find user "john")
-"assign it to me" → Entity resolution (requires proper array handling for current user)
-"add me as assignee" → Entity resolution (requires proper array handling for current user)
-"add urgent label" → Entity resolution (find label "urgent")
-"change state to done" → Entity resolution (find state "done")
-```
-
-## Required Output
+Examples:
+- "rename to Lake" → false, target_fields=["name"], operations=["set"]
+- "set priority to high" → false, target_fields=["priority"], operations=["set"]
+- "set start date to today" → false, target_fields=["start_date"], operations=["set"]
+- "change state to done" → true, target_fields=["state_id"], operations=["set"]
+- "mark it as done" → true, target_fields=["state_id"], operations=["set"]
+- "assign to john" → true, target_fields=["assignee_ids"], operations=["add"]
+- "assign it to me" → true, target_fields=["assignee_ids"], operations=["add"]
+- "add urgent label" → true, target_fields=["label_ids"], operations=["add"]
+- "set priority to high and assign to me" → true, target_fields=["priority", "assignee_ids"], operations=["set", "add"]
 
 Respond with JSON only:
-```json
-{{
-  "needs_entity_resolution": true/false,
-  "target_fields": ["field1", "field2"],
-  "operations": ["set", "add", "remove", "clear"]
-}}
-```"""
-
+{{"needs_entity_resolution": true/false, "target_fields": [...], "operations": [...]}}""" # noqa: E501
     try:
         # Initialize chatbot for analysis
         chatbot = PlaneChatBot()
@@ -869,11 +879,23 @@ async def _extract_field_values_via_llm(
     direct_fields = entity_config.get("direct_fields", [])
     target_fields = analysis.get("target_fields", [])
     operations = analysis.get("operations", [])
+    user_id = analysis.get("user_id")
+    user_field = entity_config.get("user_assignment_field")
 
     # Get current context for better generation
     current_name = current_data.get("name", "") if current_data else ""
     current_description = current_data.get("description_html", "") if current_data else ""
     current_priority = current_data.get("priority", "") if current_data else ""
+
+    # Build user context section for self-assignment
+    user_context = ""
+    if user_id and user_field:
+        user_context = f"""
+### Self-Assignment ({user_field})
+- When the user says "me", "myself", "assign to me", "assign it to me", "add me": use user ID "{user_id}"
+- For array fields like assignee_ids: return ["{user_id}"]
+- For single fields like lead_id: return "{user_id}"
+"""
 
     # Create intelligent value extraction prompt
     extraction_prompt = f"""# Field Value Extraction for {entity_type.title()}
@@ -916,7 +938,7 @@ Extract precise field values from the user request with intelligent content gene
 ### Numeric Fields (estimate_point)
 - **Direct**: "5 points", "estimate 3" → integer value
 - **Story Points**: "make it a 3 point task" → 3
-
+{user_context}
 ## Content Generation Examples
 
 ```
@@ -934,7 +956,11 @@ Current: "" + "set start date to today"
 ```
 
 ## Special Cases
-- **Clear/Remove**: "none", "empty", "clear" → ""
+- **Clear/Remove text fields**: "none", "empty", "clear" → ""
+- **Clear/Remove relation fields** (any field ending in _id or _ids): "remove", "clear", "none" → null
+  - Example: "remove the cycle" → {{"cycle_id": null}}
+  - Example: "clear the parent" → {{"parent_id": null}}
+  - Example: "remove assignees" → {{"assignee_ids": []}}
 - **Preserve**: Don't modify fields not mentioned in request
 - **Context-Aware**: Generate content based on existing artifact data
 
@@ -977,6 +1003,9 @@ Respond with JSON containing only the fields to modify:
 
 def _update_field_if_different(json_data: Dict[str, Any], field: str, new_value: Any) -> bool:
     """Update field if the new value is different from current value."""
+    if new_value == "" and (field.endswith("_id") or field.endswith("_ids")):
+        new_value = None if field.endswith("_id") else []
+
     current_value = json_data.get(field)
     if current_value != new_value:
         json_data[field] = new_value

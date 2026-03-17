@@ -748,7 +748,7 @@ async def plan_action_and_prepare_outputs(
             "action_type": action_type,
             "args": cleaned_args,
         },
-        "is_planned": True,  # Required for get_planned_actions_for_execution query
+        "is_planned": True,
         "is_executed": False,
         "execution_success": ExecutionStatus.PENDING,
     }
