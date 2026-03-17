@@ -82,8 +82,7 @@ export const SummaryBlock = observer(function SummaryBlock(props: TProps) {
           className={cn(
             "overflow-hidden",
             "transition-all duration-500 ease-in-out",
-
-            isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0 mt-0"
+            isOpen ? "opacity-100" : "max-h-0 opacity-0 mt-0"
           )}
         >
           <div className="m-4 mt-0">

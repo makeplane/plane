@@ -36,9 +36,7 @@ export const AddRemovePreviewCard = observer(function AddRemovePreviewCard(props
           </div>
           <div className="flex flex-wrap gap-1 truncate text-body-sm-medium text-start my-auto">
             <span className="text-body-sm-medium">{data.action === "add" ? "Adding " : "Removing "}</span>{" "}
-            {data.artifact_type} <span className="text-primary text-body-sm-medium">{data.parameters?.name}</span>{" "}
-            {data.action === "add" ? "to" : "from"} {artifactSubType}
-            {properties && Array.isArray(properties) && properties.length > 0 ? "s" : ""}
+            {artifactSubType || "entities "}
             {properties &&
               Array.isArray(properties) &&
               properties.map(
@@ -54,6 +52,8 @@ export const AddRemovePreviewCard = observer(function AddRemovePreviewCard(props
                   </span>
                 )
               )}
+            {data.action === "add" ? "to " : "from "}
+            {data.artifact_type} <span className="text-primary text-body-sm-medium">{data.parameters?.name}</span>{" "}
           </div>
         </div>
       </div>

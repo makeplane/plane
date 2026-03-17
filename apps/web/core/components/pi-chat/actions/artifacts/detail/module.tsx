@@ -64,8 +64,8 @@ export const ModuleDetail = observer(function ModuleDetail(props: TModuleDetailP
   };
   return (
     <>
-      <div className="w-full overflow-scroll h-full m-auto flex flex-col justify-center items-center mb-[100px]">
-        <Card className="relative max-w-[700px] rounded-xl shadow-overlay-200 p-0 space-y-0 border border-subtle overflow-scroll">
+      <div className="w-full overflow-auto h-full flex flex-col items-center my-[100px]">
+        <Card className="relative max-w-[700px] my-auto rounded-xl shadow-overlay-200 p-0 space-y-0 border border-subtle overflow-visible">
           <ModuleForm
             onChange={onChange}
             status
