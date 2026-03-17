@@ -140,6 +140,9 @@ const envSchema = z.object({
   PRD_AGENT_CLIENT_ID: z.string().optional(),
   PRD_AGENT_CLIENT_SECRET: z.string().optional(),
 
+  // Cursor Agent
+  CURSOR_WEBHOOK_SECRET: z.string().optional(),
+
   // AI Service
   AI_SERVICE_BASE_URL: z
     .string()

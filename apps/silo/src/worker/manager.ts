@@ -37,6 +37,8 @@ import { NotionDataMigrator } from "@/apps/notion-importer/worker";
 import { SentryPlaneWebhookHandler, SentryWebhookHandler } from "@/apps/sentry/worker/worker";
 import { PlaneSlackWebhookWorker } from "@/apps/slack/worker/plane-worker";
 import { SlackInteractionHandler } from "@/apps/slack/worker/worker";
+import { AgentWebhookWorker } from "@/agents/workers/agent-webhook.worker";
+import { CursorWebhookWorker } from "@/agents/cursor/workers/cursor-webhook.worker";
 import { captureException } from "@/logger";
 import type { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, s3Client, Store } from "./base";
@@ -97,6 +99,10 @@ class WorkerFactory {
         return new ClickUpDataMigrator(mq, store);
       case "clickup_additional_data":
         return new ClickUpAdditionalDataMigrator(mq, store);
+      case "agent-webhook":
+        return new AgentWebhookWorker(mq, store);
+      case "cursor-webhook":
+        return new CursorWebhookWorker(mq, store);
       default:
         throw new Error(`Unsupported worker type: ${type}`);
     }

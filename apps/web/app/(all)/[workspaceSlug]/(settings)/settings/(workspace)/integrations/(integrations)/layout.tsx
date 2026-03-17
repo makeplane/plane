@@ -22,7 +22,6 @@ import { useUser, useUserProfile } from "@/hooks/store/user";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { IntegrationsEmptyState } from "@/components/integrations";
 import type { Route } from "./+types/layout";
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 
 function IntegrationLayout({ params }: Route.ComponentProps) {
   // router params
@@ -47,20 +46,18 @@ function IntegrationLayout({ params }: Route.ComponentProps) {
       workspaceSlug={workspaceSlug}
       fallback={<IntegrationsEmptyState theme={currentUserProfile?.theme.theme || "light"} />}
     >
-      <SettingsContentWrapper header={null}>
+      <div className="w-full h-full">
+        <Link
+          href={`/${workspaceSlug}/settings/integrations`}
+          className="flex items-center gap-2 text-body-xs-semibold text-tertiary mb-6"
+        >
+          <ChevronLeftIcon className="w-4 h-4" />
+          Back to integrations
+        </Link>
         <div className="w-full h-full">
-          <Link
-            href={`/${workspaceSlug}/settings/integrations`}
-            className="flex items-center gap-2 text-body-xs-semibold text-tertiary mb-6"
-          >
-            <ChevronLeftIcon className="w-4 h-4" />
-            Back to integrations
-          </Link>
-          <div className="w-full h-full">
-            <Outlet />
-          </div>
+          <Outlet />
         </div>
-      </SettingsContentWrapper>
+      </div>
     </WithFeatureFlagHOC>
   );
 }

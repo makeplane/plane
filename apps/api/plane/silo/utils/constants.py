@@ -108,4 +108,18 @@ APPLICATIONS = {
         "skip_authorization": False,
         "resource_permissions": ["read", "write"],
     },
+    "cursor": {
+        "key": "cursor",
+        "name": "Cursor",
+        "slug": "cursor",
+        "short_description": "Launch Cursor AI coding agents from Plane work items.",
+        "description_html": "<p>Cursor AI Agent Integration</p>",
+        "setup_url": f"{settings.SILO_URL}/api/apps/CURSOR/auth/consent-url/",
+        "redirect_uris": f"{settings.SILO_URL}/api/apps/CURSOR/auth/callback",
+        "webhook_url": f"{settings.SILO_URL}/api/agents/webhook/cursor",
+        "skip_authorization": False,
+        "is_mentionable": True,
+        "resource_permissions": ["read", "write"],
+        "configuration_url": "settings/integrations/cursor"
+    },
 }

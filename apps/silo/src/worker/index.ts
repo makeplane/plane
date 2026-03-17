@@ -41,6 +41,8 @@ export const integrationTaskManager = new TaskManager({
     "plane-slack-webhook": "plane-slack-webhook",
     "sentry-webhook": "sentry-webhook",
     "plane-sentry-webhook": "plane-sentry-webhook",
+    "agent-webhook": "agent-webhook",
+    "cursor-webhook": "cursor-webhook",
   },
   retryAttempts: 3,
   retryDelay: 1000,

@@ -57,7 +57,9 @@ def generate_application(
 
     webhook_url = app_data.get("webhook_url", None)
     setup_url = app_data.get("setup_url", None)
+    configuration_url = app_data.get("configuration_url", None)
     skip_authorization = app_data.get("skip_authorization", True)
+    is_mentionable = app_data.get("is_mentionable", False)
     resource_permissions = app_data.get("resource_permissions", ["read", "write"])
 
     with transaction.atomic():
@@ -77,7 +79,9 @@ def generate_application(
             "client_secret": client_secret,
             "webhook_url": webhook_url,
             "setup_url": setup_url,
+            "configuration_url": configuration_url,
             "is_internal": True,
+            "is_mentionable": is_mentionable,
             "resource_permissions": resource_permissions,
         }
 
@@ -89,8 +93,10 @@ def generate_application(
             application.redirect_uris = app_data["redirect_uris"]
             application.webhook_url = webhook_url
             application.setup_url = setup_url
+            application.configuration_url = configuration_url
             application.skip_authorization = skip_authorization
             application.is_internal = True
+            application.is_mentionable = is_mentionable
             application.resource_permissions = resource_permissions
             application.save()
         else:

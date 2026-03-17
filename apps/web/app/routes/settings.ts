@@ -213,6 +213,10 @@ export const settingsRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/integrations/slack",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/integrations/(integrations)/slack/page.tsx"
           ),
+          route(
+            ":workspaceSlug/settings/integrations/cursor",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/integrations/(integrations)/cursor/page.tsx"
+          ),
         ]),
       ]),
 

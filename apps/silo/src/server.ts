@@ -41,12 +41,19 @@ import LinearController from "@/apps/linear-importer/controllers";
 import ClickupController from "./apps/clickup-importer/controllers";
 import CSVController from "./apps/flatfile/controllers";
 import GithubEnterpriseController from "./apps/github-enterprise/controllers";
+// eslint-disable-next-line import/no-named-as-default
 import GitlabController from "./apps/gitlab/controller";
+// eslint-disable-next-line import/no-named-as-default
 import GitlabEnterpriseController from "./apps/gitlab-enterprise/controllers";
 import JiraDataCenterController from "./apps/jira-server-importer/controllers";
 import { NotionController } from "./apps/notion-importer/controller";
 import SentryControllers from "./apps/sentry/controllers";
 import SlackController from "./apps/slack/controllers";
+
+// Agents
+import { AgentController } from "./agents/controllers/agent.controller";
+import { CursorController } from "./agents/cursor/controllers/cursor.controller";
+import { registerAgents } from "./agents";
 
 // Helpers and Utils
 import { env } from "./env";
@@ -84,6 +91,8 @@ export default class Server {
       ClickupController,
       OAuthRoutes,
       ...SentryControllers,
+      AgentController,
+      CursorController,
     ],
   };
 
@@ -100,6 +109,7 @@ export default class Server {
     this.setupErrorHandlers();
     this.setupProcessHandlers();
     registerOAuthStrategies();
+    registerAgents();
   }
 
   private setupMiddleware(): void {
@@ -146,6 +156,7 @@ export default class Server {
 
   private setupControllers(): void {
     const router = express.Router();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const allControllers: any[] = [
       ...Server.CONTROLLERS.PING,
       ...Server.CONTROLLERS.ENGINE,
@@ -153,6 +164,7 @@ export default class Server {
     ];
 
     allControllers.forEach((controller) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       registerController(router, controller);
     });
 
@@ -166,12 +178,14 @@ export default class Server {
     this.app.use(this.handle404.bind(this));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private handleError(err: Error, req: Request, res: Response, next: NextFunction): void {
     const logError = {
       error: err.message,
       stack: err.stack,
       url: req.url,
       method: req.method,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       body: req.body,
       query: req.query,
     };
@@ -186,6 +200,7 @@ export default class Server {
     res.status(response.status).json(response);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private handle404(req: Request, res: Response): void {
     const response: APIErrorResponse = {
       error: "Not Found",

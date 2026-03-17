@@ -14,6 +14,7 @@
 import type { TUserApplication } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 import drawioLogo from "@/app/assets/services/drawio.png?url";
+import cursorLogo from "@/app/assets/services/cursor.png?url";
 
 type AppTileLogoProps = {
   app: TUserApplication;
@@ -48,6 +49,7 @@ const getLogoUrl = (app: TUserApplication): string | undefined => {
   // TODO: Remove this once we have normalized logos for internal apps
   const serviceLogoMap: Record<string, string> = {
     drawio: drawioLogo,
+    cursor: cursorLogo,
   };
   if (serviceLogoMap[app.slug]) {
     return serviceLogoMap[app.slug];

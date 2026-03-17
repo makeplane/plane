@@ -17,9 +17,13 @@ from plane.db.models import IssueComment
 def create_comment_from_activity(activity: AgentRunActivity):
     """
     Create a new comment.
+    Agent activity body may already be HTML (e.g. <p>content</p> from LLM/silo).
+    Only wrap in <p> when body is plain text to avoid double wrapping.
     """
+    body = activity.content.get("body", "")
+    comment_html = body if body.strip().startswith("<") else f"<p>{body}</p>"
     return IssueComment.objects.create(
-        comment_html=f"<p>{activity.content['body']}</p>",
+        comment_html=comment_html,
         actor=activity.actor,
         issue=activity.agent_run.issue,
         project=activity.agent_run.project,
