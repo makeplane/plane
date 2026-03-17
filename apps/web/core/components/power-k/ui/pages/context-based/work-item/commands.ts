@@ -117,11 +117,11 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     [entityDetails, handleUpdateEntity]
   );
 
-  const { isSubscribed, handleSubscription } = useIssueSubscription(
+  const { isSubscribed, handleSubscription } = useIssueSubscription({
     workspaceSlug,
-    entityDetails?.project_id ?? undefined,
-    entityDetails?.id ?? undefined
-  );
+    projectId: entityDetails?.project_id ?? undefined,
+    issueId: entityDetails?.id ?? undefined,
+  });
 
   const handleDeleteWorkItem = useCallback(() => {
     toggleDeleteIssueModal(true);

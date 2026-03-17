@@ -11,26 +11,23 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useCallback, useState } from "react";
 import useSWR from "swr";
 import { IssueSubscriberService } from "@plane/services";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-
 import { useUser } from "./store/user";
-import { useCallback, useState } from "react";
-import { useTranslation } from "@plane/i18n";
 
 const issueSubscriberService = new IssueSubscriberService();
 
-export const useIssueSubscription = (
-  workspaceSlug: string | undefined,
-  projectId: string | undefined,
-  issueId: string | undefined
-) => {
+type IssueSubscriptionValues = {
+  workspaceSlug: string | undefined;
+  projectId: string | undefined;
+  issueId: string | undefined;
+};
+export const useIssueSubscription = (values: IssueSubscriptionValues) => {
+  const { workspaceSlug, projectId, issueId } = values;
   const [loading, setLoading] = useState(false);
-
-  const { t } = useTranslation();
+  // hooks
   const { data: currentUser } = useUser();
-
   // swr hooks
   const { data: subscribers, mutate: mutateSubscribers } = useSWR<string[]>(
     workspaceSlug && projectId && issueId ? `ISSUES_SUBSCRIBERS_${issueId}` : null,
@@ -38,39 +35,36 @@ export const useIssueSubscription = (
   );
   // derived values
   const isSubscribed = subscribers?.find((subscriber) => subscriber === currentUser?.id) ? true : false;
+  const subscribersCount = subscribers?.length ?? 0;
 
   const handleSubscription = useCallback(async () => {
     if (!workspaceSlug || !projectId || !issueId) return;
     setLoading(true);
-    try {
-      if (isSubscribed) await issueSubscriberService.unsubscribe(workspaceSlug, projectId, issueId);
-      else await issueSubscriberService.subscribe(workspaceSlug, projectId, issueId);
-
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("toast.success"),
-        message: isSubscribed
-          ? t("issue.subscription.actions.unsubscribed")
-          : t("issue.subscription.actions.subscribed"),
-      });
-    } catch {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("toast.error"),
-        message: t("common.error.message"),
-      });
-    } finally {
-      mutateSubscribers();
-      setLoading(false);
-    }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    if (isSubscribed) await issueSubscriberService.unsubscribe(workspaceSlug, projectId, issueId);
+    else await issueSubscriberService.subscribe(workspaceSlug, projectId, issueId);
+    mutateSubscribers();
+    setLoading(false);
   }, [isSubscribed, projectId, workspaceSlug, issueId, mutateSubscribers]);
+
+  const handleSubscribers = useCallback(
+    async (subscriberIds: string[]) => {
+      if (!workspaceSlug || !projectId || !issueId) return;
+      try {
+        mutateSubscribers(subscriberIds, false);
+        await issueSubscriberService.update(workspaceSlug, projectId, issueId, subscriberIds);
+      } catch (_error: any) {
+        mutateSubscribers();
+      }
+    },
+    [workspaceSlug, projectId, issueId, mutateSubscribers]
+  );
 
   return {
     loading,
     isSubscribed,
+    subscribersCount,
     subscribers: subscribers ?? [],
-    mutateSubscribers,
     handleSubscription,
+    handleSubscribers,
   };
 };

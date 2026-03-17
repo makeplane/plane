@@ -10,6 +10,9 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Third Party imports
+from typing import Any
+
+
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -17,7 +20,10 @@ from rest_framework import status
 from .. import BaseViewSet
 from plane.app.serializers import IssueSubscriberSerializer
 from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
-from plane.db.models import IssueSubscriber, ProjectMember
+
+from plane.db.models import IssueSubscriber, ProjectMember, WorkspaceMember
+from plane.ee.models import TeamspaceMember, TeamspaceProject
+
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 
@@ -56,25 +62,45 @@ class IssueSubscriberViewSet(BaseViewSet):
         )
 
     def list(self, request, slug, project_id, issue_id):
+        # fetch all the subscribers for the issue
         subscribers = IssueSubscriber.objects.filter(
             workspace__slug=slug, project_id=project_id, issue_id=issue_id
         ).values_list("subscriber_id", flat=True)
-        return Response(subscribers, status=status.HTTP_200_OK)
+        # fetch all the project members that are subscribed to the issue
+        subscribed_project_members = ProjectMember.objects.filter(
+            project_id=project_id,
+            member_id__in=subscribers,
+            is_active=True,
+        ).values_list("member_id", flat=True)
+        # fetch all the teamspaces that are part of the project
+        teamspace_ids = TeamspaceProject.objects.filter(project_id=project_id).values_list("team_space_id", flat=True)
+        # fetch all the teamspace members that are subscribed to the issue
+        subscribed_teamspace_members = TeamspaceMember.objects.filter(
+            team_space_id__in=teamspace_ids,
+            member_id__in=subscribers,
+        ).values_list("member_id", flat=True)
+        # combine the project members and teamspace members and remove duplicates
+        subscribed_users = set(list(subscribed_project_members) + list(subscribed_teamspace_members))
+        return Response(subscribed_users, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.MANAGE_ISSUE_SUBSCRIBERS)
     def update(self, request, slug, project_id, issue_id):
         subscriber_ids = request.data.get("subscriber_ids", [])
 
         # check if the subscriber IDs are part of the project members
-        project_members = ProjectMember.objects.filter(
-            project_id=project_id,
+        workspace_members = WorkspaceMember.objects.filter(
+            workspace__slug=slug,
             member_id__in=subscriber_ids,
-        ).values_list("member", flat=True)
-        if len(project_members) != len(subscriber_ids):
+            is_active=True,
+        ).values_list("member_id", flat=True)
+        workspace_member_ids = [str(uuid_obj) for uuid_obj in workspace_members]
+        print(workspace_member_ids)
+        print(subscriber_ids)
+        if set[Any](workspace_member_ids) != set[Any](subscriber_ids):
             return Response(
                 {
-                    "message": "Subscriber IDs are not part of the project members.",
-                    "code": "SUBSCRIBER_NOT_PROJECT_MEMBER",
+                    "message": "Subscriber IDs are not part of the workspace members.",
+                    "code": "SUBSCRIBER_NOT_WORKSPACE_MEMBER",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

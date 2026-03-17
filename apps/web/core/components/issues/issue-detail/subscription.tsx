@@ -20,7 +20,6 @@ import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { cn } from "@plane/propel/utils";
-import { IssueSubscriberService } from "@plane/services";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
@@ -46,7 +45,6 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
   // hooks
   const { allowPermissions } = useUserPermissions();
   const { isMobile } = usePlatformOS();
-  const issueSubscriberService = new IssueSubscriberService();
   // permissions
   const flagEnabled = useFlag(workspaceSlug, "MANAGE_ISSUE_SUBSCRIBERS");
   const hasPermission = allowPermissions(
@@ -55,20 +53,35 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
     workspaceSlug,
     projectId
   );
-  const { loading, isSubscribed, subscribers, handleSubscription, mutateSubscribers } = useIssueSubscription(
-    workspaceSlug,
-    projectId,
-    issueId
-  );
+  // fetching subscribers
+  const { loading, isSubscribed, subscribers, subscribersCount, handleSubscription, handleSubscribers } =
+    useIssueSubscription({ workspaceSlug, projectId, issueId });
 
   // derived values
-  const subscribersCount = subscribers.length;
   const isEditable = flagEnabled && hasPermission;
 
-  const handleSubscribers = async (subscriberIds: string[]) => {
+  const handleSubscribersChange = async (subscriberIds: string[]) => {
     try {
-      const updatedSubscribers = await issueSubscriberService.update(workspaceSlug, projectId, issueId, subscriberIds);
-      await mutateSubscribers(updatedSubscribers, false);
+      await handleSubscribers(subscriberIds);
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("common.error.message"),
+      });
+    }
+  };
+
+  const handleSubscriptionButtonClick = async () => {
+    try {
+      await handleSubscription();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("toast.success"),
+        message: isSubscribed
+          ? t("issue.subscription.actions.unsubscribed")
+          : t("issue.subscription.actions.subscribed"),
+      });
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -91,7 +104,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
         <MemberDropdown
           projectId={projectId}
           value={subscribers}
-          onChange={handleSubscribers}
+          onChange={handleSubscribersChange}
           multiple
           buttonVariant={subscribersCount > 0 ? "transparent-without-text" : "border-without-text"}
           buttonClassName={cn(getButtonStyling("secondary", "lg"), "rounded-r-none border-r-0")}
@@ -105,7 +118,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
       <Button
         variant="secondary"
         className={cn("hover:bg-accent-primary/20!", isEditable && "rounded-l-none")}
-        onClick={handleSubscription}
+        onClick={handleSubscriptionButtonClick}
         disabled={!hasPermission || loading}
         size="lg"
       >
