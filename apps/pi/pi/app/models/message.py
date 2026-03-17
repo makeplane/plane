@@ -130,6 +130,7 @@ class MessageFlowStep(BaseModel, table=True):
     )
     oauth_completed_at: Optional[datetime] = Field(default=None, nullable=True, description="When OAuth authorization was completed")
     workspace_slug: Optional[str] = Field(default=None, nullable=True, max_length=255)
+    mcp_connector_id: Optional[uuid.UUID] = Field(default=None, nullable=True)
     # Foreign keys
     message_id: uuid.UUID = Field(
         sa_column=Column(UUID(as_uuid=True), ForeignKey("messages.id", name="fk_message_flow_steps_message_id"), nullable=False)

@@ -13,6 +13,7 @@
 import uuid
 from typing import Any
 from typing import Dict
+from typing import List
 from typing import Optional
 
 from sqlalchemy import JSON
@@ -55,6 +56,7 @@ class UserChatPreference(BaseModel, table=True):
     focus_project_id: Optional[uuid.UUID] = Field(default=None, nullable=True)
     focus_workspace_id: Optional[uuid.UUID] = Field(default=None, nullable=True)
     mode: str = Field(default="ask", nullable=False, max_length=10)  # "ask" or "build"
+    mcp_connector_ids: Optional[List[str]] = Field(sa_type=JSON, default_factory=list)
     user_id: uuid.UUID = Field(default=None, nullable=False)
 
     # Foreign keys
