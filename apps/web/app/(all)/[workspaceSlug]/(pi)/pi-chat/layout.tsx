@@ -28,7 +28,8 @@ import PageNotFound from "@/app/not-found";
 function PiLayout({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
-  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const { isWorkspaceFeatureEnabled, loader } = useWorkspaceFeatures();
+  const shouldUpgrade = !loader && !isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
 
   return (
     <>
@@ -37,9 +38,11 @@ function PiLayout({ params }: Route.ComponentProps) {
         <div className="relative flex size-full overflow-hidden">
           <PiAppSidebar />
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
-            {isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) ? (
+            {shouldUpgrade ? (
+              <EmptyPiChat />
+            ) : (
               <WithAiFeatureFlagHOC
-                workspaceSlug={workspaceSlug?.toString()}
+                workspaceSlug={workspaceSlug}
                 flag="AI_CHAT"
                 disabledFallback={<EmptyPiChat />}
                 notConfiguredFallback={<PageNotFound />}
@@ -48,8 +51,6 @@ function PiLayout({ params }: Route.ComponentProps) {
                   <Outlet />
                 </PiChatLayout>
               </WithAiFeatureFlagHOC>
-            ) : (
-              <EmptyPiChat />
             )}
           </main>
         </div>

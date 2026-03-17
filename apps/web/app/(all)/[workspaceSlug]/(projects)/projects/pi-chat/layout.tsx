@@ -25,8 +25,12 @@ import PageNotFound from "@/app/not-found";
 function Layout({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
-  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  return isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) ? (
+  const { isWorkspaceFeatureEnabled, loader } = useWorkspaceFeatures();
+  const shouldUpgrade = !loader && !isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+
+  return shouldUpgrade ? (
+    <EmptyPiChat />
+  ) : (
     <WithAiFeatureFlagHOC
       workspaceSlug={workspaceSlug}
       flag="AI_CHAT"
@@ -37,8 +41,6 @@ function Layout({ params }: Route.ComponentProps) {
         <Outlet />
       </PiChatLayout>
     </WithAiFeatureFlagHOC>
-  ) : (
-    <EmptyPiChat />
   );
 }
 

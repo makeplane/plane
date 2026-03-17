@@ -50,4 +50,8 @@ export const redirectRoutes: RouteConfigEntry[] = [
 
   // Pages to Wiki redirect: /:workspaceSlug/pages/:path* → /:workspaceSlug/wiki/:path*
   route(":workspaceSlug/pages/*", "routes/redirects/extended/wiki.tsx"),
+
+  // Workspace-level pi-chat → ai-chat (single splat route to avoid duplicate route id; matches /:ws/pi-chat and /:ws/pi-chat/*)
+  route(":workspaceSlug/pi-chat/*", "routes/redirects/extended/pi-chat.tsx"),
+  route(":workspaceSlug/projects/pi-chat/*", "routes/redirects/extended/pi-chat-project.tsx"),
 ];

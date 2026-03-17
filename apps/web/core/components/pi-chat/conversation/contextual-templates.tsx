@@ -18,7 +18,6 @@ import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { UnauthorizedView } from "../unauthorized";
 import type { TTemplate } from "@/types";
 
 type TProps = {
@@ -50,7 +49,6 @@ export const ContextualTemplates = observer(function ContextualTemplates(props: 
     workspaceId ? `PI_PRESET_TEMPLATES_${workspaceId}_${mode}_${projectId}_${entityId}_${entityType}` : null,
     workspaceId ? () => fetchPrompts(workspaceId, mode, projectId, entityId, entityType) : null
   );
-  if (!isLoading && !instance?.is_authorized) return <UnauthorizedView />;
   return (
     <div>
       {isLoading || isLoadingPrompts ? (
