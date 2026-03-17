@@ -11,13 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType } from "@plane/types";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
+import { IssueVotes } from "@/components/issues/issue-detail/issue-votes";
 import { IssueReaction } from "@/components/issues/issue-detail/reactions";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -25,6 +25,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 // services
 import { WorkItemVersionService } from "@/services/issue";
+
 const workItemVersionService = new WorkItemVersionService(EIssueServiceType.EPICS);
 
 type TEpicInfoActionItemsProps = {
@@ -49,20 +50,30 @@ export const EpicInfoActionItems = observer(function EpicInfoActionItems(props: 
   if (!epic || !epic.project_id) return null;
 
   return (
-    <div className="flex-shrink-0 w-full flex items-center justify-between gap-2">
+    <div className="shrink-0 w-full flex items-center justify-between gap-2 mt-4">
       {currentUser && (
-        <IssueReaction
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={epicId}
-          currentUser={currentUser}
-          disabled={disabled}
-          className="m-0"
-        />
+        <div className="flex items-center gap-2">
+          <IssueVotes
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={epicId}
+            currentUser={currentUser}
+            disabled={disabled}
+          />
+
+          <IssueReaction
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={epicId}
+            currentUser={currentUser}
+            disabled={disabled}
+            className="mt-0 shrink-0"
+          />
+        </div>
       )}
       {!disabled && (
         <DescriptionVersionsRoot
-          className="flex-shrink-0"
+          className="shrink-0"
           entityInformation={{
             createdAt: epic.created_at ? new Date(epic.created_at) : new Date(),
             createdByDisplayName: getUserDetails(epic.created_by)?.display_name ?? "",

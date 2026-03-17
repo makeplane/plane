@@ -26,6 +26,7 @@ from plane.api.views import (
     IssueRelationListCreateAPIEndpoint,
     IssueRelationRemoveAPIEndpoint,
     IssueSearchEndpoint,
+    IssueVoteAPIEndpoint,
     WorkItemAdvancedSearchEndpoint,
     WorkItemCreateAPIEndpoint,
     WorkItemPageListCreateAPIEndpoint,
@@ -117,6 +118,11 @@ old_url_patterns = [
         IssueRelationRemoveAPIEndpoint.as_view(http_method_names=["post"]),
         name="relation",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/votes/",
+        IssueVoteAPIEndpoint.as_view(http_method_names=["get", "post", "delete"]),
+        name="issue-vote",
+    ),
 ]
 
 # New url patterns with work-items as the prefix
@@ -200,6 +206,11 @@ new_url_patterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/relations/remove/",
         IssueRelationRemoveAPIEndpoint.as_view(http_method_names=["post"]),
         name="work-item-relation-remove",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/votes/",
+        IssueVoteAPIEndpoint.as_view(http_method_names=["get", "post", "delete"]),
+        name="work-item-vote",
     ),
 ]
 

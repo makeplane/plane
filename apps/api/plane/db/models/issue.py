@@ -784,6 +784,22 @@ class IssueVote(ProjectBaseModel):
     def __str__(self):
         return f"{self.issue.name} {self.actor.email}"
 
+    @classmethod
+    def log_issue_vote(cls, issue_id, user, project_id, vote_value):
+        try:
+            # Here if the user already has a vote change it
+            # otherwise create a new vote
+            obj = cls.objects.filter(issue_id=issue_id, actor=user, project_id=project_id).first()
+            if obj:
+                obj.vote = vote_value
+                obj.save(update_fields=["vote", "updated_at"])
+            else:
+                obj = cls.objects.create(issue_id=issue_id, actor=user, project_id=project_id, vote=vote_value)
+            return obj
+        except Exception as e:
+            log_exception(e)
+            raise e
+
 
 class IssueVersion(ProjectBaseModel):
     PRIORITY_CHOICES = (

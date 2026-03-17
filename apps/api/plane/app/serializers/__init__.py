@@ -179,7 +179,6 @@ from .integration import (
 
 from .deploy_board import DeployBoardSerializer
 
-
 # Extended serializers
 from .extended.issue import ExtendedIssueCreateSerializer as IssueCreateSerializer  # noqa: F811
 

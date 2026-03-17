@@ -38,6 +38,7 @@ from .issue import (
     IssueRelationRemoveSerializer,
     IssueRelationResponseSerializer,
     RelatedIssueSerializer,
+    IssueVoteSerializer,
 )
 from .state import StateLiteSerializer, StateSerializer
 from .cycle import (

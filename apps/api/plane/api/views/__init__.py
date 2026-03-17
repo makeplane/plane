@@ -66,6 +66,7 @@ from .issue import (
     IssueRelationListCreateAPIEndpoint,
     IssueRelationRemoveAPIEndpoint,
     IssueSearchEndpoint,
+    IssueVoteAPIEndpoint,
 )
 
 from .issue_type import IssueTypeListCreateAPIEndpoint, IssueTypeDetailAPIEndpoint

@@ -308,3 +308,5 @@ from .issue.relation_definition import WorkItemRelationDefinitionViewSet
 
 # work item relation
 from .issue.relation import IssueRelationViewSet, WorkItemRelationDependencyViewSet, WorkItemRelationRelationViewSet
+
+from .issue.vote import IssueVoteEndpoint

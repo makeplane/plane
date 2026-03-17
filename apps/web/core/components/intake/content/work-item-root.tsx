@@ -27,6 +27,7 @@ import { DescriptionInputLoader } from "@/components/editor/rich-text/descriptio
 import { IssueAttachmentRoot } from "@/components/issues/attachment";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { IssueActivity } from "@/components/issues/issue-detail/issue-activity";
+import { IssueVotes } from "@/components/issues/issue-detail/issue-votes";
 import { IssueReaction } from "@/components/issues/issue-detail/reactions";
 import { IssueTitleInput } from "@/components/issues/title-input";
 // hooks
@@ -196,18 +197,28 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
           />
         )}
 
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 mt-4">
           {currentUser && (
-            <IssueReaction
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issue.id}
-              currentUser={currentUser}
-            />
+            <div className="flex items-center gap-2">
+              <IssueVotes
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issue.id}
+                currentUser={currentUser}
+              />
+
+              <IssueReaction
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issue.id}
+                currentUser={currentUser}
+                className="mt-0 shrink-0"
+              />
+            </div>
           )}
           {isEditable && (
             <DescriptionVersionsRoot
-              className="flex-shrink-0"
+              className="shrink-0"
               entityInformation={{
                 createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
                 createdByDisplayName:

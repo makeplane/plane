@@ -41,6 +41,7 @@ import { PeekOverviewProperties } from "../peek-overview/properties";
 import { IssueTitleInput } from "../title-input";
 import { IssueActivity } from "./issue-activity";
 import { IssueParentDetail } from "./parent";
+import { IssueVotes } from "./issue-votes";
 import { IssueReaction } from "./reactions";
 import type { TIssueOperations } from "./root";
 // services init
@@ -175,20 +176,30 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           workspaceSlug={workspaceSlug}
         />
 
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 mt-4">
           {currentUser && (
-            <IssueReaction
-              className="flex-shrink-0"
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              currentUser={currentUser}
-              disabled={isArchived}
-            />
+            <div className="flex items-center gap-2">
+              <IssueVotes
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                currentUser={currentUser}
+                disabled={isArchived}
+              />
+
+              <IssueReaction
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                currentUser={currentUser}
+                disabled={isArchived}
+                className="mt-0 shrink-0"
+              />
+            </div>
           )}
           {isEditable && (
             <DescriptionVersionsRoot
-              className="flex-shrink-0"
+              className="shrink-0"
               entityInformation={{
                 createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
                 createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",

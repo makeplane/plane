@@ -69,6 +69,7 @@ from plane.api.serializers import (
     IssueLinkCreateSerializer,
     IssueLinkUpdateSerializer,
     LabelCreateUpdateSerializer,
+    IssueVoteSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -83,6 +84,7 @@ from plane.db.models import (
     IssueComment,
     IssueLink,
     IssueRelation,
+    IssueVote,
     Label,
     Project,
     ProjectMember,
@@ -2957,4 +2959,109 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
             notification=True,
             origin=base_host(request=request, is_app=True),
         )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IssueVoteAPIEndpoint(BaseAPIView):
+    """Issue Vote API Endpoint"""
+
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+    }
+
+    @issue_docs(
+        operation_id="list_work_item_votes",
+        summary="Manage work item votes",
+        description="Get work item votes",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="List of votes for the work item",
+                response=IssueVoteSerializer(many=True),
+            ),
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id, issue_id):
+        votes = IssueVote.objects.filter(
+            project_id=project_id,
+            issue_id=issue_id,
+            workspace__slug=slug,
+        )
+        serializer = IssueVoteSerializer(votes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    @issue_docs(
+        operation_id="create_work_item_vote",
+        summary="Create a vote for a work item",
+        description="Cast a vote for a work item. Each user can vote once per work item.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IssueVoteSerializer,
+            examples=[
+                OpenApiExample(
+                    name="Cast a vote",
+                    value={
+                        "vote": 1,
+                    },
+                )
+            ],
+        ),
+        responses={
+            200: OpenApiResponse(
+                description="Vote cast successfully",
+                response=IssueVoteSerializer,
+            ),
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        serializer = IssueVoteSerializer(
+            data=request.data,
+            context={
+                "issue_id": issue_id,
+                "project_id": project_id,
+                "user": request.user,
+            },
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @issue_docs(
+        operation_id="delete_work_item_vote",
+        summary="Delete a vote for a work item",
+        description="Remove your vote from a work item.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        responses={
+            204: OpenApiResponse(description="Vote deleted successfully"),
+            404: OpenApiResponse(description="Vote not found"),
+        },
+    )
+    def delete(self, request, slug, project_id, issue_id):
+        issue_vote = IssueVote.objects.filter(
+            issue_id=issue_id,
+            actor=request.user,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).first()
+
+        if not issue_vote:
+            return Response(
+                {"error": "Vote not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        issue_vote.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

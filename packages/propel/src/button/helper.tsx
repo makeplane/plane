@@ -23,6 +23,8 @@ export const buttonVariants = cva(
           "bg-accent-primary hover:bg-accent-primary-hover active:bg-accent-primary-active disabled:bg-layer-disabled text-on-color disabled:text-on-color-disabled",
         "error-fill":
           "bg-danger-primary hover:bg-danger-primary-hover active:bg-danger-primary-active disabled:bg-layer-disabled text-on-color disabled:text-disabled",
+        "primary-outline":
+          "bg-layer-2 hover:bg-accent-subtle active:bg-accent-subtle-hover disabled:bg-layer-2 text-accent-secondary disabled:text-disabled border border-accent-strong disabled:border-subtle-1",
         "error-outline":
           "bg-layer-2 hover:bg-danger-subtle active:bg-danger-subtle-hover disabled:bg-layer-2 text-danger-secondary disabled:text-disabled border border-danger-strong disabled:border-subtle-1",
         "success-outline":

@@ -44,6 +44,7 @@ from plane.app.views import (
     IssueRelationViewSet,  # deprecated
     WorkItemRelationDependencyViewSet,
     WorkItemRelationRelationViewSet,
+    IssueVoteEndpoint,
 )
 
 all_urlpatterns = [
@@ -311,6 +312,11 @@ all_urlpatterns = [
             {"get": "list", "post": "create_relation", "delete": "remove_relation"}
         ),
         name="work-item-relation-relation",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/votes/",
+        IssueVoteEndpoint.as_view(),
+        name="issue-votes",
     ),
 ]
 

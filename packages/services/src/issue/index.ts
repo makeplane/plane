@@ -13,4 +13,5 @@
 
 export * from "./sites-issue.service";
 export * from "./comments";
+export * from "./votes.service";
 export * from "./subscriber.service";

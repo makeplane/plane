@@ -32,6 +32,7 @@ from plane.db.models import (
     State,
     User,
     EstimatePoint,
+    IssueVote,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -951,3 +952,44 @@ class IssueDetailSerializer(IssueSerializer):
         model = Issue
         read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
         exclude = ["description_json"]
+
+
+class IssueVoteSerializer(BaseSerializer):
+    def validate(self, attrs):
+        vote_value = attrs.get("vote")
+        if vote_value not in (-1, 1):
+            raise serializers.ValidationError("Vote must be 1 (upvote) or -1 (downvote).")
+        return attrs
+
+    def create(self, validated_data):
+        issue_id = self.context.get("issue_id")
+        project_id = self.context.get("project_id")
+        user = self.context.get("user")
+        vote_value = validated_data.get("vote", 1)
+        issue_vote = IssueVote.log_issue_vote(
+            issue_id=issue_id,
+            user=user,
+            project_id=project_id,
+            vote_value=vote_value,
+        )
+        return issue_vote
+
+    class Meta:
+        model = IssueVote
+        fields = (
+            "id",
+            "issue",
+            "vote",
+            "project",
+            "actor",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = (
+            "id",
+            "issue",
+            "project",
+            "actor",
+            "created_at",
+            "updated_at",
+        )
