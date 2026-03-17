@@ -456,7 +456,7 @@ class Celery:
 
     # Using RabbitMQ for message brokering only (no result backend)
     # Tasks run asynchronously but progress is tracked via logs only
-    BROKER_URL: str = os.getenv("CELERY_BROKER_URL") or os.getenv("AMQP_URL") or "pyamqp://guest@localhost:5672//"
+    BROKER_URL: str = os.getenv("CELERY_BROKER_URL", "") or os.getenv("AMQP_URL", "") or "pyamqp://guest@localhost:5672//"
     RESULT_BACKEND: str | None = None
 
     def __post_init__(self) -> None:
@@ -588,7 +588,8 @@ class Celery:
     # Workspace plan sync settings (Pro/Business management)
     WORKSPACE_PLAN_SYNC_ENABLED: bool = get_env_bool("CELERY_WORKSPACE_PLAN_SYNC_ENABLED", "1")
     WORKSPACE_PLAN_SYNC_INTERVAL: int = get_env_int("CELERY_WORKSPACE_PLAN_SYNC_INTERVAL", "86400")  # 24 hours
-
+    # Maximum concurrent workspace sync jobs
+    MAX_CONCURRENT_VECTORIZATION_JOBS: int = 2
     # Chat search sync settings
     PI_MESSAGES_INDEX_SYNC_ENABLED: bool = get_env_bool("CELERY_PI_MESSAGES_INDEX_SYNC_ENABLED", "0")
 

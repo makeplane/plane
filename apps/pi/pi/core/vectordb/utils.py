@@ -9,6 +9,7 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+import re
 from typing import Any
 from typing import Dict
 from typing import List
@@ -169,7 +170,13 @@ def build_pages_semantic_query(query: str, workspace_id: str, user_id: str, proj
 
 
 def build_issue_text_search_query(
-    query_title: str, query_description: str | None, workspace_id: str, issue_id: str | None, project_id: str | None, user_id: str | None
+    query_title: str,
+    query_description: str | None,
+    workspace_id: str,
+    issue_id: str | None,
+    project_id: str | None,
+    user_id: str | None,
+    force_no_fuzziness: bool = False,
 ) -> Dict[str, Any]:
     """
     Build a text search query for issues using OpenSearch match queries.
@@ -180,24 +187,39 @@ def build_issue_text_search_query(
     else:
         filter_query = {"term": {"workspace_id": workspace_id}}
 
+    def _should_use_fuzziness(text: str) -> bool:
+        if force_no_fuzziness:
+            return False
+        # Expanded rewrites (many terms/quoted phrases) can exceed OpenSearch maxClauseCount with fuzzy match.
+        term_count = len(re.findall(r"\b\w+\b", text))
+        return term_count <= 8 and '"' not in text
+
+    def _build_match_clause(field: str, text: str) -> Dict[str, Any]:
+        use_fuzziness = _should_use_fuzziness(text)
+        match_body: Dict[str, Any] = {"query": text}
+        if use_fuzziness:
+            match_body.update({"fuzziness": "AUTO", "prefix_length": 1, "minimum_should_match": "70%"})
+        else:
+            # Keep matching permissive enough while preventing fuzzy term explosion.
+            match_body.update({"minimum_should_match": "50%"})
+        return {"match": {field: match_body}}
+
     # Build should clauses dynamically
     should_clauses = [
         # query_title vs title matches
-        {"match": {"name": {"query": query_title, "fuzziness": "AUTO", "prefix_length": 1, "minimum_should_match": "70%"}}},
+        _build_match_clause("name", query_title),
         # query_title vs description matches
-        {"match": {"description": {"query": query_title, "fuzziness": "AUTO", "prefix_length": 1, "minimum_should_match": "70%"}}},
+        _build_match_clause("description", query_title),
     ]
 
     # Add query_description clauses only if it's not empty or None
     if query_description and query_description.strip():
         # query_description vs title matches
-        should_clauses.extend(
-            [
-                {"match": {"name": {"query": query_description, "fuzziness": "AUTO", "prefix_length": 1, "minimum_should_match": "70%"}}},
-                # query_description vs description matches
-                {"match": {"description": {"query": query_description, "fuzziness": "AUTO", "prefix_length": 1, "minimum_should_match": "70%"}}},
-            ]
-        )
+        should_clauses.extend([
+            _build_match_clause("name", query_description),
+            # query_description vs description matches
+            _build_match_clause("description", query_description),
+        ])
 
     # Add user_id filter if provided
     filters = [filter_query]

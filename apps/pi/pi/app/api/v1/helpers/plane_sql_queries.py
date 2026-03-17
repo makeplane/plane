@@ -1123,6 +1123,68 @@ async def get_workspace_plans_batch(workspace_ids: List[str]) -> Dict[str, str]:
         return {}
 
 
+# --- Synchronous versions for Celery tasks (avoid asyncio event loop issues) ---
+
+
+def get_pro_business_workspaces_sync() -> List[str]:
+    """
+    Get all Pro/Business workspace IDs from the Plane database (synchronous version).
+
+    This is a synchronous version for use in Celery tasks to avoid asyncio event loop issues.
+
+    Returns:
+        List of workspace IDs (as strings) that have Pro/Business plans
+    """
+    query = """
+    SELECT DISTINCT workspace_id::text as workspace_id
+    FROM workspace_licenses
+    WHERE UPPER(plan) IN ('PRO', 'BUSINESS')
+    ORDER BY workspace_id
+    """
+
+    try:
+        results = PlaneDBSync.fetch(query)
+        workspace_ids = [row["workspace_id"] for row in results]
+        log.info(f"[DIAGNOSTIC] get_pro_business_workspaces_sync found {len(workspace_ids)} Pro/Business workspaces: {workspace_ids}")
+        return workspace_ids
+    except Exception as e:
+        log.error(f"[DIAGNOSTIC] Error fetching Pro/Business workspaces (sync): {e}", exc_info=True)
+        return []
+
+
+def get_workspace_plans_batch_sync(workspace_ids: List[str]) -> Dict[str, str]:
+    """
+    Get current plans for multiple workspaces in a single query (synchronous version).
+
+    This is a synchronous version for use in Celery tasks to avoid asyncio event loop issues.
+
+    Args:
+        workspace_ids: List of workspace IDs to check
+
+    Returns:
+        Dictionary mapping workspace_id -> plan name
+    """
+    if not workspace_ids:
+        return {}
+
+    # psycopg2 uses %s placeholders, not $1, $2, etc.
+    placeholders = ", ".join(["%s" for _ in workspace_ids])
+    query = f"""
+    SELECT workspace_id::text as workspace_id, UPPER(plan) as plan
+    FROM workspace_licenses
+    WHERE workspace_id IN ({placeholders})
+    """
+
+    try:
+        results = PlaneDBSync.fetch(query, tuple(workspace_ids))
+        plans = {row["workspace_id"]: row["plan"] for row in results}
+        log.info(f"[DIAGNOSTIC] get_workspace_plans_batch_sync mapped plans for {len(plans)} workspaces: {plans}")
+        return plans
+    except Exception as e:
+        log.error(f"[DIAGNOSTIC] Error fetching workspace plans for {len(workspace_ids)} workspaces (sync): {e}", exc_info=True)
+        return {}
+
+
 async def get_all_workspace_ids() -> List[str]:
     """
     Get all workspace IDs from the Plane database.

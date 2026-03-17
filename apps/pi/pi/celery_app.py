@@ -61,6 +61,8 @@ from pi.services.retrievers.vdb_store.chat_search import mark_chat_deleted
 from pi.services.retrievers.vdb_store.chat_search import process_chat_and_messages_from_token
 from pi.services.retrievers.vdb_store.chat_search import update_chat_title_and_propagate
 
+MAX_CONCURRENT_VECTORIZATION_JOBS = settings.celery.MAX_CONCURRENT_VECTORIZATION_JOBS
+
 
 # Circuit breaker state
 class CircuitBreaker:
@@ -396,12 +398,14 @@ def get_eligible_workspaces() -> list[str]:
         return []
 
 
-async def get_pro_business_workspaces_needing_feed() -> list[str]:
+def get_pro_business_workspaces_needing_feed() -> list[str]:
     """
     Get list of Pro/Business workspace IDs that need initial vectorization feed.
 
+    This is a synchronous version for use in Celery tasks to avoid asyncio event loop issues.
+
     Two-step approach:
-    1. Query Plane follower DB for Pro/Business workspaces (workspace_licenses table)
+    1. Query Plane follower DB for Pro/Business workspaces (using sync PlaneDBSync)
     2. Check PI DB to exclude workspaces that already have successful vectorization
 
     Returns:
@@ -409,10 +413,10 @@ async def get_pro_business_workspaces_needing_feed() -> list[str]:
         Returns empty list if database query fails.
     """
     try:
-        from pi.app.api.v1.helpers.plane_sql_queries import get_pro_business_workspaces
+        from pi.app.api.v1.helpers.plane_sql_queries import get_pro_business_workspaces_sync
 
-        # Step 1: Get all Pro/Business workspaces from Plane DB
-        pro_business_workspace_ids: list[str] = await get_pro_business_workspaces()
+        # Step 1: Get all Pro/Business workspaces from Plane DB (sync call)
+        pro_business_workspace_ids: list[str] = get_pro_business_workspaces_sync()
 
         if not pro_business_workspace_ids:
             log.info("No Pro/Business workspaces found in Plane database")
@@ -448,11 +452,14 @@ async def get_pro_business_workspaces_needing_feed() -> list[str]:
             # Return workspaces that need vectorization
             needs_feed = [ws_id for ws_id in pro_business_workspace_ids if ws_id not in already_vectorized]
 
-            log.debug(
-                "Found %d Pro/Business workspaces needing initial vectorization (excluded %d already vectorized)",
-                len(needs_feed),
-                len(already_vectorized),
+            log.info(
+                f"[DIAGNOSTIC] get_pro_business_workspaces_needing_feed: "
+                f"Pro/business count={len(pro_business_workspace_ids)}, "
+                f"Already vectorized count={len(already_vectorized)}, "
+                f"Needs feed count={len(needs_feed)}"
             )
+            log.info(f"[DIAGNOSTIC] Already vectorized IDs: {list(already_vectorized)}")
+            log.info(f"[DIAGNOSTIC] Returning needs_feed: {needs_feed}")
             return needs_feed
 
     except Exception as exc:
@@ -460,9 +467,11 @@ async def get_pro_business_workspaces_needing_feed() -> list[str]:
         return []
 
 
-async def disable_live_sync_for_non_pro_workspaces() -> dict[str, int | list[str] | str | None]:
+def disable_live_sync_for_non_pro_workspaces() -> dict[str, int | list[str] | str | None]:
     """
     Disable live sync and remove vector data for workspaces that are no longer Pro/Business.
+
+    This is a synchronous version for use in Celery tasks to avoid asyncio event loop issues.
 
     Approach: Start from our DB (workspaces with live_sync_enabled=True)
     and check if they're now FREE plan. For downgraded workspaces, queue
@@ -472,7 +481,7 @@ async def disable_live_sync_for_non_pro_workspaces() -> dict[str, int | list[str
         Dictionary with counts of processed workspaces and task info
     """
     try:
-        from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_plans_batch
+        from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_plans_batch_sync
 
         checked_count = 0
         downgraded_workspaces = []
@@ -506,19 +515,23 @@ async def disable_live_sync_for_non_pro_workspaces() -> dict[str, int | list[str
 
             log.debug("Found %d workspaces with live sync enabled", len(workspaces_with_live_sync))
 
-            # Get all workspace plans in a single batch query (avoid N+1)
+            # Get all workspace plans in a single batch query (sync call)
             workspace_ids = [ws.workspace_id for ws in workspaces_with_live_sync]
-            workspace_plans = await get_workspace_plans_batch(workspace_ids)
+            workspace_plans = get_workspace_plans_batch_sync(workspace_ids)
 
             # Check each workspace's current plan
+            log.info(f"[DIAGNOSTIC] disable_live_sync_for_non_pro_workspaces checking plans for: {workspace_ids}")
+            log.info(f"[DIAGNOSTIC] Received workspace_plans map: {workspace_plans}")
+
             for workspace in workspaces_with_live_sync:
                 checked_count += 1
                 current_plan = workspace_plans.get(workspace.workspace_id)
+                log.info(f"[DIAGNOSTIC] Workspace {workspace.workspace_id} has plan in DB: {current_plan}")
 
                 # If workspace is now FREE (or plan not found), mark for removal
                 if current_plan == "FREE" or current_plan is None:
                     downgraded_workspaces.append(workspace.workspace_id)
-                    log.info("Workspace %s downgraded to FREE - will remove vector data", workspace.workspace_id)
+                    log.info(f"[DIAGNOSTIC] Workspace {workspace.workspace_id} marked as downgraded. Reason: plan is {current_plan}")
 
         # Queue removal task for downgraded workspaces
         task_id = None
@@ -543,13 +556,13 @@ async def disable_live_sync_for_non_pro_workspaces() -> dict[str, int | list[str
         return {"checked": 0, "downgraded": 0, "task_id": None}
 
 
-async def find_stale_workspaces_needing_initial_feed() -> list[str]:
+def find_stale_workspaces_needing_initial_feed() -> list[str]:
     """
-    Find workspaces that are stuck with >50 missing vectors but marked as 'success'.
+    Find workspaces that still have missing vectors but are marked as 'success'.
 
     These are workspaces that:
     1. Have status='success' and live_sync_enabled=True
-    2. But have >50 missing vectors (so live sync skips them)
+    2. But still have >0 missing vectors (indicating vectorization backlog)
     3. Need to be re-fed with initial vectorization
 
     Returns:
@@ -563,7 +576,7 @@ async def find_stale_workspaces_needing_initial_feed() -> list[str]:
             log.debug("No eligible workspaces found for stale check")
             return []
 
-        # Use the same filtering logic but find workspaces with >50 missing vectors
+        # Find workspaces with any missing vectors
         stale_workspaces = _find_stale_workspaces_via_opensearch(eligible_workspaces)
 
         log.debug("Found %d stale workspaces needing initial re-feeding", len(stale_workspaces))
@@ -574,9 +587,9 @@ async def find_stale_workspaces_needing_initial_feed() -> list[str]:
         return []
 
 
-async def handle_stale_workspaces() -> dict[str, int]:
+def handle_stale_workspaces() -> dict[str, int]:
     """
-    Handle stale workspaces that have >50 missing vectors but are marked as 'success'.
+    Handle stale workspaces that have >0 missing vectors but are marked as 'success'.
 
     Creates initial vectorization jobs for these workspaces to fix their incomplete state.
 
@@ -585,7 +598,7 @@ async def handle_stale_workspaces() -> dict[str, int]:
     """
     try:
         # Find stale workspaces
-        stale_workspaces = await find_stale_workspaces_needing_initial_feed()
+        stale_workspaces = find_stale_workspaces_needing_initial_feed()
 
         if not stale_workspaces:
             log.debug("No stale workspaces found needing re-feeding")
@@ -637,17 +650,7 @@ async def handle_stale_workspaces() -> dict[str, int]:
                         session.commit()
                         session.refresh(existing_success_job)
 
-                        # Dispatch Celery task for re-processing
-                        job_config = {
-                            "workspace_id": workspace_id,
-                            "job_id": str(existing_success_job.id),
-                            "feed_issues": existing_success_job.feed_issues,
-                            "feed_pages": existing_success_job.feed_pages,
-                            "feed_slices": existing_success_job.feed_slices,
-                            "batch_size": existing_success_job.batch_size,
-                        }
-
-                        celery_app.send_task("pi.celery_app.vectorize_workspace", args=[job_config])
+                        # Job is now queued - vectorization_scheduler will dispatch it
                         re_fed_count += 1
 
                         log.info("Re-queued stale workspace %s for initial re-feeding (job_id: %s)", workspace_id, existing_success_job.id)
@@ -670,14 +673,10 @@ async def handle_stale_workspaces() -> dict[str, int]:
 def _find_stale_workspaces_via_opensearch(
     workspace_ids: list[str],
     batch_size: int | None = None,
-    threshold: int = 50,
+    threshold: int = 0,
 ) -> list[str]:
     """
     Find workspaces that have >threshold missing vectors.
-
-    This reuses _filter_workspaces_via_opensearch and inverts the result.
-    Processable workspaces have ≤threshold missing vectors.
-    Stale workspaces have >threshold missing vectors.
 
     Args:
         workspace_ids: List of workspace IDs to check
@@ -691,16 +690,47 @@ def _find_stale_workspaces_via_opensearch(
         return []
 
     log.info("Finding stale workspaces (>%d missing vectors) from %d candidates", threshold, len(workspace_ids))
+    if batch_size is None:
+        batch_size = settings.vector_db.LIVE_SYNC_BATCH
 
-    # Use existing filter function to get processable workspaces (≤threshold missing)
-    processable_workspaces = set(_filter_workspaces_via_opensearch(workspace_ids, batch_size=batch_size, threshold=threshold))
+    async def _async_find_stale():
+        from pi.core.vectordb.client import VectorStore
 
-    # Return workspaces that are NOT processable (i.e., stale with >threshold missing)
-    stale_workspaces = [ws_id for ws_id in workspace_ids if ws_id not in processable_workspaces]
+        field_maps = {
+            settings.vector_db.ISSUE_INDEX: {
+                "name": "name_semantic",
+                "description": "description_semantic",
+                "content": "content_semantic",
+            },
+            settings.vector_db.PAGES_INDEX: {
+                "name": "name_semantic",
+                "description": "description_semantic",
+            },
+        }
 
-    log.info("Found %d stale workspaces out of %d checked", len(stale_workspaces), len(workspace_ids))
+        workspace_totals = {ws_id: 0 for ws_id in workspace_ids}
 
-    return stale_workspaces
+        async with VectorStore() as vdb:
+            for index_name, fmap in field_maps.items():
+                for src_field, tgt_field in fmap.items():
+                    try:
+                        counts = await vdb.missing_vectors_by_workspace(index_name, src_field, tgt_field, workspace_ids, batch_size)
+                        for ws_id, count in counts.items():
+                            workspace_totals[ws_id] += count
+                    except Exception as exc:
+                        log.error("Error checking stale vectors for %s field %s->%s: %s", index_name, src_field, tgt_field, exc)
+                        continue
+
+        stale_workspaces = [ws_id for ws_id, total in workspace_totals.items() if total > threshold]
+        log.info("Found %d stale workspaces out of %d checked", len(stale_workspaces), len(workspace_ids))
+        return stale_workspaces
+
+    try:
+        return asyncio.run(_async_find_stale())
+    except Exception as exc:
+        log.error("Failed to find stale workspaces via OpenSearch: %s", exc)
+        # On error, avoid false positives that could trigger unnecessary re-feed jobs.
+        return []
 
 
 def _filter_workspaces_via_opensearch(
@@ -709,16 +739,16 @@ def _filter_workspaces_via_opensearch(
     threshold: int = 50,
 ) -> list[str]:
     """
-    Return only those workspace IDs that have ≤threshold missing vectors
-    for *any* field (name/description/content) in issues/pages index.
+    Return workspace IDs that have any missing vectors (>0)
+    for any field (name/description/content) in issues/pages index.
 
     Args:
         workspace_ids: List of workspace IDs to check
         batch_size: Batch size for OpenSearch queries (defaults to settings)
-        threshold: Maximum number of missing vectors to consider processable
+        threshold: Deprecated (retained for compatibility, currently ignored)
 
     Returns:
-        List of workspace IDs that are processable (≤threshold missing vectors)
+        List of workspace IDs that are processable (>0 missing vectors)
     """
     if not workspace_ids:
         return []
@@ -771,7 +801,7 @@ def _filter_workspaces_via_opensearch(
                         # Continue with other fields on error
                         continue
 
-        # Filter workspaces that have reasonable number of missing vectors
+        # Process every workspace that has at least one missing vector.
         processable = []
         skipped_count = 0
 
@@ -781,7 +811,7 @@ def _filter_workspaces_via_opensearch(
                 processable.append(ws_id)
             else:
                 skipped_count += 1
-                log.debug(f"Skipping workspace {ws_id} because it has {total_missing} missing vectors")
+                log.debug("Skipping workspace %s because it has no missing vectors", ws_id)
 
         log.info(
             "OpenSearch filtering complete: %d/%d workspaces processable, %d skipped",
@@ -846,15 +876,15 @@ def trigger_live_sync(self):
                 "dispatched": 0,
             }
 
-        # Filter workspaces using OpenSearch to find those with reasonable amounts of missing vectors
+        # Filter workspaces using OpenSearch to find those that still need vectorization work.
         processable_workspaces = _filter_workspaces_via_opensearch(eligible_workspaces)
 
         if not processable_workspaces:
             # Log when there are eligible workspaces but none are processable
-            log.info("No processable workspaces found - all %d eligible workspaces have no or >50 missing vectors", len(eligible_workspaces))
+            log.info("No processable workspaces found - all %d eligible workspaces have no missing vectors", len(eligible_workspaces))
             return {
                 "status": "no_processable_workspaces",
-                "message": "All eligible workspaces have no or >50 missing vectors",
+                "message": "All eligible workspaces have no missing vectors",
                 "total_eligible_from_pg": len(eligible_workspaces),
                 "processable_after_os_filter": 0,
                 "dispatched": 0,
@@ -904,20 +934,20 @@ def workspace_plan_sync(self):
 
     This task performs three operations:
     1. Removes vector data and disables live sync for workspaces downgraded from Pro/Business to FREE
-    2. Re-feeds stale workspaces that have >50 missing vectors (stuck incomplete jobs)
+    2. Re-feeds stale workspaces that have >0 missing vectors
     3. Creates initial vectorization jobs for new Pro/Business workspaces
 
     Environment variable: CELERY_WORKSPACE_PLAN_SYNC_ENABLED (default: enabled)
     """
     try:
         # Step 1: Handle non-Pro workspaces (remove vector data and disable live sync)
-        downgrade_result = asyncio.run(disable_live_sync_for_non_pro_workspaces())
+        downgrade_result = disable_live_sync_for_non_pro_workspaces()
 
-        # Step 2: Handle stale workspaces (re-feed those with >50 missing vectors)
-        stale_result = asyncio.run(handle_stale_workspaces())
+        # Step 2: Handle stale workspaces (re-feed those with >0 missing vectors)
+        stale_result = handle_stale_workspaces()
 
         # Step 3: Get Pro/Business workspaces that need feed
-        workspaces_needing_feed = asyncio.run(get_pro_business_workspaces_needing_feed())
+        workspaces_needing_feed = get_pro_business_workspaces_needing_feed()
 
         if not workspaces_needing_feed:
             result = {
@@ -935,10 +965,7 @@ def workspace_plan_sync(self):
             # Log if any significant activity happened
             downgraded_count = downgrade_result.get("downgraded", 0)
             re_fed_count = stale_result.get("re_fed", 0)
-            if (isinstance(downgraded_count, int) and downgraded_count > 0) or (isinstance(re_fed_count, int) and re_fed_count > 0):
-                log.info("Workspace plan sync completed: %s", result)
-            else:
-                log.debug("Workspace plan sync completed: %s", result)
+            log.info(f"[DIAGNOSTIC] Workspace plan sync completed returning: {result}")
 
             return result
 
@@ -981,20 +1008,9 @@ def workspace_plan_sync(self):
                     session.commit()
                     session.refresh(job)
 
-                    # Dispatch Celery task
-                    job_config = {
-                        "workspace_id": workspace_id,
-                        "job_id": str(job.id),
-                        "feed_issues": True,
-                        "feed_pages": True,
-                        "feed_slices": settings.vector_db.FEED_SLICES,
-                        "batch_size": settings.vector_db.BATCH_SIZE,
-                    }
-
-                    celery_app.send_task("pi.celery_app.vectorize_workspace", args=[job_config])
+                    # Job is now queued in DB - vectorization_scheduler will dispatch it
                     dispatched += 1
-
-                    log.info("Created vectorization job for Pro/Business workspace %s (job_id: %s)", workspace_id, job.id)
+                    log.info("Queued vectorization job for Pro/Business workspace %s (job_id: %s)", workspace_id, job.id)
 
             except Exception as exc:
                 error_msg = f"Failed to create vectorization job for workspace {workspace_id}: {exc}"
@@ -1025,6 +1041,113 @@ def workspace_plan_sync(self):
 
     except Exception as exc:
         log.error("Failed to run workspace plan sync: %s", exc)
+        raise
+
+
+@celery_app.task(bind=True, name="pi.celery_app.vectorization_scheduler")
+def vectorization_scheduler(self):
+    """
+    Scheduler task that runs periodically to dispatch queued vectorization jobs.
+
+    This task controls concurrency by:
+    1. Checking how many jobs are currently running
+    2. Dispatching new jobs only if running < MAX_CONCURRENT_VECTORIZATION_JOBS
+
+    This prevents overwhelming the system when there are many workspaces (e.g., 10k+)
+    needing vectorization.
+    """
+    try:
+        with db_session() as session:
+            # Count currently running jobs
+            running_stmt = (
+                select(func.count()).select_from(WorkspaceVectorization).where(WorkspaceVectorization.status == VectorizationStatus.running)  # noqa: E501
+            )
+            running_count = session.exec(running_stmt).one()
+
+            # Calculate available slots
+            slots_available = MAX_CONCURRENT_VECTORIZATION_JOBS - running_count
+
+            if slots_available <= 0:
+                log.debug(
+                    "Vectorization scheduler: no slots available (running: %d, max: %d)",
+                    running_count,
+                    MAX_CONCURRENT_VECTORIZATION_JOBS,
+                )
+                return {
+                    "status": "no_slots_available",
+                    "running": running_count,
+                    "max_concurrent": MAX_CONCURRENT_VECTORIZATION_JOBS,
+                    "dispatched": 0,
+                }
+
+            # Get queued jobs (oldest first)
+            queued_stmt = (
+                select(WorkspaceVectorization)
+                .where(WorkspaceVectorization.status == VectorizationStatus.queued)
+                .order_by(WorkspaceVectorization.created_at)  # type: ignore[arg-type]
+                .limit(slots_available)
+            )
+            queued_jobs = session.exec(queued_stmt).all()
+
+            if not queued_jobs:
+                log.debug(
+                    "Vectorization scheduler: no queued jobs (running: %d)",
+                    running_count,
+                )
+                return {
+                    "status": "no_queued_jobs",
+                    "running": running_count,
+                    "dispatched": 0,
+                }
+
+            dispatched = 0
+            for job in queued_jobs:
+                try:
+                    # Build job config
+                    job_config = {
+                        "workspace_id": str(job.workspace_id),
+                        "job_id": str(job.id),
+                        "feed_issues": job.feed_issues,
+                        "feed_pages": job.feed_pages,
+                        "feed_slices": job.feed_slices,
+                        "batch_size": job.batch_size,
+                    }
+
+                    # Dispatch Celery task
+                    celery_app.send_task("pi.celery_app.vectorize_workspace", args=[job_config])
+                    dispatched += 1
+
+                    log.info(
+                        "Vectorization scheduler: dispatched job %s for workspace %s",
+                        job.id,
+                        job.workspace_id,
+                    )
+
+                except Exception as exc:
+                    log.error(
+                        "Vectorization scheduler: failed to dispatch job %s for workspace %s: %s",
+                        job.id,
+                        job.workspace_id,
+                        exc,
+                    )
+
+            result = {
+                "status": "dispatched",
+                "running_before": running_count,
+                "slots_available": slots_available,
+                "queued_found": len(queued_jobs),
+                "dispatched": dispatched,
+            }
+
+            if dispatched > 0:
+                log.info("Vectorization scheduler completed: %s", result)
+            else:
+                log.debug("Vectorization scheduler completed: %s", result)
+
+            return result
+
+    except Exception as exc:
+        log.error("Vectorization scheduler failed: %s", exc)
         raise
 
 
@@ -1070,28 +1193,33 @@ async def _process_workspace_live_sync(workspace_id: str) -> Dict[str, Any]:
     async with VectorStore() as vdb:
         for index_name, fmap in field_maps.items():
             try:
-                # Consolidate IDs that are missing vectors for ANY field
-                ids_needed = set()
-                # Track which fields should be processed (those with ≤50 missing vectors)
-                processable_fields = {}
+                # Track fields that still have any missing vectors.
+                processable_fields: Dict[str, str] = {}
+                missing_by_field: Dict[str, int] = {}
 
                 for src_field, tgt_field in fmap.items():
-                    missing_count, missing_ids = await vdb.missing_vectors_count(
-                        index_name, src_field, tgt_field, live=True, workspace_id=workspace_id
+                    # Use non-live counting here so we don't apply legacy "count > 50" behavior.
+                    missing_count, _ = await vdb.missing_vectors_count(
+                        index_name,
+                        src_field,
+                        tgt_field,
+                        live=False,
+                        workspace_id=workspace_id,
                     )
 
-                    if missing_count > 0 and missing_count <= 50 and missing_ids:
-                        ids_needed.update(missing_ids)
+                    if missing_count > 0:
                         processable_fields[src_field] = tgt_field
+                        missing_by_field[src_field] = missing_count
 
-                # Only process if we have a reasonable number of documents AND processable fields
-                if ids_needed and len(ids_needed) <= 50 and processable_fields:
+                if processable_fields:
+                    total_missing = sum(missing_by_field.values())
                     log.info(
-                        "Processing live sync for workspace %s, index %s: %d documents, fields: %s",
+                        "Processing live sync for workspace %s, index %s: fields=%s missing_by_field=%s total_missing=%d",
                         workspace_id,
                         index_name,
-                        len(ids_needed),
                         list(processable_fields.keys()),
+                        missing_by_field,
+                        total_missing,
                     )
 
                     await populate_embeddings(
@@ -1099,12 +1227,12 @@ async def _process_workspace_live_sync(workspace_id: str) -> Dict[str, Any]:
                         index_name,
                         processable_fields,
                         live=True,
-                        ids=list(ids_needed),
                         workspace_id=workspace_id,
                     )
 
-                    results["processed"] = results["processed"] + len(ids_needed)
-                    results[f"{index_name}_processed"] = len(ids_needed)
+                    # "processed" tracks the number of missing vectors detected for this run.
+                    results["processed"] = results["processed"] + total_missing
+                    results[f"{index_name}_processed"] = total_missing
 
             except Exception as exc:
                 log.error("Error processing live sync for workspace %s, index %s: %s", workspace_id, index_name, exc)
@@ -1482,6 +1610,12 @@ if settings.celery.WORKSPACE_PLAN_SYNC_ENABLED:
     celery_app.conf.beat_schedule["workspace-plan-sync"] = {
         "task": "pi.celery_app.workspace_plan_sync",
         "schedule": settings.celery.WORKSPACE_PLAN_SYNC_INTERVAL,
+    }
+    # Add vectorization scheduler (runs frequently to dispatch queued jobs with controlled concurrency)
+    celery_app.conf.beat_schedule["vectorization-scheduler"] = {
+        "task": "pi.celery_app.vectorization_scheduler",
+        "schedule": 60.0,  # Run every 60 seconds to check for queued jobs
+        "options": {"expires": 120},  # Expire if not processed within 2 minutes
     }
 else:
     log.info("Workspace plan sync disabled (CELERY_WORKSPACE_PLAN_SYNC_ENABLED=%s)", settings.celery.WORKSPACE_PLAN_SYNC_ENABLED)

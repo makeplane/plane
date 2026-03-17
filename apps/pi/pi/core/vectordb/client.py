@@ -257,6 +257,30 @@ class VectorStore:
         search_body = build_issue_text_search_query(query_title, query_description, workspace_id, issue_id, project_id, user_id)
         try:
             response = await self.async_os.search(index=ISSUE_INDEX, body=search_body)
+        except TransportError as e:
+            if "too_many_nested_clauses" in str(e):
+                log.warning("Text similarity query exceeded maxClauseCount; retrying without fuzziness")
+                fallback_search_body = build_issue_text_search_query(
+                    query_title=query_title,
+                    query_description=query_description,
+                    workspace_id=workspace_id,
+                    issue_id=issue_id,
+                    project_id=project_id,
+                    user_id=user_id,
+                    force_no_fuzziness=True,
+                )
+                try:
+                    response = await self.async_os.search(index=ISSUE_INDEX, body=fallback_search_body)
+                except Exception as fallback_error:
+                    log.error(
+                        "Fallback text similarity search failed: %s fallback search body: %s",
+                        fallback_error,
+                        fallback_search_body,
+                    )
+                    return []
+            else:
+                log.error(f"Error searching for similar issues based on text similarity: {e} search body: {search_body}")
+                return []
         except Exception as e:
             log.error(f"Error searching for similar issues based on text similarity: {e} search body: {search_body}")
             return []
@@ -522,25 +546,18 @@ class VectorStore:
         resp = await self.async_os.search(index=index_name, body=body)
         count = resp["hits"]["total"]["value"]
 
-        if live:
-            if count > 50:
-                log.warning(
-                    "Too many missing vectors (%d) for %s in %s - skipping this field in live sync because count > 50", count, tgt_field, index_name
-                )
-                return count, []
-            elif count > 0:
-                # Get the actual IDs for live sync
-                debug_body = body.copy()
-                debug_body["size"] = count  # Get all IDs since count <= 50
-                debug_body["_source"] = []  # We only need the IDs
-                sample = await self.async_os.search(index=index_name, body=debug_body)
-                ids = [hit["_id"] for hit in sample["hits"]["hits"]]
-                return count, ids
-            else:
-                return count, []
-        else:
-            # Non-live mode: just return count
-            return count, []
+        if live and count > 0:
+            # Live mode can optionally return IDs for callers that need explicit
+            # document targeting instead of full workspace backfill.
+            debug_body = body.copy()
+            debug_body["size"] = count
+            debug_body["_source"] = []
+            sample = await self.async_os.search(index=index_name, body=debug_body)
+            ids = [hit["_id"] for hit in sample["hits"]["hits"]]
+            return count, ids
+
+        # Non-live mode (or zero count): return just the count.
+        return count, []
 
     # -----------------------------------------------------------------
     # Blocking helper equivalents (sync) – used by Celery sync pipelines
@@ -607,26 +624,15 @@ class VectorStore:
         resp = self.os.search(index=index_name, body=body)
         count = resp["hits"]["total"]["value"]
 
-        if live:
-            if count > 50:
-                log.warning(
-                    "Too many missing vectors (%d) for %s in %s - skipping this field in live sync because count > 50",
-                    count,
-                    tgt_field,
-                    index_name,
-                )
-                return count, []
-            elif count > 0:
-                debug_body = body.copy()
-                debug_body["size"] = count
-                debug_body["_source"] = []
-                sample = self.os.search(index=index_name, body=debug_body)
-                ids = [hit["_id"] for hit in sample["hits"]["hits"]]
-                return count, ids
-            else:
-                return count, []
-        else:
-            return count, []
+        if live and count > 0:
+            debug_body = body.copy()
+            debug_body["size"] = count
+            debug_body["_source"] = []
+            sample = self.os.search(index=index_name, body=debug_body)
+            ids = [hit["_id"] for hit in sample["hits"]["hits"]]
+            return count, ids
+
+        return count, []
 
     async def missing_vectors_by_workspace(
         self,
