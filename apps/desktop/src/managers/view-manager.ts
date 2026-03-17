@@ -24,6 +24,13 @@ import type { WindowLayoutMode } from "../stores/types";
 const TAB_BAR_HEIGHT = 44;
 
 /**
+ * Minimum time (ms) to display the tab-bar loading spinner before revealing
+ * content.  Matches the CSS `spin` animation duration (1 s) so the spinner
+ * always completes at least one full rotation.
+ */
+const MIN_LOADING_SPINNER_MS = 1_000;
+
+/**
  * Plane cloud deployment hosts.
  * Self-hosted instances always serve app, api and assets from the same hostname,
  * so cross-host handling is only needed for cloud hosts.
@@ -34,6 +41,7 @@ const CLOUD_API_HOST = "api.plane.so";
 export class ViewManager {
   #views: Map<string, WebContentsView> = new Map();
   #loadedTabs: Set<string> = new Set();
+  #tabCreatedAt: Map<string, number> = new Map();
   #visibleTabId: string | undefined = undefined;
   #mainWindow: BrowserWindow | undefined = undefined;
   #tabBarView: WebContentsView | undefined = undefined;
@@ -186,6 +194,7 @@ export class ViewManager {
 
     this.#views.delete(id);
     this.#loadedTabs.delete(id);
+    this.#tabCreatedAt.delete(id);
   }
 
   /**
@@ -320,6 +329,7 @@ export class ViewManager {
     });
 
     this.#views.set(id, view);
+    this.#tabCreatedAt.set(id, Date.now());
     this.#window.contentView.addChildView(view);
     this.#updateContentBounds(view);
     this.#setupTabIndexShortcuts(view.webContents);
@@ -328,15 +338,7 @@ export class ViewManager {
     view.setBounds({ x: 0, y: tabBarHeight, width: 0, height: 0 });
 
     view.webContents.once("did-stop-loading", () => {
-      this.#loadedTabs.add(id);
-      this.#onTabLoadedCallback?.(id);
-      this.#sendStateToTabBar();
-
-      if (this.#tabStore.getActiveTabId(this.#windowId) !== id) {
-        return;
-      }
-
-      this.#showView(id);
+      this.#markTabLoaded(id);
     });
 
     if (!instanceUrl) {
@@ -347,6 +349,50 @@ export class ViewManager {
     const fullUrl = new URL(tabPath, instanceUrl).href;
     void view.webContents.loadURL(fullUrl);
     this.#setupViewHandlers(view, id, instanceUrl);
+  }
+
+  /**
+   * Called when a tab finishes loading.  If the loading spinner has not yet
+   * completed a full rotation we delay the reveal so the animation is not cut
+   * short.  The spinner CSS animation lasts MIN_LOADING_SPINNER_MS (1 s).
+   *
+   * The delay is skipped in setup mode where the tab bar (and its spinner)
+   * is hidden, so the setup page appears immediately.
+   */
+  #markTabLoaded(id: string): void {
+    if (this.#layoutMode !== "app") {
+      this.#finishTabLoad(id);
+      return;
+    }
+
+    const createdAt = this.#tabCreatedAt.get(id) ?? 0;
+    const elapsed = Date.now() - createdAt;
+    const remaining = MIN_LOADING_SPINNER_MS - elapsed;
+
+    if (remaining > 0) {
+      setTimeout(() => this.#finishTabLoad(id), remaining);
+      return;
+    }
+
+    this.#finishTabLoad(id);
+  }
+
+  #finishTabLoad(id: string): void {
+    // Guard: the tab may have been closed while waiting for the delay
+    if (!this.#views.has(id)) {
+      return;
+    }
+
+    this.#loadedTabs.add(id);
+    this.#tabCreatedAt.delete(id);
+    this.#onTabLoadedCallback?.(id);
+    this.#sendStateToTabBar();
+
+    if (this.#tabStore.getActiveTabId(this.#windowId) !== id) {
+      return;
+    }
+
+    this.#showView(id);
   }
 
   #setupViewHandlers(view: WebContentsView, id: string, instanceUrl: string): void {
