@@ -171,6 +171,8 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
     issueCrudOperationState?.create?.parentIssueId &&
     isCreateIssueModalOpen;
 
+  const splittedRelationKey = relationKey?.split("::")[1];
+
   return (
     <>
       {!hideWidgets?.includes("links") && (
@@ -211,7 +213,12 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
           handleClose={handleRelationOnClose}
           searchParams={{
             issue_id: issueId,
-            ...(relationKey && DEPENDENCY_RELATION_KEYS.has(relationKey) ? { issue_relation: true } : {}),
+            ...(relationKey && DEPENDENCY_RELATION_KEYS.has(relationKey)
+              ? { issue_relation: true }
+              : {
+                  issue_custom_relation: true,
+                  issue_custom_relation_type: splittedRelationKey || undefined,
+                }),
           }}
           handleOnSubmit={handleExistingIssueModalOnSubmit}
           workspaceLevelToggle

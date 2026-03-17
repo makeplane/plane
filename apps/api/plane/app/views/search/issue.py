@@ -10,6 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
+from typing import Optional
 from uuid import UUID
 
 # Django imports
@@ -17,14 +18,16 @@ from django.db.models import Q, QuerySet
 
 # Third party imports
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework.response import Response
 
 # Module imports
-from .base import BaseAPIView
-from plane.db.models import Issue, ProjectMember, IssueRelation
-from plane.utils.issue_search import search_issues
+from plane.db.models import Issue, IssueRelation, ProjectMember, RelationCategory
 from plane.db.models.intake import IntakeIssueStatus
+from plane.utils.issue_search import search_issues
+
+# Local imports
+from .base import BaseAPIView
 
 
 class IssueSearchEndpoint(BaseAPIView):
@@ -54,25 +57,67 @@ class IssueSearchEndpoint(BaseAPIView):
             issues = issues.filter(~Q(pk=issue_id), ~Q(pk=issue.parent_id), ~Q(parent_id=issue_id))
         return issues
 
-    def filter_issues_excluding_related_issues(self, issue_id: str, issues: QuerySet) -> QuerySet:
+    def filter_issues_excluding_related_issues(self, issue_id: str, issues_and_epic_query_set: QuerySet) -> QuerySet:
         """
         Filter issues excluding related issues
         """
+
+        # validate issue id
         issue = Issue.objects.filter(pk=issue_id).first()
 
-        related_issue_ids = (
+        # get dependency work item ids
+        dependency_work_item_ids = (
             IssueRelation.objects.filter(Q(related_issue=issue) | Q(issue=issue))
+            .filter(category=RelationCategory.DEPENDENCY.value, deleted_at__isnull=True)
             .values_list("issue_id", "related_issue_id")
             .distinct()
         )
 
-        related_issue_ids = [item for sublist in related_issue_ids for item in sublist]
-        related_issue_ids.append(issue_id)
+        # flatten dependency work item ids
+        dependency_work_item_ids = [item for sublist in dependency_work_item_ids for item in sublist]
+        dependency_work_item_ids.append(issue_id)
+        dependency_work_item_ids = list(set(dependency_work_item_ids))
 
-        if issue:
-            issues = issues.exclude(pk__in=related_issue_ids)
+        # exclude dependency work item ids from issues and epics query set
+        issues_and_epic_query_set = issues_and_epic_query_set.exclude(pk__in=dependency_work_item_ids)
 
-        return issues
+        # return issues and epics query set excluding dependency work item ids
+        return issues_and_epic_query_set
+
+    def filter_issues_excluding_custom_relation_issues(
+        self,
+        issue_id: str,
+        issues_and_epic_query_set: QuerySet,
+        issue_custom_relation_type: Optional[str],
+    ) -> QuerySet:
+        """
+        Filter issues excluding custom relation issues
+        """
+
+        # validate issue id
+        issue = Issue.objects.filter(pk=issue_id).first()
+
+        # get related work item ids
+        related_work_item_ids = (
+            IssueRelation.objects.filter(Q(related_issue=issue) | Q(issue=issue))
+            .filter(
+                Q(definition__inward=issue_custom_relation_type) | Q(definition__outward=issue_custom_relation_type)
+            )
+            .filter(category=RelationCategory.RELATION.value)
+            .values_list("issue_id", "related_issue_id")
+            .distinct()
+        )
+
+        # flatten related work item ids
+        related_work_item_ids = [item for sublist in related_work_item_ids for item in sublist]
+        related_work_item_ids.append(issue_id)
+        related_work_item_ids = list(set(related_work_item_ids))
+
+        # exclude related work item ids from issues and epics query set
+        issues_and_epic_query_set = issues_and_epic_query_set.exclude(pk__in=related_work_item_ids)
+
+        # return issues and epics query set excluding related work item ids
+        return issues_and_epic_query_set
 
     def filter_root_issues_only(self, issue_id: str, issues: QuerySet) -> QuerySet:
         """
@@ -121,6 +166,8 @@ class IssueSearchEndpoint(BaseAPIView):
         workspace_search = request.query_params.get("workspace_search", "false")
         parent = request.query_params.get("parent", "false")
         issue_relation = request.query_params.get("issue_relation", "false")
+        issue_custom_relation = request.query_params.get("issue_custom_relation", "false")
+        issue_custom_relation_type = request.query_params.get("issue_custom_relation_type", None)
         cycle = request.query_params.get("cycle", "false")
         module = request.query_params.get("module", False)
         epic = request.query_params.get("epic", "false")
@@ -189,7 +236,16 @@ class IssueSearchEndpoint(BaseAPIView):
             issues = self.search_issues_and_excluding_parent(issues_and_epics, issue_id)
 
         if issue_relation == "true" and issue_id:
-            issues = self.filter_issues_excluding_related_issues(issue_id, issues_and_epics)
+            issues = self.filter_issues_excluding_related_issues(
+                issue_id=issue_id, issues_and_epic_query_set=issues_and_epics
+            )
+
+        if issue_custom_relation == "true" and issue_id and issue_custom_relation_type:
+            issues = self.filter_issues_excluding_custom_relation_issues(
+                issue_id=issue_id,
+                issues_and_epic_query_set=issues_and_epics,
+                issue_custom_relation_type=issue_custom_relation_type,
+            )
 
         if sub_issue == "true" and issue_id:
             issues = self.filter_root_issues_only(issue_id, issues)
@@ -209,9 +265,6 @@ class IssueSearchEndpoint(BaseAPIView):
             project_id=project_id, member=self.request.user, is_active=True, role=5
         ).exists():
             issues = issues.filter(created_by=self.request.user)
-
-        issues = issues.exclude(id=issue_id)
-        issues_and_epics = issues_and_epics.exclude(id=issue_id)
 
         return Response(
             issues.values(

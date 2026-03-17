@@ -186,7 +186,10 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
   };
 
   // helpers
-  const createUpdateModalData = { parent_id: issueCrudOperationState?.create?.parentIssueId, project_id: projectId };
+  const createUpdateModalData = {
+    parent_id: issueCrudOperationState?.create?.parentIssueId,
+    project_id: projectId,
+  };
 
   const existingIssuesModalSearchParams = {
     sub_issue: true,
@@ -201,6 +204,8 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
 
   const shouldRenderCreateUpdateModal =
     issueCrudOperationState?.create?.toggle && issueCrudOperationState?.create?.parentIssueId && isCreateIssueModalOpen;
+
+  const splittedRelationKey = relationKey?.split("::")[1];
 
   return (
     <>
@@ -233,7 +238,12 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
         handleClose={handleRelationOnClose}
         searchParams={{
           issue_id: epicId,
-          ...(relationKey && DEPENDENCY_RELATION_KEYS.has(relationKey) ? { issue_relation: true } : {}),
+          ...(relationKey && DEPENDENCY_RELATION_KEYS.has(relationKey)
+            ? { issue_relation: true }
+            : {
+                issue_custom_relation: true,
+                issue_custom_relation_type: splittedRelationKey || undefined,
+              }),
         }}
         handleOnSubmit={handleExistingIssueModalOnSubmit}
         workspaceLevelToggle
