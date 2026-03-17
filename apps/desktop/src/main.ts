@@ -29,6 +29,8 @@ const persistStore = new Store<StoreSchema>({
   defaults: {
     instanceUrl: undefined,
     windows: [],
+    closedWindows: [],
+    closedTabs: {},
     schemaVersion: STORE_SCHEMA_VERSION,
   },
 });

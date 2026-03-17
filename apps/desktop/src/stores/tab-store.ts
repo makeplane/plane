@@ -27,6 +27,12 @@ export interface TabState {
   windows: Map<string, WindowTabState>;
 }
 
+/** Maximum number of closed windows to remember for "restore closed window". */
+const MAX_CLOSED_WINDOWS = 10;
+
+/** Maximum number of closed tabs to remember per window for "restore closed tab". */
+const MAX_CLOSED_TABS_PER_WINDOW = 20;
+
 function generateTabId(): string {
   return `tab-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 }
@@ -52,6 +58,15 @@ export class TabStore extends Store<TabState> {
 
     super({ windows });
     this.persistStore = persistStore;
+
+    this.#closedWindows = persistStore.get("closedWindows") ?? [];
+
+    const persistedClosedTabs = persistStore.get("closedTabs") ?? {};
+    for (const [windowId, tabs] of Object.entries(persistedClosedTabs)) {
+      if (tabs.length > 0) {
+        this.#closedTabsByWindow.set(windowId, tabs);
+      }
+    }
   }
 
   registerWindow(windowId: string): void {
@@ -109,17 +124,30 @@ export class TabStore extends Store<TabState> {
     };
 
     this.#closedWindows.push(closedWindow);
+    if (this.#closedWindows.length > MAX_CLOSED_WINDOWS) {
+      this.#closedWindows.splice(0, this.#closedWindows.length - MAX_CLOSED_WINDOWS);
+    }
     this.#closedTabsByWindow.delete(windowId);
+    this.#persistClosedWindows();
+    this.#persistClosedTabs();
   }
 
   popClosedWindow(): PersistedWindow | undefined {
-    return this.#closedWindows.pop();
+    const window = this.#closedWindows.pop();
+    if (window) {
+      this.#persistClosedWindows();
+    }
+    return window;
   }
 
   pushClosedTab(windowId: string, tab: PersistedTab): void {
     const closedTabs = this.#closedTabsByWindow.get(windowId) ?? [];
     closedTabs.push(tab);
+    if (closedTabs.length > MAX_CLOSED_TABS_PER_WINDOW) {
+      closedTabs.splice(0, closedTabs.length - MAX_CLOSED_TABS_PER_WINDOW);
+    }
     this.#closedTabsByWindow.set(windowId, closedTabs);
+    this.#persistClosedTabs();
   }
 
   popClosedTab(windowId: string): PersistedTab | undefined {
@@ -132,6 +160,7 @@ export class TabStore extends Store<TabState> {
     if (closedTabs.length === 0) {
       this.#closedTabsByWindow.delete(windowId);
     }
+    this.#persistClosedTabs();
 
     return tab;
   }
@@ -142,6 +171,8 @@ export class TabStore extends Store<TabState> {
     this.#persistWindows(windows);
     this.#closedTabsByWindow.clear();
     this.#closedWindows = [];
+    this.#persistClosedWindows();
+    this.#persistClosedTabs();
   }
 
   addTab(windowId: string, path: string = "/", title: string = "New Tab"): string {
@@ -169,6 +200,18 @@ export class TabStore extends Store<TabState> {
       activeTabId: win.activeTabId,
     }));
     this.persistStore.set("windows", persistedWindows);
+  }
+
+  #persistClosedWindows(): void {
+    this.persistStore.set("closedWindows", this.#closedWindows);
+  }
+
+  #persistClosedTabs(): void {
+    const obj: Record<string, PersistedTab[]> = {};
+    for (const [windowId, tabs] of this.#closedTabsByWindow) {
+      obj[windowId] = tabs;
+    }
+    this.persistStore.set("closedTabs", obj);
   }
 
   #updateWindowState(

@@ -33,9 +33,15 @@ export interface TabWithFavicon extends Tab {
   favicon?: string;
 }
 
+export interface PersistedClosedTabs {
+  [windowId: string]: PersistedTab[];
+}
+
 export interface StoreSchema {
   instanceUrl: string | undefined;
   windows: PersistedWindow[];
+  closedWindows: PersistedWindow[];
+  closedTabs: PersistedClosedTabs;
   schemaVersion: number;
 }
 

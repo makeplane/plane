@@ -14,7 +14,7 @@
 import type ElectronStore from "electron-store";
 import type { StoreSchema } from "./types";
 
-export const STORE_SCHEMA_VERSION = 1;
+export const STORE_SCHEMA_VERSION = 2;
 
 export type StoreMigration = {
   from: number;
