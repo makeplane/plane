@@ -289,48 +289,54 @@ def persist_tool_selection_steps(func: Callable) -> Callable:
                 and isinstance(enhanced_conversation_history, str)
                 and enhanced_conversation_history.strip()
             ):
-                steps.append({
-                    "step_order": current_step,
-                    "step_type": FlowStepType.TOOL.value,
-                    "tool_name": "tool_orchestration_context",
-                    "content": "Context used for tool orchestration",
-                    "execution_data": {"enhanced_conversation_history": enhanced_conversation_history},
-                    "is_planned": False,
-                    "is_executed": False,
-                })
+                steps.append(
+                    {
+                        "step_order": current_step,
+                        "step_type": FlowStepType.TOOL.value,
+                        "tool_name": "tool_orchestration_context",
+                        "content": "Context used for tool orchestration",
+                        "execution_data": {"enhanced_conversation_history": enhanced_conversation_history},
+                        "is_planned": False,
+                        "is_executed": False,
+                    }
+                )
                 current_step += 1
 
             # Persist tool selection
             tool_calls = getattr(ai_message, "tool_calls", None)
             if tool_calls:
                 selected_tool_calls = [{"name": tc.get("name"), "args": tc.get("args", {}), "id": tc.get("id", "")} for tc in tool_calls]
-                steps.append({
-                    "step_order": current_step,
-                    "step_type": FlowStepType.TOOL.value,
-                    "tool_name": "tool_selection",
-                    "content": standardize_flow_step_content({"selected_tools": selected_tool_calls}, FlowStepType.TOOL),
-                    "execution_data": {
-                        "selected_tools": selected_tool_calls,
-                        "available_tools": [getattr(t, "name", "") for t in tools],
-                        "query": enhanced_query_for_processing,
-                    },
-                    "is_planned": False,
-                    "is_executed": False,
-                })
+                steps.append(
+                    {
+                        "step_order": current_step,
+                        "step_type": FlowStepType.TOOL.value,
+                        "tool_name": "tool_selection",
+                        "content": standardize_flow_step_content({"selected_tools": selected_tool_calls}, FlowStepType.TOOL),
+                        "execution_data": {
+                            "selected_tools": selected_tool_calls,
+                            "available_tools": [getattr(t, "name", "") for t in tools],
+                            "query": enhanced_query_for_processing,
+                        },
+                        "is_planned": False,
+                        "is_executed": False,
+                    }
+                )
                 current_step += 1
 
             # Persist LLM reasoning content if present
             reasoning_text = extract_text_from_content(getattr(ai_message, "content", "") or "").strip()
             if reasoning_text:
-                steps.append({
-                    "step_order": current_step,
-                    "step_type": FlowStepType.TOOL.value,
-                    "tool_name": "llm_reasoning",
-                    "content": reasoning_text,
-                    "execution_data": {"reasoning": reasoning_text},
-                    "is_planned": False,
-                    "is_executed": False,
-                })
+                steps.append(
+                    {
+                        "step_order": current_step,
+                        "step_type": FlowStepType.TOOL.value,
+                        "tool_name": "llm_reasoning",
+                        "content": reasoning_text,
+                        "execution_data": {"reasoning": reasoning_text},
+                        "is_planned": False,
+                        "is_executed": False,
+                    }
+                )
                 current_step += 1
 
             if steps and query_id and chat_id and db:
@@ -564,15 +570,17 @@ async def orchestrate_llm_step_with_streaming(llm_with_tools, messages, **kwargs
             and isinstance(enhanced_conversation_history, str)
             and enhanced_conversation_history.strip()
         ):
-            steps.append({
-                "step_order": current_step,
-                "step_type": FlowStepType.TOOL.value,
-                "tool_name": "tool_orchestration_context",
-                "content": "Context used for tool orchestration",
-                "execution_data": {"enhanced_conversation_history": enhanced_conversation_history},
-                "is_planned": False,
-                "is_executed": False,
-            })
+            steps.append(
+                {
+                    "step_order": current_step,
+                    "step_type": FlowStepType.TOOL.value,
+                    "tool_name": "tool_orchestration_context",
+                    "content": "Context used for tool orchestration",
+                    "execution_data": {"enhanced_conversation_history": enhanced_conversation_history},
+                    "is_planned": False,
+                    "is_executed": False,
+                }
+            )
             current_step += 1
             log.info("orchestrate_llm_step: Added tool_orchestration_context step")
 
@@ -580,34 +588,38 @@ async def orchestrate_llm_step_with_streaming(llm_with_tools, messages, **kwargs
         tool_calls = getattr(ai_message, "tool_calls", None)
         if tool_calls:
             selected_tool_calls = [{"name": tc.get("name"), "args": tc.get("args", {}), "id": tc.get("id", "")} for tc in tool_calls]
-            steps.append({
-                "step_order": current_step,
-                "step_type": FlowStepType.TOOL.value,
-                "tool_name": "tool_selection",
-                "content": standardize_flow_step_content({"selected_tools": selected_tool_calls}, FlowStepType.TOOL),
-                "execution_data": {
-                    "selected_tools": selected_tool_calls,
-                    "available_tools": [getattr(t, "name", "") for t in tools],
-                    "query": enhanced_query_for_processing,
-                },
-                "is_planned": False,
-                "is_executed": False,
-            })
+            steps.append(
+                {
+                    "step_order": current_step,
+                    "step_type": FlowStepType.TOOL.value,
+                    "tool_name": "tool_selection",
+                    "content": standardize_flow_step_content({"selected_tools": selected_tool_calls}, FlowStepType.TOOL),
+                    "execution_data": {
+                        "selected_tools": selected_tool_calls,
+                        "available_tools": [getattr(t, "name", "") for t in tools],
+                        "query": enhanced_query_for_processing,
+                    },
+                    "is_planned": False,
+                    "is_executed": False,
+                }
+            )
             current_step += 1
             log.info(f"orchestrate_llm_step: Added tool_selection step with {len(tool_calls)} tools")
 
         # Persist LLM reasoning content if present
         reasoning_text = extract_text_from_content(getattr(ai_message, "content", "") or "").strip()
         if reasoning_text:
-            steps.append({
-                "step_order": current_step,
-                "step_type": FlowStepType.TOOL.value,
-                "tool_name": "llm_reasoning",
-                "content": reasoning_text,
-                "execution_data": {"reasoning": reasoning_text},
-                "is_planned": False,
-                "is_executed": False,
-            })
+            steps.append(
+                {
+                    "step_order": current_step,
+                    "step_type": FlowStepType.TOOL.value,
+                    "tool_name": "llm_reasoning",
+                    "content": reasoning_text,
+                    "execution_data": {"reasoning": reasoning_text},
+                    "is_planned": False,
+                    "is_executed": False,
+                }
+            )
             current_step += 1
             log.info(f"orchestrate_llm_step: Added llm_reasoning step (content length: {len(reasoning_text)})")
 
@@ -677,15 +689,17 @@ async def orchestrate_llm_step(llm_with_tools, messages, **kwargs):
             and isinstance(enhanced_conversation_history, str)
             and enhanced_conversation_history.strip()
         ):
-            steps.append({
-                "step_order": current_step,
-                "step_type": FlowStepType.TOOL.value,
-                "tool_name": "tool_orchestration_context",
-                "content": "Context used for tool orchestration",
-                "execution_data": {"enhanced_conversation_history": enhanced_conversation_history},
-                "is_planned": False,
-                "is_executed": False,
-            })
+            steps.append(
+                {
+                    "step_order": current_step,
+                    "step_type": FlowStepType.TOOL.value,
+                    "tool_name": "tool_orchestration_context",
+                    "content": "Context used for tool orchestration",
+                    "execution_data": {"enhanced_conversation_history": enhanced_conversation_history},
+                    "is_planned": False,
+                    "is_executed": False,
+                }
+            )
             current_step += 1
             log.info("orchestrate_llm_step: Added tool_orchestration_context step")
 
@@ -693,34 +707,38 @@ async def orchestrate_llm_step(llm_with_tools, messages, **kwargs):
         tool_calls = getattr(ai_message, "tool_calls", None)
         if tool_calls:
             selected_tool_calls = [{"name": tc.get("name"), "args": tc.get("args", {}), "id": tc.get("id", "")} for tc in tool_calls]
-            steps.append({
-                "step_order": current_step,
-                "step_type": FlowStepType.TOOL.value,
-                "tool_name": "tool_selection",
-                "content": standardize_flow_step_content({"selected_tools": selected_tool_calls}, FlowStepType.TOOL),
-                "execution_data": {
-                    "selected_tools": selected_tool_calls,
-                    "available_tools": [getattr(t, "name", "") for t in tools],
-                    "query": enhanced_query_for_processing,
-                },
-                "is_planned": False,
-                "is_executed": False,
-            })
+            steps.append(
+                {
+                    "step_order": current_step,
+                    "step_type": FlowStepType.TOOL.value,
+                    "tool_name": "tool_selection",
+                    "content": standardize_flow_step_content({"selected_tools": selected_tool_calls}, FlowStepType.TOOL),
+                    "execution_data": {
+                        "selected_tools": selected_tool_calls,
+                        "available_tools": [getattr(t, "name", "") for t in tools],
+                        "query": enhanced_query_for_processing,
+                    },
+                    "is_planned": False,
+                    "is_executed": False,
+                }
+            )
             current_step += 1
             log.info(f"orchestrate_llm_step: Added tool_selection step with {len(tool_calls)} tools")
 
         # Persist LLM reasoning content if present
         reasoning_text = extract_text_from_content(getattr(ai_message, "content", "") or "").strip()
         if reasoning_text:
-            steps.append({
-                "step_order": current_step,
-                "step_type": FlowStepType.TOOL.value,
-                "tool_name": "llm_reasoning",
-                "content": reasoning_text,
-                "execution_data": {"reasoning": reasoning_text},
-                "is_planned": False,
-                "is_executed": False,
-            })
+            steps.append(
+                {
+                    "step_order": current_step,
+                    "step_type": FlowStepType.TOOL.value,
+                    "tool_name": "llm_reasoning",
+                    "content": reasoning_text,
+                    "execution_data": {"reasoning": reasoning_text},
+                    "is_planned": False,
+                    "is_executed": False,
+                }
+            )
             current_step += 1
             log.info(f"orchestrate_llm_step: Added llm_reasoning step (content length: {len(reasoning_text)})")
 

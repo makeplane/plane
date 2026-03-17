@@ -510,12 +510,14 @@ def create_plotting_tools(
             # Build bars array with stackId
             bars = []
             for idx, y_key in enumerate(y_keys):
-                bars.append({
-                    "key": y_key,
-                    "label": y_labels[idx] if y_labels and idx < len(y_labels) else y_key.title(),
-                    "fill": _get_color(idx),
-                    "stackId": "a",  # All bars in the same stack
-                })
+                bars.append(
+                    {
+                        "key": y_key,
+                        "label": y_labels[idx] if y_labels and idx < len(y_labels) else y_key.title(),
+                        "fill": _get_color(idx),
+                        "stackId": "a",  # All bars in the same stack
+                    }
+                )
 
             config = {"showTooltip": True}
 

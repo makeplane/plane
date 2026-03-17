@@ -603,13 +603,15 @@ async def list_authorized_workspaces(
 
         workspaces = []
         for token in tokens:
-            workspaces.append({
-                "workspace_id": str(token.workspace_id),
-                "workspace_slug": token.workspace_slug,
-                "expires_at": token.expires_at.isoformat(),
-                "needs_refresh": token.needs_refresh(),
-                "is_expired": token.is_expired(),
-            })
+            workspaces.append(
+                {
+                    "workspace_id": str(token.workspace_id),
+                    "workspace_slug": token.workspace_slug,
+                    "expires_at": token.expires_at.isoformat(),
+                    "needs_refresh": token.needs_refresh(),
+                    "is_expired": token.is_expired(),
+                }
+            )
 
         return JSONResponse(content={"workspaces": workspaces})
 

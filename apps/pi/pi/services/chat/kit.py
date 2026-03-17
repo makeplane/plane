@@ -1636,10 +1636,12 @@ Provide concise, relevant context from the attachment(s):"""
         formatted_query = query if not attachment_blocks else format_message_with_attachments(query, attachment_blocks)
 
         # Stream the response
-        combination_prompt = ChatPromptTemplate.from_messages([
-            ("system", system_prompt),
-            ("human", user_prompt),
-        ])
+        combination_prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", system_prompt),
+                ("human", user_prompt),
+            ]
+        )
 
         # Set tracking context for combination streaming
         if self._token_tracking_context:
@@ -1656,11 +1658,13 @@ Provide concise, relevant context from the attachment(s):"""
         # Use streaming error handler context manager
         async with streaming_error_handler("[COMBINED_RESPONSE_STREAM]") as error_context:
             try:
-                stream_generator = combination_llm_chain.astream({
-                    "original_query": formatted_query,
-                    "responses": formatted_responses_str,
-                    "conversation_history": conversation_history,
-                })
+                stream_generator = combination_llm_chain.astream(
+                    {
+                        "original_query": formatted_query,
+                        "responses": formatted_responses_str,
+                        "conversation_history": conversation_history,
+                    }
+                )
 
                 # Word-level batcher to reduce browser SSE event overhead
                 _batcher = WordBatcher(words_per_batch=15)

@@ -2207,12 +2207,14 @@ async def handle_missing_required_fields(
                 # Explicitly check for False or None (workspace context)
                 if is_page_tool and is_project_chat is not True:
                     log.info(f"ChatID: {chat_id} - Adding workspace-level option for page creation")
-                    disambig_options.append({
-                        "id": "__workspace_scope__",
-                        "name": "Workspace level",
-                        "type": "scope",
-                        "description": "Create page at workspace level (accessible across all projects)",
-                    })
+                    disambig_options.append(
+                        {
+                            "id": "__workspace_scope__",
+                            "name": "Workspace level",
+                            "type": "scope",
+                            "description": "Create page at workspace level (accessible across all projects)",
+                        }
+                    )
 
                 # Prefer DB-backed, filtered project list to avoid archived/deleted noise
                 try:

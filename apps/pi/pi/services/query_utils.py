@@ -85,12 +85,14 @@ async def parse_query(
         for mention in parsed.mentions:
             try:
                 mention_id_uuid = UUID(mention["entity_id"])
-                mention_records.append({
-                    "message_id": message_id,
-                    "workspace_id": ws_id,
-                    "mention_type": mention["mention_type"],
-                    "mention_id": mention_id_uuid,
-                })
+                mention_records.append(
+                    {
+                        "message_id": message_id,
+                        "workspace_id": ws_id,
+                        "mention_type": mention["mention_type"],
+                        "mention_id": mention_id_uuid,
+                    }
+                )
             except Exception as e:
                 log.error(f"Failed to store mentions in database: {e}")
                 continue
@@ -146,12 +148,14 @@ def _parse_query_internal(query: str) -> ParsedQuery:
                 mention_tag_name = MENTION_TAGS.get(mention_target, mention_target)
 
                 # Store mention details
-                mentions.append({
-                    "mention_type": mention_target,
-                    "entity_id": entity_id,
-                    "entity_name": entity_name,
-                    "label": label,
-                })
+                mentions.append(
+                    {
+                        "mention_type": mention_target,
+                        "entity_id": entity_id,
+                        "entity_name": entity_name,
+                        "label": label,
+                    }
+                )
 
                 return f"{mention_tag_name} with id: {entity_id}"
             return ""

@@ -257,16 +257,18 @@ async def list_recent_cycles(
         result: List[Dict[str, Any]] = []
         for r in rows:
             try:
-                result.append({
-                    "id": str(r["id"]),
-                    "name": r["name"],
-                    "project_id": str(r["project_id"]) if r.get("project_id") else None,
-                    "workspace_id": str(r["workspace_id"]) if r.get("workspace_id") else None,
-                    "workspace_slug": r.get("workspace_slug"),
-                    "start_date": str(r["start_date"]) if r.get("start_date") else None,
-                    "end_date": str(r["end_date"]) if r.get("end_date") else None,
-                    "status": r.get("status"),
-                })
+                result.append(
+                    {
+                        "id": str(r["id"]),
+                        "name": r["name"],
+                        "project_id": str(r["project_id"]) if r.get("project_id") else None,
+                        "workspace_id": str(r["workspace_id"]) if r.get("workspace_id") else None,
+                        "workspace_slug": r.get("workspace_slug"),
+                        "start_date": str(r["start_date"]) if r.get("start_date") else None,
+                        "end_date": str(r["end_date"]) if r.get("end_date") else None,
+                        "status": r.get("status"),
+                    }
+                )
             except Exception:
                 # Best-effort row mapping; skip malformed rows
                 continue
@@ -794,15 +796,17 @@ async def search_current_cycle(project_id: str, workspace_slug: Optional[str] = 
         results = await PlaneDBPool.fetch(query, tuple(params))
         cycles = []
         for result in results:
-            cycles.append({
-                "id": str(result["id"]),
-                "name": result["name"],
-                "project_id": str(result["project_id"]),
-                "workspace_id": str(result["workspace_id"]) if result.get("workspace_id") else None,
-                "workspace_slug": result.get("workspace_slug"),
-                "start_date": str(result["start_date"]) if result["start_date"] else None,
-                "end_date": str(result["end_date"]) if result["end_date"] else None,
-            })
+            cycles.append(
+                {
+                    "id": str(result["id"]),
+                    "name": result["name"],
+                    "project_id": str(result["project_id"]),
+                    "workspace_id": str(result["workspace_id"]) if result.get("workspace_id") else None,
+                    "workspace_slug": result.get("workspace_slug"),
+                    "start_date": str(result["start_date"]) if result["start_date"] else None,
+                    "end_date": str(result["end_date"]) if result["end_date"] else None,
+                }
+            )
         return cycles
     except Exception as e:
         log.error(
@@ -1904,14 +1908,16 @@ async def list_scope_added_issues(cycle_id: str, limit: int = 50) -> List[Dict[s
             identifier = None
             if r.get("project_identifier") and r.get("sequence_id"):
                 identifier = f"{r['project_identifier']}-{r['sequence_id']}"
-            results.append({
-                "id": str(r["id"]),
-                "name": r["name"],
-                "identifier": identifier,
-                "priority": r.get("priority"),
-                "state_group": r.get("state_group"),
-                "added_at": str(r["created_at"]) if r.get("created_at") else None,
-            })
+            results.append(
+                {
+                    "id": str(r["id"]),
+                    "name": r["name"],
+                    "identifier": identifier,
+                    "priority": r.get("priority"),
+                    "state_group": r.get("state_group"),
+                    "added_at": str(r["created_at"]) if r.get("created_at") else None,
+                }
+            )
         return results
     except Exception as e:
         log.error(f"Error listing scope-added issues for cycle {cycle_id}: {e}")
@@ -1951,14 +1957,16 @@ async def list_scope_removed_issues(cycle_id: str, limit: int = 50) -> List[Dict
             identifier = None
             if r.get("project_identifier") and r.get("sequence_id"):
                 identifier = f"{r['project_identifier']}-{r['sequence_id']}"
-            results.append({
-                "id": str(r["id"]),
-                "name": r["name"],
-                "identifier": identifier,
-                "priority": r.get("priority"),
-                "state_group": r.get("state_group"),
-                "removed_at": str(r["deleted_at"]) if r.get("deleted_at") else None,
-            })
+            results.append(
+                {
+                    "id": str(r["id"]),
+                    "name": r["name"],
+                    "identifier": identifier,
+                    "priority": r.get("priority"),
+                    "state_group": r.get("state_group"),
+                    "removed_at": str(r["deleted_at"]) if r.get("deleted_at") else None,
+                }
+            )
         return results
     except Exception as e:
         log.error(f"Error listing scope-removed issues for cycle {cycle_id}: {e}")
@@ -2085,18 +2093,20 @@ async def list_cycle_issues_filtered(
             identifier = None
             if r.get("project_identifier") and r.get("sequence_id"):
                 identifier = f"{r['project_identifier']}-{r['sequence_id']}"
-            results.append({
-                "id": str(r["id"]),
-                "name": r["name"],
-                "identifier": identifier,
-                "priority": r.get("priority"),
-                "points": int(r.get("point") or 0),
-                "state_id": str(r["state_id"]) if r.get("state_id") else None,
-                "state_group": r.get("state_group"),
-                "completed_at": str(r["completed_at"]) if r.get("completed_at") else None,
-                "created_at": str(r.get("created_at")) if r.get("created_at") else None,
-                "updated_at": str(r.get("updated_at")) if r.get("updated_at") else None,
-            })
+            results.append(
+                {
+                    "id": str(r["id"]),
+                    "name": r["name"],
+                    "identifier": identifier,
+                    "priority": r.get("priority"),
+                    "points": int(r.get("point") or 0),
+                    "state_id": str(r["state_id"]) if r.get("state_id") else None,
+                    "state_group": r.get("state_group"),
+                    "completed_at": str(r["completed_at"]) if r.get("completed_at") else None,
+                    "created_at": str(r.get("created_at")) if r.get("created_at") else None,
+                    "updated_at": str(r.get("updated_at")) if r.get("updated_at") else None,
+                }
+            )
         return results
     except Exception as e:
         log.error(f"Error listing cycle issues for {cycle_id}: {e}. SQL: {sql}")

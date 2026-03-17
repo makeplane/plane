@@ -530,14 +530,16 @@ async def retrieve_chat_history(
                     attachments_object_dict[attachment.message_id] = []
 
                 attachments_dict[attachment.message_id].append(str(attachment.id))
-                attachments_object_dict[attachment.message_id].append({
-                    "id": str(attachment.id),
-                    "filename": attachment.original_filename,
-                    "file_type": attachment.file_type,
-                    "file_size": attachment.file_size,
-                    "preview_url": get_presigned_url_preview(attachment),
-                    "download_url": get_presigned_url_download(attachment),
-                })
+                attachments_object_dict[attachment.message_id].append(
+                    {
+                        "id": str(attachment.id),
+                        "filename": attachment.original_filename,
+                        "file_type": attachment.file_type,
+                        "file_size": attachment.file_size,
+                        "preview_url": get_presigned_url_preview(attachment),
+                        "download_url": get_presigned_url_download(attachment),
+                    }
+                )
 
         # Step 7: Format messages
         dialogue_list: List[Any] = []
@@ -746,10 +748,12 @@ async def retrieve_chat_history(
 
                         # Add execution information at dialogue level (only if there are actions)
                         if execution_status_info.get("actions"):
-                            qa_pair.update({
-                                "action_summary": execution_status_info.get("action_summary", {}),
-                                "actions": execution_status_info.get("actions", []),
-                            })
+                            qa_pair.update(
+                                {
+                                    "action_summary": execution_status_info.get("action_summary", {}),
+                                    "actions": execution_status_info.get("actions", []),
+                                }
+                            )
 
                         if pi_internal:
                             # Generate internal reasoning for this specific assistant message
@@ -1079,10 +1083,12 @@ async def retrieve_chat_history(
 
                         # Flatten actions and summary at the top-level for frontend compatibility (build mode)
                         if execution_status_info.get("actions"):
-                            standalone_qa_pair.update({
-                                "action_summary": execution_status_info.get("action_summary", {}),
-                                "actions": execution_status_info.get("actions", []),
-                            })
+                            standalone_qa_pair.update(
+                                {
+                                    "action_summary": execution_status_info.get("action_summary", {}),
+                                    "actions": execution_status_info.get("actions", []),
+                                }
+                            )
 
                         if pi_internal:
                             # Generate internal reasoning for this standalone user message

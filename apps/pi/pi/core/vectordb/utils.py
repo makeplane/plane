@@ -191,11 +191,13 @@ def build_issue_text_search_query(
     # Add query_description clauses only if it's not empty or None
     if query_description and query_description.strip():
         # query_description vs title matches
-        should_clauses.extend([
-            {"match": {"name": {"query": query_description, "fuzziness": "AUTO", "prefix_length": 1, "minimum_should_match": "70%"}}},
-            # query_description vs description matches
-            {"match": {"description": {"query": query_description, "fuzziness": "AUTO", "prefix_length": 1, "minimum_should_match": "70%"}}},
-        ])
+        should_clauses.extend(
+            [
+                {"match": {"name": {"query": query_description, "fuzziness": "AUTO", "prefix_length": 1, "minimum_should_match": "70%"}}},
+                # query_description vs description matches
+                {"match": {"description": {"query": query_description, "fuzziness": "AUTO", "prefix_length": 1, "minimum_should_match": "70%"}}},
+            ]
+        )
 
     # Add user_id filter if provided
     filters = [filter_query]

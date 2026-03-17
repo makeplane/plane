@@ -69,16 +69,18 @@ def distill_result(resp_sem: list, resp_text: list):
         issue_id = h["id"]
         if issue_id not in seen_issue_ids and not h["is_epic"]:  # Filtering out epic issues
             seen_issue_ids.add(issue_id)
-            duplicates.append({
-                "id": issue_id,
-                "typeId": h["type_id"],
-                "project_id": h["project_id"],
-                "sequence_id": h["sequence_id"],
-                "name": h["name"],
-                "priority": h["priority"],
-                "state_id": h["state_id"],
-                "created_by": h["created_by_id"],
-            })
+            duplicates.append(
+                {
+                    "id": issue_id,
+                    "typeId": h["type_id"],
+                    "project_id": h["project_id"],
+                    "sequence_id": h["sequence_id"],
+                    "name": h["name"],
+                    "priority": h["priority"],
+                    "state_id": h["state_id"],
+                    "created_by": h["created_by_id"],
+                }
+            )
     return duplicates
 
 

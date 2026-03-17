@@ -173,14 +173,16 @@ if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_MOD
     if _custom_key and _custom_key not in llm_id_map:
         # Deterministic UUID from model key for idempotent sync
         llm_id_map[_custom_key] = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"plane-custom-llm-{_custom_key}"))
-        LLMS_DATA.append({
-            "id": llm_id_map[_custom_key],
-            "name": settings.llm_config.CUSTOM_LLM_NAME,
-            "description": settings.llm_config.CUSTOM_LLM_DESCRIPTION,
-            "provider": settings.llm_config.CUSTOM_LLM_PROVIDER,
-            "model_key": _custom_key,
-            "max_tokens": int(settings.llm_config.CUSTOM_LLM_MAX_TOKENS),
-        })
+        LLMS_DATA.append(
+            {
+                "id": llm_id_map[_custom_key],
+                "name": settings.llm_config.CUSTOM_LLM_NAME,
+                "description": settings.llm_config.CUSTOM_LLM_DESCRIPTION,
+                "provider": settings.llm_config.CUSTOM_LLM_PROVIDER,
+                "model_key": _custom_key,
+                "max_tokens": int(settings.llm_config.CUSTOM_LLM_MAX_TOKENS),
+            }
+        )
 
 tracked_fields = ["name", "description", "provider", "model_key", "max_tokens"]
 

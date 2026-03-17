@@ -1,5 +1,5 @@
 indent-width = 4
-preview = true
+preview = false
 target-version = "py312"
 
 # Exclude third-party code

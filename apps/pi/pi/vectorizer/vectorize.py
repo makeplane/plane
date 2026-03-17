@@ -395,10 +395,12 @@ async def _create_embed_and_queue_helper(
                 doc: Dict[str, Any] = {tgt_field: vec}
                 if tgt_field == "content_semantic":
                     doc["content"] = original  # record combined text
-                bulk_ops.extend([
-                    {"update": {"_index": index_name, "_id": doc_id}},
-                    {"doc": doc},
-                ])
+                bulk_ops.extend(
+                    [
+                        {"update": {"_index": index_name, "_id": doc_id}},
+                        {"doc": doc},
+                    ]
+                )
                 queued_count += 1
 
             log.debug("Slice %s: Queued %d document updates", slice_id if slice_id is not None else "live", queued_count)

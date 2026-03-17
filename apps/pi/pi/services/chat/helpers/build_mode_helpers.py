@@ -220,10 +220,12 @@ async def run_category_router_and_persist(
     if enhanced_conversation_history and isinstance(enhanced_conversation_history, str) and enhanced_conversation_history.strip():
         custom_prompt = f"CONVERSATION HISTORY & ACTION CONTEXT:\n{enhanced_conversation_history}\n\n" + custom_prompt
 
-    router_prompt_template = ChatPromptTemplate.from_messages([
-        ("system", action_category_router_prompt),
-        ("human", "{custom_prompt}"),
-    ])
+    router_prompt_template = ChatPromptTemplate.from_messages(
+        [
+            ("system", action_category_router_prompt),
+            ("human", "{custom_prompt}"),
+        ]
+    )
 
     # For Claude models: Don't use with_structured_output as it doesn't handle markdown-wrapped JSON properly
     # Instead, get raw response and manually parse the JSON

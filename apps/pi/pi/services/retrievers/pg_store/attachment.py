@@ -86,16 +86,18 @@ async def get_attachments_with_base64_data(
         for attachment in attachments:
             base64_data = await get_attachment_base64_data(attachment)
             if base64_data:
-                attachments_data.append({
-                    "id": str(attachment.id),
-                    "filename": attachment.original_filename,
-                    "content_type": attachment.content_type,
-                    "file_type": attachment.file_type,
-                    "file_size": attachment.file_size,
-                    "base64_data": base64_data,
-                    "is_image": attachment.is_image,
-                    "is_pdf": attachment.is_pdf,
-                })
+                attachments_data.append(
+                    {
+                        "id": str(attachment.id),
+                        "filename": attachment.original_filename,
+                        "content_type": attachment.content_type,
+                        "file_type": attachment.file_type,
+                        "file_size": attachment.file_size,
+                        "base64_data": base64_data,
+                        "is_image": attachment.is_image,
+                        "is_pdf": attachment.is_pdf,
+                    }
+                )
             else:
                 log.warning(f"Failed to get base64 data for attachment {attachment.id}")
 

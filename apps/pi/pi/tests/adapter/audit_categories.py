@@ -111,15 +111,17 @@ for cat_name, (sdk_obj, adapter_patterns) in categories.items():
         for m in unmatched_adapter:
             print(f"      - {m}")
 
-    all_results.append({
-        "category": cat_name,
-        "status": status,
-        "sdk_count": len(sdk_methods),
-        "adapter_count": len(adapter_methods),
-        "matched": len(matched),
-        "missing": unmatched_sdk,
-        "phantom": unmatched_adapter,
-    })
+    all_results.append(
+        {
+            "category": cat_name,
+            "status": status,
+            "sdk_count": len(sdk_methods),
+            "adapter_count": len(adapter_methods),
+            "matched": len(matched),
+            "missing": unmatched_sdk,
+            "phantom": unmatched_adapter,
+        }
+    )
 
 # Summary
 print("\n" + "=" * 80)

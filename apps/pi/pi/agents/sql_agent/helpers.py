@@ -1527,10 +1527,12 @@ def _detect_group_by_order_by_issues_parsed(parsed: exp.Expression) -> list:
                 missing_columns = non_aggregate_columns - group_by_columns
 
                 for col_sql in missing_columns:
-                    issues.append({
-                        "column": col_sql,
-                        "issue": f"Column '{col_sql}' must appear in GROUP BY clause or be used in an aggregate function",
-                    })
+                    issues.append(
+                        {
+                            "column": col_sql,
+                            "issue": f"Column '{col_sql}' must appear in GROUP BY clause or be used in an aggregate function",
+                        }
+                    )
 
         return issues
 

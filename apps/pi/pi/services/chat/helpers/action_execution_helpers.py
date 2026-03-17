@@ -386,14 +386,16 @@ async def load_artifacts(
             else:
                 log.warning(f"Failed to create ActionArtifactVersion for edited artifact {artifact.id}")
 
-        planned_actions.append({
-            "artifact_id": str(artifact.id),
-            "tool_name": artifact.data.get("planning_data", {}).get("tool_name", ""),
-            "args": tool_args,
-            "entity_type": entity_type,
-            "action": action,
-            "version_id": version_id,  # Track version for execution status update
-        })
+        planned_actions.append(
+            {
+                "artifact_id": str(artifact.id),
+                "tool_name": artifact.data.get("planning_data", {}).get("tool_name", ""),
+                "args": tool_args,
+                "entity_type": entity_type,
+                "action": action,
+                "version_id": version_id,  # Track version for execution status update
+            }
+        )
 
     return planned_actions, original_query, conversation_context
 

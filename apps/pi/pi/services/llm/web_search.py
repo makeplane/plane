@@ -216,12 +216,14 @@ async def _anthropic_web_search(
 
     normalized_model = _normalize_anthropic_model(model)
     candidate_models = list(
-        dict.fromkeys([
-            normalized_model,
-            settings.llm_model.CLAUDE_SONNET_4_6,
-            settings.llm_model.CLAUDE_SONNET_4_5,
-            settings.llm_model.CLAUDE_SONNET_4_0,
-        ])
+        dict.fromkeys(
+            [
+                normalized_model,
+                settings.llm_model.CLAUDE_SONNET_4_6,
+                settings.llm_model.CLAUDE_SONNET_4_5,
+                settings.llm_model.CLAUDE_SONNET_4_0,
+            ]
+        )
     )
 
     system_prompt, user_prompt = _build_web_search_prompts(query, workspace_in_context, max_results)

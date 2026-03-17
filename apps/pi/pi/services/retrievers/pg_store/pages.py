@@ -448,15 +448,17 @@ async def get_page_ai_blocks_by_page_id(
         blocks_data = []
         for row in rows:
             block, feedback = row
-            blocks_data.append({
-                "block_id": str(block.id),
-                "block_type": block.block_type,
-                "content": block.content,
-                "has_content": has_content_for_block(block.block_type, block.content),
-                "feedback": feedback,  # 'positive', 'negative', or None
-                "created_at": block.created_at.isoformat() if block.created_at else None,
-                "updated_at": block.updated_at.isoformat() if block.updated_at else None,
-            })
+            blocks_data.append(
+                {
+                    "block_id": str(block.id),
+                    "block_type": block.block_type,
+                    "content": block.content,
+                    "has_content": has_content_for_block(block.block_type, block.content),
+                    "feedback": feedback,  # 'positive', 'negative', or None
+                    "created_at": block.created_at.isoformat() if block.created_at else None,
+                    "updated_at": block.updated_at.isoformat() if block.updated_at else None,
+                }
+            )
 
         return blocks_data
 
