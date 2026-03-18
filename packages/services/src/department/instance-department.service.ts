@@ -9,6 +9,35 @@ import { APIService } from "../api.service";
 
 export type DeptType = "" | "HO" | "BRX" | "OSR";
 
+export interface IDepartmentBulkImportRow {
+  name: string;
+  code?: string;
+  short_name?: string;
+  dept_code?: string;
+  dept_type?: DeptType;
+  parent_code?: string;
+  manager_email?: string;
+  sort_order?: number;
+  is_active?: boolean;
+}
+
+export interface IDepartmentBulkImportRequest {
+  departments: IDepartmentBulkImportRow[];
+}
+
+export interface IDepartmentBulkImportSkipped {
+  row_number: number;
+  name: string;
+  reason: string;
+}
+
+export interface IDepartmentBulkImportResponse {
+  created: IInstanceDepartment[];
+  skipped: IDepartmentBulkImportSkipped[];
+  total_created: number;
+  total_skipped: number;
+}
+
 export interface IInstanceDepartment {
   id: string;
   name: string;
@@ -48,6 +77,21 @@ export interface ILinkWorkspaceResult {
   managers_added: IManagerAdded[];
   async?: boolean;
   staff_count?: number;
+}
+
+export type TAutoJoinMode = "all_projects" | "bank_wide_projects";
+
+export interface IAutoJoinResult {
+  newly_added: number;
+  already_member: number;
+  total: number;
+}
+
+export interface IRejoinAllResult {
+  departments_processed: number;
+  newly_added: number;
+  already_member: number;
+  total: number;
 }
 
 export class InstanceDepartmentService extends APIService {
@@ -122,6 +166,30 @@ export class InstanceDepartmentService extends APIService {
   async unlinkWorkspace(id: string): Promise<void> {
     return this.delete(`/api/instances/departments/${id}/link-workspace/`)
       .then(() => undefined)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async autoJoin(id: string, mode: TAutoJoinMode): Promise<IAutoJoinResult> {
+    return this.post(`/api/instances/departments/${id}/auto-join/`, { mode })
+      .then((res) => res?.data as IAutoJoinResult)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async rejoinAll(mode: TAutoJoinMode): Promise<IRejoinAllResult> {
+    return this.post("/api/instances/departments/rejoin-all/", { mode })
+      .then((res) => res?.data as IRejoinAllResult)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async bulkImport(data: IDepartmentBulkImportRequest): Promise<IDepartmentBulkImportResponse> {
+    return this.post("/api/instances/departments/bulk-import/", data)
+      .then((res) => res?.data as IDepartmentBulkImportResponse)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });

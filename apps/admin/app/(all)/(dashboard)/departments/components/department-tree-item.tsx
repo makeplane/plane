@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronRight, Pencil, Trash2 } from "lucide-react";
+import { ChevronRight, Pencil, Trash2, UserPlus } from "lucide-react";
 import { cn } from "@plane/utils";
 import type { IInstanceDepartment } from "@plane/services";
 import { Button } from "@plane/propel/button";
@@ -17,6 +17,7 @@ type Props = {
   depth?: number;
   onEdit: (dept: IInstanceDepartment) => void;
   onDelete: (id: string) => void;
+  onAutoJoin: (dept: IInstanceDepartment) => void;
 };
 
 export const DepartmentTreeItem = observer(function DepartmentTreeItem({
@@ -24,6 +25,7 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
   depth = 0,
   onEdit,
   onDelete,
+  onAutoJoin,
 }: Props) {
   const [expanded, setExpanded] = useState(true);
   const hasChildren = dept.children && dept.children.length > 0;
@@ -63,6 +65,14 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
 
         {/* Actions */}
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onAutoJoin(dept)}
+            title="Auto join manager to projects"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+          </Button>
           <Button variant="secondary" size="sm" onClick={() => onEdit(dept)}>
             <Pencil className="w-3.5 h-3.5" />
           </Button>
@@ -82,6 +92,7 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
               depth={depth + 1}
               onEdit={onEdit}
               onDelete={onDelete}
+              onAutoJoin={onAutoJoin}
             />
           ))}
         </div>
