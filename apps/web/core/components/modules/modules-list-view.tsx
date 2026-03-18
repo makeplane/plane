@@ -40,7 +40,7 @@ export const ModulesListView = observer(function ModulesListView() {
   const projectModuleIds = projectId ? getProjectModuleIds(projectId.toString()) : undefined;
   const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
   const canPerformEmptyStateActions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    [EUserProjectRoles.ADMIN],
     EUserPermissionsLevel.PROJECT
   );
 

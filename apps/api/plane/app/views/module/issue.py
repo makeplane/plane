@@ -24,10 +24,12 @@ from plane.db.models import (
     Issue,
     FileAsset,
     IssueLink,
+    Module,
     ModuleIssue,
     Project,
     CycleIssue,
 )
+from plane.utils.module_activity import log_module_activity
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -243,6 +245,16 @@ class ModuleIssueViewSet(BaseViewSet):
             )
             for issue in issues
         ]
+        # Log work items added to module
+        module = Module.objects.filter(pk=module_id, project_id=project_id, workspace__slug=slug).first()
+        if module:
+            log_module_activity(
+                module=module,
+                actor=request.user,
+                verb="updated",
+                field="work_items",
+                new_value=",".join(str(i) for i in issues),
+            )
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -322,16 +334,25 @@ class ModuleIssueViewSet(BaseViewSet):
             module_id=module_id,
             issue_id=issue_id,
         )
+        mi = module_issue.first()
         issue_activity.delay(
             type="module.activity.deleted",
             requested_data=json.dumps({"module_id": str(module_id)}),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=json.dumps({"module_name": module_issue.first().module.name}),
+            current_instance=json.dumps({"module_name": mi.module.name if mi else ""}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=base_host(request=request, is_app=True),
         )
+        if mi:
+            log_module_activity(
+                module=mi.module,
+                actor=request.user,
+                verb="updated",
+                field="work_items",
+                old_value=str(issue_id),
+            )
         module_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

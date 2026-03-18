@@ -9,7 +9,6 @@ import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
@@ -44,12 +43,12 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
 
   const { getModuleById, restoreModule } = useModule();
 
-  const { t } = useTranslation();
+  
   // derived values
   const moduleDetails = getModuleById(moduleId);
   // auth
   const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT,
     workspaceSlug,
     projectId
@@ -63,6 +62,7 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
         title: "Link Copied!",
         message: "Module link copied to clipboard.",
       });
+      return undefined;
     });
   const handleOpenInNewTab = () => window.open(`/${moduleLink}`, "_blank");
 
@@ -91,11 +91,11 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
     projectId,
     moduleId,
     isEditingAllowed,
-    handleEdit: () => setEditModal(true),
-    handleArchive: () => setArchiveModuleModal(true),
-    handleRestore: handleRestoreModule,
-    handleDelete: () => setDeleteModal(true),
-    handleCopyLink: handleCopyText,
+    handleEdit: () => void setEditModal(true),
+    handleArchive: () => void setArchiveModuleModal(true),
+    handleRestore: () => void handleRestoreModule(),
+    handleDelete: () => void setDeleteModal(true),
+    handleCopyLink: () => void handleCopyText(),
     handleOpenInNewTab,
   });
 
