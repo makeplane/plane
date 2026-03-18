@@ -13,7 +13,13 @@
 
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+import type {
+  ISearchIssueResponse,
+  TIssue,
+  TIssueServiceType,
+  TWorkItemRelationsSearchResponse,
+  TWorkItemWidgets,
+} from "@plane/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { DEPENDENCY_RELATION_KEYS } from "@/components/relations";
@@ -28,6 +34,7 @@ import { IssueLinkCreateUpdateModal } from "../issue-detail/links/create-update-
 import { CreateUpdateIssueModal } from "../issue-modal/root";
 import { useSubIssueOperations } from "./sub-issues/helper";
 import { PagesMultiSelectModal } from "./pages/multi-select-modal";
+import { SubWorkItemsListModal } from "../modals/add-sub-work-items/modal";
 
 type Props = {
   workspaceSlug: string;
@@ -92,12 +99,12 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
     toggleSubIssuesModal(null);
   };
 
-  const handleExistingIssuesModalOnSubmit = async (_issue: ISearchIssueResponse[]) =>
+  const handleExistingIssuesModalOnSubmit = async (_workItems: TWorkItemRelationsSearchResponse[]) =>
     subIssueOperations.addSubIssue(
       workspaceSlug,
       projectId,
       issueId,
-      _issue.map((issue) => issue.id)
+      _workItems.map((w) => w.id)
     );
 
   const handleCreateUpdateModalClose = () => {
@@ -153,11 +160,6 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
     project_id: projectId,
   };
 
-  const existingIssuesModalSearchParams = {
-    sub_issue: true,
-    issue_id: issueCrudOperationState?.existing?.parentIssueId,
-  };
-
   // render conditions
   const shouldRenderExistingIssuesModal =
     !hideWidgets?.includes("sub-work-items") &&
@@ -194,14 +196,13 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
       )}
 
       {shouldRenderExistingIssuesModal && (
-        <ExistingIssuesListModal
-          workspaceSlug={workspaceSlug}
+        <SubWorkItemsListModal
           projectId={projectId}
           isOpen={issueCrudOperationState?.existing?.toggle}
           handleClose={handleExistingIssuesModalClose}
-          searchParams={existingIssuesModalSearchParams}
-          handleOnSubmit={handleExistingIssuesModalOnSubmit}
-          workspaceLevelToggle={isCrossProjectSubWorkItemsEnabled}
+          workItemId={issueId}
+          handleSubmit={handleExistingIssuesModalOnSubmit}
+          enableCrossProjectToggle={isCrossProjectSubWorkItemsEnabled}
         />
       )}
 

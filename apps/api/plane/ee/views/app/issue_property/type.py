@@ -371,6 +371,9 @@ class WorkspaceDefaultWorkItemTypeEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+# ---------------- Below are the endpoints for project level issue types [Old]----------------
+
+
 class WorkspaceIssueTypeEndpoint(BaseAPIView):
     permission_classes = [WorkspaceEntityPermission]
 

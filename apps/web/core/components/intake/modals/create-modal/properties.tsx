@@ -11,12 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ETabIndices } from "@plane/constants";
 import { ParentPropertyIcon } from "@plane/propel/icons";
-import type { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { TIssue, TWorkItemRelationsSearchResponse } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate, getTabIndex } from "@plane/utils";
 // components
@@ -27,7 +26,7 @@ import { IntakeStateDropdown } from "@/components/dropdowns/intake-state/dropdow
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
-import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
+import { ParentWorkItemsListModal } from "@/components/issues/modals/add-parent/modal";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
 // hooks
@@ -48,7 +47,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
   const { isMobile } = usePlatformOS();
   // states
   const [parentIssueModalOpen, setParentIssueModalOpen] = useState(false);
-  const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | undefined>(undefined);
+  const [selectedParentIssue, setSelectedParentIssue] = useState<TWorkItemRelationsSearchResponse | null>(null);
 
   const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
 
@@ -189,10 +188,10 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
                   type="button"
                   className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
                 >
-                  <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
+                  <ParentPropertyIcon className="h-3 w-3 shrink-0" />
                   <span className="whitespace-nowrap">
                     {selectedParentIssue
-                      ? `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
+                      ? `${selectedParentIssue.project.identifier}-${selectedParentIssue.sequence_id}`
                       : `Add parent`}
                   </span>
                 </button>
@@ -203,14 +202,14 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
               tabIndex={getIndex("parent_id")}
             >
               <>
-                <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueModalOpen(true)}>
+                <CustomMenu.MenuItem className="p-1!" onClick={() => setParentIssueModalOpen(true)}>
                   Change parent work item
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem
-                  className="!p-1"
+                  className="p-1!"
                   onClick={() => {
                     handleData("parent_id", "");
-                    setSelectedParentIssue(undefined);
+                    setSelectedParentIssue(null);
                   }}
                 >
                   Remove parent work item
@@ -223,12 +222,12 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
               className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
               onClick={() => setParentIssueModalOpen(true)}
             >
-              <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
+              <ParentPropertyIcon className="h-3 w-3 shrink-0" />
               <span className="whitespace-nowrap">Add parent</span>
             </button>
           )}
 
-          <ParentIssuesListModal
+          <ParentWorkItemsListModal
             isOpen={parentIssueModalOpen}
             handleClose={() => setParentIssueModalOpen(false)}
             onChange={(issue) => {
@@ -236,7 +235,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
               setSelectedParentIssue(issue);
             }}
             projectId={projectId}
-            issueId={undefined}
+            typeId={data?.type_id ?? undefined}
           />
         </div>
       )}

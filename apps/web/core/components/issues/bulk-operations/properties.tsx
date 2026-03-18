@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -35,7 +35,6 @@ import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabelSelect } from "@/components/issues/select";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
-import { useLabel } from "@/hooks/store/use-label";
 import { useProject } from "@/hooks/store/use-project";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
@@ -140,6 +139,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
           message: toastAlertMessage,
         });
         reset(defaultValues);
+        return;
       })
       .catch((error: { error_code?: E_BULK_OPERATION_ERROR_CODES }) => {
         const errorInfo = BULK_OPERATION_ERROR_DETAILS[error?.error_code as E_BULK_OPERATION_ERROR_CODES] ?? undefined;
@@ -191,7 +191,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                 value={value}
                 onChange={(val) => onChange(value === val ? undefined : val)}
                 buttonVariant="border-with-text"
-                buttonClassName="!text-tertiary"
+                buttonClassName="text-tertiary!"
                 disabled={isUpdateDisabled}
                 placement="top-start"
               />
@@ -227,7 +227,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                 onChange={(val) => onChange(val ? renderFormattedPayloadDate(val) : null)}
                 buttonVariant="border-with-text"
                 placeholder="Start date"
-                icon={<StartDatePropertyIcon className="size-3 flex-shrink-0" />}
+                icon={<StartDatePropertyIcon className="size-3 shrink-0" />}
                 disabled={isUpdateDisabled}
                 maxDate={maxDate ?? undefined}
                 placement="top-start"
@@ -245,7 +245,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                 onChange={(val) => onChange(val ? renderFormattedPayloadDate(val) : null)}
                 buttonVariant="border-with-text"
                 placeholder="Due date"
-                icon={<DueDatePropertyIcon className="size-3 flex-shrink-0" />}
+                icon={<DueDatePropertyIcon className="size-3 shrink-0" />}
                 disabled={isUpdateDisabled}
                 minDate={minDate ?? undefined}
                 placement="top-start"
@@ -339,16 +339,15 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
                   <div className={cn("h-6")}>
                     <IssueTypeDropdown
                       disabled={isUpdateDisabled}
-                      getWorkItemTypes={getProjectIssueTypes}
-                      handleIssueTypeChange={(issueTypeId) => {
+                      allWorkItemTypes={Object.values(getProjectIssueTypes(projectId, true))}
+                      handleChange={(workItemTypeId) => {
                         // Allow issue type to be null (unset issue type)
-                        const newValue = value === issueTypeId ? null : issueTypeId;
+                        const newValue = value === workItemTypeId ? null : workItemTypeId;
                         onChange(newValue);
                       }}
                       isInitializing={workItemTypeLoader === "init-loader"}
-                      issueTypeId={value}
+                      selectedWorkItemTypeId={value?.toString() || null}
                       optionTooltip={optionTooltip}
-                      projectId={projectId?.toString()}
                       variant="xs"
                     />
                   </div>

@@ -11,10 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { LayersIcon } from "@plane/propel/icons";
-import type { IIssueType } from "@plane/types";
+import type { BaseWorkItemTypeInstanceSchema, IIssueType } from "@plane/types";
 import { CustomSearchSelect, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -29,51 +30,57 @@ export type TIssueTypeOptionTooltip = {
 type TIssueTypeDropdownProps = {
   buttonClassName?: string;
   disabled?: boolean;
-  getWorkItemTypes: (projectId: string, activeOnly: boolean) => Record<string, IIssueType>;
-  handleIssueTypeChange: (value: string) => void;
+  allWorkItemTypes: IIssueType[] | BaseWorkItemTypeInstanceSchema[];
+  handleChange: (value: string) => void;
   isInitializing?: boolean;
-  issueTypeId: string | null;
+  selectedWorkItemTypeId: string | null;
   optionTooltip?: TIssueTypeOptionTooltip;
   placeholder?: string;
-  projectId: string;
   variant?: TIssueTypeDropdownVariant;
+  noChevron?: boolean;
 };
 
 export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIssueTypeDropdownProps) {
   const {
-    issueTypeId,
-    projectId,
+    selectedWorkItemTypeId,
+    allWorkItemTypes,
     disabled = false,
     variant = "sm",
     placeholder = "Work item type",
     isInitializing = false,
-    handleIssueTypeChange,
+    handleChange,
     optionTooltip,
     buttonClassName,
-    getWorkItemTypes,
+    noChevron = true,
   } = props;
   // derived values
-  const allIssueTypes = getWorkItemTypes(projectId, false);
-  const activeIssueTypes = getWorkItemTypes(projectId, true);
+  const activeWorkItemTypes = useMemo(
+    () => allWorkItemTypes.filter((workItemType) => workItemType.is_active),
+    [allWorkItemTypes]
+  );
+  const selectedWorkItemTypeDetails = useMemo(
+    () => activeWorkItemTypes.find((workItemType) => workItemType.id === selectedWorkItemTypeId),
+    [activeWorkItemTypes, selectedWorkItemTypeId]
+  );
 
   // Can be used with CustomSearchSelect as well
-  const issueTypeOptions = Object.entries(activeIssueTypes).map(([issueTypeId, issueTypeDetail]) => ({
-    value: issueTypeId,
-    query: issueTypeDetail.name ?? "",
+  const workItemTypeOptions = activeWorkItemTypes.map((typeDetails) => ({
+    value: typeDetails.id,
+    query: typeDetails.name ?? "",
     content: (
       <div className="flex w-full gap-2 items-center">
-        <IssueTypeLogo icon_props={issueTypeDetail?.logo_props?.icon} isDefault={issueTypeDetail?.is_default} />
+        <IssueTypeLogo icon_props={typeDetails?.logo_props?.icon} isDefault={typeDetails?.is_default} />
         <div
           className={cn("text-secondary truncate", {
             "text-caption-md-regular": variant === "xs",
             "text-body-sm-medium": variant === "sm",
           })}
         >
-          {issueTypeDetail.name}
+          {typeDetails.name}
         </div>
       </div>
     ),
-    tooltip: optionTooltip?.[issueTypeId] ?? undefined,
+    tooltip: optionTooltip?.[typeDetails.id ?? ""],
   }));
 
   if (isInitializing) {
@@ -86,7 +93,7 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
 
   return (
     <CustomSearchSelect
-      value={issueTypeId}
+      value={selectedWorkItemTypeId}
       label={
         <div
           className={cn("flex w-full items-center max-w-44", {
@@ -94,38 +101,38 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
             "gap-2": variant === "sm",
           })}
         >
-          {!issueTypeId && (
+          {!selectedWorkItemTypeId && (
             <LayersIcon
-              className={cn("flex-shrink-0 text-tertiary", {
+              className={cn("shrink-0 text-tertiary", {
                 "size-3": variant === "xs",
                 "size-4": variant === "sm",
               })}
             />
           )}
-          {issueTypeId && (
+          {selectedWorkItemTypeDetails && (
             <IssueTypeLogo
-              icon_props={allIssueTypes[issueTypeId]?.logo_props?.icon}
-              isDefault={allIssueTypes[issueTypeId]?.is_default}
+              icon_props={selectedWorkItemTypeDetails?.logo_props?.icon}
+              isDefault={selectedWorkItemTypeDetails?.is_default}
               size={variant}
             />
           )}
           <div
-            className={cn("truncate", issueTypeId ? "text-secondary" : "text-tertiary", {
+            className={cn("truncate", selectedWorkItemTypeId ? "text-secondary" : "text-tertiary", {
               "text-caption-md-regular": variant === "xs",
               "text-body-sm-medium": variant === "sm",
             })}
           >
-            {issueTypeId ? allIssueTypes[issueTypeId]?.name : placeholder}
+            {selectedWorkItemTypeDetails?.name ?? placeholder}
           </div>
         </div>
       }
-      options={issueTypeOptions}
-      onChange={handleIssueTypeChange}
+      options={workItemTypeOptions}
+      onChange={handleChange}
       className="w-full h-full flex"
       optionsClassName="w-44 space-y-1.5"
       buttonClassName={cn("rounded-sm text-13 py-0.5 bg-surface-1 border-[0.5px] border-subtle-1", buttonClassName)}
       disabled={disabled}
-      noChevron
+      noChevron={noChevron}
     />
   );
 });

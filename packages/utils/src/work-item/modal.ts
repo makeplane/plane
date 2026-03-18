@@ -17,11 +17,11 @@ import { DEFAULT_WORK_ITEM_FORM_VALUES, ISSUE_PRIORITIES } from "@plane/constant
 import type {
   IPartialProject,
   IProject,
-  ISearchIssueResponse,
   IState,
   IUser,
   TIssue,
   TIssuePriorities,
+  TWorkItemRelationsSearchResponse,
 } from "@plane/types";
 import { renderFormattedPayloadDate } from "../datetime";
 
@@ -41,19 +41,23 @@ export const convertWorkItemDataToSearchResponse = (
   workItem: TIssue,
   project: IPartialProject | undefined,
   state: IState | undefined
-): ISearchIssueResponse => ({
+): TWorkItemRelationsSearchResponse => ({
   id: workItem.id,
   name: workItem.name,
-  project_id: workItem.project_id ?? "",
-  project__identifier: project?.identifier ?? "",
-  project__name: project?.name ?? "",
+  project: {
+    id: workItem.project_id ?? "",
+    identifier: project?.identifier ?? "",
+    name: project?.name ?? "",
+  },
   sequence_id: workItem.sequence_id,
   type_id: workItem.type_id ?? "",
-  state__color: state?.color ?? "",
+  state: {
+    color: state?.color ?? "",
+    group: state?.group ?? "backlog",
+    name: state?.name ?? "",
+  },
   start_date: workItem.start_date,
-  state__group: state?.group ?? "backlog",
-  state__name: state?.name ?? "",
-  workspace__slug: workspaceSlug,
+  workspace_slug: workspaceSlug,
 });
 
 export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {

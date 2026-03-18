@@ -39,6 +39,7 @@ export type TWorkspaceSettingsTabs =
   | "scripts"
   | "access-tokens"
   | "work_item_types"
+  | "work_item_type_hierarchy"
   | "relations";
 
 export type TWorkspaceSettingsItem = {

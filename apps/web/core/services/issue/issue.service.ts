@@ -25,6 +25,8 @@ import type {
   TWorkItemsMetaResponse,
   TIssuesResponse,
   TIssueSubIssues,
+  TWorkItemRelationsSearchResponse,
+  TWorkItemRelationsSearchRequestParams,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
@@ -463,6 +465,32 @@ export class IssueService extends APIService {
         type: action,
       }
     )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async subWorkItemsSearch(
+    workspaceSlug: string,
+    params: TWorkItemRelationsSearchRequestParams
+  ): Promise<TWorkItemRelationsSearchResponse[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/sub-workitem-search/`, {
+      params,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async parentWorkItemSearch(
+    workspaceSlug: string,
+    params: TWorkItemRelationsSearchRequestParams
+  ): Promise<TWorkItemRelationsSearchResponse[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/parent-workitem-search/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

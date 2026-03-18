@@ -87,25 +87,29 @@ function WorkItemTypesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
 
   return (
     <SettingsContentWrapper header={<WorkItemTypesWorkspaceSettingsHeader />}>
-      <div className="flex flex-col gap-12 w-full">
+      <div className="flex flex-col w-full">
         <PageHead title={pageTitle} />
         <SettingsHeading title={t("work_item_types.label")} description={t("work_item_types.settings.description")} />
         {isWorkItemTypesEnabled ? (
-          <WorkspaceWorkItemTypesSettingsRoot workspaceSlug={workspaceSlug} />
+          <div className="w-full mt-12">
+            <WorkspaceWorkItemTypesSettingsRoot workspaceSlug={workspaceSlug} />
+          </div>
         ) : (
-          <SettingsBoxedControlItem
-            title="Turn on Work Item Types for this workspace."
-            description="This will enable configuration and control of work item types and properties at workspace level."
-            control={
-              <Tooltip
-                tooltipContent={"Work Item Types can't be disabled"}
-                disabled={!isWorkItemTypesEnabled}
-                position="left"
-              >
-                <Switch value={isWorkItemTypesEnabled} onChange={toggleWorkItemTypesFeature} />
-              </Tooltip>
-            }
-          />
+          <div className="w-full mt-6">
+            <SettingsBoxedControlItem
+              title="Turn on Work Item Types for this workspace."
+              description="This will enable configuration and control of work item types and properties at workspace level."
+              control={
+                <Tooltip
+                  tooltipContent={"Work Item Types can't be disabled"}
+                  disabled={!isWorkItemTypesEnabled}
+                  position="left"
+                >
+                  <Switch value={isWorkItemTypesEnabled} onChange={toggleWorkItemTypesFeature} />
+                </Tooltip>
+              }
+            />
+          </div>
         )}
       </div>
     </SettingsContentWrapper>

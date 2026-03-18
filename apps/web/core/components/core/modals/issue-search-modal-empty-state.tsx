@@ -15,7 +15,6 @@ import React from "react";
 import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import type { ISearchIssueResponse } from "@plane/types";
 // assets
 import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";
 import lightIssuesAsset from "@/app/assets/empty-state/search/issues-light.webp?url";
@@ -24,14 +23,17 @@ import lightSearchAsset from "@/app/assets/empty-state/search/search-light.webp?
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 
-interface EmptyStateProps {
-  issues: ISearchIssueResponse[];
+type EmptyStateProps = {
+  resultCount: number;
   searchTerm: string;
-  debouncedSearchTerm: string;
   isSearching: boolean;
+};
+
+function EmptyStateContainer({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-col items-center justify-center px-3 py-8 text-center">{children}</div>;
 }
 
-export function IssueSearchModalEmptyState({ issues, searchTerm, debouncedSearchTerm, isSearching }: EmptyStateProps) {
+export function IssueSearchModalEmptyState({ resultCount, searchTerm, isSearching }: EmptyStateProps) {
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
@@ -40,17 +42,13 @@ export function IssueSearchModalEmptyState({ issues, searchTerm, debouncedSearch
   const searchResolvedPath = resolvedTheme === "light" ? lightSearchAsset : darkSearchAsset;
   const issuesResolvedPath = resolvedTheme === "light" ? lightIssuesAsset : darkIssuesAsset;
 
-  function EmptyStateContainer({ children }: { children: React.ReactNode }) {
-    return <div className="flex flex-col items-center justify-center px-3 py-8 text-center">{children}</div>;
-  }
-
-  if (issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching) {
+  if (resultCount === 0 && searchTerm !== "" && !isSearching) {
     return (
       <EmptyStateContainer>
         <SimpleEmptyState title={t("issue_relation.empty_state.no_issues.title")} assetPath={issuesResolvedPath} />
       </EmptyStateContainer>
     );
-  } else if (issues.length === 0) {
+  } else if (resultCount === 0) {
     return (
       <EmptyStateContainer>
         <SimpleEmptyState title={t("issue_relation.empty_state.search.title")} assetPath={searchResolvedPath} />

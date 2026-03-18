@@ -24,17 +24,23 @@ from django.db.models.functions import Coalesce
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.request import Request
 
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueSerializer
 from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import Issue, IssueLink, FileAsset, CycleIssue
+from plane.db.models import Issue, IssueLink, FileAsset, CycleIssue, IssueType
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.timezone_converter import user_timezone_converter
+from plane.utils.issue_type_hierarchy import validate_parent_child_hierarchy
 from collections import defaultdict
 from plane.utils.host import base_host
 from plane.utils.order_queryset import order_issue_queryset
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.app.serializers.sub_workitem import WorkitemSearchSerializer
+from plane.utils.issue_search import search_issues
 
 
 class SubIssuesEndpoint(BaseAPIView):
@@ -180,7 +186,7 @@ class SubIssuesEndpoint(BaseAPIView):
 
     # Assign multiple sub issues
     def post(self, request, slug, project_id, issue_id):
-        parent_issue = Issue.issue_objects.get(pk=issue_id)
+        parent_issue = Issue.issue_objects.select_related("type").get(pk=issue_id)
         sub_issue_ids = request.data.get("sub_issue_ids", [])
 
         if not len(sub_issue_ids):
@@ -189,7 +195,20 @@ class SubIssuesEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
+        sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids).select_related("type")
+
+        # Check heirarchy if flag is enabled
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.WORKITEM_TYPE_HIERARCHY, user_id=request.user.id, slug=slug
+        ):
+            # Validate type hierarchy for each sub-issue
+            for sub_issue in sub_issues:
+                is_valid, error_msg = validate_parent_child_hierarchy(parent_issue, sub_issue)
+                if not is_valid:
+                    return Response(
+                        {"error": error_msg},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
         for sub_issue in sub_issues:
             sub_issue.parent = parent_issue
@@ -231,3 +250,188 @@ class SubIssuesEndpoint(BaseAPIView):
             {"sub_issues": sub_work_item_data, "state_distribution": result},
             status=status.HTTP_200_OK,
         )
+
+
+class SubWorkitemSearchEndpoint(BaseAPIView):
+    """Search for potential sub-workitems based on type hierarchy levels."""
+
+    def get(self, request: Request, slug: str):
+        type_id = request.GET.get("type_id", None)
+        workitem_id = request.GET.get("workitem_id", None)
+        project_id = request.GET.get("project_id", None)
+
+        # Default to level 0 if no type_id or workitem_id is provided, which means we are looking for parent workitems
+        # for a level 0 workitem
+        current_level = 0
+
+        # Keep track of the current workitem's parent ID to exclude it from potential sub-workitems 
+        # to prevent circular references
+        workitem_parent_id = None
+
+        # Determine the current workitem's type level based on provided type_id or workitem_id
+        if type_id:
+            issue_type = IssueType.objects.filter(id=type_id, workspace__slug=slug).first()
+            if not issue_type:
+                return Response(
+                    {"error": "Issue type not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            current_level = issue_type.level
+
+        if workitem_id:
+            # Get the current workitem with its type
+            workitem = (
+                Issue.issue_and_epics_objects.filter(
+                    workspace__slug=slug,
+                    id=workitem_id,
+                )
+                .select_related("type")
+                .first()
+            )
+            workitem_parent_id = workitem.parent_id if workitem else None
+
+            if not workitem:
+                return Response(
+                    {"error": "Workitem not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            # Determine the current workitem's type level
+            current_level = 0 if not workitem.type_id else workitem.type.level
+
+        # Get type IDs that are valid for sub-workitems
+        if current_level == 0:
+            # Level 0 workitems can only have level 0 sub-workitems
+            valid_type_ids = IssueType.objects.filter(
+                workspace__slug=slug,
+                level=current_level,
+            ).values_list("id", flat=True)
+        else:
+            # Higher level workitems can have sub-workitems with lower levels
+            valid_type_ids = IssueType.objects.filter(
+                workspace__slug=slug,
+                level=(current_level - 1),
+            ).values_list("id", flat=True)
+
+        # Build the base queryset
+        issues = (
+            Issue.issue_and_epics_objects.filter(
+                workspace__slug=slug,
+            )
+            .filter(type_id__in=valid_type_ids)
+            .select_related("project", "state", "workspace")
+            .exclude(id=workitem_id)
+            .exclude(parent_id=workitem_id)
+            .accessible_to(request.user.id, slug)
+            .distinct()
+            .order_by("-last_activity_at")
+        )
+
+        if project_id:
+            issues = issues.filter(project_id=project_id)
+
+        # Exclude the current workitem's parent to prevent circular references
+        if workitem_parent_id:
+            issues = issues.exclude(id=workitem_parent_id)
+
+        # Apply search query
+
+        query = request.query_params.get("search", "").strip('"')
+        if query:
+            issues = search_issues(query, issues)
+
+        serializer = WorkitemSearchSerializer(issues[:30], many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ParentWorkitemSearchEndpoint(BaseAPIView):
+    """Search for potential parent workitems based on type hierarchy levels."""
+
+    def get(self, request: Request, slug: str):
+        type_id = request.GET.get("type_id", None)
+        workitem_id = request.GET.get("workitem_id", None)
+        project_id = request.GET.get("project_id", None)
+
+        # Default to level 0 if no type_id or workitem_id is provided, which means we are looking for parent workitems
+        # for a level 0 workitem
+        current_level = 0
+
+        # Keep track of the current workitem's children IDs to exclude them from potential parent workitems
+        children_workitem_ids = []
+
+        # Determine the current workitem's type level based on provided type_id or workitem_id
+        if type_id:
+            issue_type = IssueType.objects.filter(id=type_id, workspace__slug=slug).first()
+            if not issue_type:
+                return Response(
+                    {"error": "Issue type not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            current_level = issue_type.level
+
+        if workitem_id:
+            # Get the current workitem with its type
+            workitem = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    id=workitem_id,
+                )
+                .select_related("type")
+                .first()
+            )
+
+            if not workitem:
+                return Response(
+                    {"error": "Workitem not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            # Get the current workitem's children IDs to exclude them from potential parent workitems
+            children_workitem_ids = list(
+                Issue.issue_objects.filter(parent_id=workitem_id).values_list("id", flat=True)
+            )
+
+            # Determine the current workitem's type level
+            current_level = 0 if not workitem.type_id else workitem.type.level
+
+        # Get type IDs that are valid for parent workitems
+        valid_type_ids = IssueType.objects.filter(
+            workspace__slug=slug,
+        )
+
+        # Level 0 workitems cannot have parent workitems, so we only consider types for levels greater than 0
+        if current_level == 0:
+            valid_type_ids = valid_type_ids.filter(Q(level=current_level) | Q(level=current_level + 1)).values_list(
+                "id", flat=True
+            )
+        else:
+            valid_type_ids = valid_type_ids.filter(level=current_level + 1).values_list("id", flat=True)
+
+        # Higher level workitems can have parent workitems with higher levels
+        valid_type_ids = valid_type_ids.values_list("id", flat=True)
+
+        # Build the base queryset
+        issues = (
+            Issue.issue_and_epics_objects.filter(
+                workspace__slug=slug,
+                type_id__in=valid_type_ids,
+            )
+            .select_related("project", "state", "workspace")
+            .exclude(id=workitem_id)
+            .exclude(id__in=children_workitem_ids)
+            .accessible_to(request.user.id, slug)
+            .order_by("-last_activity_at")
+        )
+
+        if project_id:
+            issues = issues.filter(project_id=project_id)
+
+        # Apply search query
+        query = request.query_params.get("search", "").strip('"')
+        if query:
+            issues = search_issues(query, issues)
+
+        serializer = WorkitemSearchSerializer(issues[:30], many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+

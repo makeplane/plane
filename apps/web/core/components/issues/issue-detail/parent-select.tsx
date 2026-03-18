@@ -27,7 +27,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // local imports
-import { ParentIssuesListModal } from "../parent-issues-list-modal";
+import { ParentWorkItemsListModal } from "../modals/add-parent/modal";
 
 type TIssueParentSelect = {
   className?: string;
@@ -75,12 +75,12 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
 
   return (
     <>
-      <ParentIssuesListModal
+      <ParentWorkItemsListModal
         projectId={projectId}
-        issueId={issueId}
+        workItemId={issueId}
         isOpen={isParentIssueModalOpen === issueId}
         handleClose={() => toggleParentIssueModal(null)}
-        onChange={(issue: any) => handleParentIssue(issue?.id)}
+        onChange={(issue) => handleParentIssue(issue?.id)}
       />
       <button
         type="button"
@@ -132,11 +132,11 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
         )}
         {!disabled && (
           <span
-            className={cn("p-1 flex-shrink-0 opacity-0 group-hover:opacity-100", {
+            className={cn("p-1 shrink-0 opacity-0 group-hover:opacity-100", {
               "text-placeholder": !issue.parent_id && !parentIssue,
             })}
           >
-            <EditIcon className="h-2.5 w-2.5 flex-shrink-0" />
+            <EditIcon className="h-2.5 w-2.5 shrink-0" />
           </span>
         )}
       </button>

@@ -77,7 +77,6 @@ export type WorkItemFormProps = {
   handleDuplicateIssueModal: (isOpen: boolean) => void;
   handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
-  convertToWorkItem?: boolean;
   showActionButtons?: boolean;
   dataResetProperties?: any[];
   isTypeSelectDisabled?: boolean;
@@ -106,7 +105,6 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
     handleDuplicateIssueModal,
     handleDraftAndClose,
     isProjectSelectionDisabled = false,
-    convertToWorkItem = false,
     showActionButtons = true,
     dataResetProperties = [],
     isTypeSelectDisabled = false,
@@ -353,7 +351,7 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
     setSelectedParentIssue(
       convertWorkItemDataToSearchResponse(workspaceSlug?.toString(), issue, projectDetails, stateDetails)
     );
-  }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById]);
+  }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById, setSelectedParentIssue, workspaceSlug]);
 
   // executing this useEffect when isDirty changes
   useEffect(() => {
@@ -532,7 +530,6 @@ export const WorkItemFormRoot = observer(function IssueFormRoot(props: WorkItemF
                   isDraft={isDraft}
                   handleFormChange={handleFormChange}
                   setSelectedParentIssue={setSelectedParentIssue}
-                  convertToWorkItem={convertToWorkItem}
                 />
               </div>
               {showActionButtons && (

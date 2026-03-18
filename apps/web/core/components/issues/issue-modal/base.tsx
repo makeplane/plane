@@ -455,7 +455,6 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
     isDuplicateModalOpen: isDuplicateModalOpen,
     handleDuplicateIssueModal: handleDuplicateIssueModal,
     isProjectSelectionDisabled: isProjectSelectionDisabled,
-    convertToWorkItem: isConversionOperation,
     isTypeSelectDisabled: isTypeSelectDisabled,
   };
 
@@ -464,7 +463,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       isOpen={isOpen}
       position={EModalPosition.TOP}
       width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
-      className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"
+      className="bg-transparent! rounded-lg shadow-none transition-[width] ease-linear"
     >
       {withDraftIssueWrapper ? (
         <WithDraftWrapperWorkItemForm

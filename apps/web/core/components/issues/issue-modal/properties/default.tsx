@@ -19,7 +19,7 @@ import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/con
 import { useTranslation } from "@plane/i18n";
 import { ParentPropertyIcon } from "@plane/propel/icons";
 // types
-import type { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { TIssue, TWorkItemRelationsSearchResponse } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
@@ -31,7 +31,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
-import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
+import { ParentWorkItemsListModal } from "@/components/issues/modals/add-parent/modal";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
 // hooks
@@ -47,14 +47,13 @@ type TIssueDefaultPropertiesProps = {
   id: string | undefined;
   projectId: string | null;
   workspaceSlug: string;
-  selectedParentIssue: ISearchIssueResponse | null;
+  selectedParentIssue: TWorkItemRelationsSearchResponse | null;
   startDate: string | null;
   targetDate: string | null;
   parentId: string | null;
   isDraft: boolean;
   handleFormChange: () => void;
-  setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
-  convertToWorkItem?: boolean;
+  setSelectedParentIssue: (issue: TWorkItemRelationsSearchResponse) => void;
 };
 
 export const IssueDefaultProperties = observer(function IssueDefaultProperties(props: TIssueDefaultPropertiesProps) {
@@ -70,7 +69,6 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
     isDraft,
     handleFormChange,
     setSelectedParentIssue,
-    convertToWorkItem = false,
   } = props;
   // states
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
@@ -284,11 +282,11 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                 type="button"
                 className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-caption-sm-regular hover:bg-layer-1"
               >
-                {selectedParentIssue?.project_id && (
+                {selectedParentIssue?.project && (
                   <IssueIdentifier
-                    projectId={selectedParentIssue.project_id}
+                    projectId={selectedParentIssue.project.id}
                     issueTypeId={selectedParentIssue.type_id}
-                    projectIdentifier={selectedParentIssue?.project__identifier}
+                    projectIdentifier={selectedParentIssue?.project.identifier}
                     issueSequenceId={selectedParentIssue.sequence_id}
                     size="xs"
                   />
@@ -301,7 +299,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
             tabIndex={getIndex("parent_id")}
           >
             <>
-              <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
+              <CustomMenu.MenuItem className="p-1!" onClick={() => setParentIssueListModalOpen(true)}>
                 {t("change_parent_issue")}
               </CustomMenu.MenuItem>
               <Controller
@@ -309,7 +307,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                 name="parent_id"
                 render={({ field: { onChange } }) => (
                   <CustomMenu.MenuItem
-                    className="!p-1"
+                    className="p-1!"
                     onClick={() => {
                       onChange(null);
                       handleFormChange();
@@ -327,30 +325,30 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
             className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-caption-sm-regular hover:bg-layer-1"
             onClick={() => setParentIssueListModalOpen(true)}
           >
-            <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
+            <ParentPropertyIcon className="h-3 w-3 shrink-0" />
             <span className="whitespace-nowrap">{t("add_parent")}</span>
           </button>
         )}
       </div>
-      <Controller
-        control={control}
-        name="parent_id"
-        render={({ field: { onChange } }) => (
-          <ParentIssuesListModal
-            isOpen={parentIssueListModalOpen}
-            handleClose={() => setParentIssueListModalOpen(false)}
-            onChange={(issue) => {
-              onChange(issue.id);
-              handleFormChange();
-              setSelectedParentIssue(issue);
-            }}
-            projectId={projectId ?? undefined}
-            issueId={isDraft ? undefined : id}
-            searchEpic
-            convertToWorkItem={convertToWorkItem}
-          />
-        )}
-      />
+      {projectId && (
+        <Controller
+          control={control}
+          name="parent_id"
+          render={({ field: { onChange } }) => (
+            <ParentWorkItemsListModal
+              isOpen={parentIssueListModalOpen}
+              handleClose={() => setParentIssueListModalOpen(false)}
+              onChange={(workItem) => {
+                onChange(workItem.id);
+                handleFormChange();
+                setSelectedParentIssue(workItem);
+              }}
+              projectId={projectId}
+              workItemId={isDraft ? undefined : id}
+            />
+          )}
+        />
+      )}
     </div>
   );
 });

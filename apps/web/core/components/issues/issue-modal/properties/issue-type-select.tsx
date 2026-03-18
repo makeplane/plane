@@ -110,7 +110,7 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
         <>
           {renderChevron && (
             <div className="flex items-center gap-2">
-              <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0 text-tertiary" aria-hidden="true" />
+              <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-tertiary" aria-hidden="true" />
             </div>
           )}
           <Controller<T>
@@ -124,10 +124,10 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
                 {projectId && (
                   <IssueTypeDropdown
                     disabled={disabled}
-                    getWorkItemTypes={getProjectIssueTypes}
-                    handleIssueTypeChange={(issueTypeId) => {
+                    allWorkItemTypes={Object.values(getProjectIssueTypes(projectId, true))}
+                    handleChange={(workItemTypeId) => {
                       // If it's not set as required, then allow issue type to be null (unset issue type)
-                      const newTypeId = !isRequired && value === issueTypeId ? null : issueTypeId;
+                      const newTypeId = !isRequired && value === workItemTypeId ? null : workItemTypeId;
 
                       // Show confirmation modal for existing issues when type is changing
                       // Only show if: existing issue (has ID), currently has a type, and type is actually changing
@@ -140,9 +140,8 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Parti
                       applyTypeChange(newTypeId, onChange);
                     }}
                     isInitializing={workItemTypeLoader === "init-loader"}
-                    issueTypeId={value?.toString() || null}
+                    selectedWorkItemTypeId={value?.toString() || null}
                     placeholder={placeholder}
-                    projectId={projectId}
                     variant={variant}
                   />
                 )}

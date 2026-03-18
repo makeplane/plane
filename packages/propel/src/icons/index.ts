@@ -50,6 +50,7 @@ export * from "./full-screen-panel-icon";
 export * from "./github-icon";
 export * from "./group-syncing-icon";
 export * from "./helpers";
+export * from "./hierarchy-icon";
 export * from "./icon-wrapper";
 export * from "./icon";
 export * from "./in-progress-icon";

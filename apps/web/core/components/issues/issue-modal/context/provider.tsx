@@ -18,7 +18,12 @@ import { mutate } from "swr";
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import type { ISearchIssueResponse, TIssue, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import type {
+  TIssue,
+  TIssuePropertyValueErrors,
+  TIssuePropertyValues,
+  TWorkItemRelationsSearchResponse,
+} from "@plane/types";
 import { EWorkItemConversionType, EWorkItemTypeEntity } from "@plane/types";
 import {
   extractAndSanitizeCustomPropertyValuesFormData,
@@ -66,7 +71,7 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
   // states
   const [workItemTemplateId, setWorkItemTemplateId] = useState<string | null>(templateId ?? null);
   const [isApplyingTemplate, setIsApplyingTemplate] = useState<boolean>(false);
-  const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
+  const [selectedParentIssue, setSelectedParentIssue] = useState<TWorkItemRelationsSearchResponse | null>(null);
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // plane hooks
@@ -212,6 +217,7 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
         setIssuePropertyValues({
           ...getPropertiesDefaultValues(issueType?.activeProperties ?? []),
         });
+        return;
       })
       .catch(() => {
         setToast({
@@ -375,14 +381,14 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
   const handleConvert = async (workspaceSlug: string, data: Partial<TIssue> | undefined) => {
     if (data?.id && data?.project_id) {
       await convertWorkItem(workspaceSlug.toString(), data.project_id, data?.id, EWorkItemConversionType.WORK_ITEM)
-        .then(() => {
+        .then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("success"),
             message: "Epic converted to work item successfully",
             actionItems: <WorkItemConversionToastActionItem workspaceSlug={workspaceSlug} workItemId={data?.id} />,
-          });
-        })
+          })
+        )
         .catch((error) => {
           console.error(error);
           setToast({

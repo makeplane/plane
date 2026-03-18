@@ -16,6 +16,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { WorkspaceWorkItemTypesService } from "@plane/services";
 import type {
+  BaseWorkItemTypeInstanceSchema,
   EUserWorkspaceRoles,
   TUserPermissions,
   TWorkItemTypeResponse,
@@ -73,6 +74,25 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
       return ids.map((id) => this.args.get(id)).filter((type) => type !== undefined);
     }
   );
+
+  getWorkItemTypesByWorkspaceSlugGroupedByLevel: WorkspaceWorkItemTypesStoreSchema["getWorkItemTypesByWorkspaceSlugGroupedByLevel"] =
+    computedFn((workspaceSlug) => {
+      const types = this.getWorkItemTypesByWorkspaceSlug(workspaceSlug);
+      const grouped = types.reduce((acc, type) => {
+        acc.set(type.level, [...(acc.get(type.level) ?? []), type]);
+        return acc;
+      }, new Map<number, BaseWorkItemTypeInstanceSchema[]>());
+
+      if (grouped.size === 0) return grouped;
+
+      const maxLevel = Math.max(...grouped.keys());
+      // Build result in descending order from maxLevel to 0, filling missing levels with empty arrays
+      const result = new Map<number, BaseWorkItemTypeInstanceSchema[]>();
+      for (let level = maxLevel; level >= 0; level--) {
+        result.set(level, grouped.get(level) ?? []);
+      }
+      return result;
+    });
 
   getDefaultWorkItemTypeId: WorkspaceWorkItemTypesStoreSchema["getDefaultWorkItemTypeId"] = computedFn(
     (workspaceSlug) => {

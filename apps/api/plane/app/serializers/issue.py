@@ -48,8 +48,9 @@ from plane.db.models import (
     ReleaseWorkItem,
     Release,
 )
-from plane.ee.models import Customer, TeamspaceMember, TeamspaceProject
+from plane.ee.models import Customer, TeamspaceMember, TeamspaceProject, WorkspaceFeature
 from plane.payment.flags.flag import FeatureFlag
+from plane.utils.issue_type_hierarchy import validate_type_hierarchy
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.utils.content_validator import (
     validate_binary_data,
@@ -241,15 +242,64 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("State is not valid please pass a valid state_id")
 
-        # Check parent issue is from the same workspace (cross-project sub-issues are allowed)
-        if (
-            attrs.get("parent")
-            and not Issue.objects.filter(
-                workspace__slug=self.context.get("slug"),
-                pk=attrs.get("parent").id,
-            ).exists()
-        ):
-            raise serializers.ValidationError("Parent is not valid issue_id please pass a valid issue_id")
+
+        workspace_feature = WorkspaceFeature.objects.filter(
+            workspace__slug=self.context.get("slug"),
+        ).first()
+
+        hierarchy_enabled = workspace_feature.is_workitem_hierarchy_enabled if workspace_feature else False
+        is_workitem_heirarchy_enabled = check_workspace_feature_flag(
+                feature_key=FeatureFlag.WORKITEM_TYPE_HIERARCHY,
+                user_id=self.context.get("user_id"),
+                slug=self.context.get("slug"),
+        ) and hierarchy_enabled
+
+        # Check parent issue is from workspace as it can be cross workspace
+        if attrs.get("type") and self.instance is not None:
+            parent_level = self.instance.parent.type.level if self.instance.parent and self.instance.parent.type else 0
+            child_level = Issue.objects.filter(
+                parent=self.instance
+            ).select_related("type").first()
+            child_level = child_level.type.level if child_level and child_level.type else 0
+
+            # Validate type hierarchy with parent
+            is_valid, error_msg = validate_type_hierarchy(parent_level, attrs["type"].level)
+            if not is_valid:
+                raise serializers.ValidationError(error_msg)    
+            
+            # If the issue type is being updated, also validate the type hierarchy with its children
+            is_valid, error_msg = validate_type_hierarchy(attrs["type"].level, child_level)
+            if not is_valid:
+                raise serializers.ValidationError(error_msg)
+
+        if attrs.get("parent"):
+            parent_issue = (
+                Issue.objects.filter(
+                    workspace__slug=self.context.get("slug"),
+                    pk=attrs.get("parent").id,
+                )
+                .select_related("type")
+                .first()
+            )
+
+            if not parent_issue:
+                raise serializers.ValidationError("Parent is not valid issue_id please pass a valid issue_id")
+        
+            # Check workitem hierarchy
+            if is_workitem_heirarchy_enabled:                    
+                # Validate type hierarchy with parent
+                child_type = attrs.get("type") if attrs.get("type") else self.instance.type
+                if not child_type:
+                    child_type = IssueType.objects.filter(
+                        workspace__slug=self.context.get("slug"),
+                    ).order_by("level").first()
+
+                child_level = child_type.level if child_type else 0
+                parent_level = parent_issue.type.level if parent_issue.type_id and parent_issue.type else 0
+
+                is_valid, error_msg = validate_type_hierarchy(parent_level, child_level)
+                if not is_valid:
+                    raise serializers.ValidationError(error_msg)
 
         if (
             attrs.get("estimate_point")

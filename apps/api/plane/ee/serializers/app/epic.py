@@ -45,6 +45,8 @@ from plane.app.serializers import (
     IssueFlatSerializer,
     DynamicBaseSerializer,
 )
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
 
 ##TODO: Find a better way to write this serializer
@@ -106,6 +108,38 @@ class EpicCreateSerializer(BaseSerializer):
             and data.get("start_date", None) > data.get("target_date", None)
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
+
+        # NOTE: we may need this in future because of removal of epics
+        # Adding it for now to avoid issues in case of wrong parent id being sent in request
+        if check_workspace_feature_flag(
+            slug=self.context.get("slug"),
+            user_id=self.context.get("user_id"),
+            feature_key=FeatureFlag.WORKITEM_TYPE_HIERARCHY,
+        ):
+            # Validate parent-child type hierarchy
+            if data.get("parent"):
+                from plane.utils.issue_type_hierarchy import validate_type_hierarchy
+
+                parent_issue = (
+                    Issue.objects.filter(
+                        pk=data["parent"].id,
+                    )
+                    .select_related("type")
+                    .first()
+                )
+
+                if not parent_issue:
+                    raise serializers.ValidationError("Parent issue does not exist.")
+
+                if parent_issue:
+                    epic_type = IssueType.objects.filter(id=self.context.get("type_id")).first()
+                    child_level = epic_type.level if epic_type else 0
+                    parent_level = parent_issue.type.level if parent_issue.type_id and parent_issue.type else 0
+
+                    is_valid, error_msg = validate_type_hierarchy(parent_level, child_level)
+                    if not is_valid:
+                        raise serializers.ValidationError(error_msg)
+
         return data
 
     def create(self, validated_data):

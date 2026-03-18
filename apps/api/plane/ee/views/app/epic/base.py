@@ -234,6 +234,8 @@ class EpicViewSet(BaseViewSet):
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
                 "type_id": epic.id,
+                "slug": slug,
+                "user_id": request.user.id,
             },
         )
 
@@ -473,7 +475,18 @@ class EpicViewSet(BaseViewSet):
         current_instance = json.dumps(EpicDetailSerializer(epic).data, cls=DjangoJSONEncoder)
 
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
-        serializer = EpicCreateSerializer(epic, data=request.data, partial=True)
+        serializer = EpicCreateSerializer(
+            epic,
+            data=request.data,
+            partial=True,
+            context={
+                "slug": slug,
+                "user_id": request.user.id,
+                "project_id": project_id,
+                "workspace_id": epic.workspace_id,
+                "type_id": epic.type_id,
+            },
+        )
         if serializer.is_valid():
             serializer.save()
 

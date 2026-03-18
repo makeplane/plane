@@ -44,6 +44,9 @@ from plane.app.views import (
     IssueRelationViewSet,  # deprecated
     WorkItemRelationDependencyViewSet,
     WorkItemRelationRelationViewSet,
+    # hierarchy search endpoints
+    SubWorkitemSearchEndpoint,
+    ParentWorkitemSearchEndpoint,
     IssueVoteEndpoint,
 )
 
@@ -333,4 +336,22 @@ issue_subscriber_urlpatterns = [
     ),
 ]
 
-urlpatterns = all_urlpatterns + issue_subscriber_urlpatterns
+
+workitem_search_urlpatterns = [
+    # Sub-workitem Search Endpoint
+    path(
+        "workspaces/<str:slug>/sub-workitem-search/",
+        SubWorkitemSearchEndpoint.as_view(),
+        name="sub-workitem-search",
+    ),
+    # End Sub-workitem Search Endpoint
+    # Parent Workitem Search Endpoint
+    path(
+        "workspaces/<str:slug>/parent-workitem-search/",
+        ParentWorkitemSearchEndpoint.as_view(),
+        name="parent-workitem-search",
+    ),
+    # End Parent Workitem Search Endpoint
+]
+
+urlpatterns = all_urlpatterns + issue_subscriber_urlpatterns + workitem_search_urlpatterns

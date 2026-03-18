@@ -134,6 +134,8 @@ class FeatureFlag(Enum):
     WORKITEM_TYPE_FORMULA_FIELD = "WORKITEM_TYPE_FORMULA_FIELD"
     # Workspace work item types
     WORKSPACE_WORK_ITEM_TYPES = "WORKSPACE_WORK_ITEM_TYPES"
+    # Hierarchy
+    WORKITEM_TYPE_HIERARCHY = "WORKITEM_TYPE_HIERARCHY"
     # Custom relations
     CUSTOM_RELATIONS = "CUSTOM_RELATIONS"
     # Manage Issue Subscribers

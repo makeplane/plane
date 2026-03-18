@@ -7528,4 +7528,40 @@ the way you want to from the sources you specify.`,
     placeholder: 'Type a query and press "ENTER" to filter...',
     error: "Error submitting query. Please check and try again.",
   },
+  work_item_type_hierarchy: {
+    settings: {
+      title: "Hierarchy",
+      description:
+        "Set up hierarchy levels to organize your work. Each level defines a parent relationship with the item directly above it and child relationship with the item directly below it. ",
+      sidebar_label: "Hierarchy",
+      enable_control: {
+        title: "Enable hierarchy",
+        description: "Create parent-child relationships between different work item types.",
+        tooltip: "Once ",
+      },
+      workspace_work_item_types_disabled_banner: {
+        content: "Define Work Item Types first to create a new hierarchy.",
+        cta: "Work item types settings",
+      },
+    },
+    levels: {
+      add_level_button: "Add hierarchy level",
+      empty_level_placeholder: "Add a work item type to level {level}",
+      empty_level_unauthorized: "No work item types found in this level.",
+      zero_level_description: "By default, all work item types are at level 0 until they are assigned to a hierarchy.",
+    },
+    add_level_modal: {
+      title: "Add hierarchy level",
+      description: "Add a new hierarchy level to the work item type.",
+      work_item_type: "Work item type",
+      not_found_toast: {
+        title: "Error",
+        message: "Work item type not found.",
+      },
+      error_toast: {
+        title: "Error",
+        message: "Failed to add work item type to hierarchy.",
+      },
+    },
+  },
 } as const;

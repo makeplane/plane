@@ -17,7 +17,12 @@ import { mutate } from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import type { ISearchIssueResponse, TIssue, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import type {
+  TIssue,
+  TIssuePropertyValueErrors,
+  TIssuePropertyValues,
+  TWorkItemRelationsSearchResponse,
+} from "@plane/types";
 import { EIssueServiceType, EWorkItemConversionType, EWorkItemTypeEntity } from "@plane/types";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // components
@@ -48,7 +53,7 @@ export const EpicModalProvider = observer(function EpicModalProvider(props: TEpi
   // states
   const [workItemTemplateId, setWorkItemTemplateId] = useState<string | null>(null);
   const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
-  const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
+  const [selectedParentIssue, setSelectedParentIssue] = useState<TWorkItemRelationsSearchResponse | null>(null);
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // plane hooks
@@ -154,6 +159,7 @@ export const EpicModalProvider = observer(function EpicModalProvider(props: TEpi
         setIssuePropertyValues({
           ...getPropertiesDefaultValues(issueType?.activeProperties ?? []),
         });
+        return;
       })
       .catch(() => {
         setToast({
@@ -170,14 +176,14 @@ export const EpicModalProvider = observer(function EpicModalProvider(props: TEpi
   const handleConvert = async (workspaceSlug: string, data: Partial<TIssue> | undefined) => {
     if (data?.id && data?.project_id) {
       await convertWorkItem(workspaceSlug.toString(), data.project_id, data?.id, EWorkItemConversionType.EPIC)
-        .then(() => {
+        .then(() =>
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("success"),
             message: "Work item converted to epic successfully",
             actionItems: <WorkItemConversionToastActionItem workspaceSlug={workspaceSlug} workItemId={data?.id} />,
-          });
-        })
+          })
+        )
         .catch((error) => {
           console.error(error);
           setToast({

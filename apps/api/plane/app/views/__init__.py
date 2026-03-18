@@ -309,4 +309,6 @@ from .issue.relation_definition import WorkItemRelationDefinitionViewSet
 # work item relation
 from .issue.relation import IssueRelationViewSet, WorkItemRelationDependencyViewSet, WorkItemRelationRelationViewSet
 
+# hierarchy search endpoints
+from .issue.sub_issue import SubWorkitemSearchEndpoint, ParentWorkitemSearchEndpoint
 from .issue.vote import IssueVoteEndpoint

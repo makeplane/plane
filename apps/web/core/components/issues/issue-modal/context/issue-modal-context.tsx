@@ -16,7 +16,12 @@ import { createContext } from "react";
 import type { UseFormReset, UseFormWatch } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import type { ISearchIssueResponse, TIssue, TIssuePropertyValues, TIssuePropertyValueErrors } from "@plane/types";
+import type {
+  TIssue,
+  TIssuePropertyValues,
+  TIssuePropertyValueErrors,
+  TWorkItemRelationsSearchResponse,
+} from "@plane/types";
 import type { TIssueFields } from "@/components/issues/issue-modal/properties/issue-type-select";
 
 export type TPropertyValuesValidationProps = {
@@ -70,8 +75,8 @@ export type TIssueModalContext = {
   setWorkItemTemplateId: React.Dispatch<React.SetStateAction<string | null>>;
   isApplyingTemplate: boolean;
   setIsApplyingTemplate: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedParentIssue: ISearchIssueResponse | null;
-  setSelectedParentIssue: React.Dispatch<React.SetStateAction<ISearchIssueResponse | null>>;
+  selectedParentIssue: TWorkItemRelationsSearchResponse | null;
+  setSelectedParentIssue: React.Dispatch<React.SetStateAction<TWorkItemRelationsSearchResponse | null>>;
   issuePropertyValues: TIssuePropertyValues;
   setIssuePropertyValues: React.Dispatch<React.SetStateAction<TIssuePropertyValues>>;
   issuePropertyValueErrors: TIssuePropertyValueErrors;

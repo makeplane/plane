@@ -201,16 +201,12 @@ export function ExistingIssuesListModal(props: Props) {
           {workspaceLevelToggle && (
             <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
               <div
-                className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-11 ${
+                className={`flex shrink-0 cursor-pointer items-center gap-1 text-11 ${
                   isWorkspaceLevel ? "text-primary" : "text-secondary"
                 }`}
               >
                 <Switch value={isWorkspaceLevel} onChange={() => setIsWorkspaceLevel((prevData) => !prevData)} />
-                <button
-                  type="button"
-                  onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                  className="flex-shrink-0"
-                >
+                <button type="button" onClick={() => setIsWorkspaceLevel((prevData) => !prevData)} className="shrink-0">
                   {t("common.workspace_level")}
                 </button>
               </div>
@@ -243,9 +239,8 @@ export function ExistingIssuesListModal(props: Props) {
             <>
               {filteredIssues.length === 0 ? (
                 <IssueSearchModalEmptyState
-                  debouncedSearchTerm={debouncedSearchTerm}
                   isSearching={isSearching}
-                  issues={filteredIssues}
+                  resultCount={filteredIssues.length}
                   searchTerm={searchTerm}
                 />
               ) : (
@@ -268,12 +263,12 @@ export function ExistingIssuesListModal(props: Props) {
                         <div className="flex items-center gap-2 truncate">
                           <input type="checkbox" checked={selected} readOnly />
                           <span
-                            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                            className="block h-1.5 w-1.5 shrink-0 rounded-full"
                             style={{
                               backgroundColor: issue.state__color,
                             }}
                           />
-                          <span className="flex-shrink-0">
+                          <span className="shrink-0">
                             <IssueIdentifier
                               projectId={issue.project_id}
                               issueTypeId={issue.type_id}
@@ -294,7 +289,7 @@ export function ExistingIssuesListModal(props: Props) {
                             sequenceId: issue?.sequence_id,
                           })}
                           target="_blank"
-                          className="z-1 relative hidden flex-shrink-0 text-secondary hover:text-primary group-hover:block"
+                          className="z-1 relative hidden shrink-0 text-secondary hover:text-primary group-hover:block"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                         >

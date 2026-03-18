@@ -11,12 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
-import { Rocket } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 // plane imports
-import type { ISearchIssueResponse } from "@plane/types";
+import type { TWorkItemRelationsSearchResponse } from "@plane/types";
 import { generateWorkItemLink } from "@plane/utils";
 // components
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
@@ -25,52 +23,52 @@ import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type Props = {
   workspaceSlug: string;
-  issue: ISearchIssueResponse;
+  workItem: TWorkItemRelationsSearchResponse;
 };
 
-export const ParentIssuesListItem = observer(function ParentIssuesListItem(props: Props) {
-  const { workspaceSlug, issue } = props;
-
+export const SubWorkItemsListItem = observer(function SubWorkItemsListItem(props: Props) {
+  const { workspaceSlug, workItem } = props;
+  // store hooks
   const { getIssueTypeById } = useIssueTypes();
-
-  const isParentEpic = getIssueTypeById(issue?.type_id || "")?.is_epic;
+  // derived values
+  const isParentEpic = getIssueTypeById(workItem?.type_id || "")?.is_epic;
 
   return (
     <>
-      <div className="flex flex-grow items-center gap-2 truncate">
+      <div className="grow flex items-center gap-2 truncate">
         <span
-          className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+          className="size-1.5 shrink-0 rounded-full block"
           style={{
-            backgroundColor: issue.state__color,
+            backgroundColor: workItem.state.color,
           }}
         />
-        <span className="flex-shrink-0">
+        <span className="shrink-0">
           <IssueIdentifier
-            projectId={issue.project_id}
-            issueTypeId={issue.type_id}
-            projectIdentifier={issue.project__identifier}
-            issueSequenceId={issue.sequence_id}
+            projectId={workItem.project.id}
+            issueTypeId={workItem.type_id}
+            projectIdentifier={workItem.project.identifier}
+            issueSequenceId={workItem.sequence_id}
             variant="secondary"
             size="xs"
           />
         </span>{" "}
-        <span className="truncate">{issue.name}</span>
+        <span className="truncate text-body-xs-medium">{workItem.name}</span>
       </div>
       <a
         href={generateWorkItemLink({
           workspaceSlug: workspaceSlug.toString(),
-          projectId: issue?.project_id,
-          issueId: issue?.id,
-          projectIdentifier: issue.project__identifier,
-          sequenceId: issue?.sequence_id,
+          projectId: workItem.project.id,
+          issueId: workItem.id,
+          projectIdentifier: workItem.project.identifier,
+          sequenceId: workItem.sequence_id,
           isEpic: isParentEpic,
         })}
         target="_blank"
-        className="z-1 relative hidden flex-shrink-0 text-secondary hover:text-primary group-hover:block"
+        className="z-1 relative hidden shrink-0 text-tertiary hover:text-primary group-hover:block"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
       >
-        <Rocket className="h-4 w-4" />
+        <ArrowUpRight className="size-4" />
       </a>
     </>
   );

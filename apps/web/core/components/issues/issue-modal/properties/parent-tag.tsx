@@ -14,23 +14,21 @@
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
+// plane imports
 import { ETabIndices } from "@plane/constants";
 import { CloseIcon } from "@plane/propel/icons";
-// plane imports
-// types
-import type { ISearchIssueResponse, TIssue } from "@plane/types";
-// helpers
+import type { TIssue, TWorkItemRelationsSearchResponse } from "@plane/types";
 import { getTabIndex } from "@plane/utils";
+// components
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 
 type TIssueParentTagProps = {
   control: Control<TIssue>;
-  selectedParentIssue: ISearchIssueResponse;
+  selectedParentIssue: TWorkItemRelationsSearchResponse;
   handleFormChange: () => void;
-  setSelectedParentIssue: (issue: ISearchIssueResponse | null) => void;
+  setSelectedParentIssue: (issue: TWorkItemRelationsSearchResponse | null) => void;
 };
 
 export const IssueParentTag = observer(function IssueParentTag(props: TIssueParentTagProps) {
@@ -48,17 +46,17 @@ export const IssueParentTag = observer(function IssueParentTag(props: TIssuePare
         <div className="flex w-min items-center gap-2 whitespace-nowrap rounded-sm bg-surface-2 p-2 text-caption-sm-regular">
           <div className="flex items-center gap-2">
             <span
-              className="block h-1.5 w-1.5 rounded-full"
+              className="block size-1.5 rounded-full"
               style={{
-                backgroundColor: selectedParentIssue.state__color,
+                backgroundColor: selectedParentIssue.state.color,
               }}
             />
-            <span className="flex-shrink-0 text-secondary">
-              {selectedParentIssue?.project_id && (
+            <span className="shrink-0 text-secondary">
+              {selectedParentIssue?.project.id && (
                 <IssueIdentifier
-                  projectId={selectedParentIssue.project_id}
+                  projectId={selectedParentIssue.project.id}
                   issueTypeId={selectedParentIssue.type_id}
-                  projectIdentifier={selectedParentIssue?.project__identifier}
+                  projectIdentifier={selectedParentIssue?.project.identifier}
                   issueSequenceId={selectedParentIssue.sequence_id}
                   size="xs"
                 />

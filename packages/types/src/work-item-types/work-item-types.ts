@@ -98,6 +98,9 @@ export type WorkspaceWorkItemTypesStoreSchema = {
   getLoaderByWorkspaceSlug: (workspaceSlug: string) => TLoader | undefined;
   // helpers
   getWorkItemTypesByWorkspaceSlug: (workspaceSlug: string) => BaseWorkItemTypeInstanceSchema[];
+  getWorkItemTypesByWorkspaceSlugGroupedByLevel: (
+    workspaceSlug: string
+  ) => Map<number, BaseWorkItemTypeInstanceSchema[]>;
   getDefaultWorkItemTypeId: (workspaceSlug: string) => string | undefined;
   // actions
   fetchTypes: (workspaceSlug: string) => Promise<TWorkItemTypeResponse[]>;

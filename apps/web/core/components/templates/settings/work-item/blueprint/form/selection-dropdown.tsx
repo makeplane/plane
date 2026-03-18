@@ -27,6 +27,7 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { IssueTypeDropdown } from "@/components/work-item-types/dropdowns/issue-type";
 import { COMMON_BUTTON_CLASS_NAME, COMMON_ERROR_CLASS_NAME } from "@/components/templates/settings/common/helpers";
 import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useMemo } from "react";
 
 type TUseMobxData = {
   usePropsForAdditionalData: false;
@@ -76,14 +77,19 @@ export const SelectionDropdown = observer(function SelectionDropdown<T extends F
   // derived values
   const projectIdError = getNestedError(errors, fieldPaths.projectId);
   const issueTypeIdError = getNestedError(errors, fieldPaths.issueTypeId);
+  const allWorkItemTypes: IIssueType[] = useMemo(() => {
+    if (!projectId) return [];
+    if (props.usePropsForAdditionalData) {
+      return Object.values(props.getWorkItemTypes(projectId, true));
+    }
+    return Object.values(getProjectIssueTypes(projectId, true));
+  }, [getProjectIssueTypes, projectId, props]);
   const additionalProps = props.usePropsForAdditionalData
     ? {
-        getWorkItemTypes: props.getWorkItemTypes,
         isWorkItemTypeEnabled: props.isWorkItemTypeEnabled,
         isWorkItemTypeInitializing: props.isWorkItemTypeInitializing,
       }
     : {
-        getWorkItemTypes: getProjectIssueTypes,
         isWorkItemTypeEnabled: projectId ? isWorkItemTypeEnabledForProject(workspaceSlug, projectId) : false,
         isWorkItemTypeInitializing: workItemTypeLoader === "init-loader",
       };
@@ -128,7 +134,7 @@ export const SelectionDropdown = observer(function SelectionDropdown<T extends F
         <>
           {allowProjectSelection && (
             <div className="flex items-center gap-2">
-              <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0 text-tertiary" aria-hidden="true" />
+              <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-tertiary" aria-hidden="true" />
             </div>
           )}
           <div className="space-y-1">
@@ -144,12 +150,10 @@ export const SelectionDropdown = observer(function SelectionDropdown<T extends F
                     buttonClassName={cn(COMMON_BUTTON_CLASS_NAME, {
                       [COMMON_ERROR_CLASS_NAME]: Boolean(issueTypeIdError),
                     })}
-                    handleIssueTypeChange={(issueTypeId) => {
-                      onChange(issueTypeId);
-                    }}
-                    issueTypeId={value}
-                    projectId={projectId}
+                    handleChange={onChange}
+                    selectedWorkItemTypeId={value}
                     variant="sm"
+                    allWorkItemTypes={allWorkItemTypes}
                     {...additionalProps}
                   />
                 </div>

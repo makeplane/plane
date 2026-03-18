@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { TIssue } from "@plane/types";
 import { Card, cn } from "@plane/ui";
@@ -54,9 +54,7 @@ export const WorkItemDetail = observer(function WorkItemDetail(props: TWorkItemD
     if (!formData) return;
     setIsSaving(true);
     await updateArtifact(formData)
-      .then(() => {
-        handleOnSave();
-      })
+      .then(() => handleOnSave())
       .catch((error) => {
         console.error(error);
         setError(error);
@@ -79,7 +77,6 @@ export const WorkItemDetail = observer(function WorkItemDetail(props: TWorkItemD
     isDuplicateModalOpen: false,
     handleDuplicateIssueModal: () => {},
     isProjectSelectionDisabled: false,
-    convertToWorkItem: false,
     showActionButtons: false,
   };
 
