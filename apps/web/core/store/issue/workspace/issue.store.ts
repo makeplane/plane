@@ -110,13 +110,22 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
 
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, viewId, undefined, undefined, undefined);
+      // Inject include_archived based on display filter (outside computedFn cache)
+      const issueFilters = this.issueFilterStore?.getIssueFilters(viewId);
+      if (issueFilters?.displayFilters?.show_archived && params) {
+        params.include_archived = true;
+      }
+      console.log("[ARCHIVED-DEBUG] show_archived =", issueFilters?.displayFilters?.show_archived, "| include_archived =", params?.include_archived, "| caller:", new Error().stack?.split("\n")[2]?.trim());
       // call the fetch issues API with the params
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params, {
         signal: this.controller.signal,
       });
 
       // after fetching issues, call the base method to process the response further
+      const resultIds = Array.isArray(response?.results) ? response.results.map((i: any) => i.id) : Object.keys(response?.results || {});
+      console.log("[ARCHIVED-DEBUG] API returned", response?.total_count, "issues. Result IDs:", resultIds.length, resultIds);
       this.onfetchIssues(response, options, workspaceSlug, undefined, undefined, !isExistingPaginationOptions);
+      console.log("[ARCHIVED-DEBUG] groupedIssueIds count:", Object.values(this.groupedIssueIds || {}).flat().length);
       return response;
     } catch (error) {
       // set loader to undefined if errored out
@@ -151,6 +160,11 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
         groupId,
         subGroupId
       );
+      // Inject include_archived based on display filter (outside computedFn cache)
+      const issueFilters = this.issueFilterStore?.getIssueFilters(viewId);
+      if (issueFilters?.displayFilters?.show_archived && params) {
+        params.include_archived = true;
+      }
       // call the fetch issues API with the params for next page in issues
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
 

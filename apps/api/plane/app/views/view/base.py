@@ -228,10 +228,25 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
     def get_queryset(self):
         return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug"))
 
+    def _get_queryset_with_archived(self):
+        """Return queryset that includes archived issues but still excludes triage/draft."""
+        from plane.db.models.state import StateGroup
+
+        return (
+            Issue.objects.filter(
+                workspace__slug=self.kwargs.get("slug"),
+                deleted_at__isnull=True,
+                project__archived_at__isnull=True,
+                is_draft=False,
+            )
+            .exclude(state__group=StateGroup.TRIAGE.value)
+        )
+
     @method_decorator(gzip_page)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
-        issue_queryset = self.get_queryset()
+        include_archived = request.GET.get("include_archived", "false").lower() == "true"
+        issue_queryset = self._get_queryset_with_archived() if include_archived else self.get_queryset()
 
         # Apply filtering from filterset
         issue_queryset = self.filter_queryset(issue_queryset)

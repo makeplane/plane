@@ -48,6 +48,7 @@ import {
 import {
   SpreadsheetDepartmentNameColumn,
   SpreadsheetProjectNameColumn,
+  SpreadsheetProjectLeadColumn,
   SpreadsheetBankWideProjectColumn,
   SpreadsheetProgressTrackingColumn,
   SpreadsheetCompletedDateColumn,
@@ -121,6 +122,7 @@ export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpr
   // CE extended columns
   department_name: SpreadsheetDepartmentNameColumn,
   project_name: SpreadsheetProjectNameColumn,
+  project_lead: SpreadsheetProjectLeadColumn,
   bank_wide_project: SpreadsheetBankWideProjectColumn,
   progress_tracking: SpreadsheetProgressTrackingColumn,
   completed_date: SpreadsheetCompletedDateColumn,

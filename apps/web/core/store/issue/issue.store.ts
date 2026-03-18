@@ -28,7 +28,7 @@ export type IIssueStore = {
   // helper methods
   getIssueById(issueId: string): undefined | TIssue;
   getIssueIdByIdentifier(issueIdentifier: string): undefined | string;
-  getIssuesByIds(issueIds: string[], type: "archived" | "un-archived"): TIssue[]; // Record defines issue_id as key and TIssue as value
+  getIssuesByIds(issueIds: string[], type: "archived" | "un-archived" | "all"): TIssue[]; // Record defines issue_id as key and TIssue as value
 };
 
 export class IssueStore implements IIssueStore {
@@ -154,14 +154,14 @@ export class IssueStore implements IIssueStore {
    * @param {boolean} archivedIssues
    * @returns {Record<string, TIssue> | undefined}
    */
-  getIssuesByIds = computedFn((issueIds: string[], type: "archived" | "un-archived") => {
+  getIssuesByIds = computedFn((issueIds: string[], type: "archived" | "un-archived" | "all") => {
     if (!issueIds || issueIds.length <= 0) return [];
     const filteredIssues: TIssue[] = [];
     Object.values(issueIds).forEach((issueId) => {
-      // if type is archived then check archived_at is not null
-      // if type is un-archived then check archived_at is null
       const issue = this.issuesMap[issueId];
-      if (issue && ((type === "archived" && issue.archived_at) || (type === "un-archived" && !issue?.archived_at))) {
+      if (!issue) return;
+      // "all" returns both archived and un-archived issues
+      if (type === "all" || (type === "archived" && issue.archived_at) || (type === "un-archived" && !issue.archived_at)) {
         filteredIssues.push(issue);
       }
     });

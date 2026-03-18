@@ -33,7 +33,8 @@ DEFAULT_PROJECT_VIEW_DISPLAY_PROPERTIES = {
     "modules": True,
     "cycle": True,
     "issue_type": False,
-    # CE extended properties — 5 of 7 (no department_name, project_name)
+    # CE extended properties — 5 of 7 (no department_name, project_name, project_lead)
+    "project_lead": False,
     "bank_wide_project": True,
     "progress_tracking": True,
     "completed_date": True,
