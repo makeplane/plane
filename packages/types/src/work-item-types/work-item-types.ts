@@ -64,14 +64,14 @@ export interface BaseWorkItemTypeInstanceSchema extends TWorkItemTypeResponse {
   canReorderProperties: boolean;
   // actions
   mutateProperties: (data: Partial<TWorkItemTypeResponse>) => void;
-  updateType: (data: Partial<TWorkItemType>) => Promise<void>;
+  updateType: (data: Partial<TWorkItemType>, enableOptimisticUpdate?: boolean) => Promise<void>;
   linkProperties: (propertyIds: string[]) => Promise<void>;
   unlinkProperty: (propertyId: string) => Promise<void>;
   reorderProperty: (propertyId: string, newSortOrder: number) => Promise<void>;
 }
 
 export interface ProjectWorkItemTypeInstanceSchema {
-  updateType: (data: Partial<TWorkItemType>) => Promise<void>;
+  updateType: (data: Partial<TWorkItemType>, enableOptimisticUpdate?: boolean) => Promise<void>;
 }
 
 export interface WorkspaceWorkItemTypeInstanceSchema {

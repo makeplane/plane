@@ -84,10 +84,14 @@ export class WorkspaceWorkItemTypeInstance
   }
 
   // actions
-  updateType: BaseWorkItemTypeInstanceSchema["updateType"] = async (data) => {
+  updateType: BaseWorkItemTypeInstanceSchema["updateType"] = async (data, enableOptimisticUpdate) => {
     const workspaceSlug = this.workspaceSlug;
     if (!workspaceSlug) throw new Error("Workspace slug not available");
-    return this.update(() => workspaceTypeService.update({ workspaceSlug, typeId: this.id, data }), data);
+    return this.update(
+      () => workspaceTypeService.update({ workspaceSlug, typeId: this.id, data }),
+      data,
+      enableOptimisticUpdate
+    );
   };
 
   linkProperties: BaseWorkItemTypeInstanceSchema["linkProperties"] = async (propertyIds) => {

@@ -33,6 +33,12 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
     E_FEATURE_FLAGS.CUSTOM_RELATIONS,
     false
   );
+  const isWorkItemTypeHierarchyEnabled = store.featureFlags.getFeatureFlag(
+    workspaceSlug,
+    E_FEATURE_FLAGS.WORKITEM_TYPE_HIERARCHY,
+    false
+  );
+  const isGroupSyncingEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.IDP_GROUP_SYNC, false);
   // Cloud SSO is enabled if the instance is not self-managed (i.e cloud only)
   const isCloudSSOEnabled = store.instance.config?.is_self_managed === false ? true : false;
   switch (settingKey) {
@@ -48,6 +54,10 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
       return isCustomRelationsEnabled;
     case "work_item_types":
       return isWorkItemTypesEnabled;
+    case "work_item_type_hierarchy":
+      return isWorkItemTypeHierarchyEnabled;
+    case "group-syncing":
+      return isGroupSyncingEnabled;
     default:
       return true;
   }

@@ -168,3 +168,6 @@ export const getErrorMessage = (error: unknown, fallbackMessage: string) => {
   const errorObj = error as TError | undefined;
   return errorObj?.error ?? errorObj?.detail ?? errorObj?.message ?? fallbackMessage;
 };
+
+export const isObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);

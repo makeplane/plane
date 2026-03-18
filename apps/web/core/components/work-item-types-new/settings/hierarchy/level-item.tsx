@@ -16,6 +16,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Pill, EPillSize, EPillVariant, ERadius } from "@plane/propel/pill";
 import type { BaseWorkItemTypeInstanceSchema } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
 import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
 // local imports
@@ -58,7 +59,14 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
     <div className="bg-layer-2 border border-subtle p-3 rounded-lg flex items-center justify-between gap-2 truncate">
       <div className="flex flex-col gap-2 truncate">
         <div className="shrink-0 flex items-center gap-3">
-          <span className="shrink-0 size-8 bg-layer-3 rounded-md text-caption-md-medium text-secondary grid place-items-center">
+          <span
+            className={cn(
+              "shrink-0 size-8 bg-layer-3 rounded-md text-caption-md-medium text-secondary grid place-items-center",
+              {
+                "text-placeholder": level === 0,
+              }
+            )}
+          >
             {level}
           </span>
           <>
@@ -105,7 +113,9 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
           </div>
         )}
       </div>
-      {!isEmptyLevel && <WorkItemTypeHierarchyLevelQuickActions level={level} workItemTypes={workItemTypes} />}
+      {!isEmptyLevel && level > 0 && (
+        <WorkItemTypeHierarchyLevelQuickActions level={level} workItemTypes={workItemTypes} />
+      )}
     </div>
   );
 });

@@ -140,13 +140,24 @@ export abstract class BaseWorkItemTypeInstance implements BaseWorkItemTypeInstan
     });
   };
 
-  protected update = async (callback: () => Promise<void>, data: Partial<TWorkItemType>): Promise<void> => {
+  protected update = async (
+    callback: () => Promise<void>,
+    data: Partial<TWorkItemType>,
+    enableOptimisticUpdate: boolean = true
+  ): Promise<void> => {
     const originalData = cloneDeep(this.asJSON);
     try {
-      this.mutateProperties(data);
+      if (enableOptimisticUpdate) {
+        this.mutateProperties(data);
+      }
       await callback();
+      if (!enableOptimisticUpdate) {
+        this.mutateProperties(data);
+      }
     } catch (error) {
-      this.mutateProperties(originalData);
+      if (enableOptimisticUpdate) {
+        this.mutateProperties(originalData);
+      }
       console.error("Failed to update work item type instance:", error);
       throw error;
     }

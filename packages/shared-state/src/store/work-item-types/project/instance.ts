@@ -82,7 +82,7 @@ export class ProjectWorkItemTypeInstance extends BaseWorkItemTypeInstance implem
   }
 
   // actions
-  updateType: BaseWorkItemTypeInstanceSchema["updateType"] = async (data) => {
+  updateType: BaseWorkItemTypeInstanceSchema["updateType"] = async (data, enableOptimisticUpdate) => {
     const workspaceSlug = this.workspaceSlug;
     if (!workspaceSlug) throw new Error("Workspace slug not available");
     return this.update(
@@ -93,7 +93,8 @@ export class ProjectWorkItemTypeInstance extends BaseWorkItemTypeInstance implem
           typeId: this.id,
           data: data,
         }),
-      data
+      data,
+      enableOptimisticUpdate
     );
   };
 

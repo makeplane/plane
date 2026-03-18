@@ -15,6 +15,8 @@ import { Fragment } from "react";
 import { MoveDown } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "react-router";
+// plane imports
+import { Loader } from "@plane/ui";
 // plane web imports
 import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-types/use-workspace-work-item-types";
 // local imports
@@ -25,10 +27,22 @@ export const WorkItemTypeHierarchyLevelsRoot = observer(function WorkItemTypeHie
   // params
   const { workspaceSlug } = useParams();
   // store hooks
-  const { canCreate, getWorkItemTypesByWorkspaceSlugGroupedByLevel } = useWorkspaceWorkItemTypes();
+  const { canCreate, getWorkItemTypesByWorkspaceSlugGroupedByLevel, getLoaderByWorkspaceSlug } =
+    useWorkspaceWorkItemTypes();
   // derived values
   const workItemTypesByLevel = workspaceSlug ? getWorkItemTypesByWorkspaceSlugGroupedByLevel(workspaceSlug) : new Map();
+  const isLoading = workspaceSlug ? getLoaderByWorkspaceSlug(workspaceSlug) === "init-loader" : true;
   const canAddLevel = !!workspaceSlug && canCreate(workspaceSlug);
+
+  if (isLoading)
+    return (
+      <Loader className="w-full flex flex-col gap-4">
+        <Loader.Item height="56px" width="100%" />
+        <Loader.Item height="56px" width="100%" />
+        <Loader.Item height="56px" width="100%" />
+        <Loader.Item height="56px" width="100%" />
+      </Loader>
+    );
 
   return (
     <div className="bg-surface-2 rounded-2xl p-4">

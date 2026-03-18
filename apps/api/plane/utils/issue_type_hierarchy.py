@@ -29,6 +29,12 @@ def validate_type_hierarchy(parent_level, child_level):
 
     Returns (is_valid, error_message) tuple.
     """
+    if parent_level is None:
+        return True, None
+
+    if child_level is None:
+        return True, None
+
     if parent_level == 0:
         if child_level != 0:
             return (
@@ -39,15 +45,15 @@ def validate_type_hierarchy(parent_level, child_level):
         if child_level >= parent_level:
             return (
                 False,
-                f"Sub-work item type level ({child_level}) must be lower "
-                f"than the parent type level ({parent_level}).",
+                f"Sub-work item type level ({int(child_level)}) must be lower "
+                f"than the parent type level ({int(parent_level)}).",
             )
 
         if parent_level - child_level > 1:
             return (
                 False,
-                f"Sub-work item type level ({child_level}) must be at most "
-                f"1 level lower than the parent type level ({parent_level}).",
+                f"Sub-work item type level ({int(child_level)}) must be at most "
+                f"1 level lower than the parent type level ({int(parent_level)}).",
             )
 
     return (True, None)

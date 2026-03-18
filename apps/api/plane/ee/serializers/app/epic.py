@@ -134,7 +134,7 @@ class EpicCreateSerializer(BaseSerializer):
                 if parent_issue:
                     epic_type = IssueType.objects.filter(id=self.context.get("type_id")).first()
                     child_level = epic_type.level if epic_type else 0
-                    parent_level = parent_issue.type.level if parent_issue.type_id and parent_issue.type else 0
+                    parent_level = parent_issue.type.level if parent_issue.type_id and parent_issue.type else None
 
                     is_valid, error_msg = validate_type_hierarchy(parent_level, child_level)
                     if not is_valid:

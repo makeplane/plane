@@ -104,6 +104,7 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     href: `/settings/group-syncing`,
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/group-syncing/`,
+    beta: true,
   },
   identity: {
     key: "identity",

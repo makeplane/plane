@@ -21,6 +21,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TBaseIssue, TIssue } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { isObject } from "@plane/utils";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -270,12 +271,20 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       setDescription("<p></p>");
       setChangesMade(null);
       return response;
-    } catch (error: any) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("error"),
-        message: error?.error ?? t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
-      });
+    } catch (error) {
+      if (isObject(error) && "type" in error) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("work_item_type_hierarchy.work_item_modal.invalid_work_item_type_create_toast.title"),
+          message: t("work_item_type_hierarchy.work_item_modal.invalid_work_item_type_create_toast.message"),
+        });
+      } else {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("error"),
+          message: t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
+        });
+      }
       throw error;
     }
   };
@@ -388,14 +397,22 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       }
 
       handleClose();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       if (showToast) {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("error"),
-          message: error?.error ?? t("issue_could_not_be_updated"),
-        });
+        if (isObject(error) && "type" in error) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("work_item_type_hierarchy.work_item_modal.invalid_work_item_type_update_toast.title"),
+            message: t("work_item_type_hierarchy.work_item_modal.invalid_work_item_type_update_toast.message"),
+          });
+        } else {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("error"),
+            message: t("issue_could_not_be_updated"),
+          });
+        }
       }
     }
   };

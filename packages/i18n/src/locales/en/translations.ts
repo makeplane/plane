@@ -7538,7 +7538,7 @@ the way you want to from the sources you specify.`,
       enable_control: {
         title: "Enable hierarchy",
         description: "Create parent-child relationships between different work item types.",
-        tooltip: "Once ",
+        tooltip: "You cannot disable hierarchy once it is enabled.",
       },
       workspace_work_item_types_disabled_banner: {
         content: "Define Work Item Types first to create a new hierarchy.",
@@ -7555,6 +7555,10 @@ the way you want to from the sources you specify.`,
       title: "Add hierarchy level",
       description: "Add a new hierarchy level to the work item type.",
       work_item_type: "Work item type",
+      invalid_level_toast: {
+        title: "Error!",
+        message: "{type_name} cannot be added to level {level} since it breaks the hierarchy rules.",
+      },
       not_found_toast: {
         title: "Error",
         message: "Work item type not found.",
@@ -7562,6 +7566,28 @@ the way you want to from the sources you specify.`,
       error_toast: {
         title: "Error",
         message: "Failed to add work item type to hierarchy.",
+      },
+    },
+    remove_from_level_toast: {
+      loading: "Removing work item type from level",
+      success: {
+        title: "Success!",
+        message: "Work item type removed from level successfully.",
+      },
+      error: {
+        title: "Error!",
+        message: "Failed to remove work item type from level.",
+      },
+    },
+    work_item_modal: {
+      invalid_work_item_type_create_toast: {
+        title: "Error!",
+        message:
+          "The selected work item type cannot be used to create a new work item since it breaks the hierarchy rules.",
+      },
+      invalid_work_item_type_update_toast: {
+        title: "Error!",
+        message: "Work item type cannot be updated since it breaks the hierarchy rules.",
       },
     },
   },

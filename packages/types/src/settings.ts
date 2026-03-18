@@ -48,6 +48,7 @@ export type TWorkspaceSettingsItem = {
   href: string;
   access: EUserWorkspaceRoles[];
   highlight: (pathname: string, baseUrl: string) => boolean;
+  beta?: boolean;
 };
 
 export type TProjectSettingsTabs =

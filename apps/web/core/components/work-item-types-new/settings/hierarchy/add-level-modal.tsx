@@ -73,17 +73,31 @@ export const AddWorkItemTypeHierarchyLevelModal = observer(function AddWorkItemT
 
     try {
       setLoader(true);
-      await workItemType.updateType({
-        level: levelToAddTo,
-      });
+      await workItemType.updateType(
+        {
+          level: levelToAddTo,
+        },
+        false
+      );
       handleClose();
     } catch (error) {
       console.error("Failed to add work item type to hierarchy:", error);
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("work_item_type_hierarchy.add_level_modal.error_toast.title"),
-        message: t("work_item_type_hierarchy.add_level_modal.error_toast.message"),
-      });
+      if (typeof error === "object" && error !== null && !Array.isArray(error) && "level" in error) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("work_item_type_hierarchy.add_level_modal.invalid_level_toast.title"),
+          message: t("work_item_type_hierarchy.add_level_modal.invalid_level_toast.message", {
+            type_name: workItemType.name,
+            level: levelToAddTo,
+          }),
+        });
+      } else {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("work_item_type_hierarchy.add_level_modal.error_toast.title"),
+          message: t("work_item_type_hierarchy.add_level_modal.error_toast.message"),
+        });
+      }
     } finally {
       setLoader(false);
     }

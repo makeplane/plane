@@ -19,8 +19,8 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Switch } from "@plane/propel/switch";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
@@ -37,7 +37,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 // types
-import { EWorkspaceFeatures } from "@/types/workspace-feature";
+import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
 import type { Route } from "./+types/page";
 import { WorkItemTypeHierarchyWorkspaceSettingsHeader } from "./header";
@@ -49,7 +49,7 @@ function WorkItemTypeHierarchySettingsPage({ params }: Route.ComponentProps) {
   // store hooks
   const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
+  const { isWorkspaceFeatureEnabled, updateWorkspaceFeature, loader } = useWorkspaceFeatures();
   const { t } = useTranslation();
   // derived values
   const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
@@ -57,7 +57,7 @@ function WorkItemTypeHierarchySettingsPage({ params }: Route.ComponentProps) {
     ? `${currentWorkspace.name} - ${t("work_item_type_hierarchy.settings.title")}`
     : undefined;
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-  const isWorkItemTypesHierarchyFlagAvailable = useFlag(workspaceSlug, "WORKITEM_TYPE_HIERARCHY", false);
+  const isWorkItemTypesHierarchyFlagAvailable = useFlag(workspaceSlug, "WORKITEM_TYPE_HIERARCHY");
   const isWorkItemHierarchyFeatureEnabled = isWorkspaceFeatureEnabled(
     EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED
   );
@@ -95,6 +95,8 @@ function WorkItemTypeHierarchySettingsPage({ params }: Route.ComponentProps) {
 
   if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
+  if (loader === EWorkspaceFeatureLoader.INIT_LOADER) return null;
+
   return (
     <SettingsContentWrapper header={<WorkItemTypeHierarchyWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
@@ -104,23 +106,22 @@ function WorkItemTypeHierarchySettingsPage({ params }: Route.ComponentProps) {
       />
       <div
         className={cn("mt-6", {
-          "opacity-60 pointer-events-none": disableToggling,
+          "opacity-60": disableToggling,
         })}
       >
         <SettingsBoxedControlItem
           title={t("work_item_type_hierarchy.settings.enable_control.title")}
           description={t("work_item_type_hierarchy.settings.enable_control.description")}
           control={
-            <Tooltip
-              tooltipContent={t("work_item_type_hierarchy.settings.enable_control.tooltip")}
-              disabled={disableToggling}
-              position="left"
-            >
-              <Switch
-                value={isWorkItemHierarchyFeatureEnabled}
-                onChange={toggleWorkItemHierarchyFeature}
-                disabled={disableToggling}
-              />
+            <Tooltip tooltipContent={t("work_item_type_hierarchy.settings.enable_control.tooltip")} position="top">
+              {/* NOTE: added a wrapper span since disabling Switch removes pointer events thus ultimately disabling the tooltip. */}
+              <span>
+                <Switch
+                  value={isWorkItemHierarchyFeatureEnabled}
+                  onChange={toggleWorkItemHierarchyFeature}
+                  disabled={isWorkItemHierarchyFeatureEnabled}
+                />
+              </span>
             </Tooltip>
           }
         />

@@ -62,8 +62,10 @@ class WorkspaceWorkItemTypeSerializer(BaseSerializer):
                         is_valid, error_msg = validate_type_hierarchy(parent_level, new_level)
                         if not is_valid:
                             raise serializers.ValidationError(
-                                f"Cannot change level to {new_level}. "
-                                f"Issues of this type have a parent with type level {parent_level}. {error_msg}"
+                                {
+                                    "level": f"New level {int(new_level)} is not compatible with parent work item type level {int(parent_level)}. "  # noqa: E501
+                                    f"{error_msg}"
+                                }
                             )
 
                     # Check child compatibility: get the child type level for any
@@ -81,8 +83,10 @@ class WorkspaceWorkItemTypeSerializer(BaseSerializer):
                         is_valid, error_msg = validate_type_hierarchy(new_level, child_level)
                         if not is_valid:
                             raise serializers.ValidationError(
-                                f"Cannot change level to {new_level}. "
-                                f"Issues of this type have sub-work items with type level {child_level}. {error_msg}"
+                                {
+                                    "level": f"Cannot change level to {int(new_level)}. "
+                                    f"Work items of this type have sub-work items with type level {int(child_level)}. {error_msg}"  # noqa: E501
+                                }
                             )
 
         return data

@@ -25,7 +25,6 @@ import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
 import { shouldRenderSettingLink } from "@/helpers/settings/workspace";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // local imports
 import { WORKSPACE_SETTINGS_ICONS } from "./item-icon";
 
@@ -37,8 +36,6 @@ export const WorkspaceSettingsSidebarItemCategories = observer(function Workspac
   const { allowPermissions } = useUserPermissions();
   // translation
   const { t } = useTranslation();
-
-  const isGroupSyncingFeatureEnabled = useFlag(workspaceSlug, "IDP_GROUP_SYNC");
 
   return (
     <div className="mt-1.5 flex flex-col divide-y divide-subtle px-3">
@@ -57,9 +54,6 @@ export const WorkspaceSettingsSidebarItemCategories = observer(function Workspac
             <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t(category)}</div>
             <div className="flex flex-col">
               {accessibleItems.map((item) => {
-                const isGroupSyncing = item.key === "group-syncing";
-                if (isGroupSyncing && !isGroupSyncingFeatureEnabled) return null;
-
                 const isItemActive =
                   item.href === "/settings"
                     ? pathname === `/${workspaceSlug}${item.href}/`
@@ -73,7 +67,7 @@ export const WorkspaceSettingsSidebarItemCategories = observer(function Workspac
                     isActive={isItemActive}
                     icon={WORKSPACE_SETTINGS_ICONS[item.key]}
                     label={t(item.i18n_label)}
-                    appendContent={isGroupSyncing && <BetaBadge />}
+                    appendContent={item.beta && <BetaBadge />}
                   />
                 );
               })}
