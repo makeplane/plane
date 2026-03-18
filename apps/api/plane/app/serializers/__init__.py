@@ -83,6 +83,7 @@ from .issue import (
 )
 
 from .module import (
+    ModuleActivitySerializer,
     ModuleDetailSerializer,
     ModuleWriteSerializer,
     ModuleSerializer,

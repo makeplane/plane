@@ -7,17 +7,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { SquareUser } from "lucide-react";
-// Plane imports
-import {
-  MODULE_STATUS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  IS_FAVORITE_MENU_OPEN,
-  MODULE_TRACKER_EVENTS,
-  MODULE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { SquareUser } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -56,7 +48,8 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
   // derived values
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
-  const isEditingAllowed = allowPermissions(
+  const isEditingAllowed = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canInteract = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
@@ -73,6 +66,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
       () => {
         // open favorites menu if closed
         if (!storedValue) toggleFavoriteMenu(true);
+        return undefined;
       }
     );
 
@@ -123,6 +117,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
           title: "Success!",
           message: "Module updated successfully.",
         });
+        return undefined;
       })
       .catch((err) => {
         setToast({
@@ -146,7 +141,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
           to: getDate(moduleDetails.target_date),
         }}
         onSelect={(val) => {
-          handleModuleDetailsChange({
+          void handleModuleDetailsChange({
             start_date: val?.from ? renderFormattedPayloadDate(val.from) : null,
             target_date: val?.to ? renderFormattedPayloadDate(val.to) : null,
           });
@@ -178,7 +173,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
         </Tooltip>
       )}
 
-      {isEditingAllowed && !moduleDetails.archived_at && (
+      {canInteract && !moduleDetails.archived_at && (
         <FavoriteStar
           onClick={(e) => {
             if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);

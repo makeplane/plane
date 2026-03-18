@@ -66,6 +66,7 @@ from plane.bgtasks.webhook_task import model_activity
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
+from plane.utils.module_activity import log_module_activity
 
 
 class ModuleViewSet(BaseViewSet):
@@ -345,6 +346,8 @@ class ModuleViewSet(BaseViewSet):
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
+            # Log module activity
+            log_module_activity(module=serializer.instance, actor=request.user, verb="created")
             datetime_fields = ["created_at", "updated_at"]
             module = user_timezone_converter(module, datetime_fields, request.user.user_timezone)
             return Response(module, status=status.HTTP_201_CREATED)
@@ -666,6 +669,9 @@ class ModuleViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         current_instance = json.dumps(ModuleSerializer(current_module).data, cls=DjangoJSONEncoder)
+        # Capture current field values for activity diff tracking
+        tracked_fields = ["name", "description", "status", "start_date", "target_date", "lead_id"]
+        current_field_values = {f: getattr(current_module, f, None) for f in tracked_fields}
         serializer = ModuleWriteSerializer(current_module, data=request.data, partial=True)
 
         if serializer.is_valid():
@@ -714,6 +720,20 @@ class ModuleViewSet(BaseViewSet):
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
+            # Log per-field module activities for tracked fields that changed
+            for field_name in tracked_fields:
+                if field_name in request.data:
+                    old_val = current_field_values.get(field_name)
+                    new_val = request.data.get(field_name)
+                    if str(old_val) != str(new_val):
+                        log_module_activity(
+                            module=serializer.instance,
+                            actor=request.user,
+                            verb="updated",
+                            field=field_name,
+                            old_value=old_val,
+                            new_value=new_val,
+                        )
 
             datetime_fields = ["created_at", "updated_at"]
             module = user_timezone_converter(module, datetime_fields, request.user.user_timezone)
@@ -739,6 +759,8 @@ class ModuleViewSet(BaseViewSet):
             )
             for issue in module_issues
         ]
+        # Log before hard delete so the FK is still valid
+        log_module_activity(module=module, actor=request.user, verb="deleted", old_value=module.name)
         module.delete()
         # Delete the module issues
         ModuleIssue.objects.filter(module=pk, project_id=project_id).delete()

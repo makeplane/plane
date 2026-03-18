@@ -179,6 +179,8 @@ from .module.issue import ModuleIssueViewSet
 
 from .module.archive import ModuleArchiveUnarchiveEndpoint
 
+from .module.activity import ModuleActivityEndpoint
+
 from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
 
 from .page.base import (
