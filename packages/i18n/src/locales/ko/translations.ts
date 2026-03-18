@@ -3380,6 +3380,7 @@ export default {
     columns: {
       department_name: "부서",
       project_name: "프로젝트",
+      project_lead: "팀/프로젝트 리드",
       bank_wide_project: "전행 프로젝트",
       progress_tracking: "진행 추적",
       completed_date: "완료일",

@@ -227,6 +227,7 @@ export const ISSUE_DISPLAY_PROPERTIES: {
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "department_name",
   "project_name",
+  "project_lead",
   "assignee",
   "modules",
   "bank_wide_project",
@@ -387,6 +388,14 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "created_at",
     descendingOrderTitle: "Z",
     icon: "FolderIcon",
+  },
+  project_lead: {
+    i18n_title: "spreadsheet.columns.project_lead",
+    ascendingOrderKey: "-created_at",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "created_at",
+    descendingOrderTitle: "Z",
+    icon: "MembersPropertyIcon",
   },
   bank_wide_project: {
     i18n_title: "spreadsheet.columns.bank_wide_project",

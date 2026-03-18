@@ -16,10 +16,10 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ViewsIcon } from "@plane/propel/icons";
+import { ArchiveIcon, ViewsIcon } from "@plane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearchSelectOption } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown, ToggleSwitch } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
@@ -45,7 +45,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const {
     issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
-  const { getViewDetailsById, currentWorkspaceViews } = useGlobalView();
+  const { getViewDetailsById, currentWorkspaceViews, globalViewMap } = useGlobalView();
   const { t } = useTranslation();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
@@ -111,7 +111,14 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
     };
   });
 
-  const switcherOptions = [...defaultOptions, ...workspaceOptions].filter(
+  // Default workspace views (Daily Status) appear before built-in views
+  const defaultWorkspaceOptions = workspaceOptions.filter(
+    (opt) => opt && globalViewMap[opt.value]?.is_default
+  );
+  const otherWorkspaceOptions = workspaceOptions.filter(
+    (opt) => opt && !globalViewMap[opt.value]?.is_default
+  );
+  const switcherOptions = [...defaultWorkspaceOptions, ...defaultOptions, ...otherWorkspaceOptions].filter(
     (option) => option !== undefined
   ) as ICustomSearchSelectOption[];
   const currentLayoutFilters = useMemo(() => {
@@ -158,6 +165,16 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
               workspaceSlug={workspaceSlug.toString()}
             />
           )}
+          {/* Show Archived toggle */}
+          <div className="flex items-center gap-1.5 rounded-md border border-subtle px-2.5 py-1 text-xs">
+            <ArchiveIcon className="size-3.5 text-tertiary" />
+            <span className="text-13 whitespace-nowrap">Archived</span>
+            <ToggleSwitch
+              value={issueFilters?.displayFilters?.show_archived ?? true}
+              onChange={(value) => handleDisplayFilters({ show_archived: value })}
+              size="sm"
+            />
+          </div>
           {globalViewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={globalViewId} />}
           {!isLocked && (
             <FiltersDropdown title={t("common.display")} placement="bottom-end">

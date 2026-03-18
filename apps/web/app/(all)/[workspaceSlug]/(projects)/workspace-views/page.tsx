@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
+import useSWR from "swr";
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -14,8 +15,9 @@ import { SearchIcon } from "@plane/propel/icons";
 import { Input } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core/page-title";
+import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 import { GlobalDefaultViewListItem } from "@/components/workspace/views/default-view-list-item";
-import { GlobalViewsList } from "@/components/workspace/views/views-list";
+import { GlobalViewListItem } from "@/components/workspace/views/view-list-item";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -28,10 +30,19 @@ const WorkspaceViewsPage = observer(function WorkspaceViewsPage() {
   const [searchParams] = useSearchParams();
   // store
   const { currentWorkspace } = useWorkspace();
-  const { globalViewMap, currentWorkspaceViews } = useGlobalView();
+  const { globalViewMap, currentWorkspaceViews, fetchAllGlobalViews, getSearchedViews } = useGlobalView();
   const { t } = useTranslation();
+  // fetch workspace views
+  useSWR(
+    workspaceSlug ? `GLOBAL_VIEWS_LIST_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchAllGlobalViews(workspaceSlug) : null
+  );
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - All Views` : undefined;
+  // Split views: default (Daily Status) first, rest after built-in views
+  const filteredViewIds = getSearchedViews(query);
+  const defaultViewIds = filteredViewIds?.filter((id) => globalViewMap[id]?.is_default) ?? [];
+  const otherViewIds = filteredViewIds?.filter((id) => !globalViewMap[id]?.is_default) ?? [];
 
   // Auto-navigate to the default view on page load
   useEffect(() => {
@@ -63,12 +74,19 @@ const WorkspaceViewsPage = observer(function WorkspaceViewsPage() {
           />
         </div>
         <div className="flex flex-col h-full w-full vertical-scrollbar scrollbar-lg">
+          {/* Default workspace views (Daily Status) render first */}
+          {!currentWorkspaceViews
+            ? <ViewListLoader />
+            : defaultViewIds.map((viewId) => <GlobalViewListItem key={viewId} viewId={viewId} />)
+          }
+          {/* Built-in views: All work items, Assigned, Created, Subscribed */}
           {DEFAULT_GLOBAL_VIEWS_LIST.filter((v) => t(v.i18n_label).toLowerCase().includes(query.toLowerCase())).map(
             (option) => (
               <GlobalDefaultViewListItem key={option.key} view={option} />
             )
           )}
-          <GlobalViewsList searchQuery={query} />
+          {/* Other workspace views */}
+          {otherViewIds.map((viewId) => <GlobalViewListItem key={viewId} viewId={viewId} />)}
         </div>
       </div>
     </>

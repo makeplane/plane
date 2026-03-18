@@ -86,7 +86,8 @@ export type TIssueParams =
   | "issue_type"
   | "layout"
   | "expand"
-  | "filters";
+  | "filters"
+  | "include_archived";
 
 export type TCalendarLayouts = "month" | "week";
 
@@ -157,6 +158,7 @@ export interface IIssueDisplayFilterOptions {
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;
+  show_archived?: boolean;
 }
 export interface IIssueDisplayProperties {
   assignee?: boolean;
@@ -178,6 +180,7 @@ export interface IIssueDisplayProperties {
   // CE extended columns
   department_name?: boolean;
   project_name?: boolean;
+  project_lead?: boolean;
   bank_wide_project?: boolean;
   progress_tracking?: boolean;
   completed_date?: boolean;
