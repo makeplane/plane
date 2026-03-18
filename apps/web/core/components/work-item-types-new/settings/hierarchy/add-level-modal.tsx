@@ -101,6 +101,7 @@ export const AddWorkItemTypeHierarchyLevelModal = observer(function AddWorkItemT
             selectedWorkItemTypeId={workItemTypeId}
             buttonClassName="py-2 px-3 rounded-md"
             noChevron={false}
+            showOnlyActiveWorkItemTypes={false}
           />
         </div>
         <hr className="border-[0.5px] border-subtle" />

@@ -13,6 +13,7 @@
 
 import { ArrowUpRight, TriangleAlert } from "lucide-react";
 import { observer } from "mobx-react";
+import { Navigate } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -28,15 +29,13 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // plane web imports
-import { WithFeatureFlagHOC } from "@/components/feature-flags";
-import { TeamspaceUpgrade } from "@/components/teamspaces/upgrade";
 import { WorkItemTypeHierarchyLevelsRoot } from "@/components/work-item-types-new/settings/hierarchy/root";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 // types
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
@@ -58,13 +57,12 @@ function WorkItemTypeHierarchySettingsPage({ params }: Route.ComponentProps) {
     ? `${currentWorkspace.name} - ${t("work_item_type_hierarchy.settings.title")}`
     : undefined;
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const isWorkItemTypesHierarchyFlagAvailable = useFlag(workspaceSlug, "WORKITEM_TYPE_HIERARCHY", false);
   const isWorkItemHierarchyFeatureEnabled = isWorkspaceFeatureEnabled(
     EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED
   );
-  const isWorkspaceWorkItemTypesEnabled = !isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED);
+  const isWorkspaceWorkItemTypesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED);
   const disableToggling = !isWorkspaceWorkItemTypesEnabled || isWorkItemHierarchyFeatureEnabled;
-
-  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   const toggleWorkItemHierarchyFeature = async () => {
     try {
@@ -90,6 +88,13 @@ function WorkItemTypeHierarchySettingsPage({ params }: Route.ComponentProps) {
     }
   };
 
+  if (!isWorkItemTypesHierarchyFlagAvailable) {
+    //TODO: replace with upgrade screen once ready
+    return <Navigate to={`/${workspaceSlug}`} />;
+  }
+
+  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
+
   return (
     <SettingsContentWrapper header={<WorkItemTypeHierarchyWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
@@ -97,56 +102,54 @@ function WorkItemTypeHierarchySettingsPage({ params }: Route.ComponentProps) {
         title={t("work_item_type_hierarchy.settings.title")}
         description={t("work_item_type_hierarchy.settings.description")}
       />
-      <WithFeatureFlagHOC flag="WORKITEM_TYPE_HIERARCHY" fallback={<TeamspaceUpgrade />} workspaceSlug={workspaceSlug}>
-        <div
-          className={cn("mt-6", {
-            "opacity-60 pointer-events-none": disableToggling,
-          })}
-        >
-          <SettingsBoxedControlItem
-            title={t("work_item_type_hierarchy.settings.enable_control.title")}
-            description={t("work_item_type_hierarchy.settings.enable_control.description")}
-            control={
-              <Tooltip
-                tooltipContent={t("work_item_type_hierarchy.settings.enable_control.tooltip")}
+      <div
+        className={cn("mt-6", {
+          "opacity-60 pointer-events-none": disableToggling,
+        })}
+      >
+        <SettingsBoxedControlItem
+          title={t("work_item_type_hierarchy.settings.enable_control.title")}
+          description={t("work_item_type_hierarchy.settings.enable_control.description")}
+          control={
+            <Tooltip
+              tooltipContent={t("work_item_type_hierarchy.settings.enable_control.tooltip")}
+              disabled={disableToggling}
+              position="left"
+            >
+              <Switch
+                value={isWorkItemHierarchyFeatureEnabled}
+                onChange={toggleWorkItemHierarchyFeature}
                 disabled={disableToggling}
-                position="left"
-              >
-                <Switch
-                  value={isWorkItemHierarchyFeatureEnabled}
-                  onChange={toggleWorkItemHierarchyFeature}
-                  disabled={disableToggling}
-                />
-              </Tooltip>
-            }
-          />
-        </div>
-        {isWorkspaceWorkItemTypesEnabled ? (
-          isWorkItemHierarchyFeatureEnabled && (
-            <div className="mt-12">
-              <WorkItemTypeHierarchyLevelsRoot />
-            </div>
-          )
-        ) : (
-          <div className="bg-warning-subtle border border-warning-subtle text-warning-secondary shadow-raised-200 rounded-lg py-3.5 px-4 mt-6 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <TriangleAlert className="shrink-0 size-5" />
-              <p className="text-body-sm-medium">
-                {t("work_item_type_hierarchy.settings.workspace_work_item_types_disabled_banner.content")}
-              </p>
-            </div>
-            <div className="shrink-0">
-              <Button
-                variant="secondary"
-                onClick={() => router.push(`/${workspaceSlug}/settings/work-item-types/`)}
-                appendIcon={<ArrowUpRight />}
-              >
-                {t("work_item_type_hierarchy.settings.workspace_work_item_types_disabled_banner.cta")}
-              </Button>
-            </div>
+              />
+            </Tooltip>
+          }
+        />
+      </div>
+      {isWorkspaceWorkItemTypesEnabled ? (
+        isWorkItemHierarchyFeatureEnabled && (
+          <div className="mt-12">
+            <WorkItemTypeHierarchyLevelsRoot />
           </div>
-        )}
-      </WithFeatureFlagHOC>
+        )
+      ) : (
+        <div className="bg-warning-subtle border border-warning-subtle text-warning-secondary shadow-raised-200 rounded-lg py-3.5 px-4 mt-6 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <TriangleAlert className="shrink-0 size-5" />
+            <p className="text-body-sm-medium">
+              {t("work_item_type_hierarchy.settings.workspace_work_item_types_disabled_banner.content")}
+            </p>
+          </div>
+          <div className="shrink-0">
+            <Button
+              variant="secondary"
+              onClick={() => router.push(`/${workspaceSlug}/settings/work-item-types/`)}
+              appendIcon={<ArrowUpRight />}
+            >
+              {t("work_item_type_hierarchy.settings.workspace_work_item_types_disabled_banner.cta")}
+            </Button>
+          </div>
+        </div>
+      )}
     </SettingsContentWrapper>
   );
 }

@@ -12,6 +12,7 @@
  */
 
 import { observer } from "mobx-react";
+import { Navigate } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -34,7 +35,6 @@ import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-it
 import { Tooltip } from "@plane/propel/tooltip";
 import { Switch } from "@plane/propel/switch";
 import { setPromiseToast } from "@plane/propel/toast";
-import { Navigate } from "react-router";
 
 function WorkItemTypesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -71,12 +71,12 @@ function WorkItemTypesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
   };
   // derived values
   const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-  const isWorkItemTypesFeatureEnabled = useFlag(workspaceSlug, "WORKSPACE_WORK_ITEM_TYPES", false);
+  const isWorkItemTypesFlagAvailable = useFlag(workspaceSlug, "WORKSPACE_WORK_ITEM_TYPES", false);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t("work_item_types.label")}` : undefined;
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const isWorkItemTypesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED);
 
-  if (!isWorkItemTypesFeatureEnabled) {
+  if (!isWorkItemTypesFlagAvailable) {
     //TODO: replace with upgrade screen once ready
     return <Navigate to={`/${workspaceSlug}`} />;
   }

@@ -31,6 +31,7 @@ type TIssueTypeDropdownProps = {
   buttonClassName?: string;
   disabled?: boolean;
   allWorkItemTypes: IIssueType[] | BaseWorkItemTypeInstanceSchema[];
+  showOnlyActiveWorkItemTypes?: boolean;
   handleChange: (value: string) => void;
   isInitializing?: boolean;
   selectedWorkItemTypeId: string | null;
@@ -44,6 +45,7 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
   const {
     selectedWorkItemTypeId,
     allWorkItemTypes,
+    showOnlyActiveWorkItemTypes = true,
     disabled = false,
     variant = "sm",
     placeholder = "Work item type",
@@ -55,8 +57,11 @@ export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIss
   } = props;
   // derived values
   const activeWorkItemTypes = useMemo(
-    () => allWorkItemTypes.filter((workItemType) => workItemType.is_active),
-    [allWorkItemTypes]
+    () =>
+      showOnlyActiveWorkItemTypes
+        ? allWorkItemTypes.filter((workItemType) => workItemType.is_active)
+        : allWorkItemTypes,
+    [allWorkItemTypes, showOnlyActiveWorkItemTypes]
   );
   const selectedWorkItemTypeDetails = useMemo(
     () => activeWorkItemTypes.find((workItemType) => workItemType.id === selectedWorkItemTypeId),
