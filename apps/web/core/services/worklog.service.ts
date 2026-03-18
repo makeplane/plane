@@ -69,14 +69,23 @@ export class WorklogService extends APIService {
       });
   }
 
-  async deleteWorklog(workspaceSlug: string, projectId: string, issueId: string, worklogId: string): Promise<void> {
+  async deleteWorklog(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    worklogId: string,
+    reason?: string
+  ): Promise<void> {
     return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/${worklogId}/`
-    ).then(() => {
-      return;
-    }).catch((error: { response?: { data: unknown } }) => {
-      throw error?.response?.data;
-    });
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/${worklogId}/`,
+      reason ? { reason } : undefined
+    )
+      .then(() => {
+        return;
+      })
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
   }
 
   // Summary endpoints

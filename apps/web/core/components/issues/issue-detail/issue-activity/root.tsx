@@ -76,11 +76,13 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
 
   // derived values
   const issue = issueId ? getIssueById(issueId) : undefined;
+  const project = getProjectById(projectId);
   const currentUserProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
   const isAdmin = currentUserProjectRole === EUserPermissions.ADMIN;
   const isGuest = currentUserProjectRole === EUserPermissions.GUEST;
   const isAssigned = issue?.assignee_ids && currentUser?.id ? issue?.assignee_ids.includes(currentUser?.id) : false;
-  const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && (isAdmin || isAssigned);
+  const isTimeTrackingEnabled = project?.is_time_tracking_enabled !== false;
+  const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && isTimeTrackingEnabled && (isAdmin || isAssigned);
   // toggle filter
   const toggleFilter = (filter: TActivityFilters) => {
     if (!selectedFilters) return;
@@ -102,7 +104,6 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   // helper hooks
   const activityOperations = useWorkItemCommentOperations(workspaceSlug, projectId, issueId);
 
-  const project = getProjectById(projectId);
   const renderCommentCreationBox = useMemo(
     () => (
       <CommentCreate

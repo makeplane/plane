@@ -17,6 +17,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web components
 import { IssueAdditionalPropertiesActivity } from "@/plane-web/components/issues/issue-details/issue-properties-activity";
 import { OpinionButton } from "@/plane-web/components/issues/opinion";
+import { WorklogActivityGroup } from "@/plane-web/components/issues/worklog/activity/worklog-activity-group";
 import { IssueActivityWorklog } from "@/plane-web/components/issues/worklog/activity/root";
 import { useOpinion } from "@/plane-web/hooks/store/use-opinion";
 // local imports
@@ -110,6 +111,15 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
           <IssueAdditionalPropertiesActivity key={activityComment.id} activityId={activityComment.id} ends={ends} />
         ) : activityComment.activity_type === "WORKLOG" ? (
           <IssueActivityWorklog
+            key={activityComment.id}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            activityComment={activityComment}
+            ends={ends}
+          />
+        ) : activityComment.activity_type === "WORKLOG_GROUP" ? (
+          <WorklogActivityGroup
             key={activityComment.id}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
