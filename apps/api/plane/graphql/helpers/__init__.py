@@ -120,8 +120,8 @@ from .work_item import (
 )
 from .work_item_mention import get_work_item_mention, get_work_item_mention_async
 from .work_item_relation import (
-    RELATION_TYPE_MAP,
-    get_work_item_relation_type,
+    WORK_ITEM_RELATION_TYPE_MAP,
+    get_work_item_actual_relation_type,
     is_timeline_dependency_feature_flagged,
     is_timeline_dependency_feature_flagged_async,
 )

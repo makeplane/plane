@@ -11,6 +11,7 @@
 
 # Python imports
 import copy
+from typing import Any, Optional
 
 # Third-party imports
 import strawberry
@@ -27,7 +28,15 @@ from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
 # Module imports
-from plane.db.models import IssueRelation
+from plane.db.models import (
+    DEFAULT_DUPLICATE_DEFINITION,
+    DEFAULT_IMPLEMENTS_DEFINITION,
+    DEFAULT_RELATES_TO_DEFINITION,
+    Issue,
+    IssueRelation,
+    RelationCategory,
+    WorkItemRelationDefinition,
+)
 from plane.graphql.helpers import (
     is_timeline_dependency_feature_flagged_async,
     work_item_base_query,
@@ -35,6 +44,107 @@ from plane.graphql.helpers import (
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.issues.relation import IssueRelationType, WorkItemRelationTypes
+from plane.graphql.utils.archive import ArchivedFilterTypes
+
+
+# **************** Helpers ****************
+def _aggregate_relation_ids(field: str, **filter_kwargs: Any):
+    return Coalesce(
+        ArrayAgg(field, filter=Q(**filter_kwargs), distinct=True),
+        Value([], output_field=ArrayField(UUIDField())),
+    )
+
+
+def _build_relation_list(
+    work_items: dict[str, dict], work_item_ids: list[str], relation_type_value: WorkItemRelationTypes
+) -> list[dict]:
+    result = []
+
+    for work_item_id in work_item_ids or []:
+        work_item = work_items.get(str(work_item_id))
+        if work_item:
+            work_item_copy = copy.copy(work_item)
+            work_item_copy.relation_type = relation_type_value
+            result.append(work_item_copy)
+
+    return result
+
+
+# **************** Async Functions ****************
+@sync_to_async
+def _get_work_item_relation_definition(
+    workspace_slug: str,
+) -> tuple[list[dict], list[str], dict[str, dict]]:
+    relation_definitions = (
+        WorkItemRelationDefinition.objects.filter(workspace__slug=workspace_slug, is_active=True)
+        .only("id", "outward", "inward")
+        .values("id", "outward", "inward")
+    )
+
+    relation_definitions = list(relation_definitions)
+    relation_definition_ids = [d["id"] for d in relation_definitions]
+    relation_definition_by_id = {d["id"]: d for d in relation_definitions}
+
+    return relation_definitions, relation_definition_ids, relation_definition_by_id
+
+
+@sync_to_async
+def _get_work_item_relations_by_definition_ids(
+    workspace_slug: str, relation_definition_ids: list[str], work_item_id: str
+) -> list[dict]:
+    relations = (
+        IssueRelation.objects.filter(
+            workspace__slug=workspace_slug,
+            category=RelationCategory.RELATION,
+            definition_id__in=relation_definition_ids,
+        )
+        .filter(Q(issue_id=work_item_id) | Q(related_issue_id=work_item_id))
+        .values("definition_id", "issue_id", "related_issue_id")
+    )
+
+    relations = list(relations)
+
+    return relations
+
+
+@sync_to_async
+def _get_work_items_by_ids(workspace_slug: str, work_item_ids: Optional[list[str]] = None) -> dict[str, Issue]:
+    work_item_required_fields = ["id", "name", "priority", "sequence_id", "project", "state", "type"]
+
+    if work_item_ids is None:
+        return {}
+
+    work_items_query = (
+        work_item_base_query(workspace_slug=workspace_slug, archived_filter=ArchivedFilterTypes.INCLUDE)
+        .filter(id__in=work_item_ids)
+        .select_related("project", "type")
+        .prefetch_related("assignees")
+        .only(*work_item_required_fields)
+        .annotate(
+            assignee_ids=Coalesce(
+                ArrayAgg(
+                    "assignees__id",
+                    distinct=True,
+                    filter=Q(
+                        ~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
+                    ),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
+    )
+
+    work_items = list(work_items_query)
+    if not work_items:
+        return {}
+
+    work_items_by_id_map = {}
+    for work_item in work_items:
+        work_items_by_id_map[str(work_item.id)] = copy.copy(work_item)
+
+    return work_items_by_id_map
 
 
 @strawberry.type
@@ -47,6 +157,13 @@ class IssueRelationQuery:
         user = info.context.user
         user_id = str(user.id)
 
+        # check if the timeline dependency feature flag is enabled
+        timeline_dependency_feature_flagged = await is_timeline_dependency_feature_flagged_async(
+            user_id=user_id,
+            workspace_slug=slug,
+            raise_exception=False,
+        )
+
         # get the project teamspace filter
         project_teamspace_filter = await project_member_filter_via_teamspaces_async(
             user_id=user_id,
@@ -56,132 +173,44 @@ class IssueRelationQuery:
         # construct the issue relation query
         work_item_relation_query = (
             IssueRelation.objects.filter(workspace__slug=slug)
+            .filter(category=RelationCategory.DEPENDENCY)
             .filter(project_teamspace_filter.query)
             .filter(Q(issue_id=issue) | Q(related_issue_id=issue))
             .order_by("-created_at")
             .distinct()
         )
 
-        # build aggregation kwargs for single query
+        # build aggregation kwargs for single query for all relation types
         aggregation_kwargs = {
             # blocking: BLOCKED_BY where related_issue_id=issue → get issue_id
-            "blocking_work_item_ids": Coalesce(
-                ArrayAgg(
-                    "issue_id",
-                    filter=Q(relation_type=WorkItemRelationTypes.BLOCKED_BY.value, related_issue_id=issue),
-                    distinct=True,
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
+            "blocking_work_item_ids": _aggregate_relation_ids(
+                "issue_id", relation_type=WorkItemRelationTypes.BLOCKED_BY.value, related_issue_id=issue
             ),
             # blocked_by: BLOCKED_BY where issue_id=issue → get related_issue_id
-            "blocked_by_work_item_ids": Coalesce(
-                ArrayAgg(
-                    "related_issue_id",
-                    filter=Q(relation_type=WorkItemRelationTypes.BLOCKED_BY.value, issue_id=issue),
-                    distinct=True,
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-            # duplicate: DUPLICATE from both directions combined
-            "duplicate_work_item_ids": Coalesce(
-                ArrayAgg(
-                    "related_issue_id",
-                    filter=Q(relation_type=WorkItemRelationTypes.DUPLICATE.value, issue_id=issue),
-                    distinct=True,
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-            "duplicate_work_item_ids_related": Coalesce(
-                ArrayAgg(
-                    "issue_id",
-                    filter=Q(relation_type=WorkItemRelationTypes.DUPLICATE.value, related_issue_id=issue),
-                    distinct=True,
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-            # relates_to: RELATES_TO from both directions combined
-            "relates_to_work_item_ids": Coalesce(
-                ArrayAgg(
-                    "related_issue_id",
-                    filter=Q(relation_type=WorkItemRelationTypes.RELATES_TO.value, issue_id=issue),
-                    distinct=True,
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-            "relates_to_work_item_ids_related": Coalesce(
-                ArrayAgg(
-                    "issue_id",
-                    filter=Q(relation_type=WorkItemRelationTypes.RELATES_TO.value, related_issue_id=issue),
-                    distinct=True,
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-            # implements: IMPLEMENTED_BY where issue_id=issue → get related_issue_id
-            "implements_work_item_ids": Coalesce(
-                ArrayAgg(
-                    "related_issue_id",
-                    filter=Q(relation_type=WorkItemRelationTypes.IMPLEMENTED_BY.value, issue_id=issue),
-                    distinct=True,
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            ),
-            # implemented_by: IMPLEMENTED_BY where related_issue_id=issue → get issue_id
-            "implemented_by_work_item_ids": Coalesce(
-                ArrayAgg(
-                    "issue_id",
-                    filter=Q(relation_type=WorkItemRelationTypes.IMPLEMENTED_BY.value, related_issue_id=issue),
-                    distinct=True,
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
+            "blocked_by_work_item_ids": _aggregate_relation_ids(
+                "related_issue_id", relation_type=WorkItemRelationTypes.BLOCKED_BY.value, issue_id=issue
             ),
         }
-
-        # check if the timeline dependency feature flag is enabled
-        timeline_dependency_feature_flagged = await is_timeline_dependency_feature_flagged_async(
-            user_id=user_id,
-            workspace_slug=slug,
-            raise_exception=False,
-        )
 
         # add timeline dependency aggregations if feature flag is enabled
         if timeline_dependency_feature_flagged:
             aggregation_kwargs.update(
                 {
                     # start_after: START_BEFORE where related_issue_id=issue → get issue_id
-                    "start_after_work_item_ids": Coalesce(
-                        ArrayAgg(
-                            "issue_id",
-                            filter=Q(relation_type=WorkItemRelationTypes.START_BEFORE.value, related_issue_id=issue),
-                            distinct=True,
-                        ),
-                        Value([], output_field=ArrayField(UUIDField())),
+                    "start_after_work_item_ids": _aggregate_relation_ids(
+                        "issue_id", relation_type=WorkItemRelationTypes.START_BEFORE.value, related_issue_id=issue
                     ),
                     # start_before: START_BEFORE where issue_id=issue → get related_issue_id
-                    "start_before_work_item_ids": Coalesce(
-                        ArrayAgg(
-                            "related_issue_id",
-                            filter=Q(relation_type=WorkItemRelationTypes.START_BEFORE.value, issue_id=issue),
-                            distinct=True,
-                        ),
-                        Value([], output_field=ArrayField(UUIDField())),
+                    "start_before_work_item_ids": _aggregate_relation_ids(
+                        "related_issue_id", relation_type=WorkItemRelationTypes.START_BEFORE.value, issue_id=issue
                     ),
                     # finish_after: FINISH_BEFORE where related_issue_id=issue → get issue_id
-                    "finish_after_work_item_ids": Coalesce(
-                        ArrayAgg(
-                            "issue_id",
-                            filter=Q(relation_type=WorkItemRelationTypes.FINISH_BEFORE.value, related_issue_id=issue),
-                            distinct=True,
-                        ),
-                        Value([], output_field=ArrayField(UUIDField())),
+                    "finish_after_work_item_ids": _aggregate_relation_ids(
+                        "issue_id", relation_type=WorkItemRelationTypes.FINISH_BEFORE.value, related_issue_id=issue
                     ),
                     # finish_before: FINISH_BEFORE where issue_id=issue → get related_issue_id
-                    "finish_before_work_item_ids": Coalesce(
-                        ArrayAgg(
-                            "related_issue_id",
-                            filter=Q(relation_type=WorkItemRelationTypes.FINISH_BEFORE.value, issue_id=issue),
-                            distinct=True,
-                        ),
-                        Value([], output_field=ArrayField(UUIDField())),
+                    "finish_before_work_item_ids": _aggregate_relation_ids(
+                        "related_issue_id", relation_type=WorkItemRelationTypes.FINISH_BEFORE.value, issue_id=issue
                     ),
                 }
             )
@@ -192,20 +221,6 @@ class IssueRelationQuery:
         # extract IDs from aggregation result
         blocking_work_item_ids = relation_ids.get("blocking_work_item_ids", [])
         blocked_by_work_item_ids = relation_ids.get("blocked_by_work_item_ids", [])
-        duplicate_work_item_ids = list(
-            set(
-                relation_ids.get("duplicate_work_item_ids", [])
-                + relation_ids.get("duplicate_work_item_ids_related", [])
-            )
-        )
-        relates_work_item_ids = list(
-            set(
-                relation_ids.get("relates_to_work_item_ids", [])
-                + relation_ids.get("relates_to_work_item_ids_related", [])
-            )
-        )
-        implements_work_item_ids = relation_ids.get("implements_work_item_ids", [])
-        implemented_by_work_item_ids = relation_ids.get("implemented_by_work_item_ids", [])
 
         if timeline_dependency_feature_flagged:
             start_after_work_item_ids = relation_ids.get("start_after_work_item_ids", [])
@@ -219,92 +234,108 @@ class IssueRelationQuery:
             finish_before_work_item_ids = []
 
         # collect all unique work item IDs to fetch in a single query
-        all_work_item_ids = set()
-        all_work_item_ids.update(blocking_work_item_ids or [])
-        all_work_item_ids.update(blocked_by_work_item_ids or [])
-        all_work_item_ids.update(duplicate_work_item_ids or [])
-        all_work_item_ids.update(relates_work_item_ids or [])
-        all_work_item_ids.update(start_after_work_item_ids or [])
-        all_work_item_ids.update(start_before_work_item_ids or [])
-        all_work_item_ids.update(finish_after_work_item_ids or [])
-        all_work_item_ids.update(finish_before_work_item_ids or [])
-        all_work_item_ids.update(implements_work_item_ids or [])
-        all_work_item_ids.update(implemented_by_work_item_ids or [])
+        work_item_ids = set()
+        work_item_ids.update(blocking_work_item_ids or [])
+        work_item_ids.update(blocked_by_work_item_ids or [])
+        work_item_ids.update(start_after_work_item_ids or [])
+        work_item_ids.update(start_before_work_item_ids or [])
+        work_item_ids.update(finish_after_work_item_ids or [])
+        work_item_ids.update(finish_before_work_item_ids or [])
 
-        # construct the work item required fields
-        work_item_required_fields = ["id", "name", "priority", "sequence_id", "project", "state", "type"]
+        # ******************** Related to work items definition and relations ********************
+        # fetch related to work items definition and relations
+        (
+            relation_definitions,
+            relation_definition_ids,
+            relation_definition_by_id,
+        ) = await _get_work_item_relation_definition(
+            workspace_slug=slug,
+        )
+
+        # fetch related to work items relations by definition IDs
+        work_item_relations = await _get_work_item_relations_by_definition_ids(
+            workspace_slug=slug,
+            relation_definition_ids=relation_definition_ids,
+            work_item_id=str(issue),
+        )
+
+        # Group related to work item IDs by relation label (outward / inward from current item's perspective)
+        work_item_ids_by_relation = {}
+        for relation_definition in relation_definitions:
+            work_item_ids_by_relation[relation_definition["outward"]] = []
+            work_item_ids_by_relation[relation_definition["inward"]] = []
+
+        # Add related to work item IDs to the work item IDs set
+        for relation in work_item_relations:
+            relation_definition = relation_definition_by_id.get(relation["definition_id"])
+            if not relation_definition:
+                continue
+
+            if str(relation["issue_id"]) == str(issue):
+                work_item_ids_by_relation[relation_definition["outward"]].append(relation["related_issue_id"])
+            else:
+                work_item_ids_by_relation[relation_definition["inward"]].append(relation["issue_id"])
+
+        relation_work_item_ids = {uid for ids in work_item_ids_by_relation.values() for uid in ids}
+
+        work_item_ids.update(relation_work_item_ids)
+        # ******************** Related to work items definition and relations ********************
 
         # fetch all work items in a single query
-        if all_work_item_ids:
-            work_item_query = (
-                work_item_base_query(workspace_slug=slug)
-                .filter(id__in=all_work_item_ids)
-                .select_related("project", "type")
-                .prefetch_related("assignees")
-                .only(*work_item_required_fields)
-                .annotate(
-                    assignee_ids=Coalesce(
-                        ArrayAgg(
-                            "assignees__id",
-                            distinct=True,
-                            filter=Q(
-                                ~Q(assignees__id__isnull=True)
-                                & Q(assignees__member_project__is_active=True)
-                                & Q(issue_assignee__deleted_at__isnull=True)
-                            ),
-                        ),
-                        Value([], output_field=ArrayField(UUIDField())),
-                    ),
-                )
-            )
-            all_work_items_list = await sync_to_async(list)(work_item_query)
-            work_items_by_id = {str(item.id): item for item in all_work_items_list}
+        work_item_ids = list([str(work_item_id) for work_item_id in work_item_ids])
 
-            # TODO: Pre-compute analytics for issues to avoid N+1 queries
-        else:
-            work_items_by_id = {}
-
-        # helper to build work items list with relation_type
-        def build_relation_list(ids, relation_type_value):
-            result = []
-            for work_item_id in ids or []:
-                item = work_items_by_id.get(str(work_item_id))
-                if item:
-                    item_copy = copy.copy(item)
-                    item_copy.relation_type = relation_type_value
-                    result.append(item_copy)
-            return result
+        work_items = await _get_work_items_by_ids(workspace_slug=slug, work_item_ids=work_item_ids)
 
         # build all relation lists from fetched work items
-        blocking_work_items = build_relation_list(blocking_work_item_ids, WorkItemRelationTypes.BLOCKING.value)
-        blocked_by_work_items = build_relation_list(blocked_by_work_item_ids, WorkItemRelationTypes.BLOCKED_BY.value)
-        duplicate_work_items = build_relation_list(duplicate_work_item_ids, WorkItemRelationTypes.DUPLICATE.value)
-        relates_to_work_items = build_relation_list(relates_work_item_ids, WorkItemRelationTypes.RELATES_TO.value)
-        start_after_work_items = build_relation_list(start_after_work_item_ids, WorkItemRelationTypes.START_AFTER.value)
-        start_before_work_items = build_relation_list(
-            start_before_work_item_ids, WorkItemRelationTypes.START_BEFORE.value
+        blocking_work_items = _build_relation_list(
+            work_items=work_items,
+            work_item_ids=blocking_work_item_ids,
+            relation_type_value=WorkItemRelationTypes.BLOCKING.value,
         )
-        finish_after_work_items = build_relation_list(
-            finish_after_work_item_ids, WorkItemRelationTypes.FINISH_AFTER.value
+        blocked_by_work_items = _build_relation_list(
+            work_items=work_items,
+            work_item_ids=blocked_by_work_item_ids,
+            relation_type_value=WorkItemRelationTypes.BLOCKED_BY.value,
         )
-        finish_before_work_items = build_relation_list(
-            finish_before_work_item_ids, WorkItemRelationTypes.FINISH_BEFORE.value
+        start_after_work_items = _build_relation_list(
+            work_items=work_items,
+            work_item_ids=start_after_work_item_ids,
+            relation_type_value=WorkItemRelationTypes.START_AFTER.value,
         )
-        implements_work_items = build_relation_list(implements_work_item_ids, WorkItemRelationTypes.IMPLEMENTS.value)
-        implemented_by_work_items = build_relation_list(
-            implemented_by_work_item_ids, WorkItemRelationTypes.IMPLEMENTED_BY.value
+        start_before_work_items = _build_relation_list(
+            work_items=work_items,
+            work_item_ids=start_before_work_item_ids,
+            relation_type_value=WorkItemRelationTypes.START_BEFORE.value,
         )
+        finish_after_work_items = _build_relation_list(
+            work_items=work_items,
+            work_item_ids=finish_after_work_item_ids,
+            relation_type_value=WorkItemRelationTypes.FINISH_AFTER.value,
+        )
+        finish_before_work_items = _build_relation_list(
+            work_items=work_items,
+            work_item_ids=finish_before_work_item_ids,
+            relation_type_value=WorkItemRelationTypes.FINISH_BEFORE.value,
+        )
+
+        response_data = {
+            relation_type: _build_relation_list(
+                work_items=work_items, work_item_ids=ids, relation_type_value=relation_type
+            )
+            for relation_type, ids in work_item_ids_by_relation.items()
+        }
 
         relation_response = IssueRelationType(
             blocking=blocking_work_items,
             blocked_by=blocked_by_work_items,
-            duplicate=duplicate_work_items,
-            relates_to=relates_to_work_items,
             start_after=start_after_work_items,
             start_before=start_before_work_items,
             finish_after=finish_after_work_items,
             finish_before=finish_before_work_items,
-            implements=implements_work_items if len(implements_work_item_ids) > 0 else None,
-            implemented_by=implemented_by_work_items if len(implemented_by_work_item_ids) > 0 else None,
+            duplicate=response_data.get(DEFAULT_DUPLICATE_DEFINITION["outward"], []),
+            relates_to=response_data.get(DEFAULT_RELATES_TO_DEFINITION["outward"], []),
+            implements=response_data.get(DEFAULT_IMPLEMENTS_DEFINITION["outward"], []),
+            implemented_by=response_data.get(DEFAULT_IMPLEMENTS_DEFINITION["inward"], []),
         )
+
         return relation_response

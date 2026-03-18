@@ -171,6 +171,8 @@ from plane.ee.utils.workflow import WorkflowStateManager
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
+from plane.db.models import WorkItemRelationDefinition, RelationCategory
+from plane.db.models.work_item_relation import DEFAULT_RELATES_TO_DEFINITION, DEFAULT_DUPLICATE_DEFINITION
 from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from rest_framework.permissions import IsAuthenticated
 from plane.utils.oauth import (
@@ -2659,6 +2661,7 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = IssueRelationSerializer
     model = IssueRelation
+    relation_definition_model = WorkItemRelationDefinition
     permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_RELATIONS_READ_SCOPE]],
@@ -2710,6 +2713,7 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         Retrieve all relationships for a work item organized by relation type.
         Returns a structured response with relations grouped by type.
         """
+
         empty_uuid_array = Value([], output_field=ArrayField(UUIDField()))
 
         def _agg_ids(field, **filter_kwargs):
@@ -2726,10 +2730,6 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         relation_ids = issue_relation_qs.aggregate(
             blocking_ids=_agg_ids("issue_id", relation_type="blocked_by", related_issue_id=issue_id),
             blocked_by_ids=_agg_ids("related_issue_id", relation_type="blocked_by", issue_id=issue_id),
-            duplicate_ids=_agg_ids("related_issue_id", relation_type="duplicate", issue_id=issue_id),
-            duplicate_ids_related=_agg_ids("issue_id", relation_type="duplicate", related_issue_id=issue_id),
-            relates_to_ids=_agg_ids("related_issue_id", relation_type="relates_to", issue_id=issue_id),
-            relates_to_ids_related=_agg_ids("issue_id", relation_type="relates_to", related_issue_id=issue_id),
             start_after_ids=_agg_ids("issue_id", relation_type="start_before", related_issue_id=issue_id),
             start_before_ids=_agg_ids("related_issue_id", relation_type="start_before", issue_id=issue_id),
             finish_after_ids=_agg_ids("issue_id", relation_type="finish_before", related_issue_id=issue_id),
@@ -2739,13 +2739,66 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         response_data = {
             "blocking": relation_ids["blocking_ids"],
             "blocked_by": relation_ids["blocked_by_ids"],
-            "duplicate": list(set(relation_ids["duplicate_ids"] + relation_ids["duplicate_ids_related"])),
-            "relates_to": list(set(relation_ids["relates_to_ids"] + relation_ids["relates_to_ids_related"])),
             "start_after": relation_ids["start_after_ids"],
             "start_before": relation_ids["start_before_ids"],
             "finish_after": relation_ids["finish_after_ids"],
             "finish_before": relation_ids["finish_before_ids"],
+            "relates_to": [],
+            "duplicate": [],
         }
+
+        # implement from the custom relation definition
+        relation_definitions = list(
+            self.relation_definition_model.objects.filter(
+                workspace__slug=slug,
+                is_active=True,
+                outward__in=[
+                    DEFAULT_RELATES_TO_DEFINITION["outward"],
+                    DEFAULT_DUPLICATE_DEFINITION["outward"],
+                ],
+            ).values("id", "outward", "inward")
+        )
+        relation_definition_ids = [d["id"] for d in relation_definitions]
+        relation_definition_by_id = {d["id"]: d for d in relation_definitions}
+
+        # Work item relations with category=relation use definition_id (not relation_type)
+        work_item_relations = (
+            self.model.objects.filter(category=RelationCategory.RELATION, definition_id__in=relation_definition_ids)
+            .filter(
+                Q(issue_id=issue_id) | Q(related_issue_id=issue_id),
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            .values("definition_id", "issue_id", "related_issue_id")
+        )
+
+        # Group related work item IDs by relation label (outward / inward from current item's perspective)
+        work_item_ids_by_relation = {}
+        for relation_definition in relation_definitions:
+            work_item_ids_by_relation[relation_definition["outward"]] = set()
+            work_item_ids_by_relation[relation_definition["inward"]] = set()
+
+        for rel in work_item_relations:
+            relation_definition = relation_definition_by_id.get(rel["definition_id"])
+            if not relation_definition:
+                continue
+
+            if rel["issue_id"] == issue_id:
+                work_item_ids_by_relation[relation_definition["outward"]].add(rel["related_issue_id"])
+            else:
+                work_item_ids_by_relation[relation_definition["inward"]].add(rel["issue_id"])
+
+        for relation_definition in relation_definitions:
+            response_data[relation_definition["outward"]] = list(
+                work_item_ids_by_relation[relation_definition["outward"]]
+            )
+            response_data[relation_definition["inward"]] = list(
+                work_item_ids_by_relation[relation_definition["inward"]]
+            )
+
+        # convert the relation keys from relates to to relates_to if it exists and remove the relates to key
+        if "relates to" in response_data.keys():
+            response_data["relates_to"] = response_data.pop("relates to")
 
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -2817,53 +2870,110 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         issues = serializer.validated_data["issues"]
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
-        actual_relation = get_actual_relation(relation_type)
-        is_reverse = relation_type in ["blocking", "start_after", "finish_after"]
+        refetch_filter = Q()
+        is_reverse = False
 
-        IssueRelation.objects.bulk_create(
-            [
-                IssueRelation(
-                    issue_id=(issue if is_reverse else issue_id),
-                    related_issue_id=(issue_id if is_reverse else issue),
-                    relation_type=actual_relation,
-                    project_id=project_id,
-                    workspace_id=project.workspace_id,
-                    created_by=request.user,
-                    updated_by=request.user,
-                )
-                for issue in issues
-            ],
-            batch_size=10,
-            ignore_conflicts=True,
-        )
-
-        issue_activity.delay(
-            type="issue_relation.activity.created",
-            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-            actor_id=str(request.user.id),
-            issue_id=str(issue_id),
-            project_id=str(project_id),
-            current_instance=None,
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=base_host(request=request, is_app=True),
-        )
-
-        # Re-fetch with select_related to avoid N+1 queries in serializers.
-        # bulk_create with ignore_conflicts=True may not return PKs,
-        # so query by the issue/related_issue pairs and relation type.
-        if is_reverse:
-            refetch_filter = Q(
-                issue_id__in=issues,
-                related_issue_id=issue_id,
-                relation_type=actual_relation,
+        # Handle the relation type which supports the relation definition relates to and duplicate
+        if relation_type in ["relates_to", "duplicate"]:
+            relation_type_actual = (
+                DEFAULT_RELATES_TO_DEFINITION["inward"]
+                if relation_type == "relates_to"
+                else DEFAULT_DUPLICATE_DEFINITION["inward"]
+                if relation_type == "duplicate"
+                else None
             )
-        else:
+            if not relation_type_actual:
+                return Response({"message": "Invalid relation type"}, status=status.HTTP_400_BAD_REQUEST)
+
+            relation_definition = WorkItemRelationDefinition.objects.filter(
+                workspace__slug=slug, inward=relation_type_actual, is_active=True
+            ).first()
+            if not relation_definition:
+                return Response({"message": "Relation definition not found."}, status=status.HTTP_404_NOT_FOUND)
+
+            IssueRelation.objects.bulk_create(
+                [
+                    IssueRelation(
+                        issue_id=issue_id,
+                        related_issue_id=issue,
+                        category=RelationCategory.RELATION,
+                        definition_id=relation_definition.id,
+                        workspace_id=project.workspace_id,
+                        project_id=project_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for issue in issues
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+
+            issue_activity.delay(
+                type="issue_relation.activity.created",
+                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
+            )
+
             refetch_filter = Q(
                 issue_id=issue_id,
                 related_issue_id__in=issues,
-                relation_type=actual_relation,
+                definition_id=relation_definition.id,
             )
+        else:
+            actual_relation = get_actual_relation(relation_type)
+            is_reverse = relation_type in ["blocking", "start_after", "finish_after"]
+
+            IssueRelation.objects.bulk_create(
+                [
+                    IssueRelation(
+                        issue_id=(issue if is_reverse else issue_id),
+                        related_issue_id=(issue_id if is_reverse else issue),
+                        relation_type=actual_relation,
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for issue in issues
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+
+            issue_activity.delay(
+                type="issue_relation.activity.created",
+                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
+            )
+
+            # Re-fetch with select_related to avoid N+1 queries in serializers.
+            # bulk_create with ignore_conflicts=True may not return PKs,
+            # so query by the issue/related_issue pairs and relation type.
+            if is_reverse:
+                refetch_filter = Q(
+                    issue_id__in=issues,
+                    related_issue_id=issue_id,
+                    relation_type=actual_relation,
+                )
+            else:
+                refetch_filter = Q(
+                    issue_id=issue_id,
+                    related_issue_id__in=issues,
+                    relation_type=actual_relation,
+                )
 
         refetched_relations = IssueRelation.objects.filter(
             refetch_filter,
@@ -2925,40 +3035,56 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
 
         related_issue = serializer.validated_data["related_issue"]
 
-        issue_relation = (
+        issue_relations = (
             IssueRelation.objects.filter(workspace__slug=slug)
             .filter(
                 Q(issue_id=related_issue, related_issue_id=issue_id)
                 | Q(issue_id=issue_id, related_issue_id=related_issue)
             )
-            .select_related(
-                "issue__type",
-                "issue__state",
-                "related_issue__type",
-                "related_issue__state",
-            )
-            .first()
+            .select_related("definition")
         )
+        if not issue_relations.exists():
+            return Response({"message": "Issue relation not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        if issue_relation is None:
-            return Response(
-                {"message": "Issue relation not found"},
-                status=status.HTTP_404_NOT_FOUND,
+        issue_relation_activity = []
+        for issue_relation in issue_relations:
+            related_issue = (
+                issue_relation.related_issue_id if issue_relation.issue_id == issue_id else issue_relation.issue_id
+            )
+            relation_type = issue_relation.relation_type
+
+            if issue_relation.category == RelationCategory.RELATION:
+                if issue_relation.definition.outward == DEFAULT_RELATES_TO_DEFINITION["outward"]:
+                    relation_type = "relates_to"
+                elif issue_relation.definition.outward == DEFAULT_DUPLICATE_DEFINITION["outward"]:
+                    relation_type = "duplicate"
+                else:
+                    relation_type = issue_relation.definition.outward
+
+            issue_relation_activity.append(
+                {
+                    "related_issue": str(related_issue),
+                    "relation_type": relation_type,
+                }
             )
 
-        current_instance = json.dumps(IssueRelationSerializer(issue_relation).data, cls=DjangoJSONEncoder)
-        issue_relation.delete()
-        issue_activity.delay(
-            type="issue_relation.activity.deleted",
-            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-            actor_id=str(request.user.id),
-            issue_id=str(issue_id),
-            project_id=str(project_id),
-            current_instance=current_instance,
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=base_host(request=request, is_app=True),
-        )
+        issue_relations.delete()
+
+        for activity in issue_relation_activity:
+            issue_activity.delay(
+                type="issue_relation.activity.deleted",
+                requested_data=json.dumps(
+                    {"related_issue": activity["related_issue"], "relation_type": activity["relation_type"]}
+                ),
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
+            )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

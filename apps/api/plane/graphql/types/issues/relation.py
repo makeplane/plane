@@ -29,12 +29,12 @@ from plane.graphql.utils.work_item import get_all_related_work_items
 class WorkItemRelationTypes(Enum):
     BLOCKING = "blocking"
     BLOCKED_BY = "blocked_by"
-    DUPLICATE = "duplicate"
-    RELATES_TO = "relates_to"
     START_AFTER = "start_after"
     START_BEFORE = "start_before"
     FINISH_AFTER = "finish_after"
     FINISH_BEFORE = "finish_before"
+    DUPLICATE = "duplicate"
+    RELATES_TO = "relates_to"
     IMPLEMENTS = "implements"
     IMPLEMENTED_BY = "implemented_by"
 

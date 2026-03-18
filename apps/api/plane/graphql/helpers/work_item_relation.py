@@ -20,7 +20,7 @@ from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
 from plane.graphql.types.issues.relation import WorkItemRelationTypes
 from plane.graphql.utils.feature_flag import _validate_feature_flag
 
-RELATION_TYPE_MAP = {
+WORK_ITEM_RELATION_TYPE_MAP = {
     WorkItemRelationTypes.START_AFTER.value: WorkItemRelationTypes.START_BEFORE.value,
     WorkItemRelationTypes.FINISH_AFTER.value: WorkItemRelationTypes.FINISH_BEFORE.value,
     WorkItemRelationTypes.BLOCKING.value: WorkItemRelationTypes.BLOCKED_BY.value,
@@ -31,8 +31,8 @@ RELATION_TYPE_MAP = {
 }
 
 
-def get_work_item_relation_type(relation_type):
-    return RELATION_TYPE_MAP.get(relation_type, relation_type)
+def get_work_item_actual_relation_type(relation_type):
+    return WORK_ITEM_RELATION_TYPE_MAP.get(relation_type, relation_type)
 
 
 def is_timeline_dependency_feature_flagged(user_id: str, workspace_slug: str, raise_exception: bool = True):

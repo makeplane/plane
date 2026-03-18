@@ -20,19 +20,27 @@ import strawberry
 from asgiref.sync import sync_to_async
 
 # Django Imports
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 
 # Strawberry Imports
 from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
 # Module Imports
-from plane.db.models import Issue
+from plane.db.models import (
+    DEFAULT_DUPLICATE_DEFINITION,
+    DEFAULT_IMPLEMENTS_DEFINITION,
+    DEFAULT_RELATES_TO_DEFINITION,
+    Issue,
+    IssueRelation,
+    RelationCategory,
+)
 from plane.graphql.helpers import is_epic_feature_flagged, is_project_epics_enabled
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.graphql.types.intake.base import IntakeWorkItemStatusType
 from plane.graphql.types.issues.base import IssueLiteType
+from plane.graphql.types.issues.relation import WorkItemRelationTypes
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
 
@@ -41,6 +49,103 @@ from plane.graphql.utils.paginator import paginate
 def get_issue_details(issue_id):
     issue = Issue.objects.get(id=issue_id)
     return issue
+
+
+@sync_to_async
+def handle_work_item_relation_issues(
+    workspace_slug: str, work_item_id: str, work_item_queryset: QuerySet, relation_type: WorkItemRelationTypes = None
+):
+    def _construct_work_item_q(
+        work_item_id: str, related_work_item_ids: list[str, list[str]], work_item_queryset: QuerySet
+    ):
+        # flatten related work item ids
+        related_work_item_ids = [str(item) for sublist in related_work_item_ids for item in sublist]
+        related_work_item_ids.append(work_item_id)
+        related_work_item_ids = list(set(related_work_item_ids))
+
+        # exclude related work item ids from issues and epics query set
+        work_item_queryset = work_item_queryset.exclude(pk__in=related_work_item_ids)
+
+        # return issues and epics query set excluding related work item ids
+        return work_item_queryset
+
+    if relation_type in [
+        WorkItemRelationTypes.BLOCKING.value,
+        WorkItemRelationTypes.BLOCKED_BY.value,
+        WorkItemRelationTypes.START_AFTER.value,
+        WorkItemRelationTypes.START_BEFORE.value,
+        WorkItemRelationTypes.FINISH_AFTER.value,
+        WorkItemRelationTypes.FINISH_BEFORE.value,
+    ]:
+        related_work_item_ids = (
+            IssueRelation.objects.filter(
+                Q(issue_id=work_item_id) | Q(related_issue_id=work_item_id),
+                workspace__slug=workspace_slug,
+                category=RelationCategory.DEPENDENCY,
+                deleted_at__isnull=True,
+            )
+            .values_list("issue_id", "related_issue_id")
+            .distinct()
+        )
+
+        return _construct_work_item_q(
+            work_item_id=work_item_id,
+            related_work_item_ids=related_work_item_ids,
+            work_item_queryset=work_item_queryset,
+        )
+
+    elif relation_type in [WorkItemRelationTypes.IMPLEMENTS.value, WorkItemRelationTypes.IMPLEMENTED_BY.value]:
+        actual_relation_type = (
+            DEFAULT_IMPLEMENTS_DEFINITION["outward"]
+            if relation_type == WorkItemRelationTypes.IMPLEMENTS.value
+            else DEFAULT_IMPLEMENTS_DEFINITION["inward"]
+            if relation_type == WorkItemRelationTypes.IMPLEMENTED_BY.value
+            else None
+        )
+        if not actual_relation_type:
+            return work_item_queryset
+
+        # get related work item ids
+        related_work_item_ids = (
+            IssueRelation.objects.filter(Q(related_issue_id=work_item_id) | Q(issue_id=work_item_id))
+            .filter(Q(definition__inward=actual_relation_type) | Q(definition__outward=actual_relation_type))
+            .filter(category=RelationCategory.RELATION.value)
+            .values_list("issue_id", "related_issue_id")
+            .distinct()
+        )
+
+        return _construct_work_item_q(
+            work_item_id=work_item_id,
+            related_work_item_ids=related_work_item_ids,
+            work_item_queryset=work_item_queryset,
+        )
+    elif relation_type in [WorkItemRelationTypes.DUPLICATE.value, WorkItemRelationTypes.RELATES_TO.value]:
+        actual_relation_type = (
+            DEFAULT_DUPLICATE_DEFINITION["inward"]
+            if relation_type == WorkItemRelationTypes.DUPLICATE.value
+            else DEFAULT_RELATES_TO_DEFINITION["inward"]
+            if relation_type == WorkItemRelationTypes.RELATES_TO.value
+            else None
+        )
+        if not actual_relation_type:
+            return work_item_queryset
+
+        # get related work item ids
+        related_work_item_ids = (
+            IssueRelation.objects.filter(Q(related_issue_id=work_item_id) | Q(issue_id=work_item_id))
+            .filter(Q(definition__inward=actual_relation_type) | Q(definition__outward=actual_relation_type))
+            .filter(category=RelationCategory.RELATION.value)
+            .values_list("issue_id", "related_issue_id")
+            .distinct()
+        )
+
+        return _construct_work_item_q(
+            work_item_id=work_item_id,
+            related_work_item_ids=related_work_item_ids,
+            work_item_queryset=work_item_queryset,
+        )
+    else:
+        return work_item_queryset
 
 
 @strawberry.type
@@ -61,6 +166,7 @@ class IssuesSearchQuery:
         subIssues: Optional[bool] = False,
         is_epic_related: Optional[bool] = False,
         is_intake_related: Optional[bool] = False,
+        relationTypeValue: Optional[WorkItemRelationTypes] = None,
     ) -> PaginatorResponse[IssueLiteType]:
         user = info.context.user
         user_id = str(user.id)
@@ -118,17 +224,25 @@ class IssuesSearchQuery:
 
         # issue relation issues
         if relationType and issue:
-            issue_queryset = issue_queryset.filter(
-                ~Q(pk=issue),
-                ~Q(
-                    issue_related__issue_id=issue,
-                    issue_related__deleted_at__isnull=True,
-                ),
-                ~Q(
-                    issue_relation__related_issue_id=issue,
-                    issue_related__deleted_at__isnull=True,
-                ),
-            )
+            if relationTypeValue is None:
+                issue_queryset = issue_queryset.filter(
+                    ~Q(pk=issue),
+                    ~Q(
+                        issue_related__issue_id=issue,
+                        issue_related__deleted_at__isnull=True,
+                    ),
+                    ~Q(
+                        issue_relation__related_issue_id=issue,
+                        issue_related__deleted_at__isnull=True,
+                    ),
+                )
+            else:
+                issue_queryset = await handle_work_item_relation_issues(
+                    workspace_slug=slug,
+                    work_item_id=str(issue),
+                    work_item_queryset=issue_queryset,
+                    relation_type=relationTypeValue,
+                )
 
         # sub issues
         if subIssues and issue:
