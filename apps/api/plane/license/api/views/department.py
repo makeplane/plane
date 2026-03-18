@@ -352,9 +352,17 @@ class InstanceDepartmentAutoJoinEndpoint(BaseAPIView):
                     )
 
                 for project in projects:
-                    # Check for existing active membership
-                    if ProjectMember.objects.filter(project=project, member=manager).exists():
-                        already_member += 1
+                    # Check for existing non-soft-deleted membership (active or inactive)
+                    existing = ProjectMember.objects.filter(project=project, member=manager).first()
+                    if existing:
+                        if not existing.is_active:
+                            # Reactivate inactive membership and upgrade role if needed
+                            existing.is_active = True
+                            existing.role = max(existing.role, 20)
+                            existing.save(update_fields=["is_active", "role"])
+                            newly_added += 1
+                        else:
+                            already_member += 1
                         continue
 
                     # Restore soft-deleted membership instead of creating a duplicate
@@ -449,8 +457,15 @@ class RejoinAllEndpoint(BaseAPIView):
                     )
 
                 for project in projects:
-                    if ProjectMember.objects.filter(project=project, member=manager).exists():
-                        already_member += 1
+                    existing = ProjectMember.objects.filter(project=project, member=manager).first()
+                    if existing:
+                        if not existing.is_active:
+                            existing.is_active = True
+                            existing.role = max(existing.role, 20)
+                            existing.save(update_fields=["is_active", "role"])
+                            newly_added += 1
+                        else:
+                            already_member += 1
                         continue
 
                     soft_deleted = ProjectMember.all_objects.filter(
