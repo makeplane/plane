@@ -215,3 +215,31 @@ class ModuleUserProperties(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.module.name} {self.user.email}"
+
+
+class ModuleActivity(ProjectBaseModel):
+    module = models.ForeignKey(
+        "db.Module",
+        on_delete=models.CASCADE,
+        related_name="module_activities",
+    )
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="module_activities",
+    )
+    verb = models.CharField(max_length=255, default="created")
+    field = models.CharField(max_length=255, blank=True, null=True)
+    old_value = models.TextField(blank=True, null=True)
+    new_value = models.TextField(blank=True, null=True)
+    epoch = models.FloatField(null=True)
+
+    class Meta:
+        verbose_name = "Module Activity"
+        verbose_name_plural = "Module Activities"
+        db_table = "module_activities"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.module.name} {self.verb} {self.field}"

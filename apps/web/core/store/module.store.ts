@@ -412,13 +412,16 @@ export class ModulesStore implements IModuleStore {
    * @param data
    * @returns IModule
    */
-  createModule = async (workspaceSlug: string, projectId: string, data: Partial<IModule>) =>
-    await this.moduleService.createModule(workspaceSlug, projectId, data).then((response) => {
-      runInAction(() => {
-        set(this.moduleMap, [response?.id], response);
-      });
-      return response;
+  createModule = async (workspaceSlug: string, projectId: string, data: Partial<IModule>) => {
+    const response = await this.moduleService.createModule(workspaceSlug, projectId, data);
+    runInAction(() => {
+      set(this.moduleMap, [response?.id], response);
     });
+    // Refresh activity sidebar if available (CE store extension)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    void (this.rootStore as any).moduleActivity?.refreshActivities(workspaceSlug, projectId, response?.id);
+    return response;
+  };
 
   /**
    * @description updates module details
@@ -435,6 +438,9 @@ export class ModulesStore implements IModuleStore {
         set(this.moduleMap, [moduleId], { ...originalModuleDetails, ...data });
       });
       const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data);
+      // Refresh activity sidebar if available (CE store extension)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      void (this.rootStore as any).moduleActivity?.refreshActivities(workspaceSlug, projectId, moduleId);
       return response;
     } catch (error) {
       console.error("Failed to update module in module store", error);
@@ -454,12 +460,14 @@ export class ModulesStore implements IModuleStore {
   deleteModule = async (workspaceSlug: string, projectId: string, moduleId: string) => {
     const moduleDetails = this.getModuleById(moduleId);
     if (!moduleDetails) return;
-    await this.moduleService.deleteModule(workspaceSlug, projectId, moduleId).then(() => {
-      runInAction(() => {
-        delete this.moduleMap[moduleId];
-        if (this.rootStore.favorite.entityMap[moduleId]) this.rootStore.favorite.removeFavoriteFromStore(moduleId);
-      });
+    await this.moduleService.deleteModule(workspaceSlug, projectId, moduleId);
+    runInAction(() => {
+      delete this.moduleMap[moduleId];
+      if (this.rootStore.favorite.entityMap[moduleId]) this.rootStore.favorite.removeFavoriteFromStore(moduleId);
     });
+    // Refresh activity sidebar if available (CE store extension)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    void (this.rootStore as any).moduleActivity?.refreshActivities(workspaceSlug, projectId, moduleId);
   };
 
   /**

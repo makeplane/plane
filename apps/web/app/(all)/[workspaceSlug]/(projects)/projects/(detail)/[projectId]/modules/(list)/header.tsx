@@ -38,7 +38,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
 
   // auth
   const canUserCreateModule = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT
   );
 
