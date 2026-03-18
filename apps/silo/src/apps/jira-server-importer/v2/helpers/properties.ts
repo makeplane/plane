@@ -57,10 +57,8 @@ export const getSupportedDefaultProperties = (
     external_id: getDefaultPropertyExternalId(resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.FIX_VERSION),
     external_source: source,
     display_name: "Fix Version",
-    property_type: "TEXT",
-    settings: {
-      display_format: "single-line",
-    },
+    property_type: "RELATION",
+    relation_type: "RELEASE",
     is_active: true,
   },
   {
@@ -73,10 +71,8 @@ export const getSupportedDefaultProperties = (
     ),
     external_source: source,
     display_name: "Affected Version",
-    property_type: "TEXT",
-    settings: {
-      display_format: "single-line",
-    },
+    property_type: "RELATION",
+    relation_type: "RELEASE",
     is_active: true,
   },
   {

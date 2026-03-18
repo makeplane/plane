@@ -54,6 +54,7 @@ export type TIssuePropertyType = keyof typeof EIssuePropertyType;
 export enum EIssuePropertyRelationType {
   ISSUE = "ISSUE",
   USER = "USER",
+  RELEASE = "RELEASE",
 }
 export type TIssuePropertyRelationType = keyof typeof EIssuePropertyRelationType;
 

@@ -19,6 +19,7 @@ import type {
   IssueTypeDetails as JiraIssueTypeDetails,
   Worklog,
   FieldDetails,
+  Version,
 } from "jira.js/out/version2/models/index.js";
 import type {
   ImportedJiraUser,
@@ -84,6 +85,19 @@ export async function pullUsersV2(ctx: BasePaginationContext): Promise<Paginated
 export async function pullLabelsV2(ctx: BasePaginationContext): Promise<PaginatedResult<string>> {
   const { client, startAt, maxResults } = ctx;
   const result = await client.getLabelsV2(startAt, maxResults);
+
+  return {
+    items: result.values || [],
+    hasMore: result.isLast === false,
+    total: result.total,
+    startAt,
+    maxResults,
+  };
+}
+
+export async function pullVersions(ctx: BasePaginationContext, projectKey: string): Promise<PaginatedResult<Version>> {
+  const { client, startAt, maxResults } = ctx;
+  const result = await client.getVersionsPaginated(projectKey, startAt, maxResults);
 
   return {
     items: result.values || [],

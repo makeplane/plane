@@ -11,29 +11,24 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { ExIssueProperty } from "@plane/sdk";
 import type { ClientOptions } from "@/types";
 import { APIService } from "../api.service";
 import type { AxiosError } from "axios";
+import type { ExRelease } from "@plane/sdk";
 import type { TBulkOperationResponse } from "@/types/services";
 
-export type TIssuePropertyBulkOperationResponse = TBulkOperationResponse<ExIssueProperty>;
+export type TReleaseBulkOperationResponse = TBulkOperationResponse<ExRelease>;
 
-export class WorkItemPropertyAPIService extends APIService {
+export class ReleaseAPIService extends APIService {
   constructor(options: ClientOptions) {
     super(options);
   }
 
-  async bulkCreateOrUpdateIssueProperties(
+  async bulkCreateOrUpdateReleases(
     workspaceSlug: string,
-    projectId: string,
-    typeId: string,
-    payload: Partial<ExIssueProperty>[]
-  ): Promise<TIssuePropertyBulkOperationResponse> {
-    return this.post(
-      `/api/silo/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/properties/bulk-operation/`,
-      payload
-    )
+    payload: Partial<ExRelease>[]
+  ): Promise<TReleaseBulkOperationResponse> {
+    return this.post(`/api/silo/workspaces/${workspaceSlug}/releases/bulk-operation/`, payload)
       .then((response) => response.data)
       .catch((error: AxiosError) => {
         throw error?.response?.data;

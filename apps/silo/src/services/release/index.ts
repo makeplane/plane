@@ -11,7 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./job";
-export * from "./workspace";
-export * from "./work-item-property";
-export * from "./release";
+export * from "./release.service";

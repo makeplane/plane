@@ -291,6 +291,7 @@ export const getTransformedIssuePropertyValuesV2 = (
       const defaultPropertyValues = issueTypeId
         ? transformDefaultPropertyValues(
             { resourceId, projectId, source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA },
+            job.workspace_slug,
             issue,
             issueTypeId,
             planeIssueProperties

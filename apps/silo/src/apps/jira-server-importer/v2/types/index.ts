@@ -26,6 +26,7 @@ export enum EJiraStep {
   USERS = "users",
   STATES = "states",
   BOARDS = "boards",
+  RELEASES = "releases",
   MODULES = "modules",
   CYCLES = "cycles",
   COMMENTS = "comments",

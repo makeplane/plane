@@ -77,6 +77,7 @@ export class JiraIssuesStep implements IStep {
     EJiraStep.ISSUE_TYPES, // Provides issue types
     EJiraStep.ISSUE_PROPERTIES, // Provides properties + rawFields
     EJiraStep.ISSUE_PROPERTY_OPTIONS, // Provides options
+    EJiraStep.RELEASES, // Provides releases
   ];
 
   constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) {}
@@ -425,6 +426,7 @@ export class JiraIssuesStep implements IStep {
     storage: IStorageService
   ): Promise<{
     userMap: Map<string, string>;
+    releaseMap: Map<string, string>;
     issueTypeMap: Map<string, string>;
     cycleMap: Map<string, string>;
     moduleMap: Map<string, string>;
@@ -457,9 +459,10 @@ export class JiraIssuesStep implements IStep {
     }
 
     // Load mappings in parallel from storage
-    const [userMap, issueTypeMap, cycleMap, moduleMap] = await Promise.all([
+    const [userMap, releaseMap, issueTypeMap, cycleMap, moduleMap] = await Promise.all([
       // We are retrieving all users instead of associated users, as there can be custom fields that associates with users, and we can't select those
       storage.retrieveMapping(jobId, EJiraStep.USERS),
+      storage.retrieveMapping(jobId, EJiraStep.RELEASES),
       storage.lookupMapping(jobId, EJiraStep.ISSUE_TYPES, Array.from(issueTypeIds)),
       storage.lookupMapping(jobId, EJiraStep.CYCLES, Array.from(sprintExternalIds)),
       storage.lookupMapping(jobId, EJiraStep.MODULES, Array.from(componentExternalIds)),
@@ -485,7 +488,7 @@ export class JiraIssuesStep implements IStep {
       modules: moduleMap.size,
     });
 
-    return { userMap, issueTypeMap, cycleMap, moduleMap };
+    return { userMap, releaseMap, issueTypeMap, cycleMap, moduleMap };
   }
 
   /**
@@ -537,6 +540,7 @@ export class JiraIssuesStep implements IStep {
       issueTypeMap: Map<string, string>;
       cycleMap: Map<string, string>;
       moduleMap: Map<string, string>;
+      releaseMap: Map<string, string>;
     },
     associations: TIssuesAssociationsData,
     propertyData: {
@@ -564,6 +568,7 @@ export class JiraIssuesStep implements IStep {
       planeIssueProperties: propertyData.planeIssueProperties,
       planeIssuePropertiesOptions: propertyData.planeIssuePropertiesOptions,
       planeIssuePropertyValues: propertyValues,
+      releaseMap: mappings.releaseMap,
     });
 
     const payload = {

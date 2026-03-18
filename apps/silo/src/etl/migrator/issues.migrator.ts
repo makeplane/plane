@@ -351,6 +351,7 @@ export const generateIssuePayloadV2 = async (payload: {
   issueTypeMap: Map<string, string>;
   cycleMap: Map<string, string>;
   moduleMap: Map<string, string>;
+  releaseMap: Map<string, string>;
 
   associations: TIssuesAssociationsData;
 
@@ -361,6 +362,7 @@ export const generateIssuePayloadV2 = async (payload: {
 }): Promise<BulkIssuePayload[]> => {
   const {
     jobId,
+    releaseMap,
     issues,
     issueComments,
     issueActivities,
@@ -431,6 +433,7 @@ export const generateIssuePayloadV2 = async (payload: {
       // Get associated property values (uses existing function!) - summary collected inside
       const associatedIssuePropertyValues = getAssociatedIssuePropertyValues({
         issueId: processedIssue.external_id || "",
+        planeReleases: releaseMap,
         planeUsers,
         planeIssueProperties,
         planeIssuePropertiesOptions,
@@ -664,14 +667,22 @@ const processAttachments = async (
 export const getAssociatedIssuePropertyValues = (props: {
   issueId: string;
   planeUsers: PlaneUser[];
+  planeReleases?: Map<string, string>;
   planeIssueProperties: ExIssueProperty[];
   planeIssuePropertiesOptions: ExIssuePropertyOption[];
   planeIssuePropertyValues?: TIssuePropertyValuesPayload;
   jobId?: string;
 }) => {
   let associatedIssuePropertyValues: { id: string; values: ExIssuePropertyValue }[] = [];
-  const { issueId, planeUsers, planeIssueProperties, planeIssuePropertiesOptions, planeIssuePropertyValues, jobId } =
-    props;
+  const {
+    issueId,
+    planeUsers,
+    planeReleases,
+    planeIssueProperties,
+    planeIssuePropertiesOptions,
+    planeIssuePropertyValues,
+    jobId,
+  } = props;
 
   if (planeIssuePropertyValues && planeIssuePropertyValues[issueId]) {
     associatedIssuePropertyValues =
@@ -680,6 +691,7 @@ export const getAssociatedIssuePropertyValues = (props: {
         planeIssueProperties,
         planeIssuePropertiesOptions,
         issuePropertyValues: planeIssuePropertyValues[issueId],
+        planeReleases,
       }) ?? [];
 
     if (jobId) {
@@ -1054,6 +1066,7 @@ const createIssuePropertyValues = async (props: {
   planeClient: PlaneClient;
   workspaceSlug: string;
   projectId: string;
+  planeReleases?: Map<string, string>;
 }) => {
   const {
     createdIssueId,
@@ -1064,6 +1077,7 @@ const createIssuePropertyValues = async (props: {
     planeClient,
     workspaceSlug,
     projectId,
+    planeReleases,
   } = props;
   // If there are no issue property values, then return
   if (!issuePropertyValues || Object.keys(issuePropertyValues).length === 0) return;
@@ -1090,7 +1104,8 @@ const createIssuePropertyValues = async (props: {
         issuePropertyTypeKey,
         propertyValues,
         issuePropertiesOptionsMap,
-        planeUsers
+        planeUsers,
+        planeReleases
       );
       // Create the issue property values if the property values payload is not empty
       if (propertyValuesPayload.length > 0) {
@@ -1114,8 +1129,9 @@ const getIssuePropertyValues = (props: {
   planeIssueProperties: ExIssueProperty[];
   planeIssuePropertiesOptions: ExIssuePropertyOption[];
   issuePropertyValues: TPropertyValuesPayload;
+  planeReleases?: Map<string, string>;
 }) => {
-  const { planeUsers, planeIssueProperties, planeIssuePropertiesOptions, issuePropertyValues } = props;
+  const { planeUsers, planeReleases, planeIssueProperties, planeIssuePropertiesOptions, issuePropertyValues } = props;
 
   const values: {
     id: string;
@@ -1146,7 +1162,8 @@ const getIssuePropertyValues = (props: {
         issuePropertyTypeKey,
         propertyValues,
         issuePropertiesOptionsMap,
-        planeUsers
+        planeUsers,
+        planeReleases
       );
       if (propertyValuesPayload.length > 0) {
         values.push({
@@ -1213,7 +1230,8 @@ const generatePropertyValuesPayload = (
   issuePropertyTypeKey: TIssuePropertyTypeKeys,
   propertyValues: any[],
   issuePropertiesOptionsMap: Map<string, ExIssuePropertyOption>,
-  planeUsers: PlaneUser[]
+  planeUsers: PlaneUser[],
+  planeReleases?: Map<string, string>
 ): ExIssuePropertyValue => {
   switch (issuePropertyTypeKey) {
     case "TEXT":
@@ -1237,6 +1255,16 @@ const generatePropertyValuesPayload = (
         .filter(Boolean);
     case "RELATION_ISSUE":
       return [];
+    case "RELATION_RELEASE":
+      return propertyValues
+        .map((value) => {
+          const release = planeReleases?.get(value.value);
+          if (!release) {
+            logger.warn(`Release ${value.value} not found`);
+          }
+          return release ? { ...value, value: release } : undefined;
+        })
+        .filter(Boolean);
     default:
       return [];
   }

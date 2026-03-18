@@ -26,6 +26,7 @@ import type {
   PlaneUser,
   ExIssuePropertyOption,
 } from "@plane/sdk";
+import { createHashForString } from "@/core";
 import type { E_IMPORTER_KEYS, TPropertyValuesPayload } from "@/core";
 import {
   getFormattedDate,
@@ -378,6 +379,7 @@ export const transformIssuePropertyValues = (
 
 export const transformDefaultPropertyValues = (
   ctx: TTransformationContext,
+  workspaceSlug: string,
   issue: IJiraIssue,
   issueTypeId: string,
   planeIssueProperties: Partial<ExIssueProperty>[]
@@ -388,22 +390,31 @@ export const transformDefaultPropertyValues = (
   // Fix Versions
   if (issue.fields.fixVersions && Array.isArray(issue.fields.fixVersions)) {
     const fixVersionExternalId = `${resourceId}-${projectId}-${issueTypeId}-fix-version`;
-    propertyValuesPayload[fixVersionExternalId] = issue.fields.fixVersions.map((version) => ({
-      external_source: source,
-      external_id: version.id ? String(version.id) : undefined,
-      value: version.name || "",
-    }));
+    propertyValuesPayload[fixVersionExternalId] = issue.fields.fixVersions.map((version) => {
+      const versionNameInput = `${workspaceSlug}:${version.name?.trim().toLowerCase()}`;
+      const hashedName = createHashForString(versionNameInput);
+
+      return {
+        external_source: source,
+        external_id: `${projectId}_${resourceId}_${version.id}`,
+        value: `${resourceId}_${hashedName}`,
+      };
+    });
   }
 
   // Affected Versions
   if (issue.fields.versions && Array.isArray(issue.fields.versions)) {
     const affectedVersionExternalId = `${resourceId}-${projectId}-${issueTypeId}-affected-version`;
     const versions = issue.fields.versions as { id?: string; name?: string }[];
-    propertyValuesPayload[affectedVersionExternalId] = versions.map((version) => ({
-      external_source: source,
-      external_id: version.id ? String(version.id) : undefined,
-      value: version.name || "",
-    }));
+    propertyValuesPayload[affectedVersionExternalId] = versions.map((version) => {
+      const versionNameInput = `${workspaceSlug}:${version.name?.trim().toLowerCase()}`;
+      const hashedName = createHashForString(versionNameInput);
+      return {
+        external_source: source,
+        external_id: `${projectId}_${resourceId}_${version.id}`,
+        value: `${resourceId}_${hashedName}`,
+      };
+    });
   }
 
   // Reporter

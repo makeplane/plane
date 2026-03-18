@@ -109,6 +109,29 @@ type IIsssue = {
   type_id: string | undefined;
 };
 
+export enum EReleaseStatus {
+  UNRELEASED = "unreleased",
+  RELEASED = "released",
+  CANCELLED = "cancelled",
+}
+
+export interface IRelease {
+  id: string;
+  name: string;
+  description_html?: string;
+  status?: EReleaseStatus;
+  target_date?: string | Date;
+  release_date?: string | Date;
+  lead?: string;
+  external_id?: string;
+  external_source?: string;
+}
+
+export interface ExRelease extends IRelease {
+  labels?: string[]; // List of label names
+  tag?: string; // Version/Tag string
+}
+
 export type ExpandableFields = {
   state: ExState;
   project: ExProject;

@@ -19,6 +19,7 @@ from .importer import urlpatterns as importer_urls
 from .importer_report import urlpatterns as importer_report_urls
 from .import_execution_log import urlpatterns as import_execution_log_urls
 from .page import urlpatterns as page_urls
+from .releases import urlpatterns as releases_urls
 from .work_item_property import urlpatterns as work_item_property_urls
 
 urlpatterns = [
@@ -30,5 +31,6 @@ urlpatterns = [
     *importer_report_urls,
     *import_execution_log_urls,
     *page_urls,
+    *releases_urls,
     *work_item_property_urls,
 ]

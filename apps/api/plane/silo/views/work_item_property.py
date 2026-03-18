@@ -64,6 +64,10 @@ class IssuePropertyBulkOperationAPIView(BaseServiceAPIView):
             "in_use": "icon",
             "icon": {"name": "UsersRound", "color": "#6d7b8a"},
         },
+        f"{PropertyTypeEnum.RELATION}_{RelationTypeEnum.RELEASE}": {
+            "in_use": "icon",
+            "icon": {"name": "Release", "color": "#6d7b8a"},
+        },
         PropertyTypeEnum.URL: {
             "in_use": "icon",
             "icon": {"name": "Link", "color": "#6d7b8a"},
@@ -204,15 +208,16 @@ class IssuePropertyBulkOperationAPIView(BaseServiceAPIView):
                         data=property_data,
                         context={"issue_type": issue_type, "project": project},
                     )
+                    logo_props = self.get_logo_props(
+                        property_data.get("property_type"),
+                        property_data.get("relation_type"),
+                    )
                     if serializer.is_valid():
                         serializer.save(
                             workspace=workspace,
                             project=project,
                             issue_type=issue_type,
-                            logo_props=self.get_logo_props(
-                                property_data.get("property_type"),
-                                property_data.get("relation_type"),
-                            ),
+                            logo_props=logo_props,
                         )
                         created.append(serializer.data)
                     else:

@@ -11,7 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./job";
-export * from "./workspace";
-export * from "./work-item-property";
-export * from "./release";
+export type TBulkOperationResponse<T> = {
+  created: T[];
+  updated: T[];
+  errored: {
+    payload: Partial<T>;
+    error: string;
+  }[];
+};

@@ -90,6 +90,14 @@ export class JiraV2Service {
     return await this.jiraClient.myself.getCurrentUser();
   }
 
+  async getVersionsPaginated(projectIdOrKey: string, startAt?: number, maxResults?: number) {
+    return this.jiraClient.projectVersions.getProjectVersionsPaginated({
+      projectIdOrKey,
+      startAt: startAt ?? 0,
+      maxResults: maxResults ?? 100,
+    });
+  }
+
   async getJiraUsers(startAt?: number, maxResults?: number): Promise<JiraApiUser[]> {
     // @ts-expect-error - Ignoring ts error for return type
     return (await this.jiraClient.userSearch.findUsers({

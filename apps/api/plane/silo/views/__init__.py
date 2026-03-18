@@ -11,15 +11,16 @@
 
 # add all the views in this folder
 from .asset import ImportAssetEndpoint
-from .credential import WorkspaceCredentialAPIView, VerifyWorkspaceCredentialAPIView
 from .connection import WorkspaceConnectionAPIView, WorkspaceUserConnectionAPIView
+from .credential import VerifyWorkspaceCredentialAPIView, WorkspaceCredentialAPIView
 from .entity_connection import WorkspaceEntityConnectionAPIView
 from .importer import ImportJobAPIView
 from .importer_report import (
-    ImportReportAPIView,
-    ImportReportCountIncrementAPIView,
     ImportExecutionLogAPIView,
     ImportJobSummaryAPIView,
+    ImportReportAPIView,
+    ImportReportCountIncrementAPIView,
 )
-from .page import WikiBulkOperationAPIView, ProjectPageBulkOperationAPIView, TeamspacePageBulkOperationAPIView
+from .page import ProjectPageBulkOperationAPIView, TeamspacePageBulkOperationAPIView, WikiBulkOperationAPIView
+from .releases import ReleaseBulkOperationAPIView
 from .work_item_property import IssuePropertyBulkOperationAPIView

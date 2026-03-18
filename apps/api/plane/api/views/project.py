@@ -540,24 +540,24 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
             if serializer.is_valid():
                 # don't allow external id and external source to be changed
                 # if they are already set for an existing project
-                if (
-                    request.data.get("external_id")
-                    and request.data.get("external_source")
-                    and Project.objects.filter(
-                        external_id=request.data.get("external_id"),
-                        external_source=request.data.get("external_source"),
-                        workspace__slug=slug,
-                    )
-                    .exclude(id=pk)
-                    .exists()
-                ):
-                    return Response(
-                        {
-                            "error": "Project with the same external id and external source already exists",
-                            "id": str(project.id),
-                        },
-                        status=status.HTTP_409_CONFLICT,
-                    )
+                # if (
+                #     request.data.get("external_id")
+                #     and request.data.get("external_source")
+                #     and Project.objects.filter(
+                #         external_id=request.data.get("external_id"),
+                #         external_source=request.data.get("external_source"),
+                #         workspace__slug=slug,
+                #     )
+                #     .exclude(id=pk)
+                #     .exists()
+                # ):
+                #     return Response(
+                #         {
+                #             "error": "Project with the same external id and external source already exists",
+                #             "id": str(project.id),
+                #         },
+                #         status=status.HTTP_409_CONFLICT,
+                #     )
 
                 serializer.save()
                 if serializer.data["intake_view"]:
