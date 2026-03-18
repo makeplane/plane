@@ -179,7 +179,9 @@ export class GlobalViewStore implements IGlobalViewStore {
           viewId,
           currentView?.rich_filters || {}
         );
-        void this.rootStore.issue.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+        this.rootStore.issue.workspaceIssues
+          .fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation")
+          .catch(console.error);
       }
       return currentView;
     } catch {
