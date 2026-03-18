@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { uniq, orderBy, isEmpty, indexOf, groupBy, cloneDeep, set } from "lodash-es";
+import { uniq, orderBy, isEmpty, indexOf, groupBy, set } from "lodash-es";
 import { ALL_ISSUES, EIssueFilterType, FILTER_TO_ISSUE_MAP, ISSUE_PRIORITIES } from "@plane/constants";
 import type {
   IIssueDisplayFilterOptions,
@@ -16,7 +16,6 @@ import type {
   TIssueOrderByOptions,
 } from "@plane/types";
 import { checkDateCriteria, convertToISODateString, parseDateFilter } from "@plane/utils";
-import { store } from "@/lib/store-context";
 import { EIssueGroupedAction, ISSUE_GROUP_BY_KEY } from "./base-issues.store";
 
 /**
@@ -178,7 +177,7 @@ export const getDifference = (
  * @param object any object in which the key's value is to be checked
  * @returns 1 if empty, 0 if not empty
  */
-export const getSortOrderToFilterEmptyValues = (key: string, object: any) => {
+export const getSortOrderToFilterEmptyValues = (key: string, object: Record<string, unknown>) => {
   const value = object?.[key];
 
   if (typeof value !== "number" && isEmpty(value)) return 1;
@@ -219,22 +218,6 @@ export const checkIssueDateFilter = (
 };
 
 /**
- * Helper method to get previous issues state
- * @param issues - The array of issues to get the previous state for.
- * @returns The previous state of the issues.
- */
-export const getPreviousIssuesState = (issues: TIssue[]) => {
-  const issueIds = issues.map((issue) => issue.id);
-  const issuesPreviousState: Record<string, TIssue> = {};
-  issueIds.forEach((issueId) => {
-    if (store.issue.issues.issuesMap[issueId]) {
-      issuesPreviousState[issueId] = cloneDeep(store.issue.issues.issuesMap[issueId]);
-    }
-  });
-  return issuesPreviousState;
-};
-
-/**
  * Filters the given work items based on the provided filters and display filters.
  * @param work items - The array of work items to be filtered.
  * @param filters - The filters to be applied to the issues.
@@ -263,7 +246,7 @@ export const getFilteredWorkItems = (workItems: TIssue[], filters: IIssueFilterO
       const issueValue = workItem[issueKey];
       // Handle array-based properties vs single value properties
       if (Array.isArray(issueValue)) {
-        return filterValues!.some((filterValue: any) => issueValue.includes(filterValue));
+        return filterValues!.some((filterValue: string) => issueValue.includes(filterValue));
       } else {
         return filterValues!.includes(issueValue as string);
       }
@@ -336,7 +319,7 @@ export const getGroupedWorkItemIds = (
     if (Array.isArray(value)) {
       if (value.length === 0) return "None";
       // Sort & join to build deterministic set-like key
-      return value.slice().sort().join(",");
+      return (value as string[]).slice().sort().join(",");
     }
     return value ?? "None";
   });
