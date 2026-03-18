@@ -77,7 +77,11 @@ export class PQLFilterInstance implements IPQLFilterInstance {
   }
 
   get canSaveView(): IPQLFilterInstance["canSaveView"] {
-    return this.canClearFilters && this.hasChanges && !this.viewOptions?.saveViewOptions?.isDisabled;
+    return (
+      this.value.stripped.trim() !== "" &&
+      !!this.viewOptions?.saveViewOptions &&
+      !this.viewOptions?.saveViewOptions?.isDisabled
+    );
   }
 
   get canUpdateView(): IPQLFilterInstance["canUpdateView"] {
